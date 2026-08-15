@@ -14,14 +14,6 @@ needed exact transfer-shape coverage and explicit dispositions for
 maintenance, scheduling requests, ACRE modes, profile-gated registers, and the
 boundary between instruction-local ACRC behavior and bundle formation.
 
-The independent executable ISA comparison contains the same 35 forms. It
-corroborates register-transfer shapes, TLB operand gates, service requests,
-breakpoints, and assertions. Its cache maintenance, fences, and execution
-control operations remain staged no-ops, so they cannot supply PTO semantics.
-Its TLB privilege gate rejects only its unprivileged-manager state; PTO-v0
-deliberately uses the stricter ACR0-only rule consistent with its protected
-translation-register policy.
-
 ## Decision
 
 ### System-register transfers
@@ -64,8 +56,7 @@ operation advances an epoch or replaces the last successful operation/operand.
 invalidates the local reservation, and emits the closed Stage 3 fence event.
 The instruction-cache epoch also advances when either mask contains the
 instruction-visibility bit. `FENCE.I` invalidates the reservation and advances
-the instruction-cache epoch. These PTO effects are authoritative even though
-the comparison model currently implements both fences as no-ops.
+the instruction-cache epoch.
 
 ### Execution-control requests
 
@@ -76,9 +67,9 @@ response, but PTO-v0 defines no additional architecture-visible asleep,
 pending-wake, event-mailbox, or timeout-counter state. A profile that exposes
 such state requires a distinct identity and contract.
 
-This disposition makes the instructions total without inventing wake state
-that neither PTO nor the comparison model defines. The generated evidence
-executes every Reg5 selector for all four requests.
+This disposition makes the instructions total without inventing additional
+wake state. The generated evidence executes every Reg5 selector for all four
+requests.
 
 ### ACRE and ACRC
 
@@ -126,5 +117,3 @@ SYS producers for profile-disabled instruction-page or hardware-debug traps.
 - ACRE zero and one cannot diverge within PTO-v0.
 - ACRC bundle placement remains reviewable under `S4-T7` without reopening its
   instruction-local service-request semantics.
-- Independent comparison evidence remains corroborative; PTO ASL and this ADR
-  are authoritative where the comparison is staged or non-comparable.

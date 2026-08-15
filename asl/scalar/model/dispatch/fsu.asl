@@ -136,42 +136,48 @@ begin
     let source_selector = ScalarDecodedFPSourceType(instruction, form);
     let destination_type = ScalarDecodedBits5(
         instruction, form, ScalarField_DstType);
+    var source_type: bits(5);
+    var source_supported: boolean;
+    var destination_supported: boolean;
+    if operation == ScalarOperation_SCVTF then
+        source_type = ScalarSignedIntegerSourceTypeCode(source_selector);
+        source_supported = ScalarIntegerTypeCodeSupported(source_type);
+        destination_supported = ScalarFPTypeCodeSupported(destination_type);
+    elsif operation == ScalarOperation_UCVTF then
+        source_type = ScalarUnsignedIntegerSourceTypeCode(source_selector);
+        source_supported = ScalarIntegerTypeCodeSupported(source_type);
+        destination_supported = ScalarFPTypeCodeSupported(destination_type);
+    else
+        source_type = ScalarFPSourceTypeCode(source_selector);
+        source_supported = ScalarFPTypeCodeSupported(source_type);
+        if operation == ScalarOperation_FCVT then
+            destination_supported = ScalarFPTypeCodeSupported(destination_type);
+        else
+            destination_supported = ScalarIntegerTypeCodeSupported(destination_type);
+        end;
+    end;
+    if !source_supported || !destination_supported then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return;
+    end;
+
+    // Type legality is resolved before this first architectural source read.
     let value = ReadDecodedScalarRegister(
         instruction, form, ScalarField_SrcL);
     var result: Word;
     var flags: bits(5);
     if operation == ScalarOperation_FCVT then
-        let source_type = ScalarFPSourceTypeCode(source_selector);
-        if !ScalarFPTypeCodeSupported(source_type) ||
-           !ScalarFPTypeCodeSupported(destination_type) then
-            SetFault(Fault_IllegalInstruction, ReadPC());
-            return;
-        end;
         (result, flags) = ScalarFPConvertProfile(
             ScalarFPActiveRoundingMode(), destination_type, source_type,
             NormalizeScalarFPSource(value, source_type));
         result = NormalizeScalarFPResult(result, destination_type);
     elsif operation == ScalarOperation_SCVTF ||
           operation == ScalarOperation_UCVTF then
-        let source_type = if operation == ScalarOperation_SCVTF then
-            ScalarSignedIntegerSourceTypeCode(source_selector)
-            else ScalarUnsignedIntegerSourceTypeCode(source_selector);
-        if !ScalarIntegerTypeCodeSupported(source_type) ||
-           !ScalarFPTypeCodeSupported(destination_type) then
-            SetFault(Fault_IllegalInstruction, ReadPC());
-            return;
-        end;
         (result, flags) = ScalarIntegerToFPProfile(
             ScalarFPActiveRoundingMode(), source_type, destination_type,
             NormalizeScalarIntegerSource(value, source_type));
         result = NormalizeScalarFPResult(result, destination_type);
     else
-        let source_type = ScalarFPSourceTypeCode(source_selector);
-        if !ScalarFPTypeCodeSupported(source_type) ||
-           !ScalarIntegerTypeCodeSupported(destination_type) then
-            SetFault(Fault_IllegalInstruction, ReadPC());
-            return;
-        end;
         let rounding_mode = ScalarFPFixedConversionRoundingMode(operation);
         (result, flags) = ScalarFPToIntegerProfile(
             rounding_mode, destination_type, source_type,

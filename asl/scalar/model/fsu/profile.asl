@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-FSU-PROFILE","surface":"scalar","classification":["model","fsu","profile"],"depends_on":["PTO-SCALAR-MODEL-FSU-ARITHMETIC"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-FSU-PROFILE","surface":"scalar","classification":["model","fsu","profile"],"depends_on":["PTO-SCALAR-MODEL-FSU-ARITHMETIC","PTO-ARCH-STATE-NUMERIC-STATUS"]}
 // Raw scalar floating-point execution. The portable model fixes carrier,
 // control/status, comparison, NaN, signed-zero, and destination rules. Numeric
 // operations that require a concrete floating-point implementation cross one
@@ -57,13 +57,12 @@ end;
 
 readonly func ScalarFPFlags() => bits(5)
 begin
-    // flags[0..4] map to CORE_STATE[32..36] as NV, DZ, OF, UF, and NX.
-    return _SystemRegisters.core_state[36:32];
+    return NumericStatusFlags();
 end;
 
 func ScalarFPRecordFlags(flags: bits(5))
 begin
-    _SystemRegisters.core_state[36:32] = ScalarFPFlags() OR flags;
+    RecordNumericStatusFlags(flags);
 end;
 
 pure func NormalizeScalarFPSource(value: Word, data_type: bits(5)) => Word

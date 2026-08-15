@@ -31,13 +31,28 @@ cmp.andi SrcL, simm, ->{t, u, Rd}
 | cmp_andi_32_da7a5391738d | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 | cmp_andi_32_da7a5391738d | simm12 | 12 | signed | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| cmp_andi_32_da7a5391738d | RegDst | 5 | 0–31 | none | none | absolute GPR destination | Encoded zero names the architectural zero GPR. |
+| cmp_andi_32_da7a5391738d | SrcL | 5 | 0–31 | none | none | left absolute GPR source | Encoded zero names the architectural zero GPR. |
+| cmp_andi_32_da7a5391738d | simm12 | 12 | 0–4095 | none | none | 12-bit signed immediate or displacement | Encoded zero supplies numeric zero for the 12-bit signed immediate or displacement. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst | encoded operand or control |
-| SrcL | encoded operand or control |
-| simm12 | encoded operand or control |
+| RegDst | absolute GPR destination |
+| SrcL | left absolute GPR source |
+| simm12 | 12-bit signed immediate or displacement |
 
 ## Decode
 
@@ -61,14 +76,36 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `CMP.ANDI - Combine scalar comparison results with the encoded logical operation.`
-- **Semantic handler:** `ExecuteCompareLogical`
+- Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects.
+
+## State effects
+
+- CMP.ANDI - Combine scalar comparison results with the encoded logical operation.
+- After decode and legality checks, execute the normative ExecuteCompareLogical ASL handler; no other architectural state is modified.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+
+## Examples
+
+- cmp.andi SrcL, simm, ->{t, u, Rd}
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

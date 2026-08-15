@@ -1,6 +1,6 @@
 {
   "active_profile": {
-    "conformance_tests": "tests/asl/profile-tests.asl",
+    "conformance_tests": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
     "id": "pto-v0",
     "implementations": [
       "asl/arch/profile/applicability.asl",
@@ -23,7 +23,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
-        "tests/asl/profile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -39,7 +39,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
-        "tests/asl/profile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -55,8 +55,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -72,8 +71,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -89,8 +87,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -107,8 +104,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -125,8 +121,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -143,8 +138,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -160,8 +154,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -177,8 +170,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -194,8 +186,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -211,8 +202,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -228,8 +218,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -245,8 +234,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -262,8 +250,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -279,8 +266,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -296,8 +282,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -313,8 +298,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -330,8 +314,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -347,9 +330,8 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
-        "tests/asl/bundle-tests.asl",
-        "tests/asl/profile-tests.asl",
-        "tests/asl/state-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
+        "tests/asl/arch/data-types/trap-context/arch-fault-visible-registers-001.asl"
       ]
     },
     {
@@ -365,9 +347,8 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
-        "tests/asl/bundle-tests.asl",
-        "tests/asl/profile-tests.asl",
-        "tests/asl/state-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
+        "tests/asl/arch/data-types/trap-context/arch-fault-visible-registers-001.asl"
       ]
     },
     {
@@ -383,8 +364,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -402,9 +382,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -422,9 +400,7 @@
       "conformance_status": "reference-profile-closed",
       "maturity_target": null,
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/scalar-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -440,8 +416,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -457,8 +432,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -474,8 +448,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -491,8 +464,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -508,8 +480,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -525,8 +496,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -542,8 +512,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -559,8 +528,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -576,7 +544,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -592,8 +560,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -609,8 +576,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -626,8 +592,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/profile-tests.asl",
-        "tests/asl/tile-tests.asl"
+        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
       ]
     },
     {
@@ -643,8 +608,8 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/tile/model/execution/postprocess/PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-STATIC-INVARIANT-001.asl",
-        "tests/asl/tile/model/execution/postprocess/PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001.asl"
+        "tests/asl/tile/model/execution/postprocess/tile-static-postprocess-contract-001.asl",
+        "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-aux-001.asl"
       ]
     },
     {
@@ -660,7 +625,7 @@
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",
       "tests": [
-        "tests/asl/tile/model/execution/postprocess/PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001.asl"
+        "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-aux-001.asl"
       ]
     }
   ],

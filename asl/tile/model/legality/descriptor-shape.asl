@@ -6,8 +6,13 @@ begin
     let tile = _Tiles[[index]];
     return tile.allocated &&
            TileCapacityIsLegal(tile.capacity_bytes) &&
-           TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
-               tile.columns, tile.data_type) &&
+           (if tile.storage_kind == TileStorage_Predicate then
+                tile.rows > 0 && tile.columns > 0 &&
+                PredicateTileStorageBytes(tile.rows, tile.columns) <=
+                    tile.capacity_bytes
+            else
+                TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
+                    tile.columns, tile.data_type)) &&
            tile.valid_rows <= tile.rows &&
            tile.valid_columns <= tile.columns &&
            tile.rows * tile.columns <= PTO_MODEL_TILE_ELEMENTS;
@@ -16,7 +21,8 @@ end;
 readonly func TileDescriptorLegal(index: TileIndex) => boolean
 begin
     return TileDescriptorConfigured(index) &&
-           TileGenericIndexingPermitted(_Tiles[[index]]);
+           (_Tiles[[index]].storage_kind == TileStorage_Predicate ||
+            TileGenericIndexingPermitted(_Tiles[[index]]));
 end;
 
 readonly func TileSourceContentsDefined(index: TileIndex) => boolean

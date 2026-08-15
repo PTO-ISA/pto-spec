@@ -40,9 +40,14 @@ end;
 func ExecuteScalarDMACopy64(source_address: Word, destination_address: Word)
 begin
     let source_probe = ProbeDataAccess(source_address, 64, 1, FALSE);
-    if RaiseDataAccessFault(source_probe, source_address) then return; end;
+    if RaiseDataAccessFault(source_probe, source_address) then
+        return;
+    end;
+
     let destination_probe = ProbeDataAccess(destination_address, 64, 1, TRUE);
-    if RaiseDataAccessFault(destination_probe, destination_address) then return; end;
+    if RaiseDataAccessFault(destination_probe, destination_address) then
+        return;
+    end;
 
     let snapshot = LoadTranslatedBytes64(source_probe.translated_address);
     var event_values: array [[8]] of Word;
@@ -50,16 +55,28 @@ begin
         let offset = (chunk * 8) as integer {0..262144};
         let translated_source = source_probe.translated_address +
             NaturalToWord(offset);
-        event_values[[chunk]] = LoadTranslatedUnsigned(translated_source, 8);
-        RecordLoadEvent(translated_source, 8, event_values[[chunk]],
+        let snapshot_value = Bytes64ChunkValue(snapshot, chunk);
+        event_values[[chunk]] = snapshot_value;
+        RecordLoadEvent(
+            translated_source,
+            8,
+            snapshot_value,
             MemoryOrder_Relaxed);
     end;
-    StoreTranslatedBytes64(destination_address, destination_probe.translated_address,
-                           snapshot);
+
+    StoreTranslatedBytes64(
+        destination_address,
+        destination_probe.translated_address,
+        snapshot);
+
     for chunk = 0 to 7 do
         let offset = (chunk * 8) as integer {0..262144};
-        RecordStoreEvent(destination_probe.translated_address +
-            NaturalToWord(offset), 8, event_values[[chunk]],
+        let translated_destination = destination_probe.translated_address +
+            NaturalToWord(offset);
+        RecordStoreEvent(
+            translated_destination,
+            8,
+            event_values[[chunk]],
             MemoryOrder_Relaxed);
     end;
 end;

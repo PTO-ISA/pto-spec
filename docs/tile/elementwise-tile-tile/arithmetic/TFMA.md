@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl`
 
-Compute a fused elementwise left-times-right plus addend result.
+Fused typed elementwise multiply-add over three Local Tile sources.
 
 ## Normative identity {#PTO-INST-TILE-TFMA}
 
@@ -28,14 +28,21 @@ TFMA <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TFMA | TEPL | 0x01C | 28 | 0 | TFMA |
 
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | destination |
-| source0 | multiplicand-left |
-| source1 | multiplicand-right |
-| source2 | addend |
+| destination0 | new renamed Local destination |
+| source0 | left multiplicand Local source |
+| source1 | right multiplicand Local source |
+| source2 | fused addend Local source |
 
 ## Decode
 
@@ -52,11 +59,12 @@ end;
 
 ```asm
 BSTART.VEC TFMA, DataType
-B.DATR (optional)
-B.DIM LB0
-B.DIM (LB1/LB2 for 2D)
-B.IOT
-B.IOT
+B.DATR PadValue (optional)
+B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional)
+B.DIM LB2=Col (optional)
+B.IOT SrcLeft, SrcRight, mask=PE_MASK
+B.IOT SrcAddend, mask=PE_MASK, <last>, ->DstTile<TSize>
 BSTOP
 ```
 
@@ -64,34 +72,100 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl -->
 ```asl
+pure func InstructionContractDataTypeLegal_TFMA(
+    data_type: TileDataType) => boolean
+begin
+    return TileFusedMultiplyAddDataTypeSupported(data_type);
+end;
+
+readonly func InstructionContractOperandsLegal_TFMA(
+    destination: TileIndex,
+    source_left: TileIndex,
+    source_right: TileIndex,
+    addend: TileIndex) => boolean
+begin
+    return TileOperandsLegal_TFMA(
+        destination,
+        source_left,
+        source_right,
+        addend);
+end;
+
+func InstructionContractValue_TFMA(
+    data_type: TileDataType,
+    left: Word,
+    right: Word,
+    addend: Word) => (Word, bits(5))
+begin
+    return TileFixedFusedMultiplyAddValue(
+        data_type,
+        left,
+        right,
+        addend);
+end;
+
 readonly func InstructionContractHandler_TFMA() => TileSemanticHandler
 begin
     return TileHandler_TFMA;
 end;
 
-func InstructionContractElement_TFMA(
-    addend: Word, left: Word, right: Word,
-    destination_type: TileDataType, left_type: TileDataType,
-    right_type: TileDataType) => Word
+func InstructionContractExecute_TFMA(
+    destination: TileIndex,
+    source_left: TileIndex,
+    source_right: TileIndex,
+    addend: TileIndex)
 begin
-    return TileProfileMatrixAccumulate(addend, left, right,
-        destination_type, left_type, right_type);
+    TFMA(
+        destination,
+        source_left,
+        source_right,
+        addend);
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Legality handler:** `TileOperandsLegal_TFMA`
-- **Fault contract:** `ExecuteTileInstruction`
-- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
+- LB0 is required and supplies nonzero ValidCol; omitted LB1 defaults ValidRow to one and omitted LB2 defaults Col to ValidCol. Physical rows derive exactly from TSize, Col, and DataType.
+- Omitted B.DATR selects PadValue=Null; explicit 00, 01, 10, and 11 select Zero, Max, Min, and Null.
+- TFMA uses the selected numeric profile's fixed/default arithmetic rounding. It does not consume encoded RMode, Sat, or Canonicalize fields.
 
-## Operational information
+## Legality
 
-- **Semantic handler:** `TFMA`
-- **Effect contract:** `TFMA`
-- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
-- **State effects:** `["operand:destination0:destination", "operand:source0:multiplicand-left", "operand:source1:multiplicand-right", "operand:source2:addend"]`
+- TFMA is selected by the TEPL encoding carrier Mode 0 Function 28, canonically assembled with BSTART.VEC, and has no standalone opcode.
+- Exactly two ordered Local B.IOT bindings are required: the first supplies two multiplicands without a destination or last marker; the second supplies the addend and one new destination and terminates the sequence.
+- DataType is exactly one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- All three sources and the destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; every valid source element is defined.
+- Only B.DATR PadValueOrByteId is applicable. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
+- B.IOR and B.IOS are illegal. All participating B.IOT masks are equal; PE_MASK zero is a strict no-op before source reads, allocation, arithmetic, flags, padding, or descriptor effects.
+
+## State effects
+
+- For floating DataTypes, each valid destination element is one fused left multiplied by right plus addend operation with no rounded intermediate product and one final profile rounding.
+- For signed and unsigned integer DataTypes, each valid destination element is left multiplied by right plus addend modulo the element width; carrier bits above that width are zero.
+- The selected PadValue defines or leaves undefined the physical destination region outside ValidRow by ValidCol without changing any source descriptor or source payload.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Complete schema, dimension, DataType, layout, source-definedness, source-encoding, PE_MASK, destination-name, and capacity preflight precedes all three source snapshots.
+- Duplicate sources and any source-to-destination alias observe complete pre-operation source payloads. Sources persist after both successful and rejected blocks.
+- The complete result payload, selected padding definedness, sticky numeric flags, and renamed destination descriptor publish as one architectural operation; rejection has no architectural effect.
+
+## Exceptions
+
+- Malformed or surplus bindings, B.IOR or B.IOS, unequal masks, missing or invalid dimensions, unsupported DataType, non-row-major layout, undefined source elements, mismatched descriptors, or invalid floating encodings raise Fault_TileLegality before effects.
+- An unrepresentable destination shape, unavailable renamed destination, insufficient per-PE TSize, or exhausted architectural Tile capacity raises Fault_TileAllocation before allocation.
+- A signaling NaN, zero multiplied by infinity, infinity multiplied by zero, or an infinite product added to an opposite-signed infinity produces a quiet NaN and records floating invalid without a synchronous trap.
+
+## Examples
+
+- BSTART.VEC TFMA, FP32; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK; B.IOT SrcAddend, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

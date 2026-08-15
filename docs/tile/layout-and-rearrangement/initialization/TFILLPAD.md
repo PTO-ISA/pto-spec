@@ -28,6 +28,13 @@ TFILLPAD <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TFILLPAD | TEPL | 0x065 | 5 | 3 | TFILLPAD |
 
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
 ## Operands and results
 
 | Field | Architectural role |
@@ -66,21 +73,69 @@ readonly func InstructionContractHandler_TFILLPAD() => TileSemanticHandler
 begin
     return TileHandler_TFILLPAD;
 end;
+
+pure func InstructionContractDataTypeLegal_TFILLPAD(
+    data_type: TileDataType) => boolean
+begin
+    return TileFillPadDataTypeSupported(data_type);
+end;
+
+readonly func InstructionContractOperandsLegal_TFILLPAD(
+    destination: TileIndex,
+    source: TileIndex,
+    padding: Word) => boolean
+begin
+    return TileOperandsLegal_TFILLPAD(destination, source, padding);
+end;
+
+func InstructionContractExecute_TFILLPAD(
+    destination: TileIndex,
+    source: TileIndex,
+    padding: Word)
+begin
+    assert InstructionContractOperandsLegal_TFILLPAD(
+        destination,
+        source,
+        padding);
+    TFILLPAD(destination, source, padding);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Legality handler:** `TileOperandsLegal_TFILLPAD`
-- **Fault contract:** `ExecuteTileInstruction`
-- **Datr contract:** `{"allowed_nonzero_fields": ["PadValueOrByteId", "Layout"], "pad_union": "pad-value"}`
+- At BSTART the bundle descriptor begins with zero-valued B.DATR and B.DIM state; omitted optional commands retain those reset values, and an encoded zero is a value rather than absence.
+- The TileOperandsLegal_TFILLPAD schema determines which B.IOR, B.IOT, B.IOS, B.DATR, and B.DIM bindings are required or optional for TFILLPAD.
 
-## Operational information
+## Legality
 
-- **Semantic handler:** `TFILLPAD`
-- **Effect contract:** `TFILLPAD`
-- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
-- **State effects:** `["operand:destination0:destination", "operand:source0:source", "operand:scalar0:padding"]`
+- TFILLPAD is selected only by its BSTART carrier and selector/function assignment; it has no standalone opcode.
+- Before effects, TileOperandsLegal_TFILLPAD validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.
+- B.DATR applicability is exactly [{"allowed_nonzero_fields":["PadValueOrByteId","Layout"],"pad_union":"pad-value"}].
+
+## State effects
+
+- Copy the source and fill destination padding elements with the bound scalar.
+- After complete preflight, execute TFILLPAD with the operand bindings listed above; destination definedness changes only as specified by that handler.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- ExecuteTileInstruction supplies the operation fault contract; illegal bundles and reserved selector combinations reject before architectural effects.
+- CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation.
+
+## Examples
+
+- BSTART.SFU TFILLPAD, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

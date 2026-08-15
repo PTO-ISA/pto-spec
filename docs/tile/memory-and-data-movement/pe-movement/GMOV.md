@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/pe-movement/GMOV.asl`
 
-Copy the resolved peer-PE Tile fragment selected by the bound peer TID.
+Copies peer-resolved Local fragments within a Core4 collective.
 
 ## Normative identity {#PTO-INST-TILE-GMOV}
 
@@ -28,13 +28,20 @@ GMOV <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | GMOV | TLSU |  | 13 |  | GMOV |
 
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | destination |
-| source0 | resolved-peer-source |
-| scalar0 | peer-tid |
+| destination0 | selected Local destination fragments |
+| source0 | Core4 peer-resolved read-old Local source snapshot |
+| scalar0 | each PE's absolute peer_tid |
 
 ## Decode
 
@@ -50,9 +57,10 @@ end;
 ## Block composition
 
 ```asm
-BSTART.TLSU GMOV, DataType
-B.IOT source, destination, PE_MASK, TSize
-B.IOR peer_tid
+BSTART.GMOV DataType
+B.DATR Layout (optional)
+B.IOT source, destination, PE_MASK, TSize, L=1
+B.IOR peer_tid (optional)
 BSTOP
 ```
 
@@ -67,18 +75,42 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Legality handler:** `TileOperandsLegal_GMOV`
-- **Fault contract:** `ExecuteTileInstruction`
-- **Datr contract:** `{"allowed_nonzero_fields": ["Layout"], "pad_union": "must-zero"}`
+- Omitted B.DATR selects NORM.
+- Omitted B.IOR supplies peer_tid zero in each PE; an explicit zero selector reads the zero GPR and is not absence.
 
-## Operational information
+## Legality
 
-- **Semantic handler:** `GMOV`
-- **Effect contract:** `GMOV`
-- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
-- **State effects:** `["operand:destination0:destination", "operand:source0:resolved-peer-source", "operand:scalar0:peer-tid"]`
+- GMOV is TLSU Function 13 and has no standalone opcode.
+- Exactly one terminating Local source-plus-destination B.IOT is required. Its destination TSize equals the source per-PE capacity.
+- Any nonzero PE_MASK is legal; it selects destination writes but not rendezvous or source readiness. Mask zero is a strict no-op.
+- All four peer-resolved source fragments are ready before any selected request; each private peer_tid is 0..3 and may repeat.
+
+## State effects
+
+- Copies the byte-preserving resolved source fragment into each selected PE's newly allocated Local destination and copies definedness.
+- Unselected destinations and all Shared/GM state remain unchanged.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none; GMOV neither accesses global memory nor emits load, store, atomic, or fence events
+
+### Ordering
+
+- Combined Core4 rendezvous, descriptor, readiness, and peer validation precedes destination allocation and payload publication.
+- The source payload and definedness are snapshotted before any destination write.
+
+## Exceptions
+
+- Reject incompatible source/destination capacity, shape, type, layout, location, incomplete Core4 source readiness, peer_tid outside 0..3 in any PE, nonterminating or surplus bindings, B.DIM, or B.IOS before effects.
+- A failed collective preflight allocates and writes no destination.
+
+## Examples
+
+- BSTART.GMOV U8; B.IOT T#1, mask=0101, size=1, ->T; B.IOR zero, a0; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

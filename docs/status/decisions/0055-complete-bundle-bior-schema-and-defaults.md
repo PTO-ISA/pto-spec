@@ -77,8 +77,8 @@ encoded all-zero produces a B.IOR line with the consumed `zero` operands. A
 standalone decoder without bundle context emits a raw/unknown representation.
 
 PTO does not define a decoupled programmable-body B.IOR declaration stream.
-LinxISA may define that separate Linx-only surface, including multiple
-declarations, without changing the imported PTO direct-operation contract.
+Multiple declaration records and relative dependency-register semantics are
+outside the PTO instruction contract.
 
 `PE_MASK=0000` remains a strict no-effect case. Schema defaults may be
 resolved, but no register read, memory access, allocation, rename, fault,
@@ -89,7 +89,7 @@ consume, descriptor update, or lifetime update occurs.
 - PTO v0.58 keeps the same B.IOR bit layout and form identity; only legality,
   schema resolution, canonical text, and dynamic defaulting change.
 - Selector-range constraints become machine-readable command-catalog data and
-  are inherited by generated decoders and Linx common-form projections.
+  are inherited by generated decoders and downstream PTO projections.
 - Because the binary-closure fingerprint includes decoded legality constraints,
   the reviewed 573-form envelope is rebound from
   `9155a78499c4908e0fdc7ac2a48159eacb5c1dfc78ea724dbedf689369430993` to
@@ -115,7 +115,8 @@ decisions remain in force.
 
 ## Verification
 
-`tests/asl/bundle-tests.asl` covers selector range, omission/defaults,
+The independent points under `tests/asl/block/operands/B.IOR/` cover selector
+range, omission/defaults,
 encoded-zero semantics, unused nonzero rejection, repeated selectors, second-
 B.IOR preservation, and zero-mask no effects. `scripts/generate-asl-decoders`
 projects the catalog constraints into the executable decoder;

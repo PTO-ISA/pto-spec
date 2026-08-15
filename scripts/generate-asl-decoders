@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+import argparse
+import contextlib
+import io
 import json
-import math
 import re
 import sys
 from collections import Counter
@@ -16,6 +18,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.asl_units import load_units  # noqa: E402
+from scripts.asl_validation_shards import (  # noqa: E402
+    partition_generated_asl,
+    render_validation_shard,
+    validation_index,
+)
 from scripts.encoding_witness import (  # noqa: E402
     catalog_decode_order,
     decode_field,
@@ -23,6 +30,7 @@ from scripts.encoding_witness import (  # noqa: E402
     encoded_catalog_witnesses,
     encoded_form_witness,
     encoding_alternatives,
+    form_constraints_hold,
 )
 from scripts.project_asl_catalogs import project_catalogs  # noqa: E402
 from scripts.tile_taxonomy import (  # noqa: E402
@@ -76,6 +84,11 @@ TILE_DATR_PAD_UNION_ENUM = {
     "pad-value": "TileDATRPadUnion_PadValue",
     "histogram-byte-id": "TileDATRPadUnion_HistogramByteId",
     "must-zero": "TileDATRPadUnion_MustZero",
+}
+TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS = {
+    "TGATHER",
+    "THISTOGRAM",
+    "TIMG2COL",
 }
 SCALAR_BINARY_EFFECT_OPERATIONS = {
     "ADD": "ScalarBinary_ADD",
@@ -164,7 +177,8 @@ SCALAR_FSU_EFFECT_CLASS_COUNTS = {
     "scalar-integer-to-fp": 2,
 }
 SCALAR_SYS_EFFECT_CLASS_COUNTS = {
-    "scalar-system-register-read": 4,
+    "scalar-system-register-read": 3,
+    "scalar-local-state-register-read": 1,
     "scalar-system-register-write": 2,
     "scalar-system-register-swap": 1,
     "scalar-cache-maintenance": 12,
@@ -203,7 +217,8 @@ SCALAR_AGU_DESTINATION_SPECIAL_SELECTORS = (0, 24, 25, 26, 27, 28, 29, 30, 31)
 SCALAR_AGU_TEMP_SOURCE_SELECTORS = (24, 25, 26, 27, 28, 29, 30, 31)
 SCALAR_AGU_SRC_R_TYPE_VALUES = (0, 1, 2, 3)
 SCALAR_AGU_SHAMT_BOUNDARY_VALUES = (0, 31)
-SCALAR_AGU_PREFETCH_MODEL_VALUES = tuple(range(32))
+SCALAR_AGU_PREFETCH_MODEL_ASSIGNED_VALUES = (0, 1, 2)
+SCALAR_AGU_PREFETCH_MODEL_RESERVED_VALUES = tuple(range(3, 32))
 MASK32 = (1 << 32) - 1
 MASK64 = (1 << 64) - 1
 MASK128 = (1 << 128) - 1
@@ -267,15 +282,7 @@ def family_constraint_applies(row: dict, constraint: dict) -> bool:
 
 
 def legal_scalar_witness(row: dict, family_constraints: list[dict]) -> int:
-    instruction = int(row["encoding"][0]["match"], 16)
-    for constraint in row["constraints"]:
-        if constraint["operator"] != "not-equal":
-            raise ValueError(f"unsupported form constraint: {constraint!r}")
-        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
-            replacement = 1 if constraint["value"] == 0 else 0
-            instruction = encode_field(
-                row, constraint["field"], instruction, replacement
-            )
+    instruction = encoded_form_witness(row)
     for constraint in family_constraints:
         if not family_constraint_applies(row, constraint):
             continue
@@ -295,9 +302,8 @@ def legal_scalar_witness(row: dict, family_constraints: list[dict]) -> int:
                 instruction,
                 (left + 1) % (1 << right_field["width"]),
             )
-    for constraint in row["constraints"]:
-        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
-            raise ValueError(f"cannot synthesize legal witness for {row['form_id']}")
+    if not form_constraints_hold(row, instruction):
+        raise ValueError(f"cannot synthesize legal witness for {row['form_id']}")
     for constraint in family_constraints:
         if family_constraint_applies(row, constraint) and decode_field(
             row, constraint["left_field"], instruction
@@ -343,6 +349,8 @@ def scalar_sys_effect_class(row: dict) -> str | None:
         "ExecuteSystemRegisterGet",
     }:
         return "scalar-system-register-read"
+    if handler == "ExecuteLocalStateRegisterGet":
+        return "scalar-local-state-register-read"
     if handler == "ExecuteSystemRegisterSet":
         return "scalar-system-register-write"
     if handler == "ExecuteSystemRegisterSwap":
@@ -1207,13 +1215,25 @@ SCALAR_BRU_ALIAS_FAULT_CASE_IDS = (
     "b-nz-outside-zero",
     "b-nz-outside-one",
     "b-nz-outside-all-ones",
-    "b-z-exec-mask-precedence",
-    "b-nz-exec-mask-precedence",
     "successful-branch-preserves-bundle-state",
     "jr-srczero-zero-max-alias",
     "jr-odd-fault-outside",
     "jr-odd-fault-inside-bundle",
 )
+SCALAR_BRU_ALIAS_CASES_BY_MNEMONIC = {
+    "CMP.EQ": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[0:13],
+    "C.CMP.EQI": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[13:14],
+    "C.SETC.EQ": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[14:15],
+    "B.EQ": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[15:16],
+    "ADDTPC": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[16:19],
+    "SETRET": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[19:20],
+    "B.Z": (
+        *SCALAR_BRU_ALIAS_FAULT_CASE_IDS[20:23],
+        SCALAR_BRU_ALIAS_FAULT_CASE_IDS[26],
+    ),
+    "B.NZ": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[23:26],
+    "JR": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[27:30],
+}
 
 
 def scalar_bru_totality_labels(row: dict) -> tuple[str, ...]:
@@ -1612,7 +1632,7 @@ def scalar_bru_alias_witness(
     return instruction
 
 
-def emit_scalar_bru_alias_and_faults(
+def _emit_all_scalar_bru_alias_and_faults(
     rows: list[dict], family_constraints: list[dict]
 ) -> None:
     """Emit the compact decoded Reg5, predicate, and JR fault topology matrix."""
@@ -1866,25 +1886,6 @@ def emit_scalar_bru_alias_and_faults(
             print(f"    assert ReadTPC() == Zeros{{PTO_XLEN}} + 0x{target:x};")
             print(f"    assert _CommitArgument == {bit_literal(value, 64)};")
 
-    for mnemonic, predicate, outside in (("B.Z", 0, 1), ("B.NZ", 1, 0)):
-        row = by_mnemonic[mnemonic]
-        witness = scalar_bru_alias_witness(row, family_constraints, {"simm22": 1})
-        index = begin(f"{mnemonic.lower().replace('.', '-')}-exec-mask-precedence")
-        print(f"    _CommitArgument = {bit_literal(outside, 64)};")
-        print(
-            "    BeginBundle(BundleKind_MachineParallel, BundleTransfer_Direct, "
-            "Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 0x104, "
-            "Zeros{PTO_XLEN} + 0x108, TRUE);"
-        )
-        print("    EnterBundleBody();")
-        print(f"    WriteExecutionMask({bit_literal(predicate, 64)});")
-        execute(index, witness, row)
-        print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x102;")
-        print("    assert BundleIsActive();")
-        print("    assert _BundleBodyActive;")
-        print(f"    assert ReadExecutionMask() == {bit_literal(predicate, 64)};")
-        print(f"    assert _CommitArgument == {bit_literal(outside, 64)};")
-
     bz = by_mnemonic["B.Z"]
     bz_witness = scalar_bru_alias_witness(bz, family_constraints, {"simm22": 1})
     index = begin("successful-branch-preserves-bundle-state")
@@ -1895,16 +1896,17 @@ def emit_scalar_bru_alias_and_faults(
         "Zeros{PTO_XLEN} + 0x108, TRUE);"
     )
     print("    EnterBundleBody();")
-    print("    WriteExecutionMask(Zeros{PTO_XLEN} + 0x55);")
     execute(index, bz_witness, bz)
-    print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x102;")
+    print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x106;")
     print("    assert ReadBPC() == Zeros{PTO_XLEN} + 0x100;")
     print("    assert BundleIsActive();")
     print("    assert _BundleBodyActive;")
-    print("    assert _BundleTarget == Zeros{PTO_XLEN} + 0x100;")
-    print("    assert _BundleFallthrough == Zeros{PTO_XLEN} + 0x104;")
-    print("    assert _BundleReturnTarget == Zeros{PTO_XLEN} + 0x108;")
-    print("    assert ReadExecutionMask() == Zeros{PTO_XLEN} + 0x55;")
+    print("    assert _BARG.block_type == BundleKind_Standard;")
+    print("    assert _BARG.transfer_type == BundleTransfer_Direct;")
+    print("    assert _BARG.bpcn == Zeros{PTO_XLEN} + 0x100;")
+    print("    assert _BARG.taken;")
+    print("    assert _BundleSequentialPC == Zeros{PTO_XLEN} + 0x104;")
+    print("    assert _FrameStackReturnTarget == Zeros{PTO_XLEN} + 0x108;")
     print("    assert _CommitArgument == Zeros{PTO_XLEN};")
 
     jr = by_mnemonic["JR"]
@@ -1977,25 +1979,32 @@ def emit_scalar_bru_alias_and_faults(
         "Zeros{PTO_XLEN} + 0x108, TRUE);"
     )
     print("    EnterBundleBody();")
-    print("    WriteExecutionMask(Zeros{PTO_XLEN} + 0x55);")
     execute(index, jr_odd, jr, rejected=True)
     print("    assert _FaultAddress == Zeros{PTO_XLEN} + 0x201;")
     print("    assert _TrapContexts[[0]].valid;")
-    print("    assert _TrapContexts[[0]].tpc == Zeros{PTO_XLEN} + 0x100;")
+    print("    assert _TrapContexts[[0]].tpc == Zeros{PTO_XLEN} + 0x104;")
     print("    assert _TrapContexts[[0]].bpc == Zeros{PTO_XLEN} + 0x100;")
     print("    assert _TrapContexts[[0]].bundle_active;")
     print("    assert _TrapContexts[[0]].bundle_body_active;")
-    print("    assert _TrapContexts[[0]].bundle_target == Zeros{PTO_XLEN} + 0x100;")
     print(
-        "    assert _TrapContexts[[0]].bundle_fallthrough == Zeros{PTO_XLEN} + 0x104;"
+        "    assert _TrapContexts[[0]].barg.block_type == BundleKind_Standard;"
     )
     print(
-        "    assert _TrapContexts[[0]].bundle_return_target == Zeros{PTO_XLEN} + 0x108;"
+        "    assert _TrapContexts[[0]].barg.transfer_type == BundleTransfer_Direct;"
+    )
+    print("    assert _TrapContexts[[0]].barg.bpcn == Zeros{PTO_XLEN} + 0x100;")
+    print("    assert _TrapContexts[[0]].barg.taken;")
+    print(
+        "    assert _TrapContexts[[0]].bundle_sequential_pc == "
+        "Zeros{PTO_XLEN} + 0x104;"
+    )
+    print(
+        "    assert _TrapContexts[[0]].frame_stack_return_target == "
+        "Zeros{PTO_XLEN} + 0x108;"
     )
     print(
         f"    assert _TrapContexts[[0]].commit_argument == {bit_literal(control_sentinel, 64)};"
     )
-    print("    assert _TrapContexts[[0]].execution_mask == Zeros{PTO_XLEN} + 0x55;")
     print("    assert _TrapContexts[[0]].t_queue[[0]] == Zeros{PTO_XLEN} + 0x11;")
     print("    assert _TrapContexts[[0]].u_queue[[0]] == Zeros{PTO_XLEN} + 0x22;")
     print("    assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x201;")
@@ -2005,6 +2014,36 @@ def emit_scalar_bru_alias_and_faults(
 
     if tuple(emitted_ids) != SCALAR_BRU_ALIAS_FAULT_CASE_IDS:
         raise ValueError("scalar BRU alias/fault case inventory drift during emission")
+
+
+def emit_scalar_bru_alias_and_faults(
+    rows: list[dict], family_constraints: list[dict], mnemonic: str
+) -> None:
+    """Project the reviewed alias/fault cases owned by one BRU mnemonic."""
+
+    expected_ids = SCALAR_BRU_ALIAS_CASES_BY_MNEMONIC.get(mnemonic)
+    if expected_ids is None:
+        raise ValueError(f"BRU mnemonic has no alias/fault projection: {mnemonic}")
+    rendered = io.StringIO()
+    with contextlib.redirect_stdout(rendered):
+        _emit_all_scalar_bru_alias_and_faults(rows, family_constraints)
+    chunks: dict[str, list[str]] = {}
+    current_id: str | None = None
+    prefix = "    // BRU-ALIAS-FAULT-DECODED: "
+    for line in rendered.getvalue().splitlines():
+        if line.startswith(prefix):
+            current_id = line.removeprefix(prefix)
+            chunks[current_id] = [line]
+        elif current_id is not None:
+            chunks[current_id].append(line)
+    missing = set(expected_ids) - chunks.keys()
+    if missing:
+        raise ValueError(
+            f"missing BRU alias/fault cases for {mnemonic}: {sorted(missing)}"
+        )
+    for case_id in expected_ids:
+        for line in chunks[case_id]:
+            print(line)
 
 
 def scalar_bru_effect_class(row: dict) -> str | None:
@@ -3434,6 +3473,7 @@ def scalar_fsu_witness(
     src_type: int = 1,
     dst_type: int | None = None,
     field_values: dict[str, int] | None = None,
+    allow_reserved: bool = False,
 ) -> int:
     instruction = legal_scalar_witness(row, family_constraints)
     values = {
@@ -3453,11 +3493,10 @@ def scalar_fsu_witness(
     for field_name, value in values.items():
         if field_by_name(row, field_name) is not None:
             instruction = encode_field(row, field_name, instruction, value)
-    for constraint in row["constraints"]:
-        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
-            raise ValueError(
-                f"FSU effect witness violates constraint for {row['form_id']}"
-            )
+    if not allow_reserved and not form_constraints_hold(row, instruction):
+        raise ValueError(
+            f"FSU effect witness violates constraint for {row['form_id']}"
+        )
     return instruction
 
 
@@ -4175,8 +4214,10 @@ def emit_scalar_fsu_alias_setup() -> None:
     print("    WriteGPR(5, Zeros{PTO_XLEN} + 0x3f800005);")
     for index, value in enumerate((0x3F800011, 0x3F800012, 0x3F800013, 0x3F800014)):
         print(f"    _TQueue[[{index}]] = {bit_literal(value, 64)};")
+        print(f"    _TQueueValid[[{index}]] = TRUE;")
     for index, value in enumerate((0x3F800021, 0x3F800022, 0x3F800023, 0x3F800024)):
         print(f"    _UQueue[[{index}]] = {bit_literal(value, 64)};")
+        print(f"    _UQueueValid[[{index}]] = TRUE;")
 
 
 def scalar_fsu_alias_operand_values(
@@ -4316,6 +4357,400 @@ def scalar_fsu_alias_cases(row: dict) -> list[tuple[str, dict[str, int]]]:
     return cases
 
 
+def scalar_fsu_alias_group(label: str) -> str:
+    if "-destination-" in label:
+        return "destination"
+    if label.endswith(
+        ("-t1-push-t-snapshot", "-u1-push-u-snapshot", "-all-sources-same-gpr")
+    ):
+        return "snapshot"
+    return "sources"
+
+
+def emit_scalar_fsu_execute_validation(
+    row: dict, family_constraints: list[dict]
+) -> None:
+    mnemonic = asl_identifier(row["mnemonic"])
+    class_id = scalar_fsu_effect_class(row)
+    if class_id is None:
+        raise ValueError(f"missing FSU effect metadata: {row['form_id']}")
+    left, right, addend, src_type, dst_type = scalar_fsu_success_inputs(row)
+    witness = scalar_fsu_witness(
+        row, family_constraints, src_type=src_type, dst_type=dst_type
+    )
+    expected, expected_flags = scalar_fsu_expected(
+        row, left, right, addend, src_type, dst_type
+    )
+    print(f"func ValidateScalarFSUExecute_{mnemonic}()")
+    print("begin")
+    source_arity = sum(
+        field_by_name(row, field_name) is not None
+        for field_name in ("SrcL", "SrcR", "SrcA")
+    )
+    print(
+        f"    assert InstructionContractSourceArity_{mnemonic}() == "
+        f"{source_arity};"
+    )
+    operation = scalar_fsu_operation(row)
+    if class_id in {"scalar-fp-absolute", "scalar-fp-unary-profile"}:
+        print(
+            f"    assert InstructionContractUnaryOperation_{mnemonic}() == "
+            f"FloatingUnary_{operation};"
+        )
+    elif class_id in {"scalar-fp-binary-profile", "scalar-fp-minmax"}:
+        print(
+            f"    assert InstructionContractBinaryOperation_{mnemonic}() == "
+            f"FloatingBinary_{operation};"
+        )
+    elif class_id.startswith("scalar-fp-compare"):
+        print(
+            f"    assert InstructionContractCompareOperation_{mnemonic}() == "
+            f"FloatingCompare_{operation};"
+        )
+        print(
+            f"    assert InstructionContractSignalingCompare_{mnemonic}() == "
+            f"{'TRUE' if class_id == 'scalar-fp-compare-signaling' else 'FALSE'};"
+        )
+    elif class_id == "scalar-fp-fused-profile":
+        print(
+            f"    assert InstructionContractFusedOperation_{mnemonic}() == "
+            f"FloatingFused_{operation};"
+        )
+    print("    ResetProfileState();")
+    print(f"    // {row['form_id']}: {row['mnemonic']} [{class_id}]")
+    emit_scalar_fsu_success(
+        row,
+        0,
+        "success",
+        witness,
+        left,
+        right,
+        addend,
+        expected,
+        expected_flags,
+        sticky_flags=0x10,
+    )
+
+    sensitive_left, sensitive_right, sensitive_addend, _, _ = (
+        scalar_fsu_sensitivity_inputs(row)
+    )
+    sensitive_expected, sensitive_flags = scalar_fsu_expected(
+        row, sensitive_left, sensitive_right, sensitive_addend, src_type, dst_type
+    )
+    if sensitive_expected == expected:
+        raise ValueError(f"FSU sensitivity witness is unchanged: {row['form_id']}")
+    emit_scalar_fsu_success(
+        row,
+        0,
+        "sensitive",
+        witness,
+        sensitive_left,
+        sensitive_right,
+        sensitive_addend,
+        sensitive_expected,
+        sensitive_flags,
+        compare_against=expected,
+    )
+
+    if row["mnemonic"] == "FDIV":
+        zero_expected, zero_flags = scalar_fsu_expected(
+            row, left, 0, addend, src_type, dst_type
+        )
+        emit_scalar_fsu_success(
+            row, 0, "divide_zero", witness, left, 0, addend, zero_expected, zero_flags
+        )
+    if row["mnemonic"] == "FRECIP":
+        zero_expected, zero_flags = scalar_fsu_expected(
+            row, 0, right, addend, src_type, dst_type
+        )
+        emit_scalar_fsu_success(
+            row, 0, "recip_zero", witness, 0, right, addend, zero_expected, zero_flags
+        )
+    if row["mnemonic"] in {"FEQ", "FEQS"}:
+        for nan_index, nan_value in enumerate((0x7FC00000, 0x7FA00000)):
+            nan_expected, nan_flags = scalar_fsu_expected(
+                row, nan_value, 0x3F800000, addend, src_type, dst_type
+            )
+            emit_scalar_fsu_success(
+                row,
+                nan_index,
+                "nan",
+                witness,
+                nan_value,
+                0x3F800000,
+                addend,
+                nan_expected,
+                nan_flags,
+            )
+    if row["mnemonic"] in {"FMIN", "FMAX"}:
+        minmax_nan_inputs = (
+            (0x7FC00000, 0x3F800000),
+            (0x7FC00000, 0x7FC00000),
+            (0x7FA00000, 0x3F800000),
+        )
+        for nan_index, (nan_left, nan_right) in enumerate(minmax_nan_inputs):
+            nan_expected, nan_flags = scalar_fsu_expected(
+                row, nan_left, nan_right, addend, src_type, dst_type
+            )
+            emit_scalar_fsu_success(
+                row,
+                nan_index,
+                "minmax_nan",
+                witness,
+                nan_left,
+                nan_right,
+                addend,
+                nan_expected,
+                nan_flags,
+            )
+    if row["mnemonic"] == "FADD":
+        invalid_source = scalar_fsu_witness(
+            row,
+            family_constraints,
+            src_type=2,
+            dst_type=dst_type,
+            allow_reserved=True,
+        )
+        emit_scalar_fsu_fault(
+            row, 0, "invalid_source", invalid_source, left, right, addend
+        )
+    if row["mnemonic"] == "FCVT":
+        invalid_destination = scalar_fsu_witness(
+            row,
+            family_constraints,
+            src_type=src_type,
+            dst_type=15,
+            allow_reserved=True,
+        )
+        emit_scalar_fsu_fault(
+            row, 0, "invalid_destination", invalid_destination, left, right, addend
+        )
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+
+
+def emit_scalar_fsu_type_validation(
+    row: dict, family_constraints: list[dict], *, legal: bool
+) -> int:
+    mnemonic = asl_identifier(row["mnemonic"])
+    suffix = "Legal" if legal else "Reserved"
+    label_prefix = "FSU-TYPE-LEGAL" if legal else "FSU-TYPE-RESERVED"
+    base_left, base_right, base_addend, _, _ = scalar_fsu_success_inputs(row)
+    cases = [case for case in scalar_fsu_type_cases(row) if case[3] == legal]
+    print(f"func ValidateScalarFSUTypes{suffix}_{mnemonic}()")
+    print("begin")
+    for src_type in ((0, 1) if legal else (2, 3)):
+        operator = "" if legal else "!"
+        print(
+            f"    assert {operator}InstructionContractSourceTypeLegal_{mnemonic}("
+            f"{bit_literal(src_type, 2)});"
+        )
+    if field_by_name(row, "DstType") is not None:
+        destination_type = 0 if legal else 15
+        operator = "" if legal else "!"
+        print(
+            f"    assert {operator}InstructionContractDestinationTypeLegal_{mnemonic}("
+            f"{bit_literal(destination_type, 5)});"
+        )
+    print("    ResetProfileState();")
+    for case_index, (label, src_type, dst_type, _) in enumerate(cases):
+        witness = scalar_fsu_witness(
+            row,
+            family_constraints,
+            src_type=src_type,
+            dst_type=dst_type,
+            allow_reserved=not legal,
+        )
+        print(f"    // {label_prefix}: {row['form_id']}/{label}")
+        if legal:
+            expected, flags = scalar_fsu_expected(
+                row, base_left, base_right, base_addend, src_type, dst_type
+            )
+            emit_scalar_fsu_success(
+                row,
+                case_index,
+                "type_legal",
+                witness,
+                base_left,
+                base_right,
+                base_addend,
+                expected,
+                flags,
+                sticky_flags=0x1F,
+            )
+        else:
+            emit_scalar_fsu_fault(
+                row,
+                case_index,
+                "type_reserved",
+                witness,
+                base_left,
+                base_right,
+                base_addend,
+            )
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    return len(cases)
+
+
+def emit_scalar_fsu_bounds_validation(
+    row: dict, family_constraints: list[dict]
+) -> int:
+    mnemonic = asl_identifier(row["mnemonic"])
+    cases = scalar_fsu_boundary_cases(row)
+    print(f"func ValidateScalarFSUBounds_{mnemonic}()")
+    print("begin")
+    print("    ResetProfileState();")
+    for case_index, (label, left, right, addend, src_type, dst_type) in enumerate(
+        cases
+    ):
+        witness = scalar_fsu_witness(
+            row, family_constraints, src_type=src_type, dst_type=dst_type
+        )
+        expected, flags = scalar_fsu_expected(
+            row, left, right, addend, src_type, dst_type
+        )
+        print(f"    // FSU-BOUNDARY: {row['form_id']}/{label}")
+        emit_scalar_fsu_success(
+            row,
+            case_index,
+            "boundary",
+            witness,
+            left,
+            right,
+            addend,
+            expected,
+            flags,
+            sticky_flags=0x1C,
+        )
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    return len(cases)
+
+
+def emit_scalar_fsu_rounding_validation(
+    row: dict, family_constraints: list[dict]
+) -> int:
+    if not (
+        scalar_fsu_active_rounding_consumer(row)
+        or scalar_fsu_fixed_rounding_consumer(row)
+    ):
+        return 0
+    mnemonic = asl_identifier(row["mnemonic"])
+    left, right, addend, src_type, dst_type = scalar_fsu_success_inputs(row)
+    witness = scalar_fsu_witness(
+        row, family_constraints, src_type=src_type, dst_type=dst_type
+    )
+    expected, flags = scalar_fsu_expected(
+        row, left, right, addend, src_type, dst_type
+    )
+    print(f"func ValidateScalarFSURounding_{mnemonic}()")
+    print("begin")
+    if scalar_fsu_active_rounding_consumer(row):
+        print(f"    assert InstructionContractUsesActiveRounding_{mnemonic}();")
+    else:
+        print(f"    assert !InstructionContractUsesActiveRounding_{mnemonic}();")
+        print(
+            f"    assert InstructionContractFixedRounding_{mnemonic}() == "
+            f"ScalarFPFixedConversionRoundingMode(ScalarOperation_{mnemonic});"
+        )
+    print("    ResetProfileState();")
+    for rounding_mode in range(8):
+        print(f"    // FSU-ROUNDING: {row['form_id']}/active-{rounding_mode}")
+        emit_scalar_fsu_success(
+            row,
+            rounding_mode,
+            "rounding",
+            witness,
+            left,
+            right,
+            addend,
+            expected,
+            flags,
+            rounding_mode=rounding_mode,
+        )
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    return 8
+
+
+def emit_scalar_fsu_flags_validation(
+    row: dict, family_constraints: list[dict]
+) -> int:
+    mnemonic = asl_identifier(row["mnemonic"])
+    left, right, addend, src_type, dst_type = scalar_fsu_sticky_inputs(row)
+    witness = scalar_fsu_witness(
+        row, family_constraints, src_type=src_type, dst_type=dst_type
+    )
+    expected, flags = scalar_fsu_expected(
+        row, left, right, addend, src_type, dst_type
+    )
+    print(f"func ValidateScalarFSUFlags_{mnemonic}()")
+    print("begin")
+    profile_owned = scalar_fsu_effect_class(row) in {
+        "scalar-fp-unary-profile",
+        "scalar-fp-binary-profile",
+        "scalar-fp-fused-profile",
+        "scalar-fp-format-convert",
+        "scalar-fp-to-integer",
+        "scalar-integer-to-fp",
+    }
+    print(
+        f"    assert InstructionContractUsesProfileFlags_{mnemonic}() == "
+        f"{'TRUE' if profile_owned else 'FALSE'};"
+    )
+    print("    ResetProfileState();")
+    for case_index, seed in enumerate((0, 1, 2, 4, 8, 16, 31)):
+        print(f"    // FSU-FLAGS: {row['form_id']}/seed-{seed}")
+        emit_scalar_fsu_success(
+            row,
+            case_index,
+            "flags",
+            witness,
+            left,
+            right,
+            addend,
+            expected,
+            flags,
+            sticky_flags=seed,
+        )
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    return 7
+
+
+def emit_scalar_fsu_alias_validation(
+    row: dict, family_constraints: list[dict], group: str
+) -> int:
+    suffix = {
+        "destination": "Destination",
+        "sources": "Sources",
+        "snapshot": "Snapshot",
+    }[group]
+    mnemonic = asl_identifier(row["mnemonic"])
+    cases = [
+        case
+        for case in scalar_fsu_alias_cases(row)
+        if scalar_fsu_alias_group(case[0]) == group
+    ]
+    print(f"func ValidateScalarFSUAlias{suffix}_{mnemonic}()")
+    print("begin")
+    print("    ResetProfileState();")
+    for case_index, (label, field_values) in enumerate(cases):
+        emit_scalar_fsu_alias_case(
+            row, family_constraints, case_index, label, field_values
+        )
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    return len(cases)
+
+
 def tile_argument_expression(argument: dict) -> str:
     if set(argument) == {"operand"}:
         if argument["operand"] == "numeric_control":
@@ -4332,72 +4767,45 @@ def tile_argument_expression(argument: dict) -> str:
 
 
 def agu_metadata(row: dict) -> dict:
-    mnemonic_parts = row["mnemonic"].split(".")
-    core_index = 1 if mnemonic_parts[0] in {"C", "HL"} else 0
-    core = mnemonic_parts[core_index]
-    suffixes = set(mnemonic_parts[core_index + 1 :])
-    action_names = {
-        "ExecuteScalarLoad": "Load",
-        "ExecuteScalarLoadPair": "LoadPair",
-        "ExecuteScalarStore": "Store",
-        "ExecuteScalarStorePair": "StorePair",
-        "ScalarPrefetch": "Prefetch",
+    metadata = row.get("agu")
+    required = {
+        "action",
+        "address_kind",
+        "offset_scale",
+        "prefetch_returns_address",
+        "signed_load",
+        "size_bytes",
+        "update_mode",
     }
-    action = action_names[row["semantic_handler"]]
-    if action == "Prefetch":
-        size_bytes = 1
-    elif core.startswith(("LB", "SB")):
-        size_bytes = 1
-    elif core.startswith(("LH", "SH")):
-        size_bytes = 2
-    elif core.startswith(("LW", "SW")):
-        size_bytes = 4
-    elif core.startswith(("LD", "SD")):
-        size_bytes = 8
-    else:
-        raise ValueError(f"unclassified AGU width: {row['mnemonic']}")
-
-    field_names = {field["name"] for field in row["fields"]}
-    if "PCR" in suffixes:
-        address_kind = "PCRelative"
-    elif mnemonic_parts[0] == "C":
-        address_kind = "Compressed"
-    elif "SrcRType" in field_names:
-        address_kind = "Register"
-    else:
-        address_kind = "Immediate"
-
-    if suffixes & {"PR", "UPR"}:
-        update_mode = "PreIndex"
-    elif suffixes & {"PO", "UPO"}:
-        update_mode = "PostIndex"
-    else:
-        update_mode = "None"
-
-    unscaled = bool(suffixes & {"U", "UPR", "UPO", "UA"})
-    if address_kind == "PCRelative":
-        offset_scale = 2
-    elif address_kind == "Register" and "shamt" in field_names:
-        offset_scale = 0
-    elif unscaled:
-        offset_scale = 0
-    else:
-        offset_scale = int(math.log2(size_bytes))
-
-    signed_load = (
-        action in {"Load", "LoadPair"}
-        and core.startswith(("LB", "LH", "LW"))
-        and not core.startswith(("LBU", "LHU", "LWU"))
-    )
-    return {
-        "action": action,
-        "address_kind": address_kind,
-        "offset_scale": offset_scale,
-        "prefetch_returns_address": row["mnemonic"] in {"HL.PRF.A", "HL.PRFI.UA"},
-        "signed_load": signed_load,
-        "size_bytes": size_bytes,
-        "update_mode": update_mode,
-    }
+    if not isinstance(metadata, dict) or set(metadata) != required:
+        raise ValueError(
+            f"{row['form_id']}: AGU form must own exact agu semantic metadata"
+        )
+    if metadata["action"] not in {
+        "Load",
+        "LoadPair",
+        "Store",
+        "StorePair",
+        "Prefetch",
+    }:
+        raise ValueError(f"{row['form_id']}: invalid AGU action")
+    if metadata["address_kind"] not in {
+        "Register",
+        "Immediate",
+        "PCRelative",
+        "Compressed",
+    }:
+        raise ValueError(f"{row['form_id']}: invalid AGU address kind")
+    if metadata["update_mode"] not in {"None", "PreIndex", "PostIndex"}:
+        raise ValueError(f"{row['form_id']}: invalid AGU update mode")
+    if metadata["size_bytes"] not in {1, 2, 4, 8}:
+        raise ValueError(f"{row['form_id']}: invalid AGU access size")
+    if metadata["offset_scale"] not in {0, 1, 2, 3}:
+        raise ValueError(f"{row['form_id']}: invalid AGU offset scale")
+    for field_name in ("prefetch_returns_address", "signed_load"):
+        if not isinstance(metadata[field_name], bool):
+            raise ValueError(f"{row['form_id']}: {field_name} must be boolean")
+    return dict(metadata)
 
 
 def scalar_agu_effect_class(row: dict) -> str | None:
@@ -4534,7 +4942,7 @@ def scalar_agu_witness(
     if field_by_name(row, "SrcD1") is not None:
         fields["SrcD1"] = 5
     if field_by_name(row, "model") is not None:
-        fields["model"] = 7
+        fields["model"] = SCALAR_AGU_PREFETCH_MODEL_ASSIGNED_VALUES[0]
 
     tpc = 0x102 if address_kind == "PCRelative" else 0x100
     aligned_tpc = tpc & ~0x3
@@ -4716,10 +5124,12 @@ def emit_scalar_agu_decoded_setup() -> None:
         (0x7100000000000001, 0x7100000000000002, 0x7100000000000003, 0x7100000000000004)
     ):
         print(f"    _TQueue[[{index}]] = {bit_literal(value, 64)};")
+        print(f"    _TQueueValid[[{index}]] = TRUE;")
     for index, value in enumerate(
         (0x7200000000000001, 0x7200000000000002, 0x7200000000000003, 0x7200000000000004)
     ):
         print(f"    _UQueue[[{index}]] = {bit_literal(value, 64)};")
+        print(f"    _UQueueValid[[{index}]] = TRUE;")
 
 
 def emit_scalar_agu_decode_case(
@@ -4807,7 +5217,9 @@ def emit_scalar_agu_controlled_execution(
     print(f"    WriteGPR(6, {bit_literal(0x5400000000000000 + case_index, 64)});")
     for index in range(4):
         print(f"    _TQueue[[{index}]] = {bit_literal(base, 64)};")
+        print(f"    _TQueueValid[[{index}]] = TRUE;")
         print(f"    _UQueue[[{index}]] = {bit_literal(base, 64)};")
+        print(f"    _UQueueValid[[{index}]] = TRUE;")
     if action in {"Load", "LoadPair"} and expected_fault == "Fault_None":
         first_raw = agu_load_raw_value(size_bytes, metadata["signed_load"])
         second_raw = agu_load_raw_value(
@@ -5225,6 +5637,7 @@ def emit_scalar_agu_prefetch_model_case(
     model: int,
 ) -> None:
     witness = scalar_agu_witness(row, family_constraints, case_index)
+    print(f"    // AGU-PREFETCH-MODEL-LEGAL: {model}/{row['form_id']}")
     instruction = emit_scalar_agu_decode_case(
         row,
         family_constraints,
@@ -5244,6 +5657,54 @@ def emit_scalar_agu_prefetch_model_case(
         src_r_value=witness["src_r_value"],
         tpc=witness["tpc"],
     )
+
+
+def emit_scalar_agu_prefetch_reserved_model_case(
+    row: dict,
+    family_constraints: list[dict],
+    case_index: int,
+    model: int,
+) -> None:
+    witness = scalar_agu_witness(row, family_constraints, case_index)
+    instruction = encode_field(row, "model", witness["instruction"], model)
+    destination_sentinel = 0x5A00000000000000 + case_index
+    print(f"    // AGU-PREFETCH-MODEL-RESERVED: {model}/{row['form_id']}")
+    print("    StopMemoryEventCapture();")
+    print("    ResetMemoryExecution();")
+    print("    ResetProfileState();")
+    print("    SetCurrentACR(0);")
+    print("    ClearFault();")
+    print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
+    print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+    print(f"    WriteGPR(5, {bit_literal(destination_sentinel, 64)});")
+    for index in range(4):
+        print(f"    _TQueueValid[[{index}]] = FALSE;")
+        print(f"    _UQueueValid[[{index}]] = FALSE;")
+    if field_by_name(row, "SrcL") is not None:
+        instruction = encode_field(row, "SrcL", instruction, 24)
+    print("    StartMemoryEventCapture(0);")
+    print(
+        f"    assert DecodeScalarForm({bit_literal(instruction, 48)}, "
+        f"{row['length_bits']}) == {row['_form_index']};"
+    )
+    print(
+        f"    assert !ScalarFormOperandsLegal({bit_literal(instruction, 48)}, "
+        f"{row['_form_index']});"
+    )
+    print(
+        f"    let scalar_agu_reserved_model_status_{case_index} = "
+        f"ExecuteScalarInstruction({bit_literal(instruction, 48)}, "
+        f"{row['length_bits']});"
+    )
+    print(
+        f"    assert scalar_agu_reserved_model_status_{case_index} == "
+        "ScalarExecution_Rejected;"
+    )
+    print("    assert _LastFault == Fault_IllegalInstruction;")
+    print("    assert _MemoryEventCount == 0;")
+    print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
+    if field_by_name(row, "RegDst") is not None:
+        print(f"    assert ReadGPR(5) == {bit_literal(destination_sentinel, 64)};")
 
 
 def emit_scalar_agu_prefetch_return_wrap_case(
@@ -5301,7 +5762,9 @@ def emit_scalar_agu_alias_setup(
     print(f"    WriteGPR(6, {bit_literal(0x6300000000000000 + case_index, 64)});")
     for index in range(4):
         print(f"    _TQueue[[{index}]] = Zeros{{PTO_XLEN}} + 0x700;")
+        print(f"    _TQueueValid[[{index}]] = TRUE;")
         print(f"    _UQueue[[{index}]] = Zeros{{PTO_XLEN}} + 0x800;")
+        print(f"    _UQueueValid[[{index}]] = TRUE;")
     if metadata["action"] in {"Load", "LoadPair"}:
         first_raw = agu_load_raw_value(size_bytes, metadata["signed_load"])
         second_raw = agu_load_raw_value(
@@ -5680,7 +6143,9 @@ def emit_scalar_agu_pair_preflight_case(
     print(f"    WriteGPR(6, {bit_literal(0x3333000000000000 + case_index, 64)});")
     for index in range(4):
         print(f"    _TQueue[[{index}]] = {bit_literal(base, 64)};")
+        print(f"    _TQueueValid[[{index}]] = TRUE;")
         print(f"    _UQueue[[{index}]] = {bit_literal(base, 64)};")
+        print(f"    _UQueueValid[[{index}]] = TRUE;")
     memory_sentinel = 0x5A
     if metadata["action"] == "StorePair" and not first_fault:
         print(
@@ -5753,7 +6218,9 @@ def emit_scalar_agu_page_precedence_case(
     print(f"    WriteGPR(6, {bit_literal(0x7777000000000000 + case_index, 64)});")
     for index in range(4):
         print(f"    _TQueue[[{index}]] = {bit_literal(address, 64)};")
+        print(f"    _TQueueValid[[{index}]] = TRUE;")
         print(f"    _UQueue[[{index}]] = {bit_literal(address, 64)};")
+        print(f"    _UQueueValid[[{index}]] = TRUE;")
     print("    StartMemoryEventCapture(0);")
     print(
         f"    let scalar_agu_page_precedence_status_{case_index} = "
@@ -5850,7 +6317,9 @@ def emit_scalar_agu_restart_case(
     print(f"    WriteGPR(6, {bit_literal(second_destination_sentinel, 64)});")
     for index in range(4):
         print(f"    _TQueue[[{index}]] = Zeros{{PTO_XLEN}} + 3072;")
+        print(f"    _TQueueValid[[{index}]] = TRUE;")
         print(f"    _UQueue[[{index}]] = Zeros{{PTO_XLEN}} + 3072;")
+        print(f"    _UQueueValid[[{index}]] = TRUE;")
     print("    StartMemoryEventCapture(0);")
     print(
         f"    let scalar_agu_restart_fault_{case_index} = ExecuteScalarInstruction("
@@ -5976,6 +6445,30 @@ def emit_agu_common_setup(
         f"    PushTemporaryQueue(TRUE, {bit_literal(agu_store_value(metadata['size_bytes'], effect_index), 64)});"
     )
     print(f"    assert ReadTPC() == Zeros{{PTO_XLEN}} + 0x{witness['tpc']:x};")
+
+
+def emit_scalar_sys_body_setup(kind: str = "System") -> None:
+    """Emit one fresh active block body for a decoded SYS test case."""
+
+    print(
+        f"    BeginBundle(BundleKind_{kind}, BundleTransfer_Fallthrough,"
+    )
+    print("        Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x100,")
+    print("        Zeros{PTO_XLEN}, FALSE);")
+    print("    EnterBundleBody();")
+
+
+def emit_scalar_sys_source_setup(source: int, value: int) -> None:
+    if source < 24:
+        print(f"    WriteGPR({source}, Zeros{{PTO_XLEN}} + {value});")
+    elif source < 28:
+        index = source - 24
+        print(f"    _TQueue[[{index}]] = Zeros{{PTO_XLEN}} + {value};")
+        print(f"    _TQueueValid[[{index}]] = TRUE;")
+    else:
+        index = source - 28
+        print(f"    _UQueue[[{index}]] = Zeros{{PTO_XLEN}} + {value};")
+        print(f"    _UQueueValid[[{index}]] = TRUE;")
 
 
 def emit_agu_event_assertions(
@@ -6249,16 +6742,240 @@ def emit_scalar_agu_fault(
         )
 
 
+def emit_scalar_agu_execute_validation(
+    row: dict, family_constraints: list[dict], effect_index: int
+) -> None:
+    mnemonic = asl_identifier(row["mnemonic"])
+    print(f"func ValidateScalarAGUExecute_{mnemonic}()")
+    print("begin")
+    print("    ResetProfileState();")
+    emit_scalar_agu_success(row, family_constraints, effect_index)
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+
+
+def emit_scalar_agu_bounds_validation(
+    row: dict, family_constraints: list[dict]
+) -> int:
+    mnemonic = asl_identifier(row["mnemonic"])
+    case_index = 0
+    print(f"func ValidateScalarAGUBounds_{mnemonic}()")
+    print("begin")
+    print("    ResetProfileState();")
+    for label, raw_value, expected_offset in scalar_agu_immediate_boundary_cases(row):
+        emit_scalar_agu_immediate_boundary_case(
+            row,
+            family_constraints,
+            case_index,
+            label,
+            raw_value,
+            expected_offset,
+        )
+        case_index += 1
+    if field_by_name(row, "SrcRType") is not None:
+        for src_r_type in SCALAR_AGU_SRC_R_TYPE_VALUES:
+            emit_scalar_agu_register_modifier_case(
+                row,
+                family_constraints,
+                case_index,
+                src_r_type,
+            )
+            case_index += 1
+    if field_by_name(row, "shamt") is not None:
+        for shamt in SCALAR_AGU_SHAMT_BOUNDARY_VALUES:
+            emit_scalar_agu_shamt_boundary_case(
+                row,
+                family_constraints,
+                case_index,
+                shamt,
+            )
+            case_index += 1
+    if field_by_name(row, "model") is not None:
+        for model in SCALAR_AGU_PREFETCH_MODEL_ASSIGNED_VALUES:
+            emit_scalar_agu_prefetch_model_case(
+                row,
+                family_constraints,
+                case_index,
+                model,
+            )
+            case_index += 1
+        for model in SCALAR_AGU_PREFETCH_MODEL_RESERVED_VALUES:
+            emit_scalar_agu_prefetch_reserved_model_case(
+                row,
+                family_constraints,
+                case_index,
+                model,
+            )
+            case_index += 1
+    print(f"    // AGU-ADDRESS-WRAP-DECODED: {row['form_id']}")
+    emit_scalar_agu_wrap_case(row, family_constraints, case_index)
+    case_index += 1
+    if agu_metadata(row)["prefetch_returns_address"]:
+        for high in (False, True):
+            emit_scalar_agu_prefetch_return_wrap_case(
+                row,
+                family_constraints,
+                case_index,
+                high,
+            )
+            case_index += 1
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    return case_index
+
+
+def emit_scalar_agu_fault_validation(
+    row: dict, family_constraints: list[dict], effect_index: int
+) -> int:
+    mnemonic = asl_identifier(row["mnemonic"])
+    metadata = agu_metadata(row)
+    case_index = 0
+    print(f"func ValidateScalarAGUFault_{mnemonic}()")
+    print("begin")
+    print("    ResetProfileState();")
+    emit_scalar_agu_fault(row, family_constraints, effect_index)
+    if metadata["action"] == "Prefetch":
+        emit_scalar_agu_prefetch_invalid_case(
+            row,
+            family_constraints,
+            case_index,
+        )
+        case_index += 1
+    else:
+        precedence_label = (
+            "alignment"
+            if metadata["size_bytes"] > 1
+            and metadata["address_kind"] != "PCRelative"
+            else "page"
+        )
+        if metadata["size_bytes"] == 8 and metadata["address_kind"] == "PCRelative":
+            precedence_label = "alignment"
+        precedence_address = (
+            4100
+            if precedence_label == "alignment"
+            and metadata["address_kind"] == "PCRelative"
+            else 4097
+            if precedence_label == "alignment"
+            else 4096
+        )
+        emit_scalar_agu_page_precedence_case(
+            row,
+            family_constraints,
+            case_index,
+            precedence_label,
+            0,
+            precedence_address,
+        )
+        case_index += 1
+        emit_scalar_agu_page_precedence_case(
+            row,
+            family_constraints,
+            case_index,
+            "acr2-permission",
+            2,
+            3072,
+        )
+        case_index += 1
+        if metadata["action"] in {"LoadPair", "StorePair"}:
+            for second_faults in (True, False):
+                emit_scalar_agu_pair_preflight_case(
+                    row,
+                    family_constraints,
+                    case_index,
+                    second_faults,
+                )
+                case_index += 1
+        emit_scalar_agu_restart_case(row, family_constraints, case_index)
+        case_index += 1
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    return case_index
+
+
+def emit_scalar_agu_alias_validation(
+    row: dict, family_constraints: list[dict]
+) -> int:
+    mnemonic = asl_identifier(row["mnemonic"])
+    metadata = agu_metadata(row)
+    case_index = 0
+    print(f"func ValidateScalarAGUAlias_{mnemonic}()")
+    print("begin")
+    print("    ResetProfileState();")
+    for field in row["fields"]:
+        if field["name"] not in {"SrcL", "SrcR", "SrcD", "SrcD1"}:
+            continue
+        for selector in SCALAR_AGU_TEMP_SOURCE_SELECTORS:
+            emit_scalar_agu_source_alias_case(
+                row,
+                family_constraints,
+                case_index,
+                field["name"],
+                selector,
+            )
+            case_index += 1
+    for field in row["fields"]:
+        if field["name"] not in {"RegDst", "RegDst0", "RegDst1"}:
+            continue
+        for selector in SCALAR_AGU_DESTINATION_SPECIAL_SELECTORS:
+            emit_scalar_agu_destination_alias_case(
+                row,
+                family_constraints,
+                case_index,
+                field["name"],
+                selector,
+            )
+            case_index += 1
+    if metadata["action"] == "LoadPair":
+        for label in ("same-gpr", "t-t", "u-u", "t-u", "u-t"):
+            emit_scalar_agu_load_pair_alias_case(
+                row,
+                family_constraints,
+                case_index,
+                label,
+            )
+            case_index += 1
+    if metadata["action"] == "StorePair":
+        for lane in ("same-gpr", "t-t", "u-u"):
+            emit_scalar_agu_store_pair_alias_case(
+                row,
+                family_constraints,
+                case_index,
+                lane,
+            )
+            case_index += 1
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+    return case_index
+
+
+def emit_scalar_agu_owner_validations(
+    row: dict,
+    family_constraints: list[dict],
+    effect_index: int,
+) -> tuple[int, int]:
+    if scalar_agu_effect_class(row) is None:
+        raise ValueError(f"missing AGU effect metadata: {row['form_id']}")
+    emit_scalar_agu_execute_validation(row, family_constraints, effect_index)
+    totality_count = emit_scalar_agu_bounds_validation(row, family_constraints)
+    totality_count += emit_scalar_agu_fault_validation(
+        row,
+        family_constraints,
+        effect_index,
+    )
+    alias_count = emit_scalar_agu_alias_validation(row, family_constraints)
+    return totality_count, alias_count
+
+
 def command_bundle_kind(row: dict) -> str:
     mnemonic = row["mnemonic"]
     if ".FP" in mnemonic:
         return "Floating"
     if ".SYS" in mnemonic:
         return "System"
-    if ".MPAR" in mnemonic:
-        return "MachineParallel"
-    if ".MSEQ" in mnemonic:
-        return "MachineSequential"
     if any(
         token in mnemonic
         for token in (".MGATHER", ".MSCATTER", ".TLOAD", ".TSTORE", ".TPREFETCH")
@@ -6277,8 +6994,6 @@ def command_bundle_operation_class(row: dict) -> str:
     if row["semantic_handler"] != "ExecuteBundleStart":
         return "Control"
     mnemonic = row["mnemonic"]
-    if ".MPAR" in mnemonic or ".MSEQ" in mnemonic:
-        return "Machine"
     if ".TEPL" in mnemonic:
         return "TileElement"
     if ".FIXP" in mnemonic:
@@ -6701,7 +7416,7 @@ def emit_encoded_catalog(
     print()
 
 
-def main() -> None:
+def _emit_monolithic() -> None:
     projected_catalogs = project_catalogs(load_units(ROOT / "asl"))
     scalar_catalog = json.loads(
         projected_catalogs[Path("spec/catalog/scalar-forms.json")]
@@ -7012,10 +7727,10 @@ def main() -> None:
                     scalar_sys_register_transfer_cases.append(
                         (row, register, behavior, address, address_field["name"])
                     )
-    if len(scalar_sys_register_transfer_cases) != 1937:
+    if len(scalar_sys_register_transfer_cases) != 1872:
         raise ValueError(
             "reviewed bank-expanded SYS register-transfer inventory drift: "
-            f"expected 1937, got {len(scalar_sys_register_transfer_cases)}"
+            f"expected 1872, got {len(scalar_sys_register_transfer_cases)}"
         )
     scalar_sys_selector_read_rows = [
         row
@@ -7033,20 +7748,27 @@ def main() -> None:
         for row in scalar_sys_register_transfer_rows
         if scalar_sys_effect_class(row) == "scalar-system-register-swap"
     ]
+    scalar_sys_local_read_rows = [
+        row
+        for row in scalar_sys_effect_rows
+        if scalar_sys_effect_class(row) == "scalar-local-state-register-read"
+    ]
     scalar_sys_selector_read_case_count = len(scalar_sys_selector_read_rows) * 32
     scalar_sys_selector_write_case_count = len(scalar_sys_selector_write_rows) * 32
     scalar_sys_selector_swap_case_count = len(scalar_sys_selector_swap_rows) * 32 * 32
+    scalar_sys_local_read_case_count = len(scalar_sys_local_read_rows) * 32
     scalar_sys_selector_case_count = (
         scalar_sys_selector_read_case_count
         + scalar_sys_selector_write_case_count
         + scalar_sys_selector_swap_case_count
+        + scalar_sys_local_read_case_count
     )
     if (
         scalar_sys_selector_read_case_count,
         scalar_sys_selector_write_case_count,
         scalar_sys_selector_swap_case_count,
         scalar_sys_selector_case_count,
-    ) != (96, 64, 1024, 1184):
+    ) != (64, 64, 1024, 1184):
         raise ValueError("reviewed SYS Reg5 selector/alias inventory drift")
     scalar_sys_fence_mask_case_count = 16 * 16
     scalar_sys_breakpoint_tag_case_count = 32 + 16
@@ -7083,7 +7805,7 @@ def main() -> None:
         + scalar_sys_selector_case_count
         + scalar_sys_control_totality_case_count
     )
-    if scalar_sys_stage4_case_count != 4401:
+    if scalar_sys_stage4_case_count != 4336:
         raise ValueError("reviewed SYS Stage 4 case inventory drift")
     scalar_agu_effect_rows = [
         row for row in scalar if scalar_agu_effect_class(row) is not None
@@ -7141,7 +7863,8 @@ def main() -> None:
         if field_by_name(row, "shamt") is not None
     )
     scalar_agu_prefetch_model_case_count = sum(
-        len(SCALAR_AGU_PREFETCH_MODEL_VALUES)
+        len(SCALAR_AGU_PREFETCH_MODEL_ASSIGNED_VALUES)
+        + len(SCALAR_AGU_PREFETCH_MODEL_RESERVED_VALUES)
         for row in scalar_agu_effect_rows
         if field_by_name(row, "model") is not None
     )
@@ -7625,190 +8348,20 @@ def main() -> None:
     print("    ResetProfileState();")
     print("end;")
     print()
-    print("func ValidateCanonicalScalarAGUEffects()")
-    print("begin")
-    print("    ResetProfileState();")
+    emitted_agu_totality_cases = 0
+    emitted_agu_alias_cases = 0
     for effect_index, row in enumerate(scalar_agu_effect_rows):
-        if scalar_agu_effect_class(row) is None:
-            raise ValueError(f"missing AGU effect metadata: {row['form_id']}")
-        emit_scalar_agu_success(row, family_constraints, effect_index)
-        emit_scalar_agu_fault(row, family_constraints, effect_index)
-    print("    ResetProfileState();")
-    print("end;")
-    print()
-    print("func ValidateCanonicalScalarAGUTotality()")
-    print("begin")
-    print("    ResetProfileState();")
-    agu_totality_case_index = 0
-    for row in scalar_agu_effect_rows:
-        for label, raw_value, expected_offset in scalar_agu_immediate_boundary_cases(
-            row
-        ):
-            emit_scalar_agu_immediate_boundary_case(
-                row,
-                family_constraints,
-                agu_totality_case_index,
-                label,
-                raw_value,
-                expected_offset,
-            )
-            agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if field_by_name(row, "SrcRType") is None:
-            continue
-        for src_r_type in SCALAR_AGU_SRC_R_TYPE_VALUES:
-            emit_scalar_agu_register_modifier_case(
-                row, family_constraints, agu_totality_case_index, src_r_type
-            )
-            agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if field_by_name(row, "shamt") is None:
-            continue
-        for shamt in SCALAR_AGU_SHAMT_BOUNDARY_VALUES:
-            emit_scalar_agu_shamt_boundary_case(
-                row, family_constraints, agu_totality_case_index, shamt
-            )
-            agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if field_by_name(row, "model") is None:
-            continue
-        for model in SCALAR_AGU_PREFETCH_MODEL_VALUES:
-            emit_scalar_agu_prefetch_model_case(
-                row, family_constraints, agu_totality_case_index, model
-            )
-            agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        print(f"    // AGU-ADDRESS-WRAP-DECODED: {row['form_id']}")
-        emit_scalar_agu_wrap_case(row, family_constraints, agu_totality_case_index)
-        agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if agu_metadata(row)["action"] == "Prefetch":
-            continue
-        precedence_label = (
-            "alignment"
-            if agu_metadata(row)["size_bytes"] > 1
-            and agu_metadata(row)["address_kind"] != "PCRelative"
-            else "page"
-        )
-        if (
-            agu_metadata(row)["size_bytes"] == 8
-            and agu_metadata(row)["address_kind"] == "PCRelative"
-        ):
-            precedence_label = "alignment"
-        precedence_address = (
-            4100
-            if precedence_label == "alignment"
-            and agu_metadata(row)["address_kind"] == "PCRelative"
-            else 4097
-            if precedence_label == "alignment"
-            else 4096
-        )
-        emit_scalar_agu_page_precedence_case(
+        totality_count, alias_count = emit_scalar_agu_owner_validations(
             row,
             family_constraints,
-            agu_totality_case_index,
-            precedence_label,
-            0,
-            precedence_address,
+            effect_index,
         )
-        agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if agu_metadata(row)["action"] == "Prefetch":
-            continue
-        emit_scalar_agu_page_precedence_case(
-            row,
-            family_constraints,
-            agu_totality_case_index,
-            "acr2-permission",
-            2,
-            3072,
-        )
-        agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if agu_metadata(row)["action"] not in {"LoadPair", "StorePair"}:
-            continue
-        emit_scalar_agu_pair_preflight_case(
-            row, family_constraints, agu_totality_case_index, True
-        )
-        agu_totality_case_index += 1
-        emit_scalar_agu_pair_preflight_case(
-            row, family_constraints, agu_totality_case_index, False
-        )
-        agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if agu_metadata(row)["action"] == "Prefetch":
-            continue
-        emit_scalar_agu_restart_case(row, family_constraints, agu_totality_case_index)
-        agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if agu_metadata(row)["action"] != "Prefetch":
-            continue
-        emit_scalar_agu_prefetch_invalid_case(
-            row, family_constraints, agu_totality_case_index
-        )
-        agu_totality_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if not agu_metadata(row)["prefetch_returns_address"]:
-            continue
-        for high in (False, True):
-            emit_scalar_agu_prefetch_return_wrap_case(
-                row, family_constraints, agu_totality_case_index, high
-            )
-            agu_totality_case_index += 1
-    if agu_totality_case_index != scalar_agu_totality_case_count:
+        emitted_agu_totality_cases += totality_count
+        emitted_agu_alias_cases += alias_count
+    if emitted_agu_totality_cases != scalar_agu_totality_case_count:
         raise ValueError("scalar AGU totality count drift during emission")
-    print("    ResetProfileState();")
-    print("end;")
-    print()
-    print("func ValidateCanonicalScalarAGUAliases()")
-    print("begin")
-    print("    ResetProfileState();")
-    agu_alias_case_index = 0
-    for row in scalar_agu_effect_rows:
-        for field in row["fields"]:
-            if field["name"] not in {"SrcL", "SrcR", "SrcD", "SrcD1"}:
-                continue
-            for selector in SCALAR_AGU_TEMP_SOURCE_SELECTORS:
-                emit_scalar_agu_source_alias_case(
-                    row,
-                    family_constraints,
-                    agu_alias_case_index,
-                    field["name"],
-                    selector,
-                )
-                agu_alias_case_index += 1
-    for row in scalar_agu_effect_rows:
-        for field in row["fields"]:
-            if field["name"] not in {"RegDst", "RegDst0", "RegDst1"}:
-                continue
-            for selector in SCALAR_AGU_DESTINATION_SPECIAL_SELECTORS:
-                emit_scalar_agu_destination_alias_case(
-                    row,
-                    family_constraints,
-                    agu_alias_case_index,
-                    field["name"],
-                    selector,
-                )
-                agu_alias_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if agu_metadata(row)["action"] == "LoadPair":
-            for label in ("same-gpr", "t-t", "u-u", "t-u", "u-t"):
-                emit_scalar_agu_load_pair_alias_case(
-                    row, family_constraints, agu_alias_case_index, label
-                )
-                agu_alias_case_index += 1
-    for row in scalar_agu_effect_rows:
-        if agu_metadata(row)["action"] == "StorePair":
-            for lane in ("same-gpr", "t-t", "u-u"):
-                emit_scalar_agu_store_pair_alias_case(
-                    row, family_constraints, agu_alias_case_index, lane
-                )
-                agu_alias_case_index += 1
-    if agu_alias_case_index != scalar_agu_alias_case_count:
+    if emitted_agu_alias_cases != scalar_agu_alias_case_count:
         raise ValueError("scalar AGU alias count drift during emission")
-    print("    ResetProfileState();")
-    print("end;")
-    print()
     print("func ValidateCanonicalScalarALUEffects()")
     print("begin")
     print("    ResetProfileState();")
@@ -7967,13 +8520,14 @@ def main() -> None:
     print("    ResetProfileState();")
     print("end;")
     print()
-    print("func ValidateCanonicalScalarBRUEffects()")
-    print("begin")
-    print("    ResetProfileState();")
     bru_destination_sentinel = 0x5555555555555555
     bru_control_sentinel = 0xAAAAAAAAAAAAAAAA
     bru_queue_sentinel = 0x7777777777777777
     for effect_index, row in enumerate(scalar_bru_effect_rows):
+        identifier = asl_identifier(row["mnemonic"])
+        print(f"func ValidateScalarBRUExecute_{identifier}()")
+        print("begin")
+        print("    ResetProfileState();")
         class_id = scalar_bru_effect_class(row)
         if class_id is None:
             raise ValueError(f"missing BRU effect metadata: {row['form_id']}")
@@ -8123,22 +8677,20 @@ def main() -> None:
             print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
         if mnemonic in {"B.Z", "B.NZ"}:
             for bundle_scenario_index, desired in enumerate((True, False)):
-                _, _, body_predicate = scalar_bru_scenario(row, desired)
-                _, _, outside_predicate = scalar_bru_scenario(row, not desired)
-                expected_tpc = 0x106 if desired else 0x104
+                _, _, commit_predicate = scalar_bru_scenario(row, desired)
+                expected_tpc = 0x10A if desired else 0x108
                 print("    ResetBundleControlState();")
                 print("    SetCurrentACR(0);")
                 print("    ClearFault();")
                 print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
-                print(f"    _CommitArgument = {bit_literal(outside_predicate, 64)};")
+                print(f"    _CommitArgument = {bit_literal(commit_predicate, 64)};")
                 print(
-                    "    BeginBundle(BundleKind_MachineParallel, "
+                    "    BeginBundle(BundleKind_Standard, "
                     "BundleTransfer_Direct, Zeros{PTO_XLEN} + 0x100, "
                     "Zeros{PTO_XLEN} + 0x104, "
                     "Zeros{PTO_XLEN} + 0x104, TRUE);"
                 )
                 print("    EnterBundleBody();")
-                print(f"    WriteExecutionMask({bit_literal(body_predicate, 64)});")
                 print(
                     f"    let scalar_bru_bundle_predicate_status_"
                     f"{effect_index}_{bundle_scenario_index} = "
@@ -8157,40 +8709,40 @@ def main() -> None:
                 print("    assert BundleIsActive();")
                 print("    assert _BundleBodyActive;")
                 print(
-                    f"    assert ReadExecutionMask() == "
-                    f"{bit_literal(body_predicate, 64)};"
-                )
-                print(
                     f"    assert _CommitArgument == "
-                    f"{bit_literal(outside_predicate, 64)};"
+                    f"{bit_literal(commit_predicate, 64)};"
                 )
                 print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
                 print("    ResetBundleControlState();")
-    print("    ResetProfileState();")
-    print("end;")
-    print()
-    print("func ValidateCanonicalScalarBRUTotality()")
-    print("begin")
-    print("    ResetProfileState();")
+        print("    ResetProfileState();")
+        print("end;")
+        print()
     bru_totality_case_index = 0
     for row in scalar_bru_effect_rows:
+        identifier = asl_identifier(row["mnemonic"])
+        print(f"func ValidateScalarBRUBounds_{identifier}()")
+        print("begin")
+        print("    ResetProfileState();")
         for label in scalar_bru_totality_labels(row):
             emit_scalar_bru_totality_case(
                 row, family_constraints, bru_totality_case_index, label
             )
             bru_totality_case_index += 1
+        print("    ResetProfileState();")
+        print("end;")
+        print()
     if bru_totality_case_index != scalar_bru_totality_case_count:
         raise ValueError("scalar BRU totality case-count drift during emission")
-    print("    ResetProfileState();")
-    print("end;")
-    print()
-    print("func ValidateCanonicalScalarBRUAliasAndFaults()")
-    print("begin")
-    print("    ResetProfileState();")
-    emit_scalar_bru_alias_and_faults(scalar_bru_effect_rows, family_constraints)
-    print("    ResetProfileState();")
-    print("end;")
-    print()
+    for mnemonic in SCALAR_BRU_ALIAS_CASES_BY_MNEMONIC:
+        print(f"func ValidateScalarBRUAlias_{asl_identifier(mnemonic)}()")
+        print("begin")
+        print("    ResetProfileState();")
+        emit_scalar_bru_alias_and_faults(
+            scalar_bru_effect_rows, family_constraints, mnemonic
+        )
+        print("    ResetProfileState();")
+        print("end;")
+        print()
     print("func ValidateCanonicalScalarAMOEffects()")
     print("begin")
     print("    ResetProfileState();")
@@ -8982,299 +9534,59 @@ def main() -> None:
     print("    ResetProfileState();")
     print("end;")
     print()
-    print("func ValidateCanonicalScalarFSUEffects()")
-    print("begin")
-    print("    ResetProfileState();")
-    for effect_index, row in enumerate(scalar_fsu_effect_rows):
-        class_id = scalar_fsu_effect_class(row)
-        if class_id is None:
-            raise ValueError(f"missing FSU effect metadata: {row['form_id']}")
-        mnemonic = row["mnemonic"]
-        left, right, addend, src_type, dst_type = scalar_fsu_success_inputs(row)
-        witness = scalar_fsu_witness(
-            row, family_constraints, src_type=src_type, dst_type=dst_type
-        )
-        expected, expected_flags = scalar_fsu_expected(
-            row, left, right, addend, src_type, dst_type
-        )
-        print(f"    // {row['form_id']}: {mnemonic} [{class_id}]")
-        emit_scalar_fsu_success(
-            row,
-            effect_index,
-            "success",
-            witness,
-            left,
-            right,
-            addend,
-            expected,
-            expected_flags,
-            sticky_flags=0x10,
-        )
-
-        sensitive_left, sensitive_right, sensitive_addend, _, _ = (
-            scalar_fsu_sensitivity_inputs(row)
-        )
-        sensitive_expected, sensitive_flags = scalar_fsu_expected(
-            row, sensitive_left, sensitive_right, sensitive_addend, src_type, dst_type
-        )
-        if sensitive_expected == expected:
-            raise ValueError(f"FSU sensitivity witness is unchanged: {row['form_id']}")
-        emit_scalar_fsu_success(
-            row,
-            effect_index,
-            "sensitive",
-            witness,
-            sensitive_left,
-            sensitive_right,
-            sensitive_addend,
-            sensitive_expected,
-            sensitive_flags,
-            compare_against=expected,
-        )
-
-        if mnemonic == "FDIV":
-            zero_expected, zero_flags = scalar_fsu_expected(
-                row, left, 0, addend, src_type, dst_type
-            )
-            emit_scalar_fsu_success(
-                row,
-                effect_index,
-                "divide_zero",
-                witness,
-                left,
-                0,
-                addend,
-                zero_expected,
-                zero_flags,
-            )
-        if mnemonic == "FRECIP":
-            zero_expected, zero_flags = scalar_fsu_expected(
-                row, 0, right, addend, src_type, dst_type
-            )
-            emit_scalar_fsu_success(
-                row,
-                effect_index,
-                "recip_zero",
-                witness,
-                0,
-                right,
-                addend,
-                zero_expected,
-                zero_flags,
-            )
-        if mnemonic in {"FEQ", "FEQS"}:
-            for nan_index, nan_value in enumerate((0x7FC00000, 0x7FA00000)):
-                nan_expected, nan_flags = scalar_fsu_expected(
-                    row, nan_value, 0x3F800000, addend, src_type, dst_type
-                )
-                emit_scalar_fsu_success(
-                    row,
-                    effect_index,
-                    f"nan_{nan_index}",
-                    witness,
-                    nan_value,
-                    0x3F800000,
-                    addend,
-                    nan_expected,
-                    nan_flags,
-                )
-        if mnemonic in {"FMIN", "FMAX"}:
-            minmax_nan_inputs = (
-                (0x7FC00000, 0x3F800000),
-                (0x7FC00000, 0x7FC00000),
-                (0x7FA00000, 0x3F800000),
-            )
-            for nan_index, (nan_left, nan_right) in enumerate(minmax_nan_inputs):
-                nan_expected, nan_flags = scalar_fsu_expected(
-                    row, nan_left, nan_right, addend, src_type, dst_type
-                )
-                emit_scalar_fsu_success(
-                    row,
-                    effect_index,
-                    f"minmax_nan_{nan_index}",
-                    witness,
-                    nan_left,
-                    nan_right,
-                    addend,
-                    nan_expected,
-                    nan_flags,
-                )
-        if mnemonic == "FADD":
-            invalid_source_witness = scalar_fsu_witness(
-                row, family_constraints, src_type=2, dst_type=dst_type
-            )
-            emit_scalar_fsu_fault(
-                row,
-                effect_index,
-                "invalid_source",
-                invalid_source_witness,
-                left,
-                right,
-                addend,
-            )
-        if mnemonic == "FCVT":
-            invalid_destination_witness = scalar_fsu_witness(
-                row, family_constraints, src_type=src_type, dst_type=15
-            )
-            emit_scalar_fsu_fault(
-                row,
-                effect_index,
-                "invalid_destination",
-                invalid_destination_witness,
-                left,
-                right,
-                addend,
-            )
-    print("    ResetProfileState();")
-    print("end;")
-    print()
-    print("func ValidateCanonicalScalarFSUTotality()")
-    print("begin")
-    print("    ResetProfileState();")
-    fsu_totality_case_index = 0
-    fsu_fault_case_index = 0
+    fsu_shard_counts = {
+        "execute": 0,
+        "types_legal": 0,
+        "types_reserved": 0,
+        "bounds": 0,
+        "rounding": 0,
+        "flags": 0,
+        "alias_destination": 0,
+        "alias_sources": 0,
+        "alias_snapshot": 0,
+    }
     for row in scalar_fsu_effect_rows:
-        base_left, base_right, base_addend, _, base_dst_type = (
-            scalar_fsu_success_inputs(row)
+        emit_scalar_fsu_execute_validation(row, family_constraints)
+        fsu_shard_counts["execute"] += 1
+        fsu_shard_counts["types_legal"] += emit_scalar_fsu_type_validation(
+            row, family_constraints, legal=True
         )
-        for label, src_type, dst_type, legal in scalar_fsu_type_cases(row):
-            witness = scalar_fsu_witness(
-                row, family_constraints, src_type=src_type, dst_type=dst_type
-            )
-            print(f"    // FSU-TOTALITY-DECODED: type/{row['form_id']}/{label}")
-            if legal:
-                expected, flags = scalar_fsu_expected(
-                    row, base_left, base_right, base_addend, src_type, dst_type
-                )
-                emit_scalar_fsu_success(
-                    row,
-                    fsu_totality_case_index,
-                    "totality_type",
-                    witness,
-                    base_left,
-                    base_right,
-                    base_addend,
-                    expected,
-                    flags,
-                    sticky_flags=0x1F,
-                )
-            else:
-                emit_scalar_fsu_fault(
-                    row,
-                    fsu_totality_case_index,
-                    "totality_type",
-                    witness,
-                    base_left,
-                    base_right,
-                    base_addend,
-                )
-                fsu_fault_case_index += 1
-            fsu_totality_case_index += 1
-
-        for label, left, right, addend, src_type, dst_type in scalar_fsu_boundary_cases(
-            row
-        ):
-            witness = scalar_fsu_witness(
-                row, family_constraints, src_type=src_type, dst_type=dst_type
-            )
-            expected, flags = scalar_fsu_expected(
-                row, left, right, addend, src_type, dst_type
-            )
-            print(f"    // FSU-TOTALITY-DECODED: boundary/{row['form_id']}/{label}")
-            emit_scalar_fsu_success(
-                row,
-                fsu_totality_case_index,
-                "totality_boundary",
-                witness,
-                left,
-                right,
-                addend,
-                expected,
-                flags,
-                sticky_flags=0x1C,
-            )
-            fsu_totality_case_index += 1
-
-        if scalar_fsu_active_rounding_consumer(
-            row
-        ) or scalar_fsu_fixed_rounding_consumer(row):
-            left, right, addend, src_type, dst_type = scalar_fsu_success_inputs(row)
-            witness = scalar_fsu_witness(
-                row, family_constraints, src_type=src_type, dst_type=dst_type
-            )
-            expected, flags = scalar_fsu_expected(
-                row, left, right, addend, src_type, dst_type
-            )
-            for rounding_mode in range(8):
-                print(
-                    f"    // FSU-TOTALITY-DECODED: rounding/{row['form_id']}/"
-                    f"active-{rounding_mode}"
-                )
-                emit_scalar_fsu_success(
-                    row,
-                    fsu_totality_case_index,
-                    "totality_rounding",
-                    witness,
-                    left,
-                    right,
-                    addend,
-                    expected,
-                    flags,
-                    rounding_mode=rounding_mode,
-                )
-                fsu_totality_case_index += 1
-
-        left, right, addend, src_type, dst_type = scalar_fsu_sticky_inputs(row)
-        witness = scalar_fsu_witness(
-            row, family_constraints, src_type=src_type, dst_type=dst_type
+        fsu_shard_counts["types_reserved"] += emit_scalar_fsu_type_validation(
+            row, family_constraints, legal=False
         )
-        expected, flags = scalar_fsu_expected(
-            row, left, right, addend, src_type, dst_type
+        fsu_shard_counts["bounds"] += emit_scalar_fsu_bounds_validation(
+            row, family_constraints
         )
-        for seed in (0, 1, 2, 4, 8, 16, 31):
-            print(f"    // FSU-TOTALITY-DECODED: flags/{row['form_id']}/seed-{seed}")
-            emit_scalar_fsu_success(
-                row,
-                fsu_totality_case_index,
-                "totality_flags",
-                witness,
-                left,
-                right,
-                addend,
-                expected,
-                flags,
-                sticky_flags=seed,
+        fsu_shard_counts["rounding"] += emit_scalar_fsu_rounding_validation(
+            row, family_constraints
+        )
+        fsu_shard_counts["flags"] += emit_scalar_fsu_flags_validation(
+            row, family_constraints
+        )
+        for alias_group in ("destination", "sources", "snapshot"):
+            fsu_shard_counts[f"alias_{alias_group}"] += (
+                emit_scalar_fsu_alias_validation(
+                    row, family_constraints, alias_group
+                )
             )
-            fsu_totality_case_index += 1
-    expected_non_alias_totality = (
-        scalar_fsu_type_case_count
-        + scalar_fsu_boundary_case_count
-        + scalar_fsu_rounding_case_count
-        + scalar_fsu_sticky_case_count
-    )
-    if fsu_totality_case_index != expected_non_alias_totality:
-        raise ValueError("scalar FSU non-alias totality count drift during emission")
-    if fsu_fault_case_index != scalar_fsu_type_fault_case_count:
-        raise ValueError("scalar FSU fault count drift during emission")
-    print("    ResetProfileState();")
-    print("end;")
-    print()
-    print("func ValidateCanonicalScalarFSUAliases()")
-    print("begin")
-    print("    ResetProfileState();")
-    fsu_alias_case_index = 0
-    for row in scalar_fsu_effect_rows:
-        for label, field_values in scalar_fsu_alias_cases(row):
-            emit_scalar_fsu_alias_case(
-                row, family_constraints, fsu_alias_case_index, label, field_values
-            )
-            fsu_alias_case_index += 1
-    if fsu_alias_case_index != scalar_fsu_alias_case_count:
-        raise ValueError("scalar FSU alias count drift during emission")
-    print("    ResetProfileState();")
-    print("end;")
-    print()
-    print("func ValidateCanonicalScalarFSUFlagAndRoundingHelpers()")
+    expected_fsu_shard_counts = {
+        "execute": 30,
+        "types_legal": 284,
+        "types_reserved": 204,
+        "bounds": 500,
+        "rounding": 152,
+        "flags": 210,
+        "alias_destination": 270,
+        "alias_sources": 572,
+        "alias_snapshot": 78,
+    }
+    if fsu_shard_counts != expected_fsu_shard_counts:
+        raise ValueError(
+            "scalar FSU validation-shard inventory drift: expected "
+            f"{expected_fsu_shard_counts}, got {fsu_shard_counts}"
+        )
+
+    print("func ValidateScalarFPFlagHelpers()")
     print("begin")
     print("    ResetProfileState();")
     direct_flag_case_index = 0
@@ -9288,6 +9600,13 @@ def main() -> None:
             direct_flag_case_index += 1
     if direct_flag_case_index != 35:
         raise ValueError("scalar FSU direct flag-helper count drift during emission")
+    print("    ResetProfileState();")
+    print("end;")
+    print()
+
+    print("func ValidateScalarFPRoundingHelpers()")
+    print("begin")
+    print("    ResetProfileState();")
     scalar_active_rounding = {
         0: "NumericRound_RNE",
         1: "NumericRound_RTM",
@@ -9377,6 +9696,13 @@ def main() -> None:
         print("    _ReservationValid = FALSE;")
         print(f"    WriteGPR(3, {bit_literal(sys_destination_sentinel, 64)});")
         print(f"    WriteGPR(5, {bit_literal(sys_source_sentinel, 64)});")
+        block_kind = (
+            "Standard"
+            if class_id == "scalar-set-commit-target"
+            else "System"
+        )
+        if class_id != "scalar-architecture-enter-request":
+            emit_scalar_sys_body_setup(block_kind)
 
         if class_id == "scalar-system-register-read":
             print("    _SystemRegisters.thread_ptr = Zeros{PTO_XLEN} + 0x111;")
@@ -9428,6 +9754,7 @@ def main() -> None:
                 print("    ClearFault();")
                 print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
                 print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+                emit_scalar_sys_body_setup()
                 print(f"    WriteGPR(3, {bit_literal(sys_destination_sentinel, 64)});")
                 print(
                     "    let scalar_sys_read_access_status = "
@@ -9444,6 +9771,19 @@ def main() -> None:
                 print("    assert _TrapContexts[[0]].valid;")
                 print("    assert _TrapContexts[[0]].tpc == Zeros{PTO_XLEN} + 0x100;")
                 print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
+
+        elif class_id == "scalar-local-state-register-read":
+            print(
+                f"    let scalar_sys_status_{effect_index} = "
+                f"ExecuteScalarInstruction({bit_literal(witness, 48)}, {row['length_bits']});"
+            )
+            print(
+                f"    assert scalar_sys_status_{effect_index} == ScalarExecution_Executed;"
+            )
+            print("    assert _LastFault == Fault_None;")
+            print("    assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x100;")
+            print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;")
+            print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
 
         elif class_id == "scalar-system-register-write":
             if mnemonic == "HL.SSRSET":
@@ -9491,6 +9831,7 @@ def main() -> None:
                 print("    ClearFault();")
                 print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
                 print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+                emit_scalar_sys_body_setup()
                 print("    WriteGPR(5, Zeros{PTO_XLEN} + 0x333);")
                 print(
                     "    let scalar_sys_write_access_status = "
@@ -9540,6 +9881,7 @@ def main() -> None:
             print("    ClearFault();")
             print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
             print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            emit_scalar_sys_body_setup()
             print("    WriteGPR(3, Zeros{PTO_XLEN} + 0x666);")
             print("    WriteGPR(5, Zeros{PTO_XLEN} + 0x777);")
             print(
@@ -9625,6 +9967,7 @@ def main() -> None:
                 print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
                 print("    _TLBEpoch = 40;")
                 print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+                emit_scalar_sys_body_setup()
                 print(f"    WriteGPR(5, Zeros{{PTO_XLEN}} + 0x{invalid_source:x});")
                 print(
                     f"    let scalar_sys_tlb_invalid_status_{effect_index} = "
@@ -9686,7 +10029,7 @@ def main() -> None:
             print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
 
         elif class_id == "scalar-software-breakpoint":
-            expected_tag = "'10101'" if mnemonic == "C.EBREAK" else "'01011'"
+            expected_cause = 0x15 if mnemonic == "C.EBREAK" else 0xB
             print(
                 f"    let scalar_sys_status_{effect_index} = "
                 f"ExecuteScalarInstruction({bit_literal(witness, 48)}, {row['length_bits']});"
@@ -9696,7 +10039,10 @@ def main() -> None:
             )
             print("    assert _LastFault == Fault_SoftwareBreakpoint;")
             print("    assert _FaultAddress == Zeros{PTO_XLEN} + 0x100;")
-            print(f"    assert _BreakpointTag == {expected_tag};")
+            print(
+                "    assert _ACRTrapCause[[0]] == "
+                f"Zeros{{24}} + {expected_cause};"
+            )
             print("    assert _TrapContexts[[0]].valid;")
             print("    assert _TrapContexts[[0]].tpc == Zeros{PTO_XLEN} + 0x100;")
             print("    assert _ACRTrapNumber[[0]] == Zeros{6} + 50;")
@@ -9764,6 +10110,7 @@ def main() -> None:
             print("    ClearFault();")
             print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
             print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            emit_scalar_sys_body_setup()
             print("    WriteGPR(5, Zeros{PTO_XLEN});")
             print(
                 "    let scalar_sys_assert_fault_status = "
@@ -9808,6 +10155,7 @@ def main() -> None:
             print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
             print("    _ArchitectureRequestEpoch = 50;")
             print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            emit_scalar_sys_body_setup()
             print(
                 "    let scalar_sys_acrc_invalid_status = "
                 f"ExecuteScalarInstruction({bit_literal(invalid_witness, 48)}, "
@@ -9830,6 +10178,7 @@ def main() -> None:
             print("    ClearFault();")
             print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
             print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            emit_scalar_sys_body_setup()
             print(
                 f"    let scalar_sys_status_{effect_index} = "
                 f"ExecuteScalarInstruction({bit_literal(witness, 48)}, {row['length_bits']});"
@@ -9854,6 +10203,7 @@ def main() -> None:
             print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
             print("    _ArchitectureRequestEpoch = 50;")
             print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            emit_scalar_sys_body_setup()
             print(
                 "    let scalar_sys_acre_invalid_status = "
                 f"ExecuteScalarInstruction({bit_literal(invalid_witness, 48)}, "
@@ -9878,7 +10228,7 @@ def main() -> None:
                 f"    assert scalar_sys_status_{effect_index} == ScalarExecution_Executed;"
             )
             print("    assert _LastFault == Fault_None;")
-            print("    assert _CommitArgument == Zeros{PTO_XLEN} + 0xabc;")
+            print("    assert _BARG.bpcn == Zeros{PTO_XLEN} + 0xabc;")
             print("    assert ReadGPR(5) == Zeros{PTO_XLEN} + 0xabc;")
             print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;")
             print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
@@ -9926,9 +10276,11 @@ def main() -> None:
         witness = scalar_sys_witness(row, family_constraints, overrides)
         marker = f"transfer/{row['form_id']}/{register['name']}/0x{address:06x}"
         print(f"    // SYS-S4 {marker}")
+        print("    ResetProfileState();")
         print("    SetCurrentACR(0);")
         print("    ClearFault();")
         print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+        emit_scalar_sys_body_setup()
         print(
             f"    let scalar_sys_transfer_cycle_before_{case_index} = "
             "_SystemRegisters.cycle;"
@@ -10111,6 +10463,7 @@ def main() -> None:
             read_value = 0x110000 + selector_case_index
             print(f"    // SYS-S4 selector/read/{row['form_id']}/dst-{destination}")
             print("    ResetProfileState();")
+            emit_scalar_sys_body_setup()
             print(
                 f"    _SystemRegisters.thread_ptr = Zeros{{PTO_XLEN}} + {read_value};"
             )
@@ -10152,6 +10505,56 @@ def main() -> None:
             )
             selector_case_index += 1
 
+    for row in scalar_sys_local_read_rows:
+        for destination in range(32):
+            witness = scalar_sys_witness(
+                row,
+                family_constraints,
+                {"LSR_ID": 0, "RegDst": destination},
+            )
+            print(f"    // SYS-S4 selector/local-read/{row['form_id']}/dst-{destination}")
+            print("    ResetProfileState();")
+            print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            print("    BeginBundle(BundleKind_System, BundleTransfer_Fallthrough,")
+            print("        Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x100,")
+            print("        Zeros{PTO_XLEN}, FALSE);")
+            print("    EnterBundleBody();")
+            print(
+                f"    let scalar_sys_selector_cycle_{selector_case_index} = "
+                "_SystemRegisters.cycle;"
+            )
+            print(
+                f"    let scalar_sys_selector_status_{selector_case_index} = "
+                f"ExecuteScalarInstruction({bit_literal(witness, 48)}, "
+                f"{row['length_bits']});"
+            )
+            print(
+                f"    assert scalar_sys_selector_status_{selector_case_index} == "
+                "ScalarExecution_Executed;"
+            )
+            print("    assert _LastFault == Fault_None;")
+            if destination < 24:
+                expected = 0 if destination == 0 else 0x100
+                print(
+                    f"    assert ReadGPR({destination}) == "
+                    f"Zeros{{PTO_XLEN}} + {expected};"
+                )
+            elif destination == 30:
+                print(
+                    "    assert ReadTemporaryQueue(FALSE, 0) == "
+                    "Zeros{PTO_XLEN} + 0x100;"
+                )
+            elif destination == 31:
+                print(
+                    "    assert ReadTemporaryQueue(TRUE, 0) == "
+                    "Zeros{PTO_XLEN} + 0x100;"
+                )
+            print(
+                f"    assert _SystemRegisters.cycle == "
+                f"scalar_sys_selector_cycle_{selector_case_index} + 1;"
+            )
+            selector_case_index += 1
+
     for row in scalar_sys_selector_write_rows:
         address_field = scalar_sys_register_address_field(row)["name"]
         for source in range(32):
@@ -10162,6 +10565,7 @@ def main() -> None:
             )
             print(f"    // SYS-S4 selector/write/{row['form_id']}/src-{source}")
             print("    ResetProfileState();")
+            emit_scalar_sys_body_setup()
             print("    for scalar_sys_init = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do")
             print(
                 f"        WriteGPR(scalar_sys_init as GPRIndex, "
@@ -10179,6 +10583,8 @@ def main() -> None:
                 f"        _UQueue[[scalar_sys_init]] = Zeros{{PTO_XLEN}} + "
                 f"{selector_state_base + selector_case_index * 64 + 28} + scalar_sys_init;"
             )
+            print("        _TQueueValid[[scalar_sys_init]] = TRUE;")
+            print("        _UQueueValid[[scalar_sys_init]] = TRUE;")
             print("    end;")
             print(
                 f"    let scalar_sys_selector_source_{selector_case_index} = "
@@ -10241,6 +10647,7 @@ def main() -> None:
                     f"src-{source}/dst-{destination}"
                 )
                 print("    ResetProfileState();")
+                emit_scalar_sys_body_setup()
                 print("    for scalar_sys_init = 0 to PTO_ABSOLUTE_GPR_COUNT - 1 do")
                 print(
                     f"        WriteGPR(scalar_sys_init as GPRIndex, "
@@ -10258,6 +10665,8 @@ def main() -> None:
                     f"        _UQueue[[scalar_sys_init]] = Zeros{{PTO_XLEN}} + "
                     f"{selector_state_base + selector_case_index * 64 + 28} + scalar_sys_init;"
                 )
+                print("        _TQueueValid[[scalar_sys_init]] = TRUE;")
+                print("        _UQueueValid[[scalar_sys_init]] = TRUE;")
                 print("    end;")
                 print(
                     f"    _SystemRegisters.thread_ptr = Zeros{{PTO_XLEN}} + {old_value};"
@@ -10342,6 +10751,7 @@ def main() -> None:
             )
             print(f"    // SYS-S4 fence/{predecessor}/{successor}")
             print("    ResetProfileState();")
+            emit_scalar_sys_body_setup()
             print(
                 f"    let scalar_sys_control_status_{control_case_index} = "
                 f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10369,6 +10779,7 @@ def main() -> None:
             print(f"    // SYS-S4 breakpoint/{row['form_id']}/{tag}")
             print("    ResetProfileState();")
             print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            emit_scalar_sys_body_setup()
             print(
                 f"    let scalar_sys_control_status_{control_case_index} = "
                 f"ExecuteScalarInstruction({bit_literal(witness, 48)}, "
@@ -10379,7 +10790,9 @@ def main() -> None:
                 "ScalarExecution_Rejected;"
             )
             print("    assert _LastFault == Fault_SoftwareBreakpoint;")
-            print(f"    assert _BreakpointTag == {bit_literal(tag, 5)};")
+            print(
+                f"    assert _ACRTrapCause[[0]] == Zeros{{24}} + {tag};"
+            )
             control_case_index += 1
 
     acrc_row = scalar_sys_by_mnemonic["ACRC"]
@@ -10402,6 +10815,7 @@ def main() -> None:
             print("    ResetProfileState();")
             print(f"    SetCurrentACR({ring});")
             print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+            emit_scalar_sys_body_setup()
             print(
                 f"    let scalar_sys_control_status_{control_case_index} = "
                 f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10440,6 +10854,7 @@ def main() -> None:
         print("    SaveTrapContext(0, 0);")
         print("    ClearFault();")
         print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+        emit_scalar_sys_body_setup()
         print(
             f"    let scalar_sys_control_status_{control_case_index} = "
             f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10455,6 +10870,7 @@ def main() -> None:
         print(f"    // SYS-S4 acre/missing/type-{request_type}")
         print("    ResetProfileState();")
         print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+        emit_scalar_sys_body_setup()
         print(
             f"    let scalar_sys_control_status_{control_case_index} = "
             f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10473,6 +10889,7 @@ def main() -> None:
         print("    WriteSystemRegisterAddress(Zeros{24} + 0x0f40, Zeros{PTO_XLEN});")
         print("    ClearFault();")
         print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+        emit_scalar_sys_body_setup()
         print(
             f"    let scalar_sys_control_status_{control_case_index} = "
             f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10490,6 +10907,7 @@ def main() -> None:
         print("    SaveTrapContext(0, 0);")
         print("    ClearFault();")
         print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+        emit_scalar_sys_body_setup()
         print(
             f"    let scalar_sys_control_status_{control_case_index} = "
             f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10508,6 +10926,7 @@ def main() -> None:
         print(f"    // SYS-S4 acre/invalid/type-{request_type}")
         print("    ResetProfileState();")
         print("    WriteTPC(Zeros{PTO_XLEN} + 0x100);")
+        emit_scalar_sys_body_setup()
         print(
             f"    let scalar_sys_control_status_{control_case_index} = "
             f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10533,12 +10952,8 @@ def main() -> None:
             )
             print(f"    // SYS-S4 assert/src-{source}/value-{value}")
             print("    ResetProfileState();")
-            if source < 24:
-                print(f"    WriteGPR({source}, Zeros{{PTO_XLEN}} + {value});")
-            elif source < 28:
-                print(f"    _TQueue[[{source - 24}]] = Zeros{{PTO_XLEN}} + {value};")
-            else:
-                print(f"    _UQueue[[{source - 28}]] = Zeros{{PTO_XLEN}} + {value};")
+            emit_scalar_sys_body_setup()
+            emit_scalar_sys_source_setup(source, value)
             print(
                 f"    let scalar_sys_control_status_{control_case_index} = "
                 f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10570,12 +10985,8 @@ def main() -> None:
             witness = scalar_sys_witness(row, family_constraints, {"SrcL": source})
             print(f"    // SYS-S4 control/{row['form_id']}/src-{source}")
             print("    ResetProfileState();")
-            if source < 24:
-                print(f"    WriteGPR({source}, Zeros{{PTO_XLEN}} + {value});")
-            elif source < 28:
-                print(f"    _TQueue[[{source - 24}]] = Zeros{{PTO_XLEN}} + {value};")
-            else:
-                print(f"    _UQueue[[{source - 28}]] = Zeros{{PTO_XLEN}} + {value};")
+            emit_scalar_sys_body_setup()
+            emit_scalar_sys_source_setup(source, value)
             print(
                 f"    let scalar_sys_control_status_{control_case_index} = "
                 f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10594,12 +11005,8 @@ def main() -> None:
         witness = scalar_sys_witness(commit_row, family_constraints, {"SrcL": source})
         print(f"    // SYS-S4 commit/src-{source}")
         print("    ResetProfileState();")
-        if source < 24:
-            print(f"    WriteGPR({source}, Zeros{{PTO_XLEN}} + {value});")
-        elif source < 28:
-            print(f"    _TQueue[[{source - 24}]] = Zeros{{PTO_XLEN}} + {value};")
-        else:
-            print(f"    _UQueue[[{source - 28}]] = Zeros{{PTO_XLEN}} + {value};")
+        emit_scalar_sys_body_setup("Standard")
+        emit_scalar_sys_source_setup(source, value)
         print(
             f"    let scalar_sys_control_status_{control_case_index} = "
             f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10608,7 +11015,7 @@ def main() -> None:
             f"    assert scalar_sys_control_status_{control_case_index} == "
             "ScalarExecution_Executed;"
         )
-        print(f"    assert _CommitArgument == Zeros{{PTO_XLEN}} + {value};")
+        print(f"    assert _BARG.bpcn == Zeros{{PTO_XLEN}} + {value};")
         control_case_index += 1
 
     print("    ResetProfileState();")
@@ -10631,12 +11038,8 @@ def main() -> None:
             witness = scalar_sys_witness(row, family_constraints, {"SrcL": source})
             print(f"    // SYS-S4 maintenance-selector/{row['form_id']}/src-{source}")
             print("    ResetProfileState();")
-            if source < 24:
-                print(f"    WriteGPR({source}, Zeros{{PTO_XLEN}} + {value});")
-            elif source < 28:
-                print(f"    _TQueue[[{source - 24}]] = Zeros{{PTO_XLEN}} + {value};")
-            else:
-                print(f"    _UQueue[[{source - 28}]] = Zeros{{PTO_XLEN}} + {value};")
+            emit_scalar_sys_body_setup()
+            emit_scalar_sys_source_setup(source, value)
             print(
                 f"    let scalar_sys_control_status_{control_case_index} = "
                 f"ExecuteScalarInstruction({bit_literal(witness, 48)}, 32);"
@@ -10666,6 +11069,7 @@ def main() -> None:
             print(f"    // SYS-S4 maintenance-privilege/{row['form_id']}/ring-{ring}")
             print("    ResetProfileState();")
             print(f"    SetCurrentACR({ring});")
+            emit_scalar_sys_body_setup()
             if field_by_name(row, "SrcL") is not None:
                 print("    WriteGPR(5, Zeros{PTO_XLEN} + 0x1000);")
             print(
@@ -10692,6 +11096,7 @@ def main() -> None:
         ):
             print(f"    // SYS-S4 tlb-operand/{row['form_id']}/{label}")
             print("    ResetProfileState();")
+            emit_scalar_sys_body_setup()
             print(f"    WriteGPR(5, {bit_literal(value, 64)});")
             print(
                 f"    let scalar_sys_control_status_{control_case_index} = "
@@ -10717,6 +11122,7 @@ def main() -> None:
     ):
         print(f"    // SYS-S4 tlb-operand/{tlb_ia_row['form_id']}/{label}")
         print("    ResetProfileState();")
+        emit_scalar_sys_body_setup()
         print(f"    WriteGPR(5, Zeros{{PTO_XLEN}} + {value});")
         print(
             f"    let scalar_sys_control_status_{control_case_index} = "
@@ -10742,6 +11148,7 @@ def main() -> None:
         for label, value in (("zero", 0), ("ones", (1 << 64) - 1)):
             print(f"    // SYS-S4 cache-operand/{row['form_id']}/{label}")
             print("    ResetProfileState();")
+            emit_scalar_sys_body_setup()
             print(f"    WriteGPR(5, {bit_literal(value, 64)});")
             print(
                 f"    let scalar_sys_control_status_{control_case_index} = "
@@ -11194,15 +11601,26 @@ def main() -> None:
     print("begin")
     for index, row in enumerate(scalar):
         for constraint in row["constraints"]:
-            if constraint["operator"] != "not-equal":
+            operator = constraint["operator"]
+            if operator == "not-equal":
+                print(
+                    f"    if form == {index} && DecodeScalarOperandRaw(instruction, form, "
+                    f"ScalarField_{constraint['field']}) == {bit_literal(constraint['value'], 48)} "
+                    "then return FALSE; end;"
+                )
+            elif operator == "one-of":
+                allowed = " || ".join(
+                    "DecodeScalarOperandRaw(instruction, form, "
+                    f"ScalarField_{constraint['field']}) == {bit_literal(value, 48)}"
+                    for value in constraint["values"]
+                )
+                print(
+                    f"    if form == {index} && !({allowed}) then return FALSE; end;"
+                )
+            else:
                 raise ValueError(
                     f"unsupported scalar operand constraint: {constraint!r}"
                 )
-            print(
-                f"    if form == {index} && DecodeScalarOperandRaw(instruction, form, "
-                f"ScalarField_{constraint['field']}) == {bit_literal(constraint['value'], 48)} "
-                "then return FALSE; end;"
-            )
         for constraint in family_constraints:
             if not family_constraint_applies(row, constraint):
                 continue
@@ -11496,11 +11914,14 @@ def main() -> None:
             tile_argument_expression(argument) for argument in row["arguments"]
         )
         print(f"        when {operation_name} =>")
-        source_fields = [
-            operand["field"]
-            for operand in row["operands"]
-            if operand["field"].startswith("source") or operand["role"] == "bias"
-        ]
+        source_fields = []
+        if row["semantic_handler"] not in TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS:
+            source_fields = [
+                operand["field"]
+                for operand in row["operands"]
+                if operand["field"].startswith("source")
+                or operand["role"] == "bias"
+            ]
         if source_fields:
             undefined_sources = " || ".join(
                 f"!TileSourceContentsDefined(operands.{field})"
@@ -11586,11 +12007,38 @@ def main() -> None:
             f"    assert ScalarFormOperandsLegal({bit_literal(legal_instruction, 48)}, {index});"
         )
         for constraint in row["constraints"]:
+            if constraint["operator"] == "not-equal":
+                invalid_value = constraint["value"]
+            elif constraint["operator"] == "one-of":
+                field = field_by_name(row, constraint["field"])
+                if field is None:
+                    raise ValueError(
+                        f"constraint names absent field in {row['form_id']}: "
+                        f"{constraint!r}"
+                    )
+                allowed = set(constraint["values"])
+                invalid_value = next(
+                    (
+                        value
+                        for value in range(1 << field["width"])
+                        if value not in allowed
+                    ),
+                    None,
+                )
+                if invalid_value is None:
+                    raise ValueError(
+                        f"one-of constraint has no rejected value in {row['form_id']}: "
+                        f"{constraint!r}"
+                    )
+            else:
+                raise ValueError(
+                    f"unsupported scalar operand constraint: {constraint!r}"
+                )
             invalid_instruction = encode_field(
                 row,
                 constraint["field"],
                 legal_instruction,
-                constraint["value"],
+                invalid_value,
             )
             print(
                 f"    assert !ScalarFormOperandsLegal({bit_literal(invalid_instruction, 48)}, {index});"
@@ -11795,6 +12243,42 @@ def main() -> None:
         f"    assert SystemRegisterAccessOf({bit_literal(0x100000, 24)}) == SystemRegisterAccess_Unknown;"
     )
     print("end;")
+
+
+def _render_monolithic() -> str:
+    output = io.StringIO()
+    with contextlib.redirect_stdout(output):
+        _emit_monolithic()
+    return output.getvalue()
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--kind",
+        choices=("decoder", "validation-index", "validation-shard", "monolithic"),
+        default="decoder",
+    )
+    parser.add_argument("--entrypoint")
+    arguments = parser.parse_args(argv)
+    if arguments.kind == "monolithic":
+        if arguments.entrypoint is not None:
+            parser.error("--entrypoint is only valid with --kind validation-shard")
+        _emit_monolithic()
+        return
+    generated = partition_generated_asl(_render_monolithic())
+    if arguments.kind == "decoder":
+        if arguments.entrypoint is not None:
+            parser.error("--entrypoint is only valid with --kind validation-shard")
+        print(generated.decoder, end="")
+    elif arguments.kind == "validation-index":
+        if arguments.entrypoint is not None:
+            parser.error("--entrypoint is only valid with --kind validation-shard")
+        print(validation_index(generated), end="")
+    else:
+        if arguments.entrypoint is None:
+            parser.error("--kind validation-shard requires --entrypoint")
+        print(render_validation_shard(generated, arguments.entrypoint), end="")
 
 
 if __name__ == "__main__":

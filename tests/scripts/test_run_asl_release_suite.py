@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import tempfile
+import threading
 import unittest
 from pathlib import Path
 
@@ -23,6 +25,8 @@ MATRIX = [
         "requirements": ["PTO-ARCH-ONE-001"],
         "kind": "execution",
         "sha256": "a" * 64,
+        "validation_entrypoint": None,
+        "validation_sha256": "v" * 64,
     }
 ]
 
@@ -37,6 +41,8 @@ def result(
         "source": MATRIX[0]["source"],
         "kind": MATRIX[0]["kind"],
         "sha256": sha256 or MATRIX[0]["sha256"],
+        "validation_entrypoint": MATRIX[0]["validation_entrypoint"],
+        "validation_sha256": MATRIX[0]["validation_sha256"],
         "status": status,
         "returncode": 0 if status == "passed" else 1,
         "duration_seconds": 0.1,
@@ -110,8 +116,57 @@ class ReleaseSuiteAggregationTest(unittest.TestCase):
                 result_path.write_text(json.dumps(result()), encoding="utf-8")
                 return 0
 
-            results = execute_matrix(root, MATRIX, jobs=1, runner=fake_runner)
+            results = execute_matrix(
+                root, MATRIX, jobs=1, runner=fake_runner, output=io.StringIO()
+            )
             self.assertEqual(results, [result()])
+
+    def test_parallel_results_are_reported_in_completion_order(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            first = dict(MATRIX[0])
+            first["id"] = "PTO-AVS-ARCH-FIRST-001"
+            first["display_name"] = "ARCH first | execution | first"
+            second = dict(MATRIX[0])
+            second["id"] = "PTO-AVS-ARCH-SECOND-001"
+            second["display_name"] = "ARCH second | execution | second"
+            entries = [first, second]
+            second_done = threading.Event()
+            output = io.StringIO()
+
+            def fake_runner(command: list[str], cwd: Path) -> int:
+                test_id = command[-1]
+                if test_id == first["id"]:
+                    self.assertTrue(second_done.wait(timeout=2))
+                    entry = first
+                else:
+                    entry = second
+                payload = {
+                    **result(test_id=str(entry["id"])),
+                    "display_name": entry["display_name"],
+                }
+                path = cwd / "build/asl-test-results" / test_id / "result.json"
+                path.parent.mkdir(parents=True)
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                if test_id == second["id"]:
+                    second_done.set()
+                return 0
+
+            results = execute_matrix(
+                root,
+                entries,
+                jobs=2,
+                runner=fake_runner,
+                output=output,
+            )
+
+            lines = output.getvalue().splitlines()
+            self.assertIn(str(second["id"]), lines[0])
+            self.assertIn(str(first["id"]), lines[1])
+            self.assertEqual(
+                [item["id"] for item in results],
+                sorted((first["id"], second["id"])),
+            )
 
     def test_release_evidence_hashes_the_exact_monolithic_matrix_document(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

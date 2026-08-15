@@ -16,10 +16,10 @@ VALIDATE_SCHEMA = runpy.run_path(str(ROOT / "scripts/check-release-event-schema"
 VALID_PAYLOAD = {
     "schema_version": "1",
     "repository": "PTO-ISA/pto-spec",
-    "tag": "v0.59",
+    "tag": "v0.58.1",
     "commit": "0123456789abcdef0123456789abcdef01234567",
     "release_id": 123,
-    "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.59",
+    "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.1",
     "release_manifest_sha256": "a" * 64,
     "published_at": "2026-08-10T00:00:00Z",
 }
@@ -32,6 +32,15 @@ class ReleaseEventTest(unittest.TestCase):
 
     def test_valid_payload_is_accepted(self) -> None:
         self.assertEqual(validate_release_event(VALID_PAYLOAD), [])
+
+    def test_existing_major_minor_tag_remains_accepted(self) -> None:
+        payload = {
+            **VALID_PAYLOAD,
+            "tag": "v0.58",
+            "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58",
+        }
+
+        self.assertEqual(validate_release_event(payload), [])
 
     def test_repository_schema_is_accepted_by_the_semantic_checker(self) -> None:
         schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
@@ -54,8 +63,8 @@ class ReleaseEventTest(unittest.TestCase):
     def test_wrong_repository_is_rejected(self) -> None:
         self.assert_invalid(repository="heng" + "liao1972/DavinciOO")
 
-    def test_non_major_minor_tag_is_rejected(self) -> None:
-        for tag in ("0.59", "v0.59.0", "v0.x", "v01.59"):
+    def test_non_semantic_release_tag_is_rejected(self) -> None:
+        for tag in ("0.58.1", "v0.58.1.0", "v0.x", "v01.58.1"):
             with self.subTest(tag=tag):
                 self.assert_invalid(tag=tag)
 
@@ -71,9 +80,9 @@ class ReleaseEventTest(unittest.TestCase):
 
     def test_non_release_or_mismatched_release_url_is_rejected(self) -> None:
         for release_url in (
-            "https://example.com/PTO-ISA/pto-spec/releases/tag/v0.59",
-            "https://github.com/PTO-ISA/pto-spec/releases/v0.59",
-            "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.60",
+            "https://example.com/PTO-ISA/pto-spec/releases/tag/v0.58.1",
+            "https://github.com/PTO-ISA/pto-spec/releases/v0.58.1",
+            "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.2",
         ):
             with self.subTest(release_url=release_url):
                 self.assert_invalid(release_url=release_url)

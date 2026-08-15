@@ -138,17 +138,91 @@ begin
     return UInt(DecodeScalarOperandRaw(instruction, form, ScalarField_imml)[5:0]) + 1;
 end;
 
-pure func ScalarDecodedRightModifier(instruction: bits(48),
-                                     form: integer {0..PTO_SCALAR_FORM_COUNT-1})
-                                     => ScalarRightModifier
+pure func DecodeScalarBinaryRightModifier(raw: bits(2))
+                                           => ScalarRightModifier
 begin
-    let raw = DecodeScalarOperandRaw(instruction, form, ScalarField_SrcRType)[1:0];
+    case raw of
+        when '00' => return ScalarRight_SignedWord;
+        when '01' => return ScalarRight_UnsignedWord;
+        when '10' => return ScalarRight_NegateOrNot;
+        when '11' => return ScalarRight_None;
+    end;
+end;
+
+pure func DecodeScalarComparisonRightModifier(raw: bits(2))
+                                               => ScalarRightModifier
+begin
     case raw of
         when '00' => return ScalarRight_None;
         when '01' => return ScalarRight_SignedWord;
         when '10' => return ScalarRight_UnsignedWord;
         when '11' => return ScalarRight_NegateOrNot;
     end;
+end;
+
+pure func DecodeScalarSelectRightModifier(raw: bits(2))
+                                          => ScalarRightModifier
+begin
+    if raw == '11' then
+        return ScalarRight_NegateOrNot;
+    else
+        return ScalarRight_None;
+    end;
+end;
+
+pure func DecodeScalarAddressRightModifier(raw: bits(2))
+                                           => ScalarRightModifier
+begin
+    case raw of
+        when '00' => return ScalarRight_None;
+        when '01' => return ScalarRight_SignedWord;
+        when '10' => return ScalarRight_UnsignedWord;
+        when '11' => return ScalarRight_NegateOrNot;
+    end;
+end;
+
+pure func ScalarDecodedBinaryRightModifier(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1})
+    => ScalarRightModifier
+begin
+    let raw = DecodeScalarOperandRaw(
+        instruction,
+        form,
+        ScalarField_SrcRType)[1:0];
+    return DecodeScalarBinaryRightModifier(raw);
+end;
+
+pure func ScalarDecodedComparisonRightModifier(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1})
+    => ScalarRightModifier
+begin
+    let raw = DecodeScalarOperandRaw(
+        instruction,
+        form,
+        ScalarField_SrcRType)[1:0];
+    return DecodeScalarComparisonRightModifier(raw);
+end;
+
+pure func ScalarDecodedSelectRightModifier(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1})
+    => ScalarRightModifier
+begin
+    let raw = DecodeScalarOperandRaw(
+        instruction,
+        form,
+        ScalarField_SrcRType)[1:0];
+    return DecodeScalarSelectRightModifier(raw);
+end;
+
+pure func ScalarDecodedAddressRightModifier(
+    instruction: bits(48), form: integer {0..PTO_SCALAR_FORM_COUNT-1})
+    => ScalarRightModifier
+begin
+    let raw = DecodeScalarOperandRaw(
+        instruction,
+        form,
+        ScalarField_SrcRType)[1:0];
+    return DecodeScalarAddressRightModifier(raw);
 end;
 
 readonly func ReadDecodedScalarRegister(instruction: bits(48),

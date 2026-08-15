@@ -4,10 +4,32 @@ begin
     return _CurrentACR;
 end;
 
+pure func AccessControlRingBits(ring: AccessControlRing) => bits(4)
+begin
+    case ring of
+        when 0 => return '0000';
+        when 1 => return '0001';
+        when 2 => return '0010';
+        when 3 => return '0011';
+        when 4 => return '0100';
+        when 5 => return '0101';
+        when 6 => return '0110';
+        when 7 => return '0111';
+        when 8 => return '1000';
+        when 9 => return '1001';
+        when 10 => return '1010';
+        when 11 => return '1011';
+        when 12 => return '1100';
+        when 13 => return '1101';
+        when 14 => return '1110';
+        when 15 => return '1111';
+    end;
+end;
+
 func SetCurrentACR(ring: AccessControlRing)
 begin
     _CurrentACR = ring;
-    _SystemRegisters.core_state[3:0] = Zeros{4} + ring;
+    _SystemRegisters.core_state[3:0] = AccessControlRingBits(ring);
 end;
 
 pure func TrapTargetForFault(source: AccessControlRing) => AccessControlRing

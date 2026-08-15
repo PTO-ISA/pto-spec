@@ -23,6 +23,13 @@ begin
         return CommandExecution_Rejected;
     end;
     let form = decoded as integer {0..PTO_COMMAND_FORM_COUNT-1};
+    let handler = CommandHandlerOfForm(form);
+    if _SystemBlockTerminalPending &&
+       handler != CommandHandler_ExecuteBundleStop &&
+       handler != CommandHandler_ExecuteBundleStart then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return CommandExecution_Rejected;
+    end;
     if !CommandFormOperandsLegal(instruction, form) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return CommandExecution_Rejected;

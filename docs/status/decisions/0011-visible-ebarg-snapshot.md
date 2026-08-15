@@ -44,8 +44,8 @@ request-type encoding remains an illegal-instruction fault.
 
 The internal saved context also preserves bundle dimensions, scalar and tile
 bindings, control/data attributes, fallthrough state, the bundle return target,
-the bundle-argument kind, the 64-bit machine execution mask, and all eight
-32-bit warp predicates. The bundle return target is distinct from the local
+the bundle-argument kind, and all eight 32-bit predicate registers. The bundle
+return target is distinct from the local
 return address held in `EBARG_LRA`. These fields have no complete EBARG encoding
 in PTO v0, so successful recovery restores their saved values. EBARG-covered
 fields remain authoritative and may be deliberately edited by manager software

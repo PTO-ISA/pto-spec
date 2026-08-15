@@ -130,7 +130,7 @@ jobs:
       - name: Install pinned ASLRef dependencies
         run: make setup
 
-      - name: Verify and execute every independent ID on this page
+      - name: Verify exact ASL page plan
         shell: bash
         env:
           COMMIT: ${{ inputs.commit }}
@@ -141,13 +141,27 @@ jobs:
             --page-size "$ASL_TEST_PAGE_SIZE" --page "$PAGE" \
             > build/actual-page.json
           cmp "build/planned-asl-test-pages/page-$PAGE.json" build/actual-page.json
+
+      - name: Execute independent ASL points with machine parallelism
+        shell: bash
+        run: |
           set +e
           ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
           ./scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"
           execution_status=$?
+          set -e
+          printf '%s\n' "$execution_status" > build/asl-page-execution.status
+
+      - name: Report per-mnemonic results and enforce the page
+        if: always()
+        shell: bash
+        run: |
+          set +e
           ./scripts/report-asl-page-results --matrix build/actual-page.json --results build/asl-test-results
           report_status=$?
           set -e
+          test -f build/asl-page-execution.status
+          read -r execution_status < build/asl-page-execution.status
           test "$execution_status" = 0
           test "$report_status" = 0
 

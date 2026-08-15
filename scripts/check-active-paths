@@ -27,6 +27,7 @@ AGENT_ENTRYPOINTS = (
     Path("AGENTS.md"),
     Path(".codex/skills/pto-asl/SKILL.md"),
     Path(".codex/skills/pto-asl/agents/openai.yaml"),
+    Path(".codex/skills/pto-asl/references/arm-style.md"),
     Path(".codex/skills/pto-asl/references/formal-quality.md"),
     Path(".codex/skills/pto-asl/references/source-map.md"),
 )

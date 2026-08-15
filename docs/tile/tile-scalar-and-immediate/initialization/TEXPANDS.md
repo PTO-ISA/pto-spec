@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl`
 
-Fill the destination Tile by expanding the bound scalar value.
+Broadcast one private-GPR scalar encoding across a newly allocated Local Tile.
 
 ## Normative identity {#PTO-INST-TILE-TEXPANDS}
 
@@ -28,12 +28,79 @@ TEXPANDS <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TEXPANDS | TEPL | 0x03B | 27 | 1 | ExecuteTileFillScalar |
 
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
+## Field value dispositions
+
+### B.DATR.PadValueOrByteId (`PTO-FIELD-BLOCK-PADVALUE-OR-BYTEID`)
+
+Carries the operation-selected PadValue or ByteId union field.
+
+**Encoded zero:** For PadValue operations code zero selects Zero; for ByteId operations it selects ByteId zero.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | Zero-or-ByteId0 |
+| 1 | assigned | Max-or-ByteId1 |
+| 2 | assigned | Min-or-ByteId2 |
+| 3 | assigned | Null-or-ByteId3 |
+
+**Reserved-value behavior:** All four encodings are assigned; the selected operation separately validates whether the field is PadValue, ByteId, or inapplicable.
+
+### B.IOR.RegSrc0 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | destination |
-| scalar0 | scalar |
+| destination0 | new Local numeric destination |
+| scalar0 | per-participating-PE private-GPR scalar |
 
 ## Decode
 
@@ -50,11 +117,12 @@ end;
 
 ```asm
 BSTART.VEC TEXPANDS, DataType
-B.DATR (optional)
-B.DIM LB0
-B.DIM (LB1/LB2 for 2D)
-B.IOT
-B.IOR
+B.DATR PadValue (optional)
+B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional)
+B.DIM LB2=Col (optional)
+B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>
+B.IOR ScalarGPR, zero, zero, ->zero (optional)
 BSTOP
 ```
 
@@ -62,25 +130,78 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl -->
 ```asl
+pure func InstructionContractDataTypeLegal_TEXPANDS(
+    data_type: TileDataType) => boolean
+begin
+    return TileVecArithmeticDataTypeSupported(data_type);
+end;
+
+readonly func InstructionContractOperandsLegal_TEXPANDS(
+    destination: TileIndex,
+    scalar: Word) => boolean
+begin
+    return TileOperandsLegal_ExecuteTileFillScalar(
+        destination,
+        scalar);
+end;
+
 readonly func InstructionContractHandler_TEXPANDS() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileFillScalar;
 end;
+
+func InstructionContractExecute_TEXPANDS(
+    destination: TileIndex,
+    scalar: Word)
+begin
+    assert InstructionContractOperandsLegal_TEXPANDS(
+        destination,
+        scalar);
+    ExecuteTileFillScalar(
+        destination,
+        scalar);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Legality handler:** `TileOperandsLegal_ExecuteTileFillScalar`
-- **Fault contract:** `ExecuteTileInstruction`
-- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
+- LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol.
+- Omitted B.IOR supplies the selected DataType all-zero encoding; explicit all-zero is distinct but supplies the same value.
+- Omitted B.DATR selects PadValue=Null. Explicit 00, 01, 10, and 11 select Zero, Max, Min, and Null.
 
-## Operational information
+## Legality
 
-- **Semantic handler:** `ExecuteTileFillScalar`
-- **Effect contract:** `ExecuteTileFillScalar`
-- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
-- **State effects:** `["operand:destination0:destination", "operand:scalar0:scalar"]`
+- TEXPANDS is selected only by the TEPL raw carrier Mode 1 Function 27 and executes on VEC.
+- Exactly one terminating Local B.IOT supplies no source and one newly allocated Local numeric destination. B.IOS and additional Tile bindings are illegal.
+- The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.
+- The destination is row-major, its physical Rows and Col are powers of two, and its valid rectangle fits within physical capacity.
+- Only RegSrc0 may be nonzero in B.IOR and only PadValueOrByteId is applicable in B.DATR.
+- PE_MASK=0000 is a strict no-op before GPR reads, allocation, faults, or destination effects.
+
+## State effects
+
+- Every valid destination element receives the scalar low element-width raw encoding without conversion.
+- Padding definedness and destination descriptor publish atomically; rejection has no architectural effect.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Complete schema, dimensions, attributes, type, scalar encoding, mask, capacity, and allocation preflight precedes the private-GPR scalar snapshot.
+
+## Exceptions
+
+- Malformed destination binding, B.IOS presence, surplus B.IOR fields, unsupported DataType, missing or zero dimensions, capacity failure, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.
+- CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation.
+
+## Examples
+
+- BSTART.VEC TEXPANDS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

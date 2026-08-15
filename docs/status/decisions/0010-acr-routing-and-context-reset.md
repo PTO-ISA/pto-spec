@@ -13,11 +13,6 @@ the ACR0 extended-register bank. It also assigned the system-call trap number
 to bundle-control faults even though the catalog defines separate bundle-trap
 and system-call identities.
 
-The public source reconciliation establishes the three-level behavior for
-ACR0, ACR1, and ACR2. PTO extends the managed application-ring role uniformly
-from ACR2 through ACR15, matching the existing PTO v0 access and protected-
-memory policy.
-
 ## Decision
 
 - ACR0 is the root manager, ACR1 is the system manager, and ACR2 through ACR15
@@ -27,9 +22,9 @@ memory policy.
 - A synchronous fault or interrupt sourced in ACR2 through ACR15 targets ACR1.
 - Reset clears the complete catalog-defined context-family low-index range in
   all 16 ACR banks.
-- Reset also clears every live GPR, T/U queue, P1 through P7, the stored
-  machine execution mask, bundle descriptor, tile descriptor and definedness
-  bit, reservation, memory/event, fault, trap, and saved-context field. P0 is
+- Reset also clears every live GPR, T/U queue, P1 through P7, the bundle
+  descriptor, tile descriptor and definedness bit, reservation, memory/event,
+  fault, trap, and saved-context field. P0 is
   hardwired all-ones. Profile constants are then installed explicitly.
 - Bundle-format and bundle-control faults report `BUNDLE_TRAP` (5).
 - `SCALL` (6) remains reserved for the separately specified `ACRC` service-

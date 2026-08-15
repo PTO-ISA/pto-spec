@@ -1,0 +1,200 @@
+#!/usr/bin/env python3
+"""Generate the canonical complete PTO mnemonic and encoded-field contract."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+from typing import Sequence
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.asl_units import load_units  # noqa: E402
+from scripts.instruction_contracts import (  # noqa: E402
+    PLACEHOLDER_TEXT,
+    check_instruction_contracts,
+)
+from scripts.instruction_docs import load_instruction_index  # noqa: E402
+
+
+DEFAULT_OUTPUT = ROOT / "spec/evidence/instruction-contract-closure.json"
+
+
+def _field_domain(field_name: str, domain: object) -> dict[str, object]:
+    return {
+        "field": field_name,
+        "id": domain.contract_id,
+        "width": domain.width,
+        "role": domain.role,
+        "zero_meaning": domain.zero_meaning,
+        "assigned": [
+            {"value": value, "meaning": meaning}
+            for value, meaning in domain.assigned
+        ],
+        "reserved": list(domain.reserved),
+        "rejection": domain.rejection,
+        "source": domain.source_path.as_posix(),
+    }
+
+
+def _encoded_field(field: object) -> dict[str, object]:
+    return {
+        "form_id": field.form_id,
+        "field": field.field_name,
+        "width": field.width,
+        "signedness": field.signedness,
+        "role": field.role,
+        "zero_meaning": field.zero_meaning,
+        "assigned_ranges": [list(interval) for interval in field.assigned_ranges],
+        "other_owner_values": [
+            {"value": value, "owner": owner}
+            for value, owner in field.other_owner_values
+        ],
+        "reserved_ranges": [list(interval) for interval in field.reserved_ranges],
+        "rejection": field.rejection,
+    }
+
+
+def _contract(record: object) -> dict[str, object]:
+    contract = record.contract
+    if contract is None:  # pragma: no cover - global validation makes this unreachable
+        raise ValueError(f"missing resolved contract for {record.mnemonic}")
+    return {
+        "encoding_class": contract.encoding_class,
+        "standalone_opcode": contract.standalone_opcode,
+        "canonical_assembly": list(contract.canonical_assembly),
+        "field_domains": [
+            _field_domain(field_name, domain)
+            for field_name, domain in contract.field_domains
+        ],
+        "encoded_fields": [_encoded_field(field) for field in contract.encoded_fields],
+        "operands": list(contract.operands),
+        "defaults": list(contract.defaults),
+        "legality": list(contract.legality),
+        "state_effects": list(contract.state_effects),
+        "memory_effects": list(contract.memory_effects),
+        "ordering": list(contract.ordering),
+        "exceptions": list(contract.exceptions),
+        "examples": list(contract.examples),
+        "block_composition": list(contract.block_composition),
+    }
+
+
+def build_document(root: Path = ROOT) -> dict[str, object]:
+    errors = check_instruction_contracts(root, require_complete=True)
+    if errors:
+        raise ValueError("\n".join(errors))
+    records = load_instruction_index(root)
+    units = load_units(root / "asl")
+    ownership = next(
+        unit
+        for unit in units
+        if unit.unit_id == "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP"
+    )
+    deleted_names = ownership.metadata.get("deleted_names")
+    if not isinstance(deleted_names, list) or any(
+        not isinstance(name, str) or not name for name in deleted_names
+    ):
+        raise ValueError("encoding ownership must declare deleted_names")
+
+    instructions: list[dict[str, object]] = []
+    encoded_form_count = 0
+    selector_operation_count = 0
+    unresolved_field_count = 0
+    placeholder_count = 0
+    for record in sorted(records, key=lambda item: (item.surface, item.mnemonic)):
+        contract = _contract(record)
+        encoded_form_count += sum(
+            bool(catalog_record.get("encoding"))
+            for catalog_record in record.catalog_records
+        )
+        selector_operation_count += (
+            contract["encoding_class"] == "selector-encoded-block-operation"
+        )
+        expected_fields = sum(
+            len(catalog_record.get("fields", []))
+            for catalog_record in record.catalog_records
+        )
+        unresolved_field_count += expected_fields - len(contract["encoded_fields"])
+        serialized_text = json.dumps(
+            {"summary": record.summary, "contract": contract},
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        placeholder_count += bool(PLACEHOLDER_TEXT.search(serialized_text))
+        instructions.append(
+            {
+                "mnemonic": record.mnemonic,
+                "surface": record.surface,
+                "classification": list(record.classification),
+                "engine": record.engine,
+                "alias_of": record.alias_of,
+                "alias_engine": record.alias_engine,
+                "summary": record.summary,
+                "source": record.source_path.as_posix(),
+                "documentation": record.markdown_path.as_posix(),
+                "ndf_clause": record.ndf_id,
+                "catalog_records": list(record.catalog_records),
+                "contract": contract,
+            }
+        )
+    if unresolved_field_count or placeholder_count:
+        raise ValueError(
+            "instruction contract projection is incomplete: "
+            f"unresolved_fields={unresolved_field_count}, placeholders={placeholder_count}"
+        )
+    return {
+        "schema": "pto.instruction-contract-closure.v1",
+        "authority": "asl/{block,scalar,tile} PTO-INSTRUCTION metadata and embedded ASL operation",
+        "deleted_names": sorted(deleted_names),
+        "instructions": instructions,
+        "summary": {
+            "mnemonic_count": len(instructions),
+            "encoded_form_count": encoded_form_count,
+            "selector_operation_count": selector_operation_count,
+            "unresolved_field_count": unresolved_field_count,
+            "placeholder_count": placeholder_count,
+            "status": "closed",
+        },
+    }
+
+
+def render(document: dict[str, object]) -> str:
+    return json.dumps(document, indent=2, sort_keys=True) + "\n"
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check", action="store_true")
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    arguments = parser.parse_args(argv)
+    try:
+        generated = render(build_document())
+        if arguments.check:
+            if not arguments.output.is_file():
+                raise ValueError(f"missing generated artifact {arguments.output}")
+            if arguments.output.read_text(encoding="utf-8") != generated:
+                raise ValueError(f"stale generated artifact {arguments.output}")
+        else:
+            arguments.output.write_text(generated, encoding="utf-8")
+    except (OSError, ValueError, StopIteration, json.JSONDecodeError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    if arguments.check:
+        print("instruction contract closure passed")
+    else:
+        try:
+            relative = arguments.output.relative_to(ROOT)
+        except ValueError:
+            relative = arguments.output
+        print(f"wrote {relative}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -18,6 +18,8 @@ ENTRY = {
     "requirements": [],
     "kind": "execution",
     "sha256": "a" * 64,
+    "validation_entrypoint": None,
+    "validation_sha256": "v" * 64,
 }
 
 
@@ -52,6 +54,8 @@ class AslPageReportTest(unittest.TestCase):
             "source": ENTRY["source"],
             "kind": ENTRY["kind"],
             "sha256": ENTRY["sha256"],
+            "validation_entrypoint": ENTRY["validation_entrypoint"],
+            "validation_sha256": ENTRY["validation_sha256"],
             "status": "passed",
             "returncode": 0,
             "duration_seconds": 1.25,

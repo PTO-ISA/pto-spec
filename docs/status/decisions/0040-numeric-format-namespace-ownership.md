@@ -25,12 +25,10 @@ TLSU/TALLOC code 2 denotes the raw `F16` carrier while bundle code 4 denotes
 only in the bundle namespace. Treating the integers as one shared encoding
 would therefore change architectural behavior.
 
-The public PTO type system establishes visible names, widths, and target
-availability observations but does not resolve every PTO ASL binding. In
-particular, the exact `FP8`, `FPL8`, `FP4`, `FPL4`, and `E8M0` roles remain
-ambiguous or profile-dependent. The reviewed independent executable model
-corroborates the scalar raw-carrier table and bundle field width, but it does
-not supply tile numeric format semantics or an independent numeric oracle.
+The PTO type system establishes visible names and widths but does not resolve
+every operation-local ASL binding. In particular, the exact `FP8`, `FPL8`,
+`FP4`, `FPL4`, and `E8M0` roles remain ambiguous or profile-dependent until
+their owning PTO rules are accepted.
 
 ## Decision
 
@@ -92,10 +90,9 @@ complete PD-02 result decision.
 - `asl/tile/state.asl`
 - `asl/tile/memory.asl`
 - `asl/bundle/dispatch.asl`
-- `tests/asl/state-tests.asl`
-- `tests/asl/scalar-tests.asl`
-- `tests/asl/bundle-tests.asl`
-- `tests/asl/tile/model/memory/load-store/PTO-AVS-TILE-TESTTLSUTOTALITY-BOUNDARY-001.asl`
+- `spec/evidence/numeric-format-namespace-contract.json`
+- `spec/evidence/release-traceability-readiness.json`
+- `tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl`
 - `docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md`
 - `docs/status/decisions/0033-tlsu-four-bit-memory-packing.md`
 - `docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md`

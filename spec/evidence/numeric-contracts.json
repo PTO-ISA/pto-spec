@@ -304,7 +304,9 @@
       "id": "cube-matrix",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileMatrixAccumulate"
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "requirement": "PTO-REQ-CUBE-001",
       "stage4_target": "S4-T10",
@@ -573,6 +575,48 @@
         "tile:CUBE:TGEMV_MX",
         "tile:CUBE:TGEMV_MX_ACC",
         "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL_MX",
+        "tile:CUBE:TMATMUL_MX_ACC",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ]
+    },
+    {
+      "name": "TileProfileMatrixPostProcess",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/model/execution/postprocess.asl",
+      "requirement": "PTO-REQ-CUBE-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:CUBE:TGEMV",
+        "tile:CUBE:TGEMV_ACC",
+        "tile:CUBE:TGEMV_BIAS",
+        "tile:CUBE:TGEMV_MX",
+        "tile:CUBE:TGEMV_MX_ACC",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL",
+        "tile:CUBE:TMATMUL_ACC",
+        "tile:CUBE:TMATMUL_BIAS",
+        "tile:CUBE:TMATMUL_MX",
+        "tile:CUBE:TMATMUL_MX_ACC",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ]
+    },
+    {
+      "name": "TileProfileMatrixReductionStep",
+      "role": "portable-profile-boundary",
+      "model": "asl/tile/model/execution/postprocess.asl",
+      "requirement": "PTO-REQ-CUBE-001",
+      "profile_owner": "PTO numeric architecture maintainers",
+      "operation_keys": [
+        "tile:CUBE:TGEMV",
+        "tile:CUBE:TGEMV_ACC",
+        "tile:CUBE:TGEMV_BIAS",
+        "tile:CUBE:TGEMV_MX",
+        "tile:CUBE:TGEMV_MX_ACC",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL",
+        "tile:CUBE:TMATMUL_ACC",
+        "tile:CUBE:TMATMUL_BIAS",
         "tile:CUBE:TMATMUL_MX",
         "tile:CUBE:TMATMUL_MX_ACC",
         "tile:CUBE:TMATMUL_MX_BIAS"
@@ -1020,7 +1064,9 @@
       "numeric_contract": "cube-matrix",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileMatrixAccumulate"
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1036,7 +1082,9 @@
       "numeric_contract": "cube-matrix",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileMatrixAccumulate"
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1053,7 +1101,9 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixBias"
+        "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1070,7 +1120,9 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1087,7 +1139,9 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1105,7 +1159,9 @@
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1121,7 +1177,9 @@
       "numeric_contract": "cube-matrix",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileMatrixAccumulate"
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1137,7 +1195,9 @@
       "numeric_contract": "cube-matrix",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
-        "TileProfileMatrixAccumulate"
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1154,7 +1214,9 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixBias"
+        "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1171,7 +1233,9 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1188,7 +1252,9 @@
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -1206,7 +1272,9 @@
       "primary_hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "reference_helpers": [],
       "requirement": "PTO-REQ-CUBE-001",
@@ -2412,11 +2480,11 @@
     }
   ],
   "summary": {
-    "numeric_hook_count": 28,
+    "numeric_hook_count": 30,
     "decoded_operation_count": 104,
     "scalar_form_count": 19,
     "direct_tile_operation_count": 85,
-    "primary_profile_boundary_hook_count": 21,
+    "primary_profile_boundary_hook_count": 23,
     "reference_helper_hook_count": 5,
     "library_only_hook_count": 2,
     "target_conformance_status": "open:S5-T2"

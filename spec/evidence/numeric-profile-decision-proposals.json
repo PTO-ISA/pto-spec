@@ -4,7 +4,7 @@
   "status": "proposal-complete-two-decisions-accepted",
   "input": {
     "path": "spec/evidence/numeric-profile-decision-inputs.json",
-    "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96",
+    "sha256": "d001984ca86695c8f08a10415419ee663e76ab3bc21743f9e70343e20d8efdf3",
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
   },
@@ -16,7 +16,7 @@
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
-    "sha256": "d1d3e5d3f56bc6450c7f4bfc12b25d902f49923a73d45741ea848873f55df1e5",
+    "sha256": "88f786e3a73a39cd1e5ddd137aa23932c05b5208b945c0a016ed6044686dba55",
     "status": "state-owner-matrix-closed-profile-production-open",
     "acceptance_record": "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
@@ -26,7 +26,7 @@
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "53d21024ac42c6e0998e3bf4058b3940e3f6bda0ba19f18455b8db39f6a90d89",
+    "sha256": "a41821eb581ce35c4309d50ab36999ab8d2a58de7b3301b00f080de96a8eed95",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
     "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
@@ -35,13 +35,13 @@
     "external_selector_class_count": 4,
     "affected_domain_count": 16,
     "affected_operation_count": 100,
-    "affected_hook_count": 23,
+    "affected_hook_count": 25,
     "accepted_domain_rounding_rule_count": 16,
     "pd03_complete": true
   },
   "subnormal_contract": {
     "path": "spec/evidence/numeric-subnormal-contract.json",
-    "sha256": "2f15d81f0bb4fd36a0d32136bd96fa14432cf179bedde211e5b4f9a22443d5c1",
+    "sha256": "55c3a93eebabab8a2e8b0344cdc1efdbaaf2b89bbafedffcfc48d6268eb94258",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
     "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
@@ -52,7 +52,7 @@
     "affected_operation_count": 93,
     "operation_applicability_row_count": 93,
     "conditional_operation_type_tuple_count": 1023,
-    "affected_hook_count": 21,
+    "affected_hook_count": 23,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
     "pd04_complete": true,
@@ -61,7 +61,7 @@
   },
   "special_value_contract": {
     "path": "spec/evidence/numeric-special-value-contract.json",
-    "sha256": "1cf3bdf7eadc7e5e726ec365755cd01de51ff105ec055ac6c5b63f5735a2a898",
+    "sha256": "8c19df9119ac530bb6f55c4c94227200efbbe70dc719399da6c63cf9b0655bb2",
     "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
     "acceptance_record": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
     "format_count": 25,
@@ -80,7 +80,7 @@
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "4ce1200852c19211788a8415f3e0edd0739f30d23b87542018e15665c2b0e62c",
+    "sha256": "681d7a75e1aa58cfb9ba8ed06ce6e6b3a17786c87b11949098fe25470b7b8da1",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
     "acceptance_record": "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
     "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
@@ -135,7 +135,7 @@
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "12df76e7e8f967af157afe8a0fdfc2d371888488456ac63da3ad00cfe35733a1",
+    "sha256": "8945c1eba30fbf5d2ada1997a4d4eb434a46f147ac3f75dd01502f7c45565876",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -155,7 +155,7 @@
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "790d990e67e624491455c2e173a7de431068dc9cf0f4301090068863f453a309",
+    "sha256": "816099495add52fc8de82fd3ec8bd837c797181b35ebc7de22b3821736b1c5fb",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
     "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
@@ -165,7 +165,7 @@
     "tuple_count": 150,
     "bundle_execution_tuple_count": 150,
     "bundle_command_form_count": 6,
-    "accepted_command_form_count": 100,
+    "accepted_command_form_count": 74,
     "result_rule_count": 0,
     "parent_pd01_complete": false,
     "cube_matrix_complete": false,
@@ -173,15 +173,15 @@
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "9dadea667e55f8d6d8cbbe9282ef29606e569729905dba468dd980ab5e909a1b",
+    "sha256": "6f22107c8e119cd3b732223ee321f21da24aa61cd1ba424b89bbfe797c98a036",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 89,
     "unique_dimension_count": 39,
     "domain_count": 18,
     "operation_count": 104,
-    "hook_count": 28,
-    "primary_operation_hook_edge_count": 128,
+    "hook_count": 30,
+    "primary_operation_hook_edge_count": 152,
     "reference_helper_operation_edge_count": 8,
     "portable_decision_owner_point_count": 89,
     "selected_route_count": 16,
@@ -321,6 +321,8 @@
     "TileProfileExpand",
     "TileProfileMatrixAccumulate",
     "TileProfileMatrixBias",
+    "TileProfileMatrixPostProcess",
+    "TileProfileMatrixReductionStep",
     "TileProfileMatrixScaledAccumulate",
     "TileProfileOrderLeft",
     "TileProfilePartialValue",
@@ -505,7 +507,7 @@
         "named-target-profile-rule",
         "implementation-defined-with-explicit-allowed-set"
       ],
-      "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.58.0-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
+      "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.58.1-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
       "open_items": [],
       "acceptance_evidence": [
         "mode-state reset and transition contract",
@@ -1547,6 +1549,8 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
       "decision_question_ids": [
@@ -1657,7 +1661,7 @@
     "numeric_domain_count": 18,
     "accepted_domain_rule_count": 0,
     "numeric_operation_count": 104,
-    "numeric_hook_count": 28,
+    "numeric_hook_count": 30,
     "numeric_variation_point_count": 89,
     "selected_variation_route_count": 16,
     "accepted_public_type_binding_count": 16,

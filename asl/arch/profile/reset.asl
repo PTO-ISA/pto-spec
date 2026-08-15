@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-RESET","surface":"arch","classification":["profile","reset"],"depends_on":["generated:decoders","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-RESET","surface":"arch","classification":["profile","reset"],"depends_on":["generated:decoders","PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE","PTO-TILE-MODEL-STATE-FEATURE-MAP-DESCRIPTORS"]}
 // PTO-REQ-PROFILE-001: concrete PTO v0 reference profile for every registered
 // numeric, memory, time, reset, and access-control-ring boundary.
 
@@ -11,8 +11,11 @@ begin
     end;
     for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do
         _TQueue[[index]] = Zeros{PTO_XLEN};
+        _TQueueValid[[index]] = FALSE;
         _UQueue[[index]] = Zeros{PTO_XLEN};
+        _UQueueValid[[index]] = FALSE;
     end;
+    ResetGQMState();
     for index = 0 to PTO_PREDICATE_REGISTER_COUNT - 1 do
         _PredicateRegisters[[index]] = Zeros{PTO_PREDICATE_WIDTH};
     end;
@@ -33,6 +36,7 @@ begin
             as SystemRegisterFileIndex]] = Zeros{PTO_XLEN} + 3;
     end;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
+        _TileFeatureMapDescriptors[[index]].valid = FALSE;
         _TileAllocationMasks[[index]] = Zeros{4};
         _Tiles[[index]].allocated = FALSE;
         _Tiles[[index]].contents_defined = FALSE;
@@ -51,6 +55,7 @@ begin
         _SharedTiles[[index]].descriptor_valid = FALSE;
         _SharedTiles[[index]].allocation_mask = Zeros{4};
         _SharedTiles[[index]].initialized_mask = Zeros{4};
+        _SharedTiles[[index]].published = FALSE;
         _SharedTiles[[index]].tile.allocated = FALSE;
         _SharedTiles[[index]].tile.contents_defined = FALSE;
         _SharedTiles[[index]].tile.defined_elements =
@@ -61,7 +66,6 @@ begin
     _BPC = Zeros{PTO_XLEN};
     _BundleActive = FALSE;
     _BundleBodyActive = FALSE;
-    _ExecutionMask = Zeros{PTO_XLEN};
     ResetBundleControlState();
     _ReturnAddress = Zeros{PTO_XLEN};
     _CommitArgument = Zeros{PTO_XLEN};
@@ -83,7 +87,6 @@ begin
     _ArchitectureRequestEpoch = 0;
     _LastControlRequest = ExecutionControl_SendEvent;
     _ControlRequestOperand = Zeros{PTO_XLEN};
-    _BreakpointTag = Zeros{5};
     for ring = 0 to PTO_ACR_COUNT - 1 do
         _ACRTrapAsynchronous[[ring]] = FALSE;
         _ACRTrapArgumentValid[[ring]] = FALSE;
@@ -101,6 +104,8 @@ begin
         _TrapContexts[[ring]].bundle_argument_kind = Zeros{3};
         _TrapContexts[[ring]].bundle_active = FALSE;
         _TrapContexts[[ring]].bundle_body_active = FALSE;
+        _TrapContexts[[ring]].bundle_commit_target_set = FALSE;
+        _TrapContexts[[ring]].system_block_terminal_pending = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.valid = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.pre_quant_mode = Zeros{6};
         _TrapContexts[[ring]].bundle_fixed_point_attributes.relu_mode = Zeros{3};
@@ -109,9 +114,12 @@ begin
         _TrapContexts[[ring]].bundle_fixed_point_attributes.group_max_en = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.row_max_init = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.max_abs_en = FALSE;
+        _TrapContexts[[ring]].memory_copy_template = _MemoryCopyTemplate;
+        _TrapContexts[[ring]].frame_template = _FrameTemplate;
         _TrapContexts[[ring]].t_queue = _TQueue;
+        _TrapContexts[[ring]].t_queue_valid = _TQueueValid;
         _TrapContexts[[ring]].u_queue = _UQueue;
-        _TrapContexts[[ring]].execution_mask = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].u_queue_valid = _UQueueValid;
         _TrapContexts[[ring]].predicates = _PredicateRegisters;
     end;
     _SystemRegisters.thread_ptr = Zeros{PTO_XLEN};

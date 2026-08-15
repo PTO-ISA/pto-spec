@@ -96,15 +96,26 @@ begin
     return _ExtendedSystemRegisters[[SystemRegisterFileIndexOf(address)]];
 end;
 
+readonly func SystemRegisterWritePermitted(address: SystemRegisterAddress)
+    => boolean
+begin
+    let access = SystemRegisterAccessOf(address);
+    return SystemRegisterAccessPermitted(address, TRUE, CurrentACR()) &&
+           access != SystemRegisterAccess_Unknown &&
+           access != SystemRegisterAccess_ReadOnly;
+end;
+
+readonly func SystemRegisterSwapPermitted(address: SystemRegisterAddress)
+    => boolean
+begin
+    return SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) &&
+           SystemRegisterAccessPermitted(address, TRUE, CurrentACR()) &&
+           SystemRegisterAccessOf(address) == SystemRegisterAccess_ReadWrite;
+end;
+
 func WriteSystemRegisterAddress(address: SystemRegisterAddress, value: Word)
 begin
-    if !SystemRegisterAccessPermitted(address, TRUE, CurrentACR()) then
-        SetFault(Fault_IllegalInstruction, ReadPC());
-        return;
-    end;
-    let access = SystemRegisterAccessOf(address);
-    if access == SystemRegisterAccess_Unknown ||
-       access == SystemRegisterAccess_ReadOnly then
+    if !SystemRegisterWritePermitted(address) then
         SetFault(Fault_IllegalInstruction, ReadPC());
         return;
     end;
@@ -134,9 +145,7 @@ begin
     // A swap is a read/write transaction.  Preflight both permissions and the
     // access class before reading so a rejected swap cannot trigger read-side
     // effects such as timer-pending refresh on a read-only register.
-    if !SystemRegisterAccessPermitted(address, FALSE, CurrentACR()) ||
-       !SystemRegisterAccessPermitted(address, TRUE, CurrentACR()) ||
-       SystemRegisterAccessOf(address) != SystemRegisterAccess_ReadWrite then
+    if !SystemRegisterSwapPermitted(address) then
         SetFault(Fault_IllegalInstruction, ReadPC());
         return Zeros{PTO_XLEN};
     end;
@@ -161,13 +170,23 @@ end;
 func ExecuteSystemRegisterSet(source: Reg5Selector,
                               address: SystemRegisterAddress)
 begin
-    WriteSystemRegisterAddress(address, ReadScalarRegisterOperand(source));
+    if !SystemRegisterWritePermitted(address) then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return;
+    end;
+    let value = ReadScalarRegisterOperand(source);
+    WriteSystemRegisterAddress(address, value);
 end;
 
 func ExecuteSystemRegisterSwap(destination: Reg5Selector, source: Reg5Selector,
                                address: SystemRegisterAddress)
 begin
-    let old_value = SwapSystemRegisterAddress(address, ReadScalarRegisterOperand(source));
+    if !SystemRegisterSwapPermitted(address) then
+        SetFault(Fault_IllegalInstruction, ReadPC());
+        return;
+    end;
+    let value = ReadScalarRegisterOperand(source);
+    let old_value = SwapSystemRegisterAddress(address, value);
     if _LastFault == Fault_None then WriteScalarDestination(destination, old_value); end;
 end;
 ```

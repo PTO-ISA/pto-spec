@@ -99,10 +99,10 @@ begin
                 ScalarDecodedSystemRegisterAddress(
                     instruction, form, ScalarField_SSR_ID));
         when ScalarOperation_LSRGET =>
-            ExecuteSystemRegisterGet(
+            ExecuteLocalStateRegisterGet(
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
-                ScalarDecodedSystemRegisterAddress(
-                    instruction, form, ScalarField_LSR_ID));
+                DecodeScalarOperandRaw(
+                    instruction, form, ScalarField_LSR_ID)[11:0]);
         when ScalarOperation_SSRGET =>
             ExecuteSystemRegisterGet(
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst),

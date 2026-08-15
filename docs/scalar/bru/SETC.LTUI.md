@@ -31,13 +31,28 @@ setc.ltui SrcL, uimm
 | setc_ltui_32_7908d25901c6 | shamt | 5 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":5}] |
 | setc_ltui_32_7908d25901c6 | uimm12 | 12 | unsigned | [{"instruction_lsb":20,"value_lsb":0,"width":12}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| setc_ltui_32_7908d25901c6 | SrcL | 5 | 0–31 | none | none | left absolute GPR source | Encoded zero names the architectural zero GPR. |
+| setc_ltui_32_7908d25901c6 | shamt | 5 | 0–31 | none | none | shift amount | Encoded zero performs no shift. |
+| setc_ltui_32_7908d25901c6 | uimm12 | 12 | 0–4095 | none | none | 12-bit unsigned immediate | Encoded zero supplies numeric zero for the 12-bit unsigned immediate. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcL | encoded operand or control |
-| shamt | encoded operand or control |
-| uimm12 | encoded operand or control |
+| SrcL | left absolute GPR source |
+| shamt | shift amount |
+| uimm12 | 12-bit unsigned immediate |
 
 ## Decode
 
@@ -61,14 +76,36 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `SETC.LTUI - Compare scalar operands and update the bundle commit condition.`
-- **Semantic handler:** `ExecuteSetCommit`
+- Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects.
+
+## State effects
+
+- SETC.LTUI - Compare scalar operands and update the bundle commit condition.
+- After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+
+## Examples
+
+- setc.ltui SrcL, uimm
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

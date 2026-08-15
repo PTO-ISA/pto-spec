@@ -12,10 +12,28 @@ CHECKER = ROOT / "scripts/check-release-closure"
 REGISTRY = ROOT / "spec/release-inputs.json"
 MAKEFILE = ROOT / "Makefile"
 RELEASE_GATE = ROOT / "spec/evidence/release-gate-readiness.json"
+SPECIFICATION = ROOT / "specification.toml"
+RELEASE_GENERATOR = ROOT / "scripts/generate-release-manifest"
 
 
 class ReleaseClosureTest(unittest.TestCase):
-    def test_release_gate_provenance_covers_workflow_validator_implementation(self) -> None:
+    def test_release_identity_is_0581_and_owns_0581_evidence(self) -> None:
+        specification = SPECIFICATION.read_text(encoding="utf-8")
+        generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
+
+        self.assertIn('architecture_version = "0.58.1"', specification)
+        self.assertIn(
+            'encoding_abi = "pto-isa-0.58.1-mode-function-v1"', specification
+        )
+        self.assertIn('RELEASE = "0.58.1"', generator)
+        self.assertIn(
+            'ENCODING_ABI = "pto-isa-0.58.1-mode-function-v1"', generator
+        )
+        self.assertIn("pto-isa-0581-encoding-totality.json", generator)
+
+    def test_release_gate_provenance_covers_workflow_validator_implementation(
+        self,
+    ) -> None:
         gate = json.loads(RELEASE_GATE.read_text(encoding="utf-8"))
         self.assertIn("scripts/check-release-workflow", gate["sources"])
         self.assertIn("scripts/check-release-event-schema", gate["sources"])
@@ -25,11 +43,25 @@ class ReleaseClosureTest(unittest.TestCase):
         )
         self.assertIn("scripts/release_workflow.py", gate["sources"])
         self.assertIn("scripts/tile_taxonomy.py", gate["sources"])
+        self.assertIn("scripts/instruction_contracts.py", gate["sources"])
+        self.assertIn("scripts/generate-instruction-contract-closure", gate["sources"])
+        self.assertIn("scripts/manual_semantic_audit.py", gate["sources"])
+        self.assertIn(
+            {
+                "id": "RG-10",
+                "name": "formal mnemonic implementation closure",
+                "command": "python3 scripts/manual_semantic_audit.py",
+                "evidence": ["scripts/manual_semantic_audit.py"],
+            },
+            gate["gates"],
+        )
 
     def test_release_targets_require_fresh_canonical_evidence(self) -> None:
         makefile = MAKEFILE.read_text(encoding="utf-8")
         self.assertIn(
             "release-evidence-check:\n"
+            "\t./scripts/generate-instruction-contract-closure --check\n"
+            "\tpython3 scripts/manual_semantic_audit.py\n"
             "\t./scripts/generate-release-traceability-readiness --check\n"
             "\t./scripts/generate-release-gate-readiness --check\n"
             "\t./scripts/check-release-closure\n"
@@ -45,6 +77,7 @@ class ReleaseClosureTest(unittest.TestCase):
 
     def test_canonical_generators_reject_stale_artifacts(self) -> None:
         for generator in (
+            ROOT / "scripts/generate-instruction-contract-closure",
             ROOT / "scripts/generate-release-traceability-readiness",
             ROOT / "scripts/generate-release-gate-readiness",
         ):
@@ -74,9 +107,10 @@ class ReleaseClosureTest(unittest.TestCase):
         self.assertEqual(
             set(paths),
             {
-                "spec/evidence/pto-isa-0580-abi-vectors.json",
-                "spec/evidence/pto-isa-0580-encoding-totality.json",
-                "spec/evidence/pto-isa-0580-hardware-numeric-vectors.json",
+                "spec/evidence/pto-isa-0581-abi-vectors.json",
+                "spec/evidence/pto-isa-0581-encoding-totality.json",
+                "spec/evidence/pto-isa-0581-hardware-numeric-vectors.json",
+                "spec/evidence/instruction-contract-closure.json",
                 "spec/evidence/release-gate-readiness.json",
                 "spec/evidence/release-traceability-readiness.json",
                 "spec/schemas/pto-spec-release-event-v1.schema.json",
@@ -92,7 +126,9 @@ class ReleaseClosureTest(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def test_checker_rejects_legacy_and_missing_paths_in_registered_evidence(self) -> None:
+    def test_checker_rejects_legacy_and_missing_paths_in_registered_evidence(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "spec/evidence").mkdir(parents=True)

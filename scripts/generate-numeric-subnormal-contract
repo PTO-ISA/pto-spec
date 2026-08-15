@@ -24,7 +24,7 @@ COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
 ACCEPTANCE_RECORD = "docs/status/decisions/0049-hardware-subnormal-policy.md"
-PROFILE_ID = "pto-hardware-numeric-0.58.0-ieee-v1"
+PROFILE_ID = "pto-hardware-numeric-0.58.1-ieee-v1"
 
 
 # name, ASL enumerator, logical width, minimum positive subnormal,
@@ -97,7 +97,7 @@ def generate() -> dict[str, Any]:
             "flush_to_zero": False,
             "input_subnormals": "preserve exact source value",
             "operation_override": False,
-            "profile_selection": "fixed by pto-hardware-numeric-0.58.0-ieee-v1",
+            "profile_selection": "fixed by pto-hardware-numeric-0.58.1-ieee-v1",
             "result_subnormals": "gradual underflow to the destination format",
             "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
             "tininess_detection": "after-rounding",
@@ -267,9 +267,9 @@ def generate() -> dict[str, Any]:
             ],
         },
         "tests": [
-            "tests/asl/profile-tests.asl:ValidateNumericFormatClassification",
-            "tests/asl/profile-tests.asl:AssertHardwareNumericSubnormalBoundary",
-            "tests/asl/profile-tests.asl:AssertHardwareNumericSubnormalNotApplicable",
+            "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:ValidateNumericFormatClassification",
+            "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:AssertHardwareNumericSubnormalBoundary",
+            "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:AssertHardwareNumericSubnormalNotApplicable",
         ],
         "sources": [
             source("spec/hardware-conformance-profile.json"),
@@ -279,7 +279,9 @@ def generate() -> dict[str, Any]:
             source("spec/evidence/executable-model-comparison.json"),
             *source_rows(ROOT, "asl/arch/data-types/*.asl"),
             *source_rows(ROOT, "asl/tile/model/numeric/formats.asl"),
-            source("tests/asl/profile-tests.asl"),
+            source(
+                "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
+            ),
             source(ACCEPTANCE_RECORD),
         ],
         "summary": {

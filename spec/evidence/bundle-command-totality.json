@@ -2,18 +2,18 @@
   "schema_version": 1,
   "target": "S4-T7",
   "status": "closed",
-  "accepted_form_count": 100,
+  "accepted_form_count": 74,
   "encoding_variant_count": 5,
   "disposition_counts": {
-    "executed": 90,
+    "executed": 64,
     "pto-v0-rejected": 10
   },
   "handler_counts": {
     "BindBundleScalarIO": 1,
     "BindBundleSharedIO": 1,
     "BindBundleTileIO": 5,
-    "ExecuteBundleStart": 69,
-    "ExecuteBundleStop": 2,
+    "ExecuteBundleStart": 43,
+    "ExecuteBundleStop": 3,
     "ExecuteCrossBlockTransfer": 1,
     "ExecuteFrameEntry": 1,
     "ExecuteFrameExit": 1,
@@ -26,7 +26,6 @@
     "ExecuteQueuePush": 1,
     "RecoverExecutionContext": 1,
     "SaveExecutionContext": 1,
-    "SetBundleBodyAddress": 1,
     "SetBundleControlAttributes": 1,
     "SetBundleDataAttributes": 1,
     "SetBundleDimension": 4,
@@ -54,7 +53,7 @@
     "retirement_rule": "Every successful non-start/non-stop command advances TPC by its encoded instruction length; start and stop own their control transfer.",
     "argument_rule": "All six B.ARG forms retain distinct three-bit argument-kind state; the dynamic form also records its decoded value.",
     "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
-    "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO-v0 resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, and operation-default operands before commit.",
+    "metadata_rule": "B.DIM, B.IOR, B.IOT, B.IOS, B.CATR, B.DATR, and B.FPATR consume every decoded field into trap-preserved bundle state. After the complete bundle is collected, PTO resolves the selected direct operation's tile, scalar/address, dimension, data-attribute, fixed-point-attribute, and operation-default operands before commit.",
     "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
     "bridge_rule": "The PTO-v0 bundle bridge resolves every canonical TileInstructionOperands field through a concrete ordered B.IOT/B.IOR resolver or explicit operation default, with raw-value decode policy recorded before constrained assignment. B.IOR GPR inputs use the fixed address, scalar0, scalar1, diagonal, flag0 order, occupy unique dense RegSrc0..RegSrc2 slots, and never exceed three inputs. Duplicate fields, duplicate assigned slots, malformed or surplus bindings reject before tile effects.",
     "matrix_postprocess_rule": "CUBE complete-bundle evidence adds optional scalar QuantParam and scalar LReLUParam after the baseline logical GPR fields, and optional RowMaxIn/vector QuantParam/vector PReLUParam before D/RowMaxOut/GroupMaxOut in the compact B.IOT stream. The static mathematical operand catalog remains unchanged."
@@ -344,22 +343,6 @@
     },
     {
       "form_index": 13,
-      "form_id": "b_text_32_1ce09f50e5dd",
-      "mnemonic": "B.TEXT",
-      "semantic_handler": "SetBundleBodyAddress",
-      "decoded_fields": [
-        "simm25"
-      ],
-      "consumed_fields": [
-        "simm25"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-body-address",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": true
-    },
-    {
-      "form_index": 14,
       "form_id": "bstart_32_7eb93b649748",
       "mnemonic": "BSTART",
       "semantic_handler": "ExecuteBundleStart",
@@ -375,7 +358,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 15,
+      "form_index": 14,
       "form_id": "bstart_32_e11e678a32ac",
       "mnemonic": "BSTART",
       "semantic_handler": "ExecuteBundleStart",
@@ -391,9 +374,9 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 16,
+      "form_index": 15,
       "form_id": "bstart_call_32_9404418d1ae5",
-      "mnemonic": "BSTART CALL",
+      "mnemonic": "BSTART.CALL",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "simm12",
@@ -401,6 +384,22 @@
       ],
       "consumed_fields": [
         "simm12",
+        "uimm5"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 16,
+      "form_id": "bstart_icall_32_50166001",
+      "mnemonic": "BSTART.ICALL",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "uimm5"
+      ],
+      "consumed_fields": [
         "uimm5"
       ],
       "disposition": "executed",
@@ -422,18 +421,6 @@
     },
     {
       "form_index": 18,
-      "form_id": "bstart_fp_32_24db3966d6ba",
-      "mnemonic": "BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [],
-      "consumed_fields": [],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 19,
       "form_id": "bstart_fp_32_58ad7954fb49",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -449,7 +436,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 20,
+      "form_index": 19,
       "form_id": "bstart_fp_32_7978795a29a1",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -461,7 +448,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 21,
+      "form_index": 20,
       "form_id": "bstart_fp_32_d00a708a81f0",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -477,23 +464,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 22,
-      "form_id": "bstart_fp_32_dd7bc8dd694c",
-      "mnemonic": "BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm17"
-      ],
-      "consumed_fields": [
-        "simm17"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 23,
+      "form_index": 21,
       "form_id": "bstart_fp_32_face4f238d84",
       "mnemonic": "BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -509,7 +480,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 24,
+      "form_index": 22,
       "form_id": "bstart_mgather_32_c9defbf18276",
       "mnemonic": "BSTART.MGATHER",
       "semantic_handler": "ExecuteBundleStart",
@@ -525,7 +496,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 25,
+      "form_index": 23,
       "form_id": "bstart_mgather_cas_32_fd8c8a3b720a",
       "mnemonic": "BSTART.MGATHER.CAS",
       "semantic_handler": "ExecuteBundleStart",
@@ -541,7 +512,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 26,
+      "form_index": 24,
       "form_id": "bstart_mgather_mask_32_5573241cd944",
       "mnemonic": "BSTART.MGATHER.MASK",
       "semantic_handler": "ExecuteBundleStart",
@@ -557,7 +528,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 27,
+      "form_index": 25,
       "form_id": "bstart_mscatter_mask_32_2a33eed646f7",
       "mnemonic": "BSTART.MSCATTER.MASK",
       "semantic_handler": "ExecuteBundleStart",
@@ -573,23 +544,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 28,
-      "form_id": "bstart_mpar_32_2d163417c615",
-      "mnemonic": "BSTART.MPAR",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "Mode"
-      ],
-      "consumed_fields": [
-        "Mode"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 29,
+      "form_index": 26,
       "form_id": "bstart_mscatter_32_0f0ba08bd798",
       "mnemonic": "BSTART.MSCATTER",
       "semantic_handler": "ExecuteBundleStart",
@@ -605,23 +560,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 30,
-      "form_id": "bstart_mseq_32_39343a456ec5",
-      "mnemonic": "BSTART.MSEQ",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "Mode"
-      ],
-      "consumed_fields": [
-        "Mode"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 31,
+      "form_index": 27,
       "form_id": "bstart_std_32_1ef99c4cedcb",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -637,19 +576,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 32,
-      "form_id": "bstart_std_32_3f6980d013f7",
-      "mnemonic": "BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [],
-      "consumed_fields": [],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 33,
+      "form_index": 28,
       "form_id": "bstart_std_32_441ad677fffe",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -665,7 +592,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 34,
+      "form_index": 29,
       "form_id": "bstart_std_32_816dfa76cc4a",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -677,7 +604,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 35,
+      "form_index": 30,
       "form_id": "bstart_std_32_986b7ee2cf6a",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -689,23 +616,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 36,
-      "form_id": "bstart_std_32_b05390d367cf",
-      "mnemonic": "BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm17"
-      ],
-      "consumed_fields": [
-        "simm17"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 37,
+      "form_index": 31,
       "form_id": "bstart_std_32_c1de85e06878",
       "mnemonic": "BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -721,7 +632,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 38,
+      "form_index": 32,
       "form_id": "bstart_sys_32_762d9d84a6d8",
       "mnemonic": "BSTART.SYS",
       "semantic_handler": "ExecuteBundleStart",
@@ -737,7 +648,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 39,
+      "form_index": 33,
       "form_id": "bstart_tepl_32_d022db6dacb3",
       "mnemonic": "BSTART.TEPL",
       "semantic_handler": "ExecuteBundleStart",
@@ -757,7 +668,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 40,
+      "form_index": 34,
       "form_id": "bstart_tgemv_32_ae19f5b678f5",
       "mnemonic": "BSTART.TGEMV",
       "semantic_handler": "ExecuteBundleStart",
@@ -773,7 +684,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 41,
+      "form_index": 35,
       "form_id": "bstart_tgemv_acc_32_9a471b21913e",
       "mnemonic": "BSTART.TGEMV.ACC",
       "semantic_handler": "ExecuteBundleStart",
@@ -789,7 +700,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 42,
+      "form_index": 36,
       "form_id": "bstart_tgemv_bias_32_186ee96c0a8b",
       "mnemonic": "BSTART.TGEMV.BIAS",
       "semantic_handler": "ExecuteBundleStart",
@@ -805,7 +716,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 43,
+      "form_index": 37,
       "form_id": "bstart_tgemvmx_32_ae5e005f6589",
       "mnemonic": "BSTART.TGEMVMX",
       "semantic_handler": "ExecuteBundleStart",
@@ -821,7 +732,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 44,
+      "form_index": 38,
       "form_id": "bstart_tgemvmx_acc_32_368647b04bb0",
       "mnemonic": "BSTART.TGEMVMX.ACC",
       "semantic_handler": "ExecuteBundleStart",
@@ -837,7 +748,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 45,
+      "form_index": 39,
       "form_id": "bstart_tgemvmx_bias_32_d23011f15171",
       "mnemonic": "BSTART.TGEMVMX.BIAS",
       "semantic_handler": "ExecuteBundleStart",
@@ -853,7 +764,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 46,
+      "form_index": 40,
       "form_id": "bstart_tload_32_d0c18bb0ab15",
       "mnemonic": "BSTART.TLOAD",
       "semantic_handler": "ExecuteBundleStart",
@@ -869,7 +780,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 47,
+      "form_index": 41,
       "form_id": "bstart_tmatmul_32_f9da70e4e0ad",
       "mnemonic": "BSTART.TMATMUL",
       "semantic_handler": "ExecuteBundleStart",
@@ -885,7 +796,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 48,
+      "form_index": 42,
       "form_id": "bstart_tmatmul_acc_32_0c8c62e5f00a",
       "mnemonic": "BSTART.TMATMUL.ACC",
       "semantic_handler": "ExecuteBundleStart",
@@ -901,7 +812,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 49,
+      "form_index": 43,
       "form_id": "bstart_tmatmul_bias_32_4d5a498d12f3",
       "mnemonic": "BSTART.TMATMUL.BIAS",
       "semantic_handler": "ExecuteBundleStart",
@@ -917,7 +828,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 50,
+      "form_index": 44,
       "form_id": "bstart_tmatmulmx_32_e26cb3874648",
       "mnemonic": "BSTART.TMATMULMX",
       "semantic_handler": "ExecuteBundleStart",
@@ -933,7 +844,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 51,
+      "form_index": 45,
       "form_id": "bstart_tmatmulmx_acc_32_70fa59b0ab4c",
       "mnemonic": "BSTART.TMATMULMX.ACC",
       "semantic_handler": "ExecuteBundleStart",
@@ -949,7 +860,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 52,
+      "form_index": 46,
       "form_id": "bstart_tmatmulmx_bias_32_098c7efa51b0",
       "mnemonic": "BSTART.TMATMULMX.BIAS",
       "semantic_handler": "ExecuteBundleStart",
@@ -965,7 +876,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 53,
+      "form_index": 47,
       "form_id": "bstart_tmov_32_211446509efb",
       "mnemonic": "BSTART.TMOV",
       "semantic_handler": "ExecuteBundleStart",
@@ -981,7 +892,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 54,
+      "form_index": 48,
       "form_id": "bstart_gmov_32_6c21e223eaa7",
       "mnemonic": "BSTART.GMOV",
       "semantic_handler": "ExecuteBundleStart",
@@ -997,7 +908,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 55,
+      "form_index": 49,
       "form_id": "bstart_tprefetch_32_d5f83e5aadf6",
       "mnemonic": "BSTART.TPREFETCH",
       "semantic_handler": "ExecuteBundleStart",
@@ -1013,7 +924,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 56,
+      "form_index": 50,
       "form_id": "bstart_tstore_32_4048b6e8b0f4",
       "mnemonic": "BSTART.TSTORE",
       "semantic_handler": "ExecuteBundleStart",
@@ -1029,7 +940,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 57,
+      "form_index": 51,
       "form_id": "bstop_32_d25b09fdd59c",
       "mnemonic": "BSTOP",
       "semantic_handler": "ExecuteBundleStop",
@@ -1041,7 +952,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 58,
+      "form_index": 52,
       "form_id": "b_ios_32_4ba5ef98fdaa",
       "mnemonic": "B.IOS",
       "semantic_handler": "BindBundleSharedIO",
@@ -1061,7 +972,7 @@
       "sequential_tpc_advance": true
     },
     {
-      "form_index": 59,
+      "form_index": 53,
       "form_id": "c_b_dimi_16_3f1b113c76ce",
       "mnemonic": "C.B.DIMI",
       "semantic_handler": "SetBundleDimension",
@@ -1079,7 +990,7 @@
       "sequential_tpc_advance": true
     },
     {
-      "form_index": 60,
+      "form_index": 54,
       "form_id": "c_bstart_16_c4e238a9227a",
       "mnemonic": "C.BSTART",
       "semantic_handler": "ExecuteBundleStart",
@@ -1095,7 +1006,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 61,
+      "form_index": 55,
       "form_id": "c_bstart_16_f833d2a4753c",
       "mnemonic": "C.BSTART",
       "semantic_handler": "ExecuteBundleStart",
@@ -1111,7 +1022,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 62,
+      "form_index": 56,
       "form_id": "c_bstart_fp_16_9dcef7e3a85b",
       "mnemonic": "C.BSTART.FP",
       "semantic_handler": "ExecuteBundleStart",
@@ -1127,31 +1038,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 63,
-      "form_id": "c_bstart_mpar_16_66c3ef2226ec",
-      "mnemonic": "C.BSTART.MPAR",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [],
-      "consumed_fields": [],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 64,
-      "form_id": "c_bstart_mseq_16_b5597e0e41c2",
-      "mnemonic": "C.BSTART.MSEQ",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [],
-      "consumed_fields": [],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 65,
+      "form_index": 57,
       "form_id": "c_bstart_std_16_8b40f078c14a",
       "mnemonic": "C.BSTART.STD",
       "semantic_handler": "ExecuteBundleStart",
@@ -1167,7 +1054,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 66,
+      "form_index": 58,
       "form_id": "c_bstart_sys_16_ec213ce96eb7",
       "mnemonic": "C.BSTART.SYS",
       "semantic_handler": "ExecuteBundleStart",
@@ -1179,7 +1066,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 67,
+      "form_index": 59,
       "form_id": "c_bstop_16_ca4743d8a95e",
       "mnemonic": "C.BSTOP",
       "semantic_handler": "ExecuteBundleStop",
@@ -1191,7 +1078,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 68,
+      "form_index": 60,
       "form_id": "ercov_32_dc0be14a2d8b",
       "mnemonic": "ERCOV",
       "semantic_handler": "RecoverExecutionContext",
@@ -1207,7 +1094,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 69,
+      "form_index": 61,
       "form_id": "esave_32_4c4f79fe3171",
       "mnemonic": "ESAVE",
       "semantic_handler": "SaveExecutionContext",
@@ -1223,7 +1110,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 70,
+      "form_index": 62,
       "form_id": "fentry_32_a47584ec13b6",
       "mnemonic": "FENTRY",
       "semantic_handler": "ExecuteFrameEntry",
@@ -1239,7 +1126,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 71,
+      "form_index": 63,
       "form_id": "fexit_32_37b663f2a34d",
       "mnemonic": "FEXIT",
       "semantic_handler": "ExecuteFrameExit",
@@ -1255,7 +1142,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 72,
+      "form_index": 64,
       "form_id": "fret_ra_32_659c886221c1",
       "mnemonic": "FRET.RA",
       "semantic_handler": "ExecuteFrameReturnAddress",
@@ -1271,7 +1158,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 73,
+      "form_index": 65,
       "form_id": "fret_stk_32_4fe246bd8241",
       "mnemonic": "FRET.STK",
       "semantic_handler": "ExecuteFrameReturnStack",
@@ -1287,169 +1174,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 74,
-      "form_id": "hl_bstart_call_48_3c784c583c90",
-      "mnemonic": "HL.BSTART CALL",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm25",
-        "uimm5"
-      ],
-      "consumed_fields": [
-        "simm25",
-        "uimm5"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 75,
-      "form_id": "hl_bstart_fp_48_038e2e96cf64",
-      "mnemonic": "HL.BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 76,
-      "form_id": "hl_bstart_fp_48_43530d2ebfae",
-      "mnemonic": "HL.BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 77,
-      "form_id": "hl_bstart_fp_48_81b457553844",
-      "mnemonic": "HL.BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 78,
-      "form_id": "hl_bstart_fp_48_eb938e9200eb",
-      "mnemonic": "HL.BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 79,
-      "form_id": "hl_bstart_std_48_51f78942222e",
-      "mnemonic": "HL.BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 80,
-      "form_id": "hl_bstart_std_48_9ba705800872",
-      "mnemonic": "HL.BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 81,
-      "form_id": "hl_bstart_std_48_b13f22c7c4a3",
-      "mnemonic": "HL.BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 82,
-      "form_id": "hl_bstart_std_48_d814d26508a4",
-      "mnemonic": "HL.BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 83,
-      "form_id": "hl_bstart_sys_48_5bf0381f7bf8",
-      "mnemonic": "HL.BSTART.SYS",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 84,
+      "form_index": 66,
       "form_id": "hl_qmt_48_eb9e41958045",
       "mnemonic": "HL.QMT",
       "semantic_handler": "ExecuteQueueMove",
@@ -1469,7 +1194,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 85,
+      "form_index": 67,
       "form_id": "hl_qpop_48_a2c57f5bc27b",
       "mnemonic": "HL.QPOP",
       "semantic_handler": "ExecuteQueuePop",
@@ -1488,7 +1213,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 86,
+      "form_index": 68,
       "form_id": "hl_qpush_48_3eab8e05d61a",
       "mnemonic": "HL.QPUSH",
       "semantic_handler": "ExecuteQueuePush",
@@ -1507,151 +1232,7 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 87,
-      "form_id": "l_bstart_fp_64_098e57019d7b",
-      "mnemonic": "L.BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 88,
-      "form_id": "l_bstart_fp_64_0cac9941f7d4",
-      "mnemonic": "L.BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 89,
-      "form_id": "l_bstart_fp_64_2067ad6667ed",
-      "mnemonic": "L.BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 90,
-      "form_id": "l_bstart_fp_64_8115c042ef26",
-      "mnemonic": "L.BSTART.FP",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 91,
-      "form_id": "l_bstart_std_64_37e84068ce61",
-      "mnemonic": "L.BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 92,
-      "form_id": "l_bstart_std_64_463a1567da91",
-      "mnemonic": "L.BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 93,
-      "form_id": "l_bstart_std_64_72d502fcd30d",
-      "mnemonic": "L.BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 94,
-      "form_id": "l_bstart_std_64_899592f9c5bc",
-      "mnemonic": "L.BSTART.STD",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 95,
-      "form_id": "l_bstart_sys_64_919e576c79e4",
-      "mnemonic": "L.BSTART.SYS",
-      "semantic_handler": "ExecuteBundleStart",
-      "decoded_fields": [
-        "simm"
-      ],
-      "consumed_fields": [
-        "simm"
-      ],
-      "disposition": "executed",
-      "effect_class": "bundle-start-descriptor",
-      "rejection_precedes_effects": false,
-      "sequential_tpc_advance": false
-    },
-    {
-      "form_index": 96,
+      "form_index": 69,
       "form_id": "mcopy_32_4fc4a803e995",
       "mnemonic": "MCOPY",
       "semantic_handler": "ExecuteMemoryCopy",
@@ -1671,7 +1252,7 @@
       "sequential_tpc_advance": true
     },
     {
-      "form_index": 97,
+      "form_index": 70,
       "form_id": "mset_32_0b932f291932",
       "mnemonic": "MSET",
       "semantic_handler": "ExecuteMemorySet",
@@ -1691,7 +1272,7 @@
       "sequential_tpc_advance": true
     },
     {
-      "form_index": 98,
+      "form_index": 71,
       "form_id": "xb_32_40ad190a0a7f",
       "mnemonic": "XB",
       "semantic_handler": "ExecuteCrossBlockTransfer",
@@ -1706,7 +1287,19 @@
       "sequential_tpc_advance": false
     },
     {
-      "form_index": 99,
+      "form_index": 72,
+      "form_id": "l_bstop_64_94c7f0a5e8b3",
+      "mnemonic": "L.BSTOP",
+      "semantic_handler": "ExecuteBundleStop",
+      "decoded_fields": [],
+      "consumed_fields": [],
+      "disposition": "executed",
+      "effect_class": "bundle-commit-and-stop",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 73,
       "form_id": "b_fpatr_32_4f2db11e8e8a",
       "mnemonic": "B.FPATR",
       "semantic_handler": "SetBundleFixedPointAttributes",
@@ -1748,7 +1341,7 @@
   ],
   "encoding_variant_matrix": [
     {
-      "form_index": 53,
+      "form_index": 47,
       "form_id": "bstart_tmov_32_211446509efb",
       "mnemonic": "BSTART.TMOV",
       "variant_name": "TMOV.L2S.INSERT",
@@ -1765,7 +1358,7 @@
       "decoder_disposition": "executed"
     },
     {
-      "form_index": 53,
+      "form_index": 47,
       "form_id": "bstart_tmov_32_211446509efb",
       "mnemonic": "BSTART.TMOV",
       "variant_name": "TMOV.L2S.PUBLISH",
@@ -1782,7 +1375,7 @@
       "decoder_disposition": "executed"
     },
     {
-      "form_index": 53,
+      "form_index": 47,
       "form_id": "bstart_tmov_32_211446509efb",
       "mnemonic": "BSTART.TMOV",
       "variant_name": "TMOV.S2L.BROADCAST",
@@ -1799,7 +1392,7 @@
       "decoder_disposition": "executed"
     },
     {
-      "form_index": 53,
+      "form_index": 47,
       "form_id": "bstart_tmov_32_211446509efb",
       "mnemonic": "BSTART.TMOV",
       "variant_name": "TMOV.S2L.EXTRACT",
@@ -1816,7 +1409,7 @@
       "decoder_disposition": "executed"
     },
     {
-      "form_index": 56,
+      "form_index": 50,
       "form_id": "bstart_tstore_32_4048b6e8b0f4",
       "mnemonic": "BSTART.TSTORE",
       "variant_name": "TSTORE.SPART",
@@ -5343,7 +4936,10 @@
         "operation": "TPREFETCH",
         "operand_fields": [
           "address",
-          "byte_count"
+          "scalar0",
+          "positive0",
+          "positive1",
+          "positive2"
         ],
         "operand_resolutions": [
           {
@@ -5354,16 +4950,36 @@
             "slot": "RegSrc0"
           },
           {
-            "field": "byte_count",
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc1"
+          },
+          {
+            "field": "positive0",
             "resolver": "B.DIM LB0",
-            "default": "0",
-            "raw_value_policy": "natural integer 0..262144"
+            "default": "1",
+            "raw_value_policy": "positive integer 1..65535"
+          },
+          {
+            "field": "positive1",
+            "resolver": "B.DIM LB1",
+            "default": "1",
+            "raw_value_policy": "positive integer 1..65535"
+          },
+          {
+            "field": "positive2",
+            "resolver": "operation default",
+            "default": "1",
+            "raw_value_policy": "positive integer 1..65535 (default only)"
           }
         ],
         "gpr_input_slots": {
-          "address": "RegSrc0"
+          "address": "RegSrc0",
+          "scalar0": "RegSrc1"
         },
-        "gpr_input_count": 1,
+        "gpr_input_count": 2,
         "representable": true,
         "unsupported_operand_fields": [],
         "complete_bundle_schema": null,
@@ -7255,13 +6871,13 @@
   },
   "executable_evidence": {
     "canonical_form_test": "scripts/generate-asl-decoders:ValidateCanonicalCommandExecution",
-    "boundary_test": "tests/asl/block/model/dispatch/commands/PTO-AVS-BLOCK-TESTBUNDLECOMMANDTOTALITYBOUNDARIES-BOUNDARY-001.asl:TestBundleCommandTotalityBoundaries",
+    "boundary_test": "tests/asl/block/model/dispatch/commands/block-bound-command-totality-boundaries-001.asl:TestBundleCommandTotalityBoundaries",
     "bridge_tests": [
-      "tests/asl/block/model/commit/effects/PTO-AVS-BLOCK-TESTBUNDLETILECOMMITLIFECYCLE-STATE-TRANSITION-001.asl:TestBundleTileCommitLifecycle",
-      "tests/asl/block/model/faults/rollback/PTO-AVS-BLOCK-TESTBUNDLETILECOMMITROLLBACK-EXECUTION-001.asl:TestBundleTileCommitRollback",
-      "tests/asl/block/operands/B.IOR/PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001.asl:TestBundleScalarBindingSchemaDefaults"
+      "tests/asl/block/model/commit/effects/block-state-tile-commit-lifecycle-001.asl:TestBundleTileCommitLifecycle",
+      "tests/asl/block/model/faults/rollback/block-exec-tile-commit-001.asl:TestBundleTileCommitRollback",
+      "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl:TestBundleScalarBindingSchemaDefaults"
     ],
-    "canonical_form_case_count": 100,
+    "canonical_form_case_count": 74,
     "decoded_complete_bundle_matrix": [
       {
         "case": "canonical-none-observable-D",
@@ -7333,12 +6949,12 @@
   "independent_comparison": {
     "source": "content-addressed independent executable ISA snapshot",
     "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
-    "matched_form_ids": 100,
-    "exact_encoding_matches": 89,
+    "matched_form_ids": 74,
+    "exact_encoding_matches": 62,
     "accepted_abi_encoding_divergences": 7,
-    "executable_subset": 80,
+    "executable_subset": 53,
     "decode_only": 16,
-    "missing": 4,
+    "missing": 5,
     "authority": "non-normative structural comparison only",
     "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and the completed direct-operation bundle schema. It stages bundle headers rather than tile payload execution, so the PTO catalogs, ADR 0055, and PTO-owned ASL evidence remain authoritative."
   },

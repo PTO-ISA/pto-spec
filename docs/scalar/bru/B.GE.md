@@ -31,13 +31,28 @@ b.ge SrcL, SrcR, label
 | b_ge_32_7bd9050705dc | SrcR | 5 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":5}] |
 | b_ge_32_7bd9050705dc | simm12 | 12 | signed | [{"instruction_lsb":25,"value_lsb":0,"width":7},{"instruction_lsb":7,"value_lsb":7,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| b_ge_32_7bd9050705dc | SrcL | 5 | 0–31 | none | none | left absolute GPR source | Encoded zero names the architectural zero GPR. |
+| b_ge_32_7bd9050705dc | SrcR | 5 | 0–31 | none | none | right absolute GPR source | Encoded zero names the architectural zero GPR. |
+| b_ge_32_7bd9050705dc | simm12 | 12 | 0–4095 | none | none | 12-bit signed immediate or displacement | Encoded zero supplies numeric zero for the 12-bit signed immediate or displacement. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcL | encoded operand or control |
-| SrcR | encoded operand or control |
-| simm12 | encoded operand or control |
+| SrcL | left absolute GPR source |
+| SrcR | right absolute GPR source |
+| simm12 | 12-bit signed immediate or displacement |
 
 ## Decode
 
@@ -61,14 +76,36 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `B.GE - Conditionally branch to the PC-relative target after comparing scalar operands.`
-- **Semantic handler:** `BranchRelative`
+- Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects.
+
+## State effects
+
+- B.GE - Conditionally branch to the PC-relative target after comparing scalar operands.
+- After decode and legality checks, execute the normative BranchRelative ASL handler; no other architectural state is modified.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+
+## Examples
+
+- b.ge SrcL, SrcR, label
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

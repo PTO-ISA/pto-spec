@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/FENCE.D.asl`
 
-FENCE.D - Order the selected predecessor and successor data-access classes.
+FENCE.D records predecessor/successor ordering masks and invalidates the local reservation.
 
 ## Normative identity {#PTO-INST-SCALAR-FENCE-D}
 
@@ -30,43 +30,106 @@ fence.d pred_imm, succ_imm
 | fence_d_32_f4783f17d84d | PRED_IMM | 4 | encoding-defined | [{"instruction_lsb":24,"value_lsb":0,"width":4}] |
 | fence_d_32_f4783f17d84d | SUCC_IMM | 4 | encoding-defined | [{"instruction_lsb":20,"value_lsb":0,"width":4}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| fence_d_32_f4783f17d84d | PRED_IMM | 4 | 0–15 | none | none | fence predecessor access-class mask | Encoded zero selects value zero of the fence predecessor access-class mask. |
+| fence_d_32_f4783f17d84d | SUCC_IMM | 4 | 0–15 | none | none | fence successor access-class mask | Encoded zero selects value zero of the fence successor access-class mask. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| PRED_IMM | encoded operand or control |
-| SUCC_IMM | encoded operand or control |
+| PRED_IMM | fence predecessor access-class mask |
+| SUCC_IMM | fence successor access-class mask |
 
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/FENCE.D.asl -->
 ```asl
-readonly func InstructionContractOperation_FENCE_D() => ScalarOperation
+readonly func InstructionContractOperation_FENCE_D()
+    => ScalarOperation
 begin
     return ScalarOperation_FENCE_D;
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
+## Block composition
+
+```asm
+FENCE.D executes as one scalar operation in the body of an active SYS block.
+```
+
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/FENCE.D.asl -->
 ```asl
-readonly func InstructionContractHandler_FENCE_D() => ScalarSemanticHandler
+readonly func InstructionContractHandler_FENCE_D()
+    => ScalarSemanticHandler
 begin
     return ScalarHandler_FenceData;
+end;
+
+pure func InstructionContractRequiresSystemBlock_FENCE_D()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractFenceMaskWidth_FENCE_D()
+    => integer {4}
+begin
+    return 4;
+end;
+
+pure func InstructionContractFenceInvalidatesReservation_FENCE_D()
+    => boolean
+begin
+    return TRUE;
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `FENCE.D - Order the selected predecessor and successor data-access classes.`
-- **Semantic handler:** `FenceData`
+- All sixteen values of each four-bit predecessor and successor mask are assigned.
+
+## State effects
+
+- Invalidate the local reservation, record both masks, emit the fence event, and advance TPC.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Record the exact predecessor and successor masks as one data-fence event.
+- If either mask carries the instruction-visibility bit, advance the instruction-cache epoch.
+
+## Exceptions
+
+- Invalid block placement raises Illegal Block Exception before encoded-field legality or effects.
+- A reserved encoding or rejected access raises Illegal Instruction before destination, queue, system-state, or TPC effects.
+
+## Examples
+
+- fence.d pred_imm, succ_imm
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

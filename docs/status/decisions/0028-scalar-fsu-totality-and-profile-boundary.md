@@ -35,9 +35,8 @@ width-specific total-order key defined by the scalar ASL.
 All eight comparisons are ordered. Any quiet or signaling NaN therefore
 produces false, including `FNE` and `FNES`. Quiet comparison forms record NV
 only for a signaling NaN. Signaling forms record NV for any NaN. Every result
-is the full-width canonical word zero or one. This PTO-owned rule is explicit
-because an independent executable comparison implemented NaN `NE` as the
-negation of equality; that behavior is not imported.
+is the full-width canonical word zero or one. NaN `NE` is not defined as the
+negation of equality.
 
 CORE_STATE bits 39 through 37 encode nearest, down, up, toward zero, and away
 as 0 through 4. Reserved encodings 5 through 7 normalize to nearest before an
@@ -78,19 +77,10 @@ legality, alias, flag, and dispatch-owned rules from Stage 5 target arithmetic
 lets both layers fail closed. It also resolves the former ambiguity in which
 negative zero missed the documented PTO-v0 zero-divisor path.
 
-An independent executable ISA/model comparison corroborates the shared
-FP32/FP64 source map, legal destination-width map, rounding selections, ABS,
-min/max NaN results, the shared signed-zero cases, and ordinary GPR
-read-before-write. It diverges for `FMAX(-0, -0)`: PTO preserves negative zero,
-while the comparison model returns positive zero for every two-zero `FMAX`
-pair. It does not model PTO Reg5 queues or PTO's attempt/fault envelope, and it
-omits or diverges on several legality and flag rules. PTO remains authoritative.
-
 ## Verification
 
-`spec/evidence/scalar-fsu-totality.json` records the format-code table,
-comparison disposition, profile boundary, and publication-safe independent
-comparison. Generated ASL executes 2,270 decoded cases: 488 type/legality,
+`spec/evidence/scalar-fsu-totality.json` records the format-code table and
+profile boundary. Generated ASL executes 2,270 decoded cases: 488 type/legality,
 500 raw-boundary, 152 rounding-binding, 920 Reg5/alias, and 210 sticky-flag
 cases. The type matrix contains 204 rejected instructions and checks precise
 fault context plus no partial register, queue, flag, or TPC effect. A further

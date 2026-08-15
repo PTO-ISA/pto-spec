@@ -32,9 +32,9 @@ normal discard, absolute-GPR, push-U, and push-T rules. `C.CMP.EQI` and
 Relative branches and jumps add the sign-extended decoded offset, shifted left
 by one, to the pre-increment TPC. A conditional branch that is not taken writes
 pre-increment TPC plus four. Arithmetic wraps modulo `2^64`. `B.Z` and `B.NZ`
-read the 64-bit execution mask in an active MPAR or MSEQ body and read the
-commit argument everywhere else. The separate 32-bit P0 through P7 warp
-predicate registers and all other bundle state are preserved.
+always read the bundle commit argument established by `SETC.*`. The separate
+32-bit P0 through P7 predicate registers and all other bundle state are
+preserved.
 
 `JR` adds its sign-extended, halfword-scaled offset to the snapshotted source.
 Its encoded `SrcZero` field is absent from the assembly grammar and is an
@@ -62,13 +62,6 @@ The catalog accepts every Reg5 source selector used by BRU forms and leaves
 source/destination overlap legal. The target rules must therefore define queue
 sources, source snapshots, destination pushes, wrapping, and fault effects
 rather than relying on host evaluation order or an implementation fetch unit.
-
-An independent executable ISA/model comparison corroborates halfword-scaled
-offsets, signed relative displacements, predicate-based conditional control,
-wrapped PC-relative arithmetic, and synchronized return-address effects. Its
-additional start-marker target policy is intentionally not imported: PTO v0
-does not expose the state needed to evaluate that policy. PTO owns the rules
-above, and the comparison is evidence rather than authority.
 
 ## Verification
 

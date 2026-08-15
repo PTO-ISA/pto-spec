@@ -2,10 +2,15 @@
 func InstallBundleOperationDescriptor(descriptor: BundleOperationDescriptor)
 begin
     _BundleOperation = descriptor;
+    if descriptor.data_type_valid && !_BundleDataAttributesPresent then
+        _BundleDataAttributes.data_type = descriptor.data_type;
+    end;
 end;
 
 func ClearBundleHeaderState()
 begin
+    _BundleCommitTargetSet = FALSE;
+    _SystemBlockTerminalPending = FALSE;
     _BundleArgument = Zeros{PTO_XLEN};
     _BundleArgumentKind = Zeros{3};
     _BundleOperation.valid = FALSE;
@@ -21,6 +26,7 @@ begin
     _BundleOperation.branch_type = Zeros{3};
     for index = 0 to PTO_BUNDLE_DIMENSION_COUNT - 1 do
         _BundleDimensions[[index]] = Zeros{PTO_XLEN};
+        _BundleDimensionPresent[[index]] = FALSE;
     end;
     for index = 0 to PTO_BUNDLE_SCALAR_BINDING_COUNT - 1 do
         _BundleScalarBindings[[index]].valid = FALSE;
@@ -41,20 +47,32 @@ begin
         _BundleSharedBindings[[index]].pe_mask = Zeros{4};
         _BundleSharedBindings[[index]].consumed = FALSE;
     end;
+    _BundleZeroParticipationSeen = FALSE;
+    _BundleControlAttributes.present = FALSE;
     _BundleControlAttributes.trap_enabled = FALSE;
     _BundleControlAttributes.atomic = FALSE;
     _BundleControlAttributes.acquire = FALSE;
     _BundleControlAttributes.release = FALSE;
     _BundleControlAttributes.far = FALSE;
-    _BundleControlAttributes.direct_register = FALSE;
+    _BundleControlAttributes.dimension_reduction = FALSE;
     _BundleDataAttributes.data_type_present = FALSE;
     _BundleDataAttributes.data_type = DTYPE_NONE;
     _BundleDataAttributes.data_layout = Zeros{5};
-    _BundleDataAttributes.pad_value = Zeros{2};
-    _BundleDataAttributes.conversion_mode = Zeros{3};
+    // Absence is distinct from an explicitly encoded zero PadValue.  The
+    // operation-visible omission default is Null; B.DATR 00 selects Zero.
+    _BundleDataAttributes.pad_value = '11';
+    _BundleDataAttributes.comparison_mode = Zeros{3};
     _BundleDataAttributes.rounding_mode = Zeros{3};
     _BundleDataAttributes.saturating = FALSE;
     _BundleDataAttributes.canonicalize = FALSE;
+    _BundleDataAttributesPresent = FALSE;
+    _BundleHint.present = FALSE;
+    _BundleHint.trace = FALSE;
+    _BundleHint.trace_end = FALSE;
+    _BundleHint.branch_valid = FALSE;
+    _BundleHint.branch_likely = FALSE;
+    _BundleHint.temperature = Zeros{2};
+    _BundleHint.prefetch_size = Zeros{12};
     _BundleFixedPointAttributes.valid = FALSE;
     _BundleFixedPointAttributes.pre_quant_mode = Zeros{6};
     _BundleFixedPointAttributes.relu_mode = Zeros{3};

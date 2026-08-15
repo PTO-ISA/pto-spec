@@ -2,15 +2,13 @@
 
 ## Status
 
-Superseded by [ADR 0046](0046-separate-execution-mask-and-warp-predicates.md).
+Superseded by PRD-039 in
+[ADR 0062](0062-mnemonic-review-decisions.md#prd-039-machine-parallel-and-machine-sequential-block-starts-are-extension-reserved).
 
 ## Historical context
 
-This decision correctly identified that every visible predicate needs an
-explicit reset, preservation, producer, and consumer contract. It incorrectly
-treated the independent 64-bit kernel EXEC mask as warp predicate register P0
-and therefore assigned the wrong width and control-flow role to P0 through P7.
-
-ADR 0046 retains the requirement for explicit state and trap behavior while
-separating the two architectural domains. This file remains only as the
-decision-history record; it is not a current semantic source.
+This decision identified that every visible predicate needs explicit reset,
+preservation, producer, and consumer rules. The current PTO contract retains
+only P0 through P7: P0 is hardwired all ones, P1 through P7 are independently
+trap-preserved, and no accepted instruction consumes them. Machine-block
+encodings and their former execution-mask model are outside PTO.

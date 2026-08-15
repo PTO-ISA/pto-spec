@@ -213,9 +213,7 @@ def validate_release_workflow(workflow: str) -> list[str]:
     if "print-asl-test-matrix" not in page:
         errors.append("each ASL page must regenerate its print-asl-test-matrix page")
     setup_position = _standalone_run_position(page, "make setup")
-    jobs_command = (
-        'ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"'
-    )
+    jobs_command = 'ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"'
     runner_command = (
         './scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"'
     )
@@ -255,9 +253,7 @@ def validate_release_workflow(workflow: str) -> list[str]:
         errors.append(
             "ASL pages must report every ASL page result after parallel execution"
         )
-    execution_status_positions = _script_line_positions(
-        page, "execution_status=$?"
-    )
+    execution_status_positions = _script_line_positions(page, "execution_status=$?")
     report_status_positions = _script_line_positions(page, "report_status=$?")
     execution_gate_positions = _script_line_positions(
         page, 'test "$execution_status" = 0'
@@ -265,31 +261,46 @@ def validate_release_workflow(workflow: str) -> list[str]:
     report_gate_positions = _script_line_positions(page, 'test "$report_status" = 0')
     set_plus_positions = _script_line_positions(page, "set +e")
     set_minus_positions = _script_line_positions(page, "set -e")
-    exact_fail_closed_block = "\n".join(
+    execution_status_file = (
+        "printf '%s\\n' \"$execution_status\" > build/asl-page-execution.status"
+    )
+    exact_execution_block = "\n".join(
         f"          {line}"
         for line in (
             "set +e",
             jobs_command,
             runner_command,
             "execution_status=$?",
+            "set -e",
+            execution_status_file,
+        )
+    )
+    exact_report_block = "\n".join(
+        f"          {line}"
+        for line in (
+            "set +e",
             reporter_command,
             "report_status=$?",
             "set -e",
+            "test -f build/asl-page-execution.status",
+            "read -r execution_status < build/asl-page-execution.status",
             'test "$execution_status" = 0',
             'test "$report_status" = 0',
         )
     )
-    if exact_fail_closed_block not in page:
+    if exact_execution_block not in page or exact_report_block not in page:
         errors.append(
-            "ASL pages must use one contiguous fail-closed page execution and report block"
+            "ASL pages must use separate contiguous fail-closed execution and report blocks"
         )
     if not (
-        len(set_plus_positions) == 1
+        len(set_plus_positions) == 2
         and len(execution_status_positions) == 1
         and execution_position >= 0
         and set_plus_positions[0] < execution_position < execution_status_positions[0]
     ):
-        errors.append("ASL pages must capture the parallel execution status fail-closed")
+        errors.append(
+            "ASL pages must capture the parallel execution status fail-closed"
+        )
     if not (
         len(report_status_positions) == 1
         and len(reporter_positions) == 1
@@ -301,18 +312,24 @@ def validate_release_workflow(workflow: str) -> list[str]:
     if len(report_gate_positions) != 1:
         errors.append("ASL pages must explicitly require the report status to pass")
     if not (
-        len(set_minus_positions) == 1
+        len(set_minus_positions) == 2
         and len(execution_gate_positions) == 1
         and len(report_gate_positions) == 1
         and len(report_status_positions) == 1
-        and report_status_positions[0]
-        < set_minus_positions[0]
+        and len(reporter_positions) == 1
+        and report_status_positions[0] < set_minus_positions[1]
+        and execution_status_positions[0] < set_minus_positions[0]
+        and set_minus_positions[0] < reporter_positions[0]
+        and set_minus_positions[1]
         < execution_gate_positions[0]
         < report_gate_positions[0]
     ):
         errors.append(
             "ASL pages must restore fail-fast mode before checking execution and report statuses"
         )
+    report_steps = [step for step in _step_blocks(page) if reporter_command in step]
+    if len(report_steps) != 1 or "        if: always()" not in report_steps[0]:
+        errors.append("ASL page reporting must be a distinct always-run step")
     if re.search(r"\bxargs\b|\brun-asl-test\b", page):
         errors.append(
             "ASL pages must use the repository page runner instead of shell-level xargs"
@@ -325,11 +342,15 @@ def validate_release_workflow(workflow: str) -> list[str]:
         for step in page_steps
         if (_step_uses(step) or "").startswith("actions/upload-artifact@")
     ]
-    result_uploads = [
-        step
-        for step in upload_steps
-        if _step_uses(step) == f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}"
-    ] if len(upload_steps) == 1 else []
+    result_uploads = (
+        [
+            step
+            for step in upload_steps
+            if _step_uses(step) == f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}"
+        ]
+        if len(upload_steps) == 1
+        else []
+    )
     result_names = (
         _direct_mapping_values(result_uploads[0], "with", "name")
         if len(result_uploads) == 1
@@ -343,9 +364,7 @@ def validate_release_workflow(workflow: str) -> list[str]:
     if result_names != ["asl-test-results-${{ matrix.page }}"] or result_paths != [
         "build/asl-test-results/*/result.json"
     ]:
-        errors.append(
-            "ASL pages must upload only per-ID result.json artifacts"
-        )
+        errors.append("ASL pages must upload only per-ID result.json artifacts")
 
     evidence = _job_block(workflow, "release-evidence")
     if "run-asl-release-suite" not in evidence or "--aggregate-only" not in evidence:
@@ -368,9 +387,7 @@ def validate_release_workflow(workflow: str) -> list[str]:
         "build/asl-test-matrix.json" not in evidence
         or "spec/evidence/asl-test-matrix.sha256" not in evidence
     ):
-        errors.append(
-            "release-evidence must upload the exact matrix and its checksum"
-        )
+        errors.append("release-evidence must upload the exact matrix and its checksum")
 
     validate = _job_block(workflow, "validate")
     if "name: Release / validate" not in validate or "if: always()" not in validate:

@@ -119,7 +119,7 @@ def generate() -> dict[str, Any]:
     tile_types = [row["asl_enumerator"] for row in tile_type_rows]
     require(len(tile_types) == 25, "TileDataType count drift")
     require(
-        len(command_forms["forms"]) == 100,
+        len(command_forms["forms"]) == 74,
         "accepted command-form count drift",
     )
     command_by_mnemonic = {row["mnemonic"]: row for row in command_forms["forms"]}
@@ -325,17 +325,17 @@ def generate() -> dict[str, Any]:
                 "symbol": "BundleOperationDescriptorRejectedByAcceptedApplicabilityRules",
             },
             "direct_test": {
-                "path": "tests/asl/tile/model/execution/cube/PTO-AVS-TILE-TESTCUBETOTALITY-BOUNDARY-001.asl",
+                "path": "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
                 "symbol": "TestA2A3CubeMxDirectRejectionMatrix",
             },
             "bundle_test": {
-                "path": "tests/asl/block/model/dispatch/top-level/PTO-AVS-BLOCK-TESTA2A3CUBEMXBUNDLEREJECTIONMATRIX-EXECUTION-001.asl",
+                "path": "tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl",
                 "symbol": "TestA2A3CubeMxBundleRejectionMatrix",
             },
         },
         "tests": [
-            "tests/asl/block/model/dispatch/top-level/PTO-AVS-BLOCK-TESTA2A3CUBEMXBUNDLEREJECTIONMATRIX-EXECUTION-001.asl",
-            "tests/asl/tile/model/execution/cube/PTO-AVS-TILE-TESTCUBETOTALITY-BOUNDARY-001.asl",
+            "tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl",
+            "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
         ],
         "source_hashes": [
             source("spec/catalog/numeric-profile-applicability.json"),
@@ -349,8 +349,8 @@ def generate() -> dict[str, Any]:
             source("scripts/generate-asl-decoders"),
             *source_rows(ROOT, "asl/arch/data-types/*.asl"),
             *source_rows(ROOT, "asl/block/model/dispatch/*.asl"),
-            source("tests/asl/block/model/dispatch/top-level/PTO-AVS-BLOCK-TESTA2A3CUBEMXBUNDLEREJECTIONMATRIX-EXECUTION-001.asl"),
-            source("tests/asl/tile/model/execution/cube/PTO-AVS-TILE-TESTCUBETOTALITY-BOUNDARY-001.asl"),
+            source("tests/asl/block/model/dispatch/top-level/block-exec-a-2-a-3-cube-mx-rejection-matrix-001.asl"),
+            source("tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl"),
             source(ACCEPTANCE_RECORD),
         ],
         "open_parent_decisions": catalog["open_parent_decisions"],
@@ -362,7 +362,7 @@ def generate() -> dict[str, Any]:
             "tuple_count": 150,
             "bundle_execution_tuple_count": 150,
             "bundle_command_form_count": 6,
-            "accepted_command_form_count": 100,
+            "accepted_command_form_count": 74,
             "result_rule_count": 0,
             "parent_pd01_complete": False,
             "cube_matrix_complete": False,

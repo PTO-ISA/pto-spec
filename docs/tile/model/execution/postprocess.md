@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/execution/postprocess.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-POSTPROCESS","surface":"tile","classification":["model","execution","postprocess"],"depends_on":["PTO-TILE-MODEL-EXECUTION-CUBE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-POSTPROCESS","surface":"tile","classification":["model","execution","postprocess"],"depends_on":["PTO-TILE-MODEL-EXECUTION-CUBE","PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"]}
 // Complete-bundle B.FPATR post-processing.  Numeric conversion and activation
 // remain behind the named profile hooks while this unit owns operand routing,
 // reductions, and atomic auxiliary-output publication.
@@ -32,45 +32,17 @@ begin
     return candidate;
 end;
 
-readonly func BundleMatrixDestinationAt(ordinal: integer {0..2}) => TileIndex
+readonly func BundleMatrixLocalMathematicalSourceCount() => integer {0..5}
 begin
-    var seen: integer {0..3} = 0;
-    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
-        if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_valid then
-            if seen == ordinal then return _BundleTileBindings[[binding]].destination; end;
-            seen = (seen + 1) as integer {0..3};
-        end;
-    end;
-    return 0;
-end;
-
-readonly func BundleMatrixSourceAt(ordinal: integer {0..7}) => TileIndex
-begin
-    var seen: integer {0..8} = 0;
-    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
-        if _BundleTileBindings[[binding]].valid then
-            if _BundleTileBindings[[binding]].source0_valid then
-                if seen == ordinal then return _BundleTileBindings[[binding]].source0; end;
-                seen = (seen + 1) as integer {0..8};
-            end;
-            if _BundleTileBindings[[binding]].source1_valid then
-                if seen == ordinal then return _BundleTileBindings[[binding]].source1; end;
-                seen = (seen + 1) as integer {0..8};
-            end;
-        end;
-    end;
-    return 0;
-end;
-
-readonly func BundleMatrixStaticSourceCount(
-    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => integer {0..5}
-begin
-    return (if TileOperandPresent(operation, TileOperand_source0) then 1 else 0) +
-           (if TileOperandPresent(operation, TileOperand_source1) then 1 else 0) +
-           (if TileOperandPresent(operation, TileOperand_source2) then 1 else 0) +
-           (if TileOperandPresent(operation, TileOperand_source3) then 1 else 0) +
-           (if TileOperandPresent(operation, TileOperand_source4) then 1 else 0);
+    let function = UInt(_BundleOperation.selector[4:0]);
+    let left_type = TileDataTypeFromEncoding(
+        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    let right_type = if _BundleDataAttributesPresent then
+        TileDataTypeFromEncoding(
+            _BundleDataAttributes.data_type as TileDataTypeEncoding)
+        else left_type;
+    return TileMatrixLocalMathematicalSourceCount(
+        function, left_type, right_type, BundleSharedBindingCount());
 end;
 
 readonly func BundleMatrixOperationIndex() => integer {0..PTO_TILE_OPERATION_COUNT-1}
@@ -134,41 +106,55 @@ end;
 
 func MatrixPostProcessResult(input: TileInfo) => TileInfo
 begin
-    if !_BundleFixedPointAttributes.valid then return input; end;
+    if !_BundleFixedPointAttributes.valid then
+        return input;
+    end;
     var result = input;
     var payload = input.payload;
-    let selected_type = TileDataTypeFromEncoding(ZeroExtend{PTO_XLEN}(CurrentBundleTileOperationDataTypeCode()));
-    let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
-    let output_type = if UInt(_BundleFixedPointAttributes.pre_quant_mode) == 0 then accumulator_type
-        else BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode);
+    let output_type = if UInt(
+        _BundleFixedPointAttributes.pre_quant_mode) == 0 then
+        input.data_type
+    else
+        BundleFPATROutputType(_BundleFixedPointAttributes.pre_quant_mode);
     let operation = BundleMatrixOperationIndex();
     let operands = BundleTileInstructionOperands(operation);
     let numeric_control = ResolveTileNumericExecutionControl(operation, operands);
-    let static_sources = BundleMatrixStaticSourceCount(operation);
-    let quant_source_ordinal = static_sources +
-        (if _BundleFixedPointAttributes.row_max_en && _BundleFixedPointAttributes.row_max_init then 1 else 0);
+    let mathematical_sources = BundleMatrixLocalMathematicalSourceCount();
+    let quant_source_ordinal = mathematical_sources +
+        (if _BundleFixedPointAttributes.row_max_en &&
+            _BundleFixedPointAttributes.row_max_init then 1 else 0);
     let relu_source_ordinal = quant_source_ordinal +
-        (if BundleFPATRModeUsesVectorParameter(_BundleFixedPointAttributes.pre_quant_mode) then 1 else 0);
+        (if BundleFPATRModeUsesVectorParameter(
+            _BundleFixedPointAttributes.pre_quant_mode) then 1 else 0);
     let quant_tile = BundleMatrixSourceAt(quant_source_ordinal as integer {0..7});
     let relu_tile = BundleMatrixSourceAt(relu_source_ordinal as integer {0..7});
     for row = 0 to input.valid_rows - 1 looplimit 65536 do
         for column = 0 to input.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(input, row as integer {0..65535},
                 column as integer {0..65535});
-            let quant_param = if BundleFPATRModeUsesVectorParameter(_BundleFixedPointAttributes.pre_quant_mode) then
-                _Tiles[[quant_tile]].payload[[TileLinearIndex(_Tiles[[quant_tile]], 0,
+            let quant_param = if BundleFPATRModeUsesVectorParameter(
+                _BundleFixedPointAttributes.pre_quant_mode) then
+                _Tiles[[quant_tile]].payload[[TileLinearIndex(
+                    _Tiles[[quant_tile]], 0,
                     column as integer {0..65535})]]
-                else if BundleFPATRModeUsesScalarParameter(
-                    _BundleFixedPointAttributes.pre_quant_mode) then operands.post_quant_param
-                else Zeros{PTO_XLEN} + 1;
-        let relu_param = if BundleFPATRReluModeUsesVectorParameter(
+            else if BundleFPATRModeUsesScalarParameter(
+                _BundleFixedPointAttributes.pre_quant_mode) then
+                operands.post_quant_param
+            else
+                Zeros{PTO_XLEN} + 1;
+            let relu_param = if BundleFPATRReluModeUsesVectorParameter(
                 _BundleFixedPointAttributes.relu_mode) then
-                _Tiles[[relu_tile]].payload[[TileLinearIndex(_Tiles[[relu_tile]], 0,
-                    column as integer {0..65535})]] else operands.post_lrelu_param;
-            payload[[element]] = TileProfileMatrixPostProcess(payload[[element]],
-                _BundleFixedPointAttributes.pre_quant_mode, _BundleFixedPointAttributes.relu_mode,
-                _BundleFixedPointAttributes.group_n_code, output_type, quant_param, relu_param,
-                numeric_control);
+                _Tiles[[relu_tile]].payload[[TileLinearIndex(
+                    _Tiles[[relu_tile]], 0,
+                    column as integer {0..65535})]]
+            else
+                operands.post_lrelu_param;
+            payload[[element]] = TileProfileMatrixPostProcess(
+                payload[[element]],
+                _BundleFixedPointAttributes.pre_quant_mode,
+                _BundleFixedPointAttributes.relu_mode,
+                _BundleFixedPointAttributes.group_n_code,
+                output_type, quant_param, relu_param, numeric_control);
         end;
     end;
     result.data_type = output_type;
@@ -178,9 +164,9 @@ end;
 
 func CommitMatrixResult(destination: TileIndex, result: TileInfo)
 begin
-    let operation = BundleMatrixOperationIndex();
-    let static_sources = BundleMatrixStaticSourceCount(operation);
-    let rowmax_input = BundleMatrixSourceAt(static_sources as integer {0..7});
+    let mathematical_sources = BundleMatrixLocalMathematicalSourceCount();
+    let rowmax_input = BundleMatrixSourceAt(
+        mathematical_sources as integer {0..7});
     let processed = MatrixPostProcessResult(result);
     let rowmax_destination = BundleMatrixDestinationAt(1);
     let group_destination = if _BundleFixedPointAttributes.row_max_en then BundleMatrixDestinationAt(2)

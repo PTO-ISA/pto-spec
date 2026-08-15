@@ -1,8 +1,8 @@
 {
-  "authority": "PTO-owned ASL semantics and the 682-row disposition matrix remain authoritative. Oracle coverage is an orthogonal corroboration grade and cannot change a row classification.",
+  "authority": "PTO-owned ASL semantics and the 683-row disposition matrix remain authoritative. Oracle coverage is an orthogonal corroboration grade and cannot change a row classification.",
   "closure_layers": {
     "independent_disposition_closure": {
-      "matrix_row_count": 682,
+      "matrix_row_count": 683,
       "noncomparable_row_count": 38,
       "status": "closed:S5-T3"
     },
@@ -1490,7 +1490,7 @@
   "source_comparison": {
     "noncomparable_row_count": 38,
     "reviewed_projection_sha256": "c448126ddb8d356d761ce213763d51f95b310626edde9e553ca2e3876c139245",
-    "row_count": 682,
+    "row_count": 683,
     "schema": "pto.executable-model-comparison.v1",
     "stable_identity_sha256": "e529bcf69f62c9977e74eeab0d4f5a437b4ae0f485876d8715662ce570b8e60f"
   },

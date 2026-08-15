@@ -22,7 +22,10 @@ TYPE_BASELINE = ROOT / "spec/evidence/public-numeric-type-baseline.json"
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
 EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 ASL_MODEL = ROOT / "asl/tile/model/numeric/formats.asl"
-ASL_TESTS = ROOT / "tests/asl/tile-tests.asl"
+ASL_TESTS = (
+    ROOT
+    / "tests/asl/tile/model/numeric/formats/tile-exec-conversion-001.asl"
+)
 OUTPUT = ROOT / "spec/evidence/public-integer-conversion-contract.json"
 ACCEPTANCE_RECORD = (
     "docs/status/decisions/0044-public-integer-conversion-result-subset.md"
@@ -234,7 +237,7 @@ def generate() -> dict[str, Any]:
         ],
         "tests": [
             {
-                "path": "tests/asl/tile-tests.asl",
+                "path": "tests/asl/tile/model/numeric/formats/tile-exec-conversion-001.asl",
                 "function": "TestTileConversion",
                 "coverage": "signed widening, unsigned widening, narrowing, cross-signedness, 64-bit source, and direct TCVT execution",
             }
@@ -245,7 +248,9 @@ def generate() -> dict[str, Any]:
             source("spec/evidence/numeric-contracts.json"),
             source("spec/evidence/executable-model-comparison.json"),
             *source_rows(ROOT, "asl/tile/model/numeric/formats.asl"),
-            source("tests/asl/tile-tests.asl"),
+            source(
+                "tests/asl/tile/model/numeric/formats/tile-exec-conversion-001.asl"
+            ),
             source(ACCEPTANCE_RECORD),
         ],
         "summary": {

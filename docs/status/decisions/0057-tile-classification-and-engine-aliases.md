@@ -46,5 +46,5 @@ ownership, or change instruction semantics.
   retaining Mode, Function, selector, mask, and match unchanged.
 - Downstream assemblers may accept the TEPL compatibility spelling, but all new
   generated text and disassembly use the engine-specific canonical spelling.
-- Historical comparison evidence may retain the word TEPL only when it names
-  an immutable external snapshot or the unchanged binary carrier.
+- TEPL remains only the unchanged binary carrier and compatibility spelling;
+  it is not an execution-engine classification.

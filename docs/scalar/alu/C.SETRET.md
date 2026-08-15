@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/C.SETRET.asl`
 
-C.SETRET - Write the architectural return address.
+Materialize an unsigned halfword-scaled TPC-relative return address in ra and captured return state.
 
 ## Normative identity {#PTO-INST-SCALAR-C-SETRET}
 
@@ -14,7 +14,7 @@ The current instruction contract is owned by the ASL source linked above.
 ## Assembly
 
 ```asm
-c.setret uimm, - >Ra
+c.setret uimm, ->ra
 ```
 
 ## Encoding
@@ -29,11 +29,24 @@ c.setret uimm, - >Ra
 | --- | --- | ---: | --- | --- |
 | c_setret_16_335651ef6c27 | uimm5 | 5 | unsigned | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| c_setret_16_335651ef6c27 | uimm5 | 5 | 0–31 | none | none | unsigned five-bit halfword displacement from the pre-increment TPC | Encoded zero supplies numeric zero for the 5-bit unsigned immediate. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| uimm5 | encoded operand or control |
+| uimm5 | unsigned five-bit halfword displacement from the pre-increment TPC |
 
 ## Decode
 
@@ -46,6 +59,12 @@ end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
+## Block composition
+
+```asm
+Standalone scalar return-address materialization. Fused BSTART.CALL and BSTART.ICALL define call formation separately.
+```
+
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/alu/C.SETRET.asl -->
@@ -54,17 +73,51 @@ readonly func InstructionContractHandler_C_SETRET() => ScalarSemanticHandler
 begin
     return ScalarHandler_SetReturnAddress;
 end;
+
+pure func InstructionContractTarget_C_SETRET(
+    tpc: Word,
+    uimm5: bits(5))
+    => Word
+begin
+    let halfword_offset = ZeroExtend{PTO_XLEN}(uimm5);
+    return tpc + LSL(halfword_offset, 1);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- C.SETRET has no omitted field. Encoded uimm5 zero is the real zero displacement and materializes the address of C.SETRET itself.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `C.SETRET - Write the architectural return address.`
-- **Semantic handler:** `SetReturnAddress`
+- Every uimm5 value 0..31 is assigned. The fixed destination is architectural ra (GPR10).
+- C.SETRET is legal as a standalone scalar operation and does not by itself form a call.
+
+## State effects
+
+- Compute target = pre-increment TPC + (ZeroExtend(uimm5) << 1) with XLEN wrapping.
+- Atomically write the same target to GPR10 ra and the captured return-address state; successful dispatch then advances TPC by two bytes.
+- A later ordinary write to ra does not retroactively change the captured return-address state.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Snapshot the pre-increment TPC, compute the target, publish ra and captured return state together, then perform the ordinary two-byte sequential TPC advance.
+
+## Exceptions
+
+- All uimm5 values are legal. C.SETRET performs no target dereference and raises no alignment, memory, arithmetic, or block-control exception.
+
+## Examples
+
+- c.setret 0, ->ra
+- c.setret 31, ->ra
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

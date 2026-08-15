@@ -56,6 +56,8 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
@@ -122,6 +124,8 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
@@ -188,6 +192,8 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
@@ -273,6 +279,8 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
@@ -355,6 +363,8 @@
       "hook_ids": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
@@ -6143,7 +6153,9 @@
       "operation_key": "tile:CUBE:TGEMV",
       "domain": "cube-matrix",
       "hooks": [
-        "TileProfileMatrixAccumulate"
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6162,7 +6174,9 @@
       "operation_key": "tile:CUBE:TGEMV_ACC",
       "domain": "cube-matrix",
       "hooks": [
-        "TileProfileMatrixAccumulate"
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6182,7 +6196,9 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixBias"
+        "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6202,7 +6218,9 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6224,7 +6242,9 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6247,7 +6267,9 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6268,7 +6290,9 @@
       "operation_key": "tile:CUBE:TMATMUL",
       "domain": "cube-matrix",
       "hooks": [
-        "TileProfileMatrixAccumulate"
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6287,7 +6311,9 @@
       "operation_key": "tile:CUBE:TMATMUL_ACC",
       "domain": "cube-matrix",
       "hooks": [
-        "TileProfileMatrixAccumulate"
+        "TileProfileMatrixAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6307,7 +6333,9 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixBias"
+        "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6327,7 +6355,9 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6349,7 +6379,9 @@
       "domain": "cube-matrix",
       "hooks": [
         "TileProfileMatrixAccumulate",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -6372,7 +6404,9 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
-        "TileProfileMatrixScaledAccumulate"
+        "TileProfileMatrixScaledAccumulate",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep"
       ],
       "variation_point_ids": [
         "numeric-vp/cube-matrix/accumulation-width",
@@ -8311,6 +8345,80 @@
       "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
+      "hook": "TileProfileMatrixPostProcess",
+      "role": "portable-profile-boundary",
+      "requirement": "PTO-REQ-CUBE-001",
+      "domains": [
+        "cube-matrix"
+      ],
+      "operation_keys": [
+        "tile:CUBE:TGEMV",
+        "tile:CUBE:TGEMV_ACC",
+        "tile:CUBE:TGEMV_BIAS",
+        "tile:CUBE:TGEMV_MX",
+        "tile:CUBE:TGEMV_MX_ACC",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL",
+        "tile:CUBE:TMATMUL_ACC",
+        "tile:CUBE:TMATMUL_BIAS",
+        "tile:CUBE:TMATMUL_MX",
+        "tile:CUBE:TMATMUL_MX_ACC",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ],
+      "variation_point_ids": [
+        "numeric-vp/cube-matrix/accumulation-width",
+        "numeric-vp/cube-matrix/input-product-precision",
+        "numeric-vp/cube-matrix/nan-and-infinity",
+        "numeric-vp/cube-matrix/rounding",
+        "numeric-vp/cube-matrix/saturation"
+      ],
+      "decision_owner_kind": "portable-architecture",
+      "decision_owner_id": "pto-numeric-v1",
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileMatrixPostProcess",
+      "status": "rounding-rule-accepted-other-result-rules-open"
+    },
+    {
+      "hook": "TileProfileMatrixReductionStep",
+      "role": "portable-profile-boundary",
+      "requirement": "PTO-REQ-CUBE-001",
+      "domains": [
+        "cube-matrix"
+      ],
+      "operation_keys": [
+        "tile:CUBE:TGEMV",
+        "tile:CUBE:TGEMV_ACC",
+        "tile:CUBE:TGEMV_BIAS",
+        "tile:CUBE:TGEMV_MX",
+        "tile:CUBE:TGEMV_MX_ACC",
+        "tile:CUBE:TGEMV_MX_BIAS",
+        "tile:CUBE:TMATMUL",
+        "tile:CUBE:TMATMUL_ACC",
+        "tile:CUBE:TMATMUL_BIAS",
+        "tile:CUBE:TMATMUL_MX",
+        "tile:CUBE:TMATMUL_MX_ACC",
+        "tile:CUBE:TMATMUL_MX_BIAS"
+      ],
+      "variation_point_ids": [
+        "numeric-vp/cube-matrix/accumulation-width",
+        "numeric-vp/cube-matrix/input-product-precision",
+        "numeric-vp/cube-matrix/nan-and-infinity",
+        "numeric-vp/cube-matrix/rounding",
+        "numeric-vp/cube-matrix/saturation"
+      ],
+      "decision_owner_kind": "portable-architecture",
+      "decision_owner_id": "pto-numeric-v1",
+      "selected_route": {
+        "kind": "portable-rule",
+        "profile_id": "pto-numeric-v1"
+      },
+      "result_rule_id": "pd03-rounding-hook/TileProfileMatrixReductionStep",
+      "status": "rounding-rule-accepted-other-result-rules-open"
+    },
+    {
       "hook": "TileProfileMatrixScaledAccumulate",
       "role": "portable-profile-boundary",
       "requirement": "PTO-REQ-CUBE-001",
@@ -8628,11 +8736,11 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "0eae4a99230713271bdcff56dd02d6011988a32edd2971160748f40f174fad7c"
+      "sha256": "7c3005a7885e94537911d717b5ae977ced8ba088cd966934619cc82ba6dda03c"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
+      "sha256": "d001984ca86695c8f08a10415419ee663e76ab3bc21743f9e70343e20d8efdf3"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -8640,15 +8748,15 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "3ccd3be455ff1b241fc2c7e748087376bf03a9c33f4ede5d044ef7dca17e7fc2"
+      "sha256": "99c6bfbb4e4186ce86a63601d26151fdd3de99338cddd9f39474fe0405166c59"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "53d21024ac42c6e0998e3bf4058b3940e3f6bda0ba19f18455b8db39f6a90d89"
+      "sha256": "a41821eb581ce35c4309d50ab36999ab8d2a58de7b3301b00f080de96a8eed95"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
+      "sha256": "681d7a75e1aa58cfb9ba8ed06ce6e6b3a17786c87b11949098fe25470b7b8da1"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -8656,15 +8764,15 @@
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "12df76e7e8f967af157afe8a0fdfc2d371888488456ac63da3ad00cfe35733a1"
+      "sha256": "8945c1eba30fbf5d2ada1997a4d4eb434a46f147ac3f75dd01502f7c45565876"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "0b5307ba9a432795bd65d8a488c96987e5bfba1939bf3fbd87c3571f8edba5e2"
+      "sha256": "816099495add52fc8de82fd3ec8bd837c797181b35ebc7de22b3821736b1c5fb"
     },
     {
       "path": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
-      "sha256": "16b791c480f47bb72c7fa02081303c61c1c75486b793712977f831e14e47ae48"
+      "sha256": "3a48d5be11004046601a6e15f2a81122f9d75ffb2b8fc38976d11024e33f2495"
     }
   ],
   "summary": {
@@ -8672,8 +8780,8 @@
     "unique_dimension_count": 39,
     "domain_count": 18,
     "operation_count": 104,
-    "hook_count": 28,
-    "primary_operation_hook_edge_count": 128,
+    "hook_count": 30,
+    "primary_operation_hook_edge_count": 152,
     "reference_helper_operation_edge_count": 8,
     "portable_decision_owner_point_count": 89,
     "selected_route_count": 16,

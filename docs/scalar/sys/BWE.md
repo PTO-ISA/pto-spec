@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/BWE.asl`
 
-BWE - Issue this mnemonic's architecture control request.
+BWE publishes the WaitEvent nonblocking execution-control request.
 
 ## Normative identity {#PTO-INST-SCALAR-BWE}
 
@@ -29,42 +29,106 @@ bwe SrcL
 | --- | --- | ---: | --- | --- |
 | bwe_32_e5a5240bdf9b | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| bwe_32_e5a5240bdf9b | SrcL | 5 | 0–31 | none | none | Reg5 source: R0..R23, T#1..T#4, or U#1..U#4 | Encoded zero names the architectural zero GPR. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcL | encoded operand or control |
+| SrcL | Reg5 source: R0..R23, T#1..T#4, or U#1..U#4 |
 
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/BWE.asl -->
 ```asl
-readonly func InstructionContractOperation_BWE() => ScalarOperation
+readonly func InstructionContractOperation_BWE()
+    => ScalarOperation
 begin
     return ScalarOperation_BWE;
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
+## Block composition
+
+```asm
+BWE executes as one scalar operation in the body of an active SYS block.
+```
+
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/BWE.asl -->
 ```asl
-readonly func InstructionContractHandler_BWE() => ScalarSemanticHandler
+readonly func InstructionContractHandler_BWE()
+    => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteControlRequest;
+end;
+
+pure func InstructionContractRequiresSystemBlock_BWE()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractControlRequest_BWE()
+    => ExecutionControlRequest
+begin
+    return ExecutionControl_WaitEvent;
+end;
+
+pure func InstructionContractControlRequestIsNonblocking_BWE()
+    => boolean
+begin
+    return TRUE;
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `BWE - Issue this mnemonic's architecture control request.`
-- **Semantic handler:** `ExecuteControlRequest`
+- Every fixed bit and explicit field constraint is checked before operation semantics.
+- Every assigned Reg5 source selector follows the common scalar-source availability rule.
+
+## State effects
+
+- Snapshot SrcL, publish ExecutionControl_WaitEvent and the exact XLEN operand, increment the architecture-request epoch, then advance TPC.
+- PTO defines no additional asleep, mailbox, timeout-counter, or pending-wake state for this nonblocking request.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Check block placement and encoded legality before source reads or architectural effects.
+- Snapshot every scalar source before the selected system effect, then advance TPC only after success.
+
+## Exceptions
+
+- Invalid block placement raises Illegal Block Exception before encoded-field legality or effects.
+- A reserved encoding or rejected access raises Illegal Instruction before destination, queue, system-state, or TPC effects.
+
+## Examples
+
+- bwe SrcL
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

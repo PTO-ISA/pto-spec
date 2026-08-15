@@ -80,6 +80,7 @@ class AslUnitsTest(unittest.TestCase):
 
         self.assertEqual(unit.mnemonic, "ADD")
         self.assertEqual(unit.classification, ("alu",))
+        self.assertIsNone(unit.manual_semantic_review)
 
     def test_load_units_rejects_non_ascii_source_text(self) -> None:
         path = self.write_unit()
@@ -124,6 +125,16 @@ class AslUnitsTest(unittest.TestCase):
 
         self.assertIn(
             "asl/arch/memory-model/ordering.asl: exceeds 500 physical lines: 501",
+            errors,
+        )
+
+    def test_validate_layout_rejects_single_line_implementation_body(self) -> None:
+        self.write_unit(body="func ReadOrdering() => integer begin return 0; end;\n")
+
+        errors = validate_layout(self.root, load_units(self.root))
+
+        self.assertIn(
+            "asl/arch/memory-model/ordering.asl: implementation body must span multiple physical lines: 2",
             errors,
         )
 

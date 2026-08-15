@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/agu/HL.SWIP.U.asl`
 
-HL.SWIP.U - Store a scalar register pair using this mnemonic's address-update form.
+HL.SWIP.U snapshots its scalar sources, forms its encoded address, and stores two adjacent aligned little-endian 4-byte values.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-SWIP-U}
 
@@ -32,14 +32,30 @@ hl.swip.u SrcD, SrcD1, [SrcR, simm]
 | hl_swip_u_48_e2dc917c8505 | SrcR | 5 | encoding-defined | [{"instruction_lsb":36,"value_lsb":0,"width":5}] |
 | hl_swip_u_48_e2dc917c8505 | simm17 | 17 | signed | [{"instruction_lsb":41,"value_lsb":0,"width":7},{"instruction_lsb":23,"value_lsb":7,"width":5},{"instruction_lsb":11,"value_lsb":12,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| hl_swip_u_48_e2dc917c8505 | SrcD | 5 | 0–31 | none | none | Reg5 first store-data source | Encoded zero reads the architectural zero GPR. |
+| hl_swip_u_48_e2dc917c8505 | SrcD1 | 5 | 0–31 | none | none | Reg5 second store-data source | Encoded zero reads the architectural zero GPR. |
+| hl_swip_u_48_e2dc917c8505 | SrcR | 5 | 0–31 | none | none | Reg5 register-offset source | Encoded zero reads the architectural zero GPR. |
+| hl_swip_u_48_e2dc917c8505 | simm17 | 17 | 0–131071 | none | none | signed address displacement | Encoded zero supplies a zero displacement; it does not denote omission. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcD | encoded operand or control |
-| SrcD1 | encoded operand or control |
-| SrcR | encoded operand or control |
-| simm17 | encoded operand or control |
+| SrcD | Reg5 first store-data source |
+| SrcD1 | Reg5 second store-data source |
+| SrcR | Reg5 register-offset source |
+| simm17 | signed address displacement |
 
 ## Decode
 
@@ -56,21 +72,95 @@ end;
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/agu/HL.SWIP.U.asl -->
 ```asl
-readonly func InstructionContractHandler_HL_SWIP_U() => ScalarSemanticHandler
+readonly func InstructionContractHandler_HL_SWIP_U()
+    => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteScalarStorePair;
+end;
+
+pure func InstructionContractAGUAction_HL_SWIP_U()
+    => ScalarAGUAction
+begin
+    return ScalarAGU_StorePair;
+end;
+
+pure func InstructionContractAGUAddressKind_HL_SWIP_U()
+    => ScalarAGUAddressKind
+begin
+    return ScalarAGU_Immediate;
+end;
+
+pure func InstructionContractAGUSizeBytes_HL_SWIP_U()
+    => integer {1,2,4,8}
+begin
+    return 4;
+end;
+
+pure func InstructionContractAGUOffsetScale_HL_SWIP_U()
+    => integer {0..3}
+begin
+    return 0;
+end;
+
+pure func InstructionContractAGUUpdateMode_HL_SWIP_U()
+    => AddressUpdateMode
+begin
+    return AddressUpdate_None;
+end;
+
+pure func InstructionContractAGUSignedLoad_HL_SWIP_U()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractAGUPrefetchReturnsAddress_HL_SWIP_U()
+    => boolean
+begin
+    return FALSE;
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `HL.SWIP.U - Store a scalar register pair using this mnemonic's address-update form.`
-- **Semantic handler:** `ExecuteScalarStorePair`
+- Every encoded Reg5 source uses the complete domain: codes 0..23 select absolute GPRs, codes 24..27 select T#1..T#4, and codes 28..31 select U#1..U#4 without consumption.
+- simm17 assigns every signed 17-bit value -65536..65535; the encoded byte displacement is that value multiplied by 1.
+- Each memory address must be aligned to the 4-byte access size; a 4-byte access is the complete transfer unit.
+
+## State effects
+
+- Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.
+- The pair addresses are address and address plus 4; the instruction performs no base writeback.
+- Snapshot every store-data source before any memory effect or destination publication.
+- Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- Preflight both adjacent 4-byte addresses before either store; on success record two relaxed store events in address order.
+- Successful overlapping stores invalidate an overlapping reservation only after complete pair preflight.
+
+### Ordering
+
+- Snapshot all explicit and implicit scalar sources before destination or memory effects; duplicate and source/destination aliases observe pre-instruction values.
+- Preflight both addresses, commit the two relaxed 4-byte operations in address order, publish ordered results if any, then advance TPC.
+
+## Exceptions
+
+- A fixed-bit mismatch, reserved field value, or unavailable selected T/U source raises Fault_IllegalInstruction before instruction effects.
+- A misaligned 4-byte address raises Fault_DataAlignment before translation or permission. A later permission or bounded-memory failure raises Fault_DataPage at the original address.
+- A fault emits no successful memory event, performs no partial memory or destination effect, preserves pending writeback, and leaves TPC at the faulting instruction.
+- Recovery performs a full reissue: every address, source snapshot, preflight, memory operation, and destination is recomputed with no retained progress.
+
+## Examples
+
+- hl.swip.u SrcD, SrcD1, [SrcR, simm]
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

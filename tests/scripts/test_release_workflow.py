@@ -73,16 +73,27 @@ jobs:
         with:
           name: planned-asl-test-pages
       - run: make setup
-      - run: |
+      - name: Verify exact ASL page plan
+        run: |
           ./scripts/print-asl-test-matrix --page-size 100 --page "${{ matrix.page }}"
           cmp "build/planned-asl-test-pages/page-${{ matrix.page }}.json" "build/actual-page.json"
+      - name: Execute independent ASL points with machine parallelism
+        run: |
           set +e
           ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
           ./scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"
           execution_status=$?
+          set -e
+          printf '%s\n' "$execution_status" > build/asl-page-execution.status
+      - name: Report per-mnemonic results and enforce the page
+        if: always()
+        run: |
+          set +e
           ./scripts/report-asl-page-results --matrix build/actual-page.json --results build/asl-test-results
           report_status=$?
           set -e
+          test -f build/asl-page-execution.status
+          read -r execution_status < build/asl-page-execution.status
           test "$execution_status" = 0
           test "$report_status" = 0
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -198,8 +209,9 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
             with self.subTest(replacement=replacement):
                 self.assert_rejected(
                     VALID_RELEASE_WORKFLOW.replace(
-                        "      - run: make setup\n      - run: |\n",
-                        replacement + "      - run: |\n",
+                        "      - run: make setup\n"
+                        "      - name: Verify exact ASL page plan\n",
+                        replacement + "      - name: Verify exact ASL page plan\n",
                         1,
                     ),
                     "prepare pinned ASLRef",
@@ -235,9 +247,7 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
             ('          test "$report_status" = 0\n', "report status"),
         ):
             with self.subTest(line=line):
-                self.assert_rejected(
-                    VALID_RELEASE_WORKFLOW.replace(line, ""), expected
-                )
+                self.assert_rejected(VALID_RELEASE_WORKFLOW.replace(line, ""), expected)
 
     def test_status_capture_must_be_immediately_after_each_command(self) -> None:
         for command, status in (
@@ -255,8 +265,14 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
                     VALID_RELEASE_WORKFLOW.replace(
                         command + status, command + "          true\n" + status
                     ),
-                    "contiguous fail-closed page execution",
+                    "separate contiguous fail-closed",
                 )
+
+    def test_page_report_is_a_distinct_always_run_step(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace("        if: always()\n", ""),
+            "distinct always-run step",
+        )
 
     def test_fail_closed_aggregation_is_required(self) -> None:
         self.assert_rejected(
@@ -334,11 +350,14 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
           name: asl-test-results-${{ matrix.page }}
           path: build/asl-test-results/*/result.json
 """
-        compact_and_broad_uploads = real_upload + """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        compact_and_broad_uploads = (
+            real_upload
+            + """      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: asl-test-results-broad-${{ matrix.page }}
           path: build/asl-test-results
 """
+        )
         self.assert_rejected(
             VALID_RELEASE_WORKFLOW.replace(real_upload, compact_and_broad_uploads),
             "only per-ID result.json",
@@ -350,11 +369,14 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
           name: asl-test-results-${{ matrix.page }}
           path: build/asl-test-results/*/result.json
 """
-        compact_and_unpinned_broad_uploads = real_upload + """      - uses: actions/upload-artifact@v4
+        compact_and_unpinned_broad_uploads = (
+            real_upload
+            + """      - uses: actions/upload-artifact@v4
         with:
           name: asl-test-results-broad-${{ matrix.page }}
           path: build/asl-test-results
 """
+        )
         self.assert_rejected(
             VALID_RELEASE_WORKFLOW.replace(
                 real_upload, compact_and_unpinned_broad_uploads
@@ -370,11 +392,14 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
 """
         for quote in ('"', "'"):
             with self.subTest(quote=quote):
-                quoted_broad_upload = real_upload + f"""      - uses: {quote}actions/upload-artifact@v4{quote}
+                quoted_broad_upload = (
+                    real_upload
+                    + f"""      - uses: {quote}actions/upload-artifact@v4{quote}
         with:
           name: asl-test-results-broad-${{{{ matrix.page }}}}
           path: build/asl-test-results
 """
+                )
                 self.assert_rejected(
                     VALID_RELEASE_WORKFLOW.replace(real_upload, quoted_broad_upload),
                     "only per-ID result.json",
@@ -391,15 +416,16 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
             r"action\u0073/upload-artifact@v4",
         ):
             with self.subTest(escaped_action=escaped_action):
-                escaped_broad_upload = real_upload + f'''      - uses: "{escaped_action}"
+                escaped_broad_upload = (
+                    real_upload
+                    + f'''      - uses: "{escaped_action}"
         with:
           name: asl-test-results-broad-${{{{ matrix.page }}}}
           path: build/asl-test-results
 '''
+                )
                 self.assert_rejected(
-                    VALID_RELEASE_WORKFLOW.replace(
-                        real_upload, escaped_broad_upload
-                    ),
+                    VALID_RELEASE_WORKFLOW.replace(real_upload, escaped_broad_upload),
                     "uses values",
                 )
 

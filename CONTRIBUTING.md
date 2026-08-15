@@ -25,6 +25,37 @@ Defaults, intentionally unspecified behavior, encoding/assembly impact, and
 dependent-toolchain impact must be explicit in the issue and represented in
 the ASL owner where architectural.
 
+## ASL source and test shape
+
+Normative ASL lives only below `asl/arch`, `asl/block`, `asl/scalar`, or
+`asl/tile`. A complete `begin ... end;` implementation body must span multiple
+physical lines so instruction and architecture behavior remains reviewable.
+
+Executable ASL evidence lives only below `tests/asl/` and mirrors its owner
+exactly. For example:
+
+```text
+asl/block/operands/B.IOR.asl
+tests/asl/block/operands/B.IOR/block-exec-b-ior-ordered-gpr-001.asl
+```
+
+Do not add an ad hoc test root or an extra classification directory. Test
+filenames use `<group>-<type>-<mnemonic>-<purpose>-<NNN>.asl` for instruction
+owners and `<group>-<type>-<purpose>-<NNN>.asl` for architecture concepts
+without a mnemonic, where group is
+`arch|block|scalar|tile`, `NNN` is `001` through `999`, and the complete
+filename is at most 68 characters. The fixed type vocabulary is
+`decode|exec|bound|fault|atomic|order|state|static`; it is derived from the
+`PTO-TEST.kind` value. Purpose names are lowercase and concise, and must not
+contain the redundant tokens `test`, `execution`, `validate`, or `validation`.
+The mnemonic component is lowercase, converts punctuation to `-`, and appears
+immediately after the type so a filename remains self-identifying outside its
+mirror directory (for example, `B.IOR` becomes `b-ior`).
+
+Keep `PTO-TEST.id` stable when renaming a file. The `summary` must state the
+behavior under test and `pass_condition` must state the observable success
+condition; migration placeholders are not accepted.
+
 ## Pull request lane
 
 `make pr-check` is intentionally lightweight. It checks NDF structure,

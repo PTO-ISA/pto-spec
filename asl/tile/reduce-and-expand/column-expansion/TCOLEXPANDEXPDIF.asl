@@ -1,4 +1,14 @@
-// PTO-INSTRUCTION: {"assembly":["TCOLEXPANDEXPDIF <bundle operands>"],"block":["BSTART.SFU TCOLEXPANDEXPDIF, DataType","B.DATR (optional)","B.DIM LB0","B.DIM (LB1/LB2 for 2D)","B.IOT","BSTOP"],"catalog_indices":[65],"catalog_records":[{"arguments":[{"constant":"TileExpand_EXPDIF"},{"constant":"TileAxis_Column"},{"operand":"destination0"},{"operand":"source0"},{"operand":"source1"}],"command_mnemonic":"BSTART.TEPL","contract_status":"reviewed-complete","datr_contract":{"allowed_nonzero_fields":[],"pad_union":"must-zero"},"disposition":"accepted-direct-operation","effect_contract":"ExecuteTileExpand","family":"TEPL","fault_contract":"ExecuteTileInstruction","function":27,"legality_handler":"TileOperandsLegal_ExecuteTileExpand","mode":2,"name":"TCOLEXPANDEXPDIF","operands":[{"field":"destination0","role":"destination"},{"field":"source0","role":"source"},{"field":"source1","role":"broadcast-source"}],"restart_contract":"CompleteBundleAtWithAcceptedApplicabilityRules","selector":"0x05B","semantic_handler":"ExecuteTileExpand","state_effects":["operand:destination0:destination","operand:source0:source","operand:source1:broadcast-source"]}],"classification":["reduce-and-expand","column-expansion"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING"],"engine":"SFU","id":"PTO-TILE-TCOLEXPANDEXPDIF","mnemonic":"TCOLEXPANDEXPDIF","summary":"Apply exponential difference while expanding the bound col vector across the source Tile.","surface":"tile"}
+// PTO-INSTRUCTION: {"assembly":["TCOLEXPANDEXPDIF <bundle operands>"],"block":["BSTART.SFU TCOLEXPANDEXPDIF, DataType","B.DATR PadValue (optional)","B.DIM LB0=ValidCol","B.DIM LB1=ValidRow (optional)","B.DIM LB2=Col (optional)","B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>","BSTOP"],"catalog_indices":[65],"catalog_records":[{"arguments":[{"constant":"TileExpand_EXPDIF"},{"constant":"TileAxis_Column"},{"operand":"destination0"},{"operand":"source0"},{"operand":"source1"}],"command_mnemonic":"BSTART.TEPL","contract_status":"reviewed-complete","datr_contract":{"allowed_nonzero_fields":["PadValueOrByteId"],"pad_union":"pad-value"},"disposition":"accepted-direct-operation","effect_contract":"ExecuteTileExpand","family":"TEPL","fault_contract":"ExecuteTileInstruction","function":27,"legality_handler":"TileOperandsLegal_ExecuteTileExpand","mode":2,"name":"TCOLEXPANDEXPDIF","operands":[{"field":"destination0","role":"new Local same-type numeric destination"},{"field":"source0","role":"persistent Local full-shape numeric source"},{"field":"source1","role":"persistent Local one-row broadcast source"}],"restart_contract":"CompleteBundleAtWithAcceptedApplicabilityRules","selector":"0x05B","semantic_handler":"ExecuteTileExpand","state_effects":["operand:destination0:new-local-same-type-destination","operand:source0:persistent-local-full-shape-source","operand:source1:persistent-local-one-row-broadcast-source","runtime:CurrentBundlePadValue:numeric-padding"]}],"classification":["reduce-and-expand","column-expansion"],"contract":{"block_composition":["BSTART.SFU TCOLEXPANDEXPDIF, DataType","B.DATR PadValue (optional)","B.DIM LB0=ValidCol","B.DIM LB1=ValidRow (optional)","B.DIM LB2=Col (optional)","B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>","BSTOP"],"canonical_assembly":["TCOLEXPANDEXPDIF <bundle operands>"],"defaults":["LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.","Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.","For every valid destination element, first compute typed source0 - BroadcastTile[0,c], then compute the same-type natural exponential.","The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction."],"encoding_class":"selector-encoded-block-operation","examples":["BSTART.SFU TCOLEXPANDEXPDIF, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"],"exceptions":["A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, non-row-major source, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.","An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.","All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."],"field_contracts":{"B.DATR.PadValueOrByteId":{"ref":"PTO-FIELD-BLOCK-PADVALUE-OR-BYTEID"}},"field_zero_meanings":{"B.DATR.PadValueOrByteId":"Zero padding when B.DATR is present; omission selects Null.","B.DIM.LB0":"Zero is illegal because LB0 is required and ValidCol is nonzero.","B.DIM.LB1":"Omission selects ValidRow one; an explicitly encoded zero is illegal.","B.DIM.LB2":"Omission selects Col equal to ValidCol; an explicitly encoded zero is illegal."},"legality":["TCOLEXPANDEXPDIF is selected by the TEPL raw encoding carrier Mode 2 Function 27; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.","Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.","Only the eight architectural floating DataTypes are legal because EXPDIF composes typed TSUB and typed natural TEXP.","The destination and both sources use exactly the selected DataType.","The broadcast source has ValidRow equal to one and ValidCol and physical Col equal to the destination.","The full-shape source and destination have identical physical and valid geometry equal to the B.DIM-derived geometry.","Every source is a fully defined row-major numeric Tile with valid numeric encodings.","PadValueOrByteId is the only applicable B.DATR field. B.IOR and B.IOS are illegal.","All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."],"memory_effects":["none"],"operands":[{"field":"destination0","role":"new Local same-type numeric destination"},{"field":"source0","role":"persistent Local full-shape numeric source"},{"field":"source1","role":"persistent Local one-row broadcast source"}],"ordering":["Complete schema, attribute, dimension, type, descriptor, source-definedness, source-encoding, mask, capacity, name-allocation, and storage preflight precedes every source snapshot.","All source payloads are snapshotted before result construction; sources persist and legal aliases use read-old/write-new behavior.","Numeric status, all valid results, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."],"standalone_opcode":false,"state_effects":["For every valid destination element, first compute typed source0 - BroadcastTile[0,c], then compute the same-type natural exponential.","The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction.","Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.","Publish the complete renamed destination atomically after every element succeeds."]},"depends_on":["PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-TILE-MODEL-EXECUTION-EXPANSION","PTO-TILE-MODEL-LEGALITY-REDUCTION-AND-EXPANSION"],"engine":"SFU","id":"PTO-TILE-TCOLEXPANDEXPDIF","mnemonic":"TCOLEXPANDEXPDIF","summary":"Exponentiate the typed difference between a full-shape source and a broadcast one-row vector.","surface":"tile"}
+// PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}
+// NDF-BEGIN: PTO-TCOLEXPANDEXPDIF-CONTRACT-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// TCOLEXPANDEXPDIF MUST subtract the one-row source from the full-shape source
+// down rows and MUST exponentiate the result at the selected DataType.
+// The complete bundle MUST use one terminating Local B.IOT, MUST reject
+// B.IOR and B.IOS, and MUST accept only the DataTypes listed by this owner.
+// Complete preflight and source snapshot MUST precede atomic result, status,
+// padding, and renamed-destination publication.
+// NDF-END: PTO-TCOLEXPANDEXPDIF-CONTRACT-001
 // DOC-BEGIN: decode
 readonly func InstructionContractOperation_TCOLEXPANDEXPDIF() => TileOperation
 begin
@@ -6,8 +16,46 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+pure func InstructionContractDataTypeLegal_TCOLEXPANDEXPDIF(
+    data_type: TileDataType) => boolean
+begin
+    return TileUnaryDataTypeSupported(
+        TileUnary_EXP,
+        data_type);
+end;
+
+readonly func InstructionContractOperandsLegal_TCOLEXPANDEXPDIF(
+    destination: TileIndex,
+    source: TileIndex,
+    broadcast: TileIndex) => boolean
+begin
+    return TileOperandsLegal_ExecuteTileExpand(
+        TileExpand_EXPDIF,
+        TileAxis_Column,
+        destination,
+        source,
+        broadcast);
+end;
+
 readonly func InstructionContractHandler_TCOLEXPANDEXPDIF() => TileSemanticHandler
 begin
     return TileHandler_ExecuteTileExpand;
+end;
+
+func InstructionContractExecute_TCOLEXPANDEXPDIF(
+    destination: TileIndex,
+    source: TileIndex,
+    broadcast: TileIndex)
+begin
+    assert InstructionContractOperandsLegal_TCOLEXPANDEXPDIF(
+        destination,
+        source,
+        broadcast);
+    ExecuteTileExpand(
+        TileExpand_EXPDIF,
+        TileAxis_Column,
+        destination,
+        source,
+        broadcast);
 end;
 // DOC-END: operation

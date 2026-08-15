@@ -12,7 +12,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Callable, Mapping, Sequence
+from typing import Callable, Mapping, Sequence, TextIO
 
 from scripts.asl_tests import _repository, matrix, validate_test_coverage
 
@@ -77,7 +77,13 @@ def aggregate_results(
             raise ValueError(f"path mismatch for {test_id}")
         if result.get("sha256") != entry.get("sha256"):
             raise ValueError(f"hash mismatch for {test_id}")
-        for field in ("display_name", "source", "kind"):
+        for field in (
+            "display_name",
+            "source",
+            "kind",
+            "validation_entrypoint",
+            "validation_sha256",
+        ):
             if result.get(field) != entry.get(field):
                 raise ValueError(f"{field} mismatch for {test_id}")
         if result.get("status") != "passed":
@@ -112,6 +118,7 @@ def execute_matrix(
     *,
     jobs: int,
     runner: Runner = _default_runner,
+    output: TextIO = sys.stdout,
 ) -> list[dict[str, object]]:
     """Execute each ID independently and load exactly one result per invocation."""
 
@@ -128,20 +135,42 @@ def execute_matrix(
         command = [str(root / "scripts/run-asl-test"), "--id", test_id]
         return runner(command, root)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
-        returncodes = dict(zip(planned, pool.map(run_one, planned), strict=True))
-
     loaded: list[dict[str, object]] = []
-    for test_id in planned:
-        path = result_root / test_id / "result.json"
-        if not path.is_file():
-            if returncodes[test_id] != 0:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
+        futures = {pool.submit(run_one, test_id): test_id for test_id in planned}
+        completions = (
+            (futures[future], future.result())
+            for future in concurrent.futures.as_completed(futures)
+        )
+        for test_id, returncode in completions:
+            entry = planned[test_id]
+            path = result_root / test_id / "result.json"
+            if not path.is_file():
+                display_name = str(entry.get("display_name") or test_id)
+                print(
+                    f"FAIL {display_name} [{test_id}] missing result",
+                    file=output,
+                    flush=True,
+                )
+                if returncode == 0:
+                    raise ValueError(
+                        f"runner returned success without result for {test_id}"
+                    )
                 continue
-            raise ValueError(f"runner returned success without result for {test_id}")
-        value = json.loads(path.read_text(encoding="utf-8"))
-        if not isinstance(value, dict):
-            raise ValueError(f"result for {test_id} is not a JSON object")
-        loaded.append(value)
+            value = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(value, dict):
+                raise ValueError(f"result for {test_id} is not a JSON object")
+            status = "PASS" if value.get("status") == "passed" else "FAIL"
+            display_name = str(value.get("display_name") or test_id)
+            duration = value.get("duration_seconds", "-")
+            print(
+                f"{status} {display_name} [{test_id}] {duration}s",
+                file=output,
+                flush=True,
+            )
+            loaded.append(value)
+
+    loaded.sort(key=lambda value: str(value.get("id", "")))
     return loaded
 
 
@@ -252,9 +281,7 @@ def page_main(argv: Sequence[str] | None = None) -> int:
         "-j",
         "--jobs",
         type=int,
-        default=int(
-            os.environ.get("PTO_ASL_TEST_JOBS", str(os.cpu_count() or 1))
-        ),
+        default=int(os.environ.get("PTO_ASL_TEST_JOBS", str(os.cpu_count() or 1))),
     )
     arguments = parser.parse_args(argv)
     root = arguments.root.resolve()
@@ -294,9 +321,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--jobs",
         type=int,
-        default=int(
-            os.environ.get("PTO_ASL_TEST_JOBS", str(os.cpu_count() or 1))
-        ),
+        default=int(os.environ.get("PTO_ASL_TEST_JOBS", str(os.cpu_count() or 1))),
     )
     parser.add_argument("--aggregate-only", action="store_true")
     parser.add_argument("--matrix-pages", type=Path)

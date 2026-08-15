@@ -35,15 +35,10 @@ silently treating adjacent fields as one operand. It preserves the existing PTO
 catalog and executable reference behavior while making the non-byte `REV` result
 an explicit architecture rule rather than an incidental implementation choice.
 
-An independent executable ISA comparison corroborates the zero result for a
-non-byte `REV` width and the wrapping field convention. Its current decode path
-does not provide trustworthy evidence that both encoded `REV` bounds are used
-independently, so PTO owns that requirement and proves it with metamorphic raw
-instruction tests.
-
 ## Verification
 
-`tests/asl/scalar-tests.asl` varies `imml` while holding `immr` fixed, varies
+`tests/asl/scalar/model/alu/semantics/scalar-bound-bitfield-contract-001.asl`
+varies `imml` while holding `immr` fixed, varies
 `immr` while holding `imml` fixed, exercises minimum, byte-aligned, wrapping,
 non-byte, and full-width selections, and uses an aliased source/destination.
 The catalog checker requires this ADR and the decoded boundary witness to remain

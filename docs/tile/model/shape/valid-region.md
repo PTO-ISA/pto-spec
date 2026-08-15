@@ -22,6 +22,26 @@ begin
     return rows != 0 && valid_rows <= rows && valid_columns <= columns;
 end;
 
+// A source-form B.IOS carries no TSize.  When the selected Shared register has
+// no descriptor, the consuming operation derives the smallest architectural
+// per-PE capacity that can represent its completed schema.  Zero reports that
+// no 128 B through 8 KiB Tile size can represent the requested shape.
+pure func MinimumTileCapacityBytesForShape(
+    columns: integer {0..65535}, valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535}, data_type: TileDataType)
+    => integer {0..8192}
+begin
+    for size_code = 1 to 7 do
+        let capacity_bytes = TileSizeCodeBytes(
+            size_code as integer {1..7});
+        if TileDescriptorShapeLegal(capacity_bytes, columns, valid_rows,
+               valid_columns, data_type) then
+            return capacity_bytes;
+        end;
+    end;
+    return 0;
+end;
+
 pure func TileDataTypeIsFourBit(data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_E2M1X2 ||

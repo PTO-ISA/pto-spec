@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/C.AND.asl`
 
-C.AND - Compute this mnemonic's binary scalar operation and write the selected destination.
+C.AND snapshots two complete Reg5 sources, computes the bitwise conjunction of SrcL and SrcR, and pushes the wrapping XLEN result to T.
 
 ## Normative identity {#PTO-INST-SCALAR-C-AND}
 
@@ -30,12 +30,26 @@ c.and srcL, srcR, ->t
 | c_and_16_379e5bed3352 | SrcL | 5 | encoding-defined | [{"instruction_lsb":6,"value_lsb":0,"width":5}] |
 | c_and_16_379e5bed3352 | SrcR | 5 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| c_and_16_379e5bed3352 | SrcL | 5 | 0–31 | none | none | left Reg5 source | Encoded zero reads the architectural zero GPR. |
+| c_and_16_379e5bed3352 | SrcR | 5 | 0–31 | none | none | right Reg5 source | Encoded zero reads the architectural zero GPR. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcL | encoded operand or control |
-| SrcR | encoded operand or control |
+| SrcL | left Reg5 source |
+| SrcR | right Reg5 source |
 
 ## Decode
 
@@ -56,17 +70,55 @@ readonly func InstructionContractHandler_C_AND() => ScalarSemanticHandler
 begin
     return ScalarHandler_ScalarBinary;
 end;
+
+pure func InstructionContractResult_C_AND(
+    left: Word,
+    right: Word)
+    => Word
+begin
+    return ScalarBinary(
+        ScalarBinary_AND,
+        left,
+        right);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- SrcL and SrcR are required encoded fields; neither source can be omitted.
+- The destination is not encoded: every successful form pushes exactly one result to T.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `C.AND - Compute this mnemonic's binary scalar operation and write the selected destination.`
-- **Semantic handler:** `ScalarBinary`
+- Each source code 0..23 selects an absolute GPR, 24..27 selects T#1..T#4, and 28..31 selects U#1..U#4 without consumption.
+- Duplicate, absolute-relative, and relative-relative source pairs are legal. Every encoded source value is assigned.
+
+## State effects
+
+- Compute bitwise AND on the two complete XLEN source values.
+- Push exactly one XLEN result to T. Existing T entries shift toward older indices, the former T#4 is discarded, and no source is consumed.
+- No GPR, U queue, memory, reservation, descriptor, numeric-status, block, privilege, predicate, or other control state changes. Successful execution advances TPC by two bytes.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Snapshot both sources before pushing the destination so aliases observe the pre-instruction queue state.
+- Push the result as the newest T entry, then advance TPC by two bytes.
+
+## Exceptions
+
+- Bitwise and is a total fixed-width operation and raises no arithmetic exception.
+- An unavailable selected T/U source raises Fault_IllegalInstruction before the T push, before TPC advances, and before any other effect.
+
+## Examples
+
+- c.and t#1, u#1, ->t
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

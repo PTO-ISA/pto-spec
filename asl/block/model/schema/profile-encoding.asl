@@ -5,8 +5,6 @@ begin
         when BundleKind_Standard => return '0000';
         when BundleKind_Floating => return '0001';
         when BundleKind_System => return '0010';
-        when BundleKind_MachineParallel => return '0011';
-        when BundleKind_MachineSequential => return '0100';
         when BundleKind_TileElement => return '0101';
         when BundleKind_TileMemory => return '0110';
         when BundleKind_TileMatrix => return '0111';
@@ -18,8 +16,6 @@ pure func PTOv0BundleKindOf(code: bits(4)) => BundleKind
 begin
     if code == '0001' then return BundleKind_Floating;
     elsif code == '0010' then return BundleKind_System;
-    elsif code == '0011' then return BundleKind_MachineParallel;
-    elsif code == '0100' then return BundleKind_MachineSequential;
     elsif code == '0101' then return BundleKind_TileElement;
     elsif code == '0110' then return BundleKind_TileMemory;
     elsif code == '0111' then return BundleKind_TileMatrix;
@@ -55,8 +51,9 @@ end;
 
 pure func PTOv0EBARGControlLegal(control: Word) => boolean
 begin
+    let kind_code = UInt(control[10:7]);
     return control[63:15] == Zeros{49} &&
-           UInt(control[10:7]) <= 8 &&
+           (kind_code <= 2 || (kind_code >= 5 && kind_code <= 8)) &&
            UInt(control[13:11]) <= 6 &&
            (control[6] == '0' || control[5] == '1');
 end;

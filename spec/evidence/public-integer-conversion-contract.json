@@ -962,7 +962,7 @@
   ],
   "tests": [
     {
-      "path": "tests/asl/tile-tests.asl",
+      "path": "tests/asl/tile/model/numeric/formats/tile-exec-conversion-001.asl",
       "function": "TestTileConversion",
       "coverage": "signed widening, unsigned widening, narrowing, cross-signedness, 64-bit source, and direct TCVT execution"
     }
@@ -970,7 +970,7 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
+      "sha256": "d001984ca86695c8f08a10415419ee663e76ab3bc21743f9e70343e20d8efdf3"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -978,23 +978,23 @@
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "0eae4a99230713271bdcff56dd02d6011988a32edd2971160748f40f174fad7c"
+      "sha256": "7c3005a7885e94537911d717b5ae977ced8ba088cd966934619cc82ba6dda03c"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
+      "sha256": "8fab6140efb0831df728941e71cf0e93ca0f7506f8c28c952d4fa3530d089648"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
       "sha256": "7b35e8353c621a7448facada22a4175acc30e14377fdc2a7cb9c130ab1323d56"
     },
     {
-      "path": "tests/asl/tile-tests.asl",
-      "sha256": "bf82683e74be1d0f80ad48c4d02ca97d932939737e6f18d109d45d8a9764d625"
+      "path": "tests/asl/tile/model/numeric/formats/tile-exec-conversion-001.asl",
+      "sha256": "f40b91fc9e5f3b2034e6d1a59f9c25747e7506d002e487593a0bb7ac043a1512"
     },
     {
       "path": "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
-      "sha256": "fe98df65bb6c86efc9206b0e50ff65f23494f79c6bf2a0389adb7288bc2cf42d"
+      "sha256": "99d732ce68bea0bc109bc26f9b9ff23ac594d75f6aaf68910bb191b4bae21bb2"
     }
   ],
   "summary": {

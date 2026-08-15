@@ -7,7 +7,7 @@
 
 ## Context
 
-PTO accepts 99 bundle-command forms through 22 semantic handlers. The 89
+PTO accepts 100 bundle-command forms through 22 semantic handlers. The 90
 executed forms use 12 handlers; 10 forms map to 10 unsupported handlers and
 reject before effects. Earlier closure work proved decode identity, installed
 operation descriptors, and the start/header/stop lifecycle. It did not make
@@ -22,13 +22,6 @@ direct tile dispatch. ADR 0055 supersedes that limitation: a complete bundle
 now resolves ordered tile and GPR bindings, bundle-header operands, and the
 selected operation's architectural defaults before commit. This preserves the
 direct-operation schema without inventing values at execution time.
-
-The generated comparison matrix contains dispositions for all 99 form IDs. The
-content-addressed independent snapshot grades 80 as an executable subset and 16
-as decode-only; three new PTO identities are explicitly missing from the
-snapshot. Its model stages bundle headers rather than executing tile
-payloads. It is useful structural evidence, not normative PTO semantics or a
-conformance oracle.
 
 ## Decision
 
@@ -72,17 +65,23 @@ All remaining forms have a defined effect:
 - dimension, body-address, scalar binding, tile binding, control-attribute,
   and data-attribute fields are stored without truncation in their named
   bundle state;
-- `MCOPY` and `MSET` accept an XLEN length from 0 through 63 bytes, including
-  zero length, and reject larger values before memory or last-command state
+- `MSET` accepts an XLEN length from 0 through 63 bytes, including zero
+  length, and rejects larger values before memory or last-command state
   changes;
+- PRD-152 supersedes the former `MCOPY` 63-byte bound and snapshot rule:
+  `MCOPY` accepts its complete XLEN length, rejects wrapping or overlapping
+  ranges before effects, and uses trap-preserved restartable memory steps;
+- `MSET` reads destination, fill value, and byte length only from absolute
+  GPR selectors `0..23`; selector codes `24..31` are reserved and reject
+  before any register, memory, reservation, last-command, or TPC effect;
 - bundle starts consume their target, return target, operation selector,
   data type, mode, and branch type when those fields are present.
 
-The memory-command bound is a PTO-v0 architectural bound, not a low-bit
-encoding rule. A future profile may raise it only with a corresponding
-instruction-wide preflight and evidence update.
+The `MSET` bound is an architectural bound, not a low-bit encoding rule. A
+future profile may raise it only with a corresponding instruction-wide
+preflight and evidence update. `MCOPY` has no such byte-count bound.
 
-`B.DIM`, `B.TEXT`, `B.IOR`, `B.IOT`, `B.CATR`, and `B.DATR` consume every
+`B.DIM`, `B.IOR`, `B.IOT`, `B.IOS`, `B.CATR`, and `B.DATR` consume every
 decoded field into trap-preserved bundle state. PTO-v0 tile commit resolves
 their schema-contributing values after the full bundle is collected. Missing
 optional operands use the defaults defined by the selected operation; surplus
@@ -107,9 +106,9 @@ The checked bridge inventory is:
 | CUBE | 12 | 12 | 0 |
 | **Total** | **109** | **109** | **0** |
 
-This representability statement does not guarantee independent model parity;
-it states only that the PTO bundle schema can construct every canonical direct
-operation without changing that operation's encoding or semantics.
+This representability statement means only that the PTO bundle schema can
+construct every canonical direct operation without changing that operation's
+encoding or semantics.
 
 ## Evidence contract
 
@@ -119,18 +118,13 @@ consumed fields, retirement disposition, effect class, and all 109 bridge
 representability decisions. The repository gate regenerates it and fails on
 any catalog or policy drift.
 
-`ValidateCanonicalCommandExecution` executes all 99 canonical form witnesses.
+`ValidateCanonicalCommandExecution` executes all 100 canonical form witnesses.
 It asserts success or pre-effect rejection, fault identity, and TPC behavior;
 it additionally checks descriptor installation, argument kind, and hint
 payload where applicable. `TestBundleCommandTotalityBoundaries` covers
 unsupported pre-effect rejection, memory-command zero/upper/over-limit cases,
 argument-kind distinction, and hint observability. Bundle commit tests cover
 representable execution and missing/incompatible binding rollback.
-
-The clean comparison snapshot has aggregate SHA-256
-`1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec`.
-S5-T3 disposition closure is closed, while independent executable parity
-remains open at 0/38.
 
 ## Consequences
 

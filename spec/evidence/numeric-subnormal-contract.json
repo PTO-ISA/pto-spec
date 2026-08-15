@@ -4,7 +4,7 @@
   "decision_id": "PD-04",
   "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
   "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
-  "profile_id": "pto-hardware-numeric-0.58.0-ieee-v1",
+  "profile_id": "pto-hardware-numeric-0.58.1-ieee-v1",
   "policy": {
     "input_subnormals": "preserve-exact-source-value",
     "result_subnormals": "gradual-underflow-to-destination-format",
@@ -195,6 +195,8 @@
       "hooks": [
         "TileProfileMatrixAccumulate",
         "TileProfileMatrixBias",
+        "TileProfileMatrixPostProcess",
+        "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
@@ -2535,54 +2537,54 @@
     ]
   },
   "tests": [
-    "tests/asl/profile-tests.asl:ValidateNumericFormatClassification",
-    "tests/asl/profile-tests.asl:AssertHardwareNumericSubnormalBoundary",
-    "tests/asl/profile-tests.asl:AssertHardwareNumericSubnormalNotApplicable"
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:ValidateNumericFormatClassification",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:AssertHardwareNumericSubnormalBoundary",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl:AssertHardwareNumericSubnormalNotApplicable"
   ],
   "sources": [
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "c4076cf8ac6ebd0c6db8a070b7c290b9928ed7f98c089538ee53ed4644e1531a"
+      "sha256": "170deadacb174c933c287231fb67da1046d7989f84b6852bf353d68a495d1755"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
+      "sha256": "d001984ca86695c8f08a10415419ee663e76ab3bc21743f9e70343e20d8efdf3"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "0eae4a99230713271bdcff56dd02d6011988a32edd2971160748f40f174fad7c"
+      "sha256": "7c3005a7885e94537911d717b5ae977ced8ba088cd966934619cc82ba6dda03c"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
+      "sha256": "681d7a75e1aa58cfb9ba8ed06ce6e6b3a17786c87b11949098fe25470b7b8da1"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
+      "sha256": "429fdeb37c2bd4b3e9a0d2c209f959b92c476860e81a3331e5d7df90c95970d3"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
-      "sha256": "e3a280e7acf0e582d6f777dee4c5295747a518a505d93e1e3118661f0b561d92"
+      "sha256": "659ed9cbf6286d7011a9156b582b804e5f2e6fa1dd5bd5c3dac70056bd572b9d"
     },
     {
       "path": "asl/arch/data-types/floating-point.asl",
-      "sha256": "9232fffb96d16c57168252188147ad98d4be027780b5cacd926acbd3915e4dc2"
+      "sha256": "3eaa4e906174194125ff651c24703bd9a4704073baf2d37268634bd67d5a06a2"
     },
     {
       "path": "asl/arch/data-types/integer.asl",
-      "sha256": "ee412e917aca73b90cf0729bb05b6ee8eba9d636dd87bd01c3d49481fbb6de39"
+      "sha256": "9c09a85c8eedcbacc04e0007a556f5dc8a08e3076ec47b58a805d2c06e3af995"
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
-      "sha256": "4012f50d5019f5692d8eb2f31ff0ce58f133a3763163e47cf760bed6a2ebbf67"
+      "sha256": "dd4adb80d037bc6e6b9b87dd53b8f4ccf6cda4a4fcd648c2874074d8587312d7"
     },
     {
       "path": "asl/arch/data-types/memory-operations.asl",
-      "sha256": "5213fbde30b1e6cc67f9676e0f0e478a21a04e89853c73e7a2bac7723901d07a"
+      "sha256": "4c5b08dd7c47caa6b1917185886bd8ea6929a9bf00c2b8578b86ead04e110b71"
     },
     {
       "path": "asl/arch/data-types/numeric-classification.asl",
-      "sha256": "0c592e04bf159e15822c47f085dac61066c78a20a33c887665ae46f3053a5a7a"
+      "sha256": "b2d9d280d2b40e6cd0c5e17400e9c2b29aec86fbb651d20404cf7b3a7b6b2cb9"
     },
     {
       "path": "asl/arch/data-types/packed.asl",
@@ -2590,31 +2592,31 @@
     },
     {
       "path": "asl/arch/data-types/rounding.asl",
-      "sha256": "6763b6bc65185550a466412faac96fc23438e6f97b85f1b2b84f951f47e407ee"
+      "sha256": "7914ae826137d9581ca7703b578532e9711d46675a2f45823700faaf6317adff"
     },
     {
       "path": "asl/arch/data-types/system-registers.asl",
-      "sha256": "db06b148c04403903c1973f696eb2c23ce49f2c29279d6b2412a083d4ed7d02e"
+      "sha256": "c1f9c741dd9e4f1d18eba487fc0a536bf3b5911b5c02909808d959ea8476f6b7"
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
-      "sha256": "40afc7c9304a83307fe7abfcca2a0f9cc82998872b2349250132b81f51f564cc"
+      "sha256": "a75d0210fb96b92c7b282d341ec992935be922761c679504f7eb6a6e85c50d94"
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "b7183d7eb28289b128c842e2f806c5cf4ff95151e24e64799d689f6410faaafd"
+      "sha256": "2f29e933b2295bb8a8c5f16a9950c1b7668c3a593cd8bd55b099c90579b491db"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "7b35e8353c621a7448facada22a4175acc30e14377fdc2a7cb9c130ab1323d56"
+      "sha256": "55eb6eaf63ddfdcd918603a21673b53c198f448c6e8800e3389b28f43410fad8"
     },
     {
-      "path": "tests/asl/profile-tests.asl",
-      "sha256": "47248debd7876d0117b0738a44d226e4352806581d574895a7f10a8cb8949f89"
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
+      "sha256": "ec317991843f696e06d7c2456002feef823107ed466de354a8e04c4c4218360d"
     },
     {
       "path": "docs/status/decisions/0049-hardware-subnormal-policy.md",
-      "sha256": "9065787b60ef2a323515c1deb82331bfde059d8be4455c3c3ffa0d0f50f4311a"
+      "sha256": "91f91dca15966df2f292bcdaf8793a24f91839be00be343111a22a71780ac12e"
     }
   ],
   "summary": {
@@ -2626,7 +2628,7 @@
     "affected_operation_count": 93,
     "operation_applicability_row_count": 93,
     "conditional_operation_type_tuple_count": 1023,
-    "affected_hook_count": 21,
+    "affected_hook_count": 23,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
     "pd04_complete": true,

@@ -46,3 +46,38 @@ readonly func TileMemoryIndexedHighNibble(index_value: Word,
 begin
     return TileDataTypeIsFourBit(data_type) && index_value[0] == '1';
 end;
+
+pure func TileIndexByteDisplacement(index_value: Word,
+                                    index_data_type: TileDataType) => Word
+begin
+    assert TileDataTypeIsInteger(index_data_type);
+    case index_data_type of
+        when TileDataType_S4X2 =>
+            return SignExtend{PTO_XLEN}(index_value[3:0]);
+        when TileDataType_S8 =>
+            return SignExtend{PTO_XLEN}(index_value[7:0]);
+        when TileDataType_S16 =>
+            return SignExtend{PTO_XLEN}(index_value[15:0]);
+        when TileDataType_S32 =>
+            return SignExtend{PTO_XLEN}(index_value[31:0]);
+        when TileDataType_S64 => return index_value;
+        when TileDataType_U4X2 =>
+            return ZeroExtend{PTO_XLEN}(index_value[3:0]);
+        when TileDataType_U8 =>
+            return ZeroExtend{PTO_XLEN}(index_value[7:0]);
+        when TileDataType_U16 =>
+            return ZeroExtend{PTO_XLEN}(index_value[15:0]);
+        when TileDataType_U32 =>
+            return ZeroExtend{PTO_XLEN}(index_value[31:0]);
+        when TileDataType_U64 => return index_value;
+        otherwise => unreachable;
+    end;
+end;
+
+pure func TileMemoryByteDisplacementAddress(
+    base_address: Word, index_value: Word,
+    index_data_type: TileDataType) => Word
+begin
+    return base_address +
+        TileIndexByteDisplacement(index_value, index_data_type);
+end;

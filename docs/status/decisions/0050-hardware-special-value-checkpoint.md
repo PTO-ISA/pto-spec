@@ -24,14 +24,6 @@ payload to escape, or choosing a zero sign from operand order. The existing
 scalar FP32/FP64 MIN/MAX and compare paths already implement compatible
 portable rules, but the named tile-numeric profile remained unwired.
 
-An independently reviewed executable ISA model corroborates the shared
-FP32/FP64 classification, ordered-comparison, signed-zero-equality, NaN
-MIN/MAX, and most zero-selection foundations. It intentionally differs for
-`FMAX(-0, -0)`: PTO preserves `-0`, while the comparison model returns `+0`
-for every two-zero `FMAX` input pair. The comparison therefore does not bind
-that PTO-owned result, any PTO low-precision format, or a complete target flag,
-infinity-arithmetic, or numeric-oracle contract.
-
 ## Decision
 
 ### Produced NaNs
@@ -107,9 +99,6 @@ missing-rule rejection.
   and MAX have operation-defined zero signs independent of operand order.
 - **Apply these rules to `pto-v0`.** Rejected because that profile remains the
   deterministic raw-carrier reference.
-- **Use the comparison model as a complete oracle.** Rejected because its
-  corroborating FP32/FP64 subset does not define PTO low-precision results or
-  complete target status behavior.
 
 ## Consequences
 
@@ -149,4 +138,5 @@ passed.
 - `spec/evidence/numeric-format-namespace-contract.json`
 - `spec/evidence/numeric-special-value-contract.json`
 - `scripts/generate-numeric-special-value-contract`
-- `tests/asl/profile-tests.asl`
+- `tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl`
+- `spec/evidence/release-traceability-readiness.json`

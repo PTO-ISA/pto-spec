@@ -22,11 +22,8 @@ The remaining evidence contains two traps for an implementation:
 - `FCVTA` means nearest with ties away from zero, not directed rounding away
   from zero for every inexact value.
 
-The published scalar contract and an independently reviewed executable ISA
-model agree on the scalar field location, the four assigned directional codes,
-and an RNE fallback for reserved values. The independent model is corroborating
-evidence only; PTO semantics remain defined by this decision and the normative
-ASL.
+PTO defines the scalar field location, the four assigned directional codes,
+and an RNE fallback for reserved values in the owning ASL.
 
 ## Decision
 
@@ -143,9 +140,8 @@ The generated domain ledger records the rule and saturation ordering for all
 
 - Treating scalar raw values 4 through 7 as the bundle modes was rejected
   because it conflates distinct architectural namespaces.
-- Rejecting reserved scalar values before effects was rejected because the
-  published scalar behavior and independent executable comparison both use a
-  deterministic RNE fallback.
+- Rejecting reserved scalar values before effects was rejected because PTO
+  defines a deterministic RNE fallback.
 - Defining `FCVTA` as directed away from zero was rejected because it changes
   non-halfway values and conflicts with the mnemonic's ties-away contract.
 - Passing public enumeration ordinals directly into `B.DATR.RMode` was rejected
@@ -178,7 +174,7 @@ in progress.
 - `spec/hardware-conformance-profile.json`
 - `spec/evidence/numeric-rounding-selector-contract.json`
 - `scripts/generate-numeric-rounding-selector-contract`
-- `tests/asl/profile-tests.asl`
-- `tests/asl/scalar-tests.asl`
-- `tests/asl/bundle-tests.asl`
-- `tests/asl/tile-tests.asl`
+- `tests/asl/arch/data-types/rounding/arch-static-rounding-contract-001.asl`
+- `tests/asl/scalar/model/dispatch/fsu/scalar-exec-flag-and-rounding-helpers-001.asl`
+- `tests/asl/tile/model/numeric/rounding/tile-static-rounding-contract-001.asl`
+- `spec/evidence/release-traceability-readiness.json`

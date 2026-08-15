@@ -51,15 +51,12 @@ semantics instead of relying on host evaluation order. The fixed-width corner
 rules are the existing PTO reference behavior and are now closure requirements,
 not incidental test examples.
 
-An independent executable ISA comparison corroborates fixed-width wrapping,
-non-trapping division corners, source snapshots, and ordered pair writes. PTO
-owns the rules above and does not import the comparison model as authority.
-
 ## Verification
 
-`spec/evidence/scalar-alu-totality.json` binds all seven ALU effect classes and
-all 107 stable form IDs to 337 decoded boundary cases and 35 decoded alias
-cases.
+The canonical scalar catalog and mirrored ALU ASL units bind every accepted
+form to its effect class. The independent ALU boundary and alias tests are
+owned through `spec/evidence/release-traceability-readiness.json`; no separate
+behavioral evidence ledger is normative.
 `TestScalarALUBoundaryMatrix` covers arithmetic, logic, shifts, extrema,
 multiply/divide, pair results, bitfields, concatenation, materialization,
 extension, selection, and control-effect bounds. `TestScalarALUAliasMatrix`

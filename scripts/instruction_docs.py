@@ -15,6 +15,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.asl_units import AslUnit, load_units  # noqa: E402
+from scripts.instruction_contracts import (  # noqa: E402
+    ResolvedInstructionContract,
+    load_field_domains,
+    resolve_instruction_contract,
+)
 from scripts.ndf import instruction_clause_id  # noqa: E402
 from scripts.tile_taxonomy import (  # noqa: E402
     TILE_CLASSIFICATIONS,
@@ -68,6 +73,7 @@ class InstructionRecord:
     engine: str | None
     alias_of: str | None
     alias_engine: str | None
+    contract: ResolvedInstructionContract | None = None
     alias_catalog_records: tuple[dict[str, object], ...] = ()
 
     @property
@@ -279,8 +285,20 @@ def load_instruction_index(root: Path = ROOT) -> list[InstructionRecord]:
         resolved.append(
             replace(record, alias_catalog_records=target.catalog_records)
         )
+    units = load_units(root / "asl")
+    domains = load_field_domains(units)
+    units_by_path = {unit.source_path: unit for unit in units}
+    contracted = [
+        replace(
+            record,
+            contract=resolve_instruction_contract(
+                units_by_path[record.source_path], domains, require_complete=False
+            ),
+        )
+        for record in resolved
+    ]
     return sorted(
-        resolved,
+        contracted,
         key=lambda record: (record.surface, record.classification, record.mnemonic),
     )
 
@@ -437,18 +455,25 @@ def _encoding_section(record: InstructionRecord) -> list[str]:
 def _operands_section(record: InstructionRecord) -> list[str]:
     rows: list[list[str]] = []
     seen: set[tuple[str, str]] = set()
-    for catalog_record in record.display_catalog_records:
-        for operand in catalog_record.get("operands", []):
+    if record.contract is not None:
+        for operand in record.contract.operands:
             row = (str(operand.get("field", "")), str(operand.get("role", "")))
             if row not in seen:
                 seen.add(row)
                 rows.append(list(row))
-        if not catalog_record.get("operands"):
-            for field in catalog_record.get("fields", []):
-                row = (str(field.get("name", "")), "encoded operand or control")
+    else:
+        for catalog_record in record.display_catalog_records:
+            for operand in catalog_record.get("operands", []):
+                row = (str(operand.get("field", "")), str(operand.get("role", "")))
                 if row not in seen:
                     seen.add(row)
                     rows.append(list(row))
+            if not catalog_record.get("operands"):
+                for field in catalog_record.get("fields", []):
+                    row = (str(field.get("name", "")), "encoded operand or control")
+                    if row not in seen:
+                        seen.add(row)
+                        rows.append(list(row))
     lines = ["## Operands and results", ""]
     if rows:
         lines.extend(
@@ -513,7 +538,151 @@ def _operational_section(record: InstructionRecord) -> list[str]:
     return lines
 
 
+def _encoding_class_section(record: InstructionRecord) -> list[str]:
+    contract = record.contract
+    if contract is None:
+        return []
+    lines = [
+        "## Encoding class",
+        "",
+        f"- **Class:** `{contract.encoding_class}`",
+        f"- **Standalone opcode:** `{'yes' if contract.standalone_opcode else 'no'}`",
+        "",
+    ]
+    if not contract.standalone_opcode:
+        lines.extend(["This operation has no standalone opcode.", ""])
+    return lines
+
+
+def _field_disposition_section(record: InstructionRecord) -> list[str]:
+    contract = record.contract
+    if contract is None or not contract.field_domains:
+        return []
+    lines = ["## Field value dispositions", ""]
+    for field_name, domain in contract.field_domains:
+        lines.extend(
+            [
+                f"### {field_name} (`{domain.contract_id}`)",
+                "",
+                domain.role,
+                "",
+                f"**Encoded zero:** {domain.zero_meaning}",
+                "",
+                "| Code | Disposition | Meaning |",
+                "| ---: | --- | --- |",
+            ]
+        )
+        assigned = dict(domain.assigned)
+        reserved = set(domain.reserved)
+        for value in range(1 << domain.width):
+            if value in assigned:
+                disposition = "assigned"
+                meaning = assigned[value]
+            elif value in reserved:
+                disposition = "reserved"
+                meaning = "future extension"
+            else:  # pragma: no cover - the validator makes this unreachable
+                raise ValueError(
+                    f"{domain.contract_id}: unresolved rendered value {value}"
+                )
+            lines.append(f"| {value} | {disposition} | {meaning} |")
+        lines.extend(["", f"**Reserved-value behavior:** {domain.rejection}", ""])
+    return lines
+
+
+def _format_ranges(ranges: tuple[tuple[int, int], ...]) -> str:
+    if not ranges:
+        return "none"
+    return ", ".join(
+        str(start) if start == end else f"{start}–{end}"
+        for start, end in ranges
+    )
+
+
+def _format_other_owners(values: tuple[tuple[int, str], ...]) -> str:
+    if not values:
+        return "none"
+    return ", ".join(f"{value} ({owner})" for value, owner in values)
+
+
+def _encoded_field_closure_section(record: InstructionRecord) -> list[str]:
+    contract = record.contract
+    if contract is None or not contract.encoded_fields:
+        return []
+    lines = [
+        "## Encoded field closure",
+        "",
+        "Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.",
+        "",
+        "| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |",
+        "| --- | --- | ---: | --- | --- | --- | --- | --- |",
+    ]
+    for field in contract.encoded_fields:
+        lines.append(
+            "| "
+            + " | ".join(
+                _markdown_cell(value)
+                for value in (
+                    field.form_id,
+                    field.field_name,
+                    field.width,
+                    _format_ranges(field.assigned_ranges),
+                    _format_other_owners(field.other_owner_values),
+                    _format_ranges(field.reserved_ranges),
+                    field.role,
+                    field.zero_meaning,
+                )
+            )
+            + " |"
+        )
+    lines.append("")
+    for field in contract.encoded_fields:
+        if field.reserved_ranges:
+            lines.append(
+                f"- `{field.form_id}.{field.field_name}` reserved values: {field.rejection}"
+            )
+    if any(field.reserved_ranges for field in contract.encoded_fields):
+        lines.append("")
+    return lines
+
+
+def _contract_list_section(title: str, values: tuple[str, ...]) -> list[str]:
+    return [f"## {title}", "", *[f"- {value}" for value in values], ""]
+
+
+def _resolved_contract_sections(record: InstructionRecord) -> list[str]:
+    contract = record.contract
+    if contract is None:
+        return [*_legality_section(record), *_operational_section(record)]
+    lines: list[str] = []
+    lines.extend(_contract_list_section("Defaults and encoded zero", contract.defaults))
+    lines.extend(_contract_list_section("Legality", contract.legality))
+    lines.extend(_contract_list_section("State effects", contract.state_effects))
+    lines.extend(
+        [
+            "## Memory effects and ordering",
+            "",
+            "### Memory effects",
+            "",
+            *[f"- {value}" for value in contract.memory_effects],
+            "",
+            "### Ordering",
+            "",
+            *[f"- {value}" for value in contract.ordering],
+            "",
+        ]
+    )
+    lines.extend(_contract_list_section("Exceptions", contract.exceptions))
+    lines.extend(_contract_list_section("Examples", contract.examples))
+    return lines
+
+
 def render_page(record: InstructionRecord, supplementary: str = "") -> str:
+    assembly = (
+        record.contract.canonical_assembly
+        if record.contract is not None
+        else record.assembly
+    )
     lines = [
         f"<!-- GENERATED FROM: {record.source_path.as_posix()} -->",
         f"# {record.mnemonic}",
@@ -554,10 +723,13 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
             "## Assembly",
             "",
             "```asm",
-            *record.assembly,
+            *assembly,
             "```",
             "",
             *_encoding_section(record),
+            *_encoding_class_section(record),
+            *_field_disposition_section(record),
+            *_encoded_field_closure_section(record),
             *_operands_section(record),
             "## Decode",
             "",
@@ -565,13 +737,18 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
             "",
         ]
     )
-    if record.surface == "tile":
+    block_composition = (
+        record.contract.block_composition
+        if record.contract is not None
+        else record.block
+    )
+    if block_composition != ("none",) and (record.surface == "tile" or record.contract):
         lines.extend(
             [
                 "## Block composition",
                 "",
                 "```asm",
-                *record.block,
+                *block_composition,
                 "```",
                 "",
             ]
@@ -582,8 +759,7 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
             "",
             *_generated_region(record, "operation"),
             "",
-            *_legality_section(record),
-            *_operational_section(record),
+            *_resolved_contract_sections(record),
             SUPPLEMENTARY_BEGIN,
             supplementary.rstrip(),
             SUPPLEMENTARY_END,

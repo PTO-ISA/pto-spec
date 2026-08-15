@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/irregular-and-complex/initialization/TTRI.asl`
 
-Initialize the selected upper or lower triangular region relative to the diagonal.
+Generate an exact typed lower or upper triangular matrix in a new Local Tile.
 
 ## Normative identity {#PTO-INST-TILE-TTRI}
 
@@ -28,13 +28,194 @@ TTRI <bundle operands>
 | --- | --- | --- | ---: | ---: | --- |
 | TTRI | TEPL | 0x067 | 7 | 3 | TTRI |
 
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
+## Field value dispositions
+
+### B.IOR.RegDst (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
+### B.IOR.RegSrc0 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
+### B.IOR.RegSrc1 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
+### B.IOR.RegSrc2 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | destination |
-| flag0 | upper |
-| diagonal | diagonal |
+| destination0 | new Local triangular destination |
+| flag0 | lower or upper orientation |
+| diagonal | signed diagonal displacement |
 
 ## Decode
 
@@ -50,12 +231,13 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TTRI, DataType
-B.DATR (optional)
-B.DIM LB0
-B.DIM (LB1/LB2 for 2D)
-B.IOT
-B.IOR
+BSTART.SFU TTRI, FP32|FP16|S32|S16|U32|U16
+B.DATR all-zero (optional)
+B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional, default 1)
+B.DIM LB2=Col (optional, default ValidCol)
+B.IOR Diagonal, Orientation (optional; omission selects 0 and lower)
+B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>
 BSTOP
 ```
 
@@ -63,28 +245,96 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/irregular-and-complex/initialization/TTRI.asl -->
 ```asl
-// Complete-bundle B.IOR consumes diagonal in RegSrc0 and upper in RegSrc1.
-// The raw diagonal is signed XLEN and legal only in -65535..65535; upper is
-// raw boolean 0/1. Validation precedes destination resolution at BSTOP.
+pure func InstructionContractDataTypeLegal_TTRI(
+    data_type: TileDataType) => boolean
+begin
+    return TileTTRIDataTypeSupported(data_type);
+end;
+
+pure func InstructionContractDefaultDiagonal_TTRI()
+    => integer {-65535..65535}
+begin
+    return 0;
+end;
+
+pure func InstructionContractDefaultUpper_TTRI() => boolean
+begin
+    return FALSE;
+end;
+
+readonly func InstructionContractOperandsLegal_TTRI(
+    destination: TileIndex,
+    upper: boolean,
+    diagonal: integer {-65535..65535}) => boolean
+begin
+    return TileOperandsLegal_TTRI(
+        destination,
+        upper,
+        diagonal);
+end;
+
 readonly func InstructionContractHandler_TTRI() => TileSemanticHandler
 begin
     return TileHandler_TTRI;
 end;
+
+func InstructionContractExecute_TTRI(
+    destination: TileIndex,
+    upper: boolean,
+    diagonal: integer {-65535..65535})
+begin
+    assert InstructionContractOperandsLegal_TTRI(
+        destination,
+        upper,
+        diagonal);
+    TTRI(
+        destination,
+        upper,
+        diagonal);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- **Legality handler:** `TileOperandsLegal_TTRI`
-- **Fault contract:** `ExecuteTileInstruction`
-- **Datr contract:** `{"allowed_nonzero_fields": [], "pad_union": "must-zero"}`
+- LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow one. Omitted LB2 selects Col equal to ValidCol.
+- Omitted B.IOR selects diagonal zero and lower orientation. An explicitly present all-zero B.IOR is a distinct descriptor with the same operand values.
+- Omitted B.DATR selects the operation defaults. A present B.DATR is legal only when every encoded field is zero. Physical padding is always Null.
 
-## Operational information
+## Legality
 
-- **Semantic handler:** `TTRI`
-- **Effect contract:** `TTRI`
-- **Restart contract:** `CompleteBundleAtWithAcceptedApplicabilityRules`
-- **State effects:** `["operand:destination0:destination", "operand:flag0:upper", "operand:diagonal:diagonal"]`
+- TTRI is selected by the TEPL encoding carrier Mode 3 Function 7, canonically assembled with BSTART.SFU, and has no standalone opcode.
+- Exactly one terminating destination-only Local B.IOT supplies one newly allocated destination. Every source binding, a second B.IOT, B.IOS, or an unterminated binding stream is illegal.
+- The selected DataType is exactly FP32, FP16, S32, S16, U32, or U16. The destination is row-major with nonzero ValidRow and ValidCol, and Col is at least ValidCol.
+- A present B.IOR consumes RegSrc0 as signed diagonal and RegSrc1 as exact zero or one orientation. RegSrc2 and RegDst are zero.
+- Every explicit nonzero B.DATR field is illegal. PE_MASK zero is a strict no-op before GPR reads, descriptor checks, allocation, faults, or payload effects.
+
+## State effects
+
+- For lower orientation, logical element [r,c] is typed one exactly when c is at most r plus diagonal; otherwise it is typed zero.
+- For upper orientation, logical element [r,c] is typed one exactly when c is at least r plus diagonal; otherwise it is typed zero.
+- Signed boundary comparison does not wrap. FP32 and FP16 use their exact positive-zero and positive-one encodings. Every physical coordinate outside the valid rectangle is undefined Null padding.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Complete schema, type, dimensions, TSize, diagonal, orientation, mask, destination-name, and allocation preflight precedes generation.
+- The triangular payload, Null padding definedness, and renamed destination descriptor publish atomically; rejection publishes none.
+
+## Exceptions
+
+- Malformed bindings, B.IOS, unsupported DataType, non-row-major layout, missing or invalid dimensions, orientation other than zero or one, diagonal outside -65535 through 65535, or a nonzero inapplicable B.DATR field raises Fault_TileLegality before allocation.
+- An unrepresentable shape, unavailable renamed destination, insufficient TSize, or exhausted Tile capacity raises Fault_TileAllocation before allocation.
+- PE_MASK zero completes as a strict no-op before every validation or effect.
+
+## Examples
+
+- BSTART.SFU TTRI, FP16; B.DIM LB0=16; B.DIM LB1=8; B.IOR a0, a1; B.IOT mask=1111, <last>, ->T0<2>; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

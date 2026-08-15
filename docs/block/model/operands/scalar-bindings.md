@@ -26,16 +26,6 @@ begin
     _CommitArgument = value;
 end;
 
-func SetBundleBodyAddress(address: Word)
-begin
-    if address[0] == '1' then
-        SetFault(Fault_InstructionPC, address);
-    else
-        _BundleBodyAddress = address;
-        WriteBPC(address);
-    end;
-end;
-
 func SetBundleScalarBinding(index: BundleScalarBindingIndex,
                            destination: Reg5Selector,
                            source0: Reg5Selector,
@@ -43,6 +33,10 @@ func SetBundleScalarBinding(index: BundleScalarBindingIndex,
                            source2: Reg5Selector,
                            source_count: integer {0..3})
 begin
+    // source_count records the encoded binding capacity for direct helper
+    // users.  Architectural effective arity is always derived from the
+    // complete operation schema; zero-valued unused selectors are not
+    // inferred as absent.
     _BundleScalarBindings[[index]].valid = TRUE;
     _BundleScalarBindings[[index]].destination = destination;
     _BundleScalarBindings[[index]].source0 = source0;

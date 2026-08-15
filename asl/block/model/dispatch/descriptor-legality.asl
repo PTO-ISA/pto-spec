@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","surface":"block","classification":["model","dispatch","descriptor-legality"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DECODE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","surface":"block","classification":["model","dispatch","descriptor-legality"],"depends_on":["PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","PTO-BLOCK-MODEL-DISPATCH-DECODE"]}
 pure func BundleBranchTypeLegal(branch_type: bits(3)) => boolean
 begin
     return branch_type == '001' || branch_type == '101' ||
@@ -35,34 +35,7 @@ end;
 
 pure func BundleTileDataType(data_type: bits(5)) => TileDataType
 begin
-    case data_type of
-        when '00000' => return TileDataType_FP64;
-        when '00001' => return TileDataType_FP32;
-        when '00010' => return TileDataType_TF32;
-        when '00011' => return TileDataType_HF32;
-        when '00100' => return TileDataType_FP16;
-        when '00101' => return TileDataType_BF16;
-        when '00110' => return TileDataType_HiF8;
-        when '00111' => return TileDataType_E4M3;
-        when '01000' => return TileDataType_E5M2;
-        when '01001' => return TileDataType_E3M2;
-        when '01010' => return TileDataType_E2M3;
-        when '01011' => return TileDataType_E2M1X2;
-        when '01100' => return TileDataType_E1M2X2;
-        when '01101' => return TileDataType_E8M0;
-        when '01110' => return TileDataType_HiF4X2;
-        when '10000' => return TileDataType_S64;
-        when '10001' => return TileDataType_S32;
-        when '10010' => return TileDataType_S16;
-        when '10011' => return TileDataType_S8;
-        when '10100' => return TileDataType_S4X2;
-        when '11000' => return TileDataType_U64;
-        when '11001' => return TileDataType_U32;
-        when '11010' => return TileDataType_U16;
-        when '11011' => return TileDataType_U8;
-        when '11100' => return TileDataType_U4X2;
-        otherwise => unreachable;
-    end;
+    return TileDataTypeFromEncoding(data_type as TileDataTypeEncoding);
 end;
 
 pure func BundleDescriptorSelectsTMOV(
@@ -217,7 +190,6 @@ begin
     var destination_count: integer = 0;
     var source_count: integer = 0;
     var binding_count: integer = 0;
-    var last_seen = FALSE;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid then
             binding_count = binding_count + 1;
@@ -230,7 +202,6 @@ begin
             if _BundleTileBindings[[binding]].source1_valid then
                 source_count = source_count + 1;
             end;
-            if _BundleTileBindings[[binding]].last then last_seen = TRUE; end;
         end;
     end;
     let matrix = _BundleOperation.valid &&
@@ -299,7 +270,9 @@ begin
     end;
     if destination_count != expected_destinations ||
        source_count != expected_sources then return FALSE; end;
-    if binding_count > 0 && !last_seen then return FALSE; end;
+    if binding_count > 0 && !BundleTileBindingStreamTerminated() then
+        return FALSE;
+    end;
     if !BundleOperationScalarBindingSchemaLegal(operation) then return FALSE; end;
     return TRUE;
 end;

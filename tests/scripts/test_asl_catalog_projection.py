@@ -27,12 +27,12 @@ class AslCatalogProjectionTest(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertEqual(projected[path], (REPO / path).read_bytes())
 
-    def test_linx_extension_reservations_are_owned_by_arch_asl(self) -> None:
+    def test_extension_reservations_are_owned_by_arch_asl(self) -> None:
         owners = [
             unit
             for unit in self.units
             if unit.metadata.get("catalog_projection", {}).get("catalog")
-            == "linx-vector-reservations"
+            == "extension-encoding-reservations"
         ]
 
         self.assertEqual(len(owners), 1)
@@ -44,6 +44,33 @@ class AslCatalogProjectionTest(unittest.TestCase):
                 "BSTART.VSEQ",
                 "C.BSTART.VPAR",
                 "C.BSTART.VSEQ",
+                "B.TEXT",
+                "BSTART.FP.FIXUP",
+                "BSTART.STD.FIXUP",
+                "BSTART.SYS.FIXUP",
+                "BSTART.MPAR",
+                "BSTART.MSEQ",
+                "C.BSTART.MPAR",
+                "C.BSTART.MSEQ",
+                "HL.BSTART.CALL",
+                "HL.BSTART.FP.COND",
+                "HL.BSTART.FP.FALL",
+                "HL.BSTART.FP.CALL",
+                "HL.BSTART.FP.DIRECT",
+                "HL.BSTART.STD.CALL",
+                "HL.BSTART.STD.FALL",
+                "HL.BSTART.STD.COND",
+                "HL.BSTART.STD.DIRECT",
+                "HL.BSTART.SYS.FALL",
+                "L.BSTART.FP.COND",
+                "L.BSTART.FP.DIRECT",
+                "L.BSTART.FP.CALL",
+                "L.BSTART.FP.FALL",
+                "L.BSTART.STD.DIRECT",
+                "L.BSTART.STD.CALL",
+                "L.BSTART.STD.COND",
+                "L.BSTART.STD.FALL",
+                "L.BSTART.SYS.FALL",
                 "V.*",
             },
         )
@@ -51,6 +78,10 @@ class AslCatalogProjectionTest(unittest.TestCase):
         self.assertEqual(vector_root["length_bits"], 64)
         self.assertEqual(vector_root["encoding"][0]["mask"], "0x0000007f")
         self.assertEqual(vector_root["encoding"][0]["match"], "0x0000007f")
+        self.assertIn(
+            Path("spec/catalog/extension-encoding-reservations.json"),
+            CATALOG_PATHS,
+        )
 
     def test_projection_is_deterministic_under_input_reordering(self) -> None:
         self.assertEqual(

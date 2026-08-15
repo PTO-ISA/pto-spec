@@ -23,11 +23,13 @@ EXPECTED_CLASSES = {
     for classification, mnemonics in EXPECTED_CLASSES.items()
 }
 
-SFU_ELEMENTWISE = frozenset({"TEXP", "TLOG", "TRECIP", "TRSQRT", "TSQRT"})
+SFU_ELEMENTWISE = frozenset(
+    {"TDIV", "TEXP", "TLOG", "TRECIP", "TREM", "TRSQRT", "TSQRT"}
+)
 
 EXPECTED_VEC = frozenset(
-    "TABS TADD TADDS TAND TANDS TCMP TCMPS TCVT TDIV TDIVS TEXPANDS TFMA "
-    "TMAX TMAXS TMIN TMINS TMUL TMULS TNEG TNOT TOR TORS TRELU TREM TREMS "
+    "TABS TADD TADDS TAND TANDS TCMP TCMPS TCVT TEXPANDS TFMA "
+    "TMAX TMAXS TMIN TMINS TMUL TMULS TNEG TNOT TOR TORS TRELU "
     "TSEL TSELS TSHL TSHLS TSHR TSHRS TSUB TSUBS TXOR TXORS".split()
 )
 
@@ -74,7 +76,7 @@ class TileClassificationTest(unittest.TestCase):
             if record.mnemonic in SFU_ELEMENTWISE:
                 self.assertEqual(engine, "SFU")
 
-        self.assertEqual(by_engine, {"VEC": 35, "SFU": 52, "TLSU": 10, "CUBE": 12})
+        self.assertEqual(by_engine, {"VEC": 31, "SFU": 56, "TLSU": 10, "CUBE": 12})
 
         actual_vec = {record.mnemonic for record in self.tile if record.engine == "VEC"}
         self.assertEqual(actual_vec, EXPECTED_VEC)
@@ -135,12 +137,15 @@ class TileClassificationTest(unittest.TestCase):
                 rendered = (ROOT / alias.markdown_path).read_text(encoding="utf-8")
                 self.assertIn("**Encoding owner:** `BSTART.TEPL`", rendered)
                 self.assertIn(f"**Canonical engine:** `{engine}`", rendered)
-                test_id = mnemonic.replace(".", "-")
                 avs = (
                     ROOT
                     / "tests/asl/block/execution"
                     / mnemonic
-                    / f"PTO-AVS-BLOCK-{test_id}-DECODE-001.asl"
+                    / (
+                        "block-decode-"
+                        + mnemonic.lower().replace(".", "-")
+                        + "-canonical-001.asl"
+                    )
                 )
                 self.assertTrue(avs.is_file())
                 self.assertIn(
@@ -192,7 +197,13 @@ class TileClassificationTest(unittest.TestCase):
 
     def test_decoder_validation_binds_engine_specific_alias_contracts(self) -> None:
         generated = subprocess.run(
-            [str(ROOT / "scripts/generate-asl-decoders")],
+            [
+                str(ROOT / "scripts/generate-asl-decoders"),
+                "--kind",
+                "validation-shard",
+                "--entrypoint",
+                "ValidateCanonicalDecoders",
+            ],
             cwd=ROOT,
             text=True,
             stdout=subprocess.PIPE,

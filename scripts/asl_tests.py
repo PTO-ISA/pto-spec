@@ -24,6 +24,7 @@ from scripts.asl_units import (
     load_units,
 )
 from scripts.ndf import NdfValidationError, instruction_clause_id, parse_ndf_regions
+from scripts.asl_validation_shards import EMPTY_VALIDATION_SHARD, VALIDATION_CALL
 
 
 TEST_PREFIX = "// PTO-TEST: "
@@ -40,6 +41,42 @@ SUPPORTED_KINDS = frozenset(
         "state-transition",
         "static-invariant",
     }
+)
+SEMANTIC_TEST_KINDS = frozenset(
+    {
+        "execution",
+        "boundary",
+        "fault",
+        "atomicity",
+        "ordering",
+        "state-transition",
+    }
+)
+TEST_KIND_TYPES = {
+    "decode-positive": "decode",
+    "decode-negative": "decode",
+    "execution": "exec",
+    "boundary": "bound",
+    "fault": "fault",
+    "atomicity": "atomic",
+    "ordering": "order",
+    "state-transition": "state",
+    "static-invariant": "static",
+}
+TEST_FILENAME = re.compile(
+    r"(?P<group>arch|block|scalar|tile)-"
+    r"(?P<type>decode|exec|bound|fault|atomic|order|state|static)-"
+    r"(?P<name>[a-z0-9]+(?:-[a-z0-9]+)*)-"
+    r"(?P<sequence>[0-9]{3})\.asl"
+)
+FORBIDDEN_TEST_NAME_TOKENS = frozenset(
+    {"test", "execution", "validate", "validation"}
+)
+MAX_TEST_FILENAME_LENGTH = 68
+REJECTED_TEST_SUMMARY_PREFIXES = (
+    "migrated independent behavior point for ",
+    "run test",
+    "validate execution",
 )
 METADATA_FIELDS = frozenset(
     {
@@ -68,6 +105,8 @@ class AslTestPoint:
     related_sources: tuple[Path, ...]
     path: Path
     sha256: str
+    validation_entrypoint: str | None
+    validation_sha256: str
 
 
 def _string(metadata: dict[str, object], field: str, path: Path) -> str:
@@ -128,10 +167,71 @@ def _source_path(value: str, field: str, path: Path) -> Path:
     return source
 
 
-def _expected_test_path(source: Path, test_id: str) -> Path:
-    return (
-        Path("tests/asl") / source.relative_to("asl").with_suffix("") / f"{test_id}.asl"
+def _expected_test_directory(source: Path) -> Path:
+    return Path("tests/asl") / source.relative_to("asl").with_suffix("")
+
+
+def _mnemonic_slug(mnemonic: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", mnemonic.lower()).strip("-")
+
+
+def _validate_test_filename(
+    path: Path, source: Path, kind: str, mnemonic: str | None
+) -> None:
+    if len(path.name) > MAX_TEST_FILENAME_LENGTH:
+        raise ValueError(
+            f"{path}: test filename must be at most "
+            f"{MAX_TEST_FILENAME_LENGTH} characters"
+        )
+    match = TEST_FILENAME.fullmatch(path.name)
+    if match is None or match.group("sequence") == "000":
+        raise ValueError(
+            f"{path}: canonical test filename must be "
+            "<group>-<type>-<name>-<NNN>.asl with NNN in 001..999"
+        )
+    expected_group = source.parts[1]
+    if match.group("group") != expected_group:
+        raise ValueError(
+            f"{path}: test filename group must be {expected_group} for {source}"
+        )
+    expected_type = TEST_KIND_TYPES[kind]
+    if match.group("type") != expected_type:
+        raise ValueError(
+            f"{path}: test filename type must be {expected_type} for kind {kind}"
+        )
+    name = match.group("name")
+    owner_slug = (
+        _mnemonic_slug(mnemonic)
+        if mnemonic is not None
+        else _mnemonic_slug(source.stem)
     )
+    if mnemonic is not None:
+        if name != owner_slug and not name.startswith(owner_slug + "-"):
+            raise ValueError(
+                f"{path}: instruction test filename must include mnemonic "
+                f"{owner_slug} immediately after {expected_type}"
+            )
+    purpose = (
+        name[len(owner_slug) :].removeprefix("-")
+        if name == owner_slug or name.startswith(owner_slug + "-")
+        else name
+    )
+    tokens = frozenset(purpose.split("-")) if purpose else frozenset()
+    forbidden = sorted(tokens & FORBIDDEN_TEST_NAME_TOKENS)
+    if forbidden:
+        raise ValueError(
+            f"{path}: test filename contains forbidden purpose token "
+            + ", ".join(forbidden)
+        )
+
+
+def _validate_test_purpose(path: Path, summary: str) -> None:
+    normalized = " ".join(summary.lower().split())
+    if any(normalized.startswith(prefix) for prefix in REJECTED_TEST_SUMMARY_PREFIXES):
+        raise ValueError(
+            f"{path}: PTO-TEST summary must describe its purpose without a "
+            "migration or execution placeholder"
+        )
 
 
 def _display_name(unit: AslUnit, kind: str, summary: str) -> str:
@@ -163,7 +263,12 @@ def _validate_main(path: Path, text: str) -> tuple[str, ...]:
     )
 
 
-def load_test_points(root: Path, units: Sequence[AslUnit]) -> tuple[AslTestPoint, ...]:
+def load_test_points(
+    root: Path,
+    units: Sequence[AslUnit],
+    *,
+    validation_resources: Mapping[str, str] | None = None,
+) -> tuple[AslTestPoint, ...]:
     """Load all independent tests below *root* and reject ambiguous ownership."""
 
     units_by_source = {unit.source_path: unit for unit in units}
@@ -192,16 +297,21 @@ def load_test_points(root: Path, units: Sequence[AslUnit]) -> tuple[AslTestPoint
         source = _source_path(_string(metadata, "source", relative), "source", relative)
         if source not in known_sources:
             raise ValueError(f"{relative}: unknown ASL source {source}")
-        expected = _expected_test_path(source, test_id)
-        if relative != expected:
+        expected_directory = _expected_test_directory(source)
+        if relative.parent != expected_directory:
             raise ValueError(
-                f"{relative}: test path does not mirror source; expected {expected}"
+                f"{relative}: test path does not mirror source; expected directory "
+                f"{expected_directory}"
             )
         requirements = _strings(metadata, "requirements", relative)
         kind = _string(metadata, "kind", relative)
         summary = _string(metadata, "summary", relative)
         if kind not in SUPPORTED_KINDS:
             raise ValueError(f"{relative}: unsupported ASL test kind {kind}")
+        _validate_test_filename(
+            relative, source, kind, units_by_source[source].mnemonic
+        )
+        _validate_test_purpose(relative, summary)
         related_sources = tuple(
             _source_path(item, "related_sources", relative)
             for item in _strings(metadata, "related_sources", relative)
@@ -210,6 +320,34 @@ def load_test_points(root: Path, units: Sequence[AslUnit]) -> tuple[AslTestPoint
             if related not in known_sources:
                 raise ValueError(f"{relative}: unknown related ASL source {related}")
         helpers = _validate_main(relative, text)
+        uncommented = "\n".join(line.split("//", 1)[0] for line in text.splitlines())
+        validation_entrypoints = sorted(
+            set(VALIDATION_CALL.findall(uncommented)) - set(helpers)
+        )
+        if len(validation_entrypoints) > 1:
+            raise ValueError(
+                f"{relative}: test calls multiple generated validation entrypoints: "
+                + ", ".join(validation_entrypoints)
+            )
+        validation_entrypoint = (
+            validation_entrypoints[0] if validation_entrypoints else None
+        )
+        if validation_entrypoint is None:
+            validation_sha256 = hashlib.sha256(
+                EMPTY_VALIDATION_SHARD.encode()
+            ).hexdigest()
+        else:
+            if validation_resources is None:
+                raise ValueError(
+                    f"{relative}: validation resources are required for "
+                    f"{validation_entrypoint}"
+                )
+            validation_sha256 = validation_resources.get(validation_entrypoint, "")
+            if not validation_sha256:
+                raise ValueError(
+                    f"{relative}: unknown generated validation entrypoint "
+                    f"{validation_entrypoint}"
+                )
         loaded.append(
             (
                 AslTestPoint(
@@ -223,6 +361,8 @@ def load_test_points(root: Path, units: Sequence[AslUnit]) -> tuple[AslTestPoint
                     related_sources=related_sources,
                     path=relative,
                     sha256=hashlib.sha256(text.encode("utf-8")).hexdigest(),
+                    validation_entrypoint=validation_entrypoint,
+                    validation_sha256=validation_sha256,
                 ),
                 text,
                 helpers,
@@ -260,16 +400,27 @@ def validate_test_coverage(
         if unit.source_path not in owned_sources:
             errors.append(f"ASL unit has no mirrored test owner: {unit.source_path}")
     owned_requirements: set[str] = set()
+    requirement_kinds: dict[str, set[str]] = {}
     for point in sorted(points, key=lambda item: item.test_id):
         for requirement in point.requirements:
             if requirement not in requirements:
                 errors.append(f"unknown NDF requirement {requirement}")
             else:
                 owned_requirements.add(requirement)
+                requirement_kinds.setdefault(requirement, set()).add(point.kind)
     for requirement, executable in sorted(requirements.items()):
         if executable and requirement not in owned_requirements:
             errors.append(
                 f"executable NDF requirement has no ASL test owner: {requirement}"
+            )
+        elif (
+            executable
+            and requirement.startswith("PTO-INST-")
+            and not (requirement_kinds.get(requirement, set()) & SEMANTIC_TEST_KINDS)
+        ):
+            errors.append(
+                "executable instruction requirement has no semantic ASL test owner: "
+                f"{requirement}"
             )
     return sorted(set(errors))
 
@@ -286,6 +437,8 @@ def matrix(points: Sequence[AslTestPoint]) -> list[dict[str, object]]:
             "requirements": list(point.requirements),
             "kind": point.kind,
             "sha256": point.sha256,
+            "validation_entrypoint": point.validation_entrypoint,
+            "validation_sha256": point.validation_sha256,
         }
         for point in sorted(points, key=lambda item: item.test_id)
     ]
@@ -315,11 +468,63 @@ def requirement_index(root: Path, units: Sequence[AslUnit]) -> dict[str, bool]:
     return requirements
 
 
+def load_validation_resources(root: Path) -> dict[str, str]:
+    """Load exact generated validation-closure hashes for matrix binding."""
+
+    command = [
+        str(root / "scripts/generate-asl-decoders"),
+        "--kind",
+        "validation-index",
+    ]
+    completed = subprocess.run(
+        command,
+        cwd=root,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise ValueError(
+            "validation index generation failed:\n"
+            + completed.stdout
+            + completed.stderr
+        )
+    try:
+        document = json.loads(completed.stdout)
+    except json.JSONDecodeError as error:
+        raise ValueError(f"invalid generated validation index: {error}") from error
+    if not isinstance(document, dict) or document.get("schema") != 1:
+        raise ValueError("invalid generated validation index schema")
+    entries = document.get("validation")
+    if not isinstance(entries, list):
+        raise ValueError("generated validation index has no validation entries")
+    resources: dict[str, str] = {}
+    for entry in entries:
+        if not isinstance(entry, dict):
+            raise ValueError("generated validation index contains a non-object entry")
+        name = entry.get("name")
+        sha256 = entry.get("closure_sha256")
+        if not isinstance(name, str) or not name:
+            raise ValueError("generated validation index contains an invalid name")
+        if not isinstance(sha256, str) or re.fullmatch(r"[0-9a-f]{64}", sha256) is None:
+            raise ValueError(
+                f"generated validation index contains an invalid closure hash for {name}"
+            )
+        if name in resources:
+            raise ValueError(f"duplicate generated validation entrypoint {name}")
+        resources[name] = sha256
+    return resources
+
+
 def _repository(
     root: Path,
 ) -> tuple[tuple[AslUnit, ...], tuple[AslTestPoint, ...], dict[str, bool]]:
     units = load_units(root / "asl")
-    points = load_test_points(root, units)
+    points = load_test_points(
+        root,
+        units,
+        validation_resources=load_validation_resources(root),
+    )
     requirements = requirement_index(root, units)
     return units, points, requirements
 
@@ -344,6 +549,8 @@ def _write_result(
         "source": point.source.as_posix(),
         "kind": point.kind,
         "sha256": point.sha256,
+        "validation_entrypoint": point.validation_entrypoint,
+        "validation_sha256": point.validation_sha256,
         "status": status,
         "returncode": returncode,
         "duration_seconds": round(duration, 6),
@@ -370,7 +577,9 @@ def _markdown_escape(value: object) -> str:
 def _result_objects(result_root: Path) -> tuple[list[dict[str, object]], list[str]]:
     values: list[dict[str, object]] = []
     errors: list[str] = []
-    for path in sorted(result_root.rglob("result.json")) if result_root.exists() else []:
+    for path in (
+        sorted(result_root.rglob("result.json")) if result_root.exists() else []
+    ):
         try:
             value = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as error:
@@ -426,7 +635,15 @@ def report_page_results(
         observed[test_id] = result
 
     rows: list[dict[str, object]] = []
-    metadata_fields = ("path", "sha256", "display_name", "source", "kind")
+    metadata_fields = (
+        "path",
+        "sha256",
+        "display_name",
+        "source",
+        "kind",
+        "validation_entrypoint",
+        "validation_sha256",
+    )
     for test_id, entry in sorted(planned.items()):
         result = observed.get(test_id)
         row_errors: list[str] = []
@@ -474,7 +691,10 @@ def report_page_results(
     for test_id in sorted(set(observed) - set(planned)):
         errors.append(f"unplanned result {test_id}")
     for error in errors:
-        print(f"::error title=ASL page {_github_escape(page, property_value=True)}::{_github_escape(error)}", file=output)
+        print(
+            f"::error title=ASL page {_github_escape(page, property_value=True)}::{_github_escape(error)}",
+            file=output,
+        )
 
     summary_lines = [
         f"## ASL page {page}",
@@ -525,6 +745,7 @@ def execute_test_point(
     result_dir = build / "asl-test-results" / point.test_id
     order_path = result_dir / "asl-source-order.txt"
     decoder_path = result_dir / "decoders.asl"
+    validation_path = result_dir / "validation.asl"
     model_path = result_dir / "pto-spec.asl"
     test_path = result_dir / "test.asl"
     build.mkdir(parents=True, exist_ok=True)
@@ -536,7 +757,12 @@ def execute_test_point(
         order_path.write_text(
             "\n".join(generate_source_order(root)) + "\n", encoding="utf-8"
         )
-        decoder_command = [sys.executable, str(root / "scripts/generate-asl-decoders")]
+        decoder_command = [
+            sys.executable,
+            str(root / "scripts/generate-asl-decoders"),
+            "--kind",
+            "decoder",
+        ]
         decoder_result = run(
             decoder_command,
             cwd=root,
@@ -552,6 +778,40 @@ def execute_test_point(
                 + decoder_result.stderr
             )
         decoder_path.write_text(decoder_result.stdout, encoding="utf-8")
+        if point.validation_entrypoint is None:
+            validation_text = EMPTY_VALIDATION_SHARD
+        else:
+            validation_command = [
+                sys.executable,
+                str(root / "scripts/generate-asl-decoders"),
+                "--kind",
+                "validation-shard",
+                "--entrypoint",
+                point.validation_entrypoint,
+            ]
+            validation_result = run(
+                validation_command,
+                cwd=root,
+                text=True,
+                capture_output=True,
+                timeout=timeout_seconds,
+                check=False,
+            )
+            log_parts.append(validation_result.stderr)
+            if validation_result.returncode != 0:
+                raise RuntimeError(
+                    "validation shard generation failed:\n"
+                    + validation_result.stdout
+                    + validation_result.stderr
+                )
+            validation_text = validation_result.stdout
+        validation_hash = hashlib.sha256(validation_text.encode()).hexdigest()
+        if validation_hash != point.validation_sha256:
+            raise ValueError(
+                f"validation shard hash mismatch for {point.test_id}: "
+                f"expected {point.validation_sha256}, observed {validation_hash}"
+            )
+        validation_path.write_text(validation_text, encoding="utf-8")
         assembly_commands = (
             [
                 str(root / "scripts/assemble-asl"),
@@ -566,6 +826,7 @@ def execute_test_point(
                 str(root / "scripts/assemble-asl"),
                 str(test_path),
                 str(model_path),
+                str(validation_path),
                 str(root / point.path),
             ],
         )
@@ -732,7 +993,11 @@ def run_main(argv: Sequence[str] | None = None) -> int:
     root = arguments.root.resolve()
     try:
         units = load_units(root / "asl")
-        points = load_test_points(root, units)
+        points = load_test_points(
+            root,
+            units,
+            validation_resources=load_validation_resources(root),
+        )
         point = next((item for item in points if item.test_id == arguments.id), None)
         if point is None:
             raise ValueError(f"unknown ASL test ID {arguments.id}")

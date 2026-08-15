@@ -21,6 +21,29 @@ from scripts.asl_tests import (
 from scripts.asl_units import AslUnit
 
 
+KIND_TYPES = {
+    "decode-positive": "decode",
+    "decode-negative": "decode",
+    "execution": "exec",
+    "boundary": "bound",
+    "fault": "fault",
+    "atomicity": "atomic",
+    "ordering": "order",
+    "state-transition": "state",
+    "static-invariant": "static",
+}
+
+
+def canonical_filename(
+    *,
+    group: str = "arch",
+    kind: str = "state-transition",
+    name: str = "registers",
+    sequence: int = 1,
+) -> str:
+    return f"{group}-{KIND_TYPES[kind]}-{name}-{sequence:03d}.asl"
+
+
 def unit(
     source: str = "asl/arch/state/registers.asl",
     *,
@@ -46,6 +69,7 @@ def metadata(
     source: str = "asl/arch/state/registers.asl",
     requirements: tuple[str, ...] = ("PTO-REQ-REGISTERS",),
     kind: str = "state-transition",
+    summary: str = "register state remains independently testable",
     related_sources: tuple[str, ...] = (),
 ) -> str:
     payload = {
@@ -53,18 +77,22 @@ def metadata(
         "source": source,
         "requirements": list(requirements),
         "kind": kind,
-        "summary": "register state remains independently testable",
+        "summary": summary,
         "pass_condition": "main returns zero",
         "related_sources": list(related_sources),
     }
     return json.dumps(payload, separators=(",", ":"))
 
 
-def test_source(**kwargs: object) -> str:
+def test_source(*, validation_entrypoint: str | None = None, **kwargs: object) -> str:
+    validation_call = (
+        f"    {validation_entrypoint}();\n" if validation_entrypoint is not None else ""
+    )
     return (
         f"// PTO-TEST: {metadata(**kwargs)}\n"
         "func main() => integer\n"
         "begin\n"
+        f"{validation_call}"
         "    return 0;\n"
         "end;\n"
     )
@@ -76,7 +104,7 @@ class AslTestsTest(unittest.TestCase):
         self.root = Path(self.temporary.name)
         self.path = (
             self.root
-            / "tests/asl/arch/state/registers/PTO-AVS-ARCH-STATE-REGISTERS-001.asl"
+            / "tests/asl/arch/state/registers/arch-state-registers-001.asl"
         )
         self.path.parent.mkdir(parents=True)
 
@@ -105,11 +133,50 @@ class AslTestsTest(unittest.TestCase):
         )
         self.assertEqual(point.sha256, hashlib.sha256(body.encode()).hexdigest())
         self.assertEqual(point.path, self.path.relative_to(self.root))
+        self.assertIsNone(point.validation_entrypoint)
+
+    def test_binds_one_explicit_generated_validation_entrypoint(self) -> None:
+        self.write(test_source(validation_entrypoint="ValidateKnown"))
+
+        point = load_test_points(
+            self.root,
+            (unit(),),
+            validation_resources={"ValidateKnown": "b" * 64},
+        )[0]
+
+        self.assertEqual(point.validation_entrypoint, "ValidateKnown")
+        self.assertEqual(point.validation_sha256, "b" * 64)
+
+    def test_rejects_unknown_or_multiple_generated_validation_entrypoints(
+        self,
+    ) -> None:
+        self.write(test_source(validation_entrypoint="ValidateUnknown"))
+        with self.assertRaisesRegex(
+            ValueError, "unknown generated validation entrypoint ValidateUnknown"
+        ):
+            load_test_points(self.root, (unit(),), validation_resources={})
+
+        self.write(
+            test_source(validation_entrypoint="ValidateFirst").replace(
+                "    return 0;", "    ValidateSecond();\n    return 0;"
+            )
+        )
+        with self.assertRaisesRegex(
+            ValueError, "multiple generated validation entrypoints"
+        ):
+            load_test_points(
+                self.root,
+                (unit(),),
+                validation_resources={
+                    "ValidateFirst": "a" * 64,
+                    "ValidateSecond": "b" * 64,
+                },
+            )
 
     def test_instruction_test_display_name_is_derived_from_mnemonic(self) -> None:
         source = "asl/tile/tepl/TADD.asl"
         test_id = "PTO-AVS-TILE-TEPL-TADD-EXECUTION-001"
-        path = self.root / f"tests/asl/tile/tepl/TADD/{test_id}.asl"
+        path = self.root / "tests/asl/tile/tepl/TADD/tile-exec-tadd-register-state-001.asl"
         self.write(
             test_source(
                 test_id=test_id,
@@ -134,10 +201,33 @@ class AslTestsTest(unittest.TestCase):
             "TADD | execution | register state remains independently testable",
         )
 
+    def test_rejects_instruction_filename_without_mnemonic(self) -> None:
+        source = "asl/tile/tepl/TADD.asl"
+        path = self.root / "tests/asl/tile/tepl/TADD/tile-static-contract-001.asl"
+        self.write(
+            test_source(
+                test_id="PTO-AVS-TILE-TEPL-TADD-STATIC-001",
+                source=source,
+                requirements=(),
+                kind="static-invariant",
+            ),
+            path=path,
+        )
+        owner = unit(
+            source,
+            unit_id="PTO-TILE-TEPL-TADD",
+            surface="tile",
+            classification=("tepl",),
+            mnemonic="TADD",
+        )
+
+        with self.assertRaisesRegex(ValueError, "must include mnemonic tadd"):
+            load_test_points(self.root, (owner,))
+
     def test_rejects_duplicate_ids(self) -> None:
         self.write()
         duplicate = (
-            self.root / "tests/asl/arch/other/PTO-AVS-ARCH-STATE-REGISTERS-001.asl"
+            self.root / "tests/asl/arch/other/arch-state-registers-001.asl"
         )
         self.write(test_source(), path=duplicate)
 
@@ -147,11 +237,68 @@ class AslTestsTest(unittest.TestCase):
     def test_rejects_path_mismatch(self) -> None:
         wrong = (
             self.root
-            / "tests/asl/arch/state/wrong/PTO-AVS-ARCH-STATE-REGISTERS-001.asl"
+            / "tests/asl/arch/state/wrong/arch-state-registers-001.asl"
         )
         self.write(path=wrong)
 
         with self.assertRaisesRegex(ValueError, "test path does not mirror source"):
+            load_test_points(self.root, (unit(),))
+
+    def test_accepts_structured_filename_with_independent_id(self) -> None:
+        structured = (
+            self.root
+            / "tests/asl/arch/state/registers/arch-state-registers-001.asl"
+        )
+        self.write(path=structured)
+
+        point = load_test_points(self.root, (unit(),))[0]
+
+        self.assertEqual(point.test_id, "PTO-AVS-ARCH-STATE-REGISTERS-001")
+        self.assertEqual(point.source, Path("asl/arch/state/registers.asl"))
+        self.assertEqual(
+            point.path,
+            Path("tests/asl/arch/state/registers/arch-state-registers-001.asl"),
+        )
+
+    def test_rejects_historical_id_filename(self) -> None:
+        historical = self.path.with_name("PTO-AVS-ARCH-STATE-REGISTERS-001.asl")
+        self.write(path=historical)
+
+        with self.assertRaisesRegex(ValueError, "canonical test filename"):
+            load_test_points(self.root, (unit(),))
+
+    def test_rejects_filename_with_wrong_group_or_kind_type(self) -> None:
+        wrong_group = self.path.with_name("block-state-registers-001.asl")
+        self.write(path=wrong_group)
+        with self.assertRaisesRegex(ValueError, "group must be arch"):
+            load_test_points(self.root, (unit(),))
+
+        wrong_group.unlink()
+        wrong_type = self.path.with_name("arch-exec-registers-001.asl")
+        self.write(path=wrong_type)
+        with self.assertRaisesRegex(ValueError, "type must be state"):
+            load_test_points(self.root, (unit(),))
+
+    def test_rejects_redundant_or_overlong_purpose_name(self) -> None:
+        for token in ("test", "execution", "validate", "validation"):
+            path = self.path.with_name(f"arch-state-{token}-001.asl")
+            self.write(path=path)
+            with self.assertRaisesRegex(ValueError, "forbidden purpose token"):
+                load_test_points(self.root, (unit(),))
+            path.unlink()
+
+        overlong = self.path.with_name(
+            "arch-state-" + "purpose-" * 8 + "001.asl"
+        )
+        self.write(path=overlong)
+        with self.assertRaisesRegex(ValueError, "at most 68 characters"):
+            load_test_points(self.root, (unit(),))
+
+    def test_rejects_malformed_sequence(self) -> None:
+        malformed = self.path.with_name("arch-state-registers-1.asl")
+        self.write(path=malformed)
+
+        with self.assertRaisesRegex(ValueError, "canonical test filename"):
             load_test_points(self.root, (unit(),))
 
     def test_rejects_absent_source_and_related_source(self) -> None:
@@ -168,6 +315,16 @@ class AslTestsTest(unittest.TestCase):
         self.write(test_source(kind="smoke"))
 
         with self.assertRaisesRegex(ValueError, "unsupported ASL test kind"):
+            load_test_points(self.root, (unit(),))
+
+    def test_rejects_migration_placeholder_summary(self) -> None:
+        self.write(
+            test_source(
+                summary="migrated independent behavior point for TestRegisters"
+            )
+        )
+
+        with self.assertRaisesRegex(ValueError, "summary must describe its purpose"):
             load_test_points(self.root, (unit(),))
 
     def test_rejects_zero_or_multiple_integer_main_declarations(self) -> None:
@@ -194,7 +351,7 @@ class AslTestsTest(unittest.TestCase):
             "end;\n"
         )
         second_id = "PTO-AVS-ARCH-STATE-REGISTERS-002"
-        second = self.path.with_name(f"{second_id}.asl")
+        second = self.path.with_name("arch-state-registers-002.asl")
         self.write(
             f"// PTO-TEST: {metadata(test_id=second_id)}\n"
             "func ForeignHelper() => integer\n"
@@ -230,6 +387,49 @@ class AslTestsTest(unittest.TestCase):
             ),
         )
 
+    def test_rejects_instruction_requirement_with_only_decode_or_static_coverage(
+        self,
+    ) -> None:
+        requirement = "PTO-INST-ARCH-REGISTERS"
+        decode = AslTestPoint(
+            test_id="PTO-AVS-ARCH-STATE-REGISTERS-001",
+            display_name="register decode",
+            source=Path("asl/arch/state/registers.asl"),
+            requirements=(requirement,),
+            kind="decode-positive",
+            summary="register decode is canonical",
+            pass_condition="main returns zero",
+            related_sources=(),
+            path=Path("tests/asl/arch/state/registers/arch-decode-registers-001.asl"),
+            sha256="0" * 64,
+            validation_entrypoint=None,
+            validation_sha256="0" * 64,
+        )
+        static = AslTestPoint(
+            test_id="PTO-AVS-ARCH-STATE-REGISTERS-002",
+            display_name="register contract",
+            source=Path("asl/arch/state/registers.asl"),
+            requirements=(requirement,),
+            kind="static-invariant",
+            summary="register contract is present",
+            pass_condition="main returns zero",
+            related_sources=(),
+            path=Path("tests/asl/arch/state/registers/arch-static-registers-002.asl"),
+            sha256="1" * 64,
+            validation_entrypoint=None,
+            validation_sha256="0" * 64,
+        )
+
+        self.assertIn(
+            "executable instruction requirement has no semantic ASL test owner: "
+            + requirement,
+            validate_test_coverage(
+                (decode, static),
+                (unit(),),
+                {requirement: True},
+            ),
+        )
+
     def test_rejects_missing_unit_coverage(self) -> None:
         errors = validate_test_coverage((), (unit(),), {})
 
@@ -256,6 +456,8 @@ class AslTestsTest(unittest.TestCase):
                 "requirements",
                 "kind",
                 "sha256",
+                "validation_entrypoint",
+                "validation_sha256",
             },
         )
 
@@ -263,7 +465,7 @@ class AslTestsTest(unittest.TestCase):
         self.write()
         first = load_test_points(self.root, (unit(),))[0]
         second_id = "PTO-AVS-ARCH-STATE-REGISTERS-002"
-        second_path = self.path.with_name(f"{second_id}.asl")
+        second_path = self.path.with_name("arch-state-registers-002.asl")
         self.write(test_source(test_id=second_id), path=second_path)
         points = load_test_points(self.root, (unit(),))
         commit = "1" * 40
@@ -313,7 +515,9 @@ class AslTestsTest(unittest.TestCase):
         )
         for index, kind in enumerate(kinds, start=1):
             test_id = f"PTO-AVS-ARCH-STATE-REGISTERS-{index:03d}"
-            path = self.path.with_name(f"{test_id}.asl")
+            path = self.path.with_name(
+                canonical_filename(kind=kind, sequence=index)
+            )
             self.write(test_source(test_id=test_id, kind=kind), path=path)
 
         points = load_test_points(self.root, (unit(),))
@@ -336,6 +540,8 @@ class AslTestsTest(unittest.TestCase):
                 "related_sources",
                 "path",
                 "sha256",
+                "validation_entrypoint",
+                "validation_sha256",
             },
         )
 
@@ -378,6 +584,62 @@ class AslTestsTest(unittest.TestCase):
         self.assertEqual(payload["kind"], point.kind)
         self.assertEqual(payload["log_excerpt"], "")
         self.assertTrue((result_path.parent / "aslref.log").is_file())
+        self.assertTrue((result_path.parent / "validation.asl").is_file())
+
+    def test_individual_execution_loads_only_the_bound_validation_shard(
+        self,
+    ) -> None:
+        validation_text = (
+            "// Generated validation shard. Do not edit.\n"
+            "// Entrypoint: ValidateKnown\n\n"
+            "func ValidateKnown()\nbegin\nend;\n"
+        )
+        self.write(test_source(validation_entrypoint="ValidateKnown"))
+        point = load_test_points(
+            self.root,
+            (unit(),),
+            validation_resources={
+                "ValidateKnown": hashlib.sha256(validation_text.encode()).hexdigest()
+            },
+        )[0]
+        calls: list[list[str]] = []
+
+        def fake_run(command: list[str], **_: object) -> CompletedProcess[str]:
+            calls.append(command)
+            stdout = ""
+            if "generate-asl-decoders" in command[1]:
+                stdout = (
+                    validation_text
+                    if "validation-shard" in command
+                    else "// generated decoder\n"
+                )
+            return CompletedProcess(command, 0, stdout=stdout, stderr="")
+
+        with patch(
+            "scripts.asl_tests.generate_source_order",
+            return_value=("asl/arch/state/registers.asl",),
+        ):
+            result = execute_test_point(
+                self.root, point, timeout_seconds=7, run=fake_run
+            )
+
+        self.assertEqual(result, 0)
+        validation_commands = [call for call in calls if "validation-shard" in call]
+        self.assertEqual(len(validation_commands), 1)
+        self.assertEqual(validation_commands[0][-1], "ValidateKnown")
+        assembled = calls[3]
+        self.assertEqual(
+            assembled[-2],
+            str(
+                self.root / "build/asl-test-results" / point.test_id / "validation.asl"
+            ),
+        )
+        self.assertEqual(
+            (
+                self.root / "build/asl-test-results" / point.test_id / "validation.asl"
+            ).read_text(encoding="utf-8"),
+            validation_text,
+        )
 
     def test_failed_execution_records_bounded_log_excerpt(self) -> None:
         self.write()

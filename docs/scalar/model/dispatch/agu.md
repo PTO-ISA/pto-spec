@@ -54,7 +54,7 @@ begin
     if address_kind == ScalarAGU_Register then
         let unshifted = ApplyScalarRightModifier(
             ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-            ScalarDecodedRightModifier(instruction, form), FALSE);
+            ScalarDecodedAddressRightModifier(instruction, form), FALSE);
         let shift_amount = if ScalarOperandPresent(form, ScalarField_shamt) then
             ScalarDecodedUInt6(instruction, form, ScalarField_shamt)
             else scale;

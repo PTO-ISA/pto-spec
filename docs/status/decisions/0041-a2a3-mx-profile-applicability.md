@@ -12,19 +12,9 @@ accepted profile identities from ADR 0037 allow target profiles such as
 `pto-a2a3-numeric-v1`, but a profile identity does not imply that every
 operation/type tuple is supported by that target.
 
-Public target and portability documents require target-specific support
-restrictions to be explicit. Pinned A2/A3 matrix evidence does not expose MX
-CUBE support, while pinned A5 and public intrinsic evidence expose the MX
-operation names. The independent executable-model comparison corroborates the
-six MX CUBE selector identities structurally, but those rows are header/decode
-evidence only and are not an oracle for tile payload arithmetic.
-
-A broad public statement that a target supports the PTO tile family could be
-read as covering these operations. This decision resolves that ambiguity in
-favor of the more specific public evidence: the MX overloads are guarded for
-A5/CPU exposure, the A2/A3 matrix has no MX surface, and the A5 matrix does.
-This is a support-boundary decision only; no backend implementation behavior is
-imported as PTO arithmetic semantics.
+Target-specific support restrictions must be explicit in PTO. This decision
+defines a bounded A2/A3 support exclusion for the six MX CUBE selectors. It is
+a support-boundary decision only and supplies no CUBE payload arithmetic.
 
 ## Decision
 

@@ -78,5 +78,6 @@ overrides and differential conformance evidence.
 
 ## Evidence
 
-- `tests/asl/tile/model/dispatch/top-level/PTO-AVS-TILE-TESTVECSFUCARRIERTOTALITY-BOUNDARY-001.asl`
-- `spec/evidence/vec-sfu-carrier-totality.json`
+- `tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-carrier-totality-001.asl`
+- `spec/catalog/tile-operations.json`
+- `spec/evidence/release-traceability-readiness.json`

@@ -31,13 +31,28 @@ hl.setc.andi SrcL, simm
 | hl_setc_andi_48_f27796612fb3 | shamt | 5 | encoding-defined | [{"instruction_lsb":23,"value_lsb":0,"width":5}] |
 | hl_setc_andi_48_f27796612fb3 | simm24 | 24 | signed | [{"instruction_lsb":36,"value_lsb":0,"width":12},{"instruction_lsb":4,"value_lsb":12,"width":12}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| hl_setc_andi_48_f27796612fb3 | SrcL | 5 | 0–31 | none | none | left absolute GPR source | Encoded zero names the architectural zero GPR. |
+| hl_setc_andi_48_f27796612fb3 | shamt | 5 | 0–31 | none | none | shift amount | Encoded zero performs no shift. |
+| hl_setc_andi_48_f27796612fb3 | simm24 | 24 | 0–16777215 | none | none | 24-bit signed immediate or displacement | Encoded zero supplies numeric zero for the 24-bit signed immediate or displacement. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcL | encoded operand or control |
-| shamt | encoded operand or control |
-| simm24 | encoded operand or control |
+| SrcL | left absolute GPR source |
+| shamt | shift amount |
+| simm24 | 24-bit signed immediate or displacement |
 
 ## Decode
 
@@ -61,14 +76,36 @@ end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `HL.SETC.ANDI - Combine scalar comparison results and update the bundle commit condition.`
-- **Semantic handler:** `ExecuteSetCommitLogical`
+- Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects.
+
+## State effects
+
+- HL.SETC.ANDI - Combine scalar comparison results and update the bundle commit condition.
+- After decode and legality checks, execute the normative ExecuteSetCommitLogical ASL handler; no other architectural state is modified.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- none
+
+## Exceptions
+
+- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+
+## Examples
+
+- hl.setc.andi SrcL, simm
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

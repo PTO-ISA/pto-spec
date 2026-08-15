@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/sys/SETC.TGT.asl`
 
-SETC.TGT - Write the bundle commit target.
+SETC.TGT snapshots SrcL into BARG.BPCN for the active Standard or Floating block.
 
 ## Normative identity {#PTO-INST-SCALAR-SETC-TGT}
 
@@ -29,42 +29,103 @@ setc.tgt SrcL
 | --- | --- | ---: | --- | --- |
 | setc_tgt_32_c02656d3a2b8 | SrcL | 5 | encoding-defined | [{"instruction_lsb":15,"value_lsb":0,"width":5}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| setc_tgt_32_c02656d3a2b8 | SrcL | 5 | 0–31 | none | none | Reg5 source: R0..R23, T#1..T#4, or U#1..U#4 | Encoded zero names the architectural zero GPR. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| SrcL | encoded operand or control |
+| SrcL | Reg5 source: R0..R23, T#1..T#4, or U#1..U#4 |
 
 ## Decode
 
 <!-- GENERATED-ASL-BEGIN: decode source=asl/scalar/sys/SETC.TGT.asl -->
 ```asl
-readonly func InstructionContractOperation_SETC_TGT() => ScalarOperation
+readonly func InstructionContractOperation_SETC_TGT()
+    => ScalarOperation
 begin
     return ScalarOperation_SETC_TGT;
 end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
+## Block composition
+
+```asm
+SETC.TGT is legal in the body of an active Standard or Floating block and is not a SYS-block instruction.
+```
+
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/sys/SETC.TGT.asl -->
 ```asl
-readonly func InstructionContractHandler_SETC_TGT() => ScalarSemanticHandler
+readonly func InstructionContractHandler_SETC_TGT()
+    => ScalarSemanticHandler
 begin
     return ScalarHandler_SetCommitTarget;
+end;
+
+pure func InstructionContractRequiresSystemBlock_SETC_TGT()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractRequiresCommitTargetBlock_SETC_TGT()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractWritesBARGBPCN_SETC_TGT()
+    => boolean
+begin
+    return TRUE;
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `SETC.TGT - Write the bundle commit target.`
-- **Semantic handler:** `SetCommitTarget`
+- Every available Reg5 source selector is assigned; block applicability is checked before the source read.
+
+## State effects
+
+- Replace only BARG.BPCN with the complete XLEN source; preserve BPC, BlockType, TYPE, TAKEN, and all other block state.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Check block applicability, snapshot SrcL, write BARG.BPCN, and then advance TPC.
+
+## Exceptions
+
+- Invalid block placement raises Illegal Block Exception before encoded-field legality or effects.
+- A reserved encoding or rejected access raises Illegal Instruction before destination, queue, system-state, or TPC effects.
+
+## Examples
+
+- setc.tgt SrcL
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

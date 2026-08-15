@@ -16,13 +16,14 @@ func ResetBundleControlState()
 begin
     _BundleActive = FALSE;
     _BundleBodyActive = FALSE;
-    _BundleKind = BundleKind_Standard;
-    _BundleTransfer = BundleTransfer_Fallthrough;
-    _BundleCondition = TRUE;
-    _BundleTarget = Zeros{PTO_XLEN};
-    _BundleFallthrough = Zeros{PTO_XLEN};
-    _BundleReturnTarget = Zeros{PTO_XLEN};
-    _BundleBodyAddress = Zeros{PTO_XLEN};
+    _BundleCommitTargetSet = FALSE;
+    _SystemBlockTerminalPending = FALSE;
+    _BARG.block_type = BundleKind_Standard;
+    _BARG.transfer_type = BundleTransfer_Fallthrough;
+    _BARG.taken = FALSE;
+    _BARG.bpcn = Zeros{PTO_XLEN};
+    _BundleSequentialPC = Zeros{PTO_XLEN};
+    _FrameStackReturnTarget = Zeros{PTO_XLEN};
     _BundleArgument = Zeros{PTO_XLEN};
     _BundleArgumentKind = Zeros{3};
     _BundleOperation.valid = FALSE;
@@ -38,6 +39,7 @@ begin
     _BundleOperation.branch_type = Zeros{3};
     for index = 0 to PTO_BUNDLE_DIMENSION_COUNT - 1 do
         _BundleDimensions[[index]] = Zeros{PTO_XLEN};
+        _BundleDimensionPresent[[index]] = FALSE;
     end;
     for index = 0 to PTO_BUNDLE_SCALAR_BINDING_COUNT - 1 do
         _BundleScalarBindings[[index]].valid = FALSE;
@@ -68,20 +70,30 @@ begin
         _BundleSharedBindings[[index]].pe_mask = Zeros{4};
         _BundleSharedBindings[[index]].consumed = FALSE;
     end;
+    _BundleZeroParticipationSeen = FALSE;
+    _BundleControlAttributes.present = FALSE;
     _BundleControlAttributes.trap_enabled = FALSE;
     _BundleControlAttributes.atomic = FALSE;
     _BundleControlAttributes.acquire = FALSE;
     _BundleControlAttributes.release = FALSE;
     _BundleControlAttributes.far = FALSE;
-    _BundleControlAttributes.direct_register = FALSE;
+    _BundleControlAttributes.dimension_reduction = FALSE;
     _BundleDataAttributes.data_type_present = FALSE;
     _BundleDataAttributes.data_type = DTYPE_NONE;
     _BundleDataAttributes.data_layout = Zeros{5};
-    _BundleDataAttributes.pad_value = Zeros{2};
-    _BundleDataAttributes.conversion_mode = Zeros{3};
+    _BundleDataAttributes.pad_value = '11';
+    _BundleDataAttributes.comparison_mode = Zeros{3};
     _BundleDataAttributes.rounding_mode = Zeros{3};
     _BundleDataAttributes.saturating = FALSE;
     _BundleDataAttributes.canonicalize = FALSE;
+    _BundleDataAttributesPresent = FALSE;
+    _BundleHint.present = FALSE;
+    _BundleHint.trace = FALSE;
+    _BundleHint.trace_end = FALSE;
+    _BundleHint.branch_valid = FALSE;
+    _BundleHint.branch_likely = FALSE;
+    _BundleHint.temperature = Zeros{2};
+    _BundleHint.prefetch_size = Zeros{12};
     _BundleFixedPointAttributes.valid = FALSE;
     _BundleFixedPointAttributes.pre_quant_mode = Zeros{6};
     _BundleFixedPointAttributes.relu_mode = Zeros{3};
@@ -90,6 +102,27 @@ begin
     _BundleFixedPointAttributes.group_max_en = FALSE;
     _BundleFixedPointAttributes.row_max_init = FALSE;
     _BundleFixedPointAttributes.max_abs_en = FALSE;
+    _MemoryCopyTemplate.active = FALSE;
+    _MemoryCopyTemplate.instruction_pc = Zeros{PTO_XLEN};
+    _MemoryCopyTemplate.destination = Zeros{PTO_XLEN};
+    _MemoryCopyTemplate.source = Zeros{PTO_XLEN};
+    _MemoryCopyTemplate.length = Zeros{PTO_XLEN};
+    _MemoryCopyTemplate.progress = Zeros{PTO_XLEN};
+    _FrameTemplate.active = FALSE;
+    _FrameTemplate.kind = FrameTemplate_Entry;
+    _FrameTemplate.instruction_pc = Zeros{PTO_XLEN};
+    _FrameTemplate.begin_reg = 2;
+    _FrameTemplate.end_reg = 2;
+    _FrameTemplate.register_count = 0;
+    _FrameTemplate.frame_size = Zeros{PTO_XLEN};
+    _FrameTemplate.caller_sp = Zeros{PTO_XLEN};
+    _FrameTemplate.stack_adjusted = FALSE;
+    _FrameTemplate.progress = 0;
+    _FrameTemplate.return_target = Zeros{PTO_XLEN};
+    _FrameTemplate.return_target_valid = FALSE;
+    for frame_index = 0 to 21 do
+        _FrameTemplate.source_values[[frame_index]] = Zeros{PTO_XLEN};
+    end;
     _TileDataLayoutCapabilities = Zeros{32};
     _TileDataLayoutCapabilities[0] = '1';
     for ring = 0 to PTO_ACR_COUNT - 1 do
@@ -102,28 +135,36 @@ begin
         _TrapContexts[[ring]].commit_argument = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].bundle_active = FALSE;
         _TrapContexts[[ring]].bundle_body_active = FALSE;
-        _TrapContexts[[ring]].bundle_kind = BundleKind_Standard;
-        _TrapContexts[[ring]].bundle_transfer = BundleTransfer_Fallthrough;
-        _TrapContexts[[ring]].bundle_condition = TRUE;
-        _TrapContexts[[ring]].bundle_target = Zeros{PTO_XLEN};
-        _TrapContexts[[ring]].bundle_fallthrough = Zeros{PTO_XLEN};
-        _TrapContexts[[ring]].bundle_return_target = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].bundle_commit_target_set = FALSE;
+        _TrapContexts[[ring]].system_block_terminal_pending = FALSE;
+        _TrapContexts[[ring]].barg = _BARG;
+        _TrapContexts[[ring]].bundle_sequential_pc = Zeros{PTO_XLEN};
+        _TrapContexts[[ring]].frame_stack_return_target = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].return_address = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].bundle_argument_kind = Zeros{3};
-        _TrapContexts[[ring]].bundle_body_address = Zeros{PTO_XLEN};
         _TrapContexts[[ring]].bundle_operation = _BundleOperation;
         _TrapContexts[[ring]].bundle_dimensions = _BundleDimensions;
+        _TrapContexts[[ring]].bundle_dimension_present =
+            _BundleDimensionPresent;
         _TrapContexts[[ring]].bundle_scalar_bindings = _BundleScalarBindings;
         _TrapContexts[[ring]].bundle_tile_bindings = _BundleTileBindings;
         _TrapContexts[[ring]].bundle_shared_bindings = _BundleSharedBindings;
+        _TrapContexts[[ring]].bundle_zero_participation_seen =
+            _BundleZeroParticipationSeen;
         _TrapContexts[[ring]].bundle_control_attributes =
             _BundleControlAttributes;
         _TrapContexts[[ring]].bundle_data_attributes = _BundleDataAttributes;
+        _TrapContexts[[ring]].bundle_data_attributes_present =
+            _BundleDataAttributesPresent;
+        _TrapContexts[[ring]].bundle_hint = _BundleHint;
         _TrapContexts[[ring]].bundle_fixed_point_attributes =
             _BundleFixedPointAttributes;
+        _TrapContexts[[ring]].memory_copy_template = _MemoryCopyTemplate;
+        _TrapContexts[[ring]].frame_template = _FrameTemplate;
         _TrapContexts[[ring]].t_queue = _TQueue;
+        _TrapContexts[[ring]].t_queue_valid = _TQueueValid;
         _TrapContexts[[ring]].u_queue = _UQueue;
-        _TrapContexts[[ring]].execution_mask = _ExecutionMask;
+        _TrapContexts[[ring]].u_queue_valid = _UQueueValid;
         _TrapContexts[[ring]].predicates = _PredicateRegisters;
     end;
     _FrameDepth = 0;

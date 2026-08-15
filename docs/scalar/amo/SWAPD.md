@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/amo/SWAPD.asl`
 
-SWAPD - Atomically read, apply this mnemonic's named operation, and write the scalar memory location.
+SWAPD atomically replaces one doubleword and publishes the prior value.
 
 ## Normative identity {#PTO-INST-SCALAR-SWAPD}
 
@@ -14,7 +14,14 @@ The current instruction contract is owned by the ASL source linked above.
 ## Assembly
 
 ```asm
-swapd<.{aq, rl, f, aqrl, aqf, rlf, aqrlf}> [SrcL], SrcR, {->t, ->u, ->Rd}
+swapd [SrcL], SrcR, ->Rd
+swapd.aq [SrcL], SrcR, ->Rd
+swapd.rl [SrcL], SrcR, ->Rd
+swapd.f [SrcL], SrcR, ->Rd
+swapd.aqrl [SrcL], SrcR, ->Rd
+swapd.aqf [SrcL], SrcR, ->Rd
+swapd.rlf [SrcL], SrcR, ->Rd
+swapd.aqrlf [SrcL], SrcR, ->Rd
 ```
 
 ## Encoding
@@ -34,16 +41,34 @@ swapd<.{aq, rl, f, aqrl, aqf, rlf, aqrlf}> [SrcL], SrcR, {->t, ->u, ->Rd}
 | swapd_32_cd31ccde2303 | far | 1 | encoding-defined | [{"instruction_lsb":27,"value_lsb":0,"width":1}] |
 | swapd_32_cd31ccde2303 | rl | 1 | encoding-defined | [{"instruction_lsb":25,"value_lsb":0,"width":1}] |
 
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Encoded field closure
+
+Every encoded field value is assigned here, owned by another mnemonic, or reserved by the normative ASL contract.
+
+| Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
+| --- | --- | ---: | --- | --- | --- | --- | --- |
+| swapd_32_cd31ccde2303 | RegDst | 5 | 0–31 | none | none | Reg5 old-value destination | Encoded zero discards the prior value. |
+| swapd_32_cd31ccde2303 | SrcL | 5 | 0–31 | none | none | Reg5 atomic address source | Encoded zero reads the architectural zero register as the address. |
+| swapd_32_cd31ccde2303 | SrcR | 5 | 0–31 | none | none | Reg5 doubleword replacement source | Encoded zero supplies numeric zero as the replacement. |
+| swapd_32_cd31ccde2303 | aq | 1 | 0–1 | none | none | acquire ordering bit | Encoded zero disables acquire ordering. |
+| swapd_32_cd31ccde2303 | far | 1 | 0–1 | none | none | flat-address routing hint | Encoded zero selects the default flat-address route. |
+| swapd_32_cd31ccde2303 | rl | 1 | 0–1 | none | none | release ordering bit | Encoded zero disables release ordering. |
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst | encoded operand or control |
-| SrcL | encoded operand or control |
-| SrcR | encoded operand or control |
-| aq | encoded operand or control |
-| far | encoded operand or control |
-| rl | encoded operand or control |
+| SrcL | Reg5 atomic address source |
+| SrcR | Reg5 doubleword replacement source |
+| RegDst | Reg5 old-value destination |
+| aq | acquire ordering bit |
+| rl | release ordering bit |
+| far | flat-address routing hint |
 
 ## Decode
 
@@ -64,17 +89,77 @@ readonly func InstructionContractHandler_SWAPD() => ScalarSemanticHandler
 begin
     return ScalarHandler_AtomicReadModifyWrite;
 end;
+
+pure func InstructionContractAtomicOperation_SWAPD()
+    => AtomicOperation
+begin
+    return Atomic_SWAP;
+end;
+
+pure func InstructionContractAtomicSizeBytes_SWAPD()
+    => integer {1,2,4,8}
+begin
+    return 8;
+end;
+
+pure func InstructionContractZeroExtendsOldValue_SWAPD()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractSignExtendsOldValue_SWAPD()
+    => boolean
+begin
+    return FALSE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
-## Legality and exceptions
+## Defaults and encoded zero
 
-- No additional catalog constraint beyond decode legality.
+- SrcL, SrcR, and RegDst are required Reg5 fields. Encoded source zero reads the architectural zero register; encoded destination zero discards the old value.
+- aq=0 and rl=0 select relaxed ordering. aq=1 selects acquire, rl=1 selects release, and aq=1 with rl=1 selects acquire-release.
+- far=0 selects the default flat-address route. far=1 is a profile routing hint; the reference profile preserves the same architectural address and atomic result.
 
-## Operational information
+## Legality
 
-- **Semantic summary:** `SWAPD - Atomically read, apply this mnemonic's named operation, and write the scalar memory location.`
-- **Semantic handler:** `AtomicReadModifyWrite`
+- All 32 SrcL and SrcR Reg5 encodings are assigned: 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4.
+- All 32 RegDst encodings are assigned. Code 0 and codes 24..29 discard, code 30 pushes U, code 31 pushes T, and codes 1..23 write the named absolute GPR.
+- All aq, rl, and far combinations are assigned.
+- The effective address must be aligned to 8 bytes.
+
+## State effects
+
+- Snapshot SrcL and SrcR before any memory or destination effect.
+- Publish the prior value only after successful atomic commit.
+- The 64-bit old value is published unchanged.
+- Successful execution advances TPC by four bytes. A fault saves and later restores the original TPC for full reissue.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- After aligned read and write preflight identify the same translated location, atomically read one 8-byte doubleword, store SrcR truncated to 8 bytes, and emit one ordered atomic event.
+- A successful overlapping write invalidates the local 64-byte-line reservation; a nonoverlapping write preserves it.
+- The 64-bit old value is published unchanged.
+
+### Ordering
+
+- aq=0,rl=0 records relaxed ordering; aq=1,rl=0 acquire; aq=0,rl=1 release; aq=1,rl=1 acquire-release.
+- far changes only the route hint in the reference profile.
+
+## Exceptions
+
+- The effective address must be aligned to 8 bytes. Alignment, read translation/permission, write translation/permission, and translated-address equality are checked before effects.
+- On a fault, no destination, memory write, event, reservation update, or TPC advance occurs. Trap entry saves the original TPC and recovery restores it for full reissue.
+- An undecodable fixed-bit pattern raises Fault_IllegalInstruction before effects. All explicit field values are assigned.
+
+## Examples
+
+- swapd [a0], a1, ->a2
+- swapd.aqrl [t#1], u#1, ->u
+- swapd.f [sp], zero, ->t
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

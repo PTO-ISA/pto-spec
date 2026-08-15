@@ -19,11 +19,6 @@ denormals-are-zero behavior, and selected after-rounding tininess detection.
 Leaving PD-04 open despite that profile text would permit an implementation to
 invent hidden mode state or silently apply a backend-specific shortcut.
 
-An independently reviewed executable ISA model corroborates the raw FP32 and
-FP64 classification boundary. It does not provide executable arithmetic
-subnormal behavior, an FTZ/DAZ contract, or PTO low-precision formats, so it is
-not used as the numeric oracle for this decision.
-
 ## Decision
 
 ### Input and result rules
@@ -106,9 +101,6 @@ support.
   named hardware profile and changes both source and result values.
 - **Apply the rule to `pto-v0`.** Rejected because `pto-v0` remains the
   architecture's deterministic raw-carrier reference profile.
-- **Use the independent model as an arithmetic oracle.** Rejected because its
-  corroborating FP32/FP64 classification coverage does not define arithmetic
-  underflow, FTZ/DAZ, or PTO low-precision behavior.
 
 ## Consequences
 
@@ -131,8 +123,7 @@ Executable assertions cover:
 - the existing invalid internal TF32, HF32, E3M2, and E2M3 encodings.
 
 The generated evidence binds these assertions, the hardware profile, all
-affected domains and operations, the accepted decision record, and the
-publication-safe independent-comparison boundary.
+affected domains and operations, and the accepted decision record.
 
 These assertions are Stage 5 profile-decision evidence. Arithmetic input/output
 and underflow-transition vectors remain required by `S5-T2-C`; accepting PD-04
@@ -147,7 +138,8 @@ than an implementation-conformance result.
 - `spec/hardware-conformance-profile.json`
 - `spec/evidence/numeric-subnormal-contract.json`
 - `scripts/generate-numeric-subnormal-contract`
-- `tests/asl/profile-tests.asl`
+- `tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl`
+- `spec/evidence/release-traceability-readiness.json`
 - `spec/evidence/numeric-profile-decision-inputs.json`
 - `spec/evidence/numeric-contracts.json`
 - `spec/evidence/numeric-format-namespace-contract.json`

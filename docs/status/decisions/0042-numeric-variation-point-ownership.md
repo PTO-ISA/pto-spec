@@ -17,12 +17,10 @@ open dimensions within those domains. In PTO ISA 0.58.0 that inventory contains
 104 operations, 18 domains, and 28 hooks. That made it possible to discuss a
 profile or hook without proving ownership of every unresolved result choice.
 
-The public PTO contract identifies target profiles and numeric variation but
-does not supply complete allowed-result sets. The pinned independent executable
-model corroborates encodings and namespace separation only: its PTO tile paths
-do not execute numeric payload semantics, and similarly numbered data-type
-fields belong to conflicting namespaces. Neither that model nor a backend may
-therefore become the numeric owner by implication.
+The PTO architecture identifies target profiles and numeric variation but does
+not yet supply complete allowed-result sets. No profile name, equal numeric
+code, tool behavior, or implementation behavior becomes a numeric owner by
+implication.
 
 ## Decision
 

@@ -93,7 +93,7 @@ must define their own derivation.
 - All legality checks occur before memory, payload, descriptor, allocation,
   rename, destination finalization, or binder consumption effects.
 - Catalogs, ASL, tests, requirements, Markdown, HTML, XLSX, evidence, release
-  manifest, PTO consumers, and Linx ISA 0.58 locks must be regenerated.
+  manifest, and downstream PTO consumers must be regenerated.
 
 ## Supersession
 
@@ -101,7 +101,7 @@ ADR 0045's `B.IOT` allocation-size-code paragraph and ADR 0052's aggregate
 Tile-size table remain historical. This ADR supersedes those size encodings,
 plus ADR 0052's active `C.B.IOS` encoding, `B.IOR` Shared-size carrier,
 mask-only `B.IOT` companion, and Shared binder schema. The retained operation
-inventory and Linx-only reservations in ADR 0052 remain in force.
+inventory and extension-encoding reservations in ADR 0052 remain in force.
 
 This ADR also supersedes ADR 0052's current Tile/Bundle assertion-inventory
 pin. The direct assertions protecting a valid live `B.IOS` binding and a

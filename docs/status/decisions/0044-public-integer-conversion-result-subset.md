@@ -36,10 +36,9 @@ The rule defines 48 ordered unequal-width source/destination tuples: 24
 widening and 24 narrowing. It defines results only after a target profile has
 accepted the type pair. It does not make any pair supported by A2/A3 or A5.
 
-Same-width conversions are excluded because the pinned public rule states only
-widening and narrowing. Floating-point, float/integer, quantization, rounding,
-saturation, exception, and flag behavior remain behind their existing numeric
-profile hooks.
+Same-width conversions are excluded from this bounded decision. Floating-
+point, float/integer, quantization, rounding, saturation, exception, and flag
+behavior remain behind their existing numeric profile hooks.
 
 ## Consequences
 
@@ -51,17 +50,12 @@ narrowing corners without changing any floating path.
 parent `PD-07` decision, complete the `tile-convert` domain, select any of the
 99 broad variation-point routes, or change the M4 maturity floor.
 
-The pinned independent executable model's vector integer-conversion subset uses
-the same source-width-first widening/narrowing structure. It is corroboration
-only: that vector surface is outside PTO, and its type-code values, predicate
-behavior, and register packing are not PTO semantics.
-
 ## Evidence
 
 - `spec/evidence/public-integer-conversion-contract.json`
 - `scripts/generate-public-integer-conversion-contract`
 - `asl/tile/conversion.asl`
-- `tests/asl/tile-tests.asl`
+- `tests/asl/tile/model/numeric/formats/tile-exec-conversion-001.asl`
 - `spec/evidence/public-numeric-type-baseline.json`
 - `spec/evidence/numeric-profile-decision-inputs.json`
 - `spec/evidence/executable-model-comparison.json`

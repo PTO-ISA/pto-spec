@@ -7,12 +7,20 @@ begin
     return ReadTPC() + LSL(offset, 1);
 end;
 
+readonly func RetiringBundleBPCNAvailable() => boolean
+begin
+    return _BundleActive &&
+           (_BARG.block_type == BundleKind_Standard ||
+            _BARG.block_type == BundleKind_Floating);
+end;
+
 func ExecuteDecodedBundleStartWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet,
     instruction: bits(64),
     form: integer {0..PTO_COMMAND_FORM_COUNT-1},
     length_bits: integer {16,32,48,64})
 begin
+    let instruction_pc = ReadTPC();
     let kind = CommandBundleKindOfForm(form);
     let descriptor = DecodeBundleOperationDescriptor(instruction, form);
     if !BundleOperationDescriptorLegal(descriptor) then
@@ -27,31 +35,38 @@ begin
     let transfer = if descriptor.branch_type_valid then
         BundleTransferOfBranchType(descriptor.branch_type)
         else CommandBundleTransferOfForm(form);
-    let fallthrough = ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8));
+    let fallthrough = instruction_pc +
+        (Zeros{PTO_XLEN} + (length_bits DIV 8));
+    let reads_retiring_bpcn =
+        transfer == BundleTransfer_Indirect ||
+        transfer == BundleTransfer_IndirectCall;
+    if reads_retiring_bpcn && !RetiringBundleBPCNAvailable() then
+        SetFault(Fault_BundleControl, instruction_pc);
+        return;
+    end;
+    let retiring_bpcn = _BARG.bpcn;
     let target = if transfer == BundleTransfer_Return then _ReturnAddress
-        else if transfer == BundleTransfer_Indirect ||
-                transfer == BundleTransfer_IndirectCall then _CommitArgument
+        else if reads_retiring_bpcn then retiring_bpcn
         else if transfer == BundleTransfer_Fallthrough then fallthrough
         else if CommandHasSignedOffset(form) then
             CommandDecodedBundleTarget(instruction, form)
-        else if _BundleBodyAddress != Zeros{PTO_XLEN} then _BundleBodyAddress
         else fallthrough;
     let return_target = if CommandOperandPresent(form, CommandField_uimm5) then
-        ReadTPC() + (Zeros{PTO_XLEN} + ((length_bits DIV 8) - 2)) +
+        instruction_pc + (Zeros{PTO_XLEN} + ((length_bits DIV 8) - 2)) +
         LSL(CommandDecodedWord(instruction, form, CommandField_uimm5), 1)
         else fallthrough;
-    let condition = if transfer == BundleTransfer_Conditional then
-        !IsZero(ReadBranchPredicate()) else TRUE;
+    let taken = transfer != BundleTransfer_Conditional;
     if target[0] == '1' then
         SetFault(Fault_InstructionPC, target);
         return;
     end;
     if _BundleActive && !CompleteBundleAtWithAcceptedApplicabilityRules(
-        rules, ReadTPC()) then
+        rules, instruction_pc) then
         return;
     end;
     ClearBundleHeaderState();
-    BeginBundle(kind, transfer, target, fallthrough, return_target, condition);
+    BeginBundleAt(instruction_pc, kind, transfer, target, fallthrough,
+        return_target, taken);
     if _LastFault == Fault_None then
         InstallBundleOperationDescriptor(descriptor);
     end;

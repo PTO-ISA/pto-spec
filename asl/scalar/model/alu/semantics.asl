@@ -320,17 +320,14 @@ func ExecuteConcatenatePair(destination_low: Reg5Selector,
                             left: Word, right: Word,
                             shift_amount: integer {0..127})
 begin
-    var low: Word = Zeros{PTO_XLEN};
-    var high: Word = Zeros{PTO_XLEN};
-    if shift_amount == 0 then
-        low = right;
-        high = left;
-    elsif shift_amount < 64 then
-        low = LSR(right, shift_amount) OR LSL(left, 64 - shift_amount);
-        high = LSR(left, shift_amount);
-    elsif shift_amount < 128 then
-        low = LSR(left, shift_amount - 64);
-    end;
+    let low = InstructionContractLowResult_HL_CCAT(
+        left,
+        right,
+        shift_amount);
+    let high = InstructionContractHighResult_HL_CCAT(
+        left,
+        right,
+        shift_amount);
     WriteScalarDestination(destination_low, low);
     WriteScalarDestination(destination_high, high);
 end;
@@ -340,16 +337,14 @@ func ExecuteConcatenatePairW(destination_low: Reg5Selector,
                              left: Word, right: Word,
                              shift_amount: integer {0..127})
 begin
-    var low: Word = Zeros{PTO_XLEN};
-    var high: Word = Zeros{PTO_XLEN};
-    if shift_amount < 64 then
-        var packed: Word = Zeros{PTO_XLEN};
-        packed[31:0] = right[31:0];
-        packed[63:32] = left[31:0];
-        let shifted = LSR(packed, shift_amount);
-        low = SignExtend{PTO_XLEN}(shifted[31:0]);
-        high = SignExtend{PTO_XLEN}(shifted[63:32]);
-    end;
+    let low = InstructionContractLowResult_HL_CCATW(
+        left,
+        right,
+        shift_amount);
+    let high = InstructionContractHighResult_HL_CCATW(
+        left,
+        right,
+        shift_amount);
     WriteScalarDestination(destination_low, low);
     WriteScalarDestination(destination_high, high);
 end;

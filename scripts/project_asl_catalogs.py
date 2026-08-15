@@ -22,7 +22,7 @@ CATALOG_PATHS = (
     Path("spec/catalog/scalar-forms.json"),
     Path("spec/catalog/command-forms.json"),
     Path("spec/catalog/tile-operations.json"),
-    Path("spec/catalog/linx-vector-reservations.json"),
+    Path("spec/catalog/extension-encoding-reservations.json"),
 )
 
 SURFACE_CATALOG = {
@@ -32,7 +32,7 @@ SURFACE_CATALOG = {
 }
 
 PROJECTION_CATALOGS = frozenset(
-    (*SURFACE_CATALOG.values(), "linx-vector-reservations")
+    (*SURFACE_CATALOG.values(), "extension-encoding-reservations")
 )
 
 
@@ -224,12 +224,12 @@ def project_catalogs(
         "rejected_names": tile_envelope["rejected_names"],
     }
 
-    reservation_envelope = envelopes["linx-vector-reservations"]
+    reservation_envelope = envelopes["extension-encoding-reservations"]
     reservations = reservation_envelope["reservations"]
     if not isinstance(reservations, list) or any(
         not isinstance(reservation, dict) for reservation in reservations
     ):
-        raise ValueError("linx-vector-reservations reservations must be objects")
+        raise ValueError("extension-encoding-reservations reservations must be objects")
     if release is None:
         specification = tomllib.loads(
             (ROOT / "specification.toml").read_text(encoding="utf-8")

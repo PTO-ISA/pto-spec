@@ -7,7 +7,7 @@ begin
     let destination = ScalarDecodedSelector(instruction, form, ScalarField_RegDst);
     let left = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL);
     let unmodified_right = ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR);
-    let modifier = ScalarDecodedRightModifier(instruction, form);
+    let modifier = ScalarDecodedBinaryRightModifier(instruction, form);
     let shift_amount = ScalarDecodedUInt6(instruction, form, ScalarField_shamt);
     let right = PrepareScalarRight(unmodified_right, modifier, shift_amount, logical_family);
     let result = if word_operation then ScalarBinaryW(operation, left, right)
@@ -394,7 +394,7 @@ begin
                     ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
                     ApplySelectModifier(
                         ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-                        ScalarDecodedRightModifier(instruction, form))));
+                        ScalarDecodedSelectRightModifier(instruction, form))));
 
         when ScalarOperation_LUI =>
             WriteScalarDestination(
@@ -436,7 +436,10 @@ begin
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL), 32,
                 operation == ScalarOperation_C_SEXT_W));
         when ScalarOperation_C_SETC_TGT =>
-            SetCommitTarget(ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL));
+            SetCompressedCommitTarget(ReadDecodedScalarRegister(
+                instruction,
+                form,
+                ScalarField_SrcL));
         when ScalarOperation_C_SETRET =>
             SetReturnAddress(ScalarDecodedWord(instruction, form, ScalarField_uimm5));
 

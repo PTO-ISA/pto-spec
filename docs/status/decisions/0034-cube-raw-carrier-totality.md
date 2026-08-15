@@ -63,8 +63,8 @@ value they wrote earlier through an aliased operand.
 
 ## Evidence contract
 
-`spec/evidence/cube-totality.json` owns the exact 13-function inventory and
-the raw-carrier/profile boundary. `TestCubeDecodedSelectorMatrix` executes
+The canonical tile catalog and CUBE ASL units own the accepted function
+inventory and raw-carrier/profile boundary. `TestCubeDecodedSelectorMatrix` executes
 every accepted selector through decoded dispatch and checks its result.
 Additional matrices cover all 25 type identities, mixed type/layout/location
 execution, implementation-defined layout rejection, all 19 reserved function
@@ -75,8 +75,8 @@ accumulate, ACCCVT, and GEMV aliases. The preflight matrix covers destination,
 left, right, bias, both scale roles, accumulator definedness, layout, and shape.
 
 The repository checker derives function/name identity from the canonical tile
-catalog and fails closed if the evidence, test entrypoints, requirement state,
-or maturity state drifts.
+catalog and `release-traceability-readiness.json`, and fails closed if the ASL,
+test entrypoints, or instruction-contract ownership drifts.
 
 ## Consequences
 

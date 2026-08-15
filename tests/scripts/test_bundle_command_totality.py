@@ -15,6 +15,10 @@ GENERATOR = runpy.run_path(
 
 
 class BundleCommandTotalityTest(unittest.TestCase):
+    def bridge_matrix(self, tile_catalog=None):
+        catalog = tile_catalog or GENERATOR["load_json"](GENERATOR["TILE_CATALOG"])
+        return GENERATOR["build_bridge_matrix"](catalog["operations"])
+
     def test_representability_fails_closed_for_incomplete_operand_policy(self) -> None:
         # Negative fixture: an accepted control loses its raw-value policy.
         # The evidence generator must reject the catalog rather than report
@@ -26,11 +30,10 @@ class BundleCommandTotalityTest(unittest.TestCase):
             with self.assertRaisesRegex(
                 ValueError, "missing concrete bridge resolver/default for operand flag0"
             ):
-                GENERATOR["build_evidence"]()
+                self.bridge_matrix()
 
     def test_representability_rejects_more_than_three_gpr_inputs(self) -> None:
-        original_load_json = GENERATOR["load_json"]
-        tile_catalog = original_load_json(GENERATOR["TILE_CATALOG"])
+        tile_catalog = GENERATOR["load_json"](GENERATOR["TILE_CATALOG"])
         synthetic = deepcopy(tile_catalog["operations"][0])
         synthetic["name"] = "SYNTHETIC_FOUR_GPR"
         synthetic["operands"] = [
@@ -39,18 +42,11 @@ class BundleCommandTotalityTest(unittest.TestCase):
         ]
         tile_catalog["operations"].append(synthetic)
 
-        def load_json(path):
-            if path == GENERATOR["TILE_CATALOG"]:
-                return tile_catalog
-            return original_load_json(path)
-
-        with patch.dict(GENERATOR["build_evidence"].__globals__, {"load_json": load_json}):
-            with self.assertRaisesRegex(ValueError, "more than three GPR inputs"):
-                GENERATOR["build_evidence"]()
+        with self.assertRaisesRegex(ValueError, "more than three GPR inputs"):
+            self.bridge_matrix(tile_catalog)
 
     def test_representability_rejects_duplicate_gpr_fields(self) -> None:
-        original_load_json = GENERATOR["load_json"]
-        tile_catalog = original_load_json(GENERATOR["TILE_CATALOG"])
+        tile_catalog = GENERATOR["load_json"](GENERATOR["TILE_CATALOG"])
         synthetic = deepcopy(tile_catalog["operations"][0])
         synthetic["name"] = "SYNTHETIC_DUPLICATE_FLAG0"
         synthetic["operands"] = [
@@ -59,14 +55,8 @@ class BundleCommandTotalityTest(unittest.TestCase):
         ]
         tile_catalog["operations"].append(synthetic)
 
-        def load_json(path):
-            if path == GENERATOR["TILE_CATALOG"]:
-                return tile_catalog
-            return original_load_json(path)
-
-        with patch.dict(GENERATOR["build_evidence"].__globals__, {"load_json": load_json}):
-            with self.assertRaisesRegex(ValueError, "duplicate GPR operand fields"):
-                GENERATOR["build_evidence"]()
+        with self.assertRaisesRegex(ValueError, "duplicate GPR operand fields"):
+            self.bridge_matrix(tile_catalog)
 
     def test_representability_rejects_unknown_operand_field(self) -> None:
         original_load_json = GENERATOR["load_json"]
@@ -104,10 +94,9 @@ class BundleCommandTotalityTest(unittest.TestCase):
             )
 
     def test_real_operations_record_architectural_gpr_slots(self) -> None:
-        evidence = GENERATOR["build_evidence"]()
         rows = {
             row["operation"]: row
-            for row in evidence["bundle_tile_bridge"]["operation_matrix"]
+            for row in self.bridge_matrix()
         }
         self.assertEqual(
             rows["TCI"]["gpr_input_slots"], {"scalar0": "RegSrc0", "flag0": "RegSrc1"}
