@@ -103,7 +103,7 @@
   "sources": {
     ".aslref-version": "943437e8563813c276417b022296f0c51b34fadbb8da49ca70dbac7f6589db63",
     ".github/workflows/asl.yml": "3dc9e14d43b616a2065c166e4e3528147e1c9edd6b9e066db29f38bdf59a414f",
-    ".github/workflows/release.yml": "d3dd6b4cd5033647301d3b302c6c27e654b9f90e6e2d872114a4b815da4b329e",
+    ".github/workflows/release.yml": "6ab67fa53687b8e9bf615170a1916687e76b7dfafd2391d640f8601a6e7a57d4",
     "CONTRIBUTING.md": "3a3f1620c710739806d6d027058b5597f53c835f7296addc2f93f2f10b638306",
     "GOVERNANCE.md": "bca735a3a2235052494f37765d3dbfd6034e45c5c3e33ba980a9abcbc00c1d68",
     "Makefile": "fffaf1437f97207cec7f81632027173280a8b78f1a77156f520aea8ee5e1a86e",
@@ -132,7 +132,7 @@
     "scripts/print-asl-test-matrix": "1e4b29cb97ba7524e252bb506cf0dd1b8f3d4e3d1108e345d6adf85540937a3d",
     "scripts/project_asl_catalogs.py": "749e10b486c08e32a687364715d0f6dd640edcb91e1862d56a99a66726e7a43f",
     "scripts/release_event.py": "564942755c99289ddf16971e00ac65a5b40bc303875f5c6eacc158f9b1b7643c",
-    "scripts/release_workflow.py": "808bef87c7799f65c50bb6b4c903862bc0e133e073fe893c374b72d0112b7406",
+    "scripts/release_workflow.py": "2f2cb47d0c9fd8ccf24c79adb5d7d60c65fd60c59477587f13792c0d4c45f228",
     "scripts/report-asl-page-results": "2dde0acdd94de060dc56c409e5d232f2252a2fa605512fe4461c360ffdda3cae",
     "scripts/run-asl-page": "64e7e3a7eaa7db6d264665325fcdf42b1b29cc7c4d7b7e1fd9fde30655c19e7f",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",

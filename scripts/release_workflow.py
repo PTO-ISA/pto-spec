@@ -283,6 +283,16 @@ def validate_release_workflow(workflow: str) -> list[str]:
         )
     if re.search(r"(?:^|\s)--page(?:\s|=)", matrix_plan):
         errors.append("matrix-plan must not regenerate pages in a serial loop")
+    build_directory_positions = _script_line_positions(matrix_plan, "mkdir -p build")
+    matrix_discovery_position = matrix_plan.find("./scripts/print-asl-test-matrix")
+    if (
+        len(build_directory_positions) != 1
+        or matrix_discovery_position < 0
+        or build_directory_positions[0] >= matrix_discovery_position
+    ):
+        errors.append(
+            "matrix-plan must create build before redirecting the ASL plan index"
+        )
     if "planned-asl-test-pages" not in matrix_plan or not re.search(
         r"actions/upload-artifact@[0-9a-f]{40}", matrix_plan
     ):

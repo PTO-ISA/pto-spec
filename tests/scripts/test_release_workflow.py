@@ -77,6 +77,7 @@ jobs:
       - id: matrix
         run: |
           test "$(git rev-parse HEAD)" = "$COMMIT"
+          mkdir -p build
           ./scripts/print-asl-test-matrix --page-size 100 --output-dir build/planned-asl-test-pages > build/asl-test-plan-index.json
           echo 'pages=[0]' >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -236,6 +237,26 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
         self.assert_rejected(
             VALID_RELEASE_WORKFLOW.replace("./scripts/print-asl-test-matrix", "printf"),
             "print-asl-test-matrix",
+        )
+
+    def test_matrix_plan_creates_build_before_redirecting_plan_index(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace("          mkdir -p build\n", ""),
+            "create build before redirecting",
+        )
+
+    def test_matrix_plan_must_create_build_before_matrix_discovery(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                "          mkdir -p build\n"
+                "          ./scripts/print-asl-test-matrix",
+                "          ./scripts/print-asl-test-matrix",
+            ).replace(
+                " > build/asl-test-plan-index.json\n",
+                " > build/asl-test-plan-index.json\n          mkdir -p build\n",
+                1,
+            ),
+            "create build before redirecting",
         )
 
     def test_page_rediscovery_is_rejected(self) -> None:
