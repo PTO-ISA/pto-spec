@@ -154,7 +154,7 @@ begin
     prefetch_address[27:23] = Zeros{5} + 16;
     prefetch_address[35:31] = Zeros{5} + 2;
     prefetch_address[40:36] = Zeros{5} + 3;
-    prefetch_address[15:11] = Zeros{5} + 5;
+    prefetch_address[15:11] = Zeros{5} + 2;
     prefetch_address[47:43] = Zeros{5} + 2;
     let prefetch_status = ExecuteScalarInstruction(prefetch_address, 48);
     assert prefetch_status == ScalarExecution_Executed;

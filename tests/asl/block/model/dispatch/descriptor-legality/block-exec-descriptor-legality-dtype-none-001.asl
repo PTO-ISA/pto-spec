@@ -48,7 +48,7 @@ begin
     DTypeNoneInstallOperation(BundleOperation_TileElement, Zeros{10},
         Zeros{5} + 24);
     SetBundleDataAttributeState(DTYPE_NONE, Zeros{5}, Zeros{2},
-        Zeros{3}, Zeros{3}, FALSE);
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
     assert _LastFault == Fault_None;
     assert _BundleDataAttributes.data_type_present;
     let (start_valid, start_type) = ResolveBundleEffectiveDataType();
@@ -57,7 +57,7 @@ begin
 
     // A concrete B.DATR type has precedence over BSTART.
     SetBundleDataAttributeState(Zeros{5} + 8, Zeros{5}, Zeros{2},
-        Zeros{3}, Zeros{3}, FALSE);
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
     let (datr_valid, datr_type) = ResolveBundleEffectiveDataType();
     assert datr_valid;
     assert datr_type == TileDataType_E5M2;
@@ -68,7 +68,7 @@ begin
     DTypeNoneInstallOperation(BundleOperation_TileMemory, Zeros{10} + 2,
         DTYPE_NONE);
     SetBundleDataAttributeState(DTYPE_NONE, Zeros{5}, Zeros{2},
-        Zeros{3}, Zeros{3}, FALSE);
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
     AddBundleTileBinding(TRUE, 2, 1, '1111', TRUE, FALSE, 0, 0, TRUE);
     let (local_valid, local_type) = ResolveBundleEffectiveDataType();
     assert local_valid;
@@ -85,7 +85,7 @@ begin
     DTypeNoneInstallOperation(BundleOperation_TileMemory, Zeros{10} + 11,
         DTYPE_NONE);
     SetBundleDataAttributeState(DTYPE_NONE, Zeros{5}, Zeros{2},
-        Zeros{3}, Zeros{3}, FALSE);
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
     BindBundleSharedIO(Zeros{8} + 31, 0, '1111');
     let (shared_valid, shared_type) = ResolveBundleEffectiveDataType();
     assert shared_valid;
@@ -97,7 +97,7 @@ begin
     DTypeNoneInstallOperation(BundleOperation_TileMemory, Zeros{10} + 2,
         DTYPE_NONE);
     SetBundleDataAttributeState(DTYPE_NONE, Zeros{5}, Zeros{2},
-        Zeros{3}, Zeros{3}, FALSE);
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
     AddBundleTileBinding(TRUE, 2, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
     let unresolved = ResolveBundleTileDestinations();
     assert !unresolved;

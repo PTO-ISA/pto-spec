@@ -63,6 +63,25 @@ class ScalarMemoryAgentFixtureTest(unittest.TestCase):
 
         self.assert_agent_selected_before_gpr_setup(output.getvalue(), agent=1)
 
+    def test_amo_temporary_sources_are_marked_available(self) -> None:
+        output = io.StringIO()
+
+        with redirect_stdout(output):
+            GENERATOR["emit_scalar_amo_decoded_success"](
+                scalar_form("CASB"),
+                FAMILY_CONSTRAINTS,
+                0,
+                "fixture-temporary-source",
+                old_value=0x22,
+                operand=0x22,
+                desired=0x44,
+                selectors={"SrcD": 24},
+            )
+
+        emitted = output.getvalue()
+        self.assertIn("_TQueue[[0]] =", emitted)
+        self.assertIn("_TQueueValid[[0]] = TRUE;", emitted)
+
 
 if __name__ == "__main__":
     unittest.main()

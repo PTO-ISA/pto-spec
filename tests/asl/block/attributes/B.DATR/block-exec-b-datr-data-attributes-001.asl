@@ -8,7 +8,7 @@ begin
     assert TileDataLayoutCodeAccepted(Zeros{5} + 30);
     assert !TileDataLayoutCodeAccepted(Zeros{5} + 2);
     assert TileDataLayoutCodeSupported(Zeros{5});
-    assert !TileDataLayoutCodeSupported(Zeros{5} + 1);
+    assert TileDataLayoutCodeSupported(Zeros{5} + 1);
 
     ClearFault();
     SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5}, '11',
@@ -24,12 +24,11 @@ begin
     assert conversion_operands.numeric_control.rounding_mode == NumericRound_RTZ;
     assert conversion_operands.numeric_control.saturating;
 
-    // Accepted implementation-defined layouts are rejected by generic
-    // indexing until the implementation advertises support.
+    // Every assigned layout is architectural and supported by the profile.
     ClearFault();
     SetBundleDataAttributeState(Zeros{5} + 24, Zeros{5} + 1, '00',
         Zeros{3}, Zeros{3}, FALSE, FALSE);
-    assert _LastFault == Fault_TileLegality;
+    assert _LastFault == Fault_None;
     assert CurrentBundleDataTypeCode() == Zeros{5} + 24;
     AdvertiseTileDataLayout(Zeros{5} + 1);
     ClearFault();
@@ -53,7 +52,7 @@ end;
 
 func TestReservedBundleDataTypeEncodingsRejectBeforeEffects()
 begin
-    for index = 0 to 6 looplimit 7 do
+    for index = 0 to 5 looplimit 6 do
         let reserved = if index == 0 then Zeros{5} + 15 else
                        if index <= 3 then Zeros{5} + 20 + index else
                        Zeros{5} + 25 + index;

@@ -40,6 +40,13 @@ begin
         Zeros{PTO_XLEN} + 0x404;
     assert _ArchitectureRequestEpoch == system_epoch + 1;
     ClearFault();
+    _BundleActive = FALSE;
+    _BundleBodyActive = FALSE;
+    ClearBundleHeaderState();
+    BeginBundle(BundleKind_System, BundleTransfer_Fallthrough,
+        Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x904,
+        Zeros{PTO_XLEN} + 0x904, FALSE);
+    EnterBundleBody();
     ArchitectureEnterRequest('0001');
     assert _LastFault == Fault_None;
     assert CurrentACR() == 2;

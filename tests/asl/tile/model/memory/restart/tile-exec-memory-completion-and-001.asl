@@ -15,9 +15,9 @@ begin
     gather_operands.source0 = 15;
 
     ExecuteTileFillScalar(14, Zeros{PTO_XLEN} + 0x5a);
-    WriteTileElement(15, 0, 0, Zeros{PTO_XLEN} + 384);
-    WriteTileElement(15, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(15, 0, 0, Zeros{PTO_XLEN} + 3072);
+    WriteTileElement(15, 0, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 16);
     ClearFault();
     let (first_status, -) = ExecuteTileInstruction(
         TileDecode_TLSU, '000000000100', gather_operands);
@@ -29,7 +29,7 @@ begin
     assert ReadTileElement(14, 0, 2) == Zeros{PTO_XLEN} + 0x5a;
 
     WriteTileElement(15, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(15, 0, 1, Zeros{PTO_XLEN} + 384);
+    WriteTileElement(15, 0, 1, Zeros{PTO_XLEN} + 3072);
     ClearFault();
     let (middle_status, -) = ExecuteTileInstruction(
         TileDecode_TLSU, '000000000100', gather_operands);
@@ -41,7 +41,8 @@ begin
     assert ReadTileElement(14, 0, 2) == Zeros{PTO_XLEN} + 0x5a;
 
     WriteTileElement(15, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 384);
+    WriteTileElement(15, 0, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 3072);
     ClearFault();
     let (last_status, -) = ExecuteTileInstruction(
         TileDecode_TLSU, '000000000100', gather_operands);
@@ -52,7 +53,7 @@ begin
     assert ReadTileElement(14, 0, 1) == Zeros{PTO_XLEN} + 0x5a;
     assert ReadTileElement(14, 0, 2) == Zeros{PTO_XLEN} + 0x5a;
 
-    WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 16);
     ClearFault();
     let (restart_status, -) = ExecuteTileInstruction(
         TileDecode_TLSU, '000000000100', gather_operands);
@@ -70,8 +71,8 @@ begin
     WriteTileElement(16, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(16, 0, 2, Zeros{PTO_XLEN} + 3);
     WriteTileElement(17, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(17, 0, 1, Zeros{PTO_XLEN} + 320);
-    WriteTileElement(17, 0, 2, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(17, 0, 1, Zeros{PTO_XLEN} + 2560);
+    WriteTileElement(17, 0, 2, Zeros{PTO_XLEN} + 16);
     Store(Zeros{PTO_XLEN} + 1536, 8, Zeros{PTO_XLEN} + 0xaa);
     Store(Zeros{PTO_XLEN} + 1544, 8, Zeros{PTO_XLEN} + 0xbb);
     Store(Zeros{PTO_XLEN} + 1552, 8, Zeros{PTO_XLEN} + 0xcc);
@@ -93,7 +94,7 @@ begin
     assert scatter_preserved_middle == Zeros{PTO_XLEN} + 0xbb;
     assert scatter_preserved_last == Zeros{PTO_XLEN} + 0xcc;
 
-    WriteTileElement(17, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(17, 0, 1, Zeros{PTO_XLEN} + 8);
     ClearFault();
     let (scatter_restart_status, -) = ExecuteTileInstruction(
         TileDecode_TLSU, '000000000101', scatter_operands);

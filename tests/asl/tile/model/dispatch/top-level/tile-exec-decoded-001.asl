@@ -6,6 +6,12 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
+func ConfigureTwoByTwoTyped(index: TileIndex, data_type: TileDataType)
+begin
+    ConfigureTile(index, 256, 2, 2, 2, 2, data_type,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
 func SelectTestCUBEDataType(data_type: bits(5))
 begin
     InstallBundleOperationDescriptor(BundleOperationDescriptor {
@@ -67,9 +73,9 @@ begin
     assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 21;
     assert ReadTileElement(3, 1, 1) == Zeros{PTO_XLEN} + 24;
 
-    ConfigureTwoByTwo(4);
-    ConfigureTwoByTwo(5);
-    ConfigureTwoByTwo(6);
+    ConfigureTwoByTwoTyped(4, TileDataType_S16);
+    ConfigureTwoByTwoTyped(5, TileDataType_S16);
+    ConfigureTwoByTwoTyped(6, TileDataType_S32);
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(4, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(4, 1, 0, Zeros{PTO_XLEN} + 3);
@@ -82,7 +88,7 @@ begin
     cube_operands.destination0 = 6;
     cube_operands.source0 = 4;
     cube_operands.source1 = 5;
-    SelectTestCUBEDataType('11000');
+    SelectTestCUBEDataType('10010');
     let (cube_status, cube_value) = ExecuteTileInstruction(
         TileDecode_CUBE, '000000000000', cube_operands);
     assert cube_status == TileExecution_Executed;

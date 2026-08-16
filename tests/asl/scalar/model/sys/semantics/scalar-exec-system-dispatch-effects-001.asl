@@ -6,6 +6,11 @@ begin
     // depend on a preceding fault to change the active ACR implicitly.
     SetCurrentACR(0);
     ClearFault();
+    WriteTPC(Zeros{PTO_XLEN} + 0x80);
+    BeginBundle(BundleKind_System, BundleTransfer_Fallthrough,
+        Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x84,
+        Zeros{PTO_XLEN} + 0x84, FALSE);
+    EnterBundleBody();
     WriteGPR(5, Zeros{PTO_XLEN} + 0x55);
     var ssrset_instruction: bits(48) = Zeros{48} + 0x0000103b;
     ssrset_instruction[19:15] = Zeros{5} + 5;
@@ -70,6 +75,7 @@ begin
     assert _LastFenceSuccessor == '0101';
     assert _InstructionCacheEpoch == before_instruction + 1;
 
+    ResetBundleControlState();
     WriteTPC(Zeros{PTO_XLEN} + 0x100);
     BeginBundleAt(
         ReadTPC(),
@@ -88,6 +94,11 @@ begin
     ResetBundleControlState();
 
     SetCurrentACR(2);
+    WriteTPC(Zeros{PTO_XLEN} + 0x300);
+    BeginBundle(BundleKind_System, BundleTransfer_Fallthrough,
+        Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x304,
+        Zeros{PTO_XLEN} + 0x304, FALSE);
+    EnterBundleBody();
     let before_request = _ArchitectureRequestEpoch;
     var close_request: bits(48) = Zeros{48} + 0x0000302b;
     close_request[23:20] = '0001';
@@ -99,6 +110,12 @@ begin
     assert _ControlRequestOperand[3:0] == '0001';
 
     ClearFault();
+    ResetBundleControlState();
+    WriteTPC(Zeros{PTO_XLEN} + 0x400);
+    BeginBundle(BundleKind_System, BundleTransfer_Fallthrough,
+        Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x404,
+        Zeros{PTO_XLEN} + 0x404, FALSE);
+    EnterBundleBody();
     var enter_request: bits(48) = Zeros{48} + 0x0100302b;
     enter_request[23:20] = '0010';
     let enter_status = ExecuteScalarInstruction(enter_request, 32);
@@ -112,7 +129,7 @@ begin
     let breakpoint_status = ExecuteScalarInstruction(breakpoint, 32);
     assert breakpoint_status == ScalarExecution_Rejected;
     assert _LastFault == Fault_SoftwareBreakpoint;
-    assert _BreakpointTag == '01001';
+    assert _ACRTrapCause[[CurrentACR()]] == Zeros{24} + 9;
     assert _FaultAddress == Zeros{PTO_XLEN} + 0x400;
 
     ClearFault();

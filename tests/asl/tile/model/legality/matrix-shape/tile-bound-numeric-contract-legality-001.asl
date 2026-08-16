@@ -19,7 +19,10 @@ end;
 
 func TestMatrixNumericContractLegality()
 begin
-    SelectTestCUBEDataType('00001');
+    SelectTestCUBEDataType('00111');
+    SetBundleDataAttributeState(Zeros{5} + 8, Zeros{5}, Zeros{2},
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
+    _BundleDataAttributesPresent = TRUE;
     ConfigureTile(40, 256, 1, 64, 1, 32, TileDataType_E4M3,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(41, 256, 32, 1, 32, 1, TileDataType_E5M2,
@@ -52,7 +55,7 @@ begin
     ConfigureTile(42, 256, 1, 2, 1, 2, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     assert !TileOperandsLegal_TMATMUL_MX(44, 40, 42, 41, 43);
-    SelectTestCUBEDataType('00111');
+    SelectTestCUBEDataType('00100');
     assert !TileOperandsLegal_TMATMUL_MX(44, 40, 42, 41, 43);
 end;
 func main() => integer

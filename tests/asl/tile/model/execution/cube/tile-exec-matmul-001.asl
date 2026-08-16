@@ -83,13 +83,16 @@ begin
 
     ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(28, 256, 2, 1, 2, 1, TileDataType_U32,
+    ConfigureTile(29, 256, 1, 2, 1, 2, TileDataType_U16,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(28, 256, 1, 1, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);
-    TGEMV(28, 5, 27);
+    WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 2);
+    TGEMV(28, 29, 27);
     assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 8;
-    assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 18;
 
 end;
 func main() => integer
