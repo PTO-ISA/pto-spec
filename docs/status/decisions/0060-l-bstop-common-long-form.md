@@ -5,6 +5,9 @@
 - Requirements: PTO-REQ-BUNDLE-DISPATCH-001,
   PTO-REQ-BUNDLE-OPERATION-001, PTO-REQ-BUNDLE-STATE-001
 
+Current release inventory is governed by ADR 0062; numeric inventories below
+are acceptance-time history, not the current active decoder set.
+
 ## Context
 
 PTO requires compressed, base-width, and long bundle-stop encodings with one
@@ -40,9 +43,10 @@ encoding and `ExecuteBundleStop` handler identity.
 
 ## Consequences
 
-- The common command-form inventory increases from 99 to 100 and the encoded
-  scalar-plus-command envelope increases from 573 to 574 forms.
-- The reviewed 574-form binary-closure fingerprint is
+- At acceptance time, the common command-form inventory increased from 99 to
+  100 and the encoded scalar-plus-command envelope increased from 573 to 574
+  forms.
+- The acceptance-time 574-form binary-closure fingerprint was
   `6d0814b26ed0db560395752a53f4403c0ff000d7c5cf2a7a87ec42048c25678b`.
 - PTO decoder, assembly, disassembly, AVS, generated documentation, and release
   projections MUST include `L.BSTOP`.

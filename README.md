@@ -36,18 +36,21 @@ The active source chain is deliberately singular:
 normative ASL -> generated Markdown mirror -> independent AVS points -> release evidence
 ```
 
-The current executable inventory contains 474 scalar forms, 100 block forms,
-and 109 direct Tile operations. Release traceability covers 789 ASL units, 789
-generated pages, 911 independently runnable AVS points, and 652 executable
-mnemonic requirements. Detailed numeric, model-comparison, and release-gate
-ledgers stay machine-readable under [`spec/evidence/`](spec/evidence/) instead
-of being duplicated in this landing page.
+The current executable inventory contains 474 scalar forms, 74 active block
+forms, 109 direct Tile operations, and 32 occupied extension reservations.
+Release traceability covers 819 ASL units, 819 generated pages, 3178
+independently runnable AVS points, and 642 executable mnemonic requirements.
+Detailed numeric, model-comparison, and release-gate ledgers stay
+machine-readable under [`spec/evidence/`](spec/evidence/) instead of being
+duplicated in this landing page.
 
 ## Architecture scope
 
 - 474 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS.
-- 100 bundle/command forms for bundle start, dimension,
-  attributes, IO binding, hints, stop, and context handling.
+- 74 active bundle/command forms for bundle start, dimension, attributes, IO
+  binding, hints, stop, and context handling, plus 32 occupied extension
+  reservations that are rejected by the PTO decoder and unavailable for future
+  PTO allocation.
 - 109 direct tile operations across seven semantic classes: elementwise
   tile-tile, tile-scalar/immediate, reduce/expand, memory/data movement,
   matrix/matrix-vector, layout/rearrangement, and irregular/complex.

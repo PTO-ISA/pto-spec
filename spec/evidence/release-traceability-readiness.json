@@ -679,10 +679,12 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-B-IOR-DECODE-001",
-        "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001",
+        "PTO-AVS-BLOCK-B-IOR-DEFAULTS-EXEC-001",
         "PTO-AVS-BLOCK-B-IOR-EXECUTION-001",
+        "PTO-AVS-BLOCK-B-IOR-ORDER-EXEC-002",
         "PTO-AVS-BLOCK-B-IOR-ORDERED-GPR-EXECUTION-001",
         "PTO-AVS-BLOCK-B-IOR-PLACEMENT-001",
+        "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-BLOCK-TMRGSORT-END-TO-END-EXECUTION-001"
       ]
     },
@@ -7876,7 +7878,7 @@
         "asl/tile/irregular-and-complex/initialization/TCI.asl"
       ],
       "tests": [
-        "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001",
+        "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-BLOCK-TCI-SCHEMA-001",
         "PTO-AVS-TILE-TCI-BUNDLE-001",
         "PTO-AVS-TILE-TCI-DIRECTION-001",
@@ -8487,7 +8489,7 @@
         "asl/tile/irregular-and-complex/sorting/TMRGSORT.asl"
       ],
       "tests": [
-        "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001",
+        "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-BLOCK-TMRGSORT-END-TO-END-EXECUTION-001",
         "PTO-AVS-TILE-SORT-ORDER-001",
         "PTO-AVS-TILE-TMRGSORT-BUNDLE-001",
@@ -8962,7 +8964,7 @@
         "asl/tile/irregular-and-complex/sorting/TSORT.asl"
       ],
       "tests": [
-        "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001",
+        "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-TILE-SORT-ORDER-001",
         "PTO-AVS-TILE-TSORT-BUNDLE-001",
         "PTO-AVS-TILE-TSORT-GROUPS-001",
@@ -9046,7 +9048,7 @@
         "asl/tile/irregular-and-complex/initialization/TTRI.asl"
       ],
       "tests": [
-        "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001",
+        "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-BLOCK-TTRI-SCHEMA-001",
         "PTO-AVS-TILE-TTRI-BUNDLE-001",
         "PTO-AVS-TILE-TTRI-EDGE-001",
@@ -10355,7 +10357,7 @@
     "asl/arch/state/numeric-status.asl": "3d3fe1709c7e2903bca96d50e9671a6a484c442ff08ce4a8340168cdb38ac6d9",
     "asl/arch/state/program-counter.asl": "3b5f7bad14ca62af5d776ae551ddf32b4b9f43fe25d96ce0fd31a59b44e1e845",
     "asl/arch/state/tile-descriptor.asl": "52604c09f7171f5f530755929970b499296d3ce84a5ee337d7bc8c63eb8d7913",
-    "asl/arch/state/trap-context.asl": "634a2e821390fd15d8288034c9b60921f2da8491f081c1ea5f24e077a197d094",
+    "asl/arch/state/trap-context.asl": "e16737bb312d906218a21a28badb8687b9605a5c2659363be5cc81242d96107c",
     "asl/arch/system-registers/access-control.asl": "b902ec666fffe515cb48ef7f54c144d19b514561537489a670349369eee3a819",
     "asl/arch/system-registers/addressing.asl": "9a6b1b703497812b9be330d30b5600fe7640c3b1ded3cb234696f451da8d893d",
     "asl/arch/system-registers/context.asl": "957d493d986f37345a38ade133ba905879030b4d88142b2a94054079f9cc7247",
@@ -11174,7 +11176,7 @@
     "docs/arch/state/numeric-status.md": "b2e92eb15d24f456c5817688ccb50b203ff14cf7ed920aeb5b4ab6a11db2b5e9",
     "docs/arch/state/program-counter.md": "2f3d10196c3319698d9aaeff587a3b4d3fd94d312f0b6d78bf7932a239554409",
     "docs/arch/state/tile-descriptor.md": "410adee0ab3f250dedd94466d6a370f600185d2ff1b3c4e0dd4e15a8ddb385d3",
-    "docs/arch/state/trap-context.md": "96e5c37137b0aad468edef9f255b3b0e9a59ba10d3f49ead0b6b23460e2f4075",
+    "docs/arch/state/trap-context.md": "5bda87a3be7f8971ac49765621283323bea3fb15b457786651d1a8608b5ff3d3",
     "docs/arch/system-registers/access-control.md": "8043d4e337659c50c1eec1290e2755574f0364cac3890060ad8bd7d46a188a5e",
     "docs/arch/system-registers/addressing.md": "aa14611632c7c2791c8ec04c136055fc12f53efccde873f02f805950e7361225",
     "docs/arch/system-registers/context.md": "904b1c77435fa9efc7a14a13343095894648dd72f66e6957fe57383fe3fc8dd6",
@@ -11983,7 +11985,10 @@
     "tests/asl/arch/memory-model/global-memory-access/arch-bound-mask-001.asl": "f400c4bc12bcdbc3e3314d7fcaa5bc270cdd2ba6e8fb20c5ee7051d03c5695a6",
     "tests/asl/arch/memory-model/global-memory-access/arch-static-global-memory-access-contract-001.asl": "a99f4e240da5f3f18704ac05f623bbd44dd592086fcbf9b58e913a018994799c",
     "tests/asl/arch/memory-model/memory-events/arch-static-memory-events-contract-001.asl": "8ee092e2d47ed671d8ef54d6a70ffac9676f058c85fe86b11f0b2ce46a89996d",
-    "tests/asl/arch/memory-model/ordering/arch-order-tso-concurrency-001.asl": "925265566f2370a66dcdda7cef32c16c52907adc50b2183fa99469116becbe32",
+    "tests/asl/arch/memory-model/ordering/arch-order-dependencies-004.asl": "54396119014ae03015b66a801f8fd47c886f1a856ac7d1efc69a79fdafaa3d4e",
+    "tests/asl/arch/memory-model/ordering/arch-order-production-events-002.asl": "c30ba50cb3651411c4ec93ebcd4ef342a46d908207707cc5579db55d419b6346",
+    "tests/asl/arch/memory-model/ordering/arch-order-tile-events-003.asl": "8093407438f1dfc29fd99983624e9d08c6d0f26093539968dcaf50634f830257",
+    "tests/asl/arch/memory-model/ordering/arch-order-tso-concurrency-001.asl": "9d01691c413335132b7527d49c2fd1e99f574789cd67624fc2b15ca934fd5132",
     "tests/asl/arch/memory-model/ordering/arch-static-ordering-contract-001.asl": "213cbc201790ba43a1d0c64598812cb7a4193b78411453939b2b853b0f41a8f9",
     "tests/asl/arch/overview/architecture/arch-static-architecture-contract-001.asl": "807818223d14c98b06937c0b0a1d06686bb1f61accc46ab7766e662e0d22e55a",
     "tests/asl/arch/overview/encoding-ownership/arch-bound-fixup-001.asl": "77d6e276bd208225f1d0900a50795cce9a64155ae79fa7cf7caee829dfb6370b",
@@ -11994,7 +11999,13 @@
     "tests/asl/arch/overview/encoding-ownership/arch-static-encoding-ownership-contract-001.asl": "d0269564c67e8dae296af82b9438fbe7c010ce8563194ff018dd43987687b8ec",
     "tests/asl/arch/overview/instruction-classification/arch-static-instruction-classification-contract-001.asl": "3c8f5053d2772e838c1ae9725d855c471c5e42723d3da0507987ce5c2325555b",
     "tests/asl/arch/profile/applicability/arch-static-applicability-contract-001.asl": "72e3606eddaf180815dfda25f6e262401c3e8d840afe5b2e43f4087568c8a87d",
-    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl": "ec317991843f696e06d7c2456002feef823107ed466de354a8e04c4c4218360d",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl": "38814e41be41d630c7839bdd6988e4df6e4ca8eb0667764d6a6e8b6eedd6ace5",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-access-005.asl": "eb604d8c6f7b0bb4aabce0500ea989b246177cf88fd1f4742c6b11ab64eade12",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-reset-007.asl": "fa24ce2bbb3f85a16e9a83bb2eda73c28371e202ae82f2cc19afdecd49833c9c",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-rounding-004.asl": "4b5a7c0f3234f7a17c75929202cfee9fb1f29935625d7aac83d2e1a1d8a1f2e1",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-special-values-002.asl": "00aae83648a1597cca55809fb2a2aa50a4956fbeff60780fbfb9b9dd4bf81440",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-tile-006.asl": "2bd5b60876bdc2b846795965cd0699cb7b335c4d84b469acf08aa00db3e57d44",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-value-classes-003.asl": "91670f4a73dc9c2d0d433afc66ff18354a43035c8ede7c98a35612464fb220af",
     "tests/asl/arch/profile/reference-profile/arch-static-reference-profile-contract-001.asl": "58ea19f523b6a5a5d43b22a58c28b5c4e1ed0bce3d05344713c5e24b652cba29",
     "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-001.asl": "77a1aeec8c6b63e08c22aca602ea197a22a51320e033721fa531bdfbb1046fea",
     "tests/asl/arch/profile/reference-quantization/arch-static-reference-quantization-contract-001.asl": "e5859faec80b723cccc8cd21c068ad1cd6ce6ba79c1ba1d9bf22e6365113487d",
@@ -12020,9 +12031,12 @@
     "tests/asl/arch/state/program-counter/arch-state-scalar-001.asl": "2f4c57a7182ce6707369e1cca732679572bcf318089ccea5f6188271736d8bda",
     "tests/asl/arch/state/program-counter/arch-static-program-counter-contract-001.asl": "029beecc1a36ba671aa592a04339db70da60bd5aae48ff817c28d7490cc3047b",
     "tests/asl/arch/state/tile-descriptor/arch-static-tile-descriptor-contract-001.asl": "7e51eb6f70f41fb28b5986deb7129c1a0d4cd949b7435256c0bdfc4d80832ba4",
-    "tests/asl/arch/state/trap-context/arch-fault-all-leaf-recovery-evidence-001.asl": "e13fbbd70eb40ce3626ad2ec9ee48f79826fb4b24571de9fd4bfe47d419d244b",
+    "tests/asl/arch/state/trap-context/arch-fault-all-leaf-recovery-evidence-001.asl": "895a73c23839eb7eb945fd943f2f7278f13bb6c54342fbe625f59f3b3f24e8a7",
     "tests/asl/arch/state/trap-context/arch-fault-queue-readiness-recovery-001.asl": "3c6609590e7bbc2666d9a498a2eda8ba5d2cb8a64d966e01f82922353f943e43",
     "tests/asl/arch/state/trap-context/arch-fault-routing-policy-001.asl": "69c5c80eea3b4dc4380e560c027266c98cb6a3bb01ae76cbcac3fd017fabc07e",
+    "tests/asl/arch/state/trap-context/arch-fault-trap-attributes-003.asl": "f7df68b34c3dc9a97bfc61775cec9c11da201aad38971def3207d790df80fcf1",
+    "tests/asl/arch/state/trap-context/arch-fault-trap-bindings-002.asl": "7f894d03e22c4864479342a38fbb55ba4d6de5c12415909e790c864776e8ce8b",
+    "tests/asl/arch/state/trap-context/arch-fault-trap-portable-004.asl": "fa38a935c4d9aaca5cca5fe56fc0534825d762250e23f3c9b7f3622cfcf27a29",
     "tests/asl/arch/state/trap-context/arch-static-trap-context-contract-001.asl": "576010933b4c5e154f6e1319de00442b055b68d58b1666b00eda2b79929cb6fe",
     "tests/asl/arch/system-registers/access-control/arch-static-access-control-contract-001.asl": "84f205e7b465e1547898bc952ff27a94ded966a19ee9e2a3f822c428dfdb3e24",
     "tests/asl/arch/system-registers/addressing/arch-static-addressing-contract-001.asl": "80b647c6e77d79d74d5139feed24c302ec0199d46bc0a399c5448bd7a6f333a5",
@@ -12309,7 +12323,12 @@
     "tests/asl/block/model/dispatch/reduction-schema/block-static-reduction-schema-contract-001.asl": "47350f615c9f4dc735d53fc63c361882b357baba28478f51a1eafe894074086c",
     "tests/asl/block/model/dispatch/scalar-schema/block-static-scalar-schema-contract-001.asl": "26a1eef09b2ff830e33b85e1d1b8c73c4108c6b9e26a061638a938d9f5366c4b",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-per-pe-gm-001.asl": "d3e8d0984cf1da904822d504a2de8b2cdf901eafdf72b9b29b4ad55195f6aa62",
-    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl": "def185eb271b75d672a2965ad6ea8d90eeb19d46826401b5361d313c7e3df502",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl": "5aa69122036e74955618ba300d52a5b00a3a35ccfd30f54af66cd1f5e817339a",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-mask-partition-005.asl": "550d5e4778b37df7b6b7a621096460c16acbd304e1b05c10dfe7b4eb17dcfb6c",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-missing-binder-006.asl": "028718a42384246af17eb1e4679e7d2a95d8445d94bea8494d8bc0437b782dc4",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-partial-004.asl": "9b01e8dbacac1555eb3541b524a43b7a05495269e8c54797d6f704edd4bbe827",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-publish-003.asl": "b82472985f4dad039859505c35697899e1807f2ccc70aea59ee18d6f55d42ec9",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-zero-ior-002.asl": "5e1c52595896870b219fb773e97c84da941b78822bf51998dd6fc81824d8c943",
     "tests/asl/block/model/dispatch/shared-tlsu/block-fault-tstore-mask-legality-001.asl": "0677bbfaccea927f37a5a73ac64be740206f8ae8b6c1099635e06361ce5c231c",
     "tests/asl/block/model/dispatch/shared-tlsu/block-static-shared-tlsu-contract-001.asl": "c3a2dd790c901b04c97861fff2f41a07cf5816b66ce5994fc16c1f053bec868c",
     "tests/asl/block/model/dispatch/sorting-schema/block-bound-sorting-schema-001.asl": "74effe307ff4ddaebef4742d268cbe892b66bbbef63e4f2fa200ea01679a21d4",
@@ -12354,9 +12373,11 @@
     "tests/asl/block/model/state/descriptor-state/block-static-descriptor-state-contract-001.asl": "3403f35dcefd253565c98f808af0e61d0cf7e4354ddd10c1f76be60b183b7f9b",
     "tests/asl/block/model/state/types/block-static-types-contract-001.asl": "6deef6b157ce1e2043264f9a5d709debb88a34537096d5c21853268992810224",
     "tests/asl/block/operands/B.IOR/block-decode-b-ior-canonical-001.asl": "41eac5c50b41de9083dc2e0d2aeffa1f10aba17deae302940f0e516b9619080c",
-    "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl": "5ac18d9e18766f1277a36f37b5593e106fe3114ee92ade6247a62ed0bf421be4",
+    "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl": "88acc6f88716f133143e6fa69dc9801cba8882019557ebec0d7e3de58bb46cf5",
+    "tests/asl/block/operands/B.IOR/block-exec-b-ior-order-002.asl": "9645c5f0d3b77532f08aacb7544d798590850e1de36b94e9f7b9a07baab844f7",
     "tests/asl/block/operands/B.IOR/block-exec-b-ior-ordered-gpr-001.asl": "1a54b4476a71f525a388252ee56ddcea2d605eb0586c1ba4a87e613f03d983f9",
     "tests/asl/block/operands/B.IOR/block-exec-b-ior-ordered-gpr-helper-coverage-001.asl": "3481ecf84984942da6e143ceede549c4c6c292b56ddf54852a1bedf69845f8b3",
+    "tests/asl/block/operands/B.IOR/block-exec-b-ior-tile-consumers-003.asl": "99fa97c2bc738a1a26f4fb4e897c7f26c74874280a69edc2ec71b57d00d2b073",
     "tests/asl/block/operands/B.IOR/block-exec-b-ior-tmrgsort-end-to-end-001.asl": "a250256de64b2ccf55fa25188c12b7f50ed98403fd7e683fce6e97c29f769b3f",
     "tests/asl/block/operands/B.IOR/block-fault-b-ior-placement-001.asl": "25c4a4a82fa9557d552193a8488a9d220b6e711bd3591c26feec43f802a1cb79",
     "tests/asl/block/operands/B.IOS/block-decode-b-ios-canonical-001.asl": "cc4a8d801456b22eb9874dbe0b8830885d9e7602d5eb64c7279474e98097d8fc",
@@ -14315,7 +14336,11 @@
     "tests/asl/scalar/model/alu/semantics/scalar-bound-alu-matrix-001.asl": "d3fe194b51027d06f800382c4324b7248aa84f5fa336683ca2974c3b9a5baf96",
     "tests/asl/scalar/model/alu/semantics/scalar-bound-bitfield-contract-001.asl": "ac3d7fcae6ee548bb5f952c4d96a00319fd72305ff6bb29703f0124af2d0b71d",
     "tests/asl/scalar/model/alu/semantics/scalar-exec-aliasing-order-001.asl": "9726119c4fc203d1e27fd2b16203fd1e7cd6c267f8dab064ac5966986242d0a6",
-    "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-alias-matrix-001.asl": "f2cba6cee95f625a851faac1e1a59d22acdd061d135fb8bba31b3833273bfa19",
+    "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-alias-matrix-001.asl": "d6169122913c70a70484bd3bdaffe717eef5213b2effa13fe01d52bed89669a1",
+    "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-control-alias-004.asl": "7deb6f22ba07e2d7816988cd46db6fe2baebdfa7f68c7e80422ea3e74119768a",
+    "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-multi-alias-003.asl": "4fd371542d5ef8137c75f8675442735fb959e276aae1e28645dfe828df4a4b1b",
+    "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-pair-alias-005.asl": "71b5ee4ea1364a14400e3f50542907b9b3178fa4084c5f59bebf79922af4e6be",
+    "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-queue-alias-002.asl": "bd8d11adf8ef588a78afd1c8f9840afe44a8d9f47acf699c63460f5a8de61960",
     "tests/asl/scalar/model/alu/semantics/scalar-exec-dispatch-effects-001.asl": "7f80d677d73b962d4f6ac7ab19a63db719c14ad50b011fab75b09cc18e893bda",
     "tests/asl/scalar/model/alu/semantics/scalar-static-semantics-contract-001.asl": "f2fcf690dd21b67855c017e5a0005a0ce55dcf6e470a232c702736ed1cbd44ac",
     "tests/asl/scalar/model/amo/semantics/scalar-atomic-atomics-001.asl": "7af1332c23c78005470d710ff13079479f36a4943d899d7c07a199f98711a0d5",
@@ -14906,13 +14931,18 @@
     "tests/asl/tile/model/dispatch/tile-scalar-and-immediate/tile-static-tile-scalar-and-immediate-contract-001.asl": "0487c7d6c50d554d650fc466e10639bd4963dcac6a21a350443ebf84031fdad2",
     "tests/asl/tile/model/dispatch/top-level/tile-bound-handler-closure-001.asl": "d667e81b302cf13e32c8e1a2839dedea74bb20b1c3db1698cac8f13e0f6eb6d4",
     "tests/asl/tile/model/dispatch/top-level/tile-bound-selector-closure-extensions-001.asl": "1921ece1040f5ee10a0b44018f264dff4954ae90295553f5796122c7a6adfa8d",
-    "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-carrier-totality-001.asl": "f7a07bcbfa37a7d60af8ae5fe46a34d6e26ae8399b5ec67fd780943b492166b6",
+    "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-carrier-totality-001.asl": "a8fad4de3cd79dc3d75bc1f6896e803e03117855eb0094e3c9e282c5eeb5134a",
+    "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-index-corners-004.asl": "8acb285ad9ef62c5a40ab2c882931abaeb21a512826f1b41d54059b97150e8bf",
+    "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-layout-alias-003.asl": "7dddc7b7d500ae829750994d2616c5fc704b701d3a83bc364780c0f1d1cf9c12",
+    "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-reserved-002.asl": "ac0c7b9bdddc6dc95cc0efa0143af9a74f8113e3091ade150cedf97c506d161d",
+    "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-results-005.asl": "acf3a12c2432e54e9edf71b8c745eea66660e27d9bb6c4fa5ad91a7c7cffcded",
     "tests/asl/tile/model/dispatch/top-level/tile-exec-decoded-001.asl": "b0fa0075f6fef949626d08ff64281851f7dae59d7838e5ab3b3ae0763088a916",
     "tests/asl/tile/model/dispatch/top-level/tile-static-top-level-contract-001.asl": "984000828d18dbee173ee320ebee6c3b70a9499f8ee2ee07ed6949b2d3061b1c",
     "tests/asl/tile/model/execution/comparison/tile-static-comparison-contract-001.asl": "bcfbbfb45ac2a7fe8412387be9f7c5823d9c6b54cb649d8f11e51e2998be47be",
     "tests/asl/tile/model/execution/complex/tile-exec-complex-operations-001.asl": "8cddd460d3aa8c17ed76228bdf63d2f634a3bbfdf3cb52f94bbfcf1324b7d759",
     "tests/asl/tile/model/execution/complex/tile-static-complex-contract-001.asl": "782685cbcd903af93ff40bc328793005a86a7acc0da758e225bc9754fd3373d7",
-    "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl": "d4568c7e2f99ea0cda1cec78bfa13dde3240d6512b03f88af277b32316c63be9",
+    "tests/asl/tile/model/execution/cube/tile-bound-preflight-002.asl": "a369c3373b3e88a0ad16260363110257d79b3df2d90d576af2406be4e07adc97",
+    "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl": "97a5b78aa1af14756ba2851461fffd0f270f8c263ea99f8639942610f56d0394",
     "tests/asl/tile/model/execution/cube/tile-exec-matmul-001.asl": "6aaa77f8f1793e542a0aae6318f49b336176f72eb862e9d85a53dc040f8a21e4",
     "tests/asl/tile/model/execution/cube/tile-static-cube-contract-001.asl": "fd9dd8102a0da44356e571839ef289abbac473221d6c4ed4459f4d0009594085",
     "tests/asl/tile/model/execution/elementwise/tile-exec-and-aliasing-001.asl": "f491848f5b07285b0d8fdd78f8aeb4683fae618cd54560a9d68d66aef66ec272",
@@ -14971,7 +15001,10 @@
     "tests/asl/tile/model/memory/atomics/tile-atomic-shared-register-updates-001.asl": "b2d425c27cda6aa10bf1300355966b18ef7be4178ce69b32a9f951d7e1bf4f12",
     "tests/asl/tile/model/memory/atomics/tile-static-atomics-contract-001.asl": "e3f0b897d64c12bf23e613b3ab3e3dc15ea37cc37801a86af953ecb2fe9f0995",
     "tests/asl/tile/model/memory/gather-scatter/tile-static-gather-scatter-contract-001.asl": "d6cab96d0eebc246fb74ecdff0f75f334333306b431e54d11980faba4d944d02",
-    "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl": "bf0f5fc85e7149999c3aedadbe58b60117747c3a32354a6200675169dc8d7eff",
+    "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-decode-004.asl": "500f0a8ace423bc6f462c0733cf7cb5b720fde83ecfc73b33c6e0eab37b4fb01",
+    "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-faults-003.asl": "44e380708e70394cebd5d55152ed14d958d40b054dde6325ab8fd634b3339466",
+    "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-indexed-002.asl": "b1366e6736fcf28ed47e78f8dad9ae36f82bf31fe4d5978f00a9002639890588",
+    "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl": "5cbc214f80bb7888ebea2aa582dbd78479ec52a25161fec9f5609abd6bd414d1",
     "tests/asl/tile/model/memory/load-store/tile-exec-memory-snapshot-001.asl": "f6caed9a89482a36af5192fa817cab4f1aab2eaafa2b5ab471264b17fbacffb5",
     "tests/asl/tile/model/memory/load-store/tile-static-load-store-contract-001.asl": "a520fb4fa4e0da1c31c5cf32de5a820a61fb56a4bb0a43dfdb53b26a3d3d77a1",
     "tests/asl/tile/model/memory/restart/tile-exec-memory-completion-and-001.asl": "392f9f2f0ba3aba6a1ab23558157a55510fb11bef32d81a2b2a2f7bd977a0efc",
@@ -15106,7 +15139,7 @@
     "mnemonic_count": 642,
     "requirement_count": 823,
     "status": "closed",
-    "test_count": 3147,
+    "test_count": 3178,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -22435,6 +22468,62 @@
       "source": "asl/scalar/agu/SWI.U.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-CONCRETE-ACCESS-EXEC-005",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-access-005.asl",
+      "requirements": [],
+      "sha256": "eb604d8c6f7b0bb4aabce0500ea989b246177cf88fd1f4742c6b11ab64eade12",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-CONCRETE-RESET-EXEC-007",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-reset-007.asl",
+      "requirements": [],
+      "sha256": "fa24ce2bbb3f85a16e9a83bb2eda73c28371e202ae82f2cc19afdecd49833c9c",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-CONCRETE-ROUNDING-EXEC-004",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-rounding-004.asl",
+      "requirements": [],
+      "sha256": "4b5a7c0f3234f7a17c75929202cfee9fb1f29935625d7aac83d2e1a1d8a1f2e1",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-CONCRETE-SPECIAL-VALUES-EXEC-002",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-special-values-002.asl",
+      "requirements": [],
+      "sha256": "00aae83648a1597cca55809fb2a2aa50a4956fbeff60780fbfb9b9dd4bf81440",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-CONCRETE-SUBNORMAL-EXEC-001",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
+      "requirements": [],
+      "sha256": "38814e41be41d630c7839bdd6988e4df6e4ca8eb0667764d6a6e8b6eedd6ace5",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-CONCRETE-TILE-EXEC-006",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-tile-006.asl",
+      "requirements": [],
+      "sha256": "2bd5b60876bdc2b846795965cd0699cb7b335c4d84b469acf08aa00db3e57d44",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-CONCRETE-VALUE-CLASSES-EXEC-003",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-value-classes-003.asl",
+      "requirements": [],
+      "sha256": "91670f4a73dc9c2d0d433afc66ff18354a43035c8ede7c98a35612464fb220af",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-DATA-TYPES-FAULT-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl",
@@ -22529,6 +22618,14 @@
       "requirements": [],
       "sha256": "8bc90a14061253e64b4fdfcae7a2797235f43213e563a4189ae8c9927410e079",
       "source": "asl/arch/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-DEPENDENCIES-ORDER-004",
+      "kind": "ordering",
+      "path": "tests/asl/arch/memory-model/ordering/arch-order-dependencies-004.asl",
+      "requirements": [],
+      "sha256": "54396119014ae03015b66a801f8fd47c886f1a856ac7d1efc69a79fdafaa3d4e",
+      "source": "asl/arch/memory-model/ordering.asl"
     },
     {
       "id": "PTO-AVS-ARCH-DISPATCH-TOP-LEVEL-STATIC-001",
@@ -22751,6 +22848,14 @@
       ],
       "sha256": "3c8f5053d2772e838c1ae9725d855c471c5e42723d3da0507987ce5c2325555b",
       "source": "asl/arch/overview/instruction-classification.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-PRODUCTION-EVENTS-ORDER-002",
+      "kind": "ordering",
+      "path": "tests/asl/arch/memory-model/ordering/arch-order-production-events-002.asl",
+      "requirements": [],
+      "sha256": "c30ba50cb3651411c4ec93ebcd4ef342a46d908207707cc5579db55d419b6346",
+      "source": "asl/arch/memory-model/ordering.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-APPLICABILITY-STATIC-001",
@@ -22995,14 +23100,6 @@
       "source": "asl/arch/data-types/fault.asl"
     },
     {
-      "id": "PTO-AVS-ARCH-TESTCONCRETEPROFILE-EXECUTION-001",
-      "kind": "execution",
-      "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
-      "requirements": [],
-      "sha256": "ec317991843f696e06d7c2456002feef823107ed466de354a8e04c4c4218360d",
-      "source": "asl/arch/profile/reference-profile.asl"
-    },
-    {
       "id": "PTO-AVS-ARCH-TESTCROSSDISPATCHEXECUTIONCONTRACT-EXECUTION-001",
       "kind": "execution",
       "path": "tests/asl/arch/dispatch/top-level/arch-exec-cross-dispatch-contract-001.asl",
@@ -23059,28 +23156,12 @@
       "source": "asl/arch/programming-model/tile-registers.asl"
     },
     {
-      "id": "PTO-AVS-ARCH-TESTTRAPCONTEXTALLLEAFRECOVERYEVIDENCE-FAULT-001",
-      "kind": "fault",
-      "path": "tests/asl/arch/state/trap-context/arch-fault-all-leaf-recovery-evidence-001.asl",
-      "requirements": [],
-      "sha256": "e13fbbd70eb40ce3626ad2ec9ee48f79826fb4b24571de9fd4bfe47d419d244b",
-      "source": "asl/arch/state/trap-context.asl"
-    },
-    {
       "id": "PTO-AVS-ARCH-TESTTRAPROUTINGPOLICY-FAULT-001",
       "kind": "fault",
       "path": "tests/asl/arch/state/trap-context/arch-fault-routing-policy-001.asl",
       "requirements": [],
       "sha256": "69c5c80eea3b4dc4380e560c027266c98cb6a3bb01ae76cbcac3fd017fabc07e",
       "source": "asl/arch/state/trap-context.asl"
-    },
-    {
-      "id": "PTO-AVS-ARCH-TESTTSOCONCURRENCY-ORDERING-001",
-      "kind": "ordering",
-      "path": "tests/asl/arch/memory-model/ordering/arch-order-tso-concurrency-001.asl",
-      "requirements": [],
-      "sha256": "925265566f2370a66dcdda7cef32c16c52907adc50b2183fa99469116becbe32",
-      "source": "asl/arch/memory-model/ordering.asl"
     },
     {
       "id": "PTO-AVS-ARCH-TESTUNIFIEDINSTRUCTIONDISPATCH-EXECUTION-001",
@@ -23099,12 +23180,60 @@
       "source": "asl/arch/data-types/trap-context.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-TILE-EVENTS-ORDER-003",
+      "kind": "ordering",
+      "path": "tests/asl/arch/memory-model/ordering/arch-order-tile-events-003.asl",
+      "requirements": [],
+      "sha256": "8093407438f1dfc29fd99983624e9d08c6d0f26093539968dcaf50634f830257",
+      "source": "asl/arch/memory-model/ordering.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-TILEDATATYPE-RESERVED-001",
       "kind": "boundary",
       "path": "tests/asl/arch/data-types/tile-data-types/arch-bound-tiledatatype-reserved-001.asl",
       "requirements": [],
       "sha256": "ae260e537714dc2a32494f6435b7475871a8bffdda8787fb05cfdac3e799975c",
       "source": "asl/arch/data-types/tile-data-types.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TRAP-ATTRIBUTES-FAULT-003",
+      "kind": "fault",
+      "path": "tests/asl/arch/state/trap-context/arch-fault-trap-attributes-003.asl",
+      "requirements": [],
+      "sha256": "f7df68b34c3dc9a97bfc61775cec9c11da201aad38971def3207d790df80fcf1",
+      "source": "asl/arch/state/trap-context.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TRAP-BINDINGS-FAULT-002",
+      "kind": "fault",
+      "path": "tests/asl/arch/state/trap-context/arch-fault-trap-bindings-002.asl",
+      "requirements": [],
+      "sha256": "7f894d03e22c4864479342a38fbb55ba4d6de5c12415909e790c864776e8ce8b",
+      "source": "asl/arch/state/trap-context.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TRAP-CONTROL-FAULT-001",
+      "kind": "fault",
+      "path": "tests/asl/arch/state/trap-context/arch-fault-all-leaf-recovery-evidence-001.asl",
+      "requirements": [],
+      "sha256": "895a73c23839eb7eb945fd943f2f7278f13bb6c54342fbe625f59f3b3f24e8a7",
+      "source": "asl/arch/state/trap-context.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TRAP-PORTABLE-FAULT-004",
+      "kind": "fault",
+      "path": "tests/asl/arch/state/trap-context/arch-fault-trap-portable-004.asl",
+      "requirements": [],
+      "sha256": "fa38a935c4d9aaca5cca5fe56fc0534825d762250e23f3c9b7f3622cfcf27a29",
+      "source": "asl/arch/state/trap-context.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-TSO-CONCURRENCY-ORDER-001",
+      "kind": "ordering",
+      "path": "tests/asl/arch/memory-model/ordering/arch-order-tso-concurrency-001.asl",
+      "requirements": [],
+      "sha256": "9d01691c413335132b7527d49c2fd1e99f574789cd67624fc2b15ca934fd5132",
+      "source": "asl/arch/memory-model/ordering.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-B-CATR-DECODE-001",
@@ -23527,17 +23656,13 @@
       "source": "asl/block/operands/B.IOR.asl"
     },
     {
-      "id": "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001",
+      "id": "PTO-AVS-BLOCK-B-IOR-DEFAULTS-EXEC-001",
       "kind": "execution",
       "path": "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl",
       "requirements": [
-        "PTO-INST-BLOCK-B-IOR",
-        "PTO-INST-TILE-TCI",
-        "PTO-INST-TILE-TTRI",
-        "PTO-INST-TILE-TSORT",
-        "PTO-INST-TILE-TMRGSORT"
+        "PTO-INST-BLOCK-B-IOR"
       ],
-      "sha256": "5ac18d9e18766f1277a36f37b5593e106fe3114ee92ade6247a62ed0bf421be4",
+      "sha256": "88acc6f88716f133143e6fa69dc9801cba8882019557ebec0d7e3de58bb46cf5",
       "source": "asl/block/operands/B.IOR.asl"
     },
     {
@@ -23548,6 +23673,16 @@
         "PTO-INST-BLOCK-B-IOR"
       ],
       "sha256": "3481ecf84984942da6e143ceede549c4c6c292b56ddf54852a1bedf69845f8b3",
+      "source": "asl/block/operands/B.IOR.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-B-IOR-ORDER-EXEC-002",
+      "kind": "execution",
+      "path": "tests/asl/block/operands/B.IOR/block-exec-b-ior-order-002.asl",
+      "requirements": [
+        "PTO-INST-BLOCK-B-IOR"
+      ],
+      "sha256": "9645c5f0d3b77532f08aacb7544d798590850e1de36b94e9f7b9a07baab844f7",
       "source": "asl/block/operands/B.IOR.asl"
     },
     {
@@ -23568,6 +23703,20 @@
         "PTO-INST-BLOCK-B-IOR"
       ],
       "sha256": "25c4a4a82fa9557d552193a8488a9d220b6e711bd3591c26feec43f802a1cb79",
+      "source": "asl/block/operands/B.IOR.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
+      "kind": "execution",
+      "path": "tests/asl/block/operands/B.IOR/block-exec-b-ior-tile-consumers-003.asl",
+      "requirements": [
+        "PTO-INST-BLOCK-B-IOR",
+        "PTO-INST-TILE-TCI",
+        "PTO-INST-TILE-TTRI",
+        "PTO-INST-TILE-TSORT",
+        "PTO-INST-TILE-TMRGSORT"
+      ],
+      "sha256": "99fa97c2bc738a1a26f4fb4e897c7f26c74874280a69edc2ec71b57d00d2b073",
       "source": "asl/block/operands/B.IOR.asl"
     },
     {
@@ -25573,6 +25722,38 @@
       "source": "asl/block/model/dispatch/quantization-schema.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-SHARED-TLSU-BINDER-EXEC-006",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-missing-binder-006.asl",
+      "requirements": [],
+      "sha256": "028718a42384246af17eb1e4679e7d2a95d8445d94bea8494d8bc0437b782dc4",
+      "source": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl",
+      "requirements": [],
+      "sha256": "5aa69122036e74955618ba300d52a5b00a3a35ccfd30f54af66cd1f5e817339a",
+      "source": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TLSU-MASK-PARTITION-EXEC-005",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-mask-partition-005.asl",
+      "requirements": [],
+      "sha256": "550d5e4778b37df7b6b7a621096460c16acbd304e1b05c10dfe7b4eb17dcfb6c",
+      "source": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TLSU-PARTIAL-EXEC-004",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-partial-004.asl",
+      "requirements": [],
+      "sha256": "9b01e8dbacac1555eb3541b524a43b7a05495269e8c54797d6f704edd4bbe827",
+      "source": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-SHARED-TLSU-PER-PE-GM-EXECUTION-001",
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-per-pe-gm-001.asl",
@@ -25581,6 +25762,22 @@
         "PTO-INST-TILE-TLOAD"
       ],
       "sha256": "d3e8d0984cf1da904822d504a2de8b2cdf901eafdf72b9b29b4ad55195f6aa62",
+      "source": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TLSU-PUBLISH-EXEC-003",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-publish-003.asl",
+      "requirements": [],
+      "sha256": "b82472985f4dad039859505c35697899e1807f2ccc70aea59ee18d6f55d42ec9",
+      "source": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-SHARED-TLSU-ZERO-IOR-EXEC-002",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-zero-ior-002.asl",
+      "requirements": [],
+      "sha256": "5e1c52595896870b219fb773e97c84da941b78822bf51998dd6fc81824d8c943",
       "source": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
@@ -25691,14 +25888,6 @@
       ],
       "sha256": "24e829b075ac41a53f058635297906e9551a6f8244b535b3d9f0d50d00f464fe",
       "source": "asl/block/operands/B.IOS.asl"
-    },
-    {
-      "id": "PTO-AVS-BLOCK-TESTBUNDLESHAREDTLSUEXECUTION-EXECUTION-001",
-      "kind": "execution",
-      "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl",
-      "requirements": [],
-      "sha256": "def185eb271b75d672a2965ad6ea8d90eeb19d46826401b5361d313c7e3df502",
-      "source": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-TESTBUNDLESTATELIFECYCLE-STATE-TRANSITION-001",
@@ -30626,12 +30815,52 @@
       "source": "asl/scalar/alu/ADDW.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-ALU-CONTROL-ALIAS-EXEC-004",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-control-alias-004.asl",
+      "requirements": [],
+      "sha256": "7deb6f22ba07e2d7816988cd46db6fe2baebdfa7f68c7e80422ea3e74119768a",
+      "source": "asl/scalar/model/alu/semantics.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-ALU-EFFECTS-001",
       "kind": "execution",
       "path": "tests/asl/scalar/model/dispatch/alu/scalar-exec-effects-001.asl",
       "requirements": [],
       "sha256": "de81611b7012ecad41d811341bffe888965596db96c5454f7bca3f7937e3ddc9",
       "source": "asl/scalar/model/dispatch/alu.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-ALU-GPR-ALIAS-EXEC-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-alias-matrix-001.asl",
+      "requirements": [],
+      "sha256": "d6169122913c70a70484bd3bdaffe717eef5213b2effa13fe01d52bed89669a1",
+      "source": "asl/scalar/model/alu/semantics.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-ALU-MULTI-ALIAS-EXEC-003",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-multi-alias-003.asl",
+      "requirements": [],
+      "sha256": "4fd371542d5ef8137c75f8675442735fb959e276aae1e28645dfe828df4a4b1b",
+      "source": "asl/scalar/model/alu/semantics.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-ALU-PAIR-ALIAS-EXEC-005",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-pair-alias-005.asl",
+      "requirements": [],
+      "sha256": "71b5ee4ea1364a14400e3f50542907b9b3178fa4084c5f59bebf79922af4e6be",
+      "source": "asl/scalar/model/alu/semantics.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-ALU-QUEUE-ALIAS-EXEC-002",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-queue-alias-002.asl",
+      "requirements": [],
+      "sha256": "bd8d11adf8ef588a78afd1c8f9840afe44a8d9f47acf699c63460f5a8de61960",
+      "source": "asl/scalar/model/alu/semantics.asl"
     },
     {
       "id": "PTO-AVS-SCALAR-ALU-TOTALITY-001",
@@ -39058,14 +39287,6 @@
       "source": "asl/scalar/model/alu/semantics.asl"
     },
     {
-      "id": "PTO-AVS-SCALAR-TESTSCALARALUALIASMATRIX-EXECUTION-001",
-      "kind": "execution",
-      "path": "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-alias-matrix-001.asl",
-      "requirements": [],
-      "sha256": "f2cba6cee95f625a851faac1e1a59d22acdd061d135fb8bba31b3833273bfa19",
-      "source": "asl/scalar/model/alu/semantics.asl"
-    },
-    {
       "id": "PTO-AVS-SCALAR-TESTSCALARALUBOUNDARYMATRIX-BOUNDARY-001",
       "kind": "boundary",
       "path": "tests/asl/scalar/model/alu/semantics/scalar-bound-alu-matrix-001.asl",
@@ -41040,6 +41261,22 @@
       "source": "asl/scalar/sys/TLB.IV.asl"
     },
     {
+      "id": "PTO-AVS-TILE-CUBE-PREFLIGHT-BOUND-002",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/execution/cube/tile-bound-preflight-002.asl",
+      "requirements": [],
+      "sha256": "a369c3373b3e88a0ad16260363110257d79b3df2d90d576af2406be4e07adc97",
+      "source": "asl/tile/model/execution/cube.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-CUBE-SELECTORS-BOUND-001",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
+      "requirements": [],
+      "sha256": "97a5b78aa1af14756ba2851461fffd0f270f8c263ea99f8639942610f56d0394",
+      "source": "asl/tile/model/execution/cube.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-FEATURE-MAP-STATE-001",
       "kind": "state-transition",
       "path": "tests/asl/tile/model/state/feature-map-descriptors/tile-state-feature-map-001.asl",
@@ -42812,14 +43049,6 @@
       "source": "asl/tile/tile-scalar-and-immediate/arithmetic/TDIVS.asl"
     },
     {
-      "id": "PTO-AVS-TILE-TESTCUBETOTALITY-BOUNDARY-001",
-      "kind": "boundary",
-      "path": "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl",
-      "requirements": [],
-      "sha256": "d4568c7e2f99ea0cda1cec78bfa13dde3240d6512b03f88af277b32316c63be9",
-      "source": "asl/tile/model/execution/cube.asl"
-    },
-    {
       "id": "PTO-AVS-TILE-TESTDECODEDTILEEXECUTION-EXECUTION-001",
       "kind": "execution",
       "path": "tests/asl/tile/model/dispatch/top-level/tile-exec-decoded-001.asl",
@@ -42961,22 +43190,6 @@
       "path": "tests/asl/tile/model/dispatch/top-level/tile-bound-selector-closure-extensions-001.asl",
       "requirements": [],
       "sha256": "1921ece1040f5ee10a0b44018f264dff4954ae90295553f5796122c7a6adfa8d",
-      "source": "asl/tile/model/dispatch/top-level.asl"
-    },
-    {
-      "id": "PTO-AVS-TILE-TESTTLSUTOTALITY-BOUNDARY-001",
-      "kind": "boundary",
-      "path": "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl",
-      "requirements": [],
-      "sha256": "bf0f5fc85e7149999c3aedadbe58b60117747c3a32354a6200675169dc8d7eff",
-      "source": "asl/tile/model/memory/load-store.asl"
-    },
-    {
-      "id": "PTO-AVS-TILE-TESTVECSFUCARRIERTOTALITY-BOUNDARY-001",
-      "kind": "boundary",
-      "path": "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-carrier-totality-001.asl",
-      "requirements": [],
-      "sha256": "f7a07bcbfa37a7d60af8ae5fe46a34d6e26ae8399b5ec67fd780943b492166b6",
       "source": "asl/tile/model/dispatch/top-level.asl"
     },
     {
@@ -43589,6 +43802,38 @@
       ],
       "sha256": "b18dedf88b43ccae19483754f10869c55bd8dde14a94eb7412fd74fa5874b7fe",
       "source": "asl/tile/elementwise-tile-tile/transcendental/TLOG.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TLSU-DECODE-BOUND-004",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-decode-004.asl",
+      "requirements": [],
+      "sha256": "500f0a8ace423bc6f462c0733cf7cb5b720fde83ecfc73b33c6e0eab37b4fb01",
+      "source": "asl/tile/model/memory/load-store.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TLSU-DIRECT-BOUND-001",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl",
+      "requirements": [],
+      "sha256": "5cbc214f80bb7888ebea2aa582dbd78479ec52a25161fec9f5609abd6bd414d1",
+      "source": "asl/tile/model/memory/load-store.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TLSU-FAULTS-BOUND-003",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-faults-003.asl",
+      "requirements": [],
+      "sha256": "44e380708e70394cebd5d55152ed14d958d40b054dde6325ab8fd634b3339466",
+      "source": "asl/tile/model/memory/load-store.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-TLSU-INDEXED-BOUND-002",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-indexed-002.asl",
+      "requirements": [],
+      "sha256": "b1366e6736fcf28ed47e78f8dad9ae36f82bf31fe4d5978f00a9002639890588",
+      "source": "asl/tile/model/memory/load-store.asl"
     },
     {
       "id": "PTO-AVS-TILE-TMATMUL-ACC-EXEC-001",
@@ -46138,6 +46383,46 @@
       ],
       "sha256": "6576253c9632cd289802b4adca399223b3d22ccfb4e871d7d8dfe335c826038c",
       "source": "asl/tile/tile-scalar-and-immediate/logical/TXORS.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-VEC-SFU-INDEX-CORNERS-BOUND-004",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-index-corners-004.asl",
+      "requirements": [],
+      "sha256": "8acb285ad9ef62c5a40ab2c882931abaeb21a512826f1b41d54059b97150e8bf",
+      "source": "asl/tile/model/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-VEC-SFU-LAYOUT-ALIAS-BOUND-003",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-layout-alias-003.asl",
+      "requirements": [],
+      "sha256": "7dddc7b7d500ae829750994d2616c5fc704b701d3a83bc364780c0f1d1cf9c12",
+      "source": "asl/tile/model/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-VEC-SFU-RESERVED-BOUND-002",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-reserved-002.asl",
+      "requirements": [],
+      "sha256": "ac0c7b9bdddc6dc95cc0efa0143af9a74f8113e3091ade150cedf97c506d161d",
+      "source": "asl/tile/model/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-VEC-SFU-RESULTS-BOUND-005",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-results-005.asl",
+      "requirements": [],
+      "sha256": "acf3a12c2432e54e9edf71b8c745eea66660e27d9bb6c4fa5ad91a7c7cffcded",
+      "source": "asl/tile/model/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-VEC-SFU-SELECTOR-BOUND-001",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-carrier-totality-001.asl",
+      "requirements": [],
+      "sha256": "a8fad4de3cd79dc3d75bc1f6896e803e03117855eb0094e3c9e282c5eeb5134a",
+      "source": "asl/tile/model/dispatch/top-level.asl"
     }
   ],
   "units": [
@@ -46469,8 +46754,11 @@
       "source": "asl/arch/memory-model/ordering.asl",
       "surface": "arch",
       "tests": [
+        "PTO-AVS-ARCH-DEPENDENCIES-ORDER-004",
         "PTO-AVS-ARCH-MEMORY-MODEL-ORDERING-STATIC-001",
-        "PTO-AVS-ARCH-TESTTSOCONCURRENCY-ORDERING-001"
+        "PTO-AVS-ARCH-PRODUCTION-EVENTS-ORDER-002",
+        "PTO-AVS-ARCH-TILE-EVENTS-ORDER-003",
+        "PTO-AVS-ARCH-TSO-CONCURRENCY-ORDER-001"
       ]
     },
     {
@@ -46545,8 +46833,14 @@
       "source": "asl/arch/profile/reference-profile.asl",
       "surface": "arch",
       "tests": [
-        "PTO-AVS-ARCH-PROFILE-REFERENCE-PROFILE-STATIC-001",
-        "PTO-AVS-ARCH-TESTCONCRETEPROFILE-EXECUTION-001"
+        "PTO-AVS-ARCH-CONCRETE-ACCESS-EXEC-005",
+        "PTO-AVS-ARCH-CONCRETE-RESET-EXEC-007",
+        "PTO-AVS-ARCH-CONCRETE-ROUNDING-EXEC-004",
+        "PTO-AVS-ARCH-CONCRETE-SPECIAL-VALUES-EXEC-002",
+        "PTO-AVS-ARCH-CONCRETE-SUBNORMAL-EXEC-001",
+        "PTO-AVS-ARCH-CONCRETE-TILE-EXEC-006",
+        "PTO-AVS-ARCH-CONCRETE-VALUE-CLASSES-EXEC-003",
+        "PTO-AVS-ARCH-PROFILE-REFERENCE-PROFILE-STATIC-001"
       ]
     },
     {
@@ -46768,8 +47062,11 @@
       "tests": [
         "PTO-AVS-ARCH-QUEUE-READINESS-RECOVERY-001",
         "PTO-AVS-ARCH-STATE-TRAP-CONTEXT-STATIC-001",
-        "PTO-AVS-ARCH-TESTTRAPCONTEXTALLLEAFRECOVERYEVIDENCE-FAULT-001",
-        "PTO-AVS-ARCH-TESTTRAPROUTINGPOLICY-FAULT-001"
+        "PTO-AVS-ARCH-TESTTRAPROUTINGPOLICY-FAULT-001",
+        "PTO-AVS-ARCH-TRAP-ATTRIBUTES-FAULT-003",
+        "PTO-AVS-ARCH-TRAP-BINDINGS-FAULT-002",
+        "PTO-AVS-ARCH-TRAP-CONTROL-FAULT-001",
+        "PTO-AVS-ARCH-TRAP-PORTABLE-FAULT-004"
       ]
     },
     {
@@ -48323,9 +48620,14 @@
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-MODEL-DISPATCH-SHARED-TLSU-STATIC-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-BINDER-EXEC-006",
+        "PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-MASK-PARTITION-EXEC-005",
+        "PTO-AVS-BLOCK-SHARED-TLSU-PARTIAL-EXEC-004",
         "PTO-AVS-BLOCK-SHARED-TLSU-PER-PE-GM-EXECUTION-001",
-        "PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001",
-        "PTO-AVS-BLOCK-TESTBUNDLESHAREDTLSUEXECUTION-EXECUTION-001"
+        "PTO-AVS-BLOCK-SHARED-TLSU-PUBLISH-EXEC-003",
+        "PTO-AVS-BLOCK-SHARED-TLSU-ZERO-IOR-EXEC-002",
+        "PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001"
       ]
     },
     {
@@ -48819,10 +49121,12 @@
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-B-IOR-DECODE-001",
-        "PTO-AVS-BLOCK-B-IOR-END-TO-END-EXECUTION-001",
+        "PTO-AVS-BLOCK-B-IOR-DEFAULTS-EXEC-001",
         "PTO-AVS-BLOCK-B-IOR-EXECUTION-001",
+        "PTO-AVS-BLOCK-B-IOR-ORDER-EXEC-002",
         "PTO-AVS-BLOCK-B-IOR-ORDERED-GPR-EXECUTION-001",
         "PTO-AVS-BLOCK-B-IOR-PLACEMENT-001",
+        "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-BLOCK-TMRGSORT-END-TO-END-EXECUTION-001"
       ]
     },
@@ -58316,9 +58620,13 @@
       "source": "asl/scalar/model/alu/semantics.asl",
       "surface": "scalar",
       "tests": [
+        "PTO-AVS-SCALAR-ALU-CONTROL-ALIAS-EXEC-004",
+        "PTO-AVS-SCALAR-ALU-GPR-ALIAS-EXEC-001",
+        "PTO-AVS-SCALAR-ALU-MULTI-ALIAS-EXEC-003",
+        "PTO-AVS-SCALAR-ALU-PAIR-ALIAS-EXEC-005",
+        "PTO-AVS-SCALAR-ALU-QUEUE-ALIAS-EXEC-002",
         "PTO-AVS-SCALAR-MODEL-ALU-SEMANTICS-STATIC-001",
         "PTO-AVS-SCALAR-TESTSCALARALIASINGORDER-EXECUTION-001",
-        "PTO-AVS-SCALAR-TESTSCALARALUALIASMATRIX-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSCALARALUBOUNDARYMATRIX-BOUNDARY-001",
         "PTO-AVS-SCALAR-TESTSCALARBITFIELDBOUNDARYCONTRACT-BOUNDARY-001",
         "PTO-AVS-SCALAR-TESTSCALARDISPATCHEFFECTS-EXECUTION-001"
@@ -61073,7 +61381,11 @@
         "PTO-AVS-TILE-TESTDECODEDTILEEXECUTION-EXECUTION-001",
         "PTO-AVS-TILE-TESTTILEHANDLERCLOSURE-BOUNDARY-001",
         "PTO-AVS-TILE-TESTTILESELECTORCLOSUREEXTENSIONS-BOUNDARY-001",
-        "PTO-AVS-TILE-TESTVECSFUCARRIERTOTALITY-BOUNDARY-001"
+        "PTO-AVS-TILE-VEC-SFU-INDEX-CORNERS-BOUND-004",
+        "PTO-AVS-TILE-VEC-SFU-LAYOUT-ALIAS-BOUND-003",
+        "PTO-AVS-TILE-VEC-SFU-RESERVED-BOUND-002",
+        "PTO-AVS-TILE-VEC-SFU-RESULTS-BOUND-005",
+        "PTO-AVS-TILE-VEC-SFU-SELECTOR-BOUND-001"
       ]
     },
     {
@@ -61119,8 +61431,9 @@
       "source": "asl/tile/model/execution/cube.asl",
       "surface": "tile",
       "tests": [
+        "PTO-AVS-TILE-CUBE-PREFLIGHT-BOUND-002",
+        "PTO-AVS-TILE-CUBE-SELECTORS-BOUND-001",
         "PTO-AVS-TILE-MODEL-EXECUTION-CUBE-STATIC-001",
-        "PTO-AVS-TILE-TESTCUBETOTALITY-BOUNDARY-001",
         "PTO-AVS-TILE-TESTTILEMATMUL-EXECUTION-001"
       ]
     },
@@ -61628,7 +61941,10 @@
       "tests": [
         "PTO-AVS-TILE-MEM-SNAPSHOT-001",
         "PTO-AVS-TILE-MODEL-MEMORY-LOAD-STORE-STATIC-001",
-        "PTO-AVS-TILE-TESTTLSUTOTALITY-BOUNDARY-001"
+        "PTO-AVS-TILE-TLSU-DECODE-BOUND-004",
+        "PTO-AVS-TILE-TLSU-DIRECT-BOUND-001",
+        "PTO-AVS-TILE-TLSU-FAULTS-BOUND-003",
+        "PTO-AVS-TILE-TLSU-INDEXED-BOUND-002"
       ]
     },
     {

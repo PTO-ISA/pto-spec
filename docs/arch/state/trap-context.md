@@ -82,7 +82,11 @@ end;
 
 func RecoverPortableTrapContext(target: AccessControlRing) => boolean
 begin
-    if !TrapContextRecoverable(target) then
+    // This helper is the architecture-portable recovery path.  It must not
+    // dispatch through the active profile override, because that override may
+    // require target-specific context-register state that SavePortableTrapContext
+    // deliberately does not create.
+    if !PortableTrapContextRecoverable(target) then
         return FALSE;
     end;
     WriteTPC(_TrapContexts[[target]].tpc);
