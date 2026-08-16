@@ -708,6 +708,52 @@ class AslTestsTest(unittest.TestCase):
             validation_text,
         )
 
+    def test_prepared_execution_reuses_model_and_validation_without_regeneration(
+        self,
+    ) -> None:
+        prepared_type = getattr(asl_tests, "PreparedAslInputs", None)
+        self.assertIsNotNone(prepared_type)
+        self.write()
+        point = load_test_points(self.root, (unit(),))[0]
+        shared = self.root / "build/asl-page-inputs"
+        shared.mkdir(parents=True)
+        model_path = shared / "pto-spec.asl"
+        model_path.write_text("// prepared model\n", encoding="utf-8")
+        validation_path = shared / "validation-none.asl"
+        validation_path.write_text(
+            asl_tests.EMPTY_VALIDATION_SHARD,
+            encoding="utf-8",
+        )
+        prepared = prepared_type(
+            model_path=model_path,
+            validation_paths={None: validation_path},
+        )
+        calls: list[list[str]] = []
+
+        def fake_run(command: list[str], **_: object) -> CompletedProcess[str]:
+            calls.append(command)
+            return CompletedProcess(command, 0, stdout="", stderr="")
+
+        result = execute_test_point(
+            self.root,
+            point,
+            timeout_seconds=7,
+            run=fake_run,
+            prepared=prepared,
+        )
+
+        self.assertEqual(result, 0)
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(calls[0][0], str(self.root / "scripts/assemble-asl"))
+        self.assertEqual(calls[0][-3], str(model_path))
+        self.assertNotIn("generate-asl-decoders", " ".join(calls[0]))
+        self.assertEqual(
+            (
+                self.root / "build/asl-test-results" / point.test_id / "validation.asl"
+            ).read_text(encoding="utf-8"),
+            asl_tests.EMPTY_VALIDATION_SHARD,
+        )
+
     def test_failed_execution_records_bounded_log_excerpt(self) -> None:
         self.write()
         point = load_test_points(self.root, (unit(),))[0]

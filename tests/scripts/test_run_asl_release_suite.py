@@ -7,7 +7,11 @@ import tempfile
 import threading
 import unittest
 from pathlib import Path
+from subprocess import CompletedProcess
+from types import SimpleNamespace
+from unittest.mock import patch
 
+import scripts.asl_release_suite as asl_release_suite
 from scripts.asl_release_suite import (
     _write_evidence,
     aggregate_results,
@@ -102,24 +106,49 @@ class ReleaseSuiteAggregationTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "display_name mismatch"):
             aggregate_results("c" * 40, MATRIX, [observed])
 
-    def test_fake_runner_pass_failure_and_timeout_are_observed(self) -> None:
+    def test_page_preparation_runs_once_and_entries_execute_directly(self) -> None:
+        self.assertTrue(hasattr(asl_release_suite, "prepare_page_inputs"))
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            result_path = (
-                root / "build/asl-test-results" / str(MATRIX[0]["id"]) / "result.json"
-            )
+            second = {**MATRIX[0], "id": "PTO-AVS-ARCH-TWO-001"}
+            entries = [MATRIX[0], second]
+            prepared = SimpleNamespace(name="prepared")
+            observed: list[tuple[str, object]] = []
 
-            def fake_runner(command: list[str], cwd: Path) -> int:
-                self.assertEqual(cwd, root)
-                self.assertEqual(command[-2:], ["--id", MATRIX[0]["id"]])
+            def fake_point_runner(point: object, inputs: object) -> int:
+                test_id = str(getattr(point, "test_id"))
+                observed.append((test_id, inputs))
+                entry = next(item for item in entries if item["id"] == test_id)
+                result_path = root / "build/asl-test-results" / test_id / "result.json"
                 result_path.parent.mkdir(parents=True)
-                result_path.write_text(json.dumps(result()), encoding="utf-8")
+                payload = {
+                    **result(test_id=test_id),
+                    "display_name": entry["display_name"],
+                }
+                result_path.write_text(json.dumps(payload), encoding="utf-8")
                 return 0
 
-            results = execute_matrix(
-                root, MATRIX, jobs=1, runner=fake_runner, output=io.StringIO()
+            with patch(
+                "scripts.asl_release_suite.prepare_page_inputs",
+                return_value=prepared,
+            ) as prepare:
+                results = execute_matrix(
+                    root,
+                    entries,
+                    jobs=2,
+                    point_runner=fake_point_runner,
+                    output=io.StringIO(),
+                )
+
+            prepare.assert_called_once()
+            self.assertEqual(
+                sorted(observed),
+                sorted((str(entry["id"]), prepared) for entry in entries),
             )
-            self.assertEqual(results, [result()])
+            self.assertEqual(
+                [item["id"] for item in results],
+                sorted(str(entry["id"]) for entry in entries),
+            )
 
     def test_parallel_results_are_reported_in_completion_order(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -134,8 +163,8 @@ class ReleaseSuiteAggregationTest(unittest.TestCase):
             second_done = threading.Event()
             output = io.StringIO()
 
-            def fake_runner(command: list[str], cwd: Path) -> int:
-                test_id = command[-1]
+            def fake_point_runner(point: object, _: object) -> int:
+                test_id = str(getattr(point, "test_id"))
                 if test_id == first["id"]:
                     self.assertTrue(second_done.wait(timeout=2))
                     entry = first
@@ -145,20 +174,24 @@ class ReleaseSuiteAggregationTest(unittest.TestCase):
                     **result(test_id=str(entry["id"])),
                     "display_name": entry["display_name"],
                 }
-                path = cwd / "build/asl-test-results" / test_id / "result.json"
+                path = root / "build/asl-test-results" / test_id / "result.json"
                 path.parent.mkdir(parents=True)
                 path.write_text(json.dumps(payload), encoding="utf-8")
                 if test_id == second["id"]:
                     second_done.set()
                 return 0
 
-            results = execute_matrix(
-                root,
-                entries,
-                jobs=2,
-                runner=fake_runner,
-                output=output,
-            )
+            with patch(
+                "scripts.asl_release_suite.prepare_page_inputs",
+                return_value=SimpleNamespace(name="prepared"),
+            ):
+                results = execute_matrix(
+                    root,
+                    entries,
+                    jobs=2,
+                    point_runner=fake_point_runner,
+                    output=output,
+                )
 
             lines = output.getvalue().splitlines()
             self.assertIn(str(second["id"]), lines[0])
@@ -167,6 +200,39 @@ class ReleaseSuiteAggregationTest(unittest.TestCase):
                 [item["id"] for item in results],
                 sorted((first["id"], second["id"])),
             )
+
+    def test_page_preparation_rejects_a_test_file_hash_mismatch_before_building(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / str(MATRIX[0]["path"])
+            path.parent.mkdir(parents=True)
+            path.write_text("// exact test\n", encoding="utf-8")
+            entry = {
+                **MATRIX[0],
+                "sha256": "0" * 64,
+                "validation_sha256": hashlib.sha256(
+                    asl_release_suite.EMPTY_VALIDATION_SHARD.encode()
+                ).hexdigest(),
+            }
+
+            with (
+                patch(
+                    "scripts.asl_release_suite.generate_source_order",
+                    return_value=("asl/arch/one.asl",),
+                ),
+                patch(
+                    "scripts.asl_release_suite._run_checked",
+                    return_value=CompletedProcess(
+                        ["fake"], 0, stdout="// decoder\n", stderr=""
+                    ),
+                ) as run_checked,
+            ):
+                with self.assertRaisesRegex(ValueError, "test file hash mismatch"):
+                    asl_release_suite.prepare_page_inputs(root, [entry])
+
+            run_checked.assert_not_called()
 
     def test_release_evidence_hashes_the_exact_monolithic_matrix_document(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

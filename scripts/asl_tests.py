@@ -10,6 +10,7 @@ import math
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import time
@@ -108,6 +109,28 @@ class AslTestPoint:
     sha256: str
     validation_entrypoint: str | None
     validation_sha256: str
+
+
+@dataclass(frozen=True)
+class AslExecutionPoint:
+    """Exact matrix fields required to execute and report one independent point."""
+
+    test_id: str
+    display_name: str
+    source: Path
+    kind: str
+    path: Path
+    sha256: str
+    validation_entrypoint: str | None
+    validation_sha256: str
+
+
+@dataclass(frozen=True)
+class PreparedAslInputs:
+    """Immutable model and validation inputs shared by one matrix page."""
+
+    model_path: Path
+    validation_paths: Mapping[str | None, Path]
 
 
 def _string(metadata: dict[str, object], field: str, path: Path) -> str:
@@ -612,7 +635,7 @@ def _repository(
 def _write_result(
     result_dir: Path,
     *,
-    point: AslTestPoint,
+    point: AslTestPoint | AslExecutionPoint,
     status: str,
     command: Sequence[str],
     returncode: int | None,
@@ -814,10 +837,11 @@ def report_page_results(
 
 def execute_test_point(
     root: Path,
-    point: AslTestPoint,
+    point: AslTestPoint | AslExecutionPoint,
     *,
     timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
     run: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
+    prepared: PreparedAslInputs | None = None,
 ) -> int:
     """Assemble and run exactly one test point, recording a fail-closed result."""
 
@@ -834,78 +858,101 @@ def execute_test_point(
     command: list[str] = []
     log_parts: list[str] = []
     try:
-        order_path.write_text(
-            "\n".join(generate_source_order(root)) + "\n", encoding="utf-8"
-        )
-        decoder_command = [
-            sys.executable,
-            str(root / "scripts/generate-asl-decoders"),
-            "--kind",
-            "decoder",
-        ]
-        decoder_result = run(
-            decoder_command,
-            cwd=root,
-            text=True,
-            capture_output=True,
-            timeout=timeout_seconds,
-            check=False,
-        )
-        if decoder_result.returncode != 0:
-            raise RuntimeError(
-                "decoder generation failed:\n"
-                + decoder_result.stdout
-                + decoder_result.stderr
+        if prepared is None:
+            order_path.write_text(
+                "\n".join(generate_source_order(root)) + "\n", encoding="utf-8"
             )
-        decoder_path.write_text(decoder_result.stdout, encoding="utf-8")
-        if point.validation_entrypoint is None:
-            validation_text = EMPTY_VALIDATION_SHARD
-        else:
-            validation_command = [
+            decoder_command = [
                 sys.executable,
                 str(root / "scripts/generate-asl-decoders"),
                 "--kind",
-                "validation-shard",
-                "--entrypoint",
-                point.validation_entrypoint,
+                "decoder",
             ]
-            validation_result = run(
-                validation_command,
+            decoder_result = run(
+                decoder_command,
                 cwd=root,
                 text=True,
                 capture_output=True,
                 timeout=timeout_seconds,
                 check=False,
             )
-            log_parts.append(validation_result.stderr)
-            if validation_result.returncode != 0:
+            if decoder_result.returncode != 0:
                 raise RuntimeError(
-                    "validation shard generation failed:\n"
-                    + validation_result.stdout
-                    + validation_result.stderr
+                    "decoder generation failed:\n"
+                    + decoder_result.stdout
+                    + decoder_result.stderr
                 )
-            validation_text = validation_result.stdout
-        validation_hash = hashlib.sha256(validation_text.encode()).hexdigest()
-        if validation_hash != point.validation_sha256:
-            raise ValueError(
-                f"validation shard hash mismatch for {point.test_id}: "
-                f"expected {point.validation_sha256}, observed {validation_hash}"
+            decoder_path.write_text(decoder_result.stdout, encoding="utf-8")
+            if point.validation_entrypoint is None:
+                validation_text = EMPTY_VALIDATION_SHARD
+            else:
+                validation_command = [
+                    sys.executable,
+                    str(root / "scripts/generate-asl-decoders"),
+                    "--kind",
+                    "validation-shard",
+                    "--entrypoint",
+                    point.validation_entrypoint,
+                ]
+                validation_result = run(
+                    validation_command,
+                    cwd=root,
+                    text=True,
+                    capture_output=True,
+                    timeout=timeout_seconds,
+                    check=False,
+                )
+                log_parts.append(validation_result.stderr)
+                if validation_result.returncode != 0:
+                    raise RuntimeError(
+                        "validation shard generation failed:\n"
+                        + validation_result.stdout
+                        + validation_result.stderr
+                    )
+                validation_text = validation_result.stdout
+            validation_hash = hashlib.sha256(validation_text.encode()).hexdigest()
+            if validation_hash != point.validation_sha256:
+                raise ValueError(
+                    f"validation shard hash mismatch for {point.test_id}: "
+                    f"expected {point.validation_sha256}, observed {validation_hash}"
+                )
+            validation_path.write_text(validation_text, encoding="utf-8")
+            model_input = model_path
+            preparation_commands = (
+                [
+                    str(root / "scripts/assemble-asl"),
+                    "--order",
+                    str(order_path),
+                    "--decoder",
+                    str(decoder_path),
+                    "--output",
+                    str(model_path),
+                ],
             )
-        validation_path.write_text(validation_text, encoding="utf-8")
-        assembly_commands = (
-            [
-                str(root / "scripts/assemble-asl"),
-                "--order",
-                str(order_path),
-                "--decoder",
-                str(decoder_path),
-                "--output",
-                str(model_path),
-            ],
+        else:
+            shared_validation = prepared.validation_paths.get(
+                point.validation_entrypoint
+            )
+            if shared_validation is None:
+                raise ValueError(
+                    "prepared page is missing validation input for "
+                    f"{point.validation_entrypoint or '<none>'}"
+                )
+            validation_text = shared_validation.read_text(encoding="utf-8")
+            validation_hash = hashlib.sha256(validation_text.encode()).hexdigest()
+            if validation_hash != point.validation_sha256:
+                raise ValueError(
+                    f"prepared validation hash mismatch for {point.test_id}: "
+                    f"expected {point.validation_sha256}, observed {validation_hash}"
+                )
+            shutil.copyfile(shared_validation, validation_path)
+            model_input = prepared.model_path
+            preparation_commands = ()
+        assembly_commands = preparation_commands + (
             [
                 str(root / "scripts/assemble-asl"),
                 str(test_path),
-                str(model_path),
+                str(model_input),
                 str(validation_path),
                 str(root / point.path),
             ],

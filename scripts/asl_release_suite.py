@@ -14,12 +14,22 @@ import sys
 from pathlib import Path
 from typing import Callable, Mapping, Sequence, TextIO
 
-from scripts.asl_tests import _repository, matrix, validate_test_coverage
+from scripts.asl_tests import (
+    DEFAULT_TIMEOUT_SECONDS,
+    EMPTY_VALIDATION_SHARD,
+    AslExecutionPoint,
+    PreparedAslInputs,
+    _repository,
+    execute_test_point,
+    matrix,
+    validate_test_coverage,
+)
+from scripts.asl_units import generate_source_order
 
 
 MatrixEntry = Mapping[str, object]
 Result = Mapping[str, object]
-Runner = Callable[[list[str], Path], int]
+PointRunner = Callable[[AslExecutionPoint, PreparedAslInputs], int]
 
 
 def require_exact_head(requested: str, actual: str, status: str) -> None:
@@ -108,8 +118,157 @@ def aggregate_results(
     }
 
 
-def _default_runner(command: list[str], cwd: Path) -> int:
-    return subprocess.run(command, cwd=cwd, check=False).returncode
+def execution_point(entry: MatrixEntry) -> AslExecutionPoint:
+    """Validate and convert one exact matrix entry for direct execution."""
+
+    required = ("id", "display_name", "path", "source", "kind", "sha256")
+    values: dict[str, str] = {}
+    for field in required:
+        value = entry.get(field)
+        if not isinstance(value, str) or not value:
+            raise ValueError(f"matrix entry contains invalid {field}")
+        values[field] = value
+    validation_entrypoint = entry.get("validation_entrypoint")
+    if validation_entrypoint is not None and (
+        not isinstance(validation_entrypoint, str) or not validation_entrypoint
+    ):
+        raise ValueError("matrix entry contains invalid validation_entrypoint")
+    validation_sha256 = entry.get("validation_sha256")
+    if not isinstance(validation_sha256, str) or not validation_sha256:
+        raise ValueError("matrix entry contains invalid validation_sha256")
+    return AslExecutionPoint(
+        test_id=values["id"],
+        display_name=values["display_name"],
+        path=Path(values["path"]),
+        source=Path(values["source"]),
+        kind=values["kind"],
+        sha256=values["sha256"],
+        validation_entrypoint=validation_entrypoint,
+        validation_sha256=validation_sha256,
+    )
+
+
+def _run_checked(
+    command: list[str],
+    *,
+    root: Path,
+    timeout_seconds: int,
+) -> subprocess.CompletedProcess[str]:
+    completed = subprocess.run(
+        command,
+        cwd=root,
+        text=True,
+        capture_output=True,
+        timeout=timeout_seconds,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise ValueError(
+            f"page preparation command failed with exit {completed.returncode}: "
+            + " ".join(command)
+            + "\n"
+            + completed.stdout
+            + completed.stderr
+        )
+    return completed
+
+
+def prepare_page_inputs(
+    root: Path,
+    entries: Sequence[MatrixEntry],
+    *,
+    timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
+) -> PreparedAslInputs:
+    """Prepare immutable decoder, model, and validation inputs once per page."""
+
+    points = [execution_point(entry) for entry in entries]
+    for point in points:
+        path = root / point.path
+        if not path.is_file():
+            raise ValueError(f"matrix test file is missing: {point.path}")
+        observed_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+        if observed_hash != point.sha256:
+            raise ValueError(
+                f"test file hash mismatch for {point.test_id}: "
+                f"expected {point.sha256}, observed {observed_hash}"
+            )
+    shared = root / "build/asl-page-inputs"
+    if shared.exists():
+        shutil.rmtree(shared)
+    shared.mkdir(parents=True)
+    order_path = shared / "asl-source-order.txt"
+    decoder_path = shared / "decoders.asl"
+    model_path = shared / "pto-spec.asl"
+    order_path.write_text(
+        "\n".join(generate_source_order(root)) + "\n", encoding="utf-8"
+    )
+    decoder = _run_checked(
+        [
+            sys.executable,
+            str(root / "scripts/generate-asl-decoders"),
+            "--kind",
+            "decoder",
+        ],
+        root=root,
+        timeout_seconds=timeout_seconds,
+    )
+    decoder_path.write_text(decoder.stdout, encoding="utf-8")
+    _run_checked(
+        [
+            str(root / "scripts/assemble-asl"),
+            "--order",
+            str(order_path),
+            "--decoder",
+            str(decoder_path),
+            "--output",
+            str(model_path),
+        ],
+        root=root,
+        timeout_seconds=timeout_seconds,
+    )
+
+    expected_hashes: dict[str | None, str] = {}
+    for point in points:
+        previous = expected_hashes.setdefault(
+            point.validation_entrypoint, point.validation_sha256
+        )
+        if previous != point.validation_sha256:
+            raise ValueError(
+                "matrix entries disagree on validation hash for "
+                f"{point.validation_entrypoint or '<none>'}"
+            )
+    validation_paths: dict[str | None, Path] = {}
+    for index, (entrypoint, expected_hash) in enumerate(expected_hashes.items()):
+        if entrypoint is None:
+            text = EMPTY_VALIDATION_SHARD
+        else:
+            generated = _run_checked(
+                [
+                    sys.executable,
+                    str(root / "scripts/generate-asl-decoders"),
+                    "--kind",
+                    "validation-shard",
+                    "--entrypoint",
+                    entrypoint,
+                ],
+                root=root,
+                timeout_seconds=timeout_seconds,
+            )
+            text = generated.stdout
+        observed_hash = hashlib.sha256(text.encode()).hexdigest()
+        if observed_hash != expected_hash:
+            raise ValueError(
+                "validation shard hash mismatch for "
+                f"{entrypoint or '<none>'}: expected {expected_hash}, "
+                f"observed {observed_hash}"
+            )
+        path = shared / f"validation-{index}.asl"
+        path.write_text(text, encoding="utf-8")
+        validation_paths[entrypoint] = path
+    return PreparedAslInputs(
+        model_path=model_path,
+        validation_paths=validation_paths,
+    )
 
 
 def execute_matrix(
@@ -117,7 +276,7 @@ def execute_matrix(
     entries: Sequence[MatrixEntry],
     *,
     jobs: int,
-    runner: Runner = _default_runner,
+    point_runner: PointRunner | None = None,
     output: TextIO = sys.stdout,
 ) -> list[dict[str, object]]:
     """Execute each ID independently and load exactly one result per invocation."""
@@ -130,10 +289,16 @@ def execute_matrix(
     result_root.mkdir(parents=True)
 
     planned = _matrix_by_id(entries)
+    points = {test_id: execution_point(entry) for test_id, entry in planned.items()}
+    prepared = prepare_page_inputs(root, entries)
+    if point_runner is None:
+
+        def point_runner(point: AslExecutionPoint, inputs: PreparedAslInputs) -> int:
+            return execute_test_point(root, point, prepared=inputs)
 
     def run_one(test_id: str) -> int:
-        command = [str(root / "scripts/run-asl-test"), "--id", test_id]
-        return runner(command, root)
+        assert point_runner is not None
+        return point_runner(points[test_id], prepared)
 
     loaded: list[dict[str, object]] = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
