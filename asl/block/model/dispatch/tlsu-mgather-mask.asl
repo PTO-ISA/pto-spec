@@ -66,8 +66,8 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    if !ResolveBundleTileDestinationsWithShape(TRUE, valid_rows,
-           valid_columns, columns) then return FALSE; end;
+    if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
+           valid_columns, columns, TRUE, data_type) then return FALSE; end;
     let destination = _BundleTileBindings[[0]].destination;
     let pad_value = CurrentBundlePadValue();
     if !TileOperandsLegal_MGATHER_MASK(destination, Zeros{PTO_XLEN},

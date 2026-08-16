@@ -82,6 +82,20 @@ class InstructionContractClosureTest(unittest.TestCase):
             traceability["sources"],
         )
 
+    def test_every_mnemonic_has_owner_local_semantic_evidence(self) -> None:
+        traceability = json.loads(TRACEABILITY.read_text(encoding="utf-8"))
+        mnemonic_rows = [row for row in traceability["units"] if row["mnemonic"]]
+
+        self.assertEqual(
+            traceability["summary"]["mnemonic_semantic_gap_count"],
+            0,
+        )
+        self.assertEqual(
+            traceability["summary"]["mnemonics_without_semantic_tests"],
+            [],
+        )
+        self.assertTrue(all(row["semantic_tests"] for row in mnemonic_rows))
+
 
 if __name__ == "__main__":
     unittest.main()

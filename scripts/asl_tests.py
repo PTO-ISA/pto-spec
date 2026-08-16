@@ -477,14 +477,26 @@ def matrix(points: Sequence[AslTestPoint]) -> list[dict[str, object]]:
 def matrix_pages(
     entries: Sequence[Mapping[str, object]],
     commit: str,
-    page_size: int,
+    page_size: int | None = None,
+    *,
+    page_count: int | None = None,
 ) -> list[dict[str, object]]:
     """Return complete deterministic pages with stable round-robin assignment."""
 
-    if page_size <= 0:
+    if page_size is not None and page_count is not None:
+        raise ValueError("page size and page count are mutually exclusive")
+    if page_size is None and page_count is None:
+        page_size = 200
+    if page_size is not None and page_size <= 0:
         raise ValueError("page size must be positive")
+    if page_count is not None and page_count <= 0:
+        raise ValueError("page count must be positive")
     ordered = sorted(entries, key=lambda entry: str(entry.get("id", "")))
-    page_count = max(1, math.ceil(len(ordered) / page_size))
+    if page_count is None:
+        assert page_size is not None
+        page_count = max(1, math.ceil(len(ordered) / page_size))
+    else:
+        page_count = min(page_count, max(1, len(ordered)))
     return [
         {
             "commit": commit,
@@ -519,13 +531,19 @@ def export_matrix_pages(
     root: Path,
     output_dir: Path,
     *,
-    page_size: int,
+    page_size: int | None = None,
+    page_count: int | None = None,
 ) -> dict[str, object]:
     """Discover once, write every exact matrix page, and return its compact index."""
 
     root = root.resolve()
     commit, entries = _release_matrix(root)
-    pages = matrix_pages(entries, commit, page_size)
+    pages = matrix_pages(
+        entries,
+        commit,
+        page_size,
+        page_count=page_count,
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
     expected = {f"page-{page['page']}.json" for page in pages}
     for stale in output_dir.glob("page-*.json"):
@@ -1092,13 +1110,19 @@ def check_main(argv: Sequence[str] | None = None) -> int:
 def matrix_main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path.cwd())
-    parser.add_argument("--page-size", type=int, default=200)
+    page_shape = parser.add_mutually_exclusive_group()
+    page_shape.add_argument("--page-size", type=int)
+    page_shape.add_argument("--page-count", type=int)
     parser.add_argument("--page", type=int, default=0)
     parser.add_argument("--output-dir", type=Path)
     arguments = parser.parse_args(argv)
-    if arguments.page_size <= 0 or arguments.page < 0:
+    if (
+        (arguments.page_size is not None and arguments.page_size <= 0)
+        or (arguments.page_count is not None and arguments.page_count <= 0)
+        or arguments.page < 0
+    ):
         print(
-            "error: page size must be positive and page must be nonnegative",
+            "error: page size/count must be positive and page must be nonnegative",
             file=sys.stderr,
         )
         return 2
@@ -1109,10 +1133,16 @@ def matrix_main(argv: Sequence[str] | None = None) -> int:
                 root,
                 arguments.output_dir.resolve(),
                 page_size=arguments.page_size,
+                page_count=arguments.page_count,
             )
         else:
             commit, entries = _release_matrix(root)
-            pages = matrix_pages(entries, commit, arguments.page_size)
+            pages = matrix_pages(
+                entries,
+                commit,
+                arguments.page_size,
+                page_count=arguments.page_count,
+            )
             if arguments.page >= len(pages):
                 raise ValueError(
                     f"page {arguments.page} is outside matrix page count {len(pages)}"

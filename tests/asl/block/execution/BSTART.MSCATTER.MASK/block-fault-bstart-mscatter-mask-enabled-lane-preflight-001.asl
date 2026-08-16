@@ -6,17 +6,16 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(2, 128, 1, 4, 1, 3, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(3, 128, 1, 4, 1, 3, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+    ConfigurePredicateTile(3, 128, 1, 4, 1, 3);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x1111);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x2222);
     WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 0x3333);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 5000);
     WriteTileElement(2, 0, 2, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(3, 0, 1, Zeros{PTO_XLEN});
-    WriteTileElement(3, 0, 2, Zeros{PTO_XLEN} + 1);
+    WriteTilePredicateBit(3, 0, 0, TRUE);
+    WriteTilePredicateBit(3, 0, 1, FALSE);
+    WriteTilePredicateBit(3, 0, 2, TRUE);
     Store(Zeros{PTO_XLEN} + 4094, 2, Zeros{PTO_XLEN} + 0xaaaa);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 4094);
     var start: bits(64) = Zeros{64} + 0x00711181;

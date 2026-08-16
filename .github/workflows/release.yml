@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  ASL_TEST_PAGE_SIZE: "100"
+  ASL_TEST_PAGE_COUNT: "8"
 
 jobs:
   identity:
@@ -96,7 +96,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$COMMIT"
           mkdir -p build
           ./scripts/print-asl-test-matrix \
-            --page-size "$ASL_TEST_PAGE_SIZE" \
+            --page-count "$ASL_TEST_PAGE_COUNT" \
             --output-dir build/planned-asl-test-pages \
             > build/asl-test-plan-index.json
           pages="$(python3 -c 'import json,sys; data=json.load(open(sys.argv[1])); print(json.dumps(data["pages"], separators=(",", ":")))' build/asl-test-plan-index.json)"
@@ -209,26 +209,23 @@ jobs:
         run: make setup
 
       - name: Execute independent ASL points with machine parallelism
+        id: execute
         shell: bash
         run: |
-          set +e
           ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
           ./scripts/run-asl-page --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" -j "$ASL_TEST_JOBS"
-          execution_status=$?
-          set -e
-          printf '%s\n' "$execution_status" > build/asl-page-execution.status
 
       - name: Report per-mnemonic results and enforce the page
         if: always()
         shell: bash
+        env:
+          EXECUTION_OUTCOME: ${{ steps.execute.outcome }}
         run: |
           set +e
           ./scripts/report-asl-page-results --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" --results build/asl-test-results
           report_status=$?
           set -e
-          test -f build/asl-page-execution.status
-          read -r execution_status < build/asl-page-execution.status
-          test "$execution_status" = 0
+          test "$EXECUTION_OUTCOME" = success
           test "$report_status" = 0
 
       - name: Upload per-ID ASL results

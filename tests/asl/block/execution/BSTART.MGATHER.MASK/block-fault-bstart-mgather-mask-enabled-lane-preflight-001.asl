@@ -28,14 +28,13 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 4, 1, 3, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(1, 128, 1, 4, 1, 3, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+    ConfigurePredicateTile(1, 128, 1, 4, 1, 3);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x7fff);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN});
     WriteTileElement(0, 0, 2, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 1);
+    WriteTilePredicateBit(1, 0, 0, FALSE);
+    WriteTilePredicateBit(1, 0, 1, TRUE);
+    WriteTilePredicateBit(1, 0, 2, TRUE);
     Store(Zeros{PTO_XLEN} + 4094, 2, Zeros{PTO_XLEN} + 11);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 4094);
     let started = ExecuteCommandInstruction(FaultMaskGatherStart(), 32);

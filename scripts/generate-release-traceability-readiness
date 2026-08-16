@@ -21,6 +21,16 @@ from scripts.ndf import instruction_clause_id, parse_ndf_regions  # noqa: E402
 
 DEFAULT_OUTPUT = ROOT / "spec/evidence/release-traceability-readiness.json"
 INSTRUCTION_CONTRACT_PATH = Path("spec/evidence/instruction-contract-closure.json")
+SEMANTIC_TEST_KINDS = frozenset(
+    {
+        "execution",
+        "boundary",
+        "fault",
+        "state-transition",
+        "ordering",
+        "atomicity",
+    }
+)
 
 
 def _sha256(path: Path) -> str:
@@ -43,9 +53,12 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
     }
 
     tests_by_source: dict[Path, list[str]] = defaultdict(list)
+    semantic_tests_by_source: dict[Path, list[str]] = defaultdict(list)
     tests_by_requirement: dict[str, list[str]] = defaultdict(list)
     for point in points:
         tests_by_source[point.source].append(point.test_id)
+        if point.kind in SEMANTIC_TEST_KINDS:
+            semantic_tests_by_source[point.source].append(point.test_id)
         for requirement in point.requirements:
             tests_by_requirement[requirement].append(point.test_id)
 
@@ -77,6 +90,7 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
             "documentation": document.as_posix(),
             "mnemonic": unit.mnemonic,
             "tests": sorted(tests_by_source[unit.source_path]),
+            "semantic_tests": sorted(semantic_tests_by_source[unit.source_path]),
         }
         if unit.mnemonic is not None:
             contract = contract_by_mnemonic.get(unit.mnemonic)
@@ -138,6 +152,18 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
         for requirement, executable in sorted(requirements.items())
         if executable and not tests_by_requirement[requirement]
     ]
+    mnemonics_without_semantic_tests = sorted(
+        unit.mnemonic
+        for unit in units
+        if unit.mnemonic is not None
+        and not semantic_tests_by_source[unit.source_path]
+    )
+    if mnemonics_without_semantic_tests:
+        raise ValueError(
+            "mnemonic owners require owner-local semantic evidence beyond "
+            "decode/static linkage: "
+            + ", ".join(mnemonics_without_semantic_tests)
+        )
     return {
         "schema": "pto.release-traceability.v2",
         "derivation": {
@@ -163,8 +189,16 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
             "uncovered_units": uncovered_units,
             "uncovered_executable_requirement_count": len(uncovered_executable),
             "uncovered_executable_requirements": uncovered_executable,
+            "mnemonic_semantic_gap_count": len(
+                mnemonics_without_semantic_tests
+            ),
+            "mnemonics_without_semantic_tests": (
+                mnemonics_without_semantic_tests
+            ),
             "status": "closed"
-            if not uncovered_units and not uncovered_executable
+            if not uncovered_units
+            and not uncovered_executable
+            and not mnemonics_without_semantic_tests
             else "open",
         },
     }

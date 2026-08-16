@@ -43,6 +43,8 @@ on:
         type: string
 permissions:
   contents: read
+env:
+  ASL_TEST_PAGE_COUNT: "8"
 jobs:
   identity:
     timeout-minutes: 10
@@ -78,7 +80,7 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$COMMIT"
           mkdir -p build
-          ./scripts/print-asl-test-matrix --page-size 100 --output-dir build/planned-asl-test-pages > build/asl-test-plan-index.json
+          ./scripts/print-asl-test-matrix --page-count "$ASL_TEST_PAGE_COUNT" --output-dir build/planned-asl-test-pages > build/asl-test-plan-index.json
           echo 'pages=[0]' >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -105,6 +107,7 @@ jobs:
     timeout-minutes: 360
     strategy:
       fail-fast: false
+      max-parallel: 8
       matrix:
         page: ${{ fromJSON(needs.matrix-plan.outputs.pages) }}
     steps:
@@ -124,23 +127,20 @@ jobs:
           key: aslref-${{ runner.os }}-${{ runner.arch }}-ocaml-5.2.1-${{ hashFiles('.aslref-version', 'scripts/setup-aslref', 'scripts/prepare-aslref') }}
       - run: make setup
       - name: Execute independent ASL points with machine parallelism
+        id: execute
         run: |
-          set +e
           ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
           ./scripts/run-asl-page --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" -j "$ASL_TEST_JOBS"
-          execution_status=$?
-          set -e
-          printf '%s\n' "$execution_status" > build/asl-page-execution.status
       - name: Report per-mnemonic results and enforce the page
         if: always()
+        env:
+          EXECUTION_OUTCOME: ${{ steps.execute.outcome }}
         run: |
           set +e
           ./scripts/report-asl-page-results --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" --results build/asl-test-results
           report_status=$?
           set -e
-          test -f build/asl-page-execution.status
-          read -r execution_status < build/asl-page-execution.status
-          test "$execution_status" = 0
+          test "$EXECUTION_OUTCOME" = success
           test "$report_status" = 0
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
@@ -324,30 +324,31 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
 
     def test_execution_and_report_statuses_must_both_fail_closed(self) -> None:
         for line, expected in (
-            ('          test "$execution_status" = 0\n', "execution status"),
+            ('          test "$EXECUTION_OUTCOME" = success\n', "execution outcome"),
             ('          test "$report_status" = 0\n', "report status"),
         ):
             with self.subTest(line=line):
                 self.assert_rejected(VALID_RELEASE_WORKFLOW.replace(line, ""), expected)
 
-    def test_status_capture_must_be_immediately_after_each_command(self) -> None:
-        for command, status in (
-            (
-                '          ./scripts/run-asl-page --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" -j "$ASL_TEST_JOBS"\n',
-                "          execution_status=$?\n",
-            ),
-            (
-                '          ./scripts/report-asl-page-results --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" --results build/asl-test-results\n',
-                "          report_status=$?\n",
-            ),
+    def test_execution_step_must_expose_failure_and_allow_reporting(self) -> None:
+        for line in (
+            "        id: execute\n",
+            "          EXECUTION_OUTCOME: ${{ steps.execute.outcome }}\n",
         ):
-            with self.subTest(command=command):
+            with self.subTest(line=line):
                 self.assert_rejected(
-                    VALID_RELEASE_WORKFLOW.replace(
-                        command + status, command + "          true\n" + status
-                    ),
-                    "separate contiguous fail-closed",
+                    VALID_RELEASE_WORKFLOW.replace(line, ""),
+                    "execution outcome",
                 )
+
+    def test_execution_step_must_not_mask_its_failure(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                "        id: execute\n",
+                "        id: execute\n        continue-on-error: true\n",
+            ),
+            "fail visibly",
+        )
 
     def test_page_report_is_a_distinct_always_run_step(self) -> None:
         self.assert_rejected(
