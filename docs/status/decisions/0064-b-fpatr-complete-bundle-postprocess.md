@@ -5,6 +5,9 @@
 - **Deciders**: PTO ISA maintainers
 - **Issue**: [#64](https://github.com/PTO-ISA/pto-spec/issues/64)
 
+Current release inventory is governed by ADR 0062; numeric inventories below
+are acceptance-time history, not the current active decoder set.
+
 ## Decision
 
 PTO ISA 0.58.0 accepts `B.FPATR` as the single complete-bundle matrix
@@ -29,11 +32,12 @@ order, with LReLU-only consuming RegSrc0.  Output commits are one atomic group.
 
 ## Consequences
 
-The 0.58.0 command projection is corrected to 100 command forms and 574 total
-scalar-plus-command forms.  Existing twelve CUBE operation IDs, selectors,
-and mathematical operand aliases remain unchanged.  Exact target numeric
-results, FP19 exceptional behavior, and non-saturating overflow remain owned
-by the numeric profile variation point rather than this architecture decision.
+At acceptance time, the 0.58.0 command projection was corrected to 100 command
+forms and 574 total scalar-plus-command forms. Existing twelve CUBE operation
+IDs, selectors, and mathematical operand aliases remained unchanged. Exact
+target numeric results, FP19 exceptional behavior, and non-saturating overflow
+remain owned by the numeric profile variation point rather than this
+architecture decision.
 
 The normative owners are `asl/block/attributes/B.FPATR.asl`, the complete
 bundle state/schema/dispatch/lifecycle units, the trap context and reference

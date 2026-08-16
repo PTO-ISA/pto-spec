@@ -5,6 +5,9 @@
 - **Deciders**: PTO ISA maintainers
 - **Issue**: [#54](https://github.com/PTO-ISA/pto-spec/issues/54)
 
+Current release inventory is governed by ADR 0062; numeric inventories below
+are acceptance-time history, not the current active decoder set.
+
 ## Context
 
 The PTO instruction set had accumulated three ownership defects: retired

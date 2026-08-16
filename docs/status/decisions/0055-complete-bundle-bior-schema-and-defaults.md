@@ -7,6 +7,9 @@
 - **Deciders**: PTO ISA maintainers
 - **Tracks**: issue #51
 
+Current release inventory is governed by ADR 0062; numeric inventories below
+are acceptance-time history, not the current active decoder set.
+
 ## Context
 
 The reissued PTO ISA 0.58 catalog encodes `B.IOR` with four five-bit fields,

@@ -19,6 +19,20 @@ records and the `manual_semantic_audit.py` compatibility entrypoint measure
 that later formal implementation closure; they MUST NOT be reported as a
 regression of the frozen audit count.
 
+## Current active and reserved encoding inventory
+
+The PTO ISA 0.58.1 binary projection contains 474 Scalar forms and 74 active
+Block forms, for 548 active encoded forms. The separate extension catalog
+contains 32 occupied extension-reservation entries. Reserved entries are not
+active PTO instructions: PTO decoding and assembly MUST reject them, and future
+PTO revisions MUST NOT allocate another instruction in their occupied spaces.
+
+The current inventory supersedes acceptance-time totals recorded in earlier
+ADRs. Those older totals remain historical evidence of the transition that was
+reviewed at the time; they MUST NOT be used as the active decoder, release, or
+coverage count. The generated catalogs, instruction-contract closure, and
+release manifest are the machine-checked projections of this decision.
+
 ## PRD-001: `B.CATR.DR` selects dimension-reduction mode
 
 `B.CATR.DR` is the dimension-reduction-mode selector. It does not select

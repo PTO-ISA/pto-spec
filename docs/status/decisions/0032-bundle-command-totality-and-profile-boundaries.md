@@ -5,13 +5,16 @@
 - Requirements: PTO-REQ-BUNDLE-DISPATCH-001,
   PTO-REQ-BUNDLE-OPERATION-001, PTO-REQ-BUNDLE-STATE-001
 
+Current release inventory is governed by ADR 0062; numeric inventories below
+are acceptance-time history, not the current active decoder set.
+
 ## Context
 
-PTO accepts 100 bundle-command forms through 22 semantic handlers. The 90
-executed forms use 12 handlers; 10 forms map to 10 unsupported handlers and
-reject before effects. Earlier closure work proved decode identity, installed
-operation descriptors, and the start/header/stop lifecycle. It did not make
-every retained command total:
+When this decision was accepted, PTO inventoried 100 bundle-command forms
+through 22 semantic handlers. Ninety forms used 12 executable handlers; ten
+forms mapped to unsupported handlers and rejected before effects. Earlier
+closure work proved decode identity, installed operation descriptors, and the
+start/header/stop lifecycle. It did not make every retained command total:
 some commands recorded placeholder metadata, five constant `B.ARG` forms
 collapsed to the same value, `B.HINT` discarded its fields, `MCOPY` and `MSET`
 silently truncated their length, and several successful commands retired
@@ -33,7 +36,12 @@ stop own their control transfer through the bundle lifecycle. A rejected
 command leaves TPC at its pre-instruction value; the ordinary architectural
 attempt tick and trap entry remain governed by the common dispatch contract.
 
-### Explicit PTO-v0 rejection boundary
+### Historical PTO-v0 rejection boundary
+
+The rejection list below records the boundary when this ADR was accepted.
+ADR 0062 PRD-149 through PRD-159 subsequently define these mnemonics as formal
+PTO instructions; the current ASL MUST execute those accepted contracts rather
+than apply this historical rejection rule.
 
 PTO-v0 rejects the following handlers with `ILLEGAL_INST` before decoding
 their operands or changing command, queue, frame, context, memory, or TPC
@@ -118,7 +126,8 @@ consumed fields, retirement disposition, effect class, and all 109 bridge
 representability decisions. The repository gate regenerates it and fails on
 any catalog or policy drift.
 
-`ValidateCanonicalCommandExecution` executes all 100 canonical form witnesses.
+`ValidateCanonicalCommandExecution` executes all 74 active canonical form
+witnesses.
 It asserts success or pre-effect rejection, fault identity, and TPC behavior;
 it additionally checks descriptor installation, argument kind, and hint
 payload where applicable. `TestBundleCommandTotalityBoundaries` covers
@@ -128,11 +137,12 @@ representable execution and missing/incompatible binding rollback.
 
 ## Consequences
 
-- Every accepted command form now reaches a defined effect or explicit
-  pre-effect PTO-v0 rejection.
+- Every active command form now reaches a defined formal effect. Occupied
+  extension reservations reject outside the active command-form decoder.
 - No command length, argument kind, or hint payload is silently discarded.
-- Unsupported frame, context, queue, and cross-block behavior cannot be
-  mistaken for implemented architecture.
+- Frame, context, queue, and cross-block behavior is implemented only where
+  accepted by ADR 0062; reserved extension spellings cannot be mistaken for
+  PTO instructions.
 - Direct tile and bundle commit use the same canonical operation schemas.
 - Future operands require a catalog/default update and executable evidence;
   they cannot silently inherit an unrelated header field.

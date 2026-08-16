@@ -4,6 +4,9 @@
 - **Date**: 2026-08-06
 - **Deciders**: PTO ISA maintainers
 
+Current release inventory is governed by ADR 0062; numeric inventories below
+are acceptance-time history, not the current active decoder set.
+
 ## Context
 
 PTO ISA 0.58 originally described `TSize` using a four-PE aggregate size table
