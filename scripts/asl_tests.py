@@ -10,6 +10,7 @@ import math
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import time
@@ -108,6 +109,28 @@ class AslTestPoint:
     sha256: str
     validation_entrypoint: str | None
     validation_sha256: str
+
+
+@dataclass(frozen=True)
+class AslExecutionPoint:
+    """Exact matrix fields required to execute and report one independent point."""
+
+    test_id: str
+    display_name: str
+    source: Path
+    kind: str
+    path: Path
+    sha256: str
+    validation_entrypoint: str | None
+    validation_sha256: str
+
+
+@dataclass(frozen=True)
+class PreparedAslInputs:
+    """Immutable model and validation inputs shared by one matrix page."""
+
+    model_path: Path
+    validation_paths: Mapping[str | None, Path]
 
 
 def _string(metadata: dict[str, object], field: str, path: Path) -> str:
@@ -451,6 +474,79 @@ def matrix(points: Sequence[AslTestPoint]) -> list[dict[str, object]]:
     ]
 
 
+def matrix_pages(
+    entries: Sequence[Mapping[str, object]],
+    commit: str,
+    page_size: int,
+) -> list[dict[str, object]]:
+    """Return complete deterministic pages with stable round-robin assignment."""
+
+    if page_size <= 0:
+        raise ValueError("page size must be positive")
+    ordered = sorted(entries, key=lambda entry: str(entry.get("id", "")))
+    page_count = max(1, math.ceil(len(ordered) / page_size))
+    return [
+        {
+            "commit": commit,
+            "page": page,
+            "page_count": page_count,
+            "test_count": len(ordered),
+            "include": ordered[page::page_count],
+        }
+        for page in range(page_count)
+    ]
+
+
+def _exact_commit(root: Path) -> str:
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        text=True,
+        capture_output=True,
+        check=True,
+    ).stdout.strip()
+
+
+def _release_matrix(root: Path) -> tuple[str, list[dict[str, object]]]:
+    units, points, requirements = _repository(root)
+    errors = validate_test_coverage(points, units, requirements)
+    if errors:
+        raise ValueError("\n".join(errors))
+    return _exact_commit(root), matrix(points)
+
+
+def export_matrix_pages(
+    root: Path,
+    output_dir: Path,
+    *,
+    page_size: int,
+) -> dict[str, object]:
+    """Discover once, write every exact matrix page, and return its compact index."""
+
+    root = root.resolve()
+    commit, entries = _release_matrix(root)
+    pages = matrix_pages(entries, commit, page_size)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    expected = {f"page-{page['page']}.json" for page in pages}
+    for stale in output_dir.glob("page-*.json"):
+        if stale.name not in expected:
+            stale.unlink()
+    for page in pages:
+        path = output_dir / f"page-{page['page']}.json"
+        temporary = path.with_suffix(".json.tmp")
+        temporary.write_text(
+            json.dumps(page, separators=(",", ":"), sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        temporary.replace(path)
+    return {
+        "commit": commit,
+        "page_count": len(pages),
+        "pages": list(range(len(pages))),
+        "test_count": len(entries),
+    }
+
+
 def requirement_index(root: Path, units: Sequence[AslUnit]) -> dict[str, bool]:
     """Build the repository's NDF identity-to-executable index."""
 
@@ -539,7 +635,7 @@ def _repository(
 def _write_result(
     result_dir: Path,
     *,
-    point: AslTestPoint,
+    point: AslTestPoint | AslExecutionPoint,
     status: str,
     command: Sequence[str],
     returncode: int | None,
@@ -667,7 +763,14 @@ def report_page_results(
                 )
                 if result.get("returncode") is not None:
                     row_errors.append(f"return code {result['returncode']}")
-        status = "PASS" if not row_errors else "FAIL"
+        if not row_errors:
+            status = "PASS"
+        elif result.get("status") == "timeout":
+            status = "TIMEOUT"
+        elif result.get("status") == "error":
+            status = "ERROR"
+        else:
+            status = "FAIL"
         display_name = str(entry.get("display_name") or test_id)
         duration = result.get("duration_seconds", "-")
         print(f"{status} {display_name} [{test_id}] ({duration}s)", file=output)
@@ -703,19 +806,48 @@ def report_page_results(
             file=output,
         )
 
+    failures = [row for row in rows if row["status"] != "PASS"]
+    passed_count = len(rows) - len(failures)
+    slowest = sorted(
+        rows,
+        key=lambda row: (
+            -float(row["duration"])
+            if isinstance(row["duration"], int | float)
+            else 0.0,
+            str(row["id"]),
+        ),
+    )[:5]
     summary_lines = [
         f"## ASL page {page}",
         "",
+        f"**{passed_count} passed, {len(failures)} failed**",
+        "",
+        "### Slowest points",
+        "",
+        "| Duration (s) | Status | Test | Stable ID |",
+        "| ---: | --- | --- | --- |",
+    ]
+    for row in slowest:
+        summary_lines.append(
+            f"| {_markdown_escape(row['duration'])} | {row['status']} | "
+            f"{_markdown_escape(row['display_name'])} | "
+            f"`{_markdown_escape(row['id'])}` |"
+        )
+    summary_lines.extend(
+        [
+        "",
+        "### Complete results",
+        "",
         "| Status | Test | Stable ID | Kind | Duration (s) |",
         "| --- | --- | --- | --- | ---: |",
-    ]
+        ]
+    )
     for row in rows:
         summary_lines.append(
             f"| {row['status']} | {_markdown_escape(row['display_name'])} | "
             f"`{_markdown_escape(row['id'])}` | {_markdown_escape(row['kind'])} | "
             f"{_markdown_escape(row['duration'])} |"
         )
-    failures = [row for row in rows if row["status"] == "FAIL"]
     for row in failures:
         summary_lines.extend(
             [
@@ -741,10 +873,11 @@ def report_page_results(
 
 def execute_test_point(
     root: Path,
-    point: AslTestPoint,
+    point: AslTestPoint | AslExecutionPoint,
     *,
     timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
     run: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
+    prepared: PreparedAslInputs | None = None,
 ) -> int:
     """Assemble and run exactly one test point, recording a fail-closed result."""
 
@@ -761,78 +894,101 @@ def execute_test_point(
     command: list[str] = []
     log_parts: list[str] = []
     try:
-        order_path.write_text(
-            "\n".join(generate_source_order(root)) + "\n", encoding="utf-8"
-        )
-        decoder_command = [
-            sys.executable,
-            str(root / "scripts/generate-asl-decoders"),
-            "--kind",
-            "decoder",
-        ]
-        decoder_result = run(
-            decoder_command,
-            cwd=root,
-            text=True,
-            capture_output=True,
-            timeout=timeout_seconds,
-            check=False,
-        )
-        if decoder_result.returncode != 0:
-            raise RuntimeError(
-                "decoder generation failed:\n"
-                + decoder_result.stdout
-                + decoder_result.stderr
+        if prepared is None:
+            order_path.write_text(
+                "\n".join(generate_source_order(root)) + "\n", encoding="utf-8"
             )
-        decoder_path.write_text(decoder_result.stdout, encoding="utf-8")
-        if point.validation_entrypoint is None:
-            validation_text = EMPTY_VALIDATION_SHARD
-        else:
-            validation_command = [
+            decoder_command = [
                 sys.executable,
                 str(root / "scripts/generate-asl-decoders"),
                 "--kind",
-                "validation-shard",
-                "--entrypoint",
-                point.validation_entrypoint,
+                "decoder",
             ]
-            validation_result = run(
-                validation_command,
+            decoder_result = run(
+                decoder_command,
                 cwd=root,
                 text=True,
                 capture_output=True,
                 timeout=timeout_seconds,
                 check=False,
             )
-            log_parts.append(validation_result.stderr)
-            if validation_result.returncode != 0:
+            if decoder_result.returncode != 0:
                 raise RuntimeError(
-                    "validation shard generation failed:\n"
-                    + validation_result.stdout
-                    + validation_result.stderr
+                    "decoder generation failed:\n"
+                    + decoder_result.stdout
+                    + decoder_result.stderr
                 )
-            validation_text = validation_result.stdout
-        validation_hash = hashlib.sha256(validation_text.encode()).hexdigest()
-        if validation_hash != point.validation_sha256:
-            raise ValueError(
-                f"validation shard hash mismatch for {point.test_id}: "
-                f"expected {point.validation_sha256}, observed {validation_hash}"
+            decoder_path.write_text(decoder_result.stdout, encoding="utf-8")
+            if point.validation_entrypoint is None:
+                validation_text = EMPTY_VALIDATION_SHARD
+            else:
+                validation_command = [
+                    sys.executable,
+                    str(root / "scripts/generate-asl-decoders"),
+                    "--kind",
+                    "validation-shard",
+                    "--entrypoint",
+                    point.validation_entrypoint,
+                ]
+                validation_result = run(
+                    validation_command,
+                    cwd=root,
+                    text=True,
+                    capture_output=True,
+                    timeout=timeout_seconds,
+                    check=False,
+                )
+                log_parts.append(validation_result.stderr)
+                if validation_result.returncode != 0:
+                    raise RuntimeError(
+                        "validation shard generation failed:\n"
+                        + validation_result.stdout
+                        + validation_result.stderr
+                    )
+                validation_text = validation_result.stdout
+            validation_hash = hashlib.sha256(validation_text.encode()).hexdigest()
+            if validation_hash != point.validation_sha256:
+                raise ValueError(
+                    f"validation shard hash mismatch for {point.test_id}: "
+                    f"expected {point.validation_sha256}, observed {validation_hash}"
+                )
+            validation_path.write_text(validation_text, encoding="utf-8")
+            model_input = model_path
+            preparation_commands = (
+                [
+                    str(root / "scripts/assemble-asl"),
+                    "--order",
+                    str(order_path),
+                    "--decoder",
+                    str(decoder_path),
+                    "--output",
+                    str(model_path),
+                ],
             )
-        validation_path.write_text(validation_text, encoding="utf-8")
-        assembly_commands = (
-            [
-                str(root / "scripts/assemble-asl"),
-                "--order",
-                str(order_path),
-                "--decoder",
-                str(decoder_path),
-                "--output",
-                str(model_path),
-            ],
+        else:
+            shared_validation = prepared.validation_paths.get(
+                point.validation_entrypoint
+            )
+            if shared_validation is None:
+                raise ValueError(
+                    "prepared page is missing validation input for "
+                    f"{point.validation_entrypoint or '<none>'}"
+                )
+            validation_text = shared_validation.read_text(encoding="utf-8")
+            validation_hash = hashlib.sha256(validation_text.encode()).hexdigest()
+            if validation_hash != point.validation_sha256:
+                raise ValueError(
+                    f"prepared validation hash mismatch for {point.test_id}: "
+                    f"expected {point.validation_sha256}, observed {validation_hash}"
+                )
+            shutil.copyfile(shared_validation, validation_path)
+            model_input = prepared.model_path
+            preparation_commands = ()
+        assembly_commands = preparation_commands + (
             [
                 str(root / "scripts/assemble-asl"),
                 str(test_path),
-                str(model_path),
+                str(model_input),
                 str(validation_path),
                 str(root / point.path),
             ],
@@ -938,6 +1094,7 @@ def matrix_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--page-size", type=int, default=200)
     parser.add_argument("--page", type=int, default=0)
+    parser.add_argument("--output-dir", type=Path)
     arguments = parser.parse_args(argv)
     if arguments.page_size <= 0 or arguments.page < 0:
         print(
@@ -947,37 +1104,26 @@ def matrix_main(argv: Sequence[str] | None = None) -> int:
         return 2
     root = arguments.root.resolve()
     try:
-        units, points, requirements = _repository(root)
-        errors = validate_test_coverage(points, units, requirements)
-        if errors:
-            raise ValueError("\n".join(errors))
-        entries = matrix(points)
-        page_count = max(1, math.ceil(len(entries) / arguments.page_size))
-        if arguments.page >= page_count:
-            raise ValueError(
-                f"page {arguments.page} is outside matrix page count {page_count}"
+        if arguments.output_dir is not None:
+            payload = export_matrix_pages(
+                root,
+                arguments.output_dir.resolve(),
+                page_size=arguments.page_size,
             )
-        start = arguments.page * arguments.page_size
-        include = entries[start : start + arguments.page_size]
-        commit = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=root,
-            text=True,
-            capture_output=True,
-            check=True,
-        ).stdout.strip()
+        else:
+            commit, entries = _release_matrix(root)
+            pages = matrix_pages(entries, commit, arguments.page_size)
+            if arguments.page >= len(pages):
+                raise ValueError(
+                    f"page {arguments.page} is outside matrix page count {len(pages)}"
+                )
+            payload = pages[arguments.page]
     except (OSError, ValueError, subprocess.CalledProcessError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
     print(
         json.dumps(
-            {
-                "commit": commit,
-                "page": arguments.page,
-                "page_count": page_count,
-                "test_count": len(entries),
-                "include": include,
-            },
+            payload,
             separators=(",", ":"),
             sort_keys=True,
         )

@@ -7,9 +7,9 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from subprocess import CompletedProcess
-from unittest.mock import patch
+from unittest.mock import ANY, patch
 
-from scripts.asl_release_suite import page_main
+from scripts.asl_release_suite import DEFAULT_TIMEOUT_SECONDS, page_main
 from tests.scripts.test_run_asl_release_suite import MATRIX, result
 
 
@@ -61,7 +61,12 @@ class RunAslPageTest(unittest.TestCase):
             )
 
         self.assertEqual(status, 0)
-        execute.assert_called_once_with(self.root.resolve(), MATRIX, jobs=7)
+        execute.assert_called_once_with(
+            self.root.resolve(),
+            MATRIX,
+            jobs=7,
+            timeout_seconds=DEFAULT_TIMEOUT_SECONDS,
+        )
         self.assertIn("page 3 passed", output.getvalue())
 
     def test_page_runner_defaults_to_machine_core_count(self) -> None:
@@ -80,7 +85,38 @@ class RunAslPageTest(unittest.TestCase):
             )
 
         self.assertEqual(status, 0)
-        execute.assert_called_once_with(self.root.resolve(), MATRIX, jobs=6)
+        execute.assert_called_once_with(
+            self.root.resolve(),
+            MATRIX,
+            jobs=6,
+            timeout_seconds=DEFAULT_TIMEOUT_SECONDS,
+        )
+
+    def test_page_runner_passes_explicit_timeout_to_matrix_executor(self) -> None:
+        with (
+            patch("scripts.asl_release_suite.subprocess.run", return_value=self.git_result()),
+            patch(
+                "scripts.asl_release_suite.execute_matrix", return_value=[result()]
+            ) as execute,
+        ):
+            status = page_main(
+                [
+                    "--root",
+                    str(self.root),
+                    "--matrix",
+                    str(self.matrix),
+                    "--timeout-seconds",
+                    "17",
+                ]
+            )
+
+        self.assertEqual(status, 0)
+        execute.assert_called_once_with(
+            self.root.resolve(),
+            MATRIX,
+            jobs=ANY,
+            timeout_seconds=17,
+        )
 
     def test_page_runner_rejects_failed_result(self) -> None:
         error = io.StringIO()

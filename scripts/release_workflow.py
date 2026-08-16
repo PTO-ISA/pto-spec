@@ -9,6 +9,7 @@ import re
 JOB_HEADER = re.compile(r"^  ([a-z][a-z0-9-]*):\s*$", re.MULTILINE)
 STEP_HEADER = re.compile(r"^      - .*$", re.MULTILINE)
 UPLOAD_ARTIFACT_SHA = "ea165f8d65b6e75b540449e92b4886f43607fa02"
+CACHE_ACTION_SHA = "55cc8345863c7cc4c66a329aec7e433d2d1c52a9"
 INVALID_STEP_USES = "<invalid-step-uses>"
 YAML_ANCHOR_OR_ALIAS = re.compile(
     r"^[ \t]*(?:-[ \t]+)?(?:[A-Za-z0-9_-]+:[ \t]+)?"
@@ -126,6 +127,69 @@ def _script_line_positions(job: str, command: str) -> list[int]:
     ]
 
 
+def _job_needs(job: str) -> set[str]:
+    list_match = re.search(r"^    needs:\s*\[([^]]+)\]\s*$", job, re.MULTILINE)
+    if list_match:
+        return {item.strip() for item in list_match.group(1).split(",")}
+    scalar_match = re.search(r"^    needs:\s*([a-z][a-z0-9-]*)\s*$", job, re.MULTILINE)
+    return {scalar_match.group(1)} if scalar_match else set()
+
+
+def _has_exact_checkout(job: str) -> bool:
+    return bool(
+        re.search(r"actions/checkout@[0-9a-f]{40}", job)
+        and re.search(
+            r"^\s+ref:\s*\$\{\{\s*inputs\.commit\s*\}\}\s*$",
+            job,
+            re.MULTILINE,
+        )
+    )
+
+
+def _has_timeout(job: str) -> bool:
+    return bool(re.search(r"^    timeout-minutes:\s*[1-9][0-9]*\s*$", job, re.MULTILINE))
+
+
+def _validate_toolchain_cache(job: str, name: str) -> list[str]:
+    errors: list[str] = []
+    steps = _step_blocks(job)
+    cache_steps = [
+        step
+        for step in steps
+        if (_step_uses(step) or "").startswith("actions/cache@")
+    ]
+    valid_cache_steps = [
+        step
+        for step in cache_steps
+        if _step_uses(step) == f"actions/cache@{CACHE_ACTION_SHA}"
+    ]
+    if len(cache_steps) != 1 or len(valid_cache_steps) != 1:
+        errors.append(f"{name} must use the commit-pinned verified ASLRef cache action")
+        return errors
+    cache_step = valid_cache_steps[0]
+    paths = _direct_mapping_values(cache_step, "with", "path")
+    keys = _direct_mapping_values(cache_step, "with", "key")
+    required_key_terms = (
+        "runner.os",
+        "runner.arch",
+        "ocaml-5.2.1",
+        ".aslref-version",
+        "scripts/setup-aslref",
+        "scripts/prepare-aslref",
+    )
+    if paths != [".cache/herdtools7"] or len(keys) != 1 or any(
+        term not in keys[0] for term in required_key_terms
+    ):
+        errors.append(
+            f"{name} cache must bind the ASLRef path, platform, OCaml version, pin, and setup scripts"
+        )
+    setup_position = _standalone_run_position(job, "make setup")
+    cache_position = job.find(cache_step)
+    if setup_position is None or setup_position <= cache_position:
+        errors.append(f"{name} must verify the pinned ASLRef checkout after cache restore")
+    return errors
+
+
 def validate_pr_workflow(workflow: str) -> list[str]:
     """Return violations of the intentionally lightweight PR contract."""
 
@@ -165,36 +229,64 @@ def validate_release_workflow(workflow: str) -> list[str]:
     ):
         errors.append("workflow_dispatch must require a commit input")
 
-    plan = _job_block(workflow, "plan")
-    if not re.search(r"\[\[.*\^\[0-9a-f\]\{40\}\$.*\]\]", plan):
-        errors.append(
-            "plan must reject any commit that is not 40 lowercase hexadecimal characters"
-        )
-    if not re.search(
-        r"^\s+ref:\s*\$\{\{\s*inputs\.commit\s*\}\}\s*$", plan, re.MULTILINE
-    ):
-        errors.append("plan checkout must use the exact commit input")
-    if "git rev-parse HEAD" not in plan or "make pr-check" not in plan:
-        errors.append(
-            "plan must prove the checked-out exact head and run the PR contract"
-        )
-    if (
-        "outputs:" not in plan
-        or "GITHUB_OUTPUT" not in plan
-        or "print-asl-test-matrix" not in plan
-        or "pages:" not in plan
-    ):
-        errors.append(
-            "plan must derive and export every page from print-asl-test-matrix"
-        )
-    if "planned-asl-test-pages" not in plan or not re.search(
-        r"actions/upload-artifact@[0-9a-f]{40}", plan
-    ):
-        errors.append("plan must upload the exact planned ASL matrix pages")
+    job_names = (
+        "identity",
+        "pr-contract",
+        "matrix-plan",
+        "strict-model",
+        "asl-page",
+        "release-evidence",
+        "validate",
+    )
+    jobs = {name: _job_block(workflow, name) for name in job_names}
+    for name, job in jobs.items():
+        if not job:
+            errors.append(f"release workflow is missing the {name} job")
+        elif not _has_timeout(job):
+            errors.append(f"{name} must have an explicit timeout")
 
-    strict_model = _job_block(workflow, "strict-model")
+    identity = jobs["identity"]
+    if not re.search(r"\[\[.*\^\[0-9a-f\]\{40\}\$.*\]\]", identity):
+        errors.append(
+            "identity must reject any commit that is not 40 lowercase hexadecimal characters"
+        )
+    if not _has_exact_checkout(identity) or "git rev-parse HEAD" not in identity:
+        errors.append("identity must check out and prove the exact commit input")
+
+    for name in ("pr-contract", "matrix-plan", "strict-model"):
+        if _job_needs(jobs[name]) != {"identity"}:
+            errors.append(f"{name} must start directly after identity")
+        if not _has_exact_checkout(jobs[name]):
+            errors.append(f"{name} must check out the exact commit input")
+
+    pr_contract = jobs["pr-contract"]
+    if "git rev-parse HEAD" not in pr_contract or "make pr-check" not in pr_contract:
+        errors.append("pr-contract must prove the exact head and run make pr-check")
+
+    matrix_plan = jobs["matrix-plan"]
+    if (
+        "outputs:" not in matrix_plan
+        or "GITHUB_OUTPUT" not in matrix_plan
+        or matrix_plan.count("print-asl-test-matrix") != 1
+        or "--output-dir" not in matrix_plan
+        or "pages:" not in matrix_plan
+    ):
+        errors.append(
+            "matrix-plan must export every page with one print-asl-test-matrix discovery"
+        )
+    if re.search(r"(?:^|\s)--page(?:\s|=)", matrix_plan):
+        errors.append("matrix-plan must not regenerate pages in a serial loop")
+    if "planned-asl-test-pages" not in matrix_plan or not re.search(
+        r"actions/upload-artifact@[0-9a-f]{40}", matrix_plan
+    ):
+        errors.append("matrix-plan must upload the exact planned ASL matrix pages")
+
+    strict_model = jobs["strict-model"]
     if not re.search(r"ocaml/setup-ocaml@[0-9a-f]{40}", strict_model):
         errors.append("strict-model must use a commit-pinned OCaml setup action")
+    if "dune-cache: true" not in strict_model:
+        errors.append("strict-model must enable the pinned OCaml dune cache")
+    errors.extend(_validate_toolchain_cache(strict_model, "strict-model"))
     if (
         _standalone_run_position(strict_model, "make setup") is None
         or "make toolchain-check check" not in strict_model
@@ -203,23 +295,32 @@ def validate_release_workflow(workflow: str) -> list[str]:
             "strict-model must run setup, toolchain canaries, and the normative model"
         )
 
-    page = _job_block(workflow, "asl-page")
+    page = jobs["asl-page"]
+    if _job_needs(page) != {"matrix-plan"}:
+        errors.append("ASL pages must start from the completed matrix-plan")
+    if not _has_exact_checkout(page):
+        errors.append("ASL pages must check out the exact commit input")
     if not re.search(r"fail-fast:\s*false", page):
         errors.append("ASL pages must record every result with fail-fast disabled")
     if not re.search(
-        r"page:\s*\$\{\{\s*fromJSON\(needs\.plan\.outputs\.pages\)\s*\}\}", page
+        r"page:\s*\$\{\{\s*fromJSON\(needs\.matrix-plan\.outputs\.pages\)\s*\}\}",
+        page,
     ):
-        errors.append("ASL jobs must consume the exact page matrix exported by plan")
-    if "print-asl-test-matrix" not in page:
-        errors.append("each ASL page must regenerate its print-asl-test-matrix page")
+        errors.append("ASL jobs must consume the exact pages exported by matrix-plan")
+    if "print-asl-test-matrix" in page or re.search(r"^\s*cmp\s+", page, re.MULTILINE):
+        errors.append("ASL pages must execute the downloaded exact page without rediscovery")
+    if "dune-cache: true" not in page:
+        errors.append("ASL pages must enable the pinned OCaml dune cache")
+    errors.extend(_validate_toolchain_cache(page, "ASL pages"))
     setup_position = _standalone_run_position(page, "make setup")
     jobs_command = 'ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"'
     runner_command = (
-        './scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"'
+        './scripts/run-asl-page --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" '
+        '-j "$ASL_TEST_JOBS"'
     )
     reporter_command = (
-        "./scripts/report-asl-page-results --matrix build/actual-page.json "
-        "--results build/asl-test-results"
+        './scripts/report-asl-page-results --matrix "build/planned-asl-test-pages/'
+        'page-${{ matrix.page }}.json" --results build/asl-test-results'
     )
     jobs_positions = _script_line_positions(page, jobs_command)
     runner_positions = _script_line_positions(page, runner_command)
@@ -232,10 +333,6 @@ def validate_release_workflow(workflow: str) -> list[str]:
     ):
         errors.append(
             "each ASL page must prepare pinned ASLRef before parallel test execution"
-        )
-    if not re.search(r"^\s*cmp\s+", page, re.MULTILINE):
-        errors.append(
-            "each ASL page must compare its regenerated page with the plan artifact"
         )
     if len(runner_positions) != 1:
         errors.append(
@@ -366,7 +463,11 @@ def validate_release_workflow(workflow: str) -> list[str]:
     ]:
         errors.append("ASL pages must upload only per-ID result.json artifacts")
 
-    evidence = _job_block(workflow, "release-evidence")
+    evidence = jobs["release-evidence"]
+    evidence_needs = _job_needs(evidence)
+    for dependency in ("pr-contract", "matrix-plan", "strict-model", "asl-page"):
+        if dependency not in evidence_needs:
+            errors.append(f"release-evidence is missing its {dependency} dependency")
     if "run-asl-release-suite" not in evidence or "--aggregate-only" not in evidence:
         errors.append(
             "release-evidence must run fail-closed aggregate-only result validation"
@@ -389,22 +490,19 @@ def validate_release_workflow(workflow: str) -> list[str]:
     ):
         errors.append("release-evidence must upload the exact matrix and its checksum")
 
-    validate = _job_block(workflow, "validate")
+    validate = jobs["validate"]
     if "name: Release / validate" not in validate or "if: always()" not in validate:
         errors.append(
             "final release gate must be named Release / validate and always run"
         )
-    needs_match = re.search(r"needs:\s*\[([^]]+)\]", validate)
-    needs = (
-        {item.strip() for item in needs_match.group(1).split(",")}
-        if needs_match
-        else set()
-    )
-    for job in ("plan", "strict-model", "asl-page", "release-evidence"):
+    needs = _job_needs(validate)
+    for job in job_names[:-1]:
         if job not in needs:
             errors.append(f"final release gate is missing its {job} dependency")
     for variable in (
-        "PLAN_RESULT",
+        "IDENTITY_RESULT",
+        "PR_CONTRACT_RESULT",
+        "MATRIX_PLAN_RESULT",
         "STRICT_MODEL_RESULT",
         "ASL_PAGE_RESULT",
         "RELEASE_EVIDENCE_RESULT",
