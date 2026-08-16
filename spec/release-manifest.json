@@ -174,7 +174,7 @@
     },
     {
       "path": "asl/arch/state/trap-context.asl",
-      "sha256": "634a2e821390fd15d8288034c9b60921f2da8491f081c1ea5f24e077a197d094"
+      "sha256": "e16737bb312d906218a21a28badb8687b9605a5c2659363be5cc81242d96107c"
     },
     {
       "path": "asl/arch/system-registers/access-control.asl",
@@ -3314,11 +3314,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "95ed236737ed554481bd092738fa15802cc099d0586b312168aded3424c28c58"
+      "sha256": "e3306dd19ce4867f10e787fd48a0093f0e5662dd39e7a2b00720d7341cb7fd2a"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "9fcd1fc8a1b0e44d28b0f97fe54dfbc909181f90b4796bcc6369387753c41248"
+      "sha256": "0e13b0240a792102faa07bd6d1b64f733fde2ff1f218a653bf84508c2a2388c0"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3356,7 +3356,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "8e0a620ee8bc3c2fcba6ea24317ae56c4dcd3f0e0695e882a1c8e49a96aa9b7b",
+  "content_sha256": "47fc64041aaedb18d0f32e377e49749f86952ea42e345cfc77a054c95843b003",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3603,7 +3603,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/state/trap-context.md",
-      "sha256": "96e5c37137b0aad468edef9f255b3b0e9a59ba10d3f49ead0b6b23460e2f4075"
+      "sha256": "5bda87a3be7f8971ac49765621283323bea3fb15b457786651d1a8608b5ff3d3"
     },
     {
       "kind": "generated-documentation",

@@ -73,6 +73,7 @@ FORBIDDEN_TEST_NAME_TOKENS = frozenset(
     {"test", "execution", "validate", "validation"}
 )
 MAX_TEST_FILENAME_LENGTH = 68
+MAX_TEST_LINE_COUNT = 300
 REJECTED_TEST_SUMMARY_PREFIXES = (
     "migrated independent behavior point for ",
     "run test",
@@ -279,6 +280,12 @@ def load_test_points(
     for absolute in sorted(test_root.rglob("*.asl")) if test_root.exists() else []:
         relative = absolute.relative_to(root)
         text = absolute.read_text(encoding="utf-8")
+        line_count = len(text.splitlines())
+        if line_count > MAX_TEST_LINE_COUNT:
+            raise ValueError(
+                f"{relative}: independent ASL test point contains {line_count} lines; "
+                f"at most {MAX_TEST_LINE_COUNT} lines are allowed"
+            )
         metadata = _metadata(relative, text)
         raw_files.append((absolute, relative, text, metadata))
     raw_ids: dict[str, list[Path]] = {}

@@ -294,6 +294,17 @@ class AslTestsTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "at most 68 characters"):
             load_test_points(self.root, (unit(),))
 
+    def test_rejects_overlong_independent_test_point(self) -> None:
+        body = test_source().replace(
+            "func main() => integer\n",
+            "// focused setup remains below the independent-test size limit\n" * 300
+            + "func main() => integer\n",
+        )
+        self.write(body)
+
+        with self.assertRaisesRegex(ValueError, "at most 300 lines"):
+            load_test_points(self.root, (unit(),))
+
     def test_rejects_malformed_sequence(self) -> None:
         malformed = self.path.with_name("arch-state-registers-1.asl")
         self.write(path=malformed)
