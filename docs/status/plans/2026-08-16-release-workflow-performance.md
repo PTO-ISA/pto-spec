@@ -1,6 +1,8 @@
 # Release Workflow Performance Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Execute this plan inline with the repository's normal
+> edit-test-verify loop. The user explicitly prohibited subagent execution for
+> this work. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make exact-head release verification faster and easier to diagnose without weakening matrix completeness, per-ID isolation, strict ASL execution, or fail-closed aggregation.
 
@@ -253,9 +255,14 @@ python3 -m unittest \
   tests.scripts.test_run_asl_release_suite \
   tests.scripts.test_run_asl_page \
   tests.scripts.test_release_workflow -v
-python3 -m py_compile scripts/asl_tests.py scripts/asl_release_suite.py scripts/release_workflow.py
+python3 -m py_compile \
+  scripts/asl_tests.py \
+  scripts/asl_release_suite.py \
+  scripts/release_workflow.py \
+  scripts/print-asl-test-matrix \
+  scripts/run-asl-page \
+  scripts/report-asl-page-results
 ruff check scripts/asl_tests.py scripts/asl_release_suite.py scripts/release_workflow.py tests/scripts
-bash -n scripts/print-asl-test-matrix scripts/run-asl-page scripts/report-asl-page-results
 ```
 
 - [ ] **Step 3: Run repository-level short gates**
