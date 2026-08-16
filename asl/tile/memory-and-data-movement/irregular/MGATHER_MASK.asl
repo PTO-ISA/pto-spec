@@ -2,10 +2,11 @@
 // PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}
 // NDF-BEGIN: PTO-MGATHER-MASK-PREDICATE-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// Every valid MaskTile element MUST be exactly zero or one. Zero MUST suppress
-// address generation, translation, permission checks, memory access, and
-// memory events for that lane and MUST select PadValue for the destination.
-// One MUST enable the signed-or-unsigned byte-displacement load.
+// MaskTile MUST use packed predicate storage and every valid predicate bit
+// MUST be defined. A zero bit MUST suppress address generation, translation,
+// permission checks, memory access, and memory events for that lane and MUST
+// select PadValue for the destination. A one bit MUST enable the
+// signed-or-unsigned byte-displacement load.
 // NDF-END: PTO-MGATHER-MASK-PREDICATE-001
 // NDF-BEGIN: PTO-MGATHER-MASK-PUBLICATION-001
 // ndf: kind=contract level=L1 layer=tile status=accepted

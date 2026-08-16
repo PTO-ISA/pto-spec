@@ -16,6 +16,7 @@ from scripts.asl_tests import (
     execute_test_point,
     load_test_points,
     matrix,
+    matrix_pages,
     matrix_main,
     validate_test_coverage,
 )
@@ -567,6 +568,22 @@ class AslTestsTest(unittest.TestCase):
         self.assertEqual({page["commit"] for page in pages}, {commit})
         self.assertEqual({page["page_count"] for page in pages}, {2})
         self.assertEqual({page["test_count"] for page in pages}, {3})
+
+    def test_page_count_caps_hosted_jobs_without_dropping_entries(self) -> None:
+        entries = [{"id": f"test-{index}"} for index in range(11)]
+
+        pages = matrix_pages(entries, "3" * 40, page_count=4)
+
+        self.assertEqual(len(pages), 4)
+        self.assertEqual(
+            sorted(entry["id"] for page in pages for entry in page["include"]),
+            sorted(entry["id"] for entry in entries),
+        )
+        self.assertTrue(all(page["page_count"] == 4 for page in pages))
+
+    def test_page_size_and_count_are_mutually_exclusive(self) -> None:
+        with self.assertRaisesRegex(ValueError, "mutually exclusive"):
+            matrix_pages([{"id": "one"}], "4" * 40, 1, page_count=1)
 
     def test_all_supported_kinds_are_accepted(self) -> None:
         kinds = (

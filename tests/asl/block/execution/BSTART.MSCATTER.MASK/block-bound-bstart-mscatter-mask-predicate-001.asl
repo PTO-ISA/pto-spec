@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-MASK-PRED-001","source":"asl/block/execution/BSTART.MSCATTER.MASK.asl","requirements":["PTO-MSCATTER-MASK-PREDICATE-001"],"kind":"boundary","summary":"MSCATTER.MASK rejects mask values other than exact zero or one.","pass_condition":"Mask value two raises TileLegality before address generation, events, or writes.","related_sources":["asl/tile/model/definedness/elements.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-MASK-PRED-001","source":"asl/block/execution/BSTART.MSCATTER.MASK.asl","requirements":["PTO-MSCATTER-MASK-PREDICATE-001"],"kind":"boundary","summary":"MSCATTER.MASK requires packed predicate storage for MaskTile.","pass_condition":"A fully defined ordinary numeric Tile containing value one raises TileLegality before address generation, events, or writes.","related_sources":["asl/tile/model/definedness/elements.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -10,7 +10,7 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x44);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
     var start: bits(64) = Zeros{64} + 0x00711181;
     start[31:27] = Zeros{5} + 27;
     let started = ExecuteCommandInstruction(start, 32);

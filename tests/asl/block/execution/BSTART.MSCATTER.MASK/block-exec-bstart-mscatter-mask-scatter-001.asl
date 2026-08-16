@@ -31,17 +31,16 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(2, 128, 1, 8, 1, 3, TileDataType_S16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(3, 128, 1, 4, 1, 3, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+    ConfigurePredicateTile(3, 128, 1, 4, 1, 3);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x11);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x22);
     WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 0x33);
     WriteTileElement(2, 0, 0, Ones{PTO_XLEN} - 1);
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 5000);
     WriteTileElement(2, 0, 2, Zeros{PTO_XLEN} + 4);
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(3, 0, 1, Zeros{PTO_XLEN});
-    WriteTileElement(3, 0, 2, Zeros{PTO_XLEN} + 1);
+    WriteTilePredicateBit(3, 0, 0, TRUE);
+    WriteTilePredicateBit(3, 0, 1, FALSE);
+    WriteTilePredicateBit(3, 0, 2, TRUE);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x202);
     let started = ExecuteCommandInstruction(
         MaskScatterStart(Zeros{5} + 27), 32);

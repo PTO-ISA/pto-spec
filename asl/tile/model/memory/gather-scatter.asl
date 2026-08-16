@@ -249,7 +249,6 @@ begin
     assert IndexedTLSUTransferDataTypeLegal(destination_tile.data_type);
     assert TilePredicateValuesLegal(mask);
     let index_payload = index_tile.payload;
-    let mask_payload = mask_tile.payload;
     var translated_addresses: TilePayload;
     var active_lanes: bits(PTO_MODEL_TILE_ELEMENTS) =
         Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -260,9 +259,10 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let index_element = TileLinearIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let mask_element = TileLinearIndex(mask_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            if mask_payload[[mask_element]] == Zeros{PTO_XLEN} + 1 then
+            if ReadTilePredicateBit(
+                mask,
+                row as integer {0..65535},
+                column as integer {0..65535}) then
                 let address = TileMemoryByteDisplacementAddress(base_address,
                     index_payload[[index_element]], index_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
@@ -307,7 +307,6 @@ begin
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
     let mask_tile = _Tiles[[mask]];
-    let mask_payload = mask_tile.payload;
     assert source_tile.allocated && source_tile.contents_defined;
     assert index_tile.allocated && index_tile.contents_defined;
     assert mask_tile.allocated && mask_tile.contents_defined;
@@ -333,9 +332,10 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let index_element = TileLinearIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let mask_element = TileLinearIndex(mask_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            if mask_payload[[mask_element]] == Zeros{PTO_XLEN} + 1 then
+            if ReadTilePredicateBit(
+                mask,
+                row as integer {0..65535},
+                column as integer {0..65535}) then
                 let address = TileMemoryByteDisplacementAddress(base_address,
                     index_payload[[index_element]], index_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,

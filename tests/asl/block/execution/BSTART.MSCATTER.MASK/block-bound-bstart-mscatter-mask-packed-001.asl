@@ -6,11 +6,10 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(2, 128, 1, 2, 1, 1, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(3, 128, 1, 2, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+    ConfigurePredicateTile(3, 128, 1, 2, 1, 1);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTilePredicateBit(3, 0, 0, TRUE);
     var start: bits(64) = Zeros{64} + 0x00711181;
     start[31:27] = Zeros{5} + 28;
     let started = ExecuteCommandInstruction(start, 32);

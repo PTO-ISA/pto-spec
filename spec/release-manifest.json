@@ -522,15 +522,15 @@
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-      "sha256": "20adc13fddbd8623c3529d8985bf82f6820b4eef11fd29aca1e01ee34d976382"
+      "sha256": "2635f7ab7e9fcee3670b6d22b074ab2ad229d1c7c0f1fdf2f7eb1cfc7d356f86"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
-      "sha256": "77cc72ed251b0bef87a31d4b0a60c3cb3c9d44dd20e6ba756f0bca808036be1d"
+      "sha256": "e0f743ac53ebd77c5ad9a0f101e4551a92b7b2c26c4366ca9a2be0fc522e9ccd"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather.asl",
-      "sha256": "7d82e9d2572b1181ed0ac934e77db3c47f4223efc412a84c71ce69489a389fb0"
+      "sha256": "a52c8e8f4dc002d27e3067caaac76c742d366df79a1b0e0b41e3b51f7c9cdef0"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter-mask.asl",
@@ -2838,7 +2838,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl",
-      "sha256": "00992f1eec2e2828b20c88ee56b586319426eac8050a051ab3d1efbd3b1555d1"
+      "sha256": "f6ffb63eef162f2a217a097388986d97233e8561796fb74373ecfcc9be0559ea"
     },
     {
       "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
@@ -2846,7 +2846,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
-      "sha256": "5177ef7461cf3c22aee3ea173909d950c063b8f446392ecb10fef629825d14f6"
+      "sha256": "679e280a29bcfb7e093e88da6ca77d9cb231319af123a2ea552956ddc00434bd"
     },
     {
       "path": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
@@ -3042,7 +3042,7 @@
     },
     {
       "path": "asl/tile/model/memory/gather-scatter.asl",
-      "sha256": "41240cd9a878b096c227551a8e74d5038c29d278134096f7f8864906d5bce2f6"
+      "sha256": "25bc1b969670a90ce9b87891d947c2e7654e162ee50a629f883d227945d4a332"
     },
     {
       "path": "asl/tile/model/memory/load-store.asl",
@@ -3314,11 +3314,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "b9c0dc48e97c71f5ab46833ac597420ddad95d21103c6a3f0d00ad94bed50c7f"
+      "sha256": "7ebb62054bf66b2e6323ab63368cd88c0ded9a482e5e5a6599b202166a03636b"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "7fdf516d4614d85f20ca89e5ecb250a07ebfc9ad03973229cc13fd69c6720a74"
+      "sha256": "248805c39ef806fbe3b0622298a7774d295dc3f9e90e1bf4481796dc156a8f79"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3356,7 +3356,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "4ba4ec25f31ff5ca9adbf3bd38ca47a581fb7323f407f890d8345e3ad8950648",
+  "content_sha256": "61387102444281190f65373c1359e675bb0114056b6133b1d5a8b2060a92b368",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4038,17 +4038,17 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tlsu-mgather-cas.md",
-      "sha256": "38a5430a75af58fb02a657f3e6b4f05f441c0253584b1816caa13db0f1fc4119"
+      "sha256": "361de1fd2e04226688a280e360229d37a25d001ad6f7fcea079de5c62f312473"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tlsu-mgather-mask.md",
-      "sha256": "5827d6af967bfcf6de6641b0a572477ab0d6a84bfaa68674b6a9a5e622b91ce4"
+      "sha256": "8341e9af446cbadf1e464b8f64a7794114f3fb6ee83f3efa7f32348859eb882e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tlsu-mgather.md",
-      "sha256": "60aa5374318c7165dc3a0b8cd6b210394404fa96f1652ffe0e74913e13ffa576"
+      "sha256": "93ca33b6357d76e0c17245139aadc065c752e1a64d7f9b596e778d376b8a702d"
     },
     {
       "kind": "generated-documentation",
@@ -7188,7 +7188,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/gather-scatter.md",
-      "sha256": "ff04786c09ef30baaded689dc4e01ca39865793d9072e6695c598d7a0302b9a5"
+      "sha256": "d52902d5326a4074bbef58dfe922c8509539e57057b94066fca43762375bcba9"
     },
     {
       "kind": "generated-documentation",

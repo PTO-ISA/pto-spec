@@ -281,6 +281,13 @@ def validate_release_workflow(workflow: str) -> list[str]:
         errors.append(
             "matrix-plan must export every page with one print-asl-test-matrix discovery"
         )
+    if (
+        'ASL_TEST_PAGE_COUNT: "8"' not in workflow
+        or '--page-count "$ASL_TEST_PAGE_COUNT"' not in matrix_plan
+    ):
+        errors.append(
+            "matrix-plan must cap hosted fan-out at eight complete pages"
+        )
     if re.search(r"(?:^|\s)--page(?:\s|=)", matrix_plan):
         errors.append("matrix-plan must not regenerate pages in a serial loop")
     build_directory_positions = _script_line_positions(matrix_plan, "mkdir -p build")
@@ -319,6 +326,8 @@ def validate_release_workflow(workflow: str) -> list[str]:
         errors.append("ASL pages must check out the exact commit input")
     if not re.search(r"fail-fast:\s*false", page):
         errors.append("ASL pages must record every result with fail-fast disabled")
+    if not re.search(r"max-parallel:\s*8", page):
+        errors.append("ASL pages must match the eight-page hosted fan-out")
     if not re.search(
         r"page:\s*\$\{\{\s*fromJSON\(needs\.matrix-plan\.outputs\.pages\)\s*\}\}",
         page,
@@ -367,26 +376,18 @@ def validate_release_workflow(workflow: str) -> list[str]:
         errors.append(
             "ASL pages must report every ASL page result after parallel execution"
         )
-    execution_status_positions = _script_line_positions(page, "execution_status=$?")
     report_status_positions = _script_line_positions(page, "report_status=$?")
     execution_gate_positions = _script_line_positions(
-        page, 'test "$execution_status" = 0'
+        page, 'test "$EXECUTION_OUTCOME" = success'
     )
     report_gate_positions = _script_line_positions(page, 'test "$report_status" = 0')
     set_plus_positions = _script_line_positions(page, "set +e")
     set_minus_positions = _script_line_positions(page, "set -e")
-    execution_status_file = (
-        "printf '%s\\n' \"$execution_status\" > build/asl-page-execution.status"
-    )
     exact_execution_block = "\n".join(
         f"          {line}"
         for line in (
-            "set +e",
             jobs_command,
             runner_command,
-            "execution_status=$?",
-            "set -e",
-            execution_status_file,
         )
     )
     exact_report_block = "\n".join(
@@ -396,9 +397,7 @@ def validate_release_workflow(workflow: str) -> list[str]:
             reporter_command,
             "report_status=$?",
             "set -e",
-            "test -f build/asl-page-execution.status",
-            "read -r execution_status < build/asl-page-execution.status",
-            'test "$execution_status" = 0',
+            'test "$EXECUTION_OUTCOME" = success',
             'test "$report_status" = 0',
         )
     )
@@ -407,34 +406,25 @@ def validate_release_workflow(workflow: str) -> list[str]:
             "ASL pages must use separate contiguous fail-closed execution and report blocks"
         )
     if not (
-        len(set_plus_positions) == 2
-        and len(execution_status_positions) == 1
-        and execution_position >= 0
-        and set_plus_positions[0] < execution_position < execution_status_positions[0]
-    ):
-        errors.append(
-            "ASL pages must capture the parallel execution status fail-closed"
-        )
-    if not (
         len(report_status_positions) == 1
         and len(reporter_positions) == 1
         and reporter_positions[0] < report_status_positions[0]
     ):
         errors.append("ASL pages must capture the page report status fail-closed")
     if len(execution_gate_positions) != 1:
-        errors.append("ASL pages must explicitly require the execution status to pass")
+        errors.append("ASL pages must explicitly require the execution outcome to pass")
     if len(report_gate_positions) != 1:
         errors.append("ASL pages must explicitly require the report status to pass")
     if not (
-        len(set_minus_positions) == 2
+        len(set_plus_positions) == 1
+        and len(set_minus_positions) == 1
         and len(execution_gate_positions) == 1
         and len(report_gate_positions) == 1
         and len(report_status_positions) == 1
         and len(reporter_positions) == 1
-        and report_status_positions[0] < set_minus_positions[1]
-        and execution_status_positions[0] < set_minus_positions[0]
-        and set_minus_positions[0] < reporter_positions[0]
-        and set_minus_positions[1]
+        and set_plus_positions[0] < reporter_positions[0]
+        and report_status_positions[0] < set_minus_positions[0]
+        and set_minus_positions[0]
         < execution_gate_positions[0]
         < report_gate_positions[0]
     ):
@@ -444,6 +434,20 @@ def validate_release_workflow(workflow: str) -> list[str]:
     report_steps = [step for step in _step_blocks(page) if reporter_command in step]
     if len(report_steps) != 1 or "        if: always()" not in report_steps[0]:
         errors.append("ASL page reporting must be a distinct always-run step")
+    execution_steps = [step for step in _step_blocks(page) if runner_command in step]
+    execution_step = execution_steps[0] if len(execution_steps) == 1 else ""
+    report_step = report_steps[0] if len(report_steps) == 1 else ""
+    if (
+        "        id: execute" not in execution_step
+        or "          EXECUTION_OUTCOME: ${{ steps.execute.outcome }}" not in report_step
+    ):
+        errors.append(
+            "ASL page execution outcome must remain visible while always-run reporting enforces it"
+        )
+    if "continue-on-error:" in execution_step:
+        errors.append(
+            "ASL page execution must fail visibly; always-run reporting handles diagnostics"
+        )
     if re.search(r"\bxargs\b|\brun-asl-test\b", page):
         errors.append(
             "ASL pages must use the repository page runner instead of shell-level xargs"

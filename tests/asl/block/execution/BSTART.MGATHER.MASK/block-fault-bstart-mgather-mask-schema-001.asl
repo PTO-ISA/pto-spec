@@ -21,10 +21,9 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any);
+    ConfigurePredicateTile(1, 128, 1, 1, 1, 1);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTilePredicateBit(1, 0, 0, TRUE);
     let started = ExecuteCommandInstruction(SchemaMaskGatherStart(), 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);

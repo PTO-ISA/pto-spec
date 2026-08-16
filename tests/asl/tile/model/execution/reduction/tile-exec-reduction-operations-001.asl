@@ -11,7 +11,7 @@ begin
     ConfigureTwoByTwo(8);
     ConfigureTile(9, 256, 2, 1, 2, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(10, 256, 1, 2, 1, 2, TileDataType_U64,
+    ConfigureTile(10, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(8, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(8, 0, 1, Zeros{PTO_XLEN} + 2);

@@ -75,6 +75,18 @@ begin
         SetCurrentACR(0);
         ClearFault();
         WriteTPC(Zeros{PTO_XLEN} + 0x300);
+        if branch_type == 5 then
+            BeginBundleAt(
+                ReadTPC(),
+                BundleKind_Standard,
+                BundleTransfer_Direct,
+                Zeros{PTO_XLEN} + 0x440,
+                Zeros{PTO_XLEN} + 0x302,
+                Zeros{PTO_XLEN} + 0x302,
+                TRUE);
+        elsif branch_type == 7 then
+            _ReturnAddress = Zeros{PTO_XLEN} + 0x520;
+        end;
         var compressed: bits(64) = Zeros{64};
         compressed[13:11] = Zeros{3} + branch_type;
         let status = ExecuteCommandInstruction(compressed, 16);
