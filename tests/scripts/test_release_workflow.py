@@ -5,6 +5,13 @@ import unittest
 from scripts.release_workflow import validate_pr_workflow, validate_release_workflow
 
 
+def replace_last(source: str, old: str, new: str) -> str:
+    before, separator, after = source.rpartition(old)
+    if not separator:
+        return source
+    return before + new + after
+
+
 VALID_PR_WORKFLOW = r"""
 name: PR
 on:
@@ -37,9 +44,8 @@ on:
 permissions:
   contents: read
 jobs:
-  plan:
-    outputs:
-      pages: ${{ steps.matrix.outputs.pages }}
+  identity:
+    timeout-minutes: 10
     steps:
       - env:
           COMMIT: ${{ inputs.commit }}
@@ -47,41 +53,79 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           ref: ${{ inputs.commit }}
+      - run: test "$(git rev-parse HEAD)" = "$COMMIT"
+  pr-contract:
+    needs: identity
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: ${{ inputs.commit }}
+      - run: |
+          test "$(git rev-parse HEAD)" = "$COMMIT"
+          make pr-check
+  matrix-plan:
+    needs: identity
+    timeout-minutes: 45
+    outputs:
+      pages: ${{ steps.matrix.outputs.pages }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: ${{ inputs.commit }}
       - id: matrix
         run: |
           test "$(git rev-parse HEAD)" = "$COMMIT"
-          make pr-check
-          ./scripts/print-asl-test-matrix --page-size 100 --page 0
+          ./scripts/print-asl-test-matrix --page-size 100 --output-dir build/planned-asl-test-pages > build/asl-test-plan-index.json
           echo 'pages=[0]' >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: planned-asl-test-pages
   strict-model:
-    needs: plan
+    needs: identity
+    timeout-minutes: 360
     steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: ${{ inputs.commit }}
       - uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0
+        with:
+          ocaml-compiler: "5.2.1"
+          dune-cache: true
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .cache/herdtools7
+          key: aslref-${{ runner.os }}-${{ runner.arch }}-ocaml-5.2.1-${{ hashFiles('.aslref-version', 'scripts/setup-aslref', 'scripts/prepare-aslref') }}
       - run: make setup
       - run: make toolchain-check check
   asl-page:
-    needs: plan
+    needs: matrix-plan
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
-        page: ${{ fromJSON(needs.plan.outputs.pages) }}
+        page: ${{ fromJSON(needs.matrix-plan.outputs.pages) }}
     steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: ${{ inputs.commit }}
       - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
         with:
           name: planned-asl-test-pages
+      - uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0
+        with:
+          ocaml-compiler: "5.2.1"
+          dune-cache: true
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .cache/herdtools7
+          key: aslref-${{ runner.os }}-${{ runner.arch }}-ocaml-5.2.1-${{ hashFiles('.aslref-version', 'scripts/setup-aslref', 'scripts/prepare-aslref') }}
       - run: make setup
-      - name: Verify exact ASL page plan
-        run: |
-          ./scripts/print-asl-test-matrix --page-size 100 --page "${{ matrix.page }}"
-          cmp "build/planned-asl-test-pages/page-${{ matrix.page }}.json" "build/actual-page.json"
       - name: Execute independent ASL points with machine parallelism
         run: |
           set +e
           ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
-          ./scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"
+          ./scripts/run-asl-page --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" -j "$ASL_TEST_JOBS"
           execution_status=$?
           set -e
           printf '%s\n' "$execution_status" > build/asl-page-execution.status
@@ -89,7 +133,7 @@ jobs:
         if: always()
         run: |
           set +e
-          ./scripts/report-asl-page-results --matrix build/actual-page.json --results build/asl-test-results
+          ./scripts/report-asl-page-results --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" --results build/asl-test-results
           report_status=$?
           set -e
           test -f build/asl-page-execution.status
@@ -101,7 +145,8 @@ jobs:
           name: asl-test-results-${{ matrix.page }}
           path: build/asl-test-results/*/result.json
   release-evidence:
-    needs: [plan, strict-model, asl-page]
+    needs: [pr-contract, matrix-plan, strict-model, asl-page]
+    timeout-minutes: 45
     steps:
       - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
         with:
@@ -119,15 +164,20 @@ jobs:
   validate:
     name: Release / validate
     if: always()
-    needs: [plan, strict-model, asl-page, release-evidence]
+    needs: [identity, pr-contract, matrix-plan, strict-model, asl-page, release-evidence]
+    timeout-minutes: 10
     steps:
       - env:
-          PLAN_RESULT: ${{ needs.plan.result }}
+          IDENTITY_RESULT: ${{ needs.identity.result }}
+          PR_CONTRACT_RESULT: ${{ needs.pr-contract.result }}
+          MATRIX_PLAN_RESULT: ${{ needs.matrix-plan.result }}
           STRICT_MODEL_RESULT: ${{ needs.strict-model.result }}
           ASL_PAGE_RESULT: ${{ needs.asl-page.result }}
           RELEASE_EVIDENCE_RESULT: ${{ needs.release-evidence.result }}
         run: |
-          test "$PLAN_RESULT" = success
+          test "$IDENTITY_RESULT" = success
+          test "$PR_CONTRACT_RESULT" = success
+          test "$MATRIX_PLAN_RESULT" = success
           test "$STRICT_MODEL_RESULT" = success
           test "$ASL_PAGE_RESULT" = success
           test "$RELEASE_EVIDENCE_RESULT" = success
@@ -178,10 +228,14 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
             "print-asl-test-matrix",
         )
 
-    def test_exact_page_comparison_is_required(self) -> None:
+    def test_page_rediscovery_is_rejected(self) -> None:
         self.assert_rejected(
-            VALID_RELEASE_WORKFLOW.replace("          cmp ", "          true # cmp "),
-            "compare",
+            VALID_RELEASE_WORKFLOW.replace(
+                "      - name: Execute independent ASL points with machine parallelism\n",
+                "      - run: ./scripts/print-asl-test-matrix --page-size 100 --page 0\n"
+                "      - name: Execute independent ASL points with machine parallelism\n",
+            ),
+            "without rediscovery",
         )
 
     def test_independent_runner_is_required(self) -> None:
@@ -192,10 +246,7 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
 
     def test_each_page_must_prepare_aslref_before_parallel_execution(self) -> None:
         self.assert_rejected(
-            VALID_RELEASE_WORKFLOW.replace(
-                "          name: planned-asl-test-pages\n      - run: make setup\n",
-                "          name: planned-asl-test-pages\n",
-            ),
+            replace_last(VALID_RELEASE_WORKFLOW, "      - run: make setup\n", ""),
             "prepare pinned ASLRef",
         )
 
@@ -208,11 +259,10 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
         ):
             with self.subTest(replacement=replacement):
                 self.assert_rejected(
-                    VALID_RELEASE_WORKFLOW.replace(
-                        "      - run: make setup\n"
-                        "      - name: Verify exact ASL page plan\n",
-                        replacement + "      - name: Verify exact ASL page plan\n",
-                        1,
+                    replace_last(
+                        VALID_RELEASE_WORKFLOW,
+                        "      - run: make setup\n",
+                        replacement,
                     ),
                     "prepare pinned ASLRef",
                 )
@@ -235,7 +285,7 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
     def test_page_report_must_run_after_parallel_execution(self) -> None:
         self.assert_rejected(
             VALID_RELEASE_WORKFLOW.replace(
-                "          ./scripts/report-asl-page-results --matrix build/actual-page.json --results build/asl-test-results\n",
+                '          ./scripts/report-asl-page-results --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" --results build/asl-test-results\n',
                 "",
             ),
             "report every ASL page",
@@ -252,11 +302,11 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
     def test_status_capture_must_be_immediately_after_each_command(self) -> None:
         for command, status in (
             (
-                '          ./scripts/run-asl-page --matrix build/actual-page.json -j "$ASL_TEST_JOBS"\n',
+                '          ./scripts/run-asl-page --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" -j "$ASL_TEST_JOBS"\n',
                 "          execution_status=$?\n",
             ),
             (
-                "          ./scripts/report-asl-page-results --matrix build/actual-page.json --results build/asl-test-results\n",
+                '          ./scripts/report-asl-page-results --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" --results build/asl-test-results\n',
                 "          report_status=$?\n",
             ),
         ):
@@ -463,6 +513,46 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
                 'test "$ASL_PAGE_RESULT" = success', 'test -n "$ASL_PAGE_RESULT"'
             ),
             "ASL_PAGE_RESULT",
+        )
+
+    def test_independent_release_gates_start_directly_after_identity(self) -> None:
+        for job in ("pr-contract", "matrix-plan", "strict-model"):
+            workflow = VALID_RELEASE_WORKFLOW.replace(
+                f"  {job}:\n    needs: identity\n",
+                f"  {job}:\n    needs: matrix-plan\n",
+            )
+            with self.subTest(job=job):
+                self.assert_rejected(workflow, "directly after identity")
+
+    def test_every_release_job_requires_an_explicit_timeout(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace("    timeout-minutes: 45\n", "", 1),
+            "explicit timeout",
+        )
+
+    def test_toolchain_cache_action_must_be_commit_pinned(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+                "actions/cache@v5",
+                1,
+            ),
+            "commit-pinned verified ASLRef cache",
+        )
+
+    def test_cache_key_must_bind_toolchain_inputs(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace("scripts/prepare-aslref", "prepare", 1),
+            "pin, and setup scripts",
+        )
+
+    def test_release_evidence_waits_for_pr_contract(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                "needs: [pr-contract, matrix-plan, strict-model, asl-page]",
+                "needs: [matrix-plan, strict-model, asl-page]",
+            ),
+            "pr-contract dependency",
         )
 
 
