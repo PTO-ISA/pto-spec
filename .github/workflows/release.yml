@@ -94,6 +94,7 @@ jobs:
           COMMIT: ${{ inputs.commit }}
         run: |
           test "$(git rev-parse HEAD)" = "$COMMIT"
+          mkdir -p build
           ./scripts/print-asl-test-matrix \
             --page-size "$ASL_TEST_PAGE_SIZE" \
             --output-dir build/planned-asl-test-pages \
