@@ -182,6 +182,49 @@ class ReleaseSuiteAggregationTest(unittest.TestCase):
                 sorted(str(entry["id"]) for entry in entries),
             )
 
+    def test_matrix_timeout_covers_page_preparation_and_each_point(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            prepared = SimpleNamespace(name="prepared")
+
+            def fake_execute(
+                observed_root: Path,
+                point: object,
+                *,
+                timeout_seconds: int,
+                prepared: object,
+            ) -> int:
+                self.assertEqual(observed_root, root)
+                self.assertEqual(timeout_seconds, 17)
+                self.assertEqual(prepared, prepared_inputs)
+                test_id = str(getattr(point, "test_id"))
+                result_path = root / "build/asl-test-results" / test_id / "result.json"
+                result_path.parent.mkdir(parents=True)
+                result_path.write_text(json.dumps(result(test_id=test_id)), encoding="utf-8")
+                return 0
+
+            prepared_inputs = prepared
+            with (
+                patch(
+                    "scripts.asl_release_suite.prepare_page_inputs",
+                    return_value=prepared_inputs,
+                ) as prepare,
+                patch(
+                    "scripts.asl_release_suite.execute_test_point",
+                    side_effect=fake_execute,
+                ),
+            ):
+                results = execute_matrix(
+                    root,
+                    MATRIX,
+                    jobs=1,
+                    timeout_seconds=17,
+                    output=io.StringIO(),
+                )
+
+            prepare.assert_called_once_with(root, MATRIX, timeout_seconds=17)
+            self.assertEqual([item["id"] for item in results], [MATRIX[0]["id"]])
+
     def test_parallel_results_are_reported_in_completion_order(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

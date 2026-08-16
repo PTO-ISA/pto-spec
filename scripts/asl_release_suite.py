@@ -326,6 +326,7 @@ def execute_matrix(
     entries: Sequence[MatrixEntry],
     *,
     jobs: int,
+    timeout_seconds: int = DEFAULT_TIMEOUT_SECONDS,
     point_runner: PointRunner | None = None,
     output: TextIO = sys.stdout,
 ) -> list[dict[str, object]]:
@@ -333,6 +334,8 @@ def execute_matrix(
 
     if jobs <= 0:
         raise ValueError("jobs must be positive")
+    if timeout_seconds <= 0:
+        raise ValueError("timeout seconds must be positive")
     result_root = root / "build/asl-test-results"
     if result_root.exists():
         shutil.rmtree(result_root)
@@ -341,11 +344,16 @@ def execute_matrix(
     started = time.monotonic()
     planned = _matrix_by_id(entries)
     points = {test_id: execution_point(entry) for test_id, entry in planned.items()}
-    prepared = prepare_page_inputs(root, entries)
+    prepared = prepare_page_inputs(root, entries, timeout_seconds=timeout_seconds)
     if point_runner is None:
 
         def point_runner(point: AslExecutionPoint, inputs: PreparedAslInputs) -> int:
-            return execute_test_point(root, point, prepared=inputs)
+            return execute_test_point(
+                root,
+                point,
+                timeout_seconds=timeout_seconds,
+                prepared=inputs,
+            )
 
     def run_one(test_id: str) -> int:
         assert point_runner is not None
@@ -504,6 +512,13 @@ def page_main(argv: Sequence[str] | None = None) -> int:
         type=int,
         default=int(os.environ.get("PTO_ASL_TEST_JOBS", str(os.cpu_count() or 1))),
     )
+    parser.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=int(
+            os.environ.get("PTO_ASL_TEST_TIMEOUT_SECONDS", DEFAULT_TIMEOUT_SECONDS)
+        ),
+    )
     arguments = parser.parse_args(argv)
     root = arguments.root.resolve()
     if arguments.jobs <= 0:
@@ -518,7 +533,12 @@ def page_main(argv: Sequence[str] | None = None) -> int:
             check=True,
         ).stdout.strip()
         page, entries = load_matrix_page(arguments.matrix.resolve(), actual)
-        results = execute_matrix(root, entries, jobs=arguments.jobs)
+        results = execute_matrix(
+            root,
+            entries,
+            jobs=arguments.jobs,
+            timeout_seconds=arguments.timeout_seconds,
+        )
         coverage = aggregate_results(actual, entries, results)
     except (
         OSError,
@@ -543,6 +563,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--jobs",
         type=int,
         default=int(os.environ.get("PTO_ASL_TEST_JOBS", str(os.cpu_count() or 1))),
+    )
+    parser.add_argument(
+        "--timeout-seconds",
+        type=int,
+        default=int(
+            os.environ.get("PTO_ASL_TEST_TIMEOUT_SECONDS", DEFAULT_TIMEOUT_SECONDS)
+        ),
     )
     parser.add_argument("--aggregate-only", action="store_true")
     parser.add_argument("--matrix-pages", type=Path)
@@ -580,7 +607,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             if coverage_errors:
                 raise ValueError("\n".join(coverage_errors))
             entries = matrix(points)
-            results = execute_matrix(root, entries, jobs=arguments.jobs)
+            results = execute_matrix(
+                root,
+                entries,
+                jobs=arguments.jobs,
+                timeout_seconds=arguments.timeout_seconds,
+            )
         coverage = aggregate_results(actual, entries, results)
         _write_evidence(root, entries, coverage)
         generated = subprocess.run(
