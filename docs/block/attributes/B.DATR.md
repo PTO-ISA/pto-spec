@@ -179,6 +179,18 @@ readonly func InstructionContractHandler_B_DATR() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDataAttributes;
 end;
+
+pure func InstructionContractHeaderOnly_B_DATR()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractDuplicateRejects_B_DATR()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

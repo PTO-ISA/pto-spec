@@ -11,4 +11,18 @@ readonly func InstructionContractHandler_HL_SETRET() => ScalarSemanticHandler
 begin
     return ScalarHandler_SetReturnAddress;
 end;
+
+pure func InstructionContractUsesTPC_HL_SETRET()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractTarget_HL_SETRET(
+    base: Word,
+    halfword_offset: Word)
+    => Word
+begin
+    return base + LSL(halfword_offset, 1);
+end;
 // DOC-END: operation

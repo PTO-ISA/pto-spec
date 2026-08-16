@@ -73,6 +73,18 @@ readonly func InstructionContractHandler_BSTART_ICALL() => CommandSemanticHandle
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractTransfer_BSTART_ICALL()
+    => BundleTransfer
+begin
+    return BundleTransfer_IndirectCall;
+end;
+
+pure func InstructionContractWritesReturnAddress_BSTART_ICALL()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

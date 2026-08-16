@@ -126,6 +126,18 @@ readonly func InstructionContractHandler_BSTART_TPREFETCH() => CommandSemanticHa
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractStartedTileOperation_BSTART_TPREFETCH()
+    => TileOperation
+begin
+    return TileOperation_TPREFETCH;
+end;
+
+pure func InstructionContractStartsTileBundle_BSTART_TPREFETCH()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

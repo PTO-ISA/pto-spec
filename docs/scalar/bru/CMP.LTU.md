@@ -76,6 +76,23 @@ readonly func InstructionContractHandler_CMP_LTU() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
+
+pure func InstructionContractCondition_CMP_LTU()
+    => ScalarCondition
+begin
+    return ScalarCondition_LTU;
+end;
+
+pure func InstructionContractCompareResult_CMP_LTU(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_CMP_LTU(),
+        left,
+        right);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

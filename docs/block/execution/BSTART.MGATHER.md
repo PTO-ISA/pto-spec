@@ -127,6 +127,18 @@ readonly func InstructionContractHandler_BSTART_MGATHER() => CommandSemanticHand
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractStartedTileOperation_BSTART_MGATHER()
+    => TileOperation
+begin
+    return TileOperation_MGATHER;
+end;
+
+pure func InstructionContractStartsTileBundle_BSTART_MGATHER()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

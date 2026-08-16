@@ -68,6 +68,9 @@ jobs:
           test "$(git rev-parse HEAD)" = "$COMMIT"
           make pr-check
 
+      - name: Verify 642 mnemonic and 32 reservation contracts
+        run: python3 scripts/manual_semantic_audit.py
+
   matrix-plan:
     name: Release / one-pass ASL matrix plan
     needs: identity

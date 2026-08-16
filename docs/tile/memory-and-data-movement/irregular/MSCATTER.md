@@ -75,6 +75,30 @@ readonly func InstructionContractHandler_MSCATTER() => TileSemanticHandler
 begin
     return TileHandler_MSCATTER;
 end;
+
+pure func InstructionContractUsesByteDisplacements_MSCATTER()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractUsesMaskTile_MSCATTER()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractIsAtomicMemoryOperation_MSCATTER()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractWritesMemory_MSCATTER()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

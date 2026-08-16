@@ -11,4 +11,21 @@ readonly func InstructionContractHandler_CMP_LTUI() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
+
+pure func InstructionContractCondition_CMP_LTUI()
+    => ScalarCondition
+begin
+    return ScalarCondition_LTU;
+end;
+
+pure func InstructionContractCompareResult_CMP_LTUI(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_CMP_LTUI(),
+        left,
+        right);
+end;
 // DOC-END: operation

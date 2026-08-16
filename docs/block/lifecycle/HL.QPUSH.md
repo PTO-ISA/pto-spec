@@ -101,6 +101,18 @@ begin
         entry,
         flags);
 end;
+
+pure func InstructionContractChangesQueueManagerState_HL_QPUSH()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractSnapshotsSourcesBeforeWrite_HL_QPUSH()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

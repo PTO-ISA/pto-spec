@@ -11,4 +11,21 @@ readonly func InstructionContractHandler_C_CMP_NEI() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
+
+pure func InstructionContractCondition_C_CMP_NEI()
+    => ScalarCondition
+begin
+    return ScalarCondition_NE;
+end;
+
+pure func InstructionContractCompareResult_C_CMP_NEI(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_C_CMP_NEI(),
+        left,
+        right);
+end;
 // DOC-END: operation

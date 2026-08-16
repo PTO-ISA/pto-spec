@@ -128,6 +128,18 @@ readonly func InstructionContractHandler_BSTART_MGATHER_CAS() => CommandSemantic
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractStartedTileOperation_BSTART_MGATHER_CAS()
+    => TileOperation
+begin
+    return TileOperation_MGATHER_CAS;
+end;
+
+pure func InstructionContractStartsTileBundle_BSTART_MGATHER_CAS()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

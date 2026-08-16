@@ -262,6 +262,13 @@ def validate_release_workflow(workflow: str) -> list[str]:
     pr_contract = jobs["pr-contract"]
     if "git rev-parse HEAD" not in pr_contract or "make pr-check" not in pr_contract:
         errors.append("pr-contract must prove the exact head and run make pr-check")
+    if _standalone_run_position(
+        pr_contract,
+        "python3 scripts/manual_semantic_audit.py",
+    ) is None:
+        errors.append(
+            "pr-contract must prove formal mnemonic implementation closure"
+        )
 
     matrix_plan = jobs["matrix-plan"]
     if (

@@ -73,6 +73,23 @@ readonly func InstructionContractHandler_CMP_ANDI() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompareLogical;
 end;
+
+pure func InstructionContractCombinesWithOR_CMP_ANDI()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractCompareLogicalValue_CMP_ANDI(
+    left: Word,
+    right: Word)
+    => Word
+begin
+    if InstructionContractCombinesWithOR_CMP_ANDI() then
+        return left OR right;
+    end;
+    return left AND right;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

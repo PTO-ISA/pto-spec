@@ -10,5 +10,17 @@ readonly func InstructionContractHandler_MCOPY() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemoryCopy;
 end;
+
+pure func InstructionContractMemoryStepRestartable_MCOPY()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractForbidsOverlap_MCOPY()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation
 // PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}

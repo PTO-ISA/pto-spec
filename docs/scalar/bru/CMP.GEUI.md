@@ -73,6 +73,23 @@ readonly func InstructionContractHandler_CMP_GEUI() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
+
+pure func InstructionContractCondition_CMP_GEUI()
+    => ScalarCondition
+begin
+    return ScalarCondition_GEU;
+end;
+
+pure func InstructionContractCompareResult_CMP_GEUI(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_CMP_GEUI(),
+        left,
+        right);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

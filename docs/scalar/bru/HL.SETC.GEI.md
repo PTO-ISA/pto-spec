@@ -73,6 +73,23 @@ readonly func InstructionContractHandler_HL_SETC_GEI() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
+
+pure func InstructionContractCondition_HL_SETC_GEI()
+    => ScalarCondition
+begin
+    return ScalarCondition_GE;
+end;
+
+pure func InstructionContractCommitResult_HL_SETC_GEI(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_HL_SETC_GEI(),
+        left,
+        right);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

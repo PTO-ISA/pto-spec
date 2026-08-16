@@ -73,6 +73,23 @@ readonly func InstructionContractHandler_B_LTU() => ScalarSemanticHandler
 begin
     return ScalarHandler_BranchRelative;
 end;
+
+pure func InstructionContractCondition_B_LTU()
+    => ScalarCondition
+begin
+    return ScalarCondition_LTU;
+end;
+
+pure func InstructionContractBranchResult_B_LTU(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_B_LTU(),
+        left,
+        right);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

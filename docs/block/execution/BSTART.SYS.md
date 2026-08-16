@@ -76,6 +76,18 @@ readonly func InstructionContractHandler_BSTART_SYS() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractBundleKind_BSTART_SYS()
+    => BundleKind
+begin
+    return BundleKind_System;
+end;
+
+pure func InstructionContractStartsBundle_BSTART_SYS()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

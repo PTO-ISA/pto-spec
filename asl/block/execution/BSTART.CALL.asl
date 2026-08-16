@@ -11,4 +11,16 @@ readonly func InstructionContractHandler_BSTART_CALL() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractTransfer_BSTART_CALL()
+    => BundleTransfer
+begin
+    return BundleTransfer_Call;
+end;
+
+pure func InstructionContractWritesReturnAddress_BSTART_CALL()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation

@@ -64,6 +64,7 @@ jobs:
       - run: |
           test "$(git rev-parse HEAD)" = "$COMMIT"
           make pr-check
+      - run: python3 scripts/manual_semantic_audit.py
   matrix-plan:
     needs: identity
     timeout-minutes: 45
@@ -213,6 +214,15 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
 
     def test_complete_manual_workflow_is_accepted(self) -> None:
         self.assertEqual(validate_release_workflow(VALID_RELEASE_WORKFLOW), [])
+
+    def test_formal_mnemonic_closure_is_required(self) -> None:
+        self.assert_rejected(
+            VALID_RELEASE_WORKFLOW.replace(
+                "      - run: python3 scripts/manual_semantic_audit.py\n",
+                "",
+            ),
+            "formal mnemonic implementation closure",
+        )
 
     def test_exact_sha_validation_is_required(self) -> None:
         self.assert_rejected(

@@ -35,4 +35,16 @@ readonly func InstructionContractHandler_B_DIM() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleDimension;
 end;
+
+pure func InstructionContractHeaderOnly_B_DIM()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractDuplicateRejects_B_DIM()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation

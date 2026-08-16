@@ -74,6 +74,18 @@ readonly func InstructionContractHandler_TPREFETCH() => TileSemanticHandler
 begin
     return TileHandler_TPREFETCH;
 end;
+
+pure func InstructionContractPublishesTileDestination_TPREFETCH()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractUsesTLOADFootprint_TPREFETCH()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

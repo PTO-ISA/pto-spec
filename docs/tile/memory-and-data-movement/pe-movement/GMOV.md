@@ -72,6 +72,18 @@ readonly func InstructionContractHandler_GMOV() => TileSemanticHandler
 begin
     return TileHandler_GMOV;
 end;
+
+pure func InstructionContractRequiresCoreFourReadiness_GMOV()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractPartialMaskWritesSelectedPEs_GMOV()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

@@ -83,6 +83,18 @@ func ExecuteFEXIT(begin_reg: Reg5Selector,
 begin
     ExitFrame(begin_reg, end_reg, frame_size);
 end;
+
+pure func InstructionContractUsesHalfOpenRegisterRange_FEXIT()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractRejectsInvalidFrameRange_FEXIT()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

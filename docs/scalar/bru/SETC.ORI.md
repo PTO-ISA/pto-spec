@@ -73,6 +73,23 @@ readonly func InstructionContractHandler_SETC_ORI() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommitLogical;
 end;
+
+pure func InstructionContractCombinesWithOR_SETC_ORI()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractCommitLogicalValue_SETC_ORI(
+    left: Word,
+    right: Word)
+    => Word
+begin
+    if InstructionContractCombinesWithOR_SETC_ORI() then
+        return left OR right;
+    end;
+    return left AND right;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

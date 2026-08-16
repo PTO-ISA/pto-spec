@@ -128,6 +128,18 @@ readonly func InstructionContractHandler_BSTART_TSTORE() => CommandSemanticHandl
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractStartedTileOperation_BSTART_TSTORE()
+    => TileOperation
+begin
+    return TileOperation_TSTORE;
+end;
+
+pure func InstructionContractStartsTileBundle_BSTART_TSTORE()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

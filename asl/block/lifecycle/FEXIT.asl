@@ -17,5 +17,17 @@ func ExecuteFEXIT(begin_reg: Reg5Selector,
 begin
     ExitFrame(begin_reg, end_reg, frame_size);
 end;
+
+pure func InstructionContractUsesHalfOpenRegisterRange_FEXIT()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractRejectsInvalidFrameRange_FEXIT()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation
 // PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}

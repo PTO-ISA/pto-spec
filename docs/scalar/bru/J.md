@@ -67,6 +67,20 @@ readonly func InstructionContractHandler_J() => ScalarSemanticHandler
 begin
     return ScalarHandler_JumpRelative;
 end;
+
+pure func InstructionContractUsesCurrentPC_J()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractTarget_J(
+    current_pc: Word,
+    halfword_offset: Word)
+    => Word
+begin
+    return current_pc + LSL(halfword_offset, 1);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
