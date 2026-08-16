@@ -80,6 +80,8 @@ class AslPageReportTest(unittest.TestCase):
         self.assertIn("PASS TADD | execution | adds two tiles", output.getvalue())
         summary = self.summary.read_text(encoding="utf-8")
         self.assertIn("## ASL page 6", summary)
+        self.assertIn("**1 passed, 0 failed**", summary)
+        self.assertIn("### Slowest points", summary)
         self.assertIn("| PASS | TADD \\| execution \\| adds two tiles |", summary)
         self.assertIn(TEST_ID, summary)
 

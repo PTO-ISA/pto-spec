@@ -11,6 +11,7 @@ import os
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import Callable, Mapping, Sequence, TextIO
 
@@ -271,6 +272,55 @@ def prepare_page_inputs(
     )
 
 
+def _result_duration(result: Mapping[str, object]) -> float:
+    value = result.get("duration_seconds")
+    return float(value) if isinstance(value, int | float) else 0.0
+
+
+def _result_status(result: Mapping[str, object]) -> str:
+    status = str(result.get("status") or "error")
+    return {
+        "passed": "PASS",
+        "failed": "FAIL",
+        "timeout": "TIMEOUT",
+        "error": "ERROR",
+    }.get(status, "ERROR")
+
+
+def pretty_page_summary(
+    results: Sequence[Result],
+    *,
+    elapsed_seconds: float,
+    output: TextIO = sys.stdout,
+) -> None:
+    """Print a stable count summary and the slowest page points."""
+
+    passed = sum(result.get("status") == "passed" for result in results)
+    failed = len(results) - passed
+    print(
+        f"SUMMARY {passed} passed, {failed} failed, "
+        f"{elapsed_seconds:.3f}s elapsed",
+        file=output,
+        flush=True,
+    )
+    print("SLOWEST", file=output, flush=True)
+    slowest = sorted(
+        results,
+        key=lambda result: (
+            -_result_duration(result),
+            str(result.get("id") or ""),
+        ),
+    )[:5]
+    for result in slowest:
+        print(
+            f"  {_result_duration(result):9.3f}s "
+            f"{result.get('display_name') or result.get('id')} "
+            f"[{result.get('id')}]",
+            file=output,
+            flush=True,
+        )
+
+
 def execute_matrix(
     root: Path,
     entries: Sequence[MatrixEntry],
@@ -288,6 +338,7 @@ def execute_matrix(
         shutil.rmtree(result_root)
     result_root.mkdir(parents=True)
 
+    started = time.monotonic()
     planned = _matrix_by_id(entries)
     points = {test_id: execution_point(entry) for test_id, entry in planned.items()}
     prepared = prepare_page_inputs(root, entries)
@@ -325,7 +376,7 @@ def execute_matrix(
             value = json.loads(path.read_text(encoding="utf-8"))
             if not isinstance(value, dict):
                 raise ValueError(f"result for {test_id} is not a JSON object")
-            status = "PASS" if value.get("status") == "passed" else "FAIL"
+            status = _result_status(value)
             display_name = str(value.get("display_name") or test_id)
             duration = value.get("duration_seconds", "-")
             print(
@@ -336,6 +387,11 @@ def execute_matrix(
             loaded.append(value)
 
     loaded.sort(key=lambda value: str(value.get("id", "")))
+    pretty_page_summary(
+        loaded,
+        elapsed_seconds=time.monotonic() - started,
+        output=output,
+    )
     return loaded
 
 

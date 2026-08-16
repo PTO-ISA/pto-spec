@@ -763,7 +763,14 @@ def report_page_results(
                 )
                 if result.get("returncode") is not None:
                     row_errors.append(f"return code {result['returncode']}")
-        status = "PASS" if not row_errors else "FAIL"
+        if not row_errors:
+            status = "PASS"
+        elif result.get("status") == "timeout":
+            status = "TIMEOUT"
+        elif result.get("status") == "error":
+            status = "ERROR"
+        else:
+            status = "FAIL"
         display_name = str(entry.get("display_name") or test_id)
         duration = result.get("duration_seconds", "-")
         print(f"{status} {display_name} [{test_id}] ({duration}s)", file=output)
@@ -799,19 +806,48 @@ def report_page_results(
             file=output,
         )
 
+    failures = [row for row in rows if row["status"] != "PASS"]
+    passed_count = len(rows) - len(failures)
+    slowest = sorted(
+        rows,
+        key=lambda row: (
+            -float(row["duration"])
+            if isinstance(row["duration"], int | float)
+            else 0.0,
+            str(row["id"]),
+        ),
+    )[:5]
     summary_lines = [
         f"## ASL page {page}",
         "",
+        f"**{passed_count} passed, {len(failures)} failed**",
+        "",
+        "### Slowest points",
+        "",
+        "| Duration (s) | Status | Test | Stable ID |",
+        "| ---: | --- | --- | --- |",
+    ]
+    for row in slowest:
+        summary_lines.append(
+            f"| {_markdown_escape(row['duration'])} | {row['status']} | "
+            f"{_markdown_escape(row['display_name'])} | "
+            f"`{_markdown_escape(row['id'])}` |"
+        )
+    summary_lines.extend(
+        [
+        "",
+        "### Complete results",
+        "",
         "| Status | Test | Stable ID | Kind | Duration (s) |",
         "| --- | --- | --- | --- | ---: |",
-    ]
+        ]
+    )
     for row in rows:
         summary_lines.append(
             f"| {row['status']} | {_markdown_escape(row['display_name'])} | "
             f"`{_markdown_escape(row['id'])}` | {_markdown_escape(row['kind'])} | "
             f"{_markdown_escape(row['duration'])} |"
         )
-    failures = [row for row in rows if row["status"] == "FAIL"]
     for row in failures:
         summary_lines.extend(
             [

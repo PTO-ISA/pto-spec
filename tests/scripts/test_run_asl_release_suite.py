@@ -57,6 +57,38 @@ def result(
 
 
 class ReleaseSuiteAggregationTest(unittest.TestCase):
+    def test_pretty_page_summary_reports_counts_and_slowest_points(self) -> None:
+        pretty_page_summary = getattr(asl_release_suite, "pretty_page_summary", None)
+        self.assertIsNotNone(pretty_page_summary)
+        values = [
+            {
+                **result(),
+                "id": "PTO-AVS-ARCH-FAST-001",
+                "display_name": "ARCH fast",
+                "duration_seconds": 1.0,
+            },
+            {
+                **result(status="failed"),
+                "id": "PTO-AVS-ARCH-SLOW-001",
+                "display_name": "ARCH slow",
+                "duration_seconds": 3.0,
+            },
+            {
+                **result(status="timeout"),
+                "id": "PTO-AVS-ARCH-MID-001",
+                "display_name": "ARCH mid",
+                "duration_seconds": 2.0,
+            },
+        ]
+        output = io.StringIO()
+
+        pretty_page_summary(values, elapsed_seconds=12.5, output=output)
+
+        text = output.getvalue()
+        self.assertIn("SUMMARY 1 passed, 2 failed, 12.500s elapsed", text)
+        self.assertLess(text.index("ARCH slow"), text.index("ARCH mid"))
+        self.assertLess(text.index("ARCH mid"), text.index("ARCH fast"))
+
     def test_exact_head_mismatch_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "exact HEAD"):
             require_exact_head("a" * 40, "b" * 40, "")
