@@ -12061,11 +12061,11 @@
     "tests/asl/block/attributes/B.DATR/block-bound-b-datr-layout-map-001.asl": "a9da84622fa3c308d2c3a9f52d6d1a11d71cd550af9c1ba81c3b124b19d89f59",
     "tests/asl/block/attributes/B.DATR/block-bound-b-datr-rmode-001.asl": "0fd204367c659e0f4519b95983e7b228c4155eea13e3e6cb6654ced750d82e42",
     "tests/asl/block/attributes/B.DATR/block-decode-b-datr-canonical-001.asl": "f42b97165059fc07dc48693b6ef21da777fe57f2a7e28d23869542c4a9b65822",
-    "tests/asl/block/attributes/B.DATR/block-exec-b-datr-data-attributes-001.asl": "53e0c0eab4e1b6474a598b653ef95b531288cf629c5405cbe5b9700cc01dcffc",
+    "tests/asl/block/attributes/B.DATR/block-exec-b-datr-data-attributes-001.asl": "01509d68f0b61952bdd86dc05b0577a3c73ab32f564ce6f5228f073661f96dcc",
     "tests/asl/block/attributes/B.DATR/block-exec-b-datr-omitted-pad-001.asl": "996f325d717c1454cdbcd6332f81defcbdbe2e6b767a679db7609f00ec606b83",
     "tests/asl/block/attributes/B.DATR/block-exec-b-datr-omitted-type-001.asl": "c70d683bfc11d53a00b77724739d4010ec42b669b1ec75219415c63622ba403e",
     "tests/asl/block/attributes/B.DATR/block-fault-b-datr-duplicate-001.asl": "7241d4fddb3f97ec55918afac1be2a6a0d90c848e532b158c32a2354f57e11dc",
-    "tests/asl/block/attributes/B.DATR/block-fault-b-datr-placement-001.asl": "72f3650dfed4e617041ea5d588f0bb522406e769a4f053506e60dee1c87f7a84",
+    "tests/asl/block/attributes/B.DATR/block-fault-b-datr-placement-001.asl": "7d27300633edc4868702ef66c6b4cc55be83e76e13faf16b4853fbe8402f6e01",
     "tests/asl/block/attributes/B.DATR/block-state-b-datr-fields-001.asl": "5b53eafe1d64e54e9655eaa9ec8dfe9d3c9169368e13a53d254fa37f7a232ea0",
     "tests/asl/block/attributes/B.DIM/block-bound-b-dim-gpr-001.asl": "0050301c2823c2a9c533dba50fc989857f08b2a506e4214f9eca856d1545b4e8",
     "tests/asl/block/attributes/B.DIM/block-bound-b-dim-low-16-001.asl": "a01b03b0d012fd0a7c4cee205b40660022d498c0ac2ac5b8ccc2800abcab790d",
@@ -12282,11 +12282,14 @@
     "tests/asl/block/lifecycle/MSET/block-decode-mset-canonical-001.asl": "9684b1189710db556e24181bae94b20cd9606077e112b3c5d01631c13200ec7f",
     "tests/asl/block/lifecycle/MSET/block-exec-mset-fill-001.asl": "51b801069c9663c00c60ad488edf0e462b652ebcfa5f4fc4206999053213afe7",
     "tests/asl/block/lifecycle/MSET/block-fault-mset-gpr-001.asl": "b2c13752c9eb302ef6746756ba1d98baec6f2dca9823bfb02dbe97cba99f0a42",
-    "tests/asl/block/model/commit/effects/block-state-tile-commit-lifecycle-001.asl": "a0024e96c7f746f61e0444c53449a2c623e702860005035d1501d50c19a5e72a",
+    "tests/asl/block/model/commit/effects/block-state-tile-commit-lifecycle-001.asl": "ef4330ac17e2506e446846e951be07a59893a1f0261dc86c445017dad40848c9",
     "tests/asl/block/model/commit/effects/block-static-effects-contract-001.asl": "a11d5cd4c0e10b6163717f452f5d934c63a8fbdba2a709fc03936eba9f06f0a6",
     "tests/asl/block/model/commit/validation/block-static-validation-contract-001.asl": "61d8f687f36ed4e5f143f06b73e0160202213625c8f8f75b31474dcd36d72846",
-    "tests/asl/block/model/dispatch/commands/block-bound-command-totality-boundaries-001.asl": "476867469dad1f6154ad7ecedd873d6aa934ab65e058d78885be7bb940558e00",
-    "tests/asl/block/model/dispatch/commands/block-exec-command-001.asl": "3cd3f7eafeebcfafe849d517e52ddc4ef8927ea8bc8e9649bfda0f2c620bc0ee",
+    "tests/asl/block/model/dispatch/commands/block-bound-command-totality-boundaries-001.asl": "45a6ce63e893f77b394567108afaabb41abc03ecf06af03dca7813186b15882c",
+    "tests/asl/block/model/dispatch/commands/block-exec-command-001.asl": "5b911ac5a6050494e8ae89dce81c7d8ed147152c5e2c9fef0f13c530e867c00d",
+    "tests/asl/block/model/dispatch/commands/block-exec-command-control-start-001.asl": "6c2b2a0f7d43373d37c000524e6e3c3136bde3dd71c5f2cef350e8c84a0403d7",
+    "tests/asl/block/model/dispatch/commands/block-exec-command-lifecycle-001.asl": "5863ac9638fe1bfc2a11dc5715ae4bacc7b26bb5ece0a30a7c008add7a620dcb",
+    "tests/asl/block/model/dispatch/commands/block-exec-command-tile-start-001.asl": "35d511fa10888c342f0ac04b60cf85dd3ee15ebf070194180ece8e6fd181ae3f",
     "tests/asl/block/model/dispatch/commands/block-static-commands-contract-001.asl": "4fb68145461fdb816e7d411115379c0d100d0581da89da25f9fa3189ddac5405",
     "tests/asl/block/model/dispatch/comparison-schema/block-static-comparison-schema-contract-001.asl": "9548b704edef7d87b6eb1680ddb3ae2a233fb93e1500f0304fa07eab9eba4b5f",
     "tests/asl/block/model/dispatch/cube-tmatmul/block-exec-tmatmul-aux-shape-001.asl": "b3cb238feee819d499c7447fe175e3a56f9131e28be9589df3e5540d285ac94c",
@@ -12307,7 +12310,7 @@
     "tests/asl/block/model/dispatch/cube-tmatmul/block-static-cube-tmatmul-contract-001.asl": "7165380af8d7f8cb1545bc53a2bdd79edcabbea1b88a95fff8894a70415c3413",
     "tests/asl/block/model/dispatch/decode/block-exec-decoded-start-and-stop-001.asl": "6f9220d1e9ade9730c4bf07cb984a739492bc55bef32f148d949b9a69b0275f5",
     "tests/asl/block/model/dispatch/decode/block-static-decode-contract-001.asl": "378ed1194c042a7d965504ede70407bd9c2f969d4f9db5eff21418a26f7bf8d0",
-    "tests/asl/block/model/dispatch/descriptor-legality/block-exec-descriptor-legality-dtype-none-001.asl": "02c4a4197c6857866032b1aaf6df95ca6d719acada246846156c4f7dd503011c",
+    "tests/asl/block/model/dispatch/descriptor-legality/block-exec-descriptor-legality-dtype-none-001.asl": "f9071df6e19d1417f879f54f098edcbd1e4c231e5662a82e678352bdb1df0374",
     "tests/asl/block/model/dispatch/descriptor-legality/block-static-descriptor-legality-contract-001.asl": "dc6cd4571bf7822d123b5f42a5a341f7e2653e654b3ec6fd924f2a8a3d97e896",
     "tests/asl/block/model/dispatch/destination-shape/block-bound-matrix-dest-shape-001.asl": "0476096e5eb9d3d51955bc9b263ff5e0778a9adc85f47ffe04516cdbfcd3f3e3",
     "tests/asl/block/model/dispatch/destination-shape/block-bound-tcolsum-dest-001.asl": "3afd92c738611ec0dcecd05a14dcccd921dfe454917d3d6128ec6bbb61621c58",
@@ -12356,12 +12359,12 @@
     "tests/asl/block/model/dispatch/top-level/block-static-top-level-contract-001.asl": "4ffcbb15e69f0fe11c2f89d59cc95ea51ef1b8720fccd6e9515f19a4947ac447",
     "tests/asl/block/model/faults/rollback/block-exec-tile-commit-001.asl": "594c4203078f9af00f996a9e31f551caf79b3ac3b6711bc47ed5b0e91a853ba1",
     "tests/asl/block/model/faults/rollback/block-fault-faults-001.asl": "098fe700300116871af9332a3cc9d01eed1f9f128a9f759455e2ba6ed506db4e",
-    "tests/asl/block/model/faults/rollback/block-fault-trap-context-route-and-recover-001.asl": "9072e85dee25770bb695dff6589a3febce24b34fd91031c917448047716963d1",
+    "tests/asl/block/model/faults/rollback/block-fault-trap-context-route-and-recover-001.asl": "6c163f45035375813562baa0da20855200e835d232890b42bb6db91a51931cad",
     "tests/asl/block/model/faults/rollback/block-static-rollback-contract-001.asl": "4edaeaada75418212faf68f03d7ee2fdb2f24f4eb96b500449dfbd1a43bd4d7b",
     "tests/asl/block/model/lifecycle/begin/block-state-lifecycle-001.asl": "81b9df8be49b21d91fd3c4435c8740e1950580f68324e9e7c66a06f535235c9e",
     "tests/asl/block/model/lifecycle/begin/block-static-begin-contract-001.asl": "b649a68bd437c76fa671811adb0cb397a43b4085bcd9a77447868bfa5894a2b7",
     "tests/asl/block/model/lifecycle/enter-stop/block-static-enter-stop-contract-001.asl": "367fe799b3f4003acb0bccaf5c4708458415d196b184f16309db7f67f05878e6",
-    "tests/asl/block/model/lifecycle/lifetime/block-exec-tile-allocation-and-001.asl": "c3dedb0cb2b5c91726a3ea4f24739a6cc98244f233831f9e3e7bd16f95fff576",
+    "tests/asl/block/model/lifecycle/lifetime/block-exec-tile-allocation-and-001.asl": "5f5e5da056b2a660fbc8d016f52d1adea94c11edb81d563360a3ab7887bbe3eb",
     "tests/asl/block/model/lifecycle/lifetime/block-exec-tile-undersized-allocation-001.asl": "24d6c16d00dfed69ac2041fd79399f5ffa85e92971a5fbab3ecbc8b32638a4a2",
     "tests/asl/block/model/lifecycle/lifetime/block-static-lifetime-contract-001.asl": "ba16ab7b0aaa23a078a097b0c3590dc46e836d19054309216a92a1f2927bee4e",
     "tests/asl/block/model/lifecycle/reset/block-static-reset-contract-001.asl": "679dbdcee89b28c6591f4992e9e1fa56535c90113565ca8711b3d62487953aad",
@@ -14335,7 +14338,7 @@
     "tests/asl/scalar/fsu/UCVTF/scalar-exec-ucvtf-src-001.asl": "9df4d2fd1a8881fceb73e2b3f2ae2b127d682e3ab556fd54d562dd0d4a2f9edf",
     "tests/asl/scalar/fsu/UCVTF/scalar-fault-ucvtf-types-001.asl": "e6e20ee406db1987c4948edff60904290c9d3499c9779d0120dd7616618f7a7e",
     "tests/asl/scalar/fsu/UCVTF/scalar-state-ucvtf-flags-001.asl": "97827bf19aeea1da5767cd6f8968882adcaa0de0d1e2b9ee55b56af61f550f8b",
-    "tests/asl/scalar/model/agu/addressing/scalar-exec-agu-dispatch-effects-001.asl": "d7775852707db9c981dc268e2797b4cf50def2865a7e5d2995ff5c46018c8ec3",
+    "tests/asl/scalar/model/agu/addressing/scalar-exec-agu-dispatch-effects-001.asl": "cbcb6f4f3a04789872993a6f8d486bf311a596d9d17738809953622d7e36979d",
     "tests/asl/scalar/model/agu/addressing/scalar-static-addressing-contract-001.asl": "5b720c104d678e877e0cfefba90a05401c4f4891457160925e2c3d9c0ea6f69a",
     "tests/asl/scalar/model/agu/memory/scalar-exec-memory-effects-001.asl": "e8092a4fcc7267269aa95bbf908894050070343813c2a5260ce52fde46aeaf09",
     "tests/asl/scalar/model/agu/memory/scalar-exec-pair-completion-001.asl": "e998f84da89580079f56d07ee9bda7620c1bfc9bcf3d00317a6974f5fc066196",
@@ -14387,8 +14390,13 @@
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-512-to-767-001.asl": "87ed95319520d5debc9e7c622f16788fe0e3b1069b9ed3eb6276730069fd8c93",
     "tests/asl/scalar/model/dispatch/sys/scalar-state-register-transfers-768-to-1023-001.asl": "70c85e1e9296db35de40a9cfbb71a540c5d31404c0f41578e32c55d0aecd955c",
     "tests/asl/scalar/model/dispatch/sys/scalar-static-sys-contract-001.asl": "6a8f540be84c94d0968c72b0e7ca119bf5e5d15648da10ad75a79bdcd6ff453b",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-exec-agu-canonical-001.asl": "7d419f0ae17caa87b43927975bfce549eda038bae636b1aa78597a5024e0bc8d",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-exec-amo-canonical-001.asl": "80b9e99f9b05ca0cc7dd7593dfeff47faa8a1cb308043d9f9f4a0088ad59de40",
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-binary-effects-001.asl": "06576904a52188b212ca122013f2e87ab775b9590c17b831efb462e41d31d766",
-    "tests/asl/scalar/model/dispatch/top-level/scalar-exec-dispatch-001.asl": "0603452e0a8ba10b8a6ad731c51ace2d1ca7876f215695ea85770d5d86e6a06b",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-exec-bru-canonical-001.asl": "c9deec4b72252db0191b75cd7bc61ac931f43cdeb8c22e62029e6e8247702ff5",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-exec-dispatch-001.asl": "b545be5d57972aa08af48ab807e1ea2fd29e0089f83e2996c01e217e5c611caa",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-exec-fsu-canonical-001.asl": "3d9eee57ffb8770aa4c8de097029ae0e515802bd0b7e86291687270541af3937",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-exec-sys-canonical-001.asl": "0f25235aa9ea79cb274d472d8bfe66b928ed4a26c666f5bd9b47e70c612003ca",
     "tests/asl/scalar/model/dispatch/top-level/scalar-static-top-level-contract-001.asl": "4a1d3eeac365fc028d6f166f641440442b183dbde23b2fe91e60969c1a05cec5",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl": "f69215340e4386705e0c6015f439b8095a354a3dff748f4b79b48f81ce3ed64d",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-fp-dispatch-effects-001.asl": "c524593e05c0f0f763f183dfd80c1e1561563c4d1f9af1d04b19b1c3b99598b5",
@@ -14396,9 +14404,9 @@
     "tests/asl/scalar/model/fsu/arithmetic/scalar-static-arithmetic-contract-001.asl": "75f3c757212d5f07e16173c1d9934d285b2fae56c3e96066a7dc1979e33d6bd3",
     "tests/asl/scalar/model/fsu/profile/scalar-static-profile-contract-001.asl": "03f43acc843b027876eddf985a01156ad0b8e0c5eb847d27be6189194cdefd75",
     "tests/asl/scalar/model/sys/registers/scalar-static-registers-contract-001.asl": "1e6ccc57aa4299b7e1b4bd480761016bfbbac7bfc31f860849926d3514fa56e0",
-    "tests/asl/scalar/model/sys/semantics/scalar-exec-service-request-control-001.asl": "58d00312a1cf3b1b35a36b6f5dbfb1cbe18e42fab177ec198850715470c456e8",
-    "tests/asl/scalar/model/sys/semantics/scalar-exec-system-001.asl": "0cf88f1ced71e75aa36c718e08190510beefb62d15afcfffd82a521a45af388a",
-    "tests/asl/scalar/model/sys/semantics/scalar-exec-system-dispatch-effects-001.asl": "e9382b117d8baf46de04b0da7526dcb91eb4d25a416d540ad1ef2acb9845861b",
+    "tests/asl/scalar/model/sys/semantics/scalar-exec-service-request-control-001.asl": "efd1277a41c7c46a9704eda6a4764d9b85fd1fc20644b17f411cfb46eea8a1b0",
+    "tests/asl/scalar/model/sys/semantics/scalar-exec-system-001.asl": "1ea1ec712a97c4e81a9d5d5432b5360233f5ac1326709c393b39148aea5b6179",
+    "tests/asl/scalar/model/sys/semantics/scalar-exec-system-dispatch-effects-001.asl": "9ab846e982efce407efabe4e4e6ffb7b916446df537a4b6f8729e992f5d16a9f",
     "tests/asl/scalar/model/sys/semantics/scalar-static-semantics-contract-001.asl": "94f20788eda611573f17427fa6cbc9896bfa40eaa8c86843570b723bf9015b61",
     "tests/asl/scalar/model/types/operands/scalar-static-operands-contract-001.asl": "50309ed5f605efa5bf4f2ae949c3378d493d5591a2e7867cf3b3f7c13c1bde6a",
     "tests/asl/scalar/model/types/operations/scalar-static-operations-contract-001.asl": "d5cde4ceb9b26687390ccb6f6cd8366246f67b9afde9e8802b99b64d837399b9",
@@ -14943,28 +14951,28 @@
     "tests/asl/tile/model/dispatch/memory-and-data-movement/tile-static-memory-and-data-movement-contract-001.asl": "c45cbc282e4ab81eb5ad4cec47a441579f56a678eb5b75e726a4a9e786af92b0",
     "tests/asl/tile/model/dispatch/reduce-and-expand/tile-static-reduce-and-expand-contract-001.asl": "2e862791de929f6984ae38d0e17093a32efb1070009c931721df9a67ee36215f",
     "tests/asl/tile/model/dispatch/tile-scalar-and-immediate/tile-static-tile-scalar-and-immediate-contract-001.asl": "0487c7d6c50d554d650fc466e10639bd4963dcac6a21a350443ebf84031fdad2",
-    "tests/asl/tile/model/dispatch/top-level/tile-bound-handler-closure-001.asl": "d667e81b302cf13e32c8e1a2839dedea74bb20b1c3db1698cac8f13e0f6eb6d4",
-    "tests/asl/tile/model/dispatch/top-level/tile-bound-selector-closure-extensions-001.asl": "1921ece1040f5ee10a0b44018f264dff4954ae90295553f5796122c7a6adfa8d",
+    "tests/asl/tile/model/dispatch/top-level/tile-bound-handler-closure-001.asl": "82893de555edab04dda7595f306ffdafb33ee82b4cf3028afa4ab7ee5bf3313b",
+    "tests/asl/tile/model/dispatch/top-level/tile-bound-selector-closure-extensions-001.asl": "6464df8d66c016eaf9104428647523e16b1753ef8b52fa2be3101f35eb9d274c",
     "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-carrier-totality-001.asl": "a8fad4de3cd79dc3d75bc1f6896e803e03117855eb0094e3c9e282c5eeb5134a",
     "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-index-corners-004.asl": "8acb285ad9ef62c5a40ab2c882931abaeb21a512826f1b41d54059b97150e8bf",
     "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-layout-alias-003.asl": "7dddc7b7d500ae829750994d2616c5fc704b701d3a83bc364780c0f1d1cf9c12",
     "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-reserved-002.asl": "ac0c7b9bdddc6dc95cc0efa0143af9a74f8113e3091ade150cedf97c506d161d",
     "tests/asl/tile/model/dispatch/top-level/tile-bound-vec-sfu-results-005.asl": "acf3a12c2432e54e9edf71b8c745eea66660e27d9bb6c4fa5ad91a7c7cffcded",
-    "tests/asl/tile/model/dispatch/top-level/tile-exec-decoded-001.asl": "b0fa0075f6fef949626d08ff64281851f7dae59d7838e5ab3b3ae0763088a916",
+    "tests/asl/tile/model/dispatch/top-level/tile-exec-decoded-001.asl": "75e7b68f0ea267798c3c4ae9f1fc4915e00e0e11e1459c394d1d1c274d3db010",
     "tests/asl/tile/model/dispatch/top-level/tile-static-top-level-contract-001.asl": "984000828d18dbee173ee320ebee6c3b70a9499f8ee2ee07ed6949b2d3061b1c",
     "tests/asl/tile/model/execution/comparison/tile-static-comparison-contract-001.asl": "bcfbbfb45ac2a7fe8412387be9f7c5823d9c6b54cb649d8f11e51e2998be47be",
-    "tests/asl/tile/model/execution/complex/tile-exec-complex-operations-001.asl": "8cddd460d3aa8c17ed76228bdf63d2f634a3bbfdf3cb52f94bbfcf1324b7d759",
+    "tests/asl/tile/model/execution/complex/tile-exec-complex-operations-001.asl": "d633d33f5e5bf912263bfeeeea0aa6295046f18369e1994f427b7496fa965d6e",
     "tests/asl/tile/model/execution/complex/tile-static-complex-contract-001.asl": "782685cbcd903af93ff40bc328793005a86a7acc0da758e225bc9754fd3373d7",
     "tests/asl/tile/model/execution/cube/tile-bound-preflight-002.asl": "a369c3373b3e88a0ad16260363110257d79b3df2d90d576af2406be4e07adc97",
     "tests/asl/tile/model/execution/cube/tile-bound-totality-001.asl": "97a5b78aa1af14756ba2851461fffd0f270f8c263ea99f8639942610f56d0394",
-    "tests/asl/tile/model/execution/cube/tile-exec-matmul-001.asl": "6aaa77f8f1793e542a0aae6318f49b336176f72eb862e9d85a53dc040f8a21e4",
+    "tests/asl/tile/model/execution/cube/tile-exec-matmul-001.asl": "fa090d57c36bb0f629fac54e407f330f158e9ad1e0144f8df3023c560883811f",
     "tests/asl/tile/model/execution/cube/tile-static-cube-contract-001.asl": "fd9dd8102a0da44356e571839ef289abbac473221d6c4ed4459f4d0009594085",
     "tests/asl/tile/model/execution/elementwise/tile-exec-and-aliasing-001.asl": "f491848f5b07285b0d8fdd78f8aeb4683fae618cd54560a9d68d66aef66ec272",
     "tests/asl/tile/model/execution/elementwise/tile-static-elementwise-contract-001.asl": "c7ba7ab11c1d6c547b0443b93d0d370af10c2a4ff146fa678bcd9c096745ed8e",
     "tests/asl/tile/model/execution/expansion/tile-exec-expansion-operations-001.asl": "4a4d067de7ac8253c91255c39880a1147b5c762715c25ab34d56cccd425f5e74",
     "tests/asl/tile/model/execution/expansion/tile-static-expansion-contract-001.asl": "5cba3cde84fda63716707232adbaeb0d1bb5b3b8a1d7af8749aa5ff690a789e0",
     "tests/asl/tile/model/execution/fused-multiply-add/tile-static-fused-multiply-add-contract-001.asl": "8e85f1cc214a81a2368844aae2b71bd5a0d8f971a32ea00036c10995e6cdb274",
-    "tests/asl/tile/model/execution/generation/tile-exec-generation-operations-001.asl": "e07692420f802e0d03f36cbeef385bf921d8f5d2ffd53a2ce2af404bc28216ef",
+    "tests/asl/tile/model/execution/generation/tile-exec-generation-operations-001.asl": "1ea490849246684e4b69d3d58637532cc7e87fb41adbe4486caeb6c5454cd5cd",
     "tests/asl/tile/model/execution/generation/tile-static-generation-contract-001.asl": "4b5e8ddb6fc7479d1958fa9a4cc3e10df6b8435d40c07136ef3a53317675277a",
     "tests/asl/tile/model/execution/image-to-column/tile-exec-img2col-offset-001.asl": "0943b5546a5249003843a14df2c0278eafa57f016fc6128037870e6811b51173",
     "tests/asl/tile/model/execution/image-to-column/tile-static-image-to-column-contract-001.asl": "5abccd2b38b6ca96e2b70120fba684294f37938c25f7a30becc614add7a64105",
@@ -15000,8 +15008,8 @@
     "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-vprelu-001.asl": "7c3cac790e6e491001e243dae6f2611404b820f5d937a9dafa1108365a9a03ab",
     "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-vquant-001.asl": "400c5f75816686cdb7acadd9a054c5acda5a4cc237bef98f2455092172bfcdc2",
     "tests/asl/tile/model/legality/matrix-postprocess/tile-static-matrix-postprocess-contract-001.asl": "13236af3657b566a4e0489442f948de7f2ebb4005d2c42d5fd13faa49f86428d",
-    "tests/asl/tile/model/legality/matrix-shape/tile-bound-numeric-contract-legality-001.asl": "931ed551beffd9ddeeac6ac63709a568cef6c412542f651091e336357a6d1e7e",
-    "tests/asl/tile/model/legality/matrix-shape/tile-exec-physical-accumulator-classes-001.asl": "16076f7d4db0046d3b54278bfaa311590da351eff778d99c6b49866bd1cfdd22",
+    "tests/asl/tile/model/legality/matrix-shape/tile-bound-numeric-contract-legality-001.asl": "95eee8fc45ca5a1fcc1a3dfd9246225a4dfa16296746897abe21e90b8350dea6",
+    "tests/asl/tile/model/legality/matrix-shape/tile-exec-physical-accumulator-classes-001.asl": "df3babc5baee2dd58ee1d77ac539a64c852ae0e9c1c8eb885735b0a7d53f11d4",
     "tests/asl/tile/model/legality/matrix-shape/tile-static-matrix-shape-contract-001.asl": "8b8b0332ed905744f10b06a47279ddf399f49d4c55e6aa29cbae9dced9d3b0de",
     "tests/asl/tile/model/legality/memory-schema/tile-static-memory-schema-contract-001.asl": "73f9b8d2c868e9ff8c7d26e74eccae471bf5db1974e2153711c88c00fe134335",
     "tests/asl/tile/model/legality/operand-schema/tile-fault-decoded-legality-faults-001.asl": "1930476b3b2de0a7d75aa5921a7c5cfbb0470e78104f9c218e19d4b7fcbbc8b2",
@@ -15021,7 +15029,7 @@
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl": "5cbc214f80bb7888ebea2aa582dbd78479ec52a25161fec9f5609abd6bd414d1",
     "tests/asl/tile/model/memory/load-store/tile-exec-memory-snapshot-001.asl": "f6caed9a89482a36af5192fa817cab4f1aab2eaafa2b5ab471264b17fbacffb5",
     "tests/asl/tile/model/memory/load-store/tile-static-load-store-contract-001.asl": "a520fb4fa4e0da1c31c5cf32de5a820a61fb56a4bb0a43dfdb53b26a3d3d77a1",
-    "tests/asl/tile/model/memory/restart/tile-exec-memory-completion-and-001.asl": "392f9f2f0ba3aba6a1ab23558157a55510fb11bef32d81a2b2a2f7bd977a0efc",
+    "tests/asl/tile/model/memory/restart/tile-exec-memory-completion-and-001.asl": "c84d1d6fa4494cc6380ad4767181b623f4e82e2753762984b580085a4d77da71",
     "tests/asl/tile/model/memory/restart/tile-static-restart-contract-001.asl": "b098f4fcc88b6d4dc0115584a60305c9a95b638048b82769949a5686e468b3ab",
     "tests/asl/tile/model/memory/shared-movement/tile-static-shared-movement-contract-001.asl": "f54001f2b86ea0dbd3cf9ff048155f0a058e7bce8de84d36de5741af891088dd",
     "tests/asl/tile/model/memory/stride/tile-static-stride-contract-001.asl": "79b2d1cc67a26b8d27674fc40390b678364d6471baf28dbe36cf54bfc69b9807",
@@ -15155,7 +15163,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 823,
     "status": "closed",
-    "test_count": 3185,
+    "test_count": 3193,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -23378,7 +23386,7 @@
       "requirements": [
         "PTO-INST-BLOCK-B-DATR"
       ],
-      "sha256": "72f3650dfed4e617041ea5d588f0bb522406e769a4f053506e60dee1c87f7a84",
+      "sha256": "7d27300633edc4868702ef66c6b4cc55be83e76e13faf16b4853fbe8402f6e01",
       "source": "asl/block/attributes/B.DATR.asl"
     },
     {
@@ -24578,11 +24586,35 @@
       "source": "asl/block/lifecycle/C.BSTOP.asl"
     },
     {
-      "id": "PTO-AVS-BLOCK-CMD-EXEC-001",
+      "id": "PTO-AVS-BLOCK-CMD-CTRLSTART-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/commands/block-exec-command-control-start-001.asl",
+      "requirements": [],
+      "sha256": "6c2b2a0f7d43373d37c000524e6e3c3136bde3dd71c5f2cef350e8c84a0403d7",
+      "source": "asl/block/model/dispatch/commands.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-CMD-HEADER-001",
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/commands/block-exec-command-001.asl",
       "requirements": [],
-      "sha256": "3cd3f7eafeebcfafe849d517e52ddc4ef8927ea8bc8e9649bfda0f2c620bc0ee",
+      "sha256": "5b911ac5a6050494e8ae89dce81c7d8ed147152c5e2c9fef0f13c530e867c00d",
+      "source": "asl/block/model/dispatch/commands.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-CMD-LIFECYCLE-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/commands/block-exec-command-lifecycle-001.asl",
+      "requirements": [],
+      "sha256": "5863ac9638fe1bfc2a11dc5715ae4bacc7b26bb5ece0a30a7c008add7a620dcb",
+      "source": "asl/block/model/dispatch/commands.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-CMD-TILESTART-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/commands/block-exec-command-tile-start-001.asl",
+      "requirements": [],
+      "sha256": "35d511fa10888c342f0ac04b60cf85dd3ee15ebf070194180ece8e6fd181ae3f",
       "source": "asl/block/model/dispatch/commands.asl"
     },
     {
@@ -24590,7 +24622,7 @@
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/descriptor-legality/block-exec-descriptor-legality-dtype-none-001.asl",
       "requirements": [],
-      "sha256": "02c4a4197c6857866032b1aaf6df95ca6d719acada246846156c4f7dd503011c",
+      "sha256": "f9071df6e19d1417f879f54f098edcbd1e4c231e5662a82e678352bdb1df0374",
       "source": "asl/block/model/dispatch/descriptor-legality.asl"
     },
     {
@@ -25848,7 +25880,7 @@
       "kind": "boundary",
       "path": "tests/asl/block/model/dispatch/commands/block-bound-command-totality-boundaries-001.asl",
       "requirements": [],
-      "sha256": "476867469dad1f6154ad7ecedd873d6aa934ab65e058d78885be7bb940558e00",
+      "sha256": "45a6ce63e893f77b394567108afaabb41abc03ecf06af03dca7813186b15882c",
       "source": "asl/block/model/dispatch/commands.asl"
     },
     {
@@ -25866,7 +25898,7 @@
       "requirements": [
         "PTO-INST-BLOCK-B-DATR"
       ],
-      "sha256": "53e0c0eab4e1b6474a598b653ef95b531288cf629c5405cbe5b9700cc01dcffc",
+      "sha256": "01509d68f0b61952bdd86dc05b0577a3c73ab32f564ce6f5228f073661f96dcc",
       "source": "asl/block/attributes/B.DATR.asl"
     },
     {
@@ -25918,7 +25950,7 @@
       "kind": "execution",
       "path": "tests/asl/block/model/lifecycle/lifetime/block-exec-tile-allocation-and-001.asl",
       "requirements": [],
-      "sha256": "c3dedb0cb2b5c91726a3ea4f24739a6cc98244f233831f9e3e7bd16f95fff576",
+      "sha256": "5f5e5da056b2a660fbc8d016f52d1adea94c11edb81d563360a3ab7887bbe3eb",
       "source": "asl/block/model/lifecycle/lifetime.asl"
     },
     {
@@ -25936,7 +25968,7 @@
       "kind": "state-transition",
       "path": "tests/asl/block/model/commit/effects/block-state-tile-commit-lifecycle-001.asl",
       "requirements": [],
-      "sha256": "a0024e96c7f746f61e0444c53449a2c623e702860005035d1501d50c19a5e72a",
+      "sha256": "ef4330ac17e2506e446846e951be07a59893a1f0261dc86c445017dad40848c9",
       "source": "asl/block/model/commit/effects.asl"
     },
     {
@@ -25968,7 +26000,7 @@
       "kind": "fault",
       "path": "tests/asl/block/model/faults/rollback/block-fault-trap-context-route-and-recover-001.asl",
       "requirements": [],
-      "sha256": "9072e85dee25770bb695dff6589a3febce24b34fd91031c917448047716963d1",
+      "sha256": "6c163f45035375813562baa0da20855200e835d232890b42bb6db91a51931cad",
       "source": "asl/block/model/faults/rollback.asl"
     },
     {
@@ -30831,6 +30863,22 @@
       "source": "asl/scalar/alu/ADDW.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-AGU-CANON-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-exec-agu-canonical-001.asl",
+      "requirements": [],
+      "sha256": "7d419f0ae17caa87b43927975bfce549eda038bae636b1aa78597a5024e0bc8d",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-ALU-CANON-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-exec-dispatch-001.asl",
+      "requirements": [],
+      "sha256": "b545be5d57972aa08af48ab807e1ea2fd29e0089f83e2996c01e217e5c611caa",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-ALU-CONTROL-ALIAS-EXEC-004",
       "kind": "execution",
       "path": "tests/asl/scalar/model/alu/semantics/scalar-exec-alu-control-alias-004.asl",
@@ -30893,6 +30941,14 @@
       "requirements": [],
       "sha256": "209f07235301271daf400e4c1818fe905a0adecf0b26dcda993664ea9bae4772",
       "source": "asl/scalar/model/dispatch/amo.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-AMO-CANON-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-exec-amo-canonical-001.asl",
+      "requirements": [],
+      "sha256": "80b9e99f9b05ca0cc7dd7593dfeff47faa8a1cb308043d9f9f4a0088ad59de40",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
     },
     {
       "id": "PTO-AVS-SCALAR-AMO-EFFECTS-001",
@@ -31267,6 +31323,14 @@
       ],
       "sha256": "caa22fa8dac1e04bb0a1e967046697dcde558800955c037bd18198b8ad7ff831",
       "source": "asl/scalar/alu/BIS.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-BRU-CANON-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-exec-bru-canonical-001.asl",
+      "requirements": [],
+      "sha256": "c9deec4b72252db0191b75cd7bc61ac931f43cdeb8c22e62029e6e8247702ff5",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
     },
     {
       "id": "PTO-AVS-SCALAR-BSE-DECODE-001",
@@ -32499,14 +32563,6 @@
       "source": "asl/scalar/sys/DC.ZVA.asl"
     },
     {
-      "id": "PTO-AVS-SCALAR-DISPATCH-001",
-      "kind": "execution",
-      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-exec-dispatch-001.asl",
-      "requirements": [],
-      "sha256": "0603452e0a8ba10b8a6ad731c51ace2d1ca7876f215695ea85770d5d86e6a06b",
-      "source": "asl/scalar/model/dispatch/top-level.asl"
-    },
-    {
       "id": "PTO-AVS-SCALAR-DIV-DECODE-001",
       "kind": "decode-positive",
       "path": "tests/asl/scalar/alu/DIV/scalar-decode-div-canonical-001.asl",
@@ -32941,6 +32997,14 @@
       ],
       "sha256": "7c14e2c83cc12c9d7dda01c388b41631ae7484cae375dbe021e80465a51f4db4",
       "source": "asl/scalar/fsu/FSQRT.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-FSU-CANON-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-exec-fsu-canonical-001.asl",
+      "requirements": [],
+      "sha256": "3d9eee57ffb8770aa4c8de097029ae0e515802bd0b7e86291687270541af3937",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
     },
     {
       "id": "PTO-AVS-SCALAR-FSUB-DECODE-001",
@@ -39135,6 +39199,14 @@
       "source": "asl/scalar/agu/SWI.U.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-SYS-CANON-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-exec-sys-canonical-001.asl",
+      "requirements": [],
+      "sha256": "0f25235aa9ea79cb274d472d8bfe66b928ed4a26c666f5bd9b47e70c612003ca",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-SYS-EFFECTS-001",
       "kind": "execution",
       "path": "tests/asl/scalar/model/dispatch/sys/scalar-exec-effects-001.asl",
@@ -39291,7 +39363,7 @@
       "kind": "execution",
       "path": "tests/asl/scalar/model/agu/addressing/scalar-exec-agu-dispatch-effects-001.asl",
       "requirements": [],
-      "sha256": "d7775852707db9c981dc268e2797b4cf50def2865a7e5d2995ff5c46018c8ec3",
+      "sha256": "cbcb6f4f3a04789872993a6f8d486bf311a596d9d17738809953622d7e36979d",
       "source": "asl/scalar/model/agu/addressing.asl"
     },
     {
@@ -39387,7 +39459,7 @@
       "kind": "execution",
       "path": "tests/asl/scalar/model/sys/semantics/scalar-exec-system-001.asl",
       "requirements": [],
-      "sha256": "0cf88f1ced71e75aa36c718e08190510beefb62d15afcfffd82a521a45af388a",
+      "sha256": "1ea1ec712a97c4e81a9d5d5432b5360233f5ac1326709c393b39148aea5b6179",
       "source": "asl/scalar/model/sys/semantics.asl"
     },
     {
@@ -39395,7 +39467,7 @@
       "kind": "execution",
       "path": "tests/asl/scalar/model/sys/semantics/scalar-exec-system-dispatch-effects-001.asl",
       "requirements": [],
-      "sha256": "e9382b117d8baf46de04b0da7526dcb91eb4d25a416d540ad1ef2acb9845861b",
+      "sha256": "9ab846e982efce407efabe4e4e6ffb7b916446df537a4b6f8729e992f5d16a9f",
       "source": "asl/scalar/model/sys/semantics.asl"
     },
     {
@@ -39403,7 +39475,7 @@
       "kind": "execution",
       "path": "tests/asl/scalar/model/sys/semantics/scalar-exec-service-request-control-001.asl",
       "requirements": [],
-      "sha256": "58d00312a1cf3b1b35a36b6f5dbfb1cbe18e42fab177ec198850715470c456e8",
+      "sha256": "efd1277a41c7c46a9704eda6a4764d9b85fd1fc20644b17f411cfb46eea8a1b0",
       "source": "asl/scalar/model/sys/semantics.asl"
     },
     {
@@ -43129,7 +43201,7 @@
       "kind": "execution",
       "path": "tests/asl/tile/model/dispatch/top-level/tile-exec-decoded-001.asl",
       "requirements": [],
-      "sha256": "b0fa0075f6fef949626d08ff64281851f7dae59d7838e5ab3b3ae0763088a916",
+      "sha256": "75e7b68f0ea267798c3c4ae9f1fc4915e00e0e11e1459c394d1d1c274d3db010",
       "source": "asl/tile/model/dispatch/top-level.asl"
     },
     {
@@ -43145,7 +43217,7 @@
       "kind": "boundary",
       "path": "tests/asl/tile/model/legality/matrix-shape/tile-bound-numeric-contract-legality-001.asl",
       "requirements": [],
-      "sha256": "931ed551beffd9ddeeac6ac63709a568cef6c412542f651091e336357a6d1e7e",
+      "sha256": "95eee8fc45ca5a1fcc1a3dfd9246225a4dfa16296746897abe21e90b8350dea6",
       "source": "asl/tile/model/legality/matrix-shape.asl"
     },
     {
@@ -43153,7 +43225,7 @@
       "kind": "execution",
       "path": "tests/asl/tile/model/legality/matrix-shape/tile-exec-physical-accumulator-classes-001.asl",
       "requirements": [],
-      "sha256": "16076f7d4db0046d3b54278bfaa311590da351eff778d99c6b49866bd1cfdd22",
+      "sha256": "df3babc5baee2dd58ee1d77ac539a64c852ae0e9c1c8eb885735b0a7d53f11d4",
       "source": "asl/tile/model/legality/matrix-shape.asl"
     },
     {
@@ -43177,7 +43249,7 @@
       "kind": "execution",
       "path": "tests/asl/tile/model/execution/complex/tile-exec-complex-operations-001.asl",
       "requirements": [],
-      "sha256": "8cddd460d3aa8c17ed76228bdf63d2f634a3bbfdf3cb52f94bbfcf1324b7d759",
+      "sha256": "d633d33f5e5bf912263bfeeeea0aa6295046f18369e1994f427b7496fa965d6e",
       "source": "asl/tile/model/execution/complex.asl"
     },
     {
@@ -43217,7 +43289,7 @@
       "kind": "execution",
       "path": "tests/asl/tile/model/execution/generation/tile-exec-generation-operations-001.asl",
       "requirements": [],
-      "sha256": "e07692420f802e0d03f36cbeef385bf921d8f5d2ffd53a2ce2af404bc28216ef",
+      "sha256": "1ea490849246684e4b69d3d58637532cc7e87fb41adbe4486caeb6c5454cd5cd",
       "source": "asl/tile/model/execution/generation.asl"
     },
     {
@@ -43225,7 +43297,7 @@
       "kind": "boundary",
       "path": "tests/asl/tile/model/dispatch/top-level/tile-bound-handler-closure-001.asl",
       "requirements": [],
-      "sha256": "d667e81b302cf13e32c8e1a2839dedea74bb20b1c3db1698cac8f13e0f6eb6d4",
+      "sha256": "82893de555edab04dda7595f306ffdafb33ee82b4cf3028afa4ab7ee5bf3313b",
       "source": "asl/tile/model/dispatch/top-level.asl"
     },
     {
@@ -43233,7 +43305,7 @@
       "kind": "execution",
       "path": "tests/asl/tile/model/execution/cube/tile-exec-matmul-001.asl",
       "requirements": [],
-      "sha256": "6aaa77f8f1793e542a0aae6318f49b336176f72eb862e9d85a53dc040f8a21e4",
+      "sha256": "fa090d57c36bb0f629fac54e407f330f158e9ad1e0144f8df3023c560883811f",
       "source": "asl/tile/model/execution/cube.asl"
     },
     {
@@ -43241,7 +43313,7 @@
       "kind": "execution",
       "path": "tests/asl/tile/model/memory/restart/tile-exec-memory-completion-and-001.asl",
       "requirements": [],
-      "sha256": "392f9f2f0ba3aba6a1ab23558157a55510fb11bef32d81a2b2a2f7bd977a0efc",
+      "sha256": "c84d1d6fa4494cc6380ad4767181b623f4e82e2753762984b580085a4d77da71",
       "source": "asl/tile/model/memory/restart.asl"
     },
     {
@@ -43265,7 +43337,7 @@
       "kind": "boundary",
       "path": "tests/asl/tile/model/dispatch/top-level/tile-bound-selector-closure-extensions-001.asl",
       "requirements": [],
-      "sha256": "1921ece1040f5ee10a0b44018f264dff4954ae90295553f5796122c7a6adfa8d",
+      "sha256": "6464df8d66c016eaf9104428647523e16b1753ef8b52fa2be3101f35eb9d274c",
       "source": "asl/tile/model/dispatch/top-level.asl"
     },
     {
@@ -48861,13 +48933,19 @@
       "id": "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
       "mnemonic": null,
       "semantic_tests": [
-        "PTO-AVS-BLOCK-CMD-EXEC-001",
+        "PTO-AVS-BLOCK-CMD-CTRLSTART-001",
+        "PTO-AVS-BLOCK-CMD-HEADER-001",
+        "PTO-AVS-BLOCK-CMD-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-CMD-TILESTART-001",
         "PTO-AVS-BLOCK-TESTBUNDLECOMMANDTOTALITYBOUNDARIES-BOUNDARY-001"
       ],
       "source": "asl/block/model/dispatch/commands.asl",
       "surface": "block",
       "tests": [
-        "PTO-AVS-BLOCK-CMD-EXEC-001",
+        "PTO-AVS-BLOCK-CMD-CTRLSTART-001",
+        "PTO-AVS-BLOCK-CMD-HEADER-001",
+        "PTO-AVS-BLOCK-CMD-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-CMD-TILESTART-001",
         "PTO-AVS-BLOCK-MODEL-DISPATCH-COMMANDS-STATIC-001",
         "PTO-AVS-BLOCK-TESTBUNDLECOMMANDTOTALITYBOUNDARIES-BOUNDARY-001"
       ]
@@ -61860,15 +61938,25 @@
       "id": "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
       "mnemonic": null,
       "semantic_tests": [
+        "PTO-AVS-SCALAR-AGU-CANON-001",
+        "PTO-AVS-SCALAR-ALU-CANON-001",
+        "PTO-AVS-SCALAR-AMO-CANON-001",
         "PTO-AVS-SCALAR-BINARY-EFFECTS-001",
-        "PTO-AVS-SCALAR-DISPATCH-001"
+        "PTO-AVS-SCALAR-BRU-CANON-001",
+        "PTO-AVS-SCALAR-FSU-CANON-001",
+        "PTO-AVS-SCALAR-SYS-CANON-001"
       ],
       "source": "asl/scalar/model/dispatch/top-level.asl",
       "surface": "scalar",
       "tests": [
+        "PTO-AVS-SCALAR-AGU-CANON-001",
+        "PTO-AVS-SCALAR-ALU-CANON-001",
+        "PTO-AVS-SCALAR-AMO-CANON-001",
         "PTO-AVS-SCALAR-BINARY-EFFECTS-001",
-        "PTO-AVS-SCALAR-DISPATCH-001",
-        "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001"
+        "PTO-AVS-SCALAR-BRU-CANON-001",
+        "PTO-AVS-SCALAR-FSU-CANON-001",
+        "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001",
+        "PTO-AVS-SCALAR-SYS-CANON-001"
       ]
     },
     {

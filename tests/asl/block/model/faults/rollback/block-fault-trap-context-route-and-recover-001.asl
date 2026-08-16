@@ -38,8 +38,8 @@ begin
     SetBundleTileBinding(15, TRUE, 2, 7, '1111', TRUE, TRUE, 10, 11,
         TRUE);
     SetBundleControlAttributeState(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE);
-    SetBundleDataAttributeState(Zeros{5} + 1, Zeros{5} + 2,
-        Zeros{2} + 3, Zeros{3} + 1, Zeros{3} + 2, TRUE);
+    SetBundleDataAttributeState(Zeros{5} + 1, Zeros{5} + 3,
+        Zeros{2} + 3, Zeros{3} + 1, Zeros{3} + 2, TRUE, FALSE);
 
     assert CurrentACR() == 2;
     assert AccessControlRingBits(CurrentACR()) == '0010';
@@ -80,7 +80,7 @@ begin
         FALSE);
     SetBundleControlAttributeState(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE);
     SetBundleDataAttributeState(Zeros{5}, Zeros{5}, Zeros{2},
-        Zeros{3}, Zeros{3}, FALSE);
+        Zeros{3}, Zeros{3}, FALSE, FALSE);
     let saved_control = PTOv0ReadContextRegister(1, 0x0f40);
     let saved_ecstate = PTOv0ReadContextRegister(1, 0x0f00);
     assert CurrentACR() == 1;
@@ -91,7 +91,26 @@ begin
     assert saved_control[3:0] == '0010';
     assert PTOv0ReadContextRegister(1, 0x0f41)[0] == '0';
     assert PTOv0ReadContextRegister(1, 0x0f43)[0] == '0';
+    // A direct semantic-helper invocation does not pass through
+    // BeginArchitecturalInstructionAttempt(), so clear the handled fault just
+    // as decoded ACRE execution does before committing its system block.
+    ClearFault();
+    // Install the trap handler's live system block without using the test-only
+    // whole-model reset, which intentionally invalidates saved trap contexts.
+    _BundleActive = FALSE;
+    _BundleBodyActive = FALSE;
+    ClearBundleHeaderState();
+    WriteTPC(Zeros{PTO_XLEN} + 0xa00);
+    BeginBundle(BundleKind_System, BundleTransfer_Fallthrough,
+        Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0xa04,
+        Zeros{PTO_XLEN} + 0xa04, FALSE);
+    EnterBundleBody();
+    assert CurrentACR() == 1;
+    let recoverable = TrapContextRecoverable(1);
+    assert recoverable;
     ArchitectureEnterRequest('0001');
+    assert _LastFault == Fault_None;
+    assert !_TrapContexts[[1]].valid;
     assert CurrentACR() == 2;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x304;
     assert ReadBPC() == Zeros{PTO_XLEN} + 0x300;

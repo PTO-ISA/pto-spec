@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-TILE-TESTTILECOMPLEX-EXECUTION-001","source":"asl/tile/model/execution/complex.asl","requirements":[],"kind":"execution","summary":"Covers Tile Complex.","pass_condition":"TestTileComplex completes without assertion failure","related_sources":[]}
 func TestTileComplex()
 begin
-    ConfigureTile(29, 256, 1, 4, 1, 3, TileDataType_U64,
+    ConfigureTile(29, 256, 1, 4, 1, 3, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(30, 256, 1, 4, 1, 2, TileDataType_U64,
+    ConfigureTile(30, 256, 1, 4, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(31, 256, 1, 4, 1, 3, TileDataType_U64,
+    ConfigureTile(31, 256, 1, 4, 1, 3, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 4);
@@ -18,13 +18,13 @@ begin
     assert ReadTileElement(31, 0, 1) == Zeros{PTO_XLEN} + 7;
     assert ReadTileElement(31, 0, 2) == Zeros{PTO_XLEN} + 6;
 
-    ConfigureTile(45, 256, 1, 4, 1, 3, TileDataType_U64,
+    ConfigureTile(45, 256, 1, 4, 1, 3, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(46, 256, 1, 4, 1, 3, TileDataType_U64,
+    ConfigureTile(46, 256, 1, 4, 1, 3, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(47, 256, 1, 4, 1, 3, TileDataType_U64,
+    ConfigureTile(47, 256, 1, 4, 1, 3, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(48, 256, 1, 4, 1, 2, TileDataType_U64,
+    ConfigureTile(48, 256, 1, 4, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     TCI(47, Zeros{PTO_XLEN} + 10, FALSE);
     TCI(48, Zeros{PTO_XLEN} + 20, FALSE);
@@ -34,9 +34,9 @@ begin
     assert ReadTileElement(45, 0, 2) == Zeros{PTO_XLEN} + 6;
     assert ReadTileElement(46, 0, 2) == Zeros{PTO_XLEN} + 12;
 
-    ConfigureTile(32, 256, 1, 4, 1, 4, TileDataType_U64,
+    ConfigureTile(32, 256, 1, 4, 1, 4, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(33, 256, 1, 4, 1, 4, TileDataType_U64,
+    ConfigureTile(33, 256, 1, 4, 1, 4, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(38, 256, 1, 4, 1, 4, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
@@ -50,11 +50,11 @@ begin
     assert ReadTileElement(38, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(38, 0, 3) == Zeros{PTO_XLEN};
 
-    ConfigureTile(34, 256, 1, 2, 1, 2, TileDataType_U64,
+    ConfigureTile(34, 256, 1, 2, 1, 2, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(35, 256, 1, 2, 1, 2, TileDataType_U64,
+    ConfigureTile(35, 256, 1, 2, 1, 2, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(36, 256, 1, 4, 1, 4, TileDataType_U64,
+    ConfigureTile(36, 256, 1, 4, 1, 4, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(34, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(34, 0, 1, Zeros{PTO_XLEN} + 4);

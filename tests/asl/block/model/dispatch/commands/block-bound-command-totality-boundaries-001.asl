@@ -39,12 +39,12 @@ begin
     assert ReadMemoryByte(Zeros{PTO_XLEN} + 16) == Zeros{8} + 0x11;
     assert ReadMemoryByte(Zeros{PTO_XLEN} + 17) == Zeros{8} + 0x22;
     assert ReadMemoryByte(Zeros{PTO_XLEN} + 18) == Zeros{8} + 0x33;
-    ExecuteMemoryCopyTemplate(Zeros{PTO_XLEN} + 32,
+    ExecuteMemoryCopyTemplate(Zeros{PTO_XLEN} + 128,
         Zeros{PTO_XLEN} + 8, Zeros{PTO_XLEN} + 64);
     assert _LastFault == Fault_None;
-    assert _LastMemoryCommandAddress == Zeros{PTO_XLEN} + 32;
+    assert _LastMemoryCommandAddress == Zeros{PTO_XLEN} + 128;
     assert _LastMemoryCommandSize == Zeros{PTO_XLEN} + 64;
-    assert ReadMemoryByte(Zeros{PTO_XLEN} + 32) == Zeros{8} + 0x11;
+    assert ReadMemoryByte(Zeros{PTO_XLEN} + 128) == Zeros{8} + 0x11;
 
     // The decoded MSET path applies the same full-XLEN bound and does not
     // reduce 64 to zero through a low-bit surrogate.

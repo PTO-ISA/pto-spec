@@ -47,6 +47,7 @@ begin
     assert start == CommandExecution_Executed;
     assert BundleIsActive();
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
     let binding = ExecuteCommandInstruction(BundleTestTileBinding(
         '10', Zeros{6}, Zeros{6} + 1, TRUE), 32);
     assert binding == CommandExecution_Executed;
@@ -74,6 +75,7 @@ begin
     WriteTPC(Zeros{PTO_XLEN} + 0x200);
     let first_start = ExecuteCommandInstruction(
         BundleTestTEPLStart(Zeros{10}, Zeros{5} + 24), 32);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
     let first_binding = ExecuteCommandInstruction(BundleTestTileBinding(
         '10', Zeros{6}, Zeros{6} + 1, TRUE), 32);
     var next_start: bits(64) = Zeros{64} + 0x00000011;

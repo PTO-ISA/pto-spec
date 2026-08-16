@@ -49,16 +49,17 @@ begin
     assert _Tiles[[0]].allocated;
     assert _Tiles[[1]].allocated;
 
-    // A successful attempt retains the destination and consumes its sources.
+    // A successful attempt retains the destination. B.IOT Last terminates the
+    // binding sequence; it does not consume either source lifetime.
     let committed_resolved = ResolveBundleTileDestinations();
     assert committed_resolved;
     let committed_destination = _BundleTileBindings[[0]].destination;
     FinalizeBundleTileAttempt(TileExecution_Executed);
     assert _Tiles[[committed_destination]].allocated;
     assert _TileAllocationMasks[[committed_destination]] == '1111';
-    assert TileCapacityInUse() == 2048;
-    assert !_Tiles[[0]].allocated;
-    assert !_Tiles[[1]].allocated;
+    assert TileCapacityInUse() == 2560;
+    assert _Tiles[[0]].allocated;
+    assert _Tiles[[1]].allocated;
 
     ResetBundleControlState();
     ClearFault();

@@ -139,7 +139,7 @@
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
-    "spec/evidence/release-traceability-readiness.json": "248805c39ef806fbe3b0622298a7774d295dc3f9e90e1bf4481796dc156a8f79",
+    "spec/evidence/release-traceability-readiness.json": "bfc908c8231bcf8b57c3b21f328b6581387819c5faf29a13918e4a71a2b66f3d",
     "spec/release-inputs.json": "1aa26a77e67665d5dd67c593819f36a97dc5739a1f9d6bb02cd85a344f32b6fa",
     "spec/schemas/pto-spec-release-event-v1.schema.json": "0d435c6ca7fba416d9f3886e5ebf617bbc761afab0bad4731326b4d52f6d4b44"
   },
@@ -149,7 +149,7 @@
     "gate_count": 10,
     "mnemonic_count": 642,
     "status": "ready-for-exact-head-verification",
-    "test_count": 3185,
+    "test_count": 3193,
     "test_page_count": 32,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,

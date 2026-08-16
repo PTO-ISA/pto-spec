@@ -69,6 +69,11 @@ begin
     assert _LastFault == Fault_Assert;
     ClearFault();
     let before_request = _ArchitectureRequestEpoch;
+    WriteTPC(Zeros{PTO_XLEN} + 0x80);
+    BeginBundle(BundleKind_System, BundleTransfer_Fallthrough,
+        Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x84,
+        Zeros{PTO_XLEN} + 0x84, FALSE);
+    EnterBundleBody();
     ArchitectureEnterRequest('0001');
     assert _ArchitectureRequestEpoch == before_request + 1;
     ExecuteControlRequest(ExecutionControl_WaitEvent, Zeros{PTO_XLEN} + 17);
@@ -157,7 +162,7 @@ begin
     SoftwareBreakpoint('01001');
     assert _LastFault == Fault_SoftwareBreakpoint;
     assert _FaultAddress == Zeros{PTO_XLEN} + 0x400;
-    assert _BreakpointTag == '01001';
+    assert _ACRTrapCause[[0]] == Zeros{24} + 9;
 end;
 func main() => integer
 begin

@@ -551,6 +551,14 @@ def apply_scalar_right_modifier_py(
     raise ValueError(f"invalid scalar right modifier: {modifier}")
 
 
+def apply_scalar_binary_right_modifier_py(
+    value: int, raw_modifier: int, logical_family: bool
+) -> int:
+    """Apply the raw SrcRType encoding used by scalar binary instructions."""
+    decoded_modifier = (1, 2, 3, 0)[raw_modifier]
+    return apply_scalar_right_modifier_py(value, decoded_modifier, logical_family)
+
+
 def truncating_signed_division(dividend: int, divisor: int) -> int:
     if divisor == 0:
         return 0
@@ -991,7 +999,7 @@ def scalar_binary_boundary_expected(
     if field_by_name(row, "SrcR") is not None:
         effective_right = right
         if field_by_name(row, "SrcRType") is not None:
-            effective_right = apply_scalar_right_modifier_py(
+            effective_right = apply_scalar_binary_right_modifier_py(
                 effective_right, field_values["SrcRType"], logical_family
             )
             effective_right = (effective_right << field_values.get("shamt", 0)) & MASK64
@@ -1126,6 +1134,13 @@ def emit_scalar_alu_boundary_case(
         print(f"    PushTemporaryQueue(TRUE, {bit_literal(queue_sentinel, 64)});")
     if implicit_t_source:
         print(f"    PushTemporaryQueue(TRUE, {bit_literal(left, 64)});")
+    if mnemonic == "C.SETC.TGT":
+        print("    ResetBundleControlState();")
+        print(
+            f"    BeginBundle(BundleKind_Standard, BundleTransfer_Fallthrough, "
+            f"Zeros{{PTO_XLEN}}, {bit_literal(pre_tpc, 64)}, "
+            f"{bit_literal(pre_tpc, 64)}, FALSE);"
+        )
     print(
         f"    let scalar_alu_boundary_status_{case_index} = "
         f"ExecuteScalarInstruction({bit_literal(witness, 48)}, "
@@ -1143,7 +1158,7 @@ def emit_scalar_alu_boundary_case(
         print(f"    assert ReadGPR(3) == {bit_literal(destination_sentinel, 64)};")
     elif class_id == "scalar-control-value":
         if mnemonic == "C.SETC.TGT":
-            print(f"    assert _CommitArgument == {bit_literal(expected[0], 64)};")
+            print(f"    assert _BARG.bpcn == {bit_literal(expected[0], 64)};")
         elif mnemonic == "C.SETRET":
             return_target = (pre_tpc + (expected[0] << 1)) & MASK64
             print(f"    assert ReadGPR(10) == {bit_literal(return_target, 64)};")
@@ -2547,8 +2562,20 @@ def emit_scalar_amo_selector_setup(selector: int, value: int) -> None:
         print(f"    WriteGPR({selector}, {bit_literal(value, 64)});")
     elif selector < 28:
         print(f"    _TQueue[[{selector - 24}]] = {bit_literal(value, 64)};")
+        print(f"    _TQueueValid[[{selector - 24}]] = TRUE;")
     else:
         print(f"    _UQueue[[{selector - 28}]] = {bit_literal(value, 64)};")
+        print(f"    _UQueueValid[[{selector - 28}]] = TRUE;")
+
+
+def emit_canonical_scalar_amo_setup(row: dict, witness: int) -> None:
+    for field_name in ("SrcL", "SrcR", "SrcD"):
+        if field_by_name(row, field_name) is None:
+            continue
+        emit_scalar_amo_selector_setup(
+            decode_field(row, field_name, witness),
+            0,
+        )
 
 
 def emit_scalar_amo_decoded_success(
@@ -6458,6 +6485,71 @@ def emit_scalar_sys_body_setup(kind: str = "System") -> None:
     print("    EnterBundleBody();")
 
 
+CANONICAL_COMMAND_BLOCK_HANDLERS = {
+    "SetBundleControlAttributes",
+    "SetBundleDataAttributes",
+    "SetBundleFixedPointAttributes",
+    "SetBundleDimension",
+    "BindBundleSharedIO",
+    "BindBundleScalarIO",
+    "BindBundleTileIO",
+    "SetBundleHint",
+}
+
+
+def emit_canonical_command_execution_setup(
+    handler: str,
+    row: dict | None = None,
+) -> None:
+    """Install the block context required by one canonical command witness."""
+
+    if handler in CANONICAL_COMMAND_BLOCK_HANDLERS:
+        print(
+            "    BeginBundle(BundleKind_Standard, "
+            "BundleTransfer_Fallthrough, Zeros{PTO_XLEN}, "
+            "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, FALSE);"
+        )
+    if (
+        handler == "ExecuteBundleStart"
+        and row is not None
+        and command_bundle_transfer(row) in {"Indirect", "IndirectCall"}
+    ):
+        print(
+            "    BeginBundle(BundleKind_Standard, "
+            "BundleTransfer_Direct, Zeros{PTO_XLEN} + 8, "
+            "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, TRUE);"
+        )
+    if handler in {
+        "ExecuteFrameEntry",
+        "ExecuteFrameExit",
+        "ExecuteFrameReturnAddress",
+        "ExecuteFrameReturnStack",
+    }:
+        print("    WriteGPR(2, Zeros{PTO_XLEN} + 0x100);")
+    if handler in {
+        "ExecuteFrameExit",
+        "ExecuteFrameReturnAddress",
+        "ExecuteFrameReturnStack",
+    }:
+        print("    _FrameDepth = 1;")
+
+
+def emit_canonical_command_tpc_assertion(handler: str, length_bits: int) -> None:
+    """Assert the architecturally selected post-command instruction address."""
+
+    if handler in {
+        "ExecuteBundleStop",
+        "ExecuteFrameReturnAddress",
+        "ExecuteFrameReturnStack",
+    }:
+        print("    assert ReadTPC() == Zeros{PTO_XLEN};")
+    else:
+        print(
+            "    assert ReadTPC() == Zeros{PTO_XLEN} + "
+            f"{length_bits // 8};"
+        )
+
+
 def emit_scalar_sys_source_setup(source: int, value: int) -> None:
     if source < 24:
         print(f"    WriteGPR({source}, Zeros{{PTO_XLEN}} + {value});")
@@ -7039,13 +7131,6 @@ def command_bundle_start_rejected(row: dict) -> bool:
 PTO_V0_UNSUPPORTED_COMMAND_HANDLERS = {
     "SaveExecutionContext",
     "RecoverExecutionContext",
-    "ExecuteFrameEntry",
-    "ExecuteFrameExit",
-    "ExecuteFrameReturnAddress",
-    "ExecuteFrameReturnStack",
-    "ExecuteQueueMove",
-    "ExecuteQueuePop",
-    "ExecuteQueuePush",
     "ExecuteCrossBlockTransfer",
 }
 
@@ -7064,6 +7149,21 @@ def command_execution_rejected(row: dict) -> bool:
         row["semantic_handler"] == "ExecuteBundleStart"
         and command_bundle_start_rejected(row)
     )
+
+
+def canonical_command_execution_witness(row: dict, witness: int) -> int:
+    if row["semantic_handler"] in {
+        "ExecuteFrameEntry",
+        "ExecuteFrameExit",
+        "ExecuteFrameReturnAddress",
+        "ExecuteFrameReturnStack",
+    }:
+        witness = encode_field(row, "uimm", witness, 8)
+        if row["mnemonic"] == "FRET.STK":
+            witness = encode_field(row, "DstBegin", witness, 10)
+            witness = encode_field(row, "DstEnd", witness, 10)
+        return witness
+    return witness
 
 
 def command_bundle_transfer(row: dict) -> str:
@@ -8254,47 +8354,65 @@ def _emit_monolithic() -> None:
     print("    return PTO_SCALAR_FORM_COUNT;")
     print("end;")
     print()
-    print("func ValidateCanonicalScalarExecution()")
-    print("begin")
-    execution_witness_index = 0
-    for row in scalar:
-        if row["semantic_family"] not in EXECUTABLE_SCALAR_FAMILIES:
-            continue
-        match = bit_literal(legal_scalar_witness(row, family_constraints), 48)
-        print("    SetCurrentACR(0);")
-        print("    ClearFault();")
-        print("    WriteTPC(Zeros{PTO_XLEN});")
-        print("    WriteBPC(Zeros{PTO_XLEN});")
-        print("    _CommitArgument = Zeros{PTO_XLEN};")
-        if row["mnemonic"] == "ACRC":
-            print("    SetCurrentACR(2);")
-        if row["mnemonic"] == "ACRE":
-            print("    SaveTrapContext(0, 0);")
+    for family in ("AGU", "ALU", "AMO", "BRU", "FSU", "SYS"):
+        print(f"func ValidateCanonicalScalar{family}Execution()")
+        print("begin")
+        execution_witness_index = 0
+        for row in scalar:
+            if row["semantic_family"] != family:
+                continue
+            witness = legal_scalar_witness(row, family_constraints)
+            match = bit_literal(witness, 48)
+            print("    ResetBundleControlState();")
+            print("    SetCurrentACR(0);")
             print("    ClearFault();")
+            print("    WriteTPC(Zeros{PTO_XLEN});")
+            print("    WriteBPC(Zeros{PTO_XLEN});")
+            print("    _CommitArgument = Zeros{PTO_XLEN};")
+            if row["mnemonic"] == "ACRC":
+                print("    SetCurrentACR(2);")
+            if row["mnemonic"] == "ACRE":
+                print("    SaveTrapContext(0, 0);")
+                print("    ClearFault();")
+            if row["mnemonic"] == "C.SETC.TGT":
+                print(
+                    "    BeginBundle(BundleKind_Standard, "
+                    "BundleTransfer_Fallthrough, Zeros{PTO_XLEN}, "
+                    "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, FALSE);"
+                )
+            if row["mnemonic"] == "SETC.TGT":
+                emit_scalar_sys_body_setup("Standard")
+            elif row["semantic_family"] == "SYS":
+                emit_scalar_sys_body_setup()
+            if row["semantic_family"] == "AMO":
+                emit_canonical_scalar_amo_setup(row, witness)
+            print(
+                f"    let execution_status_{execution_witness_index} = "
+                f"ExecuteScalarInstruction({match}, {row['length_bits']});"
+            )
+            expected_fault = CANONICAL_EXECUTION_FAULTS.get(
+                row["mnemonic"], "Fault_None"
+            )
+            expected_status = (
+                "ScalarExecution_Executed"
+                if expected_fault == "Fault_None"
+                else "ScalarExecution_Rejected"
+            )
+            print(
+                f"    assert execution_status_{execution_witness_index} "
+                f"== {expected_status};"
+            )
+            print(f"    assert _LastFault == {expected_fault};")
+            execution_witness_index += 1
+        print("    ClearFault();")
         print(
-            f"    let execution_status_{execution_witness_index} = "
-            f"ExecuteScalarInstruction({match}, {row['length_bits']});"
+            "    let rejected_status = ExecuteScalarInstruction("
+            f"{bit_literal(0, 48)}, 32);"
         )
-        expected_fault = CANONICAL_EXECUTION_FAULTS.get(row["mnemonic"], "Fault_None")
-        expected_status = (
-            "ScalarExecution_Executed"
-            if expected_fault == "Fault_None"
-            else "ScalarExecution_Rejected"
-        )
-        print(
-            f"    assert execution_status_{execution_witness_index} "
-            f"== {expected_status};"
-        )
-        print(f"    assert _LastFault == {expected_fault};")
-        execution_witness_index += 1
-    print("    ClearFault();")
-    print(
-        f"    let rejected_status = ExecuteScalarInstruction({bit_literal(0, 48)}, 32);"
-    )
-    print("    assert rejected_status == ScalarExecution_Rejected;")
-    print("    assert _LastFault == Fault_IllegalInstruction;")
-    print("end;")
-    print()
+        print("    assert rejected_status == ScalarExecution_Rejected;")
+        print("    assert _LastFault == Fault_IllegalInstruction;")
+        print("end;")
+        print()
     print("func ValidateCanonicalScalarBinaryEffects()")
     print("begin")
     print("    ResetProfileState();")
@@ -8392,6 +8510,13 @@ def _emit_monolithic() -> None:
         print(f"    _ReturnAddress = {bit_literal(control_sentinel, 64)};")
         if mnemonic.startswith(("C.SEXT.", "C.ZEXT.")):
             print(f"    PushTemporaryQueue(TRUE, {bit_literal(queue_sentinel, 64)});")
+        if mnemonic == "C.SETC.TGT":
+            print("    ResetBundleControlState();")
+            print(
+                "    BeginBundle(BundleKind_Standard, "
+                "BundleTransfer_Fallthrough, Zeros{PTO_XLEN}, "
+                "Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 0x100, FALSE);"
+            )
         print(
             f"    let scalar_alu_status_{effect_index} = "
             f"ExecuteScalarInstruction({bit_literal(witness, 48)}, "
@@ -8449,7 +8574,7 @@ def _emit_monolithic() -> None:
             print(f"    assert ReadGPR(3) == {bit_literal(left, 64)};")
         elif class_id == "scalar-control-value":
             if mnemonic == "C.SETC.TGT":
-                print(f"    assert _CommitArgument == {bit_literal(left, 64)};")
+                print(f"    assert _BARG.bpcn == {bit_literal(left, 64)};")
             elif mnemonic == "C.SETRET":
                 print("    assert ReadGPR(10) == Zeros{PTO_XLEN} + 0x106;")
                 print("    assert _ReturnAddress == Zeros{PTO_XLEN} + 0x106;")
@@ -11171,118 +11296,142 @@ def _emit_monolithic() -> None:
     print("    ResetProfileState();")
     print("end;")
     print()
-    print("func ValidateCanonicalCommandExecution()")
-    print("begin")
-    for index, row in enumerate(command):
-        witness_value = command_witnesses[index]
-        witness = bit_literal(witness_value, 64)
-        handler = row["semantic_handler"]
-        print("    ResetProfileState();")
-        if handler == "ExecuteBundleStop":
-            print(
-                "    BeginBundle(BundleKind_Standard, BundleTransfer_Direct, "
-                "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, Zeros{PTO_XLEN} + 4, TRUE);"
+    command_groups = (
+        ("Header", range(0, 13), False),
+        ("ControlStart", range(13, 33), False),
+        ("TileStart", range(33, 51), True),
+        ("Lifecycle", range(51, len(command)), False),
+    )
+    for group_name, group_indices, include_variants in command_groups:
+        print(f"func ValidateCanonicalCommand{group_name}Execution()")
+        print("begin")
+        for index in group_indices:
+            row = command[index]
+            witness_value = canonical_command_execution_witness(
+                row, command_witnesses[index]
             )
-            print("    ClearFault();")
-        print(
-            f"    let command_status_{index} = ExecuteCommandInstruction("
-            f"{witness}, {row['length_bits']});"
-        )
-        rejected = command_execution_rejected(row)
-        rejected_start = handler == "ExecuteBundleStart" and rejected
-        if rejected:
-            print(f"    assert command_status_{index} == CommandExecution_Rejected;")
-            print("    assert _LastFault == Fault_IllegalInstruction;")
-            print("    assert ReadTPC() == Zeros{PTO_XLEN};")
-            if rejected_start:
-                print("    assert !_BundleOperation.valid;")
-        else:
-            print(f"    assert command_status_{index} == CommandExecution_Executed;")
-            print("    assert _LastFault == Fault_None;")
+            witness = bit_literal(witness_value, 64)
+            handler = row["semantic_handler"]
+            print("    ResetProfileState();")
+            emit_canonical_command_execution_setup(handler, row)
             if handler == "ExecuteBundleStop":
-                print("    assert ReadTPC() == Zeros{PTO_XLEN};")
-            else:
                 print(
-                    "    assert ReadTPC() == Zeros{PTO_XLEN} + "
-                    f"{row['length_bits'] // 8};"
+                    "    BeginBundle(BundleKind_Standard, BundleTransfer_Direct, "
+                    "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, "
+                    "Zeros{PTO_XLEN} + 4, TRUE);"
                 )
-            if handler == "SetBundleArgument":
-                print(
-                    "    assert _BundleArgumentKind == "
-                    f"{bit_literal(BUNDLE_ARGUMENT_KINDS[row['asm']], 3)};"
-                )
-            if handler == "SetBundleHint":
-                print(f"    assert _LastBundleHintPayload == {witness};")
-        if handler == "ExecuteBundleStart" and not rejected_start:
-            operation_class = command_bundle_operation_class(row)
-            selector = command_bundle_selector(row, tile_selectors)
-            print("    assert _BundleOperation.valid;")
-            print(f"    assert _BundleOperation.form_identity == Zeros{{7}} + {index};")
+                print("    ClearFault();")
             print(
-                "    assert _BundleOperation.operation_class == "
-                f"BundleOperation_{operation_class};"
+                f"    let command_status_{index} = ExecuteCommandInstruction("
+                f"{witness}, {row['length_bits']});"
             )
-            selector_field = next(
-                (
-                    name
-                    for name in ("TileOpcode", "Function")
-                    if any(field["name"] == name for field in row["fields"])
-                ),
-                None,
-            )
-            if selector_field is not None:
-                selector_value = decode_field(row, selector_field, witness_value)
-                print("    assert _BundleOperation.selector_valid;")
+            rejected = command_execution_rejected(row)
+            rejected_start = handler == "ExecuteBundleStart" and rejected
+            if rejected:
                 print(
-                    "    assert _BundleOperation.selector == "
-                    f"Zeros{{10}} + {selector_value};"
+                    f"    assert command_status_{index} == "
+                    "CommandExecution_Rejected;"
                 )
-            elif selector is not None:
-                print("    assert _BundleOperation.selector_valid;")
-                print(
-                    f"    assert _BundleOperation.selector == Zeros{{10}} + {selector};"
-                )
+                print("    assert _LastFault == Fault_IllegalInstruction;")
+                print("    assert ReadTPC() == Zeros{PTO_XLEN};")
+                if rejected_start:
+                    print("    assert !_BundleOperation.valid;")
             else:
-                print("    assert !_BundleOperation.selector_valid;")
-            for field_name, valid_name, value_name, width in (
-                ("DataType", "data_type_valid", "data_type", 5),
-                ("Mode", "mode_valid", "mode", 2),
-                ("BrType", "branch_type_valid", "branch_type", 3),
-            ):
-                present = any(field["name"] == field_name for field in row["fields"])
-                if present:
-                    value = decode_field(row, field_name, witness_value)
-                    print(f"    assert _BundleOperation.{valid_name};")
+                print(
+                    f"    assert command_status_{index} == "
+                    "CommandExecution_Executed;"
+                )
+                print("    assert _LastFault == Fault_None;")
+                emit_canonical_command_tpc_assertion(
+                    handler, row["length_bits"]
+                )
+                if handler == "SetBundleArgument":
                     print(
-                        f"    assert _BundleOperation.{value_name} == "
-                        f"Zeros{{{width}}} + {value};"
+                        "    assert _BundleArgumentKind == "
+                        f"{bit_literal(BUNDLE_ARGUMENT_KINDS[row['asm']], 3)};"
+                    )
+                if handler == "SetBundleHint":
+                    print(f"    assert _LastBundleHintPayload == {witness};")
+            if handler == "ExecuteBundleStart" and not rejected_start:
+                operation_class = command_bundle_operation_class(row)
+                selector = command_bundle_selector(row, tile_selectors)
+                print("    assert _BundleOperation.valid;")
+                print(
+                    "    assert _BundleOperation.form_identity == "
+                    f"Zeros{{7}} + {index};"
+                )
+                print(
+                    "    assert _BundleOperation.operation_class == "
+                    f"BundleOperation_{operation_class};"
+                )
+                selector_field = next(
+                    (
+                        name
+                        for name in ("TileOpcode", "Function")
+                        if any(field["name"] == name for field in row["fields"])
+                    ),
+                    None,
+                )
+                if selector_field is not None:
+                    selector_value = decode_field(row, selector_field, witness_value)
+                    print("    assert _BundleOperation.selector_valid;")
+                    print(
+                        "    assert _BundleOperation.selector == "
+                        f"Zeros{{10}} + {selector_value};"
+                    )
+                elif selector is not None:
+                    print("    assert _BundleOperation.selector_valid;")
+                    print(
+                        "    assert _BundleOperation.selector == "
+                        f"Zeros{{10}} + {selector};"
                     )
                 else:
-                    print(f"    assert !_BundleOperation.{valid_name};")
-    variant_case = 0
-    for row in command:
-        for variant in row.get("encoding_variants", []):
-            instruction = 0
-            for part in variant["encoding"]:
-                instruction |= int(part["match"], 16) << (part["index"] * 32)
-            print("    ResetProfileState();")
-            print(
-                f"    let command_variant_status_{variant_case} = ExecuteCommandInstruction("
-                f"{bit_literal(instruction, 64)}, {row['length_bits']});"
-            )
-            print(
-                f"    assert command_variant_status_{variant_case} == "
-                "CommandExecution_Executed;"
-            )
-            print("    assert _LastFault == Fault_None;")
-            print("    assert _BundleOperation.valid;")
-            print(
-                "    assert _BundleOperation.selector == Zeros{10} + "
-                f"{variant['function']};"
-            )
-            variant_case += 1
-    print("end;")
-    print()
+                    print("    assert !_BundleOperation.selector_valid;")
+                for field_name, valid_name, value_name, width in (
+                    ("DataType", "data_type_valid", "data_type", 5),
+                    ("Mode", "mode_valid", "mode", 2),
+                    ("BrType", "branch_type_valid", "branch_type", 3),
+                ):
+                    present = any(
+                        field["name"] == field_name for field in row["fields"]
+                    )
+                    if present:
+                        value = decode_field(row, field_name, witness_value)
+                        print(f"    assert _BundleOperation.{valid_name};")
+                        print(
+                            f"    assert _BundleOperation.{value_name} == "
+                            f"Zeros{{{width}}} + {value};"
+                        )
+                    else:
+                        print(f"    assert !_BundleOperation.{valid_name};")
+        if include_variants:
+            variant_case = 0
+            for row in command:
+                for variant in row.get("encoding_variants", []):
+                    instruction = 0
+                    for part in variant["encoding"]:
+                        instruction |= int(part["match"], 16) << (
+                            part["index"] * 32
+                        )
+                    print("    ResetProfileState();")
+                    print(
+                        f"    let command_variant_status_{variant_case} = "
+                        "ExecuteCommandInstruction("
+                        f"{bit_literal(instruction, 64)}, {row['length_bits']});"
+                    )
+                    print(
+                        f"    assert command_variant_status_{variant_case} == "
+                        "CommandExecution_Executed;"
+                    )
+                    print("    assert _LastFault == Fault_None;")
+                    print("    assert _BundleOperation.valid;")
+                    print(
+                        "    assert _BundleOperation.selector == Zeros{10} + "
+                        f"{variant['function']};"
+                    )
+                    variant_case += 1
+        print("end;")
+        print()
     print("pure func ScalarFamilyOfForm(form: integer {0..PTO_SCALAR_FORM_COUNT-1})")
     print("                             => ScalarSemanticFamily")
     print("begin")

@@ -39,10 +39,10 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
-    ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_S64,
+    ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_S32,
         TileLayout_RowMajor, TileLocation_Any);
     TMATMUL(47, 45, 46);
-    assert _Tiles[[47]].data_type == TileDataType_S64;
+    assert _Tiles[[47]].data_type == TileDataType_S32;
 
     SelectTestCUBEDataType('11011');
     ConfigureTile(45, 256, 1, 1, 1, 1, TileDataType_U8,
@@ -51,10 +51,10 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(45, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(46, 0, 0, Zeros{PTO_XLEN} + 3);
-    ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_U64,
+    ConfigureTile(47, 256, 1, 1, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     TMATMUL(47, 45, 46);
-    assert _Tiles[[47]].data_type == TileDataType_U64;
+    assert _Tiles[[47]].data_type == TileDataType_U32;
 end;
 func main() => integer
 begin

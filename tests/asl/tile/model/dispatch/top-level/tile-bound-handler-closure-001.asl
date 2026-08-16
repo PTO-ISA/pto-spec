@@ -42,13 +42,14 @@ begin
     assert ReadTileElement(53, 0, 0) == Zeros{PTO_XLEN} - 1;
     ExecuteTileScalar(TileBinary_ADD, 53, 51, Zeros{PTO_XLEN} + 5);
     assert ReadTileElement(53, 0, 1) == Zeros{PTO_XLEN} + 9;
+    ConfigurePredicateTile(53, 256, 16, 2, 2, 2);
     ExecuteTileCompare(53, 51, 52, TileComparison_LT);
-    assert ReadTileElement(53, 0, 0) == Zeros{PTO_XLEN} + 1;
-    assert ReadTileElement(53, 0, 1) == Zeros{PTO_XLEN};
+    assert ReadTilePredicateBit(53, 0, 0);
+    assert !ReadTilePredicateBit(53, 0, 1);
     ExecuteTileCompareScalar(53, 51, Zeros{PTO_XLEN} + 3,
         TileComparison_GE);
-    assert ReadTileElement(53, 0, 0) == Zeros{PTO_XLEN};
-    assert ReadTileElement(53, 0, 1) == Zeros{PTO_XLEN} + 1;
+    assert !ReadTilePredicateBit(53, 0, 0);
+    assert ReadTilePredicateBit(53, 0, 1);
     ExecuteTileSelect(54, 53, 51, 52);
     assert ReadTileElement(54, 0, 0) == Zeros{PTO_XLEN} + 2;
     assert ReadTileElement(54, 0, 1) == Zeros{PTO_XLEN} + 4;
@@ -106,12 +107,17 @@ begin
 
     // This closure test owns its matrix fixture. It must not inherit tiles
     // configured by TestTileMatmul when executed as an independent shard.
-    ConfigureTwoByTwo(5);
-    ConfigureTwoByTwo(6);
-    ConfigureTwoByTwo(7);
-    ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_U64,
+    ConfigureTile(5, 256, 2, 2, 2, 2, TileDataType_FP16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(28, 256, 2, 1, 2, 1, TileDataType_U64,
+    ConfigureTile(6, 256, 2, 2, 2, 2, TileDataType_FP16,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(7, 256, 2, 2, 2, 2, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_FP16,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(28, 256, 1, 1, 1, 1, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(29, 256, 1, 2, 1, 2, TileDataType_FP16,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 2);
@@ -123,30 +129,21 @@ begin
     WriteTileElement(6, 1, 1, Zeros{PTO_XLEN} + 8);
     WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 2);
 
-    ConfigureTile(61, 256, 2, 1, 2, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(62, 256, 1, 2, 1, 2, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(63, 256, 1, 1, 1, 1, TileDataType_U64,
+    ConfigureTile(61, 256, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(61, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(61, 1, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(62, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(62, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(63, 0, 0, Zeros{PTO_XLEN} + 1);
-    SelectTestCUBEDataType('11000');
-    TMATMUL_MX(7, 5, 61, 6, 62);
+    SelectTestCUBEDataType('00100');
+    TMATMUL_MX(7, 5, 0, 6, 0);
     assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 19;
-    TGEMV_BIAS(28, 5, 27, 61);
+    TGEMV_BIAS(28, 29, 27, 61);
     assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 9;
-    assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 19;
-    TGEMV_ACC(28, 28, 5, 27);
+    TGEMV_ACC(28, 28, 29, 27);
     assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 17;
-    assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 37;
-    TGEMV_MX(28, 5, 61, 27, 63);
+    TGEMV_MX(28, 29, 0, 27, 0);
     assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 8;
-    assert ReadTileElement(28, 1, 0) == Zeros{PTO_XLEN} + 18;
 end;
 func main() => integer
 begin
