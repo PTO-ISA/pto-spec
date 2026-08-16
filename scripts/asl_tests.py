@@ -451,6 +451,79 @@ def matrix(points: Sequence[AslTestPoint]) -> list[dict[str, object]]:
     ]
 
 
+def matrix_pages(
+    entries: Sequence[Mapping[str, object]],
+    commit: str,
+    page_size: int,
+) -> list[dict[str, object]]:
+    """Return complete deterministic pages with stable round-robin assignment."""
+
+    if page_size <= 0:
+        raise ValueError("page size must be positive")
+    ordered = sorted(entries, key=lambda entry: str(entry.get("id", "")))
+    page_count = max(1, math.ceil(len(ordered) / page_size))
+    return [
+        {
+            "commit": commit,
+            "page": page,
+            "page_count": page_count,
+            "test_count": len(ordered),
+            "include": ordered[page::page_count],
+        }
+        for page in range(page_count)
+    ]
+
+
+def _exact_commit(root: Path) -> str:
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=root,
+        text=True,
+        capture_output=True,
+        check=True,
+    ).stdout.strip()
+
+
+def _release_matrix(root: Path) -> tuple[str, list[dict[str, object]]]:
+    units, points, requirements = _repository(root)
+    errors = validate_test_coverage(points, units, requirements)
+    if errors:
+        raise ValueError("\n".join(errors))
+    return _exact_commit(root), matrix(points)
+
+
+def export_matrix_pages(
+    root: Path,
+    output_dir: Path,
+    *,
+    page_size: int,
+) -> dict[str, object]:
+    """Discover once, write every exact matrix page, and return its compact index."""
+
+    root = root.resolve()
+    commit, entries = _release_matrix(root)
+    pages = matrix_pages(entries, commit, page_size)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    expected = {f"page-{page['page']}.json" for page in pages}
+    for stale in output_dir.glob("page-*.json"):
+        if stale.name not in expected:
+            stale.unlink()
+    for page in pages:
+        path = output_dir / f"page-{page['page']}.json"
+        temporary = path.with_suffix(".json.tmp")
+        temporary.write_text(
+            json.dumps(page, separators=(",", ":"), sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        temporary.replace(path)
+    return {
+        "commit": commit,
+        "page_count": len(pages),
+        "pages": list(range(len(pages))),
+        "test_count": len(entries),
+    }
+
+
 def requirement_index(root: Path, units: Sequence[AslUnit]) -> dict[str, bool]:
     """Build the repository's NDF identity-to-executable index."""
 
@@ -938,6 +1011,7 @@ def matrix_main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--page-size", type=int, default=200)
     parser.add_argument("--page", type=int, default=0)
+    parser.add_argument("--output-dir", type=Path)
     arguments = parser.parse_args(argv)
     if arguments.page_size <= 0 or arguments.page < 0:
         print(
@@ -947,37 +1021,26 @@ def matrix_main(argv: Sequence[str] | None = None) -> int:
         return 2
     root = arguments.root.resolve()
     try:
-        units, points, requirements = _repository(root)
-        errors = validate_test_coverage(points, units, requirements)
-        if errors:
-            raise ValueError("\n".join(errors))
-        entries = matrix(points)
-        page_count = max(1, math.ceil(len(entries) / arguments.page_size))
-        if arguments.page >= page_count:
-            raise ValueError(
-                f"page {arguments.page} is outside matrix page count {page_count}"
+        if arguments.output_dir is not None:
+            payload = export_matrix_pages(
+                root,
+                arguments.output_dir.resolve(),
+                page_size=arguments.page_size,
             )
-        start = arguments.page * arguments.page_size
-        include = entries[start : start + arguments.page_size]
-        commit = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=root,
-            text=True,
-            capture_output=True,
-            check=True,
-        ).stdout.strip()
+        else:
+            commit, entries = _release_matrix(root)
+            pages = matrix_pages(entries, commit, arguments.page_size)
+            if arguments.page >= len(pages):
+                raise ValueError(
+                    f"page {arguments.page} is outside matrix page count {len(pages)}"
+                )
+            payload = pages[arguments.page]
     except (OSError, ValueError, subprocess.CalledProcessError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
     print(
         json.dumps(
-            {
-                "commit": commit,
-                "page": arguments.page,
-                "page_count": page_count,
-                "test_count": len(entries),
-                "include": include,
-            },
+            payload,
             separators=(",", ":"),
             sort_keys=True,
         )

@@ -10,6 +10,7 @@ from pathlib import Path
 from subprocess import CompletedProcess, TimeoutExpired
 from unittest.mock import patch
 
+import scripts.asl_tests as asl_tests
 from scripts.asl_tests import (
     AslTestPoint,
     execute_test_point,
@@ -511,6 +512,61 @@ class AslTestsTest(unittest.TestCase):
             output.getvalue().strip(),
             json.dumps(payload, separators=(",", ":"), sort_keys=True),
         )
+
+    def test_all_pages_export_discovers_once_and_writes_complete_round_robin_pages(
+        self,
+    ) -> None:
+        export_matrix_pages = getattr(asl_tests, "export_matrix_pages", None)
+        self.assertIsNotNone(export_matrix_pages)
+
+        for sequence in range(1, 4):
+            test_id = f"PTO-AVS-ARCH-STATE-REGISTERS-{sequence:03d}"
+            self.write(
+                test_source(test_id=test_id),
+                path=self.path.with_name(f"arch-state-registers-{sequence:03d}.asl"),
+            )
+        points = load_test_points(self.root, (unit(),))
+        commit = "2" * 40
+        completed = CompletedProcess(
+            ["git", "rev-parse", "HEAD"], 0, stdout=commit + "\n", stderr=""
+        )
+        output_dir = self.root / "build/pages"
+
+        with (
+            patch(
+                "scripts.asl_tests._repository",
+                return_value=(
+                    (unit(),),
+                    tuple(reversed(points)),
+                    {"PTO-REQ-REGISTERS": True},
+                ),
+            ) as discover,
+            patch("scripts.asl_tests.subprocess.run", return_value=completed),
+        ):
+            index = export_matrix_pages(self.root, output_dir, page_size=2)
+
+        self.assertEqual(discover.call_count, 1)
+        self.assertEqual(index["commit"], commit)
+        self.assertEqual(index["pages"], [0, 1])
+        self.assertEqual(index["page_count"], 2)
+        self.assertEqual(index["test_count"], 3)
+        pages = [
+            json.loads((output_dir / f"page-{page}.json").read_text())
+            for page in index["pages"]
+        ]
+        self.assertEqual(
+            [[entry["id"] for entry in page["include"]] for page in pages],
+            [
+                [
+                    "PTO-AVS-ARCH-STATE-REGISTERS-001",
+                    "PTO-AVS-ARCH-STATE-REGISTERS-003",
+                ],
+                ["PTO-AVS-ARCH-STATE-REGISTERS-002"],
+            ],
+        )
+        self.assertEqual({page["commit"] for page in pages}, {commit})
+        self.assertEqual({page["page_count"] for page in pages}, {2})
+        self.assertEqual({page["test_count"] for page in pages}, {3})
 
     def test_all_supported_kinds_are_accepted(self) -> None:
         kinds = (
