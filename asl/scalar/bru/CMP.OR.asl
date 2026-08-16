@@ -11,4 +11,21 @@ readonly func InstructionContractHandler_CMP_OR() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompareLogical;
 end;
+
+pure func InstructionContractCombinesWithOR_CMP_OR()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractCompareLogicalValue_CMP_OR(
+    left: Word,
+    right: Word)
+    => Word
+begin
+    if InstructionContractCombinesWithOR_CMP_OR() then
+        return left OR right;
+    end;
+    return left AND right;
+end;
 // DOC-END: operation

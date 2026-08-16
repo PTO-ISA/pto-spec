@@ -73,6 +73,20 @@ readonly func InstructionContractHandler_JR() => ScalarSemanticHandler
 begin
     return ScalarHandler_JumpRegister;
 end;
+
+pure func InstructionContractRequiresEvenTarget_JR()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractTarget_JR(
+    register_value: Word,
+    halfword_offset: Word)
+    => Word
+begin
+    return register_value + LSL(halfword_offset, 1);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

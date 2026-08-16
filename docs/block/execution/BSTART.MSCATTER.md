@@ -127,6 +127,18 @@ readonly func InstructionContractHandler_BSTART_MSCATTER() => CommandSemanticHan
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractStartedTileOperation_BSTART_MSCATTER()
+    => TileOperation
+begin
+    return TileOperation_MSCATTER;
+end;
+
+pure func InstructionContractStartsTileBundle_BSTART_MSCATTER()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

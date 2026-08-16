@@ -17,4 +17,16 @@ readonly func InstructionContractHandler_BSTART_MSCATTER_MASK() => CommandSemant
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractStartedTileOperation_BSTART_MSCATTER_MASK()
+    => TileOperation
+begin
+    return TileOperation_MSCATTER_MASK;
+end;
+
+pure func InstructionContractStartsTileBundle_BSTART_MSCATTER_MASK()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation

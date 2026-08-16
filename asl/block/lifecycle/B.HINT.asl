@@ -18,4 +18,16 @@ readonly func InstructionContractHandler_B_HINT() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleHint;
 end;
+
+pure func InstructionContractIsBundleHint_B_HINT()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractTraceFormMayTerminate_B_HINT()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation

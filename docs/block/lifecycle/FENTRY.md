@@ -83,6 +83,18 @@ func ExecuteFENTRY(begin_reg: Reg5Selector,
 begin
     EnterFrame(begin_reg, end_reg, frame_size);
 end;
+
+pure func InstructionContractUsesHalfOpenRegisterRange_FENTRY()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractRejectsInvalidFrameRange_FENTRY()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

@@ -17,5 +17,17 @@ func ExecuteFENTRY(begin_reg: Reg5Selector,
 begin
     EnterFrame(begin_reg, end_reg, frame_size);
 end;
+
+pure func InstructionContractUsesHalfOpenRegisterRange_FENTRY()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractRejectsInvalidFrameRange_FENTRY()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation
 // PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}

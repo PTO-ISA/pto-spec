@@ -9,6 +9,7 @@ commit, blob, or generated-artifact provenance: PTO ASL is the source.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 from typing import Sequence
@@ -36,6 +37,12 @@ ALLOWED_OUTCOMES = frozenset(
 )
 REVIEW_KEYS = frozenset({"review_method", "outcome", "reviewed_fields"})
 RESERVATION_CATALOG = "extension-encoding-reservations"
+OPERATION_BEGIN = "// DOC-BEGIN: operation"
+OPERATION_END = "// DOC-END: operation"
+INSTRUCTION_CONTRACT_FUNCTION = re.compile(
+    r"\b(?:pure\s+|readonly\s+|impdef\s+)?func\s+"
+    r"(InstructionContract[A-Za-z0-9_]+)\b"
+)
 
 
 def format_summary(summary: dict[str, int]) -> str:
@@ -87,6 +94,31 @@ def validate_review(unit: AslUnit, review: object) -> list[str]:
     return errors
 
 
+def validate_formal_operation_region(root: Path, unit: AslUnit) -> list[str]:
+    """Require a mnemonic-local operation contract beyond handler selection."""
+
+    owner = unit.source_path.as_posix()
+    text = (root / unit.source_path).read_text(encoding="utf-8")
+    begin_count = text.count(OPERATION_BEGIN)
+    end_count = text.count(OPERATION_END)
+    if begin_count != 1 or end_count != 1:
+        return [
+            f"{owner}: FORMAL-COMPLETE requires exactly one operation region; "
+            f"found {begin_count} begin and {end_count} end markers"
+        ]
+    operation = text.split(OPERATION_BEGIN, 1)[1].split(OPERATION_END, 1)[0]
+    functions = INSTRUCTION_CONTRACT_FUNCTION.findall(operation)
+    meaningful = tuple(
+        name for name in functions if not name.startswith("InstructionContractHandler_")
+    )
+    if not meaningful:
+        return [
+            f"{owner}: FORMAL-COMPLETE operation region cannot consist only of "
+            "a semantic-handler selector"
+        ]
+    return []
+
+
 def audit_repository(
     root: Path,
     *,
@@ -111,9 +143,16 @@ def audit_repository(
             if not allow_incomplete:
                 errors.append(f"{unit.source_path}: missing formal semantic review")
             continue
-        errors.extend(validate_review(unit, review))
+        review_errors = validate_review(unit, review)
+        errors.extend(review_errors)
         outcome = review.get("outcome") if isinstance(review, dict) else None
-        if outcome == "FORMAL-COMPLETE":
+        operation_errors = (
+            validate_formal_operation_region(root, unit)
+            if outcome == "FORMAL-COMPLETE"
+            else []
+        )
+        errors.extend(operation_errors)
+        if outcome == "FORMAL-COMPLETE" and not review_errors and not operation_errors:
             reviewed += 1
         else:
             missing += 1

@@ -51,6 +51,18 @@ readonly func InstructionContractHandler_C_BSTOP() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStop;
 end;
+
+pure func InstructionContractCommitsActiveBundle_C_BSTOP()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractClearsHeaderState_C_BSTOP()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

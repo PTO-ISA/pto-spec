@@ -72,6 +72,20 @@ readonly func InstructionContractHandler_ADDTPC() => ScalarSemanticHandler
 begin
     return ScalarHandler_AddToPC;
 end;
+
+pure func InstructionContractUsesTPC_ADDTPC()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractTarget_ADDTPC(
+    base: Word,
+    halfword_offset: Word)
+    => Word
+begin
+    return base + LSL(halfword_offset, 1);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

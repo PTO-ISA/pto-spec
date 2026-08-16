@@ -23,4 +23,16 @@ readonly func InstructionContractHandler_BSTART_TMOV() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractStartedTileOperation_BSTART_TMOV()
+    => TileOperation
+begin
+    return TileOperation_TMOV;
+end;
+
+pure func InstructionContractStartsTileBundle_BSTART_TMOV()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation

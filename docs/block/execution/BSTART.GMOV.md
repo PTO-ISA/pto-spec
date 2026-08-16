@@ -125,6 +125,18 @@ readonly func InstructionContractHandler_BSTART_GMOV() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractStartedTileOperation_BSTART_GMOV()
+    => TileOperation
+begin
+    return TileOperation_GMOV;
+end;
+
+pure func InstructionContractStartsTileBundle_BSTART_GMOV()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

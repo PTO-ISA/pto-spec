@@ -83,6 +83,18 @@ func ExecuteFRETRA(begin_reg: Reg5Selector,
 begin
     ReturnFromFrame(begin_reg, end_reg, frame_size, TRUE);
 end;
+
+pure func InstructionContractUsesHalfOpenRegisterRange_FRET_RA()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractRejectsInvalidFrameRange_FRET_RA()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

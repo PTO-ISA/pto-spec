@@ -282,6 +282,18 @@ readonly func InstructionContractHandler_B_FPATR() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleFixedPointAttributes;
 end;
+
+pure func InstructionContractHeaderOnly_B_FPATR()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractDuplicateRejects_B_FPATR()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

@@ -88,6 +88,18 @@ readonly func InstructionContractHandler_B_CATR() => CommandSemanticHandler
 begin
     return CommandHandler_SetBundleControlAttributes;
 end;
+
+pure func InstructionContractHeaderOnly_B_CATR()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractDuplicateRejects_B_CATR()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

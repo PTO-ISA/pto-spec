@@ -11,7 +11,7 @@ This guide is calibrated against Arm's public ASL material:
 - [Architecture Specification Language guide](https://documentation-service.arm.com/static/6901ca9402789941c1920b3a)
   describes ASL1 as imperative, strongly and statically typed, first-order,
   and able to update ambient architectural state.
-- [ASL Reference](https://documentation-service.arm.com/static/673c50ed27eda361ad4db00c)
+- [ASL Reference](https://documentation-service.arm.com/static/683862cc265f9d64f5048cf8)
   states that ASL is intended to be readable, precise, and unambiguous for
   programmers, hardware engineers, and verification engineers.
 - Arm instruction pseudocode separates encoding-specific decode from the
@@ -125,5 +125,6 @@ than maintaining parallel prose semantics.
 Before marking a mnemonic `FORMAL-COMPLETE`, verify that its ASL and generated
 page expose assembly, encoding, defaults, operation, state, memory, ordering,
 faults, and reserved behavior; its operation is readable without consulting a
-downstream implementation; and independent tests execute success, relevant
-forms/boundaries, and fault/no-effect behavior.
+downstream implementation; its operation region contains more than a semantic
+handler selector; and independent tests execute success, relevant forms,
+boundaries, and fault/no-effect behavior.

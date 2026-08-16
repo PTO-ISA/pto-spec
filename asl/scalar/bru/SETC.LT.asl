@@ -11,4 +11,21 @@ readonly func InstructionContractHandler_SETC_LT() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommit;
 end;
+
+pure func InstructionContractCondition_SETC_LT()
+    => ScalarCondition
+begin
+    return ScalarCondition_LT;
+end;
+
+pure func InstructionContractCommitResult_SETC_LT(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_SETC_LT(),
+        left,
+        right);
+end;
 // DOC-END: operation

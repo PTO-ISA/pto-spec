@@ -31,7 +31,12 @@ class ManualSemanticAuditTest(unittest.TestCase):
         review.update(overrides)
         return review
 
-    def write_instruction(self, review: dict[str, object] | None) -> Path:
+    def write_instruction(
+        self,
+        review: dict[str, object] | None,
+        *,
+        operation_region: str | None = None,
+    ) -> Path:
         metadata: dict[str, object] = {
             "id": "PTO-BLOCK-B-IOR",
             "surface": "block",
@@ -45,11 +50,22 @@ class ManualSemanticAuditTest(unittest.TestCase):
             if review is not None
             else ""
         )
+        if operation_region is None:
+            operation_region = (
+                "// DOC-BEGIN: operation\n"
+                "pure func InstructionContractSelectorLegal_B_IOR(\n"
+                "    selector: bits(5)) => boolean\n"
+                "begin\n"
+                "    return UInt(selector) < 24;\n"
+                "end;\n"
+                "// DOC-END: operation\n"
+            )
         path.write_text(
             "// PTO-INSTRUCTION: "
             + json.dumps(metadata, separators=(",", ":"))
             + "\n"
             + review_line
+            + operation_region
             + "func B_IOR()\nbegin\n    return;\nend;\n",
             encoding="utf-8",
         )
@@ -72,6 +88,30 @@ class ManualSemanticAuditTest(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(summary["reviewed"], 1)
         self.assertEqual(summary["missing"], 0)
+
+    def test_formal_complete_rejects_handler_only_operation_region(self) -> None:
+        self.write_instruction(
+            self.review(),
+            operation_region=(
+                "// DOC-BEGIN: operation\n"
+                "readonly func InstructionContractHandler_B_IOR()\n"
+                "    => CommandSemanticHandler\n"
+                "begin\n"
+                "    return CommandHandler_BindBundleScalarIO;\n"
+                "end;\n"
+                "// DOC-END: operation\n"
+            ),
+        )
+
+        errors, summary = self.audit()
+
+        self.assertIn(
+            "asl/block/operands/B.IOR.asl: FORMAL-COMPLETE operation region "
+            "cannot consist only of a semantic-handler selector",
+            errors,
+        )
+        self.assertEqual(summary["reviewed"], 0)
+        self.assertEqual(summary["missing"], 1)
 
     def test_summary_distinguishes_implementation_closure_from_frozen_audit(self) -> None:
         summary = {

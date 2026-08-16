@@ -108,6 +108,18 @@ begin
         capacity_source,
         flags);
 end;
+
+pure func InstructionContractChangesQueueManagerState_HL_QMT()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractSnapshotsSourcesBeforeWrite_HL_QMT()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

@@ -83,6 +83,18 @@ readonly func InstructionContractHandler_MCOPY() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemoryCopy;
 end;
+
+pure func InstructionContractMemoryStepRestartable_MCOPY()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractForbidsOverlap_MCOPY()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

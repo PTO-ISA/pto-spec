@@ -90,6 +90,18 @@ readonly func InstructionContractHandler_MSET() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteMemorySet;
 end;
+
+pure func InstructionContractMemoryStepRestartable_MSET()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractWritesMemory_MSET()
+    => boolean
+begin
+    return TRUE;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 

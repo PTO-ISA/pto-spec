@@ -25,4 +25,28 @@ readonly func InstructionContractHandler_MGATHER_CAS() => TileSemanticHandler
 begin
     return TileHandler_MGATHER_CAS;
 end;
+
+pure func InstructionContractUsesByteDisplacements_MGATHER_CAS()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractUsesMaskTile_MGATHER_CAS()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractIsAtomicMemoryOperation_MGATHER_CAS()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractWritesMemory_MGATHER_CAS()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation

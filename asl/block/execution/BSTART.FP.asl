@@ -21,4 +21,16 @@ readonly func InstructionContractHandler_BSTART_FP() => CommandSemanticHandler
 begin
     return CommandHandler_ExecuteBundleStart;
 end;
+
+readonly func InstructionContractBundleKind_BSTART_FP()
+    => BundleKind
+begin
+    return BundleKind_Floating;
+end;
+
+pure func InstructionContractStartsBundle_BSTART_FP()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation

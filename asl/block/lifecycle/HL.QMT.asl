@@ -22,5 +22,17 @@ begin
         capacity_source,
         flags);
 end;
+
+pure func InstructionContractChangesQueueManagerState_HL_QMT()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractSnapshotsSourcesBeforeWrite_HL_QMT()
+    => boolean
+begin
+    return TRUE;
+end;
 // DOC-END: operation
 // PTO-REVIEW: {"review_method":"formal-definition-read","outcome":"FORMAL-COMPLETE","reviewed_fields":["assembly","encoding","defaults","operation","state","memory","ordering","faults","reserved"]}

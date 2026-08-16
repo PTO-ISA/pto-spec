@@ -11,4 +11,21 @@ readonly func InstructionContractHandler_CMP_EQ() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
+
+pure func InstructionContractCondition_CMP_EQ()
+    => ScalarCondition
+begin
+    return ScalarCondition_EQ;
+end;
+
+pure func InstructionContractCompareResult_CMP_EQ(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_CMP_EQ(),
+        left,
+        right);
+end;
 // DOC-END: operation

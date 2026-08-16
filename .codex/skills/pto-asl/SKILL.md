@@ -93,6 +93,11 @@ Do not invent missing semantics. Stop at a documented requirement gap and open o
   must identify the exact handler, width, operation, publication behavior,
   defaults, faults, and reserved space. Shared helpers may implement repeated
   mechanisms, but a mnemonic may not rely on an unexplained generic label.
+- A `FORMAL-COMPLETE` operation region must contain a mnemonic-local semantic
+  contract beyond `InstructionContractHandler_*`. A handler selector alone is
+  decoder linkage, not readable operation semantics; expose the selected
+  condition, transfer, bundle kind, tile operation, address rule, publication,
+  or other behavior that distinguishes the mnemonic.
 - Keep decode and operation regions page-shaped. Decode names fields and
   rejects reserved combinations; operation reads/snapshots inputs, derives
   named dimensions or addresses, preflights every possible fault, then commits

@@ -11,4 +11,21 @@ readonly func InstructionContractHandler_CMP_GEU() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteCompare;
 end;
+
+pure func InstructionContractCondition_CMP_GEU()
+    => ScalarCondition
+begin
+    return ScalarCondition_GEU;
+end;
+
+pure func InstructionContractCompareResult_CMP_GEU(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_CMP_GEU(),
+        left,
+        right);
+end;
 // DOC-END: operation

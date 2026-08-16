@@ -11,4 +11,21 @@ readonly func InstructionContractHandler_B_Z() => ScalarSemanticHandler
 begin
     return ScalarHandler_BranchRelative;
 end;
+
+pure func InstructionContractCondition_B_Z()
+    => ScalarCondition
+begin
+    return ScalarCondition_Z;
+end;
+
+pure func InstructionContractBranchResult_B_Z(
+    left: Word,
+    right: Word)
+    => boolean
+begin
+    return ConditionHolds(
+        InstructionContractCondition_B_Z(),
+        left,
+        right);
+end;
 // DOC-END: operation

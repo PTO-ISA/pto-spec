@@ -11,4 +11,21 @@ readonly func InstructionContractHandler_SETC_AND() => ScalarSemanticHandler
 begin
     return ScalarHandler_ExecuteSetCommitLogical;
 end;
+
+pure func InstructionContractCombinesWithOR_SETC_AND()
+    => boolean
+begin
+    return FALSE;
+end;
+
+pure func InstructionContractCommitLogicalValue_SETC_AND(
+    left: Word,
+    right: Word)
+    => Word
+begin
+    if InstructionContractCombinesWithOR_SETC_AND() then
+        return left OR right;
+    end;
+    return left AND right;
+end;
 // DOC-END: operation
