@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-SETC-NEI-DECODE-001","source":"asl/scalar/bru/HL.SETC.NEI.asl","requirements":["PTO-INST-SCALAR-HL-SETC-NEI"],"kind":"decode-positive","summary":"canonical HL.SETC.NEI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000010000011101010000000000001110', 48) == 273;
-    assert ScalarOperationOfForm(273) == ScalarOperation_HL_SETC_NEI;
-    assert ScalarHandlerOfForm(273) == ScalarHandler_ExecuteSetCommit;
+    assert DecodeScalarForm('000000000000000000010000011101010000000000001110', 48) == 265;
+    assert ScalarOperationOfForm(265) == ScalarOperation_HL_SETC_NEI;
+    assert ScalarHandlerOfForm(265) == ScalarHandler_ExecuteSetCommit;
     assert InstructionContractOperation_HL_SETC_NEI() == ScalarOperation_HL_SETC_NEI;
     assert InstructionContractHandler_HL_SETC_NEI() == ScalarHandler_ExecuteSetCommit;
-    assert DecodeScalarOperandRaw('000000000000000000010000011101010000000000001110', 273, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000010000011101010000000000001110', 273, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000010000011101010000000000001110', 273, ScalarField_simm24) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000010000011101010000000000001110', 265, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000010000011101010000000000001110', 265, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000010000011101010000000000001110', 265, ScalarField_simm24) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

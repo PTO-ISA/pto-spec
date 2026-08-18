@@ -141,6 +141,7 @@ SCALAR_ALU_EFFECT_HANDLER_CLASSES = {
         "ExtendScalarValue",
         "MaterializeLUI",
         "MaterializeLongSigned",
+        "MaterializeLongUpper",
         "MaterializeLongUnsigned",
         "MoveScalarValue",
     },
@@ -150,7 +151,6 @@ SCALAR_ALU_EFFECT_HANDLER_CLASSES = {
 SCALAR_BRU_EFFECT_HANDLER_CLASSES = {
     "scalar-compare-value": {"ExecuteCompare", "ExecuteCompareLogical"},
     "scalar-commit-value": {"ExecuteSetCommit", "ExecuteSetCommitLogical"},
-    "scalar-branch-control": {"BranchRelative"},
     "scalar-jump-control": {"JumpRegister", "JumpRelative"},
     "scalar-pc-relative-value": {"AddToPC"},
     "scalar-return-address": {"SetReturnAddress"},
@@ -723,6 +723,8 @@ def scalar_pair_expected(
             effective_left = signed_integer(left, 64)
             effective_right = signed_integer(right, 64)
         accumulator = (effective_left * effective_right + effective_addend) & MASK128
+        if mnemonic == "HL.MADDW":
+            return sign_extended(accumulator, 32), sign_extended(accumulator >> 32, 32)
         return accumulator & MASK64, (accumulator >> 64) & MASK64
     if mnemonic == "HL.CCAT":
         if shift == 0:
@@ -795,7 +797,10 @@ def scalar_materialize_expected(
     if mnemonic == "LUI":
         immediate = 0x80001 if raw_immediate is None else raw_immediate
         return (sign_extended(immediate, 20) << 12) & MASK64
-    if mnemonic in {"HL.LUI", "HL.LIS"}:
+    if mnemonic == "HL.LUI":
+        immediate = 0x80000003 if raw_immediate is None else raw_immediate
+        return (immediate << 32) & MASK64
+    if mnemonic == "HL.LIS":
         immediate = 0x80000003 if raw_immediate is None else raw_immediate
         return sign_extended(immediate, 32)
     if mnemonic == "HL.LIU":
@@ -1224,18 +1229,10 @@ SCALAR_BRU_ALIAS_FAULT_CASE_IDS = (
     "source-selector-u4",
     "compressed-implicit-t-source-push",
     "commit-queue-sources",
-    "branch-queue-sources",
     "addtpc-destination-discard",
     "addtpc-push-t",
     "addtpc-push-u",
     "setret-overwrites-r10-and-return",
-    "b-z-outside-zero",
-    "b-z-outside-one",
-    "b-z-outside-all-ones",
-    "b-nz-outside-zero",
-    "b-nz-outside-one",
-    "b-nz-outside-all-ones",
-    "successful-branch-preserves-bundle-state",
     "jr-srczero-zero-max-alias",
     "jr-odd-fault-outside",
     "jr-odd-fault-inside-bundle",
@@ -1244,15 +1241,9 @@ SCALAR_BRU_ALIAS_CASES_BY_MNEMONIC = {
     "CMP.EQ": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[0:13],
     "C.CMP.EQI": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[13:14],
     "C.SETC.EQ": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[14:15],
-    "B.EQ": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[15:16],
-    "ADDTPC": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[16:19],
-    "SETRET": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[19:20],
-    "B.Z": (
-        *SCALAR_BRU_ALIAS_FAULT_CASE_IDS[20:23],
-        SCALAR_BRU_ALIAS_FAULT_CASE_IDS[26],
-    ),
-    "B.NZ": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[23:26],
-    "JR": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[27:30],
+    "ADDTPC": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[15:18],
+    "SETRET": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[18:19],
+    "JR": SCALAR_BRU_ALIAS_FAULT_CASE_IDS[19:22],
 }
 
 
@@ -1556,6 +1547,13 @@ def emit_scalar_bru_totality_case(
 
     print(f"    // {row['form_id']}: {mnemonic} [bru-totality-{label}]")
     print("    ResetBundleControlState();")
+    if class_id == "scalar-commit-value":
+        print(
+            "    BeginBundle(BundleKind_Standard, "
+            "BundleTransfer_Conditional, Zeros{PTO_XLEN}, "
+            f"{bit_literal(pre_tpc, 64)}, Zeros{{PTO_XLEN}}, FALSE);"
+        )
+        print("    EnterBundleBody();")
     print("    SetCurrentACR(0);")
     print("    ClearFault();")
     print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
@@ -1661,11 +1659,8 @@ def _emit_all_scalar_bru_alias_and_faults(
         "CMP.EQ",
         "C.CMP.EQI",
         "C.SETC.EQ",
-        "B.EQ",
         "ADDTPC",
         "SETRET",
-        "B.Z",
-        "B.NZ",
         "JR",
     }
     missing = required - by_mnemonic.keys()
@@ -1831,26 +1826,18 @@ def _emit_all_scalar_bru_alias_and_faults(
         commit, family_constraints, {"SrcL": 24, "SrcR": 28}
     )
     index = begin("commit-queue-sources")
+    print(
+        "    BeginBundle(BundleKind_Standard, BundleTransfer_Conditional, "
+        "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x100, "
+        "Zeros{PTO_XLEN}, FALSE);"
+    )
+    print("    EnterBundleBody();")
     print("    PushTemporaryQueue(TRUE, Zeros{PTO_XLEN} + 9);")
     print("    PushTemporaryQueue(FALSE, Zeros{PTO_XLEN} + 9);")
     execute(index, commit_witness, commit)
     print("    assert _CommitArgument == Zeros{PTO_XLEN} + 1;")
     print("    assert ReadTemporaryQueue(TRUE, 0) == Zeros{PTO_XLEN} + 9;")
     print("    assert ReadTemporaryQueue(FALSE, 0) == Zeros{PTO_XLEN} + 9;")
-
-    branch = by_mnemonic["B.EQ"]
-    branch_witness = scalar_bru_alias_witness(
-        branch, family_constraints, {"SrcL": 27, "SrcR": 31, "simm12": 1}
-    )
-    index = begin("branch-queue-sources")
-    for value in (33, 44, 45, 46):
-        print(f"    PushTemporaryQueue(TRUE, Zeros{{PTO_XLEN}} + {value});")
-    for value in (33, 54, 55, 56):
-        print(f"    PushTemporaryQueue(FALSE, Zeros{{PTO_XLEN}} + {value});")
-    execute(index, branch_witness, branch)
-    print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x102;")
-    print("    assert ReadTemporaryQueue(TRUE, 3) == Zeros{PTO_XLEN} + 33;")
-    print("    assert ReadTemporaryQueue(FALSE, 3) == Zeros{PTO_XLEN} + 33;")
 
     addtpc = by_mnemonic["ADDTPC"]
     for case_id, destination, queue_t in (
@@ -1892,42 +1879,6 @@ def _emit_all_scalar_bru_alias_and_faults(
     print("    assert ReadGPR(10) == Zeros{PTO_XLEN} + 0x102;")
     print("    assert _ReturnAddress == Zeros{PTO_XLEN} + 0x102;")
     print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;")
-
-    for mnemonic in ("B.Z", "B.NZ"):
-        row = by_mnemonic[mnemonic]
-        witness = scalar_bru_alias_witness(row, family_constraints, {"simm22": 1})
-        slug = mnemonic.lower().replace(".", "-")
-        for value, value_name in ((0, "zero"), (1, "one"), (MASK64, "all-ones")):
-            index = begin(f"{slug}-outside-{value_name}")
-            print(f"    _CommitArgument = {bit_literal(value, 64)};")
-            execute(index, witness, row)
-            taken = (value == 0) if mnemonic == "B.Z" else (value != 0)
-            target = 0x102 if taken else 0x104
-            print(f"    assert ReadTPC() == Zeros{{PTO_XLEN}} + 0x{target:x};")
-            print(f"    assert _CommitArgument == {bit_literal(value, 64)};")
-
-    bz = by_mnemonic["B.Z"]
-    bz_witness = scalar_bru_alias_witness(bz, family_constraints, {"simm22": 1})
-    index = begin("successful-branch-preserves-bundle-state")
-    print("    _CommitArgument = Zeros{PTO_XLEN};")
-    print(
-        "    BeginBundle(BundleKind_Standard, BundleTransfer_Direct, "
-        "Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 0x104, "
-        "Zeros{PTO_XLEN} + 0x108, TRUE);"
-    )
-    print("    EnterBundleBody();")
-    execute(index, bz_witness, bz)
-    print("    assert ReadTPC() == Zeros{PTO_XLEN} + 0x106;")
-    print("    assert ReadBPC() == Zeros{PTO_XLEN} + 0x100;")
-    print("    assert BundleIsActive();")
-    print("    assert _BundleBodyActive;")
-    print("    assert _BARG.block_type == BundleKind_Standard;")
-    print("    assert _BARG.transfer_type == BundleTransfer_Direct;")
-    print("    assert _BARG.bpcn == Zeros{PTO_XLEN} + 0x100;")
-    print("    assert _BARG.taken;")
-    print("    assert _BundleSequentialPC == Zeros{PTO_XLEN} + 0x104;")
-    print("    assert _FrameStackReturnTarget == Zeros{PTO_XLEN} + 0x108;")
-    print("    assert _CommitArgument == Zeros{PTO_XLEN};")
 
     jr = by_mnemonic["JR"]
     jr_zero = scalar_bru_alias_witness(
@@ -7600,7 +7551,6 @@ def _emit_monolithic() -> None:
         row for row in scalar if scalar_bru_effect_class(row) is not None
     ]
     expected_bru_effect_classes = {
-        "scalar-branch-control": 8,
         "scalar-commit-value": 26,
         "scalar-compare-value": 26,
         "scalar-jump-control": 2,
@@ -8672,6 +8622,14 @@ def _emit_monolithic() -> None:
         print(f"    // {row['form_id']}: {mnemonic} [{class_id}]")
         for scenario_index, desired in enumerate(scenarios):
             left, right, branch_predicate = scalar_bru_scenario(row, desired)
+            if class_id == "scalar-commit-value":
+                print("    ResetBundleControlState();")
+                print(
+                    "    BeginBundle(BundleKind_Standard, "
+                    "BundleTransfer_Conditional, Zeros{PTO_XLEN}, "
+                    "Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN}, FALSE);"
+                )
+                print("    EnterBundleBody();")
             print("    SetCurrentACR(0);")
             print("    ClearFault();")
             print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
@@ -8682,9 +8640,7 @@ def _emit_monolithic() -> None:
             print(f"    WriteGPR(10, {bit_literal(bru_control_sentinel, 64)});")
             print(f"    _ReturnAddress = {bit_literal(bru_control_sentinel, 64)};")
             print(
-                f"    _CommitArgument = {bit_literal(branch_predicate, 64)};"
-                if mnemonic in {"B.Z", "B.NZ"}
-                else f"    _CommitArgument = {bit_literal(bru_control_sentinel, 64)};"
+                f"    _CommitArgument = {bit_literal(bru_control_sentinel, 64)};"
             )
             if mnemonic in {"C.CMP.EQI", "C.CMP.NEI"}:
                 print(
@@ -8805,45 +8761,6 @@ def _emit_monolithic() -> None:
             print("    assert _TrapContexts[[0]].tpc == Zeros{PTO_XLEN} + 0x100;")
             print("    assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x201;")
             print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
-        if mnemonic in {"B.Z", "B.NZ"}:
-            for bundle_scenario_index, desired in enumerate((True, False)):
-                _, _, commit_predicate = scalar_bru_scenario(row, desired)
-                expected_tpc = 0x10A if desired else 0x108
-                print("    ResetBundleControlState();")
-                print("    SetCurrentACR(0);")
-                print("    ClearFault();")
-                print("    _SystemRegisters.cycle = Zeros{PTO_XLEN};")
-                print(f"    _CommitArgument = {bit_literal(commit_predicate, 64)};")
-                print(
-                    "    BeginBundle(BundleKind_Standard, "
-                    "BundleTransfer_Direct, Zeros{PTO_XLEN} + 0x100, "
-                    "Zeros{PTO_XLEN} + 0x104, "
-                    "Zeros{PTO_XLEN} + 0x104, TRUE);"
-                )
-                print("    EnterBundleBody();")
-                print(
-                    f"    let scalar_bru_bundle_predicate_status_"
-                    f"{effect_index}_{bundle_scenario_index} = "
-                    f"ExecuteScalarInstruction({bit_literal(witness, 48)}, "
-                    f"{row['length_bits']});"
-                )
-                print(
-                    f"    assert scalar_bru_bundle_predicate_status_"
-                    f"{effect_index}_{bundle_scenario_index} == "
-                    "ScalarExecution_Executed;"
-                )
-                print("    assert _LastFault == Fault_None;")
-                print(
-                    f"    assert ReadTPC() == Zeros{{PTO_XLEN}} + 0x{expected_tpc:x};"
-                )
-                print("    assert BundleIsActive();")
-                print("    assert _BundleBodyActive;")
-                print(
-                    f"    assert _CommitArgument == "
-                    f"{bit_literal(commit_predicate, 64)};"
-                )
-                print("    assert _SystemRegisters.cycle == Zeros{PTO_XLEN} + 1;")
-                print("    ResetBundleControlState();")
         print("    ResetProfileState();")
         print("end;")
         print()

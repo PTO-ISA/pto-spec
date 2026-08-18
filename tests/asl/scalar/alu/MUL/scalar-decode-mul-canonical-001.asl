@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-MUL-DECODE-001","source":"asl/scalar/alu/MUL.asl","requirements":["PTO-INST-SCALAR-MUL"],"kind":"decode-positive","summary":"canonical MUL catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000000000001000111', 32) == 370;
-    assert ScalarOperationOfForm(370) == ScalarOperation_MUL;
-    assert ScalarHandlerOfForm(370) == ScalarHandler_MultiplyWord;
+    assert DecodeScalarForm('000000000000000000000000000000000000000001000111', 32) == 362;
+    assert ScalarOperationOfForm(362) == ScalarOperation_MUL;
+    assert ScalarHandlerOfForm(362) == ScalarHandler_MultiplyWord;
     assert InstructionContractOperation_MUL() == ScalarOperation_MUL;
     assert InstructionContractHandler_MUL() == ScalarHandler_MultiplyWord;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001000111', 370, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001000111', 370, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001000111', 370, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001000111', 362, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001000111', 362, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001000111', 362, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

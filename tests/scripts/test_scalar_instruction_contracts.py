@@ -237,10 +237,10 @@ class ScalarInstructionContractsTest(unittest.TestCase):
             unit for unit in units if unit.surface == "scalar" and unit.mnemonic is not None
         ]
 
-        self.assertEqual(len(scalar_units), 474)
+        self.assertEqual(len(scalar_units), 466)
         self.assertEqual(
             Counter(unit.classification[0] for unit in scalar_units),
-            Counter({"agu": 183, "alu": 107, "bru": 66, "amo": 53, "sys": 35, "fsu": 30}),
+            Counter({"agu": 183, "alu": 107, "bru": 58, "amo": 53, "sys": 35, "fsu": 30}),
         )
         for unit in scalar_units:
             contract = resolve_instruction_contract(unit, domains)

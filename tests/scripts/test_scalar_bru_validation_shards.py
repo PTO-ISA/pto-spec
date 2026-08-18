@@ -59,9 +59,9 @@ class ScalarBruValidationShardTest(unittest.TestCase):
         self.assertNotIn("ValidateCanonicalScalarBRUEffects", names)
         self.assertNotIn("ValidateCanonicalScalarBRUTotality", names)
         self.assertNotIn("ValidateCanonicalScalarBRUAliasAndFaults", names)
-        self.assertIn("Zeros{PTO_XLEN} + 0x10a", functions["ValidateScalarBRUExecute_B_Z"])
-        self.assertIn("Zeros{PTO_XLEN} + 0x108", functions["ValidateScalarBRUExecute_B_NZ"])
-        self.assertIn("Zeros{PTO_XLEN} + 0x106", functions["ValidateScalarBRUAlias_B_Z"])
+        self.assertNotIn("ValidateScalarBRUExecute_B_Z", names)
+        self.assertNotIn("ValidateScalarBRUExecute_B_NZ", names)
+        self.assertNotIn("ValidateScalarBRUAlias_B_Z", names)
         self.assertIn("Zeros{PTO_XLEN} + 0x104", functions["ValidateScalarBRUAlias_JR"])
 
     def test_one_owner_projects_two_short_mnemonic_named_points(self) -> None:

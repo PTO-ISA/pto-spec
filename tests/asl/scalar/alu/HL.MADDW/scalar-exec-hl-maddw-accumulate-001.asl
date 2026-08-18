@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-MADDW-ACCUMULATE-001","source":"asl/scalar/alu/HL.MADDW.asl","requirements":["PTO-INST-SCALAR-HL-MADDW"],"kind":"execution","summary":"HL.MADDW publishes low then high halves of its full accumulated product","pass_condition":"Decoded pair results match the mnemonic low and high accumulator contracts","related_sources":["asl/scalar/model/alu/semantics.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-MADDW-ACCUMULATE-001","source":"asl/scalar/alu/HL.MADDW.asl","requirements":["PTO-INST-SCALAR-HL-MADDW"],"kind":"execution","summary":"HL.MADDW publishes sign-extended low and high word halves from its 64-bit result","pass_condition":"Decoded Dst0 and Dst1 match the mnemonic low-word and high-word contracts","related_sources":["asl/scalar/model/alu/semantics.asl"]}
 func main() => integer
 begin
     ResetProfileState();

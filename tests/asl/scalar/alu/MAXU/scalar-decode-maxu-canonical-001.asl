@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-MAXU-DECODE-001","source":"asl/scalar/alu/MAXU.asl","requirements":["PTO-INST-SCALAR-MAXU"],"kind":"decode-positive","summary":"canonical MAXU catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000001000000000000100000001011011', 32) == 367;
-    assert ScalarOperationOfForm(367) == ScalarOperation_MAXU;
-    assert ScalarHandlerOfForm(367) == ScalarHandler_ScalarBinary;
+    assert DecodeScalarForm('000000000000000000001000000000000100000001011011', 32) == 359;
+    assert ScalarOperationOfForm(359) == ScalarOperation_MAXU;
+    assert ScalarHandlerOfForm(359) == ScalarHandler_ScalarBinary;
     assert InstructionContractOperation_MAXU() == ScalarOperation_MAXU;
     assert InstructionContractHandler_MAXU() == ScalarHandler_ScalarBinary;
-    assert DecodeScalarOperandRaw('000000000000000000001000000000000100000001011011', 367, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000001000000000000100000001011011', 367, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000001000000000000100000001011011', 367, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000001000000000000100000001011011', 359, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000001000000000000100000001011011', 359, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000001000000000000100000001011011', 359, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

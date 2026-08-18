@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the reproducible PTO ISA 0.58.1 release identity artifacts."""
+"""Generate the reproducible PTO ISA 0.58.2 release identity artifacts."""
 
 from __future__ import annotations
 
@@ -13,17 +13,18 @@ import tomllib
 
 
 ROOT = Path(__file__).resolve().parent.parent
-RELEASE = "0.58.1"
-ENCODING_ABI = "pto-isa-0.58.1-mode-function-v1"
+RELEASE = "0.58.2"
+ENCODING_ABI = "pto-isa-0.58.2-mode-function-v1"
 MANIFEST_PATH = Path("spec/release-manifest.json")
-TOTALITY_PATH = Path("spec/evidence/pto-isa-0581-encoding-totality.json")
-ABI_VECTORS_PATH = Path("spec/evidence/pto-isa-0581-abi-vectors.json")
+TOTALITY_PATH = Path("spec/evidence/pto-isa-0582-encoding-totality.json")
+ABI_VECTORS_PATH = Path("spec/evidence/pto-isa-0582-abi-vectors.json")
 NUMERIC_PROFILE_PATH = Path("spec/hardware-conformance-profile.json")
-NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0581-hardware-numeric-vectors.json")
+NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0582-hardware-numeric-vectors.json")
 NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.1-ieee-v1"
+NUMERIC_PROFILE_RELEASE = "0.58.1"
 
 FAMILY_COUNTS = {'TEPL': 87, 'TLSU': 10, 'CUBE': 12}
-FORM_COUNTS = {'scalar_forms': 474, 'command_forms': 74}
+FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 74}
 COMMAND_FAMILY_COUNTS = {'CMD': 69, 'BBD': 5}
 VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
 RESERVED_DATATYPES = (15, 21, 22, 23, 29, 30)
@@ -292,7 +293,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
     if tepl_map != EXPECTED_TEPL_MAP:
         missing = sorted(set(EXPECTED_TEPL_MAP.items()) - set(tepl_map.items()))
         extra = sorted(set(tepl_map.items()) - set(EXPECTED_TEPL_MAP.items()))
-        raise SystemExit(f"TEPL 0.58.1 map mismatch; missing={missing}, unexpected={extra}")
+        raise SystemExit(f"TEPL 0.58.2 map mismatch; missing={missing}, unexpected={extra}")
 
     for family, expected in (
         ("TLSU", EXPECTED_TLSU_MAP),
@@ -300,7 +301,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
     ):
         actual = {operation_function(row): row["name"] for row in by_family[family]}
         if actual != expected:
-            raise SystemExit(f"{family} 0.58.1 function map must be {expected}, got {actual}")
+            raise SystemExit(f"{family} 0.58.2 function map must be {expected}, got {actual}")
 
     for row in operations:
         expected_command = (
@@ -605,8 +606,14 @@ def validate_numeric_profile() -> dict:
     }
     if set(profile) != expected_keys:
         raise SystemExit("hardware numeric profile top-level schema drift")
-    if profile["schema_version"] != 2 or profile["isa_release"] != RELEASE:
-        raise SystemExit("hardware numeric profile must identify schema 2 and release 0.58.1")
+    if (
+        profile["schema_version"] != 2
+        or profile["isa_release"] != NUMERIC_PROFILE_RELEASE
+    ):
+        raise SystemExit(
+            "hardware numeric profile must identify schema 2 and retained "
+            f"release {NUMERIC_PROFILE_RELEASE}"
+        )
     if profile["profile_id"] != NUMERIC_PROFILE_ID:
         raise SystemExit(f"hardware numeric profile ID must be {NUMERIC_PROFILE_ID}")
     reference = profile["reference_model_relation"]
@@ -1076,12 +1083,12 @@ def validate_owned_set() -> None:
             f"owned generated documentation set drift: expected {GENERATED_DOCS}, got {actual_docs}"
         )
     actual_evidence = tuple(
-        sorted(str(path.relative_to(ROOT)) for path in (ROOT / "spec/evidence").glob("*0581*.json"))
+        sorted(str(path.relative_to(ROOT)) for path in (ROOT / "spec/evidence").glob("*0582*.json"))
     )
     unexpected_evidence = tuple(sorted(set(actual_evidence) - set(EVIDENCE_FILES)))
     if unexpected_evidence:
         raise SystemExit(
-            f"unexpected owned 0.58.1 evidence files: {unexpected_evidence}"
+            f"unexpected owned 0.58.2 evidence files: {unexpected_evidence}"
         )
 
 

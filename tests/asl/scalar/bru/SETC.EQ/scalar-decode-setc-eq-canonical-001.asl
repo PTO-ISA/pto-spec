@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-SETC-EQ-DECODE-001","source":"asl/scalar/bru/SETC.EQ.asl","requirements":["PTO-INST-SCALAR-SETC-EQ"],"kind":"decode-positive","summary":"canonical SETC.EQ catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000000000001100101', 32) == 408;
-    assert ScalarOperationOfForm(408) == ScalarOperation_SETC_EQ;
-    assert ScalarHandlerOfForm(408) == ScalarHandler_ExecuteSetCommit;
+    assert DecodeScalarForm('000000000000000000000000000000000000000001100101', 32) == 400;
+    assert ScalarOperationOfForm(400) == ScalarOperation_SETC_EQ;
+    assert ScalarHandlerOfForm(400) == ScalarHandler_ExecuteSetCommit;
     assert InstructionContractOperation_SETC_EQ() == ScalarOperation_SETC_EQ;
     assert InstructionContractHandler_SETC_EQ() == ScalarHandler_ExecuteSetCommit;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001100101', 408, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001100101', 408, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001100101', 408, ScalarField_SrcRType) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001100101', 400, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001100101', 400, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000001100101', 400, ScalarField_SrcRType) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

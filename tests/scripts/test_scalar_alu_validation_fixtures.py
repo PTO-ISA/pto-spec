@@ -52,6 +52,14 @@ class ScalarALUValidationFixtureTest(unittest.TestCase):
         self.assertIn("ExecuteScalarRemainderPair", pair_handlers)
         self.assertIn("ExecuteScalarRemainderPairW", pair_handlers)
 
+    def test_maddw_pair_expected_publishes_sign_extended_word_halves(self) -> None:
+        self.assertEqual(
+            GENERATOR["scalar_pair_expected"](
+                "HL.MADDW", 0x7FFFFFFF, 0x7FFFFFFF, 0
+            ),
+            (1, 0x3FFFFFFF),
+        )
+
     def test_command_rejection_inventory_matches_reserved_pto_handlers(self) -> None:
         self.assertEqual(
             GENERATOR["PTO_V0_UNSUPPORTED_COMMAND_HANDLERS"],

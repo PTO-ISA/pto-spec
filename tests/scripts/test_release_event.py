@@ -16,10 +16,10 @@ VALIDATE_SCHEMA = runpy.run_path(str(ROOT / "scripts/check-release-event-schema"
 VALID_PAYLOAD = {
     "schema_version": "1",
     "repository": "PTO-ISA/pto-spec",
-    "tag": "v0.58.1",
+    "tag": "v0.58.2",
     "commit": "0123456789abcdef0123456789abcdef01234567",
     "release_id": 123,
-    "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.1",
+    "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.2",
     "release_manifest_sha256": "a" * 64,
     "published_at": "2026-08-10T00:00:00Z",
 }
@@ -64,7 +64,7 @@ class ReleaseEventTest(unittest.TestCase):
         self.assert_invalid(repository="heng" + "liao1972/DavinciOO")
 
     def test_non_semantic_release_tag_is_rejected(self) -> None:
-        for tag in ("0.58.1", "v0.58.1.0", "v0.x", "v01.58.1"):
+        for tag in ("0.58.2", "v0.58.2.0", "v0.x", "v01.58.2"):
             with self.subTest(tag=tag):
                 self.assert_invalid(tag=tag)
 
@@ -80,9 +80,9 @@ class ReleaseEventTest(unittest.TestCase):
 
     def test_non_release_or_mismatched_release_url_is_rejected(self) -> None:
         for release_url in (
-            "https://example.com/PTO-ISA/pto-spec/releases/tag/v0.58.1",
-            "https://github.com/PTO-ISA/pto-spec/releases/v0.58.1",
-            "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.2",
+            "https://example.com/PTO-ISA/pto-spec/releases/tag/v0.58.2",
+            "https://github.com/PTO-ISA/pto-spec/releases/v0.58.2",
+            "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.1",
         ):
             with self.subTest(release_url=release_url):
                 self.assert_invalid(release_url=release_url)

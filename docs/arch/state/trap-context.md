@@ -26,6 +26,8 @@ begin
     _TrapContexts[[target]].bundle_body_active = _BundleBodyActive;
     _TrapContexts[[target]].bundle_commit_target_set =
         _BundleCommitTargetSet;
+    _TrapContexts[[target]].bundle_condition_set =
+        _BundleConditionSet;
     _TrapContexts[[target]].system_block_terminal_pending =
         _SystemBlockTerminalPending;
     _TrapContexts[[target]].barg = _BARG;
@@ -98,6 +100,8 @@ begin
     _BundleBodyActive = _TrapContexts[[target]].bundle_body_active;
     _BundleCommitTargetSet =
         _TrapContexts[[target]].bundle_commit_target_set;
+    _BundleConditionSet =
+        _TrapContexts[[target]].bundle_condition_set;
     _SystemBlockTerminalPending =
         _TrapContexts[[target]].system_block_terminal_pending;
     _BARG = _TrapContexts[[target]].barg;

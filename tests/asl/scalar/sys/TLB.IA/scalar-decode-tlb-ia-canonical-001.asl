@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-TLB-IA-DECODE-001","source":"asl/scalar/sys/TLB.IA.asl","requirements":["PTO-INST-SCALAR-TLB-IA"],"kind":"decode-positive","summary":"canonical TLB.IA catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000111000000101011', 32) == 465;
-    assert ScalarOperationOfForm(465) == ScalarOperation_TLB_IA;
-    assert ScalarHandlerOfForm(465) == ScalarHandler_ExecuteMaintenance;
+    assert DecodeScalarForm('000000000000000000000000000000000111000000101011', 32) == 457;
+    assert ScalarOperationOfForm(457) == ScalarOperation_TLB_IA;
+    assert ScalarHandlerOfForm(457) == ScalarHandler_ExecuteMaintenance;
     assert InstructionContractOperation_TLB_IA() == ScalarOperation_TLB_IA;
     assert InstructionContractHandler_TLB_IA() == ScalarHandler_ExecuteMaintenance;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000101011', 465, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000101011', 457, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

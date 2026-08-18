@@ -65,6 +65,12 @@ end;
 ```
 <!-- GENERATED-ASL-END: decode -->
 
+## Block composition
+
+```asm
+Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block.
+```
+
 ## Operation
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/scalar/bru/SETC.GEU.asl -->
@@ -99,12 +105,13 @@ end;
 
 ## Legality
 
-- Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects.
+- All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it.
 
 ## State effects
 
-- SETC.GEU - Compare scalar operands and update the bundle commit condition.
-- After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified.
+- Compute SETC.GEU's local comparison or logical condition from source snapshots and canonicalize it to zero or one.
+- Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.
+- No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length.
 
 ## Memory effects and ordering
 
@@ -114,11 +121,13 @@ end;
 
 ### Ordering
 
-- none
+- Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.
+- Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker.
 
 ## Exceptions
 
-- Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation.
+- Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.
+- A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects.
 
 ## Examples
 

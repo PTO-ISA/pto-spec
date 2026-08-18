@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-J-DECODE-001","source":"asl/scalar/bru/J.asl","requirements":["PTO-INST-SCALAR-J"],"kind":"decode-positive","summary":"canonical J catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000000000000110111', 32) == 314;
-    assert ScalarOperationOfForm(314) == ScalarOperation_J;
-    assert ScalarHandlerOfForm(314) == ScalarHandler_JumpRelative;
+    assert DecodeScalarForm('000000000000000000000000000000000000000000110111', 32) == 306;
+    assert ScalarOperationOfForm(306) == ScalarOperation_J;
+    assert ScalarHandlerOfForm(306) == ScalarHandler_JumpRelative;
     assert InstructionContractOperation_J() == ScalarOperation_J;
     assert InstructionContractHandler_J() == ScalarHandler_JumpRelative;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000110111', 314, ScalarField_simm22) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000110111', 306, ScalarField_simm22) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

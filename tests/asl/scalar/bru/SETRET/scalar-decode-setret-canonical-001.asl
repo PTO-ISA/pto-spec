@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-SETRET-DECODE-001","source":"asl/scalar/bru/SETRET.asl","requirements":["PTO-INST-SCALAR-SETRET"],"kind":"decode-positive","summary":"canonical SETRET catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000000010100000111', 32) == 423;
-    assert ScalarOperationOfForm(423) == ScalarOperation_SETRET;
-    assert ScalarHandlerOfForm(423) == ScalarHandler_SetReturnAddress;
+    assert DecodeScalarForm('000000000000000000000000000000000000010100000111', 32) == 415;
+    assert ScalarOperationOfForm(415) == ScalarOperation_SETRET;
+    assert ScalarHandlerOfForm(415) == ScalarHandler_SetReturnAddress;
     assert InstructionContractOperation_SETRET() == ScalarOperation_SETRET;
     assert InstructionContractHandler_SETRET() == ScalarHandler_SetReturnAddress;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000010100000111', 423, ScalarField_imm20) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000010100000111', 415, ScalarField_imm20) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

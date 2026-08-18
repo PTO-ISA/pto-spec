@@ -19060,1314 +19060,6 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "b.eq SrcL, SrcR, label",
-          "constraints": [],
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x0000707f",
-              "match": "0x00000027",
-              "width_bits": 32
-            }
-          ],
-          "encoding_kind": "L32",
-          "fields": [
-            {
-              "name": "SrcL",
-              "pieces": [
-                {
-                  "instruction_lsb": 15,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "SrcR",
-              "pieces": [
-                {
-                  "instruction_lsb": 20,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "simm12",
-              "pieces": [
-                {
-                  "instruction_lsb": 25,
-                  "value_lsb": 0,
-                  "width": 7
-                },
-                {
-                  "instruction_lsb": 7,
-                  "value_lsb": 7,
-                  "width": 5
-                }
-              ],
-              "signedness": "signed",
-              "width": 12
-            }
-          ],
-          "form_id": "b_eq_32_41f00e5abd89",
-          "length_bits": 32,
-          "mnemonic": "B.EQ",
-          "semantic_family": "BRU",
-          "semantic_group": "BRU",
-          "semantic_handler": "BranchRelative",
-          "semantic_summary": "B.EQ - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "status": "accepted"
-        }
-      ],
-      "classification": [
-        "bru"
-      ],
-      "contract": {
-        "block_composition": [
-          "none"
-        ],
-        "canonical_assembly": [
-          "b.eq SrcL, SrcR, label"
-        ],
-        "defaults": [
-          "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
-        ],
-        "encoded_fields": [
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcL",
-            "form_id": "b_eq_32_41f00e5abd89",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "left absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcR",
-            "form_id": "b_eq_32_41f00e5abd89",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "right absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                4095
-              ]
-            ],
-            "field": "simm12",
-            "form_id": "b_eq_32_41f00e5abd89",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "12-bit signed immediate or displacement",
-            "signedness": "signed",
-            "width": 12,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 12-bit signed immediate or displacement."
-          }
-        ],
-        "encoding_class": "standalone-encoded",
-        "examples": [
-          "b.eq SrcL, SrcR, label"
-        ],
-        "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "SrcL",
-            "role": "left absolute GPR source"
-          },
-          {
-            "field": "SrcR",
-            "role": "right absolute GPR source"
-          },
-          {
-            "field": "simm12",
-            "role": "12-bit signed immediate or displacement"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": true,
-        "state_effects": [
-          "B.EQ - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "After decode and legality checks, execute the normative BranchRelative ASL handler; no other architectural state is modified."
-        ]
-      },
-      "documentation": "docs/scalar/bru/B.EQ.md",
-      "engine": null,
-      "mnemonic": "B.EQ",
-      "ndf_clause": "PTO-INST-SCALAR-B-EQ",
-      "source": "asl/scalar/bru/B.EQ.asl",
-      "summary": "B.EQ - Conditionally branch to the PC-relative target after comparing scalar operands.",
-      "surface": "scalar"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "asm": "b.ge SrcL, SrcR, label",
-          "constraints": [],
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x0000707f",
-              "match": "0x00003027",
-              "width_bits": 32
-            }
-          ],
-          "encoding_kind": "L32",
-          "fields": [
-            {
-              "name": "SrcL",
-              "pieces": [
-                {
-                  "instruction_lsb": 15,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "SrcR",
-              "pieces": [
-                {
-                  "instruction_lsb": 20,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "simm12",
-              "pieces": [
-                {
-                  "instruction_lsb": 25,
-                  "value_lsb": 0,
-                  "width": 7
-                },
-                {
-                  "instruction_lsb": 7,
-                  "value_lsb": 7,
-                  "width": 5
-                }
-              ],
-              "signedness": "signed",
-              "width": 12
-            }
-          ],
-          "form_id": "b_ge_32_7bd9050705dc",
-          "length_bits": 32,
-          "mnemonic": "B.GE",
-          "semantic_family": "BRU",
-          "semantic_group": "BRU",
-          "semantic_handler": "BranchRelative",
-          "semantic_summary": "B.GE - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "status": "accepted"
-        }
-      ],
-      "classification": [
-        "bru"
-      ],
-      "contract": {
-        "block_composition": [
-          "none"
-        ],
-        "canonical_assembly": [
-          "b.ge SrcL, SrcR, label"
-        ],
-        "defaults": [
-          "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
-        ],
-        "encoded_fields": [
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcL",
-            "form_id": "b_ge_32_7bd9050705dc",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "left absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcR",
-            "form_id": "b_ge_32_7bd9050705dc",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "right absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                4095
-              ]
-            ],
-            "field": "simm12",
-            "form_id": "b_ge_32_7bd9050705dc",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "12-bit signed immediate or displacement",
-            "signedness": "signed",
-            "width": 12,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 12-bit signed immediate or displacement."
-          }
-        ],
-        "encoding_class": "standalone-encoded",
-        "examples": [
-          "b.ge SrcL, SrcR, label"
-        ],
-        "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "SrcL",
-            "role": "left absolute GPR source"
-          },
-          {
-            "field": "SrcR",
-            "role": "right absolute GPR source"
-          },
-          {
-            "field": "simm12",
-            "role": "12-bit signed immediate or displacement"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": true,
-        "state_effects": [
-          "B.GE - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "After decode and legality checks, execute the normative BranchRelative ASL handler; no other architectural state is modified."
-        ]
-      },
-      "documentation": "docs/scalar/bru/B.GE.md",
-      "engine": null,
-      "mnemonic": "B.GE",
-      "ndf_clause": "PTO-INST-SCALAR-B-GE",
-      "source": "asl/scalar/bru/B.GE.asl",
-      "summary": "B.GE - Conditionally branch to the PC-relative target after comparing scalar operands.",
-      "surface": "scalar"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "asm": "b.geu SrcL, SrcR, label",
-          "constraints": [],
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x0000707f",
-              "match": "0x00005027",
-              "width_bits": 32
-            }
-          ],
-          "encoding_kind": "L32",
-          "fields": [
-            {
-              "name": "SrcL",
-              "pieces": [
-                {
-                  "instruction_lsb": 15,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "SrcR",
-              "pieces": [
-                {
-                  "instruction_lsb": 20,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "simm12",
-              "pieces": [
-                {
-                  "instruction_lsb": 25,
-                  "value_lsb": 0,
-                  "width": 7
-                },
-                {
-                  "instruction_lsb": 7,
-                  "value_lsb": 7,
-                  "width": 5
-                }
-              ],
-              "signedness": "signed",
-              "width": 12
-            }
-          ],
-          "form_id": "b_geu_32_43a6e57dce55",
-          "length_bits": 32,
-          "mnemonic": "B.GEU",
-          "semantic_family": "BRU",
-          "semantic_group": "BRU",
-          "semantic_handler": "BranchRelative",
-          "semantic_summary": "B.GEU - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "status": "accepted"
-        }
-      ],
-      "classification": [
-        "bru"
-      ],
-      "contract": {
-        "block_composition": [
-          "none"
-        ],
-        "canonical_assembly": [
-          "b.geu SrcL, SrcR, label"
-        ],
-        "defaults": [
-          "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
-        ],
-        "encoded_fields": [
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcL",
-            "form_id": "b_geu_32_43a6e57dce55",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "left absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcR",
-            "form_id": "b_geu_32_43a6e57dce55",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "right absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                4095
-              ]
-            ],
-            "field": "simm12",
-            "form_id": "b_geu_32_43a6e57dce55",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "12-bit signed immediate or displacement",
-            "signedness": "signed",
-            "width": 12,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 12-bit signed immediate or displacement."
-          }
-        ],
-        "encoding_class": "standalone-encoded",
-        "examples": [
-          "b.geu SrcL, SrcR, label"
-        ],
-        "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "SrcL",
-            "role": "left absolute GPR source"
-          },
-          {
-            "field": "SrcR",
-            "role": "right absolute GPR source"
-          },
-          {
-            "field": "simm12",
-            "role": "12-bit signed immediate or displacement"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": true,
-        "state_effects": [
-          "B.GEU - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "After decode and legality checks, execute the normative BranchRelative ASL handler; no other architectural state is modified."
-        ]
-      },
-      "documentation": "docs/scalar/bru/B.GEU.md",
-      "engine": null,
-      "mnemonic": "B.GEU",
-      "ndf_clause": "PTO-INST-SCALAR-B-GEU",
-      "source": "asl/scalar/bru/B.GEU.asl",
-      "summary": "B.GEU - Conditionally branch to the PC-relative target after comparing scalar operands.",
-      "surface": "scalar"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "asm": "b.lt SrcL, SrcR, label",
-          "constraints": [],
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x0000707f",
-              "match": "0x00002027",
-              "width_bits": 32
-            }
-          ],
-          "encoding_kind": "L32",
-          "fields": [
-            {
-              "name": "SrcL",
-              "pieces": [
-                {
-                  "instruction_lsb": 15,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "SrcR",
-              "pieces": [
-                {
-                  "instruction_lsb": 20,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "simm12",
-              "pieces": [
-                {
-                  "instruction_lsb": 25,
-                  "value_lsb": 0,
-                  "width": 7
-                },
-                {
-                  "instruction_lsb": 7,
-                  "value_lsb": 7,
-                  "width": 5
-                }
-              ],
-              "signedness": "signed",
-              "width": 12
-            }
-          ],
-          "form_id": "b_lt_32_2ca5ecd25cfb",
-          "length_bits": 32,
-          "mnemonic": "B.LT",
-          "semantic_family": "BRU",
-          "semantic_group": "BRU",
-          "semantic_handler": "BranchRelative",
-          "semantic_summary": "B.LT - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "status": "accepted"
-        }
-      ],
-      "classification": [
-        "bru"
-      ],
-      "contract": {
-        "block_composition": [
-          "none"
-        ],
-        "canonical_assembly": [
-          "b.lt SrcL, SrcR, label"
-        ],
-        "defaults": [
-          "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
-        ],
-        "encoded_fields": [
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcL",
-            "form_id": "b_lt_32_2ca5ecd25cfb",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "left absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcR",
-            "form_id": "b_lt_32_2ca5ecd25cfb",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "right absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                4095
-              ]
-            ],
-            "field": "simm12",
-            "form_id": "b_lt_32_2ca5ecd25cfb",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "12-bit signed immediate or displacement",
-            "signedness": "signed",
-            "width": 12,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 12-bit signed immediate or displacement."
-          }
-        ],
-        "encoding_class": "standalone-encoded",
-        "examples": [
-          "b.lt SrcL, SrcR, label"
-        ],
-        "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "SrcL",
-            "role": "left absolute GPR source"
-          },
-          {
-            "field": "SrcR",
-            "role": "right absolute GPR source"
-          },
-          {
-            "field": "simm12",
-            "role": "12-bit signed immediate or displacement"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": true,
-        "state_effects": [
-          "B.LT - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "After decode and legality checks, execute the normative BranchRelative ASL handler; no other architectural state is modified."
-        ]
-      },
-      "documentation": "docs/scalar/bru/B.LT.md",
-      "engine": null,
-      "mnemonic": "B.LT",
-      "ndf_clause": "PTO-INST-SCALAR-B-LT",
-      "source": "asl/scalar/bru/B.LT.asl",
-      "summary": "B.LT - Conditionally branch to the PC-relative target after comparing scalar operands.",
-      "surface": "scalar"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "asm": "b.ltu SrcL, SrcR, label",
-          "constraints": [],
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x0000707f",
-              "match": "0x00004027",
-              "width_bits": 32
-            }
-          ],
-          "encoding_kind": "L32",
-          "fields": [
-            {
-              "name": "SrcL",
-              "pieces": [
-                {
-                  "instruction_lsb": 15,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "SrcR",
-              "pieces": [
-                {
-                  "instruction_lsb": 20,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "simm12",
-              "pieces": [
-                {
-                  "instruction_lsb": 25,
-                  "value_lsb": 0,
-                  "width": 7
-                },
-                {
-                  "instruction_lsb": 7,
-                  "value_lsb": 7,
-                  "width": 5
-                }
-              ],
-              "signedness": "signed",
-              "width": 12
-            }
-          ],
-          "form_id": "b_ltu_32_f1ea7ad44e37",
-          "length_bits": 32,
-          "mnemonic": "B.LTU",
-          "semantic_family": "BRU",
-          "semantic_group": "BRU",
-          "semantic_handler": "BranchRelative",
-          "semantic_summary": "B.LTU - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "status": "accepted"
-        }
-      ],
-      "classification": [
-        "bru"
-      ],
-      "contract": {
-        "block_composition": [
-          "none"
-        ],
-        "canonical_assembly": [
-          "b.ltu SrcL, SrcR, label"
-        ],
-        "defaults": [
-          "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
-        ],
-        "encoded_fields": [
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcL",
-            "form_id": "b_ltu_32_f1ea7ad44e37",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "left absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcR",
-            "form_id": "b_ltu_32_f1ea7ad44e37",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "right absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                4095
-              ]
-            ],
-            "field": "simm12",
-            "form_id": "b_ltu_32_f1ea7ad44e37",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "12-bit signed immediate or displacement",
-            "signedness": "signed",
-            "width": 12,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 12-bit signed immediate or displacement."
-          }
-        ],
-        "encoding_class": "standalone-encoded",
-        "examples": [
-          "b.ltu SrcL, SrcR, label"
-        ],
-        "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "SrcL",
-            "role": "left absolute GPR source"
-          },
-          {
-            "field": "SrcR",
-            "role": "right absolute GPR source"
-          },
-          {
-            "field": "simm12",
-            "role": "12-bit signed immediate or displacement"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": true,
-        "state_effects": [
-          "B.LTU - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "After decode and legality checks, execute the normative BranchRelative ASL handler; no other architectural state is modified."
-        ]
-      },
-      "documentation": "docs/scalar/bru/B.LTU.md",
-      "engine": null,
-      "mnemonic": "B.LTU",
-      "ndf_clause": "PTO-INST-SCALAR-B-LTU",
-      "source": "asl/scalar/bru/B.LTU.asl",
-      "summary": "B.LTU - Conditionally branch to the PC-relative target after comparing scalar operands.",
-      "surface": "scalar"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "asm": "b.ne SrcL, SrcR, label",
-          "constraints": [],
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x0000707f",
-              "match": "0x00001027",
-              "width_bits": 32
-            }
-          ],
-          "encoding_kind": "L32",
-          "fields": [
-            {
-              "name": "SrcL",
-              "pieces": [
-                {
-                  "instruction_lsb": 15,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "SrcR",
-              "pieces": [
-                {
-                  "instruction_lsb": 20,
-                  "value_lsb": 0,
-                  "width": 5
-                }
-              ],
-              "signedness": "encoding-defined",
-              "width": 5
-            },
-            {
-              "name": "simm12",
-              "pieces": [
-                {
-                  "instruction_lsb": 25,
-                  "value_lsb": 0,
-                  "width": 7
-                },
-                {
-                  "instruction_lsb": 7,
-                  "value_lsb": 7,
-                  "width": 5
-                }
-              ],
-              "signedness": "signed",
-              "width": 12
-            }
-          ],
-          "form_id": "b_ne_32_831af6a36ff4",
-          "length_bits": 32,
-          "mnemonic": "B.NE",
-          "semantic_family": "BRU",
-          "semantic_group": "BRU",
-          "semantic_handler": "BranchRelative",
-          "semantic_summary": "B.NE - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "status": "accepted"
-        }
-      ],
-      "classification": [
-        "bru"
-      ],
-      "contract": {
-        "block_composition": [
-          "none"
-        ],
-        "canonical_assembly": [
-          "b.ne SrcL, SrcR, label"
-        ],
-        "defaults": [
-          "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
-        ],
-        "encoded_fields": [
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcL",
-            "form_id": "b_ne_32_831af6a36ff4",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "left absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                31
-              ]
-            ],
-            "field": "SrcR",
-            "form_id": "b_ne_32_831af6a36ff4",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "right absolute GPR source",
-            "signedness": "encoding-defined",
-            "width": 5,
-            "zero_meaning": "Encoded zero names the architectural zero GPR."
-          },
-          {
-            "assigned_ranges": [
-              [
-                0,
-                4095
-              ]
-            ],
-            "field": "simm12",
-            "form_id": "b_ne_32_831af6a36ff4",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "12-bit signed immediate or displacement",
-            "signedness": "signed",
-            "width": 12,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 12-bit signed immediate or displacement."
-          }
-        ],
-        "encoding_class": "standalone-encoded",
-        "examples": [
-          "b.ne SrcL, SrcR, label"
-        ],
-        "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "SrcL",
-            "role": "left absolute GPR source"
-          },
-          {
-            "field": "SrcR",
-            "role": "right absolute GPR source"
-          },
-          {
-            "field": "simm12",
-            "role": "12-bit signed immediate or displacement"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": true,
-        "state_effects": [
-          "B.NE - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "After decode and legality checks, execute the normative BranchRelative ASL handler; no other architectural state is modified."
-        ]
-      },
-      "documentation": "docs/scalar/bru/B.NE.md",
-      "engine": null,
-      "mnemonic": "B.NE",
-      "ndf_clause": "PTO-INST-SCALAR-B-NE",
-      "source": "asl/scalar/bru/B.NE.asl",
-      "summary": "B.NE - Conditionally branch to the PC-relative target after comparing scalar operands.",
-      "surface": "scalar"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "asm": "b.nz label",
-          "constraints": [],
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x0000707f",
-              "match": "0x00002037",
-              "width_bits": 32
-            }
-          ],
-          "encoding_kind": "L32",
-          "fields": [
-            {
-              "name": "simm22",
-              "pieces": [
-                {
-                  "instruction_lsb": 15,
-                  "value_lsb": 0,
-                  "width": 17
-                },
-                {
-                  "instruction_lsb": 7,
-                  "value_lsb": 17,
-                  "width": 5
-                }
-              ],
-              "signedness": "signed",
-              "width": 22
-            }
-          ],
-          "form_id": "b_nz_32_0f583cdd8d4d",
-          "length_bits": 32,
-          "mnemonic": "B.NZ",
-          "semantic_family": "BRU",
-          "semantic_group": "BRU",
-          "semantic_handler": "BranchRelative",
-          "semantic_summary": "B.NZ - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "status": "accepted"
-        }
-      ],
-      "classification": [
-        "bru"
-      ],
-      "contract": {
-        "block_composition": [
-          "none"
-        ],
-        "canonical_assembly": [
-          "b.nz label"
-        ],
-        "defaults": [
-          "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
-        ],
-        "encoded_fields": [
-          {
-            "assigned_ranges": [
-              [
-                0,
-                4194303
-              ]
-            ],
-            "field": "simm22",
-            "form_id": "b_nz_32_0f583cdd8d4d",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "22-bit signed immediate or displacement",
-            "signedness": "signed",
-            "width": 22,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 22-bit signed immediate or displacement."
-          }
-        ],
-        "encoding_class": "standalone-encoded",
-        "examples": [
-          "b.nz label"
-        ],
-        "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "simm22",
-            "role": "22-bit signed immediate or displacement"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": true,
-        "state_effects": [
-          "B.NZ - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "After decode and legality checks, execute the normative BranchRelative ASL handler; no other architectural state is modified."
-        ]
-      },
-      "documentation": "docs/scalar/bru/B.NZ.md",
-      "engine": null,
-      "mnemonic": "B.NZ",
-      "ndf_clause": "PTO-INST-SCALAR-B-NZ",
-      "source": "asl/scalar/bru/B.NZ.asl",
-      "summary": "B.NZ - Conditionally branch to the PC-relative target after comparing scalar operands.",
-      "surface": "scalar"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "asm": "b.z label",
-          "constraints": [],
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x0000707f",
-              "match": "0x00001037",
-              "width_bits": 32
-            }
-          ],
-          "encoding_kind": "L32",
-          "fields": [
-            {
-              "name": "simm22",
-              "pieces": [
-                {
-                  "instruction_lsb": 15,
-                  "value_lsb": 0,
-                  "width": 17
-                },
-                {
-                  "instruction_lsb": 7,
-                  "value_lsb": 17,
-                  "width": 5
-                }
-              ],
-              "signedness": "signed",
-              "width": 22
-            }
-          ],
-          "form_id": "b_z_32_753dd3b4fcb6",
-          "length_bits": 32,
-          "mnemonic": "B.Z",
-          "semantic_family": "BRU",
-          "semantic_group": "BRU",
-          "semantic_handler": "BranchRelative",
-          "semantic_summary": "B.Z - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "status": "accepted"
-        }
-      ],
-      "classification": [
-        "bru"
-      ],
-      "contract": {
-        "block_composition": [
-          "none"
-        ],
-        "canonical_assembly": [
-          "b.z label"
-        ],
-        "defaults": [
-          "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
-        ],
-        "encoded_fields": [
-          {
-            "assigned_ranges": [
-              [
-                0,
-                4194303
-              ]
-            ],
-            "field": "simm22",
-            "form_id": "b_z_32_753dd3b4fcb6",
-            "other_owner_values": [],
-            "rejection": "none",
-            "reserved_ranges": [],
-            "role": "22-bit signed immediate or displacement",
-            "signedness": "signed",
-            "width": 22,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 22-bit signed immediate or displacement."
-          }
-        ],
-        "encoding_class": "standalone-encoded",
-        "examples": [
-          "b.z label"
-        ],
-        "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "simm22",
-            "role": "22-bit signed immediate or displacement"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": true,
-        "state_effects": [
-          "B.Z - Conditionally branch to the PC-relative target after comparing scalar operands.",
-          "After decode and legality checks, execute the normative BranchRelative ASL handler; no other architectural state is modified."
-        ]
-      },
-      "documentation": "docs/scalar/bru/B.Z.md",
-      "engine": null,
-      "mnemonic": "B.Z",
-      "ndf_clause": "PTO-INST-SCALAR-B-Z",
-      "source": "asl/scalar/bru/B.Z.asl",
-      "summary": "B.Z - Conditionally branch to the PC-relative target after comparing scalar operands.",
-      "surface": "scalar"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
           "asm": "bc.iall",
           "constraints": [],
           "encoding": [
@@ -23842,7 +22534,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "c.setc.eq srcL, srcR"
@@ -23891,11 +22583,12 @@
           "c.setc.eq srcL, srcR"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -23911,12 +22604,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "C.SETC.EQ - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute C.SETC.EQ's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/C.SETC.EQ.md",
@@ -23984,7 +22679,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "c.setc.ne srcL, srcR"
@@ -24033,11 +22728,12 @@
           "c.setc.ne srcL, srcR"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -24053,12 +22749,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "C.SETC.NE - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute C.SETC.NE's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/C.SETC.NE.md",
@@ -57303,8 +56001,8 @@
           "mnemonic": "HL.LUI",
           "semantic_family": "ALU",
           "semantic_group": "ALU",
-          "semantic_handler": "MaterializeLongSigned",
-          "semantic_summary": "HL.LUI sign-extends its split encoded 32-bit immediate to XLEN and publishes the result through RegDst.",
+          "semantic_handler": "MaterializeLongUpper",
+          "semantic_summary": "HL.LUI places its split 32-bit immediate in result bits 63:32 and clears result bits 31:0.",
           "status": "accepted"
         }
       ],
@@ -57320,7 +56018,7 @@
         ],
         "defaults": [
           "Every encoded source, immediate, and explicit destination field is required; no field can be omitted.",
-          "The mnemonic fixes immediate signedness, selected source width, and implicit-versus-explicit destination behavior."
+          "The mnemonic fixes unsigned immediate placement in result bits 63:32 and the common explicit destination behavior."
         ],
         "encoded_fields": [
           {
@@ -57352,7 +56050,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "signed split 32-bit immediate",
+            "role": "split 32-bit immediate placed in result bits 63:32",
             "signedness": "encoding-defined",
             "width": 32,
             "zero_meaning": "Encoded zero materializes numeric zero."
@@ -57381,17 +56079,17 @@
           },
           {
             "field": "imm",
-            "role": "signed split 32-bit immediate"
+            "role": "split 32-bit immediate placed in result bits 63:32"
           }
         ],
         "ordering": [
-          "Snapshot any Reg5 source before the destination effect.",
-          "Publish the result, then advance TPC by the encoded instruction length."
+          "Reassemble the complete encoded immediate before the destination effect.",
+          "Publish the upper-half result, then advance TPC by six bytes."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Reassemble imm from its two encoded pieces and sign-extend bit 31 through XLEN.",
-          "Publish the complete XLEN result through the common Reg5 destination map. Relative sources are non-consuming; only a T or U destination push changes a temporary queue.",
+          "Reassemble imm from its two encoded pieces, zero-extend it to XLEN, shift it left by 32, and clear result bits 31:0.",
+          "Publish the complete XLEN result through the common Reg5 destination map. Only a T or U destination push changes a temporary queue.",
           "No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes."
         ]
       },
@@ -57400,7 +56098,7 @@
       "mnemonic": "HL.LUI",
       "ndf_clause": "PTO-INST-SCALAR-HL-LUI",
       "source": "asl/scalar/alu/HL.LUI.asl",
-      "summary": "HL.LUI sign-extends its split encoded 32-bit immediate to XLEN and publishes the result through RegDst.",
+      "summary": "HL.LUI places its split 32-bit immediate in result bits 63:32 and clears result bits 31:0.",
       "surface": "scalar"
     },
     {
@@ -63396,7 +62094,7 @@
           "semantic_family": "ALU",
           "semantic_group": "ALU",
           "semantic_handler": "ExecuteScalarMultiplyAddPair",
-          "semantic_summary": "HL.MADDW sign-extends three low-32-bit sources, computes a 128-bit product plus addend, and publishes low then high halves.",
+          "semantic_summary": "HL.MADDW computes a signed 64-bit word multiply-add result and publishes its sign-extended low and high 32-bit halves.",
           "status": "accepted"
         }
       ],
@@ -63427,7 +62125,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "low product or accumulator Reg5 destination",
+            "role": "sign-extended result[31:0] Reg5 destination",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero discards the low result."
@@ -63444,7 +62142,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "high product or accumulator Reg5 destination",
+            "role": "sign-extended result[63:32] Reg5 destination",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero discards the high result."
@@ -63521,11 +62219,11 @@
         "operands": [
           {
             "field": "RegDst0",
-            "role": "low product or accumulator Reg5 destination"
+            "role": "sign-extended result[31:0] Reg5 destination"
           },
           {
             "field": "RegDst1",
-            "role": "high product or accumulator Reg5 destination"
+            "role": "sign-extended result[63:32] Reg5 destination"
           },
           {
             "field": "SrcD",
@@ -63542,13 +62240,13 @@
         ],
         "ordering": [
           "Snapshot every source before any destination effect so duplicate selectors and destination aliases observe pre-instruction values.",
-          "Publish the low result to RegDst0, publish the high result to RegDst1, then advance TPC by six bytes."
+          "Publish SignExtend(result[31:0]) to RegDst0, publish SignExtend(result[63:32]) to RegDst1, then advance TPC by six bytes."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend SrcD[31:0], SrcL[31:0], and SrcR[31:0] to XLEN; compute a signed 128-bit product and add the sign-extended addend modulo 2^128.",
-          "Snapshot every source and compute the complete 128-bit result before destinations. Publish bits 63:0 to RegDst0, then bits 127:64 to RegDst1. Duplicate destinations are legal; the second high result is final/newest.",
-          "No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes."
+          "Interpret SrcD[31:0], SrcL[31:0], and SrcR[31:0] as signed two-complement values; compute signed32(SrcL) * signed32(SrcR) + signed32(SrcD) modulo 2^64.",
+          "Snapshot every source and compute the complete 64-bit result before destinations. Publish SignExtend(result[31:0]) to RegDst0, then SignExtend(result[63:32]) to RegDst1.",
+          "Duplicate destinations are legal and retain the second high-word result. No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes."
         ]
       },
       "documentation": "docs/scalar/alu/HL.MADDW.md",
@@ -63556,7 +62254,7 @@
       "mnemonic": "HL.MADDW",
       "ndf_clause": "PTO-INST-SCALAR-HL-MADDW",
       "source": "asl/scalar/alu/HL.MADDW.asl",
-      "summary": "HL.MADDW sign-extends three low-32-bit sources, computes a 128-bit product plus addend, and publishes low then high halves.",
+      "summary": "HL.MADDW computes a signed 64-bit word multiply-add result and publishes its sign-extended low and high 32-bit halves.",
       "surface": "scalar"
     },
     {
@@ -72193,7 +70891,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "hl.setc.andi SrcL, simm"
@@ -72259,11 +70957,12 @@
           "hl.setc.andi SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -72283,12 +70982,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "HL.SETC.ANDI - Combine scalar comparison results and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommitLogical ASL handler; no other architectural state is modified."
+          "Compute HL.SETC.ANDI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/HL.SETC.ANDI.md",
@@ -72373,7 +71074,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "hl.setc.eqi SrcL, simm"
@@ -72439,11 +71140,12 @@
           "hl.setc.eqi SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -72463,12 +71165,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "HL.SETC.EQI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute HL.SETC.EQI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/HL.SETC.EQI.md",
@@ -72553,7 +71257,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "hl.setc.gei SrcL, simm"
@@ -72619,11 +71323,12 @@
           "hl.setc.gei SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -72643,12 +71348,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "HL.SETC.GEI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute HL.SETC.GEI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/HL.SETC.GEI.md",
@@ -72733,7 +71440,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "hl.setc.geui SrcL, uimm"
@@ -72799,11 +71506,12 @@
           "hl.setc.geui SrcL, uimm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -72823,12 +71531,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "HL.SETC.GEUI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute HL.SETC.GEUI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/HL.SETC.GEUI.md",
@@ -72913,7 +71623,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "hl.setc.lti SrcL, simm"
@@ -72979,11 +71689,12 @@
           "hl.setc.lti SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -73003,12 +71714,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "HL.SETC.LTI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute HL.SETC.LTI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/HL.SETC.LTI.md",
@@ -73093,7 +71806,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "hl.setc.ltui SrcL, uimm"
@@ -73159,11 +71872,12 @@
           "hl.setc.ltui SrcL, uimm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -73183,12 +71897,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "HL.SETC.LTUI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute HL.SETC.LTUI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/HL.SETC.LTUI.md",
@@ -73273,7 +71989,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "hl.setc.nei SrcL, simm"
@@ -73339,11 +72055,12 @@
           "hl.setc.nei SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -73363,12 +72080,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "HL.SETC.NEI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute HL.SETC.NEI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/HL.SETC.NEI.md",
@@ -73453,7 +72172,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "hl.setc.ori SrcL, simm"
@@ -73519,11 +72238,12 @@
           "hl.setc.ori SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -73543,12 +72263,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "HL.SETC.ORI - Combine scalar comparison results and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommitLogical ASL handler; no other architectural state is modified."
+          "Compute HL.SETC.ORI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/HL.SETC.ORI.md",
@@ -102810,7 +101532,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.and SrcL, SrcR<.sw, .uw, .not>"
@@ -102876,11 +101598,12 @@
           "setc.and SrcL, SrcR<.sw, .uw, .not>"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -102900,12 +101623,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.AND - Combine scalar comparison results and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommitLogical ASL handler; no other architectural state is modified."
+          "Compute SETC.AND's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.AND.md",
@@ -102985,7 +101710,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.andi SrcL, simm"
@@ -103051,11 +101776,12 @@
           "setc.andi SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -103075,12 +101801,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.ANDI - Combine scalar comparison results and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommitLogical ASL handler; no other architectural state is modified."
+          "Compute SETC.ANDI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.ANDI.md",
@@ -103160,7 +101888,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.eq SrcL, SrcR<{.sw, .uw}>"
@@ -103226,11 +101954,12 @@
           "setc.eq SrcL, SrcR<{.sw, .uw}>"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -103250,12 +101979,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.EQ - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.EQ's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.EQ.md",
@@ -103335,7 +102066,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.eqi SrcL, simm"
@@ -103401,11 +102132,12 @@
           "setc.eqi SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -103425,12 +102157,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.EQI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.EQI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.EQI.md",
@@ -103510,7 +102244,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.ge SrcL, SrcR<{.sw, .uw}>"
@@ -103576,11 +102310,12 @@
           "setc.ge SrcL, SrcR<{.sw, .uw}>"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -103600,12 +102335,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.GE - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.GE's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.GE.md",
@@ -103685,7 +102422,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.gei SrcL, simm"
@@ -103751,11 +102488,12 @@
           "setc.gei SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -103775,12 +102513,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.GEI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.GEI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.GEI.md",
@@ -103860,7 +102600,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.geu SrcL, SrcR<{.sw, .uw}>"
@@ -103926,11 +102666,12 @@
           "setc.geu SrcL, SrcR<{.sw, .uw}>"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -103950,12 +102691,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.GEU - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.GEU's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.GEU.md",
@@ -104035,7 +102778,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.geui SrcL, uimm"
@@ -104101,11 +102844,12 @@
           "setc.geui SrcL, uimm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -104125,12 +102869,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.GEUI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.GEUI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.GEUI.md",
@@ -104210,7 +102956,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.lt SrcL, SrcR<{.sw, .uw}>"
@@ -104276,11 +103022,12 @@
           "setc.lt SrcL, SrcR<{.sw, .uw}>"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -104300,12 +103047,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.LT - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.LT's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.LT.md",
@@ -104385,7 +103134,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.lti SrcL, simm"
@@ -104451,11 +103200,12 @@
           "setc.lti SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -104475,12 +103225,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.LTI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.LTI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.LTI.md",
@@ -104560,7 +103312,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.ltu SrcL, SrcR<{.sw, .uw}>"
@@ -104626,11 +103378,12 @@
           "setc.ltu SrcL, SrcR<{.sw, .uw}>"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -104650,12 +103403,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.LTU - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.LTU's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.LTU.md",
@@ -104735,7 +103490,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.ltui SrcL, uimm"
@@ -104801,11 +103556,12 @@
           "setc.ltui SrcL, uimm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -104825,12 +103581,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.LTUI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.LTUI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.LTUI.md",
@@ -104910,7 +103668,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.ne SrcL, SrcR<{.sw, .uw}>"
@@ -104976,11 +103734,12 @@
           "setc.ne SrcL, SrcR<{.sw, .uw}>"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -105000,12 +103759,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.NE - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.NE's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.NE.md",
@@ -105085,7 +103846,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.nei SrcL, simm"
@@ -105151,11 +103912,12 @@
           "setc.nei SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -105175,12 +103937,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.NEI - Compare scalar operands and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommit ASL handler; no other architectural state is modified."
+          "Compute SETC.NEI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.NEI.md",
@@ -105260,7 +104024,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.or SrcL, SrcR<.sw, .uw, .not>"
@@ -105326,11 +104090,12 @@
           "setc.or SrcL, SrcR<.sw, .uw, .not>"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -105350,12 +104115,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.OR - Combine scalar comparison results and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommitLogical ASL handler; no other architectural state is modified."
+          "Compute SETC.OR's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.OR.md",
@@ -105435,7 +104202,7 @@
       ],
       "contract": {
         "block_composition": [
-          "none"
+          "Applicable only in the body of an active block whose BARG.TYPE is Conditional. Across the entire SETC condition-setting family, at most one occurrence may complete successfully in that block."
         ],
         "canonical_assembly": [
           "setc.ori SrcL, simm"
@@ -105501,11 +104268,12 @@
           "setc.ori SrcL, simm"
         ],
         "exceptions": [
-          "Reserved field encodings raise Fault_IllegalInstruction before effects; handler-specific arithmetic, memory, control-flow, system-register, and privilege faults follow the embedded normative ASL operation."
+          "Wrong block placement or a second successful SETC condition setter raises Illegal Block Exception before scalar source readiness or any architectural or pending-block effect.",
+          "A fixed-bit mismatch or unavailable selected relative source raises Fault_IllegalInstruction before commit state, BARG, queues, or TPC effects."
         ],
         "field_domains": [],
         "legality": [
-          "Every value in each unconstrained encoded field is assigned; constrained complements are reserved and reject before effects."
+          "All SETC condition setters share one block-private successful-occurrence marker; a failed first occurrence does not consume it."
         ],
         "memory_effects": [
           "none"
@@ -105525,12 +104293,14 @@
           }
         ],
         "ordering": [
-          "none"
+          "Check Conditional-block applicability and the shared occurrence marker before scalar source readiness or reads.",
+          "Snapshot all sources, compute the canonical zero-or-one condition, then atomically update the commit argument, BARG.TAKEN, and the occurrence marker."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SETC.ORI - Combine scalar comparison results and update the bundle commit condition.",
-          "After decode and legality checks, execute the normative ExecuteSetCommitLogical ASL handler; no other architectural state is modified."
+          "Compute SETC.ORI's local comparison or logical condition from source snapshots and canonicalize it to zero or one.",
+          "Atomically write that value to the commit argument and BARG.TAKEN, then mark the block condition as set. Preserve BARG.BPC, BARG.BPCN, BARG.BlockType, and BARG.TYPE.",
+          "No memory, reservation, descriptor, numeric-status, or destination-register effect occurs. Successful execution advances TPC by the encoded instruction length."
         ]
       },
       "documentation": "docs/scalar/bru/SETC.ORI.md",
@@ -137293,8 +136063,8 @@
   ],
   "schema": "pto.instruction-contract-closure.v1",
   "summary": {
-    "encoded_form_count": 548,
-    "mnemonic_count": 642,
+    "encoded_form_count": 540,
+    "mnemonic_count": 634,
     "placeholder_count": 0,
     "selector_operation_count": 109,
     "status": "closed",

@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-SETC-GEI-DECODE-001","source":"asl/scalar/bru/SETC.GEI.asl","requirements":["PTO-INST-SCALAR-SETC-GEI"],"kind":"decode-positive","summary":"canonical SETC.GEI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000101000001110101', 32) == 411;
-    assert ScalarOperationOfForm(411) == ScalarOperation_SETC_GEI;
-    assert ScalarHandlerOfForm(411) == ScalarHandler_ExecuteSetCommit;
+    assert DecodeScalarForm('000000000000000000000000000000000101000001110101', 32) == 403;
+    assert ScalarOperationOfForm(403) == ScalarOperation_SETC_GEI;
+    assert ScalarHandlerOfForm(403) == ScalarHandler_ExecuteSetCommit;
     assert InstructionContractOperation_SETC_GEI() == ScalarOperation_SETC_GEI;
     assert InstructionContractHandler_SETC_GEI() == ScalarHandler_ExecuteSetCommit;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000001110101', 411, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000001110101', 411, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000001110101', 411, ScalarField_simm12) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000001110101', 403, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000001110101', 403, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000001110101', 403, ScalarField_simm12) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

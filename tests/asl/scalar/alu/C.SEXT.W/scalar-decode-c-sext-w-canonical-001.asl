@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-C-SEXT-W-DECODE-001","source":"asl/scalar/alu/C.SEXT.W.asl","requirements":["PTO-INST-SCALAR-C-SEXT-W"],"kind":"decode-positive","summary":"canonical C.SEXT.W catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000101000000011100', 16) == 49;
-    assert ScalarOperationOfForm(49) == ScalarOperation_C_SEXT_W;
-    assert ScalarHandlerOfForm(49) == ScalarHandler_ExtendScalarValue;
+    assert DecodeScalarForm('000000000000000000000000000000000101000000011100', 16) == 41;
+    assert ScalarOperationOfForm(41) == ScalarOperation_C_SEXT_W;
+    assert ScalarHandlerOfForm(41) == ScalarHandler_ExtendScalarValue;
     assert InstructionContractOperation_C_SEXT_W() == ScalarOperation_C_SEXT_W;
     assert InstructionContractHandler_C_SEXT_W() == ScalarHandler_ExtendScalarValue;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000011100', 49, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000011100', 41, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

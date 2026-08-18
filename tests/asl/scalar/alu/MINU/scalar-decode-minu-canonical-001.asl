@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-MINU-DECODE-001","source":"asl/scalar/alu/MINU.asl","requirements":["PTO-INST-SCALAR-MINU"],"kind":"decode-positive","summary":"canonical MINU catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000001000000000000101000001011011', 32) == 369;
-    assert ScalarOperationOfForm(369) == ScalarOperation_MINU;
-    assert ScalarHandlerOfForm(369) == ScalarHandler_ScalarBinary;
+    assert DecodeScalarForm('000000000000000000001000000000000101000001011011', 32) == 361;
+    assert ScalarOperationOfForm(361) == ScalarOperation_MINU;
+    assert ScalarHandlerOfForm(361) == ScalarHandler_ScalarBinary;
     assert InstructionContractOperation_MINU() == ScalarOperation_MINU;
     assert InstructionContractHandler_MINU() == ScalarHandler_ScalarBinary;
-    assert DecodeScalarOperandRaw('000000000000000000001000000000000101000001011011', 369, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000001000000000000101000001011011', 369, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000001000000000000101000001011011', 369, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000001000000000000101000001011011', 361, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000001000000000000101000001011011', 361, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000001000000000000101000001011011', 361, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

@@ -34,7 +34,7 @@ class DecoderPartitionTest(unittest.TestCase):
         cls.decoder = completed.stdout
 
     def test_decoder_only_output_preserves_complete_identity_counts(self) -> None:
-        self.assertIn("constant PTO_SCALAR_FORM_COUNT = 474;", self.decoder)
+        self.assertIn("constant PTO_SCALAR_FORM_COUNT = 466;", self.decoder)
         self.assertIn("constant PTO_COMMAND_FORM_COUNT = 74;", self.decoder)
         self.assertIn("constant PTO_TILE_OPERATION_COUNT = 109;", self.decoder)
         self.assertIn("pure func DecodeScalarForm", self.decoder)
@@ -112,10 +112,7 @@ end;
 
     def test_scalar_bru_validation_uses_current_barg_state(self) -> None:
         shards = {}
-        for entrypoint in (
-            "ValidateScalarBRUAlias_B_Z",
-            "ValidateScalarBRUAlias_JR",
-        ):
+        for entrypoint in ("ValidateScalarBRUAlias_JR",):
             completed = subprocess.run(
                 [
                     str(GENERATOR),
@@ -142,10 +139,6 @@ end;
             ".bundle_return_target",
         ):
             self.assertNotIn(retired, combined)
-        branch_shard = shards["ValidateScalarBRUAlias_B_Z"]
-        self.assertIn("_BARG.bpcn", branch_shard)
-        self.assertIn("_BundleSequentialPC", branch_shard)
-        self.assertIn("_FrameStackReturnTarget", branch_shard)
         self.assertIn(
             "_TrapContexts[[0]].barg.bpcn",
             shards["ValidateScalarBRUAlias_JR"],

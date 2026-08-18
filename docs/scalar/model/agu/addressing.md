@@ -106,9 +106,9 @@ end;
 func ScalarPrefetch(base: Word, offset: Word, size_bytes: integer {1,2,4,8},
                     model: bits(5))
 begin
-    // All model values are legal portable hint metadata. Address formation is
-    // explicit, but no translation, permission check, event, or memory effect
-    // is architecturally observed.
+    // Decode admits only the assigned L1/L2/L3 model values before sources are
+    // read. Address formation is explicit, but no translation, permission
+    // check, event, or memory effect is architecturally observed.
     - = ScalarPrefetchAddress(base, offset);
 end;
 ```

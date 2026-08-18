@@ -2,12 +2,12 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-DMA-DECODE-001","source":"asl/scalar/amo/DMA.asl","requirements":["PTO-INST-SCALAR-DMA"],"kind":"decode-positive","summary":"canonical DMA catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000111000000001011', 32) == 89;
-    assert ScalarOperationOfForm(89) == ScalarOperation_DMA;
-    assert ScalarHandlerOfForm(89) == ScalarHandler_ExecuteScalarDMACopy64;
+    assert DecodeScalarForm('000000000000000000000000000000000111000000001011', 32) == 81;
+    assert ScalarOperationOfForm(81) == ScalarOperation_DMA;
+    assert ScalarHandlerOfForm(81) == ScalarHandler_ExecuteScalarDMACopy64;
     assert InstructionContractOperation_DMA() == ScalarOperation_DMA;
     assert InstructionContractHandler_DMA() == ScalarHandler_ExecuteScalarDMACopy64;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001011', 89, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001011', 89, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001011', 81, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001011', 81, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

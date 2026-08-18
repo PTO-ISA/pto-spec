@@ -743,7 +743,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             "required_toolchain_checks": toolchain_checks,
         },
         "scope": {
-            "scalar_forms": 474,
+            "scalar_forms": 466,
             "command_forms": len(load_json(ROOT / "spec/catalog/command-forms.json")["forms"]),
             "direct_tile_operations": 109,
             "total_rows": len(rows),
@@ -793,10 +793,10 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             ],
         },
     }
-    if summary["row_count"] != 657:
-        raise SystemExit(f"expected 657 rows, got {summary['row_count']}")
+    if summary["row_count"] != 649:
+        raise SystemExit(f"expected 649 rows, got {summary['row_count']}")
     if summary["classification_counts"] != {
-        "comparable-match": 525,
+        "comparable-match": 517,
         "divergence": 94,
         "non-comparable": 38,
     }:

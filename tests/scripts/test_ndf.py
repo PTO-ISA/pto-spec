@@ -242,6 +242,7 @@ class NdfTest(unittest.TestCase):
             "PTO-STATE-BLOCK-CONTROL": (
                 "_BARG",
                 "_BundleCommitTargetSet",
+                "_BundleConditionSet",
                 "_SystemBlockTerminalPending",
                 "_BundleSequentialPC",
                 "_FrameStackReturnTarget",

@@ -84,7 +84,7 @@ begin
     ExitFrame(begin_reg, end_reg, frame_size);
 end;
 
-pure func InstructionContractUsesHalfOpenRegisterRange_FEXIT()
+pure func InstructionContractUsesInclusiveRegisterRange_FEXIT()
     => boolean
 begin
     return TRUE;

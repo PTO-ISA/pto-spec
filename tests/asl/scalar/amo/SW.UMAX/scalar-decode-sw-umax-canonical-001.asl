@@ -2,14 +2,14 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-SW-UMAX-DECODE-001","source":"asl/scalar/amo/SW.UMAX.asl","requirements":["PTO-INST-SCALAR-SW-UMAX"],"kind":"decode-positive","summary":"canonical SW.UMAX catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000001100000000000000011000000001011', 32) == 456;
-    assert ScalarOperationOfForm(456) == ScalarOperation_SW_UMAX;
-    assert ScalarHandlerOfForm(456) == ScalarHandler_AtomicReadModifyWrite;
+    assert DecodeScalarForm('000000000000000001100000000000000011000000001011', 32) == 448;
+    assert ScalarOperationOfForm(448) == ScalarOperation_SW_UMAX;
+    assert ScalarHandlerOfForm(448) == ScalarHandler_AtomicReadModifyWrite;
     assert InstructionContractOperation_SW_UMAX() == ScalarOperation_SW_UMAX;
     assert InstructionContractHandler_SW_UMAX() == ScalarHandler_AtomicReadModifyWrite;
-    assert DecodeScalarOperandRaw('000000000000000001100000000000000011000000001011', 456, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000001100000000000000011000000001011', 456, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000001100000000000000011000000001011', 456, ScalarField_far) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000001100000000000000011000000001011', 456, ScalarField_rl) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001100000000000000011000000001011', 448, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001100000000000000011000000001011', 448, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001100000000000000011000000001011', 448, ScalarField_far) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001100000000000000011000000001011', 448, ScalarField_rl) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

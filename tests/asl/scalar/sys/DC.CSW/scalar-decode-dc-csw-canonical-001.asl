@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-DC-CSW-DECODE-001","source":"asl/scalar/sys/DC.CSW.asl","requirements":["PTO-INST-SCALAR-DC-CSW"],"kind":"decode-positive","summary":"canonical DC.CSW catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000010100000110000000101011', 32) == 83;
-    assert ScalarOperationOfForm(83) == ScalarOperation_DC_CSW;
-    assert ScalarHandlerOfForm(83) == ScalarHandler_ExecuteMaintenance;
+    assert DecodeScalarForm('000000000000000000000000010100000110000000101011', 32) == 75;
+    assert ScalarOperationOfForm(75) == ScalarOperation_DC_CSW;
+    assert ScalarHandlerOfForm(75) == ScalarHandler_ExecuteMaintenance;
     assert InstructionContractOperation_DC_CSW() == ScalarOperation_DC_CSW;
     assert InstructionContractHandler_DC_CSW() == ScalarHandler_ExecuteMaintenance;
-    assert DecodeScalarOperandRaw('000000000000000000000000010100000110000000101011', 83, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000010100000110000000101011', 75, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

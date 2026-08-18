@@ -281,6 +281,11 @@ begin
     return SignExtend{PTO_XLEN}(immediate);
 end;
 
+pure func MaterializeLongUpper(immediate: bits(32)) => Word
+begin
+    return LSL(ZeroExtend{PTO_XLEN}(immediate), 32);
+end;
+
 pure func MaterializeLongUnsigned(immediate: bits(32)) => Word
 begin
     return ZeroExtend{PTO_XLEN}(immediate);
@@ -431,8 +436,17 @@ begin
     let effective_right = if word_operation then SignExtend{PTO_XLEN}(right[31:0]) else right;
     let product = MultiplyWideSigned(effective_left, effective_right);
     let accumulator = product + SignExtend{PTO_XLEN * 2}(effective_addend);
-    WriteScalarDestination(destination_low, accumulator[63:0]);
-    WriteScalarDestination(destination_high, accumulator[127:64]);
+    if word_operation then
+        WriteScalarDestination(
+            destination_low,
+            SignExtend{PTO_XLEN}(accumulator[31:0]));
+        WriteScalarDestination(
+            destination_high,
+            SignExtend{PTO_XLEN}(accumulator[63:32]));
+    else
+        WriteScalarDestination(destination_low, accumulator[63:0]);
+        WriteScalarDestination(destination_high, accumulator[127:64]);
+    end;
 end;
 
 pure func NaturalToWord(value: integer {0..262144}) => Word

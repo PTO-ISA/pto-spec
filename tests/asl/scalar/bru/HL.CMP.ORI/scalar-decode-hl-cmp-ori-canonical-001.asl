@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-CMP-ORI-DECODE-001","source":"asl/scalar/bru/HL.CMP.ORI.asl","requirements":["PTO-INST-SCALAR-HL-CMP-ORI"],"kind":"decode-positive","summary":"canonical HL.CMP.ORI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000110000010101010000000000001110', 48) == 144;
-    assert ScalarOperationOfForm(144) == ScalarOperation_HL_CMP_ORI;
-    assert ScalarHandlerOfForm(144) == ScalarHandler_ExecuteCompareLogical;
+    assert DecodeScalarForm('000000000000000000110000010101010000000000001110', 48) == 136;
+    assert ScalarOperationOfForm(136) == ScalarOperation_HL_CMP_ORI;
+    assert ScalarHandlerOfForm(136) == ScalarHandler_ExecuteCompareLogical;
     assert InstructionContractOperation_HL_CMP_ORI() == ScalarOperation_HL_CMP_ORI;
     assert InstructionContractHandler_HL_CMP_ORI() == ScalarHandler_ExecuteCompareLogical;
-    assert DecodeScalarOperandRaw('000000000000000000110000010101010000000000001110', 144, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000110000010101010000000000001110', 144, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000110000010101010000000000001110', 144, ScalarField_simm24) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000110000010101010000000000001110', 136, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000110000010101010000000000001110', 136, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000110000010101010000000000001110', 136, ScalarField_simm24) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

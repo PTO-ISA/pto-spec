@@ -10,12 +10,12 @@ import subprocess
 
 
 ROOT = Path(__file__).resolve().parent.parent
-EXPECTED_FORM_COUNT = 548
+EXPECTED_FORM_COUNT = 540
 EXPECTED_FINGERPRINT = (
-    "42c012d2d4e98dc54a355a708c3956909a82441dd6004e8119d970e350d63bfe"
+    "129cb7812264b7e4c5edd088b5aedcc528966eb69c06879dc1919c85106e21b4"
 )
-EXPECTED_RELEASE = "0.58.1"
-EXPECTED_ENCODING_ABI = "pto-isa-0.58.1-mode-function-v1"
+EXPECTED_RELEASE = "0.58.2"
+EXPECTED_ENCODING_ABI = "pto-isa-0.58.2-mode-function-v1"
 PROJECTION_KEYS = (
     "form_id",
     "mnemonic",
@@ -83,9 +83,9 @@ def main() -> int:
             f"{manifest_encoding_hash}, computed {computed_encoding_hash}"
         )
     counts = manifest.get("catalog_counts", {})
-    if counts.get("scalar_forms") != 474 or counts.get("command_forms") != 74:
+    if counts.get("scalar_forms") != 466 or counts.get("command_forms") != 74:
         raise SystemExit(
-            "release manifest scalar/command closure must remain exactly 474/74"
+            "release manifest scalar/command closure must remain exactly 466/74"
         )
     if counts.get("command_form_families") != {"CMD": 69, "BBD": 5}:
         raise SystemExit(

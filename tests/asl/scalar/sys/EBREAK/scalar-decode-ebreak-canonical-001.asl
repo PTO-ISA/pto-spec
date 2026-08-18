@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-EBREAK-DECODE-001","source":"asl/scalar/sys/EBREAK.asl","requirements":["PTO-INST-SCALAR-EBREAK"],"kind":"decode-positive","summary":"canonical EBREAK catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000100000001000000101011', 32) == 94;
-    assert ScalarOperationOfForm(94) == ScalarOperation_EBREAK;
-    assert ScalarHandlerOfForm(94) == ScalarHandler_SoftwareBreakpoint;
+    assert DecodeScalarForm('000000000000000000000000000100000001000000101011', 32) == 86;
+    assert ScalarOperationOfForm(86) == ScalarOperation_EBREAK;
+    assert ScalarHandlerOfForm(86) == ScalarHandler_SoftwareBreakpoint;
     assert InstructionContractOperation_EBREAK() == ScalarOperation_EBREAK;
     assert InstructionContractHandler_EBREAK() == ScalarHandler_SoftwareBreakpoint;
-    assert DecodeScalarOperandRaw('000000000000000000000000000100000001000000101011', 94, ScalarField_imm4) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000100000001000000101011', 86, ScalarField_imm4) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

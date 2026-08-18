@@ -2,12 +2,12 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-SSRGET-DECODE-001","source":"asl/scalar/sys/HL.SSRGET.asl","requirements":["PTO-INST-SCALAR-HL-SSRGET"],"kind":"decode-positive","summary":"canonical HL.SSRGET catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000001110110000000000001110', 48) == 291;
-    assert ScalarOperationOfForm(291) == ScalarOperation_HL_SSRGET;
-    assert ScalarHandlerOfForm(291) == ScalarHandler_ExecuteSystemRegisterGet;
+    assert DecodeScalarForm('000000000000000000000000001110110000000000001110', 48) == 283;
+    assert ScalarOperationOfForm(283) == ScalarOperation_HL_SSRGET;
+    assert ScalarHandlerOfForm(283) == ScalarHandler_ExecuteSystemRegisterGet;
     assert InstructionContractOperation_HL_SSRGET() == ScalarOperation_HL_SSRGET;
     assert InstructionContractHandler_HL_SSRGET() == ScalarHandler_ExecuteSystemRegisterGet;
-    assert DecodeScalarOperandRaw('000000000000000000000000001110110000000000001110', 291, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000001110110000000000001110', 291, ScalarField_SSR_ID) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000001110110000000000001110', 283, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000001110110000000000001110', 283, ScalarField_SSR_ID) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

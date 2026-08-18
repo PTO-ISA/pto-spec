@@ -84,7 +84,7 @@ begin
     ReturnFromFrame(begin_reg, end_reg, frame_size, TRUE);
 end;
 
-pure func InstructionContractUsesHalfOpenRegisterRange_FRET_RA()
+pure func InstructionContractUsesInclusiveRegisterRange_FRET_RA()
     => boolean
 begin
     return TRUE;

@@ -2,12 +2,12 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-LIS-DECODE-001","source":"asl/scalar/alu/HL.LIS.asl","requirements":["PTO-INST-SCALAR-HL-LIS"],"kind":"decode-positive","summary":"canonical HL.LIS catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000011010000000000001110', 48) == 201;
-    assert ScalarOperationOfForm(201) == ScalarOperation_HL_LIS;
-    assert ScalarHandlerOfForm(201) == ScalarHandler_MaterializeLongSigned;
+    assert DecodeScalarForm('000000000000000000000000000011010000000000001110', 48) == 193;
+    assert ScalarOperationOfForm(193) == ScalarOperation_HL_LIS;
+    assert ScalarHandlerOfForm(193) == ScalarHandler_MaterializeLongSigned;
     assert InstructionContractOperation_HL_LIS() == ScalarOperation_HL_LIS;
     assert InstructionContractHandler_HL_LIS() == ScalarHandler_MaterializeLongSigned;
-    assert DecodeScalarOperandRaw('000000000000000000000000000011010000000000001110', 201, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000011010000000000001110', 201, ScalarField_simm32) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000011010000000000001110', 193, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000011010000000000001110', 193, ScalarField_simm32) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

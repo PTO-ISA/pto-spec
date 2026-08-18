@@ -2,9 +2,9 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-C-LDI-DECODE-001","source":"asl/scalar/agu/C.LDI.asl","requirements":["PTO-INST-SCALAR-C-LDI"],"kind":"decode-positive","summary":"canonical C.LDI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000000000000011010', 16) == 37;
-    assert ScalarOperationOfForm(37) == ScalarOperation_C_LDI;
-    assert ScalarHandlerOfForm(37) == ScalarHandler_ExecuteScalarLoad;
+    assert DecodeScalarForm('000000000000000000000000000000000000000000011010', 16) == 29;
+    assert ScalarOperationOfForm(29) == ScalarOperation_C_LDI;
+    assert ScalarHandlerOfForm(29) == ScalarHandler_ExecuteScalarLoad;
     assert InstructionContractOperation_C_LDI() == ScalarOperation_C_LDI;
     assert InstructionContractHandler_C_LDI() == ScalarHandler_ExecuteScalarLoad;
     assert InstructionContractAGUAction_C_LDI() == ScalarAGU_Load;
@@ -14,7 +14,7 @@ begin
     assert InstructionContractAGUUpdateMode_C_LDI() == AddressUpdate_None;
     assert InstructionContractAGUSignedLoad_C_LDI() == FALSE;
     assert InstructionContractAGUPrefetchReturnsAddress_C_LDI() == FALSE;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000011010', 37, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000011010', 37, ScalarField_simm5) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000011010', 29, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000011010', 29, ScalarField_simm5) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

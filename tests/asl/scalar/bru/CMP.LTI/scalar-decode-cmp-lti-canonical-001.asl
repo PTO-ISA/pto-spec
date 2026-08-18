@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-CMP-LTI-DECODE-001","source":"asl/scalar/bru/CMP.LTI.asl","requirements":["PTO-INST-SCALAR-CMP-LTI"],"kind":"decode-positive","summary":"canonical CMP.LTI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000100000001010101', 32) == 72;
-    assert ScalarOperationOfForm(72) == ScalarOperation_CMP_LTI;
-    assert ScalarHandlerOfForm(72) == ScalarHandler_ExecuteCompare;
+    assert DecodeScalarForm('000000000000000000000000000000000100000001010101', 32) == 64;
+    assert ScalarOperationOfForm(64) == ScalarOperation_CMP_LTI;
+    assert ScalarHandlerOfForm(64) == ScalarHandler_ExecuteCompare;
     assert InstructionContractOperation_CMP_LTI() == ScalarOperation_CMP_LTI;
     assert InstructionContractHandler_CMP_LTI() == ScalarHandler_ExecuteCompare;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000100000001010101', 72, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000100000001010101', 72, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000100000001010101', 72, ScalarField_simm12) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000100000001010101', 64, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000100000001010101', 64, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000100000001010101', 64, ScalarField_simm12) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;
