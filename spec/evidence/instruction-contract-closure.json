@@ -65906,8 +65906,8 @@
           "mnemonic": "HL.REM",
           "semantic_family": "ALU",
           "semantic_group": "ALU",
-          "semantic_handler": "ExecuteScalarDividePair",
-          "semantic_summary": "HL.REM computes a signed XLEN quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+          "semantic_handler": "ExecuteScalarRemainderPair",
+          "semantic_summary": "HL.REM computes a signed XLEN remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
           "status": "accepted"
         }
       ],
@@ -65938,10 +65938,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "quotient Reg5 destination or discard",
+            "role": "remainder Reg5 destination or discard",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero discards the quotient."
+            "zero_meaning": "Encoded zero discards the remainder."
           },
           {
             "assigned_ranges": [
@@ -65955,10 +65955,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "remainder Reg5 destination or discard",
+            "role": "quotient Reg5 destination or discard",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero discards the remainder."
+            "zero_meaning": "Encoded zero discards the quotient."
           },
           {
             "assigned_ranges": [
@@ -66016,11 +66016,11 @@
         "operands": [
           {
             "field": "RegDst0",
-            "role": "quotient Reg5 destination or discard"
+            "role": "remainder Reg5 destination or discard"
           },
           {
             "field": "RegDst1",
-            "role": "remainder Reg5 destination or discard"
+            "role": "quotient Reg5 destination or discard"
           },
           {
             "field": "SrcL",
@@ -66033,13 +66033,13 @@
         ],
         "ordering": [
           "Snapshot both sources and compute both results before either destination effect.",
-          "Publish quotient to RegDst0, publish remainder to RegDst1, then advance TPC by six bytes."
+          "Publish remainder to RegDst0, publish quotient to RegDst1, then advance TPC by six bytes."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Interpret the selected operands as signed values, compute both quotient and remainder using the fixed total division rules.",
           "A zero divisor returns quotient zero and the effective dividend as remainder. Signed minimum divided by negative one returns signed minimum quotient and zero remainder.",
-          "Publish RegDst0 quotient first, then RegDst1 remainder. If both destinations name one GPR, remainder is final; if both push one queue, remainder is newest and quotient is next-newest.",
+          "Publish RegDst0 remainder first, then RegDst1 quotient. If both destinations name one GPR, quotient is final; if both push one queue, quotient is newest and remainder is next-newest.",
           "No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes."
         ]
       },
@@ -66048,7 +66048,7 @@
       "mnemonic": "HL.REM",
       "ndf_clause": "PTO-INST-SCALAR-HL-REM",
       "source": "asl/scalar/alu/HL.REM.asl",
-      "summary": "HL.REM computes a signed XLEN quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+      "summary": "HL.REM computes a signed XLEN remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
       "surface": "scalar"
     },
     {
@@ -66122,8 +66122,8 @@
           "mnemonic": "HL.REMU",
           "semantic_family": "ALU",
           "semantic_group": "ALU",
-          "semantic_handler": "ExecuteScalarDividePair",
-          "semantic_summary": "HL.REMU computes a unsigned XLEN quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+          "semantic_handler": "ExecuteScalarRemainderPair",
+          "semantic_summary": "HL.REMU computes an unsigned XLEN remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
           "status": "accepted"
         }
       ],
@@ -66154,10 +66154,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "quotient Reg5 destination or discard",
+            "role": "remainder Reg5 destination or discard",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero discards the quotient."
+            "zero_meaning": "Encoded zero discards the remainder."
           },
           {
             "assigned_ranges": [
@@ -66171,10 +66171,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "remainder Reg5 destination or discard",
+            "role": "quotient Reg5 destination or discard",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero discards the remainder."
+            "zero_meaning": "Encoded zero discards the quotient."
           },
           {
             "assigned_ranges": [
@@ -66232,11 +66232,11 @@
         "operands": [
           {
             "field": "RegDst0",
-            "role": "quotient Reg5 destination or discard"
+            "role": "remainder Reg5 destination or discard"
           },
           {
             "field": "RegDst1",
-            "role": "remainder Reg5 destination or discard"
+            "role": "quotient Reg5 destination or discard"
           },
           {
             "field": "SrcL",
@@ -66249,13 +66249,13 @@
         ],
         "ordering": [
           "Snapshot both sources and compute both results before either destination effect.",
-          "Publish quotient to RegDst0, publish remainder to RegDst1, then advance TPC by six bytes."
+          "Publish remainder to RegDst0, publish quotient to RegDst1, then advance TPC by six bytes."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Interpret the selected operands as unsigned values, compute both quotient and remainder using the fixed total division rules.",
           "A zero divisor returns quotient zero and the effective dividend as remainder. Signed minimum divided by negative one returns signed minimum quotient and zero remainder.",
-          "Publish RegDst0 quotient first, then RegDst1 remainder. If both destinations name one GPR, remainder is final; if both push one queue, remainder is newest and quotient is next-newest.",
+          "Publish RegDst0 remainder first, then RegDst1 quotient. If both destinations name one GPR, quotient is final; if both push one queue, quotient is newest and remainder is next-newest.",
           "No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes."
         ]
       },
@@ -66264,7 +66264,7 @@
       "mnemonic": "HL.REMU",
       "ndf_clause": "PTO-INST-SCALAR-HL-REMU",
       "source": "asl/scalar/alu/HL.REMU.asl",
-      "summary": "HL.REMU computes a unsigned XLEN quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+      "summary": "HL.REMU computes an unsigned XLEN remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
       "surface": "scalar"
     },
     {
@@ -66338,8 +66338,8 @@
           "mnemonic": "HL.REMUW",
           "semantic_family": "ALU",
           "semantic_group": "ALU",
-          "semantic_handler": "ExecuteScalarDividePairW",
-          "semantic_summary": "HL.REMUW computes a unsigned low-32-bit quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+          "semantic_handler": "ExecuteScalarRemainderPairW",
+          "semantic_summary": "HL.REMUW computes an unsigned low-32-bit remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
           "status": "accepted"
         }
       ],
@@ -66370,10 +66370,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "quotient Reg5 destination or discard",
+            "role": "remainder Reg5 destination or discard",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero discards the quotient."
+            "zero_meaning": "Encoded zero discards the remainder."
           },
           {
             "assigned_ranges": [
@@ -66387,10 +66387,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "remainder Reg5 destination or discard",
+            "role": "quotient Reg5 destination or discard",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero discards the remainder."
+            "zero_meaning": "Encoded zero discards the quotient."
           },
           {
             "assigned_ranges": [
@@ -66448,11 +66448,11 @@
         "operands": [
           {
             "field": "RegDst0",
-            "role": "quotient Reg5 destination or discard"
+            "role": "remainder Reg5 destination or discard"
           },
           {
             "field": "RegDst1",
-            "role": "remainder Reg5 destination or discard"
+            "role": "quotient Reg5 destination or discard"
           },
           {
             "field": "SrcL",
@@ -66465,13 +66465,13 @@
         ],
         "ordering": [
           "Snapshot both sources and compute both results before either destination effect.",
-          "Publish quotient to RegDst0, publish remainder to RegDst1, then advance TPC by six bytes."
+          "Publish remainder to RegDst0, publish quotient to RegDst1, then advance TPC by six bytes."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Interpret the selected operands as unsigned values, compute both quotient and remainder using the fixed total division rules. For W forms, use the low 32 bits and sign-extend each 32-bit result to XLEN.",
           "A zero divisor returns quotient zero and the effective dividend as remainder. Signed minimum divided by negative one returns signed minimum quotient and zero remainder.",
-          "Publish RegDst0 quotient first, then RegDst1 remainder. If both destinations name one GPR, remainder is final; if both push one queue, remainder is newest and quotient is next-newest.",
+          "Publish RegDst0 remainder first, then RegDst1 quotient. If both destinations name one GPR, quotient is final; if both push one queue, quotient is newest and remainder is next-newest.",
           "No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes."
         ]
       },
@@ -66480,7 +66480,7 @@
       "mnemonic": "HL.REMUW",
       "ndf_clause": "PTO-INST-SCALAR-HL-REMUW",
       "source": "asl/scalar/alu/HL.REMUW.asl",
-      "summary": "HL.REMUW computes a unsigned low-32-bit quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+      "summary": "HL.REMUW computes an unsigned low-32-bit remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
       "surface": "scalar"
     },
     {
@@ -66554,8 +66554,8 @@
           "mnemonic": "HL.REMW",
           "semantic_family": "ALU",
           "semantic_group": "ALU",
-          "semantic_handler": "ExecuteScalarDividePairW",
-          "semantic_summary": "HL.REMW computes a signed low-32-bit quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+          "semantic_handler": "ExecuteScalarRemainderPairW",
+          "semantic_summary": "HL.REMW computes a signed low-32-bit remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
           "status": "accepted"
         }
       ],
@@ -66586,10 +66586,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "quotient Reg5 destination or discard",
+            "role": "remainder Reg5 destination or discard",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero discards the quotient."
+            "zero_meaning": "Encoded zero discards the remainder."
           },
           {
             "assigned_ranges": [
@@ -66603,10 +66603,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "remainder Reg5 destination or discard",
+            "role": "quotient Reg5 destination or discard",
             "signedness": "encoding-defined",
             "width": 5,
-            "zero_meaning": "Encoded zero discards the remainder."
+            "zero_meaning": "Encoded zero discards the quotient."
           },
           {
             "assigned_ranges": [
@@ -66664,11 +66664,11 @@
         "operands": [
           {
             "field": "RegDst0",
-            "role": "quotient Reg5 destination or discard"
+            "role": "remainder Reg5 destination or discard"
           },
           {
             "field": "RegDst1",
-            "role": "remainder Reg5 destination or discard"
+            "role": "quotient Reg5 destination or discard"
           },
           {
             "field": "SrcL",
@@ -66681,13 +66681,13 @@
         ],
         "ordering": [
           "Snapshot both sources and compute both results before either destination effect.",
-          "Publish quotient to RegDst0, publish remainder to RegDst1, then advance TPC by six bytes."
+          "Publish remainder to RegDst0, publish quotient to RegDst1, then advance TPC by six bytes."
         ],
         "standalone_opcode": true,
         "state_effects": [
           "Interpret the selected operands as signed values, compute both quotient and remainder using the fixed total division rules. For W forms, use the low 32 bits and sign-extend each 32-bit result to XLEN.",
           "A zero divisor returns quotient zero and the effective dividend as remainder. Signed minimum divided by negative one returns signed minimum quotient and zero remainder.",
-          "Publish RegDst0 quotient first, then RegDst1 remainder. If both destinations name one GPR, remainder is final; if both push one queue, remainder is newest and quotient is next-newest.",
+          "Publish RegDst0 remainder first, then RegDst1 quotient. If both destinations name one GPR, quotient is final; if both push one queue, quotient is newest and remainder is next-newest.",
           "No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes."
         ]
       },
@@ -66696,7 +66696,7 @@
       "mnemonic": "HL.REMW",
       "ndf_clause": "PTO-INST-SCALAR-HL-REMW",
       "source": "asl/scalar/alu/HL.REMW.asl",
-      "summary": "HL.REMW computes a signed low-32-bit quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+      "summary": "HL.REMW computes a signed low-32-bit remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
       "surface": "scalar"
     },
     {

@@ -4172,3 +4172,17 @@ side nor its destination effect.
 the existing 24-bit trap-cause field while publishing software-breakpoint trap
 number 50 and the faulting PC argument. No parallel breakpoint-tag state is
 architectural.
+
+## PRD-173: HL remainder forms publish remainder before quotient
+
+`HL.REM`, `HL.REMU`, `HL.REMW`, and `HL.REMUW` compute both the remainder and
+quotient from source values snapshotted before either destination effect.
+`RegDst0` receives the remainder and `RegDst1` receives the quotient. The two
+destination writes occur in that order and retain the ordinary Reg5 duplicate
+destination and queue-push behavior.
+
+`HL.DIV`, `HL.DIVU`, `HL.DIVW`, and `HL.DIVUW` retain the complementary
+result order: `RegDst0` receives the quotient and `RegDst1` receives the
+remainder. The decision changes no encoding, operand width, signedness,
+zero-divisor arithmetic, overflow behavior, selector domain, or retirement
+rule.

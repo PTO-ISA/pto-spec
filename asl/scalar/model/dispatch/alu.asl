@@ -304,22 +304,34 @@ begin
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
                 operation == ScalarOperation_HL_MADDW);
 
-        when ScalarOperation_HL_DIV, ScalarOperation_HL_REM,
-             ScalarOperation_HL_DIVU, ScalarOperation_HL_REMU =>
+        when ScalarOperation_HL_DIV, ScalarOperation_HL_DIVU =>
             ExecuteScalarDividePair(
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-                operation == ScalarOperation_HL_DIV || operation == ScalarOperation_HL_REM);
-        when ScalarOperation_HL_DIVW, ScalarOperation_HL_REMW,
-             ScalarOperation_HL_DIVUW, ScalarOperation_HL_REMUW =>
+                operation == ScalarOperation_HL_DIV);
+        when ScalarOperation_HL_REM, ScalarOperation_HL_REMU =>
+            ExecuteScalarRemainderPair(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                operation == ScalarOperation_HL_REM);
+        when ScalarOperation_HL_DIVW, ScalarOperation_HL_DIVUW =>
             ExecuteScalarDividePairW(
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-                operation == ScalarOperation_HL_DIVW || operation == ScalarOperation_HL_REMW);
+                operation == ScalarOperation_HL_DIVW);
+        when ScalarOperation_HL_REMW, ScalarOperation_HL_REMUW =>
+            ExecuteScalarRemainderPairW(
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst0),
+                ScalarDecodedSelector(instruction, form, ScalarField_RegDst1),
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
+                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
+                operation == ScalarOperation_HL_REMW);
 
         when ScalarOperation_HL_CCAT =>
             ExecuteConcatenatePair(

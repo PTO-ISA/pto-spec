@@ -577,6 +577,38 @@
     },
     {
       "executable": false,
+      "id": "PTO-HL-REM-RESULT-ORDER-001",
+      "owners": [
+        "asl/scalar/alu/HL.REM.asl"
+      ],
+      "tests": []
+    },
+    {
+      "executable": false,
+      "id": "PTO-HL-REMU-RESULT-ORDER-001",
+      "owners": [
+        "asl/scalar/alu/HL.REMU.asl"
+      ],
+      "tests": []
+    },
+    {
+      "executable": false,
+      "id": "PTO-HL-REMUW-RESULT-ORDER-001",
+      "owners": [
+        "asl/scalar/alu/HL.REMUW.asl"
+      ],
+      "tests": []
+    },
+    {
+      "executable": false,
+      "id": "PTO-HL-REMW-RESULT-ORDER-001",
+      "owners": [
+        "asl/scalar/alu/HL.REMW.asl"
+      ],
+      "tests": []
+    },
+    {
+      "executable": false,
       "id": "PTO-HL-SUBI-CONTRACT-001",
       "owners": [
         "asl/scalar/alu/HL.SUBI.asl"
@@ -4657,6 +4689,7 @@
       ],
       "tests": [
         "PTO-AVS-SCALAR-HL-REM-DECODE-001",
+        "PTO-AVS-SCALAR-HL-REM-ORDER-002",
         "PTO-AVS-SCALAR-HL-REM-PAIR-001"
       ]
     },
@@ -4668,6 +4701,7 @@
       ],
       "tests": [
         "PTO-AVS-SCALAR-HL-REMU-DECODE-001",
+        "PTO-AVS-SCALAR-HL-REMU-ORDER-002",
         "PTO-AVS-SCALAR-HL-REMU-PAIR-001"
       ]
     },
@@ -4679,6 +4713,7 @@
       ],
       "tests": [
         "PTO-AVS-SCALAR-HL-REMUW-DECODE-001",
+        "PTO-AVS-SCALAR-HL-REMUW-ORDER-002",
         "PTO-AVS-SCALAR-HL-REMUW-PAIR-001"
       ]
     },
@@ -4690,6 +4725,7 @@
       ],
       "tests": [
         "PTO-AVS-SCALAR-HL-REMW-DECODE-001",
+        "PTO-AVS-SCALAR-HL-REMW-ORDER-002",
         "PTO-AVS-SCALAR-HL-REMW-PAIR-001"
       ]
     },
@@ -10782,10 +10818,10 @@
     "asl/scalar/alu/HL.MULU.asl": "536836aa10abb8727b2f16bb905122f18867f52bac338e43920fa4382da40792",
     "asl/scalar/alu/HL.ORI.asl": "8d69c4816d6a50722aa5329ae3218b346ba341162493e13ebf13ee30d8fb47f0",
     "asl/scalar/alu/HL.ORIW.asl": "04fde3f69ecbb4bedd410ed0bb9ac3e163fbc2c53220626c053488142c03a458",
-    "asl/scalar/alu/HL.REM.asl": "3838965b533aeda5d2d49f92bbb41c2e4904b9599b93c4cea3ef9570fcbce21a",
-    "asl/scalar/alu/HL.REMU.asl": "a75c0a280196ea080e27f9de5b69fa1333de3b6bc4b34818c1f00f852e5b363a",
-    "asl/scalar/alu/HL.REMUW.asl": "46e2ef341554bb975f65742886a8b141054096d5184f933d20ec18126d3a55e9",
-    "asl/scalar/alu/HL.REMW.asl": "5bb716cfe81b28e33378b54c685dc69886e72bfda55b194261fe57dd6a7d3ca2",
+    "asl/scalar/alu/HL.REM.asl": "2508793bf6b9e37524e5290042db24630d0d08e0d676239ad9fc1174c4c4a435",
+    "asl/scalar/alu/HL.REMU.asl": "775bb2b603f09b4e833034b61cfad14526e29e90b99569261d1fb91c5b6e5703",
+    "asl/scalar/alu/HL.REMUW.asl": "2b0c7bcdab14ff90fb58e220cf676c2b4dd027de940dc9ca1894390098e80152",
+    "asl/scalar/alu/HL.REMW.asl": "a93eafd54c6b8e92e32bad81fac27571e760512273a4ce8b1e4c24a4a0bede05",
     "asl/scalar/alu/HL.SUBI.asl": "684a440a583dee7c5f7a07bd90606568e8fd95dd38d4c7a94852956d0e686d41",
     "asl/scalar/alu/HL.SUBIW.asl": "ac417cb210aa742de4327232d37d060b02ece0551e9d6cb5fc807070f986e321",
     "asl/scalar/alu/HL.XORI.asl": "909ae4628ca48827b53e4d7b91729648c37243fe9b8e74dabe19e43447970df7",
@@ -10981,11 +11017,11 @@
     "asl/scalar/fsu/UCVTF.asl": "31e31fc53a49970a8040bd58acca56c40134c7eae2854f0922d235da9452ab9a",
     "asl/scalar/model/agu/addressing.asl": "192f6bfacaf627e8cb503a3f34faa5b82988274bd68572e1b9bcc870f6170e1c",
     "asl/scalar/model/agu/memory.asl": "3e11650bdd6950bf78085be8b1de9735f65310d69b1edfb54d92e59baffee643",
-    "asl/scalar/model/alu/semantics.asl": "9e12fcfca8f8091cfe553265b2aac122c04708b9e41dcc0a14bdce56b3595aaf",
+    "asl/scalar/model/alu/semantics.asl": "a2a5e860377188274603a14948fc5fc619adecc874e02551bd122dc1390f21ed",
     "asl/scalar/model/amo/semantics.asl": "feac3f10edbf29d34595f827eb66a39925be56eb3345e38574a5bab2424a871a",
     "asl/scalar/model/bru/semantics.asl": "e7e9e30ad334b56eeaa9fa1093719ce80e685cde4e77eab8710b14086ceea31a",
     "asl/scalar/model/dispatch/agu.asl": "1e22037018ca860fef794052cda29bf99103c543ae2b6391fce292a5cba9f682",
-    "asl/scalar/model/dispatch/alu.asl": "fadf06ed6c43749bb1ee0d41596df7c3176542441aec5368c6cb70c232a5b1bc",
+    "asl/scalar/model/dispatch/alu.asl": "b5df279d0d5723b2a400a72bdcc4a6224e66dcc3dc29914f8c7327ec21a1efd5",
     "asl/scalar/model/dispatch/amo.asl": "6c1cbff9ffb76d530083ce68fc0b2b288475080ba5713b28d363f3fb23ea2666",
     "asl/scalar/model/dispatch/bru.asl": "5e17dd87f241b57a46f28de258d2387c94a9e54d087ef078676ed988f9a113c2",
     "asl/scalar/model/dispatch/decode.asl": "e998504bdb173641e9a42315c57a1ea8baf69f6e37c1f5dfd05b77c93b13d501",
@@ -11601,10 +11637,10 @@
     "docs/scalar/alu/HL.MULU.md": "69134b8792b613ea6d2deba881553f9e7c20aad2bf9fa82f49dfbb510a1219d3",
     "docs/scalar/alu/HL.ORI.md": "d418c35ecedf09e8908e8a2995970daa5a435c8d035d10a7dad1e7262c57b0b1",
     "docs/scalar/alu/HL.ORIW.md": "19d9a134f9ea2f48a2a65de38d73f58d53182ae83d4bd10cef5cdc1c696f1360",
-    "docs/scalar/alu/HL.REM.md": "8475b505785389a8d91211255bdd6b3e920e3ea8a5ec1820734cbac5af725006",
-    "docs/scalar/alu/HL.REMU.md": "8d8f0449a662c7cd19f882ae9214f13fd53ad29614a2b9da2c449e326e474c26",
-    "docs/scalar/alu/HL.REMUW.md": "0196d0be1822eee54cee85dff896e8c602ce3e2f82f7f8782ff7157338f63fdb",
-    "docs/scalar/alu/HL.REMW.md": "9b85836cca4a397ba20df5905a7a67f43625cbfb2398dddd411fca394a5a95f6",
+    "docs/scalar/alu/HL.REM.md": "d4b9ef40f55ebbd5d577e74e5e3af311bc9db8a980049b9b5d07100a5dba2d49",
+    "docs/scalar/alu/HL.REMU.md": "1a47635f6ab6edefd53054694e9bc49523e583f81f7336f500934fe8621c9a8d",
+    "docs/scalar/alu/HL.REMUW.md": "dd430e83595a60c2a6354c0f3691e3ae418a40df18df1543b4d7b9e32f295a78",
+    "docs/scalar/alu/HL.REMW.md": "12501f7908f1afd1f21de07836455401bb603500d512a1d6eace7cad3545aa9c",
     "docs/scalar/alu/HL.SUBI.md": "e19e22e23f42f7f3ac3ab26ae7d884ecd386bdf04cb4b41d5a232784ef0c5e2b",
     "docs/scalar/alu/HL.SUBIW.md": "e45571f026013044fdb0400de645680de1c3f00345e89ec12715cd3f50b32b54",
     "docs/scalar/alu/HL.XORI.md": "d23f477d0cbc2e0e796ebf48a01d81d67b91e99c5bccfb3a09518ec83c40f029",
@@ -11800,11 +11836,11 @@
     "docs/scalar/fsu/UCVTF.md": "80d40857691f4b23c126dbba7fcde35c0f172674128727b0eeaf47e41fd051ed",
     "docs/scalar/model/agu/addressing.md": "dc89ce82a3e767c70df92bf6b4834a5ac0201dad684003ab5453f22d311f58a5",
     "docs/scalar/model/agu/memory.md": "d061414e0398971d4b39b913893f15b1c4990f09224925e5d686405bf37ff2d6",
-    "docs/scalar/model/alu/semantics.md": "5800ad004acb878a6a88081cf772903976cf2ce69df75d334894c4b6e962dc06",
+    "docs/scalar/model/alu/semantics.md": "565235920c25b86d395594427f174e97bd32952e51ec7f3f1af4db8765d68cd7",
     "docs/scalar/model/amo/semantics.md": "c66f10e728208dd95c44f02e51c311f9639fe8c7357dabf18e6bb2430e9bdf60",
     "docs/scalar/model/bru/semantics.md": "ba6e7af7ec9bdf099909f9fde8129b4c55a7e4f4b2156f797713a1428b71466b",
     "docs/scalar/model/dispatch/agu.md": "76eaaf8e1dbd894ade12b1ebb8f1be5d14ea83df1dbd8d59a42c11895441e06c",
-    "docs/scalar/model/dispatch/alu.md": "2f10f5c4000d6c989b6768cab92ec0bd649e916aab80cc47387f6ffa61d7e783",
+    "docs/scalar/model/dispatch/alu.md": "ac091b68c5cbcb10ffa6658808e1e0bba8f04bd9263f741776ff8e7d03273533",
     "docs/scalar/model/dispatch/amo.md": "4b0b741e29518315d27121395880aab53e29196ea03c2b07a341237b816dcb6c",
     "docs/scalar/model/dispatch/bru.md": "874a1e48821f696158ef9f8659fe4d43d62db00604cab8d38b60f04d32c22dee",
     "docs/scalar/model/dispatch/decode.md": "d95b6dbcba5de900f7d92d2346859c3a4a7404a656413a06f8b58ebf12bec1b6",
@@ -12022,7 +12058,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "a880dae32c4e8b2d6f55b27e81a43a45277553933ce97efbde528862aaf80e34",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "86ddd65217cf977a6461d9d5d5bbf685cd02c954c5911fc87d3f712dd6a57c14",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "75bd888c10b97beaae55f1a0227f4128ec344daabf00b70d4776b7477aed5253",
-    "spec/evidence/instruction-contract-closure.json": "5ce52629884e3f65925304c19494f0d66aa7d65fc86904011520c9e0a95493c4",
+    "spec/evidence/instruction-contract-closure.json": "02b47d68098bf175f4b19cb19d7d59f501b8c8e05c1d3e65252989ed1bd0dd19",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -13559,14 +13595,18 @@
     "tests/asl/scalar/alu/HL.ORIW/scalar-decode-hl-oriw-canonical-001.asl": "749f3a1522460f504dd18faf2af07282621317b8191c76f869acf25b0eda1c96",
     "tests/asl/scalar/alu/HL.ORIW/scalar-exec-hl-oriw-result-001.asl": "b1bb987f4f2b0a2435458dd2487bcd30c7d01c95e663873dd3f156d9a9772aef",
     "tests/asl/scalar/alu/HL.ORIW/scalar-fault-hl-oriw-readiness-001.asl": "20850ab56dc7c47ac1aec38a39503aea16fdf76bb12bcda807394ab7b0b1d59b",
-    "tests/asl/scalar/alu/HL.REM/scalar-decode-hl-rem-canonical-001.asl": "d9da482f4e4d35f8c1f1282f4c1ef45502588188f124f4c68fb0c78be3228bb2",
-    "tests/asl/scalar/alu/HL.REM/scalar-exec-hl-rem-pair-001.asl": "c03bc38859fcf9fc3395d2ac44246e2dd109a286a82431c622dd2481297ce105",
-    "tests/asl/scalar/alu/HL.REMU/scalar-decode-hl-remu-canonical-001.asl": "fb591389bed99a7039b79f500f3366653e2c57ba7b22cab29bea93737b5a9040",
-    "tests/asl/scalar/alu/HL.REMU/scalar-exec-hl-remu-pair-001.asl": "3878dab750246bd20888d61547c080f6437eeb6a4c818d1534d277ff3ecff068",
-    "tests/asl/scalar/alu/HL.REMUW/scalar-decode-hl-remuw-canonical-001.asl": "930d637261e92bdfcfb5d80960a6e1a515ec5fbf12928d01568216be41044676",
-    "tests/asl/scalar/alu/HL.REMUW/scalar-exec-hl-remuw-pair-001.asl": "db6a2a560edfa462fa16a4a5065c3443d97b08eeaca15389e30428a391e3e130",
-    "tests/asl/scalar/alu/HL.REMW/scalar-decode-hl-remw-canonical-001.asl": "6368f5cd3480563ab9f210c98b6d0c23a24c78047498bcb652ecd809b8719a4d",
-    "tests/asl/scalar/alu/HL.REMW/scalar-exec-hl-remw-pair-001.asl": "3214de99539d733fd12a3d3c317d3d22db96e4bc16098b013c6c8b673846fb50",
+    "tests/asl/scalar/alu/HL.REM/scalar-decode-hl-rem-canonical-001.asl": "296945766e02c01c3977c970f7d465f54645cc080b2e82df5a58296f24085eec",
+    "tests/asl/scalar/alu/HL.REM/scalar-exec-hl-rem-order-002.asl": "1ff36e67c54e7aefceb7ea79b9b8667f8175ae36ddf5b41d149e6e1fee6a2049",
+    "tests/asl/scalar/alu/HL.REM/scalar-exec-hl-rem-pair-001.asl": "965049302bb1a0a464a0c219bc6c8b123962e082494a2b1fb04875b919543e05",
+    "tests/asl/scalar/alu/HL.REMU/scalar-decode-hl-remu-canonical-001.asl": "a73f03f3dd15b8a6d2ecf58a0305fdfebfe2411f3a2eb77e0377577b6d7ef46d",
+    "tests/asl/scalar/alu/HL.REMU/scalar-exec-hl-remu-order-002.asl": "23003e23643b1732a1146487b02e5aedb3335a1c26d0995957470864a516eb4c",
+    "tests/asl/scalar/alu/HL.REMU/scalar-exec-hl-remu-pair-001.asl": "105e40d9190f210e8af859a2a2179019affd1e571d9c6c3f4e6699e30fb14eae",
+    "tests/asl/scalar/alu/HL.REMUW/scalar-decode-hl-remuw-canonical-001.asl": "60a7651e911bc49993dcc9ddefc58b77724ef6b913bf72eebefb48907de033ce",
+    "tests/asl/scalar/alu/HL.REMUW/scalar-exec-hl-remuw-order-002.asl": "91d834ae50ebd8cb0d2b72d1d058be9288b24de34777098632c358f423b08de5",
+    "tests/asl/scalar/alu/HL.REMUW/scalar-exec-hl-remuw-pair-001.asl": "08a7559f140587bd0d73dca9c782f5bdaa83188abb737a36957a4bd2500bb462",
+    "tests/asl/scalar/alu/HL.REMW/scalar-decode-hl-remw-canonical-001.asl": "d20ae40d5d67b82ff3b5494d3379c39d6c6fd68662127df4596eec9ef1ba49c7",
+    "tests/asl/scalar/alu/HL.REMW/scalar-exec-hl-remw-order-002.asl": "e4cdb7ef5e08a1233146748283cd1ddddd08371c5f76632ab271f441f10828dc",
+    "tests/asl/scalar/alu/HL.REMW/scalar-exec-hl-remw-pair-001.asl": "d1fc4464c23b449f73858b1ed25a9f97f2cdaa7ef13d95534f79fe961cf9c69f",
     "tests/asl/scalar/alu/HL.SUBI/scalar-bound-hl-subi-selectors-001.asl": "03168276271f303f8e4022938cabc78c8b79331d1f85b9b2f6a16f5d12b6c9fa",
     "tests/asl/scalar/alu/HL.SUBI/scalar-decode-hl-subi-canonical-001.asl": "d0206214534db891d9528c38ba6c76f9be2dc407fb3666e1aa66e4ef6c9ba043",
     "tests/asl/scalar/alu/HL.SUBI/scalar-exec-hl-subi-result-001.asl": "0703488288aecc20b5153fcc23c170a74dab0feae5f545937892a350eba66549",
@@ -15239,9 +15279,9 @@
     "mnemonic_count": 642,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 827,
+    "requirement_count": 831,
     "status": "closed",
-    "test_count": 3209,
+    "test_count": 3213,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -34841,7 +34881,17 @@
       "requirements": [
         "PTO-INST-SCALAR-HL-REM"
       ],
-      "sha256": "d9da482f4e4d35f8c1f1282f4c1ef45502588188f124f4c68fb0c78be3228bb2",
+      "sha256": "296945766e02c01c3977c970f7d465f54645cc080b2e82df5a58296f24085eec",
+      "source": "asl/scalar/alu/HL.REM.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-HL-REM-ORDER-002",
+      "kind": "execution",
+      "path": "tests/asl/scalar/alu/HL.REM/scalar-exec-hl-rem-order-002.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-HL-REM"
+      ],
+      "sha256": "1ff36e67c54e7aefceb7ea79b9b8667f8175ae36ddf5b41d149e6e1fee6a2049",
       "source": "asl/scalar/alu/HL.REM.asl"
     },
     {
@@ -34851,7 +34901,7 @@
       "requirements": [
         "PTO-INST-SCALAR-HL-REM"
       ],
-      "sha256": "c03bc38859fcf9fc3395d2ac44246e2dd109a286a82431c622dd2481297ce105",
+      "sha256": "965049302bb1a0a464a0c219bc6c8b123962e082494a2b1fb04875b919543e05",
       "source": "asl/scalar/alu/HL.REM.asl"
     },
     {
@@ -34861,7 +34911,17 @@
       "requirements": [
         "PTO-INST-SCALAR-HL-REMU"
       ],
-      "sha256": "fb591389bed99a7039b79f500f3366653e2c57ba7b22cab29bea93737b5a9040",
+      "sha256": "a73f03f3dd15b8a6d2ecf58a0305fdfebfe2411f3a2eb77e0377577b6d7ef46d",
+      "source": "asl/scalar/alu/HL.REMU.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-HL-REMU-ORDER-002",
+      "kind": "execution",
+      "path": "tests/asl/scalar/alu/HL.REMU/scalar-exec-hl-remu-order-002.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-HL-REMU"
+      ],
+      "sha256": "23003e23643b1732a1146487b02e5aedb3335a1c26d0995957470864a516eb4c",
       "source": "asl/scalar/alu/HL.REMU.asl"
     },
     {
@@ -34871,7 +34931,7 @@
       "requirements": [
         "PTO-INST-SCALAR-HL-REMU"
       ],
-      "sha256": "3878dab750246bd20888d61547c080f6437eeb6a4c818d1534d277ff3ecff068",
+      "sha256": "105e40d9190f210e8af859a2a2179019affd1e571d9c6c3f4e6699e30fb14eae",
       "source": "asl/scalar/alu/HL.REMU.asl"
     },
     {
@@ -34881,7 +34941,17 @@
       "requirements": [
         "PTO-INST-SCALAR-HL-REMUW"
       ],
-      "sha256": "930d637261e92bdfcfb5d80960a6e1a515ec5fbf12928d01568216be41044676",
+      "sha256": "60a7651e911bc49993dcc9ddefc58b77724ef6b913bf72eebefb48907de033ce",
+      "source": "asl/scalar/alu/HL.REMUW.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-HL-REMUW-ORDER-002",
+      "kind": "execution",
+      "path": "tests/asl/scalar/alu/HL.REMUW/scalar-exec-hl-remuw-order-002.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-HL-REMUW"
+      ],
+      "sha256": "91d834ae50ebd8cb0d2b72d1d058be9288b24de34777098632c358f423b08de5",
       "source": "asl/scalar/alu/HL.REMUW.asl"
     },
     {
@@ -34891,7 +34961,7 @@
       "requirements": [
         "PTO-INST-SCALAR-HL-REMUW"
       ],
-      "sha256": "db6a2a560edfa462fa16a4a5065c3443d97b08eeaca15389e30428a391e3e130",
+      "sha256": "08a7559f140587bd0d73dca9c782f5bdaa83188abb737a36957a4bd2500bb462",
       "source": "asl/scalar/alu/HL.REMUW.asl"
     },
     {
@@ -34901,7 +34971,17 @@
       "requirements": [
         "PTO-INST-SCALAR-HL-REMW"
       ],
-      "sha256": "6368f5cd3480563ab9f210c98b6d0c23a24c78047498bcb652ecd809b8719a4d",
+      "sha256": "d20ae40d5d67b82ff3b5494d3379c39d6c6fd68662127df4596eec9ef1ba49c7",
+      "source": "asl/scalar/alu/HL.REMW.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-HL-REMW-ORDER-002",
+      "kind": "execution",
+      "path": "tests/asl/scalar/alu/HL.REMW/scalar-exec-hl-remw-order-002.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-HL-REMW"
+      ],
+      "sha256": "e4cdb7ef5e08a1233146748283cd1ddddd08371c5f76632ab271f441f10828dc",
       "source": "asl/scalar/alu/HL.REMW.asl"
     },
     {
@@ -34911,7 +34991,7 @@
       "requirements": [
         "PTO-INST-SCALAR-HL-REMW"
       ],
-      "sha256": "3214de99539d733fd12a3d3c317d3d22db96e4bc16098b013c6c8b673846fb50",
+      "sha256": "d1fc4464c23b449f73858b1ed25a9f97f2cdaa7ef13d95534f79fe961cf9c69f",
       "source": "asl/scalar/alu/HL.REMW.asl"
     },
     {
@@ -56680,12 +56760,14 @@
       },
       "mnemonic": "HL.REM",
       "semantic_tests": [
+        "PTO-AVS-SCALAR-HL-REM-ORDER-002",
         "PTO-AVS-SCALAR-HL-REM-PAIR-001"
       ],
       "source": "asl/scalar/alu/HL.REM.asl",
       "surface": "scalar",
       "tests": [
         "PTO-AVS-SCALAR-HL-REM-DECODE-001",
+        "PTO-AVS-SCALAR-HL-REM-ORDER-002",
         "PTO-AVS-SCALAR-HL-REM-PAIR-001"
       ]
     },
@@ -56702,12 +56784,14 @@
       },
       "mnemonic": "HL.REMU",
       "semantic_tests": [
+        "PTO-AVS-SCALAR-HL-REMU-ORDER-002",
         "PTO-AVS-SCALAR-HL-REMU-PAIR-001"
       ],
       "source": "asl/scalar/alu/HL.REMU.asl",
       "surface": "scalar",
       "tests": [
         "PTO-AVS-SCALAR-HL-REMU-DECODE-001",
+        "PTO-AVS-SCALAR-HL-REMU-ORDER-002",
         "PTO-AVS-SCALAR-HL-REMU-PAIR-001"
       ]
     },
@@ -56724,12 +56808,14 @@
       },
       "mnemonic": "HL.REMUW",
       "semantic_tests": [
+        "PTO-AVS-SCALAR-HL-REMUW-ORDER-002",
         "PTO-AVS-SCALAR-HL-REMUW-PAIR-001"
       ],
       "source": "asl/scalar/alu/HL.REMUW.asl",
       "surface": "scalar",
       "tests": [
         "PTO-AVS-SCALAR-HL-REMUW-DECODE-001",
+        "PTO-AVS-SCALAR-HL-REMUW-ORDER-002",
         "PTO-AVS-SCALAR-HL-REMUW-PAIR-001"
       ]
     },
@@ -56746,12 +56832,14 @@
       },
       "mnemonic": "HL.REMW",
       "semantic_tests": [
+        "PTO-AVS-SCALAR-HL-REMW-ORDER-002",
         "PTO-AVS-SCALAR-HL-REMW-PAIR-001"
       ],
       "source": "asl/scalar/alu/HL.REMW.asl",
       "surface": "scalar",
       "tests": [
         "PTO-AVS-SCALAR-HL-REMW-DECODE-001",
+        "PTO-AVS-SCALAR-HL-REMW-ORDER-002",
         "PTO-AVS-SCALAR-HL-REMW-PAIR-001"
       ]
     },

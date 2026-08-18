@@ -125,6 +125,8 @@ SCALAR_ALU_EFFECT_HANDLER_CLASSES = {
         "ExecuteConcatenatePairW",
         "ExecuteScalarDividePair",
         "ExecuteScalarDividePairW",
+        "ExecuteScalarRemainderPair",
+        "ExecuteScalarRemainderPairW",
         "ExecuteScalarMultiplyAddPair",
         "ExecuteScalarMultiplyPair",
     },
@@ -698,9 +700,12 @@ def scalar_pair_expected(
         "HL.REMUW",
     }:
         signed_operation = mnemonic in {"HL.DIV", "HL.DIVW", "HL.REM", "HL.REMW"}
-        return scalar_division_result(
+        quotient, remainder = scalar_division_result(
             left, right, signed_operation, mnemonic.endswith("W")
         )
+        if mnemonic.startswith("HL.REM"):
+            return remainder, quotient
+        return quotient, remainder
     if mnemonic in {"HL.MUL", "HL.MULU"}:
         if mnemonic == "HL.MUL":
             product = signed_integer(left, 64) * signed_integer(right, 64)
