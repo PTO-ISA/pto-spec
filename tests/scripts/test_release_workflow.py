@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 
 from scripts.release_workflow import validate_pr_workflow, validate_release_workflow
+
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def replace_last(source: str, old: str, new: str) -> str:
@@ -215,6 +219,16 @@ class ReleaseWorkflowContractTest(unittest.TestCase):
 
     def test_complete_manual_workflow_is_accepted(self) -> None:
         self.assertEqual(validate_release_workflow(VALID_RELEASE_WORKFLOW), [])
+
+    def test_formal_closure_step_name_does_not_freeze_inventory_counts(self) -> None:
+        workflow = (ROOT / ".github/workflows/release.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn(
+            "Verify formal mnemonic and reservation contracts",
+            workflow,
+        )
+        self.assertNotRegex(workflow, r"Verify \d+ mnemonic and \d+ reservation")
 
     def test_formal_mnemonic_closure_is_required(self) -> None:
         self.assert_rejected(
