@@ -1,5 +1,5 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","surface":"block","classification":["model","state","control-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES"]}
-// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BARG","_BundleCommitTargetSet","_SystemBlockTerminalPending","_BundleSequentialPC","_FrameStackReturnTarget","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleDimensionPresent","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleZeroParticipationSeen","_BundleControlAttributes","_BundleDataAttributes","_BundleDataAttributesPresent","_BundleHint","_BundleFixedPointAttributes","_MemoryCopyTemplate","_FrameTemplate","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BARG","_BundleCommitTargetSet","_BundleConditionSet","_SystemBlockTerminalPending","_BundleSequentialPC","_FrameStackReturnTarget","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleDimensionPresent","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleZeroParticipationSeen","_BundleControlAttributes","_BundleDataAttributes","_BundleDataAttributesPresent","_BundleHint","_BundleFixedPointAttributes","_MemoryCopyTemplate","_FrameTemplate","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
 
 // NDF-BEGIN: PTO-REQ-BUNDLE-STATE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -11,6 +11,9 @@ var _BARG : BundleArgumentRegister;
 // C.SETC.TGT owns one successful value snapshot per active block. This marker
 // is separate from BARG.BPCN because BSTART initializes BPCN before any setter.
 var _BundleCommitTargetSet : boolean;
+// Exactly one SETC condition setter may publish BARG.TAKEN in one conditional
+// block. The marker is trap-preserved and cleared with block state.
+var _BundleConditionSet : boolean;
 // ACRC is the final scalar operation of a SYS block.  This marker survives
 // its service-request trap so recovery can accept only BSTOP or a new BSTART.
 var _SystemBlockTerminalPending : boolean;

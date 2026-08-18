@@ -32,6 +32,8 @@ begin
     _BundleBodyActive = control[6] == '1';
     _BundleCommitTargetSet =
         _TrapContexts[[target]].bundle_commit_target_set;
+    _BundleConditionSet =
+        _TrapContexts[[target]].bundle_condition_set;
     _SystemBlockTerminalPending =
         _TrapContexts[[target]].system_block_terminal_pending;
     _BARG.block_type = PTOv0BundleKindOf(control[10:7]);

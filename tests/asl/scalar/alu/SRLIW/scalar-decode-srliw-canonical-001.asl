@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-SRLIW-DECODE-001","source":"asl/scalar/alu/SRLIW.asl","requirements":["PTO-INST-SCALAR-SRLIW"],"kind":"decode-positive","summary":"canonical SRLIW catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000101000000110101', 32) == 439;
-    assert ScalarOperationOfForm(439) == ScalarOperation_SRLIW;
-    assert ScalarHandlerOfForm(439) == ScalarHandler_ScalarBinaryW;
+    assert DecodeScalarForm('000000000000000000000000000000000101000000110101', 32) == 431;
+    assert ScalarOperationOfForm(431) == ScalarOperation_SRLIW;
+    assert ScalarHandlerOfForm(431) == ScalarHandler_ScalarBinaryW;
     assert InstructionContractOperation_SRLIW() == ScalarOperation_SRLIW;
     assert InstructionContractHandler_SRLIW() == ScalarHandler_ScalarBinaryW;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000110101', 439, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000110101', 439, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000110101', 439, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000110101', 431, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000110101', 431, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000101000000110101', 431, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

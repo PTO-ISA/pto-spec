@@ -4,6 +4,7 @@ begin
     _BundleActive = FALSE;
     _BundleBodyActive = FALSE;
     _BundleCommitTargetSet = FALSE;
+    _BundleConditionSet = FALSE;
     _SystemBlockTerminalPending = FALSE;
     _BARG.block_type = BundleKind_Standard;
     _BARG.transfer_type = BundleTransfer_Fallthrough;
@@ -123,6 +124,7 @@ begin
         _TrapContexts[[ring]].bundle_active = FALSE;
         _TrapContexts[[ring]].bundle_body_active = FALSE;
         _TrapContexts[[ring]].bundle_commit_target_set = FALSE;
+        _TrapContexts[[ring]].bundle_condition_set = FALSE;
         _TrapContexts[[ring]].system_block_terminal_pending = FALSE;
         _TrapContexts[[ring]].barg = _BARG;
         _TrapContexts[[ring]].bundle_sequential_pc = Zeros{PTO_XLEN};

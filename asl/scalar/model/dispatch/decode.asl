@@ -12,8 +12,7 @@ type ScalarExecutionStatus of enumeration {
 
 pure func ScalarHandlerWritesTPC(handler: ScalarSemanticHandler) => boolean
 begin
-    return handler == ScalarHandler_BranchRelative ||
-           handler == ScalarHandler_JumpRelative ||
+    return handler == ScalarHandler_JumpRelative ||
            handler == ScalarHandler_JumpRegister ||
            handler == ScalarHandler_ArchitectureEnterRequest;
 end;

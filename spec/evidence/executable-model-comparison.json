@@ -289,166 +289,6 @@
       ],
       "independent_status": "executable-subset",
       "index": 12,
-      "mnemonic": "B.EQ",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
-      "requirements": [
-        "PTO-REQ-SCALAR-CONTROL-001",
-        "PTO-REQ-SCALAR-EXECUTION-001"
-      ],
-      "semantic_family": "BRU",
-      "stable_id": "b_eq_32_41f00e5abd89",
-      "surface": "scalar"
-    },
-    {
-      "classification": "comparable-match",
-      "encoding_match": true,
-      "evidence": [
-        "spec/catalog/scalar-forms.json",
-        "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json"
-      ],
-      "independent_status": "executable-subset",
-      "index": 13,
-      "mnemonic": "B.GE",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
-      "requirements": [
-        "PTO-REQ-SCALAR-CONTROL-001",
-        "PTO-REQ-SCALAR-EXECUTION-001"
-      ],
-      "semantic_family": "BRU",
-      "stable_id": "b_ge_32_7bd9050705dc",
-      "surface": "scalar"
-    },
-    {
-      "classification": "comparable-match",
-      "encoding_match": true,
-      "evidence": [
-        "spec/catalog/scalar-forms.json",
-        "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json"
-      ],
-      "independent_status": "executable-subset",
-      "index": 14,
-      "mnemonic": "B.GEU",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
-      "requirements": [
-        "PTO-REQ-SCALAR-CONTROL-001",
-        "PTO-REQ-SCALAR-EXECUTION-001"
-      ],
-      "semantic_family": "BRU",
-      "stable_id": "b_geu_32_43a6e57dce55",
-      "surface": "scalar"
-    },
-    {
-      "classification": "comparable-match",
-      "encoding_match": true,
-      "evidence": [
-        "spec/catalog/scalar-forms.json",
-        "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json"
-      ],
-      "independent_status": "executable-subset",
-      "index": 15,
-      "mnemonic": "B.LT",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
-      "requirements": [
-        "PTO-REQ-SCALAR-CONTROL-001",
-        "PTO-REQ-SCALAR-EXECUTION-001"
-      ],
-      "semantic_family": "BRU",
-      "stable_id": "b_lt_32_2ca5ecd25cfb",
-      "surface": "scalar"
-    },
-    {
-      "classification": "comparable-match",
-      "encoding_match": true,
-      "evidence": [
-        "spec/catalog/scalar-forms.json",
-        "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json"
-      ],
-      "independent_status": "executable-subset",
-      "index": 16,
-      "mnemonic": "B.LTU",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
-      "requirements": [
-        "PTO-REQ-SCALAR-CONTROL-001",
-        "PTO-REQ-SCALAR-EXECUTION-001"
-      ],
-      "semantic_family": "BRU",
-      "stable_id": "b_ltu_32_f1ea7ad44e37",
-      "surface": "scalar"
-    },
-    {
-      "classification": "comparable-match",
-      "encoding_match": true,
-      "evidence": [
-        "spec/catalog/scalar-forms.json",
-        "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json"
-      ],
-      "independent_status": "executable-subset",
-      "index": 17,
-      "mnemonic": "B.NE",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
-      "requirements": [
-        "PTO-REQ-SCALAR-CONTROL-001",
-        "PTO-REQ-SCALAR-EXECUTION-001"
-      ],
-      "semantic_family": "BRU",
-      "stable_id": "b_ne_32_831af6a36ff4",
-      "surface": "scalar"
-    },
-    {
-      "classification": "comparable-match",
-      "encoding_match": true,
-      "evidence": [
-        "spec/catalog/scalar-forms.json",
-        "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json"
-      ],
-      "independent_status": "executable-subset",
-      "index": 18,
-      "mnemonic": "B.NZ",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
-      "requirements": [
-        "PTO-REQ-SCALAR-CONTROL-001",
-        "PTO-REQ-SCALAR-EXECUTION-001"
-      ],
-      "semantic_family": "BRU",
-      "stable_id": "b_nz_32_0f583cdd8d4d",
-      "surface": "scalar"
-    },
-    {
-      "classification": "comparable-match",
-      "encoding_match": true,
-      "evidence": [
-        "spec/catalog/scalar-forms.json",
-        "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json"
-      ],
-      "independent_status": "executable-subset",
-      "index": 19,
-      "mnemonic": "B.Z",
-      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
-      "requirements": [
-        "PTO-REQ-SCALAR-CONTROL-001",
-        "PTO-REQ-SCALAR-EXECUTION-001"
-      ],
-      "semantic_family": "BRU",
-      "stable_id": "b_z_32_753dd3b4fcb6",
-      "surface": "scalar"
-    },
-    {
-      "classification": "comparable-match",
-      "encoding_match": true,
-      "evidence": [
-        "spec/catalog/scalar-forms.json",
-        "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json"
-      ],
-      "independent_status": "executable-subset",
-      "index": 20,
       "mnemonic": "BC.IALL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -468,7 +308,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 21,
+      "index": 13,
       "mnemonic": "BC.IVA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -488,7 +328,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 22,
+      "index": 14,
       "mnemonic": "BCNT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -508,7 +348,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 23,
+      "index": 15,
       "mnemonic": "BIC",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -528,7 +368,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 24,
+      "index": 16,
       "mnemonic": "BIS",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -548,7 +388,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 25,
+      "index": 17,
       "mnemonic": "BSE",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -568,7 +408,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 26,
+      "index": 18,
       "mnemonic": "BWE",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -588,7 +428,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 27,
+      "index": 19,
       "mnemonic": "BWI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -608,7 +448,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 28,
+      "index": 20,
       "mnemonic": "BWT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -628,7 +468,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 29,
+      "index": 21,
       "mnemonic": "BXS",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -648,7 +488,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 30,
+      "index": 22,
       "mnemonic": "BXU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -668,7 +508,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 31,
+      "index": 23,
       "mnemonic": "C.ADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -688,7 +528,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 32,
+      "index": 24,
       "mnemonic": "C.ADDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -708,7 +548,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 33,
+      "index": 25,
       "mnemonic": "C.AND",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -728,7 +568,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 34,
+      "index": 26,
       "mnemonic": "C.CMP.EQI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -748,7 +588,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 35,
+      "index": 27,
       "mnemonic": "C.CMP.NEI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -768,7 +608,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 36,
+      "index": 28,
       "mnemonic": "C.EBREAK",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -788,7 +628,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 37,
+      "index": 29,
       "mnemonic": "C.LDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -808,7 +648,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 38,
+      "index": 30,
       "mnemonic": "C.LWI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -828,7 +668,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 39,
+      "index": 31,
       "mnemonic": "C.MOVI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -848,7 +688,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 40,
+      "index": 32,
       "mnemonic": "C.MOVR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -868,7 +708,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 41,
+      "index": 33,
       "mnemonic": "C.OR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -888,7 +728,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 42,
+      "index": 34,
       "mnemonic": "C.SDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -908,7 +748,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 43,
+      "index": 35,
       "mnemonic": "C.SETC.EQ",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -928,7 +768,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 44,
+      "index": 36,
       "mnemonic": "C.SETC.NE",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -948,7 +788,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 45,
+      "index": 37,
       "mnemonic": "C.SETC.TGT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -968,7 +808,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 46,
+      "index": 38,
       "mnemonic": "C.SETRET",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -988,7 +828,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 47,
+      "index": 39,
       "mnemonic": "C.SEXT.B",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1008,7 +848,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 48,
+      "index": 40,
       "mnemonic": "C.SEXT.H",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1028,7 +868,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 49,
+      "index": 41,
       "mnemonic": "C.SEXT.W",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1048,7 +888,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 50,
+      "index": 42,
       "mnemonic": "C.SLLI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1068,7 +908,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 51,
+      "index": 43,
       "mnemonic": "C.SRLI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1088,7 +928,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 52,
+      "index": 44,
       "mnemonic": "C.SSRGET",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1108,7 +948,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 53,
+      "index": 45,
       "mnemonic": "C.SUB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1128,7 +968,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 54,
+      "index": 46,
       "mnemonic": "C.SWI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1148,7 +988,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 55,
+      "index": 47,
       "mnemonic": "C.ZEXT.B",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1168,7 +1008,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 56,
+      "index": 48,
       "mnemonic": "C.ZEXT.H",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1188,7 +1028,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 57,
+      "index": 49,
       "mnemonic": "C.ZEXT.W",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1208,7 +1048,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 58,
+      "index": 50,
       "mnemonic": "CASB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1228,7 +1068,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 59,
+      "index": 51,
       "mnemonic": "CASD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1248,7 +1088,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 60,
+      "index": 52,
       "mnemonic": "CASH",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1268,7 +1108,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 61,
+      "index": 53,
       "mnemonic": "CASW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1288,7 +1128,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 62,
+      "index": 54,
       "mnemonic": "CLZ",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1308,7 +1148,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 63,
+      "index": 55,
       "mnemonic": "CMP.AND",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1328,7 +1168,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 64,
+      "index": 56,
       "mnemonic": "CMP.ANDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1348,7 +1188,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 65,
+      "index": 57,
       "mnemonic": "CMP.EQ",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1368,7 +1208,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 66,
+      "index": 58,
       "mnemonic": "CMP.EQI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1388,7 +1228,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 67,
+      "index": 59,
       "mnemonic": "CMP.GE",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1408,7 +1248,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 68,
+      "index": 60,
       "mnemonic": "CMP.GEI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1428,7 +1268,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 69,
+      "index": 61,
       "mnemonic": "CMP.GEU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1448,7 +1288,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 70,
+      "index": 62,
       "mnemonic": "CMP.GEUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1468,7 +1308,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 71,
+      "index": 63,
       "mnemonic": "CMP.LT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1488,7 +1328,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 72,
+      "index": 64,
       "mnemonic": "CMP.LTI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1508,7 +1348,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 73,
+      "index": 65,
       "mnemonic": "CMP.LTU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1528,7 +1368,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 74,
+      "index": 66,
       "mnemonic": "CMP.LTUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1548,7 +1388,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 75,
+      "index": 67,
       "mnemonic": "CMP.NE",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1568,7 +1408,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 76,
+      "index": 68,
       "mnemonic": "CMP.NEI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1588,7 +1428,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 77,
+      "index": 69,
       "mnemonic": "CMP.OR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1608,7 +1448,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 78,
+      "index": 70,
       "mnemonic": "CMP.ORI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1628,7 +1468,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 79,
+      "index": 71,
       "mnemonic": "CSEL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1648,7 +1488,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 80,
+      "index": 72,
       "mnemonic": "CTZ",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1668,7 +1508,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 81,
+      "index": 73,
       "mnemonic": "DC.CISW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1688,7 +1528,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 82,
+      "index": 74,
       "mnemonic": "DC.CIVA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1708,7 +1548,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 83,
+      "index": 75,
       "mnemonic": "DC.CSW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1728,7 +1568,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 84,
+      "index": 76,
       "mnemonic": "DC.CVA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1748,7 +1588,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 85,
+      "index": 77,
       "mnemonic": "DC.IALL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1768,7 +1608,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 86,
+      "index": 78,
       "mnemonic": "DC.ISW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1788,7 +1628,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 87,
+      "index": 79,
       "mnemonic": "DC.IVA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1808,7 +1648,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 88,
+      "index": 80,
       "mnemonic": "DC.ZVA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1828,7 +1668,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 89,
+      "index": 81,
       "mnemonic": "DMA",
       "pto_disposition": "Independent model decodes the form but does not provide executable semantics for this row.",
       "requirements": [
@@ -1848,7 +1688,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 90,
+      "index": 82,
       "mnemonic": "DIV",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1868,7 +1708,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 91,
+      "index": 83,
       "mnemonic": "DIVU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1888,7 +1728,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 92,
+      "index": 84,
       "mnemonic": "DIVUW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1908,7 +1748,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 93,
+      "index": 85,
       "mnemonic": "DIVW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1928,7 +1768,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 94,
+      "index": 86,
       "mnemonic": "EBREAK",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1948,7 +1788,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 95,
+      "index": 87,
       "mnemonic": "FABS",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1968,7 +1808,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 96,
+      "index": 88,
       "mnemonic": "FADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -1988,7 +1828,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 97,
+      "index": 89,
       "mnemonic": "FCVT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2008,7 +1848,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 98,
+      "index": 90,
       "mnemonic": "FCVTA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2028,7 +1868,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 99,
+      "index": 91,
       "mnemonic": "FCVTM",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2048,7 +1888,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 100,
+      "index": 92,
       "mnemonic": "FCVTN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2068,7 +1908,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 101,
+      "index": 93,
       "mnemonic": "FCVTP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2088,7 +1928,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 102,
+      "index": 94,
       "mnemonic": "FCVTZ",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2108,7 +1948,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 103,
+      "index": 95,
       "mnemonic": "FDIV",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2128,7 +1968,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 104,
+      "index": 96,
       "mnemonic": "FENCE.D",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2148,7 +1988,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 105,
+      "index": 97,
       "mnemonic": "FENCE.I",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2168,7 +2008,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 106,
+      "index": 98,
       "mnemonic": "FEQ",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2188,7 +2028,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 107,
+      "index": 99,
       "mnemonic": "FEQS",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2208,7 +2048,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 108,
+      "index": 100,
       "mnemonic": "FEXP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2228,7 +2068,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 109,
+      "index": 101,
       "mnemonic": "FGE",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2248,7 +2088,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 110,
+      "index": 102,
       "mnemonic": "FGES",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2268,7 +2108,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 111,
+      "index": 103,
       "mnemonic": "FLT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2288,7 +2128,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 112,
+      "index": 104,
       "mnemonic": "FLTS",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2308,7 +2148,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 113,
+      "index": 105,
       "mnemonic": "FMADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2328,7 +2168,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 114,
+      "index": 106,
       "mnemonic": "FMAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2348,7 +2188,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 115,
+      "index": 107,
       "mnemonic": "FMIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2368,7 +2208,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 116,
+      "index": 108,
       "mnemonic": "FMSUB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2388,7 +2228,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 117,
+      "index": 109,
       "mnemonic": "FMUL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2408,7 +2248,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 118,
+      "index": 110,
       "mnemonic": "FNE",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2428,7 +2268,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 119,
+      "index": 111,
       "mnemonic": "FNES",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2448,7 +2288,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 120,
+      "index": 112,
       "mnemonic": "FNMADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2468,7 +2308,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 121,
+      "index": 113,
       "mnemonic": "FNMSUB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2488,7 +2328,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 122,
+      "index": 114,
       "mnemonic": "FRECIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2508,7 +2348,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 123,
+      "index": 115,
       "mnemonic": "FSQRT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2528,7 +2368,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 124,
+      "index": 116,
       "mnemonic": "FSUB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2548,7 +2388,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 125,
+      "index": 117,
       "mnemonic": "HL.ADDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2568,7 +2408,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 126,
+      "index": 118,
       "mnemonic": "HL.ADDIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2589,7 +2429,7 @@
         "docs/status/decisions/0066-addtpc-page-scaled-immediate.md"
       ],
       "independent_status": "executable-subset",
-      "index": 127,
+      "index": 119,
       "mnemonic": "HL.ADDTPC",
       "pto_disposition": "PTO uses the accepted signed 4 KiB page displacement; the locked independent executable snapshot retains halfword scaling.",
       "requirements": [
@@ -2609,7 +2449,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 128,
+      "index": 120,
       "mnemonic": "HL.ANDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2629,7 +2469,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 129,
+      "index": 121,
       "mnemonic": "HL.ANDIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2649,7 +2489,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 130,
+      "index": 122,
       "mnemonic": "HL.BFI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2669,7 +2509,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 131,
+      "index": 123,
       "mnemonic": "HL.CASB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2689,7 +2529,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 132,
+      "index": 124,
       "mnemonic": "HL.CASD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2709,7 +2549,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 133,
+      "index": 125,
       "mnemonic": "HL.CASH",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2729,7 +2569,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 134,
+      "index": 126,
       "mnemonic": "HL.CASW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2749,7 +2589,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 135,
+      "index": 127,
       "mnemonic": "HL.CCAT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2769,7 +2609,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 136,
+      "index": 128,
       "mnemonic": "HL.CCATW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2789,7 +2629,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 137,
+      "index": 129,
       "mnemonic": "HL.CMP.ANDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2809,7 +2649,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 138,
+      "index": 130,
       "mnemonic": "HL.CMP.EQI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2829,7 +2669,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 139,
+      "index": 131,
       "mnemonic": "HL.CMP.GEI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2849,7 +2689,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 140,
+      "index": 132,
       "mnemonic": "HL.CMP.GEUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2869,7 +2709,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 141,
+      "index": 133,
       "mnemonic": "HL.CMP.LTI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2889,7 +2729,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 142,
+      "index": 134,
       "mnemonic": "HL.CMP.LTUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2909,7 +2749,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 143,
+      "index": 135,
       "mnemonic": "HL.CMP.NEI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2929,7 +2769,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 144,
+      "index": 136,
       "mnemonic": "HL.CMP.ORI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2949,7 +2789,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 145,
+      "index": 137,
       "mnemonic": "HL.DIV",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2969,7 +2809,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 146,
+      "index": 138,
       "mnemonic": "HL.DIVU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -2989,7 +2829,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 147,
+      "index": 139,
       "mnemonic": "HL.DIVUW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3009,7 +2849,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 148,
+      "index": 140,
       "mnemonic": "HL.DIVW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3029,7 +2869,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 149,
+      "index": 141,
       "mnemonic": "HL.LB.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3049,7 +2889,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 150,
+      "index": 142,
       "mnemonic": "HL.LB.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3069,7 +2909,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 151,
+      "index": 143,
       "mnemonic": "HL.LB.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3089,7 +2929,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 152,
+      "index": 144,
       "mnemonic": "HL.LBI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3109,7 +2949,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 153,
+      "index": 145,
       "mnemonic": "HL.LBI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3129,7 +2969,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 154,
+      "index": 146,
       "mnemonic": "HL.LBI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3149,7 +2989,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 155,
+      "index": 147,
       "mnemonic": "HL.LBIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3169,7 +3009,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 156,
+      "index": 148,
       "mnemonic": "HL.LBP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3189,7 +3029,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 157,
+      "index": 149,
       "mnemonic": "HL.LBU.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3209,7 +3049,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 158,
+      "index": 150,
       "mnemonic": "HL.LBU.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3229,7 +3069,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 159,
+      "index": 151,
       "mnemonic": "HL.LBU.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3249,7 +3089,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 160,
+      "index": 152,
       "mnemonic": "HL.LBUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3269,7 +3109,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 161,
+      "index": 153,
       "mnemonic": "HL.LBUI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3289,7 +3129,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 162,
+      "index": 154,
       "mnemonic": "HL.LBUI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3309,7 +3149,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 163,
+      "index": 155,
       "mnemonic": "HL.LBUIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3329,7 +3169,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 164,
+      "index": 156,
       "mnemonic": "HL.LBUP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3349,7 +3189,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 165,
+      "index": 157,
       "mnemonic": "HL.LD.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3369,7 +3209,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 166,
+      "index": 158,
       "mnemonic": "HL.LD.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3389,7 +3229,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 167,
+      "index": 159,
       "mnemonic": "HL.LD.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3409,7 +3249,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 168,
+      "index": 160,
       "mnemonic": "HL.LDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3429,7 +3269,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 169,
+      "index": 161,
       "mnemonic": "HL.LDI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3449,7 +3289,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 170,
+      "index": 162,
       "mnemonic": "HL.LDI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3469,7 +3309,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 171,
+      "index": 163,
       "mnemonic": "HL.LDI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3489,7 +3329,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 172,
+      "index": 164,
       "mnemonic": "HL.LDI.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3509,7 +3349,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 173,
+      "index": 165,
       "mnemonic": "HL.LDI.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3529,7 +3369,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 174,
+      "index": 166,
       "mnemonic": "HL.LDIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3549,7 +3389,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 175,
+      "index": 167,
       "mnemonic": "HL.LDIP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3569,7 +3409,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 176,
+      "index": 168,
       "mnemonic": "HL.LDP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3589,7 +3429,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 177,
+      "index": 169,
       "mnemonic": "HL.LH.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3609,7 +3449,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 178,
+      "index": 170,
       "mnemonic": "HL.LH.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3629,7 +3469,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 179,
+      "index": 171,
       "mnemonic": "HL.LH.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3649,7 +3489,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 180,
+      "index": 172,
       "mnemonic": "HL.LHI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3669,7 +3509,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 181,
+      "index": 173,
       "mnemonic": "HL.LHI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3689,7 +3529,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 182,
+      "index": 174,
       "mnemonic": "HL.LHI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3709,7 +3549,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 183,
+      "index": 175,
       "mnemonic": "HL.LHI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3729,7 +3569,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 184,
+      "index": 176,
       "mnemonic": "HL.LHI.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3749,7 +3589,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 185,
+      "index": 177,
       "mnemonic": "HL.LHI.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3769,7 +3609,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 186,
+      "index": 178,
       "mnemonic": "HL.LHIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3789,7 +3629,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 187,
+      "index": 179,
       "mnemonic": "HL.LHIP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3809,7 +3649,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 188,
+      "index": 180,
       "mnemonic": "HL.LHP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3829,7 +3669,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 189,
+      "index": 181,
       "mnemonic": "HL.LHU.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3849,7 +3689,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 190,
+      "index": 182,
       "mnemonic": "HL.LHU.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3869,7 +3709,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 191,
+      "index": 183,
       "mnemonic": "HL.LHU.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3889,7 +3729,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 192,
+      "index": 184,
       "mnemonic": "HL.LHUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3909,7 +3749,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 193,
+      "index": 185,
       "mnemonic": "HL.LHUI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3929,7 +3769,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 194,
+      "index": 186,
       "mnemonic": "HL.LHUI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3949,7 +3789,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 195,
+      "index": 187,
       "mnemonic": "HL.LHUI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3969,7 +3809,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 196,
+      "index": 188,
       "mnemonic": "HL.LHUI.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -3989,7 +3829,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 197,
+      "index": 189,
       "mnemonic": "HL.LHUI.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4009,7 +3849,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 198,
+      "index": 190,
       "mnemonic": "HL.LHUIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4029,7 +3869,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 199,
+      "index": 191,
       "mnemonic": "HL.LHUIP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4049,7 +3889,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 200,
+      "index": 192,
       "mnemonic": "HL.LHUP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4069,7 +3909,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 201,
+      "index": 193,
       "mnemonic": "HL.LIS",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4089,7 +3929,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 202,
+      "index": 194,
       "mnemonic": "HL.LIU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4109,7 +3949,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 203,
+      "index": 195,
       "mnemonic": "HL.LUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4129,7 +3969,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 204,
+      "index": 196,
       "mnemonic": "HL.LW.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4149,7 +3989,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 205,
+      "index": 197,
       "mnemonic": "HL.LW.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4169,7 +4009,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 206,
+      "index": 198,
       "mnemonic": "HL.LW.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4189,7 +4029,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 207,
+      "index": 199,
       "mnemonic": "HL.LWI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4209,7 +4049,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 208,
+      "index": 200,
       "mnemonic": "HL.LWI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4229,7 +4069,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 209,
+      "index": 201,
       "mnemonic": "HL.LWI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4249,7 +4089,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 210,
+      "index": 202,
       "mnemonic": "HL.LWI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4269,7 +4109,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 211,
+      "index": 203,
       "mnemonic": "HL.LWI.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4289,7 +4129,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 212,
+      "index": 204,
       "mnemonic": "HL.LWI.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4309,7 +4149,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 213,
+      "index": 205,
       "mnemonic": "HL.LWIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4329,7 +4169,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 214,
+      "index": 206,
       "mnemonic": "HL.LWIP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4349,7 +4189,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 215,
+      "index": 207,
       "mnemonic": "HL.LWP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4369,7 +4209,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 216,
+      "index": 208,
       "mnemonic": "HL.LWU.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4389,7 +4229,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 217,
+      "index": 209,
       "mnemonic": "HL.LWU.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4409,7 +4249,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 218,
+      "index": 210,
       "mnemonic": "HL.LWU.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4429,7 +4269,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 219,
+      "index": 211,
       "mnemonic": "HL.LWUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4449,7 +4289,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 220,
+      "index": 212,
       "mnemonic": "HL.LWUI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4469,7 +4309,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 221,
+      "index": 213,
       "mnemonic": "HL.LWUI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4489,7 +4329,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 222,
+      "index": 214,
       "mnemonic": "HL.LWUI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4509,7 +4349,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 223,
+      "index": 215,
       "mnemonic": "HL.LWUI.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4529,7 +4369,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 224,
+      "index": 216,
       "mnemonic": "HL.LWUI.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4549,7 +4389,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 225,
+      "index": 217,
       "mnemonic": "HL.LWUIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4569,7 +4409,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 226,
+      "index": 218,
       "mnemonic": "HL.LWUIP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4589,7 +4429,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 227,
+      "index": 219,
       "mnemonic": "HL.LWUP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4609,7 +4449,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 228,
+      "index": 220,
       "mnemonic": "HL.MADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4629,7 +4469,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 229,
+      "index": 221,
       "mnemonic": "HL.MADDW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4649,7 +4489,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 230,
+      "index": 222,
       "mnemonic": "HL.MIADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4669,7 +4509,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 231,
+      "index": 223,
       "mnemonic": "HL.MISUB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4689,7 +4529,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 232,
+      "index": 224,
       "mnemonic": "HL.MUL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4709,7 +4549,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 233,
+      "index": 225,
       "mnemonic": "HL.MULU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4729,7 +4569,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 234,
+      "index": 226,
       "mnemonic": "HL.ORI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4749,7 +4589,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 235,
+      "index": 227,
       "mnemonic": "HL.ORIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4769,7 +4609,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 236,
+      "index": 228,
       "mnemonic": "HL.PRF",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4789,7 +4629,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 237,
+      "index": 229,
       "mnemonic": "HL.PRF.A",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4809,7 +4649,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 238,
+      "index": 230,
       "mnemonic": "HL.PRFI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4829,7 +4669,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 239,
+      "index": 231,
       "mnemonic": "HL.PRFI.UA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4849,7 +4689,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 240,
+      "index": 232,
       "mnemonic": "HL.REM",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4869,7 +4709,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 241,
+      "index": 233,
       "mnemonic": "HL.REMU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4889,7 +4729,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 242,
+      "index": 234,
       "mnemonic": "HL.REMUW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4909,7 +4749,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 243,
+      "index": 235,
       "mnemonic": "HL.REMW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4929,7 +4769,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 244,
+      "index": 236,
       "mnemonic": "HL.SB.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4949,7 +4789,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 245,
+      "index": 237,
       "mnemonic": "HL.SB.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4969,7 +4809,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 246,
+      "index": 238,
       "mnemonic": "HL.SB.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -4989,7 +4829,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 247,
+      "index": 239,
       "mnemonic": "HL.SBI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5009,7 +4849,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 248,
+      "index": 240,
       "mnemonic": "HL.SBI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5029,7 +4869,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 249,
+      "index": 241,
       "mnemonic": "HL.SBI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5049,7 +4889,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 250,
+      "index": 242,
       "mnemonic": "HL.SBIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5069,7 +4909,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 251,
+      "index": 243,
       "mnemonic": "HL.SBP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5089,7 +4929,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 252,
+      "index": 244,
       "mnemonic": "HL.SD.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5109,7 +4949,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 253,
+      "index": 245,
       "mnemonic": "HL.SD.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5129,7 +4969,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 254,
+      "index": 246,
       "mnemonic": "HL.SD.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5149,7 +4989,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 255,
+      "index": 247,
       "mnemonic": "HL.SD.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5169,7 +5009,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 256,
+      "index": 248,
       "mnemonic": "HL.SD.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5189,7 +5029,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 257,
+      "index": 249,
       "mnemonic": "HL.SDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5209,7 +5049,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 258,
+      "index": 250,
       "mnemonic": "HL.SDI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5229,7 +5069,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 259,
+      "index": 251,
       "mnemonic": "HL.SDI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5249,7 +5089,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 260,
+      "index": 252,
       "mnemonic": "HL.SDI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5269,7 +5109,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 261,
+      "index": 253,
       "mnemonic": "HL.SDI.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5289,7 +5129,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 262,
+      "index": 254,
       "mnemonic": "HL.SDI.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5309,7 +5149,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 263,
+      "index": 255,
       "mnemonic": "HL.SDIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5329,7 +5169,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 264,
+      "index": 256,
       "mnemonic": "HL.SDIP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5349,7 +5189,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 265,
+      "index": 257,
       "mnemonic": "HL.SDP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5369,7 +5209,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 266,
+      "index": 258,
       "mnemonic": "HL.SDP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5389,7 +5229,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 267,
+      "index": 259,
       "mnemonic": "HL.SETC.ANDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5409,7 +5249,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 268,
+      "index": 260,
       "mnemonic": "HL.SETC.EQI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5429,7 +5269,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 269,
+      "index": 261,
       "mnemonic": "HL.SETC.GEI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5449,7 +5289,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 270,
+      "index": 262,
       "mnemonic": "HL.SETC.GEUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5469,7 +5309,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 271,
+      "index": 263,
       "mnemonic": "HL.SETC.LTI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5489,7 +5329,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 272,
+      "index": 264,
       "mnemonic": "HL.SETC.LTUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5509,7 +5349,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 273,
+      "index": 265,
       "mnemonic": "HL.SETC.NEI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5529,7 +5369,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 274,
+      "index": 266,
       "mnemonic": "HL.SETC.ORI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5549,7 +5389,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 275,
+      "index": 267,
       "mnemonic": "HL.SETRET",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5569,7 +5409,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 276,
+      "index": 268,
       "mnemonic": "HL.SH.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5589,7 +5429,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 277,
+      "index": 269,
       "mnemonic": "HL.SH.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5609,7 +5449,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 278,
+      "index": 270,
       "mnemonic": "HL.SH.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5629,7 +5469,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 279,
+      "index": 271,
       "mnemonic": "HL.SH.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5649,7 +5489,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 280,
+      "index": 272,
       "mnemonic": "HL.SH.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5669,7 +5509,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 281,
+      "index": 273,
       "mnemonic": "HL.SHI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5689,7 +5529,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 282,
+      "index": 274,
       "mnemonic": "HL.SHI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5709,7 +5549,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 283,
+      "index": 275,
       "mnemonic": "HL.SHI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5729,7 +5569,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 284,
+      "index": 276,
       "mnemonic": "HL.SHI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5749,7 +5589,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 285,
+      "index": 277,
       "mnemonic": "HL.SHI.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5769,7 +5609,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 286,
+      "index": 278,
       "mnemonic": "HL.SHI.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5789,7 +5629,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 287,
+      "index": 279,
       "mnemonic": "HL.SHIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5809,7 +5649,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 288,
+      "index": 280,
       "mnemonic": "HL.SHIP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5829,7 +5669,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 289,
+      "index": 281,
       "mnemonic": "HL.SHP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5849,7 +5689,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 290,
+      "index": 282,
       "mnemonic": "HL.SHP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5869,7 +5709,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 291,
+      "index": 283,
       "mnemonic": "HL.SSRGET",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5889,7 +5729,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 292,
+      "index": 284,
       "mnemonic": "HL.SSRSET",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5909,7 +5749,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 293,
+      "index": 285,
       "mnemonic": "HL.SUBI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5929,7 +5769,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 294,
+      "index": 286,
       "mnemonic": "HL.SUBIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5949,7 +5789,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 295,
+      "index": 287,
       "mnemonic": "HL.SW.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5969,7 +5809,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 296,
+      "index": 288,
       "mnemonic": "HL.SW.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -5989,7 +5829,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 297,
+      "index": 289,
       "mnemonic": "HL.SW.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6009,7 +5849,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 298,
+      "index": 290,
       "mnemonic": "HL.SW.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6029,7 +5869,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 299,
+      "index": 291,
       "mnemonic": "HL.SW.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6049,7 +5889,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 300,
+      "index": 292,
       "mnemonic": "HL.SWI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6069,7 +5909,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 301,
+      "index": 293,
       "mnemonic": "HL.SWI.PO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6089,7 +5929,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 302,
+      "index": 294,
       "mnemonic": "HL.SWI.PR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6109,7 +5949,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 303,
+      "index": 295,
       "mnemonic": "HL.SWI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6129,7 +5969,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 304,
+      "index": 296,
       "mnemonic": "HL.SWI.UPO",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6149,7 +5989,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 305,
+      "index": 297,
       "mnemonic": "HL.SWI.UPR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6169,7 +6009,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 306,
+      "index": 298,
       "mnemonic": "HL.SWIP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6189,7 +6029,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 307,
+      "index": 299,
       "mnemonic": "HL.SWIP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6209,7 +6049,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 308,
+      "index": 300,
       "mnemonic": "HL.SWP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6229,7 +6069,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 309,
+      "index": 301,
       "mnemonic": "HL.SWP.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6249,7 +6089,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 310,
+      "index": 302,
       "mnemonic": "HL.XORI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6269,7 +6109,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 311,
+      "index": 303,
       "mnemonic": "HL.XORIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6289,7 +6129,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 312,
+      "index": 304,
       "mnemonic": "IC.IALL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6309,7 +6149,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 313,
+      "index": 305,
       "mnemonic": "IC.IVA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6329,7 +6169,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 314,
+      "index": 306,
       "mnemonic": "J",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6349,7 +6189,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 315,
+      "index": 307,
       "mnemonic": "JR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6369,7 +6209,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 316,
+      "index": 308,
       "mnemonic": "LB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6389,7 +6229,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 317,
+      "index": 309,
       "mnemonic": "LB.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6409,7 +6249,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 318,
+      "index": 310,
       "mnemonic": "LBI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6429,7 +6269,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 319,
+      "index": 311,
       "mnemonic": "LBU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6449,7 +6289,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 320,
+      "index": 312,
       "mnemonic": "LBU.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6469,7 +6309,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 321,
+      "index": 313,
       "mnemonic": "LBUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6489,7 +6329,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 322,
+      "index": 314,
       "mnemonic": "LD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6509,7 +6349,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 323,
+      "index": 315,
       "mnemonic": "LD.ADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6529,7 +6369,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 324,
+      "index": 316,
       "mnemonic": "LD.AND",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6549,7 +6389,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 325,
+      "index": 317,
       "mnemonic": "LD.OR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6569,7 +6409,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 326,
+      "index": 318,
       "mnemonic": "LD.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6589,7 +6429,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 327,
+      "index": 319,
       "mnemonic": "LD.SMAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6609,7 +6449,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 328,
+      "index": 320,
       "mnemonic": "LD.SMIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6629,7 +6469,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 329,
+      "index": 321,
       "mnemonic": "LD.UMAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6649,7 +6489,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 330,
+      "index": 322,
       "mnemonic": "LD.UMIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6669,7 +6509,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 331,
+      "index": 323,
       "mnemonic": "LD.XOR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6689,7 +6529,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 332,
+      "index": 324,
       "mnemonic": "LDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6709,7 +6549,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 333,
+      "index": 325,
       "mnemonic": "LDI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6729,7 +6569,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 334,
+      "index": 326,
       "mnemonic": "LH",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6749,7 +6589,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 335,
+      "index": 327,
       "mnemonic": "LH.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6769,7 +6609,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 336,
+      "index": 328,
       "mnemonic": "LHI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6789,7 +6629,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 337,
+      "index": 329,
       "mnemonic": "LHI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6809,7 +6649,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 338,
+      "index": 330,
       "mnemonic": "LHU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6829,7 +6669,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 339,
+      "index": 331,
       "mnemonic": "LHU.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6849,7 +6689,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 340,
+      "index": 332,
       "mnemonic": "LHUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6869,7 +6709,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 341,
+      "index": 333,
       "mnemonic": "LHUI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6889,7 +6729,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 342,
+      "index": 334,
       "mnemonic": "LR.B",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6909,7 +6749,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 343,
+      "index": 335,
       "mnemonic": "LR.D",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6929,7 +6769,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 344,
+      "index": 336,
       "mnemonic": "LR.H",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6949,7 +6789,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 345,
+      "index": 337,
       "mnemonic": "LR.W",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6969,7 +6809,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 346,
+      "index": 338,
       "mnemonic": "LSRGET",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -6989,7 +6829,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 347,
+      "index": 339,
       "mnemonic": "LUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7009,7 +6849,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 348,
+      "index": 340,
       "mnemonic": "LW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7029,7 +6869,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 349,
+      "index": 341,
       "mnemonic": "LW.ADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7049,7 +6889,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 350,
+      "index": 342,
       "mnemonic": "LW.AND",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7069,7 +6909,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 351,
+      "index": 343,
       "mnemonic": "LW.OR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7089,7 +6929,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 352,
+      "index": 344,
       "mnemonic": "LW.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7109,7 +6949,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 353,
+      "index": 345,
       "mnemonic": "LW.SMAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7129,7 +6969,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 354,
+      "index": 346,
       "mnemonic": "LW.SMIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7149,7 +6989,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 355,
+      "index": 347,
       "mnemonic": "LW.UMAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7169,7 +7009,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 356,
+      "index": 348,
       "mnemonic": "LW.UMIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7189,7 +7029,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 357,
+      "index": 349,
       "mnemonic": "LW.XOR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7209,7 +7049,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 358,
+      "index": 350,
       "mnemonic": "LWI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7229,7 +7069,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 359,
+      "index": 351,
       "mnemonic": "LWI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7249,7 +7089,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 360,
+      "index": 352,
       "mnemonic": "LWU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7269,7 +7109,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 361,
+      "index": 353,
       "mnemonic": "LWU.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7289,7 +7129,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 362,
+      "index": 354,
       "mnemonic": "LWUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7309,7 +7149,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 363,
+      "index": 355,
       "mnemonic": "LWUI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7329,7 +7169,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 364,
+      "index": 356,
       "mnemonic": "MADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7349,7 +7189,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 365,
+      "index": 357,
       "mnemonic": "MADDW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7369,7 +7209,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 366,
+      "index": 358,
       "mnemonic": "MAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7389,7 +7229,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 367,
+      "index": 359,
       "mnemonic": "MAXU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7409,7 +7249,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 368,
+      "index": 360,
       "mnemonic": "MIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7429,7 +7269,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 369,
+      "index": 361,
       "mnemonic": "MINU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7449,7 +7289,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 370,
+      "index": 362,
       "mnemonic": "MUL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7469,7 +7309,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 371,
+      "index": 363,
       "mnemonic": "MULU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7489,7 +7329,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 372,
+      "index": 364,
       "mnemonic": "MULUW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7509,7 +7349,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 373,
+      "index": 365,
       "mnemonic": "MULW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7529,7 +7369,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 374,
+      "index": 366,
       "mnemonic": "OR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7549,7 +7389,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 375,
+      "index": 367,
       "mnemonic": "ORI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7569,7 +7409,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 376,
+      "index": 368,
       "mnemonic": "ORIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7589,7 +7429,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 377,
+      "index": 369,
       "mnemonic": "ORW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7609,7 +7449,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 378,
+      "index": 370,
       "mnemonic": "PRF",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7629,7 +7469,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 379,
+      "index": 371,
       "mnemonic": "PRFI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7649,7 +7489,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 380,
+      "index": 372,
       "mnemonic": "REM",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7669,7 +7509,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 381,
+      "index": 373,
       "mnemonic": "REMU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7689,7 +7529,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 382,
+      "index": 374,
       "mnemonic": "REMUW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7709,7 +7549,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 383,
+      "index": 375,
       "mnemonic": "REMW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7729,7 +7569,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 384,
+      "index": 376,
       "mnemonic": "REV",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7749,7 +7589,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 385,
+      "index": 377,
       "mnemonic": "SB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7769,7 +7609,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 386,
+      "index": 378,
       "mnemonic": "SB.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7789,7 +7629,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 387,
+      "index": 379,
       "mnemonic": "SBI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7809,7 +7649,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 388,
+      "index": 380,
       "mnemonic": "SC.B",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7829,7 +7669,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 389,
+      "index": 381,
       "mnemonic": "SC.D",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7849,7 +7689,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 390,
+      "index": 382,
       "mnemonic": "SC.H",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7869,7 +7709,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 391,
+      "index": 383,
       "mnemonic": "SC.W",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7889,7 +7729,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 392,
+      "index": 384,
       "mnemonic": "SCVTF",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7909,7 +7749,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 393,
+      "index": 385,
       "mnemonic": "SD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7929,7 +7769,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 394,
+      "index": 386,
       "mnemonic": "SD.ADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7949,7 +7789,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 395,
+      "index": 387,
       "mnemonic": "SD.AND",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7969,7 +7809,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 396,
+      "index": 388,
       "mnemonic": "SD.OR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -7989,7 +7829,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 397,
+      "index": 389,
       "mnemonic": "SD.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8009,7 +7849,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 398,
+      "index": 390,
       "mnemonic": "SD.SMAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8029,7 +7869,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 399,
+      "index": 391,
       "mnemonic": "SD.SMIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8049,7 +7889,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 400,
+      "index": 392,
       "mnemonic": "SD.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8069,7 +7909,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 401,
+      "index": 393,
       "mnemonic": "SD.UMAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8089,7 +7929,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 402,
+      "index": 394,
       "mnemonic": "SD.UMIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8109,7 +7949,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 403,
+      "index": 395,
       "mnemonic": "SD.XOR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8129,7 +7969,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 404,
+      "index": 396,
       "mnemonic": "SDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8149,7 +7989,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 405,
+      "index": 397,
       "mnemonic": "SDI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8169,7 +8009,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 406,
+      "index": 398,
       "mnemonic": "SETC.AND",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8189,7 +8029,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 407,
+      "index": 399,
       "mnemonic": "SETC.ANDI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8209,7 +8049,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 408,
+      "index": 400,
       "mnemonic": "SETC.EQ",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8229,7 +8069,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 409,
+      "index": 401,
       "mnemonic": "SETC.EQI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8249,7 +8089,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 410,
+      "index": 402,
       "mnemonic": "SETC.GE",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8269,7 +8109,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 411,
+      "index": 403,
       "mnemonic": "SETC.GEI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8289,7 +8129,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 412,
+      "index": 404,
       "mnemonic": "SETC.GEU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8309,7 +8149,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 413,
+      "index": 405,
       "mnemonic": "SETC.GEUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8329,7 +8169,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 414,
+      "index": 406,
       "mnemonic": "SETC.LT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8349,7 +8189,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 415,
+      "index": 407,
       "mnemonic": "SETC.LTI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8369,7 +8209,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 416,
+      "index": 408,
       "mnemonic": "SETC.LTU",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8389,7 +8229,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 417,
+      "index": 409,
       "mnemonic": "SETC.LTUI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8409,7 +8249,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 418,
+      "index": 410,
       "mnemonic": "SETC.NE",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8429,7 +8269,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 419,
+      "index": 411,
       "mnemonic": "SETC.NEI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8449,7 +8289,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 420,
+      "index": 412,
       "mnemonic": "SETC.OR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8469,7 +8309,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 421,
+      "index": 413,
       "mnemonic": "SETC.ORI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8489,7 +8329,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 422,
+      "index": 414,
       "mnemonic": "SETC.TGT",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8509,7 +8349,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 423,
+      "index": 415,
       "mnemonic": "SETRET",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8529,7 +8369,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 424,
+      "index": 416,
       "mnemonic": "SH",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8549,7 +8389,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 425,
+      "index": 417,
       "mnemonic": "SH.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8569,7 +8409,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 426,
+      "index": 418,
       "mnemonic": "SH.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8589,7 +8429,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 427,
+      "index": 419,
       "mnemonic": "SHI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8609,7 +8449,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 428,
+      "index": 420,
       "mnemonic": "SHI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8629,7 +8469,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 429,
+      "index": 421,
       "mnemonic": "SLL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8649,7 +8489,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 430,
+      "index": 422,
       "mnemonic": "SLLI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8669,7 +8509,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 431,
+      "index": 423,
       "mnemonic": "SLLIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8689,7 +8529,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 432,
+      "index": 424,
       "mnemonic": "SLLW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8709,7 +8549,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 433,
+      "index": 425,
       "mnemonic": "SRA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8729,7 +8569,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 434,
+      "index": 426,
       "mnemonic": "SRAI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8749,7 +8589,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 435,
+      "index": 427,
       "mnemonic": "SRAIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8769,7 +8609,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 436,
+      "index": 428,
       "mnemonic": "SRAW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8789,7 +8629,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 437,
+      "index": 429,
       "mnemonic": "SRL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8809,7 +8649,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 438,
+      "index": 430,
       "mnemonic": "SRLI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8829,7 +8669,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 439,
+      "index": 431,
       "mnemonic": "SRLIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8849,7 +8689,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 440,
+      "index": 432,
       "mnemonic": "SRLW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8869,7 +8709,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 441,
+      "index": 433,
       "mnemonic": "SSRGET",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8889,7 +8729,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 442,
+      "index": 434,
       "mnemonic": "SSRSET",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8909,7 +8749,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 443,
+      "index": 435,
       "mnemonic": "SSRSWAP",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8929,7 +8769,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 444,
+      "index": 436,
       "mnemonic": "SUB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8949,7 +8789,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 445,
+      "index": 437,
       "mnemonic": "SUBI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8969,7 +8809,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 446,
+      "index": 438,
       "mnemonic": "SUBIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -8989,7 +8829,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 447,
+      "index": 439,
       "mnemonic": "SUBW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9009,7 +8849,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 448,
+      "index": 440,
       "mnemonic": "SW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9029,7 +8869,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 449,
+      "index": 441,
       "mnemonic": "SW.ADD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9049,7 +8889,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 450,
+      "index": 442,
       "mnemonic": "SW.AND",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9069,7 +8909,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 451,
+      "index": 443,
       "mnemonic": "SW.OR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9089,7 +8929,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 452,
+      "index": 444,
       "mnemonic": "SW.PCR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9109,7 +8949,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 453,
+      "index": 445,
       "mnemonic": "SW.SMAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9129,7 +8969,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 454,
+      "index": 446,
       "mnemonic": "SW.SMIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9149,7 +8989,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 455,
+      "index": 447,
       "mnemonic": "SW.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9169,7 +9009,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 456,
+      "index": 448,
       "mnemonic": "SW.UMAX",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9189,7 +9029,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 457,
+      "index": 449,
       "mnemonic": "SW.UMIN",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9209,7 +9049,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 458,
+      "index": 450,
       "mnemonic": "SW.XOR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9229,7 +9069,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 459,
+      "index": 451,
       "mnemonic": "SWAPB",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9249,7 +9089,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 460,
+      "index": 452,
       "mnemonic": "SWAPD",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9269,7 +9109,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 461,
+      "index": 453,
       "mnemonic": "SWAPH",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9289,7 +9129,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 462,
+      "index": 454,
       "mnemonic": "SWAPW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9309,7 +9149,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 463,
+      "index": 455,
       "mnemonic": "SWI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9329,7 +9169,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 464,
+      "index": 456,
       "mnemonic": "SWI.U",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9349,7 +9189,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 465,
+      "index": 457,
       "mnemonic": "TLB.IA",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9369,7 +9209,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 466,
+      "index": 458,
       "mnemonic": "TLB.IALL",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9389,7 +9229,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 467,
+      "index": 459,
       "mnemonic": "TLB.IAV",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9409,7 +9249,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 468,
+      "index": 460,
       "mnemonic": "TLB.IV",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9429,7 +9269,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 469,
+      "index": 461,
       "mnemonic": "UCVTF",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9449,7 +9289,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 470,
+      "index": 462,
       "mnemonic": "XOR",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9469,7 +9309,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 471,
+      "index": 463,
       "mnemonic": "XORI",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9489,7 +9329,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 472,
+      "index": 464,
       "mnemonic": "XORIW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -9509,7 +9349,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 473,
+      "index": 465,
       "mnemonic": "XORW",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence.",
       "requirements": [
@@ -14325,8 +14165,8 @@
       "TLSU": 10
     },
     "direct_tile_operations": 109,
-    "scalar_forms": 474,
-    "total_rows": 657
+    "scalar_forms": 466,
+    "total_rows": 649
   },
   "snapshot": {
     "content_hashes": {
@@ -14438,22 +14278,22 @@
   "status": "comparison-matrix-closed-gate-open:S5-T3-G2",
   "summary": {
     "classification_counts": {
-      "comparable-match": 525,
+      "comparable-match": 517,
       "divergence": 94,
       "non-comparable": 38
     },
     "independent_status_counts": {
       "decode-only": 17,
-      "executable-subset": 526,
+      "executable-subset": 518,
       "header-manifest": 21,
       "missing": 7,
       "selector-manifest": 86
     },
-    "row_count": 657,
+    "row_count": 649,
     "surface_counts": {
       "command": 74,
       "direct-tile": 109,
-      "scalar": 474
+      "scalar": 466
     },
     "tile_family_counts": {
       "CUBE": 12,

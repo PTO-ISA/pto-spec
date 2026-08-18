@@ -428,7 +428,7 @@ begin
         when ScalarOperation_HL_LUI =>
             WriteScalarDestination(
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst),
-                MaterializeLongSigned(ScalarDecodedBits32(instruction, form, ScalarField_imm)));
+                MaterializeLongUpper(ScalarDecodedBits32(instruction, form, ScalarField_imm)));
         when ScalarOperation_HL_LIS =>
             WriteScalarDestination(
                 ScalarDecodedSelector(instruction, form, ScalarField_RegDst),

@@ -2,8 +2,8 @@
 
 ## Status
 
-The mnemonic audit is complete and frozen at 642/642 active mnemonics and
-32/32 occupied reservations. Accepted ADR-family coverage counts as mnemonic
+The mnemonic audit is complete and frozen at 634/634 active mnemonics and
+40/40 occupied reservations. Accepted ADR-family coverage counts as mnemonic
 review coverage. This plan now tracks the later ASL, documentation, and test
 implementation closure only; it MUST NOT be used to reduce or recompute the
 frozen audit count.

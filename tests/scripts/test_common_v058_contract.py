@@ -16,6 +16,9 @@ ROOT = Path(__file__).resolve().parents[2]
 class CommonV058ContractTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
+        cls.scalar = json.loads(
+            (ROOT / "spec/catalog/scalar-forms.json").read_text(encoding="utf-8")
+        )
         cls.command = json.loads(
             (ROOT / "spec/catalog/command-forms.json").read_text(encoding="utf-8")
         )
@@ -84,6 +87,26 @@ class CommonV058ContractTest(unittest.TestCase):
         for deleted in ("B.IOD", "BSTART.PAR", "C.B.IOS"):
             self.assertNotIn(deleted, active_names)
             self.assertNotIn(deleted, reserved_names)
+
+    def test_two_level_conditional_branches_are_reserved_not_active(self) -> None:
+        conditional_branches = {
+            "B.EQ",
+            "B.NE",
+            "B.LT",
+            "B.GE",
+            "B.LTU",
+            "B.GEU",
+            "B.Z",
+            "B.NZ",
+        }
+        active_names = {form["mnemonic"] for form in self.scalar["forms"]}
+        reserved_names = {
+            reservation["mnemonic"]
+            for reservation in self.reservations["reservations"]
+        }
+
+        self.assertTrue(conditional_branches.isdisjoint(active_names))
+        self.assertTrue(conditional_branches <= reserved_names)
 
     def test_b_ios_reuses_the_former_b_iod_slot(self) -> None:
         forms = [form for form in self.command["forms"] if form["mnemonic"] == "B.IOS"]

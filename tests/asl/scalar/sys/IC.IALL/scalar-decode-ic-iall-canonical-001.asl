@@ -2,9 +2,9 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-IC-IALL-DECODE-001","source":"asl/scalar/sys/IC.IALL.asl","requirements":["PTO-INST-SCALAR-IC-IALL"],"kind":"decode-positive","summary":"canonical IC.IALL catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000100000101000000101011', 32) == 312;
-    assert ScalarOperationOfForm(312) == ScalarOperation_IC_IALL;
-    assert ScalarHandlerOfForm(312) == ScalarHandler_ExecuteMaintenance;
+    assert DecodeScalarForm('000000000000000000000000000100000101000000101011', 32) == 304;
+    assert ScalarOperationOfForm(304) == ScalarOperation_IC_IALL;
+    assert ScalarHandlerOfForm(304) == ScalarHandler_ExecuteMaintenance;
     assert InstructionContractOperation_IC_IALL() == ScalarOperation_IC_IALL;
     assert InstructionContractHandler_IC_IALL() == ScalarHandler_ExecuteMaintenance;
     return 0;

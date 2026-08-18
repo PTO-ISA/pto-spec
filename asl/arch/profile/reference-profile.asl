@@ -201,8 +201,8 @@ begin
     _TrapContexts[[target]].commit_argument = _CommitArgument;
     _TrapContexts[[target]].bundle_active = _BundleActive;
     _TrapContexts[[target]].bundle_body_active = _BundleBodyActive;
-    _TrapContexts[[target]].bundle_commit_target_set =
-        _BundleCommitTargetSet;
+    _TrapContexts[[target]].bundle_commit_target_set = _BundleCommitTargetSet;
+    _TrapContexts[[target]].bundle_condition_set = _BundleConditionSet;
     _TrapContexts[[target]].system_block_terminal_pending =
         _SystemBlockTerminalPending;
     _TrapContexts[[target]].barg = _BARG;

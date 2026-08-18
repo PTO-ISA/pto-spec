@@ -11,6 +11,7 @@ begin
         _BundleActive = TRUE;
         _BundleBodyActive = FALSE;
         _BundleCommitTargetSet = FALSE;
+        _BundleConditionSet = FALSE;
         _SystemBlockTerminalPending = FALSE;
         _BARG.block_type = kind;
         if kind == BundleKind_System then

@@ -84,7 +84,7 @@ begin
     EnterFrame(begin_reg, end_reg, frame_size);
 end;
 
-pure func InstructionContractUsesHalfOpenRegisterRange_FENTRY()
+pure func InstructionContractUsesInclusiveRegisterRange_FENTRY()
     => boolean
 begin
     return TRUE;

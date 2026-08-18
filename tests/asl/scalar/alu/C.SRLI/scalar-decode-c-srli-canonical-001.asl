@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-C-SRLI-DECODE-001","source":"asl/scalar/alu/C.SRLI.asl","requirements":["PTO-INST-SCALAR-C-SRLI"],"kind":"decode-positive","summary":"canonical C.SRLI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000001100000101100', 16) == 51;
-    assert ScalarOperationOfForm(51) == ScalarOperation_C_SRLI;
-    assert ScalarHandlerOfForm(51) == ScalarHandler_ScalarBinary;
+    assert DecodeScalarForm('000000000000000000000000000000000001100000101100', 16) == 43;
+    assert ScalarOperationOfForm(43) == ScalarOperation_C_SRLI;
+    assert ScalarHandlerOfForm(43) == ScalarHandler_ScalarBinary;
     assert InstructionContractOperation_C_SRLI() == ScalarOperation_C_SRLI;
     assert InstructionContractHandler_C_SRLI() == ScalarHandler_ScalarBinary;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000001100000101100', 51, ScalarField_uimm5) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000001100000101100', 43, ScalarField_uimm5) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

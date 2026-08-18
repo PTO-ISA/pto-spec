@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-DC-CVA-DECODE-001","source":"asl/scalar/sys/DC.CVA.asl","requirements":["PTO-INST-SCALAR-DC-CVA"],"kind":"decode-positive","summary":"canonical DC.CVA catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000001000000110000000101011', 32) == 84;
-    assert ScalarOperationOfForm(84) == ScalarOperation_DC_CVA;
-    assert ScalarHandlerOfForm(84) == ScalarHandler_ExecuteMaintenance;
+    assert DecodeScalarForm('000000000000000000000000001000000110000000101011', 32) == 76;
+    assert ScalarOperationOfForm(76) == ScalarOperation_DC_CVA;
+    assert ScalarHandlerOfForm(76) == ScalarHandler_ExecuteMaintenance;
     assert InstructionContractOperation_DC_CVA() == ScalarOperation_DC_CVA;
     assert InstructionContractHandler_DC_CVA() == ScalarHandler_ExecuteMaintenance;
-    assert DecodeScalarOperandRaw('000000000000000000000000001000000110000000101011', 84, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000001000000110000000101011', 76, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

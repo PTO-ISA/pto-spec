@@ -2,7 +2,7 @@
 
 [![PR checks](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg?branch=main&event=push)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml?query=branch%3Amain)
 [![Exact-head release verification](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml)
-[![PTO ISA v0.58.1](https://img.shields.io/badge/PTO_ISA-v0.58.1-blue.svg)](https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.1)
+[![PTO ISA v0.58.2](https://img.shields.io/badge/PTO_ISA-v0.58.2-blue.svg)](https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.2)
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
 `pto-spec` is the normative ASL1 definition of the PTO Instruction Set
@@ -10,7 +10,7 @@ Architecture. It specifies a 64-bit scalar ISA, bundle/command forms, direct
 tile operations, visible architectural state, legality, faults, completion,
 profiles, and memory ordering in one executable model.
 
-The repository is the normative draft of the **PTO ISA 0.58.1** contract at
+The repository is the normative draft of the **PTO ISA 0.58.2** contract at
 maturity M4. The release identity fixes the encoding ABI; `pto-v0` is the
 deterministic raw-carrier reference profile. Target numeric conformance remains
 open under `S5-T2`, and a pending, skipped, failed, stale, or different-commit
@@ -36,26 +36,26 @@ The active source chain is deliberately singular:
 normative ASL -> generated Markdown mirror -> independent AVS points -> release evidence
 ```
 
-The current executable inventory contains 474 scalar forms, 74 active block
-forms, 109 direct Tile operations, and 32 occupied extension reservations.
-Release traceability covers 819 ASL units, 819 generated pages, 3213
-independently runnable AVS points, and 642 executable mnemonic requirements.
+The current executable inventory contains 466 scalar forms, 74 active block
+forms, 109 direct Tile operations, and 40 occupied extension reservations.
+Release traceability covers 811 ASL units, 811 generated pages, 3200
+independently runnable AVS points, and 634 executable mnemonic requirements.
 Detailed numeric, model-comparison, and release-gate ledgers stay
 machine-readable under [`spec/evidence/`](spec/evidence/) instead of being
 duplicated in this landing page.
 
 ## Architecture scope
 
-- 474 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS.
+- 466 scalar forms across AGU, ALU, AMO, BRU, FSU, and SYS.
 - 74 active bundle/command forms for bundle start, dimension, attributes, IO
-  binding, hints, stop, and context handling, plus 32 occupied extension
+  binding, hints, stop, and context handling, plus 40 occupied extension
   reservations that are rejected by the PTO decoder and unavailable for future
   PTO allocation.
 - 109 direct tile operations across seven semantic classes: elementwise
   tile-tile, tile-scalar/immediate, reduce/expand, memory/data movement,
   matrix/matrix-vector, layout/rearrangement, and irregular/complex.
 - Four execution engines: 35 VEC, 52 SFU, 10 TLSU, and 12 CUBE operations.
-- PTO ISA 0.58.1 Mode/Function tile encoding with 87 operations retaining the
+- PTO ISA 0.58.2 Mode/Function tile encoding with 87 operations retaining the
   unchanged TEPL binary carrier, split canonically between `BSTART.VEC` and
   `BSTART.SFU`; `BSTART.TEPL` remains an accepted compatibility spelling.
 - A 32-code scalar namespace: 24 absolute GPRs plus four-entry T and U

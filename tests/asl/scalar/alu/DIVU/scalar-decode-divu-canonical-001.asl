@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-DIVU-DECODE-001","source":"asl/scalar/alu/DIVU.asl","requirements":["PTO-INST-SCALAR-DIVU"],"kind":"decode-positive","summary":"canonical DIVU catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000001000001010111', 32) == 91;
-    assert ScalarOperationOfForm(91) == ScalarOperation_DIVU;
-    assert ScalarHandlerOfForm(91) == ScalarHandler_ScalarDivideUnsigned;
+    assert DecodeScalarForm('000000000000000000000000000000000001000001010111', 32) == 83;
+    assert ScalarOperationOfForm(83) == ScalarOperation_DIVU;
+    assert ScalarHandlerOfForm(83) == ScalarHandler_ScalarDivideUnsigned;
     assert InstructionContractOperation_DIVU() == ScalarOperation_DIVU;
     assert InstructionContractHandler_DIVU() == ScalarHandler_ScalarDivideUnsigned;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001010111', 91, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001010111', 91, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001010111', 91, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001010111', 83, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001010111', 83, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001010111', 83, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

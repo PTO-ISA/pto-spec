@@ -2,12 +2,12 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-C-ADDI-DECODE-001","source":"asl/scalar/alu/C.ADDI.asl","requirements":["PTO-INST-SCALAR-C-ADDI"],"kind":"decode-positive","summary":"canonical C.ADDI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000000000000001100', 16) == 32;
-    assert ScalarOperationOfForm(32) == ScalarOperation_C_ADDI;
-    assert ScalarHandlerOfForm(32) == ScalarHandler_ScalarBinary;
+    assert DecodeScalarForm('000000000000000000000000000000000000000000001100', 16) == 24;
+    assert ScalarOperationOfForm(24) == ScalarOperation_C_ADDI;
+    assert ScalarHandlerOfForm(24) == ScalarHandler_ScalarBinary;
     assert InstructionContractOperation_C_ADDI() == ScalarOperation_C_ADDI;
     assert InstructionContractHandler_C_ADDI() == ScalarHandler_ScalarBinary;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000001100', 32, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000001100', 32, ScalarField_simm5) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000001100', 24, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000001100', 24, ScalarField_simm5) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

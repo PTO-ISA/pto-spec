@@ -2,9 +2,9 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-LH-PCR-DECODE-001","source":"asl/scalar/agu/HL.LH.PCR.asl","requirements":["PTO-INST-SCALAR-HL-LH-PCR"],"kind":"decode-positive","summary":"canonical HL.LH.PCR catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000010000001110010000000000001110', 48) == 177;
-    assert ScalarOperationOfForm(177) == ScalarOperation_HL_LH_PCR;
-    assert ScalarHandlerOfForm(177) == ScalarHandler_ExecuteScalarLoad;
+    assert DecodeScalarForm('000000000000000000010000001110010000000000001110', 48) == 169;
+    assert ScalarOperationOfForm(169) == ScalarOperation_HL_LH_PCR;
+    assert ScalarHandlerOfForm(169) == ScalarHandler_ExecuteScalarLoad;
     assert InstructionContractOperation_HL_LH_PCR() == ScalarOperation_HL_LH_PCR;
     assert InstructionContractHandler_HL_LH_PCR() == ScalarHandler_ExecuteScalarLoad;
     assert InstructionContractAGUAction_HL_LH_PCR() == ScalarAGU_Load;
@@ -14,7 +14,7 @@ begin
     assert InstructionContractAGUUpdateMode_HL_LH_PCR() == AddressUpdate_None;
     assert InstructionContractAGUSignedLoad_HL_LH_PCR() == TRUE;
     assert InstructionContractAGUPrefetchReturnsAddress_HL_LH_PCR() == FALSE;
-    assert DecodeScalarOperandRaw('000000000000000000010000001110010000000000001110', 177, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000010000001110010000000000001110', 177, ScalarField_simm) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000010000001110010000000000001110', 169, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000010000001110010000000000001110', 169, ScalarField_simm) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

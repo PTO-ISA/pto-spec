@@ -7,7 +7,7 @@ normative ISA definition. Where its preliminary alternatives differ from the
 accepted ASL-linked decisions in ADR-0062, the ASL owners and those later
 decisions govern.
 
-The formal mnemonic audit subsequently completed and is frozen at 642/642
+The formal mnemonic audit subsequently completed and is frozen at 634/634
 active mnemonics. This historical plan therefore does not describe pending
 review work. Any remaining work is ASL, documentation, and independent-test
 implementation closure for already reviewed decisions. A normative change

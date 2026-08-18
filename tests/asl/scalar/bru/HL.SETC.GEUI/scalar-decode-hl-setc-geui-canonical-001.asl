@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-SETC-GEUI-DECODE-001","source":"asl/scalar/bru/HL.SETC.GEUI.asl","requirements":["PTO-INST-SCALAR-HL-SETC-GEUI"],"kind":"decode-positive","summary":"canonical HL.SETC.GEUI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000001110000011101010000000000001110', 48) == 270;
-    assert ScalarOperationOfForm(270) == ScalarOperation_HL_SETC_GEUI;
-    assert ScalarHandlerOfForm(270) == ScalarHandler_ExecuteSetCommit;
+    assert DecodeScalarForm('000000000000000001110000011101010000000000001110', 48) == 262;
+    assert ScalarOperationOfForm(262) == ScalarOperation_HL_SETC_GEUI;
+    assert ScalarHandlerOfForm(262) == ScalarHandler_ExecuteSetCommit;
     assert InstructionContractOperation_HL_SETC_GEUI() == ScalarOperation_HL_SETC_GEUI;
     assert InstructionContractHandler_HL_SETC_GEUI() == ScalarHandler_ExecuteSetCommit;
-    assert DecodeScalarOperandRaw('000000000000000001110000011101010000000000001110', 270, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000001110000011101010000000000001110', 270, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000001110000011101010000000000001110', 270, ScalarField_uimm24) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001110000011101010000000000001110', 262, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001110000011101010000000000001110', 262, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001110000011101010000000000001110', 262, ScalarField_uimm24) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

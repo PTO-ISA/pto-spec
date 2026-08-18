@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-BWE-DECODE-001","source":"asl/scalar/sys/BWE.asl","requirements":["PTO-INST-SCALAR-BWE"],"kind":"decode-positive","summary":"canonical BWE catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000100000000000000101011', 32) == 26;
-    assert ScalarOperationOfForm(26) == ScalarOperation_BWE;
-    assert ScalarHandlerOfForm(26) == ScalarHandler_ExecuteControlRequest;
+    assert DecodeScalarForm('000000000000000000000000000100000000000000101011', 32) == 18;
+    assert ScalarOperationOfForm(18) == ScalarOperation_BWE;
+    assert ScalarHandlerOfForm(18) == ScalarHandler_ExecuteControlRequest;
     assert InstructionContractOperation_BWE() == ScalarOperation_BWE;
     assert InstructionContractHandler_BWE() == ScalarHandler_ExecuteControlRequest;
-    assert DecodeScalarOperandRaw('000000000000000000000000000100000000000000101011', 26, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000100000000000000101011', 18, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

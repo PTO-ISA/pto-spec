@@ -17,19 +17,19 @@ RELEASE_GENERATOR = ROOT / "scripts/generate-release-manifest"
 
 
 class ReleaseClosureTest(unittest.TestCase):
-    def test_release_identity_is_0581_and_owns_0581_evidence(self) -> None:
+    def test_release_identity_is_0582_and_owns_0582_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
 
-        self.assertIn('architecture_version = "0.58.1"', specification)
+        self.assertIn('architecture_version = "0.58.2"', specification)
         self.assertIn(
-            'encoding_abi = "pto-isa-0.58.1-mode-function-v1"', specification
+            'encoding_abi = "pto-isa-0.58.2-mode-function-v1"', specification
         )
-        self.assertIn('RELEASE = "0.58.1"', generator)
+        self.assertIn('RELEASE = "0.58.2"', generator)
         self.assertIn(
-            'ENCODING_ABI = "pto-isa-0.58.1-mode-function-v1"', generator
+            'ENCODING_ABI = "pto-isa-0.58.2-mode-function-v1"', generator
         )
-        self.assertIn("pto-isa-0581-encoding-totality.json", generator)
+        self.assertIn("pto-isa-0582-encoding-totality.json", generator)
 
     def test_release_gate_provenance_covers_workflow_validator_implementation(
         self,
@@ -107,9 +107,9 @@ class ReleaseClosureTest(unittest.TestCase):
         self.assertEqual(
             set(paths),
             {
-                "spec/evidence/pto-isa-0581-abi-vectors.json",
-                "spec/evidence/pto-isa-0581-encoding-totality.json",
-                "spec/evidence/pto-isa-0581-hardware-numeric-vectors.json",
+                "spec/evidence/pto-isa-0582-abi-vectors.json",
+                "spec/evidence/pto-isa-0582-encoding-totality.json",
+                "spec/evidence/pto-isa-0582-hardware-numeric-vectors.json",
                 "spec/evidence/instruction-contract-closure.json",
                 "spec/evidence/release-gate-readiness.json",
                 "spec/evidence/release-traceability-readiness.json",

@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-CMP-LTUI-DECODE-001","source":"asl/scalar/bru/HL.CMP.LTUI.asl","requirements":["PTO-INST-SCALAR-HL-CMP-LTUI"],"kind":"decode-positive","summary":"canonical HL.CMP.LTUI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000001100000010101010000000000001110', 48) == 142;
-    assert ScalarOperationOfForm(142) == ScalarOperation_HL_CMP_LTUI;
-    assert ScalarHandlerOfForm(142) == ScalarHandler_ExecuteCompare;
+    assert DecodeScalarForm('000000000000000001100000010101010000000000001110', 48) == 134;
+    assert ScalarOperationOfForm(134) == ScalarOperation_HL_CMP_LTUI;
+    assert ScalarHandlerOfForm(134) == ScalarHandler_ExecuteCompare;
     assert InstructionContractOperation_HL_CMP_LTUI() == ScalarOperation_HL_CMP_LTUI;
     assert InstructionContractHandler_HL_CMP_LTUI() == ScalarHandler_ExecuteCompare;
-    assert DecodeScalarOperandRaw('000000000000000001100000010101010000000000001110', 142, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000001100000010101010000000000001110', 142, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000001100000010101010000000000001110', 142, ScalarField_uimm24) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001100000010101010000000000001110', 134, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001100000010101010000000000001110', 134, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000001100000010101010000000000001110', 134, ScalarField_uimm24) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

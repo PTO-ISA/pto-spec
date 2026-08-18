@@ -528,14 +528,6 @@ nav:
           - SWAPW: scalar/amo/SWAPW.md
       - BRU:
           - ADDTPC: scalar/bru/ADDTPC.md
-          - B.EQ: scalar/bru/B.EQ.md
-          - B.GE: scalar/bru/B.GE.md
-          - B.GEU: scalar/bru/B.GEU.md
-          - B.LT: scalar/bru/B.LT.md
-          - B.LTU: scalar/bru/B.LTU.md
-          - B.NE: scalar/bru/B.NE.md
-          - B.NZ: scalar/bru/B.NZ.md
-          - B.Z: scalar/bru/B.Z.md
           - C.CMP.EQI: scalar/bru/C.CMP.EQI.md
           - C.CMP.NEI: scalar/bru/C.CMP.NEI.md
           - C.SETC.EQ: scalar/bru/C.SETC.EQ.md
@@ -963,5 +955,6 @@ nav:
           - "ADR 0064: B.FPATR Complete-Bundle Matrix PostProcess": status/decisions/0064-b-fpatr-complete-bundle-postprocess.md
           - "ADR 0065: CUBE Matrix Family Contract": status/decisions/0065-cube-matrix-family-contract.md
           - "ADR 0066: ADDTPC page-scaled immediate": status/decisions/0066-addtpc-page-scaled-immediate.md
+          - "ADR 0067: conditional branch extension reservation": status/decisions/0067-conditional-branch-extension-reservation.md
       - Open:
           - "Open architecture questions": status/open/index.md

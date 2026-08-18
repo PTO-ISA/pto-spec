@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-ADDI-DECODE-001","source":"asl/scalar/alu/HL.ADDI.asl","requirements":["PTO-INST-SCALAR-HL-ADDI"],"kind":"decode-positive","summary":"canonical HL.ADDI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000101010000000000001110', 48) == 125;
-    assert ScalarOperationOfForm(125) == ScalarOperation_HL_ADDI;
-    assert ScalarHandlerOfForm(125) == ScalarHandler_ScalarBinary;
+    assert DecodeScalarForm('000000000000000000000000000101010000000000001110', 48) == 117;
+    assert ScalarOperationOfForm(117) == ScalarOperation_HL_ADDI;
+    assert ScalarHandlerOfForm(117) == ScalarHandler_ScalarBinary;
     assert InstructionContractOperation_HL_ADDI() == ScalarOperation_HL_ADDI;
     assert InstructionContractHandler_HL_ADDI() == ScalarHandler_ScalarBinary;
-    assert DecodeScalarOperandRaw('000000000000000000000000000101010000000000001110', 125, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000101010000000000001110', 125, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000101010000000000001110', 125, ScalarField_uimm24) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000101010000000000001110', 117, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000101010000000000001110', 117, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000101010000000000001110', 117, ScalarField_uimm24) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

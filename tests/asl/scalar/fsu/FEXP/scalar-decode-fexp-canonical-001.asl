@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-FEXP-DECODE-001","source":"asl/scalar/fsu/FEXP.asl","requirements":["PTO-INST-SCALAR-FEXP"],"kind":"decode-positive","summary":"canonical FEXP catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000011000001111011', 32) == 108;
-    assert ScalarOperationOfForm(108) == ScalarOperation_FEXP;
-    assert ScalarHandlerOfForm(108) == ScalarHandler_FloatingUnary;
+    assert DecodeScalarForm('000000000000000000000000000000000011000001111011', 32) == 100;
+    assert ScalarOperationOfForm(100) == ScalarOperation_FEXP;
+    assert ScalarHandlerOfForm(100) == ScalarHandler_FloatingUnary;
     assert InstructionContractOperation_FEXP() == ScalarOperation_FEXP;
     assert InstructionContractHandler_FEXP() == ScalarHandler_FloatingUnary;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001111011', 108, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001111011', 108, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001111011', 108, ScalarField_SrcType) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001111011', 100, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001111011', 100, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000011000001111011', 100, ScalarField_SrcType) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

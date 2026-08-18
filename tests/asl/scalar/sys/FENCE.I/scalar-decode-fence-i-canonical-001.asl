@@ -2,9 +2,9 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-FENCE-I-DECODE-001","source":"asl/scalar/sys/FENCE.I.asl","requirements":["PTO-INST-SCALAR-FENCE-I"],"kind":"decode-positive","summary":"canonical FENCE.I catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000010000000000000010000000101011', 32) == 105;
-    assert ScalarOperationOfForm(105) == ScalarOperation_FENCE_I;
-    assert ScalarHandlerOfForm(105) == ScalarHandler_FenceInstruction;
+    assert DecodeScalarForm('000000000000000000010000000000000010000000101011', 32) == 97;
+    assert ScalarOperationOfForm(97) == ScalarOperation_FENCE_I;
+    assert ScalarHandlerOfForm(97) == ScalarHandler_FenceInstruction;
     assert InstructionContractOperation_FENCE_I() == ScalarOperation_FENCE_I;
     assert InstructionContractHandler_FENCE_I() == ScalarHandler_FenceInstruction;
     return 0;

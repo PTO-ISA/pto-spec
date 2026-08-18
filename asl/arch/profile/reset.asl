@@ -105,6 +105,7 @@ begin
         _TrapContexts[[ring]].bundle_active = FALSE;
         _TrapContexts[[ring]].bundle_body_active = FALSE;
         _TrapContexts[[ring]].bundle_commit_target_set = FALSE;
+        _TrapContexts[[ring]].bundle_condition_set = FALSE;
         _TrapContexts[[ring]].system_block_terminal_pending = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.valid = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.pre_quant_mode = Zeros{6};

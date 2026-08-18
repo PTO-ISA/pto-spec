@@ -5,12 +5,14 @@
 
 ## Review coverage and implementation closure
 
-The mnemonic audit is complete for all 642 active PTO mnemonics. The 32
+The mnemonic audit is complete for all 634 active PTO mnemonics. The 40
 occupied extension reservations are also reviewed. A mnemonic covered by an
 accepted family decision in this ADR or by an earlier accepted architecture
 ADR counts as reviewed; it does not need a duplicate mnemonic-local decision.
-The frozen audit coverage therefore remains 642/642 active mnemonics and
-32/32 occupied reservations.
+The frozen audit coverage therefore remains 634/634 active mnemonics and
+40/40 occupied reservations. PRD-161 moves eight reviewed conditional branch
+families from the active inventory to the reservation inventory without
+changing total reviewed coverage.
 
 Audit coverage is distinct from formal implementation closure. A mnemonic can
 be fully reviewed while its mnemonic-local ASL operation, complete metadata,
@@ -21,9 +23,9 @@ regression of the frozen audit count.
 
 ## Current active and reserved encoding inventory
 
-The PTO ISA 0.58.1 binary projection contains 474 Scalar forms and 74 active
-Block forms, for 548 active encoded forms. The separate extension catalog
-contains 32 occupied extension-reservation entries. Reserved entries are not
+The PTO ISA 0.58.2 binary projection contains 466 Scalar forms and 74 active
+Block forms, for 540 active encoded forms. The separate extension catalog
+contains 40 occupied extension-reservation entries. Reserved entries are not
 active PTO instructions: PTO decoding and assembly MUST reject them, and future
 PTO revisions MUST NOT allocate another instruction in their occupied spaces.
 
@@ -4101,10 +4103,12 @@ source is rejected according to the common scalar-source rule before the hint
 is formed. Otherwise the instruction retires normally by four bytes. Only a
 fixed-bit decode failure or ordinary source-selector failure can reject it.
 
-## PRD-171: the reviewed common encoded-form envelope contains 548 forms
+## PRD-171: the reviewed common encoded-form envelope contains 540 forms
 
-The closed PTO common encoded-form envelope contains exactly 474 scalar forms
+The closed PTO common encoded-form envelope contains exactly 466 scalar forms
 and 74 block forms. `BSTART.ICALL` and `L.BSTOP` are active additions.
+The eight conditional branch forms reserved by PRD-161 are excluded from the
+active scalar count and remain represented only in extension reservations.
 Two-level-only `B.TEXT`, MPAR/MSEQ, Fixup, and long or high-long BSTART forms
 are not active PTO instructions; their complete encodings remain owned by the
 extension-reservation catalog and MUST NOT be reassigned to another PTO
@@ -4123,7 +4127,7 @@ forms assign `DstType` values 0 through 14 and reserve 15 through 31.
 The canonical projection of each form's ID, mnemonic, assembly, instruction
 length, encoding kind, fixed encoding, fields, and constraints has SHA-256
 fingerprint
-`d7ea59cc80d4165d106ecc6b9b2cd2ec07c78a833c592988958f1fdc2546592c`.
+`129cb7812264b7e4c5edd088b5aedcc528966eb69c06879dc1919c85106e21b4`.
 Any later change to that projection MUST be accompanied by a new architecture
 decision before the binary-closure gate is updated.
 

@@ -10,6 +10,7 @@ type TrapContext of record {
     bundle_active: boolean,
     bundle_body_active: boolean,
     bundle_commit_target_set: boolean,
+    bundle_condition_set: boolean,
     system_block_terminal_pending: boolean,
     barg: BundleArgumentRegister,
     bundle_sequential_pc: Word,

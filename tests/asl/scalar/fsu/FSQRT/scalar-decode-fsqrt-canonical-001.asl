@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-FSQRT-DECODE-001","source":"asl/scalar/fsu/FSQRT.asl","requirements":["PTO-INST-SCALAR-FSQRT"],"kind":"decode-positive","summary":"canonical FSQRT catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000001000001111011', 32) == 123;
-    assert ScalarOperationOfForm(123) == ScalarOperation_FSQRT;
-    assert ScalarHandlerOfForm(123) == ScalarHandler_FloatingUnary;
+    assert DecodeScalarForm('000000000000000000000000000000000001000001111011', 32) == 115;
+    assert ScalarOperationOfForm(115) == ScalarOperation_FSQRT;
+    assert ScalarHandlerOfForm(115) == ScalarHandler_FloatingUnary;
     assert InstructionContractOperation_FSQRT() == ScalarOperation_FSQRT;
     assert InstructionContractHandler_FSQRT() == ScalarHandler_FloatingUnary;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001111011', 123, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001111011', 123, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001111011', 123, ScalarField_SrcType) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001111011', 115, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001111011', 115, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000001000001111011', 115, ScalarField_SrcType) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

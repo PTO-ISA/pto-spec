@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-C-SETC-TGT-DECODE-001","source":"asl/scalar/alu/C.SETC.TGT.asl","requirements":["PTO-INST-SCALAR-C-SETC-TGT"],"kind":"decode-positive","summary":"canonical C.SETC.TGT catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000000000000011100', 16) == 45;
-    assert ScalarOperationOfForm(45) == ScalarOperation_C_SETC_TGT;
-    assert ScalarHandlerOfForm(45) == ScalarHandler_SetCommitTarget;
+    assert DecodeScalarForm('000000000000000000000000000000000000000000011100', 16) == 37;
+    assert ScalarOperationOfForm(37) == ScalarOperation_C_SETC_TGT;
+    assert ScalarHandlerOfForm(37) == ScalarHandler_SetCommitTarget;
     assert InstructionContractOperation_C_SETC_TGT() == ScalarOperation_C_SETC_TGT;
     assert InstructionContractHandler_C_SETC_TGT() == ScalarHandler_SetCommitTarget;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000011100', 45, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000000000011100', 37, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

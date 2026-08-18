@@ -2,13 +2,13 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-SETC-ANDI-DECODE-001","source":"asl/scalar/bru/SETC.ANDI.asl","requirements":["PTO-INST-SCALAR-SETC-ANDI"],"kind":"decode-positive","summary":"canonical SETC.ANDI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000010000001110101', 32) == 407;
-    assert ScalarOperationOfForm(407) == ScalarOperation_SETC_ANDI;
-    assert ScalarHandlerOfForm(407) == ScalarHandler_ExecuteSetCommitLogical;
+    assert DecodeScalarForm('000000000000000000000000000000000010000001110101', 32) == 399;
+    assert ScalarOperationOfForm(399) == ScalarOperation_SETC_ANDI;
+    assert ScalarHandlerOfForm(399) == ScalarHandler_ExecuteSetCommitLogical;
     assert InstructionContractOperation_SETC_ANDI() == ScalarOperation_SETC_ANDI;
     assert InstructionContractHandler_SETC_ANDI() == ScalarHandler_ExecuteSetCommitLogical;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000010000001110101', 407, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000010000001110101', 407, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000010000001110101', 407, ScalarField_simm12) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000010000001110101', 399, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000010000001110101', 399, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000010000001110101', 399, ScalarField_simm12) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

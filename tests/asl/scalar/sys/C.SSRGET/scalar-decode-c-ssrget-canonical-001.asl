@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-C-SSRGET-DECODE-001","source":"asl/scalar/sys/C.SSRGET.asl","requirements":["PTO-INST-SCALAR-C-SSRGET"],"kind":"decode-positive","summary":"canonical C.SSRGET catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000001000000000101100', 16) == 52;
-    assert ScalarOperationOfForm(52) == ScalarOperation_C_SSRGET;
-    assert ScalarHandlerOfForm(52) == ScalarHandler_ExecuteCompressedSystemRegisterGet;
+    assert DecodeScalarForm('000000000000000000000000000000001000000000101100', 16) == 44;
+    assert ScalarOperationOfForm(44) == ScalarOperation_C_SSRGET;
+    assert ScalarHandlerOfForm(44) == ScalarHandler_ExecuteCompressedSystemRegisterGet;
     assert InstructionContractOperation_C_SSRGET() == ScalarOperation_C_SSRGET;
     assert InstructionContractHandler_C_SSRGET() == ScalarHandler_ExecuteCompressedSystemRegisterGet;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000001000000000101100', 52, ScalarField_SSRID) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000001000000000101100', 44, ScalarField_SSRID) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

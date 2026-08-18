@@ -234,15 +234,15 @@
     ]
   },
   "predicate_version_boundary": {
-    "active_release": "PTO ISA 0.58.1",
+    "active_release": "PTO ISA 0.58.2",
     "current_public_source_release": "PTO ISA v0.6 micro-instruction surface",
-    "disposition": "outside-active-0.58.1-release-line",
+    "disposition": "outside-active-0.58.2-release-line",
     "accepted_mapping": null,
-    "mapping_rule": "No public v0.6 typed mask is mapped to a PTO ISA 0.58.1 architectural register, selector, encoding, producer, or consumer.",
+    "mapping_rule": "No public v0.6 typed mask is mapped to a PTO ISA 0.58.2 architectural register, selector, encoding, producer, or consumer.",
     "concepts": [
       {
         "id": "pto-isa-0580-warp-predicate-registers",
-        "source_class": "active-0.58.1-architectural-state",
+        "source_class": "active-0.58.2-architectural-state",
         "representation": "P0-P7",
         "width_bits": 32,
         "count": 8,
@@ -253,19 +253,14 @@
       },
       {
         "id": "pto-isa-0580-machine-execution-mask",
-        "source_class": "active-0.58.1-architectural-state",
+        "source_class": "active-0.58.2-architectural-state",
         "representation": "MPAR/MSEQ execution mask",
         "width_bits": 64,
         "count": 1,
-        "lifecycle": "machine-body entry initializes all-ones; trap-preserved",
-        "accepted_producers": [
-          "MPAR/MSEQ body entry"
-        ],
-        "accepted_consumers": [
-          "B.Z",
-          "B.NZ"
-        ],
-        "mapping_status": "distinct-from-P0-P7"
+        "lifecycle": "trap-preserved; no accepted PTO instruction initializes it",
+        "accepted_producers": [],
+        "accepted_consumers": [],
+        "mapping_status": "closed-no-accepted-PTO-consumer"
       },
       {
         "id": "public-v06-typed-mask-values",
@@ -290,7 +285,7 @@
           "pto.p* algebra",
           "pto.pst*"
         ],
-        "mapping_status": "outside-active-0.58.1-release-line"
+        "mapping_status": "outside-active-0.58.2-release-line"
       },
       {
         "id": "future-encoded-physical-predicate-register-mapping",
@@ -307,8 +302,8 @@
   },
   "summary": {
     "scalar_forms": {
-      "count": 474,
-      "closed": 474,
+      "count": 466,
+      "closed": 466,
       "open": 0
     },
     "tile_operations": {
@@ -412,62 +407,6 @@
       "form_id": "assert_32_f05d67874ae5",
       "mnemonic": "ASSERT",
       "semantic_family": "SYS",
-      "closure_status": "closed",
-      "public_layer": "scalar-control-or-lowering-layer"
-    },
-    {
-      "form_id": "b_eq_32_41f00e5abd89",
-      "mnemonic": "B.EQ",
-      "semantic_family": "BRU",
-      "closure_status": "closed",
-      "public_layer": "scalar-control-or-lowering-layer"
-    },
-    {
-      "form_id": "b_ge_32_7bd9050705dc",
-      "mnemonic": "B.GE",
-      "semantic_family": "BRU",
-      "closure_status": "closed",
-      "public_layer": "scalar-control-or-lowering-layer"
-    },
-    {
-      "form_id": "b_geu_32_43a6e57dce55",
-      "mnemonic": "B.GEU",
-      "semantic_family": "BRU",
-      "closure_status": "closed",
-      "public_layer": "scalar-control-or-lowering-layer"
-    },
-    {
-      "form_id": "b_lt_32_2ca5ecd25cfb",
-      "mnemonic": "B.LT",
-      "semantic_family": "BRU",
-      "closure_status": "closed",
-      "public_layer": "scalar-control-or-lowering-layer"
-    },
-    {
-      "form_id": "b_ltu_32_f1ea7ad44e37",
-      "mnemonic": "B.LTU",
-      "semantic_family": "BRU",
-      "closure_status": "closed",
-      "public_layer": "scalar-control-or-lowering-layer"
-    },
-    {
-      "form_id": "b_ne_32_831af6a36ff4",
-      "mnemonic": "B.NE",
-      "semantic_family": "BRU",
-      "closure_status": "closed",
-      "public_layer": "scalar-control-or-lowering-layer"
-    },
-    {
-      "form_id": "b_nz_32_0f583cdd8d4d",
-      "mnemonic": "B.NZ",
-      "semantic_family": "BRU",
-      "closure_status": "closed",
-      "public_layer": "scalar-control-or-lowering-layer"
-    },
-    {
-      "form_id": "b_z_32_753dd3b4fcb6",
-      "mnemonic": "B.Z",
-      "semantic_family": "BRU",
       "closure_status": "closed",
       "public_layer": "scalar-control-or-lowering-layer"
     },
@@ -4747,67 +4686,67 @@
       "name": "TALLOC",
       "public_symbol": "TALLOC",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TAXPY",
       "public_symbol": "TAXPY",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TDEINTERLEAVE",
       "public_symbol": "TDEINTERLEAVE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TFREE",
       "public_symbol": "TFREE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TGATHERB",
       "public_symbol": "TGATHERB",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TINTERLEAVE",
       "public_symbol": "TINTERLEAVE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPARTARGMAX",
       "public_symbol": "TPARTARGMAX",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPARTARGMIN",
       "public_symbol": "TPARTARGMIN",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPOP",
       "public_symbol": "TPOP",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPUSH",
       "public_symbol": "TPUSH",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TRESHAPE",
       "public_symbol": "TRESHAPE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.1 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.2 does not accept it as a direct DavinciOO Tile operation."
     }
   ]
 }

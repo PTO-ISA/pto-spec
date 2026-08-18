@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.LUI.asl`
 
-HL.LUI sign-extends its split encoded 32-bit immediate to XLEN and publishes the result through RegDst.
+HL.LUI places its split 32-bit immediate in result bits 63:32 and clears result bits 31:0.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-LUI}
 
@@ -42,14 +42,14 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
 | hl_lui_48_255991889818 | RegDst | 5 | 0–31 | none | none | Reg5 destination or discard | Encoded zero discards the result. |
-| hl_lui_48_255991889818 | imm | 32 | 0–4294967295 | none | none | signed split 32-bit immediate | Encoded zero materializes numeric zero. |
+| hl_lui_48_255991889818 | imm | 32 | 0–4294967295 | none | none | split 32-bit immediate placed in result bits 63:32 | Encoded zero materializes numeric zero. |
 
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
 | RegDst | Reg5 destination or discard |
-| imm | signed split 32-bit immediate |
+| imm | split 32-bit immediate placed in result bits 63:32 |
 
 ## Decode
 
@@ -68,14 +68,14 @@ end;
 ```asl
 readonly func InstructionContractHandler_HL_LUI() => ScalarSemanticHandler
 begin
-    return ScalarHandler_MaterializeLongSigned;
+    return ScalarHandler_MaterializeLongUpper;
 end;
 
 pure func InstructionContractResult_HL_LUI(
     encoded_immediate: bits(32))
     => Word
 begin
-    return MaterializeLongSigned(encoded_immediate);
+    return MaterializeLongUpper(encoded_immediate);
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
@@ -83,7 +83,7 @@ end;
 ## Defaults and encoded zero
 
 - Every encoded source, immediate, and explicit destination field is required; no field can be omitted.
-- The mnemonic fixes immediate signedness, selected source width, and implicit-versus-explicit destination behavior.
+- The mnemonic fixes unsigned immediate placement in result bits 63:32 and the common explicit destination behavior.
 
 ## Legality
 
@@ -92,8 +92,8 @@ end;
 
 ## State effects
 
-- Reassemble imm from its two encoded pieces and sign-extend bit 31 through XLEN.
-- Publish the complete XLEN result through the common Reg5 destination map. Relative sources are non-consuming; only a T or U destination push changes a temporary queue.
+- Reassemble imm from its two encoded pieces, zero-extend it to XLEN, shift it left by 32, and clear result bits 31:0.
+- Publish the complete XLEN result through the common Reg5 destination map. Only a T or U destination push changes a temporary queue.
 - No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes.
 
 ## Memory effects and ordering
@@ -104,8 +104,8 @@ end;
 
 ### Ordering
 
-- Snapshot any Reg5 source before the destination effect.
-- Publish the result, then advance TPC by the encoded instruction length.
+- Reassemble the complete encoded immediate before the destination effect.
+- Publish the upper-half result, then advance TPC by six bytes.
 
 ## Exceptions
 

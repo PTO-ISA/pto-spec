@@ -360,7 +360,7 @@ git commit -m "spec: close block instruction explanations"
 
 **Interfaces:**
 - Consumes: scalar catalog fields, semantic-handler bindings, Reg5 contracts, memory/fault/order model clauses.
-- Produces: complete contracts for all 474 scalar forms without changing their binary closure.
+- Produces: complete contracts for all 466 active scalar forms after the eight conditional-branch families move to extension reservations.
 
 - [ ] **Step 1: Add one failing family-count closure test**
 

@@ -1,5 +1,8 @@
 # ADR-0008: Define the PTO architectural state contract
 
+> The `B.Z`/`B.NZ` consumer clause is superseded by ADR 0067. Those spellings
+> are extension-reserved and are not active PTO instructions.
+
 - Status: accepted
 - Decision date: 2026-07-28
 - Requirement: PTO-REQ-STATE-001

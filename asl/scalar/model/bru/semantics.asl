@@ -64,6 +64,7 @@ begin
     _CommitArgument = if ConditionHolds(condition, left, right) then
         Zeros{PTO_XLEN} + 1 else Zeros{PTO_XLEN};
     if _BundleActive then _BARG.taken = !IsZero(_CommitArgument); end;
+    _BundleConditionSet = TRUE;
 end;
 
 func ExecuteSetCommitLogical(left: Word, right: Word, combine_or: boolean)
@@ -72,6 +73,7 @@ begin
     _CommitArgument = if IsZero(logical_result) then Zeros{PTO_XLEN}
                       else Zeros{PTO_XLEN} + 1;
     if _BundleActive then _BARG.taken = !IsZero(_CommitArgument); end;
+    _BundleConditionSet = TRUE;
 end;
 
 func SetReturnAddress(halfword_offset: Word)

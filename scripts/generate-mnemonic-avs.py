@@ -615,11 +615,8 @@ def render_scalar_bru_avs(unit: AslUnit) -> list[tuple[Path, str]]:
         "CMP.EQ",
         "C.CMP.EQI",
         "C.SETC.EQ",
-        "B.EQ",
         "ADDTPC",
         "SETRET",
-        "B.Z",
-        "B.NZ",
         "JR",
     }:
         points.append(

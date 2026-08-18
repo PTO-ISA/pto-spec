@@ -270,11 +270,40 @@ begin
             _BARG.block_type == BundleKind_Floating);
 end;
 
+readonly func IsCommitConditionSetter(operation: ScalarOperation)
+    => boolean
+begin
+    case operation of
+        when ScalarOperation_C_SETC_EQ, ScalarOperation_C_SETC_NE,
+             ScalarOperation_SETC_EQ, ScalarOperation_SETC_NE,
+             ScalarOperation_SETC_LT, ScalarOperation_SETC_GE,
+             ScalarOperation_SETC_LTU, ScalarOperation_SETC_GEU,
+             ScalarOperation_SETC_EQI, ScalarOperation_SETC_NEI,
+             ScalarOperation_SETC_LTI, ScalarOperation_SETC_GEI,
+             ScalarOperation_SETC_LTUI, ScalarOperation_SETC_GEUI,
+             ScalarOperation_SETC_AND, ScalarOperation_SETC_OR,
+             ScalarOperation_SETC_ANDI, ScalarOperation_SETC_ORI,
+             ScalarOperation_HL_SETC_EQI, ScalarOperation_HL_SETC_NEI,
+             ScalarOperation_HL_SETC_LTI, ScalarOperation_HL_SETC_GEI,
+             ScalarOperation_HL_SETC_LTUI, ScalarOperation_HL_SETC_GEUI,
+             ScalarOperation_HL_SETC_ANDI, ScalarOperation_HL_SETC_ORI =>
+            return TRUE;
+        otherwise =>
+            return FALSE;
+    end;
+end;
+
 readonly func ScalarOperationApplicable(operation: ScalarOperation)
     => boolean
 begin
     if _SystemBlockTerminalPending then
         return FALSE;
+    end;
+    if IsCommitConditionSetter(operation) then
+        return _BundleActive &&
+               _BundleBodyActive &&
+               _BARG.transfer_type == BundleTransfer_Conditional &&
+               !_BundleConditionSet;
     end;
     case operation of
         when ScalarOperation_C_SETC_TGT =>

@@ -1,35 +1,33 @@
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-BRU","surface":"scalar","classification":["model","dispatch","bru"],"depends_on":["PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-BRU-SEMANTICS","PTO-SCALAR-ADDTPC","PTO-SCALAR-B-EQ","PTO-SCALAR-B-GE","PTO-SCALAR-B-GEU","PTO-SCALAR-B-LT","PTO-SCALAR-B-LTU","PTO-SCALAR-B-NE","PTO-SCALAR-B-NZ","PTO-SCALAR-B-Z","PTO-SCALAR-C-CMP-EQI","PTO-SCALAR-C-CMP-NEI","PTO-SCALAR-C-SETC-EQ","PTO-SCALAR-C-SETC-NE","PTO-SCALAR-CMP-AND","PTO-SCALAR-CMP-ANDI","PTO-SCALAR-CMP-EQ","PTO-SCALAR-CMP-EQI","PTO-SCALAR-CMP-GE","PTO-SCALAR-CMP-GEI","PTO-SCALAR-CMP-GEU","PTO-SCALAR-CMP-GEUI","PTO-SCALAR-CMP-LT","PTO-SCALAR-CMP-LTI","PTO-SCALAR-CMP-LTU","PTO-SCALAR-CMP-LTUI","PTO-SCALAR-CMP-NE","PTO-SCALAR-CMP-NEI","PTO-SCALAR-CMP-OR","PTO-SCALAR-CMP-ORI","PTO-SCALAR-HL-ADDTPC","PTO-SCALAR-HL-CMP-ANDI","PTO-SCALAR-HL-CMP-EQI","PTO-SCALAR-HL-CMP-GEI","PTO-SCALAR-HL-CMP-GEUI","PTO-SCALAR-HL-CMP-LTI","PTO-SCALAR-HL-CMP-LTUI","PTO-SCALAR-HL-CMP-NEI","PTO-SCALAR-HL-CMP-ORI","PTO-SCALAR-HL-SETC-ANDI","PTO-SCALAR-HL-SETC-EQI","PTO-SCALAR-HL-SETC-GEI","PTO-SCALAR-HL-SETC-GEUI","PTO-SCALAR-HL-SETC-LTI","PTO-SCALAR-HL-SETC-LTUI","PTO-SCALAR-HL-SETC-NEI","PTO-SCALAR-HL-SETC-ORI","PTO-SCALAR-HL-SETRET","PTO-SCALAR-J","PTO-SCALAR-JR","PTO-SCALAR-SETC-AND","PTO-SCALAR-SETC-ANDI","PTO-SCALAR-SETC-EQ","PTO-SCALAR-SETC-EQI","PTO-SCALAR-SETC-GE","PTO-SCALAR-SETC-GEI","PTO-SCALAR-SETC-GEU","PTO-SCALAR-SETC-GEUI","PTO-SCALAR-SETC-LT","PTO-SCALAR-SETC-LTI","PTO-SCALAR-SETC-LTU","PTO-SCALAR-SETC-LTUI","PTO-SCALAR-SETC-NE","PTO-SCALAR-SETC-NEI","PTO-SCALAR-SETC-OR","PTO-SCALAR-SETC-ORI","PTO-SCALAR-SETRET"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-BRU","surface":"scalar","classification":["model","dispatch","bru"],"depends_on":["PTO-SCALAR-MODEL-DISPATCH-DECODE","PTO-SCALAR-MODEL-BRU-SEMANTICS","PTO-SCALAR-ADDTPC","PTO-SCALAR-C-CMP-EQI","PTO-SCALAR-C-CMP-NEI","PTO-SCALAR-C-SETC-EQ","PTO-SCALAR-C-SETC-NE","PTO-SCALAR-CMP-AND","PTO-SCALAR-CMP-ANDI","PTO-SCALAR-CMP-EQ","PTO-SCALAR-CMP-EQI","PTO-SCALAR-CMP-GE","PTO-SCALAR-CMP-GEI","PTO-SCALAR-CMP-GEU","PTO-SCALAR-CMP-GEUI","PTO-SCALAR-CMP-LT","PTO-SCALAR-CMP-LTI","PTO-SCALAR-CMP-LTU","PTO-SCALAR-CMP-LTUI","PTO-SCALAR-CMP-NE","PTO-SCALAR-CMP-NEI","PTO-SCALAR-CMP-OR","PTO-SCALAR-CMP-ORI","PTO-SCALAR-HL-ADDTPC","PTO-SCALAR-HL-CMP-ANDI","PTO-SCALAR-HL-CMP-EQI","PTO-SCALAR-HL-CMP-GEI","PTO-SCALAR-HL-CMP-GEUI","PTO-SCALAR-HL-CMP-LTI","PTO-SCALAR-HL-CMP-LTUI","PTO-SCALAR-HL-CMP-NEI","PTO-SCALAR-HL-CMP-ORI","PTO-SCALAR-HL-SETC-ANDI","PTO-SCALAR-HL-SETC-EQI","PTO-SCALAR-HL-SETC-GEI","PTO-SCALAR-HL-SETC-GEUI","PTO-SCALAR-HL-SETC-LTI","PTO-SCALAR-HL-SETC-LTUI","PTO-SCALAR-HL-SETC-NEI","PTO-SCALAR-HL-SETC-ORI","PTO-SCALAR-HL-SETRET","PTO-SCALAR-J","PTO-SCALAR-JR","PTO-SCALAR-SETC-AND","PTO-SCALAR-SETC-ANDI","PTO-SCALAR-SETC-EQ","PTO-SCALAR-SETC-EQI","PTO-SCALAR-SETC-GE","PTO-SCALAR-SETC-GEI","PTO-SCALAR-SETC-GEU","PTO-SCALAR-SETC-GEUI","PTO-SCALAR-SETC-LT","PTO-SCALAR-SETC-LTI","PTO-SCALAR-SETC-LTU","PTO-SCALAR-SETC-LTUI","PTO-SCALAR-SETC-NE","PTO-SCALAR-SETC-NEI","PTO-SCALAR-SETC-OR","PTO-SCALAR-SETC-ORI","PTO-SCALAR-SETRET"]}
 pure func ScalarConditionForOperation(operation: ScalarOperation) => ScalarCondition
 begin
     case operation of
-        when ScalarOperation_B_EQ, ScalarOperation_C_CMP_EQI,
+        when ScalarOperation_C_CMP_EQI,
              ScalarOperation_C_SETC_EQ, ScalarOperation_CMP_EQ,
              ScalarOperation_CMP_EQI, ScalarOperation_HL_CMP_EQI,
              ScalarOperation_HL_SETC_EQI, ScalarOperation_SETC_EQ,
              ScalarOperation_SETC_EQI => return ScalarCondition_EQ;
-        when ScalarOperation_B_NE, ScalarOperation_C_CMP_NEI,
+        when ScalarOperation_C_CMP_NEI,
              ScalarOperation_C_SETC_NE, ScalarOperation_CMP_NE,
              ScalarOperation_CMP_NEI, ScalarOperation_HL_CMP_NEI,
              ScalarOperation_HL_SETC_NEI, ScalarOperation_SETC_NE,
              ScalarOperation_SETC_NEI => return ScalarCondition_NE;
-        when ScalarOperation_B_LT, ScalarOperation_CMP_LT,
+        when ScalarOperation_CMP_LT,
              ScalarOperation_CMP_LTI, ScalarOperation_HL_CMP_LTI,
              ScalarOperation_HL_SETC_LTI, ScalarOperation_SETC_LT,
              ScalarOperation_SETC_LTI => return ScalarCondition_LT;
-        when ScalarOperation_B_GE, ScalarOperation_CMP_GE,
+        when ScalarOperation_CMP_GE,
              ScalarOperation_CMP_GEI, ScalarOperation_HL_CMP_GEI,
              ScalarOperation_HL_SETC_GEI, ScalarOperation_SETC_GE,
              ScalarOperation_SETC_GEI => return ScalarCondition_GE;
-        when ScalarOperation_B_LTU, ScalarOperation_CMP_LTU,
+        when ScalarOperation_CMP_LTU,
              ScalarOperation_CMP_LTUI, ScalarOperation_HL_CMP_LTUI,
              ScalarOperation_HL_SETC_LTUI, ScalarOperation_SETC_LTU,
              ScalarOperation_SETC_LTUI => return ScalarCondition_LTU;
-        when ScalarOperation_B_GEU, ScalarOperation_CMP_GEU,
+        when ScalarOperation_CMP_GEU,
              ScalarOperation_CMP_GEUI, ScalarOperation_HL_CMP_GEUI,
              ScalarOperation_HL_SETC_GEUI, ScalarOperation_SETC_GEU,
              ScalarOperation_SETC_GEUI => return ScalarCondition_GEU;
-        when ScalarOperation_B_Z => return ScalarCondition_Z;
-        when ScalarOperation_B_NZ => return ScalarCondition_NZ;
         otherwise => unreachable;
     end;
 end;
@@ -214,17 +212,6 @@ begin
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
                 ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR));
 
-        when ScalarOperation_B_EQ, ScalarOperation_B_NE,
-             ScalarOperation_B_LT, ScalarOperation_B_GE,
-             ScalarOperation_B_LTU, ScalarOperation_B_GEU =>
-            BranchRelative(ScalarConditionForOperation(operation),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcL),
-                ReadDecodedScalarRegister(instruction, form, ScalarField_SrcR),
-                ScalarDecodedWord(instruction, form, ScalarField_simm12));
-        when ScalarOperation_B_Z, ScalarOperation_B_NZ =>
-            BranchRelative(ScalarConditionForOperation(operation),
-                ReadBranchPredicate(), Zeros{PTO_XLEN},
-                ScalarDecodedWord(instruction, form, ScalarField_simm22));
         when ScalarOperation_J =>
             JumpRelative(ScalarDecodedWord(instruction, form, ScalarField_simm22));
         when ScalarOperation_JR =>

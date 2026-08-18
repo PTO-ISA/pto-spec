@@ -23,6 +23,7 @@ end;
 func ClearBundleHeaderState()
 begin
     _BundleCommitTargetSet = FALSE;
+    _BundleConditionSet = FALSE;
     _SystemBlockTerminalPending = FALSE;
     _BundleArgument = Zeros{PTO_XLEN};
     _BundleArgumentKind = Zeros{3};

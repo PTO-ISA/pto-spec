@@ -1,5 +1,9 @@
 # ADR 0027: Scalar BRU totality and target legality
 
+> Conditional-branch clauses for `B.EQ`, `B.NE`, `B.LT`, `B.GE`, `B.LTU`,
+> `B.GEU`, `B.Z`, and `B.NZ` are superseded by ADR 0067. Other BRU decisions
+> in this record remain active.
+
 - Status: accepted
 - Scope: all 66 accepted scalar BRU forms
 - Requirement: PTO-REQ-SCALAR-CONTROL-001,

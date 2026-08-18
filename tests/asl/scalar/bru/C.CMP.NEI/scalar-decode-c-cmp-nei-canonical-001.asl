@@ -2,11 +2,11 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-C-CMP-NEI-DECODE-001","source":"asl/scalar/bru/C.CMP.NEI.asl","requirements":["PTO-INST-SCALAR-C-CMP-NEI"],"kind":"decode-positive","summary":"canonical C.CMP.NEI catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000000100000101100', 16) == 35;
-    assert ScalarOperationOfForm(35) == ScalarOperation_C_CMP_NEI;
-    assert ScalarHandlerOfForm(35) == ScalarHandler_ExecuteCompare;
+    assert DecodeScalarForm('000000000000000000000000000000000000100000101100', 16) == 27;
+    assert ScalarOperationOfForm(27) == ScalarOperation_C_CMP_NEI;
+    assert ScalarHandlerOfForm(27) == ScalarHandler_ExecuteCompare;
     assert InstructionContractOperation_C_CMP_NEI() == ScalarOperation_C_CMP_NEI;
     assert InstructionContractHandler_C_CMP_NEI() == ScalarHandler_ExecuteCompare;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000000100000101100', 35, ScalarField_simm5) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000000100000101100', 27, ScalarField_simm5) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;

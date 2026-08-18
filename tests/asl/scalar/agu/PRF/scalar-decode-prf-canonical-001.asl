@@ -2,9 +2,9 @@
 // PTO-TEST: {"id":"PTO-AVS-SCALAR-PRF-DECODE-001","source":"asl/scalar/agu/PRF.asl","requirements":["PTO-INST-SCALAR-PRF"],"kind":"decode-positive","summary":"canonical PRF catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeScalarForm('000000000000000000000000000000000111000000001001', 32) == 378;
-    assert ScalarOperationOfForm(378) == ScalarOperation_PRF;
-    assert ScalarHandlerOfForm(378) == ScalarHandler_ScalarPrefetch;
+    assert DecodeScalarForm('000000000000000000000000000000000111000000001001', 32) == 370;
+    assert ScalarOperationOfForm(370) == ScalarOperation_PRF;
+    assert ScalarHandlerOfForm(370) == ScalarHandler_ScalarPrefetch;
     assert InstructionContractOperation_PRF() == ScalarOperation_PRF;
     assert InstructionContractHandler_PRF() == ScalarHandler_ScalarPrefetch;
     assert InstructionContractAGUAction_PRF() == ScalarAGU_Prefetch;
@@ -14,10 +14,10 @@ begin
     assert InstructionContractAGUUpdateMode_PRF() == AddressUpdate_None;
     assert InstructionContractAGUSignedLoad_PRF() == FALSE;
     assert InstructionContractAGUPrefetchReturnsAddress_PRF() == FALSE;
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 378, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 378, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 378, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 378, ScalarField_SrcRType) == '000000000000000000000000000000000000000000000000';
-    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 378, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 370, ScalarField_RegDst) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 370, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 370, ScalarField_SrcR) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 370, ScalarField_SrcRType) == '000000000000000000000000000000000000000000000000';
+    assert DecodeScalarOperandRaw('000000000000000000000000000000000111000000001001', 370, ScalarField_shamt) == '000000000000000000000000000000000000000000000000';
     return 0;
 end;
