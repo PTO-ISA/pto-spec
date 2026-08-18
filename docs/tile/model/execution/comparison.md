@@ -16,12 +16,12 @@ This page is a generated reference view of the normative ASL unit.
 
 pure func TileCompareDataTypeSupported(data_type: TileDataType) => boolean
 begin
-    return TileA9DataTypeSupported(data_type);
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 pure func TileSelectDataTypeSupported(data_type: TileDataType) => boolean
 begin
-    return TileCarrierOnlyDataTypeSupported(data_type);
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 pure func TileCompareBoolean(

@@ -20,8 +20,8 @@ TOTALITY_PATH = Path("spec/evidence/pto-isa-0582-encoding-totality.json")
 ABI_VECTORS_PATH = Path("spec/evidence/pto-isa-0582-abi-vectors.json")
 NUMERIC_PROFILE_PATH = Path("spec/hardware-conformance-profile.json")
 NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0582-hardware-numeric-vectors.json")
-NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.1-ieee-v1"
-NUMERIC_PROFILE_RELEASE = "0.58.1"
+NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.2-ieee-v1"
+NUMERIC_PROFILE_RELEASE = "0.58.2"
 
 FAMILY_COUNTS = {'TEPL': 87, 'TLSU': 10, 'CUBE': 12}
 FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 74}
@@ -621,7 +621,7 @@ def validate_numeric_profile() -> dict:
         "hardware_conformance_claim": False,
         "profile_id": "pto-v0",
         "role": "deterministic raw-carrier ASL reference-test profile",
-        "rule": "pto-v0 output values are not hardware numeric conformance evidence",
+        "rule": "General pto-v0 output values are not hardware numeric conformance evidence; the B.FPATR postprocess hooks implement the bit-exact matrix postprocess section of this profile.",
     }:
         raise SystemExit("pto-v0 must remain a non-hardware reference-test profile")
     if profile["implementation_conformance"].get("repository_claim") != "contract-and-vector-definition-only":
@@ -633,7 +633,7 @@ def validate_numeric_profile() -> dict:
         "flush_to_zero": False,
         "input_subnormals": "preserve exact source value",
         "operation_override": False,
-        "profile_selection": "fixed by pto-hardware-numeric-0.58.1-ieee-v1",
+        "profile_selection": "fixed by pto-hardware-numeric-0.58.2-ieee-v1",
         "result_subnormals": "gradual underflow to the destination format",
         "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
         "tininess_detection": "after-rounding",
@@ -687,47 +687,63 @@ def validate_numeric_profile() -> dict:
     if "Logical lane 2*i is bits 3:0" not in packed.get("lane_order", ""):
         raise SystemExit("packed lane order must keep even lanes in the low nibble")
 
-    ordinary = profile["matrix"].get("ordinary_type_table", [])
-    ordinary_names = {row.get("header_data_type") for row in ordinary}
-    expected_ordinary_names = set(EXPECTED_DATA_TYPE_NAMES.values()) - {"E8M0"}
-    if len(ordinary) != 24 or ordinary_names != expected_ordinary_names:
-        raise SystemExit("ordinary matrix type table must contain every assigned DataType except E8M0")
-    if any(
-        row["left_type"] != row["header_data_type"] or
-        row["right_type"] != row["header_data_type"] or
-        row["bias_type"] != row["header_data_type"]
-        for row in ordinary
-    ):
-        raise SystemExit("ordinary matrix operands, header, and bias must use one logical type")
-    expected_acc = {
-        **{name: "FP32" for name in (
+    ordinary = profile["matrix"].get("ordinary", {})
+    expected_ordinary = {
+        "floating_input_types": [
             "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
-            "E5M2", "E3M2", "E2M3", "E2M1X2", "E1M2X2", "HiF4X2",
-        )},
-        "FP64": "FP64",
-        **{name: "S64" for name in ("S64", "S32", "S16", "S8", "S4X2")},
-        **{name: "U64" for name in ("U64", "U32", "U16", "U8", "U4X2")},
+            "E5M2", "E3M2", "E2M3", "E2M1X2", "E1M2X2",
+        ],
+        "signed_input_types": ["S16", "S8", "S4X2"],
+        "unsigned_input_types": ["U16", "U8", "U4X2"],
+        "pair_rule": "The two inputs may differ only within one listed class.",
+        "accumulator_by_class": {
+            "floating": "FP32", "signed": "S32", "unsigned": "U32",
+        },
+        "bias_by_class": {
+            "floating": "FP32", "signed": "S32", "unsigned": "U32",
+        },
+        "header_data_type": "left input type",
+        "b_datr_data_type": "right input type; omission inherits the left input type",
     }
-    if any(expected_acc[row["header_data_type"]] != row["acc_type"] for row in ordinary):
-        raise SystemExit("ordinary matrix physical ACC class drift")
+    if ordinary != expected_ordinary:
+        raise SystemExit("ordinary matrix mixed-type and accumulator contract drift")
 
     mx = profile["matrix"].get("mx", {})
-    expected_mx_pairs = [
-        ["E4M3", "E4M3"], ["E4M3", "E5M2"],
-        ["E5M2", "E4M3"], ["E5M2", "E5M2"],
-        ["E2M1X2", "E2M1X2"], ["E2M1X2", "HiF4X2"],
-        ["HiF4X2", "E2M1X2"], ["HiF4X2", "HiF4X2"],
-    ]
-    if mx.get("allowed_operand_pairs") != expected_mx_pairs:
-        raise SystemExit("MX matrix operand-pair table drift")
     if (
-        mx.get("header_data_type") != "FP32" or mx.get("acc_type") != "FP32" or
-        mx.get("bias_type") != "FP32" or mx.get("scale_types") != ["E8M0", "E8M0"] or
+        mx.get("allowed_operand_types") !=
+            ["FP16", "BF16", "E4M3", "E5M2", "E2M1X2", "E1M2X2"] or
+        mx.get("pair_rule") !=
+            "Every ordered pair of allowed operand types is assigned." or
+        mx.get("unscaled_operand_types") != ["FP16", "BF16"] or
+        mx.get("scaled_operand_types") !=
+            ["E4M3", "E5M2", "E2M1X2", "E1M2X2"]
+    ):
+        raise SystemExit("MX matrix operand-type and scale-presence contract drift")
+    if (
+        mx.get("header_data_type") != "left input type" or
+        mx.get("acc_type") != "FP32" or mx.get("bias_type") != "FP32" or
+        mx.get("scale_type") != "E8M0" or
         mx.get("scale_block_logical_k_elements") != 32 or
         mx.get("scale_a_shape") != "M x ceil(K/32)" or
         mx.get("scale_b_shape") != "ceil(K/32) x N"
     ):
         raise SystemExit("MX header/ACC/bias/scale contract drift")
+
+    postprocess = profile["matrix"].get("postprocess", {})
+    modes = postprocess.get("modes", [])
+    expected_mode_codes = [
+        0, 1, 2, 3, 4, 5, 12, 13, 16, 17, 18, 19, 20,
+        23, 24, 25, 26, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39,
+    ]
+    if [row.get("code") for row in modes] != expected_mode_codes:
+        raise SystemExit("B.FPATR postprocess mode table drift")
+    if postprocess.get("order") != [
+        "raw-accumulator-row-and-group-reductions",
+        "prequant-destination-conversion",
+        "destination-domain-activation",
+        "atomic-output-and-status-publication",
+    ]:
+        raise SystemExit("B.FPATR postprocess ordering drift")
 
     invalid = profile["conversion"].get("float_to_integer_invalid", {}).get("sat_disabled", {})
     if invalid != {
@@ -851,10 +867,11 @@ def build_numeric_vectors(profile: dict) -> dict:
         "release": RELEASE,
         "hardware_profile_id": NUMERIC_PROFILE_ID,
         "hardware_profile_sha256": profile_hash,
-        "implementation_conformance_status": "unproven-in-repository",
+        "implementation_conformance_status": "b-fpatr-asl-proven-other-numeric-domains-unproven",
         "reference_profile": {
             "profile_id": "pto-v0",
             "hardware_conformance_claim": False,
+            "bit_exact_surfaces": ["B.FPATR matrix postprocess"],
         },
         "vector_groups": {
             "canonical_nan": canonical_nan,
@@ -1055,6 +1072,89 @@ def build_numeric_vectors(profile: dict) -> dict:
                     "order": "scale-inputs-before-each-fma",
                 },
             ],
+            "matrix_postprocess": [
+                {
+                    "id": "req8-scalar-affine",
+                    "mode": 3,
+                    "source_type": "S32",
+                    "input": "3",
+                    "fp19_scale": "2.0",
+                    "signed_offset": "-1",
+                    "destination": "S8",
+                    "sat": False,
+                    "expected_raw": "0x05",
+                },
+                {
+                    "id": "req8-wrap",
+                    "mode": 3,
+                    "source_type": "S32",
+                    "input": "70",
+                    "fp19_scale": "2.0",
+                    "signed_offset": "0",
+                    "destination": "S8",
+                    "sat": False,
+                    "expected_raw": "0x8C",
+                    "expected_flags": ["OF", "NX"],
+                },
+                {
+                    "id": "req8-saturate",
+                    "mode": 3,
+                    "source_type": "S32",
+                    "input": "70",
+                    "fp19_scale": "2.0",
+                    "signed_offset": "0",
+                    "destination": "S8",
+                    "sat": True,
+                    "expected_raw": "0x7F",
+                    "expected_flags": ["OF", "NX"],
+                },
+                {
+                    "id": "f32-e4m3-exact",
+                    "mode": 26,
+                    "source_type": "FP32",
+                    "input_raw": "0x3FC00000",
+                    "fp19_scale": "1.0",
+                    "destination": "E4M3",
+                    "expected_raw": "0x3C",
+                },
+                {
+                    "id": "f32-hif8-exact",
+                    "mode": 25,
+                    "source_type": "FP32",
+                    "input_raw": "0x3FC00000",
+                    "fp19_scale": "1.0",
+                    "destination": "HiF8",
+                    "expected_raw": "0x0C",
+                },
+                {
+                    "id": "post-conversion-lrelu",
+                    "mode": 24,
+                    "relu_mode": 2,
+                    "input_raw": "0xC0800000",
+                    "fp19_scale": "1.0",
+                    "fp19_alpha": "0.5",
+                    "destination": "S8",
+                    "expected_raw": "0xFE",
+                },
+                {
+                    "id": "nan-indefinite",
+                    "mode": 24,
+                    "input": "qNaN",
+                    "destination": "S8",
+                    "sat": False,
+                    "expected_raw": "0x80",
+                    "expected_flags": ["NV"],
+                },
+                {
+                    "id": "nan-saturating-zero",
+                    "mode": 24,
+                    "input": "qNaN",
+                    "destination": "S8",
+                    "sat": True,
+                    "expected_raw": "0x00",
+                    "expected_flags": ["NV"],
+                },
+            ],
         },
     }
 
@@ -1138,7 +1238,8 @@ def build_artifacts() -> dict[str, dict]:
             "path": str(NUMERIC_PROFILE_PATH),
             "sha256": sha256_bytes((ROOT / NUMERIC_PROFILE_PATH).read_bytes()),
             "evidence": str(NUMERIC_VECTORS_PATH),
-            "repository_implementation_conformance": "unproven",
+            "repository_implementation_conformance":
+                "b-fpatr-asl-proven-other-numeric-domains-unproven",
         },
         "hash_contract": {
             "algorithm": "SHA-256",

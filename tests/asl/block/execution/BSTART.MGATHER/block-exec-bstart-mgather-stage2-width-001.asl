@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"decoded MGATHER accepts B64/U64 full-width pairing, rejects S16 indices, and moves invalid raw TF32 memory bits","pass_condition":"B64 data with U64 byte displacement gathers with an 8-byte event, an upper-half U64 displacement faults at its full-width address rather than truncating, U16 indices fault before allocation, and an invalid TF32 memory encoding is published unchanged","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"decoded MGATHER preserves full-width displacements and accepts narrower integer IndexTiles","pass_condition":"U64 and U16 byte displacements execute at their encoded widths, an upper-half U64 address faults without truncation, and an invalid raw TF32 memory encoding is published unchanged","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
 
 pure func MgatherStage2Start(data_type: bits(5)) => bits(64)
 begin
@@ -93,13 +93,15 @@ begin
         TileDataType_U16,
         Zeros{PTO_XLEN},
         Zeros{5} + 27);
+    Store(Zeros{PTO_XLEN} + 0x100, 1, Zeros{PTO_XLEN} + 0x5a);
     StartMemoryEventCapture(0);
-    let rejected = ExecuteBundleTileOperation();
-    assert !rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert _MemoryEventCount == 0;
-    assert CoreTileCapacityInUse() == 128;
-    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+    let narrow_completed = ExecuteBundleTileOperation();
+    assert narrow_completed;
+    assert _LastFault == Fault_None;
+    assert _MemoryEventCount == 1;
+    let narrow_destination = _BundleTileBindings[[0]].destination;
+    assert ReadTileElement(narrow_destination, 0, 0) ==
+        Zeros{PTO_XLEN} + 0x5a;
     StopMemoryEventCapture();
 
     PrepareMgatherStage2(

@@ -13,12 +13,31 @@ strict: true
 nav:
   - Arch:
       - Data Types:
+          - Formats:
+              - Bf16: arch/data-types/formats/bf16.md
+              - E1m2x2: arch/data-types/formats/e1m2x2.md
+              - E2m1x2: arch/data-types/formats/e2m1x2.md
+              - E2m3: arch/data-types/formats/e2m3.md
+              - E3m2: arch/data-types/formats/e3m2.md
+              - E4m3: arch/data-types/formats/e4m3.md
+              - E5m2: arch/data-types/formats/e5m2.md
+              - E8m0: arch/data-types/formats/e8m0.md
+              - Fp16: arch/data-types/formats/fp16.md
+              - Fp32: arch/data-types/formats/fp32.md
+              - Fp64: arch/data-types/formats/fp64.md
+              - Hf32: arch/data-types/formats/hf32.md
+              - Hif4x2: arch/data-types/formats/hif4x2.md
+              - Hif8: arch/data-types/formats/hif8.md
+              - Tf32: arch/data-types/formats/tf32.md
           - Fault: arch/data-types/fault.md
           - Floating Point: arch/data-types/floating-point.md
+          - Format Descriptor: arch/data-types/format-descriptor.md
+          - Fp19: arch/data-types/fp19.md
           - Integer: arch/data-types/integer.md
           - Memory Model: arch/data-types/memory-model.md
           - Memory Operations: arch/data-types/memory-operations.md
           - Numeric Classification: arch/data-types/numeric-classification.md
+          - Numeric Formats: arch/data-types/numeric-formats.md
           - Packed: arch/data-types/packed.md
           - Rounding: arch/data-types/rounding.md
           - System Registers: arch/data-types/system-registers.md
@@ -45,6 +64,8 @@ nav:
           - Instruction Classification: arch/overview/instruction-classification.md
       - Profile:
           - Applicability: arch/profile/applicability.md
+          - Matrix Postprocess: arch/profile/matrix-postprocess.md
+          - Matrix Quantization: arch/profile/matrix-quantization.md
           - Reference Profile: arch/profile/reference-profile.md
           - Reference Quantization: arch/profile/reference-quantization.md
           - Reset: arch/profile/reset.md

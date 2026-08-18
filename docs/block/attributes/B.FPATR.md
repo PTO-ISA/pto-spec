@@ -52,7 +52,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| b_fpatr_32_4f2db11e8e8a | PreQuantMode | 6 | 0–5, 12–13, 16–20, 23–28, 32–39 | none | 6–11, 14–15, 21–22, 29–31, 40–63 | closed Matrix destination pre-quantization and output-type selector | No pre-quantization; the Matrix accumulation result remains FP32. |
+| b_fpatr_32_4f2db11e8e8a | PreQuantMode | 6 | 0–5, 12–13, 16–20, 23–28, 32–39 | none | 6–11, 14–15, 21–22, 29–31, 40–63 | closed Matrix destination pre-quantization and output-type selector | No pre-quantization; D retains the FP32, S32, or U32 accumulator type. |
 | b_fpatr_32_4f2db11e8e8a | ReluMode | 3 | 0–3 | none | 4–7 | post-conversion activation selector | No activation. |
 | b_fpatr_32_4f2db11e8e8a | GroupNCode | 4 | 0–9 | none | 10–15 | group maximum column-count selector | No group maximum; GroupMaxEn must also be zero. |
 | b_fpatr_32_4f2db11e8e8a | RowMaxEn | 1 | 0–1 | none | none | row maximum input/output enable | No RowMax input or output. |
@@ -174,6 +174,53 @@ begin
            UInt(code) == 32 || UInt(code) == 34 || UInt(code) == 35;
 end;
 
+pure func BundleFPATRModeUsesS32Accumulator(code: bits(6)) => boolean
+begin
+    let value = UInt(code);
+    return value == 2 || value == 3 || value == 4 || value == 5 ||
+           value == 12 || value == 13 || value == 17 || value == 18 ||
+           value == 19 || value == 20 || value == 35 || value == 39;
+end;
+
+pure func BundleFPATRModeUsesFP32Accumulator(code: bits(6)) => boolean
+begin
+    return BundleFPATRPreQuantModeLegal(code) &&
+           UInt(code) != 0 &&
+           !BundleFPATRModeUsesS32Accumulator(code);
+end;
+
+pure func BundleFPATRAccumulatorTypeLegal(
+    code: bits(6), accumulator_type: TileDataType) => boolean
+begin
+    if UInt(code) == 0 then
+        return accumulator_type == TileDataType_FP32 ||
+               accumulator_type == TileDataType_S32 ||
+               accumulator_type == TileDataType_U32;
+    elsif BundleFPATRModeUsesS32Accumulator(code) then
+        return accumulator_type == TileDataType_S32;
+    elsif BundleFPATRModeUsesFP32Accumulator(code) then
+        return accumulator_type == TileDataType_FP32;
+    end;
+    return FALSE;
+end;
+
+pure func BundleFPATRModeOffsetWidth(code: bits(6))
+    => integer {0,5,9,17}
+begin
+    let value = UInt(code);
+    if value == 17 || value == 18 then return 5;
+    elsif value == 2 || value == 3 || value == 23 || value == 24 then
+        return 9;
+    elsif value == 19 || value == 20 then return 17;
+    else return 0;
+    end;
+end;
+
+pure func BundleFPATRModeIsShift(code: bits(6)) => boolean
+begin
+    return UInt(code) == 12 || UInt(code) == 13;
+end;
+
 pure func BundleFPATRReluModeUsesScalarParameter(code: bits(3)) => boolean
 begin
     return UInt(code) == 2;
@@ -197,22 +244,26 @@ begin
     end;
     if mode == 17 || mode == 18 then
         return value[12:0] == Zeros{13} &&
+               FP19ScaleLegal(value[31:13]) &&
                value[36:32] == Zeros{5} &&
                value[63:42] == Zeros{22};
     end;
     if mode == 2 || mode == 3 || mode == 23 || mode == 24 then
         return value[12:0] == Zeros{13} &&
+               FP19ScaleLegal(value[31:13]) &&
                value[36:32] == Zeros{5} &&
                value[63:46] == Zeros{18};
     end;
     if mode == 19 || mode == 20 then
         return value[12:0] == Zeros{13} &&
+               FP19ScaleLegal(value[31:13]) &&
                value[36:32] == Zeros{5} &&
                value[63:54] == Zeros{10};
     end;
     if BundleFPATRModeUsesScalarParameter(code) ||
        BundleFPATRModeUsesVectorParameter(code) then
         return value[12:0] == Zeros{13} &&
+               FP19ScaleLegal(value[31:13]) &&
                value[63:32] == Zeros{32};
     end;
     return FALSE;
@@ -223,7 +274,8 @@ end;
 // architectural and therefore rejects nonzero high bits.
 pure func BundleFPATRReluParameterWordLegal(value: Word) => boolean
 begin
-    return value[63:19] == Zeros{45};
+    return value[63:19] == Zeros{45} &&
+           FP19ActivationParameterLegal(value[18:0]);
 end;
 
 // Matrix B.DATR contributes only the destination conversion controls once
@@ -305,6 +357,7 @@ end;
 ## Legality
 
 - PreQuantMode accepts exactly codes 0..5, 12..13, 16..20, 23..28, and 32..39; all other six-bit codes are reserved.
+- Each nonzero PreQuantMode accepts exactly its assigned S32 or FP32 accumulator class; code zero accepts FP32, S32, or U32 and preserves that type.
 - ReluMode codes 0..3 select None, ReLU, scalar LReLU/PReLU, and vector PReLU; codes 4..7 are reserved.
 - GroupNCode codes 0..9 select 0, 8, 16, 32, 48, 64, 80, 96, 112, and 128 columns; codes 10..15 are reserved.
 - RowMaxInit requires RowMaxEn. GroupMaxEn requires nonzero GroupNCode and nonzero GroupNCode requires GroupMaxEn. MaxAbsEn requires RowMaxEn or GroupMaxEn.

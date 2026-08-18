@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TREM-ZERO-TYPES-001","source":"asl/tile/elementwise-tile-tile/transcendental/TREM.asl","requirements":["PTO-INST-TILE-TREM"],"kind":"boundary","summary":"TREM rejects integer zero divisors but admits floating zero to the numeric profile","pass_condition":"S64 zero fails mnemonic legality while FP32 zero remains a legal profile input","related_sources":["asl/tile/model/legality/operand-schema.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TREM-ZERO-TYPES-001","source":"asl/tile/elementwise-tile-tile/transcendental/TREM.asl","requirements":["PTO-INST-TILE-TREM"],"kind":"boundary","summary":"TREM rejects integer zero divisors but admits floating zero to the numeric profile","pass_condition":"S64 is assigned but its zero divisor fails operand legality while FP32 zero remains a legal profile input","related_sources":["asl/tile/model/legality/operand-schema.asl"]}
 func ConfigureTREMZero(data_type: TileDataType)
 begin
     for index = 0 to 2 looplimit 3 do
@@ -11,7 +11,7 @@ end;
 
 func main() => integer
 begin
-    assert !InstructionContractDataTypeLegal_TREM(TileDataType_S64);
+    assert InstructionContractDataTypeLegal_TREM(TileDataType_S64);
     assert InstructionContractDataTypeLegal_TREM(TileDataType_FP32);
     assert !InstructionContractDataTypeLegal_TREM(TileDataType_HiF8);
 

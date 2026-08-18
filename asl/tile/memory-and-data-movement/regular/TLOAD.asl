@@ -20,7 +20,7 @@ begin
         return FALSE;
     end;
     let data_type = TileDataTypeFromEncoding(code as TileDataTypeEncoding);
-    return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
+    return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
 pure func InstructionContractDestinationShapeLegal_TLOAD(

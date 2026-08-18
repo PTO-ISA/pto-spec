@@ -1,8 +1,11 @@
 {
-  "hardware_profile_id": "pto-hardware-numeric-0.58.1-ieee-v1",
-  "hardware_profile_sha256": "fe30662f2ac220ec11b6c8d6eccbca48a410be5c511d45c57fb99f8b7016ae0b",
-  "implementation_conformance_status": "unproven-in-repository",
+  "hardware_profile_id": "pto-hardware-numeric-0.58.2-ieee-v1",
+  "hardware_profile_sha256": "be8072f68a8a352b4ad3fb18b27c0f184b683d7b02fb13c62c255f8d69a07611",
+  "implementation_conformance_status": "b-fpatr-asl-proven-other-numeric-domains-unproven",
   "reference_profile": {
+    "bit_exact_surfaces": [
+      "B.FPATR matrix postprocess"
+    ],
     "hardware_conformance_claim": false,
     "profile_id": "pto-v0"
   },
@@ -360,6 +363,99 @@
           1
         ],
         "unscaled_inputs": "all-one"
+      }
+    ],
+    "matrix_postprocess": [
+      {
+        "destination": "S8",
+        "expected_raw": "0x05",
+        "fp19_scale": "2.0",
+        "id": "req8-scalar-affine",
+        "input": "3",
+        "mode": 3,
+        "sat": false,
+        "signed_offset": "-1",
+        "source_type": "S32"
+      },
+      {
+        "destination": "S8",
+        "expected_flags": [
+          "OF",
+          "NX"
+        ],
+        "expected_raw": "0x8C",
+        "fp19_scale": "2.0",
+        "id": "req8-wrap",
+        "input": "70",
+        "mode": 3,
+        "sat": false,
+        "signed_offset": "0",
+        "source_type": "S32"
+      },
+      {
+        "destination": "S8",
+        "expected_flags": [
+          "OF",
+          "NX"
+        ],
+        "expected_raw": "0x7F",
+        "fp19_scale": "2.0",
+        "id": "req8-saturate",
+        "input": "70",
+        "mode": 3,
+        "sat": true,
+        "signed_offset": "0",
+        "source_type": "S32"
+      },
+      {
+        "destination": "E4M3",
+        "expected_raw": "0x3C",
+        "fp19_scale": "1.0",
+        "id": "f32-e4m3-exact",
+        "input_raw": "0x3FC00000",
+        "mode": 26,
+        "source_type": "FP32"
+      },
+      {
+        "destination": "HiF8",
+        "expected_raw": "0x0C",
+        "fp19_scale": "1.0",
+        "id": "f32-hif8-exact",
+        "input_raw": "0x3FC00000",
+        "mode": 25,
+        "source_type": "FP32"
+      },
+      {
+        "destination": "S8",
+        "expected_raw": "0xFE",
+        "fp19_alpha": "0.5",
+        "fp19_scale": "1.0",
+        "id": "post-conversion-lrelu",
+        "input_raw": "0xC0800000",
+        "mode": 24,
+        "relu_mode": 2
+      },
+      {
+        "destination": "S8",
+        "expected_flags": [
+          "NV"
+        ],
+        "expected_raw": "0x80",
+        "id": "nan-indefinite",
+        "input": "qNaN",
+        "mode": 24,
+        "sat": false
+      },
+      {
+        "destination": "S8",
+        "expected_flags": [
+          "NV"
+        ],
+        "expected_raw": "0x00",
+        "id": "nan-saturating-zero",
+        "input": "qNaN",
+        "mode": 24,
+        "sat": true
       }
     ],
     "mixed_expdif": {

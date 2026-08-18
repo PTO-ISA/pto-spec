@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TSEL-PADDING-001","source":"asl/tile/elementwise-tile-tile/logical/TSEL.asl","requirements":["PTO-TSEL-CONTRACT-001"],"kind":"state-transition","summary":"TSEL applies numeric PadValue outside its valid destination rectangle","pass_condition":"Min defines integer padding as zero while omitted Null leaves the same physical coordinate undefined","related_sources":["asl/tile/model/definedness/elements.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TSEL-PADDING-001","source":"asl/tile/elementwise-tile-tile/logical/TSEL.asl","requirements":["PTO-TSEL-CONTRACT-001"],"kind":"state-transition","summary":"TSEL applies numeric PadValue outside its valid destination rectangle","pass_condition":"Min writes the selected DataType's numeric minimum while omitted Null leaves the same physical coordinate undefined","related_sources":["asl/tile/model/definedness/elements.asl"]}
 func ConfigurePaddedSelection()
 begin
     ConfigurePredicateTile(0, 128, 16, 2, 1, 1);
@@ -28,7 +28,8 @@ begin
     _BundleDataAttributesPresent = TRUE;
     ExecuteTileSelect(3, 0, 1, 2);
     assert TileElementDefined(3, 0, 1);
-    assert ReadTileElement(3, 0, 1) == Zeros{PTO_XLEN};
+    assert ReadTileElement(3, 0, 1) ==
+        TilePadValueForDataType(TilePad_Min, TileDataType_FP32);
 
     ResetProfileState();
     ConfigurePaddedSelection();

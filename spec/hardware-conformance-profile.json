@@ -15,7 +15,7 @@
     "flush_to_zero": false,
     "input_subnormals": "preserve exact source value",
     "operation_override": false,
-    "profile_selection": "fixed by pto-hardware-numeric-0.58.1-ieee-v1",
+    "profile_selection": "fixed by pto-hardware-numeric-0.58.2-ieee-v1",
     "result_subnormals": "gradual underflow to the destination format",
     "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
     "tininess_detection": "after-rounding"
@@ -49,7 +49,7 @@
       "enabled": "Integer arithmetic and conversion clamp to destination minimum/maximum; NaN converts to zero; floating overflow clamps to the destination maximum finite value."
     }
   },
-  "claim_scope": "PTO ISA 0.58.1 hardware numeric conformance",
+  "claim_scope": "PTO ISA 0.58.2 hardware numeric conformance",
   "comparisons": {
     "false_result": 0,
     "nan": {
@@ -216,7 +216,7 @@
     ],
     "repository_claim": "contract-and-vector-definition-only"
   },
-  "isa_release": "0.58.1",
+  "isa_release": "0.58.2",
   "mixed_expdif": {
     "accepted_operations": [
       "TROWEXPANDEXPDIF",
@@ -275,47 +275,66 @@
     "destination_aliasing": "D == C is read-old/write-new and requires identical dtype, shape, layout, and allocation. There is no architectural implicit ACC singleton and ACCCVT remains removed/reserved.",
     "bias_order": "BIAS is added in logical result type after the complete dot product; MX BIAS is FP32 and is added after the scaled dot product.",
     "dot_order": "Products are accumulated in increasing logical K index order with one fused multiply-add rounding to the declared physical ACC type per term.",
+    "ordinary": {
+      "floating_input_types": ["FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3", "E5M2", "E3M2", "E2M3", "E2M1X2", "E1M2X2"],
+      "signed_input_types": ["S16", "S8", "S4X2"],
+      "unsigned_input_types": ["U16", "U8", "U4X2"],
+      "pair_rule": "The two inputs may differ only within one listed class.",
+      "accumulator_by_class": {"floating": "FP32", "signed": "S32", "unsigned": "U32"},
+      "bias_by_class": {"floating": "FP32", "signed": "S32", "unsigned": "U32"},
+      "header_data_type": "left input type",
+      "b_datr_data_type": "right input type; omission inherits the left input type"
+    },
     "mx": {
       "acc_type": "FP32",
-      "allowed_operand_pairs": [
-        ["E4M3", "E4M3"], ["E4M3", "E5M2"], ["E5M2", "E4M3"], ["E5M2", "E5M2"],
-        ["E2M1X2", "E2M1X2"], ["E2M1X2", "HiF4X2"], ["HiF4X2", "E2M1X2"], ["HiF4X2", "HiF4X2"]
-      ],
+      "allowed_operand_types": ["FP16", "BF16", "E4M3", "E5M2", "E2M1X2", "E1M2X2"],
+      "pair_rule": "Every ordered pair of allowed operand types is assigned.",
+      "unscaled_operand_types": ["FP16", "BF16"],
+      "scaled_operand_types": ["E4M3", "E5M2", "E2M1X2", "E1M2X2"],
       "bias_type": "FP32",
-      "header_data_type": "FP32",
+      "header_data_type": "left input type",
       "scale_a_shape": "M x ceil(K/32)",
       "scale_b_shape": "ceil(K/32) x N",
       "scale_block_logical_k_elements": 32,
       "scale_indexing": "ScaleA[m,floor(k/32)] and ScaleB[floor(k/32),n]",
-      "scale_order": "Decode both E8M0 scales and multiply each corresponding logical input by its scale before the fused multiply-add. A 0xFF scale makes the FP32 term and resulting ACC lane canonical NaN.",
-      "scale_types": ["E8M0", "E8M0"]
+      "scale_order": "Decode each present E8M0 scale and multiply the corresponding logical input before fused multiply-add. FP16 and BF16 sides omit the scale. A 0xFF scale makes the FP32 term and resulting ACC lane canonical NaN.",
+      "scale_type": "E8M0"
     },
-    "ordinary_type_table": [
-      {"acc_type": "FP64", "bias_type": "FP64", "header_data_type": "FP64", "left_type": "FP64", "right_type": "FP64"},
-      {"acc_type": "FP32", "bias_type": "FP32", "header_data_type": "FP32", "left_type": "FP32", "right_type": "FP32"},
-      {"acc_type": "FP32", "bias_type": "TF32", "header_data_type": "TF32", "left_type": "TF32", "right_type": "TF32"},
-      {"acc_type": "FP32", "bias_type": "HF32", "header_data_type": "HF32", "left_type": "HF32", "right_type": "HF32"},
-      {"acc_type": "FP32", "bias_type": "FP16", "header_data_type": "FP16", "left_type": "FP16", "right_type": "FP16"},
-      {"acc_type": "FP32", "bias_type": "BF16", "header_data_type": "BF16", "left_type": "BF16", "right_type": "BF16"},
-      {"acc_type": "FP32", "bias_type": "HiF8", "header_data_type": "HiF8", "left_type": "HiF8", "right_type": "HiF8"},
-      {"acc_type": "FP32", "bias_type": "E4M3", "header_data_type": "E4M3", "left_type": "E4M3", "right_type": "E4M3"},
-      {"acc_type": "FP32", "bias_type": "E5M2", "header_data_type": "E5M2", "left_type": "E5M2", "right_type": "E5M2"},
-      {"acc_type": "FP32", "bias_type": "E3M2", "header_data_type": "E3M2", "left_type": "E3M2", "right_type": "E3M2"},
-      {"acc_type": "FP32", "bias_type": "E2M3", "header_data_type": "E2M3", "left_type": "E2M3", "right_type": "E2M3"},
-      {"acc_type": "FP32", "bias_type": "E2M1X2", "header_data_type": "E2M1X2", "left_type": "E2M1X2", "right_type": "E2M1X2"},
-      {"acc_type": "FP32", "bias_type": "E1M2X2", "header_data_type": "E1M2X2", "left_type": "E1M2X2", "right_type": "E1M2X2"},
-      {"acc_type": "FP32", "bias_type": "HiF4X2", "header_data_type": "HiF4X2", "left_type": "HiF4X2", "right_type": "HiF4X2"},
-      {"acc_type": "S64", "bias_type": "S64", "header_data_type": "S64", "left_type": "S64", "right_type": "S64"},
-      {"acc_type": "S64", "bias_type": "S32", "header_data_type": "S32", "left_type": "S32", "right_type": "S32"},
-      {"acc_type": "S64", "bias_type": "S16", "header_data_type": "S16", "left_type": "S16", "right_type": "S16"},
-      {"acc_type": "S64", "bias_type": "S8", "header_data_type": "S8", "left_type": "S8", "right_type": "S8"},
-      {"acc_type": "S64", "bias_type": "S4X2", "header_data_type": "S4X2", "left_type": "S4X2", "right_type": "S4X2"},
-      {"acc_type": "U64", "bias_type": "U64", "header_data_type": "U64", "left_type": "U64", "right_type": "U64"},
-      {"acc_type": "U64", "bias_type": "U32", "header_data_type": "U32", "left_type": "U32", "right_type": "U32"},
-      {"acc_type": "U64", "bias_type": "U16", "header_data_type": "U16", "left_type": "U16", "right_type": "U16"},
-      {"acc_type": "U64", "bias_type": "U8", "header_data_type": "U8", "left_type": "U8", "right_type": "U8"},
-      {"acc_type": "U64", "bias_type": "U4X2", "header_data_type": "U4X2", "left_type": "U4X2", "right_type": "U4X2"}
-    ]
+    "postprocess": {
+      "order": ["raw-accumulator-row-and-group-reductions", "prequant-destination-conversion", "destination-domain-activation", "atomic-output-and-status-publication"],
+      "fp19": "sign:1, exponent:8 bias 127, fraction:10; positive finite nonzero scale",
+      "integer_sat_disabled": "finite overflow wraps modulo destination width; NaN or infinity uses the common destination indefinite value",
+      "integer_sat_enabled": "finite overflow and infinities clamp; NaN becomes zero",
+      "modes": [
+        {"code": 0, "name": "NoQuant", "source": ["FP32", "S32", "U32"], "destination": "unchanged", "parameter": "none"},
+        {"code": 1, "name": "F322F16", "source": ["FP32"], "destination": "FP16", "parameter": "none"},
+        {"code": 2, "name": "VREQ8", "source": ["S32"], "destination": "S8", "parameter": "vector-fp19-scale-s9-offset"},
+        {"code": 3, "name": "REQ8", "source": ["S32"], "destination": "S8", "parameter": "scalar-fp19-scale-s9-offset"},
+        {"code": 4, "name": "VDEQF16", "source": ["S32"], "destination": "FP16", "parameter": "vector-fp19-scale"},
+        {"code": 5, "name": "DEQF16", "source": ["S32"], "destination": "FP16", "parameter": "scalar-fp19-scale"},
+        {"code": 12, "name": "VSHIFTS322S16", "source": ["S32"], "destination": "S16", "parameter": "vector-shift-1-through-16"},
+        {"code": 13, "name": "SHIFTS322S16", "source": ["S32"], "destination": "S16", "parameter": "scalar-shift-1-through-16"},
+        {"code": 16, "name": "F322BF16", "source": ["FP32"], "destination": "BF16", "parameter": "none"},
+        {"code": 17, "name": "REQ4", "source": ["S32"], "destination": "S4X2", "parameter": "scalar-fp19-scale-s5-offset"},
+        {"code": 18, "name": "VREQ4", "source": ["S32"], "destination": "S4X2", "parameter": "vector-fp19-scale-s5-offset"},
+        {"code": 19, "name": "DEQS16", "source": ["S32"], "destination": "S16", "parameter": "scalar-fp19-scale-s17-offset"},
+        {"code": 20, "name": "VDEQS16", "source": ["S32"], "destination": "S16", "parameter": "vector-fp19-scale-s17-offset"},
+        {"code": 23, "name": "VQF322B8_PRE", "source": ["FP32"], "destination": "S8", "parameter": "vector-fp19-scale-s9-offset"},
+        {"code": 24, "name": "QF322B8_PRE", "source": ["FP32"], "destination": "S8", "parameter": "scalar-fp19-scale-s9-offset"},
+        {"code": 25, "name": "QF322HIF8_PRE", "source": ["FP32"], "destination": "HiF8", "parameter": "scalar-fp19-scale"},
+        {"code": 26, "name": "QF322FP8_PRE", "source": ["FP32"], "destination": "E4M3", "parameter": "scalar-fp19-scale"},
+        {"code": 27, "name": "QF322F32_PRE", "source": ["FP32"], "destination": "FP32", "parameter": "scalar-fp19-scale"},
+        {"code": 28, "name": "VQF322HIF8_PRE", "source": ["FP32"], "destination": "HiF8", "parameter": "vector-fp19-scale"},
+        {"code": 32, "name": "QF322F16_PRE", "source": ["FP32"], "destination": "FP16", "parameter": "scalar-fp19-scale"},
+        {"code": 33, "name": "VQF322F16_PRE", "source": ["FP32"], "destination": "FP16", "parameter": "vector-fp19-scale"},
+        {"code": 34, "name": "QF322BF16_PRE", "source": ["FP32"], "destination": "BF16", "parameter": "scalar-fp19-scale"},
+        {"code": 35, "name": "QS322BF16_PRE", "source": ["S32"], "destination": "BF16", "parameter": "scalar-fp19-scale"},
+        {"code": 36, "name": "VQF322BF16_PRE", "source": ["FP32"], "destination": "BF16", "parameter": "vector-fp19-scale"},
+        {"code": 37, "name": "VQF322FP8_PRE", "source": ["FP32"], "destination": "E4M3", "parameter": "vector-fp19-scale"},
+        {"code": 38, "name": "VQF322F32_PRE", "source": ["FP32"], "destination": "FP32", "parameter": "vector-fp19-scale"},
+        {"code": 39, "name": "VQS322BF16_PRE", "source": ["S32"], "destination": "BF16", "parameter": "vector-fp19-scale"}
+      ]
+    }
   },
   "min_max": {
     "both_nan": "canonical destination NaN when the destination format has NaN",
@@ -329,7 +348,7 @@
     "lane_order": "Logical lane 2*i is bits 3:0 of storage byte i; logical lane 2*i+1 is bits 7:4 of storage byte i.",
     "partial_final_byte": "When a logical extent is odd, the unused high nibble of the final storage byte is reserved and MUST be zero on publication. Consumers ignore it."
   },
-  "profile_id": "pto-hardware-numeric-0.58.1-ieee-v1",
+  "profile_id": "pto-hardware-numeric-0.58.2-ieee-v1",
   "reductions": {
     "arg_tie": "lowest original logical index",
     "empty_input": "illegal before effects",
@@ -342,7 +361,7 @@
     "hardware_conformance_claim": false,
     "profile_id": "pto-v0",
     "role": "deterministic raw-carrier ASL reference-test profile",
-    "rule": "pto-v0 output values are not hardware numeric conformance evidence"
+    "rule": "General pto-v0 output values are not hardware numeric conformance evidence; the B.FPATR postprocess hooks implement the bit-exact matrix postprocess section of this profile."
   },
   "reserved_data_type_codes": [15, 21, 22, 23, 29, 30],
   "schema_version": 2,

@@ -39,14 +39,19 @@ begin
            TileDataTypeIsFourBit(data_type);
 end;
 
-// Move24 operations historically excluded HiF4X2.  Keep that exact packed
-// exclusion while applying the non-packed carrier width rule.
+// Move24 operations accept every assigned Tile DataType except HiF4X2.
+// Keep that exact architectural exclusion independent of the narrower
+// Stage-4 carrier helper used by other raw-carrier operations.
 pure func TileCarrierOrMove24BaselineDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return TileCarrierOnlyDataTypeSupported(data_type) ||
-           (TileDataTypeIsFourBit(data_type) &&
-            data_type != TileDataType_HiF4X2);
+    return TileMove24DataTypeSupported(data_type);
+end;
+
+pure func TileRegularTLSUDataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    return TileTeplRawCarrierTypeSupported(data_type);
 end;
 
 pure func TileVecArithmeticDataTypeSupported(
@@ -96,6 +101,19 @@ begin
            data_type == TileDataType_BF16;
 end;
 
+pure func TileFloatingElementwiseDataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_FP64 ||
+           data_type == TileDataType_FP32 ||
+           data_type == TileDataType_TF32 ||
+           data_type == TileDataType_HF32 ||
+           data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16 ||
+           data_type == TileDataType_E4M3 ||
+           data_type == TileDataType_E5M2;
+end;
+
 pure func TileI6DataTypeSupported(
     data_type: TileDataType) => boolean
 begin
@@ -110,21 +128,13 @@ end;
 pure func TileTNegDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_S32 ||
-           data_type == TileDataType_S16 ||
-           data_type == TileDataType_S8 ||
-           data_type == TileDataType_FP32 ||
-           data_type == TileDataType_FP16 ||
-           data_type == TileDataType_BF16;
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 pure func TileTReluDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_FP16 ||
-           data_type == TileDataType_BF16 ||
-           data_type == TileDataType_FP32 ||
-           data_type == TileDataType_S32;
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 pure func TileArgReductionSourceDataTypeSupported(
@@ -136,7 +146,7 @@ end;
 pure func TileFusedMultiplyAddDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return TileF3DataTypeSupported(data_type);
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 pure func TileMove24DataTypeSupported(
@@ -148,16 +158,7 @@ end;
 pure func TileFillPadDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    case data_type of
-        when TileDataType_FP32, TileDataType_TF32,
-             TileDataType_HF32, TileDataType_FP16,
-             TileDataType_BF16, TileDataType_E4M3,
-             TileDataType_E5M2, TileDataType_S32,
-             TileDataType_S16, TileDataType_S8,
-             TileDataType_U32, TileDataType_U16,
-             TileDataType_U8 => return TRUE;
-        otherwise => return FALSE;
-    end;
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 pure func TileImg2ColDataTypeSupported(
@@ -208,18 +209,10 @@ begin
     if operation == TileBinary_AND ||
        operation == TileBinary_OR ||
        operation == TileBinary_XOR then
-        return TileCarrierOnlyDataTypeSupported(data_type);
+        return TileVecScalarIntegerDataTypeSupported(data_type);
     end;
     if operation == TileBinary_SHL || operation == TileBinary_SHR then
-        return TileI6DataTypeSupported(data_type);
-    end;
-    if operation == TileBinary_ADD || operation == TileBinary_SUB ||
-       operation == TileBinary_MAX || operation == TileBinary_MIN then
-        return TileA9DataTypeSupported(data_type);
-    end;
-    if operation == TileBinary_MUL || operation == TileBinary_DIV ||
-       operation == TileBinary_REM then
-        return TileA7DataTypeSupported(data_type);
+        return TileVecScalarIntegerDataTypeSupported(data_type);
     end;
     return TileVecArithmeticDataTypeSupported(data_type);
 end;

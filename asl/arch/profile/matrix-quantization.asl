@@ -1,0 +1,412 @@
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","surface":"arch","classification":["profile","matrix-quantization"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","PTO-ARCH-DATA-TYPES-FP19"]}
+// Bit-exact numeric helpers for B.FPATR matrix post-processing.
+// NDF-BEGIN: PTO-MATRIX-QUANT-BITEXACT-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// Matrix PreQuant MUST multiply by the selected FP19 scale, add an assigned
+// signed offset before rounding, and apply B.DATR rounding and saturation.
+// Shift modes MUST perform their assigned one-through-sixteen-bit ASR.
+// NDF-END: PTO-MATRIX-QUANT-BITEXACT-001
+
+pure func MatrixQuantParameter(fp19: bits(19), offset: Word,
+                               offset_width: integer {0,5,9,17}) => Word
+begin
+    var result = Zeros{PTO_XLEN};
+    result[31:13] = fp19;
+    case offset_width of
+        when 0 => return result;
+        when 5 => result[41:37] = offset[4:0];
+        when 9 => result[45:37] = offset[8:0];
+        when 17 => result[53:37] = offset[16:0];
+    end;
+    return result;
+end;
+
+pure func MatrixShiftParameter(code: integer {0..15}) => Word
+begin
+    var result = Zeros{PTO_XLEN};
+    result[35:32] = Zeros{4} + code;
+    return result;
+end;
+
+pure func MatrixQuantOffset(parameter: Word,
+                            width: integer {0,5,9,17}) => integer
+begin
+    case width of
+        when 0 => return 0;
+        when 5 => return SInt(parameter[41:37]);
+        when 9 => return SInt(parameter[45:37]);
+        when 17 => return SInt(parameter[53:37]);
+    end;
+end;
+
+pure func MatrixMagnitudeRoundingMode(
+    mode: NumericRoundingMode, negative: boolean) => NumericRoundingMode
+begin
+    if !negative then return mode; end;
+    if mode == NumericRound_RTP then return NumericRound_RTM;
+    elsif mode == NumericRound_RTM then return NumericRound_RTP;
+    end;
+    return mode;
+end;
+
+func MatrixRoundMagnitude(
+    value: real, mode: NumericRoundingMode,
+    negative: boolean) => integer
+begin
+    if negative && mode == NumericRound_RHB then
+        let lower = RoundDown(value);
+        let fraction = value - Real(lower);
+        if fraction <= 0.5 then return lower;
+        else return lower + 1;
+        end;
+    end;
+    return FloatingToInteger(
+        value, MatrixMagnitudeRoundingMode(mode, negative));
+end;
+
+func ReferenceMatrixIntegerEncoding(
+    value: real, destination_type: TileDataType,
+    control: NumericExecutionControl) => (Word, bits(5))
+begin
+    let rounded = FloatingToInteger(value, control.rounding_mode);
+    let minimum = ReferenceIntegerValue(
+        TileIntegerMinimum(destination_type), destination_type);
+    let maximum = ReferenceIntegerValue(
+        TileIntegerMaximum(destination_type), destination_type);
+    let overflow = rounded < minimum || rounded > maximum;
+    var selected = rounded;
+    if control.saturating && overflow then
+        if selected < minimum then selected = minimum;
+        else selected = maximum;
+        end;
+    end;
+    let flags = if overflow then Zeros{5} + 0x14
+        else if Real(rounded) != value then Zeros{5} + 0x10
+        else Zeros{5};
+    return (
+        NormalizeTileInteger(Zeros{PTO_XLEN} + selected,
+            destination_type),
+        flags);
+end;
+
+func ReferenceBinary16Encoding(
+    value: real, destination_type: TileDataType,
+    control: NumericExecutionControl) => (Word, bits(5))
+begin
+    assert destination_type == TileDataType_FP16 ||
+           destination_type == TileDataType_BF16;
+    if value == 0.0 then return (Zeros{PTO_XLEN}, Zeros{5}); end;
+    let negative = value < 0.0;
+    var normalized = if negative then -value else value;
+    var exponent: integer {-149..128} = 0;
+    for step = 1 to 128 looplimit 128 do
+        if normalized >= 2.0 && exponent < 128 then
+            normalized = normalized / 2.0;
+            exponent = (exponent + 1) as integer {-149..128};
+        end;
+    end;
+    for step = 1 to 149 looplimit 149 do
+        if normalized < 1.0 && exponent > -149 then
+            normalized = normalized * 2.0;
+            exponent = (exponent - 1) as integer {-149..128};
+        end;
+    end;
+
+    let bf16 = destination_type == TileDataType_BF16;
+    let fraction_bits = if bf16 then 7 else 10;
+    let fraction_scale = if bf16 then 128 else 1024;
+    let bias = if bf16 then 127 else 15;
+    let maximum_exponent = if bf16 then 127 else 15;
+    let minimum_exponent = if bf16 then -126 else -14;
+    let minimum_subnormal_exponent = if bf16 then -133 else -24;
+    let sign = if negative then 0x8000 else 0;
+
+    if exponent > maximum_exponent then
+        let overflow = if control.saturating then
+            (if bf16 then 0x7f7f else 0x7bff)
+        else
+            (if bf16 then 0x7f80 else 0x7c00);
+        return (Zeros{PTO_XLEN} + sign + overflow,
+                Zeros{5} + 0x14);
+    end;
+
+    if exponent < minimum_exponent then
+        let scaled = (if negative then -value else value) /
+            ReferencePowerOfTwo(
+                minimum_subnormal_exponent as integer {-149..127});
+        var rounded = MatrixRoundMagnitude(
+            scaled, control.rounding_mode, negative);
+        if rounded >= fraction_scale then
+            return (Zeros{PTO_XLEN} + sign + fraction_scale,
+                    if Real(rounded) == scaled then Zeros{5}
+                    else Zeros{5} + 0x18);
+        end;
+        if rounded < 0 then rounded = 0; end;
+        return (Zeros{PTO_XLEN} + sign + rounded,
+                if Real(rounded) == scaled then Zeros{5}
+                else Zeros{5} + 0x18);
+    end;
+
+    let scaled = normalized * Real(fraction_scale);
+    var rounded = MatrixRoundMagnitude(
+        scaled, control.rounding_mode, negative);
+    var encoded_exponent = exponent + bias;
+    if rounded == 2 * fraction_scale then
+        rounded = fraction_scale;
+        assert encoded_exponent <= 254;
+        encoded_exponent =
+            (encoded_exponent + 1) as integer {-134..255};
+    end;
+    if encoded_exponent >= 2 * bias + 1 then
+        let overflow = if control.saturating then
+            (if bf16 then 0x7f7f else 0x7bff)
+        else
+            (if bf16 then 0x7f80 else 0x7c00);
+        return (Zeros{PTO_XLEN} + sign + overflow,
+                Zeros{5} + 0x14);
+    end;
+    let fraction = rounded - fraction_scale;
+    let encoded = encoded_exponent * fraction_scale + fraction;
+    return (Zeros{PTO_XLEN} + sign + encoded,
+            if Real(rounded) == scaled then Zeros{5}
+            else Zeros{5} + 0x10);
+end;
+
+pure func ReferenceBinary16FiniteValue(
+    value: Word, data_type: TileDataType) => real
+begin
+    assert data_type == TileDataType_FP16 || data_type == TileDataType_BF16;
+    let bf16 = data_type == TileDataType_BF16;
+    let sign = value[15];
+    let exponent = if bf16 then UInt(value[14:7])
+        else UInt(value[14:10]);
+    let fraction = if bf16 then UInt(value[6:0])
+        else UInt(value[9:0]);
+    let fraction_scale = if bf16 then 128 else 1024;
+    let bias = if bf16 then 127 else 15;
+    let minimum_subnormal_exponent = if bf16 then -133 else -24;
+    let maximum_field = if bf16 then 255 else 31;
+    assert exponent != maximum_field;
+    var magnitude: real = 0.0;
+    if exponent == 0 then
+        magnitude = Real(fraction) * ReferencePowerOfTwo(
+            minimum_subnormal_exponent as integer {-149..127});
+    else
+        magnitude = (1.0 + Real(fraction) / Real(fraction_scale)) *
+            ReferencePowerOfTwo(
+                (exponent - bias) as integer {-126..127});
+    end;
+    if sign == '1' then return -magnitude; end;
+    return magnitude;
+end;
+
+pure func ReferenceFP8FiniteValue(
+    data_type: TileDataType, code: bits(8)) => real
+begin
+    assert data_type == TileDataType_E4M3 ||
+           data_type == TileDataType_HiF8;
+    let negative = code[7] == '1';
+    var magnitude: real = 0.0;
+    if data_type == TileDataType_E4M3 then
+        let exponent = UInt(code[6:3]);
+        let fraction = UInt(code[2:0]);
+        if exponent == 0 then
+            magnitude = Real(fraction) * ReferencePowerOfTwo(-9);
+        else
+            magnitude = (1.0 + Real(fraction) / 8.0) *
+                ReferencePowerOfTwo(
+                    (exponent - 7) as integer {-6..8});
+        end;
+    else
+        let body = UInt(code[6:0]);
+        if body <= 7 then
+            if body == 0 then magnitude = 0.0;
+            else
+                magnitude = ReferencePowerOfTwo(
+                    (body - 23) as integer {-22..-16});
+            end;
+        elsif body <= 15 then
+            magnitude = 1.0 + Real(body - 8) / 8.0;
+        elsif body <= 31 then
+            let exponent_code = UInt(code[3]);
+            let exponent = if exponent_code == 0 then 1 else -1;
+            magnitude = (1.0 + Real(UInt(code[2:0])) / 8.0) *
+                ReferencePowerOfTwo(exponent as integer {-1..1});
+        elsif body <= 63 then
+            let exponent_code = UInt(code[4:3]);
+            let absolute = 2 + UInt(code[3]);
+            let exponent = if exponent_code < 2 then absolute else -absolute;
+            magnitude = (1.0 + Real(UInt(code[2:0])) / 8.0) *
+                ReferencePowerOfTwo(exponent as integer {-3..3});
+        elsif body <= 95 then
+            let exponent_code = UInt(code[4:2]);
+            let absolute = 4 + UInt(code[3:2]);
+            let exponent = if exponent_code < 4 then absolute else -absolute;
+            magnitude = (1.0 + Real(UInt(code[1:0])) / 4.0) *
+                ReferencePowerOfTwo(exponent as integer {-7..7});
+        else
+            let exponent_code = UInt(code[4:1]);
+            let absolute = 8 + UInt(code[3:1]);
+            let exponent = if exponent_code < 8 then absolute else -absolute;
+            magnitude = (1.0 + Real(UInt(code[0])) / 2.0) *
+                ReferencePowerOfTwo(exponent as integer {-15..15});
+        end;
+    end;
+    if negative then return -magnitude; end;
+    return magnitude;
+end;
+
+pure func ReferenceNearestFP8CandidateBetter(
+    target: real, candidate: real, candidate_code: integer {0..255},
+    best: real, best_code: integer {0..255},
+    mode: NumericRoundingMode) => boolean
+begin
+    let candidate_distance = if candidate >= target then
+        candidate - target else target - candidate;
+    let best_distance = if best >= target then best - target else target - best;
+    if candidate_distance < best_distance then return TRUE;
+    elsif candidate_distance > best_distance then return FALSE;
+    end;
+    if mode == NumericRound_RNE then
+        return candidate_code MOD 2 == 0 && best_code MOD 2 != 0;
+    elsif mode == NumericRound_RNA then
+        let candidate_magnitude = if candidate < 0.0 then -candidate else candidate;
+        let best_magnitude = if best < 0.0 then -best else best;
+        return candidate_magnitude > best_magnitude;
+    elsif mode == NumericRound_RTO then
+        return candidate_code MOD 2 != 0 && best_code MOD 2 == 0;
+    else
+        return candidate > best;
+    end;
+end;
+
+func ReferenceFP8Encoding(
+    value: real, destination_type: TileDataType,
+    control: NumericExecutionControl) => (Word, bits(5))
+begin
+    assert destination_type == TileDataType_E4M3 ||
+           destination_type == TileDataType_HiF8;
+    if value == 0.0 then return (Zeros{PTO_XLEN}, Zeros{5}); end;
+    let negative = value < 0.0;
+    let magnitude = if negative then -value else value;
+    let maximum = if destination_type == TileDataType_E4M3 then
+        448.0 else 32768.0;
+    if magnitude > maximum then
+        let result = if control.saturating then
+            (if destination_type == TileDataType_E4M3 then
+                (if negative then 0xfe else 0x7e)
+             else (if negative then 0xee else 0x6e))
+        else if destination_type == TileDataType_E4M3 then 0x7f
+        else if negative then 0xef else 0x6f;
+        return (Zeros{PTO_XLEN} + result, Zeros{5} + 0x14);
+    end;
+
+    var best_set = FALSE;
+    var best_code: integer {0..255} = 0;
+    var best_value: real = 0.0;
+    for code = 0 to 255 do
+        let candidate_bits = Zeros{8} + code;
+        let value_class = TileNumericValueClass(
+            destination_type, Zeros{PTO_XLEN} + code);
+        if !NumericValueClassIsNaN(value_class) &&
+           !NumericValueClassIsInfinity(value_class) &&
+           value_class != NumericValue_InvalidEncoding then
+            let candidate = ReferenceFP8FiniteValue(
+                destination_type, candidate_bits);
+            var eligible = TRUE;
+            if control.rounding_mode == NumericRound_RTP then
+                eligible = candidate >= value;
+            elsif control.rounding_mode == NumericRound_RTM then
+                eligible = candidate <= value;
+            elsif control.rounding_mode == NumericRound_RTZ ||
+                  control.rounding_mode == NumericRound_RTO then
+                eligible = if negative then candidate <= 0.0 && candidate >= value
+                    else candidate >= 0.0 && candidate <= value;
+            end;
+            if eligible then
+                var better = !best_set;
+                if best_set then
+                    if control.rounding_mode == NumericRound_RTP then
+                        better = candidate < best_value;
+                    elsif control.rounding_mode == NumericRound_RTM then
+                        better = candidate > best_value;
+                    elsif control.rounding_mode == NumericRound_RTZ ||
+                          control.rounding_mode == NumericRound_RTO then
+                        better = if negative then candidate < best_value
+                            else candidate > best_value;
+                    else
+                        better = ReferenceNearestFP8CandidateBetter(
+                            value, candidate, code, best_value, best_code,
+                            control.rounding_mode);
+                    end;
+                end;
+                if better then
+                    best_set = TRUE;
+                    best_code = code;
+                    best_value = candidate;
+                end;
+            end;
+        end;
+    end;
+    assert best_set;
+
+    if control.rounding_mode == NumericRound_RTO && best_value != value &&
+       best_code MOD 2 == 0 then
+        var odd_set = FALSE;
+        var odd_code: integer {0..255} = best_code;
+        var odd_value: real = best_value;
+        for code = 0 to 255 do
+            if code MOD 2 == 1 then
+                let candidate_class = TileNumericValueClass(
+                    destination_type, Zeros{PTO_XLEN} + code);
+                if !NumericValueClassIsNaN(candidate_class) &&
+                   !NumericValueClassIsInfinity(candidate_class) then
+                    let candidate = ReferenceFP8FiniteValue(
+                        destination_type, Zeros{8} + code);
+                    let away = if negative then candidate < best_value
+                        else candidate > best_value;
+                    if away && (!odd_set ||
+                       (if negative then candidate > odd_value
+                        else candidate < odd_value)) then
+                        odd_set = TRUE;
+                        odd_code = code;
+                        odd_value = candidate;
+                    end;
+                end;
+            end;
+        end;
+        if odd_set then
+            best_code = odd_code;
+            best_value = odd_value;
+        end;
+    end;
+
+    let minimum_normal = if destination_type == TileDataType_E4M3 then
+        ReferencePowerOfTwo(-6) else ReferencePowerOfTwo(-15);
+    let inexact = best_value != value;
+    let underflow = inexact && magnitude < minimum_normal;
+    return (Zeros{PTO_XLEN} + best_code,
+            if underflow then Zeros{5} + 0x18
+            else if inexact then Zeros{5} + 0x10
+            else Zeros{5});
+end;
+
+func ReferenceMatrixFloatingEncoding(
+    value: real, destination_type: TileDataType,
+    control: NumericExecutionControl) => (Word, bits(5))
+begin
+    if destination_type == TileDataType_FP32 then
+        let (result, flags) = ReferenceFP32FiniteEncoding(
+            value, control.rounding_mode);
+        if control.saturating && (flags AND (Zeros{5} + 4)) != Zeros{5} then
+            let sign = result AND (Zeros{PTO_XLEN} + 0x80000000);
+            return (sign OR (Zeros{PTO_XLEN} + 0x7f7fffff), flags);
+        end;
+        return (result, flags);
+    elsif destination_type == TileDataType_FP16 ||
+          destination_type == TileDataType_BF16 then
+        return ReferenceBinary16Encoding(value, destination_type, control);
+    else
+        return ReferenceFP8Encoding(value, destination_type, control);
+    end;
+end;

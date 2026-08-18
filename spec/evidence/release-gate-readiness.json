@@ -126,7 +126,7 @@
     "scripts/encoding_witness.py": "f7767271a695c7d0e634683d3d5768f476f17a50f587f0e4020bd380d5769202",
     "scripts/generate-instruction-contract-closure": "3683bb65d57345b5235a83050f9e2c656dde723174577321a949d7ab1c17c9e7",
     "scripts/instruction_contracts.py": "577ec4f3110dfce23da0277b3aabd8a766bfa5d6346e7b63ca8a3b319a85ed33",
-    "scripts/instruction_docs.py": "079086723f96b82bc2a8f4d0493a47812436af4277bbb4e2c2998bcf8b5cefbd",
+    "scripts/instruction_docs.py": "23fb4e171eeaf3c0b89f6f76da5dcd245c950ba622ea1e4310db005ebab739f4",
     "scripts/manual_semantic_audit.py": "113c5ff6cfe56baaccc9730ad2d29b8a56ac4536df8a012ae13e01c05c7a45fe",
     "scripts/prepare-aslref": "0aceca8980869c80e3d8b7751bd7fcdc61d1920f027bfd760e1a7b5e3f8f85c6",
     "scripts/print-asl-test-matrix": "1e4b29cb97ba7524e252bb506cf0dd1b8f3d4e3d1108e345d6adf85540937a3d",
@@ -139,21 +139,21 @@
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
-    "spec/evidence/release-traceability-readiness.json": "7901957e681772dd8937251afd4e27b224d532c3f99006f8b2edc5487d237844",
+    "spec/evidence/release-traceability-readiness.json": "07c446c5139aa52a035f2ae6c1e8eb7fda60a0a9645f4c821c5e9c792e4009a4",
     "spec/release-inputs.json": "397e1d3b61121357fea15a1352067f40ac72e508a7e18819ac8b23004d444d0b",
     "spec/schemas/pto-spec-release-event-v1.schema.json": "0d435c6ca7fba416d9f3886e5ebf617bbc761afab0bad4731326b4d52f6d4b44"
   },
   "summary": {
-    "documentation_page_count": 811,
-    "executable_requirement_count": 634,
+    "documentation_page_count": 831,
+    "executable_requirement_count": 635,
     "gate_count": 10,
     "mnemonic_count": 634,
     "status": "ready-for-exact-head-verification",
-    "test_count": 3200,
-    "test_page_count": 32,
+    "test_count": 3250,
+    "test_page_count": 33,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,
     "uncovered_unit_count": 0,
-    "unit_count": 811
+    "unit_count": 831
   }
 }

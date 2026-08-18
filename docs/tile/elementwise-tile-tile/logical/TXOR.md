@@ -73,7 +73,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TXOR(
     data_type: TileDataType) => boolean
 begin
-    return TileCarrierOnlyDataTypeSupported(data_type);
+    return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TXOR(

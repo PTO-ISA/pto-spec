@@ -117,7 +117,7 @@ begin
         return FALSE;
     end;
     let data_type = TileDataTypeFromEncoding(code as TileDataTypeEncoding);
-    return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
+    return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractHandler_TSTORE() => TileSemanticHandler

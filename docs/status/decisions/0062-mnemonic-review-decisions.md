@@ -4190,3 +4190,166 @@ result order: `RegDst0` receives the quotient and `RegDst1` receives the
 remainder. The decision changes no encoding, operand width, signedness,
 zero-divisor arithmetic, overflow behavior, selector domain, or retirement
 rule.
+
+## PRD-174: B.FPATR numeric post-processing is bit-exact architecture
+
+Every assigned nonzero `B.FPATR.PreQuantMode`, every assigned `ReluMode`, and
+every enabled RowMax or GroupMax result MUST have one bit-exact architectural
+result. Identical input encodings, parameters, dimensions, and numeric controls
+MUST produce identical destination and auxiliary-output encodings across all
+conforming implementations.
+
+The matrix post-processing profile MUST define conversion order, parameter
+interpretation, rounding, saturation, overflow, exceptional values, output
+packing, activation, and auxiliary-reduction results. A nonzero assigned mode
+MUST NOT fall back to an identity transform or an implementation-selected
+numeric policy.
+
+## PRD-175: B.FPATR reductions precede destination conversion and activation
+
+Matrix RowMax and GroupMax consume the complete raw accumulator result before
+destination conversion or activation. `MaxAbsEn` and `RowMaxInit` affect this
+raw-accumulator reduction stage. PreQuant then converts only the primary `D`
+result, and the selected ReLU, scalar LReLU/PReLU, or vector PReLU operation
+applies to the converted `D` elements.
+
+PreQuant and activation do not alter RowMaxOut or GroupMaxOut. Those auxiliary
+outputs retain the accumulator data type and format. The processed `D` and all
+enabled auxiliary outputs are prepared from the same pre-commit state and
+published as one atomic output group.
+
+## PRD-176: B.FPATR activation is bit-exact in the converted destination domain
+
+`ReluMode=1` applies `max(x, +0)` to the converted destination value in the
+selected destination data type. Scalar LReLU/PReLU and per-column vector PReLU
+leave nonnegative converted values unchanged. For a negative converted value,
+they decode that value, multiply it by the selected FP19 parameter, and
+re-encode the product to the destination data type using the same
+`B.DATR.RMode` and `B.DATR.Sat` controls as destination conversion.
+
+The scalar mode obtains one finite nonnegative FP19 parameter from the assigned
+dense B.IOR source. The vector mode obtains one such FP19 parameter per
+destination column from the assigned `1 x N` Local parameter Tile. A NaN input
+produces the numeric profile's canonical NaN and does not participate in an
+ordered comparison with zero.
+
+## PRD-177: B.FPATR scalar and vector quantization use multiplicative scales
+
+A scalar-parameter PreQuant mode multiplies every raw accumulator element by
+one scalar scale. A vector-parameter mode multiplies each element by the scale
+selected by its destination column from the assigned `1 x N` parameter Tile.
+No assigned scale mode interprets the parameter as a divisor.
+
+For an integer-output mode whose parameter carrier includes an offset or
+zero-point, the offset is added after scale multiplication and before rounding.
+The result is then encoded using the selected `B.DATR.RMode` and
+`B.DATR.Sat`. The two S32-to-S16 shift modes are the exception: they perform
+the assigned signed arithmetic right shift and do not consume a multiplicative
+scale.
+
+## PRD-178: B.FPATR integer saturation control distinguishes clamp from wrap
+
+For every integer destination format, `B.DATR.Sat=1` clamps the rounded result
+to the minimum or maximum representable destination value. `B.DATR.Sat=0`
+does not clamp an ordinary finite overflow; it truncates the rounded integer to
+the destination element width, producing the corresponding modulo-`2^N`
+two's-complement or unsigned encoding.
+
+The same clamp-versus-wrap rule applies when scalar LReLU/PReLU or vector PReLU
+re-encodes its negative-path product to an integer destination type.
+
+## PRD-179: B.FPATR PreQuant codes retain one closed source, destination, and parameter table
+
+The assigned `PreQuantMode` table is:
+
+| Code | Mode | Accumulator | Destination | Parameter |
+| ---: | --- | --- | --- | --- |
+| 0 | NoQuant | FP32, S32, or U32 | unchanged | none |
+| 1 | F322F16 | FP32 | FP16 | none |
+| 2 | VREQ8 | S32 | S8 | per-column FP19 scale and signed 9-bit offset |
+| 3 | REQ8 | S32 | S8 | scalar FP19 scale and signed 9-bit offset |
+| 4 | VDEQF16 | S32 | FP16 | per-column FP19 scale |
+| 5 | DEQF16 | S32 | FP16 | scalar FP19 scale |
+| 12 | VSHIFTS322S16 | S32 | S16 | per-column shift code |
+| 13 | SHIFTS322S16 | S32 | S16 | scalar shift code |
+| 16 | F322BF16 | FP32 | BF16 | none |
+| 17 | REQ4 | S32 | S4X2 | scalar FP19 scale and signed 5-bit offset |
+| 18 | VREQ4 | S32 | S4X2 | per-column FP19 scale and signed 5-bit offset |
+| 19 | DEQS16 | S32 | S16 | scalar FP19 scale and signed 17-bit offset |
+| 20 | VDEQS16 | S32 | S16 | per-column FP19 scale and signed 17-bit offset |
+| 23 | VQF322B8_PRE | FP32 | S8 | per-column FP19 scale and signed 9-bit offset |
+| 24 | QF322B8_PRE | FP32 | S8 | scalar FP19 scale and signed 9-bit offset |
+| 25 | QF322HIF8_PRE | FP32 | HiF8 | scalar FP19 scale |
+| 26 | QF322FP8_PRE | FP32 | E4M3 | scalar FP19 scale |
+| 27 | QF322F32_PRE | FP32 | FP32 | scalar FP19 scale |
+| 28 | VQF322HIF8_PRE | FP32 | HiF8 | per-column FP19 scale |
+| 32 | QF322F16_PRE | FP32 | FP16 | scalar FP19 scale |
+| 33 | VQF322F16_PRE | FP32 | FP16 | per-column FP19 scale |
+| 34 | QF322BF16_PRE | FP32 | BF16 | scalar FP19 scale |
+| 35 | QS322BF16_PRE | S32 | BF16 | scalar FP19 scale |
+| 36 | VQF322BF16_PRE | FP32 | BF16 | per-column FP19 scale |
+| 37 | VQF322FP8_PRE | FP32 | E4M3 | per-column FP19 scale |
+| 38 | VQF322F32_PRE | FP32 | FP32 | per-column FP19 scale |
+| 39 | VQS322BF16_PRE | S32 | BF16 | per-column FP19 scale |
+
+Every other six-bit value is reserved. A nonzero mode used with a different
+accumulator class MUST reject before source snapshots, allocation, numeric
+status, or destination effects. The four-bit shift code represents an
+arithmetic right shift by one through sixteen bits.
+
+## PRD-180: B.FPATR parameters and special values are canonical
+
+FP19 uses one sign bit, an eight-bit exponent with bias 127, and a ten-bit
+fraction. It preserves signed zero and gradual subnormals and assigns IEEE-like
+infinity and NaN classes. A quantization scale MUST be positive, finite, and
+nonzero. Scalar parameters use B.IOR; vector parameters use one row-major
+`1 x N` U64 carrier Tile and select the element for the destination column.
+Unused carrier bits MUST be zero.
+
+Signed integer offsets are two's-complement values at their assigned 5-, 9-,
+or 17-bit width. For float-to-integer special values, `Sat=0` uses the common
+destination indefinite encoding and records invalid status. `Sat=1` converts
+NaN to zero and clamps positive or negative infinity to the corresponding
+destination endpoint; NaN records invalid and infinity records overflow plus
+inexact status. Floating destinations produce the canonical quiet NaN; a
+signaling NaN additionally records invalid status.
+
+Floating finite results preserve subnormals with tininess detected after
+rounding. On floating overflow, `Sat=1` returns the largest finite value with
+the input sign; `Sat=0` returns signed infinity where the destination format
+has infinity, or the canonical quiet NaN for finite-only E4M3. Overflow and
+inexact status are recorded.
+
+## PRD-181: B.FPATR output carriers and numeric status publish atomically
+
+FP16, BF16, HiF8, E4M3, FP32, S16, and S8 use their architectural element
+encodings. Each S4X2 logical element occupies the low nibble of its model
+carrier and adjacent logical elements use the existing packed-memory nibble
+order. RowMaxOut and GroupMaxOut retain the raw accumulator data type, use
+row-major `M x 1` and `M x ceil(N/GroupN)` shapes, and observe the fixed
+increasing-column reduction order.
+
+All post-processing and reduction flags are accumulated before commit. The
+processed D payload, enabled auxiliary payloads, descriptors, and sticky
+numeric status are published together. A failed preflight, conversion, or
+allocation exposes none of them.
+
+## PRD-182: floating and scale formats expose exact finite decompositions
+
+Every assigned floating or scale Tile DataType has one exact descriptor for
+its carrier width, logical lane width, lanes per carrier, sign, exponent and
+fraction fields, exponent bias, constrained carrier bits, and supported
+special-value classes. Integer Tile DataTypes have no floating-format
+descriptor.
+
+For every valid finite floating or scale encoding, the formal model returns an
+availability flag, sign, integer significand, and integer exponent whose exact
+value is `(-1)^sign * UInt(significand) * 2^exponent`. This decomposition uses
+only integers and bitvectors and performs no rounding. Invalid internal
+encodings, infinities, NaNs, and integer Tile DataTypes return unavailable.
+
+TF32 and HF32 retain their required low-zero carrier constraints. E3M2 and
+E2M3 retain their required high-zero carrier constraints. Packed E2M1X2,
+E1M2X2, and HiF4X2 decompose one selected four-bit logical lane. E8M0 encodes
+`2^(raw-127)` for raw values `0x00..0xFE`; `0xFF` is unavailable NaN, and a
+scale block contains 32 logical K elements.

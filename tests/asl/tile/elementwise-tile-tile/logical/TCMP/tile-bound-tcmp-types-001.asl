@@ -2,14 +2,22 @@
 func main() => integer
 begin
     assert InstructionContractDataTypeLegal_TCMP(TileDataType_FP32);
+    assert InstructionContractDataTypeLegal_TCMP(TileDataType_FP64);
+    assert InstructionContractDataTypeLegal_TCMP(TileDataType_TF32);
+    assert InstructionContractDataTypeLegal_TCMP(TileDataType_HF32);
     assert InstructionContractDataTypeLegal_TCMP(TileDataType_FP16);
     assert InstructionContractDataTypeLegal_TCMP(TileDataType_BF16);
+    assert InstructionContractDataTypeLegal_TCMP(TileDataType_E4M3);
+    assert InstructionContractDataTypeLegal_TCMP(TileDataType_E5M2);
+    assert InstructionContractDataTypeLegal_TCMP(TileDataType_S64);
     assert InstructionContractDataTypeLegal_TCMP(TileDataType_S32);
     assert InstructionContractDataTypeLegal_TCMP(TileDataType_S16);
+    assert InstructionContractDataTypeLegal_TCMP(TileDataType_S8);
+    assert InstructionContractDataTypeLegal_TCMP(TileDataType_U64);
     assert InstructionContractDataTypeLegal_TCMP(TileDataType_U32);
     assert InstructionContractDataTypeLegal_TCMP(TileDataType_U16);
-    assert !InstructionContractDataTypeLegal_TCMP(TileDataType_S8);
-    assert !InstructionContractDataTypeLegal_TCMP(TileDataType_U8);
-    assert !InstructionContractDataTypeLegal_TCMP(TileDataType_FP64);
+    assert InstructionContractDataTypeLegal_TCMP(TileDataType_U8);
+    assert !InstructionContractDataTypeLegal_TCMP(TileDataType_HiF8);
+    assert !InstructionContractDataTypeLegal_TCMP(TileDataType_U4X2);
     return 0;
 end;

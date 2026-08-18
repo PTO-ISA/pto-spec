@@ -4,7 +4,7 @@
   "id": "overview.readme",
   "kind": "overview",
   "title": "DavinciOO PTO Intrinsic 参考",
-  "status": "active",
+  "status": "historical",
   "visibility": "public",
   "profile": "pto-isa-0.58.0",
   "sources": {

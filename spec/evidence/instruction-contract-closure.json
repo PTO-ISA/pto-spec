@@ -1767,7 +1767,7 @@
             "role": "closed Matrix destination pre-quantization and output-type selector",
             "signedness": "encoding-defined",
             "width": 6,
-            "zero_meaning": "No pre-quantization; the Matrix accumulation result remains FP32."
+            "zero_meaning": "No pre-quantization; D retains the FP32, S32, or U32 accumulator type."
           },
           {
             "assigned_ranges": [
@@ -2039,6 +2039,7 @@
         "field_domains": [],
         "legality": [
           "PreQuantMode accepts exactly codes 0..5, 12..13, 16..20, 23..28, and 32..39; all other six-bit codes are reserved.",
+          "Each nonzero PreQuantMode accepts exactly its assigned S32 or FP32 accumulator class; code zero accepts FP32, S32, or U32 and preserves that type.",
           "ReluMode codes 0..3 select None, ReLU, scalar LReLU/PReLU, and vector PReLU; codes 4..7 are reserved.",
           "GroupNCode codes 0..9 select 0, 8, 16, 32, 48, 64, 80, 96, 112, and 128 columns; codes 10..15 are reserved.",
           "RowMaxInit requires RowMaxEn. GroupMaxEn requires nonzero GroupNCode and nonzero GroupNCode requires GroupMaxEn. MaxAbsEn requires RowMaxEn or GroupMaxEn.",

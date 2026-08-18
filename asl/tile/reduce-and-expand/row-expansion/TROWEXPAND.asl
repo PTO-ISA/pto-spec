@@ -18,7 +18,7 @@ end;
 pure func InstructionContractDataTypeLegal_TROWEXPAND(
     data_type: TileDataType) => boolean
 begin
-    return TileCarrierOnlyDataTypeSupported(data_type);
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TROWEXPAND(

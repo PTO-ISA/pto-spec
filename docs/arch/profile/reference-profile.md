@@ -477,40 +477,6 @@ begin
         right;
     return accumulator + MultiplyWord(scaled_left, scaled_right);
 end;
-
-// Matrix post-processing keeps conversion/activation arithmetic as a named
-// profile hook.  PTO-v0's deterministic raw-carrier default preserves the
-// payload; FP19, rounding, exceptional values, overflow, saturation, offsets,
-// and output encodings remain an S5-T2 conformance obligation.
-implementation func TileProfileMatrixPostProcess(
-    value: Word, pre_quant_mode: bits(6), relu_mode: bits(3),
-    group_n_code: bits(4), output_type: TileDataType,
-    quant_param: Word, relu_param: Word,
-    control: NumericExecutionControl) => Word
-begin
-    return value;
-end;
-
-// MaxAbs and max folding reuse the registered unary ABS and reduction MAX
-// profile hooks instead of introducing a duplicate matrix-reduction policy.
-implementation func TileProfileMatrixReductionStep(
-    current: Word, candidate: Word, max_abs: boolean,
-    data_type: TileDataType) => Word
-begin
-    let (lhs_abs, -) = TileFixedUnaryValue(
-        TileUnary_ABS,
-        data_type,
-        current);
-    let (rhs_abs, -) = TileFixedUnaryValue(
-        TileUnary_ABS,
-        data_type,
-        candidate);
-    let lhs = if max_abs then lhs_abs else current;
-    let rhs = if max_abs then rhs_abs else candidate;
-    let (selected, _) = TileProfileReductionStep(
-        TileReduction_MAX, data_type, lhs, rhs);
-    return selected;
-end;
 ```
 <!-- GENERATED-ASL-END: unit -->
 

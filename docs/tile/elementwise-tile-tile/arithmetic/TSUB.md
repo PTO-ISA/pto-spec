@@ -73,7 +73,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TSUB(
     data_type: TileDataType) => boolean
 begin
-    return TileA9DataTypeSupported(data_type);
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TSUB(

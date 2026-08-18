@@ -83,10 +83,10 @@ pure func TileUnaryDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
     if operation == TileUnary_NOT then
-        return TileI6DataTypeSupported(data_type);
+        return TileVecScalarIntegerDataTypeSupported(data_type);
     end;
     if operation == TileUnary_ABS then
-        return TileF3DataTypeSupported(data_type);
+        return TileVecArithmeticDataTypeSupported(data_type);
     end;
     if operation == TileUnary_NEG then
         return TileTNegDataTypeSupported(data_type);
@@ -95,7 +95,7 @@ begin
         return TileTReluDataTypeSupported(data_type);
     end;
     if TileUnaryUsesSFUElementwiseContract(operation) then
-        return TileF3DataTypeSupported(data_type);
+        return TileFloatingElementwiseDataTypeSupported(data_type);
     end;
     return FALSE;
 end;

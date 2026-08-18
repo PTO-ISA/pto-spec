@@ -4,7 +4,7 @@
   "id": "status.unsupported-isa",
   "kind": "coverage",
   "title": "Unsupported ISA",
-  "status": "active",
+  "status": "historical",
   "visibility": "public",
   "profile": "pto-isa-0.58.0",
   "family": "Support Status",

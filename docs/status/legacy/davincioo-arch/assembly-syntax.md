@@ -4,7 +4,7 @@
   "id": "overview.assembly_syntax",
   "kind": "overview",
   "title": "Assembly Syntax",
-  "status": "active",
+  "status": "historical",
   "visibility": "public",
   "profile": "pto-isa-0.58.0",
   "sources": { "davincioo": "ASSEMBLY_SYNTAX.md" }
@@ -71,6 +71,12 @@ B.IOS S19, mask=1111
 顺序由 Function 固定，所有 ID 必须不同。TGEMV 不允许任何 binder。
 
 ## Shared GM Forms
+
+> Superseded Shared-memory description: The exactly-one/full-object examples
+> below are historical and are not valid examples for the active ISA. Use the
+> ASL-derived [BSTART.TLOAD](../../../block/execution/BSTART.TLOAD.md),
+> [TLOAD](../../../tile/memory-and-data-movement/regular/TLOAD.md), and
+> [B.IOS](../../../block/operands/B.IOS.md) pages instead.
 
 ```asm
 /* exactly-one GM -> Shared full load */

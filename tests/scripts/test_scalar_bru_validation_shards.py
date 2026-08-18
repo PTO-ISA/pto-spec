@@ -96,11 +96,11 @@ class ScalarBruValidationShardTest(unittest.TestCase):
         }
 
         self.assertIn(
-            "Zeros{PTO_XLEN} + 0x1100",
+            GENERATOR["bit_literal"](0x3100, 64),
             functions["ValidateScalarBRUExecute_ADDTPC"],
         )
         self.assertIn(
-            "Zeros{PTO_XLEN} + 0x1100",
+            GENERATOR["bit_literal"](0x3100, 64),
             functions["ValidateScalarBRUExecute_HL_ADDTPC"],
         )
         self.assertIn(

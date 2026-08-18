@@ -8335,6 +8335,18 @@ def _emit_monolithic() -> None:
                     "BundleTransfer_Fallthrough, Zeros{PTO_XLEN}, "
                     "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, FALSE);"
                 )
+            condition_setter = (
+                row["mnemonic"].startswith("SETC.")
+                or row["mnemonic"].startswith("C.SETC.")
+                or row["mnemonic"].startswith("HL.SETC.")
+            ) and not row["mnemonic"].endswith(".TGT")
+            if condition_setter:
+                print(
+                    "    BeginBundle(BundleKind_Standard, "
+                    "BundleTransfer_Conditional, Zeros{PTO_XLEN}, "
+                    "Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 4, FALSE);"
+                )
+                print("    EnterBundleBody();")
             if row["mnemonic"] == "SETC.TGT":
                 emit_scalar_sys_body_setup("Standard")
             elif row["semantic_family"] == "SYS":
@@ -8706,7 +8718,19 @@ def _emit_monolithic() -> None:
                 target = 0x206 if mnemonic == "JR" else 0x106
                 print(f"    assert ReadTPC() == Zeros{{PTO_XLEN}} + 0x{target:x};")
             elif class_id == "scalar-pc-relative-value":
-                print("    assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x1100;")
+                immediate_field = scalar_bru_totality_immediate(row)
+                if immediate_field is None:
+                    raise ValueError(
+                        f"missing ADDTPC immediate for {row['form_id']}"
+                    )
+                immediate_raw = decode_field(
+                    row, immediate_field["name"], witness
+                )
+                immediate = signed_integer(
+                    immediate_raw, immediate_field["width"]
+                )
+                expected = (0x100 + (immediate << 12)) & MASK64
+                print(f"    assert ReadGPR(3) == {bit_literal(expected, 64)};")
                 print(
                     "    assert ReadTPC() == Zeros{PTO_XLEN} + "
                     f"{0x100 + row['length_bits'] // 8};"

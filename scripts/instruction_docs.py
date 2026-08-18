@@ -993,6 +993,8 @@ def check_legacy_banners(root: Path = ROOT) -> list[str]:
     for path in sorted(directory.rglob("*.md")) if directory.exists() else []:
         relative = path.relative_to(root).as_posix()
         current = path.read_text(encoding="utf-8")
+        if '"status": "active"' in current:
+            errors.append(f"{relative}: legacy page declares active status")
         try:
             expected = _render_legacy_page(current, path)
         except ValueError as error:

@@ -72,6 +72,14 @@ begin
     assert ReadGPR(8) == Zeros{PTO_XLEN} + 1;
 
     WriteGPR(2, Zeros{PTO_XLEN} + 8);
+    BeginBundle(
+        BundleKind_Standard,
+        BundleTransfer_Conditional,
+        Zeros{PTO_XLEN} + 106,
+        Zeros{PTO_XLEN} + 104,
+        Zeros{PTO_XLEN},
+        FALSE);
+    EnterBundleBody();
     var set_commit_immediate: bits(48) = Zeros{48} + 0x00000075;
     set_commit_immediate[11:7] = Zeros{5} + 3;
     set_commit_immediate[19:15] = Zeros{5} + 2;
@@ -79,24 +87,24 @@ begin
     let set_commit_status = ExecuteScalarInstruction(set_commit_immediate, 32);
     assert set_commit_status == ScalarExecution_Executed;
     assert _CommitArgument == Zeros{PTO_XLEN} + 1;
+    let taken_completed = CompleteBundleAt(Zeros{PTO_XLEN} + 104);
+    assert taken_completed;
+    assert ReadPC() == Zeros{PTO_XLEN} + 106;
 
+    BeginBundle(
+        BundleKind_Standard,
+        BundleTransfer_Conditional,
+        Zeros{PTO_XLEN} + 106,
+        Zeros{PTO_XLEN} + 104,
+        Zeros{PTO_XLEN},
+        FALSE);
+    EnterBundleBody();
     ExecuteSetCommit(
         ScalarCondition_EQ,
         Zeros{PTO_XLEN},
         Zeros{PTO_XLEN} + 1);
-    WritePC(Zeros{PTO_XLEN} + 100);
-    var branch_zero: bits(48) = Zeros{48} + 0x00001037;
-    branch_zero[31:15] = Zeros{17} + 3;
-    let branch_taken_status = ExecuteScalarInstruction(branch_zero, 32);
-    assert branch_taken_status == ScalarExecution_Executed;
-    assert ReadPC() == Zeros{PTO_XLEN} + 106;
-    ExecuteSetCommit(
-        ScalarCondition_EQ,
-        Zeros{PTO_XLEN} + 1,
-        Zeros{PTO_XLEN} + 1);
-    WritePC(Zeros{PTO_XLEN} + 100);
-    let branch_fallthrough_status = ExecuteScalarInstruction(branch_zero, 32);
-    assert branch_fallthrough_status == ScalarExecution_Executed;
+    let fallthrough_completed = CompleteBundleAt(Zeros{PTO_XLEN} + 104);
+    assert fallthrough_completed;
     assert ReadPC() == Zeros{PTO_XLEN} + 104;
 
     WriteGPR(2, Zeros{PTO_XLEN} + 200);

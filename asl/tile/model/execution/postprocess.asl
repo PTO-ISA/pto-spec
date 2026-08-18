@@ -12,11 +12,27 @@ begin
     return value;
 end;
 
+impdef func TileProfileMatrixPostProcessWithFlags(
+    value: Word, pre_quant_mode: bits(6), relu_mode: bits(3),
+    group_n_code: bits(4), output_type: TileDataType,
+    quant_param: Word, relu_param: Word,
+    control: NumericExecutionControl) => (Word, bits(5))
+begin
+    return (value, Zeros{5});
+end;
+
 impdef func TileProfileMatrixReductionStep(
     current: Word, candidate: Word, max_abs: boolean,
     data_type: TileDataType) => Word
 begin
     return candidate;
+end;
+
+impdef func TileProfileMatrixReductionStepWithFlags(
+    current: Word, candidate: Word, max_abs: boolean,
+    data_type: TileDataType) => (Word, bits(5))
+begin
+    return (candidate, Zeros{5});
 end;
 
 readonly func BundleMatrixLocalMathematicalSourceCount() => integer {0..5}
@@ -41,46 +57,75 @@ begin
 end;
 
 func MatrixRowMaxResult(input: TileInfo, destination: TileIndex,
-                        rowmax_input: TileIndex, has_input: boolean) => TileInfo
+                        rowmax_input: TileIndex, has_input: boolean)
+                        => (TileInfo, bits(5))
 begin
     var output = _Tiles[[destination]];
     var payload = output.payload;
+    var flags = Zeros{5};
     for row = 0 to input.valid_rows - 1 looplimit 65536 do
         let first = TileLinearIndex(input, row as integer {0..65535}, 0);
         var value = input.payload[[first]];
+        if _BundleFixedPointAttributes.max_abs_en then
+            let (initial, initial_flags) =
+                TileProfileMatrixReductionStepWithFlags(
+                    value, value, TRUE, input.data_type);
+            value = initial;
+            flags = flags OR initial_flags;
+        end;
         for column = 1 to input.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(input, row as integer {0..65535}, column as integer {0..65535});
-            value = TileProfileMatrixReductionStep(value, input.payload[[element]],
+            let (next, step_flags) = TileProfileMatrixReductionStepWithFlags(
+                value, input.payload[[element]],
                 _BundleFixedPointAttributes.max_abs_en, input.data_type);
+            value = next;
+            flags = flags OR step_flags;
         end;
         if has_input then
             let input_element = TileLinearIndex(_Tiles[[rowmax_input]], row as integer {0..65535}, 0);
-            value = TileProfileMatrixReductionStep(_Tiles[[rowmax_input]].payload[[input_element]], value,
+            let (next, step_flags) = TileProfileMatrixReductionStepWithFlags(
+                _Tiles[[rowmax_input]].payload[[input_element]], value,
                 _BundleFixedPointAttributes.max_abs_en, input.data_type);
+            value = next;
+            flags = flags OR step_flags;
         end;
         let output_element = TileLinearIndex(output, row as integer {0..65535}, 0);
         payload[[output_element]] = value;
     end;
     output.payload = payload;
-    return MarkLocalTileValidRegionDefined(output);
+    return (MarkLocalTileValidRegionDefined(output), flags);
 end;
 
-func MatrixGroupMaxResult(input: TileInfo, destination: TileIndex) => TileInfo
+func MatrixGroupMaxResult(input: TileInfo, destination: TileIndex)
+    => (TileInfo, bits(5))
 begin
     var output = _Tiles[[destination]];
     var payload = output.payload;
+    var flags = Zeros{5};
     let group_n = BundleFPATRGroupN(_BundleFixedPointAttributes.group_n_code);
     for row = 0 to input.valid_rows - 1 looplimit 65536 do
         for group = 0 to output.valid_columns - 1 looplimit 65536 do
             let first_column = group * group_n;
             let first = TileLinearIndex(input, row as integer {0..65535}, first_column as integer {0..65535});
             var value = input.payload[[first]];
+            if _BundleFixedPointAttributes.max_abs_en then
+                let (initial, initial_flags) =
+                    TileProfileMatrixReductionStepWithFlags(
+                        value, value, TRUE, input.data_type);
+                value = initial;
+                flags = flags OR initial_flags;
+            end;
             for offset = 1 to group_n - 1 looplimit 128 do
                 let column = first_column + offset;
                 if column < input.valid_columns then
                     let element = TileLinearIndex(input, row as integer {0..65535}, column as integer {0..65535});
-                    value = TileProfileMatrixReductionStep(value, input.payload[[element]],
-                        _BundleFixedPointAttributes.max_abs_en, input.data_type);
+                    let (next, step_flags) =
+                        TileProfileMatrixReductionStepWithFlags(
+                            value, input.payload[[element]],
+                            _BundleFixedPointAttributes.max_abs_en,
+                            input.data_type);
+                    value = next;
+                    flags = flags OR step_flags;
                 end;
             end;
             let output_element = TileLinearIndex(output, row as integer {0..65535}, group as integer {0..65535});
@@ -88,16 +133,17 @@ begin
         end;
     end;
     output.payload = payload;
-    return MarkLocalTileValidRegionDefined(output);
+    return (MarkLocalTileValidRegionDefined(output), flags);
 end;
 
-func MatrixPostProcessResult(input: TileInfo) => TileInfo
+func MatrixPostProcessResult(input: TileInfo) => (TileInfo, bits(5))
 begin
     if !_BundleFixedPointAttributes.valid then
-        return input;
+        return (input, Zeros{5});
     end;
     var result = input;
     var payload = input.payload;
+    var flags = Zeros{5};
     let output_type = if UInt(
         _BundleFixedPointAttributes.pre_quant_mode) == 0 then
         input.data_type
@@ -136,17 +182,20 @@ begin
                     column as integer {0..65535})]]
             else
                 operands.post_lrelu_param;
-            payload[[element]] = TileProfileMatrixPostProcess(
+            let (processed, element_flags) =
+                TileProfileMatrixPostProcessWithFlags(
                 payload[[element]],
                 _BundleFixedPointAttributes.pre_quant_mode,
                 _BundleFixedPointAttributes.relu_mode,
                 _BundleFixedPointAttributes.group_n_code,
                 output_type, quant_param, relu_param, numeric_control);
+            payload[[element]] = processed;
+            flags = flags OR element_flags;
         end;
     end;
     result.data_type = output_type;
     result.payload = payload;
-    return result;
+    return (result, flags);
 end;
 
 func CommitMatrixResult(destination: TileIndex, result: TileInfo)
@@ -154,17 +203,19 @@ begin
     let mathematical_sources = BundleMatrixLocalMathematicalSourceCount();
     let rowmax_input = BundleMatrixSourceAt(
         mathematical_sources as integer {0..7});
-    let processed = MatrixPostProcessResult(result);
+    let (processed, process_flags) = MatrixPostProcessResult(result);
     let rowmax_destination = BundleMatrixDestinationAt(1);
     let group_destination = if _BundleFixedPointAttributes.row_max_en then BundleMatrixDestinationAt(2)
         else BundleMatrixDestinationAt(1);
-    let row_result = if _BundleFixedPointAttributes.row_max_en then
+    let (row_result, row_flags) = if _BundleFixedPointAttributes.row_max_en then
         MatrixRowMaxResult(result, rowmax_destination, rowmax_input, _BundleFixedPointAttributes.row_max_init)
-        else _Tiles[[0]];
-    let group_result = if _BundleFixedPointAttributes.group_max_en then
-        MatrixGroupMaxResult(result, group_destination) else _Tiles[[0]];
+        else (_Tiles[[0]], Zeros{5});
+    let (group_result, group_flags) = if _BundleFixedPointAttributes.group_max_en then
+        MatrixGroupMaxResult(result, group_destination)
+        else (_Tiles[[0]], Zeros{5});
     // Prepare every output from pre-commit state, then publish as one group.
     _Tiles[[destination]] = processed;
     if _BundleFixedPointAttributes.row_max_en then _Tiles[[rowmax_destination]] = row_result; end;
     if _BundleFixedPointAttributes.group_max_en then _Tiles[[group_destination]] = group_result; end;
+    RecordNumericStatusFlags(process_flags OR row_flags OR group_flags);
 end;

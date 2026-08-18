@@ -22,7 +22,7 @@ end;
 pure func InstructionContractDataTypeLegal_TFILLPAD(
     data_type: TileDataType) => boolean
 begin
-    return TileCarrierOnlyDataTypeSupported(data_type);
+    return TileFillPadDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TFILLPAD(

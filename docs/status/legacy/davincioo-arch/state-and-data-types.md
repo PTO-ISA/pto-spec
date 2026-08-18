@@ -4,7 +4,7 @@
   "id": "overview.state_and_types",
   "kind": "overview",
   "title": "State and Data Types",
-  "status": "active",
+  "status": "historical",
   "visibility": "public",
   "profile": "pto-isa-0.58.0",
   "sources": { "davincioo": "STATE_AND_TYPES.md" }

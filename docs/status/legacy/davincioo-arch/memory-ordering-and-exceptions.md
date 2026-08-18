@@ -4,7 +4,7 @@
   "id": "overview.memory_and_exceptions",
   "kind": "overview",
   "title": "Memory, Ordering and Exceptions",
-  "status": "active",
+  "status": "historical",
   "visibility": "public",
   "profile": "pto-isa-0.58.0",
   "sources": { "davincioo": "MEMORY_AND_EXCEPTIONS.md" }
@@ -15,6 +15,12 @@
 > Historical, non-normative material. This page is excluded from the active PTO architecture and release closure.
 
 ## Memory Paths
+
+> Superseded Shared-memory description: The exactly-one/full-object rows below
+> are preserved only as historical context and are not current PTO behavior.
+> Use the ASL-derived [BSTART.TLOAD](../../../block/execution/BSTART.TLOAD.md),
+> [TLOAD](../../../tile/memory-and-data-movement/regular/TLOAD.md), and
+> [B.IOS](../../../block/operands/B.IOS.md) pages for the active contract.
 
 | 源 | 目的 | 公开 intrinsic | Issuer/scope |
 | --- | --- | --- | --- |
@@ -27,6 +33,10 @@
 | SharedTile | Local Tile | `TMOV<Broadcast/Extract>` | Full broadcast 或 fixed-region extract |
 
 ## Address Interpretation
+
+> Superseded Shared-memory description: The Shared full-load/store issuer model
+> below is historical and must not be used to implement the active ISA. Use the
+> ASL-derived instruction pages linked above.
 
 普通 logical-Tile `TLOAD/TSTORE` 接收完整 `GlobalTensor` descriptor。编译器结合静态 distribution 与 `thread_id` 推导各 PE fragment 地址。Shared full load/store 则使用选定 issuer 的指针表示整个对象。Partition store 是例外：每个 PE 提供自己的指针，且各地址区间不得重叠。
 

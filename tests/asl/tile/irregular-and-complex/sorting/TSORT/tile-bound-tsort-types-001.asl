@@ -3,7 +3,7 @@ func main() => integer
 begin
     assert InstructionContractDataTypeLegal_TSORT(TileDataType_FP32);
     assert InstructionContractDataTypeLegal_TSORT(TileDataType_FP16);
-    assert InstructionContractDataTypeLegal_TSORT(TileDataType_BF16);
+    assert !InstructionContractDataTypeLegal_TSORT(TileDataType_BF16);
     assert !InstructionContractDataTypeLegal_TSORT(TileDataType_U16);
     ResetProfileState();
     ConfigureTile(
@@ -34,6 +34,6 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(23, 0, 0, Zeros{PTO_XLEN} + 0x3f80);
     WriteTileElement(23, 0, 1, Zeros{PTO_XLEN} + 0x4000);
-    assert TileOperandsLegal_TSORT(25, 24, 23, 2, FALSE);
+    assert !TileOperandsLegal_TSORT(25, 24, 23, 2, FALSE);
     return 0;
 end;
