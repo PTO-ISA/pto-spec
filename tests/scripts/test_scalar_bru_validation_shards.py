@@ -87,6 +87,31 @@ class ScalarBruValidationShardTest(unittest.TestCase):
             self.assertEqual(document.count("ValidateScalarBRU"), 1)
             self.assertIn("PTO-AVS-BRU-CMP-EQ-", document)
 
+    def test_addtpc_page_scale_is_independent_from_halfword_control(self) -> None:
+        generated = GENERATOR["partition_generated_asl"](
+            GENERATOR["_render_monolithic"]()
+        )
+        functions = {
+            function.name: function.text for function in generated.validation
+        }
+
+        self.assertIn(
+            "Zeros{PTO_XLEN} + 0x1100",
+            functions["ValidateScalarBRUExecute_ADDTPC"],
+        )
+        self.assertIn(
+            "Zeros{PTO_XLEN} + 0x1100",
+            functions["ValidateScalarBRUExecute_HL_ADDTPC"],
+        )
+        self.assertIn(
+            "Zeros{PTO_XLEN} + 0x106",
+            functions["ValidateScalarBRUExecute_SETRET"],
+        )
+        self.assertIn(
+            "Zeros{PTO_XLEN} + 0x106",
+            functions["ValidateScalarBRUExecute_HL_SETRET"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

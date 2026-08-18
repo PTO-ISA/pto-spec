@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.REMU.asl`
 
-HL.REMU computes a unsigned XLEN quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.
+HL.REMU computes an unsigned XLEN remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-REMU}
 
@@ -43,8 +43,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| hl_remu_48_3bf4e5a663c1 | RegDst0 | 5 | 0–31 | none | none | quotient Reg5 destination or discard | Encoded zero discards the quotient. |
-| hl_remu_48_3bf4e5a663c1 | RegDst1 | 5 | 0–31 | none | none | remainder Reg5 destination or discard | Encoded zero discards the remainder. |
+| hl_remu_48_3bf4e5a663c1 | RegDst0 | 5 | 0–31 | none | none | remainder Reg5 destination or discard | Encoded zero discards the remainder. |
+| hl_remu_48_3bf4e5a663c1 | RegDst1 | 5 | 0–31 | none | none | quotient Reg5 destination or discard | Encoded zero discards the quotient. |
 | hl_remu_48_3bf4e5a663c1 | SrcL | 5 | 0–31 | none | none | dividend Reg5 source | Encoded zero reads the architectural zero GPR dividend. |
 | hl_remu_48_3bf4e5a663c1 | SrcR | 5 | 0–31 | none | none | divisor Reg5 source | Encoded zero reads the architectural zero GPR divisor and therefore selects defined zero-divisor pair results. |
 
@@ -52,8 +52,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst0 | quotient Reg5 destination or discard |
-| RegDst1 | remainder Reg5 destination or discard |
+| RegDst0 | remainder Reg5 destination or discard |
+| RegDst1 | quotient Reg5 destination or discard |
 | SrcL | dividend Reg5 source |
 | SrcR | divisor Reg5 source |
 
@@ -74,7 +74,7 @@ end;
 ```asl
 readonly func InstructionContractHandler_HL_REMU() => ScalarSemanticHandler
 begin
-    return ScalarHandler_ExecuteScalarDividePair;
+    return ScalarHandler_ExecuteScalarRemainderPair;
 end;
 pure func InstructionContractQuotient_HL_REMU(
     dividend: Word,
@@ -92,6 +92,26 @@ pure func InstructionContractRemainder_HL_REMU(
     => Word
 begin
     return ScalarRemainderUnsigned(
+        dividend,
+        divisor);
+end;
+
+pure func InstructionContractDst0_HL_REMU(
+    dividend: Word,
+    divisor: Word)
+    => Word
+begin
+    return InstructionContractRemainder_HL_REMU(
+        dividend,
+        divisor);
+end;
+
+pure func InstructionContractDst1_HL_REMU(
+    dividend: Word,
+    divisor: Word)
+    => Word
+begin
+    return InstructionContractQuotient_HL_REMU(
         dividend,
         divisor);
 end;
@@ -113,7 +133,7 @@ end;
 
 - Interpret the selected operands as unsigned values, compute both quotient and remainder using the fixed total division rules.
 - A zero divisor returns quotient zero and the effective dividend as remainder. Signed minimum divided by negative one returns signed minimum quotient and zero remainder.
-- Publish RegDst0 quotient first, then RegDst1 remainder. If both destinations name one GPR, remainder is final; if both push one queue, remainder is newest and quotient is next-newest.
+- Publish RegDst0 remainder first, then RegDst1 quotient. If both destinations name one GPR, quotient is final; if both push one queue, quotient is newest and remainder is next-newest.
 - No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes.
 
 ## Memory effects and ordering
@@ -125,7 +145,7 @@ end;
 ### Ordering
 
 - Snapshot both sources and compute both results before either destination effect.
-- Publish quotient to RegDst0, publish remainder to RegDst1, then advance TPC by six bytes.
+- Publish remainder to RegDst0, publish quotient to RegDst1, then advance TPC by six bytes.
 
 ## Exceptions
 

@@ -374,6 +374,19 @@ begin
     WriteScalarDestination(destination_remainder, remainder);
 end;
 
+func ExecuteScalarRemainderPair(destination_remainder: Reg5Selector,
+                                destination_quotient: Reg5Selector,
+                                left: Word, right: Word,
+                                signed_operation: boolean)
+begin
+    let quotient = if signed_operation then ScalarDivideSigned(left, right)
+                   else ScalarDivideUnsigned(left, right);
+    let remainder = if signed_operation then ScalarRemainderSigned(left, right)
+                    else ScalarRemainderUnsigned(left, right);
+    WriteScalarDestination(destination_remainder, remainder);
+    WriteScalarDestination(destination_quotient, quotient);
+end;
+
 func ExecuteScalarDividePairW(destination_quotient: Reg5Selector,
                               destination_remainder: Reg5Selector,
                               left: Word, right: Word, signed_operation: boolean)
@@ -384,6 +397,19 @@ begin
                     else ScalarRemainderUnsignedW(left, right);
     WriteScalarDestination(destination_quotient, quotient);
     WriteScalarDestination(destination_remainder, remainder);
+end;
+
+func ExecuteScalarRemainderPairW(destination_remainder: Reg5Selector,
+                                 destination_quotient: Reg5Selector,
+                                 left: Word, right: Word,
+                                 signed_operation: boolean)
+begin
+    let quotient = if signed_operation then ScalarDivideSignedW(left, right)
+                   else ScalarDivideUnsignedW(left, right);
+    let remainder = if signed_operation then ScalarRemainderSignedW(left, right)
+                    else ScalarRemainderUnsignedW(left, right);
+    WriteScalarDestination(destination_remainder, remainder);
+    WriteScalarDestination(destination_quotient, quotient);
 end;
 
 func ExecuteScalarMultiplyPair(destination_low: Reg5Selector, destination_high: Reg5Selector,

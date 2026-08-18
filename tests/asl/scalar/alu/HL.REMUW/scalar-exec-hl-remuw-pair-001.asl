@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-REMUW-PAIR-001","source":"asl/scalar/alu/HL.REMUW.asl","requirements":["PTO-INST-SCALAR-HL-REMUW"],"kind":"execution","summary":"HL.REMUW publishes quotient then remainder from source snapshots","pass_condition":"Decoded pair results match the mnemonic quotient and remainder contracts in destination order","related_sources":["asl/scalar/model/alu/semantics.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-SCALAR-HL-REMUW-PAIR-001","source":"asl/scalar/alu/HL.REMUW.asl","requirements":["PTO-INST-SCALAR-HL-REMUW"],"kind":"execution","summary":"HL.REMUW publishes remainder then quotient from source snapshots","pass_condition":"Decoded pair results match the mnemonic remainder and quotient contracts in destination order","related_sources":["asl/scalar/model/alu/semantics.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -13,8 +13,8 @@ begin
     instruction[40:36] = Zeros{5} + 2;
     let execution = ExecuteScalarInstruction(instruction, 48);
     assert execution == ScalarExecution_Executed;
-    assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x7fffffff;
-    assert ReadGPR(4) == Zeros{PTO_XLEN} + 1;
+    assert ReadGPR(3) == Zeros{PTO_XLEN} + 1;
+    assert ReadGPR(4) == Zeros{PTO_XLEN} + 0x7fffffff;
     assert InstructionContractQuotient_HL_REMUW(dividend, divisor) == Zeros{PTO_XLEN} + 0x7fffffff;
     assert InstructionContractRemainder_HL_REMUW(dividend, divisor) == Zeros{PTO_XLEN} + 1;
     return 0;

@@ -25,6 +25,33 @@ def scalar_form(mnemonic: str) -> dict:
 
 
 class ScalarALUValidationFixtureTest(unittest.TestCase):
+    def test_remainder_pair_expected_publishes_remainder_before_quotient(self) -> None:
+        self.assertEqual(
+            GENERATOR["scalar_pair_expected"]("HL.REM", 7, 3, 0),
+            (1, 2),
+        )
+        self.assertEqual(
+            GENERATOR["scalar_pair_expected"]("HL.REMUW", 0xFFFFFFFF, 2, 0),
+            (1, 0x7FFFFFFF),
+        )
+
+    def test_divide_pair_expected_keeps_quotient_before_remainder(self) -> None:
+        self.assertEqual(
+            GENERATOR["scalar_pair_expected"]("HL.DIV", 7, 3, 0),
+            (2, 1),
+        )
+        self.assertEqual(
+            GENERATOR["scalar_pair_expected"]("HL.DIVUW", 0xFFFFFFFF, 2, 0),
+            (0x7FFFFFFF, 1),
+        )
+
+    def test_remainder_pair_handlers_are_classified_as_pair_effects(self) -> None:
+        pair_handlers = GENERATOR["SCALAR_ALU_EFFECT_HANDLER_CLASSES"][
+            "scalar-pair-value"
+        ]
+        self.assertIn("ExecuteScalarRemainderPair", pair_handlers)
+        self.assertIn("ExecuteScalarRemainderPairW", pair_handlers)
+
     def test_command_rejection_inventory_matches_reserved_pto_handlers(self) -> None:
         self.assertEqual(
             GENERATOR["PTO_V0_UNSUPPORTED_COMMAND_HANDLERS"],

@@ -335,7 +335,7 @@
       "semantic_family": "BRU",
       "semantic_group": "BRU",
       "semantic_handler": "AddToPC",
-      "semantic_summary": "ADDTPC - Add the encoded displacement to the program counter.",
+      "semantic_summary": "ADDTPC - Add a signed 4 KiB page displacement to the current TPC.",
       "status": "accepted"
     },
     {
@@ -7757,7 +7757,7 @@
       "semantic_family": "BRU",
       "semantic_group": "BRU",
       "semantic_handler": "AddToPC",
-      "semantic_summary": "HL.ADDTPC - Add the encoded displacement to the program counter.",
+      "semantic_summary": "HL.ADDTPC - Add a signed 4 KiB page displacement to the current TPC.",
       "status": "accepted"
     },
     {
@@ -17113,8 +17113,8 @@
       "mnemonic": "HL.REM",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ExecuteScalarDividePair",
-      "semantic_summary": "HL.REM computes a signed XLEN quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+      "semantic_handler": "ExecuteScalarRemainderPair",
+      "semantic_summary": "HL.REM computes a signed XLEN remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
       "status": "accepted"
     },
     {
@@ -17184,8 +17184,8 @@
       "mnemonic": "HL.REMU",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ExecuteScalarDividePair",
-      "semantic_summary": "HL.REMU computes a unsigned XLEN quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+      "semantic_handler": "ExecuteScalarRemainderPair",
+      "semantic_summary": "HL.REMU computes an unsigned XLEN remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
       "status": "accepted"
     },
     {
@@ -17255,8 +17255,8 @@
       "mnemonic": "HL.REMUW",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ExecuteScalarDividePairW",
-      "semantic_summary": "HL.REMUW computes a unsigned low-32-bit quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+      "semantic_handler": "ExecuteScalarRemainderPairW",
+      "semantic_summary": "HL.REMUW computes an unsigned low-32-bit remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
       "status": "accepted"
     },
     {
@@ -17326,8 +17326,8 @@
       "mnemonic": "HL.REMW",
       "semantic_family": "ALU",
       "semantic_group": "ALU",
-      "semantic_handler": "ExecuteScalarDividePairW",
-      "semantic_summary": "HL.REMW computes a signed low-32-bit quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.",
+      "semantic_handler": "ExecuteScalarRemainderPairW",
+      "semantic_summary": "HL.REMW computes a signed low-32-bit remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.",
       "status": "accepted"
     },
     {
@@ -34234,5 +34234,5 @@
   "operand_field_count": 45,
   "operand_piece_count": 1867,
   "schema_version": 2,
-  "semantic_handler_count": 70
+  "semantic_handler_count": 72
 }

@@ -4,9 +4,9 @@ func main() => integer
 begin
     assert DecodeScalarForm('000000000000000001110000010101110000000000001110', 48) == 242;
     assert ScalarOperationOfForm(242) == ScalarOperation_HL_REMUW;
-    assert ScalarHandlerOfForm(242) == ScalarHandler_ExecuteScalarDividePairW;
+    assert ScalarHandlerOfForm(242) == ScalarHandler_ExecuteScalarRemainderPairW;
     assert InstructionContractOperation_HL_REMUW() == ScalarOperation_HL_REMUW;
-    assert InstructionContractHandler_HL_REMUW() == ScalarHandler_ExecuteScalarDividePairW;
+    assert InstructionContractHandler_HL_REMUW() == ScalarHandler_ExecuteScalarRemainderPairW;
     assert DecodeScalarOperandRaw('000000000000000001110000010101110000000000001110', 242, ScalarField_RegDst0) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000001110000010101110000000000001110', 242, ScalarField_RegDst1) == '000000000000000000000000000000000000000000000000';
     assert DecodeScalarOperandRaw('000000000000000001110000010101110000000000001110', 242, ScalarField_SrcL) == '000000000000000000000000000000000000000000000000';

@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.REMW.asl`
 
-HL.REMW computes a signed low-32-bit quotient/remainder pair from source snapshots, then publishes quotient followed by remainder.
+HL.REMW computes a signed low-32-bit remainder/quotient pair from source snapshots, then publishes remainder followed by quotient.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-REMW}
 
@@ -43,8 +43,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| hl_remw_48_3acb485d39a7 | RegDst0 | 5 | 0–31 | none | none | quotient Reg5 destination or discard | Encoded zero discards the quotient. |
-| hl_remw_48_3acb485d39a7 | RegDst1 | 5 | 0–31 | none | none | remainder Reg5 destination or discard | Encoded zero discards the remainder. |
+| hl_remw_48_3acb485d39a7 | RegDst0 | 5 | 0–31 | none | none | remainder Reg5 destination or discard | Encoded zero discards the remainder. |
+| hl_remw_48_3acb485d39a7 | RegDst1 | 5 | 0–31 | none | none | quotient Reg5 destination or discard | Encoded zero discards the quotient. |
 | hl_remw_48_3acb485d39a7 | SrcL | 5 | 0–31 | none | none | dividend Reg5 source | Encoded zero reads the architectural zero GPR dividend. |
 | hl_remw_48_3acb485d39a7 | SrcR | 5 | 0–31 | none | none | divisor Reg5 source | Encoded zero reads the architectural zero GPR divisor and therefore selects defined zero-divisor pair results. |
 
@@ -52,8 +52,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Field | Architectural role |
 | --- | --- |
-| RegDst0 | quotient Reg5 destination or discard |
-| RegDst1 | remainder Reg5 destination or discard |
+| RegDst0 | remainder Reg5 destination or discard |
+| RegDst1 | quotient Reg5 destination or discard |
 | SrcL | dividend Reg5 source |
 | SrcR | divisor Reg5 source |
 
@@ -74,7 +74,7 @@ end;
 ```asl
 readonly func InstructionContractHandler_HL_REMW() => ScalarSemanticHandler
 begin
-    return ScalarHandler_ExecuteScalarDividePairW;
+    return ScalarHandler_ExecuteScalarRemainderPairW;
 end;
 pure func InstructionContractQuotient_HL_REMW(
     dividend: Word,
@@ -92,6 +92,26 @@ pure func InstructionContractRemainder_HL_REMW(
     => Word
 begin
     return ScalarRemainderSignedW(
+        dividend,
+        divisor);
+end;
+
+pure func InstructionContractDst0_HL_REMW(
+    dividend: Word,
+    divisor: Word)
+    => Word
+begin
+    return InstructionContractRemainder_HL_REMW(
+        dividend,
+        divisor);
+end;
+
+pure func InstructionContractDst1_HL_REMW(
+    dividend: Word,
+    divisor: Word)
+    => Word
+begin
+    return InstructionContractQuotient_HL_REMW(
         dividend,
         divisor);
 end;
@@ -113,7 +133,7 @@ end;
 
 - Interpret the selected operands as signed values, compute both quotient and remainder using the fixed total division rules. For W forms, use the low 32 bits and sign-extend each 32-bit result to XLEN.
 - A zero divisor returns quotient zero and the effective dividend as remainder. Signed minimum divided by negative one returns signed minimum quotient and zero remainder.
-- Publish RegDst0 quotient first, then RegDst1 remainder. If both destinations name one GPR, remainder is final; if both push one queue, remainder is newest and quotient is next-newest.
+- Publish RegDst0 remainder first, then RegDst1 quotient. If both destinations name one GPR, quotient is final; if both push one queue, quotient is newest and remainder is next-newest.
 - No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes.
 
 ## Memory effects and ordering
@@ -125,7 +145,7 @@ end;
 ### Ordering
 
 - Snapshot both sources and compute both results before either destination effect.
-- Publish quotient to RegDst0, publish remainder to RegDst1, then advance TPC by six bytes.
+- Publish remainder to RegDst0, publish quotient to RegDst1, then advance TPC by six bytes.
 
 ## Exceptions
 

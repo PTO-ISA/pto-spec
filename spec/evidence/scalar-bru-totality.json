@@ -120,7 +120,7 @@
       "dimensions": [
         "signed-20-bit-immediate",
         "signed-32-bit-immediate",
-        "halfword-scaling",
+        "page-scaling",
         "pre-increment-TPC-base",
         "64-bit-wrap",
         "normal-Reg5-destination"
@@ -210,6 +210,7 @@
   ],
   "independent_comparison": {
     "intentional_differences": [
+      "pto-addtpc-page-scale-versus-locked-halfword-model",
       "pto-portable-target-policy-has-no-start-marker-check",
       "pto-jr-rejects-odd-target-at-instruction-boundary"
     ],
@@ -226,7 +227,7 @@
       "pto-bundle-return-address-mirror"
     ],
     "provenance_sha256": "5bdca2befb72eb7e5a060bd50036dca26d11d7352c8b3c793bdc8134d1e33931",
-    "pto_disposition": "The independent executable comparison corroborates shared arithmetic and condition rules. PTO-owned semantics remain authoritative: the portable model has no instruction-memory marker state, defines its own Reg5 queue and commit-argument versus machine-body execution-mask branch-source rules, rejects odd JR targets, and mirrors SETRET into bundle return state.",
+    "pto_disposition": "The independent executable comparison corroborates shared arithmetic and condition rules but retains halfword-scaled ADDTPC behavior. PTO-owned semantics remain authoritative: ADDTPC and HL.ADDTPC use signed 4 KiB page displacement, the portable model has no instruction-memory marker state, defines its own Reg5 queue and commit-argument versus machine-body execution-mask branch-source rules, rejects odd JR targets, and mirrors SETRET into bundle return state.",
     "status": "reviewed"
   },
   "requirement_ids": [

@@ -974,5 +974,6 @@ nav:
           - "PTO mnemonic review decisions": status/decisions/0062-mnemonic-review-decisions.md
           - "ADR 0064: B.FPATR Complete-Bundle Matrix PostProcess": status/decisions/0064-b-fpatr-complete-bundle-postprocess.md
           - "ADR 0065: CUBE Matrix Family Contract": status/decisions/0065-cube-matrix-family-contract.md
+          - "ADR 0066: ADDTPC page-scaled immediate": status/decisions/0066-addtpc-page-scaled-immediate.md
       - Open:
           - "Open architecture questions": status/open/index.md
