@@ -83,30 +83,19 @@ pure func TileUnaryDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
     if operation == TileUnary_NOT then
-        return TileUnaryScalarIntegerDataType(data_type);
+        return TileI6DataTypeSupported(data_type);
     end;
-    if operation == TileUnary_ABS ||
-       operation == TileUnary_NEG ||
-       operation == TileUnary_RELU then
-        return TileUnaryScalarIntegerDataType(data_type) ||
-               data_type == TileDataType_FP64 ||
-               data_type == TileDataType_FP32 ||
-               data_type == TileDataType_TF32 ||
-               data_type == TileDataType_HF32 ||
-               data_type == TileDataType_FP16 ||
-               data_type == TileDataType_BF16 ||
-               data_type == TileDataType_E4M3 ||
-               data_type == TileDataType_E5M2;
+    if operation == TileUnary_ABS then
+        return TileF3DataTypeSupported(data_type);
+    end;
+    if operation == TileUnary_NEG then
+        return TileTNegDataTypeSupported(data_type);
+    end;
+    if operation == TileUnary_RELU then
+        return TileTReluDataTypeSupported(data_type);
     end;
     if TileUnaryUsesSFUElementwiseContract(operation) then
-        return data_type == TileDataType_FP64 ||
-               data_type == TileDataType_FP32 ||
-               data_type == TileDataType_TF32 ||
-               data_type == TileDataType_HF32 ||
-               data_type == TileDataType_FP16 ||
-               data_type == TileDataType_BF16 ||
-               data_type == TileDataType_E4M3 ||
-               data_type == TileDataType_E5M2;
+        return TileF3DataTypeSupported(data_type);
     end;
     return FALSE;
 end;

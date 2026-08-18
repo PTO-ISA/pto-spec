@@ -52,11 +52,54 @@ Carries the operation-selected PadValue or ByteId union field.
 
 **Reserved-value behavior:** All four encodings are assigned; the selected operation separately validates whether the field is PadValue, ByteId, or inapplicable.
 
+### DataType (`PTO-FIELD-BLOCK-DATATYPE`)
+
+Selects the Tile element data type carried by Block data attributes and typed Block starts.
+
+**Encoded zero:** Code zero selects FP64; zero never means absent, inherited, NONE, or NULL.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | FP64 |
+| 1 | assigned | FP32 |
+| 2 | assigned | TF32 |
+| 3 | assigned | HF32 |
+| 4 | assigned | FP16 |
+| 5 | assigned | BF16 |
+| 6 | assigned | HiF8 |
+| 7 | assigned | E4M3 |
+| 8 | assigned | E5M2 |
+| 9 | assigned | E3M2 |
+| 10 | assigned | E2M3 |
+| 11 | assigned | E2M1X2 |
+| 12 | assigned | E1M2X2 |
+| 13 | assigned | E8M0 |
+| 14 | assigned | HiF4X2 |
+| 15 | reserved | future extension |
+| 16 | assigned | S64 |
+| 17 | assigned | S32 |
+| 18 | assigned | S16 |
+| 19 | assigned | S8 |
+| 20 | assigned | S4X2 |
+| 21 | reserved | future extension |
+| 22 | reserved | future extension |
+| 23 | reserved | future extension |
+| 24 | assigned | U64 |
+| 25 | assigned | U32 |
+| 26 | assigned | U16 |
+| 27 | assigned | U8 |
+| 28 | assigned | U4X2 |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Reserved values are held for future extension and reject before architectural effects.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new Local same-type numeric destination |
+| destination0 | new Local DstDataType destination |
 | source0 | persistent Local full-shape numeric source |
 | source1 | persistent Local one-row broadcast source |
 
@@ -75,7 +118,7 @@ end;
 
 ```asm
 BSTART.SFU TCOLEXPANDEXPDIF, DataType
-B.DATR PadValue (optional)
+B.DATR DataType, PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
@@ -90,9 +133,9 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TCOLEXPANDEXPDIF(
     data_type: TileDataType) => boolean
 begin
-    return TileUnaryDataTypeSupported(
-        TileUnary_EXP,
-        data_type);
+    return data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16 ||
+           data_type == TileDataType_FP32;
 end;
 
 readonly func InstructionContractOperandsLegal_TCOLEXPANDEXPDIF(
@@ -135,25 +178,23 @@ end;
 ## Defaults and encoded zero
 
 - LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.
-- Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.
-- For every valid destination element, first compute typed source0 - BroadcastTile[0,c], then compute the same-type natural exponential.
-- The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction.
+- Omitted B.DATR selects DstDataType=SrcDataType and PadValue=Null. When B.DATR is present, DTYPE_NONE inherits SrcDataType, a concrete DataType selects DstDataType, and encoded DataType zero selects FP64 and is never absence. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.
 
 ## Legality
 
-- TCOLEXPANDEXPDIF is selected by the TEPL raw encoding carrier Mode 2 Function 27; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.
-- Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.
-- Only the eight architectural floating DataTypes are legal because EXPDIF composes typed TSUB and typed natural TEXP.
-- The destination and both sources use exactly the selected DataType.
+- TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.
+- BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType; a concrete B.DATR DataType selects DstDataType. Source0 and BroadcastTile use SrcDataType and the destination uses DstDataType.
+- Mixed FP16/BF16 to FP32 widens both source operands exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.
+- The destination is a newly allocated FP32-capacity result for mixed pairs; no cross-type alias or reinterpret view is introduced.
 - The broadcast source has ValidRow equal to one and ValidCol and physical Col equal to the destination.
 - The full-shape source and destination have identical physical and valid geometry equal to the B.DIM-derived geometry.
 - Every source is a fully defined row-major numeric Tile with valid numeric encodings.
-- PadValueOrByteId is the only applicable B.DATR field. B.IOR and B.IOS are illegal.
+- PadValueOrByteId and DataType are the only applicable B.DATR fields. B.IOR and B.IOS are illegal.
 - All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects.
 
 ## State effects
 
-- For every valid destination element, first compute typed source0 - BroadcastTile[0,c], then compute the same-type natural exponential.
+- For every valid destination element, source0 and BroadcastTile are interpreted as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then compute FP32 source0 - BroadcastTile and FP32 natural exponential. Same-type pairs preserve the existing selected-type sequence.
 - The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction.
 - Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.
 - Publish the complete renamed destination atomically after every element succeeds.
@@ -166,19 +207,19 @@ end;
 
 ### Ordering
 
-- Complete schema, attribute, dimension, type, descriptor, source-definedness, source-encoding, mask, capacity, name-allocation, and storage preflight precedes every source snapshot.
-- All source payloads are snapshotted before result construction; sources persist and legal aliases use read-old/write-new behavior.
+- Complete schema, attribute, dimension, source/destination type-pair, descriptor, source-definedness, source-encoding, mask, capacity, name-allocation, and storage preflight precedes every source snapshot.
+- All source payloads are snapshotted before result construction; sources persist and same-type legal aliases use read-old/write-new behavior.
 - Numeric status, all valid results, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.
 
 ## Exceptions
 
-- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, non-row-major source, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.
+- A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, non-row-major source, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.
 - An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.
 - All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none.
 
 ## Examples
 
-- BSTART.SFU TCOLEXPANDEXPDIF, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
+- BSTART.SFU TCOLEXPANDEXPDIF, SrcDataType; B.DATR DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

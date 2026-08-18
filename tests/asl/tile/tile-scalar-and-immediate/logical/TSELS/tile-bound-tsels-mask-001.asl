@@ -8,7 +8,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U64,
+        TileDataType_FP32,
         TileLayout_RowMajor,
         TileLocation_Any);
     ConfigureTile(
@@ -18,7 +18,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U64,
+        TileDataType_FP32,
         TileLayout_RowMajor,
         TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 10);
@@ -28,8 +28,11 @@ end;
 func main() => integer
 begin
     ResetProfileState();
+    assert InstructionContractDataTypeLegal_TSELS(TileDataType_E3M2);
+    assert !InstructionContractDataTypeLegal_TSELS(TileDataType_U64);
+    assert !InstructionContractDataTypeLegal_TSELS(TileDataType_U4X2);
     ConfigureTSELSNumericTiles();
-    ConfigurePredicateTile(0, 128, 8, 2, 1, 2);
+    ConfigurePredicateTile(0, 128, 16, 2, 1, 2);
     WriteTilePredicateBit(0, 0, 0, TRUE);
     WriteTilePredicateBit(0, 0, 1, FALSE);
     assert TileOperandsLegal_ExecuteTileSelectScalar(
@@ -47,7 +50,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U64,
+        TileDataType_FP32,
         TileLayout_RowMajor,
         TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);

@@ -89,7 +89,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TROWMIN(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileA9DataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TROWMIN(
@@ -134,7 +134,7 @@ end;
 
 - TROWMIN is selected by the TEPL raw encoding carrier Mode 2 Function 2; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.
 - Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.
-- The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
 - The destination DataType equals the source DataType.
 - The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.
 - The destination has ValidRow equal to source.ValidRow, ValidCol and physical Col equal to one, and capacity-derived physical Rows.

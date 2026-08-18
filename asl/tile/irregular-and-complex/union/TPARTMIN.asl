@@ -17,7 +17,9 @@ end;
 pure func InstructionContractDataTypeLegal_TPARTMIN(
     data_type: TileDataType) => boolean
 begin
-    return TilePartialDataTypeSupported(data_type);
+    return TilePartialDataTypeSupportedForOperation(
+        TilePartial_MIN,
+        data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TPARTMIN(

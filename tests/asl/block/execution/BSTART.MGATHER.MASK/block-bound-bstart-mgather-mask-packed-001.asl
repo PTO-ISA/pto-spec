@@ -26,7 +26,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U16,
+    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigurePredicateTile(1, 128, 1, 2, 1, 2);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});

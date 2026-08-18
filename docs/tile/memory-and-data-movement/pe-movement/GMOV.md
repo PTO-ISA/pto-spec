@@ -68,6 +68,12 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/pe-movement/GMOV.asl -->
 ```asl
+pure func InstructionContractDataTypeLegal_GMOV(
+    data_type: TileDataType) => boolean
+begin
+    return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
+end;
+
 readonly func InstructionContractHandler_GMOV() => TileSemanticHandler
 begin
     return TileHandler_GMOV;

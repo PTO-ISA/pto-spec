@@ -18,7 +18,7 @@ end;
 pure func InstructionContractDataTypeLegal_TNOT(
     data_type: TileDataType) => boolean
 begin
-    return TileUnaryDataTypeSupported(TileUnary_NOT, data_type);
+    return TileI6DataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TNOT(

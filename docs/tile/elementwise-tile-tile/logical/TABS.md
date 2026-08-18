@@ -72,7 +72,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TABS(
     data_type: TileDataType) => boolean
 begin
-    return TileUnaryDataTypeSupported(TileUnary_ABS, data_type);
+    return TileF3DataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TABS(
@@ -120,7 +120,7 @@ end;
 
 - TABS is BSTART.VEC Mode 0 Function 15 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies one Local source and one new Local destination; B.IOR and B.IOS are illegal.
-- DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- DataType is one of FP16, FP32, or BF16.
 - Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.
 - Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
 - Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op.

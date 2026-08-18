@@ -3,22 +3,12 @@
 
 pure func TileCompareDataTypeSupported(data_type: TileDataType) => boolean
 begin
-    case data_type of
-        when TileDataType_FP64, TileDataType_FP32,
-             TileDataType_TF32, TileDataType_HF32,
-             TileDataType_FP16, TileDataType_BF16,
-             TileDataType_E4M3, TileDataType_E5M2,
-             TileDataType_S64, TileDataType_S32,
-             TileDataType_S16, TileDataType_S8,
-             TileDataType_U64, TileDataType_U32,
-             TileDataType_U16, TileDataType_U8 => return TRUE;
-        otherwise => return FALSE;
-    end;
+    return TileA9DataTypeSupported(data_type);
 end;
 
 pure func TileSelectDataTypeSupported(data_type: TileDataType) => boolean
 begin
-    return TileCompareDataTypeSupported(data_type);
+    return TileCarrierOnlyDataTypeSupported(data_type);
 end;
 
 pure func TileCompareBoolean(

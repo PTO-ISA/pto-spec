@@ -4,7 +4,7 @@ begin
     var instruction: bits(64) = Zeros{64} + 0x00019181;
     instruction[26:25] = '10';
     instruction[24:20] = '01101';
-    instruction[31:27] = Zeros{5} + 24;
+    instruction[31:27] = Zeros{5} + 27;
     return instruction;
 end;
 
@@ -18,7 +18,7 @@ begin
         4,
         2,
         3,
-        TileDataType_U64,
+        TileDataType_U8,
         TileLayout_RowMajor,
         TileLocation_Any);
     for row = 0 to 1 looplimit 2 do

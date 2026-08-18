@@ -117,7 +117,7 @@ end;
 
 - TREM retains TEPL carrier Mode 0 Function 4 but is canonically classified as SFU.
 - Exactly one terminating Local B.IOT supplies ordered dividend and divisor sources plus one new Local destination; B.IOR and B.IOS are illegal and PE_MASK zero is a strict no-op.
-- DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.
 - Both source valid rectangles are defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and the selected mask.
 - Only B.DATR PadValueOrByteId is applicable.
 

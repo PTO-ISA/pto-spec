@@ -232,7 +232,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TMRGSORT, FP32|FP16
+BSTART.SFU TMRGSORT, FP32|FP16|BF16
 B.DATR all-zero (optional)
 B.IOR Descending (optional; omission defaults to ascending)
 B.IOT two Local sources and one new Local destination, common PE_MASK, <last>
@@ -301,7 +301,7 @@ end;
 ## Legality
 
 - TMRGSORT uses the TEPL encoding carrier Mode 3 Function 13, canonically assembles with BSTART.SFU, and has no standalone opcode.
-- The complete Local binding stream supplies exactly two persistent nonempty single-row sorted sources and one newly allocated destination. All are row-major FP32 or FP16 with one common DataType.
+- The complete Local binding stream supplies exactly two persistent nonempty single-row sorted sources and one newly allocated destination. All are row-major FP32, FP16, or BF16 with one common DataType.
 - The source streams are sorted in the direction selected by B.IOR before execution. B.DATR is all zero, every B.DIM is absent, B.IOS is illegal, and every B.IOT uses one PE_MASK.
 - Every valid source element is defined and has a valid encoding. Signaling NaN is a legal merge value and records numeric invalid status rather than causing a Tile legality fault.
 

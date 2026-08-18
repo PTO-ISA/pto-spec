@@ -17,7 +17,7 @@ end;
 pure func InstructionContractDataTypeLegal_TAND(
     data_type: TileDataType) => boolean
 begin
-    return TileBinaryDataTypeSupported(TileBinary_AND, data_type);
+    return TileCarrierOnlyDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TAND(

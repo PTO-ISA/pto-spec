@@ -116,7 +116,7 @@ end;
 
 - MGATHER_CAS is selected only by BSTART.MGATHER.CAS function 8 in the TLSU selector space; it has no standalone opcode.
 - Exactly two Local B.IOT bindings are required. The first supplies IndexTile and ExpectedTile without a destination and has L=0. The second supplies ReplacementTile and a newly allocated destination and has L=1. Both carry one common PE_MASK; B.IOS is not accepted.
-- IndexTile must be allocated, fully defined, generically indexable, and use S4X2, U4X2, S8, U8, S16, U16, S32, U32, S64, or U64. Each logical element is sign- or zero-extended as a byte displacement.
+- IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Each logical element is sign- or zero-extended as a byte displacement.
 - ExpectedTile and ReplacementTile must be allocated, fully defined, use the selected transfer DataType, and match the resolved ValidRow x ValidCol. Comparison uses their encoded element values.
 - Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 are rejected because the block carries no nibble selector.
 - Destination physical Rows are derived from TSize, physical Col, and transfer DataType. Rows and Col are powers of two and the physical region contains ValidRow x ValidCol.

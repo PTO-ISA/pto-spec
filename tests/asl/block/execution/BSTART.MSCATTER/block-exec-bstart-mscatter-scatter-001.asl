@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-SCATTER-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-BSTART-MSCATTER-SCHEMA-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"MSCATTER writes only the valid region at signed and unsigned byte displacements while preserving both sources.","pass_condition":"A 2x2 U8 source and S16 IndexTile with different physical column counts write four byte-displaced addresses and leave both source descriptors unchanged.","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-SCATTER-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-BSTART-MSCATTER-SCHEMA-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"MSCATTER writes only the valid region at full-width S64 byte displacements while preserving both sources.","pass_condition":"A 2x2 U8 source and S64 IndexTile with different physical column counts write four byte-displaced addresses and leave both source descriptors unchanged.","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func ScatterStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00511181;
@@ -29,7 +29,7 @@ begin
     ResetProfileState();
     ConfigureTile(1, 128, 2, 4, 2, 2, TileDataType_U8,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 4, 8, 2, 2, TileDataType_S16,
+    ConfigureTile(2, 128, 4, 8, 2, 2, TileDataType_S64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x11);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x22);

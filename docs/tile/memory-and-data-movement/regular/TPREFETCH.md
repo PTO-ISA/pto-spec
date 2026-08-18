@@ -70,6 +70,16 @@ BSTOP
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/tile/memory-and-data-movement/regular/TPREFETCH.asl -->
 ```asl
+pure func InstructionContractDataTypeLegal_TPREFETCH(
+    code: bits(5)) => boolean
+begin
+    if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
+        return FALSE;
+    end;
+    let data_type = TileDataTypeFromEncoding(code as TileDataTypeEncoding);
+    return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
+end;
+
 readonly func InstructionContractHandler_TPREFETCH() => TileSemanticHandler
 begin
     return TileHandler_TPREFETCH;

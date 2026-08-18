@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TROWMAX-U64-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl","requirements":["PTO-INST-TILE-TROWMAX"],"kind":"execution","summary":"TROWMAX compares U64 values as unsigned elements.","pass_condition":"The all-ones U64 value is selected over one.","related_sources":["asl/tile/model/execution/reduction.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TROWMAX-U64-001","source":"asl/tile/reduce-and-expand/row-reduction/TROWMAX.asl","requirements":["PTO-INST-TILE-TROWMAX"],"kind":"execution","summary":"TROWMAX compares U16 values as unsigned elements.","pass_condition":"The all-ones U16 value is selected over one.","related_sources":["asl/tile/model/execution/reduction.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -9,7 +9,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U64,
+        TileDataType_U16,
         TileLayout_RowMajor,
         TileLocation_Any);
     ConfigureTile(
@@ -19,7 +19,7 @@ begin
         1,
         1,
         1,
-        TileDataType_U64,
+        TileDataType_U16,
         TileLayout_RowMajor,
         TileLocation_Any);
     WriteTileElement(0, 0, 0, Ones{PTO_XLEN});

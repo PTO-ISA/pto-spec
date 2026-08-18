@@ -75,7 +75,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TFMA(
     data_type: TileDataType) => boolean
 begin
-    return TileFusedMultiplyAddDataTypeSupported(data_type);
+    return TileF3DataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TFMA(
@@ -134,7 +134,7 @@ end;
 
 - TFMA is selected by the TEPL encoding carrier Mode 0 Function 28, canonically assembled with BSTART.VEC, and has no standalone opcode.
 - Exactly two ordered Local B.IOT bindings are required: the first supplies two multiplicands without a destination or last marker; the second supplies the addend and one new destination and terminates the sequence.
-- DataType is exactly one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- DataType is exactly one of FP16, FP32, or BF16.
 - All three sources and the destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; every valid source element is defined.
 - Only B.DATR PadValueOrByteId is applicable. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
 - B.IOR and B.IOS are illegal. All participating B.IOT masks are equal; PE_MASK zero is a strict no-op before source reads, allocation, arithmetic, flags, padding, or descriptor effects.

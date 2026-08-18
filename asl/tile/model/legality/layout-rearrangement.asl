@@ -6,15 +6,18 @@ readonly func TileOperandsLegal_TFILLPAD(
     padding: Word) => boolean
 begin
     if !TileDescriptorLegal(destination) ||
-       !TileSourceContentsDefined(source) ||
-       !TileSourceEncodingsValid(source) then
+       !TileSourceContentsDefined(source) then
         return FALSE;
     end;
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
+    if !TileCarrierOnlyDataTypeSupported(source_tile.data_type) &&
+       !TileSourceEncodingsValid(source) then
+        return FALSE;
+    end;
     return destination_tile.storage_kind == TileStorage_Numeric &&
            source_tile.storage_kind == TileStorage_Numeric &&
-           TileFillPadDataTypeSupported(destination_tile.data_type) &&
+           TileCarrierOnlyDataTypeSupported(destination_tile.data_type) &&
            destination_tile.data_type == source_tile.data_type &&
            TileLayoutShapeLegal(destination_tile) &&
            TileLayoutShapeLegal(source_tile) &&
@@ -31,15 +34,19 @@ readonly func TileOperandsLegal_TEXTRACT(
     column_offset: integer {0..65535}) => boolean
 begin
     if !TileDescriptorLegal(destination) ||
-       !TileSourceContentsDefined(source) ||
-       !TileSourceEncodingsValid(source) then
+       !TileSourceContentsDefined(source) then
         return FALSE;
     end;
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
+    if !TileCarrierOnlyDataTypeSupported(source_tile.data_type) &&
+       !TileSourceEncodingsValid(source) then
+        return FALSE;
+    end;
     return destination_tile.storage_kind == TileStorage_Numeric &&
            source_tile.storage_kind == TileStorage_Numeric &&
-           TileMove24DataTypeSupported(destination_tile.data_type) &&
+           TileCarrierOrMove24BaselineDataTypeSupported(
+               destination_tile.data_type) &&
            destination_tile.data_type == source_tile.data_type &&
            TileLayoutShapeLegal(destination_tile) &&
            TileLayoutShapeLegal(source_tile) &&
@@ -58,18 +65,23 @@ readonly func TileOperandsLegal_TINSERT(
 begin
     if !TileDescriptorLegal(destination) ||
        !TileSourceContentsDefined(old_destination) ||
-       !TileSourceContentsDefined(source) ||
-       !TileSourceEncodingsValid(old_destination) ||
-       !TileSourceEncodingsValid(source) then
+       !TileSourceContentsDefined(source) then
         return FALSE;
     end;
     let destination_tile = _Tiles[[destination]];
     let old_tile = _Tiles[[old_destination]];
     let source_tile = _Tiles[[source]];
+    if (!TileCarrierOnlyDataTypeSupported(old_tile.data_type) &&
+        !TileSourceEncodingsValid(old_destination)) ||
+       (!TileCarrierOnlyDataTypeSupported(source_tile.data_type) &&
+        !TileSourceEncodingsValid(source)) then
+        return FALSE;
+    end;
     return destination_tile.storage_kind == TileStorage_Numeric &&
            old_tile.storage_kind == TileStorage_Numeric &&
            source_tile.storage_kind == TileStorage_Numeric &&
-           TileMove24DataTypeSupported(destination_tile.data_type) &&
+           TileCarrierOrMove24BaselineDataTypeSupported(
+               destination_tile.data_type) &&
            TileShapeAndTypeMatch(destination, old_destination) &&
            destination_tile.data_type == source_tile.data_type &&
            TileLayoutShapeLegal(destination_tile) &&
@@ -86,15 +98,19 @@ readonly func TileOperandsLegal_TTRANS(
     source: TileIndex) => boolean
 begin
     if !TileDescriptorLegal(destination) ||
-       !TileSourceContentsDefined(source) ||
-       !TileSourceEncodingsValid(source) then
+       !TileSourceContentsDefined(source) then
         return FALSE;
     end;
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
+    if !TileCarrierOnlyDataTypeSupported(source_tile.data_type) &&
+       !TileSourceEncodingsValid(source) then
+        return FALSE;
+    end;
     return destination_tile.storage_kind == TileStorage_Numeric &&
            source_tile.storage_kind == TileStorage_Numeric &&
-           TileMove24DataTypeSupported(destination_tile.data_type) &&
+           TileCarrierOrMove24BaselineDataTypeSupported(
+               destination_tile.data_type) &&
            destination_tile.valid_rows == source_tile.valid_columns &&
            destination_tile.valid_columns == source_tile.valid_rows &&
            destination_tile.data_type == source_tile.data_type &&
@@ -110,8 +126,6 @@ begin
     if !TileDescriptorLegal(destination) ||
        !TileSourceContentsDefined(source_left) ||
        !TileSourceContentsDefined(source_right) ||
-       !TileSourceEncodingsValid(source_left) ||
-       !TileSourceEncodingsValid(source_right) ||
        _Tiles[[destination]].data_type != _Tiles[[source_left]].data_type ||
        _Tiles[[destination]].data_type != _Tiles[[source_right]].data_type then
         return FALSE;
@@ -119,10 +133,16 @@ begin
     let destination_tile = _Tiles[[destination]];
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
+    if !TileCarrierOnlyDataTypeSupported(left_tile.data_type) &&
+       (!TileSourceEncodingsValid(source_left) ||
+        !TileSourceEncodingsValid(source_right)) then
+        return FALSE;
+    end;
     return destination_tile.storage_kind == TileStorage_Numeric &&
            left_tile.storage_kind == TileStorage_Numeric &&
            right_tile.storage_kind == TileStorage_Numeric &&
-           TileMove24DataTypeSupported(destination_tile.data_type) &&
+           TileCarrierOrMove24BaselineDataTypeSupported(
+               destination_tile.data_type) &&
            left_tile.valid_rows > 0 &&
            left_tile.valid_rows == right_tile.valid_rows &&
            destination_tile.valid_rows == left_tile.valid_rows &&

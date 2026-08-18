@@ -26,7 +26,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U16,
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U8,
         TileLayout_RowMajor, TileLocation_Any);

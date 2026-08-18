@@ -214,6 +214,25 @@ begin
     end;
 end;
 
+pure func TileCarrierBinaryValue(
+    operation: TileBinaryOperation,
+    data_type: TileDataType,
+    left: Word,
+    right: Word) => Word
+begin
+    assert operation == TileBinary_AND ||
+           operation == TileBinary_OR ||
+           operation == TileBinary_XOR;
+    var result = Zeros{PTO_XLEN};
+    case operation of
+        when TileBinary_AND => result = left AND right;
+        when TileBinary_OR => result = left OR right;
+        when TileBinary_XOR => result = left XOR right;
+        otherwise => unreachable;
+    end;
+    return TileRawElementValue(result, data_type);
+end;
+
 pure func TileSignedModulo(dividend: Word, divisor: Word) => Word
 begin
     let quotient = ScalarDivideSigned(dividend, divisor);
@@ -267,7 +286,13 @@ func TileProfileBinaryWithFlags(
     left: Word,
     right: Word) => (Word, bits(5))
 begin
-    if (op == TileBinary_DIV || op == TileBinary_REM) &&
+    if (op == TileBinary_AND || op == TileBinary_OR ||
+       op == TileBinary_XOR) &&
+       TileCarrierOnlyDataTypeSupported(data_type) then
+        return (
+            TileCarrierBinaryValue(op, data_type, left, right),
+            Zeros{5});
+    elsif (op == TileBinary_DIV || op == TileBinary_REM) &&
        TileDataTypeIsInteger(data_type) then
         return (
             TileIntegerDivRemValue(op, data_type, left, right),

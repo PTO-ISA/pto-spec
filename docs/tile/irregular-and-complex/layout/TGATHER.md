@@ -41,7 +41,7 @@ This operation has no standalone opcode.
 | --- | --- |
 | destination0 | new Local value destination |
 | source0 | persistent Local value source |
-| source1 | persistent Local S32 or U32 row-index source |
+| source1 | persistent Local S16, U16, S32, U32, S64, or U64 row-index source |
 
 ## Decode
 
@@ -107,7 +107,7 @@ end;
 
 - TGATHER uses the TEPL encoding carrier Mode 3 Function 15, is canonically assembled with BSTART.SFU, and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies one persistent value source, one persistent row-index source, and one newly allocated destination; B.IOR and B.IOS are illegal.
-- Value source and destination use the same one of FP32, FP16, S32, S16, U32, or U16. The index source is exactly S32 or U32.
+- Value source and destination use the same one of HiF8, E4M3, E5M2, E3M2, E2M3, E8M0, S8, U8, FP16, BF16, S16, U16, FP32, TF32, HF32, S32, U32, FP64, S64, or U64. The index source is exactly S16, U16, S32, U32, S64, or U64.
 - Index and destination valid shapes are equal and nonzero. The value source has at least destination ValidCol columns.
 - Every signed index is nonnegative and every index is less than source ValidRow. The complete index rectangle and every selected source[value,row,column] element are defined and validly encoded.
 - All three bindings use the same PE_MASK; any nonzero subset is legal.

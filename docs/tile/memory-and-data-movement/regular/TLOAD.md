@@ -67,7 +67,11 @@ Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S255, per
 ```asl
 pure func InstructionContractDataTypeLegal_TLOAD(code: bits(5)) => boolean
 begin
-    return TileDataTypeEncodingValid(code as TileDataTypeEncoding);
+    if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
+        return FALSE;
+    end;
+    let data_type = TileDataTypeFromEncoding(code as TileDataTypeEncoding);
+    return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
 pure func InstructionContractDestinationShapeLegal_TLOAD(

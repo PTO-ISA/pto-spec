@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: irregular-and-complex/union
-    // block: BSTART.SFU TPARTMUL, FP32|FP16|BF16|S32|S16|S8|U32|U16|U8 | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional; omission defaults to 1) | B.DIM LB2=Col (optional; omission defaults to ValidCol) | B.IOT exactly two persistent Local sources and one new Local destination, common PE_MASK, <last> | BSTOP
+    // block: BSTART.SFU TPARTMUL, FP32|FP16|BF16|S32|S16|U32|U16 | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional; omission defaults to 1) | B.DIM LB2=Col (optional; omission defaults to ValidCol) | B.IOT exactly two persistent Local sources and one new Local destination, common PE_MASK, <last> | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001110010') == 84;
     assert TileOperationOfIndex(84) == TileOperation_TPARTMUL;
     assert TileHandlerOfIndex(84) == TileHandler_ExecuteTilePartial;

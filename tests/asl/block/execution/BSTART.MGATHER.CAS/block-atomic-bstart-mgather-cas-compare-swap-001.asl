@@ -45,7 +45,7 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_S16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(1, 128, 2, 4, 2, 2, TileDataType_U8,
+    ConfigureTile(1, 128, 2, 4, 2, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(2, 128, 2, 4, 2, 2, TileDataType_U8,
         TileLayout_RowMajor, TileLocation_Any);

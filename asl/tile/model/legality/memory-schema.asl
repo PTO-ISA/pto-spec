@@ -9,14 +9,18 @@ readonly func TileOperandsLegal_TLOAD(destination: TileIndex,
                                       base_address: Word,
                                       row_stride_elements: Word) => boolean
 begin
-    return TileDescriptorLegal(destination);
+    return TileDescriptorLegal(destination) &&
+           TileCarrierOrPackedBaselineDataTypeSupported(
+               _Tiles[[destination]].data_type);
 end;
 
 readonly func TileOperandsLegal_TSTORE(base_address: Word,
                                        row_stride_elements: Word,
                                        source: TileIndex) => boolean
 begin
-    return TileDescriptorLegal(source);
+    return TileDescriptorLegal(source) &&
+           TileCarrierOrPackedBaselineDataTypeSupported(
+               _Tiles[[source]].data_type);
 end;
 
 readonly func TileOperandsLegal_MGATHER(
@@ -27,7 +31,7 @@ begin
            _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
            _Tiles[[destination]].valid_columns ==
                _Tiles[[indices]].valid_columns &&
-           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(
                _Tiles[[destination]].data_type);
 end;
@@ -45,7 +49,7 @@ readonly func TileOperandsLegal_MSCATTER(
 begin
     return TileSourceContentsDefined(source) &&
            TileSourceContentsDefined(indices) &&
-           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(_Tiles[[source]].data_type) &&
            _Tiles[[source]].valid_rows == _Tiles[[indices]].valid_rows &&
            _Tiles[[source]].valid_columns ==
@@ -60,7 +64,7 @@ begin
     return TileDescriptorLegal(destination) &&
            TileSourceContentsDefined(indices) &&
            TilePredicateValuesLegal(mask) &&
-           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(
                _Tiles[[destination]].data_type) &&
            _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
@@ -80,7 +84,7 @@ begin
     return TileSourceContentsDefined(source) &&
            TileSourceContentsDefined(indices) &&
            TilePredicateValuesLegal(mask) &&
-           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(_Tiles[[source]].data_type) &&
            _Tiles[[source]].valid_rows == _Tiles[[indices]].valid_rows &&
            _Tiles[[source]].valid_columns ==
@@ -100,7 +104,7 @@ begin
            TileSourceContentsDefined(indices) &&
            TileSourceContentsDefined(expected) &&
            TileSourceContentsDefined(replacement) &&
-           TileDataTypeIsInteger(_Tiles[[indices]].data_type) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(
                _Tiles[[destination]].data_type) &&
            _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
@@ -134,4 +138,17 @@ readonly func TileOperandsLegal_TPREFETCH(
 begin
     return valid_columns <= columns && IsNonzeroPowerOfTwo(columns) &&
            valid_rows * valid_columns <= PTO_MODEL_TILE_ELEMENTS;
+end;
+
+readonly func TileOperandsLegal_TPREFETCH(
+    base_address: Word, row_stride_elements: Word,
+    valid_columns: integer {1..65535},
+    valid_rows: integer {1..65535},
+    columns: integer {1..65535},
+    data_type: TileDataType) => boolean
+begin
+    return TileOperandsLegal_TPREFETCH(
+               base_address, row_stride_elements, valid_columns,
+               valid_rows, columns) &&
+           TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;

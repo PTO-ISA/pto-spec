@@ -5,7 +5,7 @@
 // TSHLS MUST consume one Local source, one per-participating-PE
 // private-GPR scalar from optional B.IOR.RegSrc0, and one renamed Local
 // destination, and MUST compute source << masked_count over the valid region.
-// The selected DataType MUST satisfy TileVecScalarIntegerDataTypeSupported; only
+// The selected DataType MUST satisfy TileI6DataTypeSupported; only
 // PadValueOrByteId is applicable in B.DATR. Complete legality and
 // allocation preflight MUST precede source/scalar snapshots and atomic
 // payload, padding, status, and descriptor publication.

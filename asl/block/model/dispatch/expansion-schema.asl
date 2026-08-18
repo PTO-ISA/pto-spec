@@ -51,6 +51,32 @@ begin
            decoded == TileOperation_TCOLEXPANDEXPDIF;
 end;
 
+readonly func SelectedBundleExpansionExponentialDifferenceTypes()
+    => (boolean, TileDataType, TileDataType)
+begin
+    let default_type = TileDataType_FP64;
+    if !_BundleOperation.data_type_valid ||
+       !BundleDataTypeConcrete(_BundleOperation.data_type) then
+        return (FALSE, default_type, default_type);
+    end;
+    let source_type = BundleTileDataType(_BundleOperation.data_type);
+    var destination_type = source_type;
+    if _BundleDataAttributesPresent then
+        if _BundleDataAttributes.data_type == DTYPE_NONE then
+            destination_type = source_type;
+        elsif !BundleDataTypeConcrete(_BundleDataAttributes.data_type) then
+            return (FALSE, default_type, default_type);
+        else
+            destination_type = BundleTileDataType(
+                _BundleDataAttributes.data_type);
+        end;
+    end;
+    return (
+        TileExpandExpdifTypePairLegal(source_type, destination_type),
+        source_type,
+        destination_type);
+end;
+
 readonly func SelectedBundleExpansionBroadcastShapeMatches(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     broadcast: TileIndex) => boolean
@@ -96,15 +122,24 @@ begin
 
     let broadcast = if copy then
         binding.source0 else binding.source1;
-    let data_type = TileDataTypeFromEncoding(
+    var data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode()
             as TileDataTypeEncoding);
-    if !TileVecArithmeticDataTypeSupported(data_type) ||
-       (TileExpansionOperationIsExponentialDifference(operation) &&
-        !TileUnaryDataTypeSupported(TileUnary_EXP, data_type)) ||
+    let expdif = TileExpansionOperationIsExponentialDifference(operation);
+    var source_data_type = data_type;
+    if expdif then
+        let (types_legal, selected_source_type, selected_destination_type) =
+            SelectedBundleExpansionExponentialDifferenceTypes();
+        if !types_legal then
+            return FALSE;
+        end;
+        source_data_type = selected_source_type;
+        data_type = selected_destination_type;
+    end;
+    if (!expdif && !TileVecArithmeticDataTypeSupported(data_type)) ||
        !TileDescriptorLegal(broadcast) ||
        _Tiles[[broadcast]].storage_kind != TileStorage_Numeric ||
-       _Tiles[[broadcast]].data_type != data_type ||
+       _Tiles[[broadcast]].data_type != source_data_type ||
        _Tiles[[broadcast]].layout != TileLayout_RowMajor ||
        !TileSourceContentsDefined(broadcast) ||
        !TileSourceEncodingsValid(broadcast) ||
@@ -119,7 +154,7 @@ begin
     end;
     return TileDescriptorLegal(binding.source0) &&
            _Tiles[[binding.source0]].storage_kind == TileStorage_Numeric &&
-           _Tiles[[binding.source0]].data_type == data_type &&
+           _Tiles[[binding.source0]].data_type == source_data_type &&
            _Tiles[[binding.source0]].layout == TileLayout_RowMajor &&
            TileSourceContentsDefined(binding.source0) &&
            TileSourceEncodingsValid(binding.source0) &&

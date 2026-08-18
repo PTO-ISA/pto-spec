@@ -113,7 +113,7 @@ end;
 
 - MSCATTER is selected only by BSTART.MSCATTER function 5 in the TLSU selector space; it has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies DataTile and IndexTile with no destination or TSize. B.IOS and additional Tile bindings are not accepted.
-- DataTile and IndexTile must be allocated and fully defined. DataTile DataType must equal the BSTART transfer DataType. IndexTile must use a signed or unsigned integer DataType.
+- DataTile and IndexTile must be allocated and fully defined. DataTile DataType must equal the BSTART transfer DataType. IndexTile must use S32, U32, S64, or U64.
 - DataTile physical Col equals resolved LB2. Both sources have resolved ValidRow x ValidCol and selected Layout; IndexTile may use a different physical shape outside that valid rectangle.
 - Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 are rejected because the block carries no nibble selector.
 - B.IOT PE_MASK=0000 is a strict no-op before schema, GPR, source, dimension, address, permission, event, or memory checks.

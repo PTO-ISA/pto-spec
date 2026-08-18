@@ -2,7 +2,7 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigurePredicateTile(1, 128, 8, 2, 1, 2);
+    ConfigurePredicateTile(1, 128, 16, 2, 1, 2);
     ConfigureTile(
         2,
         128,
@@ -10,7 +10,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U64,
+        TileDataType_FP32,
         TileLayout_RowMajor,
         TileLocation_Any);
     ConfigureTile(
@@ -20,7 +20,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U64,
+        TileDataType_FP32,
         TileLayout_RowMajor,
         TileLocation_Any);
     WriteTilePredicateBit(1, 0, 0, TRUE);
@@ -31,7 +31,7 @@ begin
     WriteTileElement(3, 0, 1, Zeros{PTO_XLEN} + 21);
 
     let started = ExecuteCommandInstruction(
-        Zeros{PTO_XLEN} + 0xc1a19181,
+        Zeros{PTO_XLEN} + 0x09a19181,
         32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);

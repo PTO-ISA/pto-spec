@@ -430,6 +430,24 @@ begin
        TileOperationUsesClosedTCMPSSchema(operation) then
         return ResolveBundlePredicateDestination();
     end;
+    if TileExpansionOperationIsExponentialDifference(operation) then
+        let (types_legal, -, destination_type) =
+            SelectedBundleExpansionExponentialDifferenceTypes();
+        if !types_legal then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        let valid_columns = UInt(_BundleDimensions[[0]])
+            as integer {1..65535};
+        let valid_rows = if _BundleDimensionPresent[[1]] then
+            UInt(_BundleDimensions[[1]]) as integer {1..65535} else 1;
+        let columns = if _BundleDimensionPresent[[2]] then
+            UInt(_BundleDimensions[[2]]) as integer {1..65535}
+            else valid_columns;
+        return ResolveBundleTileDestinationsWithShapeAndType(
+            TRUE, valid_rows, valid_columns, columns,
+            TRUE, destination_type);
+    end;
     if !TileOperationUsesClosedBinarySchema(operation) &&
        !TileOperationUsesClosedUnarySchema(operation) &&
        !TileOperationUsesClosedTFMASchema(operation) &&

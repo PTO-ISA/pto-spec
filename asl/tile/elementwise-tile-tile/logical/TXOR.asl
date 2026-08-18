@@ -17,7 +17,7 @@ end;
 pure func InstructionContractDataTypeLegal_TXOR(
     data_type: TileDataType) => boolean
 begin
-    return TileBinaryDataTypeSupported(TileBinary_XOR, data_type);
+    return TileCarrierOnlyDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TXOR(

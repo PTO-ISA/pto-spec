@@ -130,6 +130,13 @@ begin
         return FALSE;
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    let transfer_data_type = TileDataTypeFromEncoding(
+        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    if (function == 0 || function == 1 || function == 14) &&
+       !TileCarrierOrPackedBaselineDataTypeSupported(transfer_data_type) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if !BundleOperationScalarBindingSchemaLegal(operation) then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
@@ -173,9 +180,7 @@ begin
             columns as integer {1..65535},
             valid_rows as integer {1..65535},
             valid_columns as integer {1..65535},
-            TileDataTypeFromEncoding(
-                CurrentBundleTileOperationDataTypeCode()
-                    as TileDataTypeEncoding),
+            transfer_data_type,
             CurrentBundleTileLayout(), shared_mask);
     elsif function == 1 || function == 14 then
         if !SharedStorePEMaskLegal(function, shared_mask) ||
@@ -188,9 +193,7 @@ begin
         let store_valid_rows = BundleSharedStoreValidRows(shared_id);
         let store_columns = BundleSharedStoreColumns(
             shared_id, store_valid_columns);
-        let store_data_type = TileDataTypeFromEncoding(
-            CurrentBundleTileOperationDataTypeCode()
-                as TileDataTypeEncoding);
+        let store_data_type = transfer_data_type;
         let store_layout = CurrentBundleTileLayout();
         if store_valid_columns < 1 || store_valid_rows < 1 ||
            store_columns < 1 || store_valid_columns > store_columns ||

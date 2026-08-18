@@ -73,7 +73,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TADD(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileA9DataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TADD(
@@ -117,7 +117,7 @@ end;
 
 - TADD is selected only by BSTART.VEC Mode 0 Function 0 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination. B.IOR and B.IOS are not accepted; all participating Tiles use one PE_MASK and zero mask is a strict no-op.
-- The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
 - Both source valid regions are completely defined and source/destination physical shape, valid shape, row-major layout, and DataType match.
 - B.DATR applicability allows only PadValueOrByteId as PadValue.
 

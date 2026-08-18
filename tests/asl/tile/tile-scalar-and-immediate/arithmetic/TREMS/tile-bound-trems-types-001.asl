@@ -2,7 +2,8 @@
 func main() => integer
 begin
     assert InstructionContractDataTypeLegal_TREMS(TileDataType_FP32);
-    assert InstructionContractDataTypeLegal_TREMS(TileDataType_U8);
+    assert InstructionContractDataTypeLegal_TREMS(TileDataType_U16);
+    assert !InstructionContractDataTypeLegal_TREMS(TileDataType_U8);
     assert !InstructionContractDataTypeLegal_TREMS(TileDataType_HiF8);
     assert !InstructionContractDataTypeLegal_TREMS(TileDataType_U4X2);
     return 0;

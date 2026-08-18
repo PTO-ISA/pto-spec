@@ -343,6 +343,41 @@ begin
     return (result, selected);
 end;
 
+implementation func TileProfileMixedExpdifFP32(
+    source_type: TileDataType,
+    left: Word,
+    broadcast: Word) => (Word, bits(5))
+begin
+    assert source_type == TileDataType_FP16 ||
+           source_type == TileDataType_BF16;
+    let (handled, discriminator_result) =
+        HardwareNumericMixedExpdifDiscriminator(left, broadcast);
+    if handled then return (discriminator_result, Zeros{5}); end;
+
+    let (difference, subtract_flags) = TileProfileBinaryWithFlags(
+        TileBinary_SUB,
+        TileDataType_FP32,
+        left,
+        broadcast);
+    let (special_handled, special_result, special_flags) =
+        TileSFUUnarySpecialValue(
+            TileUnary_EXP,
+            TileDataType_FP32,
+            difference);
+    if special_handled then
+        return (
+            special_result,
+            subtract_flags OR special_flags);
+    end;
+
+    let (profile_result, profile_flags) = TileProfileUnary(
+        TileUnary_EXP,
+        TileDataType_FP32,
+        difference);
+    return (
+        profile_result,
+        subtract_flags OR profile_flags);
+end;
 implementation func TileProfileExpand(op: TileExpandOperation,
                                       data_type: TileDataType,
                                       left: Word, broadcast: Word) => Word
@@ -353,7 +388,6 @@ begin
         left,
         broadcast);
 end;
-
 implementation func TileProfileOrderLeft(left: Word, right: Word,
                                          descending: boolean,
                                          data_type: TileDataType) => boolean

@@ -12,6 +12,16 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+pure func InstructionContractDataTypeLegal_TPREFETCH(
+    code: bits(5)) => boolean
+begin
+    if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
+        return FALSE;
+    end;
+    let data_type = TileDataTypeFromEncoding(code as TileDataTypeEncoding);
+    return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
+end;
+
 readonly func InstructionContractHandler_TPREFETCH() => TileSemanticHandler
 begin
     return TileHandler_TPREFETCH;

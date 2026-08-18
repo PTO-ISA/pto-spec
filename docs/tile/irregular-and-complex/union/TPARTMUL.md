@@ -57,7 +57,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TPARTMUL, FP32|FP16|BF16|S32|S16|S8|U32|U16|U8
+BSTART.SFU TPARTMUL, FP32|FP16|BF16|S32|S16|U32|U16
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional; omission defaults to 1)
 B.DIM LB2=Col (optional; omission defaults to ValidCol)
@@ -72,7 +72,9 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TPARTMUL(
     data_type: TileDataType) => boolean
 begin
-    return TilePartialDataTypeSupported(data_type);
+    return TilePartialDataTypeSupportedForOperation(
+        TilePartial_MUL,
+        data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TPARTMUL(
@@ -120,7 +122,7 @@ end;
 
 - TPARTMUL uses the TEPL encoding carrier Mode 3 Function 18, canonically assembles with BSTART.SFU, and has no standalone opcode.
 - Exactly two persistent nonempty Local sources and one newly allocated Local destination are supplied by a terminated B.IOT stream. B.DATR, B.IOR, and B.IOS are illegal.
-- Source and destination DataType is exactly one of FP32, FP16, BF16, S32, S16, S8, U32, U16, or U8. All are row-major and use one PE_MASK.
+- Source and destination DataType is exactly one of FP32, FP16, BF16, S32, S16, U32, or U16. All are row-major and use one PE_MASK.
 - Both source valid rectangles are origin-anchored, fit within ValidRow by ValidCol, and at least one source covers the entire destination valid rectangle. Thus no valid destination coordinate is uncovered.
 - Every valid source element is defined; floating encodings are valid.
 

@@ -41,7 +41,7 @@ This operation has no standalone opcode.
 | --- | --- |
 | destination0 | new zero-initialized Local value destination |
 | source0 | persistent Local value source |
-| source1 | persistent Local width-matched row-index source |
+| source1 | persistent Local S16, U16, S32, U32, S64, or U64 row-index source |
 
 ## Decode
 
@@ -107,7 +107,7 @@ end;
 
 - TSCATTER uses the TEPL encoding carrier Mode 3 Function 16, is canonically assembled with BSTART.SFU, and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies one persistent value source, one persistent row-index source, and one newly allocated destination; B.IOR and B.IOS are illegal.
-- FP32, S32, and U32 values pair with S32 or U32 indices. FP16, BF16, S16, U16, S8, and U8 values pair with S16 or U16 indices.
+- Every non-packed B8-NP, B16, B32, or B64 value pairs with every S16, U16, S32, U32, S64, or U64 index.
 - The two sources have the same nonzero valid shape. Destination ValidCol equals source ValidCol and destination ValidRow is nonzero.
 - Every signed index is nonnegative and every index is less than destination ValidRow. No two source coordinates may select the same destination coordinate [index[r,c],c].
 - Both source valid rectangles are fully defined and validly encoded. All three bindings use the same PE_MASK; any nonzero subset is legal.

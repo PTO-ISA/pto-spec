@@ -20,9 +20,7 @@ end;
 pure func InstructionContractDataTypeLegal_TORS(
     data_type: TileDataType) => boolean
 begin
-    return TileBinaryDataTypeSupported(
-        TileBinary_OR,
-        data_type);
+    return TileCarrierOnlyDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TORS(

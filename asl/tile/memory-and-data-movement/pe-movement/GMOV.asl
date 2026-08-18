@@ -7,6 +7,12 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+pure func InstructionContractDataTypeLegal_GMOV(
+    data_type: TileDataType) => boolean
+begin
+    return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
+end;
+
 readonly func InstructionContractHandler_GMOV() => TileSemanticHandler
 begin
     return TileHandler_GMOV;

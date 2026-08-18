@@ -90,7 +90,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TROWEXPANDDIV(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileA7DataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TROWEXPANDDIV(

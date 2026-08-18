@@ -64,7 +64,7 @@ begin
     if !TileSourceContentsDefined(indices) ||
        !TileSourceContentsDefined(expected) ||
        !TileSourceContentsDefined(replacement) ||
-       !TileDataTypeIsInteger(_Tiles[[indices]].data_type) ||
+       !IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
        !IndexedTLSUTransferDataTypeLegal(data_type) ||
        _Tiles[[expected]].data_type != data_type ||
        _Tiles[[replacement]].data_type != data_type then

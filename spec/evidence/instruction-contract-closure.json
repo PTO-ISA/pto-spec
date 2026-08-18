@@ -116044,7 +116044,7 @@
         "legality": [
           "MGATHER is selected only by BSTART.MGATHER function 4 in the TLSU selector space; it has no standalone opcode.",
           "Exactly one Local B.IOT binding supplies IndexTile and one destination, uses L=1, and carries the common PE_MASK and destination TSize. B.IOS is not accepted.",
-          "IndexTile must be allocated, fully defined, generically indexable, and use S4X2, U4X2, S8, U8, S16, U16, S32, U32, S64, or U64. Its ValidRow x ValidCol must equal the resolved destination valid region.",
+          "IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Its ValidRow x ValidCol must equal the resolved destination valid region.",
           "The transfer DataType may be any accepted BSTART.MGATHER DataType except E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2, whose missing nibble selector makes them reserved for indexed TLSU transfer.",
           "Destination physical Rows are derived from TSize, physical Col, and transfer DataType. Rows and Col are powers of two and the physical region must contain ValidRow x ValidCol.",
           "B.IOT PE_MASK=0000 is a strict no-op before all schema, GPR, source, dimension, allocation, and memory checks.",
@@ -116201,7 +116201,7 @@
         "legality": [
           "MGATHER_CAS is selected only by BSTART.MGATHER.CAS function 8 in the TLSU selector space; it has no standalone opcode.",
           "Exactly two Local B.IOT bindings are required. The first supplies IndexTile and ExpectedTile without a destination and has L=0. The second supplies ReplacementTile and a newly allocated destination and has L=1. Both carry one common PE_MASK; B.IOS is not accepted.",
-          "IndexTile must be allocated, fully defined, generically indexable, and use S4X2, U4X2, S8, U8, S16, U16, S32, U32, S64, or U64. Each logical element is sign- or zero-extended as a byte displacement.",
+          "IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Each logical element is sign- or zero-extended as a byte displacement.",
           "ExpectedTile and ReplacementTile must be allocated, fully defined, use the selected transfer DataType, and match the resolved ValidRow x ValidCol. Comparison uses their encoded element values.",
           "Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 are rejected because the block carries no nibble selector.",
           "Destination physical Rows are derived from TSize, physical Col, and transfer DataType. Rows and Col are powers of two and the physical region contains ValidRow x ValidCol.",
@@ -116360,7 +116360,7 @@
         "legality": [
           "MGATHER_MASK is selected only by BSTART.MGATHER.MASK function 6 in the TLSU selector space; it has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies IndexTile, MaskTile, destination, TSize, and PE_MASK. B.IOS and additional Tile bindings are not accepted.",
-          "IndexTile must be allocated, fully defined, generically indexable, and use S4X2, U4X2, S8, U8, S16, U16, S32, U32, S64, or U64. Each logical element is sign- or zero-extended as a byte displacement.",
+          "IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Each logical element is sign- or zero-extended as a byte displacement.",
           "MaskTile must be allocated and fully defined. Its logical shape and layout must match IndexTile and destination; every valid element is exactly zero or one.",
           "Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 are rejected because the block carries no nibble selector.",
           "Destination physical Rows are derived from TSize, physical Col, and transfer DataType. Rows and Col are powers of two and the physical region contains ValidRow x ValidCol.",
@@ -116502,7 +116502,7 @@
         "legality": [
           "MSCATTER is selected only by BSTART.MSCATTER function 5 in the TLSU selector space; it has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies DataTile and IndexTile with no destination or TSize. B.IOS and additional Tile bindings are not accepted.",
-          "DataTile and IndexTile must be allocated and fully defined. DataTile DataType must equal the BSTART transfer DataType. IndexTile must use a signed or unsigned integer DataType.",
+          "DataTile and IndexTile must be allocated and fully defined. DataTile DataType must equal the BSTART transfer DataType. IndexTile must use S32, U32, S64, or U64.",
           "DataTile physical Col equals resolved LB2. Both sources have resolved ValidRow x ValidCol and selected Layout; IndexTile may use a different physical shape outside that valid rectangle.",
           "Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 are rejected because the block carries no nibble selector.",
           "B.IOT PE_MASK=0000 is a strict no-op before schema, GPR, source, dimension, address, permission, event, or memory checks.",
@@ -116648,7 +116648,7 @@
         "legality": [
           "MSCATTER_MASK is selected only by BSTART.MSCATTER.MASK function 7 in the TLSU selector space; it has no standalone opcode.",
           "Exactly two Local B.IOT records supply DataTile plus IndexTile and then MaskTile with the sole last marker. Neither record has a destination or TSize; B.IOS and additional bindings are illegal.",
-          "All three sources are allocated and fully defined, share ValidRow x ValidCol and Layout, and persist after execution. DataTile DataType equals BSTART DataType; IndexTile is integer; MaskTile valid elements are exactly zero or one.",
+          "All three sources are allocated and fully defined, share ValidRow x ValidCol and Layout, and persist after execution. DataTile DataType equals BSTART DataType; IndexTile uses S32, U32, S64, or U64; MaskTile valid elements are exactly zero or one.",
           "DataTile physical Col equals LB2. IndexTile and MaskTile may use different physical shapes outside the common valid rectangle.",
           "Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 reject because the block carries no nibble selector.",
           "PE_MASK is common across both B.IOT records. PE_MASK=0000 is a strict no-op before schema, predicate, GPR, address, permission, event, or memory checks.",
@@ -116783,7 +116783,7 @@
         "legality": [
           "TABS is BSTART.VEC Mode 0 Function 15 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one Local source and one new Local destination; B.IOR and B.IOS are illegal.",
-          "DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is one of FP16, FP32, or BF16.",
           "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op."
@@ -116915,7 +116915,7 @@
         "legality": [
           "TADD is selected only by BSTART.VEC Mode 0 Function 0 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination. B.IOR and B.IOS are not accepted; all participating Tiles use one PE_MASK and zero mask is a strict no-op.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "Both source valid regions are completely defined and source/destination physical shape, valid shape, row-major layout, and DataType match.",
           "B.DATR applicability allows only PadValueOrByteId as PadValue."
         ],
@@ -117198,7 +117198,7 @@
         "legality": [
           "TADDS is selected only by the TEPL raw carrier Mode 1 Function 0; canonical execution-engine assembly is BSTART.VEC TADDS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
+          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -117896,7 +117896,7 @@
         "legality": [
           "TCMP is selected only by VEC Mode 0 Function 13 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local numeric sources and one new Local predicate destination. B.IOR, B.IOS, and additional bindings are illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "Both sources match physical shape, valid shape, row-major layout, and DataType; every valid source element is defined and every constrained floating encoding is valid.",
           "The destination uses predicate-kind storage with the same Row, Col, ValidRow, and ValidCol. Logical index i occupies bit i mod 8 of byte floor(i/8), and TSize holds at least ceil(Row*Col/8) bytes.",
           "CMode and PadValueOrByteId are the only applicable B.DATR fields. Explicit nondefault Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
@@ -118232,7 +118232,7 @@
         "legality": [
           "TCMPS is selected only by the TEPL raw carrier Mode 1 Function 13 and executes on VEC.",
           "Exactly one terminating Local B.IOT supplies one persistent numeric source and one new packed predicate destination. B.IOS and additional Tile bindings are illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other type rejects before effects.",
           "The source is row-major and completely defined. The predicate destination has matching logical geometry and capacity of at least ceil(Row*Col/8) bytes.",
           "Only CMode and PadValueOrByteId are applicable in B.DATR. When B.IOR is present, only RegSrc0 may be nonzero.",
           "PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks."
@@ -118317,7 +118317,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local U32 index destination"
+              "role": "new Local S32 or U32 index destination"
             },
             {
               "field": "source0",
@@ -118328,7 +118328,7 @@
           "selector": "0x05C",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-u32-index-destination",
+            "operand:destination0:new-local-s32-or-u32-index-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -118399,8 +118399,8 @@
         "legality": [
           "TCOLARGMAX is selected by the TEPL raw encoding carrier Mode 2 Function 28; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "The destination DataType is U32 regardless of source DataType.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The destination DataType is S32 or U32 regardless of source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
           "PadValueOrByteId is the only applicable B.DATR field. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
@@ -118411,7 +118411,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local U32 index destination"
+            "role": "new Local S32 or U32 index destination"
           },
           {
             "field": "source0",
@@ -118426,7 +118426,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid column, compute an increasing-row TMAX scan that retains the lowest winning index.",
-          "Write the selected row index as U32; equal winning values retain the lowest index.",
+          "Write the selected row index as S32 or U32; equal winning values retain the lowest index.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -118478,7 +118478,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local U32 index destination"
+              "role": "new Local S32 or U32 index destination"
             },
             {
               "field": "source0",
@@ -118489,7 +118489,7 @@
           "selector": "0x05D",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-u32-index-destination",
+            "operand:destination0:new-local-s32-or-u32-index-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -118560,8 +118560,8 @@
         "legality": [
           "TCOLARGMIN is selected by the TEPL raw encoding carrier Mode 2 Function 29; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "The destination DataType is U32 regardless of source DataType.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The destination DataType is S32 or U32 regardless of source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
           "PadValueOrByteId is the only applicable B.DATR field. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
@@ -118572,7 +118572,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local U32 index destination"
+            "role": "new Local S32 or U32 index destination"
           },
           {
             "field": "source0",
@@ -118587,7 +118587,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid column, compute an increasing-row TMIN scan that retains the lowest winning index.",
-          "Write the selected row index as U32; equal winning values retain the lowest index.",
+          "Write the selected row index as S32 or U32; equal winning values retain the lowest index.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -119150,6 +119150,7 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
+              "DataType",
               "PadValueOrByteId"
             ],
             "pad_union": "pad-value"
@@ -119166,7 +119167,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local destination with DstDataType"
             },
             {
               "field": "source0",
@@ -119181,9 +119182,9 @@
           "selector": "0x05B",
           "semantic_handler": "ExecuteTileExpand",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
-            "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-row-broadcast-source",
+            "operand:destination0:new-local-DstDataType-destination",
+            "operand:source0:persistent-local-full-shape-SrcDataType-source",
+            "operand:source1:persistent-local-one-row-SrcDataType-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -119195,7 +119196,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TCOLEXPANDEXPDIF, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR DataType, PadValue (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -119207,17 +119208,15 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-          "For every valid destination element, first compute typed source0 - BroadcastTile[0,c], then compute the same-type natural exponential.",
-          "The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction."
+          "Omitted B.DATR selects DstDataType=SrcDataType and PadValue=Null. When B.DATR is present, DTYPE_NONE inherits SrcDataType, a concrete DataType selects DstDataType, and encoded DataType zero selects FP64 and is never absence. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TCOLEXPANDEXPDIF, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+          "BSTART.SFU TCOLEXPANDEXPDIF, SrcDataType; B.DATR DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, non-row-major source, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, non-row-major source, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -119249,17 +119248,137 @@
             "source": "asl/block/attributes/B.DATR.asl",
             "width": 2,
             "zero_meaning": "For PadValue operations code zero selects Zero; for ByteId operations it selects ByteId zero."
+          },
+          {
+            "assigned": [
+              {
+                "meaning": "FP64",
+                "value": 0
+              },
+              {
+                "meaning": "FP32",
+                "value": 1
+              },
+              {
+                "meaning": "TF32",
+                "value": 2
+              },
+              {
+                "meaning": "HF32",
+                "value": 3
+              },
+              {
+                "meaning": "FP16",
+                "value": 4
+              },
+              {
+                "meaning": "BF16",
+                "value": 5
+              },
+              {
+                "meaning": "HiF8",
+                "value": 6
+              },
+              {
+                "meaning": "E4M3",
+                "value": 7
+              },
+              {
+                "meaning": "E5M2",
+                "value": 8
+              },
+              {
+                "meaning": "E3M2",
+                "value": 9
+              },
+              {
+                "meaning": "E2M3",
+                "value": 10
+              },
+              {
+                "meaning": "E2M1X2",
+                "value": 11
+              },
+              {
+                "meaning": "E1M2X2",
+                "value": 12
+              },
+              {
+                "meaning": "E8M0",
+                "value": 13
+              },
+              {
+                "meaning": "HiF4X2",
+                "value": 14
+              },
+              {
+                "meaning": "S64",
+                "value": 16
+              },
+              {
+                "meaning": "S32",
+                "value": 17
+              },
+              {
+                "meaning": "S16",
+                "value": 18
+              },
+              {
+                "meaning": "S8",
+                "value": 19
+              },
+              {
+                "meaning": "S4X2",
+                "value": 20
+              },
+              {
+                "meaning": "U64",
+                "value": 24
+              },
+              {
+                "meaning": "U32",
+                "value": 25
+              },
+              {
+                "meaning": "U16",
+                "value": 26
+              },
+              {
+                "meaning": "U8",
+                "value": 27
+              },
+              {
+                "meaning": "U4X2",
+                "value": 28
+              }
+            ],
+            "field": "DataType",
+            "id": "PTO-FIELD-BLOCK-DATATYPE",
+            "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+            "reserved": [
+              15,
+              21,
+              22,
+              23,
+              29,
+              30,
+              31
+            ],
+            "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
+            "source": "asl/arch/data-types/tile-data-types.asl",
+            "width": 5,
+            "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
           }
         ],
         "legality": [
-          "TCOLEXPANDEXPDIF is selected by the TEPL raw encoding carrier Mode 2 Function 27; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-row broadcast source, and one newly allocated Local destination.",
-          "Only the eight architectural floating DataTypes are legal because EXPDIF composes typed TSUB and typed natural TEXP.",
-          "The destination and both sources use exactly the selected DataType.",
+          "TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.",
+          "BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType; a concrete B.DATR DataType selects DstDataType. Source0 and BroadcastTile use SrcDataType and the destination uses DstDataType.",
+          "Mixed FP16/BF16 to FP32 widens both source operands exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.",
+          "The destination is a newly allocated FP32-capacity result for mixed pairs; no cross-type alias or reinterpret view is introduced.",
           "The broadcast source has ValidRow equal to one and ValidCol and physical Col equal to the destination.",
           "The full-shape source and destination have identical physical and valid geometry equal to the B.DIM-derived geometry.",
           "Every source is a fully defined row-major numeric Tile with valid numeric encodings.",
-          "PadValueOrByteId is the only applicable B.DATR field. B.IOR and B.IOS are illegal.",
+          "PadValueOrByteId and DataType are the only applicable B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
         "memory_effects": [
@@ -119268,7 +119387,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local DstDataType destination"
           },
           {
             "field": "source0",
@@ -119280,13 +119399,13 @@
           }
         ],
         "ordering": [
-          "Complete schema, attribute, dimension, type, descriptor, source-definedness, source-encoding, mask, capacity, name-allocation, and storage preflight precedes every source snapshot.",
-          "All source payloads are snapshotted before result construction; sources persist and legal aliases use read-old/write-new behavior.",
+          "Complete schema, attribute, dimension, source/destination type-pair, descriptor, source-definedness, source-encoding, mask, capacity, name-allocation, and storage preflight precedes every source snapshot.",
+          "All source payloads are snapshotted before result construction; sources persist and same-type legal aliases use read-old/write-new behavior.",
           "Numeric status, all valid results, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, first compute typed source0 - BroadcastTile[0,c], then compute the same-type natural exponential.",
+          "For every valid destination element, source0 and BroadcastTile are interpreted as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then compute FP32 source0 - BroadcastTile and FP32 natural exponential. Same-type pairs preserve the existing selected-type sequence.",
           "The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -120130,7 +120249,7 @@
         "legality": [
           "TCOLMAX is selected by the TEPL raw encoding carrier Mode 2 Function 17; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
@@ -120291,7 +120410,7 @@
         "legality": [
           "TCOLMIN is selected by the TEPL raw encoding carrier Mode 2 Function 18; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
@@ -120452,7 +120571,7 @@
         "legality": [
           "TCOLPROD is selected by the TEPL raw encoding carrier Mode 2 Function 19; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
@@ -120613,7 +120732,7 @@
         "legality": [
           "TCOLSUM is selected by the TEPL raw encoding carrier Mode 2 Function 16; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
@@ -121663,7 +121782,7 @@
         "legality": [
           "TDIV retains TEPL carrier Mode 0 Function 3 but is canonically classified as SFU.",
           "Exactly one terminating Local B.IOT supplies ordered numerator and denominator sources plus one new Local destination; B.IOR and B.IOS are illegal and PE_MASK zero is a strict no-op.",
-          "DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.",
           "Both source valid rectangles are defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and the selected mask.",
           "Only B.DATR PadValueOrByteId is applicable."
         ],
@@ -121946,7 +122065,7 @@
         "legality": [
           "TDIVS is selected only by the TEPL raw carrier Mode 1 Function 3; canonical execution-engine assembly is BSTART.SFU TDIVS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
+          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16; every other assigned or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -122105,7 +122224,7 @@
         "legality": [
           "TEXP retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, or E5M2; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
+          "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -122779,7 +122898,7 @@
         "legality": [
           "TFMA is selected by the TEPL encoding carrier Mode 0 Function 28, canonically assembled with BSTART.VEC, and has no standalone opcode.",
           "Exactly two ordered Local B.IOT bindings are required: the first supplies two multiplicands without a destination or last marker; the second supplies the addend and one new destination and terminates the sequence.",
-          "DataType is exactly one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is exactly one of FP16, FP32, or BF16.",
           "All three sources and the destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; every valid source element is defined.",
           "Only B.DATR PadValueOrByteId is applicable. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "B.IOR and B.IOS are illegal. All participating B.IOT masks are equal; PE_MASK zero is a strict no-op before source reads, allocation, arithmetic, flags, padding, or descriptor effects."
@@ -122870,7 +122989,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local S32 or U32 row-index source"
+              "role": "persistent Local S16, U16, S32, U32, S64, or U64 row-index source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -122919,7 +123038,7 @@
         "legality": [
           "TGATHER uses the TEPL encoding carrier Mode 3 Function 15, is canonically assembled with BSTART.SFU, and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent value source, one persistent row-index source, and one newly allocated destination; B.IOR and B.IOS are illegal.",
-          "Value source and destination use the same one of FP32, FP16, S32, S16, U32, or U16. The index source is exactly S32 or U32.",
+          "Value source and destination use the same one of HiF8, E4M3, E5M2, E3M2, E2M3, E8M0, S8, U8, FP16, BF16, S16, U16, FP32, TF32, HF32, S32, U32, FP64, S64, or U64. The index source is exactly S16, U16, S32, U32, S64, or U64.",
           "Index and destination valid shapes are equal and nonzero. The value source has at least destination ValidCol columns.",
           "Every signed index is nonnegative and every index is less than source ValidRow. The complete index rectangle and every selected source[value,row,column] element are defined and validly encoded.",
           "All three bindings use the same PE_MASK; any nonzero subset is legal."
@@ -122938,7 +123057,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local S32 or U32 row-index source"
+            "role": "persistent Local S16, U16, S32, U32, S64, or U64 row-index source"
           }
         ],
         "ordering": [
@@ -125086,7 +125205,7 @@
         "legality": [
           "TLOG retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, or E5M2; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
+          "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -126154,7 +126273,7 @@
         "legality": [
           "TMAX is BSTART.VEC Mode 0 Function 11 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
-          "DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op."
@@ -126440,7 +126559,7 @@
         "legality": [
           "TMAXS is selected only by the TEPL raw carrier Mode 1 Function 11; canonical execution-engine assembly is BSTART.VEC TMAXS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
+          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -126576,7 +126695,7 @@
         "legality": [
           "TMIN is BSTART.VEC Mode 0 Function 12 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
-          "DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op."
@@ -126862,7 +126981,7 @@
         "legality": [
           "TMINS is selected only by the TEPL raw carrier Mode 1 Function 12; canonical execution-engine assembly is BSTART.VEC TMINS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
+          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -127085,7 +127204,7 @@
       ],
       "contract": {
         "block_composition": [
-          "BSTART.SFU TMRGSORT, FP32|FP16",
+          "BSTART.SFU TMRGSORT, FP32|FP16|BF16",
           "B.DATR all-zero (optional)",
           "B.IOR Descending (optional; omission defaults to ascending)",
           "B.IOT two Local sources and one new Local destination, common PE_MASK, <last>",
@@ -127581,7 +127700,7 @@
         ],
         "legality": [
           "TMRGSORT uses the TEPL encoding carrier Mode 3 Function 13, canonically assembles with BSTART.SFU, and has no standalone opcode.",
-          "The complete Local binding stream supplies exactly two persistent nonempty single-row sorted sources and one newly allocated destination. All are row-major FP32 or FP16 with one common DataType.",
+          "The complete Local binding stream supplies exactly two persistent nonempty single-row sorted sources and one newly allocated destination. All are row-major FP32, FP16, or BF16 with one common DataType.",
           "The source streams are sorted in the direction selected by B.IOR before execution. B.DATR is all zero, every B.DIM is absent, B.IOS is illegal, and every B.IOT uses one PE_MASK.",
           "Every valid source element is defined and has a valid encoding. Signaling NaN is a legal merge value and records numeric invalid status rather than causing a Tile legality fault."
         ],
@@ -127720,7 +127839,7 @@
         "legality": [
           "TMUL is BSTART.VEC Mode 0 Function 2 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
-          "DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is one of S32, U32, FP32, S16, U16, FP16, or BF16.",
           "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
           "Only B.DATR PadValueOrByteId is applicable."
         ],
@@ -128003,7 +128122,7 @@
         "legality": [
           "TMULS is selected only by the TEPL raw carrier Mode 1 Function 2; canonical execution-engine assembly is BSTART.VEC TMULS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
+          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16; every other assigned or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -128131,7 +128250,7 @@
         "legality": [
           "TNEG is BSTART.VEC Mode 0 Function 17 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one Local source and one new Local destination; B.IOR and B.IOS are illegal.",
-          "DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is one of S32, S16, S8, FP32, FP16, or BF16.",
           "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op."
@@ -129186,7 +129305,7 @@
       ],
       "contract": {
         "block_composition": [
-          "BSTART.SFU TPARTMUL, FP32|FP16|BF16|S32|S16|S8|U32|U16|U8",
+          "BSTART.SFU TPARTMUL, FP32|FP16|BF16|S32|S16|U32|U16",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional; omission defaults to 1)",
           "B.DIM LB2=Col (optional; omission defaults to ValidCol)",
@@ -129215,7 +129334,7 @@
         "legality": [
           "TPARTMUL uses the TEPL encoding carrier Mode 3 Function 18, canonically assembles with BSTART.SFU, and has no standalone opcode.",
           "Exactly two persistent nonempty Local sources and one newly allocated Local destination are supplied by a terminated B.IOT stream. B.DATR, B.IOR, and B.IOS are illegal.",
-          "Source and destination DataType is exactly one of FP32, FP16, BF16, S32, S16, S8, U32, U16, or U8. All are row-major and use one PE_MASK.",
+          "Source and destination DataType is exactly one of FP32, FP16, BF16, S32, S16, U32, or U16. All are row-major and use one PE_MASK.",
           "Both source valid rectangles are origin-anchored, fit within ValidRow by ValidCol, and at least one source covers the entire destination valid rectangle. Thus no valid destination coordinate is uncovered.",
           "Every valid source element is defined; floating encodings are valid."
         ],
@@ -129932,7 +130051,7 @@
         "legality": [
           "TRECIP retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, or E5M2; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
+          "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -130056,7 +130175,7 @@
         "legality": [
           "TRELU is BSTART.VEC Mode 0 Function 23 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one Local source and one new Local destination; B.IOR and B.IOS are illegal.",
-          "DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is one of FP16, BF16, FP32, or S32.",
           "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op."
@@ -130188,7 +130307,7 @@
         "legality": [
           "TREM retains TEPL carrier Mode 0 Function 4 but is canonically classified as SFU.",
           "Exactly one terminating Local B.IOT supplies ordered dividend and divisor sources plus one new Local destination; B.IOR and B.IOS are illegal and PE_MASK zero is a strict no-op.",
-          "DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.",
           "Both source valid rectangles are defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and the selected mask.",
           "Only B.DATR PadValueOrByteId is applicable."
         ],
@@ -130471,7 +130590,7 @@
         "legality": [
           "TREMS is selected only by the TEPL raw carrier Mode 1 Function 4; canonical execution-engine assembly is BSTART.SFU TREMS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
+          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16; every other assigned or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -130551,7 +130670,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local U32 index destination"
+              "role": "new Local S32 or U32 index destination"
             },
             {
               "field": "source0",
@@ -130562,7 +130681,7 @@
           "selector": "0x04C",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-u32-index-destination",
+            "operand:destination0:new-local-s32-or-u32-index-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -130633,8 +130752,8 @@
         "legality": [
           "TROWARGMAX is selected by the TEPL raw encoding carrier Mode 2 Function 12; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "The destination DataType is U32 regardless of source DataType.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The destination DataType is S32 or U32 regardless of source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to source.ValidRow, ValidCol and physical Col equal to one, and capacity-derived physical Rows.",
           "PadValueOrByteId is the only applicable B.DATR field. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
@@ -130645,7 +130764,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local U32 index destination"
+            "role": "new Local S32 or U32 index destination"
           },
           {
             "field": "source0",
@@ -130660,7 +130779,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid row, compute an increasing-column TMAX scan that retains the lowest winning index.",
-          "Write the selected column index as U32; equal winning values retain the lowest index.",
+          "Write the selected column index as S32 or U32; equal winning values retain the lowest index.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -130712,7 +130831,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local U32 index destination"
+              "role": "new Local S32 or U32 index destination"
             },
             {
               "field": "source0",
@@ -130723,7 +130842,7 @@
           "selector": "0x04D",
           "semantic_handler": "ExecuteTileReduction",
           "state_effects": [
-            "operand:destination0:new-local-u32-index-destination",
+            "operand:destination0:new-local-s32-or-u32-index-destination",
             "operand:source0:persistent-local-numeric-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
@@ -130794,8 +130913,8 @@
         "legality": [
           "TROWARGMIN is selected by the TEPL raw encoding carrier Mode 2 Function 13; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "The destination DataType is U32 regardless of source DataType.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The destination DataType is S32 or U32 regardless of source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to source.ValidRow, ValidCol and physical Col equal to one, and capacity-derived physical Rows.",
           "PadValueOrByteId is the only applicable B.DATR field. Source and destination share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
@@ -130806,7 +130925,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local U32 index destination"
+            "role": "new Local S32 or U32 index destination"
           },
           {
             "field": "source0",
@@ -130821,7 +130940,7 @@
         "standalone_opcode": false,
         "state_effects": [
           "For each valid row, compute an increasing-column TMIN scan that retains the lowest winning index.",
-          "Write the selected column index as U32; equal winning values retain the lowest index.",
+          "Write the selected column index as S32 or U32; equal winning values retain the lowest index.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle, then publish the complete result atomically."
         ]
       },
@@ -131384,6 +131503,7 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
+              "DataType",
               "PadValueOrByteId"
             ],
             "pad_union": "pad-value"
@@ -131400,7 +131520,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local same-type numeric destination"
+              "role": "new Local destination with DstDataType"
             },
             {
               "field": "source0",
@@ -131415,9 +131535,9 @@
           "selector": "0x04B",
           "semantic_handler": "ExecuteTileExpand",
           "state_effects": [
-            "operand:destination0:new-local-same-type-destination",
-            "operand:source0:persistent-local-full-shape-source",
-            "operand:source1:persistent-local-one-column-broadcast-source",
+            "operand:destination0:new-local-DstDataType-destination",
+            "operand:source0:persistent-local-full-shape-SrcDataType-source",
+            "operand:source1:persistent-local-one-column-SrcDataType-broadcast-source",
             "runtime:CurrentBundlePadValue:numeric-padding"
           ]
         }
@@ -131429,7 +131549,7 @@
       "contract": {
         "block_composition": [
           "BSTART.SFU TROWEXPANDEXPDIF, DataType",
-          "B.DATR PadValue (optional)",
+          "B.DATR DataType, PadValue (optional)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
@@ -131441,17 +131561,15 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.",
-          "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-          "For every valid destination element, first compute typed source0 - BroadcastTile[r,0], then compute the same-type natural exponential.",
-          "The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction."
+          "Omitted B.DATR selects DstDataType=SrcDataType and PadValue=Null. When B.DATR is present, DTYPE_NONE inherits SrcDataType, a concrete DataType selects DstDataType, and encoded DataType zero selects FP64 and is never absence. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TROWEXPANDEXPDIF, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+          "BSTART.SFU TROWEXPANDEXPDIF, SrcDataType; B.DATR DataType, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported DataType, non-row-major source, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, B.IOR or B.IOS presence, missing or zero dimension, unsupported source/destination DataType pair, non-row-major source, undefined source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
           "An unrepresentable destination shape, insufficient TSize, unavailable renamed destination, or exhausted Tile capacity raises Fault_TileAllocation before destination publication.",
           "All valid results, numeric status, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
@@ -131483,17 +131601,137 @@
             "source": "asl/block/attributes/B.DATR.asl",
             "width": 2,
             "zero_meaning": "For PadValue operations code zero selects Zero; for ByteId operations it selects ByteId zero."
+          },
+          {
+            "assigned": [
+              {
+                "meaning": "FP64",
+                "value": 0
+              },
+              {
+                "meaning": "FP32",
+                "value": 1
+              },
+              {
+                "meaning": "TF32",
+                "value": 2
+              },
+              {
+                "meaning": "HF32",
+                "value": 3
+              },
+              {
+                "meaning": "FP16",
+                "value": 4
+              },
+              {
+                "meaning": "BF16",
+                "value": 5
+              },
+              {
+                "meaning": "HiF8",
+                "value": 6
+              },
+              {
+                "meaning": "E4M3",
+                "value": 7
+              },
+              {
+                "meaning": "E5M2",
+                "value": 8
+              },
+              {
+                "meaning": "E3M2",
+                "value": 9
+              },
+              {
+                "meaning": "E2M3",
+                "value": 10
+              },
+              {
+                "meaning": "E2M1X2",
+                "value": 11
+              },
+              {
+                "meaning": "E1M2X2",
+                "value": 12
+              },
+              {
+                "meaning": "E8M0",
+                "value": 13
+              },
+              {
+                "meaning": "HiF4X2",
+                "value": 14
+              },
+              {
+                "meaning": "S64",
+                "value": 16
+              },
+              {
+                "meaning": "S32",
+                "value": 17
+              },
+              {
+                "meaning": "S16",
+                "value": 18
+              },
+              {
+                "meaning": "S8",
+                "value": 19
+              },
+              {
+                "meaning": "S4X2",
+                "value": 20
+              },
+              {
+                "meaning": "U64",
+                "value": 24
+              },
+              {
+                "meaning": "U32",
+                "value": 25
+              },
+              {
+                "meaning": "U16",
+                "value": 26
+              },
+              {
+                "meaning": "U8",
+                "value": 27
+              },
+              {
+                "meaning": "U4X2",
+                "value": 28
+              }
+            ],
+            "field": "DataType",
+            "id": "PTO-FIELD-BLOCK-DATATYPE",
+            "rejection": "Reserved values are held for future extension and reject before architectural effects.",
+            "reserved": [
+              15,
+              21,
+              22,
+              23,
+              29,
+              30,
+              31
+            ],
+            "role": "Selects the Tile element data type carried by Block data attributes and typed Block starts.",
+            "source": "asl/arch/data-types/tile-data-types.asl",
+            "width": 5,
+            "zero_meaning": "Code zero selects FP64; zero never means absent, inherited, NONE, or NULL."
           }
         ],
         "legality": [
-          "TROWEXPANDEXPDIF is selected by the TEPL raw encoding carrier Mode 2 Function 11; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies one persistent full-shape source, one persistent one-column broadcast source, and one newly allocated Local destination.",
-          "Only the eight architectural floating DataTypes are legal because EXPDIF composes typed TSUB and typed natural TEXP.",
-          "The destination and both sources use exactly the selected DataType.",
+          "TROWEXPANDEXPDIF and TCOLEXPANDEXPDIF accept exactly (FP16,FP16), (BF16,BF16), (FP32,FP32), (FP16,FP32), and (BF16,FP32) as (SrcDataType,DstDataType) pairs.",
+          "BSTART DataType selects SrcDataType; omitted B.DATR or explicit DataType=DTYPE_NONE selects DstDataType=SrcDataType; a concrete B.DATR DataType selects DstDataType. Source0 and BroadcastTile use SrcDataType and the destination uses DstDataType.",
+          "Mixed FP16/BF16 to FP32 widens both source operands exactly to FP32 before FP32 subtraction and FP32 exponential. Same-type pairs retain their selected type.",
+          "The destination is a newly allocated FP32-capacity result for mixed pairs; no cross-type alias or reinterpret view is introduced.",
           "The broadcast source has ValidRow equal to the destination, the orthogonal valid extent equal to one, and physical Col equal to one.",
           "The full-shape source and destination have identical physical and valid geometry equal to the B.DIM-derived geometry.",
           "Every source is a fully defined row-major numeric Tile with valid numeric encodings.",
-          "PadValueOrByteId is the only applicable B.DATR field. B.IOR and B.IOS are illegal.",
+          "PadValueOrByteId and DataType are the only applicable B.DATR fields. B.IOR and B.IOS are illegal.",
           "All operands share one PE_MASK; PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, status, or payload effects."
         ],
         "memory_effects": [
@@ -131502,7 +131740,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local same-type numeric destination"
+            "role": "new Local DstDataType destination"
           },
           {
             "field": "source0",
@@ -131514,13 +131752,13 @@
           }
         ],
         "ordering": [
-          "Complete schema, attribute, dimension, type, descriptor, source-definedness, source-encoding, mask, capacity, name-allocation, and storage preflight precedes every source snapshot.",
-          "All source payloads are snapshotted before result construction; sources persist and legal aliases use read-old/write-new behavior.",
+          "Complete schema, attribute, dimension, source/destination type-pair, descriptor, source-definedness, source-encoding, mask, capacity, name-allocation, and storage preflight precedes every source snapshot.",
+          "All source payloads are snapshotted before result construction; sources persist and same-type legal aliases use read-old/write-new behavior.",
           "Numeric status, all valid results, selected padding definedness, and the renamed destination descriptor publish atomically; rejection publishes none."
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For every valid destination element, first compute typed source0 - BroadcastTile[r,0], then compute the same-type natural exponential.",
+          "For every valid destination element, source0 and BroadcastTile are interpreted as SrcDataType. For mixed FP16/BF16 to FP32 pairs, widen both exactly to FP32, then compute FP32 source0 - BroadcastTile and FP32 natural exponential. Same-type pairs preserve the existing selected-type sequence.",
           "The subtraction and exponential stages apply in sequence and their numeric-status flags are accumulated into one transaction.",
           "Apply the selected PadValue to physical destination coordinates outside the valid result rectangle.",
           "Publish the complete renamed destination atomically after every element succeeds."
@@ -132364,7 +132602,7 @@
         "legality": [
           "TROWMAX is selected by the TEPL raw encoding carrier Mode 2 Function 1; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to source.ValidRow, ValidCol and physical Col equal to one, and capacity-derived physical Rows.",
@@ -132525,7 +132763,7 @@
         "legality": [
           "TROWMIN is selected by the TEPL raw encoding carrier Mode 2 Function 2; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to source.ValidRow, ValidCol and physical Col equal to one, and capacity-derived physical Rows.",
@@ -132686,7 +132924,7 @@
         "legality": [
           "TROWPROD is selected by the TEPL raw encoding carrier Mode 2 Function 3; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to source.ValidRow, ValidCol and physical Col equal to one, and capacity-derived physical Rows.",
@@ -132847,7 +133085,7 @@
         "legality": [
           "TROWSUM is selected by the TEPL raw encoding carrier Mode 2 Function 0; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to source.ValidRow, ValidCol and physical Col equal to one, and capacity-derived physical Rows.",
@@ -133006,7 +133244,7 @@
         "legality": [
           "TRSQRT retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, or E5M2; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
+          "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -133087,7 +133325,7 @@
             },
             {
               "field": "source1",
-              "role": "persistent Local width-matched row-index source"
+              "role": "persistent Local S16, U16, S32, U32, S64, or U64 row-index source"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -133136,7 +133374,7 @@
         "legality": [
           "TSCATTER uses the TEPL encoding carrier Mode 3 Function 16, is canonically assembled with BSTART.SFU, and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent value source, one persistent row-index source, and one newly allocated destination; B.IOR and B.IOS are illegal.",
-          "FP32, S32, and U32 values pair with S32 or U32 indices. FP16, BF16, S16, U16, S8, and U8 values pair with S16 or U16 indices.",
+          "Every non-packed B8-NP, B16, B32, or B64 value pairs with every S16, U16, S32, U32, S64, or U64 index.",
           "The two sources have the same nonzero valid shape. Destination ValidCol equals source ValidCol and destination ValidRow is nonzero.",
           "Every signed index is nonnegative and every index is less than destination ValidRow. No two source coordinates may select the same destination coordinate [index[r,c],c].",
           "Both source valid rectangles are fully defined and validly encoded. All three bindings use the same PE_MASK; any nonzero subset is legal."
@@ -133155,7 +133393,7 @@
           },
           {
             "field": "source1",
-            "role": "persistent Local width-matched row-index source"
+            "role": "persistent Local S16, U16, S32, U32, S64, or U64 row-index source"
           }
         ],
         "ordering": [
@@ -133265,12 +133503,12 @@
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every present dimension must be nonzero.",
           "Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.",
-          "A zero predicate bit selects SrcFalse and a one predicate bit selects SrcTrue. Selection copies the chosen source encoding without conversion or numeric-status changes."
+          "A zero predicate bit selects SrcFalse and a one predicate bit selects SrcTrue. TSEL is a raw-carrier operation: it copies the chosen source carrier bits, preserves the concrete DataType, does not require TileNumericEncodingValid for selected payloads, and performs no conversion or numeric-status update."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.VEC TSEL, U64; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK; B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
+          "BSTART.VEC TSEL, E3M2; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK; B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
           "Malformed binding order, B.IOR or B.IOS presence, missing or zero dimensions, ordinary numeric mask storage, undefined predicate or data elements, unsupported DataType, shape, type or layout mismatch, unequal masks, or insufficient destination capacity raises Fault_TileLegality or Fault_TileAllocation before architectural effects.",
@@ -133281,8 +133519,8 @@
         "legality": [
           "TSEL is selected only by VEC Mode 0 Function 26 and has no standalone opcode.",
           "Exactly two ordered Local B.IOT bindings are required. The first supplies packed Predicate and SrcTrue without Last or a destination; the second supplies SrcFalse and one new terminating destination. B.IOR, B.IOS, and additional bindings are illegal.",
-          "The data DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "SrcTrue, SrcFalse, and destination match physical shape, valid shape, row-major layout, and DataType; every valid element of both data sources is defined.",
+          "The data DataType is exactly HiF8, E4M3, E5M2, E3M2, E2M3, E8M0, S8, U8, FP16, BF16, S16, U16, FP32, TF32, HF32, S32, or U32; every other type, including FP64, S64, U64, and packed-X2 types, rejects before effects.",
+          "SrcTrue, SrcFalse, and destination match physical shape, valid shape, row-major layout, and DataType; every valid element of both data sources is defined, and numeric encoding validity is not required for selected carrier payloads.",
           "Predicate uses predicate-kind storage, has the same Row, Col, ValidRow, and ValidCol as the data Tiles, and defines every valid predicate bit. An ordinary numeric Tile is not a legal mask.",
           "PadValueOrByteId is the only applicable B.DATR field. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Both B.IOT bindings use one PE_MASK. PE_MASK=0000 is a strict no-op before schema, source, allocation, or payload checks."
@@ -133414,7 +133652,7 @@
         ],
         "defaults": [
           "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol.",
-          "Omitted B.IOR supplies the selected DataType all-zero false scalar; explicit all-zero is distinct but supplies the same value.",
+          "Omitted B.IOR supplies the selected DataType all-zero false scalar; explicit all-zero is distinct but supplies the same value. TSELS is a raw-carrier operation: predicate-one copies SrcTrue carrier bits, predicate-zero copies the scalar's low physical carrier bits, preserves the concrete DataType, does not require TileNumericEncodingValid for selected source or scalar payloads, and performs no conversion or numeric-status update.",
           "Omitted B.DATR selects PadValue=Null. Explicit 00, 01, 10, and 11 select Zero, Max, Min, and Null."
         ],
         "encoded_fields": [],
@@ -133577,8 +133815,8 @@
         "legality": [
           "TSELS is selected only by the TEPL raw carrier Mode 1 Function 26 and executes on VEC.",
           "Exactly one terminating Local B.IOT supplies packed Predicate, numeric SrcTrue, and one newly allocated numeric destination. B.IOS and additional Tile bindings are illegal.",
-          "The data DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.",
-          "Predicate uses packed predicate-kind storage with matching logical geometry and every valid bit defined. SrcTrue and destination match physical shape, valid shape, row-major layout, and DataType.",
+          "The data DataType is exactly HiF8, E4M3, E5M2, E3M2, E2M3, E8M0, S8, U8, FP16, BF16, S16, U16, FP32, TF32, HF32, S32, or U32; every other type, including FP64, S64, U64, and packed-X2 types, rejects before effects.",
+          "Predicate uses packed predicate-kind storage with matching logical geometry and every valid bit defined. SrcTrue and destination match physical shape, valid shape, row-major layout, and DataType; numeric encoding validity is not required for selected source or scalar carrier payloads.",
           "Only RegSrc0 may be nonzero in B.IOR and only PadValueOrByteId is applicable in B.DATR.",
           "PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks."
         ],
@@ -134541,7 +134779,7 @@
       ],
       "contract": {
         "block_composition": [
-          "BSTART.SFU TSORT, FP32|FP16",
+          "BSTART.SFU TSORT, FP32|FP16|BF16",
           "B.DATR all-zero (optional)",
           "B.DIM LB0=sort_width (optional; zero or omission defaults to 32)",
           "B.IOR Descending (optional; omission defaults to ascending)",
@@ -135038,7 +135276,7 @@
         ],
         "legality": [
           "TSORT uses the TEPL encoding carrier Mode 3 Function 12, canonically assembles with BSTART.SFU, and has no standalone opcode.",
-          "The complete Local binding stream supplies exactly one persistent source and two distinct newly allocated destinations. Value source and value destination are FP32 or FP16; the index destination is U32. All use the same nonzero valid shape and row-major layout.",
+          "The complete Local binding stream supplies exactly one persistent source and two distinct newly allocated destinations. Value source and value destination are FP32, FP16, or BF16; the index destination is U32. All use the same nonzero valid shape and row-major layout.",
           "LB1 and LB2 are absent. B.DATR is all zero. B.IOS is illegal. All B.IOT bindings use one PE_MASK.",
           "Every valid source element is defined and has a valid encoding. Signaling NaN is a legal sortable value and records numeric invalid status rather than causing a Tile legality fault."
         ],
@@ -135206,7 +135444,7 @@
         "legality": [
           "TSQRT retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, or E5M2; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
+          "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -135587,7 +135825,7 @@
         "legality": [
           "TSUB is BSTART.VEC Mode 0 Function 1 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
-          "DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
+          "DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
           "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
           "Only B.DATR PadValueOrByteId is applicable."
         ],
@@ -135870,7 +136108,7 @@
         "legality": [
           "TSUBS is selected only by the TEPL raw carrier Mode 1 Function 1; canonical execution-engine assembly is BSTART.VEC TSUBS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
-          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
+          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."

@@ -41,6 +41,10 @@ begin
        !BundleGMOVCore4SourceReady(binding.source0) ||
        BundleTileDestinationSizeBytes(0) !=
            _Tiles[[binding.source0]].capacity_bytes ||
+       !TileCarrierOrPackedBaselineDataTypeSupported(
+           TileDataTypeFromEncoding(
+               CurrentBundleTileOperationDataTypeCode()
+                   as TileDataTypeEncoding)) ||
        _Tiles[[binding.source0]].data_type != TileDataTypeFromEncoding(
            CurrentBundleTileOperationDataTypeCode()
                as TileDataTypeEncoding) ||

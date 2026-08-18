@@ -36,6 +36,12 @@ begin
         return FALSE;
     end;
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
+    let data_type = TileDataTypeFromEncoding(
+        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    if !TileCarrierOrPackedBaselineDataTypeSupported(data_type) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     // TPREFETCH has implicit PE participation 1111 and no Local or Shared Tile
     // operand.  Any B.IOT or B.IOS is a malformed complete-bundle schema.
     if BundleTileBindingCount() != 0 || BundleSharedBindingCount() != 0 ||
@@ -69,9 +75,7 @@ begin
         valid_columns as integer {1..65535},
         valid_rows as integer {1..65535},
         columns as integer {1..65535},
-        TileDataTypeFromEncoding(
-            CurrentBundleTileOperationDataTypeCode()
-                as TileDataTypeEncoding));
+        data_type);
     if _LastFault != Fault_None then return FALSE; end;
     FinalizeBundleTileAttempt(TileExecution_Executed);
     return TRUE;

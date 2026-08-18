@@ -211,7 +211,7 @@ end;
 
 - TCMPS is selected only by the TEPL raw carrier Mode 1 Function 13 and executes on VEC.
 - Exactly one terminating Local B.IOT supplies one persistent numeric source and one new packed predicate destination. B.IOS and additional Tile bindings are illegal.
-- The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.
+- The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other type rejects before effects.
 - The source is row-major and completely defined. The predicate destination has matching logical geometry and capacity of at least ceil(Row*Col/8) bytes.
 - Only CMode and PadValueOrByteId are applicable in B.DATR. When B.IOR is present, only RegSrc0 may be nonzero.
 - PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks.
