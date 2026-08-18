@@ -67,4 +67,3 @@ begin
     TestTF32NumericFormat();
     return 0;
 end;
-

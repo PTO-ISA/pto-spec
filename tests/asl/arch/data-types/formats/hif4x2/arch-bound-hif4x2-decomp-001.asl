@@ -70,4 +70,3 @@ begin
     TestHiF4X2NumericFormat();
     return 0;
 end;
-

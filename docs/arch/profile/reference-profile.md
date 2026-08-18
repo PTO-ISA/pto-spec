@@ -162,20 +162,6 @@ begin
     return value + 1;
 end;
 
-implementation func TileProfileConvert(value: Word,
-                                        source_type: TileDataType,
-                                        destination_type: TileDataType,
-                                        control: NumericExecutionControl)
-                                        => (Word, bits(5))
-begin
-    if !TileDataTypeIsFloating(destination_type) then
-        return (
-            NormalizeTileInteger(value, destination_type),
-            Zeros{5});
-    end;
-    return (value, Zeros{5});
-end;
-
 readonly implementation func AtomicAddress(address: Word,
                                             far: boolean) => Word
 begin

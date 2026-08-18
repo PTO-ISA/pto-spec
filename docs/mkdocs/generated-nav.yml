@@ -52,6 +52,7 @@ nav:
           - Instruction Classification: arch/overview/instruction-classification.md
       - Profile:
           - Applicability: arch/profile/applicability.md
+          - E8m0 Conversion: arch/profile/e8m0-conversion.md
           - Matrix Postprocess: arch/profile/matrix-postprocess.md
           - Matrix Quantization: arch/profile/matrix-quantization.md
           - Reference Profile: arch/profile/reference-profile.md

@@ -59,4 +59,3 @@ begin
     TestE8M0NumericFormat();
     return 0;
 end;
-

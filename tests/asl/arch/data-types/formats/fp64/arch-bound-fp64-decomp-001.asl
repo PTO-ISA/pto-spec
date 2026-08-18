@@ -75,4 +75,3 @@ begin
     TestFP64NumericFormat();
     return 0;
 end;
-

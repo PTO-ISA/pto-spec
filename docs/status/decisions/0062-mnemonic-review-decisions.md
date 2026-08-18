@@ -4353,3 +4353,23 @@ E2M3 retain their required high-zero carrier constraints. Packed E2M1X2,
 E1M2X2, and HiF4X2 decompose one selected four-bit logical lane. E8M0 encodes
 `2^(raw-127)` for raw values `0x00..0xFE`; `0xFF` is unavailable NaN, and a
 scale block contains 32 logical K elements.
+
+## PRD-183: TCVT to E8M0 rounds a positive base-two exponent
+
+The named hardware profile accepts exactly `FP16`, `BF16`, and `FP32` as
+sources when `TCVT` selects an `E8M0` destination. Other sources to E8M0
+reject before destination allocation or payload effects. This restriction
+does not narrow other TCVT destination types.
+
+For a positive finite source in the inclusive range `2^-127` through `2^127`,
+TCVT rounds `log2(source)` to an integer exponent under the resolved `RMode`
+and writes `exponent + 127`. Exact powers of two set no status; other in-range
+values record inexact. `RNE`, `RTM`, `RTP`, `RTZ`, `RNA`, `RTO`, and `RHB`
+retain their architectural meanings in the exponent domain.
+
+Positive finite values below `2^-127` underflow and values above `2^127`
+overflow. With `Sat=1` they clamp to `0x00` or `0xFE`; with `Sat=0` they
+produce `0xFF`. Underflow or overflow also records inexact. Positive infinity
+uses the overflow rule. Positive or negative zero, every negative value, and
+every NaN produce `0xFF` and record invalid. `Canonicalize` keeps its existing
+private-CUBE-source representation role and does not change this value map.

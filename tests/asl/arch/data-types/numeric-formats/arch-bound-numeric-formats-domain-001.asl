@@ -110,4 +110,3 @@ begin
     TestNumericFormatCommon();
     return 0;
 end;
-

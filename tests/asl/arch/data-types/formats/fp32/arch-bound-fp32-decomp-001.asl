@@ -72,4 +72,3 @@ begin
     TestFP32NumericFormat();
     return 0;
 end;
-

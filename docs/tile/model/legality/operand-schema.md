@@ -207,6 +207,11 @@ begin
     end;
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
+    if !HardwareTCVTTypePairSupported(
+           source_tile.data_type,
+           destination_tile.data_type) then
+        return FALSE;
+    end;
     if destination_tile.rows != source_tile.rows ||
        destination_tile.columns != source_tile.columns ||
        destination_tile.valid_rows != source_tile.valid_rows ||

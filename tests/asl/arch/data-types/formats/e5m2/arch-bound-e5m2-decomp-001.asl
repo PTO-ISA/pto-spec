@@ -63,4 +63,3 @@ begin
     TestE5M2NumericFormat();
     return 0;
 end;
-

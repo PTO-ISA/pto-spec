@@ -109,4 +109,3 @@ begin
     TestHiF8NumericFormat();
     return 0;
 end;
-

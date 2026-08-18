@@ -270,6 +270,36 @@
       }
     ]
   },
+  "tcvt_e8m0": {
+    "accepted_source_types": ["FP16", "BF16", "FP32"],
+    "destination_type": "E8M0",
+    "finite_domain": "positive finite values",
+    "encoding": "rounded_base2_exponent_plus_127",
+    "exact_range": {"minimum": "2^-127", "maximum": "2^127"},
+    "rounding": "resolved B.DATR RMode in the base-two exponent domain",
+    "inexact": "Every non-power-of-two in-range source records NX.",
+    "invalid": {
+      "inputs": ["positive_zero", "negative_zero", "negative_finite", "negative_infinity", "quiet_nan", "signaling_nan"],
+      "result": "0xFF",
+      "flags": ["NV"]
+    },
+    "positive_infinity": {
+      "sat0_result": "0xFF",
+      "sat1_result": "0xFE",
+      "flags": ["OF", "NX"]
+    },
+    "finite_underflow": {
+      "sat0_result": "0xFF",
+      "sat1_result": "0x00",
+      "flags": ["UF", "NX"]
+    },
+    "finite_overflow": {
+      "sat0_result": "0xFF",
+      "sat1_result": "0xFE",
+      "flags": ["OF", "NX"]
+    },
+    "canonicalize": "representation-only; it does not change the E8M0 value map"
+  },
   "matrix": {
     "destination_model": "Every active CUBE operation writes explicit Local D. Base, BIAS, and MX variants initialize the dot product from zero; .ACC variants initialize it from explicit Local C.",
     "destination_aliasing": "D == C is read-old/write-new and requires identical dtype, shape, layout, and allocation. There is no architectural implicit ACC singleton and ACCCVT remains removed/reserved.",
@@ -361,7 +391,7 @@
     "hardware_conformance_claim": false,
     "profile_id": "pto-v0",
     "role": "deterministic raw-carrier ASL reference-test profile",
-    "rule": "General pto-v0 output values are not hardware numeric conformance evidence; the B.FPATR postprocess hooks implement the bit-exact matrix postprocess section of this profile."
+    "rule": "General pto-v0 output values are not hardware numeric conformance evidence; the B.FPATR postprocess and TCVT-to-E8M0 hooks implement their bit-exact sections of this profile."
   },
   "reserved_data_type_codes": [15, 21, 22, 23, 29, 30],
   "schema_version": 2,

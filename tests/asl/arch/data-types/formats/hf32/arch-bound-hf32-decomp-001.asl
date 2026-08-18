@@ -67,4 +67,3 @@ begin
     TestHF32NumericFormat();
     return 0;
 end;
-

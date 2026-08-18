@@ -64,4 +64,3 @@ begin
     TestBF16NumericFormat();
     return 0;
 end;
-

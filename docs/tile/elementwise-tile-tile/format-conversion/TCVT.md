@@ -210,6 +210,7 @@ end;
 - LB0 is required and supplies ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol. Every present dimension must be nonzero.
 - RMode zero selects RTZ for floating-to-integer conversion and RNE for every other conversion that requires rounding. Sat zero disables saturation and Canonicalize zero selects an ordinary public source.
 - Omitted B.DATR selects Layout=NORM and PadValue=Null. Explicit PadValue codes 00, 01, 10, and 11 select Zero, Max, Min, and Null.
+- For an E8M0 destination, RMode rounds the base-two exponent. Exact powers of two are exact; Sat selects finite endpoint clamp versus 0xFF for finite range overflow or underflow.
 
 ## Legality
 
@@ -221,12 +222,14 @@ end;
 - Every assigned Layout code has executable indexing. The source descriptor matches the transform source layout and the destination descriptor matches its target layout.
 - A private CUBE source requires Canonicalize=1 and Layout=NORM. An ordinary source requires Canonicalize=0.
 - The source valid region is fully defined and contains valid encodings. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.
+- Under the named hardware profile, an E8M0 destination accepts exactly FP16, BF16, or FP32 sources. Every other source-to-E8M0 pair rejects before destination allocation.
 
 ## State effects
 
 - Snapshot the persistent source, convert every valid logical element under the resolved rounding and saturation controls, and write the corresponding logical coordinate in the destination layout.
 - Define or undefine every physical padding coordinate according to PadValue and publish the destination as a public representation.
 - The source may alias the destination; execution observes the complete pre-execution source snapshot.
+- For a supported E8M0 conversion, map the rounded base-two exponent to code exponent+127 and accumulate exact NV/UF/OF/NX status before atomic publication.
 
 ## Memory effects and ordering
 
@@ -244,6 +247,7 @@ end;
 - Malformed bindings, missing or zero dimensions, type, shape, capacity, layout, canonicalization, encoding, or definedness mismatch raises Fault_TileLegality before destination allocation or payload effects.
 - Reserved selector, DataType, or Layout encodings raise the corresponding instruction or Tile legality fault before effects.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation.
+- For E8M0, zero, negative values, and NaNs produce 0xFF with NV. Positive infinity follows the overflow rule. Finite values below 2^-127 or above 2^127 produce 0xFF when Sat=0 or clamp to 0x00/0xFE when Sat=1, with UF/OF plus NX.
 
 ## Examples
 

@@ -593,6 +593,7 @@ def validate_numeric_profile() -> dict:
         "implementation_conformance",
         "isa_release",
         "mixed_expdif",
+        "tcvt_e8m0",
         "matrix",
         "min_max",
         "packed_storage",
@@ -621,7 +622,7 @@ def validate_numeric_profile() -> dict:
         "hardware_conformance_claim": False,
         "profile_id": "pto-v0",
         "role": "deterministic raw-carrier ASL reference-test profile",
-        "rule": "General pto-v0 output values are not hardware numeric conformance evidence; the B.FPATR postprocess hooks implement the bit-exact matrix postprocess section of this profile.",
+        "rule": "General pto-v0 output values are not hardware numeric conformance evidence; the B.FPATR postprocess and TCVT-to-E8M0 hooks implement their bit-exact sections of this profile.",
     }:
         raise SystemExit("pto-v0 must remain a non-hardware reference-test profile")
     if profile["implementation_conformance"].get("repository_claim") != "contract-and-vector-definition-only":
@@ -842,6 +843,43 @@ def validate_numeric_profile() -> dict:
     }
     if profile["mixed_expdif"] != expected_mixed_expdif:
         raise SystemExit("mixed EXPDIF hardware-profile clause drift")
+    expected_tcvt_e8m0 = {
+        "accepted_source_types": ["FP16", "BF16", "FP32"],
+        "destination_type": "E8M0",
+        "finite_domain": "positive finite values",
+        "encoding": "rounded_base2_exponent_plus_127",
+        "exact_range": {"minimum": "2^-127", "maximum": "2^127"},
+        "rounding": "resolved B.DATR RMode in the base-two exponent domain",
+        "inexact": "Every non-power-of-two in-range source records NX.",
+        "invalid": {
+            "inputs": [
+                "positive_zero", "negative_zero", "negative_finite",
+                "negative_infinity", "quiet_nan", "signaling_nan",
+            ],
+            "result": "0xFF",
+            "flags": ["NV"],
+        },
+        "positive_infinity": {
+            "sat0_result": "0xFF",
+            "sat1_result": "0xFE",
+            "flags": ["OF", "NX"],
+        },
+        "finite_underflow": {
+            "sat0_result": "0xFF",
+            "sat1_result": "0x00",
+            "flags": ["UF", "NX"],
+        },
+        "finite_overflow": {
+            "sat0_result": "0xFF",
+            "sat1_result": "0xFE",
+            "flags": ["OF", "NX"],
+        },
+        "canonicalize": (
+            "representation-only; it does not change the E8M0 value map"
+        ),
+    }
+    if profile["tcvt_e8m0"] != expected_tcvt_e8m0:
+        raise SystemExit("TCVT-to-E8M0 hardware-profile clause drift")
     return profile
 
 
@@ -867,11 +905,14 @@ def build_numeric_vectors(profile: dict) -> dict:
         "release": RELEASE,
         "hardware_profile_id": NUMERIC_PROFILE_ID,
         "hardware_profile_sha256": profile_hash,
-        "implementation_conformance_status": "b-fpatr-asl-proven-other-numeric-domains-unproven",
+        "implementation_conformance_status": "b-fpatr-and-tcvt-e8m0-asl-proven-other-numeric-domains-unproven",
         "reference_profile": {
             "profile_id": "pto-v0",
             "hardware_conformance_claim": False,
-            "bit_exact_surfaces": ["B.FPATR matrix postprocess"],
+            "bit_exact_surfaces": [
+                "B.FPATR matrix postprocess",
+                "TCVT FP16/BF16/FP32 to E8M0",
+            ],
         },
         "vector_groups": {
             "canonical_nan": canonical_nan,
@@ -902,6 +943,27 @@ def build_numeric_vectors(profile: dict) -> dict:
                 {"data_type": "E8M0", "raw": "0xFF", "expected": "NaN"},
             ],
             "mixed_expdif": profile["mixed_expdif"],
+            "tcvt_e8m0": {
+                "contract": profile["tcvt_e8m0"],
+                "vectors": [
+                    {"source_type": "BF16", "input": "0x3F80", "rmode": "RNE", "sat": False, "expected": "0x7F", "flags": []},
+                    {"source_type": "BF16", "input": "0x3FC0", "rmode": "RNE", "sat": False, "expected": "0x80", "flags": ["NX"]},
+                    {"source_type": "BF16", "input": "0x3FC0", "rmode": "RTM", "sat": False, "expected": "0x7F", "flags": ["NX"]},
+                    {"source_type": "FP32", "input": "0x00400000", "rmode": "RNE", "sat": False, "expected": "0x00", "flags": []},
+                    {"source_type": "FP32", "input": "0x00200000", "rmode": "RNE", "sat": False, "expected": "0xFF", "flags": ["UF", "NX"]},
+                    {"source_type": "FP32", "input": "0x00200000", "rmode": "RNE", "sat": True, "expected": "0x00", "flags": ["UF", "NX"]},
+                    {"source_type": "FP32", "input": "0x7F000000", "rmode": "RNE", "sat": False, "expected": "0xFE", "flags": []},
+                    {"source_type": "FP32", "input": "0x7F7FFFFF", "rmode": "RNE", "sat": False, "expected": "0xFF", "flags": ["OF", "NX"]},
+                    {"source_type": "BF16", "input": "0x0000", "rmode": "RNE", "sat": False, "expected": "0xFF", "flags": ["NV"]},
+                    {"source_type": "BF16", "input": "0x7F80", "rmode": "RNE", "sat": True, "expected": "0xFE", "flags": ["OF", "NX"]},
+                ],
+                "unsupported_source_types": [
+                    "FP64", "TF32", "HF32", "HiF8", "E4M3", "E5M2",
+                    "E3M2", "E2M3", "E2M1X2", "E1M2X2", "E8M0",
+                    "HiF4X2", "S64", "S32", "S16", "S8", "S4X2",
+                    "U64", "U32", "U16", "U8", "U4X2",
+                ],
+            },
             "packed_lane_order": [
                 {
                     "data_type": "E1M2X2",
@@ -1239,7 +1301,7 @@ def build_artifacts() -> dict[str, dict]:
             "sha256": sha256_bytes((ROOT / NUMERIC_PROFILE_PATH).read_bytes()),
             "evidence": str(NUMERIC_VECTORS_PATH),
             "repository_implementation_conformance":
-                "b-fpatr-asl-proven-other-numeric-domains-unproven",
+                "b-fpatr-and-tcvt-e8m0-asl-proven-other-numeric-domains-unproven",
         },
         "hash_contract": {
             "algorithm": "SHA-256",

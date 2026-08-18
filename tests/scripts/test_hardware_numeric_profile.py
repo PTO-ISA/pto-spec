@@ -109,6 +109,41 @@ class HardwareNumericProfileTest(unittest.TestCase):
         )
         self.assertIn('NUMERIC_PROFILE_RELEASE = "0.58.2"', generator)
 
+    def test_tcvt_e8m0_profile_is_closed_and_bit_exact(self) -> None:
+        self.assertEqual(
+            self.profile["tcvt_e8m0"],
+            {
+                "accepted_source_types": ["FP16", "BF16", "FP32"],
+                "destination_type": "E8M0",
+                "finite_domain": "positive finite values",
+                "encoding": "rounded_base2_exponent_plus_127",
+                "exact_range": {"minimum": "2^-127", "maximum": "2^127"},
+                "rounding": "resolved B.DATR RMode in the base-two exponent domain",
+                "inexact": "Every non-power-of-two in-range source records NX.",
+                "invalid": {
+                    "inputs": ["positive_zero", "negative_zero", "negative_finite", "negative_infinity", "quiet_nan", "signaling_nan"],
+                    "result": "0xFF",
+                    "flags": ["NV"],
+                },
+                "positive_infinity": {
+                    "sat0_result": "0xFF",
+                    "sat1_result": "0xFE",
+                    "flags": ["OF", "NX"],
+                },
+                "finite_underflow": {
+                    "sat0_result": "0xFF",
+                    "sat1_result": "0x00",
+                    "flags": ["UF", "NX"],
+                },
+                "finite_overflow": {
+                    "sat0_result": "0xFF",
+                    "sat1_result": "0xFE",
+                    "flags": ["OF", "NX"],
+                },
+                "canonicalize": "representation-only; it does not change the E8M0 value map",
+            },
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

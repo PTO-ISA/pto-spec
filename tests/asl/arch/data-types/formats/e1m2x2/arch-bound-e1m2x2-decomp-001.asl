@@ -70,4 +70,3 @@ begin
     TestE1M2X2NumericFormat();
     return 0;
 end;
-
