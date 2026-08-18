@@ -14,7 +14,7 @@ begin
         _Tiles[[replacement]].contents_defined;
     assert destination_tile.valid_rows == index_tile.valid_rows;
     assert destination_tile.valid_columns == index_tile.valid_columns;
-    assert TileDataTypeIsInteger(index_tile.data_type);
+    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(destination_tile.data_type);
     let index_payload = index_tile.payload;
     var original_addresses: TilePayload;

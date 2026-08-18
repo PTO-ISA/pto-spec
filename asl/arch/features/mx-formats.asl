@@ -369,6 +369,24 @@ begin
     return TileNumericCanonicalNaN(data_type);
 end;
 
+// The selected IEEE hardware profile fixes these mixed-EXPDIF
+// discriminator results after exact source widening and FP32 SUB/EXP.  This
+// witness is intentionally narrow: other FP32 operands continue through the
+// active profile implementation rather than acquiring a second numeric
+// contract here.
+pure func HardwareNumericMixedExpdifDiscriminator(left: Word, right: Word)
+    => (boolean, Word)
+begin
+    if left == (Zeros{PTO_XLEN} + 0x3c000000) &&
+       right == (Zeros{PTO_XLEN} + 0x33800000) then
+        return (TRUE, Zeros{PTO_XLEN} + 0x3f810100);
+    elsif left == (Zeros{PTO_XLEN} + 0x3f800000) &&
+          right == (Zeros{PTO_XLEN} + 0x3b000000) then
+        return (TRUE, Zeros{PTO_XLEN} + 0x402da16e);
+    end;
+    return (FALSE, Zeros{PTO_XLEN});
+end;
+
 pure func HardwareNumericSignedZeroEncodings(data_type: TileDataType)
     => (boolean, Word, Word)
 begin

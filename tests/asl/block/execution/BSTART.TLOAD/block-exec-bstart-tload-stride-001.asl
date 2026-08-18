@@ -2,7 +2,7 @@
 pure func TLoadStrideStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
-    instruction[31:27] = Zeros{5} + 24;
+    instruction[31:27] = Zeros{5} + 25;
     return instruction;
 end;
 
@@ -39,9 +39,9 @@ func main() => integer
 begin
     ResetProfileState();
     _Memory[[0x100]] = Zeros{8} + 1;
-    _Memory[[0x108]] = Zeros{8} + 2;
-    _Memory[[0x118]] = Zeros{8} + 3;
-    _Memory[[0x120]] = Zeros{8} + 4;
+    _Memory[[0x104]] = Zeros{8} + 2;
+    _Memory[[0x10c]] = Zeros{8} + 3;
+    _Memory[[0x110]] = Zeros{8} + 4;
     WriteGPR(2, Zeros{PTO_XLEN} + 0x100);
     WriteGPR(3, Zeros{PTO_XLEN} + 3);
     StartTwoByTwoTLoad(2);
@@ -58,9 +58,9 @@ begin
 
     ResetProfileState();
     _Memory[[0]] = Zeros{8} + 5;
-    _Memory[[8]] = Zeros{8} + 6;
-    _Memory[[32]] = Zeros{8} + 7;
-    _Memory[[40]] = Zeros{8} + 8;
+    _Memory[[4]] = Zeros{8} + 6;
+    _Memory[[16]] = Zeros{8} + 7;
+    _Memory[[20]] = Zeros{8} + 8;
     StartTwoByTwoTLoad(4);
     let omitted_completed = ExecuteBundleTileOperation();
     assert omitted_completed;
@@ -72,7 +72,7 @@ begin
 
     ResetProfileState();
     _Memory[[0]] = Zeros{8} + 9;
-    _Memory[[8]] = Zeros{8} + 10;
+    _Memory[[4]] = Zeros{8} + 10;
     StartTwoByTwoTLoad(4);
     let zero_ior_status = ExecuteCommandInstruction(
         TLoadStrideIOR(Zeros{5}, Zeros{5}), 32);

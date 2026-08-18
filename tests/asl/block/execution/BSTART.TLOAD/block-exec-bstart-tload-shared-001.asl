@@ -2,7 +2,7 @@
 pure func TLoadSharedStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
-    instruction[31:27] = Zeros{5} + 24;
+    instruction[31:27] = Zeros{5} + 25;
     return instruction;
 end;
 
@@ -32,7 +32,7 @@ begin
     WritePEGPR(0, 3, Zeros{PTO_XLEN} + 32);
     WritePEGPR(1, 3, Zeros{PTO_XLEN} + 40);
     _Memory[[0]] = Zeros{8} + 0x11;
-    _Memory[[0x280]] = Zeros{8} + 0x22;
+    _Memory[[0x2a0]] = Zeros{8} + 0x22;
 
     let start_status = ExecuteCommandInstruction(TLoadSharedStart(), 32);
     assert start_status == CommandExecution_Executed;
@@ -52,9 +52,9 @@ begin
     assert shared.allocation_mask == '0011';
     assert shared.initialized_mask == '0011';
     assert ReadSharedTileWord(shared_id, 0) == Zeros{PTO_XLEN} + 0x11;
-    assert ReadSharedTileWord(shared_id, 16 as ModelTileElementIndex) ==
-        Zeros{PTO_XLEN} + 0x22;
     assert ReadSharedTileWord(shared_id, 32 as ModelTileElementIndex) ==
-        UndefinedSharedTileWord(shared_id, 32 as ModelTileElementIndex);
+        Zeros{PTO_XLEN} + 0x22;
+    assert ReadSharedTileWord(shared_id, 64 as ModelTileElementIndex) ==
+        UndefinedSharedTileWord(shared_id, 64 as ModelTileElementIndex);
     return 0;
 end;

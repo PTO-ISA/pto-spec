@@ -2,7 +2,7 @@
 pure func TLoadFaultStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
-    instruction[31:27] = Zeros{5} + 24;
+    instruction[31:27] = Zeros{5} + 25;
     return instruction;
 end;
 
@@ -26,7 +26,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    Store(Zeros{PTO_XLEN} + 4088, 8, Zeros{PTO_XLEN} + 0xaa);
+    Store(Zeros{PTO_XLEN} + 4088, 4, Zeros{PTO_XLEN} + 0xaa);
     WriteGPR(2, Zeros{PTO_XLEN} + 4088);
     WriteGPR(3, Zeros{PTO_XLEN} + 2);
     let start_status = ExecuteCommandInstruction(TLoadFaultStart(), 32);

@@ -11,7 +11,7 @@ end;
 
 func main() => integer
 begin
-    assert InstructionContractDataTypeLegal_TREM(TileDataType_S64);
+    assert !InstructionContractDataTypeLegal_TREM(TileDataType_S64);
     assert InstructionContractDataTypeLegal_TREM(TileDataType_FP32);
     assert !InstructionContractDataTypeLegal_TREM(TileDataType_HiF8);
 

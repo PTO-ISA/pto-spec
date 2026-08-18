@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER uses byte displacements, applies dimension defaults, and pads the full physical destination.","pass_condition":"Two U16 indices load base+0 and base+3 into a U8 destination whose omitted LB1/LB2 defaults are 1 and LB0; every non-valid physical element receives Max padding.","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER uses U32 byte displacements, applies dimension defaults, and pads the full physical destination.","pass_condition":"Two U32 indices load base+0 and base+3 into a U8 destination whose omitted LB1/LB2 defaults are 1 and LB0; every non-valid physical element receives Max padding.","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func GatherStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -34,7 +34,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U16,
+    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 3);

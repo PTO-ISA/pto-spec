@@ -4,7 +4,7 @@ begin
     ResetProfileState();
     ConfigureTile(1, 128, 1, 2, 1, 1, TileDataType_U4X2,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 1, 2, 1, 1, TileDataType_U16,
+    ConfigureTile(2, 128, 1, 2, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigurePredicateTile(3, 128, 1, 2, 1, 1);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);

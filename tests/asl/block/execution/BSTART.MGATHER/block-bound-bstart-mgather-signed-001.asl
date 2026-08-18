@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-SIGNED-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"boundary","summary":"Signed IndexTile elements are sign-extended byte displacements.","pass_condition":"S8 values -3 and -1 access base-3 and base-1 without transfer-type scaling.","related_sources":["asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-SIGNED-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"boundary","summary":"Signed S32 IndexTile elements are sign-extended byte displacements.","pass_condition":"S32 values -3 and -1 access base-3 and base-1 without transfer-type scaling.","related_sources":["asl/tile/model/memory/addressing.asl"]}
 pure func SignedGatherStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -25,7 +25,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_S8,
+    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_S32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xfd);
     WriteTileElement(0, 0, 1, Ones{PTO_XLEN});

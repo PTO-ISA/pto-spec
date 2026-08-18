@@ -17,7 +17,9 @@ end;
 pure func InstructionContractDataTypeLegal_TPARTADD(
     data_type: TileDataType) => boolean
 begin
-    return TilePartialDataTypeSupported(data_type);
+    return TilePartialDataTypeSupportedForOperation(
+        TilePartial_ADD,
+        data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TPARTADD(

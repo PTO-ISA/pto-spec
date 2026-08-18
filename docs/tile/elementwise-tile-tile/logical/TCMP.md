@@ -131,7 +131,7 @@ end;
 
 - TCMP is selected only by VEC Mode 0 Function 13 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies two ordered Local numeric sources and one new Local predicate destination. B.IOR, B.IOS, and additional bindings are illegal.
-- The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
 - Both sources match physical shape, valid shape, row-major layout, and DataType; every valid source element is defined and every constrained floating encoding is valid.
 - The destination uses predicate-kind storage with the same Row, Col, ValidRow, and ValidCol. Logical index i occupies bit i mod 8 of byte floor(i/8), and TSize holds at least ceil(Row*Col/8) bytes.
 - CMode and PadValueOrByteId are the only applicable B.DATR fields. Explicit nondefault Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.

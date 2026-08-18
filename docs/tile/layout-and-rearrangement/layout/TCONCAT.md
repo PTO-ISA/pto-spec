@@ -77,7 +77,7 @@ end;
 pure func InstructionContractDataTypeLegal_TCONCAT(
     data_type: TileDataType) => boolean
 begin
-    return TileMove24DataTypeSupported(data_type);
+    return TileCarrierOrMove24BaselineDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TCONCAT(

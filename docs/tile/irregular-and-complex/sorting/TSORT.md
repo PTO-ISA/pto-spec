@@ -233,7 +233,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TSORT, FP32|FP16
+BSTART.SFU TSORT, FP32|FP16|BF16
 B.DATR all-zero (optional)
 B.DIM LB0=sort_width (optional; zero or omission defaults to 32)
 B.IOR Descending (optional; omission defaults to ascending)
@@ -314,7 +314,7 @@ end;
 ## Legality
 
 - TSORT uses the TEPL encoding carrier Mode 3 Function 12, canonically assembles with BSTART.SFU, and has no standalone opcode.
-- The complete Local binding stream supplies exactly one persistent source and two distinct newly allocated destinations. Value source and value destination are FP32 or FP16; the index destination is U32. All use the same nonzero valid shape and row-major layout.
+- The complete Local binding stream supplies exactly one persistent source and two distinct newly allocated destinations. Value source and value destination are FP32, FP16, or BF16; the index destination is U32. All use the same nonzero valid shape and row-major layout.
 - LB1 and LB2 are absent. B.DATR is all zero. B.IOS is illegal. All B.IOT bindings use one PE_MASK.
 - Every valid source element is defined and has a valid encoding. Signaling NaN is a legal sortable value and records numeric invalid status rather than causing a Tile legality fault.
 

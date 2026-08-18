@@ -113,7 +113,7 @@ end;
 
 - MGATHER is selected only by BSTART.MGATHER function 4 in the TLSU selector space; it has no standalone opcode.
 - Exactly one Local B.IOT binding supplies IndexTile and one destination, uses L=1, and carries the common PE_MASK and destination TSize. B.IOS is not accepted.
-- IndexTile must be allocated, fully defined, generically indexable, and use S4X2, U4X2, S8, U8, S16, U16, S32, U32, S64, or U64. Its ValidRow x ValidCol must equal the resolved destination valid region.
+- IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Its ValidRow x ValidCol must equal the resolved destination valid region.
 - The transfer DataType may be any accepted BSTART.MGATHER DataType except E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2, whose missing nibble selector makes them reserved for indexed TLSU transfer.
 - Destination physical Rows are derived from TSize, physical Col, and transfer DataType. Rows and Col are powers of two and the physical region must contain ValidRow x ValidCol.
 - B.IOT PE_MASK=0000 is a strict no-op before all schema, GPR, source, dimension, allocation, and memory checks.

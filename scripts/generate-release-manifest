@@ -591,6 +591,7 @@ def validate_numeric_profile() -> dict:
         "data_types",
         "implementation_conformance",
         "isa_release",
+        "mixed_expdif",
         "matrix",
         "min_max",
         "packed_storage",
@@ -766,6 +767,58 @@ def validate_numeric_profile() -> dict:
         raise SystemExit("hardware TSORT output must retain U32 original indices")
     if not profile["arithmetic"].get("standard", "").startswith("IEEE 754-2019"):
         raise SystemExit("hardware numeric profile must use IEEE 754-2019 semantics")
+    expected_mixed_expdif = {
+        "accepted_operations": ["TROWEXPANDEXPDIF", "TCOLEXPANDEXPDIF"],
+        "accepted_source_destination_pairs": [
+            ["FP16", "FP16"],
+            ["BF16", "BF16"],
+            ["FP32", "FP32"],
+            ["FP16", "FP32"],
+            ["BF16", "FP32"],
+        ],
+        "pipeline": "ExactWidenFP16ToFP32 or ExactWidenBF16ToFP32 for both sources, then FP32 SUB, then FP32 EXP",
+        "exact_widening": {
+            "BF16": {
+                "finite_zero_infinity": "ZeroExtend32(source_bits) << 16",
+                "inexact_flag": False,
+                "rounding": "none",
+            },
+            "FP16": {
+                "finite_zero_infinity": "IEEE binary16 value-preserving widening to the unique FP32 encoding",
+                "inexact_flag": False,
+                "rounding": "none",
+                "subnormals": "normalize to the unique equal-valued FP32 encoding",
+            },
+            "nan": "Use the selected profile FP32 canonical-NaN and signaling-input rule",
+        },
+        "fp32_sub_exp": {
+            "numeric_status": "Use the selected profile FP32 NV/DZ/OF/UF/NX rules",
+            "rounding": "Use the selected profile FP32 rounding rule",
+            "special_values": "Use the selected profile FP32 IEEE special-value rule",
+        },
+        "discriminator_vectors": [
+            {
+                "source_type": "FP16",
+                "a": "0x2000",
+                "b": "0x0001",
+                "widen_first_sub": "0x3BFFFF80",
+                "source_precision_sub_then_widen": "0x3C000000",
+                "widen_first_exp": "0x3F810100",
+                "source_precision_exp": "0x3F810101",
+            },
+            {
+                "source_type": "BF16",
+                "a": "0x3F80",
+                "b": "0x3B00",
+                "widen_first_sub": "0x3F7F8000",
+                "source_precision_sub_then_widen": "0x3F800000",
+                "widen_first_exp": "0x402DA16E",
+                "source_precision_exp": "0x402DF854",
+            },
+        ],
+    }
+    if profile["mixed_expdif"] != expected_mixed_expdif:
+        raise SystemExit("mixed EXPDIF hardware-profile clause drift")
     return profile
 
 
@@ -824,6 +877,7 @@ def build_numeric_vectors(profile: dict) -> dict:
                 {"data_type": "E8M0", "raw": "0xFE", "expected": "2^127"},
                 {"data_type": "E8M0", "raw": "0xFF", "expected": "NaN"},
             ],
+            "mixed_expdif": profile["mixed_expdif"],
             "packed_lane_order": [
                 {
                     "data_type": "E1M2X2",

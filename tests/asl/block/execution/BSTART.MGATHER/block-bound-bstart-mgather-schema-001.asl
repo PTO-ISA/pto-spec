@@ -41,7 +41,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureSchemaIndex(TileDataType_U16);
+    ConfigureSchemaIndex(TileDataType_U32);
     let missing_ior_start = ExecuteCommandInstruction(
         SchemaGatherStart(Zeros{5} + 27), 32);
     assert missing_ior_start == CommandExecution_Executed;
@@ -67,7 +67,7 @@ begin
     assert _MemoryEventCount == 0;
 
     ResetProfileState();
-    ConfigureSchemaIndex(TileDataType_U16);
+    ConfigureSchemaIndex(TileDataType_U32);
     let packed_start = ExecuteCommandInstruction(
         SchemaGatherStart(Zeros{5} + 28), 32);
     assert packed_start == CommandExecution_Executed;

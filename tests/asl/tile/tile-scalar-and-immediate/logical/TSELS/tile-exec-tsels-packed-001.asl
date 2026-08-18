@@ -2,7 +2,7 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigurePredicateTile(0, 128, 8, 2, 1, 2);
+    ConfigurePredicateTile(0, 128, 16, 2, 1, 2);
     ConfigureTile(
         1,
         128,
@@ -10,7 +10,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U64,
+        TileDataType_FP32,
         TileLayout_RowMajor,
         TileLocation_Any);
     ConfigureTile(
@@ -20,7 +20,7 @@ begin
         2,
         1,
         2,
-        TileDataType_U64,
+        TileDataType_FP32,
         TileLayout_RowMajor,
         TileLocation_Any);
     // The two predicates share byte zero.  This pattern distinguishes packed

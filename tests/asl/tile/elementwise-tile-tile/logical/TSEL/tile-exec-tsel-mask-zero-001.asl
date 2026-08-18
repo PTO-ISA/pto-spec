@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     let started = ExecuteCommandInstruction(
-        Zeros{PTO_XLEN} + 0xc1a19181,
+        Zeros{PTO_XLEN} + 0x09a19181,
         32);
     assert started == CommandExecution_Executed;
     AddBundleTileBinding(

@@ -2,7 +2,7 @@
 pure func TStoreStrideStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00111181;
-    instruction[31:27] = Zeros{5} + 24;
+    instruction[31:27] = Zeros{5} + 25;
     return instruction;
 end;
 
@@ -25,7 +25,7 @@ end;
 func ConfigureTStoreSource(first: integer, second: integer,
                            third: integer, fourth: integer)
 begin
-    ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_U64,
+    ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + first);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + second);
@@ -51,9 +51,9 @@ begin
     let explicit_completed = ExecuteBundleTileOperation();
     assert explicit_completed;
     assert _Memory[[0x200]] == Zeros{8} + 11;
-    assert _Memory[[0x208]] == Zeros{8} + 12;
-    assert _Memory[[0x218]] == Zeros{8} + 13;
-    assert _Memory[[0x220]] == Zeros{8} + 14;
+    assert _Memory[[0x204]] == Zeros{8} + 12;
+    assert _Memory[[0x20c]] == Zeros{8} + 13;
+    assert _Memory[[0x210]] == Zeros{8} + 14;
 
     ResetProfileState();
     ConfigureTStoreSource(15, 16, 17, 18);
@@ -67,9 +67,9 @@ begin
     let omitted_completed = ExecuteBundleTileOperation();
     assert omitted_completed;
     assert _Memory[[0]] == Zeros{8} + 15;
-    assert _Memory[[8]] == Zeros{8} + 16;
-    assert _Memory[[24]] == Zeros{8} + 17;
-    assert _Memory[[32]] == Zeros{8} + 18;
+    assert _Memory[[4]] == Zeros{8} + 16;
+    assert _Memory[[12]] == Zeros{8} + 17;
+    assert _Memory[[16]] == Zeros{8} + 18;
 
     ResetProfileState();
     ConfigureTStoreSource(19, 20, 21, 22);
@@ -86,6 +86,6 @@ begin
     let zero_completed = ExecuteBundleTileOperation();
     assert zero_completed;
     assert _Memory[[0]] == Zeros{8} + 21;
-    assert _Memory[[8]] == Zeros{8} + 22;
+    assert _Memory[[4]] == Zeros{8} + 22;
     return 0;
 end;

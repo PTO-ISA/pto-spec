@@ -16,8 +16,7 @@ This page is a generated reference view of the normative ASL unit.
 pure func TileSortDataTypeSupported(
     data_type: TileDataType) => boolean
 begin
-    return data_type == TileDataType_FP32 ||
-           data_type == TileDataType_FP16;
+    return TileF3DataTypeSupported(data_type);
 end;
 
 pure func TileSortValueIsSignalingNaN(

@@ -17,7 +17,9 @@ end;
 pure func InstructionContractDataTypeLegal_TPARTMAX(
     data_type: TileDataType) => boolean
 begin
-    return TilePartialDataTypeSupported(data_type);
+    return TilePartialDataTypeSupportedForOperation(
+        TilePartial_MAX,
+        data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TPARTMAX(

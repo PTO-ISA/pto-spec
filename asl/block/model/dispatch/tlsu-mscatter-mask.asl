@@ -57,7 +57,7 @@ begin
        !TileSourceContentsDefined(indices) ||
        !TilePredicateValuesLegal(mask) ||
        _Tiles[[source]].data_type != data_type ||
-       !TileDataTypeIsInteger(_Tiles[[indices]].data_type) ||
+       !IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
        !IndexedTLSUTransferDataTypeLegal(data_type) ||
        _Tiles[[source]].valid_rows != valid_rows ||
        _Tiles[[source]].valid_columns != valid_columns ||

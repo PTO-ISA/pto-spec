@@ -14,22 +14,30 @@ begin
 
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
+    let index_reduction =
+        operation == TileReduction_ARGMIN ||
+        operation == TileReduction_ARGMAX;
+    let source_type_legal =
+        if index_reduction then
+            TileArgReductionSourceDataTypeSupported(source_tile.data_type)
+        else if operation == TileReduction_PRODUCT then
+            TileA7DataTypeSupported(source_tile.data_type)
+        else
+            TileA9DataTypeSupported(source_tile.data_type);
     if destination_tile.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        destination_tile.layout != TileLayout_RowMajor ||
        source_tile.layout != TileLayout_RowMajor ||
        source_tile.valid_rows == 0 ||
        source_tile.valid_columns == 0 ||
-       !TileVecArithmeticDataTypeSupported(source_tile.data_type) ||
+       !source_type_legal ||
        !TileSourceEncodingsValid(source) then
         return FALSE;
     end;
 
-    let index_reduction =
-        operation == TileReduction_ARGMIN ||
-        operation == TileReduction_ARGMAX;
     if index_reduction then
-        if destination_tile.data_type != TileDataType_U32 then
+        if destination_tile.data_type != TileDataType_S32 &&
+           destination_tile.data_type != TileDataType_U32 then
             return FALSE;
         end;
     elsif destination_tile.data_type != source_tile.data_type then
@@ -49,6 +57,20 @@ begin
                source_tile.valid_columns;
 end;
 
+pure func TileExpandExpdifTypePairLegal(
+    source_type: TileDataType,
+    destination_type: TileDataType) => boolean
+begin
+    return (source_type == TileDataType_FP16 &&
+            (destination_type == TileDataType_FP16 ||
+             destination_type == TileDataType_FP32)) ||
+           (source_type == TileDataType_BF16 &&
+            (destination_type == TileDataType_BF16 ||
+             destination_type == TileDataType_FP32)) ||
+           (source_type == TileDataType_FP32 &&
+            destination_type == TileDataType_FP32);
+end;
+
 readonly func TileOperandsLegal_ExecuteTileExpand(
     operation: TileExpandOperation,
     axis: TileAxis,
@@ -65,23 +87,37 @@ begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     let broadcast_tile = _Tiles[[broadcast_source]];
+    let expdif = operation == TileExpand_EXPDIF;
+    let operation_type_legal =
+        if operation == TileExpand_COPY then
+            TileCarrierOnlyDataTypeSupported(destination_tile.data_type)
+        else if expdif then
+            TileExpandExpdifTypePairLegal(
+                source_tile.data_type,
+                destination_tile.data_type)
+        else if operation == TileExpand_ADD ||
+           operation == TileExpand_SUB ||
+           operation == TileExpand_MAX ||
+           operation == TileExpand_MIN then
+            TileA9DataTypeSupported(destination_tile.data_type)
+        else if operation == TileExpand_MUL ||
+              operation == TileExpand_DIV then
+            TileA7DataTypeSupported(destination_tile.data_type)
+        else
+            TileVecArithmeticDataTypeSupported(destination_tile.data_type);
     if destination_tile.storage_kind != TileStorage_Numeric ||
        destination_tile.layout != TileLayout_RowMajor ||
        destination_tile.valid_rows == 0 ||
        destination_tile.valid_columns == 0 ||
-       !TileVecArithmeticDataTypeSupported(destination_tile.data_type) ||
+       !operation_type_legal ||
        broadcast_tile.storage_kind != TileStorage_Numeric ||
-       broadcast_tile.data_type != destination_tile.data_type ||
+       broadcast_tile.data_type !=
+           (if expdif then source_tile.data_type
+            else destination_tile.data_type) ||
        broadcast_tile.layout != TileLayout_RowMajor ||
        !TileSourceContentsDefined(broadcast_source) ||
-       !TileSourceEncodingsValid(broadcast_source) then
-        return FALSE;
-    end;
-
-    if operation == TileExpand_EXPDIF &&
-       !TileUnaryDataTypeSupported(
-           TileUnary_EXP,
-           destination_tile.data_type) then
+       (operation != TileExpand_COPY &&
+        !TileSourceEncodingsValid(broadcast_source)) then
         return FALSE;
     end;
 
@@ -89,11 +125,13 @@ begin
         if source != broadcast_source then
             return FALSE;
         end;
-    elsif !TileShapeAndTypeMatch(destination, source) ||
+    elsif (if expdif then !TileLogicalShapeMatch(destination, source)
+           else !TileShapeAndTypeMatch(destination, source)) ||
           source_tile.storage_kind != TileStorage_Numeric ||
           source_tile.layout != TileLayout_RowMajor ||
           !TileSourceContentsDefined(source) ||
-          !TileSourceEncodingsValid(source) then
+          (operation != TileExpand_COPY &&
+           !TileSourceEncodingsValid(source)) then
         return FALSE;
     end;
 

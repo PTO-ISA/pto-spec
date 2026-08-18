@@ -54,7 +54,8 @@ begin
     if !binding.destination_valid || !binding.source0_valid ||
        binding.source1_valid || !binding.last ||
        !TileSourceContentsDefined(binding.source0) ||
-       !TileDataTypeIsInteger(_Tiles[[binding.source0]].data_type) then
+       !IndexedTLSUIndexDataTypeLegal(
+           _Tiles[[binding.source0]].data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;

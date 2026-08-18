@@ -33,7 +33,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 4, 1, 3, TileDataType_S16,
+    ConfigureTile(0, 128, 1, 4, 1, 3, TileDataType_S32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigurePredicateTile(1, 128, 1, 4, 1, 3);
     WriteTileElement(0, 0, 0, Ones{PTO_XLEN} - 7);

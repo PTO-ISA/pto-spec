@@ -1,6 +1,6 @@
 {
   "hardware_profile_id": "pto-hardware-numeric-0.58.1-ieee-v1",
-  "hardware_profile_sha256": "170deadacb174c933c287231fb67da1046d7989f84b6852bf353d68a495d1755",
+  "hardware_profile_sha256": "fe30662f2ac220ec11b6c8d6eccbca48a410be5c511d45c57fb99f8b7016ae0b",
   "implementation_conformance_status": "unproven-in-repository",
   "reference_profile": {
     "hardware_conformance_claim": false,
@@ -362,6 +362,74 @@
         "unscaled_inputs": "all-one"
       }
     ],
+    "mixed_expdif": {
+      "accepted_operations": [
+        "TROWEXPANDEXPDIF",
+        "TCOLEXPANDEXPDIF"
+      ],
+      "accepted_source_destination_pairs": [
+        [
+          "FP16",
+          "FP16"
+        ],
+        [
+          "BF16",
+          "BF16"
+        ],
+        [
+          "FP32",
+          "FP32"
+        ],
+        [
+          "FP16",
+          "FP32"
+        ],
+        [
+          "BF16",
+          "FP32"
+        ]
+      ],
+      "discriminator_vectors": [
+        {
+          "a": "0x2000",
+          "b": "0x0001",
+          "source_precision_exp": "0x3F810101",
+          "source_precision_sub_then_widen": "0x3C000000",
+          "source_type": "FP16",
+          "widen_first_exp": "0x3F810100",
+          "widen_first_sub": "0x3BFFFF80"
+        },
+        {
+          "a": "0x3F80",
+          "b": "0x3B00",
+          "source_precision_exp": "0x402DF854",
+          "source_precision_sub_then_widen": "0x3F800000",
+          "source_type": "BF16",
+          "widen_first_exp": "0x402DA16E",
+          "widen_first_sub": "0x3F7F8000"
+        }
+      ],
+      "exact_widening": {
+        "BF16": {
+          "finite_zero_infinity": "ZeroExtend32(source_bits) << 16",
+          "inexact_flag": false,
+          "rounding": "none"
+        },
+        "FP16": {
+          "finite_zero_infinity": "IEEE binary16 value-preserving widening to the unique FP32 encoding",
+          "inexact_flag": false,
+          "rounding": "none",
+          "subnormals": "normalize to the unique equal-valued FP32 encoding"
+        },
+        "nan": "Use the selected profile FP32 canonical-NaN and signaling-input rule"
+      },
+      "fp32_sub_exp": {
+        "numeric_status": "Use the selected profile FP32 NV/DZ/OF/UF/NX rules",
+        "rounding": "Use the selected profile FP32 rounding rule",
+        "special_values": "Use the selected profile FP32 IEEE special-value rule"
+      },
+      "pipeline": "ExactWidenFP16ToFP32 or ExactWidenBF16ToFP32 for both sources, then FP32 SUB, then FP32 EXP"
+    },
     "packed_lane_order": [
       {
         "data_type": "E1M2X2",

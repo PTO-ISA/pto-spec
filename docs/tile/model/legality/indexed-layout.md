@@ -26,6 +26,16 @@ begin
            data_type == TileDataType_U8;
 end;
 
+pure func TilePartialDataTypeSupportedForOperation(
+    operation: TilePartialOperation,
+    data_type: TileDataType) => boolean
+begin
+    if operation == TilePartial_MUL then
+        return TileA7DataTypeSupported(data_type);
+    end;
+    return TileA9DataTypeSupported(data_type);
+end;
+
 readonly func TileOperandsLegal_ExecuteTilePartial(
     op: TilePartialOperation, destination: TileIndex,
     source_left: TileIndex, source_right: TileIndex) => boolean
@@ -35,7 +45,7 @@ begin
         return FALSE;
     end;
     let data_type = _Tiles[[destination]].data_type;
-    if !TilePartialDataTypeSupported(data_type) ||
+    if !TilePartialDataTypeSupportedForOperation(op, data_type) ||
        _Tiles[[source_left]].data_type != data_type ||
        _Tiles[[source_right]].data_type != data_type ||
        _Tiles[[destination]].layout != TileLayout_RowMajor ||
@@ -196,6 +206,8 @@ begin
            TileDescriptorLegal(destination) &&
            TileSourceContentsDefined(source) &&
            TileLogicalShapeMatch(destination, source) &&
+           TileCarrierOrPackedBaselineDataTypeSupported(
+               _Tiles[[source]].data_type) &&
            _Tiles[[destination]].data_type == _Tiles[[source]].data_type &&
            _Tiles[[destination]].layout == _Tiles[[source]].layout &&
            _Tiles[[destination]].location != TileLocation_Memory &&

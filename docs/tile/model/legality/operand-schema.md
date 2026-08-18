@@ -47,7 +47,7 @@ begin
     return TileDescriptorLegal(destination) &&
            _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
            _Tiles[[destination]].layout == TileLayout_RowMajor &&
-           TileVecArithmeticDataTypeSupported(
+           TileCarrierOnlyDataTypeSupported(
                _Tiles[[destination]].data_type);
 end;
 
@@ -73,18 +73,23 @@ readonly func TileOperandsLegal_ExecuteTileScalar(
     op: TileBinaryOperation, destination: TileIndex,
     source: TileIndex, scalar: Word) => boolean
 begin
+    let carrier_logical = (op == TileBinary_AND ||
+                           op == TileBinary_OR ||
+                           op == TileBinary_XOR) &&
+                          TileCarrierOnlyDataTypeSupported(
+                              _Tiles[[source]].data_type);
     if !TileShapeAndTypeMatch(destination, source) ||
        _Tiles[[source]].storage_kind != TileStorage_Numeric ||
        _Tiles[[source]].layout != TileLayout_RowMajor ||
        !TileBinaryDataTypeSupported(op, _Tiles[[source]].data_type) ||
        !TileSourceContentsDefined(source) ||
-       !TileSourceEncodingsValid(source) then
+       (!carrier_logical && !TileSourceEncodingsValid(source)) then
         return FALSE;
     end;
     let normalized_scalar = TileRawElementValue(
         scalar,
         _Tiles[[source]].data_type);
-    if !TileNumericEncodingValid(
+    if !carrier_logical && !TileNumericEncodingValid(
            _Tiles[[source]].data_type,
            normalized_scalar) then
         return FALSE;

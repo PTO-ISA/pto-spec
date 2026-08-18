@@ -16,41 +16,31 @@ This page is a generated reference view of the normative ASL unit.
 pure func InstructionContractValueDataTypeLegal_TGATHER(
     data_type: TileDataType) => boolean
 begin
-    case data_type of
-        when TileDataType_FP32, TileDataType_FP16,
-             TileDataType_S32, TileDataType_S16,
-             TileDataType_U32, TileDataType_U16 => return TRUE;
-        otherwise => return FALSE;
-    end;
+    return IndexedTLSUTransferDataTypeLegal(data_type);
 end;
 
 pure func InstructionContractIndexDataTypeLegal_TGATHER(
     data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_S32 ||
-           data_type == TileDataType_U32;
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_S16 ||
+           data_type == TileDataType_U16 ||
+           data_type == TileDataType_S64 ||
+           data_type == TileDataType_U64;
 end;
 
 pure func InstructionContractTypePairLegal_TSCATTER(
     value_type: TileDataType,
     index_type: TileDataType) => boolean
 begin
-    if value_type == TileDataType_FP32 ||
-       value_type == TileDataType_S32 ||
-       value_type == TileDataType_U32 then
-        return index_type == TileDataType_S32 ||
-               index_type == TileDataType_U32;
-    end;
-    if value_type == TileDataType_FP16 ||
-       value_type == TileDataType_BF16 ||
-       value_type == TileDataType_S16 ||
-       value_type == TileDataType_U16 ||
-       value_type == TileDataType_S8 ||
-       value_type == TileDataType_U8 then
-        return index_type == TileDataType_S16 ||
-               index_type == TileDataType_U16;
-    end;
-    return FALSE;
+    return IndexedTLSUTransferDataTypeLegal(value_type) &&
+           (index_type == TileDataType_S16 ||
+            index_type == TileDataType_U16 ||
+            index_type == TileDataType_S32 ||
+            index_type == TileDataType_U32 ||
+            index_type == TileDataType_S64 ||
+            index_type == TileDataType_U64);
 end;
 
 pure func TileIndexedRowIsNegative(
@@ -63,6 +53,9 @@ begin
     if data_type == TileDataType_S32 then
         return SInt(value[31:0]) < 0;
     end;
+    if data_type == TileDataType_S64 then
+        return SInt(value[63:0]) < 0;
+    end;
     return FALSE;
 end;
 
@@ -74,9 +67,13 @@ begin
        data_type == TileDataType_U16 then
         return UInt(value[15:0]);
     end;
-    assert data_type == TileDataType_S32 ||
-           data_type == TileDataType_U32;
-    return UInt(value[31:0]);
+    if data_type == TileDataType_S32 ||
+       data_type == TileDataType_U32 then
+        return UInt(value[31:0]);
+    end;
+    assert data_type == TileDataType_S64 ||
+           data_type == TileDataType_U64;
+    return UInt(value[63:0]);
 end;
 
 readonly func TileGatherReferencesLegal(
@@ -107,10 +104,7 @@ begin
                 source_tile,
                 source_row as integer {0..65535},
                 column as integer {0..65535});
-            if source_tile.defined_elements[source_element] == '0' ||
-               !TileNumericEncodingValid(
-                   source_tile.data_type,
-                   source_payload[[source_element]]) then
+            if source_tile.defined_elements[source_element] == '0' then
                 return FALSE;
             end;
         end;
@@ -216,7 +210,6 @@ begin
        destination_tile.valid_columns != source_tile.valid_columns ||
        !TileSourceContentsDefined(source) ||
        !TileSourceContentsDefined(indices) ||
-       !TileSourceEncodingsValid(source) ||
        !TileSourceEncodingsValid(indices) then
         return FALSE;
     end;

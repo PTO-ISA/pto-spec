@@ -106,11 +106,7 @@ begin
                     input_column,
                     channel_in_group);
                 if source_index >= PTO_MODEL_TILE_ELEMENTS ||
-                   source_tile.defined_elements[source_index] == '0' ||
-                   !TileNumericEncodingValid(
-                       source_tile.data_type,
-                       source_tile.payload[[source_index as
-                           ModelTileElementIndex]]) then
+                   source_tile.defined_elements[source_index] == '0' then
                     return FALSE;
                 end;
             end;
@@ -133,13 +129,12 @@ begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     let descriptor = ReadTileFeatureMapDescriptor(source);
-    if !TileImg2ColDataTypeSupported(source_tile.data_type) ||
+    if !TileCarrierOnlyDataTypeSupported(source_tile.data_type) ||
        destination_tile.data_type != source_tile.data_type ||
        destination_tile.layout != TileLayout_RowMajor ||
        source_tile.layout != TileLayout_RowMajor ||
        destination_tile.location != TileLocation_Matrix ||
-       source_tile.location != TileLocation_Matrix ||
-       !TileNumericEncodingValid(source_tile.data_type, descriptor.padding) then
+       source_tile.location != TileLocation_Matrix then
         return FALSE;
     end;
     let output_height = TileImageToColumnOutputHeight(descriptor);

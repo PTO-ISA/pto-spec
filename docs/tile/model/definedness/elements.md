@@ -120,11 +120,20 @@ end;
 pure func IndexedTLSUTransferDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
-    // Indexed TLSU addresses are byte displacements.  A packed four-bit
+    // Indexed TLSU addresses are byte displacements. A packed four-bit
     // transfer would additionally need a low/high-nibble selector, which the
-    // block schema does not encode.  Packed signed/unsigned IndexTiles remain
-    // legal because each logical index element denotes a whole-byte offset.
+    // block schema does not encode. IndexTile legality is governed separately
+    // by IndexedTLSUIndexDataTypeLegal.
     return !TileDataTypeIsFourBit(data_type);
+end;
+
+pure func IndexedTLSUIndexDataTypeLegal(
+    data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_S32 ||
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_S64 ||
+           data_type == TileDataType_U64;
 end;
 
 pure func TileDataTypeIsFloating(data_type: TileDataType) => boolean

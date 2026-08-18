@@ -18,7 +18,7 @@ end;
 pure func InstructionContractDataTypeLegal_TROWEXPANDSUB(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileA9DataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TROWEXPANDSUB(

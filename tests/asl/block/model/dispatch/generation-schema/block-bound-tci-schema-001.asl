@@ -10,6 +10,10 @@ end;
 
 func main() => integer
 begin
+    assert InstructionContractDataTypeLegal_TCI(TileDataType_BF16);
+    assert InstructionContractDataTypeLegal_TCI(TileDataType_S8);
+    assert InstructionContractDataTypeLegal_TCI(TileDataType_U8);
+    assert !InstructionContractDataTypeLegal_TCI(TileDataType_FP64);
     ResetProfileState();
     let started = ExecuteCommandInstruction(TCISchemaStart(), 32);
     assert started == CommandExecution_Executed;

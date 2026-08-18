@@ -46,7 +46,7 @@ begin
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     if !TileSourceContentsDefined(indices) ||
        !TilePredicateValuesLegal(mask) ||
-       !TileDataTypeIsInteger(_Tiles[[indices]].data_type) ||
+       !IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
        !IndexedTLSUTransferDataTypeLegal(data_type) ||
        _Tiles[[indices]].layout != CurrentBundleTileLayout() ||
        _Tiles[[mask]].layout != CurrentBundleTileLayout() then

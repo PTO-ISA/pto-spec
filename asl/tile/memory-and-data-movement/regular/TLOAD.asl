@@ -16,7 +16,11 @@ end;
 // DOC-BEGIN: operation
 pure func InstructionContractDataTypeLegal_TLOAD(code: bits(5)) => boolean
 begin
-    return TileDataTypeEncodingValid(code as TileDataTypeEncoding);
+    if !TileDataTypeEncodingValid(code as TileDataTypeEncoding) then
+        return FALSE;
+    end;
+    let data_type = TileDataTypeFromEncoding(code as TileDataTypeEncoding);
+    return TileCarrierOrPackedBaselineDataTypeSupported(data_type);
 end;
 
 pure func InstructionContractDestinationShapeLegal_TLOAD(

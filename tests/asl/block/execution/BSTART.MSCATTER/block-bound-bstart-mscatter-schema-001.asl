@@ -37,8 +37,8 @@ end;
 
 func main() => integer
 begin
-    RejectScatterSchema(TileDataType_U8, TileDataType_U16, FALSE);
-    RejectScatterSchema(TileDataType_U16, TileDataType_U16, TRUE);
+    RejectScatterSchema(TileDataType_U8, TileDataType_U32, FALSE);
+    RejectScatterSchema(TileDataType_U16, TileDataType_U32, TRUE);
     RejectScatterSchema(TileDataType_U8, TileDataType_FP32, TRUE);
     return 0;
 end;

@@ -21,7 +21,7 @@ begin
     assert index_tile.allocated && index_tile.contents_defined;
     assert destination_tile.valid_rows == index_tile.valid_rows;
     assert destination_tile.valid_columns == index_tile.valid_columns;
-    assert TileDataTypeIsInteger(index_tile.data_type);
+    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(destination_tile.data_type);
     let index_payload = index_tile.payload;
     var translated_addresses: TilePayload;
@@ -125,7 +125,7 @@ begin
     assert source_tile.valid_rows == index_tile.valid_rows;
     assert source_tile.valid_columns == index_tile.valid_columns;
     assert source_tile.layout == index_tile.layout;
-    assert TileDataTypeIsInteger(index_tile.data_type);
+    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(source_tile.data_type);
     let source_payload = source_tile.payload;
     let index_payload = index_tile.payload;
@@ -258,7 +258,7 @@ begin
     assert destination_tile.valid_columns == mask_tile.valid_columns;
     assert destination_tile.layout == index_tile.layout;
     assert destination_tile.layout == mask_tile.layout;
-    assert TileDataTypeIsInteger(index_tile.data_type);
+    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(destination_tile.data_type);
     assert TilePredicateValuesLegal(mask);
     let index_payload = index_tile.payload;
@@ -329,7 +329,7 @@ begin
     assert source_tile.valid_columns == mask_tile.valid_columns;
     assert source_tile.layout == index_tile.layout;
     assert source_tile.layout == mask_tile.layout;
-    assert TileDataTypeIsInteger(index_tile.data_type);
+    assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(source_tile.data_type);
     assert TilePredicateValuesLegal(mask);
     let source_payload = source_tile.payload;

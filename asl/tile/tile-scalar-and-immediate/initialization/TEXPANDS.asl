@@ -18,7 +18,7 @@ end;
 pure func InstructionContractDataTypeLegal_TEXPANDS(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileCarrierOnlyDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TEXPANDS(

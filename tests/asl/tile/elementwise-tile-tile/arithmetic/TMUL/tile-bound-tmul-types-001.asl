@@ -12,15 +12,16 @@ end;
 func main() => integer
 begin
     assert InstructionContractDataTypeLegal_TMUL(TileDataType_FP16);
-    assert InstructionContractDataTypeLegal_TMUL(TileDataType_S8);
+    assert InstructionContractDataTypeLegal_TMUL(TileDataType_S16);
+    assert !InstructionContractDataTypeLegal_TMUL(TileDataType_S8);
     assert !InstructionContractDataTypeLegal_TMUL(TileDataType_U4X2);
 
     ResetProfileState();
-    ConfigureTMULType(TileDataType_S8);
+    ConfigureTMULType(TileDataType_S16);
     assert InstructionContractOperandsLegal_TMUL(2, 0, 1);
 
     ResetProfileState();
-    ConfigureTMULType(TileDataType_U4X2);
+    ConfigureTMULType(TileDataType_S8);
     assert !InstructionContractOperandsLegal_TMUL(2, 0, 1);
     assert !_Tiles[[2]].contents_defined;
     return 0;

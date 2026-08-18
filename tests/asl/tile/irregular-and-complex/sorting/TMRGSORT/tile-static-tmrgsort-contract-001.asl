@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: irregular-and-complex/sorting
-    // block: BSTART.SFU TMRGSORT, FP32|FP16 | B.DATR all-zero (optional) | B.IOR Descending (optional; omission defaults to ascending) | B.IOT two Local sources and one new Local destination, common PE_MASK, <last> | BSTOP
+    // block: BSTART.SFU TMRGSORT, FP32|FP16|BF16 | B.DATR all-zero (optional) | B.IOR Descending (optional; omission defaults to ascending) | B.IOT two Local sources and one new Local destination, common PE_MASK, <last> | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001101101') == 79;
     assert TileOperationOfIndex(79) == TileOperation_TMRGSORT;
     assert TileHandlerOfIndex(79) == TileHandler_TMRGSORT;

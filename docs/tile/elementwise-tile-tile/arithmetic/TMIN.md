@@ -73,7 +73,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TMIN(
     data_type: TileDataType) => boolean
 begin
-    return TileVecArithmeticDataTypeSupported(data_type);
+    return TileA9DataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TMIN(
@@ -131,7 +131,7 @@ end;
 
 - TMIN is BSTART.VEC Mode 0 Function 12 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.
-- DataType is one of FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
+- DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.
 - Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.
 - Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
 - Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op.
