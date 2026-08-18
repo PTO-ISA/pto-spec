@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/bru/ADDTPC.asl`
 
-ADDTPC - Add the encoded displacement to the program counter.
+ADDTPC - Add a signed 4 KiB page displacement to the current TPC.
 
 ## Normative identity {#PTO-INST-SCALAR-ADDTPC}
 
@@ -42,7 +42,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
 | addtpc_32_e5aa0f0abca3 | RegDst | 5 | 0–9, 11–31 | none | 10 | absolute GPR destination | Encoded zero names the architectural zero GPR. |
-| addtpc_32_e5aa0f0abca3 | imm20 | 20 | 0–1048575 | none | none | 20-bit immediate value | Encoded zero supplies numeric zero for the 20-bit immediate value. |
+| addtpc_32_e5aa0f0abca3 | imm20 | 20 | 0–1048575 | none | none | signed 20-bit 4 KiB page displacement | Encoded zero contributes a zero page displacement and produces the current instruction TPC. |
 
 - `addtpc_32_e5aa0f0abca3.RegDst` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
@@ -51,7 +51,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Field | Architectural role |
 | --- | --- |
 | RegDst | absolute GPR destination |
-| imm20 | 20-bit immediate value |
+| imm20 | signed 20-bit 4 KiB page displacement |
 
 ## Decode
 
@@ -79,18 +79,43 @@ begin
     return TRUE;
 end;
 
+pure func InstructionContractImmediateWidth_ADDTPC()
+    => integer {20}
+begin
+    return 20;
+end;
+
+pure func InstructionContractImmediateIsSigned_ADDTPC()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractPageShift_ADDTPC()
+    => integer {12}
+begin
+    return 12;
+end;
+
+pure func InstructionContractWritesTPC_ADDTPC()
+    => boolean
+begin
+    return FALSE;
+end;
+
 pure func InstructionContractTarget_ADDTPC(
     base: Word,
-    halfword_offset: Word)
+    page_offset: Word)
     => Word
 begin
-    return base + LSL(halfword_offset, 1);
+    return base + LSL(page_offset, 12);
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
 ## Defaults and encoded zero
 
+- The imm20 field is sign-extended and scaled by 4096 bytes; encoded zero contributes a zero page displacement and produces the current instruction TPC.
 - The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission.
 
 ## Legality
@@ -99,8 +124,8 @@ end;
 
 ## State effects
 
-- ADDTPC - Add the encoded displacement to the program counter.
-- After decode and legality checks, execute the normative AddToPC ASL handler; no other architectural state is modified.
+- ADDTPC writes TPC + (SignExtend(imm20) << 12), wrapping at XLEN, through the selected Reg5 destination.
+- The instruction does not install a control-flow target and does not directly modify TPC.
 
 ## Memory effects and ordering
 
@@ -110,7 +135,8 @@ end;
 
 ### Ordering
 
-- none
+- Read the current instruction TPC before computing the wrapping XLEN result.
+- After the destination effect, the scalar dispatch boundary advances TPC by four bytes.
 
 ## Exceptions
 

@@ -8,6 +8,17 @@
   "requirements": [
     {
       "executable": false,
+      "id": "PTO-ADDTPC-PAGE-001",
+      "owners": [
+        "asl/scalar/bru/ADDTPC.asl"
+      ],
+      "tests": [
+        "PTO-AVS-SCALAR-ADDTPC-PAGE-001",
+        "PTO-AVS-SCALAR-ADDTPC-SIGNED-001"
+      ]
+    },
+    {
+      "executable": false,
       "id": "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
       "owners": [
         "asl/arch/overview/architecture.asl"
@@ -504,6 +515,17 @@
         "asl/scalar/alu/HL.ADDIW.asl"
       ],
       "tests": []
+    },
+    {
+      "executable": false,
+      "id": "PTO-HL-ADDTPC-PAGE-001",
+      "owners": [
+        "asl/scalar/bru/HL.ADDTPC.asl"
+      ],
+      "tests": [
+        "PTO-AVS-SCALAR-HL-ADDTPC-PAGE-001",
+        "PTO-AVS-SCALAR-HL-ADDTPC-SIGNED-001"
+      ]
     },
     {
       "executable": false,
@@ -1412,7 +1434,9 @@
         "PTO-AVS-BRU-ADDTPC-ALIAS-001",
         "PTO-AVS-BRU-ADDTPC-BOUND-001",
         "PTO-AVS-BRU-ADDTPC-EXEC-001",
-        "PTO-AVS-SCALAR-ADDTPC-DECODE-001"
+        "PTO-AVS-SCALAR-ADDTPC-DECODE-001",
+        "PTO-AVS-SCALAR-ADDTPC-PAGE-001",
+        "PTO-AVS-SCALAR-ADDTPC-SIGNED-001"
       ]
     },
     {
@@ -3118,7 +3142,9 @@
       "tests": [
         "PTO-AVS-BRU-HL-ADDTPC-BOUND-001",
         "PTO-AVS-BRU-HL-ADDTPC-EXEC-001",
-        "PTO-AVS-SCALAR-HL-ADDTPC-DECODE-001"
+        "PTO-AVS-SCALAR-HL-ADDTPC-DECODE-001",
+        "PTO-AVS-SCALAR-HL-ADDTPC-PAGE-001",
+        "PTO-AVS-SCALAR-HL-ADDTPC-SIGNED-001"
       ]
     },
     {
@@ -10857,7 +10883,7 @@
     "asl/scalar/amo/SWAPD.asl": "dbc4c49422d4f71ebec7ce5198f37ffa4da986a35cf01fd5be25f4f0a6586494",
     "asl/scalar/amo/SWAPH.asl": "e0c79a4ae0388b41cefdb6f6f1f086193a33fc9c0b2292bd1526b19e4ea02a28",
     "asl/scalar/amo/SWAPW.asl": "d3418f257884d841cef679f84b5a05a112668b774c5bbd0b1fdd17ec53eb63e2",
-    "asl/scalar/bru/ADDTPC.asl": "f551677ec54ca4db473a7045163dfe8a26fb6630c8d9801cb046a710f9b94207",
+    "asl/scalar/bru/ADDTPC.asl": "5540c697d3e55a266f3ebb431848fce1b8a21ba0396a793ca71de8a5ca124d69",
     "asl/scalar/bru/B.EQ.asl": "dbd41e04788a49dfb6c3fe4746ca1fc28bb599635a0f68426555a835c785b81b",
     "asl/scalar/bru/B.GE.asl": "4886b88e48084cc9b72bfea12e46db6eba2122c7111a7b5ef2d79bd8047090d0",
     "asl/scalar/bru/B.GEU.asl": "fa350ea42d3aa41db66136372a27c2000650345e78e1d90f39db38f3125d3290",
@@ -10886,7 +10912,7 @@
     "asl/scalar/bru/CMP.NEI.asl": "db5863cd7b9584d0d3623b10b026ff0699c17074e80d75e48dc1f3a62d4dc298",
     "asl/scalar/bru/CMP.OR.asl": "cbfbb1a522b1846795b93b4f790e92c7829533ef7a0d06929a5b6b66a11d6675",
     "asl/scalar/bru/CMP.ORI.asl": "d19844ba0e59fc5bbb8a520c8290fc398ace9aa4bee46340ead073a0b8475aa3",
-    "asl/scalar/bru/HL.ADDTPC.asl": "cff392524fade34f90e5648397f67e0c381757cb139fa15b8616959e844a6d85",
+    "asl/scalar/bru/HL.ADDTPC.asl": "590ac4e288d39487337d546d982c2a2e5ae76eab42e9627f86984a4924d61bd9",
     "asl/scalar/bru/HL.CMP.ANDI.asl": "28a66f90c3050931559bb1896c0df5cdd375f80fe94b679ec6fc9c0c6673b5e3",
     "asl/scalar/bru/HL.CMP.EQI.asl": "995034f887914fca6fb627d3930dadf6a35f88c72b4f22d3699c21b54f696a99",
     "asl/scalar/bru/HL.CMP.GEI.asl": "afc9593e5c52443f61d9c9a4ba1a0d78c245d7bb818b6e32f3f60214716e4719",
@@ -10957,7 +10983,7 @@
     "asl/scalar/model/agu/memory.asl": "3e11650bdd6950bf78085be8b1de9735f65310d69b1edfb54d92e59baffee643",
     "asl/scalar/model/alu/semantics.asl": "9e12fcfca8f8091cfe553265b2aac122c04708b9e41dcc0a14bdce56b3595aaf",
     "asl/scalar/model/amo/semantics.asl": "feac3f10edbf29d34595f827eb66a39925be56eb3345e38574a5bab2424a871a",
-    "asl/scalar/model/bru/semantics.asl": "14fa84cacde476b63158b9b7f97f38c4f4810bf8a711009c493fd60b5524a624",
+    "asl/scalar/model/bru/semantics.asl": "e7e9e30ad334b56eeaa9fa1093719ce80e685cde4e77eab8710b14086ceea31a",
     "asl/scalar/model/dispatch/agu.asl": "1e22037018ca860fef794052cda29bf99103c543ae2b6391fce292a5cba9f682",
     "asl/scalar/model/dispatch/alu.asl": "fadf06ed6c43749bb1ee0d41596df7c3176542441aec5368c6cb70c232a5b1bc",
     "asl/scalar/model/dispatch/amo.asl": "6c1cbff9ffb76d530083ce68fc0b2b288475080ba5713b28d363f3fb23ea2666",
@@ -11676,7 +11702,7 @@
     "docs/scalar/amo/SWAPD.md": "76dc0506483978a039f6ec6779402c9449f513993034622e85e648bba7efa4c5",
     "docs/scalar/amo/SWAPH.md": "bff8b962298745c3a09cd03fe2dd9d41fcc48d1512d41f740324f133a253e5d7",
     "docs/scalar/amo/SWAPW.md": "d9c0c4f248e750d19677266928fe9e13b96b889e1b51b1837c530408c6e65758",
-    "docs/scalar/bru/ADDTPC.md": "9fb81c19c0f9cd183e719f28b9a5150db9078ba495a2e7bef3ed78bc17428165",
+    "docs/scalar/bru/ADDTPC.md": "238e480d56d8e70964f60dc22de35cba8defd409c604c67242627013ccb228a7",
     "docs/scalar/bru/B.EQ.md": "83f11f9a99c315636bb912a12542eb89377526b8d9eefea041e07ff3a78e0af8",
     "docs/scalar/bru/B.GE.md": "134f85d33878d5b4889e57f76b7d616c61740510547a9709e4640ea4782d1289",
     "docs/scalar/bru/B.GEU.md": "e3b657f45634414aaa68edcb64392b733c5ffc95ee7897ae3c89a008c760e560",
@@ -11705,7 +11731,7 @@
     "docs/scalar/bru/CMP.NEI.md": "c259d67afdfa3f367637b03328622f990923124f16ef25feb8478bae2205a663",
     "docs/scalar/bru/CMP.OR.md": "703557ff2707af8c4ef125e5902dc53e24f5af08c2953e17e3ff94b34d7c054d",
     "docs/scalar/bru/CMP.ORI.md": "77f33c8cad9187858765ee6718aab59264ae1b1c41c1e457f4bc28a9a313d58b",
-    "docs/scalar/bru/HL.ADDTPC.md": "a2492f20bcd4d42833c30745ca1b4b9dcfa39514ce600001d7a1cb51ff659e11",
+    "docs/scalar/bru/HL.ADDTPC.md": "c885895570d5e6b06c9114cdd70d6619a5bc6987556a3cc315c5cf897b6aef81",
     "docs/scalar/bru/HL.CMP.ANDI.md": "2bcc8f7aa2be43496db51adb3159210e545e4026f9e975f961bf51d7eb56e6c7",
     "docs/scalar/bru/HL.CMP.EQI.md": "b69f2ebc50e25eb544352d0383a31bb25b539dd02ebe49fcd4d0a0fdf60be2f5",
     "docs/scalar/bru/HL.CMP.GEI.md": "1878f816a39fb4b55bc0ef2cad90976d41e48e376c24617dc4241a073451f8df",
@@ -11776,7 +11802,7 @@
     "docs/scalar/model/agu/memory.md": "d061414e0398971d4b39b913893f15b1c4990f09224925e5d686405bf37ff2d6",
     "docs/scalar/model/alu/semantics.md": "5800ad004acb878a6a88081cf772903976cf2ce69df75d334894c4b6e962dc06",
     "docs/scalar/model/amo/semantics.md": "c66f10e728208dd95c44f02e51c311f9639fe8c7357dabf18e6bb2430e9bdf60",
-    "docs/scalar/model/bru/semantics.md": "3f3f7c7197280b4240f8963407322f5794554882512a526f85d173b855aec5bd",
+    "docs/scalar/model/bru/semantics.md": "ba6e7af7ec9bdf099909f9fde8129b4c55a7e4f4b2156f797713a1428b71466b",
     "docs/scalar/model/dispatch/agu.md": "76eaaf8e1dbd894ade12b1ebb8f1be5d14ea83df1dbd8d59a42c11895441e06c",
     "docs/scalar/model/dispatch/alu.md": "2f10f5c4000d6c989b6768cab92ec0bd649e916aab80cc47387f6ffa61d7e783",
     "docs/scalar/model/dispatch/amo.md": "4b0b741e29518315d27121395880aab53e29196ea03c2b07a341237b816dcb6c",
@@ -11996,7 +12022,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "a880dae32c4e8b2d6f55b27e81a43a45277553933ce97efbde528862aaf80e34",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "86ddd65217cf977a6461d9d5d5bbf685cd02c954c5911fc87d3f712dd6a57c14",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "75bd888c10b97beaae55f1a0227f4128ec344daabf00b70d4776b7477aed5253",
-    "spec/evidence/instruction-contract-closure.json": "a600173cd25842c02961a1ca3532df15ed1964eebac995978b060e618c24836d",
+    "spec/evidence/instruction-contract-closure.json": "5ce52629884e3f65925304c19494f0d66aa7d65fc86904011520c9e0a95493c4",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -13360,7 +13386,7 @@
     "tests/asl/scalar/agu/SWI/scalar-fault-swi-precise-001.asl": "004e0258f53360ee58649896caf3d1b7c41f4fac665a08b45529bfecd09eef22",
     "tests/asl/scalar/alu/ADD/scalar-bound-add-aliases-001.asl": "890100b94f221f517ca831ed6f078cdfb5a9e011fae4145b50cb7252759bba66",
     "tests/asl/scalar/alu/ADD/scalar-decode-add-canonical-001.asl": "a33b77a44d8d2718bce72664a128cd913f70b3aa2a45642ba2bd988d1c094772",
-    "tests/asl/scalar/alu/ADD/scalar-exec-add-integer-001.asl": "6b44d33e9cd04cd386a5f79522a1ab51a7918fb0dc35e30dc3d37736de6f8788",
+    "tests/asl/scalar/alu/ADD/scalar-exec-add-integer-001.asl": "92cd919b3d0cec4cb38bb48624ae9cf5273091e0182b94a7c402472febea5151",
     "tests/asl/scalar/alu/ADD/scalar-exec-add-modifier-001.asl": "7646f52c9e2b15d4334480f99097dd38a422386b2a2aa1e3de66686d7632af6c",
     "tests/asl/scalar/alu/ADDI/scalar-bound-addi-aliases-001.asl": "234dd391b9e306ad1649f17ea1fb19af435694a2ce4aa65feecde08a17d8403e",
     "tests/asl/scalar/alu/ADDI/scalar-decode-addi-canonical-001.asl": "daea98e948768d451f23c84e927ba752698c67d047d58007e5b6e2ab9cf47eef",
@@ -13880,9 +13906,11 @@
     "tests/asl/scalar/amo/SWAPW/scalar-exec-swapw-result-001.asl": "8b1864d605b30835340f398ca2485ba04588965dcfa447519be5af2c49685d39",
     "tests/asl/scalar/amo/SWAPW/scalar-fault-swapw-precise-001.asl": "60387f6d0b10bcfb8145033f24af8cdfe4802d75be1458deb9d9fc0eeaa3e0fb",
     "tests/asl/scalar/bru/ADDTPC/scalar-bound-addtpc-fields-001.asl": "d2cb3a4acfa9580b9c6838d23e7ad8145ee87c9301c33c937eef68b47985d430",
+    "tests/asl/scalar/bru/ADDTPC/scalar-bound-addtpc-signed-001.asl": "539b198a603479817837e9291fb1f3dbd9e19209e3da79745474d500d5769fbe",
     "tests/asl/scalar/bru/ADDTPC/scalar-decode-addtpc-canonical-001.asl": "15fdbbb39413ed618a8f3522c3e78162b7677efe894258ceb960202ca9ff691d",
     "tests/asl/scalar/bru/ADDTPC/scalar-exec-addtpc-alias-001.asl": "9322d16f5593cd7ec0edb1925171bcb16d0d19f972de598f5c4009a8dd662e8b",
     "tests/asl/scalar/bru/ADDTPC/scalar-exec-addtpc-direct-001.asl": "2551dd00a1126d04c2e81ff5843df395d0d6ae1336a6dba06e0286dec54a8980",
+    "tests/asl/scalar/bru/ADDTPC/scalar-exec-addtpc-page-001.asl": "f01bbb34c6654a4e112ba2cc9faa142e63bbaeaf487e5bb59d81274d3af14117",
     "tests/asl/scalar/bru/B.EQ/scalar-bound-b-eq-fields-001.asl": "08751ecd7ae9ea24e4fea893e1b364c99a6d4c2ec2bf7c560bdae19b94a9a4b9",
     "tests/asl/scalar/bru/B.EQ/scalar-decode-b-eq-canonical-001.asl": "cb643123919c50a9337a197238d8f97a55091f132937b6a0f2526c1fdf44a6e5",
     "tests/asl/scalar/bru/B.EQ/scalar-exec-b-eq-alias-001.asl": "f74f197a04772f6f0651cecee5cc789e4500077a0dffe47a7a730a6e984455ba",
@@ -13975,8 +14003,10 @@
     "tests/asl/scalar/bru/CMP.ORI/scalar-decode-cmp-ori-canonical-001.asl": "2b1dc0939a2f3b18490001f5043d94e762d893c86200e9e1399fe047a9edf6b6",
     "tests/asl/scalar/bru/CMP.ORI/scalar-exec-cmp-ori-direct-001.asl": "7c7246caa85d5d4f2d6fe7cf0c2ee162202642c9a71cba5bfba62b2b7f9ce1ed",
     "tests/asl/scalar/bru/HL.ADDTPC/scalar-bound-hl-addtpc-fields-001.asl": "26daacf26c168f2400acea06e22d4d76a775d2798dd9033968100326d95b585b",
+    "tests/asl/scalar/bru/HL.ADDTPC/scalar-bound-hl-addtpc-signed-001.asl": "6e5511ad6103a5d0730d3ec23789bda0c804b72abcb20bab73ad0b0c3acb7dbe",
     "tests/asl/scalar/bru/HL.ADDTPC/scalar-decode-hl-addtpc-canonical-001.asl": "33438d232fa260de55f971c51df70f7d481b96b8849fdc1d11858e9b99baf0d4",
     "tests/asl/scalar/bru/HL.ADDTPC/scalar-exec-hl-addtpc-direct-001.asl": "bff1809a9c5c6bef2f519a5ac8549ff6a90e0daff655b4c9c1c03d8429ecdf48",
+    "tests/asl/scalar/bru/HL.ADDTPC/scalar-exec-hl-addtpc-page-001.asl": "360dee840f7a7efbd3260c794513c91e9ba4abde708ae9ac5a503a8927a42993",
     "tests/asl/scalar/bru/HL.CMP.ANDI/scalar-bound-hl-cmp-andi-fields-001.asl": "46cc8a78fb38f78f68859fe1dbdf683f140628468b7475d01bce4602ce41ed6a",
     "tests/asl/scalar/bru/HL.CMP.ANDI/scalar-decode-hl-cmp-andi-canonical-001.asl": "73e72c4163fef4dc24874c8a9248b124ebeafe77466b2ac1d4ebb79ab18b16f8",
     "tests/asl/scalar/bru/HL.CMP.ANDI/scalar-exec-hl-cmp-andi-direct-001.asl": "2a2b6cd8c6c1fb887ac201f7a35dda7406e40e0362a2cf2e682f4e52be0bc8d6",
@@ -15209,9 +15239,9 @@
     "mnemonic_count": 642,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 825,
+    "requirement_count": 827,
     "status": "closed",
-    "test_count": 3205,
+    "test_count": 3209,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -30823,7 +30853,7 @@
       "requirements": [
         "PTO-INST-SCALAR-ADD"
       ],
-      "sha256": "6b44d33e9cd04cd386a5f79522a1ab51a7918fb0dc35e30dc3d37736de6f8788",
+      "sha256": "92cd919b3d0cec4cb38bb48624ae9cf5273091e0182b94a7c402472febea5151",
       "source": "asl/scalar/alu/ADD.asl"
     },
     {
@@ -30904,6 +30934,28 @@
         "PTO-INST-SCALAR-ADDTPC"
       ],
       "sha256": "15fdbbb39413ed618a8f3522c3e78162b7677efe894258ceb960202ca9ff691d",
+      "source": "asl/scalar/bru/ADDTPC.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-ADDTPC-PAGE-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/bru/ADDTPC/scalar-exec-addtpc-page-001.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-ADDTPC",
+        "PTO-ADDTPC-PAGE-001"
+      ],
+      "sha256": "f01bbb34c6654a4e112ba2cc9faa142e63bbaeaf487e5bb59d81274d3af14117",
+      "source": "asl/scalar/bru/ADDTPC.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-ADDTPC-SIGNED-001",
+      "kind": "boundary",
+      "path": "tests/asl/scalar/bru/ADDTPC/scalar-bound-addtpc-signed-001.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-ADDTPC",
+        "PTO-ADDTPC-PAGE-001"
+      ],
+      "sha256": "539b198a603479817837e9291fb1f3dbd9e19209e3da79745474d500d5769fbe",
       "source": "asl/scalar/bru/ADDTPC.asl"
     },
     {
@@ -33178,6 +33230,28 @@
         "PTO-INST-SCALAR-HL-ADDTPC"
       ],
       "sha256": "33438d232fa260de55f971c51df70f7d481b96b8849fdc1d11858e9b99baf0d4",
+      "source": "asl/scalar/bru/HL.ADDTPC.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-HL-ADDTPC-PAGE-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/bru/HL.ADDTPC/scalar-exec-hl-addtpc-page-001.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-HL-ADDTPC",
+        "PTO-HL-ADDTPC-PAGE-001"
+      ],
+      "sha256": "360dee840f7a7efbd3260c794513c91e9ba4abde708ae9ac5a503a8927a42993",
+      "source": "asl/scalar/bru/HL.ADDTPC.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-HL-ADDTPC-SIGNED-001",
+      "kind": "boundary",
+      "path": "tests/asl/scalar/bru/HL.ADDTPC/scalar-bound-hl-addtpc-signed-001.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-HL-ADDTPC",
+        "PTO-HL-ADDTPC-PAGE-001"
+      ],
+      "sha256": "6e5511ad6103a5d0730d3ec23789bda0c804b72abcb20bab73ad0b0c3acb7dbe",
       "source": "asl/scalar/bru/HL.ADDTPC.asl"
     },
     {
@@ -59118,7 +59192,9 @@
       "semantic_tests": [
         "PTO-AVS-BRU-ADDTPC-ALIAS-001",
         "PTO-AVS-BRU-ADDTPC-BOUND-001",
-        "PTO-AVS-BRU-ADDTPC-EXEC-001"
+        "PTO-AVS-BRU-ADDTPC-EXEC-001",
+        "PTO-AVS-SCALAR-ADDTPC-PAGE-001",
+        "PTO-AVS-SCALAR-ADDTPC-SIGNED-001"
       ],
       "source": "asl/scalar/bru/ADDTPC.asl",
       "surface": "scalar",
@@ -59126,7 +59202,9 @@
         "PTO-AVS-BRU-ADDTPC-ALIAS-001",
         "PTO-AVS-BRU-ADDTPC-BOUND-001",
         "PTO-AVS-BRU-ADDTPC-EXEC-001",
-        "PTO-AVS-SCALAR-ADDTPC-DECODE-001"
+        "PTO-AVS-SCALAR-ADDTPC-DECODE-001",
+        "PTO-AVS-SCALAR-ADDTPC-PAGE-001",
+        "PTO-AVS-SCALAR-ADDTPC-SIGNED-001"
       ]
     },
     {
@@ -59829,14 +59907,18 @@
       "mnemonic": "HL.ADDTPC",
       "semantic_tests": [
         "PTO-AVS-BRU-HL-ADDTPC-BOUND-001",
-        "PTO-AVS-BRU-HL-ADDTPC-EXEC-001"
+        "PTO-AVS-BRU-HL-ADDTPC-EXEC-001",
+        "PTO-AVS-SCALAR-HL-ADDTPC-PAGE-001",
+        "PTO-AVS-SCALAR-HL-ADDTPC-SIGNED-001"
       ],
       "source": "asl/scalar/bru/HL.ADDTPC.asl",
       "surface": "scalar",
       "tests": [
         "PTO-AVS-BRU-HL-ADDTPC-BOUND-001",
         "PTO-AVS-BRU-HL-ADDTPC-EXEC-001",
-        "PTO-AVS-SCALAR-HL-ADDTPC-DECODE-001"
+        "PTO-AVS-SCALAR-HL-ADDTPC-DECODE-001",
+        "PTO-AVS-SCALAR-HL-ADDTPC-PAGE-001",
+        "PTO-AVS-SCALAR-HL-ADDTPC-SIGNED-001"
       ]
     },
     {

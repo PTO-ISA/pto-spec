@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 from importlib.machinery import SourceFileLoader
+import json
 import unittest
 from pathlib import Path
 
@@ -87,6 +88,64 @@ class ExecutableModelComparisonTest(unittest.TestCase):
                 "spec/evidence/release-traceability-readiness.json",
             ],
         )
+
+    def test_addtpc_semantic_drift_is_not_hidden_by_matching_encodings(self) -> None:
+        classification, disposition = self.generator.scalar_comparison_disposition(
+            {"mnemonic": "ADDTPC"},
+            independent_present=True,
+            encoding_match=True,
+            independent_status="executable-subset",
+        )
+
+        self.assertEqual(classification, "divergence")
+        self.assertIn("4 KiB page displacement", disposition)
+        self.assertIn("halfword scaling", disposition)
+
+    def test_published_addtpc_rows_report_semantic_divergence(self) -> None:
+        evidence = json.loads(
+            (ROOT / "spec/evidence/executable-model-comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        rows = {row.get("mnemonic"): row for row in evidence["rows"]}
+
+        for mnemonic in ("ADDTPC", "HL.ADDTPC"):
+            row = rows[mnemonic]
+            self.assertEqual(row["classification"], "divergence")
+            self.assertTrue(row["encoding_match"])
+            self.assertIn("4 KiB page displacement", row["pto_disposition"])
+            self.assertIn(
+                "docs/status/decisions/0066-addtpc-page-scaled-immediate.md",
+                row["evidence"],
+            )
+        self.assertEqual(
+            evidence["summary"]["classification_counts"],
+            {"comparable-match": 525, "divergence": 94, "non-comparable": 38},
+        )
+
+    def test_published_missing_b_fpatr_is_an_explicit_divergence(self) -> None:
+        evidence = json.loads(
+            (ROOT / "spec/evidence/executable-model-comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        row = next(row for row in evidence["rows"] if row["mnemonic"] == "B.FPATR")
+
+        self.assertEqual(row["classification"], "divergence")
+        self.assertEqual(row["independent_status"], "missing")
+        self.assertIn("no independent comparison row", row["pto_disposition"])
+
+    def test_published_hl_qpop_keeps_reviewed_encoding_divergence(self) -> None:
+        evidence = json.loads(
+            (ROOT / "spec/evidence/executable-model-comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        row = next(row for row in evidence["rows"] if row["mnemonic"] == "HL.QPOP")
+
+        self.assertEqual(row["classification"], "divergence")
+        self.assertIsNotNone(row["abi_change_acceptance"])
+        self.assertIn("superseded command encoding", row["pto_disposition"])
 
 
 if __name__ == "__main__":

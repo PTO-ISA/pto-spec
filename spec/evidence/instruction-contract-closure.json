@@ -17717,7 +17717,7 @@
           "semantic_family": "BRU",
           "semantic_group": "BRU",
           "semantic_handler": "AddToPC",
-          "semantic_summary": "ADDTPC - Add the encoded displacement to the program counter.",
+          "semantic_summary": "ADDTPC - Add a signed 4 KiB page displacement to the current TPC.",
           "status": "accepted"
         }
       ],
@@ -17732,6 +17732,7 @@
           "addtpc simm, ->{t, u, Rd}"
         ],
         "defaults": [
+          "The imm20 field is sign-extended and scaled by 4096 bytes; encoded zero contributes a zero page displacement and produces the current instruction TPC.",
           "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
         ],
         "encoded_fields": [
@@ -17773,10 +17774,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "20-bit immediate value",
+            "role": "signed 20-bit 4 KiB page displacement",
             "signedness": "encoding-defined",
             "width": 20,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 20-bit immediate value."
+            "zero_meaning": "Encoded zero contributes a zero page displacement and produces the current instruction TPC."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -17800,16 +17801,17 @@
           },
           {
             "field": "imm20",
-            "role": "20-bit immediate value"
+            "role": "signed 20-bit 4 KiB page displacement"
           }
         ],
         "ordering": [
-          "none"
+          "Read the current instruction TPC before computing the wrapping XLEN result.",
+          "After the destination effect, the scalar dispatch boundary advances TPC by four bytes."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "ADDTPC - Add the encoded displacement to the program counter.",
-          "After decode and legality checks, execute the normative AddToPC ASL handler; no other architectural state is modified."
+          "ADDTPC writes TPC + (SignExtend(imm20) << 12), wrapping at XLEN, through the selected Reg5 destination.",
+          "The instruction does not install a control-flow target and does not directly modify TPC."
         ]
       },
       "documentation": "docs/scalar/bru/ADDTPC.md",
@@ -17817,7 +17819,7 @@
       "mnemonic": "ADDTPC",
       "ndf_clause": "PTO-INST-SCALAR-ADDTPC",
       "source": "asl/scalar/bru/ADDTPC.asl",
-      "summary": "ADDTPC - Add the encoded displacement to the program counter.",
+      "summary": "ADDTPC - Add a signed 4 KiB page displacement to the current TPC.",
       "surface": "scalar"
     },
     {
@@ -39729,7 +39731,7 @@
           "semantic_family": "BRU",
           "semantic_group": "BRU",
           "semantic_handler": "AddToPC",
-          "semantic_summary": "HL.ADDTPC - Add the encoded displacement to the program counter.",
+          "semantic_summary": "HL.ADDTPC - Add a signed 4 KiB page displacement to the current TPC.",
           "status": "accepted"
         }
       ],
@@ -39744,6 +39746,7 @@
           "hl.addtpc imm, ->{t, u, Rd}"
         ],
         "defaults": [
+          "The imm32 field is sign-extended and scaled by 4096 bytes; encoded zero contributes a zero page displacement and produces the current instruction TPC.",
           "The selected assembly form determines which fields are present; every present field carries its encoded value and no encoded zero means omission."
         ],
         "encoded_fields": [
@@ -39785,10 +39788,10 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "32-bit immediate value",
+            "role": "signed 32-bit 4 KiB page displacement",
             "signedness": "encoding-defined",
             "width": 32,
-            "zero_meaning": "Encoded zero supplies numeric zero for the 32-bit immediate value."
+            "zero_meaning": "Encoded zero contributes a zero page displacement and produces the current instruction TPC."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -39812,16 +39815,17 @@
           },
           {
             "field": "imm32",
-            "role": "32-bit immediate value"
+            "role": "signed 32-bit 4 KiB page displacement"
           }
         ],
         "ordering": [
-          "none"
+          "Read the current instruction TPC before computing the wrapping XLEN result.",
+          "After the destination effect, the scalar dispatch boundary advances TPC by six bytes."
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "HL.ADDTPC - Add the encoded displacement to the program counter.",
-          "After decode and legality checks, execute the normative AddToPC ASL handler; no other architectural state is modified."
+          "HL.ADDTPC writes TPC + (SignExtend(imm32) << 12), wrapping at XLEN, through the selected Reg5 destination.",
+          "The instruction does not install a control-flow target and does not directly modify TPC."
         ]
       },
       "documentation": "docs/scalar/bru/HL.ADDTPC.md",
@@ -39829,7 +39833,7 @@
       "mnemonic": "HL.ADDTPC",
       "ndf_clause": "PTO-INST-SCALAR-HL-ADDTPC",
       "source": "asl/scalar/bru/HL.ADDTPC.asl",
-      "summary": "HL.ADDTPC - Add the encoded displacement to the program counter.",
+      "summary": "HL.ADDTPC - Add a signed 4 KiB page displacement to the current TPC.",
       "surface": "scalar"
     },
     {

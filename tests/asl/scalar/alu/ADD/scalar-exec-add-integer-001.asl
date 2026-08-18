@@ -95,9 +95,6 @@ begin
     SetReturnAddress(Zeros{PTO_XLEN} + 3);
     assert _ReturnAddress == Zeros{PTO_XLEN} + 106;
     assert ReadGPR(10) == Zeros{PTO_XLEN} + 106;
-    AddToPC(11, Zeros{PTO_XLEN} + 4);
-    assert ReadGPR(11) == Zeros{PTO_XLEN} + 108;
-
     assert MaterializeLongSigned(Zeros{32} + 0x80000000) ==
         SignExtend{PTO_XLEN}(Zeros{32} + 0x80000000);
     assert MultiplyWord(Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN} + 4) ==

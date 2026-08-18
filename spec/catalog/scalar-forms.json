@@ -335,7 +335,7 @@
       "semantic_family": "BRU",
       "semantic_group": "BRU",
       "semantic_handler": "AddToPC",
-      "semantic_summary": "ADDTPC - Add the encoded displacement to the program counter.",
+      "semantic_summary": "ADDTPC - Add a signed 4 KiB page displacement to the current TPC.",
       "status": "accepted"
     },
     {
@@ -7757,7 +7757,7 @@
       "semantic_family": "BRU",
       "semantic_group": "BRU",
       "semantic_handler": "AddToPC",
-      "semantic_summary": "HL.ADDTPC - Add the encoded displacement to the program counter.",
+      "semantic_summary": "HL.ADDTPC - Add a signed 4 KiB page displacement to the current TPC.",
       "status": "accepted"
     },
     {

@@ -2002,7 +2002,7 @@
     },
     {
       "path": "asl/scalar/bru/ADDTPC.asl",
-      "sha256": "f551677ec54ca4db473a7045163dfe8a26fb6630c8d9801cb046a710f9b94207"
+      "sha256": "5540c697d3e55a266f3ebb431848fce1b8a21ba0396a793ca71de8a5ca124d69"
     },
     {
       "path": "asl/scalar/bru/B.EQ.asl",
@@ -2118,7 +2118,7 @@
     },
     {
       "path": "asl/scalar/bru/HL.ADDTPC.asl",
-      "sha256": "cff392524fade34f90e5648397f67e0c381757cb139fa15b8616959e844a6d85"
+      "sha256": "590ac4e288d39487337d546d982c2a2e5ae76eab42e9627f86984a4924d61bd9"
     },
     {
       "path": "asl/scalar/bru/HL.CMP.ANDI.asl",
@@ -2402,7 +2402,7 @@
     },
     {
       "path": "asl/scalar/model/bru/semantics.asl",
-      "sha256": "14fa84cacde476b63158b9b7f97f38c4f4810bf8a711009c493fd60b5524a624"
+      "sha256": "e7e9e30ad334b56eeaa9fa1093719ce80e685cde4e77eab8710b14086ceea31a"
     },
     {
       "path": "asl/scalar/model/dispatch/agu.asl",
@@ -3298,7 +3298,7 @@
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "9f3841d568ffa73fcb43bf4fd365d3c4dba42d27acffa7e273e0f403c0f0c602"
+      "sha256": "5658282b97e703ee53b93d86522d6fc9af30a5b13c55dc29b3363e3959c5e085"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -3310,15 +3310,15 @@
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "a600173cd25842c02961a1ca3532df15ed1964eebac995978b060e618c24836d"
+      "sha256": "5ce52629884e3f65925304c19494f0d66aa7d65fc86904011520c9e0a95493c4"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "38c22291b28ba17e668382e40a7cd45707ec10e77e1ce1f6365e5979d665a1c4"
+      "sha256": "31c1a30363cc46c62dd9120bd65670f3ef39e044dc0a2f808f0ecb36c2d835be"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "4e2b23947f0564f8235f79e3586ad89d0df984a49e7b7cf5fa5d34c0b8bc1c9f"
+      "sha256": "9336eb7873b30cde6a8be34e53900e2a4a42466e672ce0481ef2c388efad94c8"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3356,7 +3356,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "63cdbb0ad6b327d3ebe883af97c78fb84fc84de925becdcaf614a131e3bc7649",
+  "content_sha256": "0e2e0bcb26117aa830c8103669b566114b467f5b00565651db52ca6384a880d1",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -5888,7 +5888,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/bru/ADDTPC.md",
-      "sha256": "9fb81c19c0f9cd183e719f28b9a5150db9078ba495a2e7bef3ed78bc17428165"
+      "sha256": "238e480d56d8e70964f60dc22de35cba8defd409c604c67242627013ccb228a7"
     },
     {
       "kind": "generated-documentation",
@@ -6033,7 +6033,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/bru/HL.ADDTPC.md",
-      "sha256": "a2492f20bcd4d42833c30745ca1b4b9dcfa39514ce600001d7a1cb51ff659e11"
+      "sha256": "c885895570d5e6b06c9114cdd70d6619a5bc6987556a3cc315c5cf897b6aef81"
     },
     {
       "kind": "generated-documentation",
@@ -6388,7 +6388,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/bru/semantics.md",
-      "sha256": "3f3f7c7197280b4240f8963407322f5794554882512a526f85d173b855aec5bd"
+      "sha256": "ba6e7af7ec9bdf099909f9fde8129b4c55a7e4f4b2156f797713a1428b71466b"
     },
     {
       "kind": "generated-documentation",

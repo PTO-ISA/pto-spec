@@ -1519,7 +1519,7 @@ def scalar_bru_totality_expected(
             field_values[scalar_bru_totality_immediate(row)["name"]],
             scalar_bru_totality_immediate(row)["width"],
         )
-        expected["result"] = (pre_tpc + ((signed_immediate << 1) & MASK64)) & MASK64
+        expected["result"] = (pre_tpc + ((signed_immediate << 12) & MASK64)) & MASK64
     elif class_id == "scalar-return-address":
         if immediate is None:
             raise ValueError(f"missing SETRET immediate for {row['form_id']}")
@@ -1870,7 +1870,7 @@ def _emit_all_scalar_bru_alias_and_faults(
         else:
             queue = "TRUE" if queue_t else "FALSE"
             print(
-                f"    assert ReadTemporaryQueue({queue}, 0) == Zeros{{PTO_XLEN}} + 0x102;"
+                f"    assert ReadTemporaryQueue({queue}, 0) == Zeros{{PTO_XLEN}} + 0x1100;"
             )
             print(
                 f"    assert ReadTemporaryQueue({queue}, 1) == "
@@ -8745,7 +8745,7 @@ def _emit_monolithic() -> None:
                 target = 0x206 if mnemonic == "JR" else 0x106
                 print(f"    assert ReadTPC() == Zeros{{PTO_XLEN}} + 0x{target:x};")
             elif class_id == "scalar-pc-relative-value":
-                print("    assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x106;")
+                print("    assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x1100;")
                 print(
                     "    assert ReadTPC() == Zeros{PTO_XLEN} + "
                     f"{0x100 + row['length_bits'] // 8};"

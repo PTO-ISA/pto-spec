@@ -22,6 +22,16 @@ SPEC_FILE = "li" + "nxisa-v" + "0" + "." + "57.json"
 VERSION_TOKEN = "v" + "0" + "57"
 SNAPSHOT_ENV = "PTO_COMPARE_ROOT"
 COMMAND_TIMEOUT_SECONDS = 180
+SCALAR_SEMANTIC_DIVERGENCES = {
+    "ADDTPC": (
+        "PTO uses the accepted signed 4 KiB page displacement; the locked "
+        "independent executable snapshot retains halfword scaling."
+    ),
+    "HL.ADDTPC": (
+        "PTO uses the accepted signed 4 KiB page displacement; the locked "
+        "independent executable snapshot retains halfword scaling."
+    ),
+}
 
 # These frozen comparison rows belonged to command forms that the accepted
 # mnemonic review removed from the PTO command catalog. Keep the list explicit
@@ -430,6 +440,35 @@ def reviewed_missing_command_row(
     }
 
 
+def scalar_comparison_disposition(
+    row: dict[str, Any],
+    *,
+    independent_present: bool,
+    encoding_match: bool,
+    independent_status: str,
+) -> tuple[str, str]:
+    if not independent_present or not encoding_match:
+        return (
+            "divergence",
+            "PTO catalog is authoritative; mismatch requires manual "
+            "reconciliation before S5-T3 closure.",
+        )
+    semantic_divergence = SCALAR_SEMANTIC_DIVERGENCES.get(row["mnemonic"])
+    if semantic_divergence is not None:
+        return "divergence", semantic_divergence
+    if independent_status == "executable-subset":
+        return (
+            "comparable-match",
+            "Stable form ID, mask/match, and executable-subset status agree "
+            "with PTO-owned ASL evidence.",
+        )
+    return (
+        "non-comparable",
+        "Independent model decodes the form but does not provide executable "
+        "semantics for this row.",
+    )
+
+
 def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     scalar = load_json(ROOT / "spec/catalog/scalar-forms.json")["forms"]
     commands = load_json(ROOT / "spec/catalog/command-forms.json")["forms"]
@@ -469,15 +508,12 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
         encoding_match = independent is not None and encoding_triples(
             row
         ) == encoding_triples(independent)
-        if independent is None or not encoding_match:
-            classification = "divergence"
-            disposition = "PTO catalog is authoritative; mismatch requires manual reconciliation before S5-T3 closure."
-        elif status == "executable-subset":
-            classification = "comparable-match"
-            disposition = "Stable form ID, mask/match, and executable-subset status agree with PTO-owned ASL evidence."
-        else:
-            classification = "non-comparable"
-            disposition = "Independent model decodes the form but does not provide executable semantics for this row."
+        classification, disposition = scalar_comparison_disposition(
+            row,
+            independent_present=independent is not None,
+            encoding_match=encoding_match,
+            independent_status=status,
+        )
         rows.append(
             {
                 "surface": "scalar",
@@ -494,6 +530,11 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
                     "spec/catalog/scalar-forms.json",
                     "spec/evidence/instruction-contract-closure.json",
                     "spec/evidence/release-traceability-readiness.json",
+                    *(
+                        ["docs/status/decisions/0066-addtpc-page-scaled-immediate.md"]
+                        if row["mnemonic"] in SCALAR_SEMANTIC_DIVERGENCES
+                        else []
+                    ),
                 ],
             }
         )
@@ -755,9 +796,9 @@ def build(snapshot_root: Path) -> dict[str, Any]:
     if summary["row_count"] != 657:
         raise SystemExit(f"expected 657 rows, got {summary['row_count']}")
     if summary["classification_counts"] != {
-        "comparable-match": 527,
-        "divergence": 91,
-        "non-comparable": 39,
+        "comparable-match": 525,
+        "divergence": 94,
+        "non-comparable": 38,
     }:
         raise SystemExit(
             f"unexpected comparison classification counts: {summary['classification_counts']}"
@@ -766,7 +807,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         row for row in rows if row.get("abi_change_acceptance") is not None
     ]
     accepted_abi_break_counts = Counter(row["surface"] for row in accepted_abi_breaks)
-    if accepted_abi_break_counts != Counter({"command": 7, "direct-tile": 68}):
+    if accepted_abi_break_counts != Counter({"command": 8, "direct-tile": 68}):
         raise SystemExit(
             "unexpected accepted ABI divergence counts: "
             f"{dict(sorted(accepted_abi_break_counts.items()))}"

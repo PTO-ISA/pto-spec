@@ -88,7 +88,7 @@ begin
     WritePC(ReadPC() + LSL(halfword_offset, 1));
 end;
 
-func AddToPC(destination: Reg5Selector, halfword_offset: Word)
+func AddToPC(destination: Reg5Selector, page_offset: Word)
 begin
-    WriteScalarDestination(destination, ReadTPC() + LSL(halfword_offset, 1));
+    WriteScalarDestination(destination, ReadTPC() + LSL(page_offset, 12));
 end;
