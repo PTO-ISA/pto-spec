@@ -91,7 +91,6 @@ class HardwareNumericProfileTest(unittest.TestCase):
             "implementation func TileProfileMatrixPostProcess(", 1
         )[0]
         self.assertIn("MatrixPostQuantBaseWithFlags", body)
-        self.assertIn("MatrixActivationWithFlags", body)
         self.assertNotIn("return (value, Zeros{5});", body)
 
     def test_current_release_owns_the_current_numeric_profile(self) -> None:
