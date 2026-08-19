@@ -3,12 +3,20 @@
 
 pure func TileTCIDataTypeSupported(data_type: TileDataType) => boolean
 begin
-    return TileA9DataTypeSupported(data_type);
+    return data_type == TileDataType_S32 ||
+           data_type == TileDataType_S16 ||
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_U16;
 end;
 
 pure func TileTTRIDataTypeSupported(data_type: TileDataType) => boolean
 begin
-    return TileA9DataTypeSupported(data_type);
+    return data_type == TileDataType_FP32 ||
+           data_type == TileDataType_FP16 ||
+           data_type == TileDataType_S32 ||
+           data_type == TileDataType_S16 ||
+           data_type == TileDataType_U32 ||
+           data_type == TileDataType_U16;
 end;
 
 pure func TileTTRIOneEncoding(data_type: TileDataType) => Word

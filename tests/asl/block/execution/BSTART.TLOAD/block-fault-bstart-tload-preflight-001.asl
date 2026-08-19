@@ -26,8 +26,8 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    Store(Zeros{PTO_XLEN} + 4088, 4, Zeros{PTO_XLEN} + 0xaa);
-    WriteGPR(2, Zeros{PTO_XLEN} + 4088);
+    Store(Zeros{PTO_XLEN} + 4092, 4, Zeros{PTO_XLEN} + 0xaa);
+    WriteGPR(2, Zeros{PTO_XLEN} + 4092);
     WriteGPR(3, Zeros{PTO_XLEN} + 2);
     let start_status = ExecuteCommandInstruction(TLoadFaultStart(), 32);
     assert start_status == CommandExecution_Executed;

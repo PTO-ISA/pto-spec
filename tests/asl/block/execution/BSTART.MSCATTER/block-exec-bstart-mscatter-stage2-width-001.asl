@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-BSTART-MSCATTER-SCHEMA-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"decoded MSCATTER accepts B64/U64 full-width pairing, rejects S16 indices, and preserves raw non-packed carriers","pass_condition":"A U64 source stores with an aligned U64 byte displacement and an eight-byte event, an upper-half U64 displacement faults at its full-width address rather than truncating, S16 indices fault before memory effects, and a raw invalid TF32 carrier is stored unchanged","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-BSTART-MSCATTER-SCHEMA-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"decoded MSCATTER preserves full-width displacements and accepts narrower integer IndexTiles","pass_condition":"U64 and S16 byte displacements execute at their encoded widths, an upper-half U64 address faults without truncation, and a raw invalid TF32 carrier is stored unchanged","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
 
 pure func MscatterStage2Start(data_type: bits(5)) => bits(64)
 begin
@@ -117,13 +117,12 @@ begin
         Zeros{5} + 24);
     Store(target, 8, Zeros{PTO_XLEN} + 0xdeadbeefdeadbeef);
     StartMemoryEventCapture(0);
-    let rejected = ExecuteBundleTileOperation();
-    assert !rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert _MemoryEventCount == 0;
-    let unchanged_after_index_reject = LoadUnsigned(target, 8);
-    assert unchanged_after_index_reject ==
-        Zeros{PTO_XLEN} + 0xdeadbeefdeadbeef;
+    let narrow_completed = ExecuteBundleTileOperation();
+    assert narrow_completed;
+    assert _LastFault == Fault_None;
+    assert _MemoryEventCount == 1;
+    let stored_with_narrow_index = LoadUnsigned(target, 8);
+    assert stored_with_narrow_index == source_value;
     StopMemoryEventCapture();
 
     PrepareMscatterStage2(

@@ -4,7 +4,7 @@
   "id": "overview.isa_overview",
   "kind": "overview",
   "title": "ISA Overview",
-  "status": "active",
+  "status": "historical",
   "visibility": "public",
   "profile": "pto-isa-0.58.0",
   "sources": {
@@ -52,6 +52,12 @@ distribution 是两个独立维度：`Shared` 不是 distribution，`Replicated4
 - TSTORE<pe_scope> 与 SYNCALL<core_scope> 仍是显式改变语义的独立接口。
 
 ## Data Movement
+
+> Superseded Shared-memory description: The exactly-one/full-object bullets
+> below are retained only as historical context and do not define current PTO
+> behavior. Use the ASL-derived [BSTART.TLOAD](../../../block/execution/BSTART.TLOAD.md),
+> [TLOAD](../../../tile/memory-and-data-movement/regular/TLOAD.md), and
+> [B.IOS](../../../block/operands/B.IOS.md) pages for the active contract.
 
 v5 profile 保留 `TLOAD`、`TSTORE` 与 `TMOV` 名称：
 

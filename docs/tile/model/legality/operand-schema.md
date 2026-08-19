@@ -47,7 +47,7 @@ begin
     return TileDescriptorLegal(destination) &&
            _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
            _Tiles[[destination]].layout == TileLayout_RowMajor &&
-           TileCarrierOnlyDataTypeSupported(
+           TileFillPadDataTypeSupported(
                _Tiles[[destination]].data_type);
 end;
 
@@ -76,7 +76,7 @@ begin
     let carrier_logical = (op == TileBinary_AND ||
                            op == TileBinary_OR ||
                            op == TileBinary_XOR) &&
-                          TileCarrierOnlyDataTypeSupported(
+                          TileVecScalarIntegerDataTypeSupported(
                               _Tiles[[source]].data_type);
     if !TileShapeAndTypeMatch(destination, source) ||
        _Tiles[[source]].storage_kind != TileStorage_Numeric ||
@@ -207,6 +207,11 @@ begin
     end;
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
+    if !HardwareTCVTTypePairSupported(
+           source_tile.data_type,
+           destination_tile.data_type) then
+        return FALSE;
+    end;
     if destination_tile.rows != source_tile.rows ||
        destination_tile.columns != source_tile.columns ||
        destination_tile.valid_rows != source_tile.valid_rows ||

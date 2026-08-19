@@ -20,10 +20,8 @@ begin
     let source_type_legal =
         if index_reduction then
             TileArgReductionSourceDataTypeSupported(source_tile.data_type)
-        else if operation == TileReduction_PRODUCT then
-            TileA7DataTypeSupported(source_tile.data_type)
         else
-            TileA9DataTypeSupported(source_tile.data_type);
+            TileVecArithmeticDataTypeSupported(source_tile.data_type);
     if destination_tile.storage_kind != TileStorage_Numeric ||
        source_tile.storage_kind != TileStorage_Numeric ||
        destination_tile.layout != TileLayout_RowMajor ||
@@ -90,19 +88,11 @@ begin
     let expdif = operation == TileExpand_EXPDIF;
     let operation_type_legal =
         if operation == TileExpand_COPY then
-            TileCarrierOnlyDataTypeSupported(destination_tile.data_type)
+            TileVecArithmeticDataTypeSupported(destination_tile.data_type)
         else if expdif then
             TileExpandExpdifTypePairLegal(
                 source_tile.data_type,
                 destination_tile.data_type)
-        else if operation == TileExpand_ADD ||
-           operation == TileExpand_SUB ||
-           operation == TileExpand_MAX ||
-           operation == TileExpand_MIN then
-            TileA9DataTypeSupported(destination_tile.data_type)
-        else if operation == TileExpand_MUL ||
-              operation == TileExpand_DIV then
-            TileA7DataTypeSupported(destination_tile.data_type)
         else
             TileVecArithmeticDataTypeSupported(destination_tile.data_type);
     if destination_tile.storage_kind != TileStorage_Numeric ||

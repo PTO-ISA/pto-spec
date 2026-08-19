@@ -137,150 +137,12 @@ pure func TileNumericEncodingValid(data_type: TileDataType,
                                    value: Word) => boolean
 begin
     case data_type of
-        when TileDataType_TF32 => return value[12:0] == Zeros{13};
-        when TileDataType_HF32 => return value[11:0] == Zeros{12};
-        when TileDataType_E3M2, TileDataType_E2M3 =>
-            return value[7:6] == Zeros{2};
+        when TileDataType_TF32 => return TF32EncodingValid(value[31:0]);
+        when TileDataType_HF32 => return HF32EncodingValid(value[31:0]);
+        when TileDataType_E3M2 => return E3M2EncodingValid(value[7:0]);
+        when TileDataType_E2M3 => return E2M3EncodingValid(value[7:0]);
         otherwise => return TRUE;
     end;
-end;
-
-pure func ClassifyBinary64(value: Word) => NumericValueClass
-begin
-    let exponent = value[62:52];
-    let fraction = value[51:0];
-    if exponent == Ones{11} then
-        if fraction == Zeros{52} then
-            if value[63] == '1' then return NumericValue_NegativeInfinity;
-            else return NumericValue_PositiveInfinity;
-            end;
-        elsif fraction[51] == '1' then return NumericValue_QuietNaN;
-        else return NumericValue_SignalingNaN;
-        end;
-    end;
-    return NumericValueClassFromFiniteSign(value[63],
-        exponent == Zeros{11} && fraction == Zeros{52},
-        exponent == Zeros{11} && fraction != Zeros{52});
-end;
-
-pure func ClassifyBinary32(value: bits(32), retained_fraction_bits: integer {10,11,23})
-    => NumericValueClass
-begin
-    let exponent = value[30:23];
-    var fraction_nonzero = value[22:0] != Zeros{23};
-    if retained_fraction_bits == 10 then
-        fraction_nonzero = value[22:13] != Zeros{10};
-    elsif retained_fraction_bits == 11 then
-        fraction_nonzero = value[22:12] != Zeros{11};
-    end;
-    if exponent == Ones{8} then
-        if !fraction_nonzero then
-            if value[31] == '1' then return NumericValue_NegativeInfinity;
-            else return NumericValue_PositiveInfinity;
-            end;
-        elsif value[22] == '1' then return NumericValue_QuietNaN;
-        else return NumericValue_SignalingNaN;
-        end;
-    end;
-    return NumericValueClassFromFiniteSign(value[31],
-        exponent == Zeros{8} && !fraction_nonzero,
-        exponent == Zeros{8} && fraction_nonzero);
-end;
-
-pure func ClassifyBinary16(value: bits(16)) => NumericValueClass
-begin
-    let exponent = value[14:10];
-    let fraction = value[9:0];
-    if exponent == Ones{5} then
-        if fraction == Zeros{10} then
-            if value[15] == '1' then return NumericValue_NegativeInfinity;
-            else return NumericValue_PositiveInfinity;
-            end;
-        elsif fraction[9] == '1' then return NumericValue_QuietNaN;
-        else return NumericValue_SignalingNaN;
-        end;
-    end;
-    return NumericValueClassFromFiniteSign(value[15],
-        exponent == Zeros{5} && fraction == Zeros{10},
-        exponent == Zeros{5} && fraction != Zeros{10});
-end;
-
-pure func ClassifyBFloat16(value: bits(16)) => NumericValueClass
-begin
-    let exponent = value[14:7];
-    let fraction = value[6:0];
-    if exponent == Ones{8} then
-        if fraction == Zeros{7} then
-            if value[15] == '1' then return NumericValue_NegativeInfinity;
-            else return NumericValue_PositiveInfinity;
-            end;
-        elsif fraction[6] == '1' then return NumericValue_QuietNaN;
-        else return NumericValue_SignalingNaN;
-        end;
-    end;
-    return NumericValueClassFromFiniteSign(value[15],
-        exponent == Zeros{8} && fraction == Zeros{7},
-        exponent == Zeros{8} && fraction != Zeros{7});
-end;
-
-pure func ClassifyHiF8(value: bits(8)) => NumericValueClass
-begin
-    if value == '10000000' then return NumericValue_QuietNaN;
-    elsif value == '01101111' then return NumericValue_PositiveInfinity;
-    elsif value == '11101111' then return NumericValue_NegativeInfinity;
-    elsif value == Zeros{8} then return NumericValue_PositiveZero;
-    elsif UInt(value[6:0]) <= 7 then
-        return NumericValueClassFromFiniteSign(value[7], FALSE, TRUE);
-    else return NumericValueClassFromFiniteSign(value[7], FALSE, FALSE);
-    end;
-end;
-
-pure func ClassifyE4M3(value: bits(8)) => NumericValueClass
-begin
-    let exponent = value[6:3];
-    let fraction = value[2:0];
-    if exponent == Ones{4} && fraction == Ones{3} then
-        return NumericValue_QuietNaN;
-    end;
-    return NumericValueClassFromFiniteSign(value[7],
-        exponent == Zeros{4} && fraction == Zeros{3},
-        exponent == Zeros{4} && fraction != Zeros{3});
-end;
-
-pure func ClassifyE5M2(value: bits(8)) => NumericValueClass
-begin
-    let exponent = value[6:2];
-    let fraction = value[1:0];
-    if exponent == Ones{5} then
-        if fraction == Zeros{2} then
-            if value[7] == '1' then return NumericValue_NegativeInfinity;
-            else return NumericValue_PositiveInfinity;
-            end;
-        elsif fraction[1] == '1' then return NumericValue_QuietNaN;
-        else return NumericValue_SignalingNaN;
-        end;
-    end;
-    return NumericValueClassFromFiniteSign(value[7],
-        exponent == Zeros{5} && fraction == Zeros{2},
-        exponent == Zeros{5} && fraction != Zeros{2});
-end;
-
-pure func ClassifyE3M2(value: bits(8)) => NumericValueClass
-begin
-    let exponent = value[4:2];
-    let fraction = value[1:0];
-    return NumericValueClassFromFiniteSign(value[5],
-        exponent == Zeros{3} && fraction == Zeros{2},
-        exponent == Zeros{3} && fraction != Zeros{2});
-end;
-
-pure func ClassifyE2M3(value: bits(8)) => NumericValueClass
-begin
-    let exponent = value[4:3];
-    let fraction = value[2:0];
-    return NumericValueClassFromFiniteSign(value[5],
-        exponent == Zeros{2} && fraction == Zeros{3},
-        exponent == Zeros{2} && fraction != Zeros{3});
 end;
 
 pure func ClassifySignedInteger(value: Word, sign_bit: integer {3,7,15,31,63})
@@ -323,25 +185,21 @@ begin
         return NumericValue_InvalidEncoding;
     end;
     case data_type of
-        when TileDataType_FP64 => return ClassifyBinary64(value);
-        when TileDataType_FP32 => return ClassifyBinary32(value[31:0], 23);
-        when TileDataType_TF32 => return ClassifyBinary32(value[31:0], 10);
-        when TileDataType_HF32 => return ClassifyBinary32(value[31:0], 11);
-        when TileDataType_FP16 => return ClassifyBinary16(value[15:0]);
-        when TileDataType_BF16 => return ClassifyBFloat16(value[15:0]);
+        when TileDataType_FP64 => return ClassifyFP64(value);
+        when TileDataType_FP32 => return ClassifyFP32(value[31:0]);
+        when TileDataType_TF32 => return ClassifyTF32(value[31:0]);
+        when TileDataType_HF32 => return ClassifyHF32(value[31:0]);
+        when TileDataType_FP16 => return ClassifyFP16(value[15:0]);
+        when TileDataType_BF16 => return ClassifyBF16(value[15:0]);
         when TileDataType_HiF8 => return ClassifyHiF8(value[7:0]);
         when TileDataType_E4M3 => return ClassifyE4M3(value[7:0]);
         when TileDataType_E5M2 => return ClassifyE5M2(value[7:0]);
         when TileDataType_E3M2 => return ClassifyE3M2(value[7:0]);
         when TileDataType_E2M3 => return ClassifyE2M3(value[7:0]);
-        when TileDataType_E2M1X2, TileDataType_E1M2X2,
-             TileDataType_HiF4X2 =>
-            return NumericValueClassFromFiniteSign(value[3],
-                value[2:0] == Zeros{3}, FALSE);
-        when TileDataType_E8M0 =>
-            if value[7:0] == Ones{8} then return NumericValue_QuietNaN;
-            else return NumericValue_PositiveNormal;
-            end;
+        when TileDataType_E2M1X2 => return ClassifyE2M1X2(value);
+        when TileDataType_E1M2X2 => return ClassifyE1M2X2(value);
+        when TileDataType_E8M0 => return ClassifyE8M0(value[7:0]);
+        when TileDataType_HiF4X2 => return ClassifyHiF4X2(value);
         when TileDataType_S64 => return ClassifySignedInteger(value, 63);
         when TileDataType_S32 => return ClassifySignedInteger(value, 31);
         when TileDataType_S16 => return ClassifySignedInteger(value, 15);
@@ -358,16 +216,16 @@ end;
 pure func TileNumericCanonicalNaN(data_type: TileDataType) => (boolean, Word)
 begin
     case data_type of
-        when TileDataType_FP64 =>
-            return (TRUE, Zeros{PTO_XLEN} + 0x7ff8000000000000);
-        when TileDataType_FP32, TileDataType_TF32, TileDataType_HF32 =>
-            return (TRUE, Zeros{PTO_XLEN} + 0x7fc00000);
-        when TileDataType_FP16 => return (TRUE, Zeros{PTO_XLEN} + 0x7e00);
-        when TileDataType_BF16 => return (TRUE, Zeros{PTO_XLEN} + 0x7fc0);
-        when TileDataType_HiF8 => return (TRUE, Zeros{PTO_XLEN} + 0x80);
-        when TileDataType_E4M3 => return (TRUE, Zeros{PTO_XLEN} + 0x7f);
-        when TileDataType_E5M2 => return (TRUE, Zeros{PTO_XLEN} + 0x7e);
-        when TileDataType_E8M0 => return (TRUE, Zeros{PTO_XLEN} + 0xff);
+        when TileDataType_FP64 => return (TRUE, FP64CanonicalNaN());
+        when TileDataType_FP32 => return (TRUE, FP32CanonicalNaN());
+        when TileDataType_TF32 => return (TRUE, TF32CanonicalNaN());
+        when TileDataType_HF32 => return (TRUE, HF32CanonicalNaN());
+        when TileDataType_FP16 => return (TRUE, FP16CanonicalNaN());
+        when TileDataType_BF16 => return (TRUE, BF16CanonicalNaN());
+        when TileDataType_HiF8 => return (TRUE, HiF8CanonicalNaN());
+        when TileDataType_E4M3 => return (TRUE, E4M3CanonicalNaN());
+        when TileDataType_E5M2 => return (TRUE, E5M2CanonicalNaN());
+        when TileDataType_E8M0 => return (TRUE, E8M0CanonicalNaN());
         otherwise => return (FALSE, Zeros{PTO_XLEN});
     end;
 end;
@@ -404,19 +262,45 @@ pure func HardwareNumericSignedZeroEncodings(data_type: TileDataType)
     => (boolean, Word, Word)
 begin
     case data_type of
-        when TileDataType_FP64 => return (TRUE, Zeros{PTO_XLEN},
-            Zeros{PTO_XLEN} + 0x8000000000000000);
-        when TileDataType_FP32, TileDataType_TF32, TileDataType_HF32 =>
-            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x80000000);
-        when TileDataType_FP16, TileDataType_BF16 =>
-            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x8000);
-        when TileDataType_E4M3, TileDataType_E5M2 =>
-            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x80);
-        when TileDataType_E3M2, TileDataType_E2M3 =>
-            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x20);
-        when TileDataType_E2M1X2, TileDataType_E1M2X2,
-             TileDataType_HiF4X2 =>
-            return (TRUE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 0x8);
+        when TileDataType_FP64 =>
+            let (positive, negative) = FP64SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_FP32 =>
+            let (positive, negative) = FP32SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_TF32 =>
+            let (positive, negative) = TF32SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_HF32 =>
+            let (positive, negative) = HF32SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_FP16 =>
+            let (positive, negative) = FP16SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_BF16 =>
+            let (positive, negative) = BF16SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_E4M3 =>
+            let (positive, negative) = E4M3SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_E5M2 =>
+            let (positive, negative) = E5M2SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_E3M2 =>
+            let (positive, negative) = E3M2SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_E2M3 =>
+            let (positive, negative) = E2M3SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_E2M1X2 =>
+            let (positive, negative) = E2M1X2SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_E1M2X2 =>
+            let (positive, negative) = E1M2X2SignedZeroEncodings();
+            return (TRUE, positive, negative);
+        when TileDataType_HiF4X2 =>
+            let (positive, negative) = HiF4X2SignedZeroEncodings();
+            return (TRUE, positive, negative);
         otherwise => return (FALSE, Zeros{PTO_XLEN}, Zeros{PTO_XLEN});
     end;
 end;

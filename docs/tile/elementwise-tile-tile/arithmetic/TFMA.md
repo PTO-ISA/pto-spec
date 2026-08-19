@@ -75,7 +75,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TFMA(
     data_type: TileDataType) => boolean
 begin
-    return TileF3DataTypeSupported(data_type);
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TFMA(

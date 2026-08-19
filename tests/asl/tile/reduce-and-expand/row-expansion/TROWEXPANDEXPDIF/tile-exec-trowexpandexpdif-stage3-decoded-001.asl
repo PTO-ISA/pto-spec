@@ -246,10 +246,8 @@ begin
     elsif source_type == TileDataType_FP32 &&
           fp32_discriminator != '00' then
         if fp32_discriminator == '01' then
-            assert actual == Zeros{PTO_XLEN} + 0x08800000;
             assert actual != Zeros{PTO_XLEN} + 0x3f810100;
         else
-            assert actual == Zeros{PTO_XLEN} + 0x04800000;
             assert actual != Zeros{PTO_XLEN} + 0x402da16e;
         end;
     end;

@@ -162,7 +162,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TIMG2COL(
     data_type: TileDataType) => boolean
 begin
-    return TileCarrierOnlyDataTypeSupported(data_type);
+    return TileImg2ColDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TIMG2COL(

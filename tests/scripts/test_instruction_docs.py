@@ -834,6 +834,24 @@ class FourSurfaceDocsTest(unittest.TestCase):
         )
         self.assertEqual(check_legacy_banners(self.root), [])
 
+    def test_legacy_page_rejects_active_front_matter_status(self) -> None:
+        legacy = self.root / "docs/status/legacy/old.md"
+        legacy.parent.mkdir(parents=True, exist_ok=True)
+        legacy.write_text(
+            "---\n"
+            '{"status": "active"}\n'
+            "---\n"
+            "# Old Design\n\n"
+            "> Historical, non-normative material. This page is excluded "
+            "from the active PTO architecture and release closure.\n",
+            encoding="utf-8",
+        )
+
+        self.assertEqual(
+            check_legacy_banners(self.root),
+            ["docs/status/legacy/old.md: legacy page declares active status"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -17,10 +17,7 @@ pure func TilePartialDataTypeSupportedForOperation(
     operation: TilePartialOperation,
     data_type: TileDataType) => boolean
 begin
-    if operation == TilePartial_MUL then
-        return TileA7DataTypeSupported(data_type);
-    end;
-    return TileA9DataTypeSupported(data_type);
+    return TilePartialDataTypeSupported(data_type);
 end;
 
 readonly func TileOperandsLegal_ExecuteTilePartial(

@@ -58,6 +58,12 @@ begin
     let source_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     if _Tiles[[source]].data_type != source_type then return FALSE; end;
+    let (destination_type_valid, destination_type) =
+        ResolveBundleEffectiveDataType();
+    if !destination_type_valid ||
+       !HardwareTCVTTypePairSupported(source_type, destination_type) then
+        return FALSE;
+    end;
 
     let private_cube_source =
         _Tiles[[source]].location == TileLocation_Matrix;

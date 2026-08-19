@@ -92,6 +92,11 @@ readonly func BundleMatrixPostProcessSourcesLegal(
     n: integer {1..65535},
     accumulator_type: TileDataType) => boolean
 begin
+    if !BundleFPATRAccumulatorTypeLegal(
+           _BundleFixedPointAttributes.pre_quant_mode,
+           accumulator_type) then
+        return FALSE;
+    end;
     var ordinal = mathematical_sources as integer {0..7};
     if _BundleFixedPointAttributes.row_max_en &&
        _BundleFixedPointAttributes.row_max_init then

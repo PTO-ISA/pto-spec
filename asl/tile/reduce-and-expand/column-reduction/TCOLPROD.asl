@@ -22,7 +22,7 @@ end;
 pure func InstructionContractDataTypeLegal_TCOLPROD(
     data_type: TileDataType) => boolean
 begin
-    return TileA7DataTypeSupported(data_type);
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TCOLPROD(

@@ -4,7 +4,7 @@
   "id": "overview.encoding",
   "kind": "overview",
   "title": "Encoding Conventions",
-  "status": "active",
+  "status": "historical",
   "visibility": "public",
   "profile": "pto-isa-0.58.0",
   "sources": { "davincioo": "ENCODING.md" }

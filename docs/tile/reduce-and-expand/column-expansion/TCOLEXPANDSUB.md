@@ -90,7 +90,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TCOLEXPANDSUB(
     data_type: TileDataType) => boolean
 begin
-    return TileA9DataTypeSupported(data_type);
+    return TileVecArithmeticDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TCOLEXPANDSUB(

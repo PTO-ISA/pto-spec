@@ -134,7 +134,7 @@ BSTOP
 pure func InstructionContractDataTypeLegal_TANDS(
     data_type: TileDataType) => boolean
 begin
-    return TileCarrierOnlyDataTypeSupported(data_type);
+    return TileVecScalarIntegerDataTypeSupported(data_type);
 end;
 
 readonly func InstructionContractOperandsLegal_TANDS(

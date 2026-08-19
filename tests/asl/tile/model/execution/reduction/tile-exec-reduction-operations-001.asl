@@ -2,14 +2,14 @@
 // PTO-TEST: {"id":"PTO-AVS-TILE-TESTTILEREDUCTION-EXECUTION-001","source":"asl/tile/model/execution/reduction.asl","requirements":[],"kind":"execution","summary":"Covers Tile Reduction.","pass_condition":"TestTileReduction completes without assertion failure","related_sources":[]}
 func ConfigureTwoByTwo(index: TileIndex)
 begin
-    ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U64,
+    ConfigureTile(index, 256, 2, 2, 2, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
 func TestTileReduction()
 begin
     ConfigureTwoByTwo(8);
-    ConfigureTile(9, 256, 2, 1, 2, 1, TileDataType_U64,
+    ConfigureTile(9, 256, 2, 1, 2, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(10, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);

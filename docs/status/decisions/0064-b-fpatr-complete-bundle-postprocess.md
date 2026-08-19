@@ -34,10 +34,12 @@ order, with LReLU-only consuming RegSrc0.  Output commits are one atomic group.
 
 At acceptance time, the 0.58.0 command projection was corrected to 100 command
 forms and 574 total scalar-plus-command forms. Existing twelve CUBE operation
-IDs, selectors, and mathematical operand aliases remained unchanged. Exact
-target numeric results, FP19 exceptional behavior, and non-saturating overflow
-remain owned by the numeric profile variation point rather than this
-architecture decision.
+IDs, selectors, and mathematical operand aliases remained unchanged. The
+earlier open numeric variation point is closed by PRD-174 through PRD-181 in
+ADR 0062. Assigned post-processing modes now have bit-exact conversion,
+activation, FP19, exceptional-value, saturation/wrap, packing, auxiliary
+reduction, numeric-status, and atomic-publication rules. A nonzero assigned
+mode no longer permits an identity or implementation-selected result.
 
 The normative owners are `asl/block/attributes/B.FPATR.asl`, the complete
 bundle state/schema/dispatch/lifecycle units, the trap context and reference

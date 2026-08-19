@@ -38,8 +38,8 @@ normative ASL -> generated Markdown mirror -> independent AVS points -> release 
 
 The current executable inventory contains 466 scalar forms, 74 active block
 forms, 109 direct Tile operations, and 40 occupied extension reservations.
-Release traceability covers 811 ASL units, 811 generated pages, 3200
-independently runnable AVS points, and 634 executable mnemonic requirements.
+Release traceability covers 832 ASL units, 832 generated pages, 3255
+independently runnable AVS points, and 636 executable mnemonic requirements.
 Detailed numeric, model-comparison, and release-gate ledgers stay
 machine-readable under [`spec/evidence/`](spec/evidence/) instead of being
 duplicated in this landing page.
@@ -75,8 +75,10 @@ duplicated in this landing page.
 - Explicit tile and scalar-queue legality before effects.
 - Instruction-granular memory completion and restart behavior.
 - A concrete `pto-v0` numeric, memory, ACR, reset, and time profile.
-- A named `pto-hardware-numeric-0.58.1-ieee-v1` contract whose independent
-  implementation conformance remains open under `S5-T2`.
+- A named `pto-hardware-numeric-0.58.2-ieee-v1` contract. B.FPATR matrix
+  post-processing and `TCVT FP16/BF16/FP32 -> E8M0` are bit-exact in ASL;
+  independent implementation conformance for the remaining numeric domains
+  remains open under `S5-T2`.
 - A bounded production-connected PTO-TSO candidate model.
 - No vector instruction execution surface; vector-only encodings are outside
   the PTO ISA.

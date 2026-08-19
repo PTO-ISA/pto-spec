@@ -27,7 +27,7 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_S32,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xfd);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xfffffffd);
     WriteTileElement(0, 0, 1, Ones{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 0x100, 2, Zeros{PTO_XLEN} + 0x2211);
     Store(Zeros{PTO_XLEN} + 0x102, 2, Zeros{PTO_XLEN} + 0x4433);

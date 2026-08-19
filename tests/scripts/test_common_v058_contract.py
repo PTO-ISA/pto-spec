@@ -263,6 +263,38 @@ class CommonV058ContractTest(unittest.TestCase):
             self.assertIn(required, summary)
         self.assertNotIn("64-bit", summary)
 
+    def test_davincioo_shared_memory_text_is_point_locally_superseded(self) -> None:
+        warning = "> Superseded Shared-memory description:"
+        cases = (
+            (
+                "docs/status/legacy/davincioo-arch/"
+                "memory-ordering-and-exceptions.md",
+                (
+                    ("## Memory Paths", "Exactly-one issuer"),
+                    ("## Address Interpretation", "Shared full load/store"),
+                ),
+            ),
+            (
+                "docs/status/legacy/davincioo-arch/assembly-syntax.md",
+                (("## Shared GM Forms", "exactly-one GM -> Shared full load"),),
+            ),
+            (
+                "docs/status/legacy/davincioo-arch/isa-overview.md",
+                (("## Data Movement", "GM→Shared 由 exactly-one issuer"),),
+            ),
+        )
+
+        for relative, sections in cases:
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            self.assertIn('"status": "historical"', text, relative)
+            self.assertNotIn('"status": "active"', text, relative)
+            for heading, obsolete_text in sections:
+                with self.subTest(path=relative, section=heading):
+                    section_start = text.index(heading)
+                    obsolete_start = text.index(obsolete_text, section_start)
+                    warning_start = text.index(warning, section_start)
+                    self.assertLess(warning_start, obsolete_start)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -133,7 +133,7 @@ begin
     let transfer_data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     if (function == 0 || function == 1 || function == 14) &&
-       !TileCarrierOrPackedBaselineDataTypeSupported(transfer_data_type) then
+       !TileRegularTLSUDataTypeSupported(transfer_data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;

@@ -4,7 +4,7 @@
   "id": "overview.programming_model",
   "kind": "overview",
   "title": "Programming Model",
-  "status": "active",
+  "status": "historical",
   "visibility": "public",
   "profile": "pto-isa-0.58.0",
   "sources": {
