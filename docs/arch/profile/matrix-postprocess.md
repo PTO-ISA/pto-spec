@@ -176,6 +176,20 @@ begin
     return (value * multiplier, Zeros{5});
 end;
 
+pure func MatrixFPATREffectiveControl(
+    pre_quant_mode: bits(6), control: NumericExecutionControl)
+    => NumericExecutionControl
+begin
+    var result = control;
+    let mode = UInt(pre_quant_mode);
+    if mode == 25 || mode == 28 then
+        result.rounding_mode = NumericRound_RHB;
+    elsif BundleFPATRModeFixedRounding(pre_quant_mode) then
+        result.rounding_mode = NumericRound_RNE;
+    end;
+    return result;
+end;
+
 func MatrixPostQuantBaseWithFlags(
     value: Word, pre_quant_mode: bits(6), output_type: TileDataType,
     relu_mode: bits(3), quant_param: Word, relu_param: Word,
@@ -256,9 +270,11 @@ implementation func TileProfileMatrixPostProcessWithFlags(
     quant_param: Word, relu_param: Word,
     control: NumericExecutionControl) => (Word, bits(5))
 begin
+    let effective_control = MatrixFPATREffectiveControl(
+        pre_quant_mode, control);
     return MatrixPostQuantBaseWithFlags(
         value, pre_quant_mode, output_type, relu_mode,
-        quant_param, relu_param, control);
+        quant_param, relu_param, effective_control);
 end;
 
 implementation func TileProfileMatrixPostProcess(

@@ -14,7 +14,9 @@ PTO ISA 0.58.0 accepts `B.FPATR` as the single complete-bundle matrix
 post-processing attribute command.  It is latched once per CUBE Matrix bundle,
 cleared with the bundle descriptor, and included in trap save/recover state.
 Missing, duplicate, or non-Matrix use is rejected as `Fault_BundleControl`;
-invalid fields, operand streams, aliases, and derived shapes use
+decode-reserved field values and fixed-bit mismatches use
+`Fault_IllegalInstruction`; accepted encodings with incompatible fields,
+operand streams, parameters, aliases, or derived shapes use
 `Fault_TileLegality` before allocation or destination effects.
 
 The command form is a 32-bit `L32` encoding with mask `0x00007fff`, match and
@@ -22,7 +24,9 @@ canonical None word `0x00002023`.  Its closed `PreQuantMode` table, ReLU and
 GroupN fields, reduction enables, and fixed bits are owned by the normative
 ASL instruction unit.  Matrix B.DATR rounding/saturation legality is resolved
 after the complete bundle is known; the None mode requires RMode=NONE and
-Sat=0, while accepted non-None modes retain the full existing selector.
+Sat=0. Fixed FP16, BF16, E4M3, and HiF8 modes require RMode=NONE, fixed shift
+modes additionally require Sat=0, and programmable integer modes retain the
+full existing selector and final clamp/wrap control.
 
 The dynamic B.IOT schema packs mathematical Local sources first, followed by
 optional RowMaxIn, vector quantization, and vector PReLU parameters, with up
@@ -40,6 +44,9 @@ ADR 0062. Assigned post-processing modes now have bit-exact conversion,
 activation, FP19, exceptional-value, saturation/wrap, packing, auxiliary
 reduction, numeric-status, and atomic-publication rules. A nonzero assigned
 mode no longer permits an identity or implementation-selected result.
+Activation selects the negative-path multiplier before the single destination
+conversion, signed zero participates in affine offsets, and assigned S5, S9,
+S17, and shifted-S16 intermediates saturate before final destination encoding.
 
 The normative owners are `asl/block/attributes/B.FPATR.asl`, the complete
 bundle state/schema/dispatch/lifecycle units, the trap context and reference

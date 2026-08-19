@@ -9,7 +9,7 @@ begin
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN});
 
     assert TileMatrixVectorReluContentsLegal(0);
-    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 0x00080000);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x00080000);
     assert !TileMatrixVectorReluContentsLegal(0);
     return 0;
 end;
