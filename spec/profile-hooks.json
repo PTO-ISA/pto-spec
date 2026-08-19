@@ -318,6 +318,44 @@
       ]
     },
     {
+      "domain": "extension-first-use",
+      "model": "asl/arch/profile/extension-first-use.asl",
+      "name": "ExtensionFirstUseEnabled",
+      "portable_default": "Return false for VECTOR and CUBE so portable PTO execution never raises an extension first-use trap.",
+      "profile_obligations": [
+        "Define the covered extension kinds and their enable-state ownership.",
+        "Define source and manager ACR routing and the exact pre-effect ordering point.",
+        "Keep the enable query readonly and stable for one decoded instruction attempt."
+      ],
+      "requirement": "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
+      "implementation_status": "implemented-by-pto-v0",
+      "conformance_status": "reference-profile-closed",
+      "maturity_target": null,
+      "tests": [
+        "tests/asl/arch/profile/extension-first-use/arch-static-extension-first-use-contract-001.asl",
+        "tests/asl/arch/profile/extension-first-use/arch-exec-extension-first-use-default-001.asl"
+      ]
+    },
+    {
+      "domain": "extension-first-use",
+      "model": "asl/arch/profile/extension-first-use.asl",
+      "name": "RaiseExtensionFirstUse",
+      "portable_default": "Return false without changing trap, bundle, queue, memory, or fault state.",
+      "profile_obligations": [
+        "Define the exact trap envelope and extension-kind argument mapping.",
+        "Raise before extension resource allocation, memory issue, queue mutation, or any other architectural effect.",
+        "Preserve the original instruction for retry and guarantee context-save forward progress."
+      ],
+      "requirement": "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
+      "implementation_status": "implemented-by-pto-v0",
+      "conformance_status": "reference-profile-closed",
+      "maturity_target": null,
+      "tests": [
+        "tests/asl/arch/profile/extension-first-use/arch-static-extension-first-use-contract-001.asl",
+        "tests/asl/arch/profile/extension-first-use/arch-exec-extension-first-use-default-001.asl"
+      ]
+    },
+    {
       "domain": "trap-context",
       "model": "asl/arch/state/trap-context.asl",
       "name": "SaveTrapContext",

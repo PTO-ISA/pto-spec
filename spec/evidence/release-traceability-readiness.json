@@ -94,6 +94,17 @@
     },
     {
       "executable": false,
+      "id": "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
+      "owners": [
+        "asl/arch/profile/extension-first-use.asl"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-EXTENSION-FIRST-USE-DEFAULT-001",
+        "PTO-AVS-ARCH-PROFILE-EXTENSION-FIRST-USE-STATIC-001"
+      ]
+    },
+    {
+      "executable": false,
       "id": "PTO-ARCH-GM-ACCESS-001",
       "owners": [
         "asl/arch/memory-model/global-memory-access.asl"
@@ -11804,6 +11815,7 @@
     "asl/arch/overview/instruction-classification.asl": "9306ccb6a080dbbe8069a998c8a88e7db48c1c45d0613407b59d2892405f0958",
     "asl/arch/profile/applicability.asl": "b3734d16ed92c3e7f9d8a99047009c8b0996cbeb88a087296c12696d9965de41",
     "asl/arch/profile/e8m0-conversion.asl": "e46324c90eff21e4270558e315c684089f11b6d6a47f6dc4ee0b30411761fd57",
+    "asl/arch/profile/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
     "asl/arch/profile/matrix-postprocess.asl": "7a0423616a2f6910bf77e531c3fb3a22abc4d266db80d6ac4b43a46bb2e7d868",
     "asl/arch/profile/matrix-quantization.asl": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440",
     "asl/arch/profile/reference-profile.asl": "a866ccdeef08bde34b1818a0ebc0937044db1b886d1cf9403252fdfbce114e51",
@@ -12636,6 +12648,7 @@
     "docs/arch/overview/instruction-classification.md": "79e8943b1bc16fc7d975c74abfa5b83d0daabf1aa9db66db16a7d289eb2c2028",
     "docs/arch/profile/applicability.md": "d98df7ad5c9bfa75a41dd734c3fde98438f010696964cde9ca92e88a504d531f",
     "docs/arch/profile/e8m0-conversion.md": "79d0c29d72d409d8521cee8e9173b89730fe920fd6732404432f18e7dd4c003b",
+    "docs/arch/profile/extension-first-use.md": "7e34aaf605e217ccadcf698064f52c69342725db0b7e43387ea7b97eb5c1a6c7",
     "docs/arch/profile/matrix-postprocess.md": "2e76a74038ec1a3ab8488913691f15c57b593bd80e4b7d95438a375cb46fd137",
     "docs/arch/profile/matrix-quantization.md": "d9849311c32641d509763c7df5629b32cd6e7b178d649b7159aa24ac6911da47",
     "docs/arch/profile/reference-profile.md": "dfbaaefbed0da46dd4c7ae4a4ad3a7ec956d2a795400ce4c1f8aa04534d58b89",
@@ -13514,6 +13527,8 @@
     "tests/asl/arch/overview/instruction-classification/arch-static-instruction-classification-contract-001.asl": "3c8f5053d2772e838c1ae9725d855c471c5e42723d3da0507987ce5c2325555b",
     "tests/asl/arch/profile/applicability/arch-static-applicability-contract-001.asl": "72e3606eddaf180815dfda25f6e262401c3e8d840afe5b2e43f4087568c8a87d",
     "tests/asl/arch/profile/e8m0-conversion/arch-static-e8m0-conversion-contract-001.asl": "d31ebb831d59bacd869f07e8b9e3676b1e73d8fa8377fec8f19196b0da416cec",
+    "tests/asl/arch/profile/extension-first-use/arch-exec-extension-first-use-default-001.asl": "0e11de263b9695082f286ea7a8114971b35803a84d31683c442547d36c22e568",
+    "tests/asl/arch/profile/extension-first-use/arch-static-extension-first-use-contract-001.asl": "6255e5a5376b484598806d2d6ec01085ebd04110b5f65571c74860c9bca3b489",
     "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-001.asl": "92669a95060a3b8714455a3f9963aeede37677257743c6098cf45a6af57758de",
     "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-pipeline-002.asl": "29d156198af9caef5156e22bb229ffab7286670561b6228df661121249708a90",
     "tests/asl/arch/profile/matrix-postprocess/arch-static-matrix-postprocess-contract-001.asl": "7f3949620ad409c9911878179425bdf2233a8d259ff2f765ff99f61aeea01392",
@@ -16689,19 +16704,19 @@
     "tests/asl/tile/tile-scalar-and-immediate/logical/TXORS/tile-static-txors-contract-001.asl": "55f54fdd33b573b06e45c7ebc1a013ea26da18689ee5a26fa822ab28e71934d4"
   },
   "summary": {
-    "documentation_page_count": 832,
+    "documentation_page_count": 833,
     "executable_requirement_count": 636,
     "mnemonic_count": 634,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 993,
+    "requirement_count": 994,
     "status": "closed",
-    "test_count": 3264,
+    "test_count": 3266,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
     "uncovered_units": [],
-    "unit_count": 832
+    "unit_count": 833
   },
   "tests": [
     {
@@ -24553,6 +24568,16 @@
       "source": "asl/arch/overview/encoding-ownership.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-EXTENSION-FIRST-USE-DEFAULT-001",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/extension-first-use/arch-exec-extension-first-use-default-001.asl",
+      "requirements": [
+        "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"
+      ],
+      "sha256": "0e11de263b9695082f286ea7a8114971b35803a84d31683c442547d36c22e568",
+      "source": "asl/arch/profile/extension-first-use.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-FEATURES-MINMAX-PROFILE-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/arch/features/minmax-profile/arch-static-minmax-profile-contract-001.asl",
@@ -24883,6 +24908,16 @@
       ],
       "sha256": "d31ebb831d59bacd869f07e8b9e3676b1e73d8fa8377fec8f19196b0da416cec",
       "source": "asl/arch/profile/e8m0-conversion.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-PROFILE-EXTENSION-FIRST-USE-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/arch/profile/extension-first-use/arch-static-extension-first-use-contract-001.asl",
+      "requirements": [
+        "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"
+      ],
+      "sha256": "6255e5a5376b484598806d2d6ec01085ebd04110b5f65571c74860c9bca3b489",
+      "source": "asl/arch/profile/extension-first-use.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-MATRIX-POSTPROCESS-STATIC-001",
@@ -49634,6 +49669,24 @@
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-PROFILE-E8M0-CONVERSION-STATIC-001"
+      ]
+    },
+    {
+      "classification": [
+        "profile",
+        "extension-first-use"
+      ],
+      "documentation": "docs/arch/profile/extension-first-use.md",
+      "id": "PTO-ARCH-PROFILE-EXTENSION-FIRST-USE",
+      "mnemonic": null,
+      "semantic_tests": [
+        "PTO-AVS-ARCH-EXTENSION-FIRST-USE-DEFAULT-001"
+      ],
+      "source": "asl/arch/profile/extension-first-use.asl",
+      "surface": "arch",
+      "tests": [
+        "PTO-AVS-ARCH-EXTENSION-FIRST-USE-DEFAULT-001",
+        "PTO-AVS-ARCH-PROFILE-EXTENSION-FIRST-USE-STATIC-001"
       ]
     },
     {
