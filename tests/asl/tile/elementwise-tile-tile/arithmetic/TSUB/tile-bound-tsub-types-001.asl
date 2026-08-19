@@ -13,7 +13,7 @@ func main() => integer
 begin
     assert InstructionContractDataTypeLegal_TSUB(TileDataType_FP32);
     assert InstructionContractDataTypeLegal_TSUB(TileDataType_U8);
-    assert !InstructionContractDataTypeLegal_TSUB(TileDataType_FP64);
+    assert InstructionContractDataTypeLegal_TSUB(TileDataType_FP64);
     assert !InstructionContractDataTypeLegal_TSUB(TileDataType_HiF8);
 
     ResetProfileState();

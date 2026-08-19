@@ -3,7 +3,7 @@ func main() => integer
 begin
     assert InstructionContractDataTypeLegal_TMULS(TileDataType_FP32);
     assert InstructionContractDataTypeLegal_TMULS(TileDataType_S16);
-    assert !InstructionContractDataTypeLegal_TMULS(TileDataType_U8);
+    assert InstructionContractDataTypeLegal_TMULS(TileDataType_U8);
     assert !InstructionContractDataTypeLegal_TMULS(TileDataType_HiF8);
     assert !InstructionContractDataTypeLegal_TMULS(TileDataType_U4X2);
     return 0;

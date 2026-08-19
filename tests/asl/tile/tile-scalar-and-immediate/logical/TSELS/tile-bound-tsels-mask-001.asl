@@ -28,8 +28,8 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    assert InstructionContractDataTypeLegal_TSELS(TileDataType_E3M2);
-    assert !InstructionContractDataTypeLegal_TSELS(TileDataType_U64);
+    assert !InstructionContractDataTypeLegal_TSELS(TileDataType_E3M2);
+    assert InstructionContractDataTypeLegal_TSELS(TileDataType_U64);
     assert !InstructionContractDataTypeLegal_TSELS(TileDataType_U4X2);
     ConfigureTSELSNumericTiles();
     ConfigurePredicateTile(0, 128, 16, 2, 1, 2);

@@ -3,7 +3,7 @@ func main() => integer
 begin
     assert InstructionContractDataTypeLegal_TMRGSORT(TileDataType_FP32);
     assert InstructionContractDataTypeLegal_TMRGSORT(TileDataType_FP16);
-    assert InstructionContractDataTypeLegal_TMRGSORT(TileDataType_BF16);
+    assert !InstructionContractDataTypeLegal_TMRGSORT(TileDataType_BF16);
     assert !InstructionContractDataTypeLegal_TMRGSORT(TileDataType_U16);
     ResetProfileState();
     ConfigureTile(
@@ -26,13 +26,13 @@ begin
 
     assert !TileOperandsLegal_TMRGSORT(32, 30, 31, FALSE);
 
-    ConfigureTile(33, 256, 1, 1, 1, 1, TileDataType_BF16,
+    ConfigureTile(33, 256, 1, 1, 1, 1, TileDataType_FP16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(34, 256, 1, 1, 1, 1, TileDataType_BF16,
+    ConfigureTile(34, 256, 1, 1, 1, 1, TileDataType_FP16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(35, 256, 1, 2, 1, 2, TileDataType_BF16,
+    ConfigureTile(35, 256, 1, 2, 1, 2, TileDataType_FP16,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(33, 0, 0, Zeros{PTO_XLEN} + 0x3f80);
+    WriteTileElement(33, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
     WriteTileElement(34, 0, 0, Zeros{PTO_XLEN} + 0x4000);
     assert TileOperandsLegal_TMRGSORT(35, 33, 34, FALSE);
     return 0;

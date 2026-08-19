@@ -4,9 +4,9 @@ begin
     assert InstructionContractDataTypeLegal_TSQRT(TileDataType_FP32);
     assert InstructionContractDataTypeLegal_TSQRT(TileDataType_FP16);
     assert InstructionContractDataTypeLegal_TSQRT(TileDataType_BF16);
-    assert !InstructionContractDataTypeLegal_TSQRT(TileDataType_FP64);
-    assert !InstructionContractDataTypeLegal_TSQRT(TileDataType_E4M3);
-    assert !InstructionContractDataTypeLegal_TSQRT(TileDataType_E5M2);
+    assert InstructionContractDataTypeLegal_TSQRT(TileDataType_FP64);
+    assert InstructionContractDataTypeLegal_TSQRT(TileDataType_E4M3);
+    assert InstructionContractDataTypeLegal_TSQRT(TileDataType_E5M2);
     assert !InstructionContractDataTypeLegal_TSQRT(TileDataType_U64);
     assert !InstructionContractDataTypeLegal_TSQRT(TileDataType_E8M0);
     assert !InstructionContractDataTypeLegal_TSQRT(TileDataType_E3M2);

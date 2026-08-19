@@ -7,12 +7,14 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0,
         Zeros{PTO_XLEN} + 0x0000002000002000);
-    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(0, 0, 1,
+        Zeros{PTO_XLEN} + 0x0000002000002000);
 
     assert TileMatrixAuxiliarySourceSchemaLegal(
         0, 1, 2, TileDataType_U64);
     assert TileMatrixVectorQuantContentsLegal(0, Zeros{6} + 2);
-    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(0, 0, 1,
+        Zeros{PTO_XLEN} + 0x0000002000002001);
     assert !TileMatrixVectorQuantContentsLegal(0, Zeros{6} + 2);
     return 0;
 end;

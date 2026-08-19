@@ -13,7 +13,7 @@ func main() => integer
 begin
     assert InstructionContractDataTypeLegal_TMUL(TileDataType_FP16);
     assert InstructionContractDataTypeLegal_TMUL(TileDataType_S16);
-    assert !InstructionContractDataTypeLegal_TMUL(TileDataType_S8);
+    assert InstructionContractDataTypeLegal_TMUL(TileDataType_S8);
     assert !InstructionContractDataTypeLegal_TMUL(TileDataType_U4X2);
 
     ResetProfileState();
@@ -22,7 +22,6 @@ begin
 
     ResetProfileState();
     ConfigureTMULType(TileDataType_S8);
-    assert !InstructionContractOperandsLegal_TMUL(2, 0, 1);
-    assert !_Tiles[[2]].contents_defined;
+    assert InstructionContractOperandsLegal_TMUL(2, 0, 1);
     return 0;
 end;
