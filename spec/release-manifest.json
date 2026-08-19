@@ -189,6 +189,10 @@
       "sha256": "e46324c90eff21e4270558e315c684089f11b6d6a47f6dc4ee0b30411761fd57"
     },
     {
+      "path": "asl/arch/profile/extension-first-use.asl",
+      "sha256": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3"
+    },
+    {
       "path": "asl/arch/profile/matrix-postprocess.asl",
       "sha256": "7a0423616a2f6910bf77e531c3fb3a22abc4d266db80d6ac4b43a46bb2e7d868"
     },
@@ -3366,11 +3370,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "146875771d664fe922bdc6d245dbc1320a184098362099546870f89642ef03ab"
+      "sha256": "99a65d31d9cde5ab698277ca507215870574b27075f80b35141a2106f3c6140a"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "e9d8ea7322e930934b732adff8b04c597901561b3d17e6398c63acb19b369b04"
+      "sha256": "375a5d098c70906f04509bbbf0c0ed6b57e3bcfe524a4b9164f9afcdd515b215"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3408,7 +3412,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "01a28b34678aebafbe136de3c81178877833761c0d4e9a2097d8ba99b1ff8f2e",
+  "content_sha256": "431d3e582ca7608b43feb8f2fdda38dd67e291a56c85a94fc9301abdb25b2e5d",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3671,6 +3675,11 @@
       "kind": "generated-documentation",
       "path": "docs/arch/profile/e8m0-conversion.md",
       "sha256": "79d0c29d72d409d8521cee8e9173b89730fe920fd6732404432f18e7dd4c003b"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/profile/extension-first-use.md",
+      "sha256": "7e34aaf605e217ccadcf698064f52c69342725db0b7e43387ea7b97eb5c1a6c7"
     },
     {
       "kind": "generated-documentation",

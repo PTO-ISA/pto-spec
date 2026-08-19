@@ -53,6 +53,7 @@ nav:
       - Profile:
           - Applicability: arch/profile/applicability.md
           - E8m0 Conversion: arch/profile/e8m0-conversion.md
+          - Extension First Use: arch/profile/extension-first-use.md
           - Matrix Postprocess: arch/profile/matrix-postprocess.md
           - Matrix Quantization: arch/profile/matrix-quantization.md
           - Reference Profile: arch/profile/reference-profile.md
@@ -978,5 +979,6 @@ nav:
           - "ADR 0065: CUBE Matrix Family Contract": status/decisions/0065-cube-matrix-family-contract.md
           - "ADR 0066: ADDTPC page-scaled immediate": status/decisions/0066-addtpc-page-scaled-immediate.md
           - "ADR 0067: conditional branch extension reservation": status/decisions/0067-conditional-branch-extension-reservation.md
+          - "ADR 0068: Extension first-use is a target-profile hook": status/decisions/0068-extension-first-use-profile-hook.md
       - Open:
           - "Open architecture questions": status/open/index.md
