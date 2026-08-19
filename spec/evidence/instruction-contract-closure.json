@@ -1786,7 +1786,7 @@
                 7
               ]
             ],
-            "role": "post-conversion activation selector",
+            "role": "pre-conversion activation multiplier selector",
             "signedness": "encoding-defined",
             "width": 3,
             "zero_meaning": "No activation."
@@ -2033,7 +2033,7 @@
         ],
         "exceptions": [
           "Missing, duplicate, or non-CUBE-Matrix use raises Fault_BundleControl before operand consumption, allocation, payload, or destination effects.",
-          "Reserved field values, inconsistent reduction enables, invalid B.DATR conversion controls, malformed operand streams, illegal aliases, or invalid derived shapes raise Fault_TileLegality before effects.",
+          "Decode-reserved field values do not decode and raise Fault_IllegalInstruction. Accepted encodings with inconsistent reduction enables, invalid B.DATR conversion controls, invalid parameters, malformed operand streams, illegal aliases, or invalid derived shapes raise Fault_TileLegality before effects.",
           "Fixed-bit mismatch does not decode as B.FPATR and is rejected by normal command decoding before this handler executes."
         ],
         "field_domains": [],
@@ -2044,7 +2044,7 @@
           "GroupNCode codes 0..9 select 0, 8, 16, 32, 48, 64, 80, 96, 112, and 128 columns; codes 10..15 are reserved.",
           "RowMaxInit requires RowMaxEn. GroupMaxEn requires nonzero GroupNCode and nonzero GroupNCode requires GroupMaxEn. MaxAbsEn requires RowMaxEn or GroupMaxEn.",
           "Func=2, ElementWiseEn=0, Reserved=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.",
-          "Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; shift modes require RMode=NONE; accepted non-None modes otherwise retain the complete rounding selector and independent saturation control.",
+          "Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; fixed floating modes require RMode=NONE; fixed shift modes require RMode=NONE and Sat=0; programmable integer modes retain the complete rounding selector and final clamp/wrap control.",
           "The derived scalar/vector parameter count, Local source count, and Local destination count must fit the complete-bundle schema without duplicate destinations or illegal source/destination aliases."
         ],
         "memory_effects": [
@@ -2057,7 +2057,7 @@
           },
           {
             "field": "ReluMode",
-            "role": "post-conversion activation selector"
+            "role": "pre-conversion activation multiplier selector"
           },
           {
             "field": "GroupNCode",
@@ -2112,7 +2112,7 @@
         "state_effects": [
           "Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field.",
           "Trap save and recovery preserve the complete latched descriptor with the pending block.",
-          "Successful execution applies the selected conversion, optional activation, and optional reductions to the completed Matrix result through the numeric-profile hook, then atomically commits enabled outputs."
+          "Successful execution selects any activation-dependent multiplier before the destination conversion, preserves raw optional reductions, and atomically commits all enabled outputs through the numeric-profile hook."
         ]
       },
       "documentation": "docs/block/attributes/B.FPATR.md",

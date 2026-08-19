@@ -894,7 +894,9 @@
       ],
       "tests": [
         "PTO-AVS-ARCH-DATA-TYPES-FP19-STATIC-001",
-        "PTO-AVS-ARCH-FP19-ENC-001"
+        "PTO-AVS-ARCH-FP19-ENC-001",
+        "PTO-AVS-ARCH-FP19-PARAMETER-DOMAIN-002",
+        "PTO-AVS-TILE-MATRIX-PARAMS-002"
       ]
     },
     {
@@ -1373,6 +1375,7 @@
         "PTO-AVS-BLOCK-B-FPATR-ACT-004",
         "PTO-AVS-BLOCK-B-FPATR-ALL-MODES-007",
         "PTO-AVS-BLOCK-B-FPATR-COMMIT-006",
+        "PTO-AVS-BLOCK-B-FPATR-CONTROLS-010",
         "PTO-AVS-BLOCK-B-FPATR-DECODE-001",
         "PTO-AVS-BLOCK-B-FPATR-DUPLICATE-001",
         "PTO-AVS-BLOCK-B-FPATR-FORMATS-003",
@@ -1391,8 +1394,10 @@
         "PTO-AVS-BLOCK-B-FPATR-QUANT-002",
         "PTO-AVS-BLOCK-B-FPATR-RELU-RSVD-001",
         "PTO-AVS-BLOCK-B-FPATR-RESET-CLEAR-001",
+        "PTO-AVS-BLOCK-B-FPATR-ROUNDING-008",
         "PTO-AVS-BLOCK-B-FPATR-RSVD-001",
         "PTO-AVS-BLOCK-B-FPATR-SPECIAL-005",
+        "PTO-AVS-BLOCK-B-FPATR-ZERO-AFFINE-009",
         "PTO-AVS-BLOCK-B-FPATR-ZMASK-001",
         "PTO-AVS-BLOCK-TMATMUL-MISSING-FPATR-001"
       ]
@@ -9796,8 +9801,14 @@
       ],
       "tests": [
         "PTO-AVS-ARCH-MATRIX-POST-001",
+        "PTO-AVS-ARCH-MATRIX-POSTPROCESS-PIPELINE-002",
         "PTO-AVS-ARCH-PROFILE-MATRIX-POSTPROCESS-STATIC-001",
-        "PTO-AVS-TILE-POST-MAXABS-SINGLE-002"
+        "PTO-AVS-BLOCK-B-FPATR-ZERO-AFFINE-009",
+        "PTO-AVS-TILE-MATRIX-PARAMS-002",
+        "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
+        "PTO-AVS-TILE-POST-MAXABS-SINGLE-002",
+        "PTO-AVS-TILE-POSTPROCESS-GROUP-LARGE-004",
+        "PTO-AVS-TILE-POSTPROCESS-ROLLBACK-003"
       ]
     },
     {
@@ -9807,8 +9818,11 @@
         "asl/arch/profile/matrix-quantization.asl"
       ],
       "tests": [
+        "PTO-AVS-ARCH-MATRIX-INTERMEDIATE-002",
         "PTO-AVS-ARCH-MATRIX-QUANT-001",
-        "PTO-AVS-ARCH-PROFILE-MATRIX-QUANTIZATION-STATIC-001"
+        "PTO-AVS-ARCH-PROFILE-MATRIX-QUANTIZATION-STATIC-001",
+        "PTO-AVS-BLOCK-B-FPATR-CONTROLS-010",
+        "PTO-AVS-BLOCK-B-FPATR-ROUNDING-008"
       ]
     },
     {
@@ -11762,7 +11776,7 @@
     "asl/arch/data-types/formats/hif4x2.asl": "23949a2352947103162ec73c6b37ff9f905e5ea6de3caebeb89c80f399c5e622",
     "asl/arch/data-types/formats/hif8.asl": "44dbda4ee90a1dcb8f96cf7d087492e6a18d9b6e4e4b3d84b0cada344804578c",
     "asl/arch/data-types/formats/tf32.asl": "1b1a14d0d609cc41a312e59df8621a0f3ac711a8589c5e99844aa80fb0885873",
-    "asl/arch/data-types/fp19.asl": "c8a8550fcc951f011ea46177202ddc8d72b1ba13fe9564d0d686b803a1718ae0",
+    "asl/arch/data-types/fp19.asl": "3733d0d930df3f890b4aa5237dfface8f0cc2081f42244f45aae711435865fa6",
     "asl/arch/data-types/integer.asl": "9c09a85c8eedcbacc04e0007a556f5dc8a08e3076ec47b58a805d2c06e3af995",
     "asl/arch/data-types/memory-model.asl": "dd4adb80d037bc6e6b9b87dd53b8f4ccf6cda4a4fcd648c2874074d8587312d7",
     "asl/arch/data-types/memory-operations.asl": "4c5b08dd7c47caa6b1917185886bd8ea6929a9bf00c2b8578b86ead04e110b71",
@@ -11790,8 +11804,8 @@
     "asl/arch/overview/instruction-classification.asl": "9306ccb6a080dbbe8069a998c8a88e7db48c1c45d0613407b59d2892405f0958",
     "asl/arch/profile/applicability.asl": "b3734d16ed92c3e7f9d8a99047009c8b0996cbeb88a087296c12696d9965de41",
     "asl/arch/profile/e8m0-conversion.asl": "e46324c90eff21e4270558e315c684089f11b6d6a47f6dc4ee0b30411761fd57",
-    "asl/arch/profile/matrix-postprocess.asl": "f28a952fcf88f919fe684754cd1025485d927ed132784e488e52d68ea35dd8d1",
-    "asl/arch/profile/matrix-quantization.asl": "b7c7c3488fecd657a57d523fa5ecb0b6f96fc88a410785989b53b917cf0344ab",
+    "asl/arch/profile/matrix-postprocess.asl": "7a0423616a2f6910bf77e531c3fb3a22abc4d266db80d6ac4b43a46bb2e7d868",
+    "asl/arch/profile/matrix-quantization.asl": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440",
     "asl/arch/profile/reference-profile.asl": "a866ccdeef08bde34b1818a0ebc0937044db1b886d1cf9403252fdfbce114e51",
     "asl/arch/profile/reference-quantization.asl": "e82820dc13f89142aa0448c4435f6cbd53d4eb0b85c05e63a887452c186d9aef",
     "asl/arch/profile/reset.asl": "4f3453ee329ea5a45352ce98d17d5cf776a1b0e95aa7290e0f6317b38147d53a",
@@ -11817,7 +11831,7 @@
     "asl/block/attributes/B.CATR.asl": "dadac9c8a269fbd616524ddebb5597cb4d7493f67205cde42314d101e55d8a72",
     "asl/block/attributes/B.DATR.asl": "38a43baf7be652985172a13117f583a219993af52c5f33e89ef9cd755359040c",
     "asl/block/attributes/B.DIM.asl": "be7b6d35546379394673d5c6ab3acbf4b357f7d26c12e8e0e68a448674c85800",
-    "asl/block/attributes/B.FPATR.asl": "40796247a811c0b283e4767c9edb040cf87e7ab5e5467097457201748545a488",
+    "asl/block/attributes/B.FPATR.asl": "27399078fe9e7b69e0e5fe02b50d007aef34f451c7b4366c3716bbc8cc32aecf",
     "asl/block/attributes/C.B.DIMI.asl": "e1c951c4e7f90f6fb1f7f23959decaac35a40ad39ad397342914672ebb16cd2f",
     "asl/block/encoding/C.BSTART.FP.asl": "a8c99fdf61be0addbcd7ee8d9bc51ce5957632ca91a963b48d97de68956ff7c3",
     "asl/block/encoding/C.BSTART.STD.asl": "21814c16dcc571941e75971b177bd85309a4f233f71b29e36be3e4899fca6d4c",
@@ -12594,7 +12608,7 @@
     "docs/arch/data-types/formats/hif4x2.md": "5f5b61461cea2256f4eec957d89c575d1d142734b30a3f5677bd02e4b980b9bc",
     "docs/arch/data-types/formats/hif8.md": "ad0ea16ff1a36eacf4c2743eb8272801cd07a9b5c1ca6bdeef3d21372a8d8979",
     "docs/arch/data-types/formats/tf32.md": "1ce8f44f305b8764b11d69af22bd5cf4ed626244f12e3795ea46afb7b29edab3",
-    "docs/arch/data-types/fp19.md": "46c59ba977a94af777a943a249b45277d59baf098b09117ba37217d1b0b2e21f",
+    "docs/arch/data-types/fp19.md": "11c2e2e260bfe52f0a6612c844de73b90474997c64f2b5f3524904a1ef385bca",
     "docs/arch/data-types/integer.md": "2c4e096be1a81f1349628744b1543b07cec4c94c73ddfe065bf57ec47e104b4b",
     "docs/arch/data-types/memory-model.md": "d40cfb859a69bcf5850268417167f1ed849e3b852c39e2a121abdbe043b1fb41",
     "docs/arch/data-types/memory-operations.md": "46e92046ffb547c10c3c651e18b367ba7549f5ecb85ae74e785a676f9435a63f",
@@ -12622,8 +12636,8 @@
     "docs/arch/overview/instruction-classification.md": "79e8943b1bc16fc7d975c74abfa5b83d0daabf1aa9db66db16a7d289eb2c2028",
     "docs/arch/profile/applicability.md": "d98df7ad5c9bfa75a41dd734c3fde98438f010696964cde9ca92e88a504d531f",
     "docs/arch/profile/e8m0-conversion.md": "79d0c29d72d409d8521cee8e9173b89730fe920fd6732404432f18e7dd4c003b",
-    "docs/arch/profile/matrix-postprocess.md": "722510f6a3d38823b0320fffe7623649ec27b51904bf391830a388a84f218afd",
-    "docs/arch/profile/matrix-quantization.md": "b24937f5d61d79ffe94cf2a27d2ffc0f5d4f8b33d308c22abdaa09b89767a88c",
+    "docs/arch/profile/matrix-postprocess.md": "2e76a74038ec1a3ab8488913691f15c57b593bd80e4b7d95438a375cb46fd137",
+    "docs/arch/profile/matrix-quantization.md": "d9849311c32641d509763c7df5629b32cd6e7b178d649b7159aa24ac6911da47",
     "docs/arch/profile/reference-profile.md": "dfbaaefbed0da46dd4c7ae4a4ad3a7ec956d2a795400ce4c1f8aa04534d58b89",
     "docs/arch/profile/reference-quantization.md": "2c158f90cf69ccefdef7127981474a2d1f3b10342ebb35efa5880d6de20778c9",
     "docs/arch/profile/reset.md": "7851d7b316b0399345777ff31a5340a5e94726759c4d60191c0f9f6135b3b1bf",
@@ -12649,7 +12663,7 @@
     "docs/block/attributes/B.CATR.md": "7f845c7e753c9fce20fbac59913b3b727735ea40737087f7741cf74e8eb337a3",
     "docs/block/attributes/B.DATR.md": "fe3afbdfa196efd39cc5763840ce0f69943ec989b5e313a999b1c217b872c47b",
     "docs/block/attributes/B.DIM.md": "dd39dbac217836179acf90e038202246ea1b3d90ad7c3cf0181741cab9ff8f7d",
-    "docs/block/attributes/B.FPATR.md": "aa65f6c52b93eb0111e97aa531ce4e6f60619b4aa2e5213e2aa7f6d7b46f2f8c",
+    "docs/block/attributes/B.FPATR.md": "3354761b7b4955539afaf3a7e695696f979e83f4b185bf79fd4c7d1edfd8d010",
     "docs/block/attributes/C.B.DIMI.md": "62a4c3fc18aab8e5a8e695f259972dc2b6d6b7a9a10cad5c1b8fef0acce684af",
     "docs/block/encoding/C.BSTART.FP.md": "21250946b1b1d0edca6271eca3710c33b254bc7b095640350fd7e68af23b0b5f",
     "docs/block/encoding/C.BSTART.STD.md": "5392444f1221540f40270dcc9cc8e125a59ddc2ae206a217789c3abdc1887e13",
@@ -13408,7 +13422,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "a880dae32c4e8b2d6f55b27e81a43a45277553933ce97efbde528862aaf80e34",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "86ddd65217cf977a6461d9d5d5bbf685cd02c954c5911fc87d3f712dd6a57c14",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "b73c44e7a96aa6b5bbe8b95714d0e09ddebfccdbe45c43404cb924d6f7e41018",
-    "spec/evidence/instruction-contract-closure.json": "a99b1d133e26822d95dd72d2048f61cce3dc77dedbd30515e3d7e2285128de58",
+    "spec/evidence/instruction-contract-closure.json": "0d726f39f1e1cf080dbbb7733099912b67a28836fbd5f1ef6b29f7454de3df84",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -13445,6 +13459,7 @@
     "tests/asl/arch/data-types/formats/tf32/arch-bound-tf32-decomp-001.asl": "2b011596bc0e6d292dcee10a65971c514db4d829beae9d0b438ac7cf098b9e57",
     "tests/asl/arch/data-types/formats/tf32/arch-static-tf32-contract-001.asl": "3a8f1ca2a3ce3a2582099aa5cfa8f295e7c4474b19e3e45c3f7298797db694c4",
     "tests/asl/arch/data-types/fp19/arch-bound-fp19-encoding-001.asl": "4589d293a72d48a38f0ed10e3ff043b9e40a853c35496e28e57bca7bebf92967",
+    "tests/asl/arch/data-types/fp19/arch-bound-fp19-parameter-domain-002.asl": "972bd0e343c30dbb0c240c2175f0c276b9b8aa6cf9c0ca5cdb1ec36c5a33175e",
     "tests/asl/arch/data-types/fp19/arch-static-fp19-contract-001.asl": "50df6e60423b3392350e3af3ee65daebd30fd5d6b262d73f408aaaddb8ab852e",
     "tests/asl/arch/data-types/integer/arch-static-integer-contract-001.asl": "e1f308efd1e2f8cc8c7ef4b8cf8ed241041da15e44aa225ffac0f9ff6946d77b",
     "tests/asl/arch/data-types/memory-model/arch-static-memory-model-contract-001.asl": "b4828cc364d64df5ae3c3a22ee9dcaa6b6e1daf43106b39f9b4daffd0c697738",
@@ -13500,7 +13515,9 @@
     "tests/asl/arch/profile/applicability/arch-static-applicability-contract-001.asl": "72e3606eddaf180815dfda25f6e262401c3e8d840afe5b2e43f4087568c8a87d",
     "tests/asl/arch/profile/e8m0-conversion/arch-static-e8m0-conversion-contract-001.asl": "d31ebb831d59bacd869f07e8b9e3676b1e73d8fa8377fec8f19196b0da416cec",
     "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-001.asl": "92669a95060a3b8714455a3f9963aeede37677257743c6098cf45a6af57758de",
+    "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-pipeline-002.asl": "29d156198af9caef5156e22bb229ffab7286670561b6228df661121249708a90",
     "tests/asl/arch/profile/matrix-postprocess/arch-static-matrix-postprocess-contract-001.asl": "7f3949620ad409c9911878179425bdf2233a8d259ff2f765ff99f61aeea01392",
+    "tests/asl/arch/profile/matrix-quantization/arch-exec-matrix-intermediate-002.asl": "d6cb36092f0003111e8003e8e027c323e2686e8b88965bccd59e7332f5e2306e",
     "tests/asl/arch/profile/matrix-quantization/arch-exec-matrix-quantization-001.asl": "58ba7a5c35d1c667e57c23b82a434006709c925c88a0c91b64190cf859160c50",
     "tests/asl/arch/profile/matrix-quantization/arch-static-matrix-quantization-contract-001.asl": "bd64d8ee6c83946d3d622e3bede11ae210e662fba80f0793bfac6f18ad8629c8",
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl": "38814e41be41d630c7839bdd6988e4df6e4ca8eb0667764d6a6e8b6eedd6ace5",
@@ -13569,16 +13586,19 @@
     "tests/asl/block/attributes/B.DIM/block-decode-b-dim-canonical-001.asl": "ac10b1de4aa54f5b37851d0c11fceb50bccea736477e5f9fb38246fbef8d81a5",
     "tests/asl/block/attributes/B.DIM/block-fault-b-dim-duplicate-001.asl": "162fa5b1502d7a0bad903f4e7e16c77a506a16d6c0a6b991ce7684d90644e36d",
     "tests/asl/block/attributes/B.DIM/block-fault-b-dim-placement-001.asl": "47118ea1df163ed60cf193866e5022ccc932f4546f2ab351d5698629054f339c",
-    "tests/asl/block/attributes/B.FPATR/block-bound-b-fpatr-mode-table-001.asl": "b118d61a41ddc41d0aa5dee8f267a3c7df7a209ab175674eb26bd99f8ef07d34",
+    "tests/asl/block/attributes/B.FPATR/block-bound-b-fpatr-mode-table-001.asl": "8b7a4f5c2253d2bdb40ac7bb90b07ce9814efc53b4e7745894a6e75974a0604e",
     "tests/asl/block/attributes/B.FPATR/block-decode-b-fpatr-canonical-001.asl": "dcc6fc0db72dd670cec8819dc75c16466e484ad4632500b2a49a34ffbd88350c",
-    "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-activation-004.asl": "06166a4dc3c0e2174abfe4071f82a31e21734f0d79af2f33a93218ce64c5e914",
+    "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-activation-004.asl": "6130cfccb6f9d4a86c6312fbb04c91c3e8e6688371f4054632c48a33628a50b4",
     "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-all-modes-007.asl": "34dae6d44a62b607e5bf64cd82beab8718a3b743c35ccc14fd71745f8aad2d97",
     "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-commit-006.asl": "d49332a185ae413affe511788516a9fe6ae2f544d0955702906654cb73270d37",
     "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-formats-003.asl": "f6a2cad4ef0b95950f7c78e944d414b54b7a3677b83b18f263e84058c4d5bba0",
     "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-operand-routing-001.asl": "617ff8617e99a8814862a5adaa6bade249726b91c042675b24a3fc8fef5fe6e6",
     "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-quant-002.asl": "18153b1bf5908bb97f3b6018016ff3dd6abddb58291af3903d6a16fb983c7142",
-    "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-special-005.asl": "5dc812fb56d19597b3968213b4935b7aa7b25e9e9c8ef7a229274024a696b418",
+    "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-rounding-008.asl": "39774698c6a2b365291c974bdc41e35c4cbdfdef4957428b193e09c8ae2ba391",
+    "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-special-005.asl": "1dafeda291de684c6810f86b3c4e57a0bc90018a72228d8c042c20bc63e42e86",
+    "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-zero-affine-009.asl": "f2fbb807f80841402374fda9bf213be973ba03c06448e6f5b63100f72d868f17",
     "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-zero-mask-order-001.asl": "ef0482bf02645e29c78839d94e04981ea02574d2056522bc82d847d299a0b094",
+    "tests/asl/block/attributes/B.FPATR/block-fault-b-fpatr-controls-010.asl": "3f8b691fa83f7ee15971b75d551a5aa0042fb15343c338b204abca19455145a5",
     "tests/asl/block/attributes/B.FPATR/block-fault-b-fpatr-duplicate-001.asl": "f4b84dafdb047f2565461e14274baebcc149413bd73b235f243105c78f9b8a14",
     "tests/asl/block/attributes/B.FPATR/block-fault-b-fpatr-group-rsvd-001.asl": "f3bb9ab757bbac3cd922bfc30e605708cf6fe720f49a681c1e4de7bb39d937c5",
     "tests/asl/block/attributes/B.FPATR/block-fault-b-fpatr-input-type-002.asl": "4d0b0a29abea74fe03d3619a1695d5fed6f7f16f6d0287de5d1624a4ff3b6501",
@@ -16484,7 +16504,9 @@
     "tests/asl/tile/model/execution/indexed-rearrangement/tile-exec-indexed-map-001.asl": "b38deda21449b78b29c95cf2d4a8d7922f15800fdbc017790301337bf0ac6170",
     "tests/asl/tile/model/execution/indexed-rearrangement/tile-static-indexed-rearrangement-contract-001.asl": "25c0462a909e99b361cba6403d4fc1c26042f985e8b44af13e42c470b91a432f",
     "tests/asl/tile/model/execution/minmax/tile-static-minmax-contract-001.asl": "af1837edf97f1aa102ee5dca492209d2f5f6d5f911dbc465542495af691f097b",
-    "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-aux-001.asl": "e7eff966b280a4bc9a9e8206daa4afbb93761abc0970e04848bbb4f908676730",
+    "tests/asl/tile/model/execution/postprocess/tile-atomic-postprocess-rollback-003.asl": "2704cd312dc210bbea6a7e34195bffcfba41d890a698b92fa73dc2481c41099d",
+    "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-aux-001.asl": "6ef6b64a850a6909c5a28c2eab0b4155dd555044ee0fc0d066441c64a5c3170a",
+    "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-group-large-004.asl": "d85357a8178860f0d81961453d6ba041aa3d9a81e7989d3bf5ab297c871ac511",
     "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-maxabs-single-002.asl": "d986c36499a47c94a87f10e4854cc11a611fb33e4aa9f8f07baf619ea52f5bb0",
     "tests/asl/tile/model/execution/postprocess/tile-static-postprocess-contract-001.asl": "ec371dee401c5c5390f3453c33e7b1482fc758cdc2be40ee7b126cdbacf7e82f",
     "tests/asl/tile/model/execution/rearrangement/tile-exec-rearrangement-operations-001.asl": "10cf1983cf575b46c9ab2154dbde043dd2aa215854a3fd37adf94cd9983a96f7",
@@ -16511,9 +16533,10 @@
     "tests/asl/tile/model/legality/matrix-operands/tile-bound-matrix-bias-001.asl": "33baf0fffcaf31580daf0bb30667125d8aeaeed27574f8ae4335b7cae8219569",
     "tests/asl/tile/model/legality/matrix-operands/tile-bound-matrix-source-001.asl": "6902b1e3d7c34dd54cf619d4fa28b0925162fdd5f37433eda1b81b95fd030de2",
     "tests/asl/tile/model/legality/matrix-operands/tile-static-matrix-operands-contract-001.asl": "81b41a816cc965b10b9d4cea59137f01d3f1177d93b6ac53e73deae432a56ea9",
+    "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-params-002.asl": "9103c56ebc98d0f221d43e774a367f91d6e5c7cd530cfaa2b88dc95daec57f49",
     "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-rowmax-001.asl": "5d4bfdaefaa175b73c163d8e8c49525dbd04d1c5cd751ee111347a2b8db49c87",
-    "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-vprelu-001.asl": "ee2233c7e5ccb217f51e3fe5372c5eaac03521e6f5c07d764abfc038cd86934e",
-    "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-vquant-001.asl": "031930df61c2d7021778fcc06cf3b894e7b132e690875eb2969754f8e0aad40a",
+    "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-vprelu-001.asl": "cf02d7fd5f976c244add21cb5b334673587c8001addab512a3b450e1aac65de3",
+    "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-vquant-001.asl": "96985f598e2556a2b79411685e4a3be2a018dd93076d56a8bac10b503905870e",
     "tests/asl/tile/model/legality/matrix-postprocess/tile-static-matrix-postprocess-contract-001.asl": "13236af3657b566a4e0489442f948de7f2ebb4005d2c42d5fd13faa49f86428d",
     "tests/asl/tile/model/legality/matrix-shape/tile-bound-numeric-contract-legality-001.asl": "95eee8fc45ca5a1fcc1a3dfd9246225a4dfa16296746897abe21e90b8350dea6",
     "tests/asl/tile/model/legality/matrix-shape/tile-exec-physical-accumulator-classes-001.asl": "df3babc5baee2dd58ee1d77ac539a64c852ae0e9c1c8eb885735b0a7d53f11d4",
@@ -16673,7 +16696,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 993,
     "status": "closed",
-    "test_count": 3255,
+    "test_count": 3264,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -24600,6 +24623,16 @@
       "source": "asl/arch/data-types/fp19.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-FP19-PARAMETER-DOMAIN-002",
+      "kind": "boundary",
+      "path": "tests/asl/arch/data-types/fp19/arch-bound-fp19-parameter-domain-002.asl",
+      "requirements": [
+        "PTO-FP19-PARAMETER-CARRIER-001"
+      ],
+      "sha256": "972bd0e343c30dbb0c240c2175f0c276b9b8aa6cf9c0ca5cdb1ec36c5a33175e",
+      "source": "asl/arch/data-types/fp19.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-FP32-DECOMP-001",
       "kind": "boundary",
       "path": "tests/asl/arch/data-types/formats/fp32/arch-bound-fp32-decomp-001.asl",
@@ -24678,6 +24711,16 @@
       "source": "asl/arch/data-types/formats/hif8.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-MATRIX-INTERMEDIATE-002",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/matrix-quantization/arch-exec-matrix-intermediate-002.asl",
+      "requirements": [
+        "PTO-MATRIX-QUANT-BITEXACT-001"
+      ],
+      "sha256": "d6cb36092f0003111e8003e8e027c323e2686e8b88965bccd59e7332f5e2306e",
+      "source": "asl/arch/profile/matrix-quantization.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-MATRIX-POST-001",
       "kind": "execution",
       "path": "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-001.asl",
@@ -24685,6 +24728,16 @@
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
       ],
       "sha256": "92669a95060a3b8714455a3f9963aeede37677257743c6098cf45a6af57758de",
+      "source": "asl/arch/profile/matrix-postprocess.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-MATRIX-POSTPROCESS-PIPELINE-002",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-pipeline-002.asl",
+      "requirements": [
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
+      ],
+      "sha256": "29d156198af9caef5156e22bb229ffab7286670561b6228df661121249708a90",
       "source": "asl/arch/profile/matrix-postprocess.asl"
     },
     {
@@ -25428,7 +25481,7 @@
       "requirements": [
         "PTO-INST-BLOCK-B-FPATR"
       ],
-      "sha256": "06166a4dc3c0e2174abfe4071f82a31e21734f0d79af2f33a93218ce64c5e914",
+      "sha256": "6130cfccb6f9d4a86c6312fbb04c91c3e8e6688371f4054632c48a33628a50b4",
       "source": "asl/block/attributes/B.FPATR.asl"
     },
     {
@@ -25449,6 +25502,17 @@
         "PTO-INST-BLOCK-B-FPATR"
       ],
       "sha256": "d49332a185ae413affe511788516a9fe6ae2f544d0955702906654cb73270d37",
+      "source": "asl/block/attributes/B.FPATR.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-B-FPATR-CONTROLS-010",
+      "kind": "fault",
+      "path": "tests/asl/block/attributes/B.FPATR/block-fault-b-fpatr-controls-010.asl",
+      "requirements": [
+        "PTO-INST-BLOCK-B-FPATR",
+        "PTO-MATRIX-QUANT-BITEXACT-001"
+      ],
+      "sha256": "3f8b691fa83f7ee15971b75d551a5aa0042fb15343c338b204abca19455145a5",
       "source": "asl/block/attributes/B.FPATR.asl"
     },
     {
@@ -25508,7 +25572,7 @@
       "requirements": [
         "PTO-INST-BLOCK-B-FPATR"
       ],
-      "sha256": "b118d61a41ddc41d0aa5dee8f267a3c7df7a209ab175674eb26bd99f8ef07d34",
+      "sha256": "8b7a4f5c2253d2bdb40ac7bb90b07ce9814efc53b4e7745894a6e75974a0604e",
       "source": "asl/block/attributes/B.FPATR.asl"
     },
     {
@@ -25632,6 +25696,17 @@
       "source": "asl/block/attributes/B.FPATR.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-B-FPATR-ROUNDING-008",
+      "kind": "execution",
+      "path": "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-rounding-008.asl",
+      "requirements": [
+        "PTO-INST-BLOCK-B-FPATR",
+        "PTO-MATRIX-QUANT-BITEXACT-001"
+      ],
+      "sha256": "39774698c6a2b365291c974bdc41e35c4cbdfdef4957428b193e09c8ae2ba391",
+      "source": "asl/block/attributes/B.FPATR.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-B-FPATR-RSVD-001",
       "kind": "fault",
       "path": "tests/asl/block/attributes/B.FPATR/block-fault-b-fpatr-pq06-11-001.asl",
@@ -25648,7 +25723,18 @@
       "requirements": [
         "PTO-INST-BLOCK-B-FPATR"
       ],
-      "sha256": "5dc812fb56d19597b3968213b4935b7aa7b25e9e9c8ef7a229274024a696b418",
+      "sha256": "1dafeda291de684c6810f86b3c4e57a0bc90018a72228d8c042c20bc63e42e86",
+      "source": "asl/block/attributes/B.FPATR.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-B-FPATR-ZERO-AFFINE-009",
+      "kind": "execution",
+      "path": "tests/asl/block/attributes/B.FPATR/block-exec-b-fpatr-zero-affine-009.asl",
+      "requirements": [
+        "PTO-INST-BLOCK-B-FPATR",
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
+      ],
+      "sha256": "f2fbb807f80841402374fda9bf213be973ba03c06448e6f5b63100f72d868f17",
       "source": "asl/block/attributes/B.FPATR.asl"
     },
     {
@@ -43422,6 +43508,17 @@
       "source": "asl/tile/model/legality/matrix-functions.asl"
     },
     {
+      "id": "PTO-AVS-TILE-MATRIX-PARAMS-002",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-params-002.asl",
+      "requirements": [
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+        "PTO-FP19-PARAMETER-CARRIER-001"
+      ],
+      "sha256": "9103c56ebc98d0f221d43e774a367f91d6e5c7cd530cfaa2b88dc95daec57f49",
+      "source": "asl/tile/model/legality/matrix-postprocess.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-MATRIX-ROWMAX-DESC-001",
       "kind": "boundary",
       "path": "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-rowmax-001.asl",
@@ -43442,7 +43539,7 @@
       "kind": "boundary",
       "path": "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-vprelu-001.asl",
       "requirements": [],
-      "sha256": "ee2233c7e5ccb217f51e3fe5372c5eaac03521e6f5c07d764abfc038cd86934e",
+      "sha256": "cf02d7fd5f976c244add21cb5b334673587c8001addab512a3b450e1aac65de3",
       "source": "asl/tile/model/legality/matrix-postprocess.asl"
     },
     {
@@ -43450,7 +43547,7 @@
       "kind": "boundary",
       "path": "tests/asl/tile/model/legality/matrix-postprocess/tile-bound-matrix-vquant-001.asl",
       "requirements": [],
-      "sha256": "031930df61c2d7021778fcc06cf3b894e7b132e690875eb2969754f8e0aad40a",
+      "sha256": "96985f598e2556a2b79411685e4a3be2a018dd93076d56a8bac10b503905870e",
       "source": "asl/tile/model/legality/matrix-postprocess.asl"
     },
     {
@@ -43693,8 +43790,10 @@
       "id": "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
       "kind": "execution",
       "path": "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-aux-001.asl",
-      "requirements": [],
-      "sha256": "e7eff966b280a4bc9a9e8206daa4afbb93761abc0970e04848bbb4f908676730",
+      "requirements": [
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
+      ],
+      "sha256": "6ef6b64a850a6909c5a28c2eab0b4155dd555044ee0fc0d066441c64a5c3170a",
       "source": "asl/tile/model/execution/postprocess.asl"
     },
     {
@@ -44068,6 +44167,26 @@
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
       ],
       "sha256": "d986c36499a47c94a87f10e4854cc11a611fb33e4aa9f8f07baf619ea52f5bb0",
+      "source": "asl/tile/model/execution/postprocess.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-POSTPROCESS-GROUP-LARGE-004",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/execution/postprocess/tile-exec-postprocess-group-large-004.asl",
+      "requirements": [
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
+      ],
+      "sha256": "d85357a8178860f0d81961453d6ba041aa3d9a81e7989d3bf5ab297c871ac511",
+      "source": "asl/tile/model/execution/postprocess.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-POSTPROCESS-ROLLBACK-003",
+      "kind": "atomicity",
+      "path": "tests/asl/tile/model/execution/postprocess/tile-atomic-postprocess-rollback-003.asl",
+      "requirements": [
+        "PTO-MATRIX-POSTPROCESS-BITEXACT-001"
+      ],
+      "sha256": "2704cd312dc210bbea6a7e34195bffcfba41d890a698b92fa73dc2481c41099d",
       "source": "asl/tile/model/execution/postprocess.asl"
     },
     {
@@ -49040,13 +49159,15 @@
       "id": "PTO-ARCH-DATA-TYPES-FP19",
       "mnemonic": null,
       "semantic_tests": [
-        "PTO-AVS-ARCH-FP19-ENC-001"
+        "PTO-AVS-ARCH-FP19-ENC-001",
+        "PTO-AVS-ARCH-FP19-PARAMETER-DOMAIN-002"
       ],
       "source": "asl/arch/data-types/fp19.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-DATA-TYPES-FP19-STATIC-001",
-        "PTO-AVS-ARCH-FP19-ENC-001"
+        "PTO-AVS-ARCH-FP19-ENC-001",
+        "PTO-AVS-ARCH-FP19-PARAMETER-DOMAIN-002"
       ]
     },
     {
@@ -49524,12 +49645,14 @@
       "id": "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
       "mnemonic": null,
       "semantic_tests": [
-        "PTO-AVS-ARCH-MATRIX-POST-001"
+        "PTO-AVS-ARCH-MATRIX-POST-001",
+        "PTO-AVS-ARCH-MATRIX-POSTPROCESS-PIPELINE-002"
       ],
       "source": "asl/arch/profile/matrix-postprocess.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-MATRIX-POST-001",
+        "PTO-AVS-ARCH-MATRIX-POSTPROCESS-PIPELINE-002",
         "PTO-AVS-ARCH-PROFILE-MATRIX-POSTPROCESS-STATIC-001"
       ]
     },
@@ -49542,11 +49665,13 @@
       "id": "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
       "mnemonic": null,
       "semantic_tests": [
+        "PTO-AVS-ARCH-MATRIX-INTERMEDIATE-002",
         "PTO-AVS-ARCH-MATRIX-QUANT-001"
       ],
       "source": "asl/arch/profile/matrix-quantization.asl",
       "surface": "arch",
       "tests": [
+        "PTO-AVS-ARCH-MATRIX-INTERMEDIATE-002",
         "PTO-AVS-ARCH-MATRIX-QUANT-001",
         "PTO-AVS-ARCH-PROFILE-MATRIX-QUANTIZATION-STATIC-001"
       ]
@@ -50050,6 +50175,7 @@
         "PTO-AVS-BLOCK-B-FPATR-ACT-004",
         "PTO-AVS-BLOCK-B-FPATR-ALL-MODES-007",
         "PTO-AVS-BLOCK-B-FPATR-COMMIT-006",
+        "PTO-AVS-BLOCK-B-FPATR-CONTROLS-010",
         "PTO-AVS-BLOCK-B-FPATR-DUPLICATE-001",
         "PTO-AVS-BLOCK-B-FPATR-FORMATS-003",
         "PTO-AVS-BLOCK-B-FPATR-GROUP-RSVD-001",
@@ -50067,8 +50193,10 @@
         "PTO-AVS-BLOCK-B-FPATR-QUANT-002",
         "PTO-AVS-BLOCK-B-FPATR-RELU-RSVD-001",
         "PTO-AVS-BLOCK-B-FPATR-RESET-CLEAR-001",
+        "PTO-AVS-BLOCK-B-FPATR-ROUNDING-008",
         "PTO-AVS-BLOCK-B-FPATR-RSVD-001",
         "PTO-AVS-BLOCK-B-FPATR-SPECIAL-005",
+        "PTO-AVS-BLOCK-B-FPATR-ZERO-AFFINE-009",
         "PTO-AVS-BLOCK-B-FPATR-ZMASK-001"
       ],
       "source": "asl/block/attributes/B.FPATR.asl",
@@ -50077,6 +50205,7 @@
         "PTO-AVS-BLOCK-B-FPATR-ACT-004",
         "PTO-AVS-BLOCK-B-FPATR-ALL-MODES-007",
         "PTO-AVS-BLOCK-B-FPATR-COMMIT-006",
+        "PTO-AVS-BLOCK-B-FPATR-CONTROLS-010",
         "PTO-AVS-BLOCK-B-FPATR-DECODE-001",
         "PTO-AVS-BLOCK-B-FPATR-DUPLICATE-001",
         "PTO-AVS-BLOCK-B-FPATR-FORMATS-003",
@@ -50095,8 +50224,10 @@
         "PTO-AVS-BLOCK-B-FPATR-QUANT-002",
         "PTO-AVS-BLOCK-B-FPATR-RELU-RSVD-001",
         "PTO-AVS-BLOCK-B-FPATR-RESET-CLEAR-001",
+        "PTO-AVS-BLOCK-B-FPATR-ROUNDING-008",
         "PTO-AVS-BLOCK-B-FPATR-RSVD-001",
         "PTO-AVS-BLOCK-B-FPATR-SPECIAL-005",
+        "PTO-AVS-BLOCK-B-FPATR-ZERO-AFFINE-009",
         "PTO-AVS-BLOCK-B-FPATR-ZMASK-001"
       ]
     },
@@ -67794,14 +67925,18 @@
       "mnemonic": null,
       "semantic_tests": [
         "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
-        "PTO-AVS-TILE-POST-MAXABS-SINGLE-002"
+        "PTO-AVS-TILE-POST-MAXABS-SINGLE-002",
+        "PTO-AVS-TILE-POSTPROCESS-GROUP-LARGE-004",
+        "PTO-AVS-TILE-POSTPROCESS-ROLLBACK-003"
       ],
       "source": "asl/tile/model/execution/postprocess.asl",
       "surface": "tile",
       "tests": [
         "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-AUX-EXECUTION-001",
         "PTO-AVS-TILE-MODEL-EXECUTION-POSTPROCESS-STATIC-001",
-        "PTO-AVS-TILE-POST-MAXABS-SINGLE-002"
+        "PTO-AVS-TILE-POST-MAXABS-SINGLE-002",
+        "PTO-AVS-TILE-POSTPROCESS-GROUP-LARGE-004",
+        "PTO-AVS-TILE-POSTPROCESS-ROLLBACK-003"
       ]
     },
     {
@@ -68053,6 +68188,7 @@
       "id": "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
       "mnemonic": null,
       "semantic_tests": [
+        "PTO-AVS-TILE-MATRIX-PARAMS-002",
         "PTO-AVS-TILE-MATRIX-ROWMAX-DESC-001",
         "PTO-AVS-TILE-MATRIX-VPRELU-DESC-001",
         "PTO-AVS-TILE-MATRIX-VQUANT-DESC-001"
@@ -68060,6 +68196,7 @@
       "source": "asl/tile/model/legality/matrix-postprocess.asl",
       "surface": "tile",
       "tests": [
+        "PTO-AVS-TILE-MATRIX-PARAMS-002",
         "PTO-AVS-TILE-MATRIX-ROWMAX-DESC-001",
         "PTO-AVS-TILE-MATRIX-VPRELU-DESC-001",
         "PTO-AVS-TILE-MATRIX-VQUANT-DESC-001",

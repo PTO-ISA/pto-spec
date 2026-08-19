@@ -78,7 +78,7 @@
     },
     {
       "path": "asl/arch/data-types/fp19.asl",
-      "sha256": "c8a8550fcc951f011ea46177202ddc8d72b1ba13fe9564d0d686b803a1718ae0"
+      "sha256": "3733d0d930df3f890b4aa5237dfface8f0cc2081f42244f45aae711435865fa6"
     },
     {
       "path": "asl/arch/data-types/integer.asl",
@@ -190,11 +190,11 @@
     },
     {
       "path": "asl/arch/profile/matrix-postprocess.asl",
-      "sha256": "f28a952fcf88f919fe684754cd1025485d927ed132784e488e52d68ea35dd8d1"
+      "sha256": "7a0423616a2f6910bf77e531c3fb3a22abc4d266db80d6ac4b43a46bb2e7d868"
     },
     {
       "path": "asl/arch/profile/matrix-quantization.asl",
-      "sha256": "b7c7c3488fecd657a57d523fa5ecb0b6f96fc88a410785989b53b917cf0344ab"
+      "sha256": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440"
     },
     {
       "path": "asl/arch/profile/reference-profile.asl",
@@ -298,7 +298,7 @@
     },
     {
       "path": "asl/block/attributes/B.FPATR.asl",
-      "sha256": "40796247a811c0b283e4767c9edb040cf87e7ab5e5467097457201748545a488"
+      "sha256": "27399078fe9e7b69e0e5fe02b50d007aef34f451c7b4366c3716bbc8cc32aecf"
     },
     {
       "path": "asl/block/attributes/C.B.DIMI.asl",
@@ -3362,15 +3362,15 @@
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "a99b1d133e26822d95dd72d2048f61cce3dc77dedbd30515e3d7e2285128de58"
+      "sha256": "0d726f39f1e1cf080dbbb7733099912b67a28836fbd5f1ef6b29f7454de3df84"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "b411ae38d5a7ddd9ffd5579a5745e23c8c76f1d3c17b7a9b2cfa5c09e911bc70"
+      "sha256": "146875771d664fe922bdc6d245dbc1320a184098362099546870f89642ef03ab"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "08bcbee64ee39eced967031576e7606b4203d13c7e50fd5257baa9441c5bf9c1"
+      "sha256": "e9d8ea7322e930934b732adff8b04c597901561b3d17e6398c63acb19b369b04"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3408,7 +3408,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "d331ada379133a1a346bb2a6c186de16c1a12f448d4ba6a60b4eb71baf275595",
+  "content_sha256": "01a28b34678aebafbe136de3c81178877833761c0d4e9a2097d8ba99b1ff8f2e",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3535,7 +3535,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/fp19.md",
-      "sha256": "46c59ba977a94af777a943a249b45277d59baf098b09117ba37217d1b0b2e21f"
+      "sha256": "11c2e2e260bfe52f0a6612c844de73b90474997c64f2b5f3524904a1ef385bca"
     },
     {
       "kind": "generated-documentation",
@@ -3675,12 +3675,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/matrix-postprocess.md",
-      "sha256": "722510f6a3d38823b0320fffe7623649ec27b51904bf391830a388a84f218afd"
+      "sha256": "2e76a74038ec1a3ab8488913691f15c57b593bd80e4b7d95438a375cb46fd137"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/matrix-quantization.md",
-      "sha256": "b24937f5d61d79ffe94cf2a27d2ffc0f5d4f8b33d308c22abdaa09b89767a88c"
+      "sha256": "d9849311c32641d509763c7df5629b32cd6e7b178d649b7159aa24ac6911da47"
     },
     {
       "kind": "generated-documentation",
@@ -3810,7 +3810,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/attributes/B.FPATR.md",
-      "sha256": "aa65f6c52b93eb0111e97aa531ce4e6f60619b4aa2e5213e2aa7f6d7b46f2f8c"
+      "sha256": "3354761b7b4955539afaf3a7e695696f979e83f4b185bf79fd4c7d1edfd8d010"
     },
     {
       "kind": "generated-documentation",
