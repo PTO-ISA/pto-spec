@@ -3,8 +3,9 @@
 // NDF-BEGIN: PTO-MATRIX-POSTPROCESS-BITEXACT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
 // Matrix post-processing MUST reduce the raw accumulator before conversion,
-// activate converted D values, canonicalize special results, and publish D,
-// enabled auxiliary outputs, and sticky flags as one non-faulting commit.
+// select an activation-dependent multiplier before destination conversion,
+// canonicalize special results, and publish D, enabled auxiliary outputs, and
+// sticky flags as one non-faulting commit.
 // NDF-END: PTO-MATRIX-POSTPROCESS-BITEXACT-001
 
 pure func MatrixFloatingSignedZero(
@@ -68,21 +69,6 @@ begin
     end;
 end;
 
-pure func MatrixEncodedFiniteValue(
-    value: Word, data_type: TileDataType) => real
-begin
-    if TileDataTypeIsInteger(data_type) then
-        return Real(ReferenceIntegerValue(value, data_type));
-    elsif data_type == TileDataType_FP32 then
-        return ReferenceFP32FiniteValue(value[31:0]);
-    elsif data_type == TileDataType_FP16 ||
-          data_type == TileDataType_BF16 then
-        return ReferenceBinary16FiniteValue(value, data_type);
-    else
-        return ReferenceFP8FiniteValue(data_type, value[7:0]);
-    end;
-end;
-
 func MatrixEncodeReal(
     value: real, data_type: TileDataType,
     control: NumericExecutionControl) => (Word, bits(5))
@@ -109,6 +95,11 @@ begin
                 if control.saturating then Zeros{PTO_XLEN}
                 else TileIntegerMinimum(destination_type),
                 Zeros{5} + 1);
+        end;
+        if control.saturating then
+            return (TRUE, Zeros{PTO_XLEN},
+                if value_class == NumericValue_SignalingNaN then
+                    Zeros{5} + 1 else Zeros{5});
         end;
         let (available, quiet_nan) =
             HardwareNumericCanonicalNaNResult(destination_type);
@@ -138,88 +129,126 @@ begin
                 if destination_type == TileDataType_E4M3 then
                     Zeros{5} + 0x14 else Zeros{5});
         end;
-    elsif NumericValueClassIsZero(value_class) then
-        return (TRUE,
-            if TileDataTypeIsInteger(destination_type) then
-                Zeros{PTO_XLEN}
-            else
-                MatrixFloatingSignedZero(
-                    destination_type,
-                    value_class == NumericValue_NegativeZero),
-            Zeros{5});
     end;
     return (FALSE, Zeros{PTO_XLEN}, Zeros{5});
 end;
 
+pure func MatrixValueClassNegative(
+    value_class: NumericValueClass) => boolean
+begin
+    return value_class == NumericValue_NegativeNormal ||
+           value_class == NumericValue_NegativeSubnormal ||
+           value_class == NumericValue_NegativeInfinity ||
+           value_class == NumericValue_NegativeZero;
+end;
+
+pure func MatrixSelectedMultiplier(
+    source_negative: boolean, relu_mode: bits(3),
+    quant_scale: real, relu_param: Word) => real
+begin
+    if !source_negative || UInt(relu_mode) == 0 then
+        return quant_scale;
+    elsif UInt(relu_mode) == 1 then
+        return 0.0;
+    end;
+    return FP19FiniteValue(relu_param[18:0]);
+end;
+
+func MatrixActivationWithFlags(
+    value: real, source_negative: boolean, relu_mode: bits(3),
+    quant_scale: real, relu_param: Word) => (real, bits(5))
+begin
+    let multiplier = MatrixSelectedMultiplier(
+        source_negative, relu_mode, quant_scale, relu_param);
+    return (value * multiplier, Zeros{5});
+end;
+
+pure func MatrixFPATREffectiveControl(
+    pre_quant_mode: bits(6), control: NumericExecutionControl)
+    => NumericExecutionControl
+begin
+    var result = control;
+    let mode = UInt(pre_quant_mode);
+    if mode == 25 || mode == 28 then
+        result.rounding_mode = NumericRound_RHB;
+    elsif BundleFPATRModeFixedRounding(pre_quant_mode) then
+        result.rounding_mode = NumericRound_RNE;
+    end;
+    return result;
+end;
+
 func MatrixPostQuantBaseWithFlags(
     value: Word, pre_quant_mode: bits(6), output_type: TileDataType,
-    quant_param: Word, control: NumericExecutionControl)
+    relu_mode: bits(3), quant_param: Word, relu_param: Word,
+    control: NumericExecutionControl)
     => (Word, bits(5))
 begin
-    if UInt(pre_quant_mode) == 0 then
+    if UInt(pre_quant_mode) == 0 && UInt(relu_mode) == 0 then
         return (value, Zeros{5});
     end;
     if BundleFPATRModeIsShift(pre_quant_mode) then
         let shift = UInt(quant_param[35:32]) + 1;
-        let shifted = ASR(value[31:0], shift);
-        return ReferenceMatrixIntegerEncoding(
-            Real(SInt(shifted)), output_type, control);
+        return MatrixShiftS32ToS16(
+            value[31:0], shift as integer {1..16});
     end;
 
-    let source_type = if BundleFPATRModeUsesS32Accumulator(
+    let source_type = if UInt(pre_quant_mode) == 0 then output_type
+    else if BundleFPATRModeUsesS32Accumulator(
         pre_quant_mode) then TileDataType_S32 else TileDataType_FP32;
-    let (special, special_result, special_flags) =
-        MatrixPostQuantSpecialValue(
-            value, source_type, output_type, control);
-    if special then return (special_result, special_flags); end;
-
-    let source_value = if source_type == TileDataType_S32 then
-        Real(SInt(value[31:0]))
+    let source_class = if source_type == TileDataType_FP32 then
+        TileNumericValueClass(source_type, value)
     else
-        ReferenceFP32FiniteValue(value[31:0]);
+        NumericValue_PositiveNormal;
+    let source_negative = if source_type == TileDataType_S32 then
+        SInt(value[31:0]) < 0
+    else
+        MatrixValueClassNegative(source_class);
     let scale = if BundleFPATRModeUsesScalarParameter(pre_quant_mode) ||
                    BundleFPATRModeUsesVectorParameter(pre_quant_mode) then
         FP19FiniteValue(quant_param[31:13])
     else
         1.0;
+    let multiplier = MatrixSelectedMultiplier(
+        source_negative, relu_mode, scale, relu_param);
+    let (special, special_result, special_flags) =
+        MatrixPostQuantSpecialValue(
+            value, source_type, output_type, control);
+    if special &&
+       !(source_class == NumericValue_NegativeInfinity &&
+         multiplier == 0.0) then
+        return (special_result, special_flags);
+    end;
+
+    let source_value = if source_type == TileDataType_S32 then
+        Real(SInt(value[31:0]))
+    else if source_type == TileDataType_U32 then
+        Real(UInt(value[31:0]))
+    else if source_class == NumericValue_NegativeInfinity then
+        0.0
+    else
+        ReferenceFP32FiniteValue(value[31:0]);
+    let (activated, activation_flags) = MatrixActivationWithFlags(
+        source_value, source_negative, relu_mode, scale, relu_param);
     let offset = MatrixQuantOffset(
         quant_param, BundleFPATRModeOffsetWidth(pre_quant_mode));
-    return MatrixEncodeReal(
-        source_value * scale + Real(offset), output_type, control);
-end;
-
-func MatrixActivationWithFlags(
-    value: Word, relu_mode: bits(3), output_type: TileDataType,
-    relu_param: Word, control: NumericExecutionControl)
-    => (Word, bits(5))
-begin
-    if UInt(relu_mode) == 0 then return (value, Zeros{5}); end;
-    let value_class = TileNumericValueClass(output_type, value);
-    if NumericValueClassIsNaN(value_class) then
-        let (available, quiet_nan) =
-            HardwareNumericCanonicalNaNResult(output_type);
-        assert available;
-        return (quiet_nan,
-            if value_class == NumericValue_SignalingNaN then
-                Zeros{5} + 1 else Zeros{5});
+    let intermediate_width =
+        BundleFPATRModeOffsetWidth(pre_quant_mode);
+    if source_class == NumericValue_NegativeZero &&
+       multiplier != 0.0 && offset == 0 &&
+       TileDataTypeIsFloating(output_type) then
+        return (
+            MatrixFloatingSignedZero(output_type, TRUE),
+            activation_flags);
     end;
-    let negative = value_class == NumericValue_NegativeNormal ||
-        value_class == NumericValue_NegativeSubnormal ||
-        value_class == NumericValue_NegativeInfinity ||
-        value_class == NumericValue_NegativeZero;
-    if !negative then return (value, Zeros{5}); end;
-    if UInt(relu_mode) == 1 then
-        return (MatrixFloatingSignedZero(output_type, FALSE), Zeros{5});
+    if intermediate_width != 0 then
+        let (encoded, encoding_flags) = MatrixQuantizedAffine(
+            activated, 1.0, offset, intermediate_width,
+            output_type, control);
+        return (encoded, activation_flags OR encoding_flags);
     end;
-    let alpha = FP19FiniteValue(relu_param[18:0]);
-    if value_class == NumericValue_NegativeInfinity then
-        if alpha == 0.0 then
-            return (MatrixFloatingSignedZero(output_type, FALSE), Zeros{5});
-        end;
-        return (value, Zeros{5});
-    end;
-    let activated = MatrixEncodedFiniteValue(value, output_type) * alpha;
-    return MatrixEncodeReal(activated, output_type, control);
+    let (encoded, encoding_flags) = MatrixEncodeReal(
+        activated + Real(offset), output_type, control);
+    return (encoded, activation_flags OR encoding_flags);
 end;
 
 implementation func TileProfileMatrixPostProcessWithFlags(
@@ -228,11 +257,11 @@ implementation func TileProfileMatrixPostProcessWithFlags(
     quant_param: Word, relu_param: Word,
     control: NumericExecutionControl) => (Word, bits(5))
 begin
-    let (converted, conversion_flags) = MatrixPostQuantBaseWithFlags(
-        value, pre_quant_mode, output_type, quant_param, control);
-    let (activated, activation_flags) = MatrixActivationWithFlags(
-        converted, relu_mode, output_type, relu_param, control);
-    return (activated, conversion_flags OR activation_flags);
+    let effective_control = MatrixFPATREffectiveControl(
+        pre_quant_mode, control);
+    return MatrixPostQuantBaseWithFlags(
+        value, pre_quant_mode, output_type, relu_mode,
+        quant_param, relu_param, effective_control);
 end;
 
 implementation func TileProfileMatrixPostProcess(

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-ACT-004","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"B.FPATR activation runs after conversion in the destination domain","pass_condition":"ReLU clamps converted negatives and scalar or vector PReLU re-encodes the FP19-scaled negative path","related_sources":["asl/tile/model/execution/postprocess.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-ACT-004","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"B.FPATR activation selects the multiplier before destination conversion","pass_condition":"ReLU selects zero while scalar and vector PReLU replace the negative-path quantization multiplier","related_sources":["asl/tile/model/execution/postprocess.asl"]}
 func main() => integer
 begin
     let control = DefaultNumericExecutionControl();

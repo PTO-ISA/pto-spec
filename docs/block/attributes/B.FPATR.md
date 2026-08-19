@@ -53,7 +53,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
 | b_fpatr_32_4f2db11e8e8a | PreQuantMode | 6 | 0–5, 12–13, 16–20, 23–28, 32–39 | none | 6–11, 14–15, 21–22, 29–31, 40–63 | closed Matrix destination pre-quantization and output-type selector | No pre-quantization; D retains the FP32, S32, or U32 accumulator type. |
-| b_fpatr_32_4f2db11e8e8a | ReluMode | 3 | 0–3 | none | 4–7 | post-conversion activation selector | No activation. |
+| b_fpatr_32_4f2db11e8e8a | ReluMode | 3 | 0–3 | none | 4–7 | pre-conversion activation multiplier selector | No activation. |
 | b_fpatr_32_4f2db11e8e8a | GroupNCode | 4 | 0–9 | none | 10–15 | group maximum column-count selector | No group maximum; GroupMaxEn must also be zero. |
 | b_fpatr_32_4f2db11e8e8a | RowMaxEn | 1 | 0–1 | none | none | row maximum input/output enable | No RowMax input or output. |
 | b_fpatr_32_4f2db11e8e8a | GroupMaxEn | 1 | 0–1 | none | none | group maximum output enable | No GroupMax output. |
@@ -81,7 +81,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Field | Architectural role |
 | --- | --- |
 | PreQuantMode | closed Matrix destination pre-quantization and output-type selector |
-| ReluMode | post-conversion activation selector |
+| ReluMode | pre-conversion activation multiplier selector |
 | GroupNCode | group maximum column-count selector |
 | RowMaxEn | row maximum input/output enable |
 | GroupMaxEn | group maximum output enable |
@@ -221,6 +221,19 @@ begin
     return UInt(code) == 12 || UInt(code) == 13;
 end;
 
+pure func BundleFPATRModeFixedRounding(code: bits(6)) => boolean
+begin
+    let value = UInt(code);
+    return value == 1 || value == 16 || value == 25 || value == 26 ||
+           value == 28 || value == 32 || value == 33 || value == 34 ||
+           value == 36 || value == 37;
+end;
+
+pure func BundleFPATRModeFinalSatProgrammable(code: bits(6)) => boolean
+begin
+    return UInt(code) != 0 && !BundleFPATRModeIsShift(code);
+end;
+
 pure func BundleFPATRReluModeUsesScalarParameter(code: bits(3)) => boolean
 begin
     return UInt(code) == 2;
@@ -280,9 +293,9 @@ end;
 
 // Matrix B.DATR contributes only the destination conversion controls once
 // B.FPATR is present.  None keeps the architectural default conversion
-// (RMode=NONE and Sat=0); every accepted non-zero mode carries the complete
-// existing rounding selector and saturation bit.  The numeric profile owns
-// the resulting conversion details.
+// (RMode=NONE and Sat=0). Fixed floating modes reject a non-default RMode;
+// fixed shift modes additionally reject Sat. Other accepted modes retain the
+// complete rounding selector and final saturation control.
 pure func BundleFPATRDATRFieldsLegal(pre_quant: bits(6),
                                      rounding_mode: bits(3),
                                      saturating: boolean) => boolean
@@ -291,9 +304,10 @@ begin
     if UInt(pre_quant) == 0 then
         return rounding_mode == Zeros{3} && !saturating;
     end;
-    // Shift pre-quant modes are fixed-point shifts.  They do not expose a
-    // rounding selector; saturation remains an independent D-only control.
-    if UInt(pre_quant) == 12 || UInt(pre_quant) == 13 then
+    if BundleFPATRModeIsShift(pre_quant) then
+        return rounding_mode == Zeros{3} && !saturating;
+    end;
+    if BundleFPATRModeFixedRounding(pre_quant) then
         return rounding_mode == Zeros{3};
     end;
     return TRUE;
@@ -362,14 +376,14 @@ end;
 - GroupNCode codes 0..9 select 0, 8, 16, 32, 48, 64, 80, 96, 112, and 128 columns; codes 10..15 are reserved.
 - RowMaxInit requires RowMaxEn. GroupMaxEn requires nonzero GroupNCode and nonzero GroupNCode requires GroupMaxEn. MaxAbsEn requires RowMaxEn or GroupMaxEn.
 - Func=2, ElementWiseEn=0, Reserved=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.
-- Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; shift modes require RMode=NONE; accepted non-None modes otherwise retain the complete rounding selector and independent saturation control.
+- Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; fixed floating modes require RMode=NONE; fixed shift modes require RMode=NONE and Sat=0; programmable integer modes retain the complete rounding selector and final clamp/wrap control.
 - The derived scalar/vector parameter count, Local source count, and Local destination count must fit the complete-bundle schema without duplicate destinations or illegal source/destination aliases.
 
 ## State effects
 
 - Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field.
 - Trap save and recovery preserve the complete latched descriptor with the pending block.
-- Successful execution applies the selected conversion, optional activation, and optional reductions to the completed Matrix result through the numeric-profile hook, then atomically commits enabled outputs.
+- Successful execution selects any activation-dependent multiplier before the destination conversion, preserves raw optional reductions, and atomically commits all enabled outputs through the numeric-profile hook.
 
 ## Memory effects and ordering
 
@@ -385,7 +399,7 @@ end;
 ## Exceptions
 
 - Missing, duplicate, or non-CUBE-Matrix use raises Fault_BundleControl before operand consumption, allocation, payload, or destination effects.
-- Reserved field values, inconsistent reduction enables, invalid B.DATR conversion controls, malformed operand streams, illegal aliases, or invalid derived shapes raise Fault_TileLegality before effects.
+- Decode-reserved field values do not decode and raise Fault_IllegalInstruction. Accepted encodings with inconsistent reduction enables, invalid B.DATR conversion controls, invalid parameters, malformed operand streams, illegal aliases, or invalid derived shapes raise Fault_TileLegality before effects.
 - Fixed-bit mismatch does not decode as B.FPATR and is rejected by normal command decoding before this handler executes.
 
 ## Examples

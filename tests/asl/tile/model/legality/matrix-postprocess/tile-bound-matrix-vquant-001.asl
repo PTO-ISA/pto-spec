@@ -5,16 +5,15 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(0, 0, 0,
-        Zeros{PTO_XLEN} + 0x0000002000002000);
-    WriteTileElement(0, 0, 1,
-        Zeros{PTO_XLEN} + 0x0000002000002000);
+    let normal_parameter = MatrixQuantParameter(
+        Zeros{19} + 0x400, Zeros{PTO_XLEN} + 1, 9);
+    WriteTileElement(0, 0, 0, normal_parameter);
+    WriteTileElement(0, 0, 1, normal_parameter);
 
     assert TileMatrixAuxiliarySourceSchemaLegal(
         0, 1, 2, TileDataType_U64);
     assert TileMatrixVectorQuantContentsLegal(0, Zeros{6} + 2);
-    WriteTileElement(0, 0, 1,
-        Zeros{PTO_XLEN} + 0x0000002000002001);
+    WriteTileElement(0, 0, 0, normal_parameter + 1);
     assert !TileMatrixVectorQuantContentsLegal(0, Zeros{6} + 2);
     return 0;
 end;

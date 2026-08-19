@@ -3,8 +3,9 @@
 // NDF-BEGIN: PTO-FP19-PARAMETER-CARRIER-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
 // FP19 MUST use one sign bit, an eight-bit bias-127 exponent, and a ten-bit
-// fraction. B.FPATR scales MUST be positive, finite, and nonzero; activation
-// parameters MUST be finite and nonnegative.
+// fraction. B.FPATR scales MUST be positive normal values; activation
+// parameters MUST be positive zero or positive normal values. Subnormal and
+// non-finite FP19 parameter carriers are illegal before architectural effects.
 // NDF-END: PTO-FP19-PARAMETER-CARRIER-001
 
 pure func FP19PowerOfTwo(exponent: integer {-136..127}) => real
@@ -63,19 +64,14 @@ end;
 
 pure func FP19ScaleLegal(value: bits(19)) => boolean
 begin
-    let value_class = FP19ValueClass(value);
-    return value[18] == '0' &&
-           !NumericValueClassIsNaN(value_class) &&
-           !NumericValueClassIsInfinity(value_class) &&
-           !NumericValueClassIsZero(value_class);
+    return FP19ValueClass(value) == NumericValue_PositiveNormal;
 end;
 
 pure func FP19ActivationParameterLegal(value: bits(19)) => boolean
 begin
     let value_class = FP19ValueClass(value);
-    return value[18] == '0' &&
-           !NumericValueClassIsNaN(value_class) &&
-           !NumericValueClassIsInfinity(value_class);
+    return value_class == NumericValue_PositiveZero ||
+           value_class == NumericValue_PositiveNormal;
 end;
 
 pure func FP32ToFP19(value: Word) => bits(19)

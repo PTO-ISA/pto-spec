@@ -28,16 +28,16 @@ begin
     assert !BundleFPATRFieldsLegal(Zeros{6}, Zeros{3}, '0001', FALSE, FALSE, TRUE, FALSE);
     assert BundleFPATRDATRFieldsLegal(Zeros{6}, Zeros{3}, FALSE);
     assert !BundleFPATRDATRFieldsLegal(Zeros{6}, '001', FALSE);
-    assert BundleFPATRDATRFieldsLegal('000001', '110', TRUE);
-    // Shift pre-quant modes accept both saturation values but require
-    // RMode=NONE; nonzero non-shift modes accept NONE (resolved as RNE) and
-    // every existing encoded rounding selector.
+    assert !BundleFPATRDATRFieldsLegal('000001', '110', TRUE);
+    // Fixed floating modes require RMode=NONE. Shift modes additionally use
+    // fixed S16 saturation and therefore reject an encoded Sat request.
     assert BundleFPATRDATRFieldsLegal('001100', Zeros{3}, FALSE);
-    assert BundleFPATRDATRFieldsLegal('001100', Zeros{3}, TRUE);
+    assert !BundleFPATRDATRFieldsLegal('001100', Zeros{3}, TRUE);
     assert !BundleFPATRDATRFieldsLegal('001100', '001', FALSE);
     assert !BundleFPATRDATRFieldsLegal('001101', '010', TRUE);
     assert BundleFPATRDATRFieldsLegal('000001', Zeros{3}, FALSE);
-    assert BundleFPATRDATRFieldsLegal('000001', '111', TRUE);
+    assert !BundleFPATRDATRFieldsLegal('000001', '111', TRUE);
+    assert BundleFPATRDATRFieldsLegal('000011', '111', TRUE);
     assert BundleFPATROutputType('010001') == TileDataType_S4X2;
     assert BundleFPATROutputType('011010') == TileDataType_E4M3;
     // Complete accepted PreQuant table, parameter routing, and destination

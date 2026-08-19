@@ -2,9 +2,10 @@
 // Bit-exact numeric helpers for B.FPATR matrix post-processing.
 // NDF-BEGIN: PTO-MATRIX-QUANT-BITEXACT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
-// Matrix PreQuant MUST multiply by the selected FP19 scale, add an assigned
-// signed offset before rounding, and apply B.DATR rounding and saturation.
-// Shift modes MUST perform their assigned one-through-sixteen-bit ASR.
+// Matrix PreQuant MUST multiply by the selected FP19 scale, round and
+// saturate at an assigned S5, S9, or S17 intermediate, add the signed offset,
+// and only then apply final destination encoding. Shift modes MUST perform
+// their assigned one-through-sixteen-bit ASR and saturate its S16 result.
 // NDF-END: PTO-MATRIX-QUANT-BITEXACT-001
 
 pure func MatrixQuantParameter(fp19: bits(19), offset: Word,
@@ -64,6 +65,46 @@ begin
         value, MatrixMagnitudeRoundingMode(mode, negative));
 end;
 
+func MatrixRoundAndSaturateSigned(
+    value: real, width: integer {5,9,17},
+    rounding_mode: NumericRoundingMode)
+    => (integer {-65536..65535}, bits(5))
+begin
+    let rounded = FloatingToInteger(value, rounding_mode);
+    let minimum = if width == 5 then -16
+        else if width == 9 then -256
+        else -65536;
+    let maximum = if width == 5 then 15
+        else if width == 9 then 255
+        else 65535;
+    let overflow = rounded < minimum || rounded > maximum;
+    var selected = rounded;
+    if selected < minimum then selected = minimum;
+    elsif selected > maximum then selected = maximum;
+    end;
+    let flags = if overflow then Zeros{5} + 0x14
+        else if Real(rounded) != value then Zeros{5} + 0x10
+        else Zeros{5};
+    return (
+        selected as integer {-65536..65535},
+        flags);
+end;
+
+func MatrixShiftS32ToS16(
+    value: bits(32), shift: integer {1..16}) => (Word, bits(5))
+begin
+    let shifted = SInt(ASR(value, shift));
+    if shifted < -32768 then
+        return (Zeros{PTO_XLEN} + 0xffffffffffff8000,
+                Zeros{5} + 0x14);
+    elsif shifted > 32767 then
+        return (Zeros{PTO_XLEN} + 0x7fff, Zeros{5} + 0x14);
+    end;
+    return (
+        SignExtend{PTO_XLEN}(Zeros{16} + shifted),
+        Zeros{5});
+end;
+
 func ReferenceMatrixIntegerEncoding(
     value: real, destination_type: TileDataType,
     control: NumericExecutionControl) => (Word, bits(5))
@@ -87,6 +128,25 @@ begin
         NormalizeTileInteger(Zeros{PTO_XLEN} + selected,
             destination_type),
         flags);
+end;
+
+func MatrixQuantizedAffine(
+    value: real, scale: real, offset: integer,
+    intermediate_width: integer {0,5,9,17},
+    output_type: TileDataType,
+    control: NumericExecutionControl) => (Word, bits(5))
+begin
+    if intermediate_width == 0 then
+        return ReferenceMatrixIntegerEncoding(
+            value * scale + Real(offset), output_type, control);
+    end;
+    let width = intermediate_width as integer {5,9,17};
+    let (intermediate, intermediate_flags) =
+        MatrixRoundAndSaturateSigned(
+            value * scale, width, control.rounding_mode);
+    let (encoded, final_flags) = ReferenceMatrixIntegerEncoding(
+        Real(intermediate + offset), output_type, control);
+    return (encoded, intermediate_flags OR final_flags);
 end;
 
 func ReferenceBinary16Encoding(

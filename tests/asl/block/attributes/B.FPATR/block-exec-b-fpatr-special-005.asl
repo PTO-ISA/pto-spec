@@ -56,5 +56,48 @@ begin
             Zeros{PTO_XLEN}, control);
     assert nan_e4m3 == Zeros{PTO_XLEN} + 0x7f;
     assert nan_e4m3_flags == Zeros{5};
+
+    let scale_one_no_offset = MatrixQuantParameter(
+        FP32ToFP19(Zeros{PTO_XLEN} + 0x3f800000),
+        Zeros{PTO_XLEN}, 0);
+    let (sat_qnan_fp16, sat_qnan_fp16_flags) =
+        TileProfileMatrixPostProcessWithFlags(
+            Zeros{PTO_XLEN} + 0x7fc00000,
+            '100000', Zeros{3}, Zeros{4}, TileDataType_FP16,
+            scale_one_no_offset, Zeros{PTO_XLEN}, saturating);
+    assert sat_qnan_fp16 == Zeros{PTO_XLEN};
+    assert sat_qnan_fp16_flags == Zeros{5};
+
+    let (sat_snan_fp16, sat_snan_fp16_flags) =
+        TileProfileMatrixPostProcessWithFlags(
+            Zeros{PTO_XLEN} + 0x7f800001,
+            '100000', Zeros{3}, Zeros{4}, TileDataType_FP16,
+            scale_one_no_offset, Zeros{PTO_XLEN}, saturating);
+    assert sat_snan_fp16 == Zeros{PTO_XLEN};
+    assert sat_snan_fp16_flags == Zeros{5} + 1;
+
+    let (sat_positive_inf_fp16, sat_positive_inf_fp16_flags) =
+        TileProfileMatrixPostProcessWithFlags(
+            Zeros{PTO_XLEN} + 0x7f800000,
+            '100000', Zeros{3}, Zeros{4}, TileDataType_FP16,
+            scale_one_no_offset, Zeros{PTO_XLEN}, saturating);
+    assert sat_positive_inf_fp16 == Zeros{PTO_XLEN} + 0x7bff;
+    assert sat_positive_inf_fp16_flags == Zeros{5} + 0x14;
+
+    let (plain_qnan_fp16, plain_qnan_fp16_flags) =
+        TileProfileMatrixPostProcessWithFlags(
+            Zeros{PTO_XLEN} + 0x7fc00000,
+            '100000', Zeros{3}, Zeros{4}, TileDataType_FP16,
+            scale_one_no_offset, Zeros{PTO_XLEN}, control);
+    assert plain_qnan_fp16 == Zeros{PTO_XLEN} + 0x7e00;
+    assert plain_qnan_fp16_flags == Zeros{5};
+
+    let (plain_qnan_hif8, plain_qnan_hif8_flags) =
+        TileProfileMatrixPostProcessWithFlags(
+            Zeros{PTO_XLEN} + 0x7fc00000,
+            '011001', Zeros{3}, Zeros{4}, TileDataType_HiF8,
+            scale_one_no_offset, Zeros{PTO_XLEN}, control);
+    assert plain_qnan_hif8 == Zeros{PTO_XLEN} + 0x80;
+    assert plain_qnan_hif8_flags == Zeros{5};
     return 0;
 end;

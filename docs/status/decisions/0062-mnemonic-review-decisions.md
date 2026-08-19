@@ -4211,27 +4211,30 @@ Matrix RowMax and GroupMax consume the complete raw accumulator result before
 destination conversion or activation. `MaxAbsEn` and `RowMaxInit` affect this
 raw-accumulator reduction stage. PreQuant then converts only the primary `D`
 result, and the selected ReLU, scalar LReLU/PReLU, or vector PReLU operation
-applies to the converted `D` elements.
+selects the positive or negative path multiplier before the single destination
+conversion of each `D` element.
 
 PreQuant and activation do not alter RowMaxOut or GroupMaxOut. Those auxiliary
 outputs retain the accumulator data type and format. The processed `D` and all
 enabled auxiliary outputs are prepared from the same pre-commit state and
 published as one atomic output group.
 
-## PRD-176: B.FPATR activation is bit-exact in the converted destination domain
+## PRD-176: B.FPATR activation selects the pre-conversion multiplier
 
-`ReluMode=1` applies `max(x, +0)` to the converted destination value in the
-selected destination data type. Scalar LReLU/PReLU and per-column vector PReLU
-leave nonnegative converted values unchanged. For a negative converted value,
-they decode that value, multiply it by the selected FP19 parameter, and
-re-encode the product to the destination data type using the same
-`B.DATR.RMode` and `B.DATR.Sat` controls as destination conversion.
+For a nonnegative raw accumulator, the ordinary quantization scale is the
+selected multiplier. For a negative raw accumulator, no activation selects
+the ordinary quantization scale, `ReluMode=1` selects zero, and scalar or
+per-column LReLU/PReLU selects its FP19 activation parameter. The selected
+multiplier is applied before the mode's intermediate and destination
+conversion; activation never decodes and re-encodes an already rounded
+destination value.
 
 The scalar mode obtains one finite nonnegative FP19 parameter from the assigned
 dense B.IOR source. The vector mode obtains one such FP19 parameter per
-destination column from the assigned `1 x N` Local parameter Tile. A NaN input
-produces the numeric profile's canonical NaN and does not participate in an
-ordered comparison with zero.
+destination column from the assigned `1 x N` Local parameter Tile. An
+activation parameter replaces, rather than multiplies, the negative-path
+quantization scale. NaN does not participate in an ordered comparison with
+zero.
 
 ## PRD-177: B.FPATR scalar and vector quantization use multiplicative scales
 
@@ -4240,23 +4243,25 @@ one scalar scale. A vector-parameter mode multiplies each element by the scale
 selected by its destination column from the assigned `1 x N` parameter Tile.
 No assigned scale mode interprets the parameter as a divisor.
 
-For an integer-output mode whose parameter carrier includes an offset or
-zero-point, the offset is added after scale multiplication and before rounding.
-The result is then encoded using the selected `B.DATR.RMode` and
-`B.DATR.Sat`. The two S32-to-S16 shift modes are the exception: they perform
-the assigned signed arithmetic right shift and do not consume a multiplicative
-scale.
+For an integer-output mode whose parameter carrier includes an offset, the
+scaled value is rounded and saturated to the assigned S5, S9, or S17
+intermediate before adding that signed offset. Final destination encoding then
+uses the selected `B.DATR.Sat` clamp/wrap rule. The two S32-to-S16 shift modes
+perform the assigned signed arithmetic right shift and saturate the S16 result;
+they do not consume a multiplicative scale.
 
 ## PRD-178: B.FPATR integer saturation control distinguishes clamp from wrap
 
-For every integer destination format, `B.DATR.Sat=1` clamps the rounded result
+After every required intermediate saturation, `B.DATR.Sat=1` clamps the result
 to the minimum or maximum representable destination value. `B.DATR.Sat=0`
 does not clamp an ordinary finite overflow; it truncates the rounded integer to
 the destination element width, producing the corresponding modulo-`2^N`
 two's-complement or unsigned encoding.
 
-The same clamp-versus-wrap rule applies when scalar LReLU/PReLU or vector PReLU
-re-encodes its negative-path product to an integer destination type.
+Fixed shift modes already produce a saturated S16 result and reject an encoded
+Sat request. Scalar LReLU/PReLU and vector PReLU participate at the same
+pre-conversion intermediate point rather than performing a second destination
+encoding.
 
 ## PRD-179: B.FPATR PreQuant codes retain one closed source, destination, and parameter table
 
@@ -4301,18 +4306,21 @@ arithmetic right shift by one through sixteen bits.
 
 FP19 uses one sign bit, an eight-bit exponent with bias 127, and a ten-bit
 fraction. It preserves signed zero and gradual subnormals and assigns IEEE-like
-infinity and NaN classes. A quantization scale MUST be positive, finite, and
-nonzero. Scalar parameters use B.IOR; vector parameters use one row-major
-`1 x N` U64 carrier Tile and select the element for the destination column.
-Unused carrier bits MUST be zero.
+infinity and NaN classes as values, but B.FPATR parameter legality is narrower.
+A quantization scale MUST be positive normal. An activation parameter MUST be
+positive zero or positive normal. Subnormal, infinite, NaN, negative, or
+nonzero-unused-bit carriers reject before effects. Scalar parameters use B.IOR;
+vector parameters use one row-major `1 x N` U64 carrier Tile and select the
+element for the destination column.
 
 Signed integer offsets are two's-complement values at their assigned 5-, 9-,
 or 17-bit width. For float-to-integer special values, `Sat=0` uses the common
 destination indefinite encoding and records invalid status. `Sat=1` converts
 NaN to zero and clamps positive or negative infinity to the corresponding
 destination endpoint; NaN records invalid and infinity records overflow plus
-inexact status. Floating destinations produce the canonical quiet NaN; a
-signaling NaN additionally records invalid status.
+inexact status. With `Sat=1`, floating NaN produces zero; with `Sat=0`, it
+produces the destination canonical quiet NaN. A signaling NaN additionally
+records invalid status in either case.
 
 Floating finite results preserve subnormals with tininess detected after
 rounding. On floating overflow, `Sat=1` returns the largest finite value with
