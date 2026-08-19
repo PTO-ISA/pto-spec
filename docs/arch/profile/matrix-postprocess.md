@@ -174,9 +174,8 @@ begin
     end;
     if BundleFPATRModeIsShift(pre_quant_mode) then
         let shift = UInt(quant_param[35:32]) + 1;
-        let shifted = ASR(value[31:0], shift);
-        return ReferenceMatrixIntegerEncoding(
-            Real(SInt(shifted)), output_type, control);
+        return MatrixShiftS32ToS16(
+            value[31:0], shift as integer {1..16});
     end;
 
     let source_type = if BundleFPATRModeUsesS32Accumulator(
@@ -197,6 +196,13 @@ begin
         1.0;
     let offset = MatrixQuantOffset(
         quant_param, BundleFPATRModeOffsetWidth(pre_quant_mode));
+    let intermediate_width =
+        BundleFPATRModeOffsetWidth(pre_quant_mode);
+    if intermediate_width != 0 then
+        return MatrixQuantizedAffine(
+            source_value, scale, offset, intermediate_width,
+            output_type, control);
+    end;
     return MatrixEncodeReal(
         source_value * scale + Real(offset), output_type, control);
 end;
