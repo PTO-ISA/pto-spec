@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-STAGE4-CARRIER-001","source":"asl/tile/model/execution/elementwise.asl","requirements":[],"kind":"execution","summary":"Stage 4 carrier bitwise and select operations preserve raw non-packed payloads","pass_condition":"BW32-NP legality, low-width scalar normalization, raw invalid patterns, and numeric rejection all hold","related_sources":["asl/tile/model/legality/dtype-layout.asl","asl/tile/model/legality/operand-schema.asl","asl/tile/model/execution/comparison.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-STAGE4-CARRIER-001","source":"asl/tile/model/execution/elementwise.asl","requirements":[],"kind":"execution","summary":"integer logical operations and exact selection preserve their assigned carriers","pass_condition":"U32 AND/XOR use raw width-limited payloads, TSEL copies an FP32 carrier exactly, and invalid TF32 arithmetic preflight rejects","related_sources":["asl/tile/model/legality/dtype-layout.asl","asl/tile/model/legality/operand-schema.asl","asl/tile/model/execution/comparison.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -16,7 +16,7 @@ begin
 
     for index = 0 to 2 looplimit 3 do
         ConfigureTile(index as TileIndex, 128, 1, 1, 1, 1,
-            TileDataType_FP32, TileLayout_RowMajor, TileLocation_Any);
+            TileDataType_U32, TileLayout_RowMajor, TileLocation_Any);
     end;
     let invalid_left = Zeros{PTO_XLEN} + 0x3f800001;
     let invalid_right = Zeros{PTO_XLEN} + 0x00ff00f0;
@@ -28,7 +28,7 @@ begin
     assert ReadTileElement(2, 0, 0) ==
         Zeros{PTO_XLEN} + 0x00800000;
 
-    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_FP32,
+    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     assert TileOperandsLegal_ExecuteTileScalar(
         TileBinary_XOR, 3, 0, Zeros{PTO_XLEN} + 0xffffffff);
@@ -40,19 +40,21 @@ begin
     ConfigurePredicateTile(4, 128, 32, 1, 1, 1);
     ConfigureTile(5, 128, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTile(6, 128, 1, 1, 1, 1, TileDataType_FP32,
+        TileLayout_RowMajor, TileLocation_Any);
     WriteTilePredicateBit(4, 0, 0, TRUE);
     WriteTileElement(5, 0, 0, invalid_left);
     assert TileOperandsLegal_ExecuteTileSelectScalar(
-        3, 4, 5, Zeros{PTO_XLEN} + 0x12345678);
-    ExecuteTileSelectScalar(3, 4, 5, Zeros{PTO_XLEN} + 0x12345678);
-    assert ReadTileElement(3, 0, 0) == invalid_left;
+        6, 4, 5, Zeros{PTO_XLEN} + 0x12345678);
+    ExecuteTileSelectScalar(6, 4, 5, Zeros{PTO_XLEN} + 0x12345678);
+    assert ReadTileElement(6, 0, 0) == invalid_left;
 
-    for index = 6 to 7 looplimit 2 do
+    for index = 7 to 8 looplimit 2 do
         ConfigureTile(index as TileIndex, 128, 1, 1, 1, 1,
             TileDataType_TF32, TileLayout_RowMajor, TileLocation_Any);
     end;
-    WriteTileElement(7, 0, 0, invalid_left);
-    assert !InstructionContractOperandsLegal_TRELU(6, 7);
-    assert !_Tiles[[6]].contents_defined;
+    WriteTileElement(8, 0, 0, invalid_left);
+    assert !InstructionContractOperandsLegal_TRELU(7, 8);
+    assert !_Tiles[[7]].contents_defined;
     return 0;
 end;

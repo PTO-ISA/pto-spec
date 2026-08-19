@@ -5,8 +5,8 @@ begin
     assert InstructionContractDataTypeLegal_TRELU(TileDataType_FP16);
     assert InstructionContractDataTypeLegal_TRELU(TileDataType_BF16);
     assert InstructionContractDataTypeLegal_TRELU(TileDataType_S32);
-    assert !InstructionContractDataTypeLegal_TRELU(TileDataType_S16);
-    assert !InstructionContractDataTypeLegal_TRELU(TileDataType_FP64);
+    assert InstructionContractDataTypeLegal_TRELU(TileDataType_S16);
+    assert InstructionContractDataTypeLegal_TRELU(TileDataType_FP64);
     assert !InstructionContractDataTypeLegal_TRELU(TileDataType_E8M0);
     assert !InstructionContractDataTypeLegal_TRELU(TileDataType_S4X2);
     return 0;

@@ -4,9 +4,9 @@ begin
     assert InstructionContractDataTypeLegal_TABS(TileDataType_FP32);
     assert InstructionContractDataTypeLegal_TABS(TileDataType_FP16);
     assert InstructionContractDataTypeLegal_TABS(TileDataType_BF16);
-    assert !InstructionContractDataTypeLegal_TABS(TileDataType_FP64);
-    assert !InstructionContractDataTypeLegal_TABS(TileDataType_S32);
-    assert !InstructionContractDataTypeLegal_TABS(TileDataType_U8);
+    assert InstructionContractDataTypeLegal_TABS(TileDataType_FP64);
+    assert InstructionContractDataTypeLegal_TABS(TileDataType_S32);
+    assert InstructionContractDataTypeLegal_TABS(TileDataType_U8);
     assert !InstructionContractDataTypeLegal_TABS(TileDataType_HiF8);
     assert !InstructionContractDataTypeLegal_TABS(TileDataType_U4X2);
     return 0;

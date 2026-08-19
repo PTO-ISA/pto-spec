@@ -7,8 +7,8 @@ begin
     assert InstructionContractDataTypeLegal_TNEG(TileDataType_S32);
     assert InstructionContractDataTypeLegal_TNEG(TileDataType_S16);
     assert InstructionContractDataTypeLegal_TNEG(TileDataType_S8);
-    assert !InstructionContractDataTypeLegal_TNEG(TileDataType_U32);
-    assert !InstructionContractDataTypeLegal_TNEG(TileDataType_FP64);
+    assert InstructionContractDataTypeLegal_TNEG(TileDataType_U32);
+    assert InstructionContractDataTypeLegal_TNEG(TileDataType_FP64);
     assert !InstructionContractDataTypeLegal_TNEG(TileDataType_HiF8);
     assert !InstructionContractDataTypeLegal_TNEG(TileDataType_S4X2);
     return 0;

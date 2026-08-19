@@ -7,11 +7,11 @@ begin
         TileDataType_FP16);
     assert InstructionContractDataTypeLegal_TEXP(
         TileDataType_BF16);
-    assert !InstructionContractDataTypeLegal_TEXP(
+    assert InstructionContractDataTypeLegal_TEXP(
         TileDataType_FP64);
-    assert !InstructionContractDataTypeLegal_TEXP(
+    assert InstructionContractDataTypeLegal_TEXP(
         TileDataType_E4M3);
-    assert !InstructionContractDataTypeLegal_TEXP(
+    assert InstructionContractDataTypeLegal_TEXP(
         TileDataType_E5M2);
     assert !InstructionContractDataTypeLegal_TEXP(
         TileDataType_U64);

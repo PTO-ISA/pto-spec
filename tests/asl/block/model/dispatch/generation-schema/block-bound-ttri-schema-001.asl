@@ -10,9 +10,15 @@ end;
 
 func main() => integer
 begin
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_BF16);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_S8);
-    assert InstructionContractDataTypeLegal_TTRI(TileDataType_U8);
+    assert InstructionContractDataTypeLegal_TTRI(TileDataType_FP32);
+    assert InstructionContractDataTypeLegal_TTRI(TileDataType_FP16);
+    assert InstructionContractDataTypeLegal_TTRI(TileDataType_S32);
+    assert InstructionContractDataTypeLegal_TTRI(TileDataType_S16);
+    assert InstructionContractDataTypeLegal_TTRI(TileDataType_U32);
+    assert InstructionContractDataTypeLegal_TTRI(TileDataType_U16);
+    assert !InstructionContractDataTypeLegal_TTRI(TileDataType_BF16);
+    assert !InstructionContractDataTypeLegal_TTRI(TileDataType_S8);
+    assert !InstructionContractDataTypeLegal_TTRI(TileDataType_U8);
     assert !InstructionContractDataTypeLegal_TTRI(TileDataType_FP64);
     ResetProfileState();
     let started = ExecuteCommandInstruction(TTRISchemaStart(), 32);
