@@ -62,6 +62,8 @@ readonly func SharedTileDescriptorsCompatible(left: TileInfo,
                                                right: TileInfo) => boolean
 begin
     return left.allocated && right.allocated &&
+           !TileLayoutIsCube(left.layout) &&
+           !TileLayoutIsCube(right.layout) &&
            left.capacity_bytes == right.capacity_bytes &&
            left.rows == right.rows && left.columns == right.columns &&
            left.valid_rows == right.valid_rows &&
@@ -78,7 +80,8 @@ readonly func SharedTileUpdateCompatible(shared_id: bits(8), tile: TileInfo,
                                           pe_mask: bits(4)) => boolean
 begin
     if pe_mask == Zeros{4} then return TRUE; end;
-    if !TileCapacityIsLegal(tile.capacity_bytes) ||
+    if TileLayoutIsCube(tile.layout) ||
+       !TileCapacityIsLegal(tile.capacity_bytes) ||
        !TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
                                  tile.columns, tile.data_type) ||
        tile.valid_rows > tile.rows ||
@@ -155,6 +158,7 @@ readonly func SharedTileReadSchemaLegalAtCapacity(
     data_type: TileDataType, layout: TileLayout,
     capacity_bytes: integer {0..262144}) => boolean
 begin
+    if TileLayoutIsCube(layout) then return FALSE; end;
     let shared = SharedTileRecord(shared_id);
     if shared.descriptor_valid then
         return SharedTileDescriptorLegal(shared_id) &&

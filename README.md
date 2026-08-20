@@ -38,7 +38,7 @@ normative ASL -> generated Markdown mirror -> independent AVS points -> release 
 
 The current executable inventory contains 466 scalar forms, 74 active block
 forms, 109 direct Tile operations, and 40 occupied extension reservations.
-Release traceability covers 834 ASL units, 834 generated pages, 3277
+Release traceability covers 834 ASL units, 834 generated pages, 3278
 independently runnable AVS points, and 636 executable mnemonic requirements.
 Detailed numeric, model-comparison, and release-gate ledgers stay
 machine-readable under [`spec/evidence/`](spec/evidence/) instead of being
