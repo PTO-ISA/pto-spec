@@ -866,6 +866,7 @@ nav:
           - Ordering:
               - Sorting: tile/model/ordering/sorting.md
           - Shape:
+              - CUBE Cell: tile/model/shape/cube-cell.md
               - Rows Columns: tile/model/shape/rows-columns.md
               - Valid Region: tile/model/shape/valid-region.md
           - State:
@@ -992,5 +993,6 @@ nav:
           - "ADR 0066: ADDTPC page-scaled immediate": status/decisions/0066-addtpc-page-scaled-immediate.md
           - "ADR 0067: conditional branch extension reservation": status/decisions/0067-conditional-branch-extension-reservation.md
           - "ADR 0068: Extension first-use is a target-profile hook": status/decisions/0068-extension-first-use-profile-hook.md
+          - "ADR 0069: Local CUBE CELL State and Geometry": status/decisions/0069-local-cube-cell-state-and-geometry.md
       - Open:
           - "Open architecture questions": status/open/index.md

@@ -63,6 +63,10 @@ begin
         _Tiles[[index]].data_type = TileDataType_U64;
         _Tiles[[index]].layout = TileLayout_RowMajor;
         _Tiles[[index]].location = TileLocation_Any;
+        _Tiles[[index]].cube_k_repeat = 0;
+        _Tiles[[index]].cube_n_repeat = 0;
+        _Tiles[[index]].cube_cell_count = 0;
+        _Tiles[[index]].cube_storage_bytes = 0;
     end;
     for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
         _SharedTiles[[index]].descriptor_valid = FALSE;
@@ -74,6 +78,10 @@ begin
         _SharedTiles[[index]].tile.defined_elements =
             Zeros{PTO_MODEL_TILE_ELEMENTS};
         _SharedTiles[[index]].tile.defined_valid_elements = 0;
+        _SharedTiles[[index]].tile.cube_k_repeat = 0;
+        _SharedTiles[[index]].tile.cube_n_repeat = 0;
+        _SharedTiles[[index]].tile.cube_cell_count = 0;
+        _SharedTiles[[index]].tile.cube_storage_bytes = 0;
     end;
     _PC = Zeros{PTO_XLEN};
     _BPC = Zeros{PTO_XLEN};

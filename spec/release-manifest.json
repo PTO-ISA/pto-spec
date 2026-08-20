@@ -114,7 +114,7 @@
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
-      "sha256": "a75d0210fb96b92c7b282d341ec992935be922761c679504f7eb6a6e85c50d94"
+      "sha256": "87b579e392c0fbff4640f031da3fee6395ffef922344d7d90b4e39188bd6a780"
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
@@ -210,7 +210,7 @@
     },
     {
       "path": "asl/arch/profile/reset.asl",
-      "sha256": "4f3453ee329ea5a45352ce98d17d5cf776a1b0e95aa7290e0f6317b38147d53a"
+      "sha256": "a118a9805cfaf30d5a6d462c4b7a909b4d4f01b4b3232bff4e6cb761e001c2fe"
     },
     {
       "path": "asl/arch/profile/trap-context-recovery.asl",
@@ -2930,7 +2930,7 @@
     },
     {
       "path": "asl/tile/model/definedness/elements.asl",
-      "sha256": "294897f7636326315ceb15d044b29bd4466809c2e270ca56f350f4890fc56e65"
+      "sha256": "10e85159f7524fdec933c22c4d8e761dc5f3a1824e72bf6ced79113468f7a064"
     },
     {
       "path": "asl/tile/model/dispatch/elementwise-tile-tile.asl",
@@ -3030,7 +3030,7 @@
     },
     {
       "path": "asl/tile/model/legality/descriptor-shape.asl",
-      "sha256": "17c3fe408037f105e543bfd6e53d78c6ea54faa8f62791c92ed09f5baeafae7d"
+      "sha256": "21413b218b8a6cf283ee1629cb1df6a1b1ed257ab67c5f9e833e0a4bffab5224"
     },
     {
       "path": "asl/tile/model/legality/dtype-layout.asl",
@@ -3110,7 +3110,7 @@
     },
     {
       "path": "asl/tile/model/memory/shared-movement.asl",
-      "sha256": "f4bf60146fdf6fae5e0dc5d98fd1aff603ca4e60dc33b4cdf8cf51c3099e48ef"
+      "sha256": "c653fd93e37f78ce1b8074eeb143404086b46df40688ff27c8ce9aff2014384c"
     },
     {
       "path": "asl/tile/model/memory/stride.asl",
@@ -3133,6 +3133,10 @@
       "sha256": "c20e8a211ee05a0981cc19139ebfe03bb3d94998a49cda8e04e55e282dd168ca"
     },
     {
+      "path": "asl/tile/model/shape/cube-cell.asl",
+      "sha256": "6aff8163d26b043ebd442e3313635c565d624c7e3b01b4c935b802276f9e26af"
+    },
+    {
       "path": "asl/tile/model/shape/rows-columns.asl",
       "sha256": "b88e329ffc836c8df374dbb848df723f6cd78710c2f5b631a2646b07952a8c11"
     },
@@ -3142,7 +3146,7 @@
     },
     {
       "path": "asl/tile/model/state/allocation.asl",
-      "sha256": "31ea58b2f8f4e038e3585fb225b7646dc3827e85bf93ab26740f17abc42cf94d"
+      "sha256": "cd1dbc6453bb220562218fc2f29071985c8e2b5ab29d6ab51a203f0d950877d3"
     },
     {
       "path": "asl/tile/model/state/descriptors.asl",
@@ -3158,11 +3162,11 @@
     },
     {
       "path": "asl/tile/model/state/shared-registers.asl",
-      "sha256": "802845b801e30cd593d2961487e9c2a398e48dd6d73f6cc0e7435dee0965a1bc"
+      "sha256": "955b0a82999b49e090e66a7ead2d5c33129c2e1c50dbcf77170ad452c91ea383"
     },
     {
       "path": "asl/tile/model/state/types.asl",
-      "sha256": "e68ecee54fd5d5c959b40c17c793f8232e8b8d75a945bb1ea0b291f00bfbfaa2"
+      "sha256": "56c82ca1af4faab45b34204e031cace44966a435ee836ebadcf571e22d8073aa"
     },
     {
       "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl",
@@ -3370,11 +3374,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "99a65d31d9cde5ab698277ca507215870574b27075f80b35141a2106f3c6140a"
+      "sha256": "3284ae7845a481c58fe40870abf50eb507be14c02447afab6778ed932167a92f"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "375a5d098c70906f04509bbbf0c0ed6b57e3bcfe524a4b9164f9afcdd515b215"
+      "sha256": "c981c6f3c36e210a65b2b58c3cc2066b7b0231246c4cdcdc928abbc1d8f62e00"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3412,7 +3416,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "431d3e582ca7608b43feb8f2fdda38dd67e291a56c85a94fc9301abdb25b2e5d",
+  "content_sha256": "c6895a28a44eabb1e142609c1d206fb46e992109fbdbb5ea529bef0ec4e6fe05",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3584,7 +3588,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/tile-data-types.md",
-      "sha256": "5582220af259a0a15ed88f3f9eb8bca10dd573227e7af8c00ad14feef3892c67"
+      "sha256": "aab157ed3ed4d766fd02e02de4b822a60ed98616c0c35647a3cb3d2db4818466"
     },
     {
       "kind": "generated-documentation",
@@ -3704,7 +3708,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reset.md",
-      "sha256": "7851d7b316b0399345777ff31a5340a5e94726759c4d60191c0f9f6135b3b1bf"
+      "sha256": "ee35577b877378421f36086b275c41d71bada773250d06e34a8baa183b5f94ca"
     },
     {
       "kind": "generated-documentation",
@@ -7104,7 +7108,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/definedness/elements.md",
-      "sha256": "5d15d0e731ec65eb7f6884630fe398c3e5332435f33932e6cc0e087972eda1e3"
+      "sha256": "abf40567ac0f6f4075b2b505cb4265680b8b1f5c32c15671a5d593e17175ed26"
     },
     {
       "kind": "generated-documentation",
@@ -7229,7 +7233,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/descriptor-shape.md",
-      "sha256": "1b03de3776cf3fc2d3f37e307ca217e2f3db9468388811e93ba3e74e91087d42"
+      "sha256": "a7d3a6656647c50c829bb2851da709d9d90fd69bd3c1c864f0799a6f60ccff22"
     },
     {
       "kind": "generated-documentation",
@@ -7329,7 +7333,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/shared-movement.md",
-      "sha256": "42fbe4c24986c1354f3675613de924295a76ec0021675d47613798774680c575"
+      "sha256": "d876def38bb56d0a02f9205fb68eed8dc8e71218fe73de25c041c09f98f650e7"
     },
     {
       "kind": "generated-documentation",
@@ -7358,6 +7362,11 @@
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/tile/model/shape/cube-cell.md",
+      "sha256": "f6e6c27dbebbd602f3e9136f83e1d61b2fba3a80c490adeab471f2a89a2bb32d"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/tile/model/shape/rows-columns.md",
       "sha256": "c5e638005c63d8874e85c4b26337e3e5ff7bf6f5a43d041b014df813468d43fa"
     },
@@ -7369,7 +7378,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/allocation.md",
-      "sha256": "9e394cef069964ce0f8a1481f1c737a0a745c12018aef83ed6b3607451a0845f"
+      "sha256": "414ae9f914e27c56fbb094459adbd9944d458a4db879797896beb1b73fdbc7ee"
     },
     {
       "kind": "generated-documentation",
@@ -7389,12 +7398,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/shared-registers.md",
-      "sha256": "bfc053df259c615964a53004ac996ca7758a105a780c9d36334411fa489b5b4b"
+      "sha256": "e6151540eb55e895694297bf776167c61fc0493abc1e4870ace9676906f0e9b8"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/types.md",
-      "sha256": "1b6da0af4f8c402f10a8034f7dcfa9d999fcd34220f8dfd1f3cafb816cd06a3c"
+      "sha256": "a65b5291cd5c6ac558c8d0d12787b1062883f3b2108c847dbd7191539c47cdda"
     },
     {
       "kind": "generated-documentation",
