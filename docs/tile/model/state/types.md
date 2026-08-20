@@ -184,6 +184,10 @@ type TileInfo of record {
     data_type: TileDataType,
     layout: TileLayout,
     location: TileLocation,
+    cube_k_repeat: integer {0..65535},
+    cube_n_repeat: integer {0..8192},
+    cube_cell_count: integer {0..16384},
+    cube_storage_bytes: integer {0..262144},
     payload: TilePayload
 };
 

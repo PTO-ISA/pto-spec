@@ -67,7 +67,11 @@ begin
            left.valid_rows == right.valid_rows &&
            left.valid_columns == right.valid_columns &&
            left.data_type == right.data_type &&
-           left.layout == right.layout && left.location == right.location;
+           left.layout == right.layout && left.location == right.location &&
+           left.cube_k_repeat == right.cube_k_repeat &&
+           left.cube_n_repeat == right.cube_n_repeat &&
+           left.cube_cell_count == right.cube_cell_count &&
+           left.cube_storage_bytes == right.cube_storage_bytes;
 end;
 
 readonly func SharedTileUpdateCompatible(shared_id: bits(8), tile: TileInfo,
@@ -214,6 +218,10 @@ begin
     tile.data_type = data_type;
     tile.layout = layout;
     tile.location = TileLocation_Any;
+    tile.cube_k_repeat = 0;
+    tile.cube_n_repeat = 0;
+    tile.cube_cell_count = 0;
+    tile.cube_storage_bytes = 0;
     return tile;
 end;
 
@@ -238,6 +246,10 @@ begin
     tile.data_type = data_type;
     tile.layout = layout;
     tile.location = TileLocation_Any;
+    tile.cube_k_repeat = 0;
+    tile.cube_n_repeat = 0;
+    tile.cube_cell_count = 0;
+    tile.cube_storage_bytes = 0;
     return tile;
 end;
 

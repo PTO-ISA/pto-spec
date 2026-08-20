@@ -120,6 +120,10 @@ begin
     tile.data_type = data_type;
     tile.layout = layout;
     tile.location = TileLocation_Any;
+    tile.cube_k_repeat = 0;
+    tile.cube_n_repeat = 0;
+    tile.cube_cell_count = 0;
+    tile.cube_storage_bytes = 0;
     if !SharedTileUpdateCompatible(shared_id, tile, pe_mask) then
         SetFault(Fault_TileLegality, ReadTPC());
         return;

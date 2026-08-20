@@ -152,6 +152,9 @@ type TileLayout of enumeration {
     TileLayout_ColumnMajor,
     TileLayout_ZN,
     TileLayout_NZ,
+    TileLayout_CUBE_M16,
+    TileLayout_CUBE_M32,
+    TileLayout_CUBE_N8,
     // Non-architectural model fixtures may use this value to prove that
     // generic execution rejects an opaque implementation layout.  No
     // assigned B.DATR Layout code maps to it.
