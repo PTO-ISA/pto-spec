@@ -68,8 +68,8 @@ B.DIM LB0 M (optional, default 1)
 B.DIM LB1 N (optional, default 1)
 B.DIM LB2 K (optional, default 1)
 B.IOS complete right or both matrix operand groups (optional; executing mask 1111)
-B.IOT ordered Local mathematical sources: C accumulator, A matrix, optional A scale, B matrix, optional B scale
-B.IOT D, optional RowMaxOut, optional GroupMaxOut destinations
+B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale
+B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations
 B.IOT/B.IOR postprocess operands selected by B.FPATR
 BSTOP or the next BSTART completion boundary
 ```
@@ -120,10 +120,12 @@ end;
 - Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.
 - Omitted LB0, LB1, and LB2 default M, N, and K independently to one.
 - Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.
+- Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.
 
 ## Legality
 
 - The carrier selects exactly CUBE Function 6 and TileOperation_TMATMUL_MX_ACC.
+- Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.
 - Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. C is one explicit Local MxN accumulator source and D is a newly published destination; C and D may use one architectural Tile name. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.
 - Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.
 - B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema.
@@ -132,6 +134,7 @@ end;
 
 - Multiply scaled matrices and accumulate into the supplied accumulator Tile.
 - After complete preflight, execute TMATMUL_MX_ACC with the operand bindings listed above; destination definedness changes only as specified by that handler.
+- For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.
 
 ## Memory effects and ordering
 
@@ -152,7 +155,7 @@ end;
 
 ## Examples
 
-- BSTART.TMATMULMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: C accumulator, A matrix, optional A scale, B matrix, optional B scale; B.IOT D, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
+- BSTART.TMATMULMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

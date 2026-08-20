@@ -16,13 +16,11 @@ readonly func TileMatrixShapeLegal(left: TileIndex,
                                    right: TileIndex) => boolean
 begin
     return BundleTileOperationSelected() &&
-           TileSourceContentsDefined(left) &&
-           TileSourceContentsDefined(right) &&
-           IsNonzeroPowerOfTwo(_Tiles[[left]].valid_rows) &&
-           IsNonzeroPowerOfTwo(_Tiles[[left]].valid_columns) &&
-           IsNonzeroPowerOfTwo(_Tiles[[right]].valid_rows) &&
-           IsNonzeroPowerOfTwo(_Tiles[[right]].valid_columns) &&
-           _Tiles[[left]].valid_columns == _Tiles[[right]].valid_rows &&
+           TileMatrixCubeInfosMatchDimensions(
+               _Tiles[[left]], _Tiles[[right]],
+               _Tiles[[left]].valid_rows,
+               _Tiles[[right]].valid_columns,
+               _Tiles[[left]].valid_columns) &&
            _Tiles[[left]].valid_rows * _Tiles[[right]].valid_columns <=
                PTO_MODEL_TILE_ELEMENTS;
 end;
@@ -82,11 +80,15 @@ begin
     return 0;
 end;
 
-readonly func BundleTMATMULDimensionsLegal() => boolean
+readonly func BundleTMATMULDimensionsLegal(
+    shared_count: integer {0..4}) => boolean
 begin
     let m = BundleCubeDimensionValue(BundleDimension_LB0);
     let n = BundleCubeDimensionValue(BundleDimension_LB1);
     let k = BundleCubeDimensionValue(BundleDimension_LB2);
+    if shared_count == 0 then
+        return m != 0 && n != 0 && k != 0;
+    end;
     return IsNonzeroPowerOfTwo(m) && IsNonzeroPowerOfTwo(n) &&
            IsNonzeroPowerOfTwo(k);
 end;
@@ -217,7 +219,11 @@ readonly func TileMatrixInfoOptionalScalesLegal(
     right: TileInfo, right_scale: TileInfo, right_scale_present: boolean)
     => boolean
 begin
-    if !TileMatrixInfoShapeLegal(left, right) then return FALSE; end;
+    let primary_shape_legal = TileMatrixInfoShapeLegal(left, right) ||
+        TileMatrixCubeInfosMatchDimensions(
+            left, right, left.valid_rows,
+            right.valid_columns, left.valid_columns);
+    if !primary_shape_legal then return FALSE; end;
     let left_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     let right_type = if _BundleDataAttributesPresent then
@@ -340,7 +346,7 @@ readonly func TileMatrixDestinationLegal(destination: TileIndex,
                                          left: TileIndex,
                                          right: TileIndex) => boolean
 begin
-    if !TileDescriptorLegal(destination) ||
+    if !TileCubeDescriptorLegal(_Tiles[[destination]]) ||
        !TileMatrixShapeLegal(left, right) then return FALSE; end;
     let left_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
@@ -359,20 +365,22 @@ begin
     else accumulator_type;
     return _Tiles[[destination]].valid_rows == _Tiles[[left]].valid_rows &&
            _Tiles[[destination]].valid_columns == _Tiles[[right]].valid_columns &&
-           _Tiles[[destination]].data_type == expected_destination_type;
+           _Tiles[[destination]].data_type == expected_destination_type &&
+           _Tiles[[destination]].layout == _Tiles[[left]].layout;
 end;
 
 readonly func TileMatrixAccumulatorDestinationLegal(destination: TileIndex,
                                                      left: TileIndex,
                                                      right: TileIndex) => boolean
 begin
-    if !TileDescriptorLegal(destination) ||
+    if !TileCubeDescriptorLegal(_Tiles[[destination]]) ||
        !TileMatrixShapeLegal(left, right) then return FALSE; end;
     let accumulator_type = TileOrdinaryMatrixAccumulatorType(
         _Tiles[[left]].data_type, _Tiles[[right]].data_type);
     return _Tiles[[destination]].valid_rows == _Tiles[[left]].valid_rows &&
            _Tiles[[destination]].valid_columns == _Tiles[[right]].valid_columns &&
-           _Tiles[[destination]].data_type == accumulator_type;
+           _Tiles[[destination]].data_type == accumulator_type &&
+           _Tiles[[destination]].layout == _Tiles[[left]].layout;
 end;
 
 readonly func TileOperandsLegal_TMATMUL(
@@ -397,7 +405,8 @@ begin
     let output_converted = _BundleFixedPointAttributes.valid &&
         UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0;
     return TileOperandsLegal_TMATMUL(destination, left, right) &&
-           TileSourceContentsDefined(accumulator) &&
+           TileCubeDescriptorLegal(_Tiles[[accumulator]]) &&
+           _Tiles[[accumulator]].contents_defined &&
            TileMatrixAccumulatorDestinationLegal(accumulator, left, right) &&
            _Tiles[[accumulator]].layout == _Tiles[[destination]].layout &&
            (output_converted ||
@@ -432,7 +441,8 @@ begin
         UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0;
     return TileOperandsLegal_TMATMUL_MX(
                destination, left, left_scale, right, right_scale) &&
-           TileSourceContentsDefined(accumulator) &&
+           TileCubeDescriptorLegal(_Tiles[[accumulator]]) &&
+           _Tiles[[accumulator]].contents_defined &&
            TileMatrixAccumulatorDestinationLegal(accumulator, left, right) &&
            _Tiles[[accumulator]].layout == _Tiles[[destination]].layout &&
            (output_converted ||

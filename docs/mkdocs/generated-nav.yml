@@ -149,6 +149,7 @@ nav:
           - Dispatch:
               - Commands: block/model/dispatch/commands.md
               - Comparison Schema: block/model/dispatch/comparison-schema.md
+              - CUBE Destination: block/model/dispatch/cube-destination.md
               - CUBE Tmatmul: block/model/dispatch/cube-tmatmul.md
               - Decode: block/model/dispatch/decode.md
               - Descriptor Legality: block/model/dispatch/descriptor-legality.md
@@ -831,6 +832,7 @@ nav:
               - Indexed Layout: tile/model/legality/indexed-layout.md
               - Indexed Rearrangement: tile/model/legality/indexed-rearrangement.md
               - Layout Rearrangement: tile/model/legality/layout-rearrangement.md
+              - Matrix CUBE Primary: tile/model/legality/matrix-cube-primary.md
               - Matrix Functions: tile/model/legality/matrix-functions.md
               - Matrix Operands: tile/model/legality/matrix-operands.md
               - Matrix Postprocess: tile/model/legality/matrix-postprocess.md
@@ -984,6 +986,7 @@ nav:
           - "ADR 0068: Extension first-use is a target-profile hook": status/decisions/0068-extension-first-use-profile-hook.md
           - "ADR 0069: Local CUBE CELL State and Geometry": status/decisions/0069-local-cube-cell-state-and-geometry.md
           - "ADR 0070: GM/Local CUBE Layout Transport": status/decisions/0070-gm-local-cube-layout-transport.md
+          - "ADR 0071: Local CUBE Matrix Operand Contract": status/decisions/0071-local-cube-matrix-operands.md
           - "ADR 0074: TLOAD/TSTORE GM Byte Row Stride": status/decisions/0074-tload-tstore-gm-byte-row-stride.md
       - Open:
           - "Open architecture questions": status/open/index.md
