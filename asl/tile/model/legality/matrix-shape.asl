@@ -69,11 +69,15 @@ begin
     return 0;
 end;
 
-readonly func BundleTMATMULDimensionsLegal() => boolean
+readonly func BundleTMATMULDimensionsLegal(
+    shared_count: integer {0..4}) => boolean
 begin
     let m = BundleCubeDimensionValue(BundleDimension_LB0);
     let n = BundleCubeDimensionValue(BundleDimension_LB1);
     let k = BundleCubeDimensionValue(BundleDimension_LB2);
+    if shared_count == 0 then
+        return m != 0 && n != 0 && k != 0;
+    end;
     return IsNonzeroPowerOfTwo(m) && IsNonzeroPowerOfTwo(n) &&
            IsNonzeroPowerOfTwo(k);
 end;

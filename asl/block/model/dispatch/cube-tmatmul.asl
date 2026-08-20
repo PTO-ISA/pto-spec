@@ -240,7 +240,7 @@ begin
        !BundleMatrixDynamicBindingsComplete(
            operation, function, left_type, right_type, shared_count) ||
        !BundleTMATMULDataAttributesLegal() ||
-       !BundleTMATMULDimensionsLegal() ||
+       !BundleTMATMULDimensionsLegal(shared_count) ||
        !SelectedBundleTileMasksLegal() ||
        !BundleTMATMULLocalMasksAreFull() ||
        !BundleTMATMULSharedMasksAreFull() then
@@ -372,8 +372,10 @@ begin
             local_ordinal as integer {0..7});
     end;
 
-    let shape_legal = TileMatrixInfosMatchDimensions(
-        left, right, m, n, k);
+    let shape_legal = if shared_count == 0 then
+        TileMatrixCubeInfosMatchDimensions(left, right, m, n, k)
+    else
+        TileMatrixInfosMatchDimensions(left, right, m, n, k);
     let operand_types_legal = left.data_type == left_type &&
         right.data_type == right_type;
     let scales_legal = !TileMatrixFunctionUsesMX(function) ||

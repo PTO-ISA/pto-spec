@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","surface":"tile","classification":["model","legality","matrix-operands"],"depends_on":["PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","surface":"tile","classification":["model","legality","matrix-operands"],"depends_on":["PTO-TILE-MODEL-LEGALITY-MATRIX-CUBE-PRIMARY","PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"]}
 // PTO-REQ-CUBE-OPERANDS-001: every Local matrix source descriptor is checked
 // in stream order before any Local or Shared payload is snapshotted.
 
@@ -84,13 +84,26 @@ begin
     let scale_blocks = ((k + 31) DIVRM 32)
         as integer {1..2048};
     var ordinal: integer {0..5} = 0;
+    let local_cube = shared_count == 0;
+    let left_ordinal = if TileMatrixFunctionUsesAccumulator(function)
+        then 1 else 0;
+    let local_m_layout = if local_cube then
+        _Tiles[[BundleMatrixSourceAt(
+            left_ordinal as integer {0..7})]].layout
+        else TileLayout_RowMajor;
 
     if TileMatrixFunctionUsesAccumulator(function) then
         let accumulator = BundleMatrixSourceAt(
             ordinal as integer {0..7});
-        if !TileMatrixInfoAccumulatorSchemaLegal(
-               accumulator, m, n, accumulator_type,
-               destination_capacity) then
+        let accumulator_legal = if local_cube then
+            TileMatrixLocalCubeAccumulatorSchemaLegal(
+                accumulator, m, n, accumulator_type,
+                local_m_layout, destination_capacity)
+        else
+            TileMatrixInfoAccumulatorSchemaLegal(
+                accumulator, m, n, accumulator_type,
+                destination_capacity);
+        if !accumulator_legal then
             return FALSE;
         end;
         ordinal = (ordinal + 1) as integer {0..5};
@@ -101,8 +114,11 @@ begin
     if shared_count == 0 || shared_count == right_group then
         let left = BundleMatrixSourceAt(
             ordinal as integer {0..7});
-        if !TileMatrixLocalOperandSchemaLegal(
-               left, m, k, left_type) then
+        let left_legal = if local_cube then
+            TileMatrixLocalMOperandSchemaLegal(left, m, k, left_type)
+        else
+            TileMatrixLocalOperandSchemaLegal(left, m, k, left_type);
+        if !left_legal then
             return FALSE;
         end;
         ordinal = (ordinal + 1) as integer {0..5};
@@ -120,8 +136,11 @@ begin
     if shared_count == 0 then
         let right = BundleMatrixSourceAt(
             ordinal as integer {0..7});
-        if !TileMatrixLocalOperandSchemaLegal(
-               right, k, n, right_type) then
+        let right_legal = if local_cube then
+            TileMatrixLocalNOperandSchemaLegal(right, k, n, right_type)
+        else
+            TileMatrixLocalOperandSchemaLegal(right, k, n, right_type);
+        if !right_legal then
             return FALSE;
         end;
         ordinal = (ordinal + 1) as integer {0..5};
