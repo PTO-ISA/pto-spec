@@ -20,19 +20,23 @@ func main() => integer
 begin
     ResetProfileState();
     SelectTMATMULMX('00100');
-    ConfigureTile(1, 128, 8, 8, 1, 2, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(2, 128, 8, 8, 2, 2, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let fp_left_ready = ConfigureCubeTile(1, 128, 1, 2,
+        TileDataType_FP16, TileLayout_CUBE_M16,
+        TileLocation_Matrix);
+    let fp_right_ready = ConfigureCubeTile(2, 128, 2, 2,
+        TileDataType_FP16, TileLayout_CUBE_N8,
+        TileLocation_Matrix);
+    assert fp_left_ready && fp_right_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN});
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN});
     WriteTileElement(2, 1, 0, Zeros{PTO_XLEN});
     WriteTileElement(2, 1, 1, Zeros{PTO_XLEN});
-    assert TileInfoDescriptorLegal(_Tiles[[1]]);
-    assert TileInfoDescriptorLegal(_Tiles[[2]]);
-    assert TileMatrixInfoShapeLegal(_Tiles[[1]], _Tiles[[2]]);
+    assert TileCubeDescriptorLegal(_Tiles[[1]]);
+    assert TileCubeDescriptorLegal(_Tiles[[2]]);
+    assert TileMatrixCubeInfosMatchDimensions(
+        _Tiles[[1]], _Tiles[[2]], 1, 2, 2);
     assert TileMXMatrixOperandsLegal(1, 2);
     assert TileMatrixInfoOptionalScalesLegal(
         _Tiles[[1]], _Tiles[[0]], FALSE,
@@ -43,10 +47,13 @@ begin
 
     ResetProfileState();
     SelectTMATMULMX('00111');
-    ConfigureTile(1, 128, 16, 8, 1, 2, TileDataType_E4M3,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(2, 128, 16, 8, 2, 2, TileDataType_E4M3,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let mx_left_ready = ConfigureCubeTile(1, 128, 1, 2,
+        TileDataType_E4M3, TileLayout_CUBE_M16,
+        TileLocation_Matrix);
+    let mx_right_ready = ConfigureCubeTile(2, 128, 2, 2,
+        TileDataType_E4M3, TileLayout_CUBE_N8,
+        TileLocation_Matrix);
+    assert mx_left_ready && mx_right_ready;
     ConfigureTile(3, 128, 16, 8, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Matrix);
     ConfigureTile(4, 128, 16, 8, 1, 2, TileDataType_E8M0,

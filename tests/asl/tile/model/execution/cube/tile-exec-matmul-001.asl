@@ -2,20 +2,23 @@
 // PTO-TEST: {"id":"PTO-AVS-TILE-TESTTILEMATMUL-EXECUTION-001","source":"asl/tile/model/execution/cube.asl","requirements":[],"kind":"execution","summary":"Covers Tile Matmul.","pass_condition":"TestTileMatmul completes without assertion failure","related_sources":[]}
 func ConfigureTwoByTwoLeft(index: TileIndex, data_type: TileDataType)
 begin
-    assert ConfigureCubeTile(index, 128, 2, 2, data_type,
+    let cube_configuration_1 = ConfigureCubeTile(index, 128, 2, 2, data_type,
         TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert cube_configuration_1;
 end;
 
 func ConfigureTwoByTwoRight(index: TileIndex, data_type: TileDataType)
 begin
-    assert ConfigureCubeTile(index, 128, 2, 2, data_type,
+    let cube_configuration_2 = ConfigureCubeTile(index, 128, 2, 2, data_type,
         TileLayout_CUBE_N8, TileLocation_Matrix);
+    assert cube_configuration_2;
 end;
 
 func ConfigureTwoByTwoDestination(index: TileIndex, data_type: TileDataType)
 begin
-    assert ConfigureCubeTile(index, 128, 2, 2, data_type,
+    let cube_configuration_3 = ConfigureCubeTile(index, 128, 2, 2, data_type,
         TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert cube_configuration_3;
 end;
 
 func SelectTestCUBEDataType(data_type: bits(5))
@@ -71,21 +74,30 @@ begin
     assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 39;
 
     // Local CUBE Matrix logical dimensions may be arbitrary positive values.
-    assert ConfigureCubeTile(30, 128, 3, 3, TileDataType_U16,
+    let cube_configuration_4 = ConfigureCubeTile(30, 128, 3, 3, TileDataType_U16,
         TileLayout_CUBE_M16, TileLocation_Matrix);
-    assert ConfigureCubeTile(31, 128, 3, 3, TileDataType_U16,
+    assert cube_configuration_4;
+    let cube_configuration_5 = ConfigureCubeTile(31, 128, 3, 3, TileDataType_U16,
         TileLayout_CUBE_N8, TileLocation_Matrix);
-    assert TileMatrixInfoShapeLegal(_Tiles[[30]], _Tiles[[31]]);
+    assert cube_configuration_5;
+    MarkTileValidRegionDefined(30);
+    MarkTileValidRegionDefined(31);
+    assert TileMatrixCubeInfosMatchDimensions(
+        _Tiles[[30]], _Tiles[[31]], 3, 3, 3);
     var zero_m = _Tiles[[5]];
     zero_m.valid_rows = 0;
     assert !TileMatrixInfoShapeLegal(zero_m, _Tiles[[6]]);
 
-    assert ConfigureCubeTile(27, 128, 2, 1, TileDataType_U16,
+    let cube_configuration_6 = ConfigureCubeTile(27, 128, 2, 1, TileDataType_U16,
         TileLayout_CUBE_N8, TileLocation_Matrix);
-    assert ConfigureCubeTile(29, 128, 1, 2, TileDataType_U16,
+
+    assert cube_configuration_6;
+    let cube_configuration_7 = ConfigureCubeTile(29, 128, 1, 2, TileDataType_U16,
         TileLayout_CUBE_M16, TileLocation_Matrix);
-    assert ConfigureCubeTile(28, 128, 1, 1, TileDataType_U32,
+    assert cube_configuration_7;
+    let cube_configuration_8 = ConfigureCubeTile(28, 128, 1, 1, TileDataType_U32,
         TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert cube_configuration_8;
     WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 1);

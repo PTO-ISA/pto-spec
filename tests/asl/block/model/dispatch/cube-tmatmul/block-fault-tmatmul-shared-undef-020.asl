@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-UNDEF-001","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-TMATMUL-CONTRACT-001"],"kind":"execution","summary":"TMATMUL reads an uninitialized Shared right operand without allocating the Shared register","pass_condition":"the undefined-register value participates in the result while the Shared descriptor remains absent","related_sources":["asl/tile/model/state/shared-registers.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-UNDEF-020","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-TMATMUL-CONTRACT-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"fault","summary":"Cooperative TMATMUL rejects an unallocated Shared primary before effects","pass_condition":"the undefined-register fallback remains legal generally but Matrix readiness rejects it without allocation consumption or Shared mutation","related_sources":["asl/tile/model/state/shared-registers.asl"]}
 pure func MatrixSharedUndefinedStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00031181;
@@ -33,8 +33,10 @@ func main() => integer
 begin
     let shared_id = Zeros{8} + 77;
     ResetProfileState();
-    ConfigureTile(0, 128, 8, 8, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let left_ready = ConfigureCubeTileForMask(0, 128, 1, 1,
+        TileDataType_FP16, TileLayout_CUBE_M16,
+        TileLocation_Matrix, '1111');
+    assert left_ready;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 2);
 
     let started = ExecuteCommandInstruction(
@@ -51,11 +53,10 @@ begin
     assert local == CommandExecution_Executed;
 
     let completed = ExecuteBundleTileOperation();
-    assert completed;
-    assert _LastFault == Fault_None;
-    let destination = _BundleTileBindings[[0]].destination;
-    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 154;
+    assert !completed;
+    assert _LastFault == Fault_TileLegality;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     assert !SharedTileRecord(shared_id).descriptor_valid;
-    assert _BundleSharedBindings[[0]].consumed;
+    assert !_BundleSharedBindings[[0]].consumed;
     return 0;
 end;

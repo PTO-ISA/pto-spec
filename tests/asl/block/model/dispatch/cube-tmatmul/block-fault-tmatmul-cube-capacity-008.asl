@@ -2,32 +2,40 @@
 func main() => integer
 begin
     ResetProfileState();
-    assert ConfigureCubeTile(1, 1024, 16, 17,
+    let cube_configuration_1 = ConfigureCubeTile(1, 1024, 16, 17,
         TileDataType_FP16, TileLayout_CUBE_M16,
         TileLocation_Matrix);
-    assert !ConfigureCubeTile(2, 512, 16, 17,
+    assert cube_configuration_1;
+    let cube_configuration_2 = ConfigureCubeTile(2, 512, 16, 17,
         TileDataType_FP16, TileLayout_CUBE_M16,
         TileLocation_Matrix);
-    assert ConfigureCubeTile(3, 2048, 17, 17,
+    assert !cube_configuration_2;
+    let cube_configuration_3 = ConfigureCubeTile(3, 2048, 17, 17,
         TileDataType_FP16, TileLayout_CUBE_M32,
         TileLocation_Matrix);
-    assert !ConfigureCubeTile(4, 1024, 17, 17,
+    assert cube_configuration_3;
+    let cube_configuration_4 = ConfigureCubeTile(4, 1024, 17, 17,
         TileDataType_FP16, TileLayout_CUBE_M32,
         TileLocation_Matrix);
-    assert ConfigureCubeTile(5, 1024, 17, 9,
+    assert !cube_configuration_4;
+    let cube_configuration_5 = ConfigureCubeTile(5, 1024, 17, 9,
         TileDataType_FP16, TileLayout_CUBE_N8,
         TileLocation_Matrix);
-    assert !ConfigureCubeTile(6, 512, 17, 9,
+    assert cube_configuration_5;
+    let cube_configuration_6 = ConfigureCubeTile(6, 512, 17, 9,
         TileDataType_FP16, TileLayout_CUBE_N8,
         TileLocation_Matrix);
+    assert !cube_configuration_6;
 
     ResetProfileState();
-    assert ConfigureCubeTileForMask(1, 1024, 16, 17,
+    let cube_configuration_7 = ConfigureCubeTileForMask(1, 1024, 16, 17,
         TileDataType_FP16, TileLayout_CUBE_M16,
         TileLocation_Matrix, '1111');
-    assert ConfigureCubeTileForMask(2, 1024, 17, 9,
+    assert cube_configuration_7;
+    let cube_configuration_8 = ConfigureCubeTileForMask(2, 1024, 17, 9,
         TileDataType_FP16, TileLayout_CUBE_N8,
         TileLocation_Matrix, '1111');
+    assert cube_configuration_8;
     MarkTileValidRegionDefined(1);
     MarkTileValidRegionDefined(2);
     _Tiles[[1]].capacity_bytes = 512;

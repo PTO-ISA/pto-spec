@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TGEMV-SHARED-001","source":"asl/block/execution/BSTART.TGEMV.asl","requirements":["PTO-TMATMUL-CONTRACT-001"],"kind":"fault","summary":"TGEMV rejects every participating Shared operand binding","pass_condition":"one B.IOS source raises Fault_TileLegality before Shared consumption","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TGEMV-SHARED-001","source":"asl/block/execution/BSTART.TGEMV.asl","requirements":["PTO-TMATMUL-CONTRACT-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"fault","summary":"TGEMV rejects every participating Shared operand binding","pass_condition":"one B.IOS source raises Fault_TileLegality before Shared consumption","related_sources":["asl/block/model/dispatch/cube-tmatmul.asl"]}
 func main() => integer
 begin
     ResetProfileState();
