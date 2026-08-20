@@ -2,10 +2,13 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(1, 128, 8, 8, 2, 2, TileDataType_S16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(2, 128, 16, 8, 2, 2, TileDataType_S8,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let a_ready = ConfigureCubeTileForMask(1, 128, 2, 2,
+        TileDataType_S16, TileLayout_CUBE_M16,
+        TileLocation_Matrix, '1111');
+    let b_ready = ConfigureCubeTileForMask(2, 128, 2, 2,
+        TileDataType_S8, TileLayout_CUBE_N8,
+        TileLocation_Matrix, '1111');
+    assert a_ready && b_ready;
     ConfigureTile(3, 128, 4, 8, 1, 2, TileDataType_S32,
         TileLayout_RowMajor, TileLocation_Matrix);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);

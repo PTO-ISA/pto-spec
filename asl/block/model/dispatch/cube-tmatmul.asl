@@ -393,9 +393,14 @@ begin
     assert shape_legal && operand_types_legal && scales_legal;
 
     let accumulator_legal = !TileMatrixFunctionUsesAccumulator(function) ||
-        TileMatrixInfoAccumulatorSchemaLegal(
-            accumulator, m, n, result_type,
-            BundleMatrixPrimaryDestinationCapacityBytes());
+        (if local_cube then
+            TileMatrixLocalCubeAccumulatorSchemaLegal(
+                accumulator, m, n, result_type, primary_layout,
+                BundleMatrixPrimaryDestinationCapacityBytes())
+         else
+            TileMatrixInfoAccumulatorSchemaLegal(
+                accumulator, m, n, result_type,
+                BundleMatrixPrimaryDestinationCapacityBytes()));
     assert accumulator_legal;
     assert !TileMatrixFunctionUsesBias(function) ||
            TileMatrixInfoBiasLegal(

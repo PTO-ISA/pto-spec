@@ -31,14 +31,20 @@ end;
 
 readonly func TileMatrixCubeInfosMatchDimensions(
     left: TileInfo, right: TileInfo,
-    m: integer {1..65535}, n: integer {1..65535},
-    k: integer {1..65535}) => boolean
+    m: integer {0..65535}, n: integer {0..65535},
+    k: integer {0..65535}) => boolean
 begin
-    return TileMatrixMLayoutLegal(left.layout, m) &&
+    if m == 0 || n == 0 || k == 0 then return FALSE; end;
+    let positive_m = m as integer {1..65535};
+    let positive_n = n as integer {1..65535};
+    let positive_k = k as integer {1..65535};
+    return TileMatrixMLayoutLegal(left.layout, positive_m) &&
            TileMatrixLocalPrimaryInfoLegal(
-               left, m, k, left.data_type, left.layout) &&
+               left, positive_m, positive_k,
+               left.data_type, left.layout) &&
            TileMatrixLocalPrimaryInfoLegal(
-               right, k, n, right.data_type, TileLayout_CUBE_N8);
+               right, positive_k, positive_n,
+               right.data_type, TileLayout_CUBE_N8);
 end;
 
 readonly func TileMatrixLocalMOperandSchemaLegal(

@@ -234,7 +234,7 @@ end;
 readonly func ReadTileElement(index: TileIndex, row: integer {0..65535},
                      column: integer {0..65535}) => Word
 begin
-    let element = TileLinearIndex(_Tiles[[index]], row, column);
+    let element = TileStorageIndex(_Tiles[[index]], row, column);
     assert _Tiles[[index]].defined_elements[element] == '1';
     return _Tiles[[index]].payload[[element]];
 end;
@@ -243,7 +243,7 @@ readonly func TileElementDefined(index: TileIndex,
                                  row: integer {0..65535},
                                  column: integer {0..65535}) => boolean
 begin
-    let element = TileLinearIndex(_Tiles[[index]], row, column);
+    let element = TileStorageIndex(_Tiles[[index]], row, column);
     return _Tiles[[index]].defined_elements[element] == '1';
 end;
 
@@ -406,7 +406,7 @@ end;
 func WriteTileElement(index: TileIndex, row: integer {0..65535},
                       column: integer {0..65535}, value: Word)
 begin
-    let element = TileLinearIndex(_Tiles[[index]], row, column);
+    let element = TileStorageIndex(_Tiles[[index]], row, column);
     _Tiles[[index]].payload[[element]] = value;
     if _Tiles[[index]].defined_elements[element] == '0' then
         _Tiles[[index]].defined_elements[element] = '1';

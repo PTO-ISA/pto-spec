@@ -10,10 +10,13 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(2, 128, 1, 8, 1, 8, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let a_ready = ConfigureCubeTileForMask(1, 128, 1, 1,
+        TileDataType_FP16, TileLayout_CUBE_M16,
+        TileLocation_Matrix, '1111');
+    let b_ready = ConfigureCubeTileForMask(2, 128, 1, 8,
+        TileDataType_FP16, TileLayout_CUBE_N8,
+        TileLocation_Matrix, '1111');
+    assert a_ready && b_ready;
     ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
@@ -31,7 +34,7 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 8);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
     AddBundleTileBinding(
-        TRUE, 0, 1, '1111', TRUE, TRUE, 1, 2, FALSE);
+        TRUE, 0, 3, '1111', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(
         TRUE, 1, 1, '1111', TRUE, FALSE, 3, 0, FALSE);
     AddBundleTileBinding(

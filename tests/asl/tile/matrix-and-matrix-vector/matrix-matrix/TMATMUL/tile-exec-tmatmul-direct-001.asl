@@ -20,12 +20,12 @@ func main() => integer
 begin
     ResetProfileState();
     SelectTMATMULFP16();
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    assert ConfigureCubeTile(1, 128, 1, 1, TileDataType_FP16,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert ConfigureCubeTile(2, 128, 1, 1, TileDataType_FP16,
+        TileLayout_CUBE_N8, TileLocation_Matrix);
+    assert ConfigureCubeTile(3, 128, 1, 1, TileDataType_FP32,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
 
