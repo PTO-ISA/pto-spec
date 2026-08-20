@@ -126,7 +126,7 @@ func ConfigureCubeTileForMask(
     location: TileLocation,
     allocation_mask: bits(4)) => boolean
 begin
-    if allocation_mask == Zeros{4} ||
+    if allocation_mask == Zeros{4} || location != TileLocation_Matrix ||
        !TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
            valid_columns, data_type, layout) then
         return FALSE;
