@@ -119,7 +119,7 @@ begin
     let code = UInt(data_layout);
     return code == 0 || code == 1 || code == 3 || code == 4 ||
            code == 6 || code == 8 || code == 9 || code == 17 ||
-           code == 18 || code == 20 || code == 27 || code == 28 ||
+           code == 18 || code == 20 || (21 <= code && code <= 28) ||
            code == 30;
 end;
 
@@ -136,6 +136,12 @@ begin
     elsif code == 17 then return TileDataLayout_ZN2ND;
     elsif code == 18 then return TileDataLayout_ZN2DN;
     elsif code == 20 then return TileDataLayout_ZN2NZ;
+    elsif code == 21 then return TileDataLayout_ND2M32;
+    elsif code == 22 then return TileDataLayout_ND2M16;
+    elsif code == 23 then return TileDataLayout_ND2N8;
+    elsif code == 24 then return TileDataLayout_M322ND;
+    elsif code == 25 then return TileDataLayout_M162ND;
+    elsif code == 26 then return TileDataLayout_N82ND;
     elsif code == 27 then return TileDataLayout_NZ2ND;
     elsif code == 28 then return TileDataLayout_NZ2DN;
     elsif code == 30 then return TileDataLayout_NZ2ZN;
@@ -156,9 +162,46 @@ begin
         when TileDataLayout_ZN2ND => return Zeros{5} + 17;
         when TileDataLayout_ZN2DN => return Zeros{5} + 18;
         when TileDataLayout_ZN2NZ => return Zeros{5} + 20;
+        when TileDataLayout_ND2M32 => return Zeros{5} + 21;
+        when TileDataLayout_ND2M16 => return Zeros{5} + 22;
+        when TileDataLayout_ND2N8 => return Zeros{5} + 23;
+        when TileDataLayout_M322ND => return Zeros{5} + 24;
+        when TileDataLayout_M162ND => return Zeros{5} + 25;
+        when TileDataLayout_N82ND => return Zeros{5} + 26;
         when TileDataLayout_NZ2ND => return Zeros{5} + 27;
         when TileDataLayout_NZ2DN => return Zeros{5} + 28;
         when TileDataLayout_NZ2ZN => return Zeros{5} + 30;
+    end;
+end;
+
+pure func TileDataLayoutIsCubeConversion(data_layout: bits(5)) => boolean
+begin
+    let code = UInt(data_layout);
+    return 21 <= code && code <= 26;
+end;
+
+pure func TileDataLayoutConversionIsLoad(data_layout: bits(5)) => boolean
+begin
+    let code = UInt(data_layout);
+    return 21 <= code && code <= 23;
+end;
+
+pure func TileDataLayoutConversionIsStore(data_layout: bits(5)) => boolean
+begin
+    let code = UInt(data_layout);
+    return 24 <= code && code <= 26;
+end;
+
+pure func TileDataLayoutCubeLayout(data_layout: bits(5)) => TileLayout
+begin
+    assert TileDataLayoutIsCubeConversion(data_layout);
+    let code = UInt(data_layout);
+    if code == 21 || code == 24 then
+        return TileLayout_CUBE_M32;
+    elsif code == 22 || code == 25 then
+        return TileLayout_CUBE_M16;
+    else
+        return TileLayout_CUBE_N8;
     end;
 end;
 
@@ -190,6 +233,12 @@ begin
         when TileDataLayout_NZ2ND,
              TileDataLayout_NZ2DN,
              TileDataLayout_NZ2ZN => return TileLayout_NZ;
+        when TileDataLayout_ND2M32,
+             TileDataLayout_ND2M16,
+             TileDataLayout_ND2N8,
+             TileDataLayout_M322ND,
+             TileDataLayout_M162ND,
+             TileDataLayout_N82ND => unreachable;
     end;
 end;
 
@@ -210,6 +259,12 @@ begin
         when TileDataLayout_ND2NZ,
              TileDataLayout_DN2NZ,
              TileDataLayout_ZN2NZ => return TileLayout_NZ;
+        when TileDataLayout_ND2M32,
+             TileDataLayout_ND2M16,
+             TileDataLayout_ND2N8,
+             TileDataLayout_M322ND,
+             TileDataLayout_M162ND,
+             TileDataLayout_N82ND => unreachable;
     end;
 end;
 

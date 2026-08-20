@@ -124,7 +124,13 @@ type TileDataLayout of enumeration {
     TileDataLayout_ZN2NZ,
     TileDataLayout_NZ2ND,
     TileDataLayout_NZ2DN,
-    TileDataLayout_NZ2ZN
+    TileDataLayout_NZ2ZN,
+    TileDataLayout_ND2M32,
+    TileDataLayout_ND2M16,
+    TileDataLayout_ND2N8,
+    TileDataLayout_M322ND,
+    TileDataLayout_M162ND,
+    TileDataLayout_N82ND
 };
 
 type TilePadValue of enumeration {
