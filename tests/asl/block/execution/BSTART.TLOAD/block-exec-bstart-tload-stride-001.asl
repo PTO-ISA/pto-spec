@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-STRIDE-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD"],"kind":"execution","summary":"TLOAD distinguishes explicit, omitted, and encoded-zero logical row strides.","pass_condition":"Explicit B.IOR addresses use RegSrc0/RegSrc1, omission uses base zero and LB2, and encoded zero aliases rows.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/tile/model/memory/load-store.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-STRIDE-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD"],"kind":"execution","summary":"TLOAD distinguishes explicit, omitted, and encoded-zero byte row strides.","pass_condition":"Explicit B.IOR addresses use RegSrc0/RegSrc1, omission converts LB2 to a dense byte width, and encoded zero aliases rows.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/tile/model/memory/load-store.asl"]}
 pure func TLoadStrideStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -35,6 +35,17 @@ begin
     assert destination_status == CommandExecution_Executed;
 end;
 
+func StartTwoByTwoTLoadWithoutLB2()
+begin
+    let start_status = ExecuteCommandInstruction(TLoadStrideStart(), 32);
+    assert start_status == CommandExecution_Executed;
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    let destination_status = ExecuteCommandInstruction(
+        TLoadStrideDestination(), 32);
+    assert destination_status == CommandExecution_Executed;
+end;
+
 func main() => integer
 begin
     ResetProfileState();
@@ -43,7 +54,7 @@ begin
     _Memory[[0x10c]] = Zeros{8} + 3;
     _Memory[[0x110]] = Zeros{8} + 4;
     WriteGPR(2, Zeros{PTO_XLEN} + 0x100);
-    WriteGPR(3, Zeros{PTO_XLEN} + 3);
+    WriteGPR(3, Zeros{PTO_XLEN} + 12);
     StartTwoByTwoTLoad(2);
     let explicit_ior_status = ExecuteCommandInstruction(
         TLoadStrideIOR(Zeros{5} + 2, Zeros{5} + 3), 32);
@@ -59,9 +70,9 @@ begin
     ResetProfileState();
     _Memory[[0]] = Zeros{8} + 5;
     _Memory[[4]] = Zeros{8} + 6;
-    _Memory[[16]] = Zeros{8} + 7;
-    _Memory[[20]] = Zeros{8} + 8;
-    StartTwoByTwoTLoad(4);
+    _Memory[[8]] = Zeros{8} + 7;
+    _Memory[[12]] = Zeros{8} + 8;
+    StartTwoByTwoTLoadWithoutLB2();
     let omitted_completed = ExecuteBundleTileOperation();
     assert omitted_completed;
     let omitted_tile = _BundleTileBindings[[0]].destination;

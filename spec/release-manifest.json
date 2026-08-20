@@ -158,7 +158,7 @@
     },
     {
       "path": "asl/arch/memory-model/global-memory-access.asl",
-      "sha256": "e0a6c02b05575b29d29a6aafb0e36b7721a86c99400a87d656589d88e0723d88"
+      "sha256": "919ddeecfa8990d1f21c006a8a9a1ef439486b9d4ba6c5cb4021db7bc5f87d95"
     },
     {
       "path": "asl/arch/memory-model/memory-events.asl",
@@ -406,7 +406,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TLOAD.asl",
-      "sha256": "5dba6feb4874c8a94efc683aded74b115f6ebcf7b75fc52687d42763c7d10735"
+      "sha256": "c1cdf348cd59e7f3baf401a8153953a58bc4fc79a07f2549f0767010f5bf260f"
     },
     {
       "path": "asl/block/execution/BSTART.TMATMUL.ACC.asl",
@@ -442,7 +442,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TSTORE.asl",
-      "sha256": "8d03a2b6fc352b20f34b11adfee67d6e6a5891ab75a6522a96abf6b5c76e506a"
+      "sha256": "58f91a9db55f8341cd515000ee79841899b843f3fd07288a819874f3b5561687"
     },
     {
       "path": "asl/block/execution/BSTART.VEC.asl",
@@ -578,7 +578,7 @@
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "2a3c423d77a1f3f03f8556dd36e732e9f914e7d7ad10df3f691b868ec360323e"
+      "sha256": "45381bb17fdd3f4e01be9abfe4188a510e7ba3bc8af003b0dbd3423a6afe1562"
     },
     {
       "path": "asl/block/model/dispatch/sorting-schema.asl",
@@ -602,7 +602,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "7fa52efff019ee2e8177ce0b64c504034e347661ed0cdf7890e24f1c7a632030"
+      "sha256": "23b4a16511136f2624949cb8282c14f63784e941f60abefd8300e93b78d87f12"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
@@ -706,7 +706,7 @@
     },
     {
       "path": "asl/block/operands/B.IOR.asl",
-      "sha256": "fe2987fceff3275bc0c654175412fe327f2357eb004ee8082ef61d334e5087f2"
+      "sha256": "eb0b9933c0d814dc8e3f36004a591dd28c1b02f3e5f4a037497f75bb793dad26"
     },
     {
       "path": "asl/block/operands/B.IOS.asl",
@@ -2910,7 +2910,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
-      "sha256": "1a191676eb5f64c13a7dd5df6f477207f065605dd762f95768346dfa97c46b53"
+      "sha256": "76a00a6024e53d7fe070898c77bec8939284970e87481ac819b22703bddd5ce0"
     },
     {
       "path": "asl/tile/memory-and-data-movement/regular/TPREFETCH.asl",
@@ -2918,7 +2918,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/regular/TSTORE.asl",
-      "sha256": "8d0b020f06ad85cd887f4fec091153ea55aa4dd8a77204a6a48c01bb12771494"
+      "sha256": "a98bcaea29c5f16094b65e155da1a214042eb73643eec9e0b4d6cb73be906be4"
     },
     {
       "path": "asl/tile/model/capacity/local.asl",
@@ -3070,7 +3070,7 @@
     },
     {
       "path": "asl/tile/model/legality/memory-schema.asl",
-      "sha256": "a7cd1b477cc4a939f10aff945599c13cb7ca9caf87204764f4804fb8189ff0c4"
+      "sha256": "8dff005ad094478e60cbbdeb3cd231da91d472de93f7fc995721c51434161449"
     },
     {
       "path": "asl/tile/model/legality/operand-schema.asl",
@@ -3102,7 +3102,7 @@
     },
     {
       "path": "asl/tile/model/memory/load-store.asl",
-      "sha256": "1aaac2d7bf4048ab8cc74ac3de17ddaffd32a948aa2a2ae1f7b72e098ea7d02e"
+      "sha256": "6ec46ec06f8ee9d5e1511853db3f9ef16e28edcbd707af2ec458204d69803a94"
     },
     {
       "path": "asl/tile/model/memory/restart.asl",
@@ -3110,11 +3110,11 @@
     },
     {
       "path": "asl/tile/model/memory/shared-movement.asl",
-      "sha256": "c653fd93e37f78ce1b8074eeb143404086b46df40688ff27c8ce9aff2014384c"
+      "sha256": "102d2417942518c336bdef1499a0fea3246eb57adf9569c8b565b1c8e7a5c80d"
     },
     {
       "path": "asl/tile/model/memory/stride.asl",
-      "sha256": "84fa5d1f63c26132f1f0c07d6ffad391498765771619dcbc005217ee127e84c7"
+      "sha256": "92960da5561ea8d7b3869d028893279dbde4541b554097cef7eea067224eba46"
     },
     {
       "path": "asl/tile/model/numeric/exceptions.asl",
@@ -3342,7 +3342,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "300a3a57a8728e6c4770da6fff0202b372ec2830edb8dc978dc141d1c26424d0"
+      "sha256": "ea695ff1b4144a3af4752fc14f24400a6b9abd09fca7971851e21ffc2b0feb57"
     },
     {
       "path": "spec/catalog/extension-encoding-reservations.json",
@@ -3366,19 +3366,19 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "f5fb890d21f674d86365ea263e260f6b65fd65f2bdf6c161979c55a6a49bbe6e"
+      "sha256": "3efc27bdedc17056914a6fc18e63cb485b01e948bff2872801f8b7ae9316576d"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "0d726f39f1e1cf080dbbb7733099912b67a28836fbd5f1ef6b29f7454de3df84"
+      "sha256": "3af11a1c9f89667d02bed11de08510f1e1d5d5c16311c7802ce896c99ef973b5"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "3284ae7845a481c58fe40870abf50eb507be14c02447afab6778ed932167a92f"
+      "sha256": "c4eab65995383f9df9e8f36de0ea6dd9f1f389f2680df9996b04d641ebf8458f"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "c981c6f3c36e210a65b2b58c3cc2066b7b0231246c4cdcdc928abbc1d8f62e00"
+      "sha256": "ec836a4fb881c85d9bce979e383d26c6b06f823f5cb04cecad4186eb280eb875"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3416,7 +3416,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "c6895a28a44eabb1e142609c1d206fb46e992109fbdbb5ea529bef0ec4e6fe05",
+  "content_sha256": "306ae717b983f73deb65df7a1b0e788ee4bc2bac80f1c87ecc0b96e84e219437",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3643,7 +3643,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/memory-model/global-memory-access.md",
-      "sha256": "751b17aee5ce79124d044f04cadbf5decdd6cc942a2e565c242a06139f5f938b"
+      "sha256": "bdb7fcd04ee8782d9c08753d81289e7decde17103e59b8be944828d2be8cfd63"
     },
     {
       "kind": "generated-documentation",
@@ -3953,7 +3953,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TLOAD.md",
-      "sha256": "be57d02c335a77d98c4d353e45e70c98e584a56a5e145479793a333a6e79cd43"
+      "sha256": "48248d83926bcd2d31b3f44983bc25540d19f4da4f6f570e6846aece11a1637d"
     },
     {
       "kind": "generated-documentation",
@@ -3998,7 +3998,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TSTORE.md",
-      "sha256": "94cf0be1ee50eff50d7e02ccca2edabcdbfe50aa2f0b1fb6dd515db7213979d0"
+      "sha256": "53ecdce2b664c02c669910563e6d2f35913f72956e8e86dfe3668bdb69e84c6c"
     },
     {
       "kind": "generated-documentation",
@@ -4168,7 +4168,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/shared-tlsu.md",
-      "sha256": "407e9564fdb562249cdb4f7b2979493849d78220250805f109215c9e7a575e0b"
+      "sha256": "535a26e8d718ab094cebcd729f36833dcf42d27606b5acf190ad4215c5dfb029"
     },
     {
       "kind": "generated-documentation",
@@ -4198,7 +4198,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tile-schema.md",
-      "sha256": "b7d43f586818045eb13c9d93b8972bd1108ade911a2101eaa22ad84777891727"
+      "sha256": "7d9e15a16c18df05354b882fb5d5adc0a8252f0e8a3e9c0c87a61f6c2db2bf20"
     },
     {
       "kind": "generated-documentation",
@@ -4328,7 +4328,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/operands/B.IOR.md",
-      "sha256": "61ba1b6bdad58a12a4b1e69430f829e54d99b90f5b666a39c74a4e855f173452"
+      "sha256": "761cdc372d08816c38bcf72836d72ed75f9c925d8979e9389d9059875d065b7d"
     },
     {
       "kind": "generated-documentation",
@@ -7083,7 +7083,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/regular/TLOAD.md",
-      "sha256": "f19ad399327cc00de1d9597be86ab150c802ab67f0440bcb55bd664ac5b384c9"
+      "sha256": "c8effcae05500eda2673cf449b262d6ddfe8edc1655123896b695ff91b5e13aa"
     },
     {
       "kind": "generated-documentation",
@@ -7093,7 +7093,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/regular/TSTORE.md",
-      "sha256": "c93c36e4dc4766d1325b1b1a5f2bf7fca6caa6240532bc181533c4b55866134f"
+      "sha256": "510c60cdf7114911d96e9c7fe8f3e5b73ba4f564d3ad784598c9c4aab830ea80"
     },
     {
       "kind": "generated-documentation",
@@ -7283,7 +7283,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/memory-schema.md",
-      "sha256": "271f54207651592b49fbd4aa527ab3658adc1e181425828295e5e8a90784bf0a"
+      "sha256": "37009103c5ae58260547374f098977a3780511fe837fe24c2f7c2d5f7bdf81ea"
     },
     {
       "kind": "generated-documentation",
@@ -7323,7 +7323,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/load-store.md",
-      "sha256": "656856aef96cbb2136202f1cf85157f19730e3e4802312243c589604ae756430"
+      "sha256": "fd22cba0bc4ff0127a2223e5e15d33757d05744970f8a740644e0a62cc441a6a"
     },
     {
       "kind": "generated-documentation",
@@ -7333,12 +7333,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/shared-movement.md",
-      "sha256": "d876def38bb56d0a02f9205fb68eed8dc8e71218fe73de25c041c09f98f650e7"
+      "sha256": "894016a68c55c8ae70eef15f39d89410efa27166633cc659aa9327e087ff86f2"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/stride.md",
-      "sha256": "8b68431d6b565dbfebae80a74bad645ccc259a9fbc0decf5550231504c1e898d"
+      "sha256": "ce607cbd6ab448d22a66cd99e7565be83df234b4f4338f14582a236bc1acc44b"
     },
     {
       "kind": "generated-documentation",

@@ -95,7 +95,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- |
 | DataType | destination element data type |
 | B.IOR.RegSrc0 | per-PE private-GPR GM base address |
-| B.IOR.RegSrc1 | per-PE private-GPR logical row stride in elements |
+| B.IOR.RegSrc1 | per-PE private-GPR byte row stride |
 | B.DIM.LB0 | ValidCol |
 | B.DIM.LB1 | ValidRow |
 | B.DIM.LB2 | physical Col |
@@ -115,7 +115,7 @@ end;
 ## Block composition
 
 ```asm
-Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and logical-element row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.
+Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and byte row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.
 Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S255, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride.
 ```
 
@@ -146,7 +146,7 @@ end;
 
 - DataType is explicit. Optional B.DATR omission retains the default NORM layout.
 - LB0/ValidCol and LB1/ValidRow default through the common destination-shape contract; omitted LB2/Col defaults to ValidCol. Rows are derived from TSize, Col, and DataType and must be at least ValidRow.
-- Omitted B.IOR supplies base zero and dense row stride equal to resolved Col. An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
+- Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
 
 ## Legality
 
@@ -164,7 +164,7 @@ end;
 
 ### Memory effects
 
-- For every selected PE and every element in ValidRow x ValidCol, read GM at base + ((row * row_stride_elements + column) * element_size), with packed four-bit formats selecting the addressed nibble after logical-element indexing.
+- For every selected PE and every element in ValidRow x ValidCol, read GM at base + row * row_stride_bytes + column * element_size, with packed four-bit columns adding floor(column / 2) to the byte-strided row base and selecting low/high by column parity.
 - All accesses participate in PTO-TSO with the block's aq/rl attributes and are precise and restartable.
 
 ### Ordering

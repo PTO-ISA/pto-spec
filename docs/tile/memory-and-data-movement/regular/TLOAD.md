@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/regular/TLOAD.asl`
 
-Load one Local or Shared Tile valid rectangle from GM using per-PE base addresses and logical row strides.
+Load one Local or Shared Tile valid rectangle from GM using per-PE base addresses and byte row strides.
 
 ## Normative identity {#PTO-INST-TILE-TLOAD}
 
@@ -41,7 +41,7 @@ This operation has no standalone opcode.
 | --- | --- |
 | destination0 | new Local destination or absolute Shared destination |
 | address | per-PE private-GPR GM base address |
-| scalar0 | per-PE private-GPR logical row stride in elements |
+| scalar0 | per-PE private-GPR byte row stride |
 
 ## Decode
 
@@ -57,7 +57,7 @@ end;
 ## Block composition
 
 ```asm
-Local: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM defines ValidCol, ValidRow, and physical Col; optional B.IOR defines the per-PE GM base and logical-element row stride; one terminating destination B.IOT allocates the result; BSTOP commits.
+Local: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM defines ValidCol, ValidRow, and physical Col; optional B.IOR defines the per-PE GM base and byte row stride; one terminating destination B.IOT allocates the result; BSTOP commits.
 Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S255, per-PE TSize, and PE_MASK. Local sources, Shared sources, multiple destinations, and mixed destination domains are illegal.
 ```
 
@@ -91,17 +91,17 @@ end;
 
 readonly func InstructionContractGMAddress_TLOAD(
     base_address: Word, row: integer {0..65535},
-    column: integer {0..65535}, row_stride_elements: Word,
+    column: integer {0..65535}, row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    return TileMemoryIndexedAddress(base_address,
-        TileMemoryStridedIndex(row, column, row_stride_elements), data_type);
+    return TileMemoryStridedByteAddress(
+        base_address, row, column, row_stride_bytes, data_type);
 end;
 
 readonly func InstructionContractDenseStride_TLOAD(
-    columns: integer {0..262144}) => Word
+    columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return NaturalToWord(columns);
+    return TileDenseRowStrideBytes(columns, data_type);
 end;
 
 pure func InstructionContractZeroMaskNoEffect_TLOAD(
@@ -116,7 +116,7 @@ end;
 
 - DataType is explicit in BSTART.TLOAD. Omitted B.DATR selects NORM layout; TLOAD does not consume PadValue.
 - LB0/ValidCol and LB1/ValidRow default through the common destination-shape rules. Omitted LB2/Col defaults to ValidCol. Rows are derived from TSize, Col, and DataType and must contain ValidRow.
-- Omitted B.IOR supplies base zero and dense row stride equal to resolved Col. An encoded zero GPR selector is present and reads zero, so an explicitly encoded zero stride aliases rows rather than selecting the omission default.
+- Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An encoded zero GPR selector is present and reads zero, so an explicitly encoded zero stride aliases rows rather than selecting the omission default.
 
 ## Legality
 
@@ -135,7 +135,7 @@ end;
 
 ### Memory effects
 
-- For each selected PE and each element in ValidRow x ValidCol, read GM at base + ((row * row_stride_elements + column) * element_size). Packed four-bit types apply the logical index first and then select the addressed nibble.
+- For each selected PE and each element in ValidRow x ValidCol, read GM at base + row * row_stride_bytes + column * element_size. Packed four-bit types add floor(column / 2) to each byte-strided row base and select the nibble from column parity.
 - The accesses participate in PTO-TSO using the block aq/rl attributes and are precise and restartable.
 
 ### Ordering

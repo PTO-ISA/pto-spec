@@ -140,7 +140,7 @@ begin
         as integer {0..PTO_TILE_OPERATION_COUNT-1};
 
     // TLOAD retains the existing B.IOR encoding: RegSrc0 is base and RegSrc1
-    // is row stride in elements. Omission uses zero base and dense LB2 stride.
+    // is row stride in bytes. Omission converts dense LB2 to a byte width.
     ResetProfileState();
     let omitted_tload_start = ExecuteCommandInstruction(
         BundleTestTLSUStart(Zeros{5}, Zeros{5} + 24), 32);
@@ -150,7 +150,7 @@ begin
     assert BundleOperationBindingsComplete(tload_operation);
     let omitted_tload_operands = BundleTileInstructionOperands(tload_operation);
     assert omitted_tload_operands.address == Zeros{PTO_XLEN};
-    assert omitted_tload_operands.scalar0 == Zeros{PTO_XLEN} + 7;
+    assert omitted_tload_operands.scalar0 == Zeros{PTO_XLEN} + 56;
 
     // An encoded zero selector is a real zero stride, not the omission
     // default. A nonzero RegSrc1 reads the selected absolute GPR.

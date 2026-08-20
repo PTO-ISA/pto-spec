@@ -113,8 +113,10 @@
         "PTO-AVS-ARCH-GLOBAL-MEMORY-ACCESS-MASK-BOUNDARY-001",
         "PTO-AVS-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS-STATIC-001",
         "PTO-AVS-ARCH-PROGRAMMING-MODEL-PE-GPR-STATE-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007",
         "PTO-AVS-BLOCK-SHARED-TLSU-PER-PE-GM-EXECUTION-001",
-        "PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001"
+        "PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001",
+        "PTO-AVS-TILE-TLSU-BYTE-ROW-STRIDE-EXECUTION-005"
       ]
     },
     {
@@ -9708,6 +9710,7 @@
         "asl/tile/memory-and-data-movement/regular/TSTORE.asl"
       ],
       "tests": [
+        "PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007",
         "PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001",
         "PTO-AVS-BLOCK-TSTORE-PACKED-001",
         "PTO-AVS-BLOCK-TSTORE-STRIDE-001",
@@ -11829,7 +11832,7 @@
     "asl/arch/memory-model/address-space.asl": "849dbcf439dc8dcd09d40056d80bc984bdcf0936c2da074db8fdf7abc22edfd0",
     "asl/arch/memory-model/atomicity.asl": "62f7e2c43e82c804a98665bf2410b8309d581d1ff401a7adcdb9b993e04ec5cb",
     "asl/arch/memory-model/fault-precision.asl": "b6118998eef77d70e5aec9fffbf56c3ea02bf6d817b713e30b9dc543d68adf47",
-    "asl/arch/memory-model/global-memory-access.asl": "e0a6c02b05575b29d29a6aafb0e36b7721a86c99400a87d656589d88e0723d88",
+    "asl/arch/memory-model/global-memory-access.asl": "919ddeecfa8990d1f21c006a8a9a1ef439486b9d4ba6c5cb4021db7bc5f87d95",
     "asl/arch/memory-model/memory-events.asl": "32b0cee879199679fb9f94e3b95a11e27c1a29d1e9677f45cdef83e2d43f895f",
     "asl/arch/memory-model/ordering.asl": "1f157179434fe7c704a35b7b0d8a086d2ade9280c4f678b3586fc29142844898",
     "asl/arch/overview/architecture.asl": "dfcca896f0961db8d1001f713d79db6edf6b8794a0c6c97429a1f6c40094805f",
@@ -11891,7 +11894,7 @@
     "asl/block/execution/BSTART.TGEMVMX.ACC.asl": "5ca9c922cb1561e72bf2785820095b6f4de162ffb8b34fdcc2e5d86a81c4df3b",
     "asl/block/execution/BSTART.TGEMVMX.BIAS.asl": "fd1d70befc76cee64b9168e2d9e8573002b85710f755f2ea5c21bf0a04aaff98",
     "asl/block/execution/BSTART.TGEMVMX.asl": "6f233a6605176fc4ef2cf0cb62cb9ff9e91331f37736dbb3d01267c5e4a45a6e",
-    "asl/block/execution/BSTART.TLOAD.asl": "5dba6feb4874c8a94efc683aded74b115f6ebcf7b75fc52687d42763c7d10735",
+    "asl/block/execution/BSTART.TLOAD.asl": "c1cdf348cd59e7f3baf401a8153953a58bc4fc79a07f2549f0767010f5bf260f",
     "asl/block/execution/BSTART.TMATMUL.ACC.asl": "9768aeaff2f22d43e8fc9506a5f3c38fc99e046e7b4a8f38a91a75615a936d2b",
     "asl/block/execution/BSTART.TMATMUL.BIAS.asl": "b3398f9015210a3a30b3d5dc109f82814c7cf945914dcb014aab2cfc12fd91a4",
     "asl/block/execution/BSTART.TMATMUL.asl": "26693c23f9ed7d1aa9617ae3c707f595947a1bd73688c737bb2daa18cb928cbd",
@@ -11900,7 +11903,7 @@
     "asl/block/execution/BSTART.TMATMULMX.asl": "640b1c27e372493ee134c388366297b0f9d9b6ba3cda35271000373bf63f7533",
     "asl/block/execution/BSTART.TMOV.asl": "718f96e1c4edcb172bad05e35a6c827e7778920f2250e2e5bee85f5305dd8211",
     "asl/block/execution/BSTART.TPREFETCH.asl": "c8c57ca48a101a23ed51a8c22d9b126690814b0f95096c4aa5519bb1439f74a9",
-    "asl/block/execution/BSTART.TSTORE.asl": "8d03a2b6fc352b20f34b11adfee67d6e6a5891ab75a6522a96abf6b5c76e506a",
+    "asl/block/execution/BSTART.TSTORE.asl": "58f91a9db55f8341cd515000ee79841899b843f3fd07288a819874f3b5561687",
     "asl/block/execution/BSTART.VEC.asl": "f3783620f9b5f536dbdd4636d74b522e112c060690a122c4af1097ee261ede77",
     "asl/block/lifecycle/B.HINT.asl": "c00cbb09d4d82839019d9ccb613a33ab95928afca9ffc5da50957895ecd98b63",
     "asl/block/lifecycle/BSTART.asl": "b4dcde54511161526282bc0a06ee434dbe6fb3beff5ce5f8426669a91125e451",
@@ -11934,13 +11937,13 @@
     "asl/block/model/dispatch/quantization-schema.asl": "77f3f85823e2b88b03fe339c9c9d0991b017cf92792769cb7d6b685e4daeedd6",
     "asl/block/model/dispatch/reduction-schema.asl": "686548d1463a8806841a2d576efe9d318432e34695e4af50ba8744752d20f0dd",
     "asl/block/model/dispatch/scalar-schema.asl": "0ceb74d729f28cef0b59abe67c03827372b17de1a70cb9aa4fa3c5e2930184b9",
-    "asl/block/model/dispatch/shared-tlsu.asl": "2a3c423d77a1f3f03f8556dd36e732e9f914e7d7ad10df3f691b868ec360323e",
+    "asl/block/model/dispatch/shared-tlsu.asl": "45381bb17fdd3f4e01be9abfe4188a510e7ba3bc8af003b0dbd3423a6afe1562",
     "asl/block/model/dispatch/sorting-schema.asl": "9070d006d8797e399fce16d08146081d55986efd502197090d6ca5cd75624ca1",
     "asl/block/model/dispatch/start.asl": "a9cee42a5f6bca111478546b4f3d7b9e8ca2f1abf7729a6902d51431e628c206",
     "asl/block/model/dispatch/tcvt-schema.asl": "9711d377ffa6aabf9b64eaa1b958bc3d894eb13fe7a89f3374f2c5c2fe3d0269",
     "asl/block/model/dispatch/tile-execution.asl": "12f0a470f906df28b88f7c767ccf599015038a37ff980dc61c3d5803b2ef7d04",
     "asl/block/model/dispatch/tile-scalar-schema.asl": "9b358fb3b7754dd2e00e21f8ab25d5e2796c78bf2b630073910c99692d71d7b1",
-    "asl/block/model/dispatch/tile-schema.asl": "7fa52efff019ee2e8177ce0b64c504034e347661ed0cdf7890e24f1c7a632030",
+    "asl/block/model/dispatch/tile-schema.asl": "23b4a16511136f2624949cb8282c14f63784e941f60abefd8300e93b78d87f12",
     "asl/block/model/dispatch/tlsu-gmov.asl": "500ea0d7053ca2126ac344052ec98b6a97f2cf78660a13bac6da0a7830be6159",
     "asl/block/model/dispatch/tlsu-mgather-cas.asl": "17d4b63d3f34e5233a7df6a8f756bd2fc5365d155488eceb99dd13d5368d50a9",
     "asl/block/model/dispatch/tlsu-mgather-mask.asl": "fc450443978e981b8863221d0868702b2aae1b111875f30c4624c0362959f19a",
@@ -11966,7 +11969,7 @@
     "asl/block/model/state/control-state.asl": "fb6922eeb547e7181d8cf6c84b2e2aad270111b9c398543a385ff8475c33de72",
     "asl/block/model/state/descriptor-state.asl": "a17ac5224036d3423df656c3c6301128d5db3259035b558b09eecabd94987e20",
     "asl/block/model/state/types.asl": "3798c5fc9e67709f341d0eb01da2c34611d705ce1745283a38b30c7dc337e6a8",
-    "asl/block/operands/B.IOR.asl": "fe2987fceff3275bc0c654175412fe327f2357eb004ee8082ef61d334e5087f2",
+    "asl/block/operands/B.IOR.asl": "eb0b9933c0d814dc8e3f36004a591dd28c1b02f3e5f4a037497f75bb793dad26",
     "asl/block/operands/B.IOS.asl": "23549cf40613ef7a944a31645383608962f37a3551bcf2b95fa8d8f6a32a46f6",
     "asl/block/operands/B.IOT.asl": "61f04d50390ca12d1fce5fcc0ddd70a77a9850b376fc41ac3c5b6323ba36b280",
     "asl/scalar/agu/C.LDI.asl": "cf9ea86090f7fbf98a32a47f33692aff5ba8b400d32e1224eb4780714dbab1f2",
@@ -12517,9 +12520,9 @@
     "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl": "ea41389b7811409bb24065e603e7e94a0ce5b7ed94bf7c3873298e34d2f93c79",
     "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl": "a65c5f6728047eb5c8a07e8748c378d39c8e22d8278672d02db86cee0dd09e60",
     "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl": "42ddf0b95a12de6654c668c3eecf316c4052d3a93ac2905df017fcbceff64f2c",
-    "asl/tile/memory-and-data-movement/regular/TLOAD.asl": "1a191676eb5f64c13a7dd5df6f477207f065605dd762f95768346dfa97c46b53",
+    "asl/tile/memory-and-data-movement/regular/TLOAD.asl": "76a00a6024e53d7fe070898c77bec8939284970e87481ac819b22703bddd5ce0",
     "asl/tile/memory-and-data-movement/regular/TPREFETCH.asl": "edaa7b33b2882f46ec0855b025ab50881458aa3a16d691e32c372ca2ba082c8a",
-    "asl/tile/memory-and-data-movement/regular/TSTORE.asl": "8d0b020f06ad85cd887f4fec091153ea55aa4dd8a77204a6a48c01bb12771494",
+    "asl/tile/memory-and-data-movement/regular/TSTORE.asl": "a98bcaea29c5f16094b65e155da1a214042eb73643eec9e0b4d6cb73be906be4",
     "asl/tile/model/capacity/local.asl": "cebf9da009185472887483077106a31509256ed4593141e5adc4b2065e6214c8",
     "asl/tile/model/capacity/shared.asl": "8099e822d9e33c0ea0a30c1fb55a65b55bd54108c8c289a8fd7d0e09da9ae51e",
     "asl/tile/model/definedness/elements.asl": "10e85159f7524fdec933c22c4d8e761dc5f3a1824e72bf6ced79113468f7a064",
@@ -12557,7 +12560,7 @@
     "asl/tile/model/legality/matrix-operands.asl": "fbcf4014de6147808f01817d0d4ae757eb723821a783cce2b9681a617692b31e",
     "asl/tile/model/legality/matrix-postprocess.asl": "f7e48378e2d55c6846f25ae67e95211c9df680209ad0f6f3ad2be93a505c1917",
     "asl/tile/model/legality/matrix-shape.asl": "ec01824d680dbe18ee8de0776a3557e4eb6eb7334be42938e76a4324a725f8e1",
-    "asl/tile/model/legality/memory-schema.asl": "a7cd1b477cc4a939f10aff945599c13cb7ca9caf87204764f4804fb8189ff0c4",
+    "asl/tile/model/legality/memory-schema.asl": "8dff005ad094478e60cbbdeb3cd231da91d472de93f7fc995721c51434161449",
     "asl/tile/model/legality/operand-schema.asl": "eb2f61467cd3df6c46fc6813a11331cd14ce41d779d0f203909c5233f5488018",
     "asl/tile/model/legality/pe-mask.asl": "8f1765d554ada2e8c34d39f7d2f721aece9ebce76b0fe6927137d52d6f2f861f",
     "asl/tile/model/legality/reduction-and-expansion.asl": "eb1c898ae4219734b9ef14c7588e2ee1f49e30417b862da930ae7e45a8f738cf",
@@ -12565,10 +12568,10 @@
     "asl/tile/model/memory/addressing.asl": "d6e975064e98ead3e19cef020acc7c9b50687e1106c8380b172b0acb7004faef",
     "asl/tile/model/memory/atomics.asl": "3fe85107f4745fdfbd1513f2485e316778e6ac053f01867f8ee9f6654c4fdeab",
     "asl/tile/model/memory/gather-scatter.asl": "380643b5cf30271df799fe19de34681f77735147d6a6e6ed31e8dad1f1de62e0",
-    "asl/tile/model/memory/load-store.asl": "1aaac2d7bf4048ab8cc74ac3de17ddaffd32a948aa2a2ae1f7b72e098ea7d02e",
+    "asl/tile/model/memory/load-store.asl": "6ec46ec06f8ee9d5e1511853db3f9ef16e28edcbd707af2ec458204d69803a94",
     "asl/tile/model/memory/restart.asl": "952183301020042b382a7c7eb14adfc52b2d3c74b99cf130e8912e89b6205b2e",
-    "asl/tile/model/memory/shared-movement.asl": "c653fd93e37f78ce1b8074eeb143404086b46df40688ff27c8ce9aff2014384c",
-    "asl/tile/model/memory/stride.asl": "84fa5d1f63c26132f1f0c07d6ffad391498765771619dcbc005217ee127e84c7",
+    "asl/tile/model/memory/shared-movement.asl": "102d2417942518c336bdef1499a0fea3246eb57adf9569c8b565b1c8e7a5c80d",
+    "asl/tile/model/memory/stride.asl": "92960da5561ea8d7b3869d028893279dbde4541b554097cef7eea067224eba46",
     "asl/tile/model/numeric/exceptions.asl": "7acbde42269981937c4b34454cde84242dd6e22c4daec4c57e8318b347f7adfa",
     "asl/tile/model/numeric/formats.asl": "55eb6eaf63ddfdcd918603a21673b53c198f448c6e8800e3389b28f43410fad8",
     "asl/tile/model/numeric/rounding.asl": "749f652fb0fdd9dc7e87c2ef889ff7ecf5f17debdf10590a72f98bcb0e6adb6f",
@@ -12663,7 +12666,7 @@
     "docs/arch/memory-model/address-space.md": "aceb71f510f5b324f030f26d8adcace90730a9d116fb28b33500b348bbaa5adf",
     "docs/arch/memory-model/atomicity.md": "b3ec6f3c6cf1e1a30a2feb7b88147a59bb01eada628402efb49297c54c88f0a9",
     "docs/arch/memory-model/fault-precision.md": "43c71076b7e7b3cfbdb44aeae119e5efeff29f960327e37261cf9f240d2ec288",
-    "docs/arch/memory-model/global-memory-access.md": "751b17aee5ce79124d044f04cadbf5decdd6cc942a2e565c242a06139f5f938b",
+    "docs/arch/memory-model/global-memory-access.md": "bdb7fcd04ee8782d9c08753d81289e7decde17103e59b8be944828d2be8cfd63",
     "docs/arch/memory-model/memory-events.md": "4885d986f0254f9b6c8218cd935e697f24cc6badd8e44760df450ecac679539e",
     "docs/arch/memory-model/ordering.md": "117d16fa92ba77f07ead98ed7994ecae0c3029358d8f0798a471ff69907b2798",
     "docs/arch/overview/architecture.md": "fd5d337a6b3b3559f27efd706271f5440e627d2fe10a7363fafed8857a849614",
@@ -12725,7 +12728,7 @@
     "docs/block/execution/BSTART.TGEMVMX.ACC.md": "0d45c862cfddd8f9ed29e4298ab8aa1f22b33ac35152c6a225a6e06cd7e8804f",
     "docs/block/execution/BSTART.TGEMVMX.BIAS.md": "30b86c087e0ba67c447fe0b64f4a060a1fe435d2bc685157056c4148fedb143d",
     "docs/block/execution/BSTART.TGEMVMX.md": "17f21c9845b1bdbb3f640fb674c7e6b02f553a0402f268fc583c2be5730b624f",
-    "docs/block/execution/BSTART.TLOAD.md": "be57d02c335a77d98c4d353e45e70c98e584a56a5e145479793a333a6e79cd43",
+    "docs/block/execution/BSTART.TLOAD.md": "48248d83926bcd2d31b3f44983bc25540d19f4da4f6f570e6846aece11a1637d",
     "docs/block/execution/BSTART.TMATMUL.ACC.md": "7903f88b5fc9cecc3d646e1f302217a11971d2b9cab8408fa0aa059b161cceeb",
     "docs/block/execution/BSTART.TMATMUL.BIAS.md": "3af72487372b7419e5dc114b3129953e8d2dc7275b8c54768b5b163d3ad98c23",
     "docs/block/execution/BSTART.TMATMUL.md": "11e5e716247fd04650b38ab75eef984f8e5cecb8f570fe4c4601d24cb2abf325",
@@ -12734,7 +12737,7 @@
     "docs/block/execution/BSTART.TMATMULMX.md": "ae7afc2e2940261ab444634867d1595e7a53e76b3815844c104dd4f3f944dc2e",
     "docs/block/execution/BSTART.TMOV.md": "3b4d1a79f4c1b0cff0f7f1a42418eddca1175e21a09775cd81b09286d8ed8663",
     "docs/block/execution/BSTART.TPREFETCH.md": "78be2222938968bf7403cc2af3f73a5273422517babfb0cd4082f4052424e592",
-    "docs/block/execution/BSTART.TSTORE.md": "94cf0be1ee50eff50d7e02ccca2edabcdbfe50aa2f0b1fb6dd515db7213979d0",
+    "docs/block/execution/BSTART.TSTORE.md": "53ecdce2b664c02c669910563e6d2f35913f72956e8e86dfe3668bdb69e84c6c",
     "docs/block/execution/BSTART.VEC.md": "c3c40cb8affc77d9d771ffc90ae268a635f4462dd2c01950a44e627bf52d1230",
     "docs/block/lifecycle/B.HINT.md": "3cd3b9e725928598332d88c5633b872fc7c42a2b85737776f568b812f5f268f7",
     "docs/block/lifecycle/BSTART.md": "a103368b5be2339173acee1471351c1dafaf9563f3c9ae926997e3276f78e8a7",
@@ -12768,13 +12771,13 @@
     "docs/block/model/dispatch/quantization-schema.md": "b6395d310f64bf5f9310f4b709a6096a55d04f5f4422df1651a4b137f3228bce",
     "docs/block/model/dispatch/reduction-schema.md": "231c57b15c90c460c5721ac8d3363b4b926833eeb8d513b6f3ce2aed00fb862a",
     "docs/block/model/dispatch/scalar-schema.md": "51aa336a117c92d0ff97c9e9a1a66731164fcdac5a6c9fe1c9b6e04b7c0f4940",
-    "docs/block/model/dispatch/shared-tlsu.md": "407e9564fdb562249cdb4f7b2979493849d78220250805f109215c9e7a575e0b",
+    "docs/block/model/dispatch/shared-tlsu.md": "535a26e8d718ab094cebcd729f36833dcf42d27606b5acf190ad4215c5dfb029",
     "docs/block/model/dispatch/sorting-schema.md": "4ebbd58834fb5af611756254caa45d00888121e46e9bc2ede30feacc62374664",
     "docs/block/model/dispatch/start.md": "15fc17c0fce3e8cf2a14fac8213d67c84d0122490cb66ddcac46a4e5756addb7",
     "docs/block/model/dispatch/tcvt-schema.md": "dc8ead3f84b5cc77036c7cea5841dcfb3dc106a0f76bae70b9247971744cad97",
     "docs/block/model/dispatch/tile-execution.md": "ce69a1bcc45a0dcc2a016554ecafebe61b617c944303eca6853f92b476ea0160",
     "docs/block/model/dispatch/tile-scalar-schema.md": "fbc99c01428e999ff3406a68addf574861b26f465f0bc9c08c767df0b99d740b",
-    "docs/block/model/dispatch/tile-schema.md": "b7d43f586818045eb13c9d93b8972bd1108ade911a2101eaa22ad84777891727",
+    "docs/block/model/dispatch/tile-schema.md": "7d9e15a16c18df05354b882fb5d5adc0a8252f0e8a3e9c0c87a61f6c2db2bf20",
     "docs/block/model/dispatch/tlsu-gmov.md": "a8adbfb2fc5eeb9425b7ff574877f007dda0b8455a7bcb37be226434fac1f6ec",
     "docs/block/model/dispatch/tlsu-mgather-cas.md": "436e94dc700f0244a13880c07ae5d195188eb58b3ca9918074649522b038aaa9",
     "docs/block/model/dispatch/tlsu-mgather-mask.md": "e7f5f2a7f47084375d6d1d2234819980352263964f9a44db711f8c76bb688689",
@@ -12800,7 +12803,7 @@
     "docs/block/model/state/control-state.md": "a13b078dcbb86c3667c59dd836088a5f515a24c40fa98c1ade5130782ad0f601",
     "docs/block/model/state/descriptor-state.md": "c183ef7e2971a657ecfc89380aa87ae36cee2523ea124cc5f410a1046f3f1426",
     "docs/block/model/state/types.md": "d0b1ba6f680adb877a35478395044ffab0d2c5c728bf0353ca3494d1e8aaab9a",
-    "docs/block/operands/B.IOR.md": "61ba1b6bdad58a12a4b1e69430f829e54d99b90f5b666a39c74a4e855f173452",
+    "docs/block/operands/B.IOR.md": "761cdc372d08816c38bcf72836d72ed75f9c925d8979e9389d9059875d065b7d",
     "docs/block/operands/B.IOS.md": "c220d8ebaa3952a1960bd5f27bb13947951c3b7e4c73dbf8b508bddd3b678d48",
     "docs/block/operands/B.IOT.md": "73901a30ffe432ba157f083fb2ffd3e99185d6111a27c383c0500a5bdf6a93a6",
     "docs/scalar/agu/C.LDI.md": "3a584ed83a2ed0a8f98153f6c0e3830caf7bdfc778f88d903e4af784b29f87bc",
@@ -13351,9 +13354,9 @@
     "docs/tile/memory-and-data-movement/irregular/MSCATTER.md": "3edcafa63e9c385e8652e910c2f4499bff69ba87edadebf99a5f9b74605ae2f5",
     "docs/tile/memory-and-data-movement/irregular/MSCATTER_MASK.md": "886a1219ab86cb6bb5fa79cd888d5df2edc7eed1cfa83c25384eb1e0b4490f28",
     "docs/tile/memory-and-data-movement/pe-movement/GMOV.md": "43d997e55060adedd26121590e76b765c31c247f06854775ef10abe3bb86d98b",
-    "docs/tile/memory-and-data-movement/regular/TLOAD.md": "f19ad399327cc00de1d9597be86ab150c802ab67f0440bcb55bd664ac5b384c9",
+    "docs/tile/memory-and-data-movement/regular/TLOAD.md": "c8effcae05500eda2673cf449b262d6ddfe8edc1655123896b695ff91b5e13aa",
     "docs/tile/memory-and-data-movement/regular/TPREFETCH.md": "f6ec124e3d598a4aa62ce4262c0242800e0103900bd0b68d3ef3c1bd681cadbb",
-    "docs/tile/memory-and-data-movement/regular/TSTORE.md": "c93c36e4dc4766d1325b1b1a5f2bf7fca6caa6240532bc181533c4b55866134f",
+    "docs/tile/memory-and-data-movement/regular/TSTORE.md": "510c60cdf7114911d96e9c7fe8f3e5b73ba4f564d3ad784598c9c4aab830ea80",
     "docs/tile/model/capacity/local.md": "9ffe607b35be01fad12129e7e75abaa3c224b54871a6f78d47c1a0c13968d823",
     "docs/tile/model/capacity/shared.md": "27ba2f329d126eb9429df96f72ca65f3eb508a4c6d1288b3a97da9d306b0d6e8",
     "docs/tile/model/definedness/elements.md": "abf40567ac0f6f4075b2b505cb4265680b8b1f5c32c15671a5d593e17175ed26",
@@ -13391,7 +13394,7 @@
     "docs/tile/model/legality/matrix-operands.md": "38d1e4987e49ba769f4b33a47f26b14f3bb37df7cee69e57c2c2c46a9e7c1249",
     "docs/tile/model/legality/matrix-postprocess.md": "f9dc75411a58a1354e539e940e18f1603dbd091c3e95d5f5d64f931fb4a66c18",
     "docs/tile/model/legality/matrix-shape.md": "9c022fc9e3c544415f77090828b74c12eb3ba2daff2f0330b9c24ae084e9df37",
-    "docs/tile/model/legality/memory-schema.md": "271f54207651592b49fbd4aa527ab3658adc1e181425828295e5e8a90784bf0a",
+    "docs/tile/model/legality/memory-schema.md": "37009103c5ae58260547374f098977a3780511fe837fe24c2f7c2d5f7bdf81ea",
     "docs/tile/model/legality/operand-schema.md": "d562b87ef0536a26cea5cf6d26bd49140ff748ef4d4aa0dcf0de7891f69608a9",
     "docs/tile/model/legality/pe-mask.md": "7a28fca19192a89cefca7ba1d72b9c382593669a0109e58fc7df07fa21cef882",
     "docs/tile/model/legality/reduction-and-expansion.md": "bc91a425df149b99365969c87d149f277def9848df565c2ae00fa51c8838c087",
@@ -13399,10 +13402,10 @@
     "docs/tile/model/memory/addressing.md": "98ce784c8bb4ceab442a0ff7891c80976eb4f1ca55b9b3d9cd3a8cc8b715f55a",
     "docs/tile/model/memory/atomics.md": "b3922a5c08967ea70485c3cd7d74101cc079c919167f7ef182ad123ef591e28e",
     "docs/tile/model/memory/gather-scatter.md": "0cdc4119d31a02c3a2c57b97205b64676a51b5f87a60d8e681bef5a33ba533da",
-    "docs/tile/model/memory/load-store.md": "656856aef96cbb2136202f1cf85157f19730e3e4802312243c589604ae756430",
+    "docs/tile/model/memory/load-store.md": "fd22cba0bc4ff0127a2223e5e15d33757d05744970f8a740644e0a62cc441a6a",
     "docs/tile/model/memory/restart.md": "9cca46b85c37f607100d6ec109cdae04fcf67a563cdcde46ad6fa37f71686746",
-    "docs/tile/model/memory/shared-movement.md": "d876def38bb56d0a02f9205fb68eed8dc8e71218fe73de25c041c09f98f650e7",
-    "docs/tile/model/memory/stride.md": "8b68431d6b565dbfebae80a74bad645ccc259a9fbc0decf5550231504c1e898d",
+    "docs/tile/model/memory/shared-movement.md": "894016a68c55c8ae70eef15f39d89410efa27166633cc659aa9327e087ff86f2",
+    "docs/tile/model/memory/stride.md": "ce607cbd6ab448d22a66cd99e7565be83df234b4f4338f14582a236bc1acc44b",
     "docs/tile/model/numeric/exceptions.md": "4e335ec29d3f652976b7d3fa16ec9f7813b5b45038180ae85361ccd8dff26c96",
     "docs/tile/model/numeric/formats.md": "6b99d9f84ecccb464f8cb09a67dea1f964d04ce94c9c9f232f85aeb01c34c852",
     "docs/tile/model/numeric/rounding.md": "c3abbe781811cd8a228ea9600c8cc4cbec31186d88ec5cadd1ca613d4d77b6f8",
@@ -13459,7 +13462,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "a880dae32c4e8b2d6f55b27e81a43a45277553933ce97efbde528862aaf80e34",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "86ddd65217cf977a6461d9d5d5bbf685cd02c954c5911fc87d3f712dd6a57c14",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "b73c44e7a96aa6b5bbe8b95714d0e09ddebfccdbe45c43404cb924d6f7e41018",
-    "spec/evidence/instruction-contract-closure.json": "0d726f39f1e1cf080dbbb7733099912b67a28836fbd5f1ef6b29f7454de3df84",
+    "spec/evidence/instruction-contract-closure.json": "3af11a1c9f89667d02bed11de08510f1e1d5d5c16311c7802ce896c99ef973b5",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -13754,9 +13757,9 @@
     "tests/asl/block/execution/BSTART.TGEMVMX/block-exec-bstart-tgemvmx-basic-001.asl": "6ba0db420f5c45f4c622c5959081964d2ffb0e40fdc5e30185b6df41ee8bafc1",
     "tests/asl/block/execution/BSTART.TLOAD/block-bound-bstart-tload-dtype-001.asl": "3778916f9729da14f983e6f929df043b4cea88cb85b42e93e7498b12fd98a39a",
     "tests/asl/block/execution/BSTART.TLOAD/block-decode-bstart-tload-canonical-001.asl": "3fa85862612bb9ffc14b7be6a0db6422fd0b2f2546d69472a1afd85682899396",
-    "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-packed-001.asl": "371cda4e569b8fc74ffec9c50d467e2ecd04365c746909b39600cc6872e67a00",
-    "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-shared-001.asl": "099684732dc089a62dcd03ffae028b999981df90babf46e96920816a28b1dbd8",
-    "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-stride-001.asl": "d41d95e47dba38a9089eaa91904576499ac8615254bf9d33666bcb2ecb23459a",
+    "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-packed-001.asl": "8865d3b39584ea414e1b72b8c4b5df65ba9dd9a7c058964c8e0a181e92f23957",
+    "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-shared-001.asl": "dc3efb225d9f1ca31753087fc82bad29f7d508ad0bf528f16e26023041c52c51",
+    "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-stride-001.asl": "fe6508e72fd1564b2f43d8386da5cbfd0f23ed9332141aa557783bd3fb03549e",
     "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-zero-mask-001.asl": "1f5f6edf1cb6d6f179307cc1e2936a3816483dd6103fc5eb07ccf247b38b0ff1",
     "tests/asl/block/execution/BSTART.TLOAD/block-fault-bstart-tload-preflight-001.asl": "87677e348643902104c9390049fc330289111b3bcba4edd9b906aae5ea783242",
     "tests/asl/block/execution/BSTART.TMATMUL.ACC/block-decode-bstart-tmatmul-acc-canonical-001.asl": "caf147a0bffd79a19d143ed6d4382b2b076c387eef49c940d4364ae46f472e46",
@@ -13793,8 +13796,8 @@
     "tests/asl/block/execution/BSTART.TSTORE/block-bound-bstart-tstore-mask-001.asl": "8852198cce93506cc206033d617c69662fe25f5cbcbb8c5190bc48a1235a03ba",
     "tests/asl/block/execution/BSTART.TSTORE/block-decode-bstart-tstore-canonical-001.asl": "5639387e4ef77e43998432976c8701818c670d12c38755ecd3f66ecf16780326",
     "tests/asl/block/execution/BSTART.TSTORE/block-decode-bstart-tstore-forms-001.asl": "49fc2101ef16ebd600ae99fe027e3940085a031f03a987068b15a1ac9b0d99a6",
-    "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-packed-001.asl": "0b5f0e24120db86c31a11c04937ffe752ec0f22625cc0eec9d853c644d2ce977",
-    "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-stride-001.asl": "4a2ae182a80f6566126fc6d302b1f6a6b57233c4811edb781788231c4c84f521",
+    "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-packed-001.asl": "0143c437e550c89f3e3766f41612a845e9bed8c7327ecd19e28ce3b8e5428b73",
+    "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-stride-001.asl": "ef7b78b7b64fc76ca36c74c89dfaac8ca4157855581e555f03264e310e664d9a",
     "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-undef-001.asl": "4ac477cd7f846778721789e9a49e5c82ccb8b5a973dfbfca36ebd469354b9a28",
     "tests/asl/block/execution/BSTART.TSTORE/block-fault-bstart-tstore-shape-001.asl": "0524fbb27cc8fd5d001fbd4372e45740762e9b4689b5b0a62a67ec9448df6416",
     "tests/asl/block/execution/BSTART.VEC/block-bound-bstart-vec-engine-001.asl": "ade1ae251277644d5913df1373c37d5dace4103d1625deb65e5ce7c334961281",
@@ -13902,8 +13905,9 @@
     "tests/asl/block/model/dispatch/reduction-schema/block-bound-trowsum-schema-001.asl": "93d0643418ade6de8b418e0839ff22ab512ef23d5ccd4d640a37288f68edf0ae",
     "tests/asl/block/model/dispatch/reduction-schema/block-static-reduction-schema-contract-001.asl": "47350f615c9f4dc735d53fc63c361882b357baba28478f51a1eafe894074086c",
     "tests/asl/block/model/dispatch/scalar-schema/block-static-scalar-schema-contract-001.asl": "26a1eef09b2ff830e33b85e1d1b8c73c4108c6b9e26a061638a938d9f5366c4b",
-    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-per-pe-gm-001.asl": "d3e8d0984cf1da904822d504a2de8b2cdf901eafdf72b9b29b4ad55195f6aa62",
-    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl": "5aa69122036e74955618ba300d52a5b00a3a35ccfd30f54af66cd1f5e817339a",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-per-pe-gm-001.asl": "e62dedf62a48154ca770b41a249bf00e80485a14bbca3c23281302c71b1a6ee9",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl": "8f0b8f450432bdf8a2970fb8a3dd2d626e2f6eac056ad7249eecd526d9336a86",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-byte-stride-007.asl": "2983a8bf871b73f01ed34c2b5d5ee7dd05ac0ca8b308e9871fac847a4e407886",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-mask-partition-005.asl": "550d5e4778b37df7b6b7a621096460c16acbd304e1b05c10dfe7b4eb17dcfb6c",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-missing-binder-006.asl": "028718a42384246af17eb1e4679e7d2a95d8445d94bea8494d8bc0437b782dc4",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-partial-004.asl": "9b01e8dbacac1555eb3541b524a43b7a05495269e8c54797d6f704edd4bbe827",
@@ -13953,10 +13957,10 @@
     "tests/asl/block/model/state/descriptor-state/block-static-descriptor-state-contract-001.asl": "3403f35dcefd253565c98f808af0e61d0cf7e4354ddd10c1f76be60b183b7f9b",
     "tests/asl/block/model/state/types/block-static-types-contract-001.asl": "6deef6b157ce1e2043264f9a5d709debb88a34537096d5c21853268992810224",
     "tests/asl/block/operands/B.IOR/block-decode-b-ior-canonical-001.asl": "41eac5c50b41de9083dc2e0d2aeffa1f10aba17deae302940f0e516b9619080c",
-    "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl": "88acc6f88716f133143e6fa69dc9801cba8882019557ebec0d7e3de58bb46cf5",
+    "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl": "90db79a5f36d0015b50aecbd8b9bc1c58ca23ed6caad501cadf9408d78ac4814",
     "tests/asl/block/operands/B.IOR/block-exec-b-ior-order-002.asl": "9645c5f0d3b77532f08aacb7544d798590850e1de36b94e9f7b9a07baab844f7",
     "tests/asl/block/operands/B.IOR/block-exec-b-ior-ordered-gpr-001.asl": "1a54b4476a71f525a388252ee56ddcea2d605eb0586c1ba4a87e613f03d983f9",
-    "tests/asl/block/operands/B.IOR/block-exec-b-ior-ordered-gpr-helper-coverage-001.asl": "3481ecf84984942da6e143ceede549c4c6c292b56ddf54852a1bedf69845f8b3",
+    "tests/asl/block/operands/B.IOR/block-exec-b-ior-ordered-gpr-helper-coverage-001.asl": "b840a658d82657d21e301f8419a42f6cc1e229c2d4bcb043cf7d87a8f36b8966",
     "tests/asl/block/operands/B.IOR/block-exec-b-ior-tile-consumers-003.asl": "99fa97c2bc738a1a26f4fb4e897c7f26c74874280a69edc2ec71b57d00d2b073",
     "tests/asl/block/operands/B.IOR/block-exec-b-ior-tmrgsort-end-to-end-001.asl": "a250256de64b2ccf55fa25188c12b7f50ed98403fd7e683fce6e97c29f769b3f",
     "tests/asl/block/operands/B.IOR/block-fault-b-ior-placement-001.asl": "25c4a4a82fa9557d552193a8488a9d220b6e711bd3591c26feec43f802a1cb79",
@@ -16496,11 +16500,11 @@
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK/tile-static-mscatter-mask-contract-001.asl": "92120e05861f90cb0e5070dd29efce47ea5dbd278f54974e1abb47e6b2cf1546",
     "tests/asl/tile/memory-and-data-movement/pe-movement/GMOV/tile-exec-gmov-copy-001.asl": "b8127ce000396df0a9f32c1a8a1c31a172625f4d359fd0254e24aa3bdfa87e1e",
     "tests/asl/tile/memory-and-data-movement/pe-movement/GMOV/tile-static-gmov-contract-001.asl": "086ae2f418ae61d2cfa9a455ee7a7587b8a69d92198a4ad6722a3794166e9f87",
-    "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-exec-tload-direct-001.asl": "7c06773361bdc0bd604e046eb9838b371781ac3621d98d87fb5e77750d827c03",
-    "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-static-tload-contract-001.asl": "7fb603f0e00db7863c11dd07a1f3214719ca63a9eea7eaa1fa934ac62dd4e7a9",
+    "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-exec-tload-direct-001.asl": "04cbcc92cfcbe1f32c9eba0f886529b0b21d713bb7e2c8bdf69a092283673eee",
+    "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-static-tload-contract-001.asl": "49011307842248f38ca8ced98d331390e7217a06ea76af92c33e24b9122fefea",
     "tests/asl/tile/memory-and-data-movement/regular/TPREFETCH/tile-exec-tprefetch-requests-001.asl": "7f01ebd44fbf50ff90ed5d40f886ae4bf55da818bdd9c42e69119f5ae9f9adbc",
     "tests/asl/tile/memory-and-data-movement/regular/TPREFETCH/tile-static-tprefetch-contract-001.asl": "5b4eb06f8ad16a564787bccc460c7018e5972a0de8e84ac4ddac10f988b210bd",
-    "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-exec-tstore-direct-001.asl": "4762ce2ef3de5a1a2ca62c3180ab902f6fcbd6686be5416544771309f26ddde8",
+    "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-exec-tstore-direct-001.asl": "738d80dfdc91fe0c130edcd8b0b9c34dd52abb4455e2342cd668eb7819ca43f1",
     "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-fault-tstore-precise-001.asl": "cfe9daf86d20821d28491a365baafcf16e8edfc165fe7b9c15f8628e69548854",
     "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-static-tstore-contract-001.asl": "6741cabb9abb0373a6fc48f9d3b29fa38786d3f02b58932883af2695a1045f30",
     "tests/asl/tile/model/capacity/local/tile-static-local-contract-001.asl": "9ee6439efa04ac4278df60700bcf0b0a43fce401f8c5d9d6aac0a743ec88a534",
@@ -16598,7 +16602,8 @@
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-decode-004.asl": "500f0a8ace423bc6f462c0733cf7cb5b720fde83ecfc73b33c6e0eab37b4fb01",
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-faults-003.asl": "44e380708e70394cebd5d55152ed14d958d40b054dde6325ab8fd634b3339466",
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-indexed-002.asl": "b1366e6736fcf28ed47e78f8dad9ae36f82bf31fe4d5978f00a9002639890588",
-    "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl": "5cbc214f80bb7888ebea2aa582dbd78479ec52a25161fec9f5609abd6bd414d1",
+    "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl": "6ae30c2c909ce7e136b83371b2cbf574cd672ca3aed65b2cad46004da0457bfe",
+    "tests/asl/tile/model/memory/load-store/tile-exec-byte-row-stride-005.asl": "c12f4b71fdd14dd42433285269f99ca557429f53ec66845b0506b099546cce01",
     "tests/asl/tile/model/memory/load-store/tile-exec-memory-snapshot-001.asl": "f6caed9a89482a36af5192fa817cab4f1aab2eaafa2b5ab471264b17fbacffb5",
     "tests/asl/tile/model/memory/load-store/tile-static-load-store-contract-001.asl": "a520fb4fa4e0da1c31c5cf32de5a820a61fb56a4bb0a43dfdb53b26a3d3d77a1",
     "tests/asl/tile/model/memory/restart/tile-exec-memory-completion-and-001.asl": "c84d1d6fa4494cc6380ad4767181b623f4e82e2753762984b580085a4d77da71",
@@ -16748,7 +16753,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 995,
     "status": "closed",
-    "test_count": 3279,
+    "test_count": 3281,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -25896,7 +25901,7 @@
       "requirements": [
         "PTO-INST-BLOCK-B-IOR"
       ],
-      "sha256": "88acc6f88716f133143e6fa69dc9801cba8882019557ebec0d7e3de58bb46cf5",
+      "sha256": "90db79a5f36d0015b50aecbd8b9bc1c58ca23ed6caad501cadf9408d78ac4814",
       "source": "asl/block/operands/B.IOR.asl"
     },
     {
@@ -25906,7 +25911,7 @@
       "requirements": [
         "PTO-INST-BLOCK-B-IOR"
       ],
-      "sha256": "3481ecf84984942da6e143ceede549c4c6c292b56ddf54852a1bedf69845f8b3",
+      "sha256": "b840a658d82657d21e301f8419a42f6cc1e229c2d4bcb043cf7d87a8f36b8966",
       "source": "asl/block/operands/B.IOR.asl"
     },
     {
@@ -28054,11 +28059,22 @@
       "source": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007",
+      "kind": "execution",
+      "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-byte-stride-007.asl",
+      "requirements": [
+        "PTO-ARCH-GM-ACCESS-001",
+        "PTO-INST-TILE-TSTORE"
+      ],
+      "sha256": "2983a8bf871b73f01ed34c2b5d5ee7dd05ac0ca8b308e9871fac847a4e407886",
+      "source": "asl/block/model/dispatch/shared-tlsu.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001",
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl",
       "requirements": [],
-      "sha256": "5aa69122036e74955618ba300d52a5b00a3a35ccfd30f54af66cd1f5e817339a",
+      "sha256": "8f0b8f450432bdf8a2970fb8a3dd2d626e2f6eac056ad7249eecd526d9336a86",
       "source": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
@@ -28085,7 +28101,7 @@
         "PTO-ARCH-GM-ACCESS-001",
         "PTO-INST-TILE-TLOAD"
       ],
-      "sha256": "d3e8d0984cf1da904822d504a2de8b2cdf901eafdf72b9b29b4ad55195f6aa62",
+      "sha256": "e62dedf62a48154ca770b41a249bf00e80485a14bbca3c23281302c71b1a6ee9",
       "source": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
@@ -28384,7 +28400,7 @@
         "PTO-INST-BLOCK-BSTART-TLOAD",
         "PTO-INST-TILE-TLOAD"
       ],
-      "sha256": "371cda4e569b8fc74ffec9c50d467e2ecd04365c746909b39600cc6872e67a00",
+      "sha256": "8865d3b39584ea414e1b72b8c4b5df65ba9dd9a7c058964c8e0a181e92f23957",
       "source": "asl/block/execution/BSTART.TLOAD.asl"
     },
     {
@@ -28406,7 +28422,7 @@
         "PTO-INST-BLOCK-BSTART-TLOAD",
         "PTO-INST-TILE-TLOAD"
       ],
-      "sha256": "099684732dc089a62dcd03ffae028b999981df90babf46e96920816a28b1dbd8",
+      "sha256": "dc3efb225d9f1ca31753087fc82bad29f7d508ad0bf528f16e26023041c52c51",
       "source": "asl/block/execution/BSTART.TLOAD.asl"
     },
     {
@@ -28417,7 +28433,7 @@
         "PTO-INST-BLOCK-BSTART-TLOAD",
         "PTO-INST-TILE-TLOAD"
       ],
-      "sha256": "d41d95e47dba38a9089eaa91904576499ac8615254bf9d33666bcb2ecb23459a",
+      "sha256": "fe6508e72fd1564b2f43d8386da5cbfd0f23ed9332141aa557783bd3fb03549e",
       "source": "asl/block/execution/BSTART.TLOAD.asl"
     },
     {
@@ -28914,7 +28930,7 @@
         "PTO-INST-BLOCK-BSTART-TSTORE",
         "PTO-INST-TILE-TSTORE"
       ],
-      "sha256": "0b5f0e24120db86c31a11c04937ffe752ec0f22625cc0eec9d853c644d2ce977",
+      "sha256": "0143c437e550c89f3e3766f41612a845e9bed8c7327ecd19e28ce3b8e5428b73",
       "source": "asl/block/execution/BSTART.TSTORE.asl"
     },
     {
@@ -28935,7 +28951,7 @@
         "PTO-INST-BLOCK-BSTART-TSTORE",
         "PTO-INST-TILE-TSTORE"
       ],
-      "sha256": "4a2ae182a80f6566126fc6d302b1f6a6b57233c4811edb781788231c4c84f521",
+      "sha256": "ef7b78b7b64fc76ca36c74c89dfaac8ca4157855581e555f03264e310e664d9a",
       "source": "asl/block/execution/BSTART.TSTORE.asl"
     },
     {
@@ -46299,7 +46315,7 @@
       "requirements": [
         "PTO-INST-TILE-TLOAD"
       ],
-      "sha256": "7c06773361bdc0bd604e046eb9838b371781ac3621d98d87fb5e77750d827c03",
+      "sha256": "04cbcc92cfcbe1f32c9eba0f886529b0b21d713bb7e2c8bdf69a092283673eee",
       "source": "asl/tile/memory-and-data-movement/regular/TLOAD.asl"
     },
     {
@@ -46309,7 +46325,7 @@
       "requirements": [
         "PTO-INST-TILE-TLOAD"
       ],
-      "sha256": "7fb603f0e00db7863c11dd07a1f3214719ca63a9eea7eaa1fa934ac62dd4e7a9",
+      "sha256": "49011307842248f38ca8ced98d331390e7217a06ea76af92c33e24b9122fefea",
       "source": "asl/tile/memory-and-data-movement/regular/TLOAD.asl"
     },
     {
@@ -46343,6 +46359,16 @@
       "source": "asl/tile/elementwise-tile-tile/transcendental/TLOG.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TLSU-BYTE-ROW-STRIDE-EXECUTION-005",
+      "kind": "execution",
+      "path": "tests/asl/tile/model/memory/load-store/tile-exec-byte-row-stride-005.asl",
+      "requirements": [
+        "PTO-ARCH-GM-ACCESS-001"
+      ],
+      "sha256": "c12f4b71fdd14dd42433285269f99ca557429f53ec66845b0506b099546cce01",
+      "source": "asl/tile/model/memory/load-store.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TLSU-DECODE-BOUND-004",
       "kind": "boundary",
       "path": "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-decode-004.asl",
@@ -46355,7 +46381,7 @@
       "kind": "boundary",
       "path": "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl",
       "requirements": [],
-      "sha256": "5cbc214f80bb7888ebea2aa582dbd78479ec52a25161fec9f5609abd6bd414d1",
+      "sha256": "6ae30c2c909ce7e136b83371b2cbf574cd672ca3aed65b2cad46004da0457bfe",
       "source": "asl/tile/model/memory/load-store.asl"
     },
     {
@@ -48730,7 +48756,7 @@
       "requirements": [
         "PTO-INST-TILE-TSTORE"
       ],
-      "sha256": "4762ce2ef3de5a1a2ca62c3180ab902f6fcbd6686be5416544771309f26ddde8",
+      "sha256": "738d80dfdc91fe0c130edcd8b0b9c34dd52abb4455e2342cd668eb7819ca43f1",
       "source": "asl/tile/memory-and-data-movement/regular/TSTORE.asl"
     },
     {
@@ -52132,6 +52158,7 @@
       "mnemonic": null,
       "semantic_tests": [
         "PTO-AVS-BLOCK-SHARED-TLSU-BINDER-EXEC-006",
+        "PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007",
         "PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001",
         "PTO-AVS-BLOCK-SHARED-TLSU-MASK-PARTITION-EXEC-005",
         "PTO-AVS-BLOCK-SHARED-TLSU-PARTIAL-EXEC-004",
@@ -52145,6 +52172,7 @@
       "tests": [
         "PTO-AVS-BLOCK-MODEL-DISPATCH-SHARED-TLSU-STATIC-001",
         "PTO-AVS-BLOCK-SHARED-TLSU-BINDER-EXEC-006",
+        "PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007",
         "PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001",
         "PTO-AVS-BLOCK-SHARED-TLSU-MASK-PARTITION-EXEC-005",
         "PTO-AVS-BLOCK-SHARED-TLSU-PARTIAL-EXEC-004",
@@ -68602,6 +68630,7 @@
       "mnemonic": null,
       "semantic_tests": [
         "PTO-AVS-TILE-MEM-SNAPSHOT-001",
+        "PTO-AVS-TILE-TLSU-BYTE-ROW-STRIDE-EXECUTION-005",
         "PTO-AVS-TILE-TLSU-DECODE-BOUND-004",
         "PTO-AVS-TILE-TLSU-DIRECT-BOUND-001",
         "PTO-AVS-TILE-TLSU-FAULTS-BOUND-003",
@@ -68612,6 +68641,7 @@
       "tests": [
         "PTO-AVS-TILE-MEM-SNAPSHOT-001",
         "PTO-AVS-TILE-MODEL-MEMORY-LOAD-STORE-STATIC-001",
+        "PTO-AVS-TILE-TLSU-BYTE-ROW-STRIDE-EXECUTION-005",
         "PTO-AVS-TILE-TLSU-DECODE-BOUND-004",
         "PTO-AVS-TILE-TLSU-DIRECT-BOUND-001",
         "PTO-AVS-TILE-TLSU-FAULTS-BOUND-003",

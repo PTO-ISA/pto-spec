@@ -57,7 +57,7 @@ begin
 end;
 
 func TLOAD(destination: TileIndex, base_address: Word,
-           row_stride_elements: Word)
+           row_stride_bytes: Word)
 begin
     let tile = _Tiles[[destination]];
     assert tile.allocated;
@@ -68,11 +68,9 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let memory_index = TileMemoryStridedIndex(
+            let address = TileMemoryStridedByteAddress(base_address,
                 row as integer {0..65535}, column as integer {0..65535},
-                row_stride_elements);
-            let address = TileMemoryIndexedAddress(base_address, memory_index,
-                tile.data_type);
+                row_stride_bytes, tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
             if RaiseDataAccessFault(probe, address) then return; end;
             translated_addresses[[element]] = probe.translated_address;
@@ -82,11 +80,8 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let memory_index = TileMemoryStridedIndex(
-                row as integer {0..65535}, column as integer {0..65535},
-                row_stride_elements);
-            let high_nibble = TileMemoryIndexedHighNibble(memory_index,
-                tile.data_type);
+            let high_nibble = TileMemoryStridedByteHighNibble(
+                column as integer {0..65535}, tile.data_type);
             let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
                 TileMemoryElementBytes(tile.data_type));
             RecordLoadEvent(translated_addresses[[element]],
@@ -100,7 +95,7 @@ begin
     MarkTileValidRegionDefined(destination);
 end;
 
-func TSTORE(base_address: Word, row_stride_elements: Word, source: TileIndex)
+func TSTORE(base_address: Word, row_stride_bytes: Word, source: TileIndex)
 begin
     let tile = _Tiles[[source]];
     assert tile.allocated && tile.contents_defined;
@@ -112,17 +107,16 @@ begin
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
             let element = TileLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let memory_index = TileMemoryStridedIndex(
+            let address = TileMemoryStridedByteAddress(base_address,
                 row as integer {0..65535}, column as integer {0..65535},
-                row_stride_elements);
-            let address = TileMemoryIndexedAddress(base_address, memory_index,
-                tile.data_type);
+                row_stride_bytes, tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, TRUE);
             if RaiseDataAccessFault(probe, address) then return; end;
             original_addresses[[element]] = address;
             translated_addresses[[element]] = probe.translated_address;
-            high_nibbles[element] = if TileMemoryIndexedHighNibble(
-                memory_index, tile.data_type) then '1' else '0';
+            high_nibbles[element] = if TileMemoryStridedByteHighNibble(
+                column as integer {0..65535}, tile.data_type)
+                then '1' else '0';
         end;
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do

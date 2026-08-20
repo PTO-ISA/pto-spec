@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/operands/B.IOR.asl`
 
-Bind up to three absolute GPR inputs and one absolute GPR output; TLOAD/TSTORE use source zero as GM base and source one as logical row stride.
+Bind up to three absolute GPR inputs and one absolute GPR output; TLOAD/TSTORE use source zero as GM base and source one as byte row stride.
 
 ## Normative identity {#PTO-INST-BLOCK-B-IOR}
 
@@ -291,7 +291,7 @@ begin
 end;
 
 // In TLOAD/TSTORE schemas source zero supplies the GM base and source one
-// supplies row stride in logical elements.  Omission is distinct from an
+// supplies row stride in bytes.  Omission is distinct from an
 // encoded selector whose current value is zero.
 pure func InstructionContractTLSUBaseSource_B_IOR() => integer
 begin
@@ -314,7 +314,7 @@ end;
 
 - The complete BSTART operation schema determines whether B.IOR is consumed and the number and roles of its GPR inputs and output.
 - When B.IOR is omitted, every consumed input or output uses its operation-defined default. An explicitly encoded selector zero names the architectural zero GPR and is not omission.
-- For TLOAD and TSTORE, omission supplies GM base zero and a dense logical row stride equal to the resolved column count; explicit RegSrc1=zero supplies a zero stride.
+- For TLOAD and TSTORE, omission supplies GM base zero and a dense byte row stride derived from the resolved column count and DataType; explicit RegSrc1=zero supplies a zero stride.
 - Matrix postprocess B.IOR slots follow the complete B.FPATR schema: scalar QuantParam then scalar LReLUParam, with omitted consumed slots reading the zero GPR.
 
 ## Legality

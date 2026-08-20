@@ -309,7 +309,7 @@ class InstructionDocsTest(unittest.TestCase):
                     "operands": [
                         {"field": "destination0", "role": "destination"},
                         {"field": "address", "role": "base-address"},
-                        {"field": "scalar0", "role": "row-stride-elements"},
+                        {"field": "scalar0", "role": "row-stride-bytes"},
                     ],
                     "state_effects": ["destination0 payload and definedness"],
                     "legality_handler": "TileOperandsLegal_TLOAD",

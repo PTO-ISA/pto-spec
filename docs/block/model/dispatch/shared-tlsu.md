@@ -174,7 +174,7 @@ begin
             return FALSE;
         end;
         var load_base_addresses: CorePEWords;
-        var load_row_strides: CorePEWords;
+        var load_row_stride_bytes: CorePEWords;
         for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
             let agent = pe as MemoryAgentId;
             load_base_addresses[[agent]] =
@@ -182,13 +182,14 @@ begin
                     ReadPEAbsoluteGPROperand(agent,
                         _BundleScalarBindings[[0]].source0)
                 else Zeros{PTO_XLEN};
-            load_row_strides[[agent]] =
+            load_row_stride_bytes[[agent]] =
                 if _BundleScalarBindings[[0]].valid then
                     ReadPEAbsoluteGPROperand(agent,
                         _BundleScalarBindings[[0]].source1)
-                else NaturalToWord(columns as integer {0..262144});
+                else TileDenseRowStrideBytes(
+                    columns as integer {0..65535}, transfer_data_type);
         end;
-        TLOADShared(shared_id, load_base_addresses, load_row_strides,
+        TLOADShared(shared_id, load_base_addresses, load_row_stride_bytes,
             shared_size as integer {1..7}, valid_rows as integer {1..65535},
             columns as integer {1..65535},
             valid_rows as integer {1..65535},
@@ -220,7 +221,7 @@ begin
             shared_id, store_valid_rows, store_valid_columns, store_columns,
             store_data_type, store_layout);
         var store_base_addresses: CorePEWords;
-        var store_row_strides: CorePEWords;
+        var store_row_stride_bytes: CorePEWords;
         for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
             let agent = pe as MemoryAgentId;
             store_base_addresses[[agent]] =
@@ -228,13 +229,14 @@ begin
                     ReadPEAbsoluteGPROperand(agent,
                         _BundleScalarBindings[[0]].source0)
                 else Zeros{PTO_XLEN};
-            store_row_strides[[agent]] =
+            store_row_stride_bytes[[agent]] =
                 if _BundleScalarBindings[[0]].valid then
                     ReadPEAbsoluteGPROperand(agent,
                         _BundleScalarBindings[[0]].source1)
-                else NaturalToWord(store_columns);
+                else TileDenseRowStrideBytes(
+                    store_columns as integer {0..65535}, store_data_type);
         end;
-        TSTOREShared(store_base_addresses, store_row_strides, shared_id,
+        TSTOREShared(store_base_addresses, store_row_stride_bytes, shared_id,
             store_tile, shared_mask);
     elsif function == 9 || function == 10 then
         if !BundleSharedTMOVLocalSchemaLegal() then
