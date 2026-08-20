@@ -13,7 +13,7 @@ begin
             2, Zeros{PTO_XLEN} + element + 1);
     end;
 
-    TLOAD(0, Zeros{PTO_XLEN} + 0x500, Zeros{PTO_XLEN} + 3);
+    TLOAD(0, Zeros{PTO_XLEN} + 0x500, Zeros{PTO_XLEN} + 6);
 
     let tile = _Tiles[[0]];
     let row_tail = TileStorageIndex(tile, 2, 0);

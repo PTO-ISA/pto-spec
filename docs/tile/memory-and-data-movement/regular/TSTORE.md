@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/regular/TSTORE.asl`
 
-Store one Local or Shared Tile valid rectangle to GM with per-PE bases and byte row strides after full-footprint preflight.
+Store one ordinary Local or Shared rectangle, or explicitly convert persistent Local CUBE storage into one GM rectangle.
 
 ## Normative identity {#PTO-INST-TILE-TSTORE}
 
@@ -105,6 +105,7 @@ end;
 The Local form uses TLSU Function 1, exactly one terminating source B.IOT, at most one B.IOR, and no B.IOS.
 The Shared full form uses TLSU Function 1, exactly one source B.IOS, at most one B.IOR, no B.IOT, and PE_MASK=1111 for every nonzero access.
 The Shared partial form uses TLSU Function 14 (TSTORE.SPART), exactly one source B.IOS, at most one B.IOR, no B.IOT, and any nonzero PE subset.
+The Local CUBE form uses Function 1, explicit B.DATR M322ND, M162ND, or N82ND with DTYPE_NONE, explicit LB0/LB1, absent LB2, and one persistent source B.IOT.
 ```
 
 ## Operation
@@ -153,6 +154,15 @@ pure func InstructionContractZeroMaskNoEffect_TSTORE(
 begin
     return pe_mask == Zeros{4};
 end;
+
+pure func InstructionContractCubeDimensionsLegal_TSTORE(
+    lb0_present: boolean, lb0: integer {0..65535},
+    lb1_present: boolean, lb1: integer {0..65535},
+    lb2_present: boolean) => boolean
+begin
+    return lb0_present && lb0 != 0 &&
+           lb1_present && lb1 != 0 && !lb2_present;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
@@ -161,7 +171,7 @@ end;
 - DataType is explicit in BSTART.TSTORE. Omitted B.DATR selects ordinary NORM layout. Ordinary and Shared forms require PadValue zero; Local CUBE codes 24 through 26 require DTYPE_NONE, accept all four PadValue encodings, and ignore physical padding while storing only valid elements.
 - For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For an unallocated Shared source they default to 1, 1, and ValidCol.
 - An unallocated Shared source derives the smallest legal 128 B through 8 KiB per-PE capacity containing the completed shape. The temporary descriptor supplies undefined-register values and is never written back.
-- Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An encoded zero selector is present and supplies the real zero GPR value, so an explicitly encoded zero stride aliases rows.
+- Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An encoded zero selector is present and supplies the real zero GPR value, so an explicitly encoded zero stride aliases rows.
 
 ## Legality
 
@@ -170,11 +180,14 @@ end;
 - The completed block has exactly one source domain. Function 1 accepts one Local B.IOT or one Shared B.IOS; Function 14 accepts only one Shared B.IOS. Source/destination role mismatches and mixed domains are illegal.
 - A nonzero Function 1 Shared store requires PE_MASK=1111. Function 14 accepts every nonzero subset. PE_MASK=0000 is a strict no-op.
 - ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the valid rectangle fits the persistent source descriptor or the derived temporary Shared descriptor.
+- Ordinary forms require nonzero ValidCol and ValidRow, ValidCol not greater than physical Col, and a valid rectangle fitting the source descriptor. Local CUBE forms require explicit nonzero LB0/LB1, absent LB2, and an exact persistent Matrix descriptor matching code, dtype, and shape.
+- Ordinary and Shared forms require PadValue zero. Local CUBE codes 24 through 26 accept all four PadValue encodings, require DTYPE_NONE, and ignore physical padding while storing the valid rectangle only.
 
 ## State effects
 
 - Read one Local or Shared source without modifying its payload, descriptor, allocation mask, initialized mask, or lifetime.
 - A Shared undefined-source read remains non-allocating and non-mutating. On success only GM and memory-event state change; normal block completion consumes the source binding, not the Tile value.
+- A successful CUBE form stores raw valid values through CUBE storage indices and never writes or changes physical padding, payload, descriptor, allocation mask, or definedness.
 
 ## Memory effects and ordering
 
@@ -198,6 +211,7 @@ end;
 - BSTART.TSTORE U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR a0, a1; B.IOT T1, mask=1111, last; BSTOP
 - BSTART.TSTORE FP16; B.IOS S7, mask=1111; BSTOP
 - BSTART.TSTORE FP16 using Function 14; B.IOS S7, mask=0011; BSTOP
+- BSTART.TSTORE FP16; B.DATR {M162ND, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=M; B.IOT M#1, mask=1111, <last>; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

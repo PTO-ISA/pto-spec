@@ -15,7 +15,7 @@ begin
     _Memory[[0x606]] = Zeros{8} + 0xdc;
     _Memory[[0x607]] = Zeros{8} + 0xfe;
 
-    TLOAD(0, base, Zeros{PTO_XLEN} + 16);
+    TLOAD(0, base, Zeros{PTO_XLEN} + 8);
 
     let tile = _Tiles[[0]];
     assert tile.payload[[0]] == Zeros{PTO_XLEN};

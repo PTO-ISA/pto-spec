@@ -39,7 +39,7 @@ begin
     Store(Zeros{PTO_XLEN} + 2, 2, Zeros{PTO_XLEN} + 2);
     Store(Zeros{PTO_XLEN} + 4, 2, Zeros{PTO_XLEN} + 3);
     WriteGPR(2, Zeros{PTO_XLEN} + 1);
-    WriteGPR(3, Zeros{PTO_XLEN} + 1);
+    WriteGPR(3, Zeros{PTO_XLEN} + 2);
     let start_status = ExecuteCommandInstruction(CubeRetryStart(), 32);
     let datr_status = ExecuteCommandInstruction(CubeRetryAttributes(), 32);
     assert start_status == CommandExecution_Executed;

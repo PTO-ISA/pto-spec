@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-CUBE-STRIDE-007","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-CUBE-CELL-TRANSPORT-001"],"kind":"execution","summary":"CUBE TLOAD distinguishes explicit omitted and encoded-zero B.IOR stride","pass_condition":"explicit stride addresses row gaps omission uses LB0 and encoded zero aliases logical rows","related_sources":["asl/block/operands/B.IOR.asl","asl/block/model/dispatch/tlsu-layout-conversion.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-CUBE-STRIDE-007","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-CUBE-CELL-TRANSPORT-001"],"kind":"execution","summary":"CUBE TLOAD distinguishes explicit omitted and encoded-zero byte row stride","pass_condition":"explicit byte stride addresses row gaps omission derives the dense byte width from LB0 and encoded zero aliases logical rows","related_sources":["asl/block/operands/B.IOR.asl","asl/block/model/dispatch/tlsu-layout-conversion.asl"]}
 pure func CubeStrideStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -52,7 +52,7 @@ begin
     Store(Zeros{PTO_XLEN} + 0x106, 2, Zeros{PTO_XLEN} + 3);
     Store(Zeros{PTO_XLEN} + 0x108, 2, Zeros{PTO_XLEN} + 4);
     WriteGPR(2, Zeros{PTO_XLEN} + 0x100);
-    WriteGPR(3, Zeros{PTO_XLEN} + 3);
+    WriteGPR(3, Zeros{PTO_XLEN} + 6);
     StartCubeStrideBlock();
     let explicit_ior = ExecuteCommandInstruction(
         CubeStrideIOR(Zeros{5} + 2, Zeros{5} + 3), 32);

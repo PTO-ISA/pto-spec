@@ -21,7 +21,7 @@ begin
     _Tiles[[1]] = tile;
 
     let base = Zeros{PTO_XLEN} + 0x800;
-    let stride = Zeros{PTO_XLEN} + 21;
+    let stride = Zeros{PTO_XLEN} + 42;
     for element = 0 to 273 do
         Store(base + (element * 2), 2, Zeros{PTO_XLEN} + 0x5a5a);
     end;

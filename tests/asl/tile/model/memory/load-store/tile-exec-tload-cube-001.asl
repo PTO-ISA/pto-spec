@@ -6,7 +6,7 @@ begin
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
     assert configured;
     let base = Zeros{PTO_XLEN} + 0x400;
-    let stride = Zeros{PTO_XLEN} + 21;
+    let stride = Zeros{PTO_XLEN} + 42;
     for row = 0 to 12 do
         for column = 0 to 18 do
             let logical = row * 21 + column;

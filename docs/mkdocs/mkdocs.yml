@@ -181,6 +181,7 @@ nav:
               - Tile Scalar Schema: block/model/dispatch/tile-scalar-schema.md
               - Tile Schema: block/model/dispatch/tile-schema.md
               - TLSU Gmov: block/model/dispatch/tlsu-gmov.md
+              - TLSU Layout Conversion: block/model/dispatch/tlsu-layout-conversion.md
               - TLSU Mgather Cas: block/model/dispatch/tlsu-mgather-cas.md
               - TLSU Mgather Mask: block/model/dispatch/tlsu-mgather-mask.md
               - TLSU Mgather: block/model/dispatch/tlsu-mgather.md
@@ -994,6 +995,7 @@ nav:
           - "ADR 0067: conditional branch extension reservation": status/decisions/0067-conditional-branch-extension-reservation.md
           - "ADR 0068: Extension first-use is a target-profile hook": status/decisions/0068-extension-first-use-profile-hook.md
           - "ADR 0069: Local CUBE CELL State and Geometry": status/decisions/0069-local-cube-cell-state-and-geometry.md
+          - "ADR 0070: GM/Local CUBE Layout Transport": status/decisions/0070-gm-local-cube-layout-transport.md
           - "ADR 0074: TLOAD/TSTORE GM Byte Row Stride": status/decisions/0074-tload-tstore-gm-byte-row-stride.md
       - Open:
           - "Open architecture questions": status/open/index.md

@@ -156,9 +156,9 @@ begin
     let base_address = if _BundleScalarBindings[[0]].valid then
         ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source0)
         else Zeros{PTO_XLEN};
-    let row_stride_elements = if _BundleScalarBindings[[0]].valid then
+    let row_stride_bytes = if _BundleScalarBindings[[0]].valid then
         ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
-        else NaturalToWord(valid_columns);
+        else TileDenseRowStrideBytes(valid_columns, data_type);
     let function = UInt(_BundleOperation.selector[4:0]);
     if function == 0 then
         if !ResolveBundleCubeTransportDestination(
@@ -166,7 +166,7 @@ begin
             return FALSE;
         end;
         let destination = _BundleTileBindings[[0]].destination;
-        TLOAD(destination, base_address, row_stride_elements);
+        TLOAD(destination, base_address, row_stride_bytes);
         if _LastFault != Fault_None then
             RollBackBundleTileDestinations();
             return FALSE;
@@ -184,7 +184,7 @@ begin
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
-        TSTORE(base_address, row_stride_elements, source);
+        TSTORE(base_address, row_stride_bytes, source);
         if _LastFault != Fault_None then return FALSE; end;
     end;
     FinalizeBundleTileAttempt(TileExecution_Executed);

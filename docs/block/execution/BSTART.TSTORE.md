@@ -96,9 +96,9 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | DataType | source element data type |
 | B.IOR.RegSrc0 | per-PE private-GPR GM base address |
 | B.IOR.RegSrc1 | per-PE private-GPR byte row stride |
-| B.DIM.LB0 | ValidCol |
-| B.DIM.LB1 | ValidRow |
-| B.DIM.LB2 | physical Col |
+| B.DIM.LB0 | ordinary ValidCol or CUBE valid columns |
+| B.DIM.LB1 | ordinary ValidRow or CUBE valid rows |
+| B.DIM.LB2 | ordinary physical Col; forbidden for CUBE conversion |
 | B.IOT/B.IOS | Local or Shared source and participation mask |
 
 ## Decode
@@ -118,6 +118,7 @@ end;
 Local source: BSTART.TSTORE DataType; optional B.DATR Layout; optional B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies each PE's GM base and byte row stride; exactly one terminating source B.IOT supplies the Local Tile; BSTOP commits.
 Shared full source: the Function 1 form replaces B.IOT with one source B.IOS and requires PE_MASK=1111 for any nonzero access.
 Shared partial source: the Function 14 TSTORE.SPART form uses one source B.IOS and accepts any nonzero PE subset. It has no Local form.
+Local CUBE source: Function 1 encodes B.DATR Layout M322ND, M162ND, or N82ND with DataType=DTYPE_NONE; requires LB0=valid columns and LB1=valid rows, omits LB2, and uses one terminating source B.IOT.
 ```
 
 ## Operation
@@ -140,6 +141,12 @@ pure func InstructionContractStartsTileBundle_BSTART_TSTORE()
 begin
     return TRUE;
 end;
+
+pure func InstructionContractCubeLayoutLegal_BSTART_TSTORE(
+    data_layout: bits(5)) => boolean
+begin
+    return TileDataLayoutConversionIsStore(data_layout);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
@@ -148,7 +155,7 @@ end;
 - DataType is explicit. Optional B.DATR omission retains the default NORM layout.
 - For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For an unallocated Shared source they default to 1, 1, and ValidCol.
 - An unallocated Shared source derives the smallest legal 128 B through 8 KiB per-PE capacity that contains the completed shape; Rows are then derived from capacity, Col, and DataType. Every selected source element is an undefined-register value and the temporary descriptor is never written back.
-- Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
+- Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
 
 ## Legality
 
@@ -157,11 +164,13 @@ end;
 - A nonzero Function 1 Shared store requires PE_MASK=1111. Function 14 accepts every nonzero subset. PE_MASK=0000 is a strict no-op before schema, descriptor, GPR, memory, fault, or source-consumption effects.
 - ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the resolved valid rectangle must fit the source descriptor or the derived temporary descriptor.
 - For an allocated Shared source, DataType, Layout, and physical Col agree with the persistent descriptor; an explicitly reduced valid rectangle may not exceed the descriptor's valid region.
+- Local CUBE conversion accepts only Layout codes 24 through 26, requires explicit DTYPE_NONE, explicit nonzero LB0/LB1, absent LB2, one persistent Matrix-location CUBE source, a supported non-64-bit non-HiF4X2 dtype, and no B.IOS.
 
 ## State effects
 
 - Reads one Local or Shared source without modifying its payload, descriptor, allocation mask, initialized mask, or lifetime.
 - A Shared undefined-source read remains non-allocating and non-mutating. On success only GM and memory-event state change; the source binding is consumed by normal block completion.
+- A successful CUBE form preserves the complete persistent Matrix descriptor, payload, definedness, allocation mask, and lifetime while storing only its LB1 by LB0 valid rectangle.
 
 ## Memory effects and ordering
 
@@ -185,6 +194,7 @@ end;
 - BSTART.TSTORE U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR a0, a1; B.IOT T#1, mask=1111, last; BSTOP
 - BSTART.TSTORE FP16; B.IOS S7, mask=1111; BSTOP
 - BSTART.TSTORE FP16 [TSTORE.SPART form]; B.IOS S7, mask=0011; BSTOP
+- BSTART.TSTORE FP16; B.DATR {M162ND, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=M; B.IOT M#1, mask=1111, <last>; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

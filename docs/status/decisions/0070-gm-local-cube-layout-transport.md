@@ -45,7 +45,7 @@ dimension schema. Before the first effect it validates:
 - dtype and CELL mapping;
 - positive valid dimensions;
 - derived CELL geometry and per-PE TSize capacity;
-- base, logical row stride, and the complete valid GM footprint; and
+- base, byte row stride, and the complete valid GM footprint; and
 - destination availability.
 
 TLOAD reads GM only for valid logical elements. Physical CELL positions outside
@@ -74,8 +74,8 @@ effects, or preceding memory writes.
 
 - Layout code zero retains the existing ordinary non-converting transfer.
 - Omission never infers a CUBE conversion.
-- GM/Shared remains ordinary base-plus-row-stride transport.
-- Existing logical-element row-stride and packed-memory rules remain unchanged.
+- GM/Shared remains ordinary base-plus-byte-row-stride transport.
+- Existing byte-row-stride and packed-memory rules remain unchanged.
 - PE mask zero remains a strict no-op before conversion and memory legality.
 
 ## Explicit exclusions

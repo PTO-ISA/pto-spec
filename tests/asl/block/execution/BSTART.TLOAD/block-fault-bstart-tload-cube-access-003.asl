@@ -66,17 +66,17 @@ func main() => integer
 begin
     let first = CubeTLoadAccessRejects(
         Zeros{PTO_XLEN} + 4096,
-        Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2,
         Zeros{PTO_XLEN} + 4096);
     assert first;
     let middle = CubeTLoadAccessRejects(
         Zeros{PTO_XLEN},
-        Zeros{PTO_XLEN} + 0x4000000000000001,
+        Zeros{PTO_XLEN} + 0x8000000000000002,
         Zeros{PTO_XLEN} + 0x8000000000000002);
     assert middle;
     let last = CubeTLoadAccessRejects(
         Zeros{PTO_XLEN} + 4092,
-        Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2,
         Zeros{PTO_XLEN} + 4096);
     assert last;
     return 0;

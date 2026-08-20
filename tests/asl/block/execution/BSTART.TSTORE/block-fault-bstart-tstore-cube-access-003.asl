@@ -92,19 +92,19 @@ func main() => integer
 begin
     let first = CubeTStoreAccessRejects(
         Zeros{PTO_XLEN} + 4096,
-        Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2,
         Zeros{PTO_XLEN} + 4096,
         0);
     assert first;
     let middle = CubeTStoreAccessRejects(
         Zeros{PTO_XLEN},
-        Zeros{PTO_XLEN} + 0x4000000000000001,
+        Zeros{PTO_XLEN} + 0x8000000000000002,
         Zeros{PTO_XLEN} + 0x8000000000000002,
         0);
     assert middle;
     let last = CubeTStoreAccessRejects(
         Zeros{PTO_XLEN} + 4092,
-        Zeros{PTO_XLEN} + 1,
+        Zeros{PTO_XLEN} + 2,
         Zeros{PTO_XLEN} + 4096,
         4092);
     assert last;

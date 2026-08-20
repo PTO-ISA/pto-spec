@@ -355,6 +355,12 @@
                 17,
                 18,
                 20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
                 27,
                 28,
                 30
@@ -637,10 +643,6 @@
               ],
               [
                 20,
-                20
-              ],
-              [
-                27,
                 28
               ],
               [
@@ -674,10 +676,6 @@
                 19
               ],
               [
-                21,
-                26
-              ],
-              [
                 29,
                 29
               ],
@@ -686,7 +684,7 @@
                 31
               ]
             ],
-            "role": "tile data layout selector",
+            "role": "tile data layout or exact GM-to-CUBE/CUBE-to-GM conversion selector",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "NORM"
@@ -694,7 +692,8 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "B.DATR {NORM, FP32, Zero, None, RNE, 0, 0}"
+          "B.DATR {NORM, FP32, Zero, None, RNE, 0, 0}",
+          "B.DATR {ND2M16, DTYPE_NONE, Null, None, Default, 0, 0}"
         ],
         "exceptions": [
           "A duplicate B.DATR or a B.DATR outside an active block header raises Illegal Block Exception before attribute state changes.",
@@ -892,7 +891,7 @@
         "legality": [
           "B.DATR may appear at most once, after BSTART and before the block body.",
           "DataType accepts the 25 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 15, 21..23, and 29..30 are reserved and reject before effects.",
-          "Layout must be one of codes 0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 27, 28, or 30 and must be supported by the active profile.",
+          "Layout codes 0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 21 through 28, and 30 are assigned. Codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively.",
           "CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.",
           "All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.",
           "Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation."
@@ -903,7 +902,7 @@
         "operands": [
           {
             "field": "Layout",
-            "role": "tile data layout selector"
+            "role": "tile data layout or exact GM-to-CUBE/CUBE-to-GM conversion selector"
           },
           {
             "field": "DataType",
@@ -9793,7 +9792,8 @@
       "contract": {
         "block_composition": [
           "Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and byte row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.",
-          "Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S255, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride."
+          "Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S255, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride.",
+          "Local CUBE destination: encode B.DATR Layout ND2M32, ND2M16, or ND2N8 with DataType=DTYPE_NONE; require LB0=valid columns and LB1=valid rows, omit LB2, and use one terminating destination B.IOT."
         ],
         "canonical_assembly": [
           "BSTART.TLOAD DataType"
@@ -9801,7 +9801,7 @@
         "defaults": [
           "DataType is explicit. Optional B.DATR omission retains the default NORM layout.",
           "LB0/ValidCol and LB1/ValidRow default through the common destination-shape contract; omitted LB2/Col defaults to ValidCol. Rows are derived from TSize, Col, and DataType and must be at least ValidRow.",
-          "Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride."
+          "Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride."
         ],
         "encoded_fields": [
           {
@@ -9846,7 +9846,8 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP",
-          "BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP"
+          "BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP",
+          "BSTART.TLOAD FP16; B.DATR {ND2M16, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=K; B.DIM LB1=M; B.IOT mask=1111, <last>, ->M<1>; BSTOP"
         ],
         "exceptions": [
           "Reserved DataType, unsupported Layout, invalid dimensions, capacity/shape overflow, inconsistent or illegal PE masks, malformed binding schema, allocation failure, or memory translation/permission/alignment fault rejects before destination publication.",
@@ -9978,7 +9979,8 @@
           "DataType accepts 0..14, 16..20, and 24..28; all other codes are reserved before effects.",
           "Exactly one destination domain is used: a terminating destination B.IOT for Local or one destination B.IOS for Shared. Source Tile bindings and mixed Local/Shared destinations are illegal.",
           "ValidCol and ValidRow must be nonzero and no greater than derived physical Col and Rows; Col and Rows are powers of two under the common Tile descriptor contract.",
-          "PE_MASK=0000 is a strict no-op before GPR reads, allocation, memory access, faults, or descriptor changes."
+          "PE_MASK=0000 is a strict no-op before GPR reads, allocation, memory access, faults, or descriptor changes.",
+          "CUBE conversion accepts only Layout codes 21 through 23, requires explicit DTYPE_NONE, explicit nonzero LB0/LB1, absent LB2, one Local destination B.IOT, a supported non-64-bit non-HiF4X2 dtype, and no B.IOS."
         ],
         "memory_effects": [
           "For every selected PE and every element in ValidRow x ValidCol, read GM at base + row * row_stride_bytes + column * element_size, with packed four-bit columns adding floor(column / 2) to the byte-strided row base and selecting low/high by column parity.",
@@ -9999,15 +10001,15 @@
           },
           {
             "field": "B.DIM.LB0",
-            "role": "ValidCol"
+            "role": "ordinary ValidCol or CUBE valid columns"
           },
           {
             "field": "B.DIM.LB1",
-            "role": "ValidRow"
+            "role": "ordinary ValidRow or CUBE valid rows"
           },
           {
             "field": "B.DIM.LB2",
-            "role": "physical Col"
+            "role": "ordinary physical Col; forbidden for CUBE conversion"
           },
           {
             "field": "B.IOT/B.IOS",
@@ -10021,7 +10023,8 @@
         "standalone_opcode": true,
         "state_effects": [
           "Allocates/renames one Local destination or reallocates the named Shared destination with Rows derived from TSize, Col, and DataType, then fills selected valid elements and marks their definedness.",
-          "Unselected PE regions remain unchanged for Shared partial-mask updates; a Local result is published through its architectural destination hand only after successful commit."
+          "Unselected PE regions remain unchanged for Shared partial-mask updates; a Local result is published through its architectural destination hand only after successful commit.",
+          "A successful CUBE form installs a persistent Matrix-location descriptor with CELL geometry derived from Layout, BSTART DataType, LB1 valid rows, and LB0 valid columns; TSize remains capacity only."
         ]
       },
       "documentation": "docs/block/execution/BSTART.TLOAD.md",
@@ -12495,7 +12498,8 @@
         "block_composition": [
           "Local source: BSTART.TSTORE DataType; optional B.DATR Layout; optional B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies each PE's GM base and byte row stride; exactly one terminating source B.IOT supplies the Local Tile; BSTOP commits.",
           "Shared full source: the Function 1 form replaces B.IOT with one source B.IOS and requires PE_MASK=1111 for any nonzero access.",
-          "Shared partial source: the Function 14 TSTORE.SPART form uses one source B.IOS and accepts any nonzero PE subset. It has no Local form."
+          "Shared partial source: the Function 14 TSTORE.SPART form uses one source B.IOS and accepts any nonzero PE subset. It has no Local form.",
+          "Local CUBE source: Function 1 encodes B.DATR Layout M322ND, M162ND, or N82ND with DataType=DTYPE_NONE; requires LB0=valid columns and LB1=valid rows, omits LB2, and uses one terminating source B.IOT."
         ],
         "canonical_assembly": [
           "BSTART.TSTORE DataType"
@@ -12504,7 +12508,7 @@
           "DataType is explicit. Optional B.DATR omission retains the default NORM layout.",
           "For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For an unallocated Shared source they default to 1, 1, and ValidCol.",
           "An unallocated Shared source derives the smallest legal 128 B through 8 KiB per-PE capacity that contains the completed shape; Rows are then derived from capacity, Col, and DataType. Every selected source element is an undefined-register value and the temporary descriptor is never written back.",
-          "Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride."
+          "Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride."
         ],
         "encoded_fields": [
           {
@@ -12550,7 +12554,8 @@
         "examples": [
           "BSTART.TSTORE U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR a0, a1; B.IOT T#1, mask=1111, last; BSTOP",
           "BSTART.TSTORE FP16; B.IOS S7, mask=1111; BSTOP",
-          "BSTART.TSTORE FP16 [TSTORE.SPART form]; B.IOS S7, mask=0011; BSTOP"
+          "BSTART.TSTORE FP16 [TSTORE.SPART form]; B.IOS S7, mask=0011; BSTOP",
+          "BSTART.TSTORE FP16; B.DATR {M162ND, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=M; B.IOT M#1, mask=1111, <last>; BSTOP"
         ],
         "exceptions": [
           "Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, illegal or inconsistent PE mask, malformed binding schema, or memory translation/permission/alignment fault rejects before the first GM write.",
@@ -12683,7 +12688,8 @@
           "The Function 1 carrier accepts exactly one Local source B.IOT or one Shared source B.IOS. The Function 14 TSTORE.SPART carrier accepts exactly one Shared source B.IOS. Source/destination role mismatches and mixed Local/Shared sources are illegal.",
           "A nonzero Function 1 Shared store requires PE_MASK=1111. Function 14 accepts every nonzero subset. PE_MASK=0000 is a strict no-op before schema, descriptor, GPR, memory, fault, or source-consumption effects.",
           "ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the resolved valid rectangle must fit the source descriptor or the derived temporary descriptor.",
-          "For an allocated Shared source, DataType, Layout, and physical Col agree with the persistent descriptor; an explicitly reduced valid rectangle may not exceed the descriptor's valid region."
+          "For an allocated Shared source, DataType, Layout, and physical Col agree with the persistent descriptor; an explicitly reduced valid rectangle may not exceed the descriptor's valid region.",
+          "Local CUBE conversion accepts only Layout codes 24 through 26, requires explicit DTYPE_NONE, explicit nonzero LB0/LB1, absent LB2, one persistent Matrix-location CUBE source, a supported non-64-bit non-HiF4X2 dtype, and no B.IOS."
         ],
         "memory_effects": [
           "For every selected PE and every selected element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size, with packed four-bit columns adding floor(column / 2) to the byte-strided row base and selecting low/high by column parity.",
@@ -12704,15 +12710,15 @@
           },
           {
             "field": "B.DIM.LB0",
-            "role": "ValidCol"
+            "role": "ordinary ValidCol or CUBE valid columns"
           },
           {
             "field": "B.DIM.LB1",
-            "role": "ValidRow"
+            "role": "ordinary ValidRow or CUBE valid rows"
           },
           {
             "field": "B.DIM.LB2",
-            "role": "physical Col"
+            "role": "ordinary physical Col; forbidden for CUBE conversion"
           },
           {
             "field": "B.IOT/B.IOS",
@@ -12726,7 +12732,8 @@
         "standalone_opcode": true,
         "state_effects": [
           "Reads one Local or Shared source without modifying its payload, descriptor, allocation mask, initialized mask, or lifetime.",
-          "A Shared undefined-source read remains non-allocating and non-mutating. On success only GM and memory-event state change; the source binding is consumed by normal block completion."
+          "A Shared undefined-source read remains non-allocating and non-mutating. On success only GM and memory-event state change; the source binding is consumed by normal block completion.",
+          "A successful CUBE form preserves the complete persistent Matrix descriptor, payload, definedness, allocation mask, and lifetime while storing only its LB1 by LB0 valid rectangle."
         ]
       },
       "documentation": "docs/block/execution/BSTART.TSTORE.md",
@@ -123758,9 +123765,10 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
+              "PadValueOrByteId",
               "Layout"
             ],
-            "pad_union": "must-zero"
+            "pad_union": "pad-value"
           },
           "disposition": "accepted-direct-operation",
           "effect_contract": "TLOAD",
@@ -123806,27 +123814,29 @@
           "TLOAD <bundle operands>"
         ],
         "defaults": [
-          "DataType is explicit in BSTART.TLOAD. Omitted B.DATR selects NORM layout; TLOAD does not consume PadValue.",
+          "DataType is explicit in BSTART.TLOAD. Omitted B.DATR selects ordinary NORM layout. Explicit CUBE Layout 21 through 23 requires DTYPE_NONE and consumes PadValue for physical CELL tails.",
           "LB0/ValidCol and LB1/ValidRow default through the common destination-shape rules. Omitted LB2/Col defaults to ValidCol. Rows are derived from TSize, Col, and DataType and must contain ValidRow.",
-          "Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An encoded zero GPR selector is present and reads zero, so an explicitly encoded zero stride aliases rows rather than selecting the omission default."
+          "Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An encoded zero GPR selector is present and reads zero, so an explicitly encoded zero stride aliases rows rather than selecting the omission default."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
           "BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP",
-          "BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP"
+          "BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP",
+          "BSTART.TLOAD FP16; B.DATR {ND2N8, DTYPE_NONE, Max, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=K; B.IOT mask=1111, <last>, ->N<3>; BSTOP"
         ],
         "exceptions": [
-          "Reserved DataType, unsupported Layout, nonzero PadValue, malformed B.IOR/B.IOT/B.IOS schema, invalid dimensions, capacity or shape overflow, allocation failure, or GM translation, permission, or alignment fault rejects before destination publication.",
+          "Reserved DataType, unsupported or wrong-direction Layout, operation-inapplicable PadValue, malformed B.IOR/B.IOT/B.IOS schema, invalid dimensions, capacity or shape overflow, allocation failure, or GM translation, permission, or alignment fault rejects before destination publication.",
           "Every selected memory address is preflighted before any destination payload, descriptor, allocation, definedness, or load event becomes visible. A failed Local allocation is rolled back; a failed Shared update preserves the prior Shared record."
         ],
         "field_domains": [],
         "legality": [
           "TLOAD is selected only by TLSU Function 0 through BSTART.TLOAD; it has no standalone opcode.",
           "The completed block has exactly one destination domain: one terminating destination B.IOT for Local or one destination B.IOS for Shared. It has no Tile source and consumes at most one B.IOR.",
-          "The BSTART DataType accepts every assigned Tile DataType code and rejects 15, 21..23, and 29..31 before effects. B.DATR may change only Layout; every other explicit nonzero B.DATR field is illegal.",
+          "The BSTART DataType accepts every assigned Tile DataType code and rejects 15, 21..23, and 29..31 before effects. Ordinary and Shared forms permit only Layout and require PadValue zero; Local CUBE codes 21 through 23 additionally permit all four PadValue encodings and require DTYPE_NONE while CMode, RMode, Sat, and Canonicalize retain zero meanings.",
           "ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the derived Rows and Col are powers of two large enough for the valid rectangle.",
-          "PE_MASK=0000 is a strict no-op before GPR reads, allocation, memory access, faults, load events, descriptor changes, or payload changes."
+          "PE_MASK=0000 is a strict no-op before GPR reads, allocation, memory access, faults, load events, descriptor changes, or payload changes.",
+          "Ordinary forms require nonzero ValidCol and ValidRow, ValidCol not greater than physical Col, and power-of-two physical Rows and Col. CUBE forms require explicit nonzero LB0/LB1, absent LB2, and derive CELL geometry from Layout, dtype, and valid shape."
         ],
         "memory_effects": [
           "For each selected PE and each element in ValidRow x ValidCol, read GM at base + row * row_stride_bytes + column * element_size. Packed four-bit types add floor(column / 2) to each byte-strided row base and select the nibble from column parity.",
@@ -123853,7 +123863,8 @@
         "standalone_opcode": false,
         "state_effects": [
           "A successful Local form allocates or renames exactly one destination Tile, installs the derived descriptor, loads every selected valid element, and marks the valid region defined.",
-          "A successful Shared form reallocates the named S register when required and updates only the quarters selected by PE_MASK. TLOAD does not modify source GPRs or GM."
+          "A successful Shared form reallocates the named S register when required and updates only the quarters selected by PE_MASK. TLOAD does not modify source GPRs or GM.",
+          "A successful CUBE form writes raw valid values through CUBE storage indices and applies Zero, Max, Min, or undefined Null to physical tail positions without counting tails as valid elements."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/regular/TLOAD.md",
@@ -123861,7 +123872,7 @@
       "mnemonic": "TLOAD",
       "ndf_clause": "PTO-INST-TILE-TLOAD",
       "source": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
-      "summary": "Load one Local or Shared Tile valid rectangle from GM using per-PE base addresses and byte row strides.",
+      "summary": "Load one ordinary Local or Shared rectangle, or explicitly convert one GM rectangle into persistent Local CUBE storage.",
       "surface": "tile"
     },
     {
@@ -134280,9 +134291,10 @@
           "contract_status": "reviewed-complete",
           "datr_contract": {
             "allowed_nonzero_fields": [
+              "PadValueOrByteId",
               "Layout"
             ],
-            "pad_union": "must-zero"
+            "pad_union": "pad-value"
           },
           "disposition": "accepted-direct-operation",
           "effect_contract": "TSTORE",
@@ -134323,23 +134335,25 @@
         "block_composition": [
           "The Local form uses TLSU Function 1, exactly one terminating source B.IOT, at most one B.IOR, and no B.IOS.",
           "The Shared full form uses TLSU Function 1, exactly one source B.IOS, at most one B.IOR, no B.IOT, and PE_MASK=1111 for every nonzero access.",
-          "The Shared partial form uses TLSU Function 14 (TSTORE.SPART), exactly one source B.IOS, at most one B.IOR, no B.IOT, and any nonzero PE subset."
+          "The Shared partial form uses TLSU Function 14 (TSTORE.SPART), exactly one source B.IOS, at most one B.IOR, no B.IOT, and any nonzero PE subset.",
+          "The Local CUBE form uses Function 1, explicit B.DATR M322ND, M162ND, or N82ND with DTYPE_NONE, explicit LB0/LB1, absent LB2, and one persistent source B.IOT."
         ],
         "canonical_assembly": [
           "TSTORE <bundle operands>"
         ],
         "defaults": [
-          "DataType is explicit in BSTART.TSTORE. Omitted B.DATR selects NORM layout; every other nonzero B.DATR field is illegal.",
+          "DataType is explicit in BSTART.TSTORE. Omitted B.DATR selects ordinary NORM layout. Ordinary and Shared forms require PadValue zero; Local CUBE codes 24 through 26 require DTYPE_NONE, accept all four PadValue encodings, and ignore physical padding while storing only valid elements.",
           "For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For an unallocated Shared source they default to 1, 1, and ValidCol.",
           "An unallocated Shared source derives the smallest legal 128 B through 8 KiB per-PE capacity containing the completed shape. The temporary descriptor supplies undefined-register values and is never written back.",
-          "Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An encoded zero selector is present and supplies the real zero GPR value, so an explicitly encoded zero stride aliases rows."
+          "Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An encoded zero selector is present and supplies the real zero GPR value, so an explicitly encoded zero stride aliases rows."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
           "BSTART.TSTORE U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR a0, a1; B.IOT T1, mask=1111, last; BSTOP",
           "BSTART.TSTORE FP16; B.IOS S7, mask=1111; BSTOP",
-          "BSTART.TSTORE FP16 using Function 14; B.IOS S7, mask=0011; BSTOP"
+          "BSTART.TSTORE FP16 using Function 14; B.IOS S7, mask=0011; BSTOP",
+          "BSTART.TSTORE FP16; B.DATR {M162ND, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=M; B.IOT M#1, mask=1111, <last>; BSTOP"
         ],
         "exceptions": [
           "Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, illegal PE mask, or GM translation, permission, or alignment fault raises Illegal Block Exception or the applicable data fault before the first GM write.",
@@ -134472,7 +134486,9 @@
           "DataType accepts 0..14, 16..20, and 24..28; codes 15, 21..23, and 29..31 are reserved and reject before effects.",
           "The completed block has exactly one source domain. Function 1 accepts one Local B.IOT or one Shared B.IOS; Function 14 accepts only one Shared B.IOS. Source/destination role mismatches and mixed domains are illegal.",
           "A nonzero Function 1 Shared store requires PE_MASK=1111. Function 14 accepts every nonzero subset. PE_MASK=0000 is a strict no-op.",
-          "ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the valid rectangle fits the persistent source descriptor or the derived temporary Shared descriptor."
+          "ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the valid rectangle fits the persistent source descriptor or the derived temporary Shared descriptor.",
+          "Ordinary forms require nonzero ValidCol and ValidRow, ValidCol not greater than physical Col, and a valid rectangle fitting the source descriptor. Local CUBE forms require explicit nonzero LB0/LB1, absent LB2, and an exact persistent Matrix descriptor matching code, dtype, and shape.",
+          "Ordinary and Shared forms require PadValue zero. Local CUBE codes 24 through 26 accept all four PadValue encodings, require DTYPE_NONE, and ignore physical padding while storing the valid rectangle only."
         ],
         "memory_effects": [
           "For every selected PE and each element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size. Packed four-bit columns add floor(column / 2) to each byte-strided row base and select low/high by column parity.",
@@ -134499,7 +134515,8 @@
         "standalone_opcode": false,
         "state_effects": [
           "Read one Local or Shared source without modifying its payload, descriptor, allocation mask, initialized mask, or lifetime.",
-          "A Shared undefined-source read remains non-allocating and non-mutating. On success only GM and memory-event state change; normal block completion consumes the source binding, not the Tile value."
+          "A Shared undefined-source read remains non-allocating and non-mutating. On success only GM and memory-event state change; normal block completion consumes the source binding, not the Tile value.",
+          "A successful CUBE form stores raw valid values through CUBE storage indices and never writes or changes physical padding, payload, descriptor, allocation mask, or definedness."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/regular/TSTORE.md",
@@ -134507,7 +134524,7 @@
       "mnemonic": "TSTORE",
       "ndf_clause": "PTO-INST-TILE-TSTORE",
       "source": "asl/tile/memory-and-data-movement/regular/TSTORE.asl",
-      "summary": "Store one Local or Shared Tile valid rectangle to GM with per-PE bases and byte row strides after full-footprint preflight.",
+      "summary": "Store one ordinary Local or Shared rectangle, or explicitly convert persistent Local CUBE storage into one GM rectangle.",
       "surface": "tile"
     },
     {
