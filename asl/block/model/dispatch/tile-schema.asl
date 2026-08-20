@@ -250,6 +250,16 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    let decoded_operation = TileOperationOfIndex(operation);
+    if (decoded_operation == TileOperation_TLOAD ||
+        decoded_operation == TileOperation_TSTORE) &&
+       !TileDataLayoutIsCubeConversion(explicit_layout) &&
+       explicit_pad != Zeros{2} then
+        // PadValue is assigned to the explicit Local CUBE conversion form.
+        // Ordinary and Shared TLOAD/TSTORE retain their zero-only union rule.
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if _BundleDataAttributesPresent &&
        _BundleDataAttributes.pad_value != Zeros{2} &&
        TileOperationDATRPadUnion(operation) ==

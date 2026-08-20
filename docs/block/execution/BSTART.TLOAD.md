@@ -96,9 +96,9 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | DataType | destination element data type |
 | B.IOR.RegSrc0 | per-PE private-GPR GM base address |
 | B.IOR.RegSrc1 | per-PE private-GPR byte row stride |
-| B.DIM.LB0 | ValidCol |
-| B.DIM.LB1 | ValidRow |
-| B.DIM.LB2 | physical Col |
+| B.DIM.LB0 | ordinary ValidCol or CUBE valid columns |
+| B.DIM.LB1 | ordinary ValidRow or CUBE valid rows |
+| B.DIM.LB2 | ordinary physical Col; forbidden for CUBE conversion |
 | B.IOT/B.IOS | Local or Shared destination, per-PE TSize, and participation mask |
 
 ## Decode
@@ -117,6 +117,7 @@ end;
 ```asm
 Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and byte row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.
 Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S255, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride.
+Local CUBE destination: encode B.DATR Layout ND2M32, ND2M16, or ND2N8 with DataType=DTYPE_NONE; require LB0=valid columns and LB1=valid rows, omit LB2, and use one terminating destination B.IOT.
 ```
 
 ## Operation
@@ -139,6 +140,12 @@ pure func InstructionContractStartsTileBundle_BSTART_TLOAD()
 begin
     return TRUE;
 end;
+
+pure func InstructionContractCubeLayoutLegal_BSTART_TLOAD(
+    data_layout: bits(5)) => boolean
+begin
+    return TileDataLayoutConversionIsLoad(data_layout);
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
@@ -146,7 +153,7 @@ end;
 
 - DataType is explicit. Optional B.DATR omission retains the default NORM layout.
 - LB0/ValidCol and LB1/ValidRow default through the common destination-shape contract; omitted LB2/Col defaults to ValidCol. Rows are derived from TSize, Col, and DataType and must be at least ValidRow.
-- Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
+- Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
 
 ## Legality
 
@@ -154,11 +161,13 @@ end;
 - Exactly one destination domain is used: a terminating destination B.IOT for Local or one destination B.IOS for Shared. Source Tile bindings and mixed Local/Shared destinations are illegal.
 - ValidCol and ValidRow must be nonzero and no greater than derived physical Col and Rows; Col and Rows are powers of two under the common Tile descriptor contract.
 - PE_MASK=0000 is a strict no-op before GPR reads, allocation, memory access, faults, or descriptor changes.
+- CUBE conversion accepts only Layout codes 21 through 23, requires explicit DTYPE_NONE, explicit nonzero LB0/LB1, absent LB2, one Local destination B.IOT, a supported non-64-bit non-HiF4X2 dtype, and no B.IOS.
 
 ## State effects
 
 - Allocates/renames one Local destination or reallocates the named Shared destination with Rows derived from TSize, Col, and DataType, then fills selected valid elements and marks their definedness.
 - Unselected PE regions remain unchanged for Shared partial-mask updates; a Local result is published through its architectural destination hand only after successful commit.
+- A successful CUBE form installs a persistent Matrix-location descriptor with CELL geometry derived from Layout, BSTART DataType, LB1 valid rows, and LB0 valid columns; TSize remains capacity only.
 
 ## Memory effects and ordering
 
@@ -181,6 +190,7 @@ end;
 
 - BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP
 - BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP
+- BSTART.TLOAD FP16; B.DATR {ND2M16, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=K; B.DIM LB1=M; B.IOT mask=1111, <last>, ->M<1>; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

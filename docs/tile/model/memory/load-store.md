@@ -74,12 +74,16 @@ func TLOAD(destination: TileIndex, base_address: Word,
 begin
     let tile = _Tiles[[destination]];
     assert tile.allocated;
+    if TileLayoutIsCube(tile.layout) then
+        assert TileCubeDescriptorLegal(tile);
+    end;
     var translated_addresses: TilePayload;
+    var result = tile;
     // Instruction-wide preflight makes tile memory faults precise and
     // restartable: no payload element changes until every access succeeds.
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(tile,
+            let element = TileStorageIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryStridedByteAddress(base_address,
                 row as integer {0..65535}, column as integer {0..65535},
@@ -91,7 +95,7 @@ begin
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(tile,
+            let element = TileStorageIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let high_nibble = TileMemoryStridedByteHighNibble(
                 column as integer {0..65535}, tile.data_type);
@@ -100,25 +104,31 @@ begin
             RecordLoadEvent(translated_addresses[[element]],
                 TileMemoryElementBytes(tile.data_type), raw,
                 CurrentBundleMemoryOrder());
-            _Tiles[[destination]].payload[[element]] =
-                DecodeTileMemoryElementRaw(
-                    raw, tile.data_type, high_nibble);
+            result.payload[[element]] = DecodeTileMemoryElementRaw(
+                raw, tile.data_type, high_nibble);
         end;
     end;
-    MarkTileValidRegionDefined(destination);
+    result = TileWithValidRegionDefined(result);
+    if TileLayoutIsCube(result.layout) then
+        result = TileWithPadding(result, CurrentBundlePadValue());
+    end;
+    _Tiles[[destination]] = result;
 end;
 
 func TSTORE(base_address: Word, row_stride_bytes: Word, source: TileIndex)
 begin
     let tile = _Tiles[[source]];
     assert tile.allocated && tile.contents_defined;
+    if TileLayoutIsCube(tile.layout) then
+        assert TileCubeDescriptorLegal(tile);
+    end;
     let payload = tile.payload;
     var original_addresses: TilePayload;
     var translated_addresses: TilePayload;
     var high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS);
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(tile,
+            let element = TileStorageIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryStridedByteAddress(base_address,
                 row as integer {0..65535}, column as integer {0..65535},
@@ -134,7 +144,7 @@ begin
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(tile,
+            let element = TileStorageIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let stored_value = StoreTileMemoryElement(
                 original_addresses[[element]], translated_addresses[[element]],

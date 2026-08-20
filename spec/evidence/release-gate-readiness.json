@@ -113,7 +113,7 @@
     "scripts/check-active-paths": "43b214cdf80e16a8cf96a0a7d3265b1a8fd6cccf37e28bedb40b052e088ab29f",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
-    "scripts/check-binary-closure": "4601412b4112958b7db45697fa6df54dd21c3c3899e07195ba69842d7a19b2fd",
+    "scripts/check-binary-closure": "f91cc8d07afeb251427646207cbf6df90464948983a159b89b39b82b74716265",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
     "scripts/check-pr": "eee82b264cc0fa5fec8c10ab2c2777b8afcdebe5e7a0a283a8faea7f61ee6e4d",
     "scripts/check-release-closure": "f362bcadd1b89cdae420bc147b87bca8bed1f46073dad04f9eabc4509a41e0c0",
@@ -139,21 +139,21 @@
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
-    "spec/evidence/release-traceability-readiness.json": "ec836a4fb881c85d9bce979e383d26c6b06f823f5cb04cecad4186eb280eb875",
+    "spec/evidence/release-traceability-readiness.json": "8e03946f363c4342960ee98a11fb9b5354de62c81553b5459e91e8a922897e18",
     "spec/release-inputs.json": "397e1d3b61121357fea15a1352067f40ac72e508a7e18819ac8b23004d444d0b",
     "spec/schemas/pto-spec-release-event-v1.schema.json": "0d435c6ca7fba416d9f3886e5ebf617bbc761afab0bad4731326b4d52f6d4b44"
   },
   "summary": {
-    "documentation_page_count": 834,
+    "documentation_page_count": 835,
     "executable_requirement_count": 636,
     "gate_count": 10,
     "mnemonic_count": 634,
     "status": "ready-for-exact-head-verification",
-    "test_count": 3281,
-    "test_page_count": 33,
+    "test_count": 3304,
+    "test_page_count": 34,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,
     "uncovered_unit_count": 0,
-    "unit_count": 834
+    "unit_count": 835
   }
 }

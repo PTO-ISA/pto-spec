@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/regular/TLOAD.asl`
 
-Load one Local or Shared Tile valid rectangle from GM using per-PE base addresses and byte row strides.
+Load one ordinary Local or Shared rectangle, or explicitly convert one GM rectangle into persistent Local CUBE storage.
 
 ## Normative identity {#PTO-INST-TILE-TLOAD}
 
@@ -109,27 +109,38 @@ pure func InstructionContractZeroMaskNoEffect_TLOAD(
 begin
     return pe_mask == Zeros{4};
 end;
+
+pure func InstructionContractCubeDimensionsLegal_TLOAD(
+    lb0_present: boolean, lb0: integer {0..65535},
+    lb1_present: boolean, lb1: integer {0..65535},
+    lb2_present: boolean) => boolean
+begin
+    return lb0_present && lb0 != 0 &&
+           lb1_present && lb1 != 0 && !lb2_present;
+end;
 ```
 <!-- GENERATED-ASL-END: operation -->
 
 ## Defaults and encoded zero
 
-- DataType is explicit in BSTART.TLOAD. Omitted B.DATR selects NORM layout; TLOAD does not consume PadValue.
+- DataType is explicit in BSTART.TLOAD. Omitted B.DATR selects ordinary NORM layout. Explicit CUBE Layout 21 through 23 requires DTYPE_NONE and consumes PadValue for physical CELL tails.
 - LB0/ValidCol and LB1/ValidRow default through the common destination-shape rules. Omitted LB2/Col defaults to ValidCol. Rows are derived from TSize, Col, and DataType and must contain ValidRow.
-- Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An encoded zero GPR selector is present and reads zero, so an explicitly encoded zero stride aliases rows rather than selecting the omission default.
+- Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An encoded zero GPR selector is present and reads zero, so an explicitly encoded zero stride aliases rows rather than selecting the omission default.
 
 ## Legality
 
 - TLOAD is selected only by TLSU Function 0 through BSTART.TLOAD; it has no standalone opcode.
 - The completed block has exactly one destination domain: one terminating destination B.IOT for Local or one destination B.IOS for Shared. It has no Tile source and consumes at most one B.IOR.
-- The BSTART DataType accepts every assigned Tile DataType code and rejects 15, 21..23, and 29..31 before effects. B.DATR may change only Layout; every other explicit nonzero B.DATR field is illegal.
+- The BSTART DataType accepts every assigned Tile DataType code and rejects 15, 21..23, and 29..31 before effects. Ordinary and Shared forms permit only Layout and require PadValue zero; Local CUBE codes 21 through 23 additionally permit all four PadValue encodings and require DTYPE_NONE while CMode, RMode, Sat, and Canonicalize retain zero meanings.
 - ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the derived Rows and Col are powers of two large enough for the valid rectangle.
 - PE_MASK=0000 is a strict no-op before GPR reads, allocation, memory access, faults, load events, descriptor changes, or payload changes.
+- Ordinary forms require nonzero ValidCol and ValidRow, ValidCol not greater than physical Col, and power-of-two physical Rows and Col. CUBE forms require explicit nonzero LB0/LB1, absent LB2, and derive CELL geometry from Layout, dtype, and valid shape.
 
 ## State effects
 
 - A successful Local form allocates or renames exactly one destination Tile, installs the derived descriptor, loads every selected valid element, and marks the valid region defined.
 - A successful Shared form reallocates the named S register when required and updates only the quarters selected by PE_MASK. TLOAD does not modify source GPRs or GM.
+- A successful CUBE form writes raw valid values through CUBE storage indices and applies Zero, Max, Min, or undefined Null to physical tail positions without counting tails as valid elements.
 
 ## Memory effects and ordering
 
@@ -145,13 +156,14 @@ end;
 
 ## Exceptions
 
-- Reserved DataType, unsupported Layout, nonzero PadValue, malformed B.IOR/B.IOT/B.IOS schema, invalid dimensions, capacity or shape overflow, allocation failure, or GM translation, permission, or alignment fault rejects before destination publication.
+- Reserved DataType, unsupported or wrong-direction Layout, operation-inapplicable PadValue, malformed B.IOR/B.IOT/B.IOS schema, invalid dimensions, capacity or shape overflow, allocation failure, or GM translation, permission, or alignment fault rejects before destination publication.
 - Every selected memory address is preflighted before any destination payload, descriptor, allocation, definedness, or load event becomes visible. A failed Local allocation is rolled back; a failed Shared update preserves the prior Shared record.
 
 ## Examples
 
 - BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP
 - BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP
+- BSTART.TLOAD FP16; B.DATR {ND2N8, DTYPE_NONE, Max, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=K; B.IOT mask=1111, <last>, ->N<3>; BSTOP
 
 <!-- SUPPLEMENTARY-BEGIN -->
 Both Local (`B.IOT`) and Shared (`B.IOS`) destination forms use LB0 as valid
