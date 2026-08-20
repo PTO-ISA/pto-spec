@@ -4924,9 +4924,10 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "PadValueOrByteId",
           "Layout"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "pad-value"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TLOAD",
@@ -4975,9 +4976,10 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
+          "PadValueOrByteId",
           "Layout"
         ],
-        "pad_union": "must-zero"
+        "pad_union": "pad-value"
       },
       "disposition": "accepted-direct-operation",
       "effect_contract": "TSTORE",

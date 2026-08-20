@@ -25,6 +25,14 @@ begin
                 FALSE;
         end;
     end;
+    let ring = CurrentACR();
+    if _LastFault != Fault_None && _TrapContexts[[ring]].valid then
+        // Memory faults save the block before the caller can release a
+        // speculative destination.  Recovery must observe the same rolled
+        // back binding state as live execution, because Tile allocation state
+        // itself is not part of the portable trap context.
+        _TrapContexts[[ring]].bundle_tile_bindings = _BundleTileBindings;
+    end;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

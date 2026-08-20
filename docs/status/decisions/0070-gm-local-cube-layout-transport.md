@@ -3,9 +3,9 @@
 - Status: accepted
 - Issue: [#103](https://github.com/PTO-ISA/pto-spec/issues/103)
 - Umbrella: [#72](https://github.com/PTO-ISA/pto-spec/pull/72)
-- Baseline: `0b8ce516ffe998b24c4bae4c1a9dbca2e0d76510`
-- Proposed requirement: `PTO-CUBE-CELL-TRANSPORT-001`
-- Depends on: proposed `PTO-CUBE-CELL-STATE-001`
+- Baseline: `15dcfc52b2710c28cf7a50da23057b0fcb9fd7c3`
+- Requirement: `PTO-CUBE-CELL-TRANSPORT-001`
+- Depends on: accepted `PTO-CUBE-CELL-STATE-001`
 
 ## Decision
 
@@ -84,10 +84,9 @@ This decision defines no GM/Shared conversion, Local/Shared conversion,
 in-place payload reinterpretation, CUBE-to-CUBE conversion, Matrix execution,
 or new dimension command.
 
-## APPLY acceptance criteria
+## Acceptance criteria
 
-A later APPLY change must land this decision as accepted together with ASL,
-generated documentation, and independent decoded tests that prove:
+The accepted ASL, generated documentation, and independent decoded tests prove:
 
 1. all six exact encodings and direction restrictions;
 2. b32/b16/b8/b4 raw-bit round trips, including M16-b4 interleave;
@@ -97,5 +96,17 @@ generated documentation, and independent decoded tests that prove:
 6. first, middle, and last memory-fault rollback and exact restart; and
 7. unchanged ordinary TLOAD/TSTORE behavior.
 
-This proposed decision is not executable or release evidence and must not merge
-independently of its APPLY implementation.
+## Binary envelope consequence
+
+The common encoded-form envelope remains exactly 540 forms. The only changed
+fingerprinted input is the assigned-value constraint of the existing B.DATR
+Layout field, which adds codes 21 through 26. No form identity, instruction
+length, mask, match, field position, BSTART.TLOAD selector, or BSTART.TSTORE
+selector changes.
+
+The reviewed encoded-form fingerprint is rebound from
+`129cb7812264b7e4c5edd088b5aedcc528966eb69c06879dc1919c85106e21b4` to
+`b19b0cc84c9e033f0d74bddcaea82aa935f4000682ed184340481ebb34f46004`.
+The release encoding projection is correspondingly rebound from
+`9738fbfb67c90b90dacdae926c6ee206a2d517691ae27e5e5fc019702cc0e447` to
+`882cdc54d00ff7670159f86942f4a4f48e637be4a04975813fda15dacc46f522`.
