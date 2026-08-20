@@ -429,7 +429,7 @@ begin
     var result = tile;
     for row = 0 to result.valid_rows - 1 looplimit 65536 do
         for column = 0 to result.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(result,
+            let element = TileStorageIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
             result.defined_elements[element] = '1';
         end;
