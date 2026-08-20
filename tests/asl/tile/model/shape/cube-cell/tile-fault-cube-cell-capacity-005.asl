@@ -1,6 +1,7 @@
 // PTO-TEST: {"id":"PTO-AVS-TILE-CUBE-CELL-CAPACITY-005","source":"asl/tile/model/shape/cube-cell.asl","requirements":["PTO-CUBE-CELL-STATE-001"],"kind":"fault","summary":"CUBE CELL descriptor legality rejects unsupported dimensions types and capacity before effects","pass_condition":"exact capacity passes while one-byte-short zero-dimension row-overflow HiF4X2 and b64 tuples reject","related_sources":["asl/tile/model/state/descriptors.asl"]}
 func main() => integer
 begin
+    ResetProfileState();
     assert TileCubeDescriptorShapeLegal(768, 13, 19,
         TileDataType_FP16, TileLayout_CUBE_N8);
     assert !TileCubeDescriptorShapeLegal(767, 13, 19,
