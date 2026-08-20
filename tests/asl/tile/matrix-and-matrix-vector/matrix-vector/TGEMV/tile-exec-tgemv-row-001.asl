@@ -21,12 +21,12 @@ begin
     ResetProfileState();
     SelectTGEMVUnsignedInputType();
 
-    ConfigureTile(1, 128, 8, 8, 1, 2, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(2, 128, 8, 8, 2, 2, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(3, 128, 4, 8, 1, 2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    assert ConfigureCubeTile(1, 128, 1, 2, TileDataType_U16,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert ConfigureCubeTile(2, 128, 2, 2, TileDataType_U16,
+        TileLayout_CUBE_N8, TileLocation_Matrix);
+    assert ConfigureCubeTile(3, 128, 1, 2, TileDataType_U32,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
 
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 3);

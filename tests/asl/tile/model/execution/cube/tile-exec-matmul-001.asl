@@ -1,9 +1,21 @@
 // Migrated from the pre-four-surface executable test suite.
 // PTO-TEST: {"id":"PTO-AVS-TILE-TESTTILEMATMUL-EXECUTION-001","source":"asl/tile/model/execution/cube.asl","requirements":[],"kind":"execution","summary":"Covers Tile Matmul.","pass_condition":"TestTileMatmul completes without assertion failure","related_sources":[]}
-func ConfigureTwoByTwo(index: TileIndex, data_type: TileDataType)
+func ConfigureTwoByTwoLeft(index: TileIndex, data_type: TileDataType)
 begin
-    ConfigureTile(index, 256, 2, 2, 2, 2, data_type,
-        TileLayout_RowMajor, TileLocation_Any);
+    assert ConfigureCubeTile(index, 128, 2, 2, data_type,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
+end;
+
+func ConfigureTwoByTwoRight(index: TileIndex, data_type: TileDataType)
+begin
+    assert ConfigureCubeTile(index, 128, 2, 2, data_type,
+        TileLayout_CUBE_N8, TileLocation_Matrix);
+end;
+
+func ConfigureTwoByTwoDestination(index: TileIndex, data_type: TileDataType)
+begin
+    assert ConfigureCubeTile(index, 128, 2, 2, data_type,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
 end;
 
 func SelectTestCUBEDataType(data_type: bits(5))
@@ -26,9 +38,9 @@ end;
 func TestTileMatmul()
 begin
     SelectTestCUBEDataType('11010');
-    ConfigureTwoByTwo(5, TileDataType_U16);
-    ConfigureTwoByTwo(6, TileDataType_U16);
-    ConfigureTwoByTwo(7, TileDataType_U32);
+    ConfigureTwoByTwoLeft(5, TileDataType_U16);
+    ConfigureTwoByTwoRight(6, TileDataType_U16);
+    ConfigureTwoByTwoDestination(7, TileDataType_U32);
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 3);
@@ -58,35 +70,22 @@ begin
     TMATMUL_ACC(7, 7, 5, 6);
     assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 39;
 
-    // Matrix M, N, and K are logical dimensions and must each be a nonzero
-    // power of two even when the enclosing physical descriptors are legal.
-    var non_power_m = _Tiles[[5]];
-    non_power_m.valid_rows = 3;
-    assert !TileMatrixInfoShapeLegal(non_power_m, _Tiles[[6]]);
+    // Local CUBE Matrix logical dimensions may be arbitrary positive values.
+    assert ConfigureCubeTile(30, 128, 3, 3, TileDataType_U16,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert ConfigureCubeTile(31, 128, 3, 3, TileDataType_U16,
+        TileLayout_CUBE_N8, TileLocation_Matrix);
+    assert TileMatrixInfoShapeLegal(_Tiles[[30]], _Tiles[[31]]);
     var zero_m = _Tiles[[5]];
     zero_m.valid_rows = 0;
     assert !TileMatrixInfoShapeLegal(zero_m, _Tiles[[6]]);
 
-    var non_power_k_left = _Tiles[[5]];
-    non_power_k_left.rows = 8;
-    non_power_k_left.columns = 4;
-    non_power_k_left.valid_columns = 3;
-    var non_power_k_right = _Tiles[[6]];
-    non_power_k_right.valid_rows = 3;
-    assert !TileMatrixInfoShapeLegal(non_power_k_left, non_power_k_right);
-
-    var non_power_n = _Tiles[[6]];
-    non_power_n.rows = 8;
-    non_power_n.columns = 4;
-    non_power_n.valid_columns = 3;
-    assert !TileMatrixInfoShapeLegal(_Tiles[[5]], non_power_n);
-
-    ConfigureTile(27, 256, 2, 1, 2, 1, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(29, 256, 1, 2, 1, 2, TileDataType_U16,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(28, 256, 1, 1, 1, 1, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
+    assert ConfigureCubeTile(27, 128, 2, 1, TileDataType_U16,
+        TileLayout_CUBE_N8, TileLocation_Matrix);
+    assert ConfigureCubeTile(29, 128, 1, 2, TileDataType_U16,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert ConfigureCubeTile(28, 128, 1, 1, TileDataType_U32,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
     WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 1);

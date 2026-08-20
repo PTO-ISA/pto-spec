@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
 
 readonly func BundleCubeMatrixSelected() => boolean
 begin
@@ -240,7 +240,7 @@ begin
        !BundleMatrixDynamicBindingsComplete(
            operation, function, left_type, right_type, shared_count) ||
        !BundleTMATMULDataAttributesLegal() ||
-       !BundleTMATMULDimensionsLegal() ||
+       !BundleTMATMULDimensionsLegal(shared_count) ||
        !SelectedBundleTileMasksLegal() ||
        !BundleTMATMULLocalMasksAreFull() ||
        !BundleTMATMULSharedMasksAreFull() then
@@ -282,10 +282,18 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    let local_cube = shared_count == 0;
+    let left_ordinal = if TileMatrixFunctionUsesAccumulator(function)
+        then 1 else 0;
+    let primary_layout = if local_cube then
+        _Tiles[[BundleMatrixSourceAt(
+            left_ordinal as integer {0..7})]].layout
+        else TileLayout_RowMajor;
     // Every field, stream, Local/Shared descriptor, parameter payload, shape,
     // and capacity rule is now closed. Allocate the atomic destination group
     // before taking the first mathematical or scalar payload snapshot.
-    if !ResolveBundleTMATMULDestination(m, n, result_type) then
+    if !ResolveBundleTMATMULDestination(
+           m, n, result_type, local_cube, primary_layout) then
         return FALSE;
     end;
 
@@ -372,8 +380,10 @@ begin
             local_ordinal as integer {0..7});
     end;
 
-    let shape_legal = TileMatrixInfosMatchDimensions(
-        left, right, m, n, k);
+    let shape_legal = if shared_count == 0 then
+        TileMatrixCubeInfosMatchDimensions(left, right, m, n, k)
+    else
+        TileMatrixInfosMatchDimensions(left, right, m, n, k);
     let operand_types_legal = left.data_type == left_type &&
         right.data_type == right_type;
     let scales_legal = !TileMatrixFunctionUsesMX(function) ||
@@ -383,9 +393,14 @@ begin
     assert shape_legal && operand_types_legal && scales_legal;
 
     let accumulator_legal = !TileMatrixFunctionUsesAccumulator(function) ||
-        TileMatrixInfoAccumulatorSchemaLegal(
-            accumulator, m, n, result_type,
-            BundleMatrixPrimaryDestinationCapacityBytes());
+        (if local_cube then
+            TileMatrixLocalCubeAccumulatorSchemaLegal(
+                accumulator, m, n, result_type, primary_layout,
+                BundleMatrixPrimaryDestinationCapacityBytes())
+         else
+            TileMatrixInfoAccumulatorSchemaLegal(
+                accumulator, m, n, result_type,
+                BundleMatrixPrimaryDestinationCapacityBytes()));
     assert accumulator_legal;
     assert !TileMatrixFunctionUsesBias(function) ||
            TileMatrixInfoBiasLegal(

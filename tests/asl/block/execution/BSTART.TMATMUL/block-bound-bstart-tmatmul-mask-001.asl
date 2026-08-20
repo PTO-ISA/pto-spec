@@ -13,10 +13,12 @@ begin
     assert CoreTileCapacityInUse() == 0;
 
     ResetProfileState();
-    ConfigureTile(1, 128, 8, 8, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(2, 128, 8, 8, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    assert ConfigureCubeTileForMask(1, 128, 1, 1,
+        TileDataType_FP16, TileLayout_CUBE_M16,
+        TileLocation_Matrix, '1111');
+    assert ConfigureCubeTileForMask(2, 128, 1, 1,
+        TileDataType_FP16, TileLayout_CUBE_N8,
+        TileLocation_Matrix, '1111');
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
     let partial_started = ExecuteCommandInstruction(start, 32);
