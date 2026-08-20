@@ -10,6 +10,8 @@ begin
     _BundleFixedPointAttributes.group_max_en = TRUE;
     _BundleFixedPointAttributes.row_max_init = TRUE;
     _BundleFixedPointAttributes.max_abs_en = TRUE;
+    _BundleFixedPointAttributes.trans_a = TRUE;
+    _BundleFixedPointAttributes.trans_b = TRUE;
     ResetBundleControlState();
     assert !_BundleFixedPointAttributes.valid;
     assert _BundleFixedPointAttributes.pre_quant_mode == Zeros{6};
@@ -19,5 +21,7 @@ begin
     assert !_BundleFixedPointAttributes.group_max_en;
     assert !_BundleFixedPointAttributes.row_max_init;
     assert !_BundleFixedPointAttributes.max_abs_en;
+    assert !_BundleFixedPointAttributes.trans_a;
+    assert !_BundleFixedPointAttributes.trans_b;
     return 0;
 end;

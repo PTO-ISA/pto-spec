@@ -3,7 +3,14 @@ func ConfigureCubeUnitTile(index: TileIndex, data_type: TileDataType,
                            layout: TileLayout, location: TileLocation,
                            value: Word)
 begin
-    ConfigureTile(index, 512, 1, 1, 1, 1, data_type, layout, location);
+    if TileLayoutIsCube(layout) then
+        let configured = ConfigureCubeTile(
+            index, 512, 1, 1, data_type, layout, location);
+        assert configured;
+    else
+        ConfigureTile(index, 512, 1, 1, 1, 1,
+            data_type, layout, location);
+    end;
     WriteTileElement(index, 0, 0, value);
 end;
 
@@ -32,13 +39,13 @@ begin
     let accumulator_type = TileOrdinaryMatrixAccumulatorType(
         data_type,
         data_type);
-    ConfigureCubeUnitTile(0, accumulator_type, TileLayout_RowMajor,
+    ConfigureCubeUnitTile(0, accumulator_type, TileLayout_CUBE_M16,
         TileLocation_Matrix, Zeros{PTO_XLEN});       // D
-    ConfigureCubeUnitTile(1, accumulator_type, TileLayout_RowMajor,
+    ConfigureCubeUnitTile(1, accumulator_type, TileLayout_CUBE_M16,
         TileLocation_Matrix, Zeros{PTO_XLEN} + 5);  // C
-    ConfigureCubeUnitTile(2, data_type, TileLayout_RowMajor,
+    ConfigureCubeUnitTile(2, data_type, TileLayout_CUBE_M16,
         TileLocation_Matrix, Zeros{PTO_XLEN} + 2);  // A
-    ConfigureCubeUnitTile(3, data_type, TileLayout_RowMajor,
+    ConfigureCubeUnitTile(3, data_type, TileLayout_CUBE_N8,
         TileLocation_Matrix, Zeros{PTO_XLEN} + 3);  // B
     ConfigureCubeUnitTile(4, accumulator_type, TileLayout_RowMajor,
         TileLocation_Any, Zeros{PTO_XLEN} + 7);     // Bias
@@ -53,15 +60,15 @@ func ResetCubeMXOperands()
 begin
     ResetProfileState();
     SelectCubeTotalityDataType('00111');
-    ConfigureCubeUnitTile(0, TileDataType_FP32, TileLayout_RowMajor,
+    ConfigureCubeUnitTile(0, TileDataType_FP32, TileLayout_CUBE_M16,
         TileLocation_Matrix, Zeros{PTO_XLEN});       // D
-    ConfigureCubeUnitTile(1, TileDataType_FP32, TileLayout_RowMajor,
+    ConfigureCubeUnitTile(1, TileDataType_FP32, TileLayout_CUBE_M16,
         TileLocation_Matrix, Zeros{PTO_XLEN} + 5);  // C
-    ConfigureCubeUnitTile(2, TileDataType_E4M3, TileLayout_RowMajor,
+    ConfigureCubeUnitTile(2, TileDataType_E4M3, TileLayout_CUBE_M16,
         TileLocation_Matrix, Zeros{PTO_XLEN} + 2);  // A
     ConfigureCubeUnitTile(3, TileDataType_E8M0, TileLayout_RowMajor,
         TileLocation_Any, Zeros{PTO_XLEN} + 1);     // ScaleA
-    ConfigureCubeUnitTile(4, TileDataType_E4M3, TileLayout_RowMajor,
+    ConfigureCubeUnitTile(4, TileDataType_E4M3, TileLayout_CUBE_N8,
         TileLocation_Matrix, Zeros{PTO_XLEN} + 3);  // B
     ConfigureCubeUnitTile(5, TileDataType_E8M0, TileLayout_RowMajor,
         TileLocation_Any, Zeros{PTO_XLEN} + 1);     // ScaleB
@@ -155,8 +162,9 @@ begin
     source_alias.source1 = source_alias.source0;
     let (source_alias_status, -) = ExecuteTileInstruction(
         TileDecode_CUBE, Zeros{12}, source_alias);
-    assert source_alias_status == TileExecution_Executed;
-    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 4;
+    assert source_alias_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
 
     ResetCubeOrdinaryOperands();
     var destination_alias = CubeTotalityOperands(2);

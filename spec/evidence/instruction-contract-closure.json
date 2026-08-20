@@ -1384,7 +1384,7 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn",
+          "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB",
           "constraints": [
             {
               "field": "PreQuantMode",
@@ -1492,6 +1492,22 @@
               ]
             },
             {
+              "field": "TransA",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "TransB",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
               "field": "Reserved",
               "operator": "one-of",
               "values": [
@@ -1523,7 +1539,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0x00007fff",
+              "mask": "0x00007e7f",
               "match": "0x00002023",
               "width_bits": 32
             }
@@ -1639,16 +1655,40 @@
               "width": 1
             },
             {
-              "name": "Reserved",
+              "name": "TransA",
               "pieces": [
                 {
                   "instruction_lsb": 7,
                   "value_lsb": 0,
-                  "width": 4
+                  "width": 1
                 }
               ],
               "signedness": "encoding-defined",
-              "width": 4
+              "width": 1
+            },
+            {
+              "name": "TransB",
+              "pieces": [
+                {
+                  "instruction_lsb": 8,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "Reserved",
+              "pieces": [
+                {
+                  "instruction_lsb": 9,
+                  "value_lsb": 0,
+                  "width": 2
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 2
             },
             {
               "name": "Opc1",
@@ -1687,7 +1727,7 @@
               "width": 1
             }
           ],
-          "form_id": "b_fpatr_32_4f2db11e8e8a",
+          "form_id": "b_fpatr_32_30c307e06d4a",
           "length_bits": 32,
           "mnemonic": "B.FPATR",
           "semantic_family": "CMD",
@@ -1707,10 +1747,10 @@
           "Scalar pre-quantization and LReLU/PReLU parameters use the dense B.IOR schema; LReLU-only consumes RegSrc0."
         ],
         "canonical_assembly": [
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn"
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB"
         ],
         "defaults": [
-          "Encoded PreQuantMode=0 and ReluMode=0 disable pre-quantization and activation. GroupNCode=0 selects no group maximum. All four enable bits default to disabled.",
+          "Encoded PreQuantMode=0 and ReluMode=0 disable pre-quantization and activation. GroupNCode=0 selects no group maximum. All four enable bits default to disabled. TransA=0 and TransB=0 select no logical transpose.",
           "Omitting B.FPATR is not a default for a CUBE Matrix block: complete-bundle preflight rejects the missing command before allocation or effects."
         ],
         "encoded_fields": [
@@ -1738,7 +1778,7 @@
               ]
             ],
             "field": "PreQuantMode",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
@@ -1776,7 +1816,7 @@
               ]
             ],
             "field": "ReluMode",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
@@ -1798,7 +1838,7 @@
               ]
             ],
             "field": "GroupNCode",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
@@ -1820,7 +1860,7 @@
               ]
             ],
             "field": "RowMaxEn",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
@@ -1837,7 +1877,7 @@
               ]
             ],
             "field": "GroupMaxEn",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
@@ -1854,7 +1894,7 @@
               ]
             ],
             "field": "RowMaxInit",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
@@ -1871,7 +1911,7 @@
               ]
             ],
             "field": "MaxAbsEn",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
@@ -1888,7 +1928,7 @@
               ]
             ],
             "field": "Func",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
@@ -1914,7 +1954,7 @@
               ]
             ],
             "field": "ElementWiseEn",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
@@ -1932,23 +1972,57 @@
             "assigned_ranges": [
               [
                 0,
+                1
+              ]
+            ],
+            "field": "TransA",
+            "form_id": "b_fpatr_32_30c307e06d4a",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "logical transpose enable for a Shared A primary",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Do not transpose Shared A."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "TransB",
+            "form_id": "b_fpatr_32_30c307e06d4a",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "logical transpose enable for a Shared B primary",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Do not transpose Shared B."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
                 0
               ]
             ],
             "field": "Reserved",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
                 1,
-                15
+                3
               ]
             ],
             "role": "fixed-zero reserved field",
             "signedness": "encoding-defined",
-            "width": 4,
-            "zero_meaning": "Fixed zero; every nonzero encoding is reserved."
+            "width": 2,
+            "zero_meaning": "Bits 10:9 are fixed zero; every nonzero encoding is reserved."
           },
           {
             "assigned_ranges": [
@@ -1958,7 +2032,7 @@
               ]
             ],
             "field": "Opc1",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
@@ -1984,7 +2058,7 @@
               ]
             ],
             "field": "Opcode",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
@@ -2010,7 +2084,7 @@
               ]
             ],
             "field": "W",
-            "form_id": "b_fpatr_32_4f2db11e8e8a",
+            "form_id": "b_fpatr_32_30c307e06d4a",
             "other_owner_values": [],
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
@@ -2027,8 +2101,8 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "B.FPATR None, None, 0, 0, 0, 0, 0",
-          "B.FPATR S8Vector, LReLU, 2, 1, 1, 1, 1"
+          "B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0",
+          "B.FPATR S8Vector, LReLU, 2, 1, 1, 1, 1, 1, 1"
         ],
         "exceptions": [
           "Missing, duplicate, or non-CUBE-Matrix use raises Fault_BundleControl before operand consumption, allocation, payload, or destination effects.",
@@ -2042,7 +2116,8 @@
           "ReluMode codes 0..3 select None, ReLU, scalar LReLU/PReLU, and vector PReLU; codes 4..7 are reserved.",
           "GroupNCode codes 0..9 select 0, 8, 16, 32, 48, 64, 80, 96, 112, and 128 columns; codes 10..15 are reserved.",
           "RowMaxInit requires RowMaxEn. GroupMaxEn requires nonzero GroupNCode and nonzero GroupNCode requires GroupMaxEn. MaxAbsEn requires RowMaxEn or GroupMaxEn.",
-          "Func=2, ElementWiseEn=0, Reserved=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.",
+          "TransA and TransB are independent one-bit controls. Matrix operation preflight accepts each only when the corresponding A or B primary is Shared.",
+          "Func=2, ElementWiseEn=0, Reserved[10:9]=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.",
           "Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; fixed floating modes require RMode=NONE; fixed shift modes require RMode=NONE and Sat=0; programmable integer modes retain the complete rounding selector and final clamp/wrap control.",
           "The derived scalar/vector parameter count, Local source count, and Local destination count must fit the complete-bundle schema without duplicate destinations or illegal source/destination aliases."
         ],
@@ -2087,6 +2162,14 @@
             "role": "fixed complete-bundle selector equal to zero"
           },
           {
+            "field": "TransA",
+            "role": "logical transpose enable for a Shared A primary"
+          },
+          {
+            "field": "TransB",
+            "role": "logical transpose enable for a Shared B primary"
+          },
+          {
             "field": "Reserved",
             "role": "fixed-zero reserved field"
           },
@@ -2109,7 +2192,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field.",
+          "Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field, including TransA and TransB.",
           "Trap save and recovery preserve the complete latched descriptor with the pending block.",
           "Successful execution selects any activation-dependent multiplier before the destination conversion, preserves raw optional reductions, and atomically commits all enabled outputs through the numeric-profile hook."
         ]
@@ -7987,7 +8070,7 @@
         "block_composition": [
           "BSTART.TGEMV AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -8003,7 +8086,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [
           {
@@ -8047,7 +8131,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TGEMV AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMV AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -8179,8 +8263,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 16 and TileOperation_TGEMV.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -8291,7 +8376,7 @@
         "block_composition": [
           "BSTART.TGEMV.ACC AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -8307,7 +8392,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [
           {
@@ -8351,7 +8437,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TGEMV.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMV.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -8483,8 +8569,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 18 and TileOperation_TGEMV_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. C is one explicit Local MxN accumulator source and D is a newly published destination; C and D may use one architectural Tile name. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -8595,7 +8682,7 @@
         "block_composition": [
           "BSTART.TGEMV.BIAS AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -8611,7 +8698,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [
           {
@@ -8655,7 +8743,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TGEMV.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMV.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -8787,8 +8875,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 17 and TileOperation_TGEMV_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -8899,7 +8988,7 @@
         "block_composition": [
           "BSTART.TGEMVMX AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -8915,7 +9004,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [
           {
@@ -8959,7 +9049,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TGEMVMX AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMVMX AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -9091,8 +9181,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 20 and TileOperation_TGEMV_MX.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -9203,7 +9294,7 @@
         "block_composition": [
           "BSTART.TGEMVMX.ACC AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -9219,7 +9310,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [
           {
@@ -9263,7 +9355,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TGEMVMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMVMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -9395,8 +9487,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 22 and TileOperation_TGEMV_MX_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. C is one explicit Local MxN accumulator source and D is a newly published destination; C and D may use one architectural Tile name. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -9507,7 +9600,7 @@
         "block_composition": [
           "BSTART.TGEMVMX.BIAS AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -9523,7 +9616,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [
           {
@@ -9567,7 +9661,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TGEMVMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMVMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -9699,8 +9793,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 21 and TileOperation_TGEMV_MX_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias is one Local row-major 1xN accumulator-type source. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -10132,11 +10227,11 @@
         "block_composition": [
           "BSTART.TMATMUL AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -10149,7 +10244,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [
           {
@@ -10193,7 +10289,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TMATMUL AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMUL AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -10325,8 +10421,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 0 and TileOperation_TMATMUL.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -10347,7 +10444,8 @@
           "Start a CUBE Function 0 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
           "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/block/execution/BSTART.TMATMUL.md",
@@ -10437,11 +10535,11 @@
         "block_composition": [
           "BSTART.TMATMUL.ACC AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -10454,7 +10552,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [
           {
@@ -10498,7 +10597,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TMATMUL.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMUL.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -10630,8 +10729,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 2 and TileOperation_TMATMUL_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. C is one explicit Local MxN accumulator source and D is a newly published destination; C and D may use one architectural Tile name. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -10652,7 +10752,8 @@
           "Start a CUBE Function 2 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_ACC using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
           "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/block/execution/BSTART.TMATMUL.ACC.md",
@@ -10742,11 +10843,11 @@
         "block_composition": [
           "BSTART.TMATMUL.BIAS AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -10759,7 +10860,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [
           {
@@ -10803,7 +10905,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TMATMUL.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMUL.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -10935,8 +11037,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 1 and TileOperation_TMATMUL_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -10957,7 +11060,8 @@
           "Start a CUBE Function 1 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_BIAS using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
           "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/block/execution/BSTART.TMATMUL.BIAS.md",
@@ -11047,11 +11151,11 @@
         "block_composition": [
           "BSTART.TMATMULMX AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -11064,7 +11168,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [
           {
@@ -11108,7 +11213,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TMATMULMX AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMULMX AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -11240,8 +11345,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 4 and TileOperation_TMATMUL_MX.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -11262,7 +11368,8 @@
           "Start a CUBE Function 4 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_MX using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
           "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/block/execution/BSTART.TMATMULMX.md",
@@ -11352,11 +11459,11 @@
         "block_composition": [
           "BSTART.TMATMULMX.ACC AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -11369,7 +11476,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [
           {
@@ -11413,7 +11521,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TMATMULMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMULMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -11545,8 +11653,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 6 and TileOperation_TMATMUL_MX_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. C is one explicit Local MxN accumulator source and D is a newly published destination; C and D may use one architectural Tile name. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -11567,7 +11676,8 @@
           "Start a CUBE Function 6 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_MX_ACC using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
           "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/block/execution/BSTART.TMATMULMX.ACC.md",
@@ -11657,11 +11767,11 @@
         "block_composition": [
           "BSTART.TMATMULMX.BIAS AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -11674,7 +11784,8 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [
           {
@@ -11718,7 +11829,7 @@
         ],
         "encoding_class": "standalone-encoded",
         "examples": [
-          "BSTART.TMATMULMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMULMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -11850,8 +11961,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 5 and TileOperation_TMATMUL_MX_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -11872,7 +11984,8 @@
           "Start a CUBE Function 5 descriptor with encoded DataType preserved as AType.",
           "At block completion execute TileOperation_TMATMUL_MX_BIAS using the resolved M, N, K, input types, mathematical operands, and B.FPATR postprocess schema.",
           "Publish the complete output group atomically after successful preflight and computation; do not consume mathematical or postprocess sources.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/block/execution/BSTART.TMATMULMX.BIAS.md",
@@ -121967,7 +122080,7 @@
         "block_composition": [
           "BSTART.TGEMV AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -121983,12 +122096,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TGEMV AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMV AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -121999,8 +122113,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 16 and TileOperation_TGEMV.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -122113,7 +122228,7 @@
         "block_composition": [
           "BSTART.TGEMV.ACC AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -122129,12 +122244,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TGEMV.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMV.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -122145,8 +122261,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 18 and TileOperation_TGEMV_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. C is one explicit Local MxN accumulator source and D is a newly published destination; C and D may use one architectural Tile name. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -122263,7 +122380,7 @@
         "block_composition": [
           "BSTART.TGEMV.BIAS AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -122279,12 +122396,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TGEMV.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMV.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -122295,8 +122413,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 17 and TileOperation_TGEMV_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -122421,7 +122540,7 @@
         "block_composition": [
           "BSTART.TGEMVMX AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -122437,12 +122556,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TGEMVMX AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMVMX AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -122453,8 +122573,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 20 and TileOperation_TGEMV_MX.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -122591,7 +122712,7 @@
         "block_composition": [
           "BSTART.TGEMVMX.ACC AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -122607,12 +122728,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TGEMVMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMVMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -122623,8 +122745,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 22 and TileOperation_TGEMV_MX_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. C is one explicit Local MxN accumulator source and D is a newly published destination; C and D may use one architectural Tile name. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -122765,7 +122888,7 @@
         "block_composition": [
           "BSTART.TGEMVMX.BIAS AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
@@ -122781,12 +122904,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one; TGEMV fixes M to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. TGEMV requires both controls to remain zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TGEMVMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TGEMVMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -122797,8 +122921,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 21 and TileOperation_TGEMV_MX_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M is fixed to one; N and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TGEMV is Local-only: TransA and TransB are zero and every effective Shared binding rejects before effects.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias is one Local row-major 1xN accumulator-type source. M is fixed to one and every Shared binding is illegal.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -124151,11 +124276,11 @@
         "block_composition": [
           "BSTART.TMATMUL AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -124168,12 +124293,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TMATMUL AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMUL AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -124184,8 +124310,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 0 and TileOperation_TMATMUL.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -124213,7 +124340,8 @@
         "state_effects": [
           "Multiply A[M x K] by B[K x N] into one private FP32, S32, or U32 CUBE destination.",
           "After complete preflight, execute TMATMUL with the operand bindings listed above; destination definedness changes only as specified by that handler.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.md",
@@ -124298,11 +124426,11 @@
         "block_composition": [
           "BSTART.TMATMUL.ACC AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -124315,12 +124443,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TMATMUL.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMUL.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -124331,8 +124460,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 2 and TileOperation_TMATMUL_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. C is one explicit Local MxN accumulator source and D is a newly published destination; C and D may use one architectural Tile name. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -124364,7 +124494,8 @@
         "state_effects": [
           "Multiply matrices and accumulate into the supplied accumulator Tile.",
           "After complete preflight, execute TMATMUL_ACC with the operand bindings listed above; destination definedness changes only as specified by that handler.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.md",
@@ -124449,11 +124580,11 @@
         "block_composition": [
           "BSTART.TMATMUL.BIAS AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -124466,12 +124597,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TMATMUL.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMUL.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -124482,8 +124614,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 1 and TileOperation_TMATMUL_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -124515,7 +124648,8 @@
         "state_effects": [
           "Compute A[M x K] times B[K x N], then add one Local row-major 1xN private-result Bias into a new Local destination.",
           "After complete preflight, execute TMATMUL_BIAS with the operand bindings listed above; destination definedness changes only as specified by that handler.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.md",
@@ -124608,11 +124742,11 @@
         "block_composition": [
           "BSTART.TMATMULMX AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -124625,12 +124759,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TMATMULMX AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMULMX AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -124641,8 +124776,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 4 and TileOperation_TMATMUL_MX.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -124678,7 +124814,8 @@
         "state_effects": [
           "Multiply matrices using row and column scale Tiles.",
           "After complete preflight, execute TMATMUL_MX with the operand bindings listed above; destination definedness changes only as specified by that handler.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.md",
@@ -124779,11 +124916,11 @@
         "block_composition": [
           "BSTART.TMATMULMX.ACC AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -124796,12 +124933,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TMATMULMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMULMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -124812,8 +124950,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 6 and TileOperation_TMATMUL_MX_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. C is one explicit Local MxN accumulator source and D is a newly published destination; C and D may use one architectural Tile name. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -124853,7 +124992,8 @@
         "state_effects": [
           "Multiply scaled matrices and accumulate into the supplied accumulator Tile.",
           "After complete preflight, execute TMATMUL_MX_ACC with the operand bindings listed above; destination definedness changes only as specified by that handler.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.md",
@@ -124954,11 +125094,11 @@
         "block_composition": [
           "BSTART.TMATMULMX.BIAS AType",
           "B.DATR BType, RMode, Sat (optional; BType defaults to AType)",
-          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one)",
+          "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one)",
           "B.DIM LB0 M (optional, default 1)",
           "B.DIM LB1 N (optional, default 1)",
           "B.DIM LB2 K (optional, default 1)",
-          "B.IOS complete right or both matrix operand groups (optional; executing mask 1111)",
+          "B.IOS complete right or both matrix operand groups (optional; common nonzero mask)",
           "B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias",
           "B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations",
           "B.IOT/B.IOR postprocess operands selected by B.FPATR",
@@ -124971,12 +125111,13 @@
           "Encoded DataType is always AType. Omitted B.DATR preserves AType as BType, selects RNE, and disables saturation.",
           "Omitted LB0, LB1, and LB2 default M, N, and K independently to one.",
           "Exactly one all-zero B.FPATR selects no conversion, activation, or reduction; B.IOR and auxiliary B.IOT operands exist only when a selected postprocess mode requires them.",
-          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles."
+          "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "TransA=0 and TransB=0 select no logical transpose. Each nonzero control is legal only when the corresponding primary is Shared."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TMATMULMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; executing mask 1111); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
+          "BSTART.TMATMULMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one); B.DIM LB0 M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; common nonzero mask); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary"
         ],
         "exceptions": [
           "A reserved DataType or fixed-bit mismatch raises Fault_IllegalInstruction before block state changes.",
@@ -124987,8 +125128,9 @@
         "legality": [
           "The carrier selects exactly CUBE Function 5 and TileOperation_TMATMUL_MX_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
+          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
-          "Every executing Local or Shared binding uses PE_MASK=1111; mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
+          "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
         ],
         "memory_effects": [
@@ -125028,7 +125170,8 @@
         "state_effects": [
           "Multiply scaled matrices and add the bias Tile.",
           "After complete preflight, execute TMATMUL_MX_BIAS with the operand bindings listed above; destination definedness changes only as specified by that handler.",
-          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts."
+          "For Local execution, publish D with A's CUBE_M16 or CUBE_M32 layout and final output dtype; ordinary Bias, MX scales, and enabled reduction auxiliaries keep their operation-owned layouts.",
+          "Successful Shared primary reads leave every Shared descriptor, mask, publication state, payload, and lifetime unchanged."
         ]
       },
       "documentation": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.md",

@@ -2,8 +2,10 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 512, 1, 32, 1, 32, TileDataType_E4M3,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let left_ready = ConfigureCubeTileForMask(0, 512, 1, 32,
+        TileDataType_E4M3, TileLayout_CUBE_M16,
+        TileLocation_Matrix, '1111');
+    assert left_ready;
     ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Matrix);
     ConfigureTile(10, 512, 32, 1, 32, 1, TileDataType_E5M2,

@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE","surface":"tile","classification":["model","legality","matrix-shape"],"depends_on":["PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE","surface":"tile","classification":["model","legality","matrix-shape"],"depends_on":["PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS","PTO-TILE-MODEL-LEGALITY-MATRIX-INFO-DESCRIPTOR","PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA"]}
 readonly func TileMatrixShapeLegal(left: TileIndex,
                                    right: TileIndex) => boolean
 begin
@@ -92,18 +92,6 @@ begin
            IsNonzeroPowerOfTwo(right.columns) &&
            left.valid_rows == m && left.valid_columns == k &&
            right.valid_rows == k && right.valid_columns == n;
-end;
-
-readonly func TileInfoDescriptorLegal(tile: TileInfo) => boolean
-begin
-    return tile.allocated && tile.contents_defined &&
-           TileCapacityIsLegal(tile.capacity_bytes) &&
-           TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
-               tile.columns, tile.data_type) &&
-           tile.valid_rows <= tile.rows &&
-           tile.valid_columns <= tile.columns &&
-           tile.rows * tile.columns <= PTO_MODEL_TILE_ELEMENTS &&
-           TileGenericIndexingPermitted(tile);
 end;
 
 readonly func TileMatrixInfoShapeLegal(left: TileInfo,
@@ -208,6 +196,9 @@ readonly func TileMatrixInfoOptionalScalesLegal(
 begin
     let primary_shape_legal = TileMatrixInfoShapeLegal(left, right) ||
         TileMatrixCubeInfosMatchDimensions(
+            left, right, left.valid_rows,
+            right.valid_columns, left.valid_columns) ||
+        TileMatrixMixedInfosMatchDimensions(
             left, right, left.valid_rows,
             right.valid_columns, left.valid_columns);
     if !primary_shape_legal then return FALSE; end;

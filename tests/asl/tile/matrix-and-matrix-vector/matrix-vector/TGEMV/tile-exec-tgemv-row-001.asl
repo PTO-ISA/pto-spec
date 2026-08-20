@@ -21,12 +21,16 @@ begin
     ResetProfileState();
     SelectTGEMVUnsignedInputType();
 
-    assert ConfigureCubeTile(1, 128, 1, 2, TileDataType_U16,
+    let cube_configuration_1 = ConfigureCubeTile(1, 128, 1, 2, TileDataType_U16,
         TileLayout_CUBE_M16, TileLocation_Matrix);
-    assert ConfigureCubeTile(2, 128, 2, 2, TileDataType_U16,
+
+    assert cube_configuration_1;
+    let cube_configuration_2 = ConfigureCubeTile(2, 128, 2, 2, TileDataType_U16,
         TileLayout_CUBE_N8, TileLocation_Matrix);
-    assert ConfigureCubeTile(3, 128, 1, 2, TileDataType_U32,
+    assert cube_configuration_2;
+    let cube_configuration_3 = ConfigureCubeTile(3, 128, 1, 2, TileDataType_U32,
         TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert cube_configuration_3;
 
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 3);

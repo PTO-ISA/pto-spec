@@ -32,7 +32,9 @@ func SetBundleFixedPointAttributeState(pre_quant_mode: bits(6),
                                        row_max_en: boolean,
                                        group_max_en: boolean,
                                        row_max_init: boolean,
-                                       max_abs_en: boolean)
+                                       max_abs_en: boolean,
+                                       trans_a: boolean,
+                                       trans_b: boolean)
 begin
     // Header-local field checks happen before the descriptor becomes visible.
     if !BundleFPATRFieldsLegal(pre_quant_mode, relu_mode, group_n_code,
@@ -49,6 +51,22 @@ begin
     _BundleFixedPointAttributes.group_max_en = group_max_en;
     _BundleFixedPointAttributes.row_max_init = row_max_init;
     _BundleFixedPointAttributes.max_abs_en = max_abs_en;
+    _BundleFixedPointAttributes.trans_a = trans_a;
+    _BundleFixedPointAttributes.trans_b = trans_b;
+end;
+
+func SetBundleFixedPointAttributeState(pre_quant_mode: bits(6),
+                                       relu_mode: bits(3),
+                                       group_n_code: bits(4),
+                                       row_max_en: boolean,
+                                       group_max_en: boolean,
+                                       row_max_init: boolean,
+                                       max_abs_en: boolean)
+begin
+    SetBundleFixedPointAttributeState(
+        pre_quant_mode, relu_mode, group_n_code,
+        row_max_en, group_max_en, row_max_init, max_abs_en,
+        FALSE, FALSE);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

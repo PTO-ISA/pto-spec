@@ -178,6 +178,41 @@ end;
             image_to_column_case,
         )
 
+    def test_matrix_legality_owns_cube_source_definedness(self) -> None:
+        operations = (
+            "TGEMV",
+            "TGEMV_ACC",
+            "TGEMV_BIAS",
+            "TGEMV_MX",
+            "TGEMV_MX_ACC",
+            "TGEMV_MX_BIAS",
+            "TMATMUL",
+            "TMATMUL_ACC",
+            "TMATMUL_BIAS",
+            "TMATMUL_MX",
+            "TMATMUL_MX_ACC",
+            "TMATMUL_MX_BIAS",
+        )
+        for operation in operations:
+            with self.subTest(operation=operation):
+                marker = f"when TileOperation_{operation} =>"
+                case_start = self.decoder.index(marker)
+                case_end = self.decoder.find(
+                    "\n        when ",
+                    case_start + len(marker),
+                )
+                if case_end == -1:
+                    case_end = self.decoder.index(
+                        "\n    end;",
+                        case_start + len(marker),
+                    )
+                matrix_case = self.decoder[case_start:case_end]
+                self.assertNotIn("TileSourceContentsDefined(", matrix_case)
+                self.assertIn(
+                    f"TileOperandsLegal_{operation}(",
+                    matrix_case,
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
