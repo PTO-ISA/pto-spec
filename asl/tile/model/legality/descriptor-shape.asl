@@ -25,6 +25,29 @@ begin
             TileGenericIndexingPermitted(_Tiles[[index]]));
 end;
 
+readonly func TileCubeDescriptorLegal(tile: TileInfo) => boolean
+begin
+    if !tile.allocated || tile.storage_kind != TileStorage_Numeric ||
+       !TileCubeDescriptorShapeLegal(tile.capacity_bytes,
+           tile.valid_rows, tile.valid_columns,
+           tile.data_type, tile.layout) then
+        return FALSE;
+    end;
+    return tile.rows == TileCubeStorageRows(
+               tile.layout, tile.valid_rows, tile.data_type) &&
+           tile.columns == TileCubeStorageColumns(
+               tile.layout, tile.valid_columns, tile.data_type) &&
+           tile.cube_k_repeat == TileCubeKRepeat(tile.layout,
+               tile.valid_rows, tile.valid_columns, tile.data_type) &&
+           tile.cube_n_repeat == TileCubeNRepeat(
+               tile.layout, tile.valid_columns, tile.data_type) &&
+           tile.cube_cell_count == TileCubeCellCount(tile.layout,
+               tile.valid_rows, tile.valid_columns, tile.data_type) &&
+           tile.cube_storage_bytes == TileCubeRequiredBytes(tile.layout,
+               tile.valid_rows, tile.valid_columns, tile.data_type) &&
+           tile.cube_storage_bytes <= tile.capacity_bytes;
+end;
+
 readonly func TileSourceContentsDefined(index: TileIndex) => boolean
 begin
     return TileDescriptorLegal(index) && _Tiles[[index]].contents_defined;

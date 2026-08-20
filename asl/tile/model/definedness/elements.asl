@@ -22,7 +22,7 @@ end;
 
 readonly func TileGenericIndexingPermitted(tile: TileInfo) => boolean
 begin
-    return TileLayoutShapeLegal(tile);
+    return !TileLayoutIsCube(tile.layout) && TileLayoutShapeLegal(tile);
 end;
 
 readonly func TileLinearIndex(tile: TileInfo, row: integer {0..65535},
@@ -64,6 +64,31 @@ begin
     end;
     assert index < PTO_MODEL_TILE_ELEMENTS;
     return index as ModelTileElementIndex;
+end;
+
+readonly func TileStorageIndex(tile: TileInfo,
+                               row: integer {0..65535},
+                               column: integer {0..65535})
+    => ModelTileElementIndex
+begin
+    if !TileLayoutIsCube(tile.layout) then
+        return TileLinearIndex(tile, row, column);
+    end;
+    assert TileCubeDescriptorShapeLegal(tile.capacity_bytes,
+        tile.valid_rows, tile.valid_columns, tile.data_type, tile.layout);
+    assert tile.rows == TileCubeStorageRows(
+        tile.layout, tile.valid_rows, tile.data_type);
+    assert tile.columns == TileCubeStorageColumns(
+        tile.layout, tile.valid_columns, tile.data_type);
+    assert tile.cube_k_repeat == TileCubeKRepeat(tile.layout,
+        tile.valid_rows, tile.valid_columns, tile.data_type);
+    assert tile.cube_n_repeat == TileCubeNRepeat(
+        tile.layout, tile.valid_columns, tile.data_type);
+    assert tile.cube_cell_count == TileCubeCellCount(tile.layout,
+        tile.valid_rows, tile.valid_columns, tile.data_type);
+    assert tile.cube_storage_bytes == TileCubeRequiredBytes(tile.layout,
+        tile.valid_rows, tile.valid_columns, tile.data_type);
+    return TileCubePayloadIndex(tile, row, column);
 end;
 
 pure func TileElementBytes(data_type: TileDataType) => integer {1,2,4,8}
@@ -429,7 +454,7 @@ begin
     for row = 0 to result.rows - 1 looplimit 65536 do
         for column = 0 to result.columns - 1 looplimit 65536 do
             if row >= result.valid_rows || column >= result.valid_columns then
-                let element = TileLinearIndex(result,
+                let element = TileStorageIndex(result,
                     row as integer {0..65535},
                     column as integer {0..65535});
                 result.payload[[element]] = padding;
