@@ -162,6 +162,7 @@ nav:
               - Quantization Schema: block/model/dispatch/quantization-schema.md
               - Reduction Schema: block/model/dispatch/reduction-schema.md
               - Scalar Schema: block/model/dispatch/scalar-schema.md
+              - Shared CUBE Matrix: block/model/dispatch/shared-cube-matrix.md
               - Shared TLSU: block/model/dispatch/shared-tlsu.md
               - Sorting Schema: block/model/dispatch/sorting-schema.md
               - Start: block/model/dispatch/start.md
@@ -834,6 +835,7 @@ nav:
               - Layout Rearrangement: tile/model/legality/layout-rearrangement.md
               - Matrix CUBE Primary: tile/model/legality/matrix-cube-primary.md
               - Matrix Functions: tile/model/legality/matrix-functions.md
+              - Matrix Info Descriptor: tile/model/legality/matrix-info-descriptor.md
               - Matrix Operands: tile/model/legality/matrix-operands.md
               - Matrix Postprocess: tile/model/legality/matrix-postprocess.md
               - Matrix Shape: tile/model/legality/matrix-shape.md

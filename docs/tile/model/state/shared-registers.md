@@ -42,6 +42,16 @@ begin
     return SharedTileFullyInitialized(shared_id) && shared.published;
 end;
 
+readonly func SharedTileCooperativeMatrixReady(
+    shared_id: bits(8)) => boolean
+begin
+    let shared = SharedTileRecord(shared_id);
+    return SharedTileDescriptorLegal(shared_id) &&
+           shared.allocation_mask == '1111' &&
+           shared.initialized_mask == '1111' &&
+           shared.published && shared.tile.contents_defined;
+end;
+
 readonly func SharedTileDescriptorLegal(shared_id: bits(8)) => boolean
 begin
     let shared = SharedTileRecord(shared_id);

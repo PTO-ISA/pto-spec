@@ -95,6 +95,8 @@ begin
     _BundleFixedPointAttributes.group_max_en = FALSE;
     _BundleFixedPointAttributes.row_max_init = FALSE;
     _BundleFixedPointAttributes.max_abs_en = FALSE;
+    _BundleFixedPointAttributes.trans_a = FALSE;
+    _BundleFixedPointAttributes.trans_b = FALSE;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

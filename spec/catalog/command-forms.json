@@ -1,6 +1,6 @@
 {
   "form_count": 74,
-  "form_constraint_count": 77,
+  "form_constraint_count": 79,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
@@ -5130,7 +5130,7 @@
       "status": "accepted"
     },
     {
-      "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn",
+      "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB",
       "constraints": [
         {
           "field": "PreQuantMode",
@@ -5238,6 +5238,22 @@
           ]
         },
         {
+          "field": "TransA",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
+          "field": "TransB",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
           "field": "Reserved",
           "operator": "one-of",
           "values": [
@@ -5269,7 +5285,7 @@
       "encoding": [
         {
           "index": 0,
-          "mask": "0x00007fff",
+          "mask": "0x00007e7f",
           "match": "0x00002023",
           "width_bits": 32
         }
@@ -5385,16 +5401,40 @@
           "width": 1
         },
         {
-          "name": "Reserved",
+          "name": "TransA",
           "pieces": [
             {
               "instruction_lsb": 7,
               "value_lsb": 0,
-              "width": 4
+              "width": 1
             }
           ],
           "signedness": "encoding-defined",
-          "width": 4
+          "width": 1
+        },
+        {
+          "name": "TransB",
+          "pieces": [
+            {
+              "instruction_lsb": 8,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "Reserved",
+          "pieces": [
+            {
+              "instruction_lsb": 9,
+              "value_lsb": 0,
+              "width": 2
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 2
         },
         {
           "name": "Opc1",
@@ -5433,7 +5473,7 @@
           "width": 1
         }
       ],
-      "form_id": "b_fpatr_32_4f2db11e8e8a",
+      "form_id": "b_fpatr_32_30c307e06d4a",
       "length_bits": 32,
       "mnemonic": "B.FPATR",
       "semantic_family": "CMD",
@@ -5444,8 +5484,8 @@
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 69,
-  "operand_piece_count": 160,
+  "operand_field_count": 71,
+  "operand_piece_count": 162,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",
