@@ -792,6 +792,7 @@
         "PTO-AVS-TILE-CUBE-CELL-TAIL-004",
         "PTO-AVS-TILE-CUBE-CELL-WIDTH-001",
         "PTO-AVS-TILE-CUBE-GENERIC-001",
+        "PTO-AVS-TILE-CUBE-LOCATION-003",
         "PTO-AVS-TILE-CUBE-PADDING-001",
         "PTO-AVS-TILE-CUBE-RECONFIGURE-002",
         "PTO-AVS-TILE-CUBE-SHARED-REJECT-001",
@@ -12546,7 +12547,7 @@
     "asl/tile/model/execution/sorting.asl": "aa93f079d31a7106beeb8b45e0f580007a163b2236b8e22bd3d9736dc94baa1c",
     "asl/tile/model/execution/unary.asl": "8e096265b2d22ab8c674a1145d8cc34dc58700bc08c47cd923033b83e819abbc",
     "asl/tile/model/legality/allocation-capacity.asl": "6aaa4a8c20dc5472dfe05e40ac40cdce4e9bb1b068f4d572393ed9fb732b1efe",
-    "asl/tile/model/legality/descriptor-shape.asl": "d2bec3b558d5376344d67e58d211c188e8696c56464e54d78ea00ffa949e4571",
+    "asl/tile/model/legality/descriptor-shape.asl": "21413b218b8a6cf283ee1629cb1df6a1b1ed257ab67c5f9e833e0a4bffab5224",
     "asl/tile/model/legality/dtype-layout.asl": "62df49205dd64ffd0288adc1a782446cede2cb6f04f975d52ca799eb8ba0d8aa",
     "asl/tile/model/legality/image-to-column.asl": "fe1e6b5acfbe2a8f767368b567ab87a90c118659cdd0612752ee037c5204c7f0",
     "asl/tile/model/legality/indexed-layout.asl": "becc2f7a768a433f6d7e8a986cfdfc480c6754661e653ed29c470225e7803862",
@@ -12575,7 +12576,7 @@
     "asl/tile/model/shape/cube-cell.asl": "6aff8163d26b043ebd442e3313635c565d624c7e3b01b4c935b802276f9e26af",
     "asl/tile/model/shape/rows-columns.asl": "b88e329ffc836c8df374dbb848df723f6cd78710c2f5b631a2646b07952a8c11",
     "asl/tile/model/shape/valid-region.asl": "28ff77cbe2663c3689b0958145965a272b68303ddebb2e9dad132d8883fb5b7a",
-    "asl/tile/model/state/allocation.asl": "96ed18d1911561e0ece87a5ab9d05cacb13940fc4a89381410630818190c4f19",
+    "asl/tile/model/state/allocation.asl": "cd1dbc6453bb220562218fc2f29071985c8e2b5ab29d6ab51a203f0d950877d3",
     "asl/tile/model/state/descriptors.asl": "9ca25ce75a751e8383666bd4356da82534c93f045cf31fb27ca813586e66f4c5",
     "asl/tile/model/state/feature-map-descriptors.asl": "a46fe06bf576cb14534659b67f1fbc75ca5de168b54dd0ff0d5513665047aa1b",
     "asl/tile/model/state/local-registers.asl": "645fda7cae232d5180641ea966a673abbab33cb9bc2f4085aedfae4d84b69f6a",
@@ -13380,7 +13381,7 @@
     "docs/tile/model/execution/sorting.md": "f2b8d38ccc990743ced3e3af6c94620ea4d086f6872500894a8f02afdcee3960",
     "docs/tile/model/execution/unary.md": "0a569980bcb730a16b44bba4221566c009fb52e9867a03ff14d3baf68e8a85dd",
     "docs/tile/model/legality/allocation-capacity.md": "bb89f8059b972eb512930922c2894e2aac6116c395315223797ebf9aa926b8a9",
-    "docs/tile/model/legality/descriptor-shape.md": "6139c45022df463f687acfb83f40dfca11b814f0dad55dd9210f6cd4cdcb3123",
+    "docs/tile/model/legality/descriptor-shape.md": "a7d3a6656647c50c829bb2851da709d9d90fd69bd3c1c864f0799a6f60ccff22",
     "docs/tile/model/legality/dtype-layout.md": "e43d588989cdc8840f38ec0dddf49512ab2fcdd9d98c19d1d30a679684323fe3",
     "docs/tile/model/legality/image-to-column.md": "9cca9561b2da225473b4c5cd3359ca58df50f87e660a6044d834150cb26605e6",
     "docs/tile/model/legality/indexed-layout.md": "73e9abe2da77ba50dc8cd9f199b3635ced4452186701eee88456d4b582697458",
@@ -13409,7 +13410,7 @@
     "docs/tile/model/shape/cube-cell.md": "f6e6c27dbebbd602f3e9136f83e1d61b2fba3a80c490adeab471f2a89a2bb32d",
     "docs/tile/model/shape/rows-columns.md": "c5e638005c63d8874e85c4b26337e3e5ff7bf6f5a43d041b014df813468d43fa",
     "docs/tile/model/shape/valid-region.md": "afdb902adfda7225dd53fc9b798001eacbaab8ac21f98f7b8a4c2b716a48ecd4",
-    "docs/tile/model/state/allocation.md": "9ffb5c21e3ef451d94d7dc78240f4c2c9a4fee8585861d34f30e0dc7d3d15d69",
+    "docs/tile/model/state/allocation.md": "414ae9f914e27c56fbb094459adbd9944d458a4db879797896beb1b73fdbc7ee",
     "docs/tile/model/state/descriptors.md": "401a9739f1e995b22177acefc689da7350a1fad93af5f52ff1693e1531c3fb6a",
     "docs/tile/model/state/feature-map-descriptors.md": "1424fbe1c247db414ba0755807cdb6915c58b113ac0b740781761b4382465aa7",
     "docs/tile/model/state/local-registers.md": "3a0a559e81791b26b2352bdc4e2bcb342045bcc84690d7087821b353bed3716a",
@@ -16618,6 +16619,7 @@
     "tests/asl/tile/model/shape/cube-cell/tile-static-cube-cell-contract-001.asl": "61e3a2cede092992ad0627c8adaebfbc1e490127ef9f495e494068677259685b",
     "tests/asl/tile/model/shape/rows-columns/tile-static-rows-columns-contract-001.asl": "017f429c92517b10d7d8236a98ba2dddb5f05c705efd5c394a7ccf1b2ba62850",
     "tests/asl/tile/model/shape/valid-region/tile-static-valid-region-contract-001.asl": "3743494e21a6c574c930ef4b182ff97a4ddb3de098064f35dca74bc0999ea490",
+    "tests/asl/tile/model/state/allocation/tile-fault-cube-location-003.asl": "06248ca5f81661c842628ada347c465a4b869d849dbfffbfbd8a49cab84a0220",
     "tests/asl/tile/model/state/allocation/tile-fault-cube-reconfigure-002.asl": "999f9b2a27e09baa81fb27ec6934947e9987f32880125c88d818fa06fb07d5ac",
     "tests/asl/tile/model/state/allocation/tile-state-cube-allocate-001.asl": "98b1a87c3736c35aec627bd9249037ac3ebdd39f43949bd6ece2634e71c95f28",
     "tests/asl/tile/model/state/allocation/tile-static-allocation-contract-001.asl": "237cdbc4a7da29afbe3ab57e7911c10f8a08f281941ae2fbcf262149e01afec7",
@@ -16746,7 +16748,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 995,
     "status": "closed",
-    "test_count": 3278,
+    "test_count": 3279,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -43547,6 +43549,16 @@
       "source": "asl/tile/model/legality/descriptor-shape.asl"
     },
     {
+      "id": "PTO-AVS-TILE-CUBE-LOCATION-003",
+      "kind": "fault",
+      "path": "tests/asl/tile/model/state/allocation/tile-fault-cube-location-003.asl",
+      "requirements": [
+        "PTO-CUBE-CELL-STATE-001"
+      ],
+      "sha256": "06248ca5f81661c842628ada347c465a4b869d849dbfffbfbd8a49cab84a0220",
+      "source": "asl/tile/model/state/allocation.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-CUBE-PADDING-001",
       "kind": "state-transition",
       "path": "tests/asl/tile/model/definedness/elements/tile-state-cube-padding-001.asl",
@@ -68797,12 +68809,14 @@
       "mnemonic": null,
       "semantic_tests": [
         "PTO-AVS-TILE-CUBE-ALLOCATE-001",
+        "PTO-AVS-TILE-CUBE-LOCATION-003",
         "PTO-AVS-TILE-CUBE-RECONFIGURE-002"
       ],
       "source": "asl/tile/model/state/allocation.asl",
       "surface": "tile",
       "tests": [
         "PTO-AVS-TILE-CUBE-ALLOCATE-001",
+        "PTO-AVS-TILE-CUBE-LOCATION-003",
         "PTO-AVS-TILE-CUBE-RECONFIGURE-002",
         "PTO-AVS-TILE-MODEL-STATE-ALLOCATION-STATIC-001"
       ]

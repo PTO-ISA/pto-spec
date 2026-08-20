@@ -3030,7 +3030,7 @@
     },
     {
       "path": "asl/tile/model/legality/descriptor-shape.asl",
-      "sha256": "d2bec3b558d5376344d67e58d211c188e8696c56464e54d78ea00ffa949e4571"
+      "sha256": "21413b218b8a6cf283ee1629cb1df6a1b1ed257ab67c5f9e833e0a4bffab5224"
     },
     {
       "path": "asl/tile/model/legality/dtype-layout.asl",
@@ -3146,7 +3146,7 @@
     },
     {
       "path": "asl/tile/model/state/allocation.asl",
-      "sha256": "96ed18d1911561e0ece87a5ab9d05cacb13940fc4a89381410630818190c4f19"
+      "sha256": "cd1dbc6453bb220562218fc2f29071985c8e2b5ab29d6ab51a203f0d950877d3"
     },
     {
       "path": "asl/tile/model/state/descriptors.asl",
@@ -3374,11 +3374,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "0403c83bd50fb8db1e0c3251e7bf51522cf516e92f30c805bfc708e9767338dd"
+      "sha256": "3284ae7845a481c58fe40870abf50eb507be14c02447afab6778ed932167a92f"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "54c6331527fd87225fb2c2377c1a6a4b097fc9dac68c00fccc3493c4fc0398a4"
+      "sha256": "c981c6f3c36e210a65b2b58c3cc2066b7b0231246c4cdcdc928abbc1d8f62e00"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3416,7 +3416,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "12cc8aac967650abd99dcd7576f1ded01a25dc4dda9ce61ab713ab8a5689893d",
+  "content_sha256": "c6895a28a44eabb1e142609c1d206fb46e992109fbdbb5ea529bef0ec4e6fe05",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -7233,7 +7233,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/descriptor-shape.md",
-      "sha256": "6139c45022df463f687acfb83f40dfca11b814f0dad55dd9210f6cd4cdcb3123"
+      "sha256": "a7d3a6656647c50c829bb2851da709d9d90fd69bd3c1c864f0799a6f60ccff22"
     },
     {
       "kind": "generated-documentation",
@@ -7378,7 +7378,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/allocation.md",
-      "sha256": "9ffb5c21e3ef451d94d7dc78240f4c2c9a4fee8585861d34f30e0dc7d3d15d69"
+      "sha256": "414ae9f914e27c56fbb094459adbd9944d458a4db879797896beb1b73fdbc7ee"
     },
     {
       "kind": "generated-documentation",
