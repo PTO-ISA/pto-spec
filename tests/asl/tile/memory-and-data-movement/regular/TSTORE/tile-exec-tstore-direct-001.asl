@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TSTORE-DIRECT-001","source":"asl/tile/memory-and-data-movement/regular/TSTORE.asl","requirements":["PTO-INST-TILE-TSTORE"],"kind":"execution","summary":"TSTORE writes one valid rectangle using a logical-element row stride and preserves its source Tile.","pass_condition":"The four U64 elements reach the strided GM addresses while the source descriptor and payload remain unchanged.","related_sources":["asl/tile/model/memory/load-store.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TSTORE-DIRECT-001","source":"asl/tile/memory-and-data-movement/regular/TSTORE.asl","requirements":["PTO-INST-TILE-TSTORE"],"kind":"execution","summary":"TSTORE writes one valid rectangle using a byte row stride and preserves its source Tile.","pass_condition":"The four U64 elements reach the strided GM addresses while the source descriptor and payload remain unchanged.","related_sources":["asl/tile/model/memory/load-store.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -9,7 +9,7 @@ begin
     WriteTileElement(4, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(4, 1, 1, Zeros{PTO_XLEN} + 4);
 
-    let stride = InstructionContractDenseStride_TSTORE(4);
+    let stride = InstructionContractDenseStride_TSTORE(4, TileDataType_U64);
     TSTORE(Zeros{PTO_XLEN} + 0x300, stride, 4);
 
     assert _LastFault == Fault_None;

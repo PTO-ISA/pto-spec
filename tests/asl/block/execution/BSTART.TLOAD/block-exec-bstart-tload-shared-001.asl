@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-SHARED-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD"],"kind":"execution","summary":"Shared TLOAD uses the selected PE-private base and stride GPRs and updates only selected quarters.","pass_condition":"Mask 0011 loads quarters zero and one from PE0 and PE1 while the other Shared quarters remain uninitialized.","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/tile/model/memory/shared-movement.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-SHARED-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD"],"kind":"execution","summary":"Shared TLOAD uses the selected PE-private base and byte-stride GPRs and updates only selected quarters.","pass_condition":"Mask 0011 loads quarters zero and one from PE0 and PE1 while the other Shared quarters remain uninitialized.","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/tile/model/memory/shared-movement.asl"]}
 pure func TLoadSharedStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -29,8 +29,8 @@ begin
     let shared_id = Zeros{8} + 31;
     WritePEGPR(0, 2, Zeros{PTO_XLEN});
     WritePEGPR(1, 2, Zeros{PTO_XLEN} + 0x200);
-    WritePEGPR(0, 3, Zeros{PTO_XLEN} + 32);
-    WritePEGPR(1, 3, Zeros{PTO_XLEN} + 40);
+    WritePEGPR(0, 3, Zeros{PTO_XLEN} + 128);
+    WritePEGPR(1, 3, Zeros{PTO_XLEN} + 160);
     _Memory[[0]] = Zeros{8} + 0x11;
     _Memory[[0x2a0]] = Zeros{8} + 0x22;
 

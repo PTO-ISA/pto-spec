@@ -95,7 +95,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- |
 | DataType | source element data type |
 | B.IOR.RegSrc0 | per-PE private-GPR GM base address |
-| B.IOR.RegSrc1 | per-PE private-GPR logical row stride in elements |
+| B.IOR.RegSrc1 | per-PE private-GPR byte row stride |
 | B.DIM.LB0 | ValidCol |
 | B.DIM.LB1 | ValidRow |
 | B.DIM.LB2 | physical Col |
@@ -115,7 +115,7 @@ end;
 ## Block composition
 
 ```asm
-Local source: BSTART.TSTORE DataType; optional B.DATR Layout; optional B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies each PE's GM base and logical-element row stride; exactly one terminating source B.IOT supplies the Local Tile; BSTOP commits.
+Local source: BSTART.TSTORE DataType; optional B.DATR Layout; optional B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies each PE's GM base and byte row stride; exactly one terminating source B.IOT supplies the Local Tile; BSTOP commits.
 Shared full source: the Function 1 form replaces B.IOT with one source B.IOS and requires PE_MASK=1111 for any nonzero access.
 Shared partial source: the Function 14 TSTORE.SPART form uses one source B.IOS and accepts any nonzero PE subset. It has no Local form.
 ```
@@ -148,7 +148,7 @@ end;
 - DataType is explicit. Optional B.DATR omission retains the default NORM layout.
 - For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For an unallocated Shared source they default to 1, 1, and ValidCol.
 - An unallocated Shared source derives the smallest legal 128 B through 8 KiB per-PE capacity that contains the completed shape; Rows are then derived from capacity, Col, and DataType. Every selected source element is an undefined-register value and the temporary descriptor is never written back.
-- Omitted B.IOR supplies base zero and dense row stride equal to resolved Col. An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
+- Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
 
 ## Legality
 
@@ -167,7 +167,7 @@ end;
 
 ### Memory effects
 
-- For every selected PE and every selected element in ValidRow x ValidCol, write GM at base + ((row * row_stride_elements + column) * element_size), with packed four-bit formats updating the addressed nibble after logical-element indexing.
+- For every selected PE and every selected element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size, with packed four-bit columns adding floor(column / 2) to the byte-strided row base and selecting low/high by column parity.
 - The complete selected-PE footprint is preflighted before the first GM write, so a fault produces no partial store. After successful preflight individual store beats need not be atomic or ordered to observers.
 
 ### Ordering

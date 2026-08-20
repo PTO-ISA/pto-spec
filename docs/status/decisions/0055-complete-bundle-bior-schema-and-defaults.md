@@ -1,5 +1,9 @@
 # ADR 0055: Complete-Bundle B.IOR Schema and Defaults
 
+> Superseded in part by ADR 0074: TLOAD/TSTORE `B.IOR.RegSrc1` and its dense
+> omission default are byte quantities. Encoding, schema resolution, and the
+> omission-versus-encoded-zero distinction below remain in force.
+
 > Historical-evidence note: verification paths named below record the evidence used when this ADR was accepted; deleted aggregate checks are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
 - **Status**: accepted

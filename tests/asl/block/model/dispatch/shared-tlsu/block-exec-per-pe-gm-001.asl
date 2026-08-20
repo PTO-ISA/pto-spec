@@ -34,10 +34,10 @@ begin
     WritePEGPR(1, 2, Zeros{PTO_XLEN} + 0x200);
     WritePEGPR(2, 2, Zeros{PTO_XLEN} + 0x400);
     WritePEGPR(3, 2, Zeros{PTO_XLEN} + 0x600);
-    WritePEGPR(0, 3, Zeros{PTO_XLEN} + 32);
-    WritePEGPR(1, 3, Zeros{PTO_XLEN} + 40);
-    WritePEGPR(2, 3, Zeros{PTO_XLEN} + 48);
-    WritePEGPR(3, 3, Zeros{PTO_XLEN} + 56);
+    WritePEGPR(0, 3, Zeros{PTO_XLEN} + 256);
+    WritePEGPR(1, 3, Zeros{PTO_XLEN} + 320);
+    WritePEGPR(2, 3, Zeros{PTO_XLEN} + 384);
+    WritePEGPR(3, 3, Zeros{PTO_XLEN} + 448);
 
     _Memory[[0]] = Zeros{8} + 0x11;
     _Memory[[0x280]] = Zeros{8} + 0x22;

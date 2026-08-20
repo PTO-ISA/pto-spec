@@ -4946,7 +4946,7 @@
         },
         {
           "field": "scalar0",
-          "role": "row-stride-elements"
+          "role": "row-stride-bytes"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -4954,7 +4954,7 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:scalar0:row-stride-elements"
+        "operand:scalar0:row-stride-bytes"
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -4993,7 +4993,7 @@
         },
         {
           "field": "scalar0",
-          "role": "row-stride-elements"
+          "role": "row-stride-bytes"
         },
         {
           "field": "source0",
@@ -5004,7 +5004,7 @@
       "semantic_handler": "TSTORE",
       "state_effects": [
         "operand:address:base-address",
-        "operand:scalar0:row-stride-elements",
+        "operand:scalar0:row-stride-bytes",
         "operand:source0:source"
       ],
       "classification": "memory-and-data-movement",

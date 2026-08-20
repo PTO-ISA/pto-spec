@@ -1,5 +1,9 @@
 # ADR 0056: PTO Encoding Ownership and Per-PE GM Access
 
+> Superseded in part by ADR 0074: the retained TLOAD/TSTORE per-PE row-stride
+> selector carries bytes rather than logical elements. Encoding ownership,
+> PE-private resolution, masks, preflight, and ordering remain in force.
+
 - **Status**: accepted
 - **Date**: 2026-08-08
 - **Deciders**: PTO ISA maintainers

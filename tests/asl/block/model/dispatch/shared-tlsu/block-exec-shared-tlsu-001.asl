@@ -108,7 +108,7 @@ begin
     assert store_completed;
     assert _Memory[[8]] == Zeros{8} + 0x2a;
 
-    // Shared TSTORE takes an explicit element stride from B.IOR.  The Shared
+    // Shared TSTORE takes an explicit byte stride from B.IOR.  The Shared
     // descriptor still supplies the physical column count independently.
     ResetProfileState();
     ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_U64,
@@ -121,7 +121,7 @@ begin
     let lb2_store_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
     WriteGPR(2, Zeros{PTO_XLEN});
-    WriteGPR(3, Zeros{PTO_XLEN} + 3);
+    WriteGPR(3, Zeros{PTO_XLEN} + 24);
     let lb2_store_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 18), 32);
     let lb2_store_address = ExecuteCommandInstruction(

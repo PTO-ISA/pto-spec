@@ -7,7 +7,7 @@ end;
 
 readonly func TileOperandsLegal_TLOAD(destination: TileIndex,
                                       base_address: Word,
-                                      row_stride_elements: Word) => boolean
+                                      row_stride_bytes: Word) => boolean
 begin
     return TileDescriptorLegal(destination) &&
            TileRegularTLSUDataTypeSupported(
@@ -15,7 +15,7 @@ begin
 end;
 
 readonly func TileOperandsLegal_TSTORE(base_address: Word,
-                                       row_stride_elements: Word,
+                                       row_stride_bytes: Word,
                                        source: TileIndex) => boolean
 begin
     return TileDescriptorLegal(source) &&

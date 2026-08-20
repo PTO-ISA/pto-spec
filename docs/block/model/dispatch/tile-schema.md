@@ -103,9 +103,21 @@ begin
         elsif TileOperationOfIndex(operation) == TileOperation_TQUANT ||
               TileOperationOfIndex(operation) == TileOperation_TDEQUANT then
             operands.scalar0 = Zeros{PTO_XLEN} + 0x3f800000;
+        elsif TileOperationOfIndex(operation) == TileOperation_TLOAD ||
+              TileOperationOfIndex(operation) == TileOperation_TSTORE then
+            // Regular TLSU omission derives a byte pitch from the resolved
+            // physical column count and transfer data type. TPREFETCH retains
+            // its separately owned logical-element stride contract.
+            let tstore = TileOperationOfIndex(operation) ==
+                TileOperation_TSTORE;
+            let columns = BundleDestinationPhysicalColumns(
+                tstore, operands.source0);
+            operands.scalar0 = TileDenseRowStrideBytes(
+                columns,
+                TileDataTypeFromEncoding(
+                    CurrentBundleTileOperationDataTypeCode()
+                        as TileDataTypeEncoding));
         elsif TileOperandPresent(operation, TileOperand_address) then
-            // TLOAD/TSTORE retain dense-row behavior when B.IOR is omitted:
-            // the resolved LB2/Col dimension is the row stride.
             operands.scalar0 = _BundleDimensions[[2]];
         end;
     end;

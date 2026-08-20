@@ -1,5 +1,9 @@
 # ADR-0033: TLSU four-bit memory packing and totality
 
+> Refined by ADR 0074 for regular TLOAD/TSTORE: packing restarts at each
+> byte-strided row base, and column parity selects the nibble within that row.
+> The containing-byte and sibling-preservation rules remain in force.
+
 - Status: Accepted
 - Date: 2026-07-30
 - Requirements: PTO-REQ-TLSU-001, PTO-REQ-MEMORY-COMPLETION-001,

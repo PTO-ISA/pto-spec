@@ -170,7 +170,7 @@ class CommonV058ContractTest(unittest.TestCase):
                 for operand in by_name[name]["operands"]
             }
             self.assertEqual(operands["address"], "base-address")
-            self.assertEqual(operands["scalar0"], "row-stride-elements")
+            self.assertEqual(operands["scalar0"], "row-stride-bytes")
 
     def test_block_datatype_namespace_is_total_and_reserved_for_extension(self) -> None:
         domains = load_field_domains(load_units(ROOT / "asl"))

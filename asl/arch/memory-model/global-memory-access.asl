@@ -3,12 +3,13 @@
 // NDF-BEGIN: PTO-ARCH-GM-ACCESS-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
 // A TLOAD or TSTORE B.IOR binding MUST encode an absolute GPR selector for the
-// GM base and an absolute GPR selector for row stride in logical elements.
+// GM base and an absolute GPR selector for row stride in bytes.
 // Each selected PE MUST resolve both selectors in its private GPR file. When
 // B.IOR is absent, base MUST default to zero and stride MUST default to the
-// dense logical row width; an explicitly encoded zero stride MUST remain zero.
-// The logical element address is base + (row * stride + column) * element size;
-// packed four-bit elements select the containing byte and the indexed nibble.
+// dense physical row width in bytes; an explicitly encoded zero stride MUST
+// remain zero. The byte address is base + row * stride + column * element size;
+// packed four-bit columns select floor(column / 2) from each byte-aligned row
+// base and use column parity to select the low or high nibble.
 // Shared Function 1 TSTORE MUST use all four PEs, while Function 14 MAY use any
 // nonzero PE subset. PE_MASK zero MUST have no effect. Selected PE accesses
 // MUST be preflighted before any effect, and the architecture defines no order

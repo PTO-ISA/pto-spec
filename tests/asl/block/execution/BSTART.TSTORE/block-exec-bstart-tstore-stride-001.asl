@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-STRIDE-001","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-INST-BLOCK-BSTART-TSTORE","PTO-INST-TILE-TSTORE"],"kind":"execution","summary":"TSTORE distinguishes explicit, omitted, and encoded-zero logical row strides.","pass_condition":"Explicit B.IOR addresses use RegSrc0/RegSrc1, omission uses base zero and LB2, and encoded zero aliases rows.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/tile/model/memory/load-store.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-STRIDE-001","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-INST-BLOCK-BSTART-TSTORE","PTO-INST-TILE-TSTORE"],"kind":"execution","summary":"TSTORE distinguishes explicit, omitted, and encoded-zero byte row strides.","pass_condition":"Explicit B.IOR addresses use RegSrc0/RegSrc1, omission converts LB2 to a dense byte width, and encoded zero aliases rows.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/tile/model/memory/load-store.asl"]}
 pure func TStoreStrideStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00111181;
@@ -38,7 +38,7 @@ begin
     ResetProfileState();
     ConfigureTStoreSource(11, 12, 13, 14);
     WriteGPR(2, Zeros{PTO_XLEN} + 0x200);
-    WriteGPR(3, Zeros{PTO_XLEN} + 3);
+    WriteGPR(3, Zeros{PTO_XLEN} + 12);
     let explicit_start_status = ExecuteCommandInstruction(
         TStoreStrideStart(), 32);
     assert explicit_start_status == CommandExecution_Executed;
@@ -60,7 +60,6 @@ begin
     let omitted_start_status = ExecuteCommandInstruction(
         TStoreStrideStart(), 32);
     assert omitted_start_status == CommandExecution_Executed;
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 3);
     let omitted_source_status = ExecuteCommandInstruction(
         TStoreStrideSource(), 32);
     assert omitted_source_status == CommandExecution_Executed;
@@ -68,8 +67,8 @@ begin
     assert omitted_completed;
     assert _Memory[[0]] == Zeros{8} + 15;
     assert _Memory[[4]] == Zeros{8} + 16;
-    assert _Memory[[12]] == Zeros{8} + 17;
-    assert _Memory[[16]] == Zeros{8} + 18;
+    assert _Memory[[8]] == Zeros{8} + 17;
+    assert _Memory[[12]] == Zeros{8} + 18;
 
     ResetProfileState();
     ConfigureTStoreSource(19, 20, 21, 22);

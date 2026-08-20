@@ -72,12 +72,12 @@ begin
     assert packed_store_byte0 == Zeros{PTO_XLEN} + 0x21;
     assert packed_store_byte1 == Zeros{PTO_XLEN} + 0xe3;
 
-    // Packed addressing applies row stride to the logical nibble index before
-    // choosing its containing byte and low/high nibble.
+    // Packed addressing applies the byte stride between row starts, then uses
+    // column parity to choose the containing byte and low/high nibble.
     ConfigurePackedTlsuTileTwoByTwo(39);
     Store(Zeros{PTO_XLEN} + 0x130, 1, Zeros{PTO_XLEN} + 0x21);
     Store(Zeros{PTO_XLEN} + 0x131, 1, Zeros{PTO_XLEN} + 0xee);
-    Store(Zeros{PTO_XLEN} + 0x132, 1, Zeros{PTO_XLEN} + 0x43);
+    Store(Zeros{PTO_XLEN} + 0x134, 1, Zeros{PTO_XLEN} + 0x43);
     TLOAD(39, Zeros{PTO_XLEN} + 0x130, Zeros{PTO_XLEN} + 4);
     assert ReadTileElement(39, 0, 0) == Zeros{PTO_XLEN} + 1;
     assert ReadTileElement(39, 0, 1) == Zeros{PTO_XLEN} + 2;
@@ -92,7 +92,7 @@ begin
     let packed_strided_row0 = LoadUnsigned(
         Zeros{PTO_XLEN} + 0x140, 1);
     let packed_strided_row1 = LoadUnsigned(
-        Zeros{PTO_XLEN} + 0x142, 1);
+        Zeros{PTO_XLEN} + 0x144, 1);
     assert packed_strided_row0 == Zeros{PTO_XLEN} + 0x65;
     assert packed_strided_row1 == Zeros{PTO_XLEN} + 0x87;
 

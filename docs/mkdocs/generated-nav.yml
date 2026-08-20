@@ -982,5 +982,6 @@ nav:
           - "ADR 0067: conditional branch extension reservation": status/decisions/0067-conditional-branch-extension-reservation.md
           - "ADR 0068: Extension first-use is a target-profile hook": status/decisions/0068-extension-first-use-profile-hook.md
           - "ADR 0069: Local CUBE CELL State and Geometry": status/decisions/0069-local-cube-cell-state-and-geometry.md
+          - "ADR 0074: TLOAD/TSTORE GM Byte Row Stride": status/decisions/0074-tload-tstore-gm-byte-row-stride.md
       - Open:
           - "Open architecture questions": status/open/index.md

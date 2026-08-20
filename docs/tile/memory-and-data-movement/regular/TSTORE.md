@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/regular/TSTORE.asl`
 
-Store one Local or Shared Tile valid rectangle to GM with per-PE bases and logical row strides after full-footprint preflight.
+Store one Local or Shared Tile valid rectangle to GM with per-PE bases and byte row strides after full-footprint preflight.
 
 ## Normative identity {#PTO-INST-TILE-TSTORE}
 
@@ -86,7 +86,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 | --- | --- |
 | source0 | Local Tile or absolute Shared S0..S255 source |
 | address | per-PE private-GPR GM base address |
-| scalar0 | per-PE private-GPR logical row stride in elements |
+| scalar0 | per-PE private-GPR byte row stride |
 
 ## Decode
 
@@ -129,23 +129,17 @@ readonly func InstructionContractGMAddress_TSTORE(
     base_address: Word,
     row: integer {0..65535},
     column: integer {0..65535},
-    row_stride_elements: Word,
+    row_stride_bytes: Word,
     data_type: TileDataType) => Word
 begin
-    let logical_index = TileMemoryStridedIndex(
-        row,
-        column,
-        row_stride_elements);
-    return TileMemoryIndexedAddress(
-        base_address,
-        logical_index,
-        data_type);
+    return TileMemoryStridedByteAddress(
+        base_address, row, column, row_stride_bytes, data_type);
 end;
 
 readonly func InstructionContractDenseStride_TSTORE(
-    columns: integer {0..262144}) => Word
+    columns: integer {0..65535}, data_type: TileDataType) => Word
 begin
-    return NaturalToWord(columns);
+    return TileDenseRowStrideBytes(columns, data_type);
 end;
 
 pure func InstructionContractSharedMaskLegal_TSTORE(
@@ -167,7 +161,7 @@ end;
 - DataType is explicit in BSTART.TSTORE. Omitted B.DATR selects NORM layout; every other nonzero B.DATR field is illegal.
 - For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For an unallocated Shared source they default to 1, 1, and ValidCol.
 - An unallocated Shared source derives the smallest legal 128 B through 8 KiB per-PE capacity containing the completed shape. The temporary descriptor supplies undefined-register values and is never written back.
-- Omitted B.IOR supplies base zero and dense logical-element row stride equal to resolved Col. An encoded zero selector is present and supplies the real zero GPR value, so an explicitly encoded zero stride aliases rows.
+- Omitted B.IOR supplies base zero and dense byte row stride equal to ceil(resolved Col * element_bits / 8). An encoded zero selector is present and supplies the real zero GPR value, so an explicitly encoded zero stride aliases rows.
 
 ## Legality
 
@@ -186,7 +180,7 @@ end;
 
 ### Memory effects
 
-- For every selected PE and each element in ValidRow x ValidCol, write GM at base + ((row * row_stride_elements + column) * element_size). Packed four-bit formats apply the logical element index before selecting the addressed nibble.
+- For every selected PE and each element in ValidRow x ValidCol, write GM at base + row * row_stride_bytes + column * element_size. Packed four-bit columns add floor(column / 2) to each byte-strided row base and select low/high by column parity.
 - The complete selected-PE footprint is translated and permission-checked before the first GM write. A fault therefore produces no partial GM or memory-event effect.
 
 ### Ordering

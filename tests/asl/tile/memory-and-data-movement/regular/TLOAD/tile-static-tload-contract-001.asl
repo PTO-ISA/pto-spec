@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: memory-and-data-movement/regular
-    // block: # Local destination | BSTART.TLOAD DataType | optional B.DATR Layout | B.DIM LB0=ValidCol, LB1=ValidRow, LB2=Col | optional B.IOR RegSrc0=base, RegSrc1=row_stride_elements | one terminating destination B.IOT | BSTOP | # Shared destination | replace B.IOT with one destination B.IOS
+    // block: # Local destination | BSTART.TLOAD DataType | optional B.DATR Layout | B.DIM LB0=ValidCol, LB1=ValidRow, LB2=Col | optional B.IOR RegSrc0=base, RegSrc1=row_stride_bytes | one terminating destination B.IOT | BSTOP | # Shared destination | replace B.IOT with one destination B.IOS
     assert DecodeTileOperation(TileDecode_TLSU, '000000000000') == 87;
     assert TileOperationOfIndex(87) == TileOperation_TLOAD;
     assert TileHandlerOfIndex(87) == TileHandler_TLOAD;

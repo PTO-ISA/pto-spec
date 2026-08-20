@@ -1,5 +1,9 @@
 # PTO mnemonic review decisions
 
+> Superseded in part by ADR 0074: TLOAD/TSTORE `B.IOR.RegSrc1` and the
+> omission-derived dense pitch are byte quantities. Other mnemonic decisions
+> in this record remain in force.
+
 - Status: audit complete and frozen
 - Date: 2026-08-11
 
@@ -279,13 +283,13 @@ reject before commit.
 ## PRD-022: TLOAD and TSTORE assign the first two `B.IOR` sources
 
 For `TLOAD` and `TSTORE`, `RegSrc0` supplies the per-PE global-memory base
-address and `RegSrc1` supplies the logical row stride in elements. Each
+address and `RegSrc1` supplies the row stride in bytes. Each
 participating PE reads the selected selectors from its own GPR file.
 
 When `B.IOR` is omitted, the base defaults to zero and the row stride defaults
-to the operation's resolved column count, producing dense rows. An explicitly
-encoded zero selector supplies a zero base or zero stride and MUST NOT select
-the omission default.
+to `ceil(resolved_columns * element_bits / 8)`, producing dense rows. An
+explicitly encoded zero selector supplies a zero base or zero stride and MUST
+NOT select the omission default. ADR 0074 owns the byte-address formula.
 
 ## PRD-023: `B.IOT` has exactly five Local-Tile forms
 

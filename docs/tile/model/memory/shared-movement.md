@@ -85,7 +85,7 @@ begin
 end;
 
 func TLOADShared(shared_id: bits(8), base_addresses: CorePEWords,
-                 row_stride_elements: CorePEWords,
+                 row_stride_bytes: CorePEWords,
                  size_code: integer {1..7},
                  rows: integer {1..65535}, columns: integer {1..65535},
                  valid_rows: integer {1..65535},
@@ -136,12 +136,10 @@ begin
             let region = SharedTileElementRegion(tile, element);
             if pe_mask[region] == '1' then
                 let agent = region as MemoryAgentId;
-                let memory_index = TileMemoryStridedIndex(
-                    row as integer {0..65535},
+                let address = TileMemoryStridedByteAddress(
+                    base_addresses[[agent]], row as integer {0..65535},
                     column as integer {0..65535},
-                    row_stride_elements[[agent]]);
-                let address = TileMemoryIndexedAddress(
-                    base_addresses[[agent]], memory_index, tile.data_type);
+                    row_stride_bytes[[agent]], tile.data_type);
                 let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
                 if RaiseDataAccessFault(probe, address) then return; end;
                 translated_addresses[[element]] = probe.translated_address;
@@ -155,12 +153,8 @@ begin
             let region = SharedTileElementRegion(tile, element);
             if pe_mask[region] == '1' then
                 let agent = region as MemoryAgentId;
-                let memory_index = TileMemoryStridedIndex(
-                    row as integer {0..65535},
-                    column as integer {0..65535},
-                    row_stride_elements[[agent]]);
-                let high_nibble = TileMemoryIndexedHighNibble(
-                    memory_index, tile.data_type);
+                let high_nibble = TileMemoryStridedByteHighNibble(
+                    column as integer {0..65535}, tile.data_type);
                 let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
                     TileMemoryElementBytes(tile.data_type));
                 RecordLoadEventForAgent(agent,
@@ -183,7 +177,7 @@ begin
 end;
 
 func TSTOREShared(base_addresses: CorePEWords,
-                  row_stride_elements: CorePEWords,
+                  row_stride_bytes: CorePEWords,
                   shared_id: bits(8),
                   tile: TileInfo,
                   pe_mask: bits(4))
@@ -201,18 +195,17 @@ begin
             if selected then
                 let agent = SharedTileElementRegion(tile, element)
                     as MemoryAgentId;
-                let memory_index = TileMemoryStridedIndex(
-                    row as integer {0..65535},
+                let address = TileMemoryStridedByteAddress(
+                    base_addresses[[agent]], row as integer {0..65535},
                     column as integer {0..65535},
-                    row_stride_elements[[agent]]);
-                let address = TileMemoryIndexedAddress(
-                    base_addresses[[agent]], memory_index, tile.data_type);
+                    row_stride_bytes[[agent]], tile.data_type);
                 let probe = ProbeTileMemoryAccess(address, tile.data_type, TRUE);
                 if RaiseDataAccessFault(probe, address) then return; end;
                 original_addresses[[element]] = address;
                 translated_addresses[[element]] = probe.translated_address;
-                high_nibbles[element] = if TileMemoryIndexedHighNibble(
-                    memory_index, tile.data_type) then '1' else '0';
+                high_nibbles[element] = if TileMemoryStridedByteHighNibble(
+                    column as integer {0..65535}, tile.data_type)
+                    then '1' else '0';
             end;
         end;
     end;
