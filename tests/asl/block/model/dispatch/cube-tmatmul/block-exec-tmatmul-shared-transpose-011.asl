@@ -52,6 +52,7 @@ begin
         let completed = ExecuteBundleTileOperation();
         assert completed;
         let destination = BundleMatrixDestinationAt(0);
+        assert _Tiles[[destination]].layout == TileLayout_CUBE_M16;
         assert ReadTileElement(destination, 0, 0) ==
             Zeros{PTO_XLEN} + 19;
         assert ReadTileElement(destination, 0, 1) ==

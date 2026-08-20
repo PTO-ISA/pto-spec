@@ -167,3 +167,29 @@ begin
         (logical_rows * logical_columns) as integer {0..16384};
     return tile;
 end;
+
+readonly func BundleMatrixCooperativeMLayout(
+    function: integer {0..31},
+    right_type: TileDataType,
+    m: integer {1..65535},
+    shared_count: integer {0..4}) => (boolean, TileLayout)
+begin
+    let right_group = TileMatrixRightGroupSourceCount(
+        function, right_type);
+    let local_left_present = shared_count == 0 ||
+        shared_count == right_group;
+    var layout = TileLayout_RowMajor;
+    if local_left_present then
+        let left_ordinal = if TileMatrixFunctionUsesAccumulator(function)
+            then 1 else 0;
+        layout = _Tiles[[BundleMatrixSourceAt(
+            left_ordinal as integer {0..7})]].layout;
+    elsif TileMatrixFunctionUsesAccumulator(function) then
+        layout = _Tiles[[BundleMatrixSourceAt(0)]].layout;
+    elsif m <= 16 then
+        layout = TileLayout_CUBE_M16;
+    elsif m <= 32 then
+        layout = TileLayout_CUBE_M32;
+    end;
+    return (TileMatrixMLayoutLegal(layout, m), layout);
+end;

@@ -18,26 +18,27 @@ begin
            !_BundleDataAttributes.canonicalize;
 end;
 
-readonly func BundleTMATMULLocalMasksAreFull() => boolean
+readonly func BundleTMATMULMasksAgree() => boolean
 begin
+    var seen = FALSE;
+    var selected = Zeros{4};
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
-        if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].pe_mask != '1111' then
-            return FALSE;
+        if _BundleTileBindings[[binding]].valid then
+            let mask = _BundleTileBindings[[binding]].pe_mask;
+            if seen && mask != selected then return FALSE; end;
+            selected = mask;
+            seen = TRUE;
         end;
     end;
-    return TRUE;
-end;
-
-readonly func BundleTMATMULSharedMasksAreFull() => boolean
-begin
     for binding = 0 to 3 do
-        if _BundleSharedBindings[[binding]].valid &&
-           _BundleSharedBindings[[binding]].pe_mask != '1111' then
-            return FALSE;
+        if _BundleSharedBindings[[binding]].valid then
+            let mask = _BundleSharedBindings[[binding]].pe_mask;
+            if seen && mask != selected then return FALSE; end;
+            selected = mask;
+            seen = TRUE;
         end;
     end;
-    return TRUE;
+    return seen;
 end;
 
 readonly func BundleTMATMULSharedMasksAreZero() => boolean
@@ -149,8 +150,7 @@ begin
        !BundleTMATMULDataAttributesLegal() ||
        !BundleTMATMULDimensionsLegal(shared_count) ||
        !SelectedBundleTileMasksLegal() ||
-       !BundleTMATMULLocalMasksAreFull() ||
-       !BundleTMATMULSharedMasksAreFull() then
+       !BundleTMATMULMasksAgree() then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
@@ -189,18 +189,18 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    let local_cube = shared_count == 0;
-    let left_ordinal = if TileMatrixFunctionUsesAccumulator(function)
-        then 1 else 0;
-    let primary_layout = if local_cube then
-        _Tiles[[BundleMatrixSourceAt(
-            left_ordinal as integer {0..7})]].layout
-        else TileLayout_RowMajor;
+    let (layout_found, primary_layout) =
+        BundleMatrixCooperativeMLayout(
+            function, right_type, m, shared_count);
+    if !layout_found then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     // Every field, stream, Local/Shared descriptor, parameter payload, shape,
     // and capacity rule is now closed. Allocate the atomic destination group
     // before taking the first mathematical or scalar payload snapshot.
     if !ResolveBundleTMATMULDestination(
-           m, n, result_type, local_cube, primary_layout) then
+           m, n, result_type, TRUE, primary_layout) then
         return FALSE;
     end;
 
@@ -306,14 +306,9 @@ begin
     assert shape_legal && operand_types_legal && scales_legal;
 
     let accumulator_legal = !TileMatrixFunctionUsesAccumulator(function) ||
-        (if local_cube then
-            TileMatrixLocalCubeAccumulatorSchemaLegal(
-                accumulator, m, n, result_type, primary_layout,
-                BundleMatrixPrimaryDestinationCapacityBytes())
-         else
-            TileMatrixInfoAccumulatorSchemaLegal(
-                accumulator, m, n, result_type,
-                BundleMatrixPrimaryDestinationCapacityBytes()));
+        TileMatrixLocalCubeAccumulatorSchemaLegal(
+            accumulator, m, n, result_type, primary_layout,
+            BundleMatrixPrimaryDestinationCapacityBytes());
     assert accumulator_legal;
     assert !TileMatrixFunctionUsesBias(function) ||
            TileMatrixInfoBiasLegal(
