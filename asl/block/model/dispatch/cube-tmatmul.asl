@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
 
 readonly func BundleCubeMatrixSelected() => boolean
 begin
@@ -282,10 +282,18 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    let local_cube = shared_count == 0;
+    let left_ordinal = if TileMatrixFunctionUsesAccumulator(function)
+        then 1 else 0;
+    let primary_layout = if local_cube then
+        _Tiles[[BundleMatrixSourceAt(
+            left_ordinal as integer {0..7})]].layout
+        else TileLayout_RowMajor;
     // Every field, stream, Local/Shared descriptor, parameter payload, shape,
     // and capacity rule is now closed. Allocate the atomic destination group
     // before taking the first mathematical or scalar payload snapshot.
-    if !ResolveBundleTMATMULDestination(m, n, result_type) then
+    if !ResolveBundleTMATMULDestination(
+           m, n, result_type, local_cube, primary_layout) then
         return FALSE;
     end;
 
