@@ -3386,11 +3386,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "55e8c8d49336f6f3b514a39298c98e4e162f19f37648c48e5cb9c6acdce076ce"
+      "sha256": "8482245562a39e6d6362f667d0b0f3b5c8dbf64efce9964906c22042eac9987b"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "4f42570c153f2d76b8aff7851776f99f5f983220dda1a93a17076d73742a1649"
+      "sha256": "aa60bb11275b8a3397847963a6de072caa7cb4baf09684ad5953b3579234ef21"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3428,7 +3428,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "ea2bf33e29f3d12974ff746004decf65b07b73a7aa2fd5ba0b0f33690ab8c78d",
+  "content_sha256": "742ec967f172af9488fe9a61a2b8e2255c113522c2939abea74fb2561b31c3dc",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

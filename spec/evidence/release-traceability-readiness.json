@@ -16594,31 +16594,31 @@
     "tests/asl/tile/layout-and-rearrangement/layout/TTRANS/tile-exec-ttrans-rect-001.asl": "4bb95d1b3923d65b9eb132a33d70fc17a6e6aa6efc788969a1b8d312fca8407a",
     "tests/asl/tile/layout-and-rearrangement/layout/TTRANS/tile-static-ttrans-contract-001.asl": "b9787e385d5cb27c5940a27149cbcb87eea20c5a75af9c7d8f640b5c33877500",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL/tile-exec-tmatmul-direct-001.asl": "b1a8979ddc82e91ba5a210b83c5bcffbd0f7f242d411674f83c62f8e32ccc362",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL/tile-static-tmatmul-contract-001.asl": "b935f457b5406169cc80eb3df9ce862886a668263a8baf8d1e15abfb6e4577ed",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL/tile-static-tmatmul-contract-001.asl": "93a71ce22970b6a7fa06e0e70cc46736a9dd8f99a418030378191064d346794f",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC/tile-exec-tmatmul-acc-direct-001.asl": "94120275c346e4e928c5a5b10a50daf8ac47d6b787abdc96be6c11d25115533a",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC/tile-static-tmatmul-acc-contract-001.asl": "80c60ebb93aac6dc41ff219b0420744e82ad56062c0b414ab395e193388e8c45",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC/tile-static-tmatmul-acc-contract-001.asl": "4d27f783686bbf263bd67d237035b0dd7d7ea94dc31873dfac85336152743fce",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS/tile-exec-tmatmul-bias-direct-001.asl": "599042fc104ad5df310e21457970092f20c7efeef12bd029e174343f5dc18cdf",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS/tile-static-tmatmul-bias-contract-001.asl": "9ea40aca820a1966f6e09c52380266c842ecc829fac306134504ce87ea3a7527",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS/tile-static-tmatmul-bias-contract-001.asl": "8b11b2e154a507e4c9177f8ccf9ad0ba8cf8c5b4a034a13a1ff74bb06aa369c6",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX/tile-bound-tmatmul-mx-scale-001.asl": "3d54cb33a0569aae96862182ec23c1e77c3778ac51bc067e17162091b3a49f2d",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX/tile-bound-tmatmul-mx-types-001.asl": "421e7a111c1d8d66a183d85483a4e1717faa6416e0556aee707f20f699ee028a",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX/tile-exec-tmatmul-mx-unscaled-001.asl": "8441e67fd33056838088fa5938a7d01969ddeae41c402682d3c467592e9b03a6",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX/tile-static-tmatmul-mx-contract-001.asl": "caf9d55f8a3f6a3005bdfaf82c867cec29e8709a36cddce7b8ad1b3044b6b242",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX/tile-static-tmatmul-mx-contract-001.asl": "9b6e02ea1f27e71e5b867e1c9b3e7764c0958993f0d2ad476e47f67d59ae4aff",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC/tile-exec-tmatmul-mx-acc-direct-001.asl": "726fba32b4faeed09c73be157b15098ebebdb54be38761babc3efc5237ff94f2",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC/tile-static-tmatmul-mx-acc-contract-001.asl": "dfda692fd73fcca534b9c1c497db873167dfd757c687d75b318ec2c6a65deeae",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC/tile-static-tmatmul-mx-acc-contract-001.asl": "2c669575a58d4447e3f0bb5381e92a4526445ac5164bff7d204bab574c965f82",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS/tile-exec-tmatmul-mx-bias-direct-001.asl": "c1706bbb5648da49bedbf6607a915f873e2b95705ecd0d65afac732fa599d5e3",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS/tile-static-tmatmul-mx-bias-contract-001.asl": "d0af1c1489cc1b23b3a55838218c2acb35a7078fd6664d1c074a02e78041f475",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS/tile-static-tmatmul-mx-bias-contract-001.asl": "ec56090877f268c68f3f5a1b2b9583faed4e0fd250f896bd110d87d26bad8d31",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV/tile-exec-tgemv-row-001.asl": "12cc7e0b30ed567065386809ba033ec9b3234e84882653926db5d3776a7332fb",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV/tile-static-tgemv-contract-001.asl": "8dedb02e4dc57c8292a17b39d257e06beff509e3de6f19a12a41266c11ceef1b",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV/tile-static-tgemv-contract-001.asl": "9dd4dda0586ce0094bb9674d85b0d36443dc9812845e6415a2e3fad1fdb748d6",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC/tile-exec-tgemv-acc-direct-001.asl": "4f0b92af2868083fd536527910a0c926eb51cf9dd942f46c8a726fe20b824716",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC/tile-static-tgemv-acc-contract-001.asl": "a57d7a43c38927f7f023ac59f455f8a8a22e5d58056c03421ad78acb51163756",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC/tile-static-tgemv-acc-contract-001.asl": "8f0e4e2babe9900213109c93a873888c4c8f688b185a310874ff7bd8a90f4938",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS/tile-exec-tgemv-bias-direct-001.asl": "6f7353c8d26ec929cb7686d777782ba6588327d98b524e3c3d95be9c1010fb57",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS/tile-static-tgemv-bias-contract-001.asl": "e62909d7b17c8abf07df46babc20ebf9d53c8a5177f72bf2a1281ff34566c89a",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS/tile-static-tgemv-bias-contract-001.asl": "bce7be3cd9acb5b41e75ab8d45732bb555dfe59dbfa4e598d0c8db26c316c09c",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX/tile-exec-tgemv-mx-direct-001.asl": "f8fa202c8abd973e87fa6b5d90dc500260a097f669690d67beecc86c7f054f58",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX/tile-static-tgemv-mx-contract-001.asl": "38aac38dd0b6f691bb23351d696f2de4bf3bfeb11f38ec8c3411a5a3588d130b",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX/tile-static-tgemv-mx-contract-001.asl": "d40e705becffbe2173042be9fe88d4ba95d0146b034b67874e2f86a82b0b596c",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC/tile-exec-tgemv-mx-acc-direct-001.asl": "dbf07095936fb018f0cf54a14f54ca8b95901e68b9c2f7f68c3cb34e91d4ac6b",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC/tile-static-tgemv-mx-acc-contract-001.asl": "10c37792dfaa1f3ba4337019884e7db0951e5cd75024684f4fa874ebed4416b5",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC/tile-static-tgemv-mx-acc-contract-001.asl": "daad97c461a31f68b9b6675580eeb12135ad277c668bcf1b0f67a989d9ec8fdf",
     "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS/tile-exec-tgemv-mx-bias-direct-001.asl": "f98b54d57edbb59622f046b2eb80885fc997ce998c71cdbfd2f4b4680f824655",
-    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS/tile-static-tgemv-mx-bias-contract-001.asl": "d96d8d237f053f6eef261b55713a49bd3e7df2d93e5f9bff51b838b075e08166",
+    "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS/tile-static-tgemv-mx-bias-contract-001.asl": "0c74f5107539a270535a68f204c7b80e7733eb0c95c20a2f63f367b8be0827b1",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER/tile-exec-mgather-bytes-001.asl": "df326f8c9af0183d0edb4a2e4ff3cd1d36d08902468c4e2b4a7d599f89bdadb7",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER/tile-static-mgather-contract-001.asl": "1187bbd16e0c1e6cc11ce3702116eab67a6772a0496353aa4ae763de9a5cc366",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_CAS/tile-atomic-mgather-cas-rmw-001.asl": "0e12656102edba1707734da1cd1d965da8b85a5909009afe275577f012059d19",
@@ -46543,7 +46543,7 @@
       "requirements": [
         "PTO-INST-TILE-TGEMV-ACC"
       ],
-      "sha256": "a57d7a43c38927f7f023ac59f455f8a8a22e5d58056c03421ad78acb51163756",
+      "sha256": "8f0e4e2babe9900213109c93a873888c4c8f688b185a310874ff7bd8a90f4938",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.asl"
     },
     {
@@ -46564,7 +46564,7 @@
       "requirements": [
         "PTO-INST-TILE-TGEMV-BIAS"
       ],
-      "sha256": "e62909d7b17c8abf07df46babc20ebf9d53c8a5177f72bf2a1281ff34566c89a",
+      "sha256": "bce7be3cd9acb5b41e75ab8d45732bb555dfe59dbfa4e598d0c8db26c316c09c",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl"
     },
     {
@@ -46585,7 +46585,7 @@
       "requirements": [
         "PTO-INST-TILE-TGEMV-MX-ACC"
       ],
-      "sha256": "10c37792dfaa1f3ba4337019884e7db0951e5cd75024684f4fa874ebed4416b5",
+      "sha256": "daad97c461a31f68b9b6675580eeb12135ad277c668bcf1b0f67a989d9ec8fdf",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC.asl"
     },
     {
@@ -46606,7 +46606,7 @@
       "requirements": [
         "PTO-INST-TILE-TGEMV-MX-BIAS"
       ],
-      "sha256": "d96d8d237f053f6eef261b55713a49bd3e7df2d93e5f9bff51b838b075e08166",
+      "sha256": "0c74f5107539a270535a68f204c7b80e7733eb0c95c20a2f63f367b8be0827b1",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl"
     },
     {
@@ -46627,7 +46627,7 @@
       "requirements": [
         "PTO-INST-TILE-TGEMV-MX"
       ],
-      "sha256": "38aac38dd0b6f691bb23351d696f2de4bf3bfeb11f38ec8c3411a5a3588d130b",
+      "sha256": "d40e705becffbe2173042be9fe88d4ba95d0146b034b67874e2f86a82b0b596c",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX.asl"
     },
     {
@@ -46647,7 +46647,7 @@
       "requirements": [
         "PTO-INST-TILE-TGEMV"
       ],
-      "sha256": "8dedb02e4dc57c8292a17b39d257e06beff509e3de6f19a12a41266c11ceef1b",
+      "sha256": "9dd4dda0586ce0094bb9674d85b0d36443dc9812845e6415a2e3fad1fdb748d6",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.asl"
     },
     {
@@ -46912,7 +46912,7 @@
       "requirements": [
         "PTO-INST-TILE-TMATMUL-ACC"
       ],
-      "sha256": "80c60ebb93aac6dc41ff219b0420744e82ad56062c0b414ab395e193388e8c45",
+      "sha256": "4d27f783686bbf263bd67d237035b0dd7d7ea94dc31873dfac85336152743fce",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl"
     },
     {
@@ -46933,7 +46933,7 @@
       "requirements": [
         "PTO-INST-TILE-TMATMUL-BIAS"
       ],
-      "sha256": "9ea40aca820a1966f6e09c52380266c842ecc829fac306134504ce87ea3a7527",
+      "sha256": "8b11b2e154a507e4c9177f8ccf9ad0ba8cf8c5b4a034a13a1ff74bb06aa369c6",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl"
     },
     {
@@ -46975,7 +46975,7 @@
       "requirements": [
         "PTO-INST-TILE-TMATMUL-MX-ACC"
       ],
-      "sha256": "dfda692fd73fcca534b9c1c497db873167dfd757c687d75b318ec2c6a65deeae",
+      "sha256": "2c669575a58d4447e3f0bb5381e92a4526445ac5164bff7d204bab574c965f82",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.asl"
     },
     {
@@ -46996,7 +46996,7 @@
       "requirements": [
         "PTO-INST-TILE-TMATMUL-MX-BIAS"
       ],
-      "sha256": "d0af1c1489cc1b23b3a55838218c2acb35a7078fd6664d1c074a02e78041f475",
+      "sha256": "ec56090877f268c68f3f5a1b2b9583faed4e0fd250f896bd110d87d26bad8d31",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl"
     },
     {
@@ -47016,7 +47016,7 @@
       "requirements": [
         "PTO-INST-TILE-TMATMUL-MX"
       ],
-      "sha256": "caf9d55f8a3f6a3005bdfaf82c867cec29e8709a36cddce7b8ad1b3044b6b242",
+      "sha256": "9b6e02ea1f27e71e5b867e1c9b3e7764c0958993f0d2ad476e47f67d59ae4aff",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl"
     },
     {
@@ -47046,7 +47046,7 @@
       "requirements": [
         "PTO-INST-TILE-TMATMUL"
       ],
-      "sha256": "b935f457b5406169cc80eb3df9ce862886a668263a8baf8d1e15abfb6e4577ed",
+      "sha256": "93a71ce22970b6a7fa06e0e70cc46736a9dd8f99a418030378191064d346794f",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl"
     },
     {
