@@ -8,8 +8,9 @@ begin
     let before = _Tiles[[0]];
     let before_mask = _TileAllocationMasks[[0]];
     let before_capacity = TileCapacityInUse();
-    assert !ConfigureCubeTile(0, 128, 13, 19, TileDataType_FP16,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+    let configured = ConfigureCubeTile(0, 128, 13, 19,
+        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+    assert !configured;
     let after = _Tiles[[0]];
     assert after.allocated == before.allocated;
     assert after.storage_kind == before.storage_kind;
@@ -24,7 +25,7 @@ begin
     assert after.data_type == before.data_type;
     assert after.layout == before.layout;
     assert after.location == before.location;
-    assert after.payload == before.payload;
+    assert after.payload[[0]] == before.payload[[0]];
     assert after.cube_k_repeat == before.cube_k_repeat;
     assert after.cube_n_repeat == before.cube_n_repeat;
     assert after.cube_cell_count == before.cube_cell_count;

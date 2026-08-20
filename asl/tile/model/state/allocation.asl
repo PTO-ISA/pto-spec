@@ -35,6 +35,10 @@ begin
     _Tiles[[index]].data_type = data_type;
     _Tiles[[index]].layout = layout;
     _Tiles[[index]].location = location;
+    _Tiles[[index]].cube_k_repeat = 0;
+    _Tiles[[index]].cube_n_repeat = 0;
+    _Tiles[[index]].cube_cell_count = 0;
+    _Tiles[[index]].cube_storage_bytes = 0;
 end;
 
 pure func PredicateTileStorageBytes(
@@ -77,6 +81,10 @@ begin
     _Tiles[[index]].data_type = TileDataType_U8;
     _Tiles[[index]].layout = TileLayout_RowMajor;
     _Tiles[[index]].location = TileLocation_Any;
+    _Tiles[[index]].cube_k_repeat = 0;
+    _Tiles[[index]].cube_n_repeat = 0;
+    _Tiles[[index]].cube_cell_count = 0;
+    _Tiles[[index]].cube_storage_bytes = 0;
 end;
 
 func ConfigurePredicateTile(
@@ -108,6 +116,72 @@ begin
         valid_rows, valid_columns, data_type, layout, location, '0001');
 end;
 
+func ConfigureCubeTileForMask(
+    index: TileIndex,
+    capacity_bytes: integer {0..262144},
+    valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535},
+    data_type: TileDataType,
+    layout: TileLayout,
+    location: TileLocation,
+    allocation_mask: bits(4)) => boolean
+begin
+    if allocation_mask == Zeros{4} ||
+       !TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
+           valid_columns, data_type, layout) then
+        return FALSE;
+    end;
+    if TileCapacityInUseExcept(index) + SharedTileCapacityInUse() +
+       TileCoreAllocationBytes(allocation_mask, capacity_bytes) >
+           TileCapacityLimitBytes() then
+        return FALSE;
+    end;
+    let rows = TileCubeStorageRows(layout, valid_rows, data_type);
+    let columns = TileCubeStorageColumns(layout, valid_columns, data_type);
+    let k_repeat = TileCubeKRepeat(
+        layout, valid_rows, valid_columns, data_type);
+    let n_repeat = TileCubeNRepeat(layout, valid_columns, data_type);
+    let cell_count = TileCubeCellCount(
+        layout, valid_rows, valid_columns, data_type);
+    let storage_bytes = TileCubeRequiredBytes(
+        layout, valid_rows, valid_columns, data_type);
+    assert rows != 0 && columns != 0 && k_repeat != 0 &&
+           n_repeat != 0 && cell_count != 0 && storage_bytes != 0;
+    InvalidateTileFeatureMapDescriptor(index);
+    _TileAllocationMasks[[index]] = allocation_mask;
+    _Tiles[[index]].allocated = TRUE;
+    _Tiles[[index]].storage_kind = TileStorage_Numeric;
+    _Tiles[[index]].contents_defined = FALSE;
+    _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    _Tiles[[index]].defined_valid_elements = 0;
+    _Tiles[[index]].capacity_bytes = capacity_bytes;
+    _Tiles[[index]].rows = rows;
+    _Tiles[[index]].columns = columns;
+    _Tiles[[index]].valid_rows = valid_rows;
+    _Tiles[[index]].valid_columns = valid_columns;
+    _Tiles[[index]].data_type = data_type;
+    _Tiles[[index]].layout = layout;
+    _Tiles[[index]].location = location;
+    _Tiles[[index]].cube_k_repeat = k_repeat;
+    _Tiles[[index]].cube_n_repeat = n_repeat;
+    _Tiles[[index]].cube_cell_count = cell_count;
+    _Tiles[[index]].cube_storage_bytes = storage_bytes;
+    return TRUE;
+end;
+
+func ConfigureCubeTile(
+    index: TileIndex,
+    capacity_bytes: integer {0..262144},
+    valid_rows: integer {0..65535},
+    valid_columns: integer {0..65535},
+    data_type: TileDataType,
+    layout: TileLayout,
+    location: TileLocation) => boolean
+begin
+    return ConfigureCubeTileForMask(index, capacity_bytes, valid_rows,
+        valid_columns, data_type, layout, location, '0001');
+end;
+
 func ReleaseTile(index: TileIndex)
 begin
     InvalidateTileFeatureMapDescriptor(index);
@@ -125,4 +199,8 @@ begin
     _Tiles[[index]].data_type = TileDataType_U8;
     _Tiles[[index]].layout = TileLayout_RowMajor;
     _Tiles[[index]].location = TileLocation_Any;
+    _Tiles[[index]].cube_k_repeat = 0;
+    _Tiles[[index]].cube_n_repeat = 0;
+    _Tiles[[index]].cube_cell_count = 0;
+    _Tiles[[index]].cube_storage_bytes = 0;
 end;

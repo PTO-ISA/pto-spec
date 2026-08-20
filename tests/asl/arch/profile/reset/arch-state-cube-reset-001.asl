@@ -16,12 +16,14 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    assert ConfigureCubeTile(0, 768, 13, 19, TileDataType_FP16,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+    let configured_before_release = ConfigureCubeTile(0, 768, 13, 19,
+        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+    assert configured_before_release;
     ReleaseTile(0);
     AssertCubeFieldsCleared(0);
-    assert ConfigureCubeTile(0, 768, 13, 19, TileDataType_FP16,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+    let configured_before_reset = ConfigureCubeTile(0, 768, 13, 19,
+        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+    assert configured_before_reset;
     ResetProfileState();
     AssertCubeFieldsCleared(0);
     return 0;

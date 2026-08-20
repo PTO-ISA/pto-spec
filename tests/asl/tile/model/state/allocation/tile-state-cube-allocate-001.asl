@@ -2,8 +2,9 @@
 func main() => integer
 begin
     ResetProfileState();
-    assert ConfigureCubeTile(0, 768, 13, 19, TileDataType_FP16,
-        TileLayout_CUBE_N8, TileLocation_Matrix);
+    let configured = ConfigureCubeTile(0, 768, 13, 19,
+        TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix);
+    assert configured;
     let tile = _Tiles[[0]];
     assert tile.allocated;
     assert tile.storage_kind == TileStorage_Numeric;
