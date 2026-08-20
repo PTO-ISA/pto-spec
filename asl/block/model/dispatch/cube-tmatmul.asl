@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
 
 readonly func BundleCubeMatrixSelected() => boolean
 begin
@@ -94,99 +94,6 @@ begin
            BundleTileBindingStreamTerminated() &&
            BundleOperationScalarBindingSchemaLegal(operation) &&
            BundleOperationGPRBindingValuesLegal(operation);
-end;
-
-readonly func BundleMatrixSharedSourceSchemaLegal(
-    ordinal: integer {0..3},
-    valid_rows: integer {1..65535},
-    valid_columns: integer {1..65535},
-    columns: integer {1..65535},
-    data_type: TileDataType) => boolean
-begin
-    return !BundleSharedBindingIsDestination(ordinal) &&
-           SharedTileReadSchemaLegal(
-               BundleSharedBindingId(ordinal),
-               valid_rows, valid_columns, columns,
-               data_type, TileLayout_RowMajor);
-end;
-
-readonly func BundleMatrixSharedSchemasLegal(
-    function: integer {0..31},
-    left_type: TileDataType,
-    right_type: TileDataType,
-    m: integer {1..65535},
-    n: integer {1..65535},
-    k: integer {1..65535},
-    shared_count: integer {0..4}) => boolean
-begin
-    if shared_count == 0 then return TRUE; end;
-    let left_scale_present = TileMatrixFunctionUsesMX(function) &&
-        TileMXInputTypeNeedsScale(left_type);
-    let right_scale_present = TileMatrixFunctionUsesMX(function) &&
-        TileMXInputTypeNeedsScale(right_type);
-    let scale_blocks = ((k + 31) DIVRM 32)
-        as integer {1..2048};
-    let right_group = TileMatrixRightGroupSourceCount(
-        function, right_type);
-    var ordinal: integer {0..4} = 0;
-
-    if shared_count != right_group then
-        if !BundleMatrixSharedSourceSchemaLegal(
-               ordinal as integer {0..3},
-               m, k, k, left_type) then
-            return FALSE;
-        end;
-        ordinal = (ordinal + 1) as integer {0..4};
-        if left_scale_present then
-            if !BundleMatrixSharedSourceSchemaLegal(
-                   ordinal as integer {0..3},
-                   m, scale_blocks, scale_blocks,
-                   TileDataType_E8M0) then
-                return FALSE;
-            end;
-            ordinal = (ordinal + 1) as integer {0..4};
-        end;
-    end;
-
-    if !BundleMatrixSharedSourceSchemaLegal(
-           ordinal as integer {0..3},
-           k, n, n, right_type) then
-        return FALSE;
-    end;
-    ordinal = (ordinal + 1) as integer {0..4};
-    if right_scale_present then
-        if !BundleMatrixSharedSourceSchemaLegal(
-               ordinal as integer {0..3},
-               scale_blocks, n, n,
-               TileDataType_E8M0) then
-            return FALSE;
-        end;
-        ordinal = (ordinal + 1) as integer {0..4};
-    end;
-    return ordinal == shared_count;
-end;
-
-readonly func MaterializeBundleSharedMatrixSource(
-    ordinal: integer {0..3},
-    valid_rows: integer {1..65535},
-    valid_columns: integer {1..65535},
-    columns: integer {1..65535},
-    data_type: TileDataType) => TileInfo
-begin
-    let shared_id = BundleSharedBindingId(ordinal);
-    var tile = MaterializeSharedTileForReadSchema(
-        shared_id, valid_rows, valid_columns, columns,
-        data_type, TileLayout_RowMajor);
-    for element = 0 to tile.rows * tile.columns - 1
-        looplimit PTO_MODEL_TILE_ELEMENTS do
-        let index = element as ModelTileElementIndex;
-        tile.payload[[index]] = ReadSharedTileWord(shared_id, index);
-        tile.defined_elements[element] = '1';
-    end;
-    tile.contents_defined = TRUE;
-    tile.defined_valid_elements =
-        (valid_rows * valid_columns) as integer {0..16384};
-    return tile;
 end;
 
 readonly func BundleMatrixPrimaryDestinationCapacityBytes()
@@ -347,9 +254,10 @@ begin
                 local_ordinal = (local_ordinal + 1) as integer {0..5};
             end;
         else
-            left = MaterializeBundleSharedMatrixSource(
+            left = MaterializeBundleSharedMatrixPrimary(
                 shared_ordinal as integer {0..3},
-                m, k, k, left_type);
+                m, k, left_type,
+                _BundleFixedPointAttributes.trans_a);
             shared_ordinal = (shared_ordinal + 1) as integer {0..4};
             if left_scale_present then
                 let scale_blocks = ((k + 31) DIVRM 32)
@@ -361,9 +269,10 @@ begin
                 shared_ordinal = (shared_ordinal + 1) as integer {0..4};
             end;
         end;
-        right = MaterializeBundleSharedMatrixSource(
+        right = MaterializeBundleSharedMatrixPrimary(
             shared_ordinal as integer {0..3},
-            k, n, n, right_type);
+            k, n, right_type,
+            _BundleFixedPointAttributes.trans_b);
         shared_ordinal = (shared_ordinal + 1) as integer {0..4};
         if right_scale_present then
             let scale_blocks = ((k + 31) DIVRM 32)
@@ -380,8 +289,12 @@ begin
             local_ordinal as integer {0..7});
     end;
 
+    let right_group = TileMatrixRightGroupSourceCount(
+        function, right_type);
     let shape_legal = if shared_count == 0 then
         TileMatrixCubeInfosMatchDimensions(left, right, m, n, k)
+    else if shared_count == right_group then
+        TileMatrixMixedInfosMatchDimensions(left, right, m, n, k)
     else
         TileMatrixInfosMatchDimensions(left, right, m, n, k);
     let operand_types_legal = left.data_type == left_type &&
