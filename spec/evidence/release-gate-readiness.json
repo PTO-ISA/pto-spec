@@ -113,7 +113,7 @@
     "scripts/check-active-paths": "43b214cdf80e16a8cf96a0a7d3265b1a8fd6cccf37e28bedb40b052e088ab29f",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
-    "scripts/check-binary-closure": "f91cc8d07afeb251427646207cbf6df90464948983a159b89b39b82b74716265",
+    "scripts/check-binary-closure": "1d8c9c6268c3b84621c763aea80187f5e818aad9bc41767a8a6d668610ebeca8",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
     "scripts/check-pr": "eee82b264cc0fa5fec8c10ab2c2777b8afcdebe5e7a0a283a8faea7f61ee6e4d",
     "scripts/check-release-closure": "f362bcadd1b89cdae420bc147b87bca8bed1f46073dad04f9eabc4509a41e0c0",
