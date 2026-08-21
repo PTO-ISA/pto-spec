@@ -15,7 +15,7 @@
   "superseded": null,
   "baseline": "0b8ce516ffe998b24c4bae4c1a9dbca2e0d76510",
   "target_releases": [
-    "unassigned"
+    "0.58.3"
   ],
   "affected_ndf": [
     "PTO-CUBE-CELL-STATE-001"

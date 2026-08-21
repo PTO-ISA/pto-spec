@@ -112,10 +112,10 @@ def main() -> int:
     sample = {
         "schema_version": "1",
         "repository": "PTO-ISA/pto-spec",
-        "tag": "v0.58.2",
+        "tag": "v0.58.3",
         "commit": "0123456789abcdef0123456789abcdef01234567",
         "release_id": 123,
-        "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.2",
+        "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.3",
         "release_manifest_sha256": "a" * 64,
         "published_at": "2026-08-10T00:00:00Z",
     }

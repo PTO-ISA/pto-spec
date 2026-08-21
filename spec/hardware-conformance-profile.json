@@ -15,7 +15,7 @@
     "flush_to_zero": false,
     "input_subnormals": "preserve exact source value",
     "operation_override": false,
-    "profile_selection": "fixed by pto-hardware-numeric-0.58.2-ieee-v1",
+    "profile_selection": "fixed by pto-hardware-numeric-0.58.3-ieee-v1",
     "result_subnormals": "gradual underflow to the destination format",
     "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
     "tininess_detection": "after-rounding"
@@ -49,7 +49,7 @@
       "enabled": "Integer arithmetic and conversion clamp to destination minimum/maximum; NaN converts to zero; floating overflow clamps to the destination maximum finite value."
     }
   },
-  "claim_scope": "PTO ISA 0.58.2 hardware numeric conformance",
+  "claim_scope": "PTO ISA 0.58.3 hardware numeric conformance",
   "comparisons": {
     "false_result": 0,
     "nan": {
@@ -216,7 +216,7 @@
     ],
     "repository_claim": "contract-and-vector-definition-only"
   },
-  "isa_release": "0.58.2",
+  "isa_release": "0.58.3",
   "mixed_expdif": {
     "accepted_operations": [
       "TROWEXPANDEXPDIF",
@@ -378,7 +378,7 @@
     "lane_order": "Logical lane 2*i is bits 3:0 of storage byte i; logical lane 2*i+1 is bits 7:4 of storage byte i.",
     "partial_final_byte": "When a logical extent is odd, the unused high nibble of the final storage byte is reserved and MUST be zero on publication. Consumers ignore it."
   },
-  "profile_id": "pto-hardware-numeric-0.58.2-ieee-v1",
+  "profile_id": "pto-hardware-numeric-0.58.3-ieee-v1",
   "reductions": {
     "arg_tie": "lowest original logical index",
     "empty_input": "illegal before effects",

@@ -15,7 +15,8 @@
   "superseded": null,
   "baseline": "2c663ce22169ee869f47ba766cc8cb9e52053c49",
   "target_releases": [
-    "0.58.0"
+    "0.58.0",
+    "0.58.3"
   ],
   "affected_ndf": [
     "PTO-B-FPATR-MATRIX-POSTPROCESS-001",

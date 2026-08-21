@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import unittest
 from pathlib import Path
@@ -13,8 +14,12 @@ RELEASE_GATE_GENERATOR = ROOT / "scripts/generate-release-gate-readiness"
 
 
 class ArchitectureReleaseBoundaryTest(unittest.TestCase):
-    def test_binder_adr_is_version_neutral(self) -> None:
+    def test_binder_adr_targets_0583_with_version_neutral_architecture_text(self) -> None:
         text = ADR.read_text(encoding="utf-8")
+        _, metadata_text, body = text.split("---", 2)
+        metadata = json.loads(metadata_text)
+
+        self.assertEqual(metadata["target_releases"], ["0.58.3"])
         for pattern in (
             r"\b0\.\d+(?:\.\d+)?\b",
             r"post-0\.",
@@ -23,7 +28,7 @@ class ArchitectureReleaseBoundaryTest(unittest.TestCase):
             r"must not merge until",
         ):
             with self.subTest(pattern=pattern):
-                self.assertIsNone(re.search(pattern, text))
+                self.assertIsNone(re.search(pattern, body))
 
     def test_ordinary_repository_check_excludes_release_manifest(self) -> None:
         checker = REPOSITORY_CHECK.read_text(encoding="utf-8")

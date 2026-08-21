@@ -18,19 +18,19 @@ TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
 
 
 class ReleaseClosureTest(unittest.TestCase):
-    def test_release_identity_is_0582_and_owns_0582_evidence(self) -> None:
+    def test_release_identity_is_0583_and_owns_0583_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
 
-        self.assertIn('architecture_version = "0.58.2"', specification)
+        self.assertIn('architecture_version = "0.58.3"', specification)
         self.assertIn(
-            'encoding_abi = "pto-isa-0.58.2-mode-function-v1"', specification
+            'encoding_abi = "pto-isa-0.58.3-mode-function-v1"', specification
         )
-        self.assertIn('RELEASE = "0.58.2"', generator)
+        self.assertIn('RELEASE = "0.58.3"', generator)
         self.assertIn(
-            'ENCODING_ABI = "pto-isa-0.58.2-mode-function-v1"', generator
+            'ENCODING_ABI = "pto-isa-0.58.3-mode-function-v1"', generator
         )
-        self.assertIn("pto-isa-0582-encoding-totality.json", generator)
+        self.assertIn("pto-isa-0583-encoding-totality.json", generator)
 
     def test_release_gate_provenance_covers_workflow_validator_implementation(
         self,
@@ -119,9 +119,9 @@ class ReleaseClosureTest(unittest.TestCase):
         self.assertEqual(
             set(paths),
             {
-                "spec/evidence/pto-isa-0582-abi-vectors.json",
-                "spec/evidence/pto-isa-0582-encoding-totality.json",
-                "spec/evidence/pto-isa-0582-hardware-numeric-vectors.json",
+                "spec/evidence/pto-isa-0583-abi-vectors.json",
+                "spec/evidence/pto-isa-0583-encoding-totality.json",
+                "spec/evidence/pto-isa-0583-hardware-numeric-vectors.json",
                 "spec/evidence/architecture-readiness.json",
                 "spec/evidence/instruction-contract-closure.json",
                 "spec/evidence/release-gate-readiness.json",
@@ -151,12 +151,12 @@ class ReleaseClosureTest(unittest.TestCase):
             requirements["PTO-TCVT-CONTRACT-001"]["readiness_subjects"],
         )
 
-    def test_unassigned_main_changes_keep_release_closure_open(self) -> None:
+    def test_current_release_selection_has_no_blockers(self) -> None:
         result = subprocess.run(
             [str(CHECKER)], cwd=ROOT, text=True, capture_output=True, check=False
         )
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("release selection contains blockers", result.stderr)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("release closure passed", result.stdout)
 
     def test_checker_rejects_legacy_and_missing_paths_in_registered_evidence(
         self,

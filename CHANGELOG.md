@@ -3,6 +3,23 @@
 This file is generated from accepted ADR metadata. It is a navigation aid,
 not architecture authority; current meaning remains in the owning ASL/NDF.
 
+## Release 0.58.3
+
+### Architecture
+- [ADR-0068](docs/status/decisions/0068-extension-first-use-profile-hook.md): Extension first-use is a target-profile hook
+
+### Cross-cutting
+- [ADR-0064](docs/status/decisions/0064-b-fpatr-complete-bundle-postprocess.md): B.FPATR Complete-Bundle Matrix PostProcess
+- [ADR-0070](docs/status/decisions/0070-gm-local-cube-layout-transport.md): GM/Local CUBE Layout Transport
+- [ADR-0071](docs/status/decisions/0071-local-cube-matrix-operands.md): Local CUBE Matrix Operand Contract
+- [ADR-0072](docs/status/decisions/0072-cooperative-shared-cube-transpose.md): Cooperative Shared CUBE Inputs and Transpose
+- [ADR-0073](docs/status/decisions/0073-cube-accumulator-atomic-output.md): CUBE Accumulator and Atomic Output Contract
+- [ADR-0074](docs/status/decisions/0074-tload-tstore-gm-byte-row-stride.md): TLOAD/TSTORE GM Byte Row Stride
+- [ADR-0096](docs/status/decisions/0096-b-iot-b-ios-sizecode-pemode.md): Re-encode B.IOT and B.IOS size and PE mode fields
+
+### Tile
+- [ADR-0069](docs/status/decisions/0069-local-cube-cell-state-and-geometry.md): Local CUBE CELL State and Geometry
+
 ## Release 0.58.2
 
 ### Architecture
@@ -68,7 +85,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0037](docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md): Numeric profile identity and bounded variation framework
 - [ADR-0042](docs/status/decisions/0042-numeric-variation-point-ownership.md): Numeric variation-point ownership
 - [ADR-0049](docs/status/decisions/0049-hardware-subnormal-policy.md): Hardware numeric subnormal policy
-- [ADR-0068](docs/status/decisions/0068-extension-first-use-profile-hook.md): Extension first-use is a target-profile hook
 
 ### Block
 - [ADR-0022](docs/status/decisions/0022-bundle-operation-descriptor-and-commit.md): Bundle operation descriptor and transactional commit
@@ -101,12 +117,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0056](docs/status/decisions/0056-pto-encoding-ownership-and-gm-access.md): PTO Encoding Ownership and Per-PE GM Access
 - [ADR-0057](docs/status/decisions/0057-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-0058](docs/status/decisions/0058-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
-- [ADR-0070](docs/status/decisions/0070-gm-local-cube-layout-transport.md): GM/Local CUBE Layout Transport
-- [ADR-0071](docs/status/decisions/0071-local-cube-matrix-operands.md): Local CUBE Matrix Operand Contract
-- [ADR-0072](docs/status/decisions/0072-cooperative-shared-cube-transpose.md): Cooperative Shared CUBE Inputs and Transpose
-- [ADR-0073](docs/status/decisions/0073-cube-accumulator-atomic-output.md): CUBE Accumulator and Atomic Output Contract
-- [ADR-0074](docs/status/decisions/0074-tload-tstore-gm-byte-row-stride.md): TLOAD/TSTORE GM Byte Row Stride
-- [ADR-0096](docs/status/decisions/0096-b-iot-b-ios-sizecode-pemode.md): Re-encode B.IOT and B.IOS size and PE mode fields
 
 ### Scalar
 - [ADR-0012](docs/status/decisions/0012-acrc-service-request.md): Define PTO v0 ACRC service requests
@@ -121,4 +131,3 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Tile
 - [ADR-0044](docs/status/decisions/0044-public-integer-conversion-result-subset.md): Public integer conversion result subset
-- [ADR-0069](docs/status/decisions/0069-local-cube-cell-state-and-geometry.md): Local CUBE CELL State and Geometry

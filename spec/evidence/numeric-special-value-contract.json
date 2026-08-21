@@ -6,7 +6,7 @@
   "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
   "acceptance_record": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "current_profile_evidence_id": "pto-hardware-numeric-0.58.2-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.58.3-ieee-v1",
   "policy": {
     "produced_nan": "canonical-destination-format-nan",
     "comparison_nan": "NE-true-all-other-relations-false",
@@ -587,7 +587,7 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "7d8f47ad85355b978f303cc3a384951268c03cc130fa6f62eb6d797d3a7cb5ec"
+      "sha256": "117cd8e61f1e82001755cdb1ee98ef224fbd624ddf2adb8577c32d6acf833575"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -607,7 +607,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "55eb6eaf63ddfdcd918603a21673b53c198f448c6e8800e3389b28f43410fad8"
+      "sha256": "6214f747a2552d0d8a8c9f81f6fc4320e585304acaaf716416cfe80a6e93da71"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",

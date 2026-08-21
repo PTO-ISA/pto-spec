@@ -15,7 +15,7 @@
   "superseded": null,
   "baseline": "15dcfc52b2710c28cf7a50da23057b0fcb9fd7c3",
   "target_releases": [
-    "unassigned"
+    "0.58.3"
   ],
   "affected_ndf": [
     "PTO-ARCH-GM-ACCESS-001",

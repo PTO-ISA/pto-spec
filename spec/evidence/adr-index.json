@@ -5532,7 +5532,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "0.58.0"
+        "0.58.0",
+        "0.58.3"
       ],
       "title": "B.FPATR Complete-Bundle Matrix PostProcess"
     },
@@ -5712,7 +5713,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.3"
       ],
       "title": "Extension first-use is a target-profile hook"
     },
@@ -5744,7 +5745,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.3"
       ],
       "title": "Local CUBE CELL State and Geometry"
     },
@@ -5791,7 +5792,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.3"
       ],
       "title": "GM/Local CUBE Layout Transport"
     },
@@ -5873,7 +5874,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.3"
       ],
       "title": "Local CUBE Matrix Operand Contract"
     },
@@ -5966,7 +5967,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.3"
       ],
       "title": "Cooperative Shared CUBE Inputs and Transpose"
     },
@@ -6016,7 +6017,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.3"
       ],
       "title": "CUBE Accumulator and Atomic Output Contract"
     },
@@ -6062,7 +6063,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.3"
       ],
       "title": "TLOAD/TSTORE GM Byte Row Stride"
     },
@@ -6097,7 +6098,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0075",
       "implementation_issue": null,
@@ -6154,7 +6155,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0076",
       "implementation_issue": null,
@@ -6229,7 +6230,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0077",
       "implementation_issue": null,
@@ -6332,7 +6333,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0078",
       "implementation_issue": null,
@@ -6436,7 +6437,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0079",
       "implementation_issue": null,
@@ -6550,7 +6551,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0080",
       "implementation_issue": null,
@@ -6652,7 +6653,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0081",
       "implementation_issue": null,
@@ -6776,7 +6777,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0082",
       "implementation_issue": null,
@@ -6874,7 +6875,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0083",
       "implementation_issue": null,
@@ -7271,7 +7272,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0084",
       "implementation_issue": null,
@@ -7339,7 +7340,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "a339fc2b1bc2c1e36aed7aa660406d77393f3337",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0085",
       "implementation_issue": null,
@@ -7379,7 +7380,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0086",
       "implementation_issue": null,
@@ -7407,7 +7408,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0087",
       "implementation_issue": null,
@@ -7435,7 +7436,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0088",
       "implementation_issue": null,
@@ -7463,7 +7464,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0089",
       "implementation_issue": null,
@@ -7491,7 +7492,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0090",
       "implementation_issue": null,
@@ -7519,7 +7520,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0091",
       "implementation_issue": null,
@@ -7547,7 +7548,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0092",
       "implementation_issue": null,
@@ -7575,7 +7576,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0093",
       "implementation_issue": null,
@@ -7603,7 +7604,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0094",
       "implementation_issue": null,
@@ -7631,7 +7632,7 @@
       "authors": [
         "Kevin Zhou <zhoubot@gmail.com>"
       ],
-      "baseline": "aec1e52c9bf9fc5c487de043b94148ca46b43a8f",
+      "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
       "id": "ADR-0095",
       "implementation_issue": null,
@@ -7732,7 +7733,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.3"
       ],
       "title": "Re-encode B.IOT and B.IOS size and PE mode fields"
     }

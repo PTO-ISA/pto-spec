@@ -15,7 +15,7 @@
   "superseded": null,
   "baseline": "69591e45f3aade7d0326da868420e0653894cb61",
   "target_releases": [
-    "unassigned"
+    "0.58.3"
   ],
   "affected_ndf": [
     "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"

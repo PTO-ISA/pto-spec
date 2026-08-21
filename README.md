@@ -2,7 +2,7 @@
 
 [![PR checks](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml/badge.svg?branch=main&event=push)](https://github.com/PTO-ISA/pto-spec/actions/workflows/asl.yml?query=branch%3Amain)
 [![Exact-head release verification](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/PTO-ISA/pto-spec/actions/workflows/release.yml)
-[![PTO ISA v0.58.2](https://img.shields.io/badge/PTO_ISA-v0.58.2-blue.svg)](https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.2)
+[![PTO ISA v0.58.3](https://img.shields.io/badge/PTO_ISA-v0.58.3-blue.svg)](https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.3)
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
 `pto-spec` is the executable ASL1 specification of the PTO Instruction Set
@@ -11,7 +11,7 @@ Tile operations, architectural state, legality, faults, completion, profiles,
 and memory ordering in one reviewable model.
 
 The working tree is a normative draft and may contain architecture changes for
-a future release. PTO ISA v0.58.2 is the latest published release; release
+a future release. PTO ISA v0.58.3 is the latest published release; release
 identity is bound to an immutable commit and its reproducible formal evidence.
 
 ## PTO ISA at a glance

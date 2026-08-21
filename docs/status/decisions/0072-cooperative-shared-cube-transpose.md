@@ -10,7 +10,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "30cd155cf635f0bf41429dbd5751fc7737268fb4",
-  "target_releases": ["unassigned"],
+  "target_releases": ["0.58.3"],
   "affected_ndf": [
     "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
     "PTO-CUBE-SHARED-TRANSPOSE-001",
