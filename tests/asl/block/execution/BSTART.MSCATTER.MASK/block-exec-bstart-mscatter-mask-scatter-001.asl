@@ -11,7 +11,8 @@ begin
     var instruction: bits(64) = Zeros{64} + 0x00004013;
     instruction[31:26] = indices;
     instruction[25:20] = source;
-    instruction[18:15] = '0001';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '001';
     return instruction;
 end;
 
@@ -20,7 +21,8 @@ begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
     instruction[25:20] = mask;
     instruction[19] = '1';
-    instruction[18:15] = '0001';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '001';
     return instruction;
 end;
 

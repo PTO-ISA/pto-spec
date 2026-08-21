@@ -7,12 +7,13 @@ begin
     return instruction;
 end;
 
-pure func SharedByteStrideSource(shared_id: bits(8), pe_mask: bits(4))
+pure func SharedByteStrideSource(shared_id: bits(8), pe_mode: bits(3))
     => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = pe_mask;
+    instruction[18:15] = '0000';
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
@@ -52,7 +53,7 @@ begin
     let full_start = ExecuteCommandInstruction(
         SharedByteStrideStart('00001'), 32);
     let full_source = ExecuteCommandInstruction(
-        SharedByteStrideSource(Zeros{8} + 7, '1111'), 32);
+        SharedByteStrideSource(Zeros{8} + 7, '111'), 32);
     assert full_start == CommandExecution_Executed;
     assert full_source == CommandExecution_Executed;
     let full_completed = ExecuteBundleTileOperation();
@@ -66,7 +67,7 @@ begin
     let partial_start = ExecuteCommandInstruction(
         SharedByteStrideStart('01110'), 32);
     let partial_source = ExecuteCommandInstruction(
-        SharedByteStrideSource(Zeros{8} + 7, '0001'), 32);
+        SharedByteStrideSource(Zeros{8} + 7, '001'), 32);
     let partial_ior = ExecuteCommandInstruction(
         SharedByteStrideIOR(Zeros{5} + 2, Zeros{5} + 3), 32);
     assert partial_start == CommandExecution_Executed;
@@ -86,7 +87,7 @@ begin
     let omitted_start = ExecuteCommandInstruction(
         SharedByteStrideStart('01110'), 32);
     let omitted_source = ExecuteCommandInstruction(
-        SharedByteStrideSource(Zeros{8} + 7, '0001'), 32);
+        SharedByteStrideSource(Zeros{8} + 7, '001'), 32);
     assert omitted_start == CommandExecution_Executed;
     assert omitted_source == CommandExecution_Executed;
     let omitted_completed = ExecuteBundleTileOperation();

@@ -12,7 +12,7 @@ begin
     instruction[25:20] = Ones{6};
     instruction[19] = '1';
     instruction[18:15] = Zeros{4};
-    instruction[11:9] = '001';
+    instruction[11:9] = '000';
     return instruction;
 end;
 

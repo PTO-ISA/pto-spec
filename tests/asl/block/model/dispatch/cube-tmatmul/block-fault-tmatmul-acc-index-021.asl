@@ -3,7 +3,7 @@ pure func EqualIndexAccumulatorBinding() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
     instruction[25:20] = Zeros{6} + 1;
-    instruction[18:15] = '1111';
+    instruction[18:15] = '0001';
     instruction[11:9] = '001';
     instruction[8:7] = '01';
     return instruction;
@@ -15,7 +15,8 @@ begin
     instruction[25:20] = Zeros{6} + 2;
     instruction[31:26] = Zeros{6} + 3;
     instruction[19] = '1';
-    instruction[18:15] = '1111';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '001';
     return instruction;
 end;
 

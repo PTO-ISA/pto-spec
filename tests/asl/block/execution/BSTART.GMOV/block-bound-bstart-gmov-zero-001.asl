@@ -9,7 +9,7 @@ end;
 pure func GMOVZeroBinding() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[11:9] = '111';
+    instruction[11:9] = '000';
     instruction[18:15] = Zeros{4};
     instruction[19] = '1';
     instruction[25:20] = Ones{6};

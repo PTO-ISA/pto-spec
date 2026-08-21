@@ -17,7 +17,8 @@ end;
 pure func CubeAccessTStoreSource() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[18:15] = '0001';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '100';
     instruction[19] = '1';
     return instruction;
 end;
