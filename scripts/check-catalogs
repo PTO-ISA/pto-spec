@@ -18,11 +18,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 REVIEWED_NONCOMPARABLE_PROJECTION_SHA256 = (
-    "3c84c50bccc25350f3cb342e9cfba38318ac28dd0da648ab97420eb66eeca20f"
+    "58134a5e148e90c78e97fcae45e52b5d82046fd813e6ef2125c5df996a94c725"
 )
 
-BUNDLE_BRIDGE_FIELDS = {"destination0", "source0", "source1"}
-BUNDLE_BRIDGE_FAMILIES = ("TEPL", "TMA", "CUBE")
+BUNDLE_BRIDGE_FIELDS = {
+    "destination0",
+    "source0",
+    "source1",
+    "address",
+    "scalar0",
+    "scalar1",
+}
+BUNDLE_BRIDGE_FAMILIES = ("TEPL", "TLSU", "CUBE")
 
 
 TILE_SEMANTIC_GROUPS = {
@@ -116,8 +123,8 @@ TILE_SEMANTIC_GROUPS = {
     "TCONCAT": {"TCONCAT"},
     "TTRANS": {"TTRANS"},
     "TIMG2COL": {"TIMG2COL"},
-    "TSORT32": {"TSORT32"},
-    "TRANDOM": {"TRANDOM"},
+    "TSORT": {"TSORT"},
+    "THISTOGRAM": {"THISTOGRAM"},
     "TMRGSORT": {"TMRGSORT"},
     "ExecuteTilePartial": {"TPARTADD", "TPARTMUL", "TPARTMAX", "TPARTMIN"},
     "TLOAD": {"TLOAD"},
@@ -125,6 +132,9 @@ TILE_SEMANTIC_GROUPS = {
     "TPREFETCH": {"TPREFETCH"},
     "MGATHER": {"MGATHER"},
     "MSCATTER": {"MSCATTER"},
+    "MGATHER_MASK": {"MGATHER_MASK"},
+    "MSCATTER_MASK": {"MSCATTER_MASK"},
+    "MGATHER_CAS": {"MGATHER_CAS"},
     "TMOV": {"TMOV"},
     "GMOV": {"GMOV"},
     "TMATMUL": {"TMATMUL"},
@@ -524,6 +534,7 @@ TILE_OPERAND_FIELDS = {
     "axis",
     "comparison",
     "flag0",
+    "sort_width",
     "numeric_control",
 }
 
@@ -545,9 +556,47 @@ TEPL_V0580_SELECTORS = {
 048:TROWEXPANDDIV 049:TROWEXPANDMAX 04A:TROWEXPANDMIN 04B:TROWEXPANDEXPDIF 04C:TROWARGMAX 04D:TROWARGMIN 050:TCOLSUM 051:TCOLMAX
 052:TCOLMIN 053:TCOLPROD 054:TCOLEXPAND 055:TCOLEXPANDADD 056:TCOLEXPANDSUB 057:TCOLEXPANDMUL 058:TCOLEXPANDDIV 059:TCOLEXPANDMAX
 05A:TCOLEXPANDMIN 05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN 060:TCONCAT 062:TEXTRACT 063:TINSERT 064:TIMG2COL
-065:TFILLPAD 066:TCI 067:TTRI 069:TRANDOM 06A:TQUANT 06B:TDEQUANT 06C:TSORT32 06D:TMRGSORT
+065:TFILLPAD 066:TCI 067:TTRI 068:THISTOGRAM 06A:TQUANT 06B:TDEQUANT 06C:TSORT 06D:TMRGSORT
 06E:TTRANS 06F:TGATHER 070:TSCATTER 071:TPARTADD 072:TPARTMUL 073:TPARTMAX 074:TPARTMIN
 """.split()
+}
+
+VEC_V0580_OPERATIONS = {
+    "TABS",
+    "TADD",
+    "TADDS",
+    "TAND",
+    "TANDS",
+    "TCMP",
+    "TCMPS",
+    "TCVT",
+    "TDIV",
+    "TDIVS",
+    "TEXPANDS",
+    "TFMA",
+    "TMAX",
+    "TMAXS",
+    "TMIN",
+    "TMINS",
+    "TMUL",
+    "TMULS",
+    "TNEG",
+    "TNOT",
+    "TOR",
+    "TORS",
+    "TRELU",
+    "TREM",
+    "TREMS",
+    "TSEL",
+    "TSELS",
+    "TSHL",
+    "TSHLS",
+    "TSHR",
+    "TSHRS",
+    "TSUB",
+    "TSUBS",
+    "TXOR",
+    "TXORS",
 }
 TILE_DATR_FIELD_ORDER = (
     "CMode",
@@ -560,10 +609,10 @@ TILE_DATR_FIELD_ORDER = (
 )
 TILE_DATR_APPLICABILITY = {
     "CMode": {"TCMP", "TCMPS"},
-    "PadValueOrByteId": {"TFILLPAD"},
+    "PadValueOrByteId": {"TFILLPAD", "THISTOGRAM", "MGATHER_MASK"},
     "Sat": {"TCVT", "TQUANT", "TDEQUANT"},
     "Canonicalize": {"TCVT", "TQUANT", "TDEQUANT"},
-    "DataType": {"TCVT", "TQUANT", "TDEQUANT"},
+    "DataType": {"TCVT", "TQUANT", "TDEQUANT", "THISTOGRAM"},
     "RMode": {"TCVT", "TQUANT", "TDEQUANT"},
     "Layout": {
         "TLOAD",
@@ -571,6 +620,9 @@ TILE_DATR_APPLICABILITY = {
         "TMOV",
         "MGATHER",
         "MSCATTER",
+        "MGATHER_MASK",
+        "MSCATTER_MASK",
+        "MGATHER_CAS",
         "GMOV",
         "TCVT",
         "TQUANT",
@@ -586,8 +638,8 @@ TILE_DATR_APPLICABILITY = {
     },
 }
 TILE_DATR_PAD_UNIONS = {
-    "pad-value": {"TFILLPAD"},
-    "histogram-byte-id": set(),
+    "pad-value": {"TFILLPAD", "MGATHER_MASK"},
+    "histogram-byte-id": {"THISTOGRAM"},
 }
 
 
@@ -1146,12 +1198,12 @@ def validate_bundle_tile_bridge(evidence: dict, operations: list[dict]) -> None:
     require(
         expected["counts"]
         == {
-            "TEPL": {"total": 87, "representable": 56, "commit_rejected": 31},
-            "TMA": {"total": 7, "representable": 1, "commit_rejected": 6},
+            "TEPL": {"total": 87, "representable": 71, "commit_rejected": 16},
+            "TLSU": {"total": 10, "representable": 7, "commit_rejected": 3},
             "CUBE": {"total": 12, "representable": 2, "commit_rejected": 10},
         }
-        and sum(row["representable"] for row in expected["counts"].values()) == 59
-        and sum(row["commit_rejected"] for row in expected["counts"].values()) == 47,
+        and sum(row["representable"] for row in expected["counts"].values()) == 80
+        and sum(row["commit_rejected"] for row in expected["counts"].values()) == 29,
         "derived bundle-to-tile bridge partition drift",
     )
     require(
@@ -1214,7 +1266,7 @@ def main() -> int:
     )
     scalar_sys_totality = load("spec/evidence/scalar-sys-totality.json")
     tepl_totality = load("spec/evidence/tepl-totality.json")
-    tma_totality = load("spec/evidence/tma-totality.json")
+    tlsu_totality = load("spec/evidence/tlsu-totality.json")
     cube_totality = load("spec/evidence/cube-totality.json")
     bundle_command_totality = load("spec/evidence/bundle-command-totality.json")
     executable_model_comparison = load("spec/evidence/executable-model-comparison.json")
@@ -1525,7 +1577,7 @@ def main() -> int:
         "status record scalar count drift",
     )
     require(
-        specification["architecture"]["command_forms"] == 96,
+        specification["architecture"]["command_forms"] == 99,
         "status record command count drift",
     )
     require(
@@ -3181,23 +3233,35 @@ def main() -> int:
             witness in rounding_profile_test_body,
             f"numeric rounding halfway witness missing: {witness}",
         )
+    exact_format_names = [
+        "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8",
+        "E4M3", "E5M2", "E3M2", "E2M3", "E2M1X2", "E1M2X2",
+        "E8M0", "HiF4X2",
+    ]
     expected_format_sources = [
         "spec/evidence/numeric-profile-decision-inputs.json",
         "spec/evidence/scalar-fsu-totality.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "spec/evidence/executable-model-comparison.json",
         "spec/hardware-conformance-profile.json",
         "spec/catalog/command-forms.json",
         "asl/types.asl",
         "asl/numeric/formats.asl",
+        *[f"asl/numeric/formats/{name.lower()}.asl" for name in exact_format_names],
+        "docs/numeric/formats/index.md",
+        *[f"docs/numeric/formats/{name.lower()}.md" for name in exact_format_names],
+        "tests/asl/numeric/formats/common.asl",
+        *[f"tests/asl/numeric/formats/{name.lower()}.asl" for name in exact_format_names],
+        "tests/asl/shards/numeric-formats.asl",
         "asl/scalar/floating.asl",
         "asl/tile/state.asl",
         "asl/tile/memory.asl",
         "asl/bundle/dispatch.asl",
         "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
-        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+        "docs/architecture-decisions/0033-tlsu-four-bit-memory-packing.md",
         "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
         "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+        "docs/architecture-decisions/0057-exact-numeric-format-decomposition.md",
     ]
     require(
         set(numeric_format_namespaces)
@@ -3209,6 +3273,9 @@ def main() -> int:
             "classification_checkpoint_id",
             "decision_id",
             "four_bit_packing",
+            "exact_decomposition",
+            "exact_decomposition_acceptance_record",
+            "exact_decomposition_checkpoint_id",
             "independent_comparison",
             "open_residuals",
             "policy",
@@ -3223,7 +3290,7 @@ def main() -> int:
             "target",
             "tests",
             "tile_data_types",
-            "tma_talloc_data_type",
+            "tlsu_data_type",
             "value_classification",
         }
         and numeric_format_namespaces["schema_version"] == 1
@@ -3231,13 +3298,17 @@ def main() -> int:
         and numeric_format_namespaces["decision_id"] == "PD-02"
         and numeric_format_namespaces["checkpoint_id"] == "PD-02-SC1"
         and numeric_format_namespaces["status"]
-        == "namespace-carrier-and-value-classification-closed-operation-rules-open"
+        == "namespace-carrier-classification-and-exact-decomposition-closed-operation-rules-open"
         and numeric_format_namespaces["acceptance_record"]
         == "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md"
         and numeric_format_namespaces["classification_checkpoint_id"]
         == "PD-02-SC2:PD-05-SC1"
         and numeric_format_namespaces["classification_acceptance_record"]
         == "docs/architecture-decisions/0048-numeric-format-value-classification.md"
+        and numeric_format_namespaces["exact_decomposition_checkpoint_id"]
+        == "PD-02-SC3"
+        and numeric_format_namespaces["exact_decomposition_acceptance_record"]
+        == "docs/architecture-decisions/0057-exact-numeric-format-decomposition.md"
         and (ROOT / numeric_format_namespaces["acceptance_record"]).is_file(),
         "numeric format namespace identity or schema drift",
     )
@@ -3289,7 +3360,7 @@ def main() -> int:
                 row["name"],
                 row["storage_bits"],
                 row["raw_class"],
-                row["tma_talloc_code"],
+                row["tlsu_data_type_code"],
                 row["bundle_code"],
                 row["numeric_semantics_status"],
             )
@@ -3429,6 +3500,107 @@ def main() -> int:
         ),
         "numeric value-classification format contract drift",
     )
+    exact_decomposition = numeric_format_namespaces["exact_decomposition"]
+    expected_exact_layouts = {
+        "FP64": (64, 64, 1, 1, 63, 11, 11, 52, 52, 1023, 0, 0, "fixed-binary"),
+        "FP32": (32, 32, 1, 1, 31, 8, 8, 23, 23, 127, 0, 0, "fixed-binary"),
+        "TF32": (32, 32, 1, 1, 31, 8, 8, 10, 10, 127, 13, 0, "fixed-binary"),
+        "HF32": (32, 32, 1, 1, 31, 8, 8, 11, 11, 127, 12, 0, "fixed-binary"),
+        "FP16": (16, 16, 1, 1, 15, 5, 5, 10, 10, 15, 0, 0, "fixed-binary"),
+        "BF16": (16, 16, 1, 1, 15, 8, 8, 7, 7, 127, 0, 0, "fixed-binary"),
+        "HiF8": (8, 8, 1, 1, 7, 0, 4, 1, 3, None, 0, 0, "hif8-dynamic"),
+        "E4M3": (8, 8, 1, 1, 7, 4, 4, 3, 3, 7, 0, 0, "fixed-binary"),
+        "E5M2": (8, 8, 1, 1, 7, 5, 5, 2, 2, 15, 0, 0, "fixed-binary"),
+        "E3M2": (8, 6, 1, 1, 5, 3, 3, 2, 2, 3, 0, 2, "fixed-binary"),
+        "E2M3": (8, 6, 1, 1, 5, 2, 2, 3, 3, 1, 0, 2, "fixed-binary"),
+        "E2M1X2": (8, 4, 2, 1, 3, 2, 2, 1, 1, 1, 0, 0, "fixed-binary"),
+        "E1M2X2": (8, 4, 2, 1, 3, 1, 1, 2, 2, 1, 0, 0, "fixed-binary"),
+        "E8M0": (8, 8, 1, 0, 0, 8, 8, 0, 0, 127, 0, 0, "e8m0-scale"),
+        "HiF4X2": (8, 4, 2, 1, 3, 1, 1, 2, 2, 1, 0, 0, "fixed-binary"),
+    }
+    exact_rows = exact_decomposition["formats"]
+    require(
+        set(exact_decomposition)
+        == {
+            "acceptance_record", "checkpoint_id", "descriptor",
+            "descriptor_type", "finite_decoder", "format_count", "formats",
+            "representation", "scale_block_elements", "status",
+        }
+        and exact_decomposition["checkpoint_id"] == "PD-02-SC3"
+        and exact_decomposition["acceptance_record"]
+        == "docs/architecture-decisions/0057-exact-numeric-format-decomposition.md"
+        and exact_decomposition["descriptor_type"] == "NumericFormatDescriptor"
+        and exact_decomposition["descriptor"] == "TileNumericFormatDescriptor"
+        and exact_decomposition["finite_decoder"] == "TileNumericFiniteDecomposition"
+        and exact_decomposition["representation"]
+        == "(-1)^negative * UInt(significand) * 2^exponent"
+        and exact_decomposition["format_count"] == 15
+        and exact_decomposition["scale_block_elements"] == 32
+        and exact_decomposition["status"] == "closed"
+        and [row["name"] for row in exact_rows] == exact_format_names,
+        "numeric exact-decomposition schema or identity drift",
+    )
+    numeric_format_shard_body = (
+        ROOT / "tests/asl/shards/numeric-formats.asl"
+    ).read_text(encoding="utf-8")
+    for row in exact_rows:
+        expected = expected_exact_layouts[row["name"]]
+        actual = (
+            row["carrier_bits"], row["lane_bits"], row["lanes_per_carrier"],
+            row["sign_bits"], row["sign_bit"], row["exponent_bits_min"],
+            row["exponent_bits_max"], row["fraction_bits_min"],
+            row["fraction_bits_max"], row["exponent_bias"],
+            row["required_low_zero_bits"], row["required_high_zero_bits"],
+            row["kind"],
+        )
+        stem = row["name"].lower()
+        asl_body = (ROOT / row["asl_path"]).read_text(encoding="utf-8")
+        test_body = (ROOT / row["test_path"]).read_text(encoding="utf-8")
+        test_function = f"Test{row['name']}NumericFormat"
+        require(
+            actual == expected
+            and row["exponent_bias_available"] == (expected[9] is not None)
+            and row["asl_enumerator"] == f"TileDataType_{row['name']}"
+            and row["descriptor_function"]
+            == f"{row['name']}NumericFormatDescriptor"
+            and row["finite_decoder"] == f"{row['name']}FiniteDecomposition"
+            and row["classifier_function"] == f"Classify{row['name']}"
+            and row["encoding_validity_function"]
+            == (f"{row['name']}EncodingValid"
+                if row["name"] in internal_encoding_constraints else None)
+            and row["canonical_nan_function"]
+            == (f"{row['name']}CanonicalNaN"
+                if row["name"] in nan_capable_types else None)
+            and row["signed_zero_function"]
+            == (f"{row['name']}SignedZeroEncodings"
+                if row["name"] in signed_zero_types else None)
+            and row["asl_path"] == f"asl/numeric/formats/{stem}.asl"
+            and row["documentation_path"] == f"docs/numeric/formats/{stem}.md"
+            and row["test_path"] == f"tests/asl/numeric/formats/{stem}.asl"
+            and all((ROOT / row[key]).is_file()
+                    for key in ("asl_path", "documentation_path", "test_path")),
+            f"numeric exact-decomposition format drift for {row['name']}",
+        )
+        require(
+            f"pure func {row['descriptor_function']}" in asl_body
+            and f"pure func {row['finite_decoder']}" in asl_body
+            and f"pure func {row['classifier_function']}" in asl_body
+            and (
+                row["encoding_validity_function"] is None
+                or f"pure func {row['encoding_validity_function']}" in asl_body
+            )
+            and (
+                row["canonical_nan_function"] is None
+                or f"pure func {row['canonical_nan_function']}" in asl_body
+            )
+            and (
+                row["signed_zero_function"] is None
+                or f"pure func {row['signed_zero_function']}" in asl_body
+            )
+            and f"func {test_function}" in test_body
+            and f"{test_function}();" in numeric_format_shard_body,
+            f"numeric exact-decomposition executable witness missing for {row['name']}",
+        )
     format_codes = scalar_fsu_totality["format_code_contract"]
     expected_source_codes = {row["code"]: row for row in format_codes["source_codes"]}
     require(
@@ -3494,10 +3666,10 @@ def main() -> int:
             ),
             f"numeric scalar destination namespace drift: {namespace}",
         )
-    expected_tma_mapping = {
-        row["tma_talloc_code"]: row["name"]
+    expected_tlsu_mapping = {
+        row["tlsu_data_type_code"]: row["name"]
         for row in tile_type_rows
-        if row["tma_talloc_code"] is not None
+        if row["tlsu_data_type_code"] is not None
     }
     expected_bundle_mapping = {
         row["bundle_code"]: row["name"]
@@ -3505,7 +3677,7 @@ def main() -> int:
         if row["bundle_code"] is not None
     }
     for key, namespace, width, mapping in (
-        ("tma_talloc_data_type", "tma-talloc-data-type", 6, expected_tma_mapping),
+        ("tlsu_data_type", "tlsu-data-type", 6, expected_tlsu_mapping),
         ("bundle_data_type", "bundle-data-type", 5, expected_bundle_mapping),
     ):
         rows = numeric_format_namespaces[key]
@@ -3522,7 +3694,7 @@ def main() -> int:
             f"numeric tile data-type namespace drift: {namespace}",
         )
     require(
-        expected_tma_mapping == expected_bundle_mapping
+        expected_tlsu_mapping == expected_bundle_mapping
         and expected_bundle_mapping[13] == "E8M0"
         and expected_bundle_mapping[11] == "E2M1X2"
         and numeric_format_namespaces["four_bit_packing"]
@@ -3569,8 +3741,8 @@ def main() -> int:
             "scalar_floating_destination_reserved_count": 17,
             "scalar_integer_destination_mapped_count": 15,
             "scalar_integer_destination_reserved_count": 17,
-            "tma_talloc_mapped_count": 25,
-            "tma_talloc_reserved_count": 39,
+            "tlsu_data_type_mapped_count": 25,
+            "tlsu_data_type_reserved_count": 39,
             "bundle_mapped_count": 25,
             "bundle_reserved_count": 7,
             "four_bit_type_count": 5,
@@ -3581,6 +3753,7 @@ def main() -> int:
             "subnormal_capable_type_count": 11,
             "signed_zero_type_count": 13,
             "internally_constrained_type_count": 4,
+            "exact_decomposition_format_count": 15,
             "open_residual_count": 8,
             "pd02_complete": False,
         },
@@ -3592,8 +3765,13 @@ def main() -> int:
             "tests/asl/state-tests.asl",
             "tests/asl/scalar-tests.asl",
             "tests/asl/bundle-tests.asl",
-            "tests/asl/tma-totality-tests.asl",
+            "tests/asl/tlsu-totality-tests.asl",
             "tests/asl/profile-tests.asl",
+            "tests/asl/numeric/formats/common.asl",
+            *[
+                f"tests/asl/numeric/formats/{name.lower()}.asl"
+                for name in exact_format_names
+            ],
         )
     )
     for witness in (
@@ -3609,6 +3787,9 @@ def main() -> int:
         "NumericValue_SignalingNaN",
         "!TileNumericEncodingValid(TileDataType_TF32",
         "TileNumericCanonicalNaN(TileDataType_E8M0)",
+        "TileNumericFiniteDecomposition(TileDataType_S32",
+        "HiF8DecodeDotField('00000000')",
+        "HardwareNumericScaleBlockElements() == 32",
     ):
         require(
             witness in format_test_bodies,
@@ -4074,7 +4255,7 @@ def main() -> int:
             "tuple_count": 150,
             "bundle_execution_tuple_count": 150,
             "bundle_command_form_count": 6,
-            "accepted_command_form_count": 96,
+            "accepted_command_form_count": 99,
             "result_rule_count": 0,
             "parent_pd01_complete": False,
             "cube_matrix_complete": False,
@@ -4797,21 +4978,21 @@ def main() -> int:
     require(command["isa"] == isa_name, "command catalog has wrong ISA identity")
     require(command["surface"] == "command-and-boundary", "wrong command surface")
     require(
-        command["form_count"] == len(command_forms) == 96,
-        "command form count must be 96",
+        command["form_count"] == len(command_forms) == 99,
+        "command form count must be 99",
     )
-    require(command["form_constraint_count"] == 37, "command constraint count drift")
-    require(command["operand_field_count"] == 56, "command operand-field count drift")
-    require(command["operand_piece_count"] == 186, "command operand-piece count drift")
+    require(command["form_constraint_count"] == 44, "command constraint count drift")
+    require(command["operand_field_count"] == 57, "command operand-field count drift")
+    require(command["operand_piece_count"] == 190, "command operand-piece count drift")
     require(command["semantic_handler_count"] == 21, "command handler count drift")
     require(
         Counter(row["semantic_family"] for row in command_forms)
-        == Counter({"CMD": 71, "BBD": 25}),
+        == Counter({"CMD": 74, "BBD": 25}),
         "command family counts changed",
     )
     require(
         Counter(row["length_bits"] for row in command_forms)
-        == Counter({16: 10, 32: 64, 48: 13, 64: 9}),
+        == Counter({16: 9, 32: 68, 48: 13, 64: 9}),
         "command length distribution changed",
     )
     command_ids = [row["form_id"] for row in command_forms]
@@ -4836,6 +5017,12 @@ def main() -> int:
         }
         if "encoding_variants" in row:
             expected_command_keys.add("encoding_variants")
+        if row["form_id"] == "bstart_tepl_32_d022db6dacb3":
+            expected_command_keys |= {
+                "accepted_assembly_mnemonics",
+                "canonical_assembly_by_engine",
+                "carrier_mnemonic",
+            }
         require(
             set(row) == expected_command_keys,
             f"command form schema drift for {row.get('form_id', '<unknown>')}",
@@ -4850,6 +5037,15 @@ def main() -> int:
         require(
             row["semantic_summary"].strip(), f"missing command summary {row['form_id']}"
         )
+        if row["form_id"] == "bstart_tepl_32_d022db6dacb3":
+            require(
+                row["carrier_mnemonic"] == "BSTART.TEPL"
+                and row["accepted_assembly_mnemonics"]
+                == ["BSTART.TEPL", "BSTART.VEC", "BSTART.SFU"]
+                and row["canonical_assembly_by_engine"]
+                == {"VEC": "BSTART.VEC", "SFU": "BSTART.SFU"},
+                "BSTART.TEPL carrier alias contract drift",
+            )
         covered_encoding_bits: set[int] = set()
         for part in row["encoding"]:
             require(
@@ -4882,11 +5078,10 @@ def main() -> int:
                 match & ~mask == 0, f"command match sets unmasked bits {row['form_id']}"
             )
         variants = row.get("encoding_variants", [])
-        if variants:
-            require(
-                row["mnemonic"] in {"BSTART.TMOV", "BSTART.TSTORE"},
-                f"encoding variants are not authorized for {row['form_id']}",
-            )
+        require(
+            not variants,
+            f"PTO command forms must not claim Linx-only encoding variants: {row['form_id']}",
+        )
         variant_names: set[str] = set()
         variant_functions: set[int] = set()
         for variant in variants:
@@ -5075,32 +5270,14 @@ def main() -> int:
                     f"{accepted['form_id']} overlaps {reservation['mnemonic']}",
                 )
 
-    command_variant_contract = {
-        "BSTART.TMOV": {
-            "TMOV.L2S.INSERT": (8, 0x00811181),
-            "TMOV.L2S.PUBLISH": (9, 0x00911181),
-            "TMOV.S2L.BROADCAST": (10, 0x00A11181),
-            "TMOV.S2L.EXTRACT": (11, 0x00B11181),
-        },
-        "BSTART.TSTORE": {"TSTORE.SPART": (12, 0x00C11181)},
-    }
-    for mnemonic, expected_variants in command_variant_contract.items():
-        row = next(item for item in command_forms if item["mnemonic"] == mnemonic)
-        actual_variants = {
-            variant["name"]: (
-                variant["function"],
-                aggregate_encoding_parts(variant["encoding"])[1],
-            )
-            for variant in row.get("encoding_variants", [])
-        }
-        require(
-            actual_variants == expected_variants
-            and all(
-                aggregate_encoding_parts(variant["encoding"])[0] == 0x07FFFFFF
-                for variant in row["encoding_variants"]
-            ),
-            f"PTO ISA 0.58.0 {mnemonic} encoding variant contract drift",
-        )
+    require(
+        all(
+            not row.get("encoding_variants")
+            for row in command_forms
+            if row["mnemonic"] in {"BSTART.TMOV", "BSTART.TSTORE"}
+        ),
+        "PTO must reserve rather than expose Linx-only TLSU variants",
+    )
 
     tepl_command = next(
         row for row in command_forms if row["mnemonic"] == "BSTART.TEPL"
@@ -5204,17 +5381,99 @@ def main() -> int:
     require(tile["schema_version"] == 3, "unsupported tile catalog schema")
     require(tile["isa"] == isa_name, "tile catalog has wrong ISA identity")
     require(
-        tile["operation_count"] == len(operations) == 106,
-        "tile operation count must be 106",
+        tile["operation_count"] == len(operations) == 109,
+        "tile operation count must be 109",
     )
     require(
-        len({row["name"] for row in operations}) == 106,
+        len({row["name"] for row in operations}) == 109,
         "tile operation names must be unique",
     )
+    operations_by_name = {row["name"]: row for row in operations}
+    for name, expected_roles in {
+        "TLOAD": {
+            "destination0": "destination",
+            "address": "base-address",
+            "scalar0": "row-stride-bytes",
+        },
+        "TSTORE": {
+            "address": "base-address",
+            "scalar0": "row-stride-bytes",
+            "source0": "source",
+        },
+        "MGATHER": {
+            "destination0": "destination",
+            "address": "base-address",
+            "source0": "byte-displacement-indices",
+        },
+        "MSCATTER": {
+            "address": "base-address",
+            "source0": "source",
+            "source1": "byte-displacement-indices",
+        },
+        "MGATHER_MASK": {
+            "destination0": "destination",
+            "address": "base-address",
+            "source0": "byte-displacement-indices",
+            "source1": "mask",
+        },
+        "MSCATTER_MASK": {
+            "address": "base-address",
+            "source0": "source",
+            "source1": "byte-displacement-indices",
+            "source2": "mask",
+        },
+        "MGATHER_CAS": {
+            "destination0": "destination",
+            "address": "base-address",
+            "source0": "byte-displacement-indices",
+            "source1": "expected",
+            "source2": "replacement",
+        },
+    }.items():
+        row = operations_by_name[name]
+        actual_roles = {
+            operand["field"]: operand["role"] for operand in row["operands"]
+        }
+        require(
+            actual_roles == expected_roles,
+            f"{name} GM byte-address operand-role contract drift",
+        )
     require(
         Counter(row["family"] for row in operations)
-        == Counter({"TEPL": 87, "TMA": 7, "CUBE": 12}),
-        "tile family counts changed",
+        == Counter({"TEPL": 87, "TLSU": 10, "CUBE": 12}),
+        "tile encoding-family counts changed",
+    )
+    require(
+        Counter(row["engine"] for row in operations)
+        == Counter({"VEC": 35, "SFU": 52, "TLSU": 10, "CUBE": 12}),
+        "tile execution-engine counts changed",
+    )
+    require(
+        {row["name"] for row in operations if row["engine"] == "VEC"}
+        == VEC_V0580_OPERATIONS
+        and all(
+            row["engine"] in {"VEC", "SFU"}
+            for row in operations
+            if row["family"] == "TEPL"
+        )
+        and all(
+            row["engine"] == row["family"]
+            for row in operations
+            if row["family"] in {"TLSU", "CUBE"}
+        ),
+        "TEPL carrier to VEC/SFU execution-engine classification drift",
+    )
+    require(
+        all(
+            row["classification"]
+            in {
+                "elementwise-tile-tile",
+                "tile-scalar-and-immediate",
+            }
+            for row in operations
+            if row["engine"] == "VEC"
+        ),
+        "VEC must remain element-wise only",
     )
     validate_bundle_tile_bridge(bundle_command_totality, operations)
 
@@ -5246,7 +5505,7 @@ def main() -> int:
         "bundle-to-tile bridge aggregate or row-membership canary failed open",
     )
     require(
-        len(tile["deleted_names"]) == len(set(tile["deleted_names"])) == 24
+        len(tile["deleted_names"]) == len(set(tile["deleted_names"])) == 21
         and len(tile["rejected_names"]) == len(set(tile["rejected_names"]))
         and set(tile["deleted_names"]).isdisjoint(tile["rejected_names"])
         and (set(tile["deleted_names"]) | set(tile["rejected_names"])).isdisjoint(
@@ -5254,10 +5513,10 @@ def main() -> int:
         ),
         "deleted/rejected tile identity partition drift",
     )
-    tma_rows = [row for row in operations if row["family"] == "TMA"]
-    expected_tma_selectors = {str(row["function"]): row["name"] for row in tma_rows}
+    tlsu_rows = [row for row in operations if row["family"] == "TLSU"]
+    expected_tlsu_selectors = {str(row["function"]): row["name"] for row in tlsu_rows}
     require(
-        set(tma_totality)
+        set(tlsu_totality)
         == {
             "architecture_contract",
             "covered_selectors",
@@ -5273,40 +5532,44 @@ def main() -> int:
             "test_scenarios",
             "validation",
         }
-        and tma_totality["schema_version"] == 1
-        and tma_totality["target"] == "S4-T9"
-        and tma_totality["status"] == "closed"
-        and tma_totality["covered_selectors"] == expected_tma_selectors
-        and tma_totality["decoded_selector_case_count"] == len(tma_rows) == 7
-        and tma_totality["scenario_count"] == len(tma_totality["test_scenarios"]) == 10,
-        "TMA totality inventory or scenario evidence drift",
+        and tlsu_totality["schema_version"] == 1
+        and tlsu_totality["target"] == "S4-T9"
+        and tlsu_totality["status"] == "closed"
+        and tlsu_totality["covered_selectors"] == expected_tlsu_selectors
+        and tlsu_totality["decoded_selector_case_count"] == len(tlsu_rows) == 10
+        and tlsu_totality["scenario_count"] == len(tlsu_totality["test_scenarios"]) == 14,
+        "TLSU totality inventory or scenario evidence drift",
     )
     require(
-        set(tma_totality["architecture_contract"])
+        set(tlsu_totality["architecture_contract"])
         == {
+            "cas_operation",
             "events",
             "four_bit_packing",
             "gmov",
             "indexed_operations",
+            "indexed_packed_transfer",
+            "masked_operations",
             "preflight",
+            "regular_gm_addressing",
         }
-        and tma_totality["requirement_ids"]
+        and tlsu_totality["requirement_ids"]
         == [
-            "PTO-REQ-TMA-001",
+            "PTO-REQ-TLSU-001",
             "PTO-REQ-MEMORY-COMPLETION-001",
             "PTO-REQ-MEMORY-TSO-001",
         ],
-        "TMA architecture or requirement contract drift",
+        "TLSU architecture or requirement contract drift",
     )
-    tma_test_body = (ROOT / "tests/asl/tma-totality-tests.asl").read_text(
+    tlsu_test_body = (ROOT / "tests/asl/tlsu-totality-tests.asl").read_text(
         encoding="utf-8"
     )
     require(
-        "func TestTmaDecodedSelectorClosure()" in tma_test_body
-        and "func TestTmaTotality()" in tma_test_body
-        and tma_test_body.count("TileDecode_TMA, Zeros{12} +") == 6
-        and "TileDecode_TMA, Zeros{12}, operands" in tma_test_body,
-        "TMA decoded selector matrix is not executable or complete",
+        "func TestTlsuDecodedSelectorClosure()" in tlsu_test_body
+        and "func TestTlsuTotality()" in tlsu_test_body
+        and tlsu_test_body.count("TileDecode_TLSU, Zeros{12} +") == 9
+        and "TileDecode_TLSU, Zeros{12}, operands" in tlsu_test_body,
+        "TLSU decoded selector matrix is not executable or complete",
     )
     cube_rows = [row for row in operations if row["family"] == "CUBE"]
     expected_cube_functions = {str(row["function"]): row["name"] for row in cube_rows}
@@ -5399,21 +5662,19 @@ def main() -> int:
         and executable_model_comparison["target"] == "S5-T3"
         and executable_model_comparison["status"]
         == "comparison-matrix-closed-clean-gates-passed:S5-T3"
-        and len(comparison_rows) == len(comparison_stable_ids) == 676
-        and len(set(comparison_stable_ids)) == 676
+        and len(comparison_rows) == len(comparison_stable_ids) == 682
+        and len(set(comparison_stable_ids)) == 682
         and set(comparison_stable_ids) == expected_comparison_stable_ids
         and comparison_classifications
         == Counter(
             {
-                "comparable-match": 556,
-                "comparable-divergence": 1,
-                "divergence": 84,
-                "intentional-extension": 3,
-                "non-comparable": 32,
+                "comparable-match": 648,
+                "divergence": 11,
+                "non-comparable": 23,
             }
         )
         and comparison_surfaces
-        == Counter({"scalar": 474, "command": 96, "direct-tile": 106})
+        == Counter({"scalar": 474, "command": 99, "direct-tile": 109})
         and all(
             row["requirements"]
             and set(row["requirements"]) <= comparison_requirement_ids
@@ -5455,13 +5716,12 @@ def main() -> int:
         and executable_model_comparison["closure_judgment"]["remaining_blockers"] == []
         and {row["id"] for row in executable_model_comparison["model_limits"]}
         == {
-            "accepted-0.58.0-abi-break",
             "bundle-bridge-operand-boundary",
             "no-independent-tile-payload-execution",
             "predicate-p0-p7-difference",
             "reg5-flat-model-mismatch",
             "tepl-selector-boundary",
-            "tma-and-cube-manifest-boundary",
+            "tlsu-and-cube-manifest-boundary",
         },
         "executable-model comparison snapshot, gate, or model-limit drift",
     )
@@ -5561,7 +5821,7 @@ def main() -> int:
             "acceptance-complete",
             "alternative-evidence",
         ]
-        and len(oracle_rows) == len(oracle_projection) == 32
+        and len(oracle_rows) == len(oracle_projection) == 23
         and oracle_projection == expected_noncomparable_projection
         and all(
             set(row) == oracle_row_keys
@@ -5586,8 +5846,8 @@ def main() -> int:
         )
         and noncomparable_oracle_coverage["source_comparison"]
         == {
-            "noncomparable_row_count": 32,
-            "row_count": 676,
+            "noncomparable_row_count": 23,
+            "row_count": 682,
             "reviewed_projection_sha256": REVIEWED_NONCOMPARABLE_PROJECTION_SHA256,
             "schema": "pto.executable-model-comparison.v1",
             "stable_identity_sha256": hashlib.sha256(
@@ -5598,36 +5858,36 @@ def main() -> int:
         == REVIEWED_NONCOMPARABLE_PROJECTION_SHA256
         and noncomparable_oracle_coverage["scope"]
         == {
-            "direct_tile_family_counts": {"CUBE": 12, "TMA": 6},
-            "row_count": 32,
-            "surface_counts": {"command": 13, "direct-tile": 18, "scalar": 1},
+            "direct_tile_family_counts": {"CUBE": 12, "TLSU": 10},
+            "row_count": 23,
+            "surface_counts": {"direct-tile": 22, "scalar": 1},
         }
         and noncomparable_oracle_coverage["summary"]
         == {
             "alternative_evidence_count": 0,
             "can_claim_independent_executable_parity": False,
             "independent_executable_parity_count": 0,
-            "oracle_coverage_counts": {"none": 32},
+            "oracle_coverage_counts": {"none": 23},
             "readiness_counts": {
-                "executable-path-absent-fail-closed": 14,
-                "executable-source-path-no-attributable-oracle": 8,
-                "existing-exact-value-test-candidate": 10,
+                "executable-path-absent-fail-closed": 7,
+                "executable-source-path-no-attributable-oracle": 9,
+                "existing-exact-value-test-candidate": 7,
             },
         }
         and noncomparable_oracle_coverage["closure_layers"]
         == {
             "independent_disposition_closure": {
-                "matrix_row_count": 676,
-                "noncomparable_row_count": 32,
+                "matrix_row_count": 682,
+                "noncomparable_row_count": 23,
                 "status": "closed:S5-T3",
             },
             "independent_executable_parity": {
                 "closed_row_count": 0,
-                "required_row_count": 32,
+                "required_row_count": 23,
                 "status": "open",
             },
             "pto_semantic_closure": {
-                "row_count": 32,
+                "row_count": 23,
                 "status": "closed-by-pto-owned-asl-and-stage-4-evidence",
             },
         },
@@ -5660,18 +5920,18 @@ def main() -> int:
         in adr_0032_flat
         and f"The {executed_form_count} executed forms use {len(executed_handlers)} handlers;"
         in adr_0032_flat
-        and f"Of the 106 direct tile operations, {representable_total} use only those fields; the other {rejected_total} require"
+        and f"Of the 109 direct tile operations, {representable_total} use only those fields; the other {rejected_total} require"
         in adr_0032_flat
         and all(
             f"| {family} | {counts['total']} | {counts['representable']} | {counts['commit_rejected']} |"
             in adr_0032_flat
             for family, counts in bridge_counts.items()
         )
-        and f"| **Total** | **106** | **{representable_total}** | **{rejected_total}** |"
+        and f"| **Total** | **109** | **{representable_total}** | **{rejected_total}** |"
         in adr_0032_flat
-        and "S5-T3 disposition closure is closed, while independent executable parity remains open at 0/32."
+        and "S5-T3 disposition closure is closed, while independent executable parity remains open at 0/23."
         in adr_0032_flat
-        and f"The bundle bridge can represent {bridge_counts['TEPL']['representable']} TEPL, {bridge_counts['TMA']['representable']} TMA, and {bridge_counts['CUBE']['representable']} CUBE direct operations;"
+        and f"The bundle bridge can represent {bridge_counts['TEPL']['representable']} TEPL, {bridge_counts['TLSU']['representable']} TLSU, and {bridge_counts['CUBE']['representable']} CUBE direct operations;"
         in adr_0036_flat,
         "ADR 0032/0036 generated command-handler or bundle-bridge projections drift",
     )
@@ -5684,24 +5944,24 @@ def main() -> int:
     require(
         bundle_command_totality["independent_comparison"]["matched_form_ids"]
         == len(command_comparison_rows)
-        == 96
+        == 99
         and bundle_command_totality["independent_comparison"]["exact_encoding_matches"]
         == sum(row["encoding_match"] for row in command_comparison_rows)
-        == 88
+        == 99
         and bundle_command_totality["independent_comparison"][
             "accepted_abi_encoding_divergences"
         ]
         == sum(
             row["abi_change_acceptance"] is not None for row in command_comparison_rows
         )
-        == 7
+        == 0
         and bundle_command_totality["independent_comparison"]["executable_subset"]
         == command_status_counts["executable-subset"]
-        == 82
+        == 99
         and bundle_command_totality["independent_comparison"]["decode_only"]
         == command_status_counts["decode-only"]
-        == 13,
-        "bundle independent-comparison counts must derive from the current 96-row matrix",
+        == 0,
+        "bundle independent-comparison counts must derive from the current 99-row matrix",
     )
     cube_test_body = (ROOT / "tests/asl/cube-totality-tests.asl").read_text(
         encoding="utf-8"
@@ -5714,7 +5974,7 @@ def main() -> int:
         and "func TestCubeTotality()" in cube_test_body,
         "CUBE totality test matrix is not executable or complete",
     )
-    for family in ("TEPL", "TMA", "CUBE"):
+    for family in ("TEPL", "TLSU", "CUBE"):
         rows = [row for row in operations if row["family"] == family]
         key = "selector" if family == "TEPL" else "function"
         values = [row[key] for row in rows]
@@ -5726,10 +5986,12 @@ def main() -> int:
                 "datr_contract",
                 "disposition",
                 "effect_contract",
+                "engine",
                 "family",
                 "fault_contract",
                 "legality_handler",
                 "name",
+                "classification",
                 key,
                 "restart_contract",
                 "semantic_handler",
@@ -5922,8 +6184,8 @@ def main() -> int:
         row["command_mnemonic"] for row in operations if row["family"] != "TEPL"
     ]
     require(
-        len(named_tile_commands) == len(set(named_tile_commands)) == 19,
-        "TMA/CUBE command mappings must be unique",
+        len(named_tile_commands) == len(set(named_tile_commands)) == 22,
+        "TLSU/CUBE command mappings must be unique",
     )
     command_mnemonics = Counter(row["mnemonic"] for row in command_forms)
     require(
@@ -5945,7 +6207,7 @@ def main() -> int:
             for row in command_forms
             if row["mnemonic"] == operation["command_mnemonic"]
         )
-        base = 0x00011181 if operation["family"] == "TMA" else 0x00031181
+        base = 0x00011181 if operation["family"] == "TLSU" else 0x00031181
         require(
             aggregate_encoding(command_form)
             == (0x07FFFFFF, (operation["function"] << 20) | base)
@@ -5986,13 +6248,19 @@ def main() -> int:
         ),
         "rounding and saturation control must bind exactly three numeric operations",
     )
-    sort_row = next(row for row in operations if row["name"] == "TSORT32")
+    sort_row = next(row for row in operations if row["name"] == "TSORT")
     require(
         [operand["field"] for operand in sort_row["operands"]]
-        == ["destination0", "destination1", "source0", "flag0"]
-        and sort_row["arguments"][:2]
-        == [{"operand": "destination0"}, {"operand": "destination1"}],
-        "TSORT32 value/index destination contract drift",
+        == ["destination0", "destination1", "source0", "sort_width", "flag0"]
+        and sort_row["arguments"]
+        == [
+            {"operand": "destination0"},
+            {"operand": "destination1"},
+            {"operand": "source0"},
+            {"operand": "sort_width"},
+            {"operand": "flag0"},
+        ],
+        "TSORT value/index destination contract drift",
     )
     tepl_accepted = {
         int(row["selector"], 0) if isinstance(row["selector"], str) else row["selector"]
@@ -6015,7 +6283,7 @@ def main() -> int:
         "TPRELU": 0x00E,
         "TAXPY": 0x02F,
         "TGATHERB": 0x061,
-        "THISTOGRAM": 0x068,
+        "TRANDOM": 0x069,
         "TPARTARGMAX": 0x075,
         "TPARTARGMIN": 0x076,
         "TRESHAPE": 0x077,
@@ -6035,7 +6303,7 @@ def main() -> int:
     )
     require(
         tepl_review == set()
-        and tile["rejected_review_only_codes"]["TMA"] == []
+        and tile["rejected_review_only_codes"]["TLSU"] == []
         and tile["rejected_review_only_codes"]["CUBE"] == [],
         "PTO ISA 0.58.0 has no review-only executable tile allocation",
     )
@@ -6120,7 +6388,7 @@ def main() -> int:
         == "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
         and tepl_totality["evidence"]["full_reserved_selector_test"]
         == "scripts/generate-asl-decoders:ValidateCanonicalRejectedTileSelectors"
-        and len(tepl_entrypoints) == len(set(tepl_entrypoints)) == 8
+        and len(tepl_entrypoints) == len(set(tepl_entrypoints)) == 9
         and all(f"func {name}()" in tepl_test_body for name in tepl_entrypoints)
         and "TestTeplTotality();"
         in (ROOT / "tests/asl/main.asl").read_text(encoding="utf-8")
@@ -6129,30 +6397,30 @@ def main() -> int:
         "TEPL totality evidence is not executable or integrated",
     )
 
-    tma_accepted = {row["function"] for row in operations if row["family"] == "TMA"}
-    tma_variant_functions = {
-        variant["function"]
-        for row in command_forms
-        for variant in row.get("encoding_variants", [])
-    }
+    tlsu_accepted = {row["function"] for row in operations if row["family"] == "TLSU"}
     require(
-        tma_variant_functions == {8, 9, 10, 11, 12},
-        "TMA encoding variant function inventory drift",
+        all("encoding_variants" not in row for row in command_forms),
+        "Linx-only TLSU forms must not become accepted PTO command variants",
     )
-    tma_accepted |= tma_variant_functions
-    tma_review = set(tile["rejected_review_only_codes"]["TMA"])
-    tma_reserved = expand_number_entries(tile["reserved"]["tma_functions"])
+    tlsu_review = set(tile["rejected_review_only_codes"]["TLSU"])
+    tlsu_reserved = expand_number_entries(tile["reserved"]["tlsu_functions"])
     require(
-        tma_accepted | tma_review | tma_reserved == set(range(32)),
-        "TMA function partition is incomplete",
+        tlsu_reserved == set(range(9, 13)) | set(range(14, 32))
+        and 8 in tlsu_accepted
+        and 13 in tlsu_accepted,
+        "PTO must reserve Linx-only TLSU Functions 9..12 and 14..31",
+    )
+    require(
+        tlsu_accepted | tlsu_review | tlsu_reserved == set(range(32)),
+        "TLSU function partition is incomplete",
     )
     require(
         not (
-            tma_accepted & tma_review
-            or tma_accepted & tma_reserved
-            or tma_review & tma_reserved
+            tlsu_accepted & tlsu_review
+            or tlsu_accepted & tlsu_reserved
+            or tlsu_review & tlsu_reserved
         ),
-        "TMA function partitions overlap",
+        "TLSU function partitions overlap",
     )
 
     cube_accepted = {row["function"] for row in operations if row["family"] == "CUBE"}
@@ -7783,8 +8051,8 @@ def main() -> int:
     memory_completion_requirement = next(
         row for row in requirements if row["id"] == "PTO-REQ-MEMORY-COMPLETION-001"
     )
-    tma_requirement = next(
-        row for row in requirements if row["id"] == "PTO-REQ-TMA-001"
+    tlsu_requirement = next(
+        row for row in requirements if row["id"] == "PTO-REQ-TLSU-001"
     )
     bundle_state_requirement = next(
         row for row in requirements if row["id"] == "PTO-REQ-BUNDLE-STATE-001"
@@ -7842,8 +8110,8 @@ def main() -> int:
         and scalar_address_requirement["status"] == "reference-totality-closed:S4-T1"
         and memory_requirement["status"] == "pto-v0-reference-totality-closed:S4-T9"
         and memory_completion_requirement["status"] == "reference-totality-closed:S4-T9"
-        and tma_requirement["status"] == "packed-reference-totality-closed:S4-T9"
-        and "spec/evidence/tma-totality.json" in tma_requirement["model"]
+        and tlsu_requirement["status"] == "packed-reference-totality-closed:S4-T9"
+        and "spec/evidence/tlsu-totality.json" in tlsu_requirement["model"]
         and bundle_state_requirement["status"] == "command-totality-closed:S4-T7"
         and bundle_dispatch_requirement["status"]
         == "decoded-command-totality-closed:S4-T7"
@@ -8257,23 +8525,23 @@ def main() -> int:
 
     tile_reconciliation = reconciliation["tile_operations"]
     require(
-        len(tile_reconciliation) == len(operations) == 106,
-        "public reconciliation must cover all 106 direct tile operations",
+        len(tile_reconciliation) == len(operations) == 109,
+        "public reconciliation must cover all 109 direct tile operations",
     )
     tile_reconciliation_by_name = {row["name"]: row for row in tile_reconciliation}
     require(
-        len(tile_reconciliation_by_name) == 106, "duplicate reconciled tile operation"
+        len(tile_reconciliation_by_name) == 109, "duplicate reconciled tile operation"
     )
     require(
         set(tile_reconciliation_by_name) == {row["name"] for row in operations},
         "reconciled tile operation names drifted from the catalog",
     )
-    public_aligned = set()
+    public_aligned = {"THISTOGRAM"}
     explicit_layer_difference = {
         "TPREFETCH",
         "TDEQUANT",
         "TCONCAT",
-        "TSORT32",
+        "TSORT",
     }
     excluded_public_rows = reconciliation["excluded_public_tile_operations"]
     excluded_by_name = {row["name"]: row for row in excluded_public_rows}
@@ -8285,7 +8553,6 @@ def main() -> int:
             "TDEINTERLEAVE",
             "TFREE",
             "TGATHERB",
-            "THISTOGRAM",
             "TINTERLEAVE",
             "TPARTARGMAX",
             "TPARTARGMIN",
@@ -8334,7 +8601,7 @@ def main() -> int:
             row["selector"] == operation.get("selector"),
             f"tile selector drift for {name}",
         )
-        expected_symbol = "TSORT32" if name == "TSORT32" else name
+        expected_symbol = "TSORT32" if name == "TSORT" else name
         expected_basis = (
             "public-api-aligned"
             if name in public_aligned
@@ -8349,7 +8616,7 @@ def main() -> int:
         )
         expected_symbol_relation = (
             "documented-spelling-mapping"
-            if name == "TSORT32"
+            if name == "TSORT"
             else "catalog-defined"
             if expected_basis == "catalog-defined-direct-binary"
             else "exact-name"
@@ -8383,17 +8650,17 @@ def main() -> int:
     expected_reconciliation_summary = {
         "scalar_forms": {"count": 474, "closed": 474, "open": 0},
         "tile_operations": {
-            "count": 106,
-            "closed": 106,
+            "count": 109,
+            "closed": 109,
             "open": 0,
-            "public_exact_name": 98,
+            "public_exact_name": 99,
             "public_spelling_mapping": 1,
         },
-        "excluded_public_tile_operations": {"count": 12, "closed": 12},
+        "excluded_public_tile_operations": {"count": 11, "closed": 11},
         "closure_basis": {
             "public_source_supported": 95,
-            "catalog_defined_direct_binary": 7,
-            "public_api_aligned": 0,
+            "catalog_defined_direct_binary": 9,
+            "public_api_aligned": 1,
             "explicit_layer_difference": 4,
             "open": 0,
         },
@@ -8629,29 +8896,29 @@ def main() -> int:
     readme_body = (ROOT / "README.md").read_text(encoding="utf-8")
     coverage_body = (ROOT / "docs" / "coverage.md").read_text(encoding="utf-8")
     shared_binding_doc = (
-        ROOT / "docs/instructions/bundle/operands/C.B.IOS.md"
+        ROOT / "docs/instructions/bundle/operands/B.IOS.md"
     ).read_text(encoding="utf-8")
-    shared_mask_doc = (
+    local_binding_doc = (
         ROOT / "docs/instructions/bundle/operands/B.IOT.md"
     ).read_text(encoding="utf-8")
     for spelling in (
-        "C.B.IOS S0",
-        "C.B.IOS S255",
-        "C.B.IOS -> S0",
-        "C.B.IOS -> S255",
+        "S0..S255",
+        "B.IOS S17, mask=1111",
+        "B.IOS mask=0011, ->S17<128B>",
     ):
         require(spelling in shared_binding_doc, f"missing Shared syntax boundary: {spelling}")
     require(
-        "B.IOT mask=PE_MASK, last" in shared_mask_doc
-        and "mask=0000" in shared_mask_doc,
-        "Shared mask-only B.IOT syntax or zero-mask contract is absent",
+        re.search(r"`?B\.IOT`? binds only Local Tile", local_binding_doc) is not None
+        and "There is no mask-only source form" in local_binding_doc
+        and "Shared register identity are all owned by" in local_binding_doc,
+        "Local-only B.IOT or B.IOS ownership contract is absent",
     )
     active_shared_docs = (
         ROOT / "docs/architecture.md",
         ROOT / "docs/davincioo-arch/programming-model.md",
         ROOT / "docs/davincioo-arch/assembly-syntax.md",
         ROOT / "docs/davincioo-arch/state-and-data-types.md",
-        ROOT / "docs/instructions/bundle/operands/C.B.IOS.md",
+        ROOT / "docs/instructions/bundle/operands/B.IOS.md",
         ROOT / "docs/instructions/bundle/operands/B.IOT.md",
         ROOT / "docs/instructions/tile/TLOAD.md",
         ROOT / "docs/instructions/tile/TSTORE.md",
@@ -8891,7 +9158,7 @@ def main() -> int:
             f"{number_words[publication_counts['packed_four_bit_type_count']]} packed four-bit",
         )
     require(
-        "normative draft of the **PTO ISA 0.58.0** contract at\nmaturity M4"
+        "normative draft of the **PTO ISA 0.58.0** contract at\nmaturity **M4**"
         in readme_body
         and "M4 instruction reference semantics closed" in coverage_body
         and "current cumulative floor is\n**M4**" in maturity_plan_body
@@ -8916,9 +9183,9 @@ def main() -> int:
         in targets_by_id["S5-T3"]["evidence"]
         and "noncomparable-oracle-coverage.json" in readme_body
         and "noncomparable-oracle-coverage.json" in coverage_body
-        and "Independent executable parity is tracked separately and remains 0/32."
+        and "Independent executable parity is tracked separately and remains 0/23."
         in maturity_plan_body
-        and "Independent executable parity for the 32 rows is orthogonal and remains 0/32."
+        and "Independent executable parity for the 23 rows is orthogonal and remains 0/23."
         in maturity_index_body
         and "numeric-conformance-readiness.json" in maturity_index_body
         and "numeric-conformance-readiness.json" in readme_body
@@ -8975,9 +9242,9 @@ def main() -> int:
         and "| `S4-T6` | SYS | Closed |" in maturity_index_body
         and "| `S4-T7` | Bundle commands | Closed |" in maturity_index_body
         and "| `S4-T8` | TEPL | Closed |" in maturity_index_body
-        and "| `S4-T9` | TMA | Closed |" in maturity_index_body
+        and "| `S4-T9` | TLSU | Closed |" in maturity_index_body
         and "| `S4-T10` | CUBE | Closed |" in maturity_index_body
-        and "19 scalar forms and\n85 direct-tile operations" in readme_body
+        and "19 scalar forms and 85\ndirect-tile operations" in readme_body
         and "19 scalar and 85\ndirect-tile" in coverage_body,
         "published maturity surfaces must agree on the cumulative M4 floor",
     )
@@ -9108,8 +9375,8 @@ def main() -> int:
     release_inventory_counts = {
         "requirements": 47,
         "scalar_forms": 474,
-        "command_forms": 96,
-        "tile_operations": 106,
+        "command_forms": 99,
+        "tile_operations": 109,
         "system_registers": 72,
         "traps": 13,
         "profile_hooks": 36,
@@ -9225,8 +9492,8 @@ def main() -> int:
         len(release_item_ids)
         == len(set(release_item_ids))
         == release_traceability["summary"]["traceability_item_count"]
-        == 918
-        and release_traceability["summary"]["state_leaf_count"] == 229
+        == 924
+        and release_traceability["summary"]["state_leaf_count"] == 235
         and release_traceability["summary"]["open_requirement_count"] == 11
         and release_traceability["summary"]["open_profile_hook_count"] == 28
         and release_traceability["summary"]["closed_prerequisite_targets"] == 28
@@ -9306,9 +9573,9 @@ def main() -> int:
         and release_summary["gate_count"] == 10
         and release_summary["required_approval_count"] == 0
         and release_summary["required_external_control_count"] == 9
-        and release_summary["shard_count"] == 34
-        and release_summary["canonical_call_count"] == 110
-        and release_summary["reachable_test_subprogram_count"] == 104
+        and release_summary["shard_count"] == 36
+        and release_summary["canonical_call_count"] == 129
+        and release_summary["reachable_test_subprogram_count"] == 126
         and release_summary["open_prerequisite_targets"] == ["S5-T2", "S6-T1"]
         and release_summary["closed_gate_contract_count"] == 10
         and release_summary["candidate_gate_result_count"] == 0
@@ -9697,7 +9964,7 @@ def main() -> int:
             "PTO-REQ-TEPL-COMPLEX-001",
             "S4-T8",
             ("TileProfileOrderLeft", "TileProfileValueIsNaN"),
-            {"TSORT32", "TMRGSORT"},
+            {"TSORT", "TMRGSORT"},
             "direct-tile-operation",
         ),
         "cube-matrix": (
@@ -10827,10 +11094,12 @@ def main() -> int:
                     ROOT / "spec/evidence/numeric-format-namespace-contract.json"
                 ).read_bytes()
             ).hexdigest(),
-            "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
+            "status": "namespace-carrier-classification-and-exact-decomposition-closed-operation-rules-open",
             "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
             "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
             "classification_acceptance_record": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
+            "exact_decomposition_checkpoint_id": "PD-02-SC3",
+            "exact_decomposition_acceptance_record": "docs/architecture-decisions/0057-exact-numeric-format-decomposition.md",
             "tile_data_type_count": 25,
             "tile_storage_width_counts": {
                 "4": 5,
@@ -10845,8 +11114,8 @@ def main() -> int:
             "scalar_floating_destination_reserved_count": 17,
             "scalar_integer_destination_mapped_count": 15,
             "scalar_integer_destination_reserved_count": 17,
-            "tma_talloc_mapped_count": 25,
-            "tma_talloc_reserved_count": 39,
+            "tlsu_data_type_mapped_count": 25,
+            "tlsu_data_type_reserved_count": 39,
             "bundle_mapped_count": 25,
             "bundle_reserved_count": 7,
             "four_bit_type_count": 5,
@@ -10857,6 +11126,7 @@ def main() -> int:
             "subnormal_capable_type_count": 11,
             "signed_zero_type_count": 13,
             "internally_constrained_type_count": 4,
+            "exact_decomposition_format_count": 15,
             "open_residual_count": 8,
             "pd02_complete": False,
         },
@@ -10908,7 +11178,7 @@ def main() -> int:
             "tuple_count": 150,
             "bundle_execution_tuple_count": 150,
             "bundle_command_form_count": 6,
-            "accepted_command_form_count": 96,
+            "accepted_command_form_count": 99,
             "result_rule_count": 0,
             "parent_pd01_complete": False,
             "cube_matrix_complete": False,
@@ -11364,7 +11634,7 @@ def main() -> int:
         "PTO-REQ-SCALAR-FP-001",
         "PTO-REQ-BUNDLE-STATE-001",
         "PTO-REQ-CUBE-001",
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-TILE-LEGALITY-001",
         "PTO-REQ-CLOSURE-001",
     ):
@@ -11868,7 +12138,7 @@ def main() -> int:
         "catalog checks passed: 474 scalar forms, 45 operand fields, 1,867 field pieces, "
         "3 form constraints, no family constraints, "
         "3 constrained overlaps, 72 system-register definitions, 13 trap numbers, and "
-        "96 command forms and 106 tile operations with closed handler reachability and feature evidence; "
+        "99 command forms and 109 tile operations with closed handler reachability and feature evidence; "
         "474 scalar forms have decoded before/after effect closure; "
         f"{len(profile_names)} profile hooks are declared, invoked, and traceable; "
         "S5-T1 owns 19 scalar and 85 direct-tile numeric contracts"

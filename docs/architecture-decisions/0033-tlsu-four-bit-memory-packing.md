@@ -1,8 +1,13 @@
-# ADR-0033: TMA four-bit memory packing and totality
+# ADR-0033: TLSU four-bit memory packing and totality
+
+> **Partially superseded:** ADR 0058 replaces logical-element row stride and
+> indexed packed-transfer addressing. Regular TLOAD/TSTORE keep the packing
+> rules below within each byte-strided row; indexed TLSU rejects packed
+> four-bit transfer data until a separate nibble selector is architected.
 
 - Status: Accepted
 - Date: 2026-07-30
-- Requirements: PTO-REQ-TMA-001, PTO-REQ-MEMORY-COMPLETION-001,
+- Requirements: PTO-REQ-TLSU-001, PTO-REQ-MEMORY-COMPLETION-001,
   PTO-REQ-MEMORY-TSO-001
 
 ## Context
@@ -33,49 +38,40 @@ byte-addressed memory:
 - an odd final element writes its selected nibble and preserves the unused
   sibling bits in the containing byte.
 
-Indexed TMA operations apply the same rule to the logical index payload. For an
-index value `j`, the accessed byte is `base + floor(j / 2)` and the selected
-nibble is low for even `j` and high for odd `j`. Duplicate lane indices are
-deterministic in row-major lane order. A later lane observes the byte state
-left by earlier lanes in the same instruction after all lanes have passed the
-instruction-wide preflight.
+ADR 0058 scopes this rule to regular TLOAD/TSTORE coordinates within each
+byte-strided row. Indexed TLSU uses byte displacements and has no independent
+nibble selector, so packed four-bit transfer data rejects before effects.
 
-Every logical four-bit lane emits one byte-sized memory event. Loads and failed
-CAS outcomes record the containing byte that was read. Stores and successful
-CAS outcomes record the containing byte after the selected nibble update.
-Failed CAS records the containing-byte value that would have been written if
-the selected nibble comparison had succeeded, but it performs no write.
+Every regular-transfer logical four-bit lane emits one byte-sized memory event.
+Loads record the containing byte that was read. Stores record the containing
+byte after the selected nibble update.
 
 The complete containing-byte footprint is probed before the first payload,
-memory, event, or reservation effect. This applies to contiguous TLOAD/TSTORE,
-gather/scatter, masked gather/scatter for active lanes, CAS read/write probes,
-and TPREFETCH byte footprints. A failing probe leaves destination tiles, memory,
-events, and sibling nibbles unchanged; recovery is full reissue.
+memory, event, or reservation effect. This applies to regular TLOAD/TSTORE.
+A failing probe leaves destination tiles, memory, events, and sibling nibbles
+unchanged; recovery is full reissue. Indexed and TPREFETCH preflight remains
+defined independently for their byte footprints.
 
-Masked gather is a read-modify-preserve operation over destination tile state:
-inactive lanes retain their existing destination elements. Direct helper use
-therefore requires the destination valid region to already be defined.
-
-TMOV does not access memory, but it is part of the TMA selector closure. It
+TMOV does not access memory, but it is part of the TLSU function closure. It
 copies payload, element definedness, valid-defined count, and whole-tile
 definedness from source to destination.
 
 ## Consequences
 
-- PTO-v0 TMA no longer aliases the executable model's payload carrier width
+- PTO-v0 TLSU no longer aliases the executable model's payload carrier width
   with architectural memory layout.
 - Four-bit events are compatible with the byte-granular memory model while
   preserving exact nibble values in tile payloads.
 - The packed layout is PTO-v0 architecture. A future profile may add another
-  layout only by defining a profile-specific TMA contract and preserving the
+  layout only by defining a profile-specific TLSU contract and preserving the
   generic totality, preflight, event, and restart guarantees.
-- `spec/evidence/tma-totality.json` and `TestTmaTotality()` are the closure
+- `spec/evidence/tlsu-totality.json` and `TestTlsuTotality()` are the closure
   hooks for this decision.
 
-The executable matrix reaches all nine TMA selectors through decoded tile
+The executable matrix reaches all ten TLSU functions through decoded tile
 dispatch. It also injects first, middle, and last footprint faults across the
 contiguous, indexed, masked, prefetch, and conditional-atomic classes and
 checks that no payload, memory, or event prefix escapes preflight.
-FP4, FPL4, S4, and U4 each execute load, store, and indexed-gather witnesses;
-source-like direct helper operands assert allocated, defined tile state before
+E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 each execute regular load/store
+witnesses, while indexed legality evidence rejects them as transfer data before
 their payload can be observed.

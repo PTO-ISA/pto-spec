@@ -533,6 +533,7 @@ end;
 readonly func TileOperandsLegal_TSORT(destination: TileIndex,
                                       destination_indices: TileIndex,
                                       source: TileIndex,
+                                      sort_width: integer {1..64},
                                       descending: boolean) => boolean
 begin
     return destination != destination_indices &&
@@ -547,6 +548,36 @@ begin
                _Tiles[[source]].valid_rows * _Tiles[[source]].valid_columns &&
            _Tiles[[destination]].data_type == _Tiles[[source]].data_type &&
            _Tiles[[destination_indices]].data_type == TileDataType_U32;
+end;
+
+readonly func TileOperandsLegal_THISTOGRAM(
+    destination: TileIndex, source: TileIndex, indices: TileIndex,
+    selected_byte: integer {0..3}) => boolean
+begin
+    if !TileDescriptorLegal(destination) ||
+       !TileSourceContentsDefined(source) ||
+       !TileSourceContentsDefined(indices) then return FALSE; end;
+    let destination_tile = _Tiles[[destination]];
+    let source_tile = _Tiles[[source]];
+    let index_tile = _Tiles[[indices]];
+    if destination_tile.valid_rows != source_tile.valid_rows ||
+       destination_tile.valid_columns < 256 ||
+       !(destination_tile.data_type == TileDataType_U8 ||
+         destination_tile.data_type == TileDataType_U16 ||
+         destination_tile.data_type == TileDataType_U32 ||
+         destination_tile.data_type == TileDataType_U64) then return FALSE; end;
+    if source_tile.data_type == TileDataType_U16 then
+        if selected_byte > 1 then return FALSE; end;
+        return selected_byte == 1 ||
+               (index_tile.valid_rows >= source_tile.valid_rows &&
+                index_tile.valid_columns >= 1);
+    elsif source_tile.data_type == TileDataType_U32 then
+        if selected_byte == 3 then return TRUE; end;
+        return index_tile.valid_rows >= 3 - selected_byte &&
+               index_tile.valid_columns >= 1;
+    else
+        return FALSE;
+    end;
 end;
 
 readonly func TileOperandsLegal_GMOV(
@@ -593,7 +624,21 @@ begin
     return TileDescriptorLegal(destination);
 end;
 
+readonly func TileOperandsLegal_TLOAD(destination: TileIndex,
+                                      base_address: Word,
+                                      row_stride_bytes: Word) => boolean
+begin
+    return TileDescriptorLegal(destination);
+end;
+
 readonly func TileOperandsLegal_TSTORE(base_address: Word,
+                                       source: TileIndex) => boolean
+begin
+    return TileDescriptorLegal(source);
+end;
+
+readonly func TileOperandsLegal_TSTORE(base_address: Word,
+                                       row_stride_bytes: Word,
                                        source: TileIndex) => boolean
 begin
     return TileDescriptorLegal(source);
@@ -603,13 +648,18 @@ readonly func TileOperandsLegal_MGATHER(
     destination: TileIndex, base_address: Word,
     indices: TileIndex) => boolean
 begin
-    return TileLogicalShapeMatch(destination, indices);
+    return TileLogicalShapeMatch(destination, indices) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(
+               _Tiles[[destination]].data_type);
 end;
 
 readonly func TileOperandsLegal_MSCATTER(
     base_address: Word, source: TileIndex, indices: TileIndex) => boolean
 begin
-    return TileLogicalShapeMatch(source, indices);
+    return TileLogicalShapeMatch(source, indices) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(_Tiles[[source]].data_type);
 end;
 
 readonly func TileOperandsLegal_MGATHER_MASK(
@@ -617,7 +667,10 @@ readonly func TileOperandsLegal_MGATHER_MASK(
     indices: TileIndex, mask: TileIndex, pad_value: TilePadValue) => boolean
 begin
     return TileLogicalShapeMatch(destination, indices) &&
-           TileLogicalShapeMatch(destination, mask);
+           TileLogicalShapeMatch(destination, mask) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(
+               _Tiles[[destination]].data_type);
 end;
 
 readonly func TileOperandsLegal_MSCATTER_MASK(
@@ -625,7 +678,9 @@ readonly func TileOperandsLegal_MSCATTER_MASK(
     mask: TileIndex) => boolean
 begin
     return TileLogicalShapeMatch(source, indices) &&
-           TileLogicalShapeMatch(source, mask);
+           TileLogicalShapeMatch(source, mask) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(_Tiles[[source]].data_type);
 end;
 
 readonly func TileOperandsLegal_MGATHER_CAS(
@@ -634,7 +689,10 @@ readonly func TileOperandsLegal_MGATHER_CAS(
 begin
     return TileLogicalShapeMatch(destination, indices) &&
            TileShapeAndTypeMatch(destination, expected) &&
-           TileShapeAndTypeMatch(destination, replacement);
+           TileShapeAndTypeMatch(destination, replacement) &&
+           IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
+           IndexedTLSUTransferDataTypeLegal(
+               _Tiles[[destination]].data_type);
 end;
 
 readonly func TileOperandsLegal_TPREFETCH(

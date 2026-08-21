@@ -5,7 +5,7 @@
   "policy": {
     "authority": "The frozen PTO candidate, manual release validation, and retained repository controls must agree before M6 promotion.",
     "no_live_branch_evidence": "A development check on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-    "long_running_policy": "Long runtime gates execute manually through the checked 34-shard topology; readiness generation validates their exact contract without waiting for them.",
+    "long_running_policy": "Long runtime gates execute manually through the checked 36-shard topology; readiness generation validates their exact contract without waiting for them.",
     "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, a passing manual release gate at that commit, and all retained external controls verified."
   },
   "sources": [
@@ -23,7 +23,7 @@
     },
     {
       "path": "Makefile",
-      "sha256": "1f8282e0de7c515795134c795769625c71e0f2193d8231e5586b28b3a20f1d55"
+      "sha256": "ef237b463f4ccdab8ce8839444e1f725a7aa3a351840c1e2ee6ae1845d9d9ab6"
     },
     {
       "path": "docs/review-checklist.md",
@@ -47,11 +47,11 @@
     },
     {
       "path": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-      "sha256": "86b6c6fb16293133f1b8f221207df4219db0aaacc88ebd5e1aa286cc07d0e86a"
+      "sha256": "05772cec7ed2c01c38bdb176182dde3cfc606a9eb9f59cc89f8b3f1d5acc1b30"
     },
     {
       "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-      "sha256": "cca6076b80003179731fe8f843ae230b835b5f0e581024f8e5b4509cd0f33f7e"
+      "sha256": "4ea4187956baf67f6ec7e2e1b8145145d11b76e3b01c2c992460e6fd4f8603c9"
     },
     {
       "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
@@ -83,19 +83,19 @@
     },
     {
       "path": "scripts/check-binary-closure",
-      "sha256": "4295c1b0208cb6bb8b72a1387ac08c8650952aece491605a984ededd822e0467"
+      "sha256": "1de85f2ed8d087f79075f4d88f5ae1d8f1532c152c51ab1c4b2efec714826000"
     },
     {
       "path": "scripts/check-catalogs",
-      "sha256": "32aa4b6001d5f340b8c8a580f2e811739952f011d5b15e8708a802449fe2b0ab"
+      "sha256": "da8201ab1848eec75814a74bced22270e8dd641873b4273f0ce47b88a638fec7"
     },
     {
       "path": "scripts/check-publication-hygiene",
-      "sha256": "bab683d150b6d8e3ff076dbefcdb706dcc6a26c77d0d67c55da18689bba62361"
+      "sha256": "077b1007da0e64c7d56c253817d29b5d7e1256e23f832dda1caacd4c8b3fbe9a"
     },
     {
       "path": "scripts/check-repository",
-      "sha256": "ac13d0231c144e213d7b8b5808b9a6caab5ac4d7ff691df3c57b425700ec920c"
+      "sha256": "aa09772346e5bd2e378905f8dcc145bf08b479cc1f6eb4da2610665714964e56"
     },
     {
       "path": "scripts/check-toolchain",
@@ -103,11 +103,11 @@
     },
     {
       "path": "scripts/generate-numeric-format-namespace-contract",
-      "sha256": "f8fce5b1594b04564f885c5d52bb2547d0672436b751bef537ab5cc1e5c57399"
+      "sha256": "62637b040e1a3d5159d8c5aa0c06749fa6c8b75036089189cd9692c6f7b7b81b"
     },
     {
       "path": "scripts/generate-numeric-profile-applicability-closure",
-      "sha256": "f5b6693682dc53227bc36c5a457f087e3a0b9b4d3e393db3250614e6395ebbaa"
+      "sha256": "73cb0712a12fbd6aa35ce58e6347f1eab4fe6bca8f97f4854186caa607ed1608"
     },
     {
       "path": "scripts/generate-numeric-subnormal-contract",
@@ -135,55 +135,55 @@
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "d034a2ab15753dcc1c9de3e516d6575d6c14b4aec74e5ff432473745165c0574"
+      "sha256": "9c1750cfe62f8b199c120a9ccb094dfcca10c2c16125ef5419e5da9ca116d935"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "aeb37690f0a65ff5df71fc8a3c5b0b420d532f5598cf87f291aec40c15e8463e"
+      "sha256": "bd71c21cb36321047daff5c725e010ca5a9d020975b23ad809a4375811c26bd5"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
+      "sha256": "7f64689765ca445ce8232ba88be93b1202a64383dfb77b68200ee11d549a314e"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "d3e1d07e4bd29adf4c582625507eac882ffae2eddb1930d628e27604bd9ebc10"
+      "sha256": "091d155d246f13084bde3dddfeda665edf596f1992cf021fc32a147bec02f840"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "fe36a3f4f2dc39d98f6ac60dbf25d2129dbd8724401fa170ffb9fc516cae89d8"
+      "sha256": "484fcf45c4a4b95fff31c6094a7a9f60a411256fd55569603cb8f50c1482f70e"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "8a32fe64469311963c7b64debbfb7620825ba65b05e56bc21bff7fc3358911f7"
+      "sha256": "d7bd220f3ecc5d45f5836c27a4c10451b58b87e4715670e98f54e0aa16e87681"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "74484654028a35f7ab73c2d591d33edf6b649f1a79b1add2480959f061c0ee26"
+      "sha256": "9406bea93f93443ff646d7f1862eab96449777f5d1efee83385f495164c57a46"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "a7f10d3fac177d3d9cc0531bd9f9749a2d1a1583b92567880790d37b3d154df1"
+      "sha256": "2dde615ade1a5a58ef2d31e50d7f40b934697b26c989c107acfa93447e17346c"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "251d075872fdeed7e83fb56975943dad89b0f78a007c50d69e72c817d902eeaf"
+      "sha256": "f1b1ead44d8a093a17619dc6cc9779614a6edbbe970626fb7adcb993e14ca007"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "1e076ce3fc5aa5a652094ec1edb439cfa81d1e9c1e71011f9709d42248a1b8f2"
+      "sha256": "b4ae9b5c5a0779dc887a01c8c862a9d1e4cfac8ae117d7779dc04c7365611b67"
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "b835a16e2b75f965dbdb02a4706a2c7385905f08a0447f992e897c67aaca3d9e"
+      "sha256": "9807c6b17f640083b84e09a3c4eab88b6306ead30f449cd439c5841fadd6f6b8"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "b793f202b578dc15206798e2d070ad472a280c8f4bcfd6a769a22bb543fdd06c"
+      "sha256": "edc9b230fe7343efe9985220939e42abc64f7bdb1d8dc8e8319ef921c765f10d"
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "c34b0b673f68c6a6f39a29c45dee2063f3db678a1dba15a3017e6fe6227a2f37"
+      "sha256": "5432341d6b9f703c16470bfbbc3af18ed0614e3addc0b4d8ec383be59311b9d9"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -195,7 +195,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "0bb3fcd235e43616e99b6642932541b591f4d507011a0cd8066201e186b6605f"
+      "sha256": "9b723251ab19b24783fbfbcf48780c833fc907013f1a457a00c59dc272c80047"
     }
   ],
   "sub_stages": [
@@ -386,6 +386,7 @@
       "tests/asl/shards/tlsu-totality.asl",
       "tests/asl/shards/cube-totality.asl",
       "tests/asl/shards/core-bundle.asl",
+      "tests/asl/shards/postprocess.asl",
       "tests/asl/shards/scalar-base.asl",
       "tests/asl/shards/scalar-agu-effects.asl",
       "tests/asl/shards/scalar-alu-bru.asl",
@@ -394,11 +395,12 @@
       "tests/asl/shards/scalar-sys.asl",
       "tests/asl/shards/tile-ops.asl",
       "tests/asl/shards/tile-lifecycle.asl",
-      "tests/asl/shards/concurrency-profile.asl"
+      "tests/asl/shards/concurrency-profile.asl",
+      "tests/asl/shards/numeric-formats.asl"
     ],
-    "shard_count": 34,
-    "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 104,
+    "shard_count": 36,
+    "canonical_call_count": 129,
+    "reachable_test_subprogram_count": 126,
     "default_parallel_jobs": 4,
     "partition_status": "closed",
     "candidate_runtime_result": null
@@ -476,7 +478,7 @@
         "scripts/check-asl-test-shards",
         "tests/asl/main.asl"
       ],
-      "acceptance": "All canonical executable tests pass through the exact 34-shard partition with no missing, duplicate, empty, or unreachable test surface.",
+      "acceptance": "All canonical executable tests pass through the exact 36-shard partition with no missing, duplicate, empty, or unreachable test surface.",
       "long_running": true,
       "contract_status": "closed",
       "candidate_commit": null,
@@ -666,9 +668,9 @@
     "gate_count": 10,
     "required_approval_count": 0,
     "required_external_control_count": 9,
-    "shard_count": 34,
-    "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 104,
+    "shard_count": 36,
+    "canonical_call_count": 129,
+    "reachable_test_subprogram_count": 126,
     "open_prerequisite_targets": [
       "S5-T2",
       "S6-T1"

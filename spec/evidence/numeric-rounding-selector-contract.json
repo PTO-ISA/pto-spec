@@ -777,7 +777,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
+      "sha256": "e42e4f1233ccb33e4710117036ad0a605b9efd7495d1e43cfb7e37d678784074"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -785,7 +785,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
+      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -801,11 +801,11 @@
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "a84d0145cd372c4ec640ebbe18afb1488098f88870b57a35341d7499b128f42f"
+      "sha256": "90b110dbc28835a3e00974e036b26f3bf3006ba0e75730c471a097d2df9ab950"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
+      "sha256": "573f4024b67ef735671581b84ade90815845d7a8ef54b11e7983d355cdb50cdf"
     },
     {
       "path": "asl/tile/conversion.asl",
@@ -817,7 +817,7 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "99f7b99a881c60ba0cbd92b4ad6f02d36bac3bd3b43b650585d04c7bedc4ad08"
+      "sha256": "617ab2713268626657b2ec6965f52c15f50ea2711068f41634e140f267c425b2"
     },
     {
       "path": "spec/hardware-conformance-profile.json",

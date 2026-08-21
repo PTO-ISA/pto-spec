@@ -193,6 +193,11 @@ begin
     MarkTileValidRegionDefined(destination_indices);
 end;
 
+pure func ExtractWordByte(value: Word, byte_index: integer {0..3}) => bits(8)
+begin
+    return value[(byte_index * 8) +: 8];
+end;
+
 func THISTOGRAM(destination: TileIndex, source: TileIndex, indices: TileIndex,
                 selected_byte: integer {0..3})
 begin

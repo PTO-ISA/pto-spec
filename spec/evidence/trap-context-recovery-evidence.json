@@ -17,7 +17,7 @@
   "classification_counts": {
     "validity-control": 1,
     "portable-first-layer-visible": 14,
-    "internal-ebstate-only": 53
+    "internal-ebstate-only": 56
   },
   "leaf_fields": [
     {
@@ -621,6 +621,30 @@
       "mutate_assertion": "assert _BundleSharedBindings[[0]].shared_id != Zeros{8} + 0x12;"
     },
     {
+      "path": "_TrapContexts[].bundle_shared_bindings[].pe_mask",
+      "classification": "internal-ebstate-only",
+      "phase_policy": "save-clobber-recover",
+      "saved_lvalue": "_TrapContexts[[1]].bundle_shared_bindings[[0]].pe_mask",
+      "live_lvalue": "_BundleSharedBindings[[0]].pe_mask",
+      "save_assertion": "assert _TrapContexts[[1]].bundle_shared_bindings[[0]].pe_mask == '1111';",
+      "mutate_statement": "_BundleSharedBindings[[0]].pe_mask = Zeros{4};",
+      "recover_assertion": "assert _BundleSharedBindings[[0]].pe_mask == '1111';",
+      "invalidate_assertion": null,
+      "mutate_assertion": "assert _BundleSharedBindings[[0]].pe_mask != '1111';"
+    },
+    {
+      "path": "_TrapContexts[].bundle_shared_bindings[].tile_size",
+      "classification": "internal-ebstate-only",
+      "phase_policy": "save-clobber-recover",
+      "saved_lvalue": "_TrapContexts[[1]].bundle_shared_bindings[[0]].tile_size",
+      "live_lvalue": "_BundleSharedBindings[[0]].tile_size",
+      "save_assertion": "assert _TrapContexts[[1]].bundle_shared_bindings[[0]].tile_size == 0;",
+      "mutate_statement": "_BundleSharedBindings[[0]].tile_size = 7;",
+      "recover_assertion": "assert _BundleSharedBindings[[0]].tile_size == 0;",
+      "invalidate_assertion": null,
+      "mutate_assertion": "assert _BundleSharedBindings[[0]].tile_size != 0;"
+    },
+    {
       "path": "_TrapContexts[].bundle_shared_bindings[].consumed",
       "classification": "internal-ebstate-only",
       "phase_policy": "save-clobber-recover",
@@ -703,6 +727,18 @@
       "recover_assertion": "assert !_BundleControlAttributes.direct_register;",
       "invalidate_assertion": null,
       "mutate_assertion": "assert _BundleControlAttributes.direct_register;"
+    },
+    {
+      "path": "_TrapContexts[].bundle_data_attributes.data_type_present",
+      "classification": "internal-ebstate-only",
+      "phase_policy": "save-clobber-recover",
+      "saved_lvalue": "_TrapContexts[[1]].bundle_data_attributes.data_type_present",
+      "live_lvalue": "_BundleDataAttributes.data_type_present",
+      "save_assertion": "assert _TrapContexts[[1]].bundle_data_attributes.data_type_present;",
+      "mutate_statement": "_BundleDataAttributes.data_type_present = FALSE;",
+      "recover_assertion": "assert _BundleDataAttributes.data_type_present;",
+      "invalidate_assertion": null,
+      "mutate_assertion": "assert !_BundleDataAttributes.data_type_present;"
     },
     {
       "path": "_TrapContexts[].bundle_data_attributes.data_type",

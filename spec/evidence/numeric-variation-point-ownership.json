@@ -4170,7 +4170,7 @@
       "label": "data-type ordering",
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ],
       "hook_ids": [
         "TileProfileOrderLeft",
@@ -4237,7 +4237,7 @@
       "label": "NaN placement",
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ],
       "hook_ids": [
         "TileProfileOrderLeft",
@@ -4292,7 +4292,7 @@
       "label": "signed zero",
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ],
       "hook_ids": [
         "TileProfileOrderLeft",
@@ -4347,7 +4347,7 @@
       "label": "equal-value stability",
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ],
       "hook_ids": [
         "TileProfileOrderLeft",
@@ -4402,7 +4402,7 @@
       "label": "ascending and descending tie behavior",
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ],
       "hook_ids": [
         "TileProfileOrderLeft",
@@ -7681,7 +7681,7 @@
       "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
-      "operation_key": "tile:TEPL:TSORT32",
+      "operation_key": "tile:TEPL:TSORT",
       "domain": "tile-order",
       "hooks": [
         "TileProfileOrderLeft",
@@ -8350,7 +8350,7 @@
       ],
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ],
       "variation_point_ids": [
         "numeric-vp/tile-order/ascending-and-descending-tie-behavior",
@@ -8537,7 +8537,7 @@
       ],
       "operation_keys": [
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ],
       "variation_point_ids": [
         "numeric-vp/tile-order/ascending-and-descending-tie-behavior",
@@ -8628,11 +8628,11 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "b4d79c47c80e82c83bdb64cc111c0a744006ec60b5b05a798e7105060068122b"
+      "sha256": "9637ce69b1b2f12d76e65c73fb7536fe66c22a1dde19c11b7827c4f5b60cc24b"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
+      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -8644,23 +8644,23 @@
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "a7f10d3fac177d3d9cc0531bd9f9749a2d1a1583b92567880790d37b3d154df1"
+      "sha256": "2dde615ade1a5a58ef2d31e50d7f40b934697b26c989c107acfa93447e17346c"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
+      "sha256": "7f64689765ca445ce8232ba88be93b1202a64383dfb77b68200ee11d549a314e"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "8a32fe64469311963c7b64debbfb7620825ba65b05e56bc21bff7fc3358911f7"
+      "sha256": "d7bd220f3ecc5d45f5836c27a4c10451b58b87e4715670e98f54e0aa16e87681"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "74484654028a35f7ab73c2d591d33edf6b649f1a79b1add2480959f061c0ee26"
+      "sha256": "9406bea93f93443ff646d7f1862eab96449777f5d1efee83385f495164c57a46"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "d3e1d07e4bd29adf4c582625507eac882ffae2eddb1930d628e27604bd9ebc10"
+      "sha256": "091d155d246f13084bde3dddfeda665edf596f1992cf021fc32a147bec02f840"
     },
     {
       "path": "docs/architecture-decisions/0042-numeric-variation-point-ownership.md",

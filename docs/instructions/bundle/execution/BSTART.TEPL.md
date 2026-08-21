@@ -15,10 +15,12 @@
 
 ## Purpose
 
-`BSTART.TEPL` selects one of the 87 accepted Tile Element Processing
-operations.  The Mode/Function selector is the canonical direct-operation
-identity; `B.DATR`, `B.DIM`, `B.IOT`, and `B.IOR` provide the operation's
-declared attributes and operands.
+`BSTART.TEPL` is the binary carrier for 87 accepted direct Tile operations.
+It is not an execution engine. Element-wise operations use the canonical
+assembly alias `BSTART.VEC`; complex-hardware operations use `BSTART.SFU`.
+Both aliases encode the same Mode/Function/DataType bits as the accepted
+`BSTART.TEPL` carrier spelling. `B.DATR`, `B.DIM`, `B.IOT`, and `B.IOR`
+provide the operation's declared attributes and operands.
 
 ## Encoding
 
@@ -44,11 +46,12 @@ following selector ranges are accepted in PTO ISA 0.58.0:
 | 0 | 0–13, 15–28 | Tile-tile and unary elementwise |
 | 1 | 0–13, 26 | Tile-scalar elementwise |
 | 2 | 0–13, 16–29 | Axis reduction and expansion |
-| 3 | 0, 2–7, 9–20 | Complex Tile operations |
+| 3 | 0, 2–8, 10–20 | Complex Tile operations |
 
 The active non-contiguous selectors are `TFMA` (Mode 0 / Function 28),
-`TSELS` (Mode 1 / Function 26), `TRANDOM` (Mode 3 / Function 9), and
-`TSORT32` (Mode 3 / Function 12).  `TSEL` is Mode 0 / Function 26.
+`TSELS` (Mode 1 / Function 26), `THISTOGRAM` (Mode 3 / Function 8), and
+`TSORT` (Mode 3 / Function 12). `TSEL` is Mode 0 / Function 26. The deleted
+`TRANDOM` selector at Mode 3 / Function 9 remains reserved.
 
 Every selector outside the accepted rows is reserved or illegal.  Removed
 identities are not listed here and do not have public instruction pages; see

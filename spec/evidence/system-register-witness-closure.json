@@ -4053,7 +4053,7 @@
           ]
         }
       ],
-      "semantic_access_inventory_sha256": "b431eed34d9b9e55a0edf2605288c954de200eb238720a8fe1d7a23b8a00f3ad",
+      "semantic_access_inventory_sha256": "040329debe291b7b6c9ad2d58e3493246d60b127a2336abf1e9c50bec502852e",
       "semantic_access_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4068,12 +4068,12 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedCubeOperation",
-          "sha256": "7d3f2383452ece79fb8ff5414581a63b61e6d79502d9ebae5b0f2afce265308d"
+          "sha256": "a54abd1ee22c1f8ebe567f804ea0f300bcdeeaff657bcef2261da8b1ac4066e2"
         },
         {
           "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleSharedTMAOperation",
-          "sha256": "81a8b622dbf4dfa25b9910ce0c05e621bdef2ffbe94361967ed16d9055d2ca39"
+          "function": "ExecuteBundleSharedTLSUOperation",
+          "sha256": "ede2f07994574dd6b7915e77943ece7c4abcfb9a5867f23f9a40a8c35c1ba688"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4083,7 +4083,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
-          "sha256": "73c1b2038ce8a2ca60ca210abb98237d450ad0b58794ba5067f2d75b79f51580"
+          "sha256": "e4fa79157fde4b16b845974328d8f052a89c06917ae5332d9a115311c54b90d0"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4093,7 +4093,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "fcd3c21724c075a3afd4e7e5de920762a39d1ef7909084b983f3613892391dd8"
+          "sha256": "74e24341e5a847255cb0335e7cdeb3f3824e170a8a7aed971f8cf7cb550beaed"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4108,12 +4108,12 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ResolveBundleTileDestinations",
-          "sha256": "de72ee9b1df272795ee06320b576a3d587f26a0ced7cf881fe0acf2143b73e73"
+          "sha256": "e4563bcea1aa63b689e6a248cf6371d9f32a83085e31157b46faa1c4568d1eb9"
         },
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "SelectedBundleTileDataAttributesLegal",
-          "sha256": "78cc3e4f1110ce46bdbe1bce189ca8d9db49e7debae05779dafba0722c866e48"
+          "sha256": "bf24e653a00a3e179dee81215e7eaf988669b8ec781168ad93d4f498f3953240"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -4128,7 +4128,7 @@
         {
           "path": "asl/bundle/state.asl",
           "function": "BindBundleSharedIO",
-          "sha256": "db3f3fcfabd2f5c42c1f2e1533535280e14bd8cd6bbdb5a407bb1cd31d9a0190"
+          "sha256": "3cb3011a0d65180b01991e1b796ab675e5a5eebf31fdf0539b793cca04657d37"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -4163,7 +4163,7 @@
         {
           "path": "asl/bundle/state.asl",
           "function": "SetBundleDataAttributeState0580",
-          "sha256": "f652af603ba738a1fde85e60a8b201a5f9777dae6edf84bc2c821785e3ea7fad"
+          "sha256": "0ec4e0f2a3fb7bb5e7b6a1f946bdf494baae2ce1124aed7da02a8b35866d61d7"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -4553,27 +4553,47 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "MGATHER",
-          "sha256": "0d6d9d3d6649c3a5f0762752512847f8d4bd59ff91250748c4eec056c37ecf43"
+          "sha256": "1970b20f91e5d7a7b912dc792b0ce5c2ec7308341acd40febca64b1c1454a2f5"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MGATHER_CAS",
+          "sha256": "271caa99ec69998cc5c257be853e64828b26e3d476b570d6600472dfb1887576"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MGATHER_MASK",
+          "sha256": "254826689b7e636af0450b015868b8830518428c0a6f652b007c6811002b5713"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "MSCATTER",
-          "sha256": "bc58ad8d1d9fbe166bd3d195036bb19a3c30c819222b28d6eb6226bc51ea7e1e"
+          "sha256": "6bba053674e3fbf0271f366b05a0bcbac82f8dce6a71c044e89dac384ca545c4"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MSCATTER_MASK",
+          "sha256": "d3ecf635f9c8f37dbfdadd5621337afd65596c5f3d8bb65c0027d3a378331c2e"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOAD",
-          "sha256": "4b2737edce44cdad77fb81c7f7049ab046143a431d7c29a4165d5bd82b992c3c"
+          "sha256": "85486bdd7b581018212c03ed2ff818bf3a6fbee7db93f3e6ff8c83eb08faabcd"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "TLOAD",
+          "sha256": "c4397dc5182f57ee649f949cd2eddcd505c3651863e9619bf3e9b7b18588f961"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOADShared",
-          "sha256": "4cd043356278772a064aa51a70e1fefdd792a34308358fa7527e780367ff8aa8"
+          "sha256": "88b86825dd49e61421ceaef0c6c3b670f34c9431fb0a7a1320606cd6fe5bf868"
         },
         {
           "path": "asl/tile/memory.asl",
-          "function": "TMOVLocalToShared",
-          "sha256": "cd5a6b0a470abf1d7f4090cacf1876ee90c615e539623db509ffa248ea361603"
+          "function": "TLOADShared",
+          "sha256": "9931ed53f158ac6c10ff1edceadb905abc193b169cba4b6e41668a8eb678ad62"
         },
         {
           "path": "asl/tile/memory.asl",
@@ -4583,12 +4603,22 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "TSTORE",
-          "sha256": "0c1affe1a55c458a94e5f4a96969385f857b15eda9ee97b608f982210b0715bd"
+          "sha256": "b2707e2de7753acf9725e37a49301da6639d904c5a8bc3c84c44170615572bf5"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "TSTORE",
+          "sha256": "291502e368dffde3980f08e42dd15139d0eeb89f62bcbdb5139fa179807319ee"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TSTOREShared",
-          "sha256": "7508e9b14609c14de7f7d4c5668f0b5097900f484b357928ab692f1e0b8865f3"
+          "sha256": "491882da7ccbca303ad7757c4e99bf5cb96968ed3f5fe3fffbdd255cf92eb6fe"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "TSTOREShared",
+          "sha256": "7cd0d115ced56d3d31e82d507e831f5f3d3b85d2dc1c3a51574497b83ccb569b"
         }
       ],
       "rule": "All fixed and bank-expanded storage-only addresses are enumerated, and every normative function that can reach the extended register backing store or any generic/context address API is content-addressed. A literal full-bank address, computed index, symbolic helper call, or direct backing-store access changes the reviewed inventory and fails closed."
@@ -4653,7 +4683,7 @@
           ]
         }
       ],
-      "activation_inventory_sha256": "1f2f6d5dce3f16d9357a6289041a42971bc4ca3b5e32ea5256a80bd41ca201fa",
+      "activation_inventory_sha256": "f8cfb76040deef8a48704917ccd49284582bfc9f1efaebe601e706a5c8078699",
       "activation_inventory": [
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4668,12 +4698,12 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleSharedCubeOperation",
-          "sha256": "7d3f2383452ece79fb8ff5414581a63b61e6d79502d9ebae5b0f2afce265308d"
+          "sha256": "a54abd1ee22c1f8ebe567f804ea0f300bcdeeaff657bcef2261da8b1ac4066e2"
         },
         {
           "path": "asl/bundle/dispatch.asl",
-          "function": "ExecuteBundleSharedTMAOperation",
-          "sha256": "81a8b622dbf4dfa25b9910ce0c05e621bdef2ffbe94361967ed16d9055d2ca39"
+          "function": "ExecuteBundleSharedTLSUOperation",
+          "sha256": "ede2f07994574dd6b7915e77943ece7c4abcfb9a5867f23f9a40a8c35c1ba688"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4683,7 +4713,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteBundleTileOperationWithAcceptedApplicabilityRules",
-          "sha256": "73c1b2038ce8a2ca60ca210abb98237d450ad0b58794ba5067f2d75b79f51580"
+          "sha256": "e4fa79157fde4b16b845974328d8f052a89c06917ae5332d9a115311c54b90d0"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4693,7 +4723,7 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ExecuteDecodedBundleCommand",
-          "sha256": "fcd3c21724c075a3afd4e7e5de920762a39d1ef7909084b983f3613892391dd8"
+          "sha256": "74e24341e5a847255cb0335e7cdeb3f3824e170a8a7aed971f8cf7cb550beaed"
         },
         {
           "path": "asl/bundle/dispatch.asl",
@@ -4708,12 +4738,22 @@
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "ResolveBundleTileDestinations",
-          "sha256": "de72ee9b1df272795ee06320b576a3d587f26a0ced7cf881fe0acf2143b73e73"
+          "sha256": "e4563bcea1aa63b689e6a248cf6371d9f32a83085e31157b46faa1c4568d1eb9"
         },
         {
           "path": "asl/bundle/dispatch.asl",
           "function": "SelectedBundleTileDataAttributesLegal",
-          "sha256": "78cc3e4f1110ce46bdbe1bce189ca8d9db49e7debae05779dafba0722c866e48"
+          "sha256": "bf24e653a00a3e179dee81215e7eaf988669b8ec781168ad93d4f498f3953240"
+        },
+        {
+          "path": "asl/bundle/postprocess.asl",
+          "function": "PostProcessConfigEncodingLegal",
+          "sha256": "8d37d1215e362870cb68480c5c72674c51837ec40ea0055ef30f77b4c75579e7"
+        },
+        {
+          "path": "asl/bundle/postprocess.asl",
+          "function": "PostProcessPreQuantModeAccepted",
+          "sha256": "4c82f21f7cfb5e47d27f5cd4973b77c4991410b7371444d05b7bd522e8874eaf"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -4728,7 +4768,7 @@
         {
           "path": "asl/bundle/state.asl",
           "function": "BindBundleSharedIO",
-          "sha256": "db3f3fcfabd2f5c42c1f2e1533535280e14bd8cd6bbdb5a407bb1cd31d9a0190"
+          "sha256": "3cb3011a0d65180b01991e1b796ab675e5a5eebf31fdf0539b793cca04657d37"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -4758,7 +4798,7 @@
         {
           "path": "asl/bundle/state.asl",
           "function": "SetBundleDataAttributeState0580",
-          "sha256": "f652af603ba738a1fde85e60a8b201a5f9777dae6edf84bc2c821785e3ea7fad"
+          "sha256": "0ec4e0f2a3fb7bb5e7b6a1f946bdf494baae2ce1124aed7da02a8b35866d61d7"
         },
         {
           "path": "asl/bundle/state.asl",
@@ -4782,11 +4822,6 @@
         },
         {
           "path": "asl/numeric/formats.asl",
-          "function": "ClassifyBinary64",
-          "sha256": "eea260b2a30780bc249592313bb123abde916470e9578d27516233faac2748e6"
-        },
-        {
-          "path": "asl/numeric/formats.asl",
           "function": "HardwareNumericComparisonSpecial",
           "sha256": "89e03f94f2b181ce0fdc370681a0f2347a3abef6e3b00c40072f8f336d01a52b"
         },
@@ -4797,8 +4832,23 @@
         },
         {
           "path": "asl/numeric/formats.asl",
+          "function": "TileNumericFiniteDecomposition",
+          "sha256": "5ace5563bddc212d62eefa05aa2323ffcbba8f93abb420afd80880295dacdf45"
+        },
+        {
+          "path": "asl/numeric/formats.asl",
           "function": "TileNumericValueClass",
-          "sha256": "74c0d297e745e1191617f8b8c2ea96b97ded667a2c6fcba8e8da56af893f3a18"
+          "sha256": "c51e2ccae20833d801fb589b1469604b0a26433dfaed8e4740aaf2144708f783"
+        },
+        {
+          "path": "asl/numeric/formats/fp64.asl",
+          "function": "ClassifyFP64",
+          "sha256": "1d340019d44cb14ea0fe0fbf93342d31c1d932796ac10fb4014fdba033b260df"
+        },
+        {
+          "path": "asl/numeric/formats/fp64.asl",
+          "function": "FP64FiniteDecomposition",
+          "sha256": "7cac5267fddf4c6891800246f9aac6074c9415a27607c09f610fd703f2d74209"
         },
         {
           "path": "asl/profiles/pto-v0.asl",
@@ -5203,27 +5253,47 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "MGATHER",
-          "sha256": "0d6d9d3d6649c3a5f0762752512847f8d4bd59ff91250748c4eec056c37ecf43"
+          "sha256": "1970b20f91e5d7a7b912dc792b0ce5c2ec7308341acd40febca64b1c1454a2f5"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MGATHER_CAS",
+          "sha256": "271caa99ec69998cc5c257be853e64828b26e3d476b570d6600472dfb1887576"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MGATHER_MASK",
+          "sha256": "254826689b7e636af0450b015868b8830518428c0a6f652b007c6811002b5713"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "MSCATTER",
-          "sha256": "bc58ad8d1d9fbe166bd3d195036bb19a3c30c819222b28d6eb6226bc51ea7e1e"
+          "sha256": "6bba053674e3fbf0271f366b05a0bcbac82f8dce6a71c044e89dac384ca545c4"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "MSCATTER_MASK",
+          "sha256": "d3ecf635f9c8f37dbfdadd5621337afd65596c5f3d8bb65c0027d3a378331c2e"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOAD",
-          "sha256": "4b2737edce44cdad77fb81c7f7049ab046143a431d7c29a4165d5bd82b992c3c"
+          "sha256": "85486bdd7b581018212c03ed2ff818bf3a6fbee7db93f3e6ff8c83eb08faabcd"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "TLOAD",
+          "sha256": "c4397dc5182f57ee649f949cd2eddcd505c3651863e9619bf3e9b7b18588f961"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TLOADShared",
-          "sha256": "4cd043356278772a064aa51a70e1fefdd792a34308358fa7527e780367ff8aa8"
+          "sha256": "88b86825dd49e61421ceaef0c6c3b670f34c9431fb0a7a1320606cd6fe5bf868"
         },
         {
           "path": "asl/tile/memory.asl",
-          "function": "TMOVLocalToShared",
-          "sha256": "cd5a6b0a470abf1d7f4090cacf1876ee90c615e539623db509ffa248ea361603"
+          "function": "TLOADShared",
+          "sha256": "9931ed53f158ac6c10ff1edceadb905abc193b169cba4b6e41668a8eb678ad62"
         },
         {
           "path": "asl/tile/memory.asl",
@@ -5233,17 +5303,27 @@
         {
           "path": "asl/tile/memory.asl",
           "function": "TSTORE",
-          "sha256": "0c1affe1a55c458a94e5f4a96969385f857b15eda9ee97b608f982210b0715bd"
+          "sha256": "b2707e2de7753acf9725e37a49301da6639d904c5a8bc3c84c44170615572bf5"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "TSTORE",
+          "sha256": "291502e368dffde3980f08e42dd15139d0eeb89f62bcbdb5139fa179807319ee"
         },
         {
           "path": "asl/tile/memory.asl",
           "function": "TSTOREShared",
-          "sha256": "7508e9b14609c14de7f7d4c5668f0b5097900f484b357928ab692f1e0b8865f3"
+          "sha256": "491882da7ccbca303ad7757c4e99bf5cb96968ed3f5fe3fffbdd255cf92eb6fe"
+        },
+        {
+          "path": "asl/tile/memory.asl",
+          "function": "TSTOREShared",
+          "sha256": "7cd0d115ced56d3d31e82d507e831f5f3d3b85d2dc1c3a51574497b83ccb569b"
         },
         {
           "path": "asl/types.asl",
           "function": "<global>",
-          "sha256": "807a91229febb05fa9a95570422f4ffe8dc598cdb95fbf8d8cc376197dc4089a"
+          "sha256": "a5664931e7bc0fddc952a04deefeabda18a1ce77c165b2263401d9dd62600d8b"
         }
       ],
       "rule": "Envelope-only fault symbols remain limited to declaration and SetFault mapping. Every normative function that can mutate trap identity, invoke a trap producer, or mention canonical trap numbers 33, 49, or 51 is content-addressed, so direct assignments, helper activation, and indirect SetFault call sites fail closed."
@@ -5296,7 +5376,7 @@
   "sources": [
     {
       "path": "Makefile",
-      "sha256": "6566203ed52be769bc793e587d2689b0fc7dadf481c935369049c69194cf328f"
+      "sha256": "ef237b463f4ccdab8ce8839444e1f725a7aa3a351840c1e2ee6ae1845d9d9ab6"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -5304,19 +5384,19 @@
     },
     {
       "path": "scripts/generate-asl-decoders",
-      "sha256": "d297cbe0931dd4551abfc45c1271efb533840e7cf7af6fb573da0601f3097274"
+      "sha256": "091716b00ebbd8f0e0044eb778814bb8cc3f950aa3ab06605d42e92efcf31ff1"
     },
     {
       "path": "generated:build/decoders.asl",
-      "sha256": "89f602de500384ed03dd36eb6d6cc2404d08c3442b8f0813de65fa788a0e2f5e"
+      "sha256": "42d2ed89a26d9e085608bab8d9a79c4aa43b79a0647e1862d141794e805b3a3f"
     },
     {
       "path": "tests/asl/main.asl",
-      "sha256": "e704200ff0b42aa66f0118861418afe4f1c9f438aa0c776408d716940c289900"
+      "sha256": "2a10f87362f8af1f9c5ef9dd0e7be87fa3e80b30b21290398adb006dfe7a539a"
     },
     {
       "path": "tests/asl/shards/core-bundle.asl",
-      "sha256": "9419dad25e8afb30f8cf06bdd778994dbcb25aabfdbf65c9a0e0693ea9afff49"
+      "sha256": "6f7a5bc33fd9f41cc2b4c360dbe9721c7c462efdd8f2b5553ba7e076027b055d"
     },
     {
       "path": "tests/asl/scalar-tests.asl",
@@ -5324,15 +5404,15 @@
     },
     {
       "path": "tests/asl/state-tests.asl",
-      "sha256": "0573a638ec67cb9930324703ac8419ef71776c46c9934fcf1104fd231dad2e53"
+      "sha256": "13798ec5c49586218cc2dc44c4e937a68421dfe288e16e329fee7097884b8494"
     },
     {
       "path": "tests/asl/tile-tests.asl",
-      "sha256": "24f9c60f3cbddbc0c25aac104e7c5bf3cf275f3a9a079138552209ae5206192c"
+      "sha256": "c86f7e5b4a595d2fa9eecfe701a2200061323d3cac59a0db90ea16b90de53420"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
+      "sha256": "b78deeec417dd72e296b449ecee0695225045f175439f94dd49c8039e69d45d8"
     },
     {
       "path": "asl/state.asl",

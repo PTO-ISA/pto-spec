@@ -7546,7 +7546,10 @@ def main() -> None:
     print("type ScalarFormIndex of integer {0..PTO_SCALAR_FORM_COUNT};")
     print("type TileOperationIndex of integer {0..PTO_TILE_OPERATION_COUNT};")
     print("type TileDecodeFamily of enumeration {")
-    print("    TileDecode_TEPL, TileDecode_TMA, TileDecode_CUBE")
+    print("    TileDecode_TEPL, TileDecode_TLSU, TileDecode_CUBE")
+    print("};")
+    print("type TileExecutionEngine of enumeration {")
+    print("    TileEngine_VEC, TileEngine_SFU, TileEngine_TLSU, TileEngine_CUBE")
     print("};")
     print("type ScalarSemanticFamily of enumeration {")
     print("    ScalarSemantic_AGU, ScalarSemantic_ALU, ScalarSemantic_AMO,")
@@ -11326,6 +11329,17 @@ def main() -> None:
     print("    return PTO_TILE_OPERATION_COUNT;")
     print("end;")
     print()
+    print("pure func TileEngineOfOperation(")
+    print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1})")
+    print("    => TileExecutionEngine")
+    print("begin")
+    for index, row in enumerate(tile):
+        print(
+            f"    if operation == {index} then return TileEngine_{row['engine']}; end;"
+        )
+    print("    unreachable;")
+    print("end;")
+    print()
     print("pure func TileOperationDATRFieldApplicable(")
     print("    operation: integer {0..PTO_TILE_OPERATION_COUNT-1},")
     print("    field: TileDATRField) => boolean")
@@ -11634,6 +11648,9 @@ def main() -> None:
         print(
             f"    assert TileHandlerOfIndex({index}) == TileHandler_{row['semantic_handler']};"
         )
+        print(
+            f"    assert TileEngineOfOperation({index}) == TileEngine_{row['engine']};"
+        )
         for operand in row["operands"]:
             print(
                 f"    assert TileOperandPresent({index}, TileOperand_{operand['field']});"
@@ -11727,11 +11744,11 @@ def main() -> None:
             int(value, 0) if isinstance(value, str) else value
             for value in tile_catalog["rejected_review_only_codes"][family]
         ]
-        for family in ("TEPL", "TMA", "CUBE")
+        for family in ("TEPL", "TLSU", "CUBE")
     }
     for family, key in (
         ("TEPL", "tepl_selector_ranges"),
-        ("TMA", "tma_functions"),
+        ("TLSU", "tlsu_functions"),
         ("CUBE", "cube_functions_without_named_alias"),
     ):
         for entry in tile_catalog["reserved"][key]:
@@ -11747,16 +11764,11 @@ def main() -> None:
                 f"    assert DecodeTileOperation(TileDecode_{family}, {bit_literal(value, 12)}) "
                 "== PTO_TILE_OPERATION_COUNT;"
             )
-    for function in (8, 9, 10, 11, 12):
-        print(
-            f"    assert DecodeTileOperation(TileDecode_TMA, {bit_literal(function, 12)}) "
-            "== PTO_TILE_OPERATION_COUNT;"
-        )
     print(
         f"    assert DecodeTileOperation(TileDecode_TEPL, {bit_literal(0x400, 12)}) == PTO_TILE_OPERATION_COUNT;"
     )
     print(
-        f"    assert DecodeTileOperation(TileDecode_TMA, {bit_literal(32, 12)}) == PTO_TILE_OPERATION_COUNT;"
+        f"    assert DecodeTileOperation(TileDecode_TLSU, {bit_literal(32, 12)}) == PTO_TILE_OPERATION_COUNT;"
     )
     print(
         f"    assert DecodeTileOperation(TileDecode_CUBE, {bit_literal(32, 12)}) == PTO_TILE_OPERATION_COUNT;"

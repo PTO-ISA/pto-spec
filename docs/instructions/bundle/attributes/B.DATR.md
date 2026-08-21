@@ -96,7 +96,11 @@ B.DATR {DataType, PadValue, ByteId, CMode, RMode, Sat}
 | `4` | `FP16` | `12` | `e1m2x2` | `20` | `S4x2` | `28` | `U4x2` |
 | `5` | `BF16` | `13` | `e8m0` | `21` | reserved | `29` | reserved |
 | `6` | `HiF8` | `14` | `HiF4x2` | `22` | reserved | `30` | reserved |
-| `7` | `e4m3` | `15` | reserved | `23` | reserved | `31` | invalid |
+| `7` | `e4m3` | `15` | reserved | `23` | reserved | `31` | `DTYPE_NONE` |
+
+`DTYPE_NONE` 是合法的 5-bit 字段值，但不是具体 `TileDataType`。它没有元素宽度、算术语义或默认的 `U8`/`U32` 解释。有效类型按以下优先级只读解析：具体 `B.DATR.DataType`、具体 `BSTART.DataType`，最后是 `TMOV` 的源描述符。因而显式 `B.DATR DTYPE_NONE` 不覆盖具体的 `BSTART.DataType`，同时仍保留本条 `B.DATR` 中的 layout、padding、rounding 等其他字段。
+
+若所选操作需要具体 DataType 而上述来源均无法解析，执行在 destination allocation、source consumption 和 payload effect 之前以 `Fault_TileLegality` 拒绝。除编码 `31` 外，表中的 reserved DataType 编码仍为非法。
 
 ### `Layout`
 

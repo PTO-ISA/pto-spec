@@ -159,10 +159,21 @@ begin
         ConfigureTeplFilledTile(1, 3, 3, TileDataType_U64, 10);
         operands.positive0 = 2;
         operands.positive1 = 2;
+    elsif operation == TileOperation_THISTOGRAM then
+        ConfigureTeplTile(0, 1, 256, TileDataType_U64);
+        ConfigureTeplTile(1, 1, 4, TileDataType_U16);
+        ConfigureTeplTile(2, 1, 1, TileDataType_U8);
+        WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x0101);
+        WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x0102);
+        WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 0x0203);
+        WriteTileElement(1, 0, 3, Zeros{PTO_XLEN} + 0xff04);
+        WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
+        operands.selected_byte = 1;
     elsif operation == TileOperation_TSORT then
         ConfigureTeplTile(0, 1, 4, TileDataType_U64);
         ConfigureTeplTile(5, 1, 4, TileDataType_U32);
         ConfigureTeplFilledTile(1, 1, 4, TileDataType_U64, 10);
+        operands.sort_width = 32;
     elsif operation == TileOperation_TMRGSORT then
         ConfigureTeplTile(0, 1, 4, TileDataType_U64);
         ConfigureTeplFilledTile(1, 1, 2, TileDataType_U64, 10);
@@ -508,6 +519,24 @@ begin
     assert ReadTileElement(1, 0, 3) == Zeros{PTO_XLEN};
 end;
 
+func TestTeplThistogramExactResult()
+begin
+    ResetProfileState();
+    ConfigureTeplTile(0, 1, 256, TileDataType_U64);
+    ConfigureTeplTile(1, 1, 4, TileDataType_U16);
+    ConfigureTeplTile(2, 1, 1, TileDataType_U8);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x0101);
+    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x0102);
+    WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 0x0203);
+    WriteTileElement(1, 0, 3, Zeros{PTO_XLEN} + 0xff04);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
+    THISTOGRAM(0, 1, 2, 1);
+    assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
+    assert ReadTileElement(0, 0, 1) == Zeros{PTO_XLEN} + 2;
+    assert ReadTileElement(0, 0, 2) == Zeros{PTO_XLEN} + 3;
+    assert ReadTileElement(0, 0, 255) == Zeros{PTO_XLEN} + 4;
+end;
+
 func TestTeplTotality()
 begin
     TestTeplDecodedSelectorMatrix();
@@ -519,4 +548,5 @@ begin
     TestTeplMergeDuplicateOrdering();
     TestTeplTfmaExactResult();
     TestTeplTsortExactPermutation();
+    TestTeplThistogramExactResult();
 end;

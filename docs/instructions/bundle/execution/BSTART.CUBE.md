@@ -15,7 +15,7 @@
 
 ## 用途
 
-BSTART.CUBE 选择 12 个 active TMATMUL/TGEMV base/BIAS/ACC、MX/non-MX Function 与 AType。所有 active Matrix operation 显式写 D 并使用一个 B.FPATR；C.B.IOS 只选择 cooperative TMATMUL operand schema。
+BSTART.CUBE 选择 12 个 active TMATMUL/TGEMV base/BIAS/ACC、MX/non-MX Function 与 AType。所有 active Matrix operation 显式写 D 并使用一个 B.FPATR；B.IOS 只选择 cooperative TMATMUL operand schema。
 
 ## 编码
 
@@ -50,14 +50,14 @@ BSTART.CUBE 选择 12 个 active TMATMUL/TGEMV base/BIAS/ACC、MX/non-MX Functio
 
 ## Local 与 Shared Form
 
-无 C.B.IOS 时，TMATMUL/TGEMV 都是 PE-local，source/output 由 B.IOT 表达。仅 TMATMUL 可使用 cooperative form：
+无 B.IOS 时，TMATMUL/TGEMV 都是 PE-local，source/output 由 B.IOT 表达。仅 TMATMUL 可使用 cooperative form：
 
 - non-MX Local A：Right；
 - non-MX Shared A：Left, Right；
 - MX Local A pair：Right, ScaleRight；
 - MX Shared A pair：Left, ScaleLeft, Right, ScaleRight。
 
-B/ScaleB 必须 Shared，PE_MASK=1111；Shared A 配 Local B 非法。TGEMV 遇到 C.B.IOS 必须诊断 illegal。
+B/ScaleB 必须 Shared，PE_MASK=1111；Shared A 配 Local B 非法。TGEMV 遇到 B.IOS 必须诊断 illegal。
 
 ## 结果与 TileAcc 约定
 

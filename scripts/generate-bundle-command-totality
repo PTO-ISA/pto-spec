@@ -46,7 +46,14 @@ EFFECT_BY_HANDLER = {
     "SetBundleHint": "diagnostic-hint-payload",
 }
 
-BRIDGE_FIELDS = {"destination0", "source0", "source1"}
+BRIDGE_FIELDS = {
+    "destination0",
+    "source0",
+    "source1",
+    "address",
+    "scalar0",
+    "scalar1",
+}
 
 
 def load_json(path: Path) -> dict:
@@ -150,7 +157,7 @@ def build_evidence() -> dict:
                 for row in bridge_matrix
             ),
         }
-        for family in ("TEPL", "TMA", "CUBE")
+        for family in ("TEPL", "TLSU", "CUBE")
     }
     comparison_status_counts = Counter(
         row["independent_status"] for row in comparison_rows
@@ -165,9 +172,7 @@ def build_evidence() -> dict:
         raise ValueError(
             "command comparison must cover every canonical command form exactly once"
         )
-    if comparison_status_counts != Counter(
-        {"executable-subset": 82, "decode-only": 13, "header-manifest": 1}
-    ):
+    if comparison_status_counts != Counter({"executable-subset": 99}):
         raise ValueError(
             f"unexpected independent command status counts: {comparison_status_counts}"
         )
@@ -189,7 +194,7 @@ def build_evidence() -> dict:
             "hint_rule": "B.HINT records the complete encoded payload and advances the hint epoch but has no PTO-v0 scheduling effect.",
             "metadata_rule": "B.DIM, B.TEXT, B.IOR, B.IOT, B.CATR, and B.DATR consume every decoded field into trap-preserved bundle state. PTO-v0 tile commit consumes only B.IOT slot 0 destination/source bindings and the descriptor data type; all other stored metadata has no payload effect in this profile.",
             "memory_rule": "MCOPY and MSET accept lengths 0 through 63 bytes and reject larger XLEN values without truncation or partial effects.",
-            "bridge_rule": "The PTO-v0 bundle bridge binds destination0, source0, and source1 only; operations needing any other operand reject at commit before tile effects.",
+            "bridge_rule": "The PTO-v0 bundle bridge binds destination0, source0, source1, address, scalar0, and scalar1; operations needing any other operand reject at commit before tile effects.",
         },
         "form_matrix": form_matrix,
         "encoding_variant_matrix": encoding_variant_matrix,
@@ -209,14 +214,16 @@ def build_evidence() -> dict:
         },
         "independent_comparison": {
             "source": "content-addressed independent executable ISA snapshot",
-            "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
+            "aggregate_sha256": load_json(EXECUTABLE_COMPARISON)["snapshot"][
+                "revision_sha256"
+            ],
             "matched_form_ids": len(comparison_rows),
             "exact_encoding_matches": exact_encoding_matches,
             "accepted_abi_encoding_divergences": accepted_abi_encoding_divergences,
             "executable_subset": comparison_status_counts["executable-subset"],
             "decode_only": comparison_status_counts["decode-only"],
             "authority": "non-normative structural comparison only",
-            "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and stages bundle payload execution, so it neither matches those masks nor validates PTO tile payload effects; ADR 0045, the PTO catalogs, and PTO-owned ASL evidence remain authoritative.",
+            "limitation": "The LinxISA v0.58 snapshot matches all common command encodings, but structural command comparison does not validate PTO tile payload effects; PTO catalogs and PTO-owned ASL evidence remain authoritative.",
         },
         "requirement_ids": [
             "PTO-REQ-BUNDLE-DISPATCH-001",

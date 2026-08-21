@@ -19,8 +19,8 @@
 | Surface | Linx/v4 baseline | DavinciOO v5 treatment |
 | --- | --- | --- |
 | `B.IOT` | `imm4`, reuse bits, 3-bit DstTile | Profile-isolated `PE_MASK`, `TSize`, 2-bit DstTile; no reuse |
-| `C.B.DIM RegSrc` | Compressed runtime dimension | Reinterpreted as `C.B.IOS`; runtime dimension uses `B.DIM` |
-| `BSTART.TLSU` | Functions 8–31 reserved | Functions 8–12 分配给 Shared movement/partition store；Function 13 分配给 `GMOV` |
+| `C.B.DIM RegSrc` | Compressed runtime dimension | Reinterpreted as `B.IOS`; runtime dimension uses `B.DIM` |
+| `BSTART.TLSU` | Linx v0.58 allocation | PTO Functions 0–8 and 13 are common; Linx-only Functions 9–12 and 14 remain reserved/illegal in PTO |
 | `BSTART.CUBE` | Existing TMATMUL/TGEMV functions | Numbers retained; Shared binder changes operand schema |
 | `FENCE.D` | PE-local fence mode `00000` | Core PE4 mode `00001` added as `FENCE.D.CORE4` |
 
@@ -30,7 +30,11 @@ DavinciOO v5 保留 12 个 base/BIAS/ACC、MX/non-MX TMATMUL/TGEMV operation，�
 
 ## TLSU Coverage
 
-TLOAD/TSTORE/TMOV retain PTO-visible names. GM↔Shared uses functions 0/1 with `C.B.IOS+B.IOR`; Local↔Shared uses functions 8–11; partition store uses function 12. Gather/scatter/prefetch do not target Shared storage in v5.
+TLOAD/TSTORE/TMOV retain PTO-visible names. GM↔Shared uses Functions 0/1 with
+`B.IOS+B.IOR`; TMOV is Local-only at Function 2. Functions 6/7/8 are
+MGATHER.MASK/MSCATTER.MASK/MGATHER.CAS. Linx-only Shared movement and
+TSTORE.SPART functions remain reserved in PTO. Gather/scatter/prefetch do not
+target Shared storage in v5.
 
 ## Scalar 与 SYS 覆盖
 
@@ -38,7 +42,7 @@ Complete HTML 的 scalar appendix 保留继承的 Linx compatibility reference�
 
 ## GMOV 覆盖
 
-`GMOV` 使用原 reserved 的 `BSTART.TLSU Function 13`，operand schema 为 `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(peer_tid,0,0)`。它是固定 Core4 collective，与 Shared CUBE 一样要求收敛，但不使用 `C.B.IOS`。
+`GMOV` 使用原 reserved 的 `BSTART.TLSU Function 13`，operand schema 为 `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(peer_tid,0,0)`。它是固定 Core4 collective，与 Shared CUBE 一样要求收敛，但不使用 `B.IOS`。
 
 ## PTO Mapping Status
 

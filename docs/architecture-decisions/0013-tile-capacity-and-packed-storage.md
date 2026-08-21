@@ -44,7 +44,7 @@ cannot be mistaken for an active allocation.
 
 This decision defines descriptor storage accounting. It does not silently
 choose the byte-addressing or packing protocol for sub-byte tile-memory
-transfers; that instruction-level rule remains a separate TMA closure item.
+transfers; that instruction-level rule remains a separate TLSU closure item.
 
 ## Consequences
 

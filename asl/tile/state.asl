@@ -218,16 +218,16 @@ begin
 end;
 
 pure func TileSizeCodeBytes(size_code: integer {1..7})
-    => integer {512,1024,2048,4096,8192,16384,32768}
+    => integer {128,256,512,1024,2048,4096,8192}
 begin
     case size_code of
-        when 1 => return 512;
-        when 2 => return 1024;
-        when 3 => return 2048;
-        when 4 => return 4096;
-        when 5 => return 8192;
-        when 6 => return 16384;
-        when 7 => return 32768;
+        when 1 => return 128;
+        when 2 => return 256;
+        when 3 => return 512;
+        when 4 => return 1024;
+        when 5 => return 2048;
+        when 6 => return 4096;
+        when 7 => return 8192;
     end;
 end;
 
@@ -365,6 +365,34 @@ begin
     return data_type == TileDataType_S8 || data_type == TileDataType_S16 ||
            data_type == TileDataType_S32 || data_type == TileDataType_S64 ||
            data_type == TileDataType_S4X2;
+end;
+
+pure func TileDataTypeIsUnsignedInteger(data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_U8 || data_type == TileDataType_U16 ||
+           data_type == TileDataType_U32 || data_type == TileDataType_U64 ||
+           data_type == TileDataType_U4X2;
+end;
+
+pure func TileDataTypeIsInteger(data_type: TileDataType) => boolean
+begin
+    return TileDataTypeIsSigned(data_type) ||
+           TileDataTypeIsUnsignedInteger(data_type);
+end;
+
+pure func IndexedTLSUTransferDataTypeLegal(
+    data_type: TileDataType) => boolean
+begin
+    // Indexed GM operands are byte displacements. Packed four-bit transfers
+    // additionally need a low/high-nibble selector that the block does not
+    // encode. IndexTile element legality is independent of this restriction.
+    return !TileDataTypeIsFourBit(data_type);
+end;
+
+pure func IndexedTLSUIndexDataTypeLegal(
+    data_type: TileDataType) => boolean
+begin
+    return TileDataTypeIsInteger(data_type);
 end;
 
 pure func TileDataTypeIsFloating(data_type: TileDataType) => boolean

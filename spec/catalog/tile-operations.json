@@ -57,7 +57,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -109,7 +111,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -161,7 +165,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -213,7 +219,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -265,7 +273,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -317,7 +327,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -369,7 +381,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -421,7 +435,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -473,7 +489,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -525,7 +543,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -577,7 +597,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -629,7 +651,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -688,7 +712,9 @@
           "CMode"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -732,7 +758,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -776,7 +804,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -820,7 +850,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -864,7 +896,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -908,7 +942,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -952,7 +988,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -996,7 +1034,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1040,7 +1080,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1084,7 +1126,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1141,7 +1185,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1196,7 +1242,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1253,7 +1301,9 @@
       },
       "selector": "0x01C",
       "mode": 0,
-      "function": 28
+      "function": 28,
+      "engine": "VEC",
+      "classification": "elementwise-tile-tile"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1305,7 +1355,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1357,7 +1409,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1409,7 +1463,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1461,7 +1517,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1513,7 +1571,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1565,7 +1625,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1617,7 +1679,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1669,7 +1733,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1721,7 +1787,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1773,7 +1841,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1825,7 +1895,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1877,7 +1949,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1936,7 +2010,9 @@
           "CMode"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -1993,7 +2069,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2034,7 +2112,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "VEC",
+      "classification": "tile-scalar-and-immediate"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2081,7 +2161,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2128,7 +2210,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2175,7 +2259,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2222,7 +2308,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2277,7 +2365,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2332,7 +2422,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2387,7 +2479,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2442,7 +2536,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2497,7 +2593,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2552,7 +2650,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2607,7 +2707,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2662,7 +2764,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2709,7 +2813,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2756,7 +2862,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2803,7 +2911,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2850,7 +2960,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2897,7 +3009,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2944,7 +3058,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -2999,7 +3115,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3054,7 +3172,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3109,7 +3229,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3164,7 +3286,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3219,7 +3343,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3274,7 +3400,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3329,7 +3457,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3384,7 +3514,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3431,7 +3563,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3478,7 +3612,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "reduce-and-expand"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3537,7 +3673,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "layout-and-rearrangement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3596,7 +3734,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "layout-and-rearrangement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3655,7 +3795,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "layout-and-rearrangement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3754,7 +3896,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "layout-and-rearrangement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3806,7 +3950,9 @@
           "Layout"
         ],
         "pad_union": "pad-value"
-      }
+      },
+      "engine": "SFU",
+      "classification": "layout-and-rearrangement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3855,7 +4001,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3904,7 +4052,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -3914,16 +4064,36 @@
       "selector": "0x068",
       "semantic_handler": "THISTOGRAM",
       "operands": [
-        {"field": "destination0", "role": "destination"},
-        {"field": "source0", "role": "source"},
-        {"field": "source1", "role": "indices"},
-        {"field": "selected_byte", "role": "selected-byte"}
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "indices"
+        },
+        {
+          "field": "selected_byte",
+          "role": "selected-byte"
+        }
       ],
       "arguments": [
-        {"operand": "destination0"},
-        {"operand": "source0"},
-        {"operand": "source1"},
-        {"operand": "selected_byte"}
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "selected_byte"
+        }
       ],
       "mode": 3,
       "function": 8,
@@ -3939,9 +4109,14 @@
         "operand:selected_byte:selected-byte"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": ["PadValueOrByteId", "DataType"],
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "DataType"
+        ],
         "pad_union": "histogram-byte-id"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4012,7 +4187,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4083,7 +4260,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4148,7 +4327,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4205,7 +4386,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4248,7 +4431,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "layout-and-rearrangement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4299,7 +4484,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4350,7 +4537,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4402,7 +4591,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4454,7 +4645,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4506,7 +4699,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4558,7 +4753,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "SFU",
+      "classification": "irregular-and-complex"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4575,6 +4772,10 @@
         {
           "field": "address",
           "role": "base-address"
+        },
+        {
+          "field": "scalar0",
+          "role": "row-stride-bytes"
         }
       ],
       "arguments": [
@@ -4583,6 +4784,9 @@
         },
         {
           "operand": "address"
+        },
+        {
+          "operand": "scalar0"
         }
       ],
       "contract_status": "reviewed-complete",
@@ -4592,14 +4796,17 @@
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:destination0:destination",
-        "operand:address:base-address"
+        "operand:address:base-address",
+        "operand:scalar0:row-stride-bytes"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "TLSU",
+      "classification": "memory-and-data-movement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4614,6 +4821,10 @@
           "role": "base-address"
         },
         {
+          "field": "scalar0",
+          "role": "row-stride-bytes"
+        },
+        {
           "field": "source0",
           "role": "source"
         }
@@ -4621,6 +4832,9 @@
       "arguments": [
         {
           "operand": "address"
+        },
+        {
+          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -4633,6 +4847,7 @@
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "state_effects": [
         "operand:address:base-address",
+        "operand:scalar0:row-stride-bytes",
         "operand:source0:source"
       ],
       "datr_contract": {
@@ -4640,7 +4855,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "TLSU",
+      "classification": "memory-and-data-movement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4681,7 +4898,9 @@
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "TLSU",
+      "classification": "layout-and-rearrangement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4720,7 +4939,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "TLSU",
+      "classification": "memory-and-data-movement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4740,7 +4961,7 @@
         },
         {
           "field": "source0",
-          "role": "indices"
+          "role": "byte-displacement-indices"
         }
       ],
       "arguments": [
@@ -4762,14 +4983,16 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:source0:indices"
+        "operand:source0:byte-displacement-indices"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "TLSU",
+      "classification": "memory-and-data-movement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4789,7 +5012,7 @@
         },
         {
           "field": "source1",
-          "role": "indices"
+          "role": "byte-displacement-indices"
         }
       ],
       "arguments": [
@@ -4811,34 +5034,58 @@
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:source",
-        "operand:source1:indices"
+        "operand:source1:byte-displacement-indices"
       ],
       "datr_contract": {
         "allowed_nonzero_fields": [
           "Layout"
         ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "TLSU",
+      "classification": "memory-and-data-movement"
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TLSU",
-      "command_mnemonic": "BSTART.TLSU",
+      "command_mnemonic": "BSTART.MGATHER.MASK",
       "function": 6,
       "name": "MGATHER_MASK",
       "semantic_handler": "MGATHER_MASK",
       "operands": [
-        {"field": "destination0", "role": "destination"},
-        {"field": "address", "role": "base-address"},
-        {"field": "source0", "role": "indices"},
-        {"field": "source1", "role": "mask"}
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "byte-displacement-indices"
+        },
+        {
+          "field": "source1",
+          "role": "mask"
+        }
       ],
       "arguments": [
-        {"operand": "destination0"},
-        {"operand": "address"},
-        {"operand": "source0"},
-        {"operand": "source1"},
-        {"runtime": "CurrentBundlePadValue"}
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "runtime": "CurrentBundlePadValue"
+        }
       ],
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_MGATHER_MASK",
@@ -4848,32 +5095,57 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:source0:indices",
+        "operand:source0:byte-displacement-indices",
         "operand:source1:mask"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": ["PadValueOrByteId", "Layout"],
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "Layout"
+        ],
         "pad_union": "pad-value"
-      }
+      },
+      "engine": "TLSU",
+      "classification": "memory-and-data-movement"
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TLSU",
-      "command_mnemonic": "BSTART.TLSU",
+      "command_mnemonic": "BSTART.MSCATTER.MASK",
       "function": 7,
       "name": "MSCATTER_MASK",
       "semantic_handler": "MSCATTER_MASK",
       "operands": [
-        {"field": "address", "role": "base-address"},
-        {"field": "source0", "role": "source"},
-        {"field": "source1", "role": "indices"},
-        {"field": "source2", "role": "mask"}
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "source"
+        },
+        {
+          "field": "source1",
+          "role": "byte-displacement-indices"
+        },
+        {
+          "field": "source2",
+          "role": "mask"
+        }
       ],
       "arguments": [
-        {"operand": "address"},
-        {"operand": "source0"},
-        {"operand": "source1"},
-        {"operand": "source2"}
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
       ],
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_MSCATTER_MASK",
@@ -4883,34 +5155,63 @@
       "state_effects": [
         "operand:address:base-address",
         "operand:source0:source",
-        "operand:source1:indices",
+        "operand:source1:byte-displacement-indices",
         "operand:source2:mask"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": ["Layout"],
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "TLSU",
+      "classification": "memory-and-data-movement"
     },
     {
       "disposition": "accepted-direct-operation",
       "family": "TLSU",
-      "command_mnemonic": "BSTART.TLSU",
+      "command_mnemonic": "BSTART.MGATHER.CAS",
       "function": 8,
       "name": "MGATHER_CAS",
       "semantic_handler": "MGATHER_CAS",
       "operands": [
-        {"field": "destination0", "role": "destination"},
-        {"field": "address", "role": "base-address"},
-        {"field": "source0", "role": "indices"},
-        {"field": "source1", "role": "expected"},
-        {"field": "source2", "role": "replacement"}
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "address",
+          "role": "base-address"
+        },
+        {
+          "field": "source0",
+          "role": "byte-displacement-indices"
+        },
+        {
+          "field": "source1",
+          "role": "expected"
+        },
+        {
+          "field": "source2",
+          "role": "replacement"
+        }
       ],
       "arguments": [
-        {"operand": "destination0"},
-        {"operand": "address"},
-        {"operand": "source0"},
-        {"operand": "source1"},
-        {"operand": "source2"}
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "address"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        }
       ],
       "contract_status": "reviewed-complete",
       "legality_handler": "TileOperandsLegal_MGATHER_CAS",
@@ -4920,14 +5221,18 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:source0:indices",
+        "operand:source0:byte-displacement-indices",
         "operand:source1:expected",
         "operand:source2:replacement"
       ],
       "datr_contract": {
-        "allowed_nonzero_fields": ["Layout"],
+        "allowed_nonzero_fields": [
+          "Layout"
+        ],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "TLSU",
+      "classification": "memory-and-data-movement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -4976,7 +5281,9 @@
         ],
         "pad_union": "must-zero"
       },
-      "function": 13
+      "function": 13,
+      "engine": "TLSU",
+      "classification": "memory-and-data-movement"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5023,7 +5330,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5078,7 +5387,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5133,7 +5444,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5196,7 +5509,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5267,7 +5582,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5338,7 +5655,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5385,7 +5704,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5440,7 +5761,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5495,7 +5818,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5558,7 +5883,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5629,7 +5956,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     },
     {
       "disposition": "accepted-direct-operation",
@@ -5700,7 +6029,9 @@
       "datr_contract": {
         "allowed_nonzero_fields": [],
         "pad_union": "must-zero"
-      }
+      },
+      "engine": "CUBE",
+      "classification": "matrix-and-matrix-vector"
     }
   ],
   "reserved": {
@@ -5760,18 +6091,18 @@
         "0x061"
       ],
       [
-        "0x068",
-        "0x068"
+        "0x069",
+        "0x069"
       ],
       [
         "0x075",
         "0x07F"
       ]
     ],
-    "tma_functions": [
+    "tlsu_functions": [
       [
-        6,
-        7
+        9,
+        12
       ],
       [
         14,
@@ -5799,6 +6130,7 @@
     "TPRELU",
     "TPUSH",
     "TRESHAPE",
+    "TRANDOM",
     "TSUBC",
     "TSUBSC"
   ],

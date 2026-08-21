@@ -166,7 +166,7 @@
       "gaps": [],
       "id": "S3-T2",
       "owner": "PTO memory-model maintainers",
-      "requirements": ["PTO-REQ-MEMORY-TSO-001", "PTO-REQ-SCALAR-AMO-001", "PTO-REQ-TMA-001"],
+      "requirements": ["PTO-REQ-MEMORY-TSO-001", "PTO-REQ-SCALAR-AMO-001", "PTO-REQ-TLSU-001"],
       "stage": 3,
       "status": "closed",
       "title": "Close ordering, reservation, prefetch, gather-CAS, and mixed-size decisions"
@@ -252,14 +252,14 @@
       "title": "Close TEPL reference semantics"
     },
     {
-      "evidence": ["spec/catalog/tile-operations.json", "asl/tile/memory.asl", "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md", "spec/evidence/tma-totality.json", "tests/asl/tile-tests.asl", "tests/asl/tma-totality-tests.asl", "tests/asl/concurrency-tests.asl"],
+      "evidence": ["spec/catalog/tile-operations.json", "asl/tile/memory.asl", "docs/architecture-decisions/0033-tlsu-four-bit-memory-packing.md", "spec/evidence/tlsu-totality.json", "tests/asl/tile-tests.asl", "tests/asl/tlsu-totality-tests.asl", "tests/asl/concurrency-tests.asl"],
       "gaps": [],
       "id": "S4-T9",
       "owner": "PTO tile memory and memory-model maintainers",
-      "requirements": ["PTO-REQ-TMA-001", "PTO-REQ-MEMORY-COMPLETION-001", "PTO-REQ-MEMORY-TSO-001"],
+      "requirements": ["PTO-REQ-TLSU-001", "PTO-REQ-MEMORY-COMPLETION-001", "PTO-REQ-MEMORY-TSO-001"],
       "stage": 4,
       "status": "closed",
-      "title": "Close TMA reference semantics"
+      "title": "Close TLSU reference semantics"
     },
     {
       "evidence": ["spec/catalog/tile-operations.json", "asl/tile/cube.asl", "asl/tile/legality.asl", "docs/architecture-decisions/0034-cube-raw-carrier-totality.md", "spec/evidence/cube-totality.json", "tests/asl/cube-totality-tests.asl", "tests/asl/tile-tests.asl"],

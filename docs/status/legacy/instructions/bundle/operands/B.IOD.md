@@ -4,8 +4,8 @@
   "id": "header.header-b.iod",
   "kind": "header",
   "title": "B.IOD",
-  "status": "active",
-  "visibility": "public",
+  "status": "historical",
+  "visibility": "legacy",
   "profile": "pto-isa-0.58.0",
   "family": "Operand Bindings",
   "sources": {
@@ -14,6 +14,9 @@
 }
 ---
 # B.IOD
+
+> Historical, non-normative material. `B.IOD` is permanently deleted and its
+> former encoding slot is owned by active `B.IOS`.
 
 ## 说明
 

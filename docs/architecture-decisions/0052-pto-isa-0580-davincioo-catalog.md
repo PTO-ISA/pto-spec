@@ -15,18 +15,18 @@ one release boundary.
 
 ## Decision
 
-PTO ISA 0.58.0 accepts exactly 106 direct Tile operations: 87 TEPL, 7 TMA, and
-12 CUBE. It accepts 96 bundle/command forms: the predecessor's 99-form set,
-minus removed `BSTART.ACCCVT`, `BSTART.MGATHER.CAS`, `BSTART.MGATHER.MASK`, and
-`BSTART.MSCATTER.MASK`, plus the new `BSTART.GMOV` form. `BSTART.GMOV` is the
-named TMA start for TLSU Function 13.
+As amended by ADRs 0053 and 0054, PTO ISA 0.58.0 accepts exactly 109 direct
+Tile operations: 87 TEPL-carrier operations, 10 TLSU operations, and 12 CUBE
+operations. The execution-engine partition is 35 VEC, 52 SFU, 10 TLSU, and
+12 CUBE. It accepts 99 bundle/command forms. `BSTART.GMOV` is the named TLSU
+start for Function 13.
 
-The release adds `GMOV`, `TFMA`, and `TRANDOM`, and uses `TSORT32` as the sole
-canonical spelling for selector `0x06C`.  `TMOV` remains accepted at Local
-Function 2; Shared modes use Functions 8 through 11 at the command/lowering
-boundary.  `TSEL` is fixed at Mode 0 / Function 26 (`0x01A`), while `TSELS`
-remains Mode 1 / Function 26 (`0x03A`).  `TFMA` is Mode 0 / Function 28
-(`0x01C`), and `TRANDOM` is Mode 3 / Function 9 (`0x069`).
+The release adds `GMOV` and `TFMA`. `TRANDOM` is deleted and `TSORT` is the
+canonical spelling for selector `0x06C`. `TMOV` remains accepted only at Local
+Function 2. `TSEL` is fixed at Mode 0 / Function 26 (`0x01A`), while `TSELS`
+remains Mode 1 / Function 26 (`0x03A`). `TFMA` is Mode 0 / Function 28
+(`0x01C`). `MGATHER.MASK`, `MSCATTER.MASK`, and `MGATHER.CAS` occupy TLSU
+Functions 6, 7, and 8; Functions 9–12 and 14 remain reserved in PTO.
 
 `TADDC` is not accepted.  Its DavinciOO encoding observation is Mode 0 /
 Function 24; the encoding remains reserved and is not conflated with `TFMA`.
@@ -47,14 +47,14 @@ The reviewed 0.58.0 scalar/command encoded-form projection contains exactly
 The binary-closure gate pins this value so any later encoding drift requires a
 new normative decision instead of silently changing the release ABI.
 
-The release replaces the v4 compressed `C.B.DIM RegSrc` slot with the 8-bit
-`C.B.IOS SharedTID` binder. `S0` through `S255` name absolute Core-local Shared
-registers with persistent descriptor/payload plus a four-quarter initialization
-mask. Shared TLOAD/TSTORE accept optional mask-only B.IOT, TMOV Functions 8–11
-and cooperative TMATMUL consume the binder schemas defined by the public 0.58.0
-architecture and instruction pages. Destination updates are atomic RMWs;
-uninitialized reads have undefined-register semantics. TGEMV rejects every
-Shared binder.
+The release assigns the former B.IOD 32-bit slot to `B.IOS`. `S0` through
+`S255` name absolute Core-local Shared registers with persistent
+descriptor/payload plus a four-PE initialization mask. Shared TLOAD/TSTORE use
+`B.IOS` for identity, mask, and destination per-PE size; `B.IOT` is Local-only.
+Cooperative TMATMUL consumes the operation-defined B.IOS binder sequence.
+Destination updates are atomic RMWs; uninitialized reads have
+undefined-register semantics. TGEMV rejects every Shared binder. `B.IOD` and
+`C.B.IOS` are permanently deleted spellings.
 
 All 12 CUBE operations write explicit Local D. ACC variants additionally read
 explicit Local C with read-old/write-new alias behavior; PTO ISA 0.58.0 has no
@@ -69,8 +69,8 @@ HTML is tracked under `docs/html/`, with
 ## Consequences
 
 - Catalog, ASL decoder, semantic handler, operand binding, executable witness,
-  Markdown, HTML, and Excel inventories must all report 106.
-- The normative Tile/Bundle ASL assertion inventory is pinned at 180 after the
+  Markdown, HTML, and Excel inventories must all report 109.
+- The normative Tile/Bundle ASL assertion inventory is pinned at 196 after the
   removed operations and replacement Shared-register model are accounted for.
 - Removed operations remain reserved or explicitly absent; they do not retain
   formal instruction pages in the Complete site.

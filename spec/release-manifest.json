@@ -10,11 +10,15 @@
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
+      "sha256": "573f4024b67ef735671581b84ade90815845d7a8ef54b11e7983d355cdb50cdf"
+    },
+    {
+      "path": "asl/bundle/postprocess.asl",
+      "sha256": "25dfbca86020490e2995ab40dea9295d55e8cc52892249525621d40da79f9c3d"
     },
     {
       "path": "asl/bundle/state.asl",
-      "sha256": "a84d0145cd372c4ec640ebbe18afb1488098f88870b57a35341d7499b128f42f"
+      "sha256": "90b110dbc28835a3e00974e036b26f3bf3006ba0e75730c471a097d2df9ab950"
     },
     {
       "path": "asl/concurrency.asl",
@@ -26,7 +30,67 @@
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "d2f16eef9b310107df3090613e76d6f05693a0cc39a1c69c8c241f33cc5bb2f4"
+      "sha256": "3c36ef13ce344eb8258f321f90a2e1b6df88e15d6905a4d864a4b48919ccc988"
+    },
+    {
+      "path": "asl/numeric/formats/bf16.asl",
+      "sha256": "ec4dabaf59660af4d0a7688ad4891a26eda5f644bcabd663b520c9f24de26eea"
+    },
+    {
+      "path": "asl/numeric/formats/e1m2x2.asl",
+      "sha256": "46f757fd27b4e65d772efcb6672f6ed08fde4e3503fb0f122fc32e8e50089875"
+    },
+    {
+      "path": "asl/numeric/formats/e2m1x2.asl",
+      "sha256": "a3e135139f3caa832e0b9a822c406b71f09ad032a2967761828ea8045e6c40ae"
+    },
+    {
+      "path": "asl/numeric/formats/e2m3.asl",
+      "sha256": "763c5a47ce8bf0eb63fe309666a249f760c9fdd2ab7f6e4b45b7aeba90575e2f"
+    },
+    {
+      "path": "asl/numeric/formats/e3m2.asl",
+      "sha256": "a9d78aedcafa63992ef32b50e63f7f6f3f24edbf31396effc772715b49efaa54"
+    },
+    {
+      "path": "asl/numeric/formats/e4m3.asl",
+      "sha256": "63396dd5985e6fd9570044004a4739000eb619e5bc8e77e68bf8a080985c30c4"
+    },
+    {
+      "path": "asl/numeric/formats/e5m2.asl",
+      "sha256": "a3ba29fb79e37706cf8a2c6fbf5b62b5e331cf9e9d9ec810e79311db095c96ed"
+    },
+    {
+      "path": "asl/numeric/formats/e8m0.asl",
+      "sha256": "8c8f9b036b7f4b465a1a98a07ff7844807eb09135e442a5bf094fc559582c6a3"
+    },
+    {
+      "path": "asl/numeric/formats/fp16.asl",
+      "sha256": "b975dc1086d82c7b4e62dc38808c9b6dc76a7a5ad0ec422fce0de6a4358a266e"
+    },
+    {
+      "path": "asl/numeric/formats/fp32.asl",
+      "sha256": "a8f8c077a4b0a143e677e7e078a1b9df0668a8deb38994458af4c76266c32ba8"
+    },
+    {
+      "path": "asl/numeric/formats/fp64.asl",
+      "sha256": "3c61ea952fe7d278182ff44f3fd32326da79f563b6a74e96461d75ca5a3a7e30"
+    },
+    {
+      "path": "asl/numeric/formats/hf32.asl",
+      "sha256": "2580030762be8f30ba0128a4cb90125d5772ba974e7135198e88124b27dcf4cb"
+    },
+    {
+      "path": "asl/numeric/formats/hif4x2.asl",
+      "sha256": "ad8161a771a010b3662a79d03c0da68917d48edbea9dfd602378cff0c2d025be"
+    },
+    {
+      "path": "asl/numeric/formats/hif8.asl",
+      "sha256": "a32a3f906574e28552d7578717b399e71bd28b1f66f5b9a41878c5c693a54566"
+    },
+    {
+      "path": "asl/numeric/formats/tf32.asl",
+      "sha256": "99e35a02ba664d5991da4e10d7cc5f35e52c5b53a3450e1142d430fbfef31935"
     },
     {
       "path": "asl/profiles/pto-v0.asl",
@@ -78,7 +142,7 @@
     },
     {
       "path": "asl/tile/complex.asl",
-      "sha256": "d147dbd128db069ff6833c1974ca55cd7fe88fc7c992518eb2941e341cb4f1f1"
+      "sha256": "11d906d264930bab97f985ff56baca8634b2c334374806154465dde1af12ceac"
     },
     {
       "path": "asl/tile/conversion.asl",
@@ -102,11 +166,11 @@
     },
     {
       "path": "asl/tile/legality.asl",
-      "sha256": "0bdf91a90b7dcdcadc9cc9eaf4382fd52a356a291aa4b9afd580f056f5ff7243"
+      "sha256": "ff402eb1ef1aeeb0fe2664ba5b61b9b97a71bccaf7c8bef6271136263ae0f4bf"
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "ddf64264ba57cec0dd3772b815b3fd3d0ff3899e7c447a60f1737862b9d1bb22"
+      "sha256": "e5c2d60ad3a5ec31afb181674d33d860b15cf17e215cff60cf7edfa5cfb65ac0"
     },
     {
       "path": "asl/tile/rearrangement.asl",
@@ -118,11 +182,11 @@
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "1d8f6a0a65e50eb71cddc3d7f28cf44175e0287b6b055bc6d42866b6ddaf98af"
+      "sha256": "a73e4106b9481c35b0d695fb451bdf7f46aa1429feb6ec58bec7bc7f31dad2b2"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
+      "sha256": "b78deeec417dd72e296b449ecee0695225045f175439f94dd49c8039e69d45d8"
     },
     {
       "path": "docs/architecture-decisions/0001-pto-architecture-scope.md",
@@ -142,7 +206,7 @@
     },
     {
       "path": "docs/architecture-decisions/0008-architectural-state-contract.md",
-      "sha256": "1efa583eafb67d75b8ece2b239d1ebc6e2d0d3ec1212aff0550127f62725f8ff"
+      "sha256": "17994fe921827995bb7a7d81c3581203be7287cdac177f380d5d80bd40dca64e"
     },
     {
       "path": "docs/architecture-decisions/0009-scalar-tpc-and-execution-status.md",
@@ -162,7 +226,7 @@
     },
     {
       "path": "docs/architecture-decisions/0013-tile-capacity-and-packed-storage.md",
-      "sha256": "10ed1439d46f03c658b3d2dad07bee27a66daa022fb17696e07e333633337627"
+      "sha256": "8b3ff37337b58714a27a735f88b5248f548ead4057143117aabb19aa5f485a22"
     },
     {
       "path": "docs/architecture-decisions/0014-element-level-tile-definedness.md",
@@ -198,7 +262,7 @@
     },
     {
       "path": "docs/architecture-decisions/0022-bundle-operation-descriptor-and-commit.md",
-      "sha256": "43e84df2875d505189ea35c1b8ab79032e2477e9d73bb45a41d45d022c5988bd"
+      "sha256": "7a6f334e105d2960b301815b1a4b258734020a099b09024eed94f63159bf4fca"
     },
     {
       "path": "docs/architecture-decisions/0023-uniform-instruction-attempt-status.md",
@@ -238,11 +302,11 @@
     },
     {
       "path": "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
-      "sha256": "1ce14f19c40bb53d868efef62994ec6c4e10a24d5da3cc5dd4de560159757e3e"
+      "sha256": "631f7e887ee890c39c440bba354d8f0a9503be020b9078df33b985d2a55a3796"
     },
     {
-      "path": "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
-      "sha256": "133d78e770cedb49f0b7cac66b52e0fc6efb6a687f99bd7cb630ca9fb7ec6714"
+      "path": "docs/architecture-decisions/0033-tlsu-four-bit-memory-packing.md",
+      "sha256": "df5bce242a3e81e8eb667021e25cb5dab2720ec368ad3d0d2a7c66535207255a"
     },
     {
       "path": "docs/architecture-decisions/0034-cube-raw-carrier-totality.md",
@@ -254,7 +318,7 @@
     },
     {
       "path": "docs/architecture-decisions/0036-executable-model-comparison-dispositions.md",
-      "sha256": "998f14706471dd024023ef5937eb4bd32cc70f3aeaa21bea95a4b0e2af7f733a"
+      "sha256": "a3c2dab839e8e3987bc655075bcc0e2278c32a67c8816efa852bce264b68fa3e"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
@@ -270,7 +334,7 @@
     },
     {
       "path": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
-      "sha256": "86b6c6fb16293133f1b8f221207df4219db0aaacc88ebd5e1aa286cc07d0e86a"
+      "sha256": "05772cec7ed2c01c38bdb176182dde3cfc606a9eb9f59cc89f8b3f1d5acc1b30"
     },
     {
       "path": "docs/architecture-decisions/0041-a2a3-mx-profile-applicability.md",
@@ -290,7 +354,7 @@
     },
     {
       "path": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-      "sha256": "94bfe27aba5f549c2579a169c720182a1366780b2deefd783047c21c4aaf236f"
+      "sha256": "5f95c3ba26d39d26a323a10798a5e4d54b176fcca49ee77d75368d9b233072e3"
     },
     {
       "path": "docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md",
@@ -302,7 +366,7 @@
     },
     {
       "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-      "sha256": "cca6076b80003179731fe8f843ae230b835b5f0e581024f8e5b4509cd0f33f7e"
+      "sha256": "4ea4187956baf67f6ec7e2e1b8145145d11b76e3b01c2c992460e6fd4f8603c9"
     },
     {
       "path": "docs/architecture-decisions/0049-hardware-subnormal-policy.md",
@@ -318,23 +382,47 @@
     },
     {
       "path": "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
-      "sha256": "6d78f37488258271eaed5c7a1129cab2c03f804beeaac8b373336512540c736a"
+      "sha256": "86b377ef1ee14383757336a4d50bee449e4c19a0c8af246bfc9febd8e266e31d"
+    },
+    {
+      "path": "docs/architecture-decisions/0053-pto-isa-0580-tile-operation-cleanup.md",
+      "sha256": "91dfab691637f0739cee0b5e38dc5e3387f6d9e13c9e24e2e49fb70cb9d551a8"
+    },
+    {
+      "path": "docs/architecture-decisions/0054-tile-execution-engine-classification.md",
+      "sha256": "45555e9e575cd6bbd1d03333cfc54df2a50477ad77e5bac9b1ad9a5f07dc12dd"
+    },
+    {
+      "path": "docs/architecture-decisions/0055-b-fpatr-postprocess-config.md",
+      "sha256": "fc2def19b597368500110fa26ed3ecf138d8c1ac234297a7265b572b65784ab7"
+    },
+    {
+      "path": "docs/architecture-decisions/0056-bundle-datatype-none-sentinel.md",
+      "sha256": "d9000f6146ae8cd2461f19e6e33fd4fc329209d11f3066ff7cff4e5fc4d805e1"
+    },
+    {
+      "path": "docs/architecture-decisions/0057-exact-numeric-format-decomposition.md",
+      "sha256": "578f9eecc37e7e8a3159d52fe4a9c2286da1e2eb5d0792d71938a6b317e17fe3"
+    },
+    {
+      "path": "docs/architecture-decisions/0058-gm-byte-addressing.md",
+      "sha256": "686e276121306ac44ff0a9fe9a72ba380068f71715fe8a89212b49f721a84a5c"
     },
     {
       "path": "docs/architecture.md",
-      "sha256": "9ef77c3bdd7cf46858ebdf4eb805bb9316fd03e929c2c61586a0326bbd1b9d39"
+      "sha256": "a2f77c2c93c4a24aaea976498d7de94d0a9e00dded309ab8efdf69a146d6e18b"
     },
     {
       "path": "docs/coverage.md",
-      "sha256": "4160080b898718f147469254d9986084350097d263d03fea798b0815ca689cc7"
+      "sha256": "16674185c1d560e4e1e2081effa506ea791be8bc0d7214a2e318ba6b52b62ef1"
     },
     {
       "path": "docs/maturity-bringup-plan.md",
-      "sha256": "b5ce62f12c4e2fc8474d2b20446d7a1e29ee8ba71949ac77833a50cffc73f010"
+      "sha256": "cde6ead5e7bd7f9b15c87a3f54374fbeb304c683d7179ada7248199f4673ab10"
     },
     {
       "path": "docs/maturity-stage-targets.md",
-      "sha256": "22db21a9d2e01210917966f8e54fc2b478f1fc1b94aca9cd925f146f9cf46eda"
+      "sha256": "95812166cb6a2fa805db44f997ccc02ca98b4eec67ff1be4678661236eb15914"
     },
     {
       "path": "docs/memory-model.md",
@@ -346,7 +434,7 @@
     },
     {
       "path": "docs/normative-sources.md",
-      "sha256": "4a365174e15d9c5cdf1e9b185931d2d01448d4a8408b60652c7986f1de07ff4f"
+      "sha256": "f49a69ce293f161f36ed0109adeec8102e4ab59fe42a78913569563722c33e7b"
     },
     {
       "path": "docs/numeric-profile-decision-register.md",
@@ -358,11 +446,11 @@
     },
     {
       "path": "docs/review-checklist.md",
-      "sha256": "0768e306a54a5512018450567bddead28d5cf140956589340b249bd4accdf08a"
+      "sha256": "3db50440d37250d0a40fa6cc13589acd4b3608b995a0bc3e367e6221f2e88e16"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
+      "sha256": "e42e4f1233ccb33e4710117036ad0a605b9efd7495d1e43cfb7e37d678784074"
     },
     {
       "path": "spec/catalog/linx-vector-reservations.json",
@@ -386,11 +474,11 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "99f7b99a881c60ba0cbd92b4ad6f02d36bac3bd3b43b650585d04c7bedc4ad08"
+      "sha256": "617ab2713268626657b2ec6965f52c15f50ea2711068f41634e140f267c425b2"
     },
     {
       "path": "spec/evidence/bundle-command-totality.json",
-      "sha256": "6a4c35c7f7bf1c26ec6cedd36406cdb0e640b4d164e010f7f0ec9bca8c544a5b"
+      "sha256": "48e75ce5ff49add478a76e3ecb7bf40e35bf1cc66c372cead68a0c9d3d0b6b4a"
     },
     {
       "path": "spec/evidence/cube-totality.json",
@@ -398,75 +486,75 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "a21760edef8d377e313b44851c361b5d5de69f989a1218b8e72b4d67fc63e9a8"
+      "sha256": "5e684217e74126506b19401d8b1c9043fb028798d2253ed9d5ad17ee90033070"
     },
     {
       "path": "spec/evidence/maturity-closure.json",
-      "sha256": "6f8d5b0a7143a01f76c2b2ef0694caaa48a3277d2cd01b7e3f401e67b9283ecf"
+      "sha256": "9c1750cfe62f8b199c120a9ccb094dfcca10c2c16125ef5419e5da9ca116d935"
     },
     {
       "path": "spec/evidence/noncomparable-oracle-coverage.json",
-      "sha256": "8848a378a19953fc5a897839355c5f3205a2e2bc4461b9162e12562c25fede5e"
+      "sha256": "518929399c536ff333f8008f66ca457c091e6af8f986e27a1da35137e1c40c34"
     },
     {
       "path": "spec/evidence/numeric-conformance-readiness.json",
-      "sha256": "3c2ca9ccb34129afb9f483d6224a47af1a27ae3ffb832ae255a635fb951ce6de"
+      "sha256": "a541567e6d16948cb1ab5d2782eb1a4549749fd4eb0ef48d18b22ef3ae30eafd"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "b4d79c47c80e82c83bdb64cc111c0a744006ec60b5b05a798e7105060068122b"
+      "sha256": "9637ce69b1b2f12d76e65c73fb7536fe66c22a1dde19c11b7827c4f5b60cc24b"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
+      "sha256": "7f64689765ca445ce8232ba88be93b1202a64383dfb77b68200ee11d549a314e"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "d3e1d07e4bd29adf4c582625507eac882ffae2eddb1930d628e27604bd9ebc10"
+      "sha256": "091d155d246f13084bde3dddfeda665edf596f1992cf021fc32a147bec02f840"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
+      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-proposals.json",
-      "sha256": "aeb37690f0a65ff5df71fc8a3c5b0b420d532f5598cf87f291aec40c15e8463e"
+      "sha256": "bd71c21cb36321047daff5c725e010ca5a9d020975b23ad809a4375811c26bd5"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "a7f10d3fac177d3d9cc0531bd9f9749a2d1a1583b92567880790d37b3d154df1"
+      "sha256": "2dde615ade1a5a58ef2d31e50d7f40b934697b26c989c107acfa93447e17346c"
     },
     {
       "path": "spec/evidence/numeric-special-value-contract.json",
-      "sha256": "1e076ce3fc5aa5a652094ec1edb439cfa81d1e9c1e71011f9709d42248a1b8f2"
+      "sha256": "b4ae9b5c5a0779dc887a01c8c862a9d1e4cfac8ae117d7779dc04c7365611b67"
     },
     {
       "path": "spec/evidence/numeric-subnormal-contract.json",
-      "sha256": "251d075872fdeed7e83fb56975943dad89b0f78a007c50d69e72c817d902eeaf"
+      "sha256": "f1b1ead44d8a093a17619dc6cc9779614a6edbbe970626fb7adcb993e14ca007"
     },
     {
       "path": "spec/evidence/numeric-variation-point-ownership.json",
-      "sha256": "fe36a3f4f2dc39d98f6ac60dbf25d2129dbd8724401fa170ffb9fc516cae89d8"
+      "sha256": "484fcf45c4a4b95fff31c6094a7a9f60a411256fd55569603cb8f50c1482f70e"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "74484654028a35f7ab73c2d591d33edf6b649f1a79b1add2480959f061c0ee26"
+      "sha256": "9406bea93f93443ff646d7f1862eab96449777f5d1efee83385f495164c57a46"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "8a32fe64469311963c7b64debbfb7620825ba65b05e56bc21bff7fc3358911f7"
+      "sha256": "d7bd220f3ecc5d45f5836c27a4c10451b58b87e4715670e98f54e0aa16e87681"
     },
     {
       "path": "spec/evidence/public-source-reconciliation.json",
-      "sha256": "e70b824de8fe49c820d814f0060bcf02668aa879279f1a37418d0dbab335734b"
+      "sha256": "400e331d1b9731ed3323751ef01192d0a46d7cf27209a381cf7aadcdf09ae79e"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "c317a1251b3c18e080c70884e5f4db36ac3880c925fa062b978b7f36fdd586c0"
+      "sha256": "e0ac012a09671d9a1691532f3713e458ec542b7da0f78677cd9c29f3c7efa4d9"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "b793f202b578dc15206798e2d070ad472a280c8f4bcfd6a769a22bb543fdd06c"
+      "sha256": "edc9b230fe7343efe9985220939e42abc64f7bdb1d8dc8e8319ef921c765f10d"
     },
     {
       "path": "spec/evidence/scalar-agu-totality.json",
@@ -494,7 +582,7 @@
     },
     {
       "path": "spec/evidence/scalar-numeric-flag-contract.json",
-      "sha256": "b835a16e2b75f965dbdb02a4706a2c7385905f08a0447f992e897c67aaca3d9e"
+      "sha256": "9807c6b17f640083b84e09a3c4eab88b6306ead30f449cd439c5841fadd6f6b8"
     },
     {
       "path": "spec/evidence/scalar-sys-totality.json",
@@ -502,19 +590,19 @@
     },
     {
       "path": "spec/evidence/system-register-witness-closure.json",
-      "sha256": "b4f5285d1da95d72084034617d069f88a055d273cd3be76635e390be9ca52ba2"
+      "sha256": "99c35b7f947e5b89cc256497cf03b2be6637c76c4f3f89f039debe5abdefed37"
     },
     {
       "path": "spec/evidence/tepl-totality.json",
-      "sha256": "43157b0af6b9d1aa59cf4040a8d275a804a994a10377dd8809d3891e9141ec08"
+      "sha256": "956a8346d44984ca8bb1b69866b60f0c6fae0c087ad19c8310fcb1b5ad1f388e"
     },
     {
-      "path": "spec/evidence/tma-totality.json",
-      "sha256": "0e09c514b38ba87120aa5d1cb1c07e5a4ddf38c6c4751b020821c0fbbaa95350"
+      "path": "spec/evidence/tlsu-totality.json",
+      "sha256": "51b57b6361143bebbb2b2cab80ad7300efb355f6dfc1fef67c54442f3f3721bb"
     },
     {
       "path": "spec/evidence/trap-context-recovery-evidence.json",
-      "sha256": "7ff9e2f173322ba7cd892ac669da423a1be1c5b8ca1313e435f21bc0f45c3877"
+      "sha256": "3b153c1d361a1bbe9325e1a0c5230f1b8ff7a1c447d693711e37c854caed1c43"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -526,21 +614,21 @@
     },
     {
       "path": "spec/requirements.json",
-      "sha256": "c34b0b673f68c6a6f39a29c45dee2063f3db678a1dba15a3017e6fe6227a2f37"
+      "sha256": "5432341d6b9f703c16470bfbbc3af18ed0614e3addc0b4d8ec383be59311b9d9"
     },
     {
       "path": "specification.toml",
-      "sha256": "e4d705a505aa3bbf5ece693d9d06df205506965da63eadc88d53ab3880d40aa5"
+      "sha256": "9b723251ab19b24783fbfbcf48780c833fc907013f1a457a00c59dc272c80047"
     }
   ],
   "catalog_counts": {
     "command_form_families": {
       "BBD": 25,
-      "CMD": 71
+      "CMD": 74
     },
-    "command_forms": 96,
+    "command_forms": 99,
     "contract_status_counts": {
-      "reviewed-complete": 106
+      "reviewed-complete": 109
     },
     "linx_vector_reservations": 6,
     "pending_base_operations": 0,
@@ -548,11 +636,11 @@
     "tile_operations": {
       "CUBE": 12,
       "TEPL": 87,
-      "TMA": 7
+      "TLSU": 10
     },
-    "tile_operations_total": 106
+    "tile_operations_total": 109
   },
-  "content_sha256": "27ad208cb7e2a310919b7fa8120a359b531cc699ba6f12985bbc10d093b0436b",
+  "content_sha256": "c9e17dda854e72f06c05f320f5e9e2e38e37ee75f0b472570ccdb0ba5c3bd5d4",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -571,7 +659,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.0-mode-function-v1",
-  "encoding_projection_sha256": "e0c7c9c81378b03402893c4c4f1b7940daf75f96eb2d1785e2c9c725cb89ec39",
+  "encoding_projection_sha256": "e64db140dc29033573d3dc3818a28d0b761253fc1b35bf3761ed92ff04c9780a",
   "hardware_conformance_profile": {
     "evidence": "spec/evidence/pto-isa-0580-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
@@ -589,12 +677,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/instructions/bundle-command.md",
-      "sha256": "d67465d18ce86cca4d91e79864dba7c84668d873093abaee9538633239d8ca32"
+      "sha256": "7467815fe400d5a2f5bb6320cabf39a7d66ff89af505f2ccb4abde0cf6eca1f1"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/instructions/index.md",
-      "sha256": "8775c705a5cb7811481562bcc75d1a473323a09ddec4dd1ba176839f8f1d362c"
+      "sha256": "548674f3a6494941b009f154bdec40cb7d9c9962338d08b51eaa03129310f0a7"
     },
     {
       "kind": "generated-documentation",
@@ -639,17 +727,17 @@
     {
       "kind": "generated-documentation",
       "path": "docs/instructions/tile.md",
-      "sha256": "67a4f6a3f901b085af8e85fb75f2f0c400562512ecaba19df3b0a6b1b96a29d1"
+      "sha256": "825efaa54be4153f2574d391a000e1fbf566d0fdb813566bc009b28d2db7bf0d"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0580-abi-vectors.json",
-      "sha256": "1b335aced5396f995d452c895cff26f2f2a8077b6894b07fdb9318a9acd4aa3c"
+      "sha256": "4ab2c36b33b9e80569ab05a0c678d5fc5972a31e6c73d3f3ca1e986fa337fb80"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0580-encoding-totality.json",
-      "sha256": "476bfa2019c601c192aa625224ac8fbc46ffc4700b0eb06603de66018277e2c0"
+      "sha256": "6386ecb6bca2293c924efaa02fde3a8b3af70127217771729cbafd504f8dc271"
     },
     {
       "kind": "generated-evidence",

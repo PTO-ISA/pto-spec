@@ -407,13 +407,16 @@ begin
         FALSE);
     SetBundleTileBinding(15, TRUE, 3, 7, '0011', TRUE, FALSE, 63, 0,
         TRUE);
-    BindBundleSharedIO(Zeros{8} + 0x12);
-    BindBundleSharedIO(Zeros{8} + 0x34);
+    BindBundleSharedIO(Zeros{8} + 0x12, '1111', 0);
+    BindBundleSharedIO(Zeros{8} + 0x34, '0011', 3);
     _BundleSharedBindings[[0]].consumed = TRUE;
     assert _BundleSharedBindings[[0]].valid;
     assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].pe_mask == '1111';
+    assert _BundleSharedBindings[[0]].tile_size == 0;
     assert _BundleSharedBindings[[0]].consumed;
     SetBundleControlAttributeState(TRUE, TRUE, TRUE, FALSE, TRUE, FALSE);
+    _BundleDataAttributes.data_type_present = TRUE;
     _BundleDataAttributes.data_type = Zeros{5} + 0x11;
     _BundleDataAttributes.data_layout = Zeros{5};
     _BundleDataAttributes.pad_value = Zeros{2} + 0x2;
@@ -500,6 +503,8 @@ begin
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].valid;
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].shared_id ==
         Zeros{8} + 0x12;
+    assert _TrapContexts[[1]].bundle_shared_bindings[[0]].pe_mask == '1111';
+    assert _TrapContexts[[1]].bundle_shared_bindings[[0]].tile_size == 0;
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].consumed;
     assert _TrapContexts[[1]].bundle_control_attributes.trap_enabled;
     assert _TrapContexts[[1]].bundle_control_attributes.atomic;
@@ -507,6 +512,7 @@ begin
     assert !_TrapContexts[[1]].bundle_control_attributes.release;
     assert _TrapContexts[[1]].bundle_control_attributes.far;
     assert !_TrapContexts[[1]].bundle_control_attributes.direct_register;
+    assert _TrapContexts[[1]].bundle_data_attributes.data_type_present;
     assert _TrapContexts[[1]].bundle_data_attributes.data_type ==
         Zeros{5} + 0x11;
     assert _TrapContexts[[1]].bundle_data_attributes.data_layout == Zeros{5};
@@ -581,6 +587,8 @@ begin
     _BundleTileBindings[[0]].last = TRUE;
     _BundleSharedBindings[[0]].valid = FALSE;
     _BundleSharedBindings[[0]].shared_id = Zeros{8};
+    _BundleSharedBindings[[0]].pe_mask = Zeros{4};
+    _BundleSharedBindings[[0]].tile_size = 7;
     _BundleSharedBindings[[0]].consumed = FALSE;
     _BundleControlAttributes.trap_enabled = FALSE;
     _BundleControlAttributes.atomic = FALSE;
@@ -588,6 +596,7 @@ begin
     _BundleControlAttributes.release = TRUE;
     _BundleControlAttributes.far = FALSE;
     _BundleControlAttributes.direct_register = TRUE;
+    _BundleDataAttributes.data_type_present = FALSE;
     _BundleDataAttributes.data_type = Zeros{5};
     _BundleDataAttributes.data_layout = Zeros{5} + 1;
     _BundleDataAttributes.pad_value = Zeros{2};
@@ -650,6 +659,8 @@ begin
     assert _BundleTileBindings[[0]].last;
     assert !_BundleSharedBindings[[0]].valid;
     assert _BundleSharedBindings[[0]].shared_id != Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].pe_mask != '1111';
+    assert _BundleSharedBindings[[0]].tile_size != 0;
     assert !_BundleSharedBindings[[0]].consumed;
     assert !_BundleControlAttributes.trap_enabled;
     assert !_BundleControlAttributes.atomic;
@@ -657,6 +668,7 @@ begin
     assert _BundleControlAttributes.release;
     assert !_BundleControlAttributes.far;
     assert _BundleControlAttributes.direct_register;
+    assert !_BundleDataAttributes.data_type_present;
     assert _BundleDataAttributes.data_type != Zeros{5} + 0x11;
     assert _BundleDataAttributes.data_layout != Zeros{5};
     assert _BundleDataAttributes.pad_value != Zeros{2} + 0x2;
@@ -724,6 +736,8 @@ begin
     assert !_BundleTileBindings[[0]].last;
     assert _BundleSharedBindings[[0]].valid;
     assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].pe_mask == '1111';
+    assert _BundleSharedBindings[[0]].tile_size == 0;
     assert _BundleSharedBindings[[0]].consumed;
     assert _BundleControlAttributes.trap_enabled;
     assert _BundleControlAttributes.atomic;
@@ -731,6 +745,7 @@ begin
     assert !_BundleControlAttributes.release;
     assert _BundleControlAttributes.far;
     assert !_BundleControlAttributes.direct_register;
+    assert _BundleDataAttributes.data_type_present;
     assert _BundleDataAttributes.data_type == Zeros{5} + 0x11;
     assert _BundleDataAttributes.data_layout == Zeros{5};
     assert _BundleDataAttributes.pad_value == Zeros{2} + 0x2;
@@ -792,8 +807,8 @@ begin
     assert TileCapacityIsLegal(262144);
     assert !TileCapacityIsLegal(192);
     assert !TileCapacityIsLegal(32);
-    assert TileSizeCodeBytes(1) == 512;
-    assert TileSizeCodeBytes(7) == 32768;
+    assert TileSizeCodeBytes(1) == 128;
+    assert TileSizeCodeBytes(7) == 8192;
     assert !TileSizeCodeIsLegal(0);
     assert !TileSizeCodeIsLegal(8);
 

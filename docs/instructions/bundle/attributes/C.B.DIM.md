@@ -15,7 +15,7 @@
 
 ## v5 Use
 
-The compressed immediate dimension form (`C.B.DIMI`) remains available for LB0/LB1/LB2. The v4 compressed `C.B.DIM RegSrc` bit pattern is reassigned to [`C.B.IOS`](../operands/C.B.IOS.md) in `davincioo-v5-superscalar`; therefore a runtime register dimension must use 32-bit [`B.DIM`](./B.DIM.md).
+The compressed immediate dimension form (`C.B.DIMI`) remains available for LB0/LB1/LB2. The v4 compressed `C.B.DIM RegSrc` bit pattern is reassigned to [`B.IOS`](../operands/B.IOS.md) in `davincioo-v5-superscalar`; therefore a runtime register dimension must use 32-bit [`B.DIM`](./B.DIM.md).
 
 ```asm
 C.B.DIM  imm, ->LB0       /* compressed immediate form */

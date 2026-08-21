@@ -13,18 +13,18 @@
   },
   "opcode": "TSTORE",
   "family": "memory-tlsu",
-  "bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared full form\nBSTART.TLSU Function 1\nC.B.IOS\nB.IOR\nShared pe_scope form\nBSTART.TLSU Function 12\nC.B.IOS\nB.IOR",
+  "bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared form\nBSTART.TLSU Function 1\nB.IOS\nB.IOR",
   "operands": {
     "output": "GlobalTensor/partition-view destination",
     "input0": "Local tile or SharedTile source",
-    "input1": "base GPR\nrow-stride GPR\nordinary quantized-store scalar (optional)",
-    "input2": "default full/core or compile-time pe_scope"
+    "input1": "base-byte-address GPR\nbyte-row-stride GPR\nordinary quantized-store scalar (optional)",
+    "input2": null
   },
   "dtypes": [
     "PTO TSTORE dtype/layout combinations supported by the v5 TLSU profile"
   ],
   "encoding": {
-    "text": "TLSU Function 1; Shared pe_scope Function 12;"
+    "text": "TLSU Function 1"
   },
   "xlsx": {
     "include": true,
@@ -48,12 +48,12 @@ template <typename TileData, typename GlobalData, AtomicType atomicType = Atomic
 PTO_INST RecordEvent TSTORE(GlobalData &dst, TileData &src, WaitEvents &... events);
 ```
 
-PTO `TSTORE` writes the source valid rectangle to a `GlobalTensor`. DavinciOO v5 retains the same family and overloads source storage/scope:
+PTO `TSTORE` writes the source valid rectangle to a `GlobalTensor`. DavinciOO
+v5 retains the same family and allows Local or Shared source storage:
 
 ```cpp
 TSTORE(fullLogicalTensor, localSrc);
-TSTORE(fullLogicalTensor, sharedSrc);            /* default full/core; exactly one issuer */
-TSTORE<pe_scope>(perPeTensor, sharedSrc);         /* partition store */
+TSTORE(fullLogicalTensor, sharedSrc);
 ```
 
 ## Local Logical-Tile Form
@@ -71,25 +71,13 @@ B.IOR       a0, a1, 0
 
 ## Shared Full/Core Form
 
-The default Shared overload uses TLSU Function 1 and exactly one issuer. Size comes from the bound Shared descriptor; `B.IOR.RegDst` is zero.
+The Shared overload uses TLSU Function 1. Size comes from the bound Shared
+descriptor; `B.IOR.RegDst` is zero. Each participating PE uses its own GPR
+base byte address and byte row-stride registers.
 
 ```asm
 BSTART.TLSU TSTORE, FP16
-C.B.IOS     S17
-B.IOT       mask=0101, last   /* optional */
-B.IOR       a0, a1, 0
-```
-
-## Shared Partition Form
-
-`TSTORE<pe_scope>` uses Function 12. The optional mask-only B.IOT chooses fixed
-offset quarters; multiple bits are permitted and `0000` is a no-op. When B.IOT
-is absent the effective mask is `1111`.
-
-```asm
-BSTART.TLSU TSTORE.SPART, FP16
-C.B.IOS     S17
-B.IOT       mask=0101, last
+B.IOS       S17, mask=0101
 B.IOR       a0, a1, 0
 ```
 
@@ -97,11 +85,18 @@ B.IOR       a0, a1, 0
 
 Shared store completion means the request has been accepted and the source has been captured or pinned. It does not mean another PE's later GM load must observe the data. Use `SYNCALL<core_scope>()` when a cross-PE GM happens-before relation is required.
 
+For byte-sized or wider elements, coordinate `(row, column)` accesses
+`base + row * stride_bytes + column * element_size_bytes`. Packed four-bit
+elements use `base + row * stride_bytes + floor(column / 2)` and preserve the
+sibling nibble. Omitted B.IOR selects the dense physical row width in bytes;
+encoded zero stride remains zero.
+
 ## 约束与合法性
 
-- Bare Shared TSTORE is full/core and exactly-one issuer; `pe_scope` is the only partition form.
-- Partition pointers are independent per PE and all written byte ranges must be non-overlapping.
-- Full and partition Shared stores use zero `B.IOR.RegDst`; there is no runtime size or owner GPR.
+- Each selected PE uses its own private GPR base and row stride. Programs must
+  ensure the resulting GM byte ranges do not conflict; the architecture does
+  not impose an order between participating PEs.
+- Shared stores use zero `B.IOR.RegDst`; source size comes from the descriptor.
 - Reading an uninitialized selected quarter is legal and produces an
   undefined-register value without modifying the Shared descriptor.
 - Source storage and scope are compile-time. Unsupported combinations are diagnostics, not runtime modes.
@@ -109,6 +104,6 @@ Shared store completion means the request has been accepted and the source has b
 
 ## Lowering 摘要
 
-Local form emits `B.IOT+B.IOR`. Shared form emits source `C.B.IOS`, optional
-mask-only `B.IOT`, and `B.IOR`. Programs must prevent overlapping concurrent
+Local form emits `B.IOT+B.IOR`. Shared form emits source `B.IOS+B.IOR`.
+Programs must prevent overlapping concurrent
 stores; the architecture provides no conflict detector or total order.

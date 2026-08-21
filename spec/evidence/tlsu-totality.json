@@ -1,0 +1,82 @@
+{
+  "architecture_contract": {
+    "four_bit_packing": {
+      "address": "regular transfer row_base + floor(column / 2), where row_base = base + row * row_stride_bytes",
+      "even_lane": "low-nibble",
+      "odd_lane": "high-nibble",
+      "load_extension": "zero-extend-selected-nibble",
+      "store_rule": "replace-selected-nibble-preserve-sibling-nibble",
+      "odd_tail": "preserve-unused-sibling-bits at every byte-aligned row tail"
+    },
+    "regular_gm_addressing": "TLOAD and TSTORE use B.IOR.RegSrc1 as the byte distance between adjacent row starts; the dense omission default is ceil(physical_columns * element_bits / 8) bytes and encoded zero remains zero.",
+    "indexed_operations": "Gather, scatter, masked variants, and CAS sign- or zero-extend each integer IndexTile element as a byte displacement and add it directly to the base without transfer-type scaling.",
+    "indexed_packed_transfer": "Packed four-bit transfer data rejects before effects because indexed TLSU has no low/high-nibble selector; packed integer IndexTile elements remain legal byte displacements.",
+    "masked_operations": "MGATHER_MASK and MSCATTER_MASK apply the per-lane mask before any memory effect; masked-off gather lanes receive the bundle pad value.",
+    "cas_operation": "MGATHER_CAS returns the old lane value and stores the replacement only when the old value equals the expected lane, recording one atomic event per lane.",
+    "events": "Each four-bit logical lane emits one byte-sized memory event over the containing byte.",
+    "preflight": "The complete containing-byte footprint is probed before payload, memory, event, or reservation effects.",
+    "gmov": "Core4 peer source is resolved before the one-level direct-operation carrier; GMOV copies that read-old fragment to the compatible local destination."
+  },
+  "covered_selectors": {
+    "0": "TLOAD",
+    "1": "TSTORE",
+    "2": "TMOV",
+    "3": "TPREFETCH",
+    "4": "MGATHER",
+    "5": "MSCATTER",
+    "6": "MGATHER_MASK",
+    "7": "MSCATTER_MASK",
+    "13": "GMOV",
+    "8": "MGATHER_CAS"
+  },
+  "evidence_files": [
+    "asl/tile/memory.asl",
+    "asl/tile/legality.asl",
+    "asl/tile/state.asl",
+    "tests/asl/tlsu-totality-tests.asl",
+    "docs/architecture-decisions/0033-tlsu-four-bit-memory-packing.md",
+    "docs/architecture-decisions/0058-gm-byte-addressing.md"
+  ],
+  "validation": [
+    {
+      "command": "make test-shard-tlsu-totality",
+      "status": "pass"
+    },
+    {
+      "command": "make check",
+      "status": "pass"
+    },
+    {
+      "command": "./scripts/check-asl-test-shards",
+      "status": "pass"
+    }
+  ],
+  "decoded_selector_case_count": 10,
+  "decoded_selector_test": "tests/asl/tlsu-totality-tests.asl:TestTlsuDecodedSelectorClosure",
+  "requirement_ids": [
+    "PTO-REQ-TLSU-001",
+    "PTO-REQ-MEMORY-COMPLETION-001",
+    "PTO-REQ-MEMORY-TSO-001"
+  ],
+  "schema_version": 1,
+  "status": "closed",
+  "target": "S4-T9",
+  "test_entrypoint": "TestTlsuTotality",
+  "test_scenarios": [
+    "FP32 two-dimensional TLOAD and TSTORE use a 64-byte row stride without element-size rescaling",
+    "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 regular TLOAD/TSTORE preserve packed nibble order and sibling bits",
+    "packed four-bit indexed transfer data rejects while integer IndexTile types remain legal",
+    "U32 MGATHER and MSCATTER use signed or unsigned byte displacements without transfer-width scaling",
+    "TMOV payload and definedness copy",
+    "GMOV resolved-peer fragment payload and definedness copy",
+    "TPREFETCH byte-sized footprint events",
+    "MGATHER_MASK masked indexed loads with per-lane mask selection",
+    "MSCATTER_MASK byte-displacement writes over selected lanes",
+    "MGATHER_CAS byte-displacement compare-and-swap with matching expected lane",
+    "first, middle, and last containing-byte TLOAD and TSTORE faults",
+    "first, middle, and last indexed-lane gather, scatter, and TPREFETCH preflight with no partial effects",
+    "successful TLOAD restart after repaired footprint",
+    "decoded selector closure reaches all ten TLSU operations"
+  ],
+  "scenario_count": 14
+}

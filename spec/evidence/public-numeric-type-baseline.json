@@ -494,7 +494,7 @@
   ],
   "independent_comparison": {
     "status": "structural-only-no-public-binding-or-result-oracle",
-    "provenance_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
+    "provenance_sha256": "90d5cfd60067ed31a077b0e08527096074d5107f0053d2425138bf62d064b626",
     "corroborated": [
       "scalar-floating-carrier-widths-and-type-field-legality",
       "numeric-code-namespaces-must-remain-distinct"
@@ -526,15 +526,15 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
+      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
+      "sha256": "7f64689765ca445ce8232ba88be93b1202a64383dfb77b68200ee11d549a314e"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "a21760edef8d377e313b44851c361b5d5de69f989a1218b8e72b4d67fc63e9a8"
+      "sha256": "5e684217e74126506b19401d8b1c9043fb028798d2253ed9d5ad17ee90033070"
     },
     {
       "path": "docs/architecture-decisions/0043-public-numeric-type-identity-and-availability.md",

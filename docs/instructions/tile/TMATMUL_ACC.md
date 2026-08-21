@@ -13,7 +13,7 @@
   },
   "opcode": "TMATMUL_ACC",
   "family": "matrix-cube",
-  "bundle": "BSTART.CUBE TMATMUL.ACC AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nC.B.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
+  "bundle": "BSTART.CUBE TMATMUL.ACC AType\nB.DATR BType RMode Sat\nB.FPATR\nB.DIM LB0 M\nB.DIM LB1 N\nB.DIM LB2 K\nB.IOS Shared operand binder (optional)\nB.IOT Local sources and Local outputs\nB.IOR scalar PostProcess parameter (optional)",
   "operands": {
     "output": "D Tile\nRowMaxOut Tile (optional)\nGroupMaxOut Tile (optional)",
     "input0": "A Tile",
@@ -101,7 +101,7 @@ B.FPATR     PreQuant.None, ReLU.None, RowMax.Off, GroupMax.Off, RowMaxInit.Off, 
 B.DIM       rM, 0, ->LB0
 B.DIM       rN, 0, ->LB1
 B.DIM       rK, 0, ->LB2
-C.B.IOS     S17
+B.IOS     S17
 B.IOT       C, A, mask=1111, last, ->D<TSize>
 ```
 
@@ -114,16 +114,16 @@ B.FPATR     PreQuant.None, ReLU.None, RowMax.Off, GroupMax.Off, RowMaxInit.Off, 
 B.DIM       rM, 0, ->LB0
 B.DIM       rN, 0, ->LB1
 B.DIM       rK, 0, ->LB2
-C.B.IOS     S16
-C.B.IOS     S17
+B.IOS     S16
+B.IOS     S17
 B.IOT       C, mask=1111, last, ->D<TSize>
 ```
 
 Shared-A form 在上述 binder 前追加 `Left`，完整顺序为 Left、Right；同时从 Local source stream 移除 A。
 
 - Local form：A、B 均由 `B.IOT` 绑定。
-- Cooperative Local-A form：`C.B.IOS Right`，Local stream 保留 A。
-- Cooperative Shared-A form：`C.B.IOS Left`、`C.B.IOS Right`，顺序固定。
+- Cooperative Local-A form：`B.IOS Right`，Local stream 保留 A。
+- Cooperative Shared-A form：`B.IOS Left`、`B.IOS Right`，顺序固定。
 
 ## Header 展开说明
 
@@ -135,7 +135,7 @@ Shared-A form 在上述 binder 前追加 `Left`，完整顺序为 Left、Right�
 | `B.DIM` | 表达 M/N/K；TGEMV 要求 M=1 | [`header/B.DIM.md`](../bundle/B.DIM.md) |
 | `B.IOT` | 绑定 Local source、D 与 auxiliary output | [`header/B.IOT.md`](../bundle/B.IOT.md) |
 | `B.IOR` | 按 config 绑定 scalar quant/ReLU 参数 | [`header/B.IOR.md`](../bundle/B.IOR.md) |
-| `C.B.IOS` | 仅 cooperative TMATMUL；绑定 Shared Left/Right role | [`header/C.B.IOS.md`](../bundle/C.B.IOS.md) |
+| `B.IOS` | 仅 cooperative TMATMUL；绑定 Shared Left/Right role | [`header/B.IOS.md`](../bundle/B.IOS.md) |
 
 ## 约束与合法性
 
@@ -154,6 +154,6 @@ Shared-A form 在上述 binder 前追加 `Left`，完整顺序为 Left、Right�
 ## Lowering 摘要
 
 1. Frontend 固化 `PostProcessConfig`，据此确定精确 operand/output arity、D role 与 DType。
-2. Lowering 发出 `BSTART.CUBE`、`B.DATR`、恰好一个 `B.FPATR`、`B.DIM`、`B.IOT`，并按需发出 `B.IOR` 与 cooperative `C.B.IOS`。
+2. Lowering 发出 `BSTART.CUBE`、`B.DATR`、恰好一个 `B.FPATR`、`B.DIM`、`B.IOT`，并按需发出 `B.IOR` 与 cooperative `B.IOS`。
 3. Rename 为 C/source 绑定旧 physical TReg，为 D 和 auxiliary output 分配新 physical TReg；D==C 仍保持 read-old/write-new。
 4. Execute 完成完整 K accumulation 后执行 max reduction 与 PostProcess；retire 原子提交所有 destination。

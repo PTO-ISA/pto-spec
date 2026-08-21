@@ -41,9 +41,16 @@ COMMAND_GROUP_ORDER = (
 )
 
 TILE_FAMILY_DESCRIPTIONS = {
-    "TEPL": "Element, scalar, reduction, expansion, generation, conversion, rearrangement, and utility operations.",
-    "TMA": "Tile memory, movement, gather, scatter, and prefetch operations.",
+    "TEPL": "Packed Mode/Function encoding carrier for VEC and SFU operations.",
+    "TLSU": "Tile memory, movement, gather, scatter, and prefetch operations.",
     "CUBE": "Matrix operations.",
+}
+
+TILE_ENGINE_DESCRIPTIONS = {
+    "VEC": "Element-wise Tile operations.",
+    "SFU": "Complex transcendental, reduction, rearrangement, and irregular operations.",
+    "TLSU": "Tile memory and data movement.",
+    "CUBE": "Matrix and matrix-vector operations.",
 }
 
 
@@ -205,6 +212,7 @@ def render_index(scalar: dict, command: dict, tile: dict, system: dict) -> str:
     scalar_family_counts = Counter(row["semantic_family"] for row in scalar_forms)
     command_family_counts = Counter(row["semantic_family"] for row in command_forms)
     tile_family_counts = Counter(row["family"] for row in tile_ops)
+    tile_engine_counts = Counter(row["engine"] for row in tile_ops)
     lines = generated_header("PTO instruction reference")
     lines.extend(
         [
@@ -269,7 +277,7 @@ def render_index(scalar: dict, command: dict, tile: dict, system: dict) -> str:
                 ],
             ),
             "",
-            "## Tile families",
+            "## Tile encoding families",
             "",
             table(
                 ["Family", "Operations", "Role"],
@@ -279,7 +287,23 @@ def render_index(scalar: dict, command: dict, tile: dict, system: dict) -> str:
                         tile_family_counts[family],
                         TILE_FAMILY_DESCRIPTIONS[family],
                     ]
-                    for family in ("TEPL", "TMA", "CUBE")
+                    for family in ("TEPL", "TLSU", "CUBE")
+                ],
+            ),
+            "",
+            "TEPL is an encoding carrier, not an execution engine.",
+            "",
+            "## Tile execution engines",
+            "",
+            table(
+                ["Engine", "Operations", "Role"],
+                [
+                    [
+                        engine,
+                        tile_engine_counts[engine],
+                        TILE_ENGINE_DESCRIPTIONS[engine],
+                    ]
+                    for engine in ("VEC", "SFU", "TLSU", "CUBE")
                 ],
             ),
             "",
@@ -399,7 +423,7 @@ def render_command(command: dict) -> str:
             "These are stable ISA spellings.",
             "",
             "PTO ISA 0.58.0 freezes this 96-form command ABI. `BSTART.TEPL` carries the two-bit Mode and "
-            "five-bit Function fields; named TMA and CUBE starts each have one command encoding. `B.IOT`, "
+            "five-bit Function fields; named TLSU and CUBE starts each have one command encoding. `B.IOT`, "
             "`B.DATR`, and `B.CATR` define tile lifetime, data attributes, and bundle-control attributes. "
             "The removed `B.ARG`, generic `BSTART.CUBE`, and generic `BSTART.FIXP` forms are not accepted. "
             "See [ADR 0052](../architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md).",
@@ -489,7 +513,7 @@ def render_tile(tile: dict) -> str:
             "tile, scalar, memory, and descriptor operands. The selector catalog is normative for operation "
             "identity, operand roles, semantic handler, and argument order.",
             "",
-            "In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. Named TMA and CUBE operations "
+            "In PTO ISA 0.58.0, TEPL identity is `Mode[1:0] : Function[4:0]`. TEPL remains an encoding carrier, not an execution engine. Named TLSU and CUBE operations "
             "bind directly to their corresponding `BSTART.*` command forms. CUBE operations carry an explicit Local "
             "destination D; ACC variants also carry an explicit Local input C, with `D == C` defined as read-old/write-new. "
             "Accepted `B.IOT` forms encode `PE_MASK`, `TSize`, and a 2-bit destination Tile field without reuse bits. `B.DATR` fields "
@@ -502,13 +526,13 @@ def render_tile(tile: dict) -> str:
                 ["Family", "Operations", "Role"],
                 [
                     [family, len(by_family[family]), TILE_FAMILY_DESCRIPTIONS[family]]
-                    for family in ("TEPL", "TMA", "CUBE")
+                    for family in ("TEPL", "TLSU", "CUBE")
                 ],
             ),
             "",
         ]
     )
-    for family in ("TEPL", "TMA", "CUBE"):
+    for family in ("TEPL", "TLSU", "CUBE"):
         lines.extend(
             [
                 f"## {family}",
@@ -517,6 +541,8 @@ def render_tile(tile: dict) -> str:
                     [
                         "Name",
                         "Selector",
+                        "Engine",
+                        "Classification",
                         "Handler",
                         "Operands",
                         "Arguments",
@@ -525,6 +551,8 @@ def render_tile(tile: dict) -> str:
                         [
                             row["name"],
                             tile_selector(row),
+                            row["engine"],
+                            row["classification"],
                             row["semantic_handler"],
                             format_operands(row),
                             format_arguments(row),

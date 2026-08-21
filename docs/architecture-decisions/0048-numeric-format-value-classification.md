@@ -72,7 +72,7 @@ behavior:
 | signed and unsigned integer types | no | no | no | no | no negative zero |
 
 For packed four-bit types, classification applies to one logical low-nibble
-value. TMA packing and sibling preservation remain governed by ADR 0033.
+value. TLSU packing and sibling preservation remain governed by ADR 0033.
 
 ### Canonical NaNs
 

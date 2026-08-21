@@ -3,12 +3,14 @@
   "target": "S5-T2-A2:PD-02",
   "decision_id": "PD-02",
   "checkpoint_id": "PD-02-SC1",
-  "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
+  "status": "namespace-carrier-classification-and-exact-decomposition-closed-operation-rules-open",
   "acceptance_record": "docs/architecture-decisions/0040-numeric-format-namespace-ownership.md",
   "classification_acceptance_record": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
   "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
+  "exact_decomposition_acceptance_record": "docs/architecture-decisions/0057-exact-numeric-format-decomposition.md",
+  "exact_decomposition_checkpoint_id": "PD-02-SC3",
   "policy": {
-    "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TMA/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
+    "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TLSU, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
     "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
     "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
     "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
@@ -21,7 +23,7 @@
       "asl_enumerator": "TileDataType_FP64",
       "storage_bits": 64,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 0,
+      "tlsu_data_type_code": 0,
       "bundle_code": 0,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -30,7 +32,7 @@
       "asl_enumerator": "TileDataType_FP32",
       "storage_bits": 32,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 1,
+      "tlsu_data_type_code": 1,
       "bundle_code": 1,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -39,7 +41,7 @@
       "asl_enumerator": "TileDataType_TF32",
       "storage_bits": 32,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 2,
+      "tlsu_data_type_code": 2,
       "bundle_code": 2,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -48,7 +50,7 @@
       "asl_enumerator": "TileDataType_HF32",
       "storage_bits": 32,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 3,
+      "tlsu_data_type_code": 3,
       "bundle_code": 3,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -57,7 +59,7 @@
       "asl_enumerator": "TileDataType_FP16",
       "storage_bits": 16,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 4,
+      "tlsu_data_type_code": 4,
       "bundle_code": 4,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -66,7 +68,7 @@
       "asl_enumerator": "TileDataType_BF16",
       "storage_bits": 16,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 5,
+      "tlsu_data_type_code": 5,
       "bundle_code": 5,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -75,7 +77,7 @@
       "asl_enumerator": "TileDataType_HiF8",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 6,
+      "tlsu_data_type_code": 6,
       "bundle_code": 6,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -84,7 +86,7 @@
       "asl_enumerator": "TileDataType_E4M3",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 7,
+      "tlsu_data_type_code": 7,
       "bundle_code": 7,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -93,7 +95,7 @@
       "asl_enumerator": "TileDataType_E5M2",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 8,
+      "tlsu_data_type_code": 8,
       "bundle_code": 8,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -102,7 +104,7 @@
       "asl_enumerator": "TileDataType_E3M2",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 9,
+      "tlsu_data_type_code": 9,
       "bundle_code": 9,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -111,7 +113,7 @@
       "asl_enumerator": "TileDataType_E2M3",
       "storage_bits": 8,
       "raw_class": "floating-raw-carrier",
-      "tma_talloc_code": 10,
+      "tlsu_data_type_code": 10,
       "bundle_code": 10,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -120,7 +122,7 @@
       "asl_enumerator": "TileDataType_E2M1X2",
       "storage_bits": 4,
       "raw_class": "packed-floating-raw-carrier",
-      "tma_talloc_code": 11,
+      "tlsu_data_type_code": 11,
       "bundle_code": 11,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -129,7 +131,7 @@
       "asl_enumerator": "TileDataType_E1M2X2",
       "storage_bits": 4,
       "raw_class": "packed-floating-raw-carrier",
-      "tma_talloc_code": 12,
+      "tlsu_data_type_code": 12,
       "bundle_code": 12,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -138,7 +140,7 @@
       "asl_enumerator": "TileDataType_E8M0",
       "storage_bits": 8,
       "raw_class": "scale-raw-carrier",
-      "tma_talloc_code": 13,
+      "tlsu_data_type_code": 13,
       "bundle_code": 13,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -147,7 +149,7 @@
       "asl_enumerator": "TileDataType_HiF4X2",
       "storage_bits": 4,
       "raw_class": "packed-floating-raw-carrier",
-      "tma_talloc_code": 14,
+      "tlsu_data_type_code": 14,
       "bundle_code": 14,
       "numeric_semantics_status": "format-contract-defined-conformance-open"
     },
@@ -156,7 +158,7 @@
       "asl_enumerator": "TileDataType_S64",
       "storage_bits": 64,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 16,
+      "tlsu_data_type_code": 16,
       "bundle_code": 16,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -165,7 +167,7 @@
       "asl_enumerator": "TileDataType_S32",
       "storage_bits": 32,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 17,
+      "tlsu_data_type_code": 17,
       "bundle_code": 17,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -174,7 +176,7 @@
       "asl_enumerator": "TileDataType_S16",
       "storage_bits": 16,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 18,
+      "tlsu_data_type_code": 18,
       "bundle_code": 18,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -183,7 +185,7 @@
       "asl_enumerator": "TileDataType_S8",
       "storage_bits": 8,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 19,
+      "tlsu_data_type_code": 19,
       "bundle_code": 19,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -192,7 +194,7 @@
       "asl_enumerator": "TileDataType_S4X2",
       "storage_bits": 4,
       "raw_class": "signed-integer",
-      "tma_talloc_code": 20,
+      "tlsu_data_type_code": 20,
       "bundle_code": 20,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -201,7 +203,7 @@
       "asl_enumerator": "TileDataType_U64",
       "storage_bits": 64,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 24,
+      "tlsu_data_type_code": 24,
       "bundle_code": 24,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -210,7 +212,7 @@
       "asl_enumerator": "TileDataType_U32",
       "storage_bits": 32,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 25,
+      "tlsu_data_type_code": 25,
       "bundle_code": 25,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -219,7 +221,7 @@
       "asl_enumerator": "TileDataType_U16",
       "storage_bits": 16,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 26,
+      "tlsu_data_type_code": 26,
       "bundle_code": 26,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -228,7 +230,7 @@
       "asl_enumerator": "TileDataType_U8",
       "storage_bits": 8,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 27,
+      "tlsu_data_type_code": 27,
       "bundle_code": 27,
       "numeric_semantics_status": "width-and-signedness-closed"
     },
@@ -237,7 +239,7 @@
       "asl_enumerator": "TileDataType_U4X2",
       "storage_bits": 4,
       "raw_class": "unsigned-integer",
-      "tma_talloc_code": 28,
+      "tlsu_data_type_code": 28,
       "bundle_code": 28,
       "numeric_semantics_status": "width-and-signedness-closed"
     }
@@ -575,6 +577,514 @@
         "internal_encoding_constraint": null
       }
     ],
+    "status": "closed"
+  },
+  "exact_decomposition": {
+    "checkpoint_id": "PD-02-SC3",
+    "acceptance_record": "docs/architecture-decisions/0057-exact-numeric-format-decomposition.md",
+    "descriptor_type": "NumericFormatDescriptor",
+    "descriptor": "TileNumericFormatDescriptor",
+    "finite_decoder": "TileNumericFiniteDecomposition",
+    "representation": "(-1)^negative * UInt(significand) * 2^exponent",
+    "format_count": 15,
+    "formats": [
+      {
+        "name": "FP64",
+        "asl_enumerator": "TileDataType_FP64",
+        "kind": "fixed-binary",
+        "carrier_bits": 64,
+        "lane_bits": 64,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 63,
+        "exponent_bits_min": 11,
+        "exponent_bits_max": 11,
+        "fraction_bits_min": 52,
+        "fraction_bits_max": 52,
+        "exponent_bias_available": true,
+        "exponent_bias": 1023,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": true,
+        "has_quiet_nan": true,
+        "has_signaling_nan": true,
+        "descriptor_function": "FP64NumericFormatDescriptor",
+        "finite_decoder": "FP64FiniteDecomposition",
+        "classifier_function": "ClassifyFP64",
+        "encoding_validity_function": null,
+        "canonical_nan_function": "FP64CanonicalNaN",
+        "signed_zero_function": "FP64SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/fp64.asl",
+        "documentation_path": "docs/numeric/formats/fp64.md",
+        "test_path": "tests/asl/numeric/formats/fp64.asl"
+      },
+      {
+        "name": "FP32",
+        "asl_enumerator": "TileDataType_FP32",
+        "kind": "fixed-binary",
+        "carrier_bits": 32,
+        "lane_bits": 32,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 31,
+        "exponent_bits_min": 8,
+        "exponent_bits_max": 8,
+        "fraction_bits_min": 23,
+        "fraction_bits_max": 23,
+        "exponent_bias_available": true,
+        "exponent_bias": 127,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": true,
+        "has_quiet_nan": true,
+        "has_signaling_nan": true,
+        "descriptor_function": "FP32NumericFormatDescriptor",
+        "finite_decoder": "FP32FiniteDecomposition",
+        "classifier_function": "ClassifyFP32",
+        "encoding_validity_function": null,
+        "canonical_nan_function": "FP32CanonicalNaN",
+        "signed_zero_function": "FP32SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/fp32.asl",
+        "documentation_path": "docs/numeric/formats/fp32.md",
+        "test_path": "tests/asl/numeric/formats/fp32.asl"
+      },
+      {
+        "name": "TF32",
+        "asl_enumerator": "TileDataType_TF32",
+        "kind": "fixed-binary",
+        "carrier_bits": 32,
+        "lane_bits": 32,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 31,
+        "exponent_bits_min": 8,
+        "exponent_bits_max": 8,
+        "fraction_bits_min": 10,
+        "fraction_bits_max": 10,
+        "exponent_bias_available": true,
+        "exponent_bias": 127,
+        "required_low_zero_bits": 13,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": true,
+        "has_quiet_nan": true,
+        "has_signaling_nan": true,
+        "descriptor_function": "TF32NumericFormatDescriptor",
+        "finite_decoder": "TF32FiniteDecomposition",
+        "classifier_function": "ClassifyTF32",
+        "encoding_validity_function": "TF32EncodingValid",
+        "canonical_nan_function": "TF32CanonicalNaN",
+        "signed_zero_function": "TF32SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/tf32.asl",
+        "documentation_path": "docs/numeric/formats/tf32.md",
+        "test_path": "tests/asl/numeric/formats/tf32.asl"
+      },
+      {
+        "name": "HF32",
+        "asl_enumerator": "TileDataType_HF32",
+        "kind": "fixed-binary",
+        "carrier_bits": 32,
+        "lane_bits": 32,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 31,
+        "exponent_bits_min": 8,
+        "exponent_bits_max": 8,
+        "fraction_bits_min": 11,
+        "fraction_bits_max": 11,
+        "exponent_bias_available": true,
+        "exponent_bias": 127,
+        "required_low_zero_bits": 12,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": true,
+        "has_quiet_nan": true,
+        "has_signaling_nan": true,
+        "descriptor_function": "HF32NumericFormatDescriptor",
+        "finite_decoder": "HF32FiniteDecomposition",
+        "classifier_function": "ClassifyHF32",
+        "encoding_validity_function": "HF32EncodingValid",
+        "canonical_nan_function": "HF32CanonicalNaN",
+        "signed_zero_function": "HF32SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/hf32.asl",
+        "documentation_path": "docs/numeric/formats/hf32.md",
+        "test_path": "tests/asl/numeric/formats/hf32.asl"
+      },
+      {
+        "name": "FP16",
+        "asl_enumerator": "TileDataType_FP16",
+        "kind": "fixed-binary",
+        "carrier_bits": 16,
+        "lane_bits": 16,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 15,
+        "exponent_bits_min": 5,
+        "exponent_bits_max": 5,
+        "fraction_bits_min": 10,
+        "fraction_bits_max": 10,
+        "exponent_bias_available": true,
+        "exponent_bias": 15,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": true,
+        "has_quiet_nan": true,
+        "has_signaling_nan": true,
+        "descriptor_function": "FP16NumericFormatDescriptor",
+        "finite_decoder": "FP16FiniteDecomposition",
+        "classifier_function": "ClassifyFP16",
+        "encoding_validity_function": null,
+        "canonical_nan_function": "FP16CanonicalNaN",
+        "signed_zero_function": "FP16SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/fp16.asl",
+        "documentation_path": "docs/numeric/formats/fp16.md",
+        "test_path": "tests/asl/numeric/formats/fp16.asl"
+      },
+      {
+        "name": "BF16",
+        "asl_enumerator": "TileDataType_BF16",
+        "kind": "fixed-binary",
+        "carrier_bits": 16,
+        "lane_bits": 16,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 15,
+        "exponent_bits_min": 8,
+        "exponent_bits_max": 8,
+        "fraction_bits_min": 7,
+        "fraction_bits_max": 7,
+        "exponent_bias_available": true,
+        "exponent_bias": 127,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": true,
+        "has_quiet_nan": true,
+        "has_signaling_nan": true,
+        "descriptor_function": "BF16NumericFormatDescriptor",
+        "finite_decoder": "BF16FiniteDecomposition",
+        "classifier_function": "ClassifyBF16",
+        "encoding_validity_function": null,
+        "canonical_nan_function": "BF16CanonicalNaN",
+        "signed_zero_function": "BF16SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/bf16.asl",
+        "documentation_path": "docs/numeric/formats/bf16.md",
+        "test_path": "tests/asl/numeric/formats/bf16.asl"
+      },
+      {
+        "name": "HiF8",
+        "asl_enumerator": "TileDataType_HiF8",
+        "kind": "hif8-dynamic",
+        "carrier_bits": 8,
+        "lane_bits": 8,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 7,
+        "exponent_bits_min": 0,
+        "exponent_bits_max": 4,
+        "fraction_bits_min": 1,
+        "fraction_bits_max": 3,
+        "exponent_bias_available": false,
+        "exponent_bias": null,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": false,
+        "has_subnormal": true,
+        "has_infinity": true,
+        "has_quiet_nan": true,
+        "has_signaling_nan": false,
+        "descriptor_function": "HiF8NumericFormatDescriptor",
+        "finite_decoder": "HiF8FiniteDecomposition",
+        "classifier_function": "ClassifyHiF8",
+        "encoding_validity_function": null,
+        "canonical_nan_function": "HiF8CanonicalNaN",
+        "signed_zero_function": null,
+        "asl_path": "asl/numeric/formats/hif8.asl",
+        "documentation_path": "docs/numeric/formats/hif8.md",
+        "test_path": "tests/asl/numeric/formats/hif8.asl"
+      },
+      {
+        "name": "E4M3",
+        "asl_enumerator": "TileDataType_E4M3",
+        "kind": "fixed-binary",
+        "carrier_bits": 8,
+        "lane_bits": 8,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 7,
+        "exponent_bits_min": 4,
+        "exponent_bits_max": 4,
+        "fraction_bits_min": 3,
+        "fraction_bits_max": 3,
+        "exponent_bias_available": true,
+        "exponent_bias": 7,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": false,
+        "has_quiet_nan": true,
+        "has_signaling_nan": false,
+        "descriptor_function": "E4M3NumericFormatDescriptor",
+        "finite_decoder": "E4M3FiniteDecomposition",
+        "classifier_function": "ClassifyE4M3",
+        "encoding_validity_function": null,
+        "canonical_nan_function": "E4M3CanonicalNaN",
+        "signed_zero_function": "E4M3SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/e4m3.asl",
+        "documentation_path": "docs/numeric/formats/e4m3.md",
+        "test_path": "tests/asl/numeric/formats/e4m3.asl"
+      },
+      {
+        "name": "E5M2",
+        "asl_enumerator": "TileDataType_E5M2",
+        "kind": "fixed-binary",
+        "carrier_bits": 8,
+        "lane_bits": 8,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 7,
+        "exponent_bits_min": 5,
+        "exponent_bits_max": 5,
+        "fraction_bits_min": 2,
+        "fraction_bits_max": 2,
+        "exponent_bias_available": true,
+        "exponent_bias": 15,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": true,
+        "has_quiet_nan": true,
+        "has_signaling_nan": true,
+        "descriptor_function": "E5M2NumericFormatDescriptor",
+        "finite_decoder": "E5M2FiniteDecomposition",
+        "classifier_function": "ClassifyE5M2",
+        "encoding_validity_function": null,
+        "canonical_nan_function": "E5M2CanonicalNaN",
+        "signed_zero_function": "E5M2SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/e5m2.asl",
+        "documentation_path": "docs/numeric/formats/e5m2.md",
+        "test_path": "tests/asl/numeric/formats/e5m2.asl"
+      },
+      {
+        "name": "E3M2",
+        "asl_enumerator": "TileDataType_E3M2",
+        "kind": "fixed-binary",
+        "carrier_bits": 8,
+        "lane_bits": 6,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 5,
+        "exponent_bits_min": 3,
+        "exponent_bits_max": 3,
+        "fraction_bits_min": 2,
+        "fraction_bits_max": 2,
+        "exponent_bias_available": true,
+        "exponent_bias": 3,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 2,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": false,
+        "has_quiet_nan": false,
+        "has_signaling_nan": false,
+        "descriptor_function": "E3M2NumericFormatDescriptor",
+        "finite_decoder": "E3M2FiniteDecomposition",
+        "classifier_function": "ClassifyE3M2",
+        "encoding_validity_function": "E3M2EncodingValid",
+        "canonical_nan_function": null,
+        "signed_zero_function": "E3M2SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/e3m2.asl",
+        "documentation_path": "docs/numeric/formats/e3m2.md",
+        "test_path": "tests/asl/numeric/formats/e3m2.asl"
+      },
+      {
+        "name": "E2M3",
+        "asl_enumerator": "TileDataType_E2M3",
+        "kind": "fixed-binary",
+        "carrier_bits": 8,
+        "lane_bits": 6,
+        "lanes_per_carrier": 1,
+        "sign_bits": 1,
+        "sign_bit": 5,
+        "exponent_bits_min": 2,
+        "exponent_bits_max": 2,
+        "fraction_bits_min": 3,
+        "fraction_bits_max": 3,
+        "exponent_bias_available": true,
+        "exponent_bias": 1,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 2,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": true,
+        "has_infinity": false,
+        "has_quiet_nan": false,
+        "has_signaling_nan": false,
+        "descriptor_function": "E2M3NumericFormatDescriptor",
+        "finite_decoder": "E2M3FiniteDecomposition",
+        "classifier_function": "ClassifyE2M3",
+        "encoding_validity_function": "E2M3EncodingValid",
+        "canonical_nan_function": null,
+        "signed_zero_function": "E2M3SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/e2m3.asl",
+        "documentation_path": "docs/numeric/formats/e2m3.md",
+        "test_path": "tests/asl/numeric/formats/e2m3.asl"
+      },
+      {
+        "name": "E2M1X2",
+        "asl_enumerator": "TileDataType_E2M1X2",
+        "kind": "fixed-binary",
+        "carrier_bits": 8,
+        "lane_bits": 4,
+        "lanes_per_carrier": 2,
+        "sign_bits": 1,
+        "sign_bit": 3,
+        "exponent_bits_min": 2,
+        "exponent_bits_max": 2,
+        "fraction_bits_min": 1,
+        "fraction_bits_max": 1,
+        "exponent_bias_available": true,
+        "exponent_bias": 1,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": false,
+        "has_infinity": false,
+        "has_quiet_nan": false,
+        "has_signaling_nan": false,
+        "descriptor_function": "E2M1X2NumericFormatDescriptor",
+        "finite_decoder": "E2M1X2FiniteDecomposition",
+        "classifier_function": "ClassifyE2M1X2",
+        "encoding_validity_function": null,
+        "canonical_nan_function": null,
+        "signed_zero_function": "E2M1X2SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/e2m1x2.asl",
+        "documentation_path": "docs/numeric/formats/e2m1x2.md",
+        "test_path": "tests/asl/numeric/formats/e2m1x2.asl"
+      },
+      {
+        "name": "E1M2X2",
+        "asl_enumerator": "TileDataType_E1M2X2",
+        "kind": "fixed-binary",
+        "carrier_bits": 8,
+        "lane_bits": 4,
+        "lanes_per_carrier": 2,
+        "sign_bits": 1,
+        "sign_bit": 3,
+        "exponent_bits_min": 1,
+        "exponent_bits_max": 1,
+        "fraction_bits_min": 2,
+        "fraction_bits_max": 2,
+        "exponent_bias_available": true,
+        "exponent_bias": 1,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": false,
+        "has_infinity": false,
+        "has_quiet_nan": false,
+        "has_signaling_nan": false,
+        "descriptor_function": "E1M2X2NumericFormatDescriptor",
+        "finite_decoder": "E1M2X2FiniteDecomposition",
+        "classifier_function": "ClassifyE1M2X2",
+        "encoding_validity_function": null,
+        "canonical_nan_function": null,
+        "signed_zero_function": "E1M2X2SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/e1m2x2.asl",
+        "documentation_path": "docs/numeric/formats/e1m2x2.md",
+        "test_path": "tests/asl/numeric/formats/e1m2x2.asl"
+      },
+      {
+        "name": "E8M0",
+        "asl_enumerator": "TileDataType_E8M0",
+        "kind": "e8m0-scale",
+        "carrier_bits": 8,
+        "lane_bits": 8,
+        "lanes_per_carrier": 1,
+        "sign_bits": 0,
+        "sign_bit": 0,
+        "exponent_bits_min": 8,
+        "exponent_bits_max": 8,
+        "fraction_bits_min": 0,
+        "fraction_bits_max": 0,
+        "exponent_bias_available": true,
+        "exponent_bias": 127,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": false,
+        "has_signed_zero": false,
+        "has_subnormal": false,
+        "has_infinity": false,
+        "has_quiet_nan": true,
+        "has_signaling_nan": false,
+        "descriptor_function": "E8M0NumericFormatDescriptor",
+        "finite_decoder": "E8M0FiniteDecomposition",
+        "classifier_function": "ClassifyE8M0",
+        "encoding_validity_function": null,
+        "canonical_nan_function": "E8M0CanonicalNaN",
+        "signed_zero_function": null,
+        "asl_path": "asl/numeric/formats/e8m0.asl",
+        "documentation_path": "docs/numeric/formats/e8m0.md",
+        "test_path": "tests/asl/numeric/formats/e8m0.asl"
+      },
+      {
+        "name": "HiF4X2",
+        "asl_enumerator": "TileDataType_HiF4X2",
+        "kind": "fixed-binary",
+        "carrier_bits": 8,
+        "lane_bits": 4,
+        "lanes_per_carrier": 2,
+        "sign_bits": 1,
+        "sign_bit": 3,
+        "exponent_bits_min": 1,
+        "exponent_bits_max": 1,
+        "fraction_bits_min": 2,
+        "fraction_bits_max": 2,
+        "exponent_bias_available": true,
+        "exponent_bias": 1,
+        "required_low_zero_bits": 0,
+        "required_high_zero_bits": 0,
+        "has_zero": true,
+        "has_signed_zero": true,
+        "has_subnormal": false,
+        "has_infinity": false,
+        "has_quiet_nan": false,
+        "has_signaling_nan": false,
+        "descriptor_function": "HiF4X2NumericFormatDescriptor",
+        "finite_decoder": "HiF4X2FiniteDecomposition",
+        "classifier_function": "ClassifyHiF4X2",
+        "encoding_validity_function": null,
+        "canonical_nan_function": null,
+        "signed_zero_function": "HiF4X2SignedZeroEncodings",
+        "asl_path": "asl/numeric/formats/hif4x2.asl",
+        "documentation_path": "docs/numeric/formats/hif4x2.md",
+        "test_path": "tests/asl/numeric/formats/hif4x2.asl"
+      }
+    ],
+    "scale_block_elements": 32,
     "status": "closed"
   },
   "scalar_source_type": [
@@ -1159,450 +1669,450 @@
       "stage4_name": null
     }
   ],
-  "tma_talloc_data_type": [
+  "tlsu_data_type": [
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 0,
       "bits": "000000",
       "status": "mapped",
       "tile_data_type": "FP64"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 1,
       "bits": "000001",
       "status": "mapped",
       "tile_data_type": "FP32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 2,
       "bits": "000010",
       "status": "mapped",
       "tile_data_type": "TF32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 3,
       "bits": "000011",
       "status": "mapped",
       "tile_data_type": "HF32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 4,
       "bits": "000100",
       "status": "mapped",
       "tile_data_type": "FP16"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 5,
       "bits": "000101",
       "status": "mapped",
       "tile_data_type": "BF16"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 6,
       "bits": "000110",
       "status": "mapped",
       "tile_data_type": "HiF8"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 7,
       "bits": "000111",
       "status": "mapped",
       "tile_data_type": "E4M3"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 8,
       "bits": "001000",
       "status": "mapped",
       "tile_data_type": "E5M2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 9,
       "bits": "001001",
       "status": "mapped",
       "tile_data_type": "E3M2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 10,
       "bits": "001010",
       "status": "mapped",
       "tile_data_type": "E2M3"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 11,
       "bits": "001011",
       "status": "mapped",
       "tile_data_type": "E2M1X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 12,
       "bits": "001100",
       "status": "mapped",
       "tile_data_type": "E1M2X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 13,
       "bits": "001101",
       "status": "mapped",
       "tile_data_type": "E8M0"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 14,
       "bits": "001110",
       "status": "mapped",
       "tile_data_type": "HiF4X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 15,
       "bits": "001111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 16,
       "bits": "010000",
       "status": "mapped",
       "tile_data_type": "S64"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 17,
       "bits": "010001",
       "status": "mapped",
       "tile_data_type": "S32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 18,
       "bits": "010010",
       "status": "mapped",
       "tile_data_type": "S16"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 19,
       "bits": "010011",
       "status": "mapped",
       "tile_data_type": "S8"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 20,
       "bits": "010100",
       "status": "mapped",
       "tile_data_type": "S4X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 21,
       "bits": "010101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 22,
       "bits": "010110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 23,
       "bits": "010111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 24,
       "bits": "011000",
       "status": "mapped",
       "tile_data_type": "U64"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 25,
       "bits": "011001",
       "status": "mapped",
       "tile_data_type": "U32"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 26,
       "bits": "011010",
       "status": "mapped",
       "tile_data_type": "U16"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 27,
       "bits": "011011",
       "status": "mapped",
       "tile_data_type": "U8"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 28,
       "bits": "011100",
       "status": "mapped",
       "tile_data_type": "U4X2"
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 29,
       "bits": "011101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 30,
       "bits": "011110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 31,
       "bits": "011111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 32,
       "bits": "100000",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 33,
       "bits": "100001",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 34,
       "bits": "100010",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 35,
       "bits": "100011",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 36,
       "bits": "100100",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 37,
       "bits": "100101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 38,
       "bits": "100110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 39,
       "bits": "100111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 40,
       "bits": "101000",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 41,
       "bits": "101001",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 42,
       "bits": "101010",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 43,
       "bits": "101011",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 44,
       "bits": "101100",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 45,
       "bits": "101101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 46,
       "bits": "101110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 47,
       "bits": "101111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 48,
       "bits": "110000",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 49,
       "bits": "110001",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 50,
       "bits": "110010",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 51,
       "bits": "110011",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 52,
       "bits": "110100",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 53,
       "bits": "110101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 54,
       "bits": "110110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 55,
       "bits": "110111",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 56,
       "bits": "111000",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 57,
       "bits": "111001",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 58,
       "bits": "111010",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 59,
       "bits": "111011",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 60,
       "bits": "111100",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 61,
       "bits": "111101",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 62,
       "bits": "111110",
       "status": "reserved-before-effects",
       "tile_data_type": null
     },
     {
-      "namespace": "tma-talloc-data-type",
+      "namespace": "tlsu-data-type",
       "code": 63,
       "bits": "111111",
       "status": "reserved-before-effects",
@@ -1863,7 +2373,7 @@
   },
   "independent_comparison": {
     "status": "scalar-carrier-structure-corroborated-tile-format-oracle-unavailable",
-    "provenance_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
+    "provenance_sha256": "90d5cfd60067ed31a077b0e08527096074d5107f0053d2425138bf62d064b626",
     "matched_contracts": [
       "scalar-source-type-code-legality",
       "scalar-destination-type-code-legality",
@@ -1914,29 +2424,46 @@
     }
   ],
   "tests": [
+    "tests/asl/numeric/formats/common.asl:TestNumericFormatCommon",
+    "tests/asl/numeric/formats/fp64.asl",
+    "tests/asl/numeric/formats/fp32.asl",
+    "tests/asl/numeric/formats/tf32.asl",
+    "tests/asl/numeric/formats/hf32.asl",
+    "tests/asl/numeric/formats/fp16.asl",
+    "tests/asl/numeric/formats/bf16.asl",
+    "tests/asl/numeric/formats/hif8.asl",
+    "tests/asl/numeric/formats/e4m3.asl",
+    "tests/asl/numeric/formats/e5m2.asl",
+    "tests/asl/numeric/formats/e3m2.asl",
+    "tests/asl/numeric/formats/e2m3.asl",
+    "tests/asl/numeric/formats/e2m1x2.asl",
+    "tests/asl/numeric/formats/e1m2x2.asl",
+    "tests/asl/numeric/formats/e8m0.asl",
+    "tests/asl/numeric/formats/hif4x2.asl",
+    "tests/asl/shards/numeric-formats.asl",
     "tests/asl/profile-tests.asl:ValidateNumericFormatClassification",
     "tests/asl/state-tests.asl:TestTileRegisterMapping",
     "tests/asl/scalar-tests.asl:TestScalarFloating",
     "tests/asl/bundle-tests.asl:TestBundleOperationDescriptorFields",
-    "tests/asl/tma-totality-tests.asl:TestTmaAllFourBitTypes",
+    "tests/asl/tlsu-totality-tests.asl:TestTlsuAllFourBitTypes",
     "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality"
   ],
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ecbc4d29caf4a82581b81c5f829c7a16cc9cc985133f43516e861d15c2ef99cd"
+      "sha256": "94d48007a9082fae64a0ec0a089f3ab146afe5f8a3b3b4a859ccfaa41519ef03"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
       "sha256": "d8d188dc06cb4195fcf3d62724591416c17cbd938c0c225d2093890d61eeb7dc"
     },
     {
-      "path": "spec/evidence/tma-totality.json",
-      "sha256": "0e09c514b38ba87120aa5d1cb1c07e5a4ddf38c6c4751b020821c0fbbaa95350"
+      "path": "spec/evidence/tlsu-totality.json",
+      "sha256": "51b57b6361143bebbb2b2cab80ad7300efb355f6dfc1fef67c54442f3f3721bb"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "a21760edef8d377e313b44851c361b5d5de69f989a1218b8e72b4d67fc63e9a8"
+      "sha256": "5e684217e74126506b19401d8b1c9043fb028798d2253ed9d5ad17ee90033070"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -1944,15 +2471,207 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "58cb445f7a4bc690859f017db4e9ec7b054ab1c10d50773eb2d6cf3a2a87d94a"
+      "sha256": "e42e4f1233ccb33e4710117036ad0a605b9efd7495d1e43cfb7e37d678784074"
     },
     {
       "path": "asl/types.asl",
-      "sha256": "e23a59bfc8ae54b84b0ba06e5af4593b331fbf7f6ef45f901bcaa83f1d6e8f43"
+      "sha256": "b78deeec417dd72e296b449ecee0695225045f175439f94dd49c8039e69d45d8"
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "d2f16eef9b310107df3090613e76d6f05693a0cc39a1c69c8c241f33cc5bb2f4"
+      "sha256": "3c36ef13ce344eb8258f321f90a2e1b6df88e15d6905a4d864a4b48919ccc988"
+    },
+    {
+      "path": "asl/numeric/formats/fp64.asl",
+      "sha256": "3c61ea952fe7d278182ff44f3fd32326da79f563b6a74e96461d75ca5a3a7e30"
+    },
+    {
+      "path": "asl/numeric/formats/fp32.asl",
+      "sha256": "a8f8c077a4b0a143e677e7e078a1b9df0668a8deb38994458af4c76266c32ba8"
+    },
+    {
+      "path": "asl/numeric/formats/tf32.asl",
+      "sha256": "99e35a02ba664d5991da4e10d7cc5f35e52c5b53a3450e1142d430fbfef31935"
+    },
+    {
+      "path": "asl/numeric/formats/hf32.asl",
+      "sha256": "2580030762be8f30ba0128a4cb90125d5772ba974e7135198e88124b27dcf4cb"
+    },
+    {
+      "path": "asl/numeric/formats/fp16.asl",
+      "sha256": "b975dc1086d82c7b4e62dc38808c9b6dc76a7a5ad0ec422fce0de6a4358a266e"
+    },
+    {
+      "path": "asl/numeric/formats/bf16.asl",
+      "sha256": "ec4dabaf59660af4d0a7688ad4891a26eda5f644bcabd663b520c9f24de26eea"
+    },
+    {
+      "path": "asl/numeric/formats/hif8.asl",
+      "sha256": "a32a3f906574e28552d7578717b399e71bd28b1f66f5b9a41878c5c693a54566"
+    },
+    {
+      "path": "asl/numeric/formats/e4m3.asl",
+      "sha256": "63396dd5985e6fd9570044004a4739000eb619e5bc8e77e68bf8a080985c30c4"
+    },
+    {
+      "path": "asl/numeric/formats/e5m2.asl",
+      "sha256": "a3ba29fb79e37706cf8a2c6fbf5b62b5e331cf9e9d9ec810e79311db095c96ed"
+    },
+    {
+      "path": "asl/numeric/formats/e3m2.asl",
+      "sha256": "a9d78aedcafa63992ef32b50e63f7f6f3f24edbf31396effc772715b49efaa54"
+    },
+    {
+      "path": "asl/numeric/formats/e2m3.asl",
+      "sha256": "763c5a47ce8bf0eb63fe309666a249f760c9fdd2ab7f6e4b45b7aeba90575e2f"
+    },
+    {
+      "path": "asl/numeric/formats/e2m1x2.asl",
+      "sha256": "a3e135139f3caa832e0b9a822c406b71f09ad032a2967761828ea8045e6c40ae"
+    },
+    {
+      "path": "asl/numeric/formats/e1m2x2.asl",
+      "sha256": "46f757fd27b4e65d772efcb6672f6ed08fde4e3503fb0f122fc32e8e50089875"
+    },
+    {
+      "path": "asl/numeric/formats/e8m0.asl",
+      "sha256": "8c8f9b036b7f4b465a1a98a07ff7844807eb09135e442a5bf094fc559582c6a3"
+    },
+    {
+      "path": "asl/numeric/formats/hif4x2.asl",
+      "sha256": "ad8161a771a010b3662a79d03c0da68917d48edbea9dfd602378cff0c2d025be"
+    },
+    {
+      "path": "docs/numeric/formats/index.md",
+      "sha256": "f497ec8161010f29f8999284eadc105ed4a63e807ac1a1b1b02ac5a3e9a565de"
+    },
+    {
+      "path": "docs/numeric/formats/fp64.md",
+      "sha256": "c48aff9c4a82309d4f2fc029a02d6cb58e281437724f5dcf46fa34470d321d87"
+    },
+    {
+      "path": "docs/numeric/formats/fp32.md",
+      "sha256": "9663522b5498e39f791497945fd2c52d5f9f95742d95cbee6cb953a893b96479"
+    },
+    {
+      "path": "docs/numeric/formats/tf32.md",
+      "sha256": "ebef320d72b708e0121dad613243ab2ddb7f35f3c7cfa022d35c93bbe934fb53"
+    },
+    {
+      "path": "docs/numeric/formats/hf32.md",
+      "sha256": "3073893d7107f77bac8cda61c987169a4a6399c5d1fd40dc72d6f7af8c2ecba6"
+    },
+    {
+      "path": "docs/numeric/formats/fp16.md",
+      "sha256": "f4cb4f6a90b357c6404046b975b437f5283cdae4074b150f8076a0b93a572514"
+    },
+    {
+      "path": "docs/numeric/formats/bf16.md",
+      "sha256": "c52948532a4c148d1b500430474b88be355b5270e8174b6db06d8b3d5dda214c"
+    },
+    {
+      "path": "docs/numeric/formats/hif8.md",
+      "sha256": "2d215e50d77a0b8a604ee517ea7d6b7b70ba3aee9d2c0b3cd9bd63587d521fbf"
+    },
+    {
+      "path": "docs/numeric/formats/e4m3.md",
+      "sha256": "d9fec4c35c9a666129738f02eda04d09bd4879c57c82125a2288c097799f3125"
+    },
+    {
+      "path": "docs/numeric/formats/e5m2.md",
+      "sha256": "7c08135990fd2f70d3892c5f00e244f889d6e85477f4201bc5d6a24ee2915b44"
+    },
+    {
+      "path": "docs/numeric/formats/e3m2.md",
+      "sha256": "31e78b592735e124cd693d18523b798f4c7046a1268cc91630a5c3005316fd5f"
+    },
+    {
+      "path": "docs/numeric/formats/e2m3.md",
+      "sha256": "cdff69b4392f3b3ac3b525ce28b1bab75c7b7f8f88193c8289c9dd07d522fad1"
+    },
+    {
+      "path": "docs/numeric/formats/e2m1x2.md",
+      "sha256": "aa18c48c664b2943b4661c493ccf9334305c4bd2c0d54590d112a63a973fdb29"
+    },
+    {
+      "path": "docs/numeric/formats/e1m2x2.md",
+      "sha256": "6ab9435d12eaf312eaf9c6a5dde421e647082019a6a9963ee9fc1a9e64e5ab26"
+    },
+    {
+      "path": "docs/numeric/formats/e8m0.md",
+      "sha256": "5bc5d37dada2b57ca87e993d44710c97fc3b60562d687125461155b4c1b3a55b"
+    },
+    {
+      "path": "docs/numeric/formats/hif4x2.md",
+      "sha256": "46dc0793a59444e6864f866716b7f228f23149821d6ea9399b842323337e05ff"
+    },
+    {
+      "path": "tests/asl/numeric/formats/common.asl",
+      "sha256": "4909e91d84bc93c0a6c3f8d07ffa7742e38cbdac9dec74677e6b347b9b959405"
+    },
+    {
+      "path": "tests/asl/numeric/formats/fp64.asl",
+      "sha256": "3529ef640b0e2daf87f50517a8e9bfd84ffb674e35fe9c6fdd8020351a9247da"
+    },
+    {
+      "path": "tests/asl/numeric/formats/fp32.asl",
+      "sha256": "12d22a9a9a9a154de006440f8c564499ef18cd5c7fff15fe416c127ce3d18a17"
+    },
+    {
+      "path": "tests/asl/numeric/formats/tf32.asl",
+      "sha256": "c73dfe03e83563f7e4cdce4de3068ce71480e0f4000f6fc26d4a7425d4d8fa6b"
+    },
+    {
+      "path": "tests/asl/numeric/formats/hf32.asl",
+      "sha256": "afb2c27f9f3cb10bb15f0231fc3991ab5197a35dc20bbf31a27e777f21f113cc"
+    },
+    {
+      "path": "tests/asl/numeric/formats/fp16.asl",
+      "sha256": "d0253c77b46ccd0bda0496725fcfc33a621d890bb3b97aaf0d19e967bebf886c"
+    },
+    {
+      "path": "tests/asl/numeric/formats/bf16.asl",
+      "sha256": "309c69e4c51ceab41aa6c79b202f521f3b4bac8231849ffa900994e8d2e99ee8"
+    },
+    {
+      "path": "tests/asl/numeric/formats/hif8.asl",
+      "sha256": "528e0444852901800d929c57688478bf2d1beb9b8f9443ddd94a6ab6443e6e7b"
+    },
+    {
+      "path": "tests/asl/numeric/formats/e4m3.asl",
+      "sha256": "4666021551654b1c210818c5d14827fd36a78a5c11b772ebd254ee321913c3e7"
+    },
+    {
+      "path": "tests/asl/numeric/formats/e5m2.asl",
+      "sha256": "2aff61a059b944bfed43b1b9cb650233fb578a5aa78dad44c6fda548e177cb94"
+    },
+    {
+      "path": "tests/asl/numeric/formats/e3m2.asl",
+      "sha256": "7b6228aa01b44a39e7d2607542f7e26310a2a8b99ddbf89426f612bb51a3245b"
+    },
+    {
+      "path": "tests/asl/numeric/formats/e2m3.asl",
+      "sha256": "95040cb34abfeb8ea38bfe31968f85fb1051385b2812daae5753c4eb28a663c6"
+    },
+    {
+      "path": "tests/asl/numeric/formats/e2m1x2.asl",
+      "sha256": "fa6732bd50f4ba04d85355f60511dc87699d43410112c288762c4d1c25bd33d1"
+    },
+    {
+      "path": "tests/asl/numeric/formats/e1m2x2.asl",
+      "sha256": "1d64b14debfcb8a18a4f0c2164fcfc4cdbc013217d4ed3ba3f45bcd3cd288fd8"
+    },
+    {
+      "path": "tests/asl/numeric/formats/e8m0.asl",
+      "sha256": "8a4ad5eba1e26a5aeb2b6febea7398dd2389fb84b169350aba178cc5c828ec09"
+    },
+    {
+      "path": "tests/asl/numeric/formats/hif4x2.asl",
+      "sha256": "666d327e089f4e325eb5b34eba8c8e9cf52b8b2e9b83fc3b17938824d5a5bb0e"
+    },
+    {
+      "path": "tests/asl/shards/numeric-formats.asl",
+      "sha256": "eb641cd0dec9f80fcf09028037d63ed8a172fa9696fa3a0949f1a7ba87a6be66"
     },
     {
       "path": "asl/scalar/floating.asl",
@@ -1960,23 +2679,23 @@
     },
     {
       "path": "asl/tile/state.asl",
-      "sha256": "1d8f6a0a65e50eb71cddc3d7f28cf44175e0287b6b055bc6d42866b6ddaf98af"
+      "sha256": "a73e4106b9481c35b0d695fb451bdf7f46aa1429feb6ec58bec7bc7f31dad2b2"
     },
     {
       "path": "asl/tile/memory.asl",
-      "sha256": "ddf64264ba57cec0dd3772b815b3fd3d0ff3899e7c447a60f1737862b9d1bb22"
+      "sha256": "e5c2d60ad3a5ec31afb181674d33d860b15cf17e215cff60cf7edfa5cfb65ac0"
     },
     {
       "path": "asl/bundle/dispatch.asl",
-      "sha256": "6a3e8fe318bb85a632998caa14a3c158b727fa9bf059c56c7c4a50c4c8fe8f6e"
+      "sha256": "573f4024b67ef735671581b84ade90815845d7a8ef54b11e7983d355cdb50cdf"
     },
     {
       "path": "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "07c51707a4f02fa6a451f92ab267b31fe4f0398d3def26f12b461f79d734d6a7"
     },
     {
-      "path": "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
-      "sha256": "133d78e770cedb49f0b7cac66b52e0fc6efb6a687f99bd7cb630ca9fb7ec6714"
+      "path": "docs/architecture-decisions/0033-tlsu-four-bit-memory-packing.md",
+      "sha256": "df5bce242a3e81e8eb667021e25cb5dab2720ec368ad3d0d2a7c66535207255a"
     },
     {
       "path": "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md",
@@ -1984,7 +2703,11 @@
     },
     {
       "path": "docs/architecture-decisions/0048-numeric-format-value-classification.md",
-      "sha256": "cca6076b80003179731fe8f843ae230b835b5f0e581024f8e5b4509cd0f33f7e"
+      "sha256": "4ea4187956baf67f6ec7e2e1b8145145d11b76e3b01c2c992460e6fd4f8603c9"
+    },
+    {
+      "path": "docs/architecture-decisions/0057-exact-numeric-format-decomposition.md",
+      "sha256": "578f9eecc37e7e8a3159d52fe4a9c2286da1e2eb5d0792d71938a6b317e17fe3"
     }
   ],
   "summary": {
@@ -2002,8 +2725,8 @@
     "scalar_floating_destination_reserved_count": 17,
     "scalar_integer_destination_mapped_count": 15,
     "scalar_integer_destination_reserved_count": 17,
-    "tma_talloc_mapped_count": 25,
-    "tma_talloc_reserved_count": 39,
+    "tlsu_data_type_mapped_count": 25,
+    "tlsu_data_type_reserved_count": 39,
     "bundle_mapped_count": 25,
     "bundle_reserved_count": 7,
     "four_bit_type_count": 5,
@@ -2014,6 +2737,7 @@
     "subnormal_capable_type_count": 11,
     "signed_zero_type_count": 13,
     "internally_constrained_type_count": 4,
+    "exact_decomposition_format_count": 15,
     "open_residual_count": 8,
     "pd02_complete": false
   }

@@ -5,6 +5,22 @@ ASLREF ?= ./scripts/aslref
 ASL_SOURCES_BEFORE_DECODER := \
 	asl/architecture.asl \
 	asl/types.asl \
+	asl/bundle/postprocess.asl \
+	asl/numeric/formats/fp64.asl \
+	asl/numeric/formats/fp32.asl \
+	asl/numeric/formats/tf32.asl \
+	asl/numeric/formats/hf32.asl \
+	asl/numeric/formats/fp16.asl \
+	asl/numeric/formats/bf16.asl \
+	asl/numeric/formats/e4m3.asl \
+	asl/numeric/formats/e5m2.asl \
+	asl/numeric/formats/e3m2.asl \
+	asl/numeric/formats/e2m3.asl \
+	asl/numeric/formats/hif8.asl \
+	asl/numeric/formats/e2m1x2.asl \
+	asl/numeric/formats/e1m2x2.asl \
+	asl/numeric/formats/hif4x2.asl \
+	asl/numeric/formats/e8m0.asl \
 	asl/numeric/formats.asl \
 	asl/state.asl \
 	asl/bundle/state.asl \
@@ -42,6 +58,7 @@ ASL_SOURCES := $(ASL_SOURCES_BEFORE_DECODER) $(ASL_SOURCES_AFTER_DECODER)
 ASL_TEST_LIB := \
 	tests/asl/state-tests.asl \
 	tests/asl/bundle-tests.asl \
+	tests/asl/postprocess-tests.asl \
 	tests/asl/scalar-tests.asl \
 	tests/asl/tile-tests.asl \
 	tests/asl/tepl-totality-tests.asl \
@@ -49,7 +66,23 @@ ASL_TEST_LIB := \
 	tests/asl/cube-totality-tests.asl \
 	tests/asl/dispatch-tests.asl \
 	tests/asl/concurrency-tests.asl \
-	tests/asl/profile-tests.asl
+	tests/asl/profile-tests.asl \
+	tests/asl/numeric/formats/common.asl \
+	tests/asl/numeric/formats/fp64.asl \
+	tests/asl/numeric/formats/fp32.asl \
+	tests/asl/numeric/formats/tf32.asl \
+	tests/asl/numeric/formats/hf32.asl \
+	tests/asl/numeric/formats/fp16.asl \
+	tests/asl/numeric/formats/bf16.asl \
+	tests/asl/numeric/formats/e4m3.asl \
+	tests/asl/numeric/formats/e5m2.asl \
+	tests/asl/numeric/formats/e3m2.asl \
+	tests/asl/numeric/formats/e2m3.asl \
+	tests/asl/numeric/formats/hif8.asl \
+	tests/asl/numeric/formats/e2m1x2.asl \
+	tests/asl/numeric/formats/e1m2x2.asl \
+	tests/asl/numeric/formats/hif4x2.asl \
+	tests/asl/numeric/formats/e8m0.asl
 
 ASL_TEST_MAIN := tests/asl/main.asl
 ASL_TESTS := $(ASL_TEST_LIB) $(ASL_TEST_MAIN)
@@ -82,6 +115,7 @@ ASL_TEST_SHARD_MAINS := \
 	tests/asl/shards/tlsu-totality.asl \
 	tests/asl/shards/cube-totality.asl \
 	tests/asl/shards/core-bundle.asl \
+	tests/asl/shards/postprocess.asl \
 	tests/asl/shards/scalar-base.asl \
 	tests/asl/shards/scalar-agu-effects.asl \
 	tests/asl/shards/scalar-alu-bru.asl \
@@ -90,7 +124,8 @@ ASL_TEST_SHARD_MAINS := \
 	tests/asl/shards/scalar-sys.asl \
 	tests/asl/shards/tile-ops.asl \
 	tests/asl/shards/tile-lifecycle.asl \
-	tests/asl/shards/concurrency-profile.asl
+	tests/asl/shards/concurrency-profile.asl \
+	tests/asl/shards/numeric-formats.asl
 
 ASL_TEST_SHARD_NAMES := $(patsubst tests/asl/shards/%.asl,%,$(ASL_TEST_SHARD_MAINS))
 ASL_TEST_SHARD_SPECS := $(addprefix build/pto-tests-,$(addsuffix .asl,$(ASL_TEST_SHARD_NAMES)))
@@ -103,6 +138,7 @@ ASL_TEST_LIB_core-bundle := \
 	tests/asl/state-tests.asl \
 	tests/asl/bundle-tests.asl \
 	tests/asl/dispatch-tests.asl
+ASL_TEST_LIB_postprocess := tests/asl/postprocess-tests.asl
 ASL_TEST_LIB_scalar-base := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-agu-effects := tests/asl/scalar-tests.asl
 ASL_TEST_LIB_scalar-agu-totality := tests/asl/scalar-tests.asl
@@ -138,6 +174,23 @@ ASL_TEST_LIB_cube-totality := tests/asl/cube-totality-tests.asl
 ASL_TEST_LIB_concurrency-profile := \
 	tests/asl/concurrency-tests.asl \
 	tests/asl/profile-tests.asl
+ASL_TEST_LIB_numeric-formats := \
+	tests/asl/numeric/formats/common.asl \
+	tests/asl/numeric/formats/fp64.asl \
+	tests/asl/numeric/formats/fp32.asl \
+	tests/asl/numeric/formats/tf32.asl \
+	tests/asl/numeric/formats/hf32.asl \
+	tests/asl/numeric/formats/fp16.asl \
+	tests/asl/numeric/formats/bf16.asl \
+	tests/asl/numeric/formats/e4m3.asl \
+	tests/asl/numeric/formats/e5m2.asl \
+	tests/asl/numeric/formats/e3m2.asl \
+	tests/asl/numeric/formats/e2m3.asl \
+	tests/asl/numeric/formats/hif8.asl \
+	tests/asl/numeric/formats/e2m1x2.asl \
+	tests/asl/numeric/formats/e1m2x2.asl \
+	tests/asl/numeric/formats/hif4x2.asl \
+	tests/asl/numeric/formats/e8m0.asl
 
 SPEC := build/pto-spec.asl
 DECODER_SPEC := build/decoders.asl

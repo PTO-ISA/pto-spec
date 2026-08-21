@@ -314,9 +314,11 @@ def generate() -> dict[str, Any]:
         format_namespace_contract["schema_version"] == 1
         and format_namespace_contract["decision_id"] == "PD-02"
         and format_namespace_contract["status"]
-        == "namespace-carrier-and-value-classification-closed-operation-rules-open"
+        == "namespace-carrier-classification-and-exact-decomposition-closed-operation-rules-open"
         and format_namespace_contract["classification_checkpoint_id"]
         == "PD-02-SC2:PD-05-SC1"
+        and format_namespace_contract["exact_decomposition_checkpoint_id"]
+        == "PD-02-SC3"
         and format_namespace_contract["value_classification"]["status"] == "closed"
         and len(format_namespace_contract["value_classification"]["formats"])
         == 25
@@ -336,8 +338,8 @@ def generate() -> dict[str, Any]:
             "scalar_floating_destination_reserved_count": 17,
             "scalar_integer_destination_mapped_count": 15,
             "scalar_integer_destination_reserved_count": 17,
-            "tma_talloc_mapped_count": 25,
-            "tma_talloc_reserved_count": 39,
+            "tlsu_data_type_mapped_count": 25,
+            "tlsu_data_type_reserved_count": 39,
             "bundle_mapped_count": 25,
             "bundle_reserved_count": 7,
             "four_bit_type_count": 5,
@@ -348,6 +350,7 @@ def generate() -> dict[str, Any]:
             "subnormal_capable_type_count": 11,
             "signed_zero_type_count": 13,
             "internally_constrained_type_count": 4,
+            "exact_decomposition_format_count": 15,
             "open_residual_count": 8,
             "pd02_complete": False,
         },
@@ -418,7 +421,7 @@ def generate() -> dict[str, Any]:
             "tuple_count": 150,
             "bundle_execution_tuple_count": 150,
             "bundle_command_form_count": 6,
-            "accepted_command_form_count": 96,
+            "accepted_command_form_count": 99,
             "result_rule_count": 0,
             "parent_pd01_complete": False,
             "cube_matrix_complete": False,
@@ -593,6 +596,12 @@ def generate() -> dict[str, Any]:
             ],
             "classification_acceptance_record": format_namespace_contract[
                 "classification_acceptance_record"
+            ],
+            "exact_decomposition_checkpoint_id": format_namespace_contract[
+                "exact_decomposition_checkpoint_id"
+            ],
+            "exact_decomposition_acceptance_record": format_namespace_contract[
+                "exact_decomposition_acceptance_record"
             ],
             **format_namespace_contract["summary"],
         },

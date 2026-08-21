@@ -84,6 +84,8 @@ begin
     for index = 0 to 3 do
         _BundleSharedBindings[[index]].valid = FALSE;
         _BundleSharedBindings[[index]].shared_id = Zeros{8};
+        _BundleSharedBindings[[index]].pe_mask = Zeros{4};
+        _BundleSharedBindings[[index]].tile_size = 0;
         _BundleSharedBindings[[index]].consumed = FALSE;
     end;
     _BundleControlAttributes.trap_enabled = FALSE;
@@ -92,7 +94,8 @@ begin
     _BundleControlAttributes.release = FALSE;
     _BundleControlAttributes.far = FALSE;
     _BundleControlAttributes.direct_register = FALSE;
-    _BundleDataAttributes.data_type = Zeros{5};
+    _BundleDataAttributes.data_type_present = FALSE;
+    _BundleDataAttributes.data_type = DTYPE_NONE;
     _BundleDataAttributes.data_layout = Zeros{5};
     _BundleDataAttributes.pad_value = Zeros{2};
     _BundleDataAttributes.conversion_mode = Zeros{3};
@@ -180,6 +183,11 @@ readonly func CurrentBundleTileOperationDataTypeCode() => bits(5)
 begin
     assert BundleTileOperationSelected() &&
            _BundleOperation.data_type_valid;
+    if _BundleDataAttributes.data_type_present &&
+       BundleDataTypeConcrete(_BundleDataAttributes.data_type) then
+        return _BundleDataAttributes.data_type;
+    end;
+    assert BundleDataTypeConcrete(_BundleOperation.data_type);
     return _BundleOperation.data_type;
 end;
 
@@ -260,11 +268,12 @@ func SetBundleDataAttributeState0580(
     conversion_mode: bits(3), rounding_mode: bits(3), saturating: boolean,
     canonicalize: boolean)
 begin
-    if !TileDataTypeEncodingValid(ZeroExtend{PTO_XLEN}(data_type)) ||
+    if !BundleDataTypeFieldValid(data_type) ||
        !TileDataLayoutCodeSupported(data_layout) then
         SetFault(Fault_TileLegality, ReadTPC());
         return;
     end;
+    _BundleDataAttributes.data_type_present = TRUE;
     _BundleDataAttributes.data_type = data_type;
     _BundleDataAttributes.data_layout = data_layout;
     _BundleDataAttributes.pad_value = pad_value;
@@ -312,6 +321,8 @@ begin
     for index = 0 to 3 do
         _BundleSharedBindings[[index]].valid = FALSE;
         _BundleSharedBindings[[index]].shared_id = Zeros{8};
+        _BundleSharedBindings[[index]].pe_mask = Zeros{4};
+        _BundleSharedBindings[[index]].tile_size = 0;
         _BundleSharedBindings[[index]].consumed = FALSE;
     end;
     _BundleControlAttributes.trap_enabled = FALSE;
@@ -320,7 +331,8 @@ begin
     _BundleControlAttributes.release = FALSE;
     _BundleControlAttributes.far = FALSE;
     _BundleControlAttributes.direct_register = FALSE;
-    _BundleDataAttributes.data_type = Zeros{5};
+    _BundleDataAttributes.data_type_present = FALSE;
+    _BundleDataAttributes.data_type = DTYPE_NONE;
     _BundleDataAttributes.data_layout = Zeros{5};
     _BundleDataAttributes.pad_value = Zeros{2};
     _BundleDataAttributes.conversion_mode = Zeros{3};
@@ -334,7 +346,8 @@ begin
     _BundleDimensions[[index]] = value;
 end;
 
-func BindBundleSharedIO(shared_id: bits(8))
+func BindBundleSharedIO(shared_id: bits(8), pe_mask: bits(4),
+                        tile_size: integer {0..7})
 begin
     for index = 0 to 3 do
         if _BundleSharedBindings[[index]].valid &&
@@ -348,6 +361,8 @@ begin
         if !_BundleSharedBindings[[index]].valid then
             _BundleSharedBindings[[index]].valid = TRUE;
             _BundleSharedBindings[[index]].shared_id = shared_id;
+            _BundleSharedBindings[[index]].pe_mask = pe_mask;
+            _BundleSharedBindings[[index]].tile_size = tile_size;
             _BundleSharedBindings[[index]].consumed = FALSE;
             return;
         end;
@@ -371,6 +386,21 @@ begin
     assert _BundleSharedBindings[[ordinal]].valid &&
            !_BundleSharedBindings[[ordinal]].consumed;
     return _BundleSharedBindings[[ordinal]].shared_id;
+end;
+
+readonly func BundleSharedBindingPEMask(ordinal: integer {0..3}) => bits(4)
+begin
+    assert _BundleSharedBindings[[ordinal]].valid &&
+           !_BundleSharedBindings[[ordinal]].consumed;
+    return _BundleSharedBindings[[ordinal]].pe_mask;
+end;
+
+readonly func BundleSharedBindingTileSize(ordinal: integer {0..3})
+    => integer {0..7}
+begin
+    assert _BundleSharedBindings[[ordinal]].valid &&
+           !_BundleSharedBindings[[ordinal]].consumed;
+    return _BundleSharedBindings[[ordinal]].tile_size;
 end;
 
 func ConsumeBundleSharedBindings(count: integer {1..4})
@@ -506,7 +536,7 @@ end;
 
 readonly func BundleTileDestinationSizeBytes(
     binding: BundleTileBindingIndex)
-    => integer {0,512,1024,2048,4096,8192,16384,32768}
+    => integer {0,128,256,512,1024,2048,4096,8192}
 begin
     if !_BundleTileBindings[[binding]].destination_valid then return 0; end;
     assert BundleTileDestinationSizeLegal(binding);
@@ -569,6 +599,7 @@ func SetBundleDataAttributeState(data_type: bits(5), data_layout: bits(5),
                                 pad_value: bits(2), conversion_mode: bits(3),
                                 rounding_mode: bits(3), saturating: boolean)
 begin
+    _BundleDataAttributes.data_type_present = TRUE;
     _BundleDataAttributes.data_type = data_type;
     _BundleDataAttributes.data_layout = data_layout;
     _BundleDataAttributes.pad_value = pad_value;

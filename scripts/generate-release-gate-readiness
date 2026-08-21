@@ -70,9 +70,9 @@ EXPECTED_COUNTS = {
     "gate_count": 10,
     "required_approval_count": 0,
     "required_external_control_count": 9,
-    "shard_count": 34,
-    "canonical_call_count": 110,
-    "reachable_test_subprogram_count": 104,
+    "shard_count": 36,
+    "canonical_call_count": 129,
+    "reachable_test_subprogram_count": 126,
 }
 
 GATE_SPECS: tuple[dict[str, Any], ...] = (
@@ -119,7 +119,7 @@ GATE_SPECS: tuple[dict[str, Any], ...] = (
         "name": "parallel executable semantics",
         "command": "make test-parallel",
         "evidence": ["Makefile", "scripts/check-asl-test-shards", "tests/asl/main.asl"],
-        "acceptance": "All canonical executable tests pass through the exact 34-shard partition with no missing, duplicate, empty, or unreachable test surface.",
+        "acceptance": "All canonical executable tests pass through the exact 36-shard partition with no missing, duplicate, empty, or unreachable test surface.",
         "long_running": True,
     },
     {
@@ -375,7 +375,7 @@ def build_evidence() -> dict[str, Any]:
     traceability = load("spec/evidence/release-traceability-readiness.json")
     require(
         traceability["status"] == "inventory-and-links-closed-promotion-open"
-        and traceability["summary"]["traceability_item_count"] == 918
+        and traceability["summary"]["traceability_item_count"] == 924
         and traceability["summary"]["release_traceability_status"] == "open:S6-T1",
         "S6-T1 readiness contract drift",
     )
@@ -441,7 +441,7 @@ def build_evidence() -> dict[str, Any]:
         "policy": {
             "authority": "The frozen PTO candidate, manual release validation, and retained repository controls must agree before M6 promotion.",
             "no_live_branch_evidence": "A development check on a moving draft branch is useful feedback but is not architecturally-complete release evidence.",
-            "long_running_policy": "Long runtime gates execute manually through the checked 34-shard topology; readiness generation validates their exact contract without waiting for them.",
+            "long_running_policy": "Long runtime gates execute manually through the checked 36-shard topology; readiness generation validates their exact contract without waiting for them.",
             "closure_rule": "S6-T2 closes only after cumulative S0 through S6-T1 closure, one immutable signed candidate, a passing manual release gate at that commit, and all retained external controls verified.",
         },
         "sources": [{"path": path, "sha256": sha256(path)} for path in SOURCE_PATHS],

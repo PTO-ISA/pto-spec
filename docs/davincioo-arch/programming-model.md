@@ -55,32 +55,22 @@ SharedTile<BaseTile>
 
 CUBE 中 `Right` 和 `ScaleRight` 可以使用 Shared storage；cooperative TMATMUL 的 `Left`/`ScaleLeft` 也可以 Shared，但只能与 Shared `Right`/`ScaleRight` 成对使用。`Bias`、`Acc` 以及所有 output role 必须为 Local。
 
-## Shared Data Movement
-
-v5 在既有 intrinsic family 上扩展以下公开 API：
-
-```cpp
-enum class SharedMoveMode { Insert, Publish, Broadcast, Extract };
-
-TMOV<SharedMoveMode::Insert>(sharedDst, localSrc);
-TMOV<SharedMoveMode::Publish>(sharedDst, localSrc);
-TMOV<SharedMoveMode::Broadcast>(localDst, sharedSrc);
-TMOV<SharedMoveMode::Extract>(localDst, sharedSrc);
-```
-
-- `Insert`/`Publish` 把 `PE_MASK` 选中的 Local quarter 原子写入 Shared register。
-- `Broadcast`/`Extract` 把 `PE_MASK` 选中的固定 Shared quarter 复制到 Local destination；未选 quarter 保持不变。
-- 多个 mask bit 可以同时为 1；selected quarter 不 pack，`0000` 不读写任何 payload。
-
-mode 必须在编译期给出。公开 API 不新增 `_SHARED` intrinsic family，也不提供 Shared→Shared TMOV。
-
 ## GM Data Movement
 
 普通 `TLOAD/TSTORE` 接收完整 logical `GlobalTensor` 描述符；编译器结合 distribution 与 `thread_id` 推导各 PE fragment 地址。
 
-`TLOAD(shared, gm)` 支持 optional mask-only B.IOT。省略 companion 时 mask 为 `1111`；否则只传输 selected fixed-offset quarter，并以一次 atomic RMW 更新 Shared destination。
+`TLOAD(shared, gm)` 使用 destination `B.IOS` 同时编码 absolute Shared ID、
+`PE_MASK` 和 per-PE `TSize`。每个参与 PE 使用自己的 GPR base/row-stride，
+selected fragment 以一次 atomic RMW 更新 Shared destination。
 
-`TSTORE(gm, shared)` 同样接受 optional mask-only B.IOT；省略时读取四个 quarter。selected uninitialized bytes 产生 undefined-register value。不同 PE 可提供不同 tile offset，但程序必须保证并发区间不冲突。Shared store 完成只表示请求已接受且源已捕获或 pin 住，并不表示其他 PE 已能观察到 GM 内容。
+`TSTORE(gm, shared)` 使用 source `B.IOS` 编码 absolute Shared ID 和
+`PE_MASK`；大小来自 Shared descriptor。selected uninitialized bytes 产生
+undefined-register value。不同 PE 可提供不同 tile offset，但程序必须保证并发
+区间不冲突。Shared store 完成只表示请求已接受且源已捕获或 pin 住，并不表示
+其他 PE 已能观察到 GM 内容。
+
+PTO 的 `TMOV` 仅允许 Local→Local。Local↔Shared/Shared→Shared TMOV 和
+`TSTORE.SPART` 均不是 PTO 指令。
 
 ## Inter-PE Local Movement
 
@@ -125,7 +115,7 @@ Linx coupled SYS body 在 v5 中完全开放，并保持 FALL-only。PTO-AS/asse
 
 - Shared A + Local B 非法；cooperative TMATMUL 的 B 必须 Shared。
 - MX 的 data/scale pair 必须同为 Local 或同为 Shared。
-- TGEMV 的任何 SharedTile 或 C.B.IOS 均非法。
+- TGEMV 的任何 SharedTile 或 B.IOS 均非法。
 - C、Bias、D、max output 必须为 Local；cooperative vector parameter 由每 PE 提供相同完整 N-vector，scalar GPR 值也必须相等。
 - nondefault AccPhase、旧 *_FIXP opcode、隐式 ACC form 和 _ACC(d,a,b) shorthand 均产生确定诊断。
 

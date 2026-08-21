@@ -4,14 +4,17 @@
   "id": "header.header-c.b.ios",
   "kind": "header",
   "title": "C.B.IOS",
-  "status": "active",
-  "visibility": "public",
+  "status": "historical",
+  "visibility": "legacy",
   "profile": "pto-isa-0.58.0",
   "family": "Operand Bindings",
   "sources": { "davincioo": "header/C.B.IOS.md" }
 }
 ---
 # C.B.IOS
+
+> Historical, non-normative material. `C.B.IOS` is a permanently deleted
+> spelling. Current agents and tools must use the active `B.IOS` page.
 
 ## 用途
 

@@ -15,7 +15,7 @@
 
 ## 用途
 
-`BSTART.TLSU` 选择数据搬运 Function 与主 dtype。普通 Local operand 使用 `B.IOT`；Shared form 使用一次性 `C.B.IOS`，随后紧跟表中规定的 companion header。
+`BSTART.TLSU` 选择数据搬运 Function 与主 dtype。普通 Local operand 使用 `B.IOT`；Shared form 使用一次性 `B.IOS`，随后紧跟表中规定的 companion header。
 
 ## 编码
 
@@ -35,27 +35,31 @@
 
 | Function | Operation | v5 operand schema |
 | ---: | --- | --- |
-| 0 | `TLOAD`; Shared form is GM2S full | Local: `B.IOT(dst)+B.IOR`; Shared: `C.B.IOS+B.IOR` |
-| 1 | `TSTORE`; Shared form is S2GM full | Local: `B.IOT(src)+B.IOR`; Shared: `C.B.IOS+B.IOR` |
+| 0 | `TLOAD`; Shared form is GM2S full | Local: `B.IOT(dst)+B.IOR`; Shared: `B.IOS+B.IOR` |
+| 1 | `TSTORE`; Shared form is S2GM full | Local: `B.IOT(src)+B.IOR`; Shared: `B.IOS+B.IOR` |
 | 2 | Local `TMOV` | `B.IOT(src,dst)` |
-| 3 | `TPREFETCH` | existing Local/cache schema |
-| 4 | `MGATHER` | existing Local schema |
-| 5 | `MSCATTER` | existing Local schema |
-| 6 | legacy `MGATHER.MASK`, removed | illegal |
-| 7 | legacy `MSCATTER.MASK`, removed | illegal |
-| 8 | `TMOV.L2S_INSERT` | `C.B.IOS+B.IOT(Local src)` |
-| 9 | `TMOV.L2S_PUBLISH` | `C.B.IOS+B.IOT(Local src)` |
-| 10 | `TMOV.S2L_BROADCAST` | `C.B.IOS+B.IOT(Local dst)` |
-| 11 | `TMOV.S2L_EXTRACT` | `C.B.IOS+B.IOT(Local dst)` |
-| 12 | `TSTORE.SPART` | `C.B.IOS+B.IOR` |
+| 3 | `TPREFETCH` | Local/cache schema |
+| 4 | `MGATHER` | Local schema |
+| 5 | `MSCATTER` | Local schema |
+| 6 | `MGATHER.MASK` | Local schema |
+| 7 | `MSCATTER.MASK` | Local schema |
+| 8 | `MGATHER.CAS` | Local schema |
+| 9–12 | reserved in PTO | illegal; Linx-only space is not available for PTO allocation |
 | 13 | `GMOV` | `B.IOT(Local src,dst,PE_MASK,TSize)+B.IOR(peer_tid,0,0)` |
-| 14–31 | reserved | illegal |
+| 14 | reserved in PTO | Linx-only `TSTORE.SPART`; illegal in PTO |
+| 15–31 | reserved | illegal |
 
-Function 8–11 由公开 `SharedMoveMode` 选择。Function 12 只由 Shared source 的 `TSTORE<pe_scope>` 选择；即使 source 已完整定义，full store 与 partition store 仍使用不同 Function。Function 13 是固定 Core4 collective `GMOV`，没有 scope 重载。
+PTO 不定义 Shared TMOV 或 `TSTORE.SPART`。Function 13 是固定 Core4
+collective `GMOV`，没有 scope 重载。Linx 已分配的 TLSU Function 必须在 PTO
+保持 reserved，PTO 不得在相同编码空间增加冲突定义。
 
 ## Size 与 Mask
 
-GM→Shared size 编码在 `B.IOR.SharedTSize`。Local↔Shared size 编码在非零 `B.IOT.TSize`；Broadcast 可按规定的 size relation 使用更大的 Local logical size。`PE_MASK` 不改变 group participant 或 source-ready 要求。`GMOV` 的 `TSize` 表示完整逻辑 Tile，每个 PE 传输固定四分之一 fragment。
+Local destination size 编码在 `B.IOT.TSize`，Shared destination size 编码在
+`B.IOS.TSize`。两者都使用 `001..111 = 128 B..8 KiB` 的 per-PE 含义。
+Shared source 的 `B.IOS.TSize=000`，大小来自 descriptor。`PE_MASK` 是 PE
+predicate；总物理容量为 per-PE size 乘以参与 PE 数。`GMOV` 采用同一 per-PE
+`TSize` 解释。
 
 ## DataType
 

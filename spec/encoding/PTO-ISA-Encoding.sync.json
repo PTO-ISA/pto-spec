@@ -16,9 +16,9 @@
     "Description",
     "Constraints"
   ],
-  "workbook_sha256": "c010f9d70b95fd4ba3807f500140216d70785e3430a758d9e20e130ccaefff91",
-  "source_fingerprint": "d7db1963d4c94c73e29a9b3f5d5856e583867c17380c0c64bdbfb37485b9a19e",
-  "projection_fingerprint": "095dbbb8bd43f0782010412c672329557d27ff7808f75f9db1d74c019ef8733d",
+  "workbook_sha256": "2794dc41c416404e71d4a1bb9c7ac8fc39af061bab4ac9d56a10f023c9627375",
+  "source_fingerprint": "f7d1226f02b8f4582034abfb86d17e83636cca5dbe173ed6fbc4b121b8e78d59",
+  "projection_fingerprint": "57a304130792bd28d9d9e97f21777877b83973e042e71474ca74857506fb17d5",
   "rows": {
     "intrinsic.mgather": {
       "opcode": "MGATHER",
@@ -30,17 +30,14 @@
         "BSTART / bundle": "BSTART.TLSU MGATHER, DataType\nB.DATR (optional)\nB.DIM LB0\nB.DIM (LB1/LB2 for 2D)\nB.IOT\nB.IOR",
         "Output": "dst tile",
         "Input 0": "global memory/partition-view src",
-        "Input 1 / attrs": "indexes tile",
+        "Input 1 / attrs": "signed/unsigned byte-displacement index tile",
         "Input 2": null,
         "Dtype": "data: U8, S8, U16, S16, U32, S32, F16, BF16, F32; index: S32, U32",
         "Encoding": "TLSU Function 4;",
         "Description": "PTO 来源页：../pto/MGATHER.md PTO 指令名：MGATHER C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 MGATHER operand role 保持一致。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nB.IOT.imm4 在 DavinciOO active PE-local profile 中只允许 3..9，对应 128 B..8 KB。\n二维 MGATHER 的 ValidCol/ValidRow/Col 均为 16-bit dimension 值，并应满足 ValidCol <= Col。\nGM address、GM stride、alignment、dtype、mask/index 和 access size 约束由 PTO/Linx 来源页和当前 TLSU target profile 共同约束。\n本指令不隐含 cross-PE visibility 或 group-level barrier。"
+        "Constraints": "Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 MGATHER operand role 保持一致。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nB.IOT.TSize=001..111 encodes a 512 B..32 KB logical Tile (128 B..8 KB per PE fragment).\n二维 MGATHER 的 ValidCol/ValidRow/Col 均为 16-bit dimension 值，并应满足 ValidCol <= Col。\nIndexTile 使用整数 dtype；其元素直接作为 byte displacement。Packed four-bit transfer dtype 因缺少 nibble selector 而在访存前拒绝。\nGM base、byte displacement、alignment、dtype、mask 和 access size 约束由 PTO/Linx 来源页和当前 TLSU target profile 共同约束。\n本指令不隐含 cross-PE visibility 或 group-level barrier。"
       },
-      "overrides": {
-        "Description": "Gather-load elements from memory into a tile using per-element indices (tile world, ins/outs).",
-        "Constraints": "1. 1D may declare B.DIM LB0 only; 2D uses B.DIM LB0/LB1/LB2 and ValidCol <= Col.\n2. Tile operand order and destination presence follow the TLSU opcode profile.\n3. GM address/stride, alignment, layout conversion, dtype, and access size must satisfy the PTO page and active TLSU target profile."
-      },
+      "overrides": {},
       "layout_placeholders": {
         "类型": null
       }
@@ -55,17 +52,14 @@
         "BSTART / bundle": "BSTART.TLSU MSCATTER, DataType\nB.DATR (optional)\nB.DIM LB0\nB.DIM (LB1/LB2 for 2D)\nB.IOT\nB.IOR",
         "Output": "global memory/partition-view dst",
         "Input 0": "src tile",
-        "Input 1 / attrs": "indexes tile",
+        "Input 1 / attrs": "signed/unsigned byte-displacement index tile",
         "Input 2": null,
         "Dtype": "data: S8, U8, S16, U16, S32, U32, F16, BF16, F32; index: S32, U32",
         "Encoding": "TLSU Function 5;",
         "Description": "PTO 来源页：../pto/MSCATTER.md PTO 指令名：MSCATTER C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 MSCATTER operand role 保持一致。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\n二维 MSCATTER 的 ValidCol/ValidRow/Col 均为 16-bit dimension 值，并应满足 ValidCol <= Col。\nGM address、GM stride、alignment、dtype、mask/index 和 access size 约束由 PTO/Linx 来源页和当前 TLSU target profile 共同约束。\n本指令不隐含 cross-PE visibility 或 group-level barrier。"
+        "Constraints": "Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nB.IOT 中表达的 operand 顺序必须与 MSCATTER operand role 保持一致。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\n二维 MSCATTER 的 ValidCol/ValidRow/Col 均为 16-bit dimension 值，并应满足 ValidCol <= Col。\nIndexTile 使用整数 dtype；其元素直接作为 byte displacement。Packed four-bit transfer dtype 因缺少 nibble selector 而在访存前拒绝。\nGM base、byte displacement、alignment、dtype、mask 和 access size 约束由 PTO/Linx 来源页和当前 TLSU target profile 共同约束。\n本指令不隐含 cross-PE visibility 或 group-level barrier。"
       },
-      "overrides": {
-        "Description": "Scatter-store elements from a tile into memory using per-element indices (tile world, ins/outs).",
-        "Constraints": "1. 1D may declare B.DIM LB0 only; 2D uses B.DIM LB0/LB1/LB2 and ValidCol <= Col.\n2. Tile operand order and destination presence follow the TLSU opcode profile.\n3. GM address/stride, alignment, layout conversion, dtype, and access size must satisfy the PTO page and active TLSU target profile."
-      },
+      "overrides": {},
       "layout_placeholders": {
         "类型": null,
         "子类型": null
@@ -1070,19 +1064,18 @@
         "类型": "Tile Memory Operation\nTile级访存操作",
         "子类型": "规则访存",
         "Opcode": "TLOAD",
-        "BSTART / bundle": "Local form\nBSTART.TLSU TLOAD\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared form\nBSTART.TLSU TLOAD\nB.DATR/B.DIM\nC.B.IOS\nB.IOR",
+        "BSTART / bundle": "Local form\nBSTART.TLSU TLOAD\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared form\nBSTART.TLSU TLOAD\nB.DATR/B.DIM\nB.IOS\nB.IOR",
         "Output": "Local tile or SharedTile destination",
         "Input 0": "full logical GlobalTensor/partition-view source",
-        "Input 1 / attrs": "base, row stride, pad/layout attributes",
+        "Input 1 / attrs": "base byte address, byte row stride, pad/layout attributes",
         "Input 2": "Shared full form requires exactly-one issuer",
         "Dtype": "PTO TLOAD dtype/layout combinations supported by the v5 TLSU profile",
         "Encoding": "TLSU Function 0;",
         "Description": "PTO 来源页：../pto/TLOAD.md PTO 指令名：TLOAD C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Destination Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace 的 output queue：T/U/M/N。\nTLOAD 不允许声明 Tile source operand。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\nB.IOT.imm4 在 DavinciOO active PE-local profile 中只允许 3..9，对应 128 B..8 KB。\n二维 TLOAD 的 ValidCol/ValidRow/Col 均为 16-bit dimension 值，并应满足 ValidCol <= Col。\nGM address、GM stride、alignment、dtype 和 access size 约束由 PTO 来源页和当前 TLSU target profile 共同约束。\nB.IOD 仅表达 PE-local block scheduling dependency。未声明 B.IOD 时表示无显式 dependency/barrier，不隐含 memory fence。\n本指令不隐含 cross-PE visibility 或 group-level barrier。"
+        "Constraints": "Local and Shared destinations are distinguished by static type; no runtime storage switch is allowed.\nShared TLOAD updates selected quarters atomically. Partial writes to an\n  initialized Sx require descriptor compatibility; a partial first write\n  establishes the descriptor and leaves unselected quarters uninitialized.\nThe issuer pointer addresses the full object; it is not a per-PE fragment pointer.\nShared destination TSize is 128 B–8 KiB per participating PE and cannot be implicit.\nGM alignment, dtype, layout, shape and valid-region constraints remain those of PTO TLOAD and the TLSU target.\nRecordEvent completion controls operation readiness but is not a cross-PE GM visibility fence."
       },
       "overrides": {
-        "Description": "PTO data load operation (Dimension Collapse: PartitionView -> TileBuf).",
-        "Constraints": "1. 1D may declare B.DIM LB0 only; 2D uses B.DIM LB0/LB1/LB2 and ValidCol <= Col.\n2. TLOAD has no Tile source operand; B.IOT declares the destination Tile only.\n3. GM address/stride, alignment, layout conversion, dtype, and access size must satisfy the PTO page and active TLSU target profile."
+        "Description": "PTO data load operation (Dimension Collapse: PartitionView -> TileBuf)."
       },
       "layout_placeholders": {}
     },
@@ -2408,19 +2401,18 @@
         "类型": "Tile Memory Operation\nTile级访存操作",
         "子类型": "规则访存",
         "Opcode": "TSTORE",
-        "BSTART / bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared full form\nBSTART.TLSU Function 1\nC.B.IOS\nB.IOR\nShared pe_scope form\nBSTART.TLSU Function 12\nC.B.IOS\nB.IOR",
+        "BSTART / bundle": "Local form\nBSTART.TLSU TSTORE\nB.DATR/B.DIM\nB.IOT\nB.IOR\nShared form\nBSTART.TLSU Function 1\nB.IOS\nB.IOR",
         "Output": "GlobalTensor/partition-view destination",
         "Input 0": "Local tile or SharedTile source",
-        "Input 1 / attrs": "base GPR\nrow-stride GPR\nordinary quantized-store scalar (optional)",
-        "Input 2": "default full/core or compile-time pe_scope",
+        "Input 1 / attrs": "base-byte-address GPR\nbyte-row-stride GPR\nordinary quantized-store scalar (optional)",
+        "Input 2": null,
         "Dtype": "PTO TSTORE dtype/layout combinations supported by the v5 TLSU profile",
-        "Encoding": "TLSU Function 1; Shared pe_scope Function 12;",
+        "Encoding": "TLSU Function 1",
         "Description": "PTO 来源页：../pto/TSTORE.md PTO 指令名：TSTORE C++ intrinsic / RecordEvent 签名摘录：",
-        "Constraints": "Source Tile operand 使用 Linx-style 6-bit / 64-entry TReg namespace：T#1..T#16、U#1..U#16、M#1..M#16、N#1..N#16。\nTSTORE 不允许声明普通 Tile destination。\n一个 block 中最后一条 B.IOT 必须设置 last；只有一条 B.IOT 时也必须设置 last。\n二维 TSTORE 的 ValidCol/ValidRow/Col 均为 16-bit dimension 值，并应满足 ValidCol <= Col。\nGM address、GM stride、alignment、dtype、atomic 和 quantized-store 约束由 PTO 来源页和当前 TLSU target profile 共同约束。\nB.IOD 仅表达 PE-local block scheduling dependency。未声明 B.IOD 时表示无显式 dependency/barrier，不隐含 memory fence。\n普通 vec-tile quantized store 是否存在 native path 由 target profile 决定；本页不新增超出 PTO 来源页的量化 store contract。\n本指令不隐含 cross-PE visibility 或 group-level barrier。"
+        "Constraints": "Each selected PE uses its own private GPR base and row stride. Programs must\n  ensure the resulting GM byte ranges do not conflict; the architecture does\n  not impose an order between participating PEs.\nShared stores use zero B.IOR.RegDst; source size comes from the descriptor.\nReading an uninitialized selected quarter is legal and produces an\n  undefined-register value without modifying the Shared descriptor.\nSource storage and scope are compile-time. Unsupported combinations are diagnostics, not runtime modes.\nGM alignment, dtype, layout, shape, atomic and ordinary quantized-store rules remain PTO/target-specific."
       },
       "overrides": {
-        "Description": "PTO data store operation (TileBuf -> PartitionView).",
-        "Constraints": "1. 1D may declare B.DIM LB0 only; 2D uses B.DIM LB0/LB1/LB2 and ValidCol <= Col.\n2. TSTORE has no ordinary Tile destination; the result is a memory side effect.\n3. GM address/stride, alignment, layout conversion, dtype, and access size must satisfy the PTO page and active TLSU target profile."
+        "Description": "PTO data store operation (TileBuf -> PartitionView)."
       },
       "layout_placeholders": {
         "类型": null,

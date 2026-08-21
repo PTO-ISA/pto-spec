@@ -14,7 +14,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 SCALAR_FSU_TOTALITY = ROOT / "spec/evidence/scalar-fsu-totality.json"
-TMA_TOTALITY = ROOT / "spec/evidence/tma-totality.json"
+TLSU_TOTALITY = ROOT / "spec/evidence/tlsu-totality.json"
 COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
 EXECUTABLE_COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
@@ -25,6 +25,27 @@ ACCEPTANCE_RECORD = (
 CLASSIFICATION_ACCEPTANCE_RECORD = (
     "docs/architecture-decisions/0048-numeric-format-value-classification.md"
 )
+EXACT_DECOMPOSITION_ACCEPTANCE_RECORD = (
+    "docs/architecture-decisions/0057-exact-numeric-format-decomposition.md"
+)
+
+EXACT_FORMAT_LAYOUTS = {
+    "FP64": (64, 64, 1, 1, 63, 11, 11, 52, 52, 1023, 0, 0, "fixed-binary"),
+    "FP32": (32, 32, 1, 1, 31, 8, 8, 23, 23, 127, 0, 0, "fixed-binary"),
+    "TF32": (32, 32, 1, 1, 31, 8, 8, 10, 10, 127, 13, 0, "fixed-binary"),
+    "HF32": (32, 32, 1, 1, 31, 8, 8, 11, 11, 127, 12, 0, "fixed-binary"),
+    "FP16": (16, 16, 1, 1, 15, 5, 5, 10, 10, 15, 0, 0, "fixed-binary"),
+    "BF16": (16, 16, 1, 1, 15, 8, 8, 7, 7, 127, 0, 0, "fixed-binary"),
+    "HiF8": (8, 8, 1, 1, 7, 0, 4, 1, 3, None, 0, 0, "hif8-dynamic"),
+    "E4M3": (8, 8, 1, 1, 7, 4, 4, 3, 3, 7, 0, 0, "fixed-binary"),
+    "E5M2": (8, 8, 1, 1, 7, 5, 5, 2, 2, 15, 0, 0, "fixed-binary"),
+    "E3M2": (8, 6, 1, 1, 5, 3, 3, 2, 2, 3, 0, 2, "fixed-binary"),
+    "E2M3": (8, 6, 1, 1, 5, 2, 2, 3, 3, 1, 0, 2, "fixed-binary"),
+    "E2M1X2": (8, 4, 2, 1, 3, 2, 2, 1, 1, 1, 0, 0, "fixed-binary"),
+    "E1M2X2": (8, 4, 2, 1, 3, 1, 1, 2, 2, 1, 0, 0, "fixed-binary"),
+    "E8M0": (8, 8, 1, 0, 0, 8, 8, 0, 0, 127, 0, 0, "e8m0-scale"),
+    "HiF4X2": (8, 4, 2, 1, 3, 1, 1, 2, 2, 1, 0, 0, "fixed-binary"),
+}
 
 NAN_CAPABLE_TYPES = {
     "FP64", "FP32", "TF32", "HF32", "FP16", "BF16", "HiF8", "E4M3",
@@ -112,7 +133,7 @@ def code_rows(
 def generate() -> dict[str, Any]:
     inputs = load(DECISION_INPUTS)
     scalar_totality = load(SCALAR_FSU_TOTALITY)
-    tma_totality = load(TMA_TOTALITY)
+    tlsu_totality = load(TLSU_TOTALITY)
     command_catalog = load(COMMAND_CATALOG)
     executable_comparison = load(EXECUTABLE_COMPARISON)
     hardware_profile = load(HARDWARE_PROFILE)
@@ -128,8 +149,8 @@ def generate() -> dict[str, Any]:
         "scalar FSU totality drift",
     )
     require(
-        tma_totality["status"] == "closed" and tma_totality["target"] == "S4-T9",
-        "TMA totality drift",
+        tlsu_totality["status"] == "closed" and tlsu_totality["target"] == "S4-T9",
+        "TLSU totality drift",
     )
     require(
         executable_comparison["status"]
@@ -143,20 +164,20 @@ def generate() -> dict[str, Any]:
             "asl_enumerator": f"TileDataType_{name}",
             "storage_bits": bits,
             "raw_class": raw_class,
-            "tma_talloc_code": code,
+            "tlsu_data_type_code": code,
             "bundle_code": code,
             "numeric_semantics_status": status,
         }
         for name, bits, raw_class, code, status in TILE_DATA_TYPES
     ]
 
-    tma_mapping = {
+    tlsu_mapping = {
         code: name for name, _, _, code, _ in TILE_DATA_TYPES
     }
     bundle_mapping = {
         code: name for name, _, _, code, _ in TILE_DATA_TYPES
     }
-    require(len(tma_mapping) == 25, "TMA/TALLOC mapping count drift")
+    require(len(tlsu_mapping) == 25, "TLSU mapping count drift")
     require(len(bundle_mapping) == 25, "bundle mapping count drift")
     hardware_types = {
         (row["name"], row["code"]) for row in hardware_profile["data_types"]
@@ -192,6 +213,58 @@ def generate() -> dict[str, Any]:
             }
         )
 
+    exact_format_rows = []
+    for name, layout in EXACT_FORMAT_LAYOUTS.items():
+        (
+            carrier_bits, lane_bits, lanes_per_carrier, sign_bits, sign_bit,
+            exponent_bits_min, exponent_bits_max, fraction_bits_min,
+            fraction_bits_max, exponent_bias, required_low_zero_bits,
+            required_high_zero_bits, kind,
+        ) = layout
+        stem = name.lower()
+        exact_format_rows.append(
+            {
+                "name": name,
+                "asl_enumerator": f"TileDataType_{name}",
+                "kind": kind,
+                "carrier_bits": carrier_bits,
+                "lane_bits": lane_bits,
+                "lanes_per_carrier": lanes_per_carrier,
+                "sign_bits": sign_bits,
+                "sign_bit": sign_bit,
+                "exponent_bits_min": exponent_bits_min,
+                "exponent_bits_max": exponent_bits_max,
+                "fraction_bits_min": fraction_bits_min,
+                "fraction_bits_max": fraction_bits_max,
+                "exponent_bias_available": exponent_bias is not None,
+                "exponent_bias": exponent_bias,
+                "required_low_zero_bits": required_low_zero_bits,
+                "required_high_zero_bits": required_high_zero_bits,
+                "has_zero": name != "E8M0",
+                "has_signed_zero": name in SIGNED_ZERO_TYPES,
+                "has_subnormal": name in SUBNORMAL_CAPABLE_TYPES,
+                "has_infinity": name in INFINITY_CAPABLE_TYPES,
+                "has_quiet_nan": name in NAN_CAPABLE_TYPES,
+                "has_signaling_nan": name in SIGNALING_NAN_TYPES,
+                "descriptor_function": f"{name}NumericFormatDescriptor",
+                "finite_decoder": f"{name}FiniteDecomposition",
+                "classifier_function": f"Classify{name}",
+                "encoding_validity_function": (
+                    f"{name}EncodingValid"
+                    if name in INTERNAL_ENCODING_CONSTRAINTS else None
+                ),
+                "canonical_nan_function": (
+                    f"{name}CanonicalNaN" if name in NAN_CAPABLE_TYPES else None
+                ),
+                "signed_zero_function": (
+                    f"{name}SignedZeroEncodings"
+                    if name in SIGNED_ZERO_TYPES else None
+                ),
+                "asl_path": f"asl/numeric/formats/{stem}.asl",
+                "documentation_path": f"docs/numeric/formats/{stem}.md",
+                "test_path": f"tests/asl/numeric/formats/{stem}.asl",
+            }
+        )
     data_type_forms = [
         form
         for form in command_catalog["forms"]
@@ -285,12 +358,14 @@ def generate() -> dict[str, Any]:
         "target": "S5-T2-A2:PD-02",
         "decision_id": "PD-02",
         "checkpoint_id": "PD-02-SC1",
-        "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
+        "status": "namespace-carrier-classification-and-exact-decomposition-closed-operation-rules-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "classification_acceptance_record": CLASSIFICATION_ACCEPTANCE_RECORD,
         "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
+        "exact_decomposition_acceptance_record": EXACT_DECOMPOSITION_ACCEPTANCE_RECORD,
+        "exact_decomposition_checkpoint_id": "PD-02-SC3",
         "policy": {
-            "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TMA/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
+            "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TLSU, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
             "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
             "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
             "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
@@ -307,10 +382,22 @@ def generate() -> dict[str, Any]:
             "formats": value_classification_rows,
             "status": "closed",
         },
+        "exact_decomposition": {
+            "checkpoint_id": "PD-02-SC3",
+            "acceptance_record": EXACT_DECOMPOSITION_ACCEPTANCE_RECORD,
+            "descriptor_type": "NumericFormatDescriptor",
+            "descriptor": "TileNumericFormatDescriptor",
+            "finite_decoder": "TileNumericFiniteDecomposition",
+            "representation": "(-1)^negative * UInt(significand) * 2^exponent",
+            "format_count": len(exact_format_rows),
+            "formats": exact_format_rows,
+            "scale_block_elements": 32,
+            "status": "closed",
+        },
         "scalar_source_type": scalar_source_rows,
         "scalar_floating_destination_type": scalar_fp_destination_rows,
         "scalar_integer_destination_type": scalar_integer_destination_rows,
-        "tma_talloc_data_type": code_rows("tma-talloc-data-type", 6, tma_mapping),
+        "tlsu_data_type": code_rows("tlsu-data-type", 6, tlsu_mapping),
         "bundle_data_type": code_rows("bundle-data-type", 5, bundle_mapping),
         "four_bit_packing": {
             "types": four_bit_types,
@@ -380,22 +467,43 @@ def generate() -> dict[str, Any]:
             },
         ],
         "tests": [
+            "tests/asl/numeric/formats/common.asl:TestNumericFormatCommon",
+            *[
+                f"tests/asl/numeric/formats/{name.lower()}.asl"
+                for name in EXACT_FORMAT_LAYOUTS
+            ],
+            "tests/asl/shards/numeric-formats.asl",
             "tests/asl/profile-tests.asl:ValidateNumericFormatClassification",
             "tests/asl/state-tests.asl:TestTileRegisterMapping",
             "tests/asl/scalar-tests.asl:TestScalarFloating",
             "tests/asl/bundle-tests.asl:TestBundleOperationDescriptorFields",
-            "tests/asl/tma-totality-tests.asl:TestTmaAllFourBitTypes",
+            "tests/asl/tlsu-totality-tests.asl:TestTlsuAllFourBitTypes",
             "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality",
         ],
         "sources": [
             source("spec/evidence/numeric-profile-decision-inputs.json"),
             source("spec/evidence/scalar-fsu-totality.json"),
-            source("spec/evidence/tma-totality.json"),
+            source("spec/evidence/tlsu-totality.json"),
             source("spec/evidence/executable-model-comparison.json"),
             source("spec/hardware-conformance-profile.json"),
             source("spec/catalog/command-forms.json"),
             source("asl/types.asl"),
             source("asl/numeric/formats.asl"),
+            *[
+                source(f"asl/numeric/formats/{name.lower()}.asl")
+                for name in EXACT_FORMAT_LAYOUTS
+            ],
+            source("docs/numeric/formats/index.md"),
+            *[
+                source(f"docs/numeric/formats/{name.lower()}.md")
+                for name in EXACT_FORMAT_LAYOUTS
+            ],
+            source("tests/asl/numeric/formats/common.asl"),
+            *[
+                source(f"tests/asl/numeric/formats/{name.lower()}.asl")
+                for name in EXACT_FORMAT_LAYOUTS
+            ],
+            source("tests/asl/shards/numeric-formats.asl"),
             source("asl/scalar/floating.asl"),
             source("asl/tile/state.asl"),
             source("asl/tile/memory.asl"),
@@ -403,13 +511,14 @@ def generate() -> dict[str, Any]:
             source(
                 "docs/architecture-decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
             ),
-            source("docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"),
+            source("docs/architecture-decisions/0033-tlsu-four-bit-memory-packing.md"),
             source(
                 "docs/architecture-decisions/0037-numeric-profile-identity-and-variation-framework.md"
             ),
             source(
                 "docs/architecture-decisions/0048-numeric-format-value-classification.md"
             ),
+            source(EXACT_DECOMPOSITION_ACCEPTANCE_RECORD),
         ],
         "summary": {
             "tile_data_type_count": len(tile_rows),
@@ -422,8 +531,8 @@ def generate() -> dict[str, Any]:
             "scalar_floating_destination_reserved_count": 32 - len(floating_by_code),
             "scalar_integer_destination_mapped_count": len(integer_by_code),
             "scalar_integer_destination_reserved_count": 32 - len(integer_by_code),
-            "tma_talloc_mapped_count": len(tma_mapping),
-            "tma_talloc_reserved_count": 64 - len(tma_mapping),
+            "tlsu_data_type_mapped_count": len(tlsu_mapping),
+            "tlsu_data_type_reserved_count": 64 - len(tlsu_mapping),
             "bundle_mapped_count": len(bundle_mapping),
             "bundle_reserved_count": 32 - len(bundle_mapping),
             "four_bit_type_count": len(four_bit_types),
@@ -434,6 +543,7 @@ def generate() -> dict[str, Any]:
             "subnormal_capable_type_count": len(SUBNORMAL_CAPABLE_TYPES),
             "signed_zero_type_count": len(SIGNED_ZERO_TYPES),
             "internally_constrained_type_count": len(INTERNAL_ENCODING_CONSTRAINTS),
+            "exact_decomposition_format_count": len(exact_format_rows),
             "open_residual_count": 8,
             "pd02_complete": False,
         },

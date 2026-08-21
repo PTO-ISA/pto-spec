@@ -44,8 +44,9 @@ state. Older bridge and pipe-management wording did not match that contract.
 
 ## Consequences
 
-- The accepted direct tile catalog contains 120 operations: 98 TEPL, 9 TMA, and
-  13 CUBE.
+- The accepted direct Tile catalog contains 109 operations: 87 use the TEPL
+  encoding carrier, 10 use TLSU functions, and 12 use CUBE functions. The
+  execution-engine partition is 35 VEC, 52 SFU, 10 TLSU, and 12 CUBE.
 - Vector instruction execution is outside PTO.
 - Implementations may use physical queues, layouts, or pipelines, but they must
   preserve the state and fault behavior defined by the ASL.

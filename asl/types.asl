@@ -118,6 +118,8 @@ type BundleTileBinding of record {
 type BundleSharedBinding of record {
     valid: boolean,
     shared_id: bits(8),
+    pe_mask: bits(4),
+    tile_size: integer {0..7},
     consumed: boolean
 };
 
@@ -131,6 +133,7 @@ type BundleControlAttributes of record {
 };
 
 type BundleDataAttributes of record {
+    data_type_present: boolean,
     data_type: bits(5),
     data_layout: bits(5),
     pad_value: bits(2),
@@ -139,6 +142,10 @@ type BundleDataAttributes of record {
     saturating: boolean,
     canonicalize: boolean
 };
+
+// DTYPE_NONE is valid only in encoded bundle DataType fields. It is not a
+// TileDataType and therefore has no element width or numeric interpretation.
+constant DTYPE_NONE = '11111';
 
 // ACR0 is the root ring. The active profile defines permissions and the
 // implemented Access Control Ring subtree.
@@ -321,6 +328,66 @@ type NumericValueClass of enumeration {
     NumericValue_QuietNaN,
     NumericValue_SignalingNaN
 };
+
+// Exact numeric-format metadata is independent from operation semantics.
+// Carrier width describes storage, while lane width describes one logical
+// value within that carrier.
+type NumericFormatKind of enumeration {
+    NumericFormatKind_Unavailable,
+    NumericFormatKind_FixedBinary,
+    NumericFormatKind_HiF8,
+    NumericFormatKind_E8M0
+};
+
+type NumericFormatDescriptor of record {
+    available: boolean,
+    kind: NumericFormatKind,
+    carrier_bits: integer {0..64},
+    lane_bits: integer {0..64},
+    lanes_per_carrier: integer {0..2},
+    sign_bits: integer {0..1},
+    sign_bit: integer {0..63},
+    exponent_bits_min: integer {0..11},
+    exponent_bits_max: integer {0..11},
+    fraction_bits_min: integer {0..52},
+    fraction_bits_max: integer {0..52},
+    exponent_bias_available: boolean,
+    exponent_bias: integer {0..1023},
+    required_low_zero_bits: integer {0..13},
+    required_high_zero_bits: integer {0..2},
+    has_zero: boolean,
+    has_signed_zero: boolean,
+    has_subnormal: boolean,
+    has_infinity: boolean,
+    has_quiet_nan: boolean,
+    has_signaling_nan: boolean
+};
+
+type HiF8DotField of enumeration {
+    HiF8DotField_Denormal,
+    HiF8DotField_D0,
+    HiF8DotField_D1,
+    HiF8DotField_D2,
+    HiF8DotField_D3,
+    HiF8DotField_D4
+};
+
+pure func NumericValueClassFromFiniteSign(sign: bits(1), zero: boolean,
+                                           subnormal: boolean)
+    => NumericValueClass
+begin
+    if zero then
+        if sign == '1' then return NumericValue_NegativeZero;
+        else return NumericValue_PositiveZero;
+        end;
+    elsif subnormal then
+        if sign == '1' then return NumericValue_NegativeSubnormal;
+        else return NumericValue_PositiveSubnormal;
+        end;
+    elsif sign == '1' then return NumericValue_NegativeNormal;
+    else return NumericValue_PositiveNormal;
+    end;
+end;
 
 // Input and result subnormal rules are intentionally separate. They describe
 // the named hardware numeric profile and are not pto-v0 arithmetic behavior.
@@ -570,6 +637,7 @@ type TileInstructionOperands of record {
     diagonal: integer {-65535..65535},
     byte_count: integer {0..262144},
     selected_byte: integer {0..3},
+    sort_width: integer {1..64},
     axis: TileAxis,
     comparison: TileComparison,
     flag0: boolean,
@@ -598,6 +666,7 @@ begin
         diagonal = 0,
         byte_count = 0,
         selected_byte = 0,
+        sort_width = 32,
         axis = TileAxis_Row,
         comparison = TileComparison_EQ,
         flag0 = FALSE,

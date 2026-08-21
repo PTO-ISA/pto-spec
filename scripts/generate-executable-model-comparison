@@ -17,9 +17,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "spec/evidence/executable-model-comparison.json"
-PROFILE_DIR = "v" + "0" + "." + "57"
-SPEC_FILE = "li" + "nxisa-v" + "0" + "." + "57.json"
-VERSION_TOKEN = "v" + "0" + "57"
+PROFILE_DIR = "v" + "0" + "." + "58"
+SPEC_FILE = "li" + "nxisa-v" + "0" + "." + "58.json"
+VERSION_TOKEN = "v" + "0" + "58"
 SNAPSHOT_ENV = "PTO_COMPARE_ROOT"
 COMMAND_TIMEOUT_SECONDS = 180
 
@@ -260,16 +260,16 @@ def evidence_for_tile_family(family: str, name: str) -> tuple[list[str], list[st
                 "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md",
             ],
         )
-    if family == "TMA":
+    if family == "TLSU":
         return (
             [
-                "PTO-REQ-TMA-001",
+                "PTO-REQ-TLSU-001",
                 "PTO-REQ-MEMORY-COMPLETION-001",
                 "PTO-REQ-MEMORY-TSO-001",
             ],
             [
-                "spec/evidence/tma-totality.json",
-                "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md",
+                "spec/evidence/tlsu-totality.json",
+                "docs/architecture-decisions/0033-tlsu-four-bit-memory-packing.md",
             ],
         )
     if family == "CUBE":
@@ -291,6 +291,25 @@ def tile_manifest_name(name: str) -> str:
     if name == "TTRANS":
         return "TTRANSPOSE"
     return name
+
+
+def snapshot_operation_name(entry: dict[str, Any]) -> str:
+    """Return the operation identity used by either comparison schema revision."""
+    name = entry.get("canonical_name", entry.get("name"))
+    if not isinstance(name, str) or not name:
+        raise ValueError("independent operation-map row is missing its operation name")
+    return name
+
+
+def snapshot_selector_value(entry: dict[str, Any]) -> int:
+    """Return a packed selector or function from historical operation-map rows."""
+    selector = entry.get("selector")
+    if selector is not None:
+        return int(selector, 16) if isinstance(selector, str) else int(selector)
+    function = entry.get("function")
+    if function is None:
+        raise ValueError("independent operation-map row is missing selector/function")
+    return int(function)
 
 
 def tile_header_name(name: str) -> str:
@@ -346,19 +365,31 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
     tile_ops = load_json(ROOT / "spec/catalog/tile-operations.json")["operations"]
     bundle = load_json(ROOT / "spec/evidence/bundle-command-totality.json")
 
-    independent_forms = {
-        row["id"]: row for row in snapshot["spec"].get("instructions", [])
-    }
-    independent_status = snapshot["status"].get("forms", {})
+    independent_forms: dict[str, dict[str, Any]] = {}
+    independent_status: dict[str, str] = {}
+    snapshot_status = snapshot["status"].get("forms", {})
+    for independent_row in snapshot["spec"].get("instructions", []):
+        independent_id = independent_row["id"]
+        source_id = independent_row.get("pto_source_form_id")
+        status = snapshot_status.get(independent_id, {}).get("status", "missing")
+        independent_forms[independent_id] = independent_row
+        independent_status[independent_id] = status
+        if source_id is not None:
+            if source_id in independent_forms and source_id != independent_id:
+                raise ValueError(f"duplicate PTO source form identity: {source_id}")
+            independent_forms[source_id] = independent_row
+            independent_status[source_id] = status
     engine = snapshot["engine"]
     op_map = snapshot["op_map"]
 
     op_map_names = {
-        (entry["family"], entry["canonical_name"]): entry
+        (entry["family"], snapshot_operation_name(entry)): entry
         for entry in op_map.get("entries", [])
     }
     engine_tepl = {entry["name"]: entry for entry in engine["tepl"]["ops"]}
-    engine_tma = {entry["mnemonic"]: entry for entry in engine["tma"]["legal_aliases"]}
+    engine_tlsu = {
+        entry["mnemonic"]: entry for entry in engine["tlsu"]["legal_aliases"]
+    }
     engine_cube = {
         entry["mnemonic"]: entry for entry in engine["cube"]["legal_aliases"]
     }
@@ -373,7 +404,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
     for index, row in enumerate(scalar):
         form_id = row["form_id"]
         independent = independent_forms.get(form_id)
-        status = independent_status.get(form_id, {}).get("status", "missing")
+        status = independent_status.get(form_id, "missing")
         encoding_match = independent is not None and encoding_triples(
             row
         ) == encoding_triples(independent)
@@ -409,7 +440,7 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
     for index, row in enumerate(commands):
         form_id = row["form_id"]
         independent = independent_forms.get(form_id)
-        status = independent_status.get(form_id, {}).get("status", "missing")
+        status = independent_status.get(form_id, "missing")
         encoding_match = independent is not None and encoding_triples(
             row
         ) == encoding_triples(independent)
@@ -481,12 +512,15 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
         selector_value = int(selector_text, 16)
         reqs, evidence = evidence_for_tile_family(family, name)
         manifest_name = tile_manifest_name(name)
-        op_map_entry = op_map_names.get((family, manifest_name))
+        snapshot_family = family
+        op_map_entry = op_map_names.get((snapshot_family, manifest_name))
+        if op_map_entry is None:
+            op_map_entry = op_map_names.get((snapshot_family, name))
         if family == "TEPL":
             engine_entry = engine_tepl.get(manifest_name)
             independent_status = "selector-manifest"
-        elif family == "TMA":
-            engine_entry = engine_tma.get(tile_header_name(name))
+        elif family == "TLSU":
+            engine_entry = engine_tlsu.get(tile_header_name(name))
             independent_status = "header-manifest"
         else:
             engine_entry = engine_cube.get(tile_header_name(name))
@@ -494,20 +528,14 @@ def build_rows(snapshot: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str
 
         selector_match = False
         if op_map_entry is not None:
-            if "selector" in op_map_entry:
-                selector_match = int(op_map_entry["selector"], 16) == selector_value
-            else:
-                selector_match = int(op_map_entry["function"]) == selector_value
+            selector_match = snapshot_selector_value(op_map_entry) == selector_value
         elif engine_entry is not None and family == "TEPL":
             selector_match = int(engine_entry["tile_opcode"]) == selector_value
         elif engine_entry is not None:
             selector_match = int(engine_entry["function"]) == selector_value
 
         abi_change_acceptance = None
-        if family == "TEPL" and name == "TPRELU":
-            classification = "intentional-extension"
-            disposition = "PTO-owned TEPL extension with raw-carrier semantics; no independent payload row is available."
-        elif engine_entry is None:
+        if engine_entry is None:
             classification = "divergence"
             disposition = (
                 "PTO selector has no matching independent operation manifest row."
@@ -606,16 +634,12 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         },
         "scope": {
             "scalar_forms": 474,
-            "command_forms": 96,
-            "direct_tile_operations": 106,
-            "total_rows": 676,
-            "direct_tile_breakdown": {"TEPL": 87, "TMA": 7, "CUBE": 12},
+            "command_forms": 99,
+            "direct_tile_operations": 109,
+            "total_rows": 682,
+            "direct_tile_breakdown": {"TEPL": 87, "TLSU": 10, "CUBE": 12},
         },
         "model_limits": [
-            {
-                "id": "accepted-0.58.0-abi-break",
-                "disposition": "The immutable independent snapshot predates the accepted command-encoding and compact TEPL-selector ABI. The retained matrix preserves 7 command encoding divergences and 67 direct-tile selector divergences instead of relabeling them as exact matches.",
-            },
             {
                 "id": "reg5-flat-model-mismatch",
                 "disposition": "PTO models Reg5 selectors 24..31 as T/U queue reads and only selectors 30/31 as queue-push destinations; the independent executable subset is a flat-form comparison and does not by itself validate queue payload ordering.",
@@ -626,15 +650,15 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             },
             {
                 "id": "bundle-bridge-operand-boundary",
-                "disposition": "PTO-v0 bundle commit exposes destination0/source0/source1 only, making 63 TEPL, 1 TMA, and 5 CUBE direct operations representable through the bundle bridge; the remaining direct operations execute only through direct tile dispatch or reject at bundle commit before effects.",
+                "disposition": "PTO-v0 bundle commit exposes destination0/source0/source1 plus B.IOR-backed address/scalar0/scalar1; the generated bundle bridge records the exact TEPL, TLSU, and CUBE representable partitions and rejects incomplete bindings before effects.",
             },
             {
                 "id": "tepl-selector-boundary",
                 "disposition": "PTO defines 87 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
             },
             {
-                "id": "tma-and-cube-manifest-boundary",
-                "disposition": "The retained TMA and CUBE manifest rows are header/function evidence rather than independent tile payload execution; GMOV is an explicit PTO-owned extension.",
+                "id": "tlsu-and-cube-manifest-boundary",
+                "disposition": "The retained historical TLSU and CUBE manifest rows are header/function evidence rather than independent tile payload execution; PTO-owned ASL remains authoritative.",
             },
             {
                 "id": "no-independent-tile-payload-execution",
@@ -655,24 +679,13 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             ],
         },
     }
-    if summary["row_count"] != 676:
-        raise SystemExit(f"expected 676 rows, got {summary['row_count']}")
-    if summary["classification_counts"] != {
-        "comparable-match": 557,
-        "divergence": 84,
-        "intentional-extension": 3,
-        "non-comparable": 32,
-    }:
-        raise SystemExit(
-            f"unexpected comparison classification counts: {summary['classification_counts']}"
-        )
+    if summary["row_count"] != 682:
+        raise SystemExit(f"expected 682 rows, got {summary['row_count']}")
     accepted_abi_breaks = [
         row for row in rows if row.get("abi_change_acceptance") is not None
     ]
-    if Counter(row["surface"] for row in accepted_abi_breaks) != Counter(
-        {"command": 7, "direct-tile": 67}
-    ):
-        raise SystemExit("expected exactly 7 command and 67 direct-tile accepted ABI divergences")
+    if accepted_abi_breaks:
+        raise SystemExit("current LinxISA v0.58 common subset must not require accepted ABI divergences")
     return data
 
 

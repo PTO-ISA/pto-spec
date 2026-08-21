@@ -18,21 +18,22 @@
 | --- | --- | --- | --- |
 | GM | Local Tile | `TLOAD` | Distributed logical Tile；编译器推导 fragment 地址 |
 | Local Tile | GM | `TSTORE` | Distributed logical Tile |
-| GM | SharedTile | `TLOAD` overload | Exactly-one issuer；full load；自动按 512 B stripe 拆分 |
-| SharedTile | GM | `TSTORE` | Exactly-one issuer；full/core store |
-| SharedTile | GM | `TSTORE<pe_scope>` | Defined-mask partition；各 PE 指针独立且不重叠 |
-| Local Tile | SharedTile | `TMOV<Insert/Publish>` | 静态 producer mask 或 single owner |
-| SharedTile | Local Tile | `TMOV<Broadcast/Extract>` | Full broadcast 或 fixed-region extract |
+| GM | SharedTile | `TLOAD` overload | `B.IOS` PE mask；每个参与 PE 独立访问自己的 GPR base/offset |
+| SharedTile | GM | `TSTORE` | `B.IOS` PE mask；每个参与 PE 独立访问自己的 GPR base/offset |
 
 ## Address Interpretation
 
-普通 logical-Tile `TLOAD/TSTORE` 接收完整 `GlobalTensor` descriptor。编译器结合静态 distribution 与 `thread_id` 推导各 PE fragment 地址。Shared full load/store 则使用选定 issuer 的指针表示整个对象。Partition store 是例外：每个 PE 提供自己的指针，且各地址区间不得重叠。
+普通 logical-Tile `TLOAD/TSTORE` 接收完整 `GlobalTensor` descriptor。编译器结合
+静态 distribution 与 `thread_id` 推导各 PE fragment 地址。Shared form 仍由每个
+参与 PE 使用自己的 GPR base/offset；架构不保证跨 PE 顺序，程序必须避免地址区间
+冲突。
 
 ## Completion and Visibility
 
 operation event 根据对应 intrinsic 合同表示 issue/completion。对 Shared→GM，完成表示请求已经接受且 Shared source 已被捕获或 pin 住；它本身不保证另一个 PE 的后续 GM load 能观察到该数据。
 
-Shared RAW 只建立 Shared register producer-to-consumer readiness；`B.IOD` 只建立 block scheduling dependency。两者都不是 GM memory fence。
+Shared RAW 只建立 Shared register producer-to-consumer readiness；它不是 GM
+memory fence。PTO 不存在 `B.IOD` dependency header。
 
 ## Core-scope GM Ordering
 
@@ -58,4 +59,7 @@ Flush/replay 不得重复登记 arrival。Exception、kill、debug termination �
 
 ## Required Diagnostics
 
-编译期诊断必须覆盖：非法 Shared role、partial compute source、不支持的 Shared operation/scope、非法 size/mode、无法证明 exactly-one issuer、partition store 重叠、MX storage 混用、MX Shared ID 重复、binder 顺序非法、cooperative mask 非 `1111`，以及静态分歧的 collective 控制流。reserved `FenceMode` 与畸形 machine-header 组合按非法编码 trap。
+编译期诊断必须覆盖：非法 Shared role、partial compute source、不支持的 Shared
+operation、非法 size、冲突的 per-PE 地址范围、MX storage 混用、MX Shared ID
+重复、binder 顺序非法、cooperative mask 非 `1111`，以及静态分歧的 collective
+控制流。reserved `FenceMode` 与畸形 machine-header 组合按非法编码 trap。

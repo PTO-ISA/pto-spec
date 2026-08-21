@@ -23,41 +23,49 @@ B.DIM       rN, 0, ->LB1
 B.IOT       T#1, T#3, mask=1111, last, ->T<4KB>
 ```
 
-Canonical 顺序为：`BSTART`、可选 `B.DATR/B.DIM`、可选的一次性 `C.B.IOS` prefix、`B.IOT/B.IOR` operand，以及可选 `B.IOD`。每个 opcode 的必需集合以对应指令页为准。
+Canonical 顺序为：`BSTART`、可选 `B.DATR/B.DIM`、一次性
+`B.IOS` Shared operand、`B.IOT` Local operand，以及 `B.IOR` scalar/GPR
+operand。每个 opcode 的必需集合以对应指令页为准。`B.IOD` 已永久删除，
+不得作为 dependency header 或保留拼写重新出现。
 
 ## Local Tile Operands
 
-Local operand 使用 6-bit T/U/M/N producer-age namespace。v5 不提供 `.reuse` 语法。destination size 表示 512 B–32 KB 的完整 logical Tile；每个 PE 获得四分之一 payload。
+Local operand 使用 6-bit T/U/M/N producer-age namespace。v5 不提供 `.reuse`
+语法。destination `TSize=001..111` 表示每个参与 PE 独立的
+128 B、256 B、512 B、1 KiB、2 KiB、4 KiB 或 8 KiB；总物理容量为该值乘以
+`popcount(PE_MASK)`。
 
 ```asm
 B.IOT T#1, T#2, mask=1111, last, ->M<8KB>
 ```
 
 同一 ordinary Local operation 内所有 `B.IOT` 使用相同的 `PE_MASK`。
-Shared operation 把它作为四位 quarter predicate；多位可同时为 1，
-`mask=0000` 是 no-op，`mask=1111` 选择全部 quarter。mask 本身不建立
-rendezvous。
+它是四位 PE predicate；多位可同时为 1，`mask=0000` 是 strict no-op，
+`mask=1111` 选择全部 PE。consumer 读取硬件重命名后的 Local register，
+不再按 mask 选择 payload。mask 本身不建立 rendezvous 或 ordering。
 
 ## Shared Binders
 
-C.B.IOS 使用 absolute `S0..S255`，是一次性 Shared operand binder。source
-写作 `C.B.IOS S17`，destination 写作 `C.B.IOS -> S17`。cooperative TMATMUL 由后续
-Local B.IOT stream 按固定 role 顺序消费；Shared TLOAD/TSTORE 由 B.IOR
-消费，Shared TMOV 由 B.IOT companion 消费：
+B.IOS 使用 absolute `S0..S255`，是一次性 Shared operand binder。source
+写作 `B.IOS S17, mask=1111`，destination 写作
+`B.IOS mask=0011, ->S17<128B>`。source 的 `TSize=000`，从现有 descriptor
+取得大小；destination 的 `TSize=001..111` 与 Local `B.IOT` 完全相同，表示
+每个参与 PE 的 128 B–8 KiB。cooperative TMATMUL 由后续 Local B.IOT stream
+按固定 role 顺序消费；Shared TLOAD/TSTORE 直接由 `B.IOS+B.IOR` 表达：
 
 ```asm
 # non-MX, Local A
-C.B.IOS S17
+B.IOS S17, mask=1111
 
 # non-MX, Shared A
-C.B.IOS S16
-C.B.IOS S17
+B.IOS S16, mask=1111
+B.IOS S17, mask=1111
 
 # MX, Shared A pair
-C.B.IOS S16
-C.B.IOS S18
-C.B.IOS S17
-C.B.IOS S19
+B.IOS S16, mask=1111
+B.IOS S18, mask=1111
+B.IOS S17, mask=1111
+B.IOS S19, mask=1111
 ```
 
 顺序由 Function 固定，所有 ID 必须不同。TGEMV 不允许任何 binder。
@@ -65,40 +73,21 @@ C.B.IOS S19
 ## Shared GM Forms
 
 ```asm
-/* exactly-one GM -> Shared full load */
+/* GM -> Shared; each selected PE receives one 128-byte fragment */
 BSTART.TLSU TLOAD, FP16
-C.B.IOS     -> S17
-B.IOT       mask=0101, last   # optional; absent means 1111
-B.IOR       a0, a1, 0, ->SharedTSize<4KB>
+B.IOS       mask=0101, ->S17<128B>
+B.IOR       a0, a1, 0
 
-/* exactly-one Shared -> GM full store */
+/* Shared -> GM; source descriptor supplies the per-PE size */
 BSTART.TLSU TSTORE, FP16
-C.B.IOS     S17
-B.IOT       mask=0101, last   # optional; absent means 1111
-B.IOR       a0, a1, 0
-
-/* per-PE Shared partition store */
-BSTART.TLSU TSTORE.SPART, FP16
-C.B.IOS     S17
-B.IOT       mask=0101, last
+B.IOS       S17, mask=0101
 B.IOR       a0, a1, 0
 ```
 
-GM→Shared 把 `B.IOR.RegDst[11:9]` 解释为 `SharedTSize`，其中 `000` 非法。Shared store 要求整个 RegDst 字段为零。
-
-## Shared TMOV Forms
-
-```asm
-BSTART.TLSU TMOV.L2S.INSERT, FP16
-C.B.IOS     -> S17
-B.IOT       T#1, mask=1100, TSize=4KB, last
-
-BSTART.TLSU TMOV.S2L.BROADCAST, FP16
-C.B.IOS     S17
-B.IOT       mask=1111, last, ->T<16KB>
-```
-
-TLSU Function 8–11 分别选择 Insert、Publish、Broadcast 与 Extract；Function 12 选择 partition store。
+Shared destination size 和 mask 只由 `B.IOS` 编码；`B.IOR.RegDst` 必须为零。
+Shared source 的 `TSize` 必须为零，大小来自 Shared descriptor。PTO 不定义
+Local↔Shared TMOV；TLSU Function 8 是 `MGATHER.CAS`，Function 9–12 和 14
+保留给 Linx-only 或未来设计。
 
 ## Coupled SYS Body
 

@@ -7,10 +7,6 @@
   },
   "model_limits": [
     {
-      "disposition": "The immutable independent snapshot predates the approved 0.58.0 command-encoding and compact TEPL-selector ABI. The matrix therefore preserves 7 command encoding divergences and 79 TEPL selector divergences, each traced to ADR 0045 and issue #18, instead of relabeling them as exact matches.",
-      "id": "accepted-0.58.0-abi-break"
-    },
-    {
       "disposition": "PTO models Reg5 selectors 24..31 as T/U queue reads and only selectors 30/31 as queue-push destinations; the independent executable subset is a flat-form comparison and does not by itself validate queue payload ordering.",
       "id": "reg5-flat-model-mismatch"
     },
@@ -19,16 +15,16 @@
       "id": "predicate-p0-p7-difference"
     },
     {
-      "disposition": "PTO-v0 bundle commit exposes destination0/source0/source1 only, making 63 TEPL, 1 TMA, and 5 CUBE direct operations representable through the bundle bridge; the remaining direct operations execute only through direct tile dispatch or reject at bundle commit before effects.",
+      "disposition": "PTO-v0 bundle commit exposes destination0/source0/source1 only; the generated bundle bridge records the exact TEPL, TLSU, and CUBE representable partitions and rejects incomplete bindings before effects.",
       "id": "bundle-bridge-operand-boundary"
     },
     {
-      "disposition": "PTO defines 98 TEPL operations. Ninety-seven match the independent TEPL selector/pattern evidence after PTO spelling normalization for transpose; TPRELU is a PTO-owned extension.",
+      "disposition": "PTO defines 87 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
       "id": "tepl-selector-boundary"
     },
     {
-      "disposition": "The independent engine manifest lists 9 TMA and 13 CUBE functions, but those rows are header/function evidence rather than independent tile payload execution.",
-      "id": "tma-and-cube-manifest-boundary"
+      "disposition": "The retained historical TLSU and CUBE manifest rows are header/function evidence rather than independent tile payload execution; PTO-owned ASL remains authoritative.",
+      "id": "tlsu-and-cube-manifest-boundary"
     },
     {
       "disposition": "Tile payload effects, aliases, legality, packed four-bit memory behavior, and raw numeric carriers are closed by PTO-owned ASL tests and ADRs, not by the independent executable model.",
@@ -9517,13 +9513,9 @@
       "surface": "scalar"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-command-encoding-break"
-      },
-      "classification": "divergence",
-      "encoding_match": false,
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
@@ -9534,7 +9526,7 @@
       "index": 0,
       "mnemonic": "B.CATR",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9545,13 +9537,9 @@
       "surface": "command"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-command-encoding-break"
-      },
-      "classification": "divergence",
-      "encoding_match": false,
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
@@ -9562,7 +9550,7 @@
       "index": 1,
       "mnemonic": "B.DATR",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9717,13 +9705,9 @@
       "surface": "command"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-command-encoding-break"
-      },
-      "classification": "divergence",
-      "encoding_match": false,
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
@@ -9734,7 +9718,7 @@
       "index": 8,
       "mnemonic": "B.IOT",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9745,13 +9729,9 @@
       "surface": "command"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-command-encoding-break"
-      },
-      "classification": "divergence",
-      "encoding_match": false,
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
@@ -9762,7 +9742,7 @@
       "index": 9,
       "mnemonic": "B.IOT",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9797,13 +9777,9 @@
       "surface": "command"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-command-encoding-break"
-      },
-      "classification": "divergence",
-      "encoding_match": false,
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
@@ -9814,7 +9790,7 @@
       "index": 11,
       "mnemonic": "B.IOT",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -9825,13 +9801,9 @@
       "surface": "command"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-command-encoding-break"
-      },
-      "classification": "divergence",
-      "encoding_match": false,
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
@@ -9842,7 +9814,7 @@
       "index": 12,
       "mnemonic": "B.IOT",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10118,7 +10090,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10126,11 +10098,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
+      "independent_status": "executable-subset",
       "index": 24,
       "mnemonic": "BSTART.MGATHER",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10166,7 +10138,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10174,11 +10146,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
+      "independent_status": "executable-subset",
       "index": 26,
       "mnemonic": "BSTART.MSCATTER",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10200,6 +10172,78 @@
       ],
       "independent_status": "executable-subset",
       "index": 27,
+      "mnemonic": "BSTART.MGATHER.MASK",
+      "pto_command_disposition": "executed",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_mgather_mask_32_5573241cd944",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
+      "evidence": [
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "tests/asl/bundle-tests.asl",
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+      ],
+      "independent_status": "executable-subset",
+      "index": 28,
+      "mnemonic": "BSTART.MSCATTER.MASK",
+      "pto_command_disposition": "executed",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_mscatter_mask_32_2a33eed646f7",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
+      "evidence": [
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "tests/asl/bundle-tests.asl",
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+      ],
+      "independent_status": "executable-subset",
+      "index": 29,
+      "mnemonic": "BSTART.MGATHER.CAS",
+      "pto_command_disposition": "executed",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_mgather_cas_32_fd8c8a3b720a",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
+      "evidence": [
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "tests/asl/bundle-tests.asl",
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+      ],
+      "independent_status": "executable-subset",
+      "index": 30,
       "mnemonic": "BSTART.MSEQ",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10223,7 +10267,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 28,
+      "index": 31,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10247,7 +10291,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 29,
+      "index": 32,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10271,7 +10315,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 30,
+      "index": 33,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10295,7 +10339,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 31,
+      "index": 34,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10319,7 +10363,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 32,
+      "index": 35,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10343,7 +10387,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 33,
+      "index": 36,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10367,7 +10411,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 34,
+      "index": 37,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10391,7 +10435,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 35,
+      "index": 38,
       "mnemonic": "BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10405,13 +10449,9 @@
       "surface": "command"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-command-encoding-break"
-      },
-      "classification": "divergence",
-      "encoding_match": false,
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
@@ -10419,10 +10459,10 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 36,
+      "index": 39,
       "mnemonic": "BSTART.TEPL",
       "pto_command_disposition": "executed",
-      "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest encoding divergence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10434,7 +10474,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10442,11 +10482,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 37,
+      "independent_status": "executable-subset",
+      "index": 40,
       "mnemonic": "BSTART.TGEMV",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10458,7 +10498,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10466,11 +10506,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 38,
+      "independent_status": "executable-subset",
+      "index": 41,
       "mnemonic": "BSTART.TGEMV.ACC",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10482,7 +10522,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10490,11 +10530,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 39,
+      "independent_status": "executable-subset",
+      "index": 42,
       "mnemonic": "BSTART.TGEMV.BIAS",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10506,7 +10546,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10514,11 +10554,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 40,
+      "independent_status": "executable-subset",
+      "index": 43,
       "mnemonic": "BSTART.TGEMVMX",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10530,7 +10570,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10538,11 +10578,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 41,
+      "independent_status": "executable-subset",
+      "index": 44,
       "mnemonic": "BSTART.TGEMVMX.ACC",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10554,7 +10594,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10562,11 +10602,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 42,
+      "independent_status": "executable-subset",
+      "index": 45,
       "mnemonic": "BSTART.TGEMVMX.BIAS",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10587,7 +10627,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 43,
+      "index": 46,
       "mnemonic": "BSTART.TLOAD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10611,7 +10651,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 44,
+      "index": 47,
       "mnemonic": "BSTART.TMATMUL",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10635,7 +10675,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 45,
+      "index": 48,
       "mnemonic": "BSTART.TMATMUL.ACC",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10650,7 +10690,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10658,11 +10698,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 46,
+      "independent_status": "executable-subset",
+      "index": 49,
       "mnemonic": "BSTART.TMATMUL.BIAS",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10674,7 +10714,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10682,11 +10722,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 47,
+      "independent_status": "executable-subset",
+      "index": 50,
       "mnemonic": "BSTART.TMATMULMX",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10698,7 +10738,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10706,11 +10746,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 48,
+      "independent_status": "executable-subset",
+      "index": 51,
       "mnemonic": "BSTART.TMATMULMX.ACC",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10722,7 +10762,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10730,11 +10770,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 49,
+      "independent_status": "executable-subset",
+      "index": 52,
       "mnemonic": "BSTART.TMATMULMX.BIAS",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10755,7 +10795,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 50,
+      "index": 53,
       "mnemonic": "BSTART.TMOV",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10770,19 +10810,19 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "intentional-extension",
-      "encoding_match": false,
+      "classification": "comparable-match",
+      "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
         "tests/asl/bundle-tests.asl",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "header-manifest",
-      "index": 51,
+      "independent_status": "executable-subset",
+      "index": 54,
       "mnemonic": "BSTART.GMOV",
       "pto_command_disposition": "executed",
-      "pto_disposition": "PTO ISA 0.58.0 adds the DavinciOO GMOV command encoding; the pinned independent predecessor snapshot has no corresponding row.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10794,7 +10834,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "classification": "non-comparable",
+      "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
         "spec/catalog/command-forms.json",
@@ -10802,11 +10842,11 @@
         "tests/asl/bundle-tests.asl",
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
-      "independent_status": "decode-only",
-      "index": 52,
+      "independent_status": "executable-subset",
+      "index": 55,
       "mnemonic": "BSTART.TPREFETCH",
       "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
         "PTO-REQ-BUNDLE-OPERATION-001",
@@ -10827,7 +10867,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 53,
+      "index": 56,
       "mnemonic": "BSTART.TSTORE",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10851,7 +10891,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 54,
+      "index": 57,
       "mnemonic": "BSTOP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10875,7 +10915,31 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 55,
+      "index": 58,
+      "mnemonic": "B.IOS",
+      "pto_command_disposition": "executed",
+      "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "BindBundleSharedIO",
+      "stable_id": "b_ios_32_4ba5ef98fdaa",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "comparable-match",
+      "encoding_match": true,
+      "evidence": [
+        "spec/catalog/command-forms.json",
+        "spec/evidence/bundle-command-totality.json",
+        "tests/asl/bundle-tests.asl",
+        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+      ],
+      "independent_status": "executable-subset",
+      "index": 59,
       "mnemonic": "C.B.DIMI",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10899,7 +10963,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 56,
+      "index": 60,
       "mnemonic": "C.BSTART",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10923,7 +10987,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 57,
+      "index": 61,
       "mnemonic": "C.BSTART",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10947,7 +11011,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 58,
+      "index": 62,
       "mnemonic": "C.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10971,7 +11035,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 59,
+      "index": 63,
       "mnemonic": "C.BSTART.MPAR",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10995,7 +11059,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 60,
+      "index": 64,
       "mnemonic": "C.BSTART.MSEQ",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11019,7 +11083,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 61,
+      "index": 65,
       "mnemonic": "C.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11043,7 +11107,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 62,
+      "index": 66,
       "mnemonic": "C.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11067,7 +11131,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 63,
+      "index": 67,
       "mnemonic": "C.BSTOP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11091,7 +11155,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 64,
+      "index": 68,
       "mnemonic": "ERCOV",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11115,7 +11179,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 65,
+      "index": 69,
       "mnemonic": "ESAVE",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11139,7 +11203,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 66,
+      "index": 70,
       "mnemonic": "FENTRY",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11163,7 +11227,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 67,
+      "index": 71,
       "mnemonic": "FEXIT",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11187,7 +11251,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 68,
+      "index": 72,
       "mnemonic": "FRET.RA",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11211,7 +11275,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 69,
+      "index": 73,
       "mnemonic": "FRET.STK",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11235,7 +11299,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 70,
+      "index": 74,
       "mnemonic": "HL.BSTART CALL",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11259,7 +11323,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 71,
+      "index": 75,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11283,7 +11347,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 72,
+      "index": 76,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11307,7 +11371,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 73,
+      "index": 77,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11331,7 +11395,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 74,
+      "index": 78,
       "mnemonic": "HL.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11355,7 +11419,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 75,
+      "index": 79,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11379,7 +11443,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 76,
+      "index": 80,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11403,7 +11467,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 77,
+      "index": 81,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11427,7 +11491,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 78,
+      "index": 82,
       "mnemonic": "HL.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11451,7 +11515,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 79,
+      "index": 83,
       "mnemonic": "HL.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11475,7 +11539,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 80,
+      "index": 84,
       "mnemonic": "HL.QMT",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11499,7 +11563,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 81,
+      "index": 85,
       "mnemonic": "HL.QPOP",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11523,7 +11587,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 82,
+      "index": 86,
       "mnemonic": "HL.QPUSH",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11547,7 +11611,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 83,
+      "index": 87,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11571,7 +11635,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 84,
+      "index": 88,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11595,7 +11659,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 85,
+      "index": 89,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11619,7 +11683,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 86,
+      "index": 90,
       "mnemonic": "L.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11643,7 +11707,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 87,
+      "index": 91,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11667,7 +11731,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 88,
+      "index": 92,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11691,7 +11755,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 89,
+      "index": 93,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11715,7 +11779,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 90,
+      "index": 94,
       "mnemonic": "L.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11739,7 +11803,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 91,
+      "index": 95,
       "mnemonic": "L.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11763,7 +11827,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 92,
+      "index": 96,
       "mnemonic": "MCOPY",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11787,7 +11851,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 93,
+      "index": 97,
       "mnemonic": "MSET",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11811,7 +11875,7 @@
         "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md"
       ],
       "independent_status": "executable-subset",
-      "index": 94,
+      "index": 98,
       "mnemonic": "XB",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11921,13 +11985,9 @@
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -11937,14 +11997,14 @@
       "independent_status": "selector-manifest",
       "index": 4,
       "mnemonic": "TREM",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x004",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x004:TREM",
       "surface": "direct-tile"
     },
@@ -12063,19 +12123,15 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00A",
+      "selector": "0x00a",
       "selector_match": true,
       "stable_id": "tepl:0x00a:TSHR",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12085,25 +12141,21 @@
       "independent_status": "selector-manifest",
       "index": 10,
       "mnemonic": "TMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00B",
-      "selector_match": false,
+      "selector": "0x00b",
+      "selector_match": true,
       "stable_id": "tepl:0x00b:TMAX",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12113,25 +12165,21 @@
       "independent_status": "selector-manifest",
       "index": 11,
       "mnemonic": "TMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00C",
-      "selector_match": false,
+      "selector": "0x00c",
+      "selector_match": true,
       "stable_id": "tepl:0x00c:TMIN",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12141,25 +12189,21 @@
       "independent_status": "selector-manifest",
       "index": 12,
       "mnemonic": "TCMP",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00D",
-      "selector_match": false,
+      "selector": "0x00d",
+      "selector_match": true,
       "stable_id": "tepl:0x00d:TCMP",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12169,25 +12213,21 @@
       "independent_status": "selector-manifest",
       "index": 13,
       "mnemonic": "TABS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x00F",
-      "selector_match": false,
+      "selector": "0x00f",
+      "selector_match": true,
       "stable_id": "tepl:0x00f:TABS",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12197,25 +12237,21 @@
       "independent_status": "selector-manifest",
       "index": 14,
       "mnemonic": "TNOT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x010",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x010:TNOT",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12225,25 +12261,21 @@
       "independent_status": "selector-manifest",
       "index": 15,
       "mnemonic": "TNEG",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x011",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x011:TNEG",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12253,25 +12285,21 @@
       "independent_status": "selector-manifest",
       "index": 16,
       "mnemonic": "TEXP",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x012",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x012:TEXP",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12281,25 +12309,21 @@
       "independent_status": "selector-manifest",
       "index": 17,
       "mnemonic": "TLOG",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x013",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x013:TLOG",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12309,25 +12333,21 @@
       "independent_status": "selector-manifest",
       "index": 18,
       "mnemonic": "TRECIP",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x014",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x014:TRECIP",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12337,25 +12357,21 @@
       "independent_status": "selector-manifest",
       "index": 19,
       "mnemonic": "TSQRT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x015",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x015:TSQRT",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12365,25 +12381,21 @@
       "independent_status": "selector-manifest",
       "index": 20,
       "mnemonic": "TRSQRT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x016",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x016:TRSQRT",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12393,25 +12405,21 @@
       "independent_status": "selector-manifest",
       "index": 21,
       "mnemonic": "TRELU",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x017",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x017:TRELU",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12421,25 +12429,21 @@
       "independent_status": "selector-manifest",
       "index": 22,
       "mnemonic": "TSEL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x01A",
-      "selector_match": false,
+      "selector": "0x01a",
+      "selector_match": true,
       "stable_id": "tepl:0x01a:TSEL",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12449,38 +12453,38 @@
       "independent_status": "selector-manifest",
       "index": 23,
       "mnemonic": "TCVT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x01B",
-      "selector_match": false,
+      "selector": "0x01b",
+      "selector_match": true,
       "stable_id": "tepl:0x01b:TCVT",
       "surface": "direct-tile"
     },
     {
       "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
-      "classification": "intentional-extension",
+      "bundle_bridge_representable": false,
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
-      "independent_status": "header-manifest",
+      "independent_status": "selector-manifest",
       "index": 24,
       "mnemonic": "TFMA",
-      "pto_disposition": "PTO ISA 0.58.0 accepts this DavinciOO architecture operation; the pinned independent snapshot has no executable counterpart.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x01C",
-      "selector_match": false,
+      "selector": "0x01c",
+      "selector_match": true,
       "stable_id": "tepl:0x01c:TFMA",
       "surface": "direct-tile"
     },
@@ -12581,13 +12585,9 @@
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12597,14 +12597,14 @@
       "independent_status": "selector-manifest",
       "index": 29,
       "mnemonic": "TREMS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x024",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x024:TREMS",
       "surface": "direct-tile"
     },
@@ -12723,19 +12723,15 @@
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x02A",
+      "selector": "0x02a",
       "selector_match": true,
       "stable_id": "tepl:0x02a:TSHRS",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12745,25 +12741,21 @@
       "independent_status": "selector-manifest",
       "index": 35,
       "mnemonic": "TMAXS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x02B",
-      "selector_match": false,
+      "selector": "0x02b",
+      "selector_match": true,
       "stable_id": "tepl:0x02b:TMAXS",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12773,25 +12765,21 @@
       "independent_status": "selector-manifest",
       "index": 36,
       "mnemonic": "TMINS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x02C",
-      "selector_match": false,
+      "selector": "0x02c",
+      "selector_match": true,
       "stable_id": "tepl:0x02c:TMINS",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12801,25 +12789,21 @@
       "independent_status": "selector-manifest",
       "index": 37,
       "mnemonic": "TCMPS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x02D",
-      "selector_match": false,
+      "selector": "0x02d",
+      "selector_match": true,
       "stable_id": "tepl:0x02d:TCMPS",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12829,25 +12813,21 @@
       "independent_status": "selector-manifest",
       "index": 38,
       "mnemonic": "TSELS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x03A",
-      "selector_match": false,
+      "selector": "0x03a",
+      "selector_match": true,
       "stable_id": "tepl:0x03a:TSELS",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -12857,995 +12837,15 @@
       "independent_status": "selector-manifest",
       "index": 39,
       "mnemonic": "TEXPANDS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x03B",
-      "selector_match": false,
+      "selector": "0x03b",
+      "selector_match": true,
       "stable_id": "tepl:0x03b:TEXPANDS",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 40,
-      "mnemonic": "TROWSUM",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x040",
-      "selector_match": false,
-      "stable_id": "tepl:0x040:TROWSUM",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 41,
-      "mnemonic": "TROWMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x041",
-      "selector_match": false,
-      "stable_id": "tepl:0x041:TROWMAX",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 42,
-      "mnemonic": "TROWMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x042",
-      "selector_match": false,
-      "stable_id": "tepl:0x042:TROWMIN",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 43,
-      "mnemonic": "TROWPROD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x043",
-      "selector_match": false,
-      "stable_id": "tepl:0x043:TROWPROD",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 44,
-      "mnemonic": "TROWEXPAND",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x044",
-      "selector_match": false,
-      "stable_id": "tepl:0x044:TROWEXPAND",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 45,
-      "mnemonic": "TROWEXPANDADD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x045",
-      "selector_match": false,
-      "stable_id": "tepl:0x045:TROWEXPANDADD",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 46,
-      "mnemonic": "TROWEXPANDSUB",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x046",
-      "selector_match": false,
-      "stable_id": "tepl:0x046:TROWEXPANDSUB",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 47,
-      "mnemonic": "TROWEXPANDMUL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x047",
-      "selector_match": false,
-      "stable_id": "tepl:0x047:TROWEXPANDMUL",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 48,
-      "mnemonic": "TROWEXPANDDIV",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x048",
-      "selector_match": false,
-      "stable_id": "tepl:0x048:TROWEXPANDDIV",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 49,
-      "mnemonic": "TROWEXPANDMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x049",
-      "selector_match": false,
-      "stable_id": "tepl:0x049:TROWEXPANDMAX",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 50,
-      "mnemonic": "TROWEXPANDMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x04A",
-      "selector_match": false,
-      "stable_id": "tepl:0x04a:TROWEXPANDMIN",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 51,
-      "mnemonic": "TROWEXPANDEXPDIF",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x04B",
-      "selector_match": false,
-      "stable_id": "tepl:0x04b:TROWEXPANDEXPDIF",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 52,
-      "mnemonic": "TROWARGMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x04C",
-      "selector_match": false,
-      "stable_id": "tepl:0x04c:TROWARGMAX",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 53,
-      "mnemonic": "TROWARGMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x04D",
-      "selector_match": false,
-      "stable_id": "tepl:0x04d:TROWARGMIN",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 54,
-      "mnemonic": "TCOLSUM",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x050",
-      "selector_match": false,
-      "stable_id": "tepl:0x050:TCOLSUM",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 55,
-      "mnemonic": "TCOLMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x051",
-      "selector_match": false,
-      "stable_id": "tepl:0x051:TCOLMAX",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 56,
-      "mnemonic": "TCOLMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x052",
-      "selector_match": false,
-      "stable_id": "tepl:0x052:TCOLMIN",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 57,
-      "mnemonic": "TCOLPROD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x053",
-      "selector_match": false,
-      "stable_id": "tepl:0x053:TCOLPROD",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 58,
-      "mnemonic": "TCOLEXPAND",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x054",
-      "selector_match": false,
-      "stable_id": "tepl:0x054:TCOLEXPAND",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 59,
-      "mnemonic": "TCOLEXPANDADD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x055",
-      "selector_match": false,
-      "stable_id": "tepl:0x055:TCOLEXPANDADD",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 60,
-      "mnemonic": "TCOLEXPANDSUB",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x056",
-      "selector_match": false,
-      "stable_id": "tepl:0x056:TCOLEXPANDSUB",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 61,
-      "mnemonic": "TCOLEXPANDMUL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x057",
-      "selector_match": false,
-      "stable_id": "tepl:0x057:TCOLEXPANDMUL",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 62,
-      "mnemonic": "TCOLEXPANDDIV",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x058",
-      "selector_match": false,
-      "stable_id": "tepl:0x058:TCOLEXPANDDIV",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 63,
-      "mnemonic": "TCOLEXPANDMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x059",
-      "selector_match": false,
-      "stable_id": "tepl:0x059:TCOLEXPANDMAX",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 64,
-      "mnemonic": "TCOLEXPANDMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x05A",
-      "selector_match": false,
-      "stable_id": "tepl:0x05a:TCOLEXPANDMIN",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 65,
-      "mnemonic": "TCOLEXPANDEXPDIF",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x05B",
-      "selector_match": false,
-      "stable_id": "tepl:0x05b:TCOLEXPANDEXPDIF",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 66,
-      "mnemonic": "TCOLARGMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x05C",
-      "selector_match": false,
-      "stable_id": "tepl:0x05c:TCOLARGMAX",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": true,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 67,
-      "mnemonic": "TCOLARGMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x05D",
-      "selector_match": false,
-      "stable_id": "tepl:0x05d:TCOLARGMIN",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": false,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 68,
-      "mnemonic": "TCONCAT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x060",
-      "selector_match": false,
-      "stable_id": "tepl:0x060:TCONCAT",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": false,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 69,
-      "mnemonic": "TEXTRACT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x062",
-      "selector_match": false,
-      "stable_id": "tepl:0x062:TEXTRACT",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": false,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 70,
-      "mnemonic": "TINSERT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x063",
-      "selector_match": false,
-      "stable_id": "tepl:0x063:TINSERT",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": false,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 71,
-      "mnemonic": "TIMG2COL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x064",
-      "selector_match": false,
-      "stable_id": "tepl:0x064:TIMG2COL",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": false,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 72,
-      "mnemonic": "TFILLPAD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x065",
-      "selector_match": false,
-      "stable_id": "tepl:0x065:TFILLPAD",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": false,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 73,
-      "mnemonic": "TCI",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x066",
-      "selector_match": false,
-      "stable_id": "tepl:0x066:TCI",
-      "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
-      "bundle_bridge_representable": false,
-      "classification": "divergence",
-      "evidence": [
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
-      ],
-      "family": "TEPL",
-      "independent_status": "selector-manifest",
-      "index": 74,
-      "mnemonic": "TTRI",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
-      "requirements": [
-        "PTO-REQ-TEPL-001",
-        "PTO-REQ-TILE-DISPATCH-001",
-        "PTO-REQ-TILE-LEGALITY-001"
-      ],
-      "selector": "0x067",
-      "selector_match": false,
-      "stable_id": "tepl:0x067:TTRI",
       "surface": "direct-tile"
     },
     {
@@ -13855,31 +12855,867 @@
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
-      "index": 75,
-      "mnemonic": "TRANDOM",
-      "pto_disposition": "The public selector manifest agrees with the PTO ISA 0.58.0 TRANDOM selector; PTO ASL owns payload semantics.",
+      "index": 40,
+      "mnemonic": "TROWSUM",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x069",
+      "selector": "0x040",
       "selector_match": true,
-      "stable_id": "tepl:0x069:TRANDOM",
+      "stable_id": "tepl:0x040:TROWSUM",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 41,
+      "mnemonic": "TROWMAX",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x041",
+      "selector_match": true,
+      "stable_id": "tepl:0x041:TROWMAX",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 42,
+      "mnemonic": "TROWMIN",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x042",
+      "selector_match": true,
+      "stable_id": "tepl:0x042:TROWMIN",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 43,
+      "mnemonic": "TROWPROD",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x043",
+      "selector_match": true,
+      "stable_id": "tepl:0x043:TROWPROD",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 44,
+      "mnemonic": "TROWEXPAND",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x044",
+      "selector_match": true,
+      "stable_id": "tepl:0x044:TROWEXPAND",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 45,
+      "mnemonic": "TROWEXPANDADD",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x045",
+      "selector_match": true,
+      "stable_id": "tepl:0x045:TROWEXPANDADD",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 46,
+      "mnemonic": "TROWEXPANDSUB",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x046",
+      "selector_match": true,
+      "stable_id": "tepl:0x046:TROWEXPANDSUB",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 47,
+      "mnemonic": "TROWEXPANDMUL",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x047",
+      "selector_match": true,
+      "stable_id": "tepl:0x047:TROWEXPANDMUL",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 48,
+      "mnemonic": "TROWEXPANDDIV",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x048",
+      "selector_match": true,
+      "stable_id": "tepl:0x048:TROWEXPANDDIV",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 49,
+      "mnemonic": "TROWEXPANDMAX",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x049",
+      "selector_match": true,
+      "stable_id": "tepl:0x049:TROWEXPANDMAX",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 50,
+      "mnemonic": "TROWEXPANDMIN",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x04a",
+      "selector_match": true,
+      "stable_id": "tepl:0x04a:TROWEXPANDMIN",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 51,
+      "mnemonic": "TROWEXPANDEXPDIF",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x04b",
+      "selector_match": true,
+      "stable_id": "tepl:0x04b:TROWEXPANDEXPDIF",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 52,
+      "mnemonic": "TROWARGMAX",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x04c",
+      "selector_match": true,
+      "stable_id": "tepl:0x04c:TROWARGMAX",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 53,
+      "mnemonic": "TROWARGMIN",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x04d",
+      "selector_match": true,
+      "stable_id": "tepl:0x04d:TROWARGMIN",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 54,
+      "mnemonic": "TCOLSUM",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x050",
+      "selector_match": true,
+      "stable_id": "tepl:0x050:TCOLSUM",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 55,
+      "mnemonic": "TCOLMAX",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x051",
+      "selector_match": true,
+      "stable_id": "tepl:0x051:TCOLMAX",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 56,
+      "mnemonic": "TCOLMIN",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x052",
+      "selector_match": true,
+      "stable_id": "tepl:0x052:TCOLMIN",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 57,
+      "mnemonic": "TCOLPROD",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x053",
+      "selector_match": true,
+      "stable_id": "tepl:0x053:TCOLPROD",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 58,
+      "mnemonic": "TCOLEXPAND",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x054",
+      "selector_match": true,
+      "stable_id": "tepl:0x054:TCOLEXPAND",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 59,
+      "mnemonic": "TCOLEXPANDADD",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x055",
+      "selector_match": true,
+      "stable_id": "tepl:0x055:TCOLEXPANDADD",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 60,
+      "mnemonic": "TCOLEXPANDSUB",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x056",
+      "selector_match": true,
+      "stable_id": "tepl:0x056:TCOLEXPANDSUB",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 61,
+      "mnemonic": "TCOLEXPANDMUL",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x057",
+      "selector_match": true,
+      "stable_id": "tepl:0x057:TCOLEXPANDMUL",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 62,
+      "mnemonic": "TCOLEXPANDDIV",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x058",
+      "selector_match": true,
+      "stable_id": "tepl:0x058:TCOLEXPANDDIV",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 63,
+      "mnemonic": "TCOLEXPANDMAX",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x059",
+      "selector_match": true,
+      "stable_id": "tepl:0x059:TCOLEXPANDMAX",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 64,
+      "mnemonic": "TCOLEXPANDMIN",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x05a",
+      "selector_match": true,
+      "stable_id": "tepl:0x05a:TCOLEXPANDMIN",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 65,
+      "mnemonic": "TCOLEXPANDEXPDIF",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x05b",
+      "selector_match": true,
+      "stable_id": "tepl:0x05b:TCOLEXPANDEXPDIF",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 66,
+      "mnemonic": "TCOLARGMAX",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x05c",
+      "selector_match": true,
+      "stable_id": "tepl:0x05c:TCOLARGMAX",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": true,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 67,
+      "mnemonic": "TCOLARGMIN",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x05d",
+      "selector_match": true,
+      "stable_id": "tepl:0x05d:TCOLARGMIN",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 68,
+      "mnemonic": "TCONCAT",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x060",
+      "selector_match": true,
+      "stable_id": "tepl:0x060:TCONCAT",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 69,
+      "mnemonic": "TEXTRACT",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x062",
+      "selector_match": true,
+      "stable_id": "tepl:0x062:TEXTRACT",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 70,
+      "mnemonic": "TINSERT",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x063",
+      "selector_match": true,
+      "stable_id": "tepl:0x063:TINSERT",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 71,
+      "mnemonic": "TIMG2COL",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x064",
+      "selector_match": true,
+      "stable_id": "tepl:0x064:TIMG2COL",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 72,
+      "mnemonic": "TFILLPAD",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x065",
+      "selector_match": true,
+      "stable_id": "tepl:0x065:TFILLPAD",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 73,
+      "mnemonic": "TCI",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x066",
+      "selector_match": true,
+      "stable_id": "tepl:0x066:TCI",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 74,
+      "mnemonic": "TTRI",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x067",
+      "selector_match": true,
+      "stable_id": "tepl:0x067:TTRI",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "comparable-match",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tepl-totality.json",
+        "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
+      ],
+      "family": "TEPL",
+      "independent_status": "selector-manifest",
+      "index": 75,
+      "mnemonic": "THISTOGRAM",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
+      "requirements": [
+        "PTO-REQ-TEPL-001",
+        "PTO-REQ-TILE-DISPATCH-001",
+        "PTO-REQ-TILE-LEGALITY-001"
+      ],
+      "selector": "0x068",
+      "selector_match": true,
+      "stable_id": "tepl:0x068:THISTOGRAM",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -13889,25 +13725,21 @@
       "independent_status": "selector-manifest",
       "index": 76,
       "mnemonic": "TQUANT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06A",
-      "selector_match": false,
+      "selector": "0x06a",
+      "selector_match": true,
       "stable_id": "tepl:0x06a:TQUANT",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -13917,25 +13749,21 @@
       "independent_status": "selector-manifest",
       "index": 77,
       "mnemonic": "TDEQUANT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06B",
-      "selector_match": false,
+      "selector": "0x06b",
+      "selector_match": true,
       "stable_id": "tepl:0x06b:TDEQUANT",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -13944,26 +13772,22 @@
       "family": "TEPL",
       "independent_status": "selector-manifest",
       "index": 78,
-      "mnemonic": "TSORT32",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "mnemonic": "TSORT",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06C",
-      "selector_match": false,
-      "stable_id": "tepl:0x06c:TSORT32",
+      "selector": "0x06c",
+      "selector_match": true,
+      "stable_id": "tepl:0x06c:TSORT",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": false,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -13973,23 +13797,19 @@
       "independent_status": "selector-manifest",
       "index": 79,
       "mnemonic": "TMRGSORT",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06D",
-      "selector_match": false,
+      "selector": "0x06d",
+      "selector_match": true,
       "stable_id": "tepl:0x06d:TMRGSORT",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
@@ -13998,28 +13818,24 @@
         "docs/architecture-decisions/0035-tepl-raw-carrier-totality.md"
       ],
       "family": "TEPL",
-      "independent_status": "selector-manifest",
+      "independent_status": "missing",
       "index": 80,
       "mnemonic": "TTRANS",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "PTO selector has no matching independent operation manifest row.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06E",
-      "selector_match": false,
+      "selector": "0x06e",
+      "selector_match": true,
       "stable_id": "tepl:0x06e:TTRANS",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -14029,25 +13845,21 @@
       "independent_status": "selector-manifest",
       "index": 81,
       "mnemonic": "TGATHER",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
-      "selector": "0x06F",
-      "selector_match": false,
+      "selector": "0x06f",
+      "selector_match": true,
       "stable_id": "tepl:0x06f:TGATHER",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -14057,25 +13869,21 @@
       "independent_status": "selector-manifest",
       "index": 82,
       "mnemonic": "TSCATTER",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x070",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x070:TSCATTER",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -14085,25 +13893,21 @@
       "independent_status": "selector-manifest",
       "index": 83,
       "mnemonic": "TPARTADD",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x071",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x071:TPARTADD",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -14113,25 +13917,21 @@
       "independent_status": "selector-manifest",
       "index": 84,
       "mnemonic": "TPARTMUL",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x072",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x072:TPARTMUL",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -14141,25 +13941,21 @@
       "independent_status": "selector-manifest",
       "index": 85,
       "mnemonic": "TPARTMAX",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x073",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x073:TPARTMAX",
       "surface": "direct-tile"
     },
     {
-      "abi_change_acceptance": {
-        "decision": "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
-        "formal_model_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
-        "kind": "accepted-0.58.0-compact-tepl-selector-break"
-      },
+      "abi_change_acceptance": null,
       "bundle_bridge_representable": true,
-      "classification": "divergence",
+      "classification": "comparable-match",
       "evidence": [
         "spec/catalog/tile-operations.json",
         "spec/evidence/tepl-totality.json",
@@ -14169,14 +13965,14 @@
       "independent_status": "selector-manifest",
       "index": 86,
       "mnemonic": "TPARTMIN",
-      "pto_disposition": "The independent snapshot retains the superseded TEPL selector. PTO ISA 0.58.0 intentionally assigns the compact 0..127 selector under ADR 0045 and issue #18; PTO remains authoritative and the comparison remains an honest selector divergence.",
+      "pto_disposition": "Selector identity and generic TEPL carrier pattern match; PTO-owned ASL supplies payload semantics.",
       "requirements": [
         "PTO-REQ-TEPL-001",
         "PTO-REQ-TILE-DISPATCH-001",
         "PTO-REQ-TILE-LEGALITY-001"
       ],
       "selector": "0x074",
-      "selector_match": false,
+      "selector_match": true,
       "stable_id": "tepl:0x074:TPARTMIN",
       "surface": "direct-tile"
     },
@@ -14186,22 +13982,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 87,
       "mnemonic": "TLOAD",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x000",
       "selector_match": true,
-      "stable_id": "tma:0x000:TLOAD",
+      "stable_id": "tlsu:0x000:TLOAD",
       "surface": "direct-tile"
     },
     {
@@ -14210,22 +14006,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 88,
       "mnemonic": "TSTORE",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x001",
       "selector_match": true,
-      "stable_id": "tma:0x001:TSTORE",
+      "stable_id": "tlsu:0x001:TSTORE",
       "surface": "direct-tile"
     },
     {
@@ -14234,22 +14030,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 89,
       "mnemonic": "TMOV",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x002",
       "selector_match": true,
-      "stable_id": "tma:0x002:TMOV",
+      "stable_id": "tlsu:0x002:TMOV",
       "surface": "direct-tile"
     },
     {
@@ -14258,22 +14054,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 90,
       "mnemonic": "TPREFETCH",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x003",
       "selector_match": true,
-      "stable_id": "tma:0x003:TPREFETCH",
+      "stable_id": "tlsu:0x003:TPREFETCH",
       "surface": "direct-tile"
     },
     {
@@ -14282,22 +14078,22 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 91,
       "mnemonic": "MGATHER",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x004",
       "selector_match": true,
-      "stable_id": "tma:0x004:MGATHER",
+      "stable_id": "tlsu:0x004:MGATHER",
       "surface": "direct-tile"
     },
     {
@@ -14306,46 +14102,118 @@
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
+        "spec/evidence/tlsu-totality.json",
         "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 92,
       "mnemonic": "MSCATTER",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
       "selector": "0x005",
       "selector_match": true,
-      "stable_id": "tma:0x005:MSCATTER",
+      "stable_id": "tlsu:0x005:MSCATTER",
       "surface": "direct-tile"
     },
     {
       "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
-      "classification": "intentional-extension",
+      "bundle_bridge_representable": false,
+      "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tma-totality.json",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md"
+        "spec/evidence/tlsu-totality.json",
+        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
       ],
-      "family": "TMA",
+      "family": "TLSU",
       "independent_status": "header-manifest",
       "index": 93,
-      "mnemonic": "GMOV",
-      "pto_disposition": "PTO ISA 0.58.0 accepts this DavinciOO architecture operation; the pinned independent snapshot has no executable counterpart.",
+      "mnemonic": "MGATHER_MASK",
+      "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
-        "PTO-REQ-TMA-001",
+        "PTO-REQ-TLSU-001",
         "PTO-REQ-MEMORY-COMPLETION-001",
         "PTO-REQ-MEMORY-TSO-001"
       ],
-      "selector": "0x00D",
-      "selector_match": false,
-      "stable_id": "tma:0x00d:GMOV",
+      "selector": "0x006",
+      "selector_match": true,
+      "stable_id": "tlsu:0x006:MGATHER_MASK",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "non-comparable",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tlsu-totality.json",
+        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+      ],
+      "family": "TLSU",
+      "independent_status": "header-manifest",
+      "index": 94,
+      "mnemonic": "MSCATTER_MASK",
+      "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
+      "requirements": [
+        "PTO-REQ-TLSU-001",
+        "PTO-REQ-MEMORY-COMPLETION-001",
+        "PTO-REQ-MEMORY-TSO-001"
+      ],
+      "selector": "0x007",
+      "selector_match": true,
+      "stable_id": "tlsu:0x007:MSCATTER_MASK",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "non-comparable",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tlsu-totality.json",
+        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+      ],
+      "family": "TLSU",
+      "independent_status": "header-manifest",
+      "index": 95,
+      "mnemonic": "MGATHER_CAS",
+      "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
+      "requirements": [
+        "PTO-REQ-TLSU-001",
+        "PTO-REQ-MEMORY-COMPLETION-001",
+        "PTO-REQ-MEMORY-TSO-001"
+      ],
+      "selector": "0x008",
+      "selector_match": true,
+      "stable_id": "tlsu:0x008:MGATHER_CAS",
+      "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "bundle_bridge_representable": false,
+      "classification": "non-comparable",
+      "evidence": [
+        "spec/catalog/tile-operations.json",
+        "spec/evidence/tlsu-totality.json",
+        "docs/architecture-decisions/0033-tma-four-bit-memory-packing.md"
+      ],
+      "family": "TLSU",
+      "independent_status": "header-manifest",
+      "index": 96,
+      "mnemonic": "GMOV",
+      "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
+      "requirements": [
+        "PTO-REQ-TLSU-001",
+        "PTO-REQ-MEMORY-COMPLETION-001",
+        "PTO-REQ-MEMORY-TSO-001"
+      ],
+      "selector": "0x00d",
+      "selector_match": true,
+      "stable_id": "tlsu:0x00d:GMOV",
       "surface": "direct-tile"
     },
     {
@@ -14359,7 +14227,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 94,
+      "index": 97,
       "mnemonic": "TMATMUL",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14383,7 +14251,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 95,
+      "index": 98,
       "mnemonic": "TMATMUL_BIAS",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14398,7 +14266,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
+      "bundle_bridge_representable": false,
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
@@ -14407,7 +14275,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 96,
+      "index": 99,
       "mnemonic": "TMATMUL_ACC",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14431,7 +14299,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 97,
+      "index": 100,
       "mnemonic": "TMATMUL_MX",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14455,7 +14323,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 98,
+      "index": 101,
       "mnemonic": "TMATMUL_MX_BIAS",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14479,7 +14347,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 99,
+      "index": 102,
       "mnemonic": "TMATMUL_MX_ACC",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14503,7 +14371,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 100,
+      "index": 103,
       "mnemonic": "TGEMV",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14527,7 +14395,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 101,
+      "index": 104,
       "mnemonic": "TGEMV_BIAS",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14542,7 +14410,7 @@
     },
     {
       "abi_change_acceptance": null,
-      "bundle_bridge_representable": true,
+      "bundle_bridge_representable": false,
       "classification": "non-comparable",
       "evidence": [
         "spec/catalog/tile-operations.json",
@@ -14551,7 +14419,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 102,
+      "index": 105,
       "mnemonic": "TGEMV_ACC",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14575,7 +14443,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 103,
+      "index": 106,
       "mnemonic": "TGEMV_MX",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14599,7 +14467,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 104,
+      "index": 107,
       "mnemonic": "TGEMV_MX_BIAS",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14623,7 +14491,7 @@
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
-      "index": 105,
+      "index": 108,
       "mnemonic": "TGEMV_MX_ACC",
       "pto_disposition": "Header/function manifest matches, but no independent tile payload execution is available.",
       "requirements": [
@@ -14635,61 +14503,36 @@
       "selector_match": true,
       "stable_id": "cube:0x016:TGEMV_MX_ACC",
       "surface": "direct-tile"
-    },
-    {
-      "abi_change_acceptance": null,
-      "classification": "comparable-divergence",
-      "encoding_match": true,
-      "evidence": [
-        "docs/architecture-decisions/0032-bundle-command-totality-and-profile-boundaries.md",
-        "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
-        "spec/catalog/command-forms.json",
-        "spec/evidence/bundle-command-totality.json",
-        "tests/asl/bundle-tests.asl"
-      ],
-      "independent_status": "executable-subset",
-      "index": 95,
-      "mnemonic": "C.B.IOS",
-      "pto_command_disposition": "executed",
-      "pto_disposition": "PTO ISA 0.58.0 reassigns the inherited compressed C.B.DIM register encoding to C.B.IOS SharedTID; the independent snapshot retains the historical dimension meaning.",
-      "requirements": [
-        "PTO-REQ-BUNDLE-DISPATCH-001",
-        "PTO-REQ-BUNDLE-OPERATION-001",
-        "PTO-REQ-BUNDLE-STATE-001"
-      ],
-      "semantic_handler": "BindBundleSharedIO",
-      "stable_id": "c_b_ios_16_14f1b8fba5e6",
-      "surface": "command"
     }
   ],
   "schema": "pto.executable-model-comparison.v1",
   "scope": {
-    "command_forms": 96,
+    "command_forms": 99,
     "direct_tile_breakdown": {
       "CUBE": 12,
       "TEPL": 87,
-      "TMA": 7
+      "TLSU": 10
     },
-    "direct_tile_operations": 106,
+    "direct_tile_operations": 109,
     "scalar_forms": 474,
-    "total_rows": 676
+    "total_rows": 682
   },
   "snapshot": {
     "content_hashes": {
-      "coverage_summary": "f9088d2cdf03280df5de001425b70546d5743a848597af74c2ddb9d09342714b",
-      "engine_operation_manifest": "248a0b1cf2d79c0b88932e05f0b71251ed805ff5d75c3d89cc228394b79a73e2",
-      "format_catalog": "b70058e1575db90f300e2cc85745d0588aba5f2957bb630c0ccdd2723e3cfc71",
-      "pto_operation_map": "fc52236b831edcc15f15e80836374087de029a42d5fec076e2217ae637e1dd74",
-      "status_matrix": "792d4dac142b0aa5d6b5bc11bff566c3ec225040b01564360a271fc2da7f62cd"
+      "coverage_summary": "1df3f952de646c26835c7a8d1d443e8acb506d355e1961abe54e6e27d6873315",
+      "engine_operation_manifest": "f40eda44fae2f11ade4e1180ade972a4ff3faf1ee6b57abeca20e16ddbddc4f2",
+      "format_catalog": "b38864f4630be258ec62e5690d794463d0574443782c06b9a79d7d0a4362c61b",
+      "pto_operation_map": "b51e48e0d4af5c20520f3190554e379c8a4b11fe6699f3acb25428097e97c311",
+      "status_matrix": "0e04cdf9cd3c344c5aa2f78baf715a3a7213b55722d0b9396a4afbc31760c384"
     },
     "coverage": {
-      "decode_only_forms": 17,
+      "decode_only_forms": 1,
       "grade_counts": {
-        "decode-only": 17,
-        "executable-subset": 752
+        "decode-only": 1,
+        "executable-subset": 765
       },
-      "modeled_forms": 752,
-      "total_forms": 769
+      "modeled_forms": 765,
+      "total_forms": 766
     },
     "gates": [
       {
@@ -14759,10 +14602,10 @@
         "command": "<independent-gate:documentation-check>",
         "exit_code": 0,
         "id": "documentation-check",
-        "output_excerpt": "OK\nok: 770 generated SVGs are current\nok: 770 generated SVGs are current\nok: 731 instruction pages and 67 group pages are current\nOK\nOK\nok: documentation integrity checks passed\nGenerated 770 SVGs in <host-temp>\nGenerated 770 SVGs in <host-temp>",
+        "output_excerpt": "OK\nok: 767 generated SVGs are current\nok: 767 generated SVGs are current\nok: 728 instruction pages and 68 group pages are current\nOK\nOK\nok: documentation integrity checks passed\nGenerated 767 SVGs in <host-temp>\nGenerated 767 SVGs in <host-temp>",
         "result": "pass",
-        "stderr_sha256": "316bc1a8900abbf9da5ee43bc9ef9a770f297a9eacbbc4d7a96631d750896f86",
-        "stdout_sha256": "6752d729b7a5c3b18e0f8c9ccf0ccd4a06f1cb62e1067eaa8d96c1aecff71910"
+        "stderr_sha256": "b342bd783c513bf3e1a490269a01a898d4f1cccece39ac715c5692c94f8501f8",
+        "stdout_sha256": "333361c0e88adfa27526a83a47382b36b8a9fec181bf5d317e590a1a1af074e7"
       }
     ],
     "kind": "content-addressed independent executable ISA snapshot",
@@ -14771,40 +14614,39 @@
         "command": "<independent-gate:sail-parser-c-backend-check>",
         "exit_code": 0,
         "id": "sail-parser-c-backend-check",
-        "output_excerpt": "ok: sail model validated (forms=769, grades={'decode-only': 17, 'executable-subset': 752, 'architecturally-complete': 0}, parser=Sail 0.20.2 entry parsed with <host-home>/.opam/sail-4.14.3/bin/sail, decode=decode.sail matches generator, status=semantics_status.json matches form-ID policy, directed=directed semantic tests executed with Sail 0.20.2, coverage=coverage.json matches semantic status, c_backend=Sail C backend generated successfully)",
+        "output_excerpt": "ok: sail model validated (forms=766, grades={'decode-only': 1, 'executable-subset': 765, 'architecturally-complete': 0}, parser=Sail 0.20.2 entry parsed with <host-home>/.opam/sail-4.14.3/bin/sail, decode=decode.sail matches generator, status=semantics_status.json matches form-ID policy, directed=directed semantic tests executed with Sail 0.20.2, coverage=coverage.json matches semantic status, c_backend=Sail C backend generated successfully)",
         "result": "pass",
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "stdout_sha256": "6c0c521edec4b4cb04b87ce492a09f0312d7ec5fdb27fcce0a9a14190cab5764"
+        "stdout_sha256": "8a9546634daabf6f305cee1bc81739559efe69ff1ed06c770187f0cdf106ee4a"
       }
     ],
-    "revision_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
+    "revision_sha256": "90d5cfd60067ed31a077b0e08527096074d5107f0053d2425138bf62d064b626",
     "worktree_clean": true
   },
   "status": "comparison-matrix-closed-clean-gates-passed:S5-T3",
   "summary": {
     "classification_counts": {
-      "comparable-divergence": 1,
-      "comparable-match": 556,
-      "divergence": 84,
-      "intentional-extension": 3,
-      "non-comparable": 32
+      "comparable-match": 648,
+      "divergence": 11,
+      "non-comparable": 23
     },
     "independent_status_counts": {
-      "decode-only": 14,
-      "executable-subset": 555,
-      "header-manifest": 21,
+      "decode-only": 1,
+      "executable-subset": 572,
+      "header-manifest": 22,
+      "missing": 1,
       "selector-manifest": 86
     },
-    "row_count": 676,
+    "row_count": 682,
     "surface_counts": {
-      "command": 96,
-      "direct-tile": 106,
+      "command": 99,
+      "direct-tile": 109,
       "scalar": 474
     },
     "tile_family_counts": {
       "CUBE": 12,
       "TEPL": 87,
-      "TMA": 7
+      "TLSU": 10
     }
   },
   "target": "S5-T3"

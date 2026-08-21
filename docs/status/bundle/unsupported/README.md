@@ -21,7 +21,8 @@
 
 - Tile operand binding 使用 `B.IOT`。
 - Shape / dimension 使用 `B.DIM`。
-- 数据属性、GPR operand 和 dependency 继续使用 `B.DATR/B.IOR/B.IOD` 等 Linx inherited header。
+- 数据属性与 GPR operand 使用 active `B.DATR/B.IOR` header。`B.IOD` 已永久
+  删除，只能在明确标记的 legacy archive 中作为历史材料出现。
 
 因此本目录下的 `B.ITP`、`B.OTA`、`B.META`、`B.MSHP`、`B.MRECTR`、`B.MRECTC` 当前不参与 active PE-local intrinsic 展开，也不作为当前 encoding 的实现依据。
 

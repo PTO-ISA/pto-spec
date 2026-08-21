@@ -42,6 +42,9 @@
 ---
 # TSORT32 Intrinsic
 
+> Legacy reference only. The active PTO instruction is `TSORT` with an explicit
+> `sort_width`; this page is excluded from active navigation.
+
 > 状态：DavinciOO v5 superscalar 指令页。本文只描述 `TSORT32` 的 PTO 语义、DavinciOO block intrinsic 展开与合法性；公共 header 的 opcode/bitfield 编码见 [`header/`](../bundle/overview/block-header-model.md)。
 
 ## PTO 语义来源

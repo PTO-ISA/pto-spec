@@ -42,6 +42,9 @@
 ---
 # TRANDOM Intrinsic
 
+> Legacy reference only. `TRANDOM` is deleted from the active PTO ISA; its
+> former selector is reserved and this page is excluded from active navigation.
+
 > 状态：DavinciOO v5 superscalar 指令页。本文只描述 `TRANDOM` 的 PTO 语义、DavinciOO block intrinsic 展开与合法性；公共 header 的 opcode/bitfield 编码见 [`header/`](../bundle/overview/block-header-model.md)。
 
 ## PTO 语义来源

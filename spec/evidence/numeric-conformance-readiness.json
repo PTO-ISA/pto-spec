@@ -492,7 +492,7 @@
         "tile:TEPL:TROWMIN",
         "tile:TEPL:TROWPROD",
         "tile:TEPL:TROWSUM",
-        "tile:TEPL:TSORT32"
+        "tile:TEPL:TSORT"
       ],
       "hooks": [
         "TileProfileOrderLeft",

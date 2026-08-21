@@ -38,6 +38,8 @@ required_files=(
     docs/architecture-decisions/0044-public-integer-conversion-result-subset.md
     docs/architecture-decisions/0045-pto-isa-release-tile-contract.md
     docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md
+    docs/architecture-decisions/0053-pto-isa-0580-tile-operation-cleanup.md
+    docs/architecture-decisions/0054-tile-execution-engine-classification.md
     docs/architecture-decisions/0046-separate-execution-mask-and-warp-predicates.md
     docs/coverage.md
     docs/memory-model.md
@@ -88,7 +90,7 @@ required_files=(
     spec/evidence/scalar-numeric-flag-contract.json
     spec/evidence/scalar-effect-closure.json
     spec/evidence/tepl-totality.json
-    spec/evidence/tma-totality.json
+    spec/evidence/tlsu-totality.json
     scripts/check-assertion-boundaries
     scripts/generate-bundle-command-totality
     scripts/generate-executable-model-comparison
@@ -112,6 +114,7 @@ required_files=(
     scripts/generate-scalar-numeric-flag-contract
     scripts/generate-system-register-witness-closure
     tests/README.md
+    tests/test_tile_engine_contract.py
     scripts/check-release-manifest
     scripts/validate-release
 )
@@ -212,6 +215,7 @@ for script in scripts/*; do
     esac
 done
 
+python3 -m unittest tests/test_tile_engine_contract.py
 python3 scripts/check-catalogs
 ./scripts/check-assertion-boundaries
 ./scripts/generate-bundle-command-totality --check

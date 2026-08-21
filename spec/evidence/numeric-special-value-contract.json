@@ -536,7 +536,7 @@
   ],
   "independent_comparison": {
     "status": "fp32-fp64-shared-special-selection-corroborated-with-fmax-zero-divergence-not-numeric-oracle",
-    "provenance_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
+    "provenance_sha256": "90d5cfd60067ed31a077b0e08527096074d5107f0053d2425138bf62d064b626",
     "matched_contracts": [
       "ordered-NaN-comparison-foundation",
       "positive-negative-zero-equality",
@@ -590,11 +590,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "91b88692f7cabe60ca9e255db278a39ec2431a58d19b3b2be7941fc58abdec6e"
+      "sha256": "7f64689765ca445ce8232ba88be93b1202a64383dfb77b68200ee11d549a314e"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "b4d79c47c80e82c83bdb64cc111c0a744006ec60b5b05a798e7105060068122b"
+      "sha256": "9637ce69b1b2f12d76e65c73fb7536fe66c22a1dde19c11b7827c4f5b60cc24b"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -602,11 +602,11 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "a21760edef8d377e313b44851c361b5d5de69f989a1218b8e72b4d67fc63e9a8"
+      "sha256": "5e684217e74126506b19401d8b1c9043fb028798d2253ed9d5ad17ee90033070"
     },
     {
       "path": "asl/numeric/formats.asl",
-      "sha256": "d2f16eef9b310107df3090613e76d6f05693a0cc39a1c69c8c241f33cc5bb2f4"
+      "sha256": "3c36ef13ce344eb8258f321f90a2e1b6df88e15d6905a4d864a4b48919ccc988"
     },
     {
       "path": "asl/scalar/floating.asl",

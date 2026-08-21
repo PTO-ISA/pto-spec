@@ -33,19 +33,32 @@ B.IOR RegSrc0, RegSrc1, RegSrc2, ->RegDst
 | `[3:1]` | `Opcode` | 3 | `1` |
 | `[0]` | `W` | 1 | `1` |
 
-Value 0 means invalid; 1–23 name GGPRs R1–R23. Repeated inputs/outputs are assembler errors. A decoupled body may access only declared registers. A coupled SYS body accesses GGPR directly under the SYS ABI and does not use `B.IOR` as a formal declaration.
+Selectors 0–23 name the architectural scalar register set: selector 0 is the
+zero register and selectors 1–23 are `sp/a0.../x3` in canonical output order.
+Whether a field is absent is determined by the selected `BSTART` opcode's
+schema, not by selector zero. Repeated input and output registers are legal.
+A decoupled body may access only declared registers. A coupled SYS body
+accesses GGPR directly under the SYS ABI and does not use `B.IOR` as a formal
+declaration.
 
 ## Shared GM Schema
 
-With a preceding [`C.B.IOS`](./C.B.IOS.md):
+With a preceding [`B.IOS`](./B.IOS.md):
 
 | Role | RegSrc0 | RegSrc1 | RegSrc2 | RegDst `[11:7]` |
 | --- | --- | --- | --- | --- |
-| GM→Shared TLOAD | full GM base | row stride bytes or zero | zero | `[11:9]=SharedTSize`, `[8:7]=00` |
-| Shared→GM full TSTORE | full GM base | row stride bytes or zero | zero | `00000` |
-| Shared→GM partition store | this PE's GM base | row stride bytes or zero | zero | `00000` |
+| GM→Shared TLOAD | this PE's GM base byte address | row stride in bytes | zero | zero |
+| Shared→GM TSTORE | this PE's GM base byte address | row stride in bytes | zero | zero |
 
-`SharedTSize` uses the `B.IOT.TSize` table and cannot be `000` for GM→Shared. Shared stores obtain size from the bound Shared descriptor. This reinterpretation applies only to these Shared TLSU schemas; ordinary TLOAD/TSTORE and matrix FIXP `B.IOR` keep their existing roles.
+Shared identity, `PE_MASK`, and destination size are encoded by `B.IOS`.
+Shared stores obtain size from the bound Shared descriptor. Every participating
+PE reads its own GPR instance, and the program must prevent conflicting GM
+address ranges.
+
+Local TLOAD/TSTORE use the same RegSrc0/RegSrc1 byte-address schema. When the
+complete B.IOR instruction is omitted, base defaults to zero and row stride
+defaults to `ceil(LB2 * element_bits / 8)` bytes. An encoded zero RegSrc1 is a
+real zero stride and never selects the dense default.
 
 ## Matrix PostProcess Scalar Parameters
 

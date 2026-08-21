@@ -17,8 +17,8 @@ canonical release inputs but are not accepted PTO instructions.
 | Surface | Count | Scope |
 | --- | ---: | --- |
 | Scalar forms | 474 | AGU, ALU, AMO, BRU, FSU, and SYS |
-| Bundle/command forms | 96 | bundle start, dimension, control, data, IO, hint, stop, and context forms |
-| Direct tile operations | 106 | 87 TEPL, 7 TMA, and 12 CUBE operations |
+| Bundle/command forms | 99 | bundle start, dimension, control, data, IO, hint, stop, and context forms |
+| Direct tile operations | 109 | encoding families: 87 TEPL, 10 TLSU, and 12 CUBE; engines: 35 VEC, 52 SFU, 10 TLSU, and 12 CUBE |
 | System registers | 72 | base, context, trap snapshot, translation, interrupt, and debug registers |
 | Linx-only vector reservations | 6 | reserved in PTO; executable only in Linx |
 
@@ -106,7 +106,8 @@ surface.
 - Each register has a `TileInfo` record containing allocation, capacity, shape,
   valid region, data type, layout, location intent, and definedness.
 - Architectural CELL size is 128 bytes. B.IOT `TSize` codes 1 through 7 allocate
-  512 bytes, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, or 32 KiB. An active
+  128 bytes, 256 bytes, 512 bytes, 1 KiB, 2 KiB, 4 KiB, or 8 KiB per selected
+  PE. An active
   tile cannot exceed the read-only `TILE_CAPACITY` system register, and the sum
   of active capacities must also stay within it.
 - Descriptor storage is `ceil(rows * columns * element_bits / 8)` bytes and
@@ -141,7 +142,7 @@ PTO ISA 0.58.0 additionally exposes 256 absolute Core-local Shared registers,
 cores have independent banks. Each register persists until overwritten or core
 reset and contains descriptor state, payload divided into four fixed-offset
 quarters, and a four-bit initialization mask. The compiler allocates S numbers;
-the C++ API does not expose physical Shared-register selection. C.B.IOS binder
+the C++ API does not expose physical Shared-register selection. B.IOS binder
 state remains architecture-visible and trap-preserved until its companion
 consumes it.
 
@@ -157,22 +158,26 @@ programs must avoid overlap or synchronize explicitly.
 The ASL payload array is bounded by `PTO_MODEL_TILE_ELEMENTS` for executable
 verification. Descriptor capacity defines architectural legality; the ASL array
 bound is not an architectural shape limit. Packed capacity accounting does not
-by itself define the address and packing protocol of sub-byte TMA transfers.
+by itself define the address and packing protocol of sub-byte TLSU transfers.
 
-## Direct tile families
+## Direct tile encoding families and execution engines
 
-- TEPL contains 87 accepted element, reduction, expansion, layout, management,
-  and utility operations.
-- TMA contains 7 accepted tile memory operations: load, store, prefetch,
-  gather, scatter, TMOV, and the DavinciOO-v5 GMOV extension. TLSU Functions
-  8–11 are Shared TMOV encoding variants and Function 12 is the Shared
-  partition-store variant; they do not add direct-operation identities.
+- TEPL is the unchanged packed Mode/Function encoding carrier for 87 accepted
+  operations. It is not an execution engine. Those operations classify as 35
+  VEC operations and 52 SFU operations.
+- VEC executes only element-wise work. SFU executes complex-hardware work,
+  including transcendental, reduction/expansion, rearrangement, sort,
+  histogram, quantization, and irregular operations.
+- TLSU contains 10 accepted memory and data-movement operations. Functions
+  9–12 and 14–31 are reserved in PTO; Linx may define its additional Shared
+  movement operations in the reserved 9–12 and 14 slots without making them
+  accepted PTO forms.
 - CUBE contains 12 accepted matrix operations, including base, bias,
   accumulate, MX, and matrix/vector variants. Every operation names Local D;
   ACC variants additionally name Local C.
 
 The canonical selector and descriptor fields define encoding and operand facts.
-TEPL, TMA, and CUBE operations have explicit tile operands. CUBE base forms
+TEPL-carrier, TLSU, and CUBE operations have explicit tile operands. CUBE base forms
 compute `D = PostProcess(A*B)`, BIAS forms add explicit Bias, and ACC forms
 read explicit C before writing D. `D == C` is legal only when dtype, shape,
 layout, and allocation agree and has read-old/write-new behavior. `TileAcc` is
@@ -183,11 +188,18 @@ Functions 4–6 accept Shared Right,ScaleRight or the complete ordered
 Left,ScaleLeft,Right,ScaleRight set. `PE_MASK` predicates selected Shared
 quarters; selected uninitialized data has undefined-register semantics.
 TGEMV Functions
-16–18 and 20–22 reject every C.B.IOS binder.
+16–18 and 20–22 reject every B.IOS binder.
 
 B.DATR compare, padding/byte-selection, saturation, canonicalization, DataType,
 rounding, and layout fields are legal only when the selected operation consumes
 them. An inapplicable nonzero field rejects before allocation or effects.
+DataType encoding 31 is the field-valid, non-concrete sentinel `DTYPE_NONE`;
+it is not a `TileDataType` and has no width or numeric default. Effective type
+resolution uses concrete B.DATR, then concrete BSTART, then a TMOV Local or
+Shared source descriptor. A non-concrete B.DATR therefore preserves a concrete
+BSTART type. If an operation requires a concrete type and resolution fails, it
+raises `Fault_TileLegality` before allocation, consumption, or payload effects;
+all other reserved five-bit DataType encodings remain illegal.
 `RMode` values 0–7 are NONE, RNE, RTZ, RDN, RUP, RNA, RTO, and RHB. Only
 `TCVT`, `TQUANT`, and `TDEQUANT` consume the resulting
 `TileNumericSelection`; NONE is RNE except for floating-to-integer `TCVT`, where
@@ -198,7 +210,7 @@ dependency metadata never creates a PTO-TSO fence.
 
 Numeric format codes are namespace-local, not one shared enumeration. Scalar
 2-bit source types, scalar 5-bit floating destinations, scalar 5-bit integer
-destinations, 6-bit TMA types, and 5-bit bundle `DataType` fields are
+destinations, 6-bit TLSU types, and 5-bit bundle `DataType` fields are
 decoded independently; equal integers do not imply equal types. ADR 0040 and
 `spec/evidence/numeric-format-namespace-contract.json` define every mapped and
 reserved code, all 25 `TileDataType` raw-carrier identities, and low-nibble-first
@@ -217,6 +229,13 @@ encoding for each of the ten NaN-capable formats. TF32, HF32, E3M2, and E2M3
 are checked for their internal zero-bit constraints before classification.
 These pure helpers do not change the active `pto-v0` raw-carrier semantics and
 do not decide operation-specific propagation, flags, or other result rules.
+ADR 0057 and `docs/numeric/formats/` additionally define executable format
+descriptors and exact finite decomposition for all 15 floating and scale
+identities. A finite value is represented as an unsigned integer significand
+times an integral power of two with an independent sign. Carrier width,
+logical lane width, packed lanes, and required zero padding remain distinct.
+The decoder performs no rounding and does not select arithmetic,
+operation/type support, scale application, or profile conformance.
 ADR 0049 and `spec/evidence/numeric-subnormal-contract.json` separately fix
 PD-04 for `pto-hardware-numeric-0.58.0-ieee-v1`: each of the eleven formats
 that defines subnormals preserves exact input values, uses gradual underflow

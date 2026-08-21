@@ -1,6 +1,6 @@
 # ADR 0045: Define the PTO ISA 0.57.1 tile and bundle contract
 
-- Status: accepted
+- Status: superseded by ADR 0052, ADR 0053, and ADR 0054
 - Decision date: 2026-07-30
 - Approval: [formal-model issue 18](https://github.com/PTO-ISA/pto-spec/issues/18)
 - Requirements: PTO-REQ-ENCODING-001, PTO-REQ-BUNDLE-STATE-001,

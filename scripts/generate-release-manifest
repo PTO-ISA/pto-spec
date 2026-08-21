@@ -22,9 +22,10 @@ NUMERIC_PROFILE_PATH = Path("spec/hardware-conformance-profile.json")
 NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0580-hardware-numeric-vectors.json")
 NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.0-ieee-v1"
 
-FAMILY_COUNTS = {'TEPL': 87, 'TMA': 7, 'CUBE': 12}
-FORM_COUNTS = {'scalar_forms': 474, 'command_forms': 96}
-COMMAND_FAMILY_COUNTS = {'CMD': 71, 'BBD': 25}
+FAMILY_COUNTS = {"TEPL": 87, "TLSU": 10, "CUBE": 12}
+ENGINE_COUNTS = {"VEC": 35, "SFU": 52, "TLSU": 10, "CUBE": 12}
+FORM_COUNTS = {"scalar_forms": 474, "command_forms": 99}
+COMMAND_FAMILY_COUNTS = {"CMD": 74, "BBD": 25}
 VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
 RESERVED_DATATYPES = (15, 21, 22, 23, 29, 30)
 ILLEGAL_DATATYPES = (31,)
@@ -68,20 +69,23 @@ EXPECTED_TEPL_MAP_TEXT = """
 048:TROWEXPANDDIV 049:TROWEXPANDMAX 04A:TROWEXPANDMIN 04B:TROWEXPANDEXPDIF 04C:TROWARGMAX 04D:TROWARGMIN 050:TCOLSUM 051:TCOLMAX
 052:TCOLMIN 053:TCOLPROD 054:TCOLEXPAND 055:TCOLEXPANDADD 056:TCOLEXPANDSUB 057:TCOLEXPANDMUL 058:TCOLEXPANDDIV 059:TCOLEXPANDMAX
 05A:TCOLEXPANDMIN 05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN 060:TCONCAT 062:TEXTRACT 063:TINSERT 064:TIMG2COL
-065:TFILLPAD 066:TCI 067:TTRI 069:TRANDOM 06A:TQUANT 06B:TDEQUANT 06C:TSORT32 06D:TMRGSORT
+065:TFILLPAD 066:TCI 067:TTRI 068:THISTOGRAM 06A:TQUANT 06B:TDEQUANT 06C:TSORT 06D:TMRGSORT
 06E:TTRANS 06F:TGATHER 070:TSCATTER 071:TPARTADD 072:TPARTMUL 073:TPARTMAX 074:TPARTMIN
 """
 EXPECTED_TEPL_MAP = {
     int(token.split(":", 1)[0], 16): token.split(":", 1)[1]
     for token in EXPECTED_TEPL_MAP_TEXT.split()
 }
-EXPECTED_TMA_MAP = {
+EXPECTED_TLSU_MAP = {
     0: 'TLOAD',
     1: 'TSTORE',
     2: 'TMOV',
     3: 'TPREFETCH',
     4: 'MGATHER',
     5: 'MSCATTER',
+    6: 'MGATHER_MASK',
+    7: 'MSCATTER_MASK',
+    8: 'MGATHER_CAS',
     13: 'GMOV',
 }
 EXPECTED_CUBE_MAP = {
@@ -105,6 +109,9 @@ EXPECTED_NON_TEPL_COMMANDS = {
     'TPREFETCH': 'BSTART.TPREFETCH',
     'MGATHER': 'BSTART.MGATHER',
     'MSCATTER': 'BSTART.MSCATTER',
+    'MGATHER_MASK': 'BSTART.MGATHER.MASK',
+    'MSCATTER_MASK': 'BSTART.MSCATTER.MASK',
+    'MGATHER_CAS': 'BSTART.MGATHER.CAS',
     'GMOV': 'BSTART.GMOV',
     'TMATMUL': 'BSTART.TMATMUL',
     'TMATMUL_BIAS': 'BSTART.TMATMUL.BIAS',
@@ -123,7 +130,7 @@ DELETED_TEPL_NAMES = (
     'TPRELU',
     'TAXPY',
     'TGATHERB',
-    'THISTOGRAM',
+    'TRANDOM',
     'TPARTARGMAX',
     'TPARTARGMIN',
     'TRESHAPE',
@@ -185,6 +192,8 @@ CANONICAL_STATIC_INPUTS = (
     "docs/review-checklist.md",
     "docs/architecture-decisions/0045-pto-isa-release-tile-contract.md",
     "docs/architecture-decisions/0052-pto-isa-0580-davincioo-catalog.md",
+    "docs/architecture-decisions/0053-pto-isa-0580-tile-operation-cleanup.md",
+    "docs/architecture-decisions/0054-tile-execution-engine-classification.md",
 )
 FORM_PROJECTION_KEYS = (
     "form_id",
@@ -274,7 +283,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
             f"tile operation closure must be exactly {FAMILY_COUNTS}, got {actual_counts}"
         )
     if catalog.get("operation_count") != sum(FAMILY_COUNTS.values()):
-        raise SystemExit("tile operation_count must be exactly 106")
+        raise SystemExit("tile operation_count must be exactly 109")
     names = [row.get("name") for row in operations]
     if None in names or len(names) != len(set(names)):
         raise SystemExit("tile operation names must be present and globally unique")
@@ -288,7 +297,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
         raise SystemExit(f"TEPL 0.58.0 map mismatch; missing={missing}, unexpected={extra}")
 
     for family, expected in (
-        ("TMA", EXPECTED_TMA_MAP),
+        ("TLSU", EXPECTED_TLSU_MAP),
         ("CUBE", EXPECTED_CUBE_MAP),
     ):
         actual = {operation_function(row): row["name"] for row in by_family[family]}
@@ -323,8 +332,13 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
     contract_status_counts = dict(Counter(row.get("contract_status") for row in operations))
     if contract_status_counts != {"reviewed-complete": sum(FAMILY_COUNTS.values())}:
         raise SystemExit(
-            "all 120 base ISA operations must have contract_status 'reviewed-complete'; "
+            "all 109 base ISA operations must have contract_status 'reviewed-complete'; "
             f"got {contract_status_counts}"
+        )
+    engine_counts = dict(Counter(row.get("engine") for row in operations))
+    if engine_counts != ENGINE_COUNTS:
+        raise SystemExit(
+            f"tile execution-engine closure must be exactly {ENGINE_COUNTS}, got {engine_counts}"
         )
     return catalog, by_family
 
@@ -422,8 +436,8 @@ def build_totality_evidence(encoding_hash: str) -> dict:
         'TADD',
         'TSEL',
         'TFMA',
-        'TRANDOM',
-        'TSORT32',
+        'THISTOGRAM',
+        'TSORT',
     )
     positive_vectors = []
     inverse = {name: selector for selector, name in EXPECTED_TEPL_MAP.items()}
@@ -444,7 +458,7 @@ def build_totality_evidence(encoding_hash: str) -> dict:
         'TPRELU': (0, 14),
         'TAXPY': (1, 15),
         'TGATHERB': (3, 1),
-        'THISTOGRAM': (3, 8),
+        'TRANDOM': (3, 9),
         'TPARTARGMAX': (3, 21),
         'TPARTARGMIN': (3, 22),
         'TRESHAPE': (3, 23),
@@ -513,7 +527,7 @@ def build_totality_evidence(encoding_hash: str) -> dict:
                 "classification_sha256": sha256_bytes(normalized_json_bytes(classifications)),
             },
         },
-        "tma": {"function_map": {str(key): value for key, value in EXPECTED_TMA_MAP.items()}},
+        "tlsu": {"function_map": {str(key): value for key, value in EXPECTED_TLSU_MAP.items()}},
         "cube": {"function_map": {str(key): value for key, value in EXPECTED_CUBE_MAP.items()}},
         "deleted_tepl_operations": list(DELETED_TEPL_NAMES),
         "positive_raw_vectors": positive_vectors,
@@ -754,9 +768,9 @@ def validate_numeric_profile() -> dict:
     ):
         raise SystemExit("B.DATR rounding-mode map drift")
     if profile["sort"].get("group_size") != 32:
-        raise SystemExit("hardware TSORT32 group size must remain exactly 32")
+        raise SystemExit("hardware TSORT group size must remain exactly 32")
     if profile["sort"].get("output") != "value paired with U32 original index":
-        raise SystemExit("hardware TSORT32 output must retain U32 original indices")
+        raise SystemExit("hardware TSORT output must retain U32 original indices")
     if not profile["arithmetic"].get("standard", "").startswith("IEEE 754-2019"):
         raise SystemExit("hardware numeric profile must use IEEE 754-2019 semantics")
     return profile
