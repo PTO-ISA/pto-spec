@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-STATE-SHARED-REGISTERS","surface":"tile","classification":["model","state","shared-registers"],"depends_on":["PTO-TILE-MODEL-STATE-LOCAL-REGISTERS","PTO-TILE-MODEL-LEGALITY-PE-MASK"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-STATE-SHARED-REGISTERS","surface":"tile","classification":["model","state","shared-registers"],"depends_on":["PTO-TILE-MODEL-STATE-LOCAL-REGISTERS","PTO-TILE-MODEL-LEGALITY-PE-MASK","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
 pure func SharedTileArrayIndex(shared_id: bits(8)) => SharedTileIndex
 begin
     return UInt(shared_id) as SharedTileIndex;
@@ -45,13 +45,15 @@ begin
     return shared.descriptor_valid && shared.tile.allocated &&
            shared.allocation_mask != Zeros{4} &&
            (shared.initialized_mask AND NOT shared.allocation_mask) == Zeros{4} &&
-           TileCapacityIsLegal(shared.tile.capacity_bytes) &&
+           SharedTileCapacityIsLegal(shared.tile.capacity_bytes) &&
            TileShapeMatchesCapacity(shared.tile.capacity_bytes,
                shared.tile.rows, shared.tile.columns,
                shared.tile.data_type) &&
            shared.tile.valid_rows <= shared.tile.rows &&
            shared.tile.valid_columns <= shared.tile.columns &&
-           shared.tile.rows * shared.tile.columns <= PTO_MODEL_TILE_ELEMENTS &&
+           shared.tile.rows * shared.tile.columns <=
+               TileLogicalElementCapacity(shared.tile.capacity_bytes,
+                                          shared.tile.data_type) &&
            TileGenericIndexingPermitted(shared.tile);
 end;
 
@@ -78,12 +80,13 @@ readonly func SharedTileUpdateCompatible(shared_id: bits(8), tile: TileInfo,
 begin
     if pe_mask == Zeros{4} then return TRUE; end;
     if TileLayoutIsCube(tile.layout) ||
-       !TileCapacityIsLegal(tile.capacity_bytes) ||
+       !SharedTileCapacityIsLegal(tile.capacity_bytes) ||
        !TileShapeMatchesCapacity(tile.capacity_bytes, tile.rows,
                                  tile.columns, tile.data_type) ||
        tile.valid_rows > tile.rows ||
        tile.valid_columns > tile.columns ||
-       tile.rows * tile.columns > PTO_MODEL_TILE_ELEMENTS then
+       tile.rows * tile.columns >
+           TileLogicalElementCapacity(tile.capacity_bytes, tile.data_type) then
         return FALSE;
     end;
     let old = SharedTileRecord(shared_id);
@@ -100,24 +103,24 @@ end;
 // by pto-v0. The returned word is not a portable value and reading it never
 // allocates the register or raises a fault.
 readonly func UndefinedSharedTileWord(shared_id: bits(8),
-                                      element: ModelTileElementIndex) => Word
+                                      element: PackedTileElementIndex) => Word
 begin
     return ZeroExtend{PTO_XLEN}(shared_id) XOR
         (Zeros{PTO_XLEN} + element);
 end;
 
 readonly func ReadSharedTileWord(shared_id: bits(8),
-                                 element: ModelTileElementIndex) => Word
+                                 element: PackedTileElementIndex) => Word
 begin
     let shared = SharedTileRecord(shared_id);
     if !shared.descriptor_valid then
         return UndefinedSharedTileWord(shared_id, element);
     end;
     let region = SharedTileElementRegion(shared.tile, element);
-    if shared.initialized_mask[region] == '0' then
+    if shared.initialized_mask[PTOPEMaskBitOfPEIdentity(region)] == '0' then
         return UndefinedSharedTileWord(shared_id, element);
     end;
-    return shared.tile.payload[[element]];
+    return TileReadLogicalElement(shared.tile, element);
 end;
 
 // Consumers observe undefined-register values for uninitialized quarters.
@@ -132,18 +135,19 @@ begin
         (pe_mask AND shared.initialized_mask) == pe_mask;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.defined_valid_elements = 0;
+    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
     for element = 0 to tile.rows * tile.columns - 1
-        looplimit PTO_MODEL_TILE_ELEMENTS do
-        let index = element as ModelTileElementIndex;
+        looplimit 524288 do
+        let index = element as PackedTileElementIndex;
         let region = SharedTileElementRegion(tile, index);
-        if pe_mask[region] == '1' then
-            tile.payload[[index]] = ReadSharedTileWord(shared_id, index);
-            tile.defined_elements[element] = '1';
+        if pe_mask[PTOPEMaskBitOfPEIdentity(region)] == '1' then
+            tile = TileInfoWithLogicalElement(tile, index,
+                ReadSharedTileWord(shared_id, index));
         end;
     end;
     if tile.contents_defined then
         tile.defined_valid_elements =
-            (tile.valid_rows * tile.valid_columns) as integer {0..16384};
+            (tile.valid_rows * tile.valid_columns) as integer {0..524288};
     end;
     tile.location = TileLocation_Any;
     return tile;
@@ -166,11 +170,11 @@ begin
                shared.tile.data_type == data_type &&
                shared.tile.layout == layout;
     end;
-    return TileCapacityIsLegal(capacity_bytes) &&
+    return SharedTileCapacityIsLegal(capacity_bytes) &&
            TileDescriptorShapeLegal(capacity_bytes, columns, valid_rows,
                valid_columns, data_type) &&
            DerivedTileRows(capacity_bytes, columns, data_type) * columns <=
-               PTO_MODEL_TILE_ELEMENTS;
+               TileLogicalElementCapacity(capacity_bytes, data_type);
 end;
 
 readonly func SharedTileReadSchemaLegal(
@@ -211,6 +215,7 @@ begin
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.defined_valid_elements = 0;
+    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
     tile.capacity_bytes = capacity_bytes;
     tile.rows = DerivedTileRows(capacity_bytes, columns, data_type);
     tile.columns = columns;
@@ -239,6 +244,7 @@ begin
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.defined_valid_elements = 0;
+    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
     tile.capacity_bytes = capacity_bytes;
     tile.rows = DerivedTileRows(capacity_bytes, columns, data_type);
     tile.columns = columns;
@@ -290,16 +296,20 @@ begin
         updated.tile.contents_defined = TRUE;
         updated.tile.defined_valid_elements =
             (updated.tile.valid_rows * updated.tile.valid_columns)
-                as integer {0..16384};
+                as integer {0..524288};
     else
         for element = 0 to tile.rows * tile.columns - 1
-            looplimit PTO_MODEL_TILE_ELEMENTS do
+            looplimit 524288 do
             let region = SharedTileElementRegion(tile,
-                element as ModelTileElementIndex);
-            if pe_mask[region] == '1' then
-                updated.tile.payload[[element]] = tile.payload[[element]];
-                updated.tile.defined_elements[element] =
-                    tile.defined_elements[element];
+                element as PackedTileElementIndex);
+            if pe_mask[PTOPEMaskBitOfPEIdentity(region)] == '1' then
+                if TileLogicalElementDefined(tile,
+                    element as PackedTileElementIndex) then
+                    updated.tile = TileInfoWithLogicalElement(updated.tile,
+                        element as PackedTileElementIndex,
+                        TileReadLogicalElement(tile,
+                            element as PackedTileElementIndex));
+                end;
             end;
         end;
         updated.initialized_mask = old.initialized_mask OR pe_mask;
@@ -312,7 +322,7 @@ begin
         if updated.tile.contents_defined then
             updated.tile.defined_valid_elements =
                 (updated.tile.valid_rows * updated.tile.valid_columns)
-                    as integer {0..16384};
+                    as integer {0..524288};
         end;
         updated.published = old.published ||
             (publish && updated.tile.contents_defined);

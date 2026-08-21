@@ -21,13 +21,28 @@ begin
            capacity_bytes <= TileCapacityLimitBytes();
 end;
 
-pure func TileSizeCodeIsLegal(size_code: integer {0..15}) => boolean
+readonly func SharedTileCapacityIsLegal(
+    capacity_bytes: integer {0..262144}) => boolean
 begin
-    return 1 <= size_code && size_code <= 7;
+    return capacity_bytes >= PTO_TILE_CELL_BYTES &&
+           capacity_bytes MOD PTO_TILE_CELL_BYTES == 0 &&
+           capacity_bytes <= PTO_SHARED_TILE_MAX_ALLOCATION_BYTES &&
+           capacity_bytes <= TileCapacityLimitBytes();
 end;
 
-pure func TileSizeCodeBytes(size_code: integer {1..7})
-    => integer {128,256,512,1024,2048,4096,8192}
+pure func TileSizeCodeIsLegal(size_code: integer {0..15}) => boolean
+begin
+    return 1 <= size_code && size_code <= 12;
+end;
+
+pure func LocalTileSizeCodeIsLegal(size_code: integer {0..15}) => boolean
+begin
+    return 1 <= size_code && size_code <= 10;
+end;
+
+pure func TileSizeCodeBytes(size_code: integer {1..12})
+    => integer {128,256,512,1024,2048,4096,8192,16384,32768,65536,
+                131072,262144}
 begin
     case size_code of
         when 1 => return 128;
@@ -37,6 +52,11 @@ begin
         when 5 => return 2048;
         when 6 => return 4096;
         when 7 => return 8192;
+        when 8 => return 16384;
+        when 9 => return 32768;
+        when 10 => return 65536;
+        when 11 => return 131072;
+        when 12 => return 262144;
     end;
 end;
 
@@ -57,4 +77,27 @@ begin
         when TileDataType_S64, TileDataType_U64,
              TileDataType_FP64 => return 64;
     end;
+end;
+
+pure func TileDataTypeIsFourBit(data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_E2M1X2 ||
+           data_type == TileDataType_E1M2X2 ||
+           data_type == TileDataType_HiF4X2 ||
+           data_type == TileDataType_S4X2 ||
+           data_type == TileDataType_U4X2;
+end;
+
+// The executable payload remains bounded by PTO_MODEL_TILE_ELEMENTS. Packed
+// four-bit descriptors retain their architectural logical-element capacity in
+// sparse boundary state, so Local 64 KiB and Shared 256 KiB shapes remain
+// legal without allocating a maximum payload for every TileInfo.
+readonly func TileLogicalElementCapacity(
+    capacity_bytes: integer {0..262144}, data_type: TileDataType)
+    => integer {1..524288}
+begin
+    if TileDataTypeIsFourBit(data_type) then
+        return (capacity_bytes * 2) as integer {1..524288};
+    end;
+    return PTO_MODEL_TILE_ELEMENTS as integer {1..524288};
 end;

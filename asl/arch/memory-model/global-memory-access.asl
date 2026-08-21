@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS","surface":"arch","classification":["memory-model","global-memory-access"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS","PTO-ARCH-MEMORY-MODEL-ATOMICITY"]}
+// PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS","surface":"arch","classification":["memory-model","global-memory-access"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS","PTO-ARCH-MEMORY-MODEL-ATOMICITY","PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY"]}
 
 // NDF-BEGIN: PTO-ARCH-GM-ACCESS-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
@@ -27,5 +27,5 @@ end;
 
 pure func SharedGMPESelected(pe_mask: bits(4), pe: MemoryAgentId) => boolean
 begin
-    return pe_mask[pe] == '1';
+    return pe_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1';
 end;

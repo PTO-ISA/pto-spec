@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-GMOV-COLLECTIVE-001","source":"asl/block/execution/BSTART.GMOV.asl","requirements":["PTO-BSTART-GMOV-COLLECTIVE-001","PTO-INST-TILE-GMOV","PTO-INST-BLOCK-BSTART-GMOV"],"kind":"execution","summary":"GMOV preflights a full Core4 source while a partial mask selects only Local destination fragments.","pass_condition":"A mask 0011 transfer with repeated legal peers copies the read-old snapshot, allocates only two PE fragments, and emits no memory event.","related_sources":["asl/block/model/dispatch/tlsu-gmov.asl","asl/tile/model/memory/shared-movement.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-GMOV-COLLECTIVE-001","source":"asl/block/execution/BSTART.GMOV.asl","requirements":["PTO-BSTART-GMOV-COLLECTIVE-001","PTO-INST-TILE-GMOV","PTO-INST-BLOCK-BSTART-GMOV"],"kind":"execution","summary":"Decoded B.IOT PEMode=111 makes GMOV copy every selected Local fragment after a full Core4 preflight.","pass_condition":"The all-PE decoded mode copies the read-old snapshot, allocates all four destination fragments, and emits no memory event.","related_sources":["asl/block/model/dispatch/tlsu-gmov.asl","asl/tile/model/memory/shared-movement.asl"]}
 pure func GMOVCollectiveStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00d11181;
@@ -6,12 +6,13 @@ begin
     return instruction;
 end;
 
-pure func GMOVCollectiveBinding(mask: bits(4), size: bits(3)) => bits(64)
+pure func GMOVCollectiveBinding(size_code: bits(4), pe_mode: bits(3))
+        => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[11:9] = size;
+    instruction[18:15] = size_code;
+    instruction[11:9] = pe_mode;
     instruction[8:7] = '00';
-    instruction[18:15] = mask;
     instruction[19] = '1';
     instruction[25:20] = Zeros{6};
     return instruction;
@@ -41,7 +42,7 @@ begin
     WritePEGPR(3, 2, Zeros{PTO_XLEN} + 3);
     let started = ExecuteCommandInstruction(GMOVCollectiveStart(), 32);
     let tiles = ExecuteCommandInstruction(
-        GMOVCollectiveBinding('0011', '001'), 32);
+        GMOVCollectiveBinding('0001', '111'), 32);
     let peers = ExecuteCommandInstruction(GMOVCollectiveIOR(), 32);
     assert started == CommandExecution_Executed;
     assert tiles == CommandExecution_Executed;
@@ -51,7 +52,7 @@ begin
     assert completed;
     let destination = _BundleTileBindings[[0]].destination;
     assert destination == 1;
-    assert _TileAllocationMasks[[destination]] == '0011';
+    assert _TileAllocationMasks[[destination]] == '1111';
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 0x5a;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();

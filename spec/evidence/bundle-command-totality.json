@@ -235,15 +235,15 @@
       "decoded_fields": [
         "SrcTile0",
         "L",
-        "PE_MASK",
-        "TSize",
+        "SizeCode",
+        "PEMode",
         "DstTile"
       ],
       "consumed_fields": [
         "SrcTile0",
         "L",
-        "PE_MASK",
-        "TSize",
+        "SizeCode",
+        "PEMode",
         "DstTile"
       ],
       "disposition": "executed",
@@ -260,13 +260,13 @@
         "SrcTile1",
         "SrcTile0",
         "L",
-        "PE_MASK"
+        "PEMode"
       ],
       "consumed_fields": [
         "SrcTile1",
         "SrcTile0",
         "L",
-        "PE_MASK"
+        "PEMode"
       ],
       "disposition": "executed",
       "effect_class": "bundle-tile-binding",
@@ -282,16 +282,16 @@
         "SrcTile1",
         "SrcTile0",
         "L",
-        "PE_MASK",
-        "TSize",
+        "SizeCode",
+        "PEMode",
         "DstTile"
       ],
       "consumed_fields": [
         "SrcTile1",
         "SrcTile0",
         "L",
-        "PE_MASK",
-        "TSize",
+        "SizeCode",
+        "PEMode",
         "DstTile"
       ],
       "disposition": "executed",
@@ -307,12 +307,12 @@
       "decoded_fields": [
         "SrcTile0",
         "L",
-        "PE_MASK"
+        "PEMode"
       ],
       "consumed_fields": [
         "SrcTile0",
         "L",
-        "PE_MASK"
+        "PEMode"
       ],
       "disposition": "executed",
       "effect_class": "bundle-tile-binding",
@@ -326,14 +326,14 @@
       "semantic_handler": "BindBundleTileIO",
       "decoded_fields": [
         "L",
-        "PE_MASK",
-        "TSize",
+        "SizeCode",
+        "PEMode",
         "DstTile"
       ],
       "consumed_fields": [
         "L",
-        "PE_MASK",
-        "TSize",
+        "SizeCode",
+        "PEMode",
         "DstTile"
       ],
       "disposition": "executed",
@@ -958,13 +958,13 @@
       "semantic_handler": "BindBundleSharedIO",
       "decoded_fields": [
         "SharedTID",
-        "PE_MASK",
-        "TSize"
+        "SizeCode",
+        "PEMode"
       ],
       "consumed_fields": [
         "SharedTID",
-        "PE_MASK",
-        "TSize"
+        "SizeCode",
+        "PEMode"
       ],
       "disposition": "executed",
       "effect_class": "bundle-shared-binding",
@@ -1202,7 +1202,6 @@
         "RegDst0",
         "RegDst1",
         "SrcL",
-        "SrcR",
         "e",
         "r"
       ],
@@ -3189,8 +3188,7 @@
         "operation": "TROWEXPAND",
         "operand_fields": [
           "destination0",
-          "source0",
-          "source1"
+          "source0"
         ],
         "operand_resolutions": [
           {
@@ -3201,12 +3199,6 @@
           },
           {
             "field": "source0",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source1",
             "resolver": "ordered B.IOT source binding",
             "default": "0",
             "raw_value_policy": "absolute TileIndex"
@@ -3651,8 +3643,7 @@
         "operation": "TCOLEXPAND",
         "operand_fields": [
           "destination0",
-          "source0",
-          "source1"
+          "source0"
         ],
         "operand_resolutions": [
           {
@@ -3663,12 +3654,6 @@
           },
           {
             "field": "source0",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source1",
             "resolver": "ordered B.IOT source binding",
             "default": "0",
             "raw_value_policy": "absolute TileIndex"
@@ -3998,8 +3983,7 @@
         "operand_fields": [
           "destination0",
           "source0",
-          "source1",
-          "axis"
+          "source1"
         ],
         "operand_resolutions": [
           {
@@ -4019,12 +4003,6 @@
             "resolver": "ordered B.IOT source binding",
             "default": "0",
             "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "axis",
-            "resolver": "operation default",
-            "default": "TileAxis_Row",
-            "raw_value_policy": "typed enum default"
           }
         ],
         "gpr_input_slots": {},
@@ -4084,6 +4062,7 @@
         "operand_fields": [
           "destination0",
           "source0",
+          "source1",
           "natural0",
           "natural1"
         ],
@@ -4096,6 +4075,12 @@
           },
           {
             "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
             "resolver": "ordered B.IOT source binding",
             "default": "0",
             "raw_value_policy": "absolute TileIndex"
@@ -4127,13 +4112,8 @@
         "operand_fields": [
           "destination0",
           "source0",
-          "positive0",
-          "positive1",
-          "positive2",
-          "positive3",
           "natural0",
-          "natural1",
-          "scalar0"
+          "natural1"
         ],
         "operand_resolutions": [
           {
@@ -4149,30 +4129,6 @@
             "raw_value_policy": "absolute TileIndex"
           },
           {
-            "field": "positive0",
-            "resolver": "B.DIM LB0",
-            "default": "1",
-            "raw_value_policy": "positive integer 1..65535"
-          },
-          {
-            "field": "positive1",
-            "resolver": "B.DIM LB1",
-            "default": "1",
-            "raw_value_policy": "positive integer 1..65535"
-          },
-          {
-            "field": "positive2",
-            "resolver": "operation default",
-            "default": "1",
-            "raw_value_policy": "positive integer 1..65535 (default only)"
-          },
-          {
-            "field": "positive3",
-            "resolver": "operation default",
-            "default": "1",
-            "raw_value_policy": "positive integer 1..65535 (default only)"
-          },
-          {
             "field": "natural0",
             "resolver": "B.DIM LB0",
             "default": "0",
@@ -4183,19 +4139,10 @@
             "resolver": "B.DIM LB1",
             "default": "0",
             "raw_value_policy": "natural integer 0..65535"
-          },
-          {
-            "field": "scalar0",
-            "resolver": "B.IOR ordered GPR input slot for scalar0",
-            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
-            "raw_value_policy": "XLEN Word",
-            "slot": "RegSrc0"
           }
         ],
-        "gpr_input_slots": {
-          "scalar0": "RegSrc0"
-        },
-        "gpr_input_count": 1,
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
         "representable": true,
         "unsupported_operand_fields": [],
         "complete_bundle_schema": null,
@@ -6950,8 +6897,8 @@
     "source": "content-addressed independent executable ISA snapshot",
     "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
     "matched_form_ids": 74,
-    "exact_encoding_matches": 62,
-    "accepted_abi_encoding_divergences": 7,
+    "exact_encoding_matches": 61,
+    "accepted_abi_encoding_divergences": 8,
     "executable_subset": 53,
     "decode_only": 16,
     "missing": 5,

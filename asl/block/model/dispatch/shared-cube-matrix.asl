@@ -107,14 +107,14 @@ begin
         shared_id, valid_rows, valid_columns, columns,
         data_type, TileLayout_RowMajor);
     for element = 0 to tile.rows * tile.columns - 1
-        looplimit PTO_MODEL_TILE_ELEMENTS do
-        let index = element as ModelTileElementIndex;
-        tile.payload[[index]] = ReadSharedTileWord(shared_id, index);
-        tile.defined_elements[element] = '1';
+        looplimit 524288 do
+        let index = element as PackedTileElementIndex;
+        tile = TileInfoWithLogicalElement(tile, index,
+            ReadSharedTileWord(shared_id, index));
     end;
     tile.contents_defined = TRUE;
     tile.defined_valid_elements =
-        (valid_rows * valid_columns) as integer {0..16384};
+        (valid_rows * valid_columns) as integer {0..524288};
     return tile;
 end;
 
@@ -132,6 +132,7 @@ begin
     var tile = shared.tile;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
     tile.defined_valid_elements = 0;
     tile.rows = DerivedTileRows(
         tile.capacity_bytes, logical_columns, data_type);
@@ -149,22 +150,21 @@ begin
         for column = 0 to logical_columns - 1 looplimit 65536 do
             let source_row = if transpose then column else row;
             let source_column = if transpose then row else column;
-            let source_element = TileLinearIndex(
+            let source_element = TileLogicalLinearIndex(
                 shared.tile,
                 source_row as integer {0..65535},
                 source_column as integer {0..65535});
-            let destination_element = TileLinearIndex(
+            let destination_element = TileLogicalLinearIndex(
                 tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            tile.payload[[destination_element]] =
-                ReadSharedTileWord(shared_id, source_element);
-            tile.defined_elements[destination_element] = '1';
+            tile = TileInfoWithLogicalElement(tile, destination_element,
+                ReadSharedTileWord(shared_id, source_element));
         end;
     end;
     tile.contents_defined = TRUE;
     tile.defined_valid_elements =
-        (logical_rows * logical_columns) as integer {0..16384};
+        (logical_rows * logical_columns) as integer {0..524288};
     return tile;
 end;
 

@@ -106,7 +106,7 @@ begin
 end;
 
 readonly func BundleMatrixPrimaryDestinationCapacityBytes()
-    => integer {0,128,256,512,1024,2048,4096,8192}
+    => integer {0,128,256,512,1024,2048,4096,8192,16384,32768,65536}
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&

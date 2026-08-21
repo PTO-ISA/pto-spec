@@ -10,7 +10,7 @@
     "hardware_conformance_claim": false,
     "profile_id": "pto-v0"
   },
-  "release": "0.58.2",
+  "release": "0.59.0",
   "schema_version": 1,
   "vector_groups": {
     "canonical_nan": [

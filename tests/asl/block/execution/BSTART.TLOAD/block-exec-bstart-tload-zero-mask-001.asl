@@ -9,9 +9,9 @@ end;
 pure func TLoadZeroMaskDestination() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00006013;
-    instruction[18:15] = Zeros{4};
+    instruction[18:15] = '0001';
     instruction[19] = '1';
-    instruction[11:9] = '001';
+    instruction[11:9] = '000';
     return instruction;
 end;
 
@@ -19,8 +19,8 @@ pure func TLoadZeroMaskShared(shared_id: bits(8)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = Zeros{4};
-    instruction[11:9] = '001';
+    instruction[18:15] = '0001';
+    instruction[11:9] = '000';
     return instruction;
 end;
 

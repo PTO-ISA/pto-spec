@@ -10,7 +10,8 @@ pure func TStorePackedSource(tile: TileIndex) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
     instruction[25:20] = Zeros{6} + tile;
-    instruction[18:15] = '1111';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '111';
     instruction[19] = '1';
     return instruction;
 end;

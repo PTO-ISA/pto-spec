@@ -8,14 +8,14 @@ begin
     return instruction;
 end;
 
-pure func BundleTestTileBindingV5(tile_size: bits(3), destination: bits(2),
-                                 pe_mask: bits(4), source0: bits(6),
+pure func BundleTestTileBindingV5(size_code: bits(4), destination: bits(2),
+                                 pe_mode: bits(3), source0: bits(6),
                                  last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[25:20] = source0;
     instruction[19] = if last then '1' else '0';
     return instruction;
@@ -25,19 +25,19 @@ pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = '1111';
-    instruction[11:9] = '000';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '111';
     return instruction;
 end;
 
 pure func BundleTestSharedBindingV6(shared_id: bits(8),
-                                   tile_size: bits(3),
-                                   pe_mask: bits(4)) => bits(64)
+                                   size_code: bits(4),
+                                   pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = pe_mask;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
@@ -53,15 +53,15 @@ begin
     return instruction;
 end;
 
-pure func BundleTestTileDestinationV5(tile_size: bits(3),
+pure func BundleTestTileDestinationV5(size_code: bits(4),
                                       destination: bits(2),
-                                      pe_mask: bits(4), last: boolean)
+                                      pe_mode: bits(3), last: boolean)
                                       => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00006013;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[19] = if last then '1' else '0';
     return instruction;
 end;
@@ -76,9 +76,9 @@ begin
     let insert_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let insert_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '001', '0001'), 32);
+        BundleTestSharedBindingV6(Zeros{8} + 23, '0001', '001'), 32);
     let insert_local = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('000', '00', '0001', Zeros{6}, TRUE), 32);
+        BundleTestTileBindingV5('0000', '00', '001', Zeros{6}, TRUE), 32);
     assert insert_start == CommandExecution_Executed;
     assert insert_shared == CommandExecution_Executed;
     assert insert_local == CommandExecution_Executed;
@@ -92,15 +92,15 @@ begin
     assert !_BundleTileBindings[[0]].source1_valid;
     assert _BundleTileBindings[[0]].last;
     assert _BundleTileBindings[[0]].destination_size == 0;
-    assert _BundleTileBindings[[0]].pe_mask == '0001';
+    assert _BundleTileBindings[[0]].pe_mask == '1000';
     assert TileSourceContentsDefined(_BundleTileBindings[[0]].source0);
     assert _Tiles[[_BundleTileBindings[[0]].source0]].capacity_bytes == 128;
     assert BundleSharedTMOVLocalSchemaLegal();
     let insert_completed = ExecuteBundleTileOperation();
     assert insert_completed;
     assert _BundleSharedBindings[[0]].consumed;
-    assert SharedTileRecord(Zeros{8} + 23).allocation_mask == '0001';
-    assert SharedTileRecord(Zeros{8} + 23).initialized_mask == '0001';
+    assert SharedTileRecord(Zeros{8} + 23).allocation_mask == '1000';
+    assert SharedTileRecord(Zeros{8} + 23).initialized_mask == '1000';
     assert SharedTileFullyInitialized(Zeros{8} + 23);
     assert _Tiles[[0]].allocated;
 
@@ -115,9 +115,9 @@ begin
     let zero_insert_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let zero_insert_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '001', Zeros{4}), 32);
+        BundleTestSharedBindingV6(Zeros{8} + 23, '0001', Zeros{3}), 32);
     let zero_insert_local = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('000', '00', Zeros{4}, Zeros{6}, TRUE), 32);
+        BundleTestTileBindingV5('0000', '00', Zeros{3}, Zeros{6}, TRUE), 32);
     assert zero_insert_start == CommandExecution_Executed;
     assert zero_insert_shared == CommandExecution_Executed;
     assert zero_insert_local == CommandExecution_Executed;
@@ -138,9 +138,9 @@ begin
     let zero_extract_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
     let zero_extract_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '000', Zeros{4}), 32);
+        BundleTestSharedBindingV6(Zeros{8} + 23, '0000', Zeros{3}), 32);
     let zero_extract_destination = ExecuteCommandInstruction(
-        BundleTestTileDestinationV5('001', '10', Zeros{4}, TRUE), 32);
+        BundleTestTileDestinationV5('0001', '10', Zeros{3}, TRUE), 32);
     assert zero_extract_start == CommandExecution_Executed;
     assert zero_extract_shared == CommandExecution_Executed;
     assert zero_extract_destination == CommandExecution_Executed;
@@ -158,7 +158,7 @@ begin
     let partition_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01110', Zeros{5} + 24), 32);
     let partition_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '000', '0001'), 32);
+        BundleTestSharedBindingV6(Zeros{8} + 23, '0000', '001'), 32);
     let partition_address = ExecuteCommandInstruction(
         BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
     assert partition_start == CommandExecution_Executed;

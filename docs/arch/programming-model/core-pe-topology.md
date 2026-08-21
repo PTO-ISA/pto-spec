@@ -24,6 +24,15 @@ constant PTO_TILE_REGISTER_COUNT = 64;
 constant PTO_SHARED_TILE_COUNT = 256;
 constant PTO_MODEL_MEMORY_AGENTS = 4;
 constant PTO_MODEL_MEMORY_EVENTS = 16;
+
+// Fixed semantic PE identities are numbered PE0..PE3.  The architectural
+// four-bit mask keeps PE0 in its high bit, so consumers that index a mask by
+// semantic PE identity must use this explicit representation bridge.
+pure func PTOPEMaskBitOfPEIdentity(
+    pe_identity: integer {0..3}) => integer {0,1,2,3}
+begin
+    return (3 - pe_identity) as integer {0,1,2,3};
+end;
 ```
 <!-- GENERATED-ASL-END: unit -->
 

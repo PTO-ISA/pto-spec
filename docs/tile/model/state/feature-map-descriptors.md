@@ -123,7 +123,9 @@ begin
     let physical_elements: integer = descriptor.batches * descriptor.depth *
         descriptor.channel_groups * descriptor.height * descriptor.width *
         descriptor.channels_per_group;
-    return physical_elements <= PTO_MODEL_TILE_ELEMENTS &&
+    return physical_elements <=
+               TileLogicalElementCapacity(_Tiles[[index]].capacity_bytes,
+                   _Tiles[[index]].data_type) &&
            physical_elements <=
                _Tiles[[index]].rows * _Tiles[[index]].columns;
 end;

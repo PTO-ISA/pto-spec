@@ -6,13 +6,15 @@ begin
     assert started == CommandExecution_Executed;
 
     var local = Zeros{64} + 0x00005013;
-    local[18:15] = '0011';
+    local[18:15] = '0000';
+    local[11:9] = '101';
     local[19] = '1';
     let local_status = ExecuteCommandInstruction(local, 32);
     assert local_status == CommandExecution_Executed;
 
     var shared = Zeros{64} + 0x00001013;
-    shared[18:15] = '0001';
+    shared[18:15] = '0000';
+    shared[11:9] = '111';
     let mixed = ExecuteCommandInstruction(shared, 32);
     assert mixed == CommandExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
@@ -21,11 +23,13 @@ begin
     ResetProfileState();
     let restarted = ExecuteCommandInstruction(Zeros{64} + 0x00019181, 32);
     assert restarted == CommandExecution_Executed;
-    shared[18:15] = '0011';
+    shared[18:15] = '0000';
+    shared[11:9] = '101';
     let first = ExecuteCommandInstruction(shared, 32);
     assert first == CommandExecution_Executed;
     shared[27:20] = Zeros{8} + 1;
-    shared[18:15] = '0001';
+    shared[18:15] = '0000';
+    shared[11:9] = '111';
     let second = ExecuteCommandInstruction(shared, 32);
     assert second == CommandExecution_Rejected;
     assert _LastFault == Fault_TileLegality;

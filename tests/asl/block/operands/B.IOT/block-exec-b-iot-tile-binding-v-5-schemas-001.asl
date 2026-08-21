@@ -19,14 +19,14 @@ begin
     return instruction;
 end;
 
-pure func BundleTestTileBindingV5(tile_size: bits(3), destination: bits(2),
-                                 pe_mask: bits(4), source0: bits(6),
+pure func BundleTestTileBindingV5(size_code: bits(4), destination: bits(2),
+                                 pe_mode: bits(3), source0: bits(6),
                                  last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[25:20] = source0;
     instruction[19] = if last then '1' else '0';
     return instruction;
@@ -41,7 +41,7 @@ begin
     let insert_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let size_one = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('001', '00', '0011', Zeros{6}, TRUE), 32);
+        BundleTestTileBindingV5('0001', '00', '101', Zeros{6}, TRUE), 32);
     assert insert_start == CommandExecution_Executed;
     assert size_one == CommandExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
@@ -51,7 +51,7 @@ begin
     let publish_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let size_seven = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('111', '00', '1100', Zeros{6}, TRUE), 32);
+        BundleTestTileBindingV5('0001', '00', '101', Zeros{6}, TRUE), 32);
     assert publish_start == CommandExecution_Executed;
     assert size_seven == CommandExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
@@ -61,7 +61,7 @@ begin
     let zero_size_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let zero_size = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('000', '00', '1111', Zeros{6}, TRUE), 32);
+        BundleTestTileBindingV5('0000', '00', '111', Zeros{6}, TRUE), 32);
     assert zero_size_start == CommandExecution_Executed;
     assert zero_size == CommandExecution_Executed;
     assert _LastFault == Fault_None;
@@ -75,7 +75,7 @@ begin
     let nonzero_destination_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let nonzero_destination = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('001', '01', '1111', Zeros{6}, TRUE), 32);
+        BundleTestTileBindingV5('0001', '01', '111', Zeros{6}, TRUE), 32);
     assert nonzero_destination_start == CommandExecution_Executed;
     assert nonzero_destination == CommandExecution_Rejected;
     assert _LastFault == Fault_TileLegality;
@@ -86,9 +86,9 @@ begin
     let tepl_start = ExecuteCommandInstruction(
         BundleTestTEPLStart(Zeros{10}, Zeros{5} + 24), 32);
     let first_mask = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('000', '00', '0011', Zeros{6}, FALSE), 32);
+        BundleTestTileBindingV5('0000', '00', '101', Zeros{6}, FALSE), 32);
     let mismatched_mask = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('000', '00', '0101', Zeros{6} + 1, TRUE), 32);
+        BundleTestTileBindingV5('0000', '00', '111', Zeros{6} + 1, TRUE), 32);
     assert tepl_start == CommandExecution_Executed;
     assert first_mask == CommandExecution_Executed;
     assert mismatched_mask == CommandExecution_Rejected;
@@ -102,12 +102,12 @@ begin
     let gmov_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01101', Zeros{5} + 24), 32);
     let partial_gmov = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('000', '00', '0111', Zeros{6}, TRUE), 32);
+        BundleTestTileBindingV5('0000', '00', '110', Zeros{6}, TRUE), 32);
     assert gmov_start == CommandExecution_Executed;
     assert partial_gmov == CommandExecution_Executed;
     assert _LastFault == Fault_None;
     assert _BundleTileBindings[[0]].valid;
-    assert _BundleTileBindings[[0]].pe_mask == '0111';
+    assert _BundleTileBindings[[0]].pe_mask == '1110';
 end;
 func main() => integer
 begin

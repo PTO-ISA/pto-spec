@@ -812,6 +812,7 @@ nav:
               - Shared: tile/model/capacity/shared.md
           - Definedness:
               - Elements: tile/model/definedness/elements.md
+              - Packed Boundary: tile/model/definedness/packed-boundary.md
           - Dispatch:
               - Elementwise Tile Tile: tile/model/dispatch/elementwise-tile-tile.md
               - Irregular And Complex: tile/model/dispatch/irregular-and-complex.md
@@ -998,6 +999,7 @@ nav:
           - "ADR 0066: ADDTPC page-scaled immediate": status/decisions/0066-addtpc-page-scaled-immediate.md
           - "ADR 0067: conditional branch extension reservation": status/decisions/0067-conditional-branch-extension-reservation.md
           - "ADR 0068: Extension first-use is a target-profile hook": status/decisions/0068-extension-first-use-profile-hook.md
+          - "ADR 0069: Re-encode B.IOT and B.IOS size and PE mode fields": status/decisions/0069-b-iot-b-ios-sizecode-pemode.md
           - "ADR 0069: Local CUBE CELL State and Geometry": status/decisions/0069-local-cube-cell-state-and-geometry.md
           - "ADR 0070: GM/Local CUBE Layout Transport": status/decisions/0070-gm-local-cube-layout-transport.md
           - "ADR 0071: Local CUBE Matrix Operand Contract": status/decisions/0071-local-cube-matrix-operands.md

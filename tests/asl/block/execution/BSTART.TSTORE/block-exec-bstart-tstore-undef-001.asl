@@ -8,12 +8,13 @@ begin
     return instruction;
 end;
 
-pure func TStoreUndefinedShared(shared_id: bits(8), pe_mask: bits(4))
+pure func TStoreUndefinedShared(shared_id: bits(8), pe_mode: bits(3))
     => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = pe_mask;
+    instruction[18:15] = '0000';
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
@@ -27,7 +28,7 @@ begin
     let start = ExecuteCommandInstruction(
         TStoreUndefinedStart('00001', Zeros{5} + 24), 32);
     let source = ExecuteCommandInstruction(
-        TStoreUndefinedShared(shared_id, '1111'), 32);
+        TStoreUndefinedShared(shared_id, '111'), 32);
     assert start == CommandExecution_Executed;
     assert source == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();

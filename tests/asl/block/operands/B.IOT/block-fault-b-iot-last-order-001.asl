@@ -8,6 +8,7 @@ begin
 
     var source = Zeros{64} + 0x00005013;
     source[18:15] = '0001';
+    source[11:9] = '111';
     source[19] = '1';
     source[25:20] = Zeros{6} + 3;
     let first = ExecuteCommandInstruction(source, 32);
@@ -15,8 +16,8 @@ begin
     assert BundleTileBindingStreamTerminated();
 
     var destination = Zeros{64} + 0x00006013;
-    destination[11:9] = '001';
     destination[18:15] = '0001';
+    destination[11:9] = '111';
     let second = ExecuteCommandInstruction(destination, 32);
     assert second == CommandExecution_Rejected;
     assert _LastFault == Fault_BundleControl;

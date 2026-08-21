@@ -200,7 +200,9 @@ begin
                 destination_type);
             if !TileDescriptorShapeLegal(capacity_bytes, auxiliary_columns,
                    valid_rows, auxiliary_valid_columns, destination_type) ||
-               rows * auxiliary_columns > PTO_MODEL_TILE_ELEMENTS then
+               rows * auxiliary_columns >
+                   TileLogicalElementCapacity(capacity_bytes,
+                       destination_type) then
                 SetFault(Fault_TileAllocation, ReadTPC());
                 return FALSE;
             end;
@@ -300,7 +302,9 @@ begin
     let capacity_bytes = BundleTileDestinationSizeBytes(
         destination_binding);
     if source_tile.storage_kind != TileStorage_Numeric ||
-       source_tile.rows * source_tile.columns > PTO_MODEL_TILE_ELEMENTS ||
+       source_tile.rows * source_tile.columns >
+           TileLogicalElementCapacity(source_tile.capacity_bytes,
+               source_tile.data_type) ||
        PredicateTileStorageBytes(
            source_tile.rows,
            source_tile.columns) > capacity_bytes then

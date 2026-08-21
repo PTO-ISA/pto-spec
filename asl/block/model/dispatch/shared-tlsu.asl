@@ -67,7 +67,7 @@ begin
     if shared_mask == Zeros{4} then return TRUE; end;
     if !TileSourceContentsDefined(binding.source0) ||
        _Tiles[[binding.source0]].capacity_bytes !=
-           TileSizeCodeBytes(shared_size as integer {1..7}) then
+           TileSizeCodeBytes(shared_size as integer {1..12}) then
         return FALSE;
     end;
     var candidate = _Tiles[[binding.source0]];
@@ -85,12 +85,12 @@ begin
     let shared_mask = BundleSharedBindingMask(0);
     if !binding.valid || !binding.destination_valid ||
        binding.source0_valid || binding.source1_valid || !binding.last ||
-       !TileSizeCodeIsLegal(binding.destination_size) ||
+       !LocalTileSizeCodeIsLegal(binding.destination_size) ||
        BundleSharedBindingIsDestination(0) ||
        binding.pe_mask != shared_mask then return FALSE; end;
     if shared_mask == Zeros{4} then return TRUE; end;
     let capacity_bytes = TileSizeCodeBytes(
-        binding.destination_size as integer {1..7});
+        binding.destination_size as integer {1..10});
     let valid_rows = BundleDestinationValidRows(FALSE, 0);
     let valid_columns = BundleDestinationValidColumns(FALSE, 0);
     let columns = BundleDestinationPhysicalColumns(FALSE, 0);
@@ -177,7 +177,7 @@ begin
                     columns as integer {0..65535}, transfer_data_type);
         end;
         TLOADShared(shared_id, load_base_addresses, load_row_stride_bytes,
-            shared_size as integer {1..7}, valid_rows as integer {1..65535},
+            shared_size as integer {1..12}, valid_rows as integer {1..65535},
             columns as integer {1..65535},
             valid_rows as integer {1..65535},
             valid_columns as integer {1..65535},
@@ -232,7 +232,7 @@ begin
         end;
         let binding = _BundleTileBindings[[0]];
         TMOVLocalToShared(shared_id, binding.source0,
-            shared_size as integer {1..7}, shared_mask, function == 10);
+            shared_size as integer {1..12}, shared_mask, function == 10);
     elsif function == 11 || function == 12 then
         if !BundleSharedTMOVDestinationSchemaLegal(shared_id, function) ||
            !SelectedBundleTileMasksLegal() then
@@ -243,7 +243,7 @@ begin
         end;
         let binding = _BundleTileBindings[[0]];
         let capacity_bytes = TileSizeCodeBytes(
-            binding.destination_size as integer {1..7});
+            binding.destination_size as integer {1..10});
         let valid_rows = BundleDestinationValidRows(FALSE, 0);
         let valid_columns = BundleDestinationValidColumns(FALSE, 0);
         let columns = BundleDestinationPhysicalColumns(FALSE, 0);

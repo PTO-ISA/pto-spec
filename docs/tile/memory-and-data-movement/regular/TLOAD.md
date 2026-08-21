@@ -74,8 +74,8 @@ begin
     return TileRegularTLSUDataTypeSupported(data_type);
 end;
 
-pure func InstructionContractDestinationShapeLegal_TLOAD(
-    size_code: integer {1..7}, columns: integer {0..65535},
+readonly func InstructionContractDestinationShapeLegal_TLOAD(
+    size_code: integer {1..12}, columns: integer {0..65535},
     valid_rows: integer {0..65535},
     valid_columns: integer {0..65535},
     data_type: TileDataType) => boolean

@@ -12,7 +12,8 @@ begin
     let started = ExecuteCommandInstruction(Zeros{64} + 0x00019181, 32);
     assert started == CommandExecution_Executed;
     var destination = source;
-    destination[11:9] = '111';
+    destination[18:15] = '0001';
+    destination[11:9] = '000';
     let zero_destination = ExecuteCommandInstruction(destination, 32);
     assert zero_destination == CommandExecution_Executed;
     assert BundleSharedBindingCount() == 0;

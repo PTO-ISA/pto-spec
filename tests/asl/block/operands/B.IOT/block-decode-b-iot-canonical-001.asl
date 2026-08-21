@@ -2,7 +2,7 @@
 // PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOT-DECODE-001","source":"asl/block/operands/B.IOT.asl","requirements":["PTO-INST-BLOCK-B-IOT"],"kind":"decode-positive","summary":"canonical B.IOT catalog and ASL contract remain aligned","pass_condition":"all canonical decode and contract assertions hold","related_sources":[]}
 func main() => integer
 begin
-    assert DecodeCommandForm('0000000000000000000000000000000000000000000000000101001000010011', 32) == 8;
+    assert DecodeCommandForm('0000000000000000000000000000000000000000000000001101000000010011', 32) == 8;
     assert CommandOperationOfForm(8) == CommandOperation_b_iot_32_10db6db84f5d;
     assert CommandHandlerOfForm(8) == CommandHandler_BindBundleTileIO;
     assert InstructionContractMatches_B_IOT(CommandOperationOfForm(8));
@@ -12,7 +12,7 @@ begin
     assert CommandHandlerOfForm(9) == CommandHandler_BindBundleTileIO;
     assert InstructionContractMatches_B_IOT(CommandOperationOfForm(9));
     assert InstructionContractHandler_B_IOT() == CommandHandler_BindBundleTileIO;
-    assert DecodeCommandForm('0000000000000000000000000000000000000000000000000100001000010011', 32) == 10;
+    assert DecodeCommandForm('0000000000000000000000000000000000000000000000001100000000010011', 32) == 10;
     assert CommandOperationOfForm(10) == CommandOperation_b_iot_32_8b8bce6bffe8;
     assert CommandHandlerOfForm(10) == CommandHandler_BindBundleTileIO;
     assert InstructionContractMatches_B_IOT(CommandOperationOfForm(10));
@@ -22,7 +22,7 @@ begin
     assert CommandHandlerOfForm(11) == CommandHandler_BindBundleTileIO;
     assert InstructionContractMatches_B_IOT(CommandOperationOfForm(11));
     assert InstructionContractHandler_B_IOT() == CommandHandler_BindBundleTileIO;
-    assert DecodeCommandForm('0000000000000000000000000000000000000000000000000110001000010011', 32) == 12;
+    assert DecodeCommandForm('0000000000000000000000000000000000000000000000001110000000010011', 32) == 12;
     assert CommandOperationOfForm(12) == CommandOperation_b_iot_32_efa0fe3fe49a;
     assert CommandHandlerOfForm(12) == CommandHandler_BindBundleTileIO;
     assert InstructionContractMatches_B_IOT(CommandOperationOfForm(12));

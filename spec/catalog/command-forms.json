@@ -832,13 +832,12 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<TSize>",
+      "asm": "B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<SizeCode>",
       "constraints": [
         {
-          "field": "PE_MASK",
+          "field": "SizeCode",
           "operator": "one-of",
           "values": [
-            0,
             1,
             2,
             3,
@@ -848,18 +847,14 @@
             7,
             8,
             9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15
+            10
           ]
         },
         {
-          "field": "TSize",
+          "field": "PEMode",
           "operator": "one-of",
           "values": [
+            0,
             1,
             2,
             3,
@@ -915,7 +910,7 @@
           "width": 1
         },
         {
-          "name": "PE_MASK",
+          "name": "SizeCode",
           "pieces": [
             {
               "instruction_lsb": 15,
@@ -927,7 +922,7 @@
           "width": 4
         },
         {
-          "name": "TSize",
+          "name": "PEMode",
           "pieces": [
             {
               "instruction_lsb": 9,
@@ -957,14 +952,14 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mask; L terminates only that sequence and never releases a source.",
+      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
       "status": "accepted"
     },
     {
       "asm": "B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>",
       "constraints": [
         {
-          "field": "PE_MASK",
+          "field": "PEMode",
           "operator": "one-of",
           "values": [
             0,
@@ -974,22 +969,14 @@
             4,
             5,
             6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15
+            7
           ]
         }
       ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0x00007e7f",
+          "mask": "0x0007f07f",
           "match": "0x00004013",
           "width_bits": 32
         }
@@ -1033,16 +1020,16 @@
           "width": 1
         },
         {
-          "name": "PE_MASK",
+          "name": "PEMode",
           "pieces": [
             {
-              "instruction_lsb": 15,
+              "instruction_lsb": 9,
               "value_lsb": 0,
-              "width": 4
+              "width": 3
             }
           ],
           "signedness": "encoding-defined",
-          "width": 4
+          "width": 3
         }
       ],
       "form_id": "b_iot_32_2c07e7177fad",
@@ -1051,17 +1038,16 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mask; L terminates only that sequence and never releases a source.",
+      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
       "status": "accepted"
     },
     {
-      "asm": "B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>, ->DstTile<TSize>",
+      "asm": "B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>, ->DstTile<SizeCode>",
       "constraints": [
         {
-          "field": "PE_MASK",
+          "field": "SizeCode",
           "operator": "one-of",
           "values": [
-            0,
             1,
             2,
             3,
@@ -1071,18 +1057,14 @@
             7,
             8,
             9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15
+            10
           ]
         },
         {
-          "field": "TSize",
+          "field": "PEMode",
           "operator": "one-of",
           "values": [
+            0,
             1,
             2,
             3,
@@ -1150,7 +1132,7 @@
           "width": 1
         },
         {
-          "name": "PE_MASK",
+          "name": "SizeCode",
           "pieces": [
             {
               "instruction_lsb": 15,
@@ -1162,7 +1144,7 @@
           "width": 4
         },
         {
-          "name": "TSize",
+          "name": "PEMode",
           "pieces": [
             {
               "instruction_lsb": 9,
@@ -1192,14 +1174,14 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mask; L terminates only that sequence and never releases a source.",
+      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
       "status": "accepted"
     },
     {
       "asm": "B.IOT SrcTile0, mask=PE_MASK, <last>",
       "constraints": [
         {
-          "field": "PE_MASK",
+          "field": "PEMode",
           "operator": "one-of",
           "values": [
             0,
@@ -1209,22 +1191,14 @@
             4,
             5,
             6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15
+            7
           ]
         }
       ],
       "encoding": [
         {
           "index": 0,
-          "mask": "0xfc007e7f",
+          "mask": "0xfc07f07f",
           "match": "0x00005013",
           "width_bits": 32
         }
@@ -1256,16 +1230,16 @@
           "width": 1
         },
         {
-          "name": "PE_MASK",
+          "name": "PEMode",
           "pieces": [
             {
-              "instruction_lsb": 15,
+              "instruction_lsb": 9,
               "value_lsb": 0,
-              "width": 4
+              "width": 3
             }
           ],
           "signedness": "encoding-defined",
-          "width": 4
+          "width": 3
         }
       ],
       "form_id": "b_iot_32_c11eb189dd83",
@@ -1274,17 +1248,16 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mask; L terminates only that sequence and never releases a source.",
+      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
       "status": "accepted"
     },
     {
-      "asm": "B.IOT mask=PE_MASK, <last>, ->DstTile<TSize>",
+      "asm": "B.IOT mask=PE_MASK, <last>, ->DstTile<SizeCode>",
       "constraints": [
         {
-          "field": "PE_MASK",
+          "field": "SizeCode",
           "operator": "one-of",
           "values": [
-            0,
             1,
             2,
             3,
@@ -1294,18 +1267,14 @@
             7,
             8,
             9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15
+            10
           ]
         },
         {
-          "field": "TSize",
+          "field": "PEMode",
           "operator": "one-of",
           "values": [
+            0,
             1,
             2,
             3,
@@ -1349,7 +1318,7 @@
           "width": 1
         },
         {
-          "name": "PE_MASK",
+          "name": "SizeCode",
           "pieces": [
             {
               "instruction_lsb": 15,
@@ -1361,7 +1330,7 @@
           "width": 4
         },
         {
-          "name": "TSize",
+          "name": "PEMode",
           "pieces": [
             {
               "instruction_lsb": 9,
@@ -1391,7 +1360,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mask; L terminates only that sequence and never releases a source.",
+      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
       "status": "accepted"
     },
     {
@@ -3566,8 +3535,42 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOS S<SharedTID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTID><TSize>",
-      "constraints": [],
+      "asm": "B.IOS S<SharedTID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTID><SizeCode>",
+      "constraints": [
+        {
+          "field": "SizeCode",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        {
+          "field": "PEMode",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -3591,7 +3594,7 @@
           "width": 8
         },
         {
-          "name": "PE_MASK",
+          "name": "SizeCode",
           "pieces": [
             {
               "instruction_lsb": 15,
@@ -3603,7 +3606,7 @@
           "width": 4
         },
         {
-          "name": "TSize",
+          "name": "PEMode",
           "pieces": [
             {
               "instruction_lsb": 9,
@@ -3621,7 +3624,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleSharedIO",
-      "semantic_summary": "Binds one ordered absolute Core-private Shared register S0..S255 as a source or destination with a common four-PE participation mask.",
+      "semantic_summary": "Binds one ordered absolute Core-private Shared register S0..S255 as a source or destination with a common four-PE participation mode decoded to a fixed mask.",
       "status": "accepted"
     },
     {
@@ -5490,12 +5493,12 @@
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",
       "narrow_form_id": "b_iot_32_c11eb189dd83",
-      "reason": "source-only form fixes TSize to zero; destination form requires TSize 1..7 and a 2-bit DstTile"
+      "reason": "source-only form fixes SizeCode to zero; destination form requires SizeCode 1..10 and a 2-bit DstTile"
     },
     {
       "broad_form_id": "b_iot_32_8b8bce6bffe8",
       "narrow_form_id": "b_iot_32_2c07e7177fad",
-      "reason": "source-only form fixes TSize to zero; destination form requires TSize 1..7 and a 2-bit DstTile"
+      "reason": "source-only form fixes SizeCode to zero; destination form requires SizeCode 1..10 and a 2-bit DstTile"
     },
     {
       "broad_form_id": "c_bstart_std_16_8b40f078c14a",

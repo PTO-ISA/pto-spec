@@ -11,7 +11,7 @@ begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
     instruction[18:15] = '0011';
-    instruction[11:9] = '011';
+    instruction[11:9] = '101';
     return instruction;
 end;
 
@@ -49,12 +49,12 @@ begin
 
     let shared = SharedTileRecord(shared_id);
     assert shared.descriptor_valid;
-    assert shared.allocation_mask == '0011';
-    assert shared.initialized_mask == '0011';
+    assert shared.allocation_mask == '1100';
+    assert shared.initialized_mask == '1100';
     assert ReadSharedTileWord(shared_id, 0) == Zeros{PTO_XLEN} + 0x11;
-    assert ReadSharedTileWord(shared_id, 32 as ModelTileElementIndex) ==
+    assert ReadSharedTileWord(shared_id, 32 as PackedTileElementIndex) ==
         Zeros{PTO_XLEN} + 0x22;
-    assert ReadSharedTileWord(shared_id, 64 as ModelTileElementIndex) ==
-        UndefinedSharedTileWord(shared_id, 64 as ModelTileElementIndex);
+    assert ReadSharedTileWord(shared_id, 64 as PackedTileElementIndex) ==
+        UndefinedSharedTileWord(shared_id, 64 as PackedTileElementIndex);
     return 0;
 end;

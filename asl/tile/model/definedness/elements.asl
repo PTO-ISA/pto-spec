@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","surface":"tile","classification":["model","definedness","elements"],"depends_on":["PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","PTO-TILE-MODEL-STATE-ALLOCATION"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","surface":"tile","classification":["model","definedness","elements"],"depends_on":["PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","PTO-TILE-MODEL-STATE-ALLOCATION","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
 pure func TileFractalInnerElements(
     data_type: TileDataType) => integer {4,8,16,32,64}
 begin
@@ -7,7 +7,6 @@ begin
     return (256 DIV TileElementBits(data_type))
         as integer {4,8,16,32,64};
 end;
-
 readonly func TileLayoutShapeLegal(tile: TileInfo) => boolean
 begin
     if tile.layout == TileLayout_ImplementationDefined then return FALSE; end;
@@ -19,12 +18,10 @@ begin
     return tile.rows MOD 16 == 0 &&
            tile.columns MOD inner_elements == 0;
 end;
-
 readonly func TileGenericIndexingPermitted(tile: TileInfo) => boolean
 begin
     return !TileLayoutIsCube(tile.layout) && TileLayoutShapeLegal(tile);
 end;
-
 readonly func TileLinearIndex(tile: TileInfo, row: integer {0..65535},
                      column: integer {0..65535}) => ModelTileElementIndex
 begin
@@ -65,7 +62,6 @@ begin
     assert index < PTO_MODEL_TILE_ELEMENTS;
     return index as ModelTileElementIndex;
 end;
-
 readonly func TileStorageIndex(tile: TileInfo,
                                row: integer {0..65535},
                                column: integer {0..65535})
@@ -91,6 +87,16 @@ begin
     return TileCubePayloadIndex(tile, row, column);
 end;
 
+readonly func TileLogicalLinearIndex(tile: TileInfo,
+                                     row: integer {0..65535},
+                                     column: integer {0..65535})
+                                     => PackedTileElementIndex
+begin
+    if PackedTileDataTypeIsFourBit(tile.data_type) then
+        return TilePackedLinearIndex(tile, row, column);
+    end;
+    return TileStorageIndex(tile, row, column) as PackedTileElementIndex;
+end;
 pure func TileElementBytes(data_type: TileDataType) => integer {1,2,4,8}
 begin
     case data_type of
@@ -108,27 +114,23 @@ begin
              TileDataType_FP64 => return 8;
     end;
 end;
-
 pure func TileDataTypeIsSigned(data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_S8 || data_type == TileDataType_S16 ||
            data_type == TileDataType_S32 || data_type == TileDataType_S64 ||
            data_type == TileDataType_S4X2;
 end;
-
 pure func TileDataTypeIsUnsignedInteger(data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_U8 || data_type == TileDataType_U16 ||
            data_type == TileDataType_U32 || data_type == TileDataType_U64 ||
            data_type == TileDataType_U4X2;
 end;
-
 pure func TileDataTypeIsInteger(data_type: TileDataType) => boolean
 begin
     return TileDataTypeIsSigned(data_type) ||
            TileDataTypeIsUnsignedInteger(data_type);
 end;
-
 pure func IndexedTLSUTransferDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
@@ -138,13 +140,11 @@ begin
     // by IndexedTLSUIndexDataTypeLegal.
     return !TileDataTypeIsFourBit(data_type);
 end;
-
 pure func IndexedTLSUIndexDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
     return TileDataTypeIsInteger(data_type);
 end;
-
 pure func TileDataTypeIsFloating(data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_FP64 ||
@@ -158,7 +158,6 @@ begin
            data_type == TileDataType_E8M0 ||
            data_type == TileDataType_HiF4X2;
 end;
-
 pure func TileMatrixAccumulatorDataType(data_type: TileDataType) => TileDataType
 begin
     if TileDataTypeIsSigned(data_type) then return TileDataType_S32; end;
@@ -167,7 +166,6 @@ begin
     end;
     return TileDataType_FP32;
 end;
-
 pure func TilePadValueForDataType(pad_value: TilePadValue,
                                   data_type: TileDataType) => Word
 begin
@@ -234,17 +232,19 @@ end;
 readonly func ReadTileElement(index: TileIndex, row: integer {0..65535},
                      column: integer {0..65535}) => Word
 begin
-    let element = TileStorageIndex(_Tiles[[index]], row, column);
-    assert _Tiles[[index]].defined_elements[element] == '1';
-    return _Tiles[[index]].payload[[element]];
+    let tile = _Tiles[[index]];
+    let element = TileLogicalLinearIndex(tile, row, column);
+    assert TileLogicalElementDefined(tile, element);
+    return TileReadLogicalElement(tile, element);
 end;
 
 readonly func TileElementDefined(index: TileIndex,
                                  row: integer {0..65535},
                                  column: integer {0..65535}) => boolean
 begin
-    let element = TileStorageIndex(_Tiles[[index]], row, column);
-    return _Tiles[[index]].defined_elements[element] == '1';
+    let tile = _Tiles[[index]];
+    let element = TileLogicalLinearIndex(tile, row, column);
+    return TileLogicalElementDefined(tile, element);
 end;
 
 readonly func TilePredicateValuesLegal(index: TileIndex) => boolean
@@ -300,7 +300,7 @@ begin
     if result.defined_elements[logical] == '0' then
         result.defined_elements[logical] = '1';
         result.defined_valid_elements =
-            (result.defined_valid_elements + 1) as integer {0..16384};
+            (result.defined_valid_elements + 1) as integer {0..524288};
     end;
     result.contents_defined = result.defined_valid_elements ==
         result.valid_rows * result.valid_columns;
@@ -389,13 +389,12 @@ begin
     let payload = tile.payload;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(
-                tile,
-                row as integer {0..65535},
+            let element = TileLogicalLinearIndex(
+                tile, row as integer {0..65535},
                 column as integer {0..65535});
             if !TileNumericEncodingValid(
                 tile.data_type,
-                payload[[element]]) then
+                TileReadLogicalElement(tile, element)) then
                 return FALSE;
             end;
         end;
@@ -406,17 +405,17 @@ end;
 func WriteTileElement(index: TileIndex, row: integer {0..65535},
                       column: integer {0..65535}, value: Word)
 begin
-    let element = TileStorageIndex(_Tiles[[index]], row, column);
-    _Tiles[[index]].payload[[element]] = value;
-    if _Tiles[[index]].defined_elements[element] == '0' then
-        _Tiles[[index]].defined_elements[element] = '1';
+    let tile = _Tiles[[index]];
+    let element = TileLogicalLinearIndex(tile, row, column);
+    let was_defined = TileLogicalElementDefined(tile, element);
+    _Tiles[[index]] = TileInfoWithLogicalElement(tile, element, value);
+    if !was_defined then
         if row < _Tiles[[index]].valid_rows &&
            column < _Tiles[[index]].valid_columns then
-            assert _Tiles[[index]].defined_valid_elements <
-                PTO_MODEL_TILE_ELEMENTS;
+            assert _Tiles[[index]].defined_valid_elements < 524288;
             _Tiles[[index]].defined_valid_elements =
                 (_Tiles[[index]].defined_valid_elements + 1)
-                    as integer {0..16384};
+                    as integer {0..524288};
         end;
     end;
     _Tiles[[index]].contents_defined =
@@ -427,16 +426,18 @@ end;
 func TileWithValidRegionDefined(tile: TileInfo) => TileInfo
 begin
     var result = tile;
-    for row = 0 to result.valid_rows - 1 looplimit 65536 do
+    for row = 0 to result.valid_rows - 1 looplimit 524288 do
         for column = 0 to result.valid_columns - 1 looplimit 65536 do
-            let element = TileStorageIndex(result,
-                row as integer {0..65535}, column as integer {0..65535});
-            result.defined_elements[element] = '1';
+            let element = TileLogicalLinearIndex(
+                result, row as integer {0..65535},
+                column as integer {0..65535});
+            result = TileInfoWithLogicalElement(result, element,
+                TileReadLogicalElement(result, element));
         end;
     end;
     result.defined_valid_elements =
         (result.valid_rows * result.valid_columns)
-            as integer {0..16384};
+            as integer {0..524288};
     result.contents_defined = TRUE;
     return result;
 end;
@@ -454,12 +455,11 @@ begin
     for row = 0 to result.rows - 1 looplimit 65536 do
         for column = 0 to result.columns - 1 looplimit 65536 do
             if row >= result.valid_rows || column >= result.valid_columns then
-                let element = TileStorageIndex(result,
-                    row as integer {0..65535},
+                let element = TileLogicalLinearIndex(
+                    result, row as integer {0..65535},
                     column as integer {0..65535});
-                result.payload[[element]] = padding;
-                result.defined_elements[element] =
-                    if padding_defined then '1' else '0';
+                result = TileInfoWithLogicalElementAndDefined(
+                    result, element, padding, padding_defined);
             end;
         end;
     end;
@@ -476,14 +476,17 @@ begin
     let tile = _Tiles[[index]];
     for row = 0 to tile.rows - 1 looplimit 65536 do
         for column = 0 to tile.columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[index]].defined_elements[element] = '1';
+            let element = TileLogicalLinearIndex(
+                tile, row as integer {0..65535},
+                column as integer {0..65535});
+            _Tiles[[index]] = TileInfoWithLogicalElement(
+                _Tiles[[index]], element,
+                TileReadLogicalElement(tile, element));
         end;
     end;
     _Tiles[[index]].defined_valid_elements =
         (tile.valid_rows * tile.valid_columns)
-            as integer {0..16384};
+                as integer {0..524288};
     _Tiles[[index]].contents_defined = TRUE;
 end;
 

@@ -9,13 +9,13 @@ begin
 end;
 
 pure func BundleTestSharedBindingV6(shared_id: bits(8),
-                                   tile_size: bits(3),
-                                   pe_mask: bits(4)) => bits(64)
+                                   size_code: bits(4),
+                                   pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = pe_mask;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
@@ -25,7 +25,7 @@ begin
     let started = ExecuteCommandInstruction(Zeros{64} + 0x00019181, 32);
     assert started == CommandExecution_Executed;
     let source = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8}, '000', '1111'), 32);
+        BundleTestSharedBindingV6(Zeros{8}, '0000', '111'), 32);
     assert source == CommandExecution_Executed;
     assert _BundleSharedBindings[[0]].valid;
     assert _BundleSharedBindings[[0]].shared_id == Zeros{8};
@@ -34,7 +34,7 @@ begin
     assert !_BundleSharedBindings[[0]].consumed;
 
     let duplicate = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8}, '000', '1111'), 32);
+        BundleTestSharedBindingV6(Zeros{8}, '0000', '111'), 32);
     assert duplicate == CommandExecution_Rejected;
     assert _LastFault == Fault_BundleControl;
 
@@ -42,29 +42,29 @@ begin
     let restarted = ExecuteCommandInstruction(Zeros{64} + 0x00019181, 32);
     assert restarted == CommandExecution_Executed;
     let destination = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 255, '111', '0011'), 32);
+        BundleTestSharedBindingV6(Zeros{8} + 255, '0111', '101'), 32);
     assert destination == CommandExecution_Executed;
     assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 255;
     assert _BundleSharedBindings[[0]].size_code == 7;
-    assert _BundleSharedBindings[[0]].pe_mask == '0011';
+    assert _BundleSharedBindings[[0]].pe_mask == '1100';
 
     var reserved19 = BundleTestSharedBindingV6(
-        Zeros{8} + 1, '001', '0001');
+        Zeros{8} + 1, '0001', '001');
     reserved19[19] = '1';
     assert DecodeCommandForm(reserved19, 32) == PTO_COMMAND_FORM_COUNT;
 
     var reserved31 = BundleTestSharedBindingV6(
-        Zeros{8} + 1, '001', '0001');
+        Zeros{8} + 1, '0001', '001');
     reserved31[31] = '1';
     assert DecodeCommandForm(reserved31, 32) == PTO_COMMAND_FORM_COUNT;
 
     var reserved8 = BundleTestSharedBindingV6(
-        Zeros{8} + 1, '001', '0001');
+        Zeros{8} + 1, '0001', '001');
     reserved8[8] = '1';
     assert DecodeCommandForm(reserved8, 32) == PTO_COMMAND_FORM_COUNT;
 
     var wrong_func3 = BundleTestSharedBindingV6(
-        Zeros{8} + 1, '001', '0001');
+        Zeros{8} + 1, '0001', '001');
     wrong_func3[14:12] = '010';
     assert DecodeCommandForm(wrong_func3, 32) == PTO_COMMAND_FORM_COUNT;
 

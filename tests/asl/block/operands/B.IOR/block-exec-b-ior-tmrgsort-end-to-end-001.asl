@@ -20,14 +20,14 @@ begin
     return instruction;
 end;
 
-pure func BundleTestTileSourceDestination(size: bits(3), destination: bits(2),
-                                          pe_mask: bits(4), source: bits(6),
+pure func BundleTestTileSourceDestination(size_code: bits(4), destination: bits(2),
+                                          pe_mode: bits(3), source: bits(6),
                                           last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[11:9] = size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[25:20] = source;
     instruction[19] = if last then '1' else '0';
     return instruction;
@@ -38,7 +38,8 @@ begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
     instruction[25:20] = source0;
     instruction[19] = if last then '1' else '0';
-    instruction[18:15] = '0001';
+    instruction[18:15] = Zeros{4};
+    instruction[11:9] = '001';
     return instruction;
 end;
 
@@ -74,7 +75,7 @@ begin
         let start = ExecuteCommandInstruction(
             BundleTestTEPLStart(Zeros{10} + 0x06d, Zeros{5} + 1), 32);
         let left = ExecuteCommandInstruction(BundleTestTileSourceDestination(
-            '001', '00', '0001', Zeros{6} + 16, FALSE), 32);
+            '0001', '00', '001', Zeros{6} + 16, FALSE), 32);
         let right = ExecuteCommandInstruction(BundleTestTileSource(
             Zeros{6} + 17, TRUE), 32);
         WriteGPR(6, Zeros{PTO_XLEN} + descending);
@@ -91,8 +92,8 @@ begin
         assert _BundleTileBindings[[0]].source0_valid;
         assert !_BundleTileBindings[[1]].destination_valid;
         assert _BundleTileBindings[[1]].source0_valid;
-        assert _BundleTileBindings[[0]].pe_mask == '0001';
-        assert _BundleTileBindings[[1]].pe_mask == '0001';
+        assert _BundleTileBindings[[0]].pe_mask == '1000';
+        assert _BundleTileBindings[[1]].pe_mask == '1000';
         assert TileSourceContentsDefined(16);
         assert TileSourceContentsDefined(17);
         assert _Tiles[[16]].data_type == TileDataType_FP32;

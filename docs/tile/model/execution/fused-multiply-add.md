@@ -123,23 +123,21 @@ begin
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
     let addend_tile = _Tiles[[addend]];
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
-    let addend_payload = addend_tile.payload;
     var result_tile = destination_tile;
     var flags = Zeros{5};
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(
+            let element = TileLogicalLinearIndex(
                 destination_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
             let (result, element_flags) = TileFixedFusedMultiplyAddValue(
                 destination_tile.data_type,
-                left_payload[[element]],
-                right_payload[[element]],
-                addend_payload[[element]]);
-            result_tile.payload[[element]] = result;
+                TileReadLogicalElement(left_tile, element),
+                TileReadLogicalElement(right_tile, element),
+                TileReadLogicalElement(addend_tile, element));
+            result_tile = TileInfoWithLogicalElement(result_tile, element,
+                result);
             flags = flags OR element_flags;
         end;
     end;
