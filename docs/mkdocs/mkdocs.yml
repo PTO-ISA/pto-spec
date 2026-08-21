@@ -1002,6 +1002,7 @@ nav:
           - "ADR 0070: GM/Local CUBE Layout Transport": status/decisions/0070-gm-local-cube-layout-transport.md
           - "ADR 0071: Local CUBE Matrix Operand Contract": status/decisions/0071-local-cube-matrix-operands.md
           - "ADR 0072: Cooperative Shared CUBE Inputs and Transpose": status/decisions/0072-cooperative-shared-cube-transpose.md
+          - "ADR 0073: CUBE Accumulator and Atomic Output Contract": status/decisions/0073-cube-accumulator-atomic-output.md
           - "ADR 0074: TLOAD/TSTORE GM Byte Row Stride": status/decisions/0074-tload-tstore-gm-byte-row-stride.md
       - Open:
           - "Open architecture questions": status/open/index.md
