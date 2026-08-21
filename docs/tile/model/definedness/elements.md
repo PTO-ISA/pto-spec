@@ -502,7 +502,6 @@ begin
                 as integer {0..524288};
     _Tiles[[index]].contents_defined = TRUE;
 end;
-
 readonly func TileShapesMatch(left: TileInfo, right: TileInfo) => boolean
 begin
     return left.rows == right.rows &&
