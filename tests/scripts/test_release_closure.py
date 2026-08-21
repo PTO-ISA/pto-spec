@@ -17,17 +17,17 @@ RELEASE_GENERATOR = ROOT / "scripts/generate-release-manifest"
 
 
 class ReleaseClosureTest(unittest.TestCase):
-    def test_release_identity_is_0590_and_owns_current_evidence(self) -> None:
+    def test_release_identity_is_0582_and_owns_0582_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
 
-        self.assertIn('architecture_version = "0.59.0"', specification)
+        self.assertIn('architecture_version = "0.58.2"', specification)
         self.assertIn(
-            'encoding_abi = "pto-isa-0.59.0-mode-function-v2"', specification
+            'encoding_abi = "pto-isa-0.58.2-mode-function-v1"', specification
         )
-        self.assertIn('RELEASE = "0.59.0"', generator)
+        self.assertIn('RELEASE = "0.58.2"', generator)
         self.assertIn(
-            'ENCODING_ABI = "pto-isa-0.59.0-mode-function-v2"', generator
+            'ENCODING_ABI = "pto-isa-0.58.2-mode-function-v1"', generator
         )
         self.assertIn("pto-isa-0582-encoding-totality.json", generator)
 
@@ -65,7 +65,7 @@ class ReleaseClosureTest(unittest.TestCase):
             "\t./scripts/generate-release-traceability-readiness --check\n"
             "\t./scripts/generate-release-gate-readiness --check\n"
             "\t./scripts/check-release-closure\n"
-            "\t./scripts/check-binary-closure\n"
+            "\t./scripts/check-binary-closure --release\n"
             "\t./scripts/check-release-manifest\n",
             makefile,
         )
