@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-STREAM-001","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"B.IOS records one ordered four-entry stream of unique Shared registers.","pass_condition":"A duplicate or fifth effective Shared binding rejects while preserving the accepted stream.","related_sources":["asl/block/model/operands/shared-bindings.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-STREAM-001","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS records one ordered four-entry stream of unique Shared registers.","pass_condition":"A duplicate or fifth effective Shared binding rejects while preserving the accepted stream.","related_sources":["asl/block/model/operands/shared-bindings.asl"]}
 pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;

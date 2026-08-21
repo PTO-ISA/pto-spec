@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-ENCODING-002","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"B.IOS accepts absolute source and destination bindings while preserving reserved-bit ownership.","pass_condition":"S0 and S255 bind with decoded SizeCode and PEMode fields, reserved bits reject, and the retired compressed word remains owned only by C.B.DIMI.","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/schema/profile-encoding.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-ENCODING-002","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS accepts absolute source and destination bindings while preserving reserved-bit ownership.","pass_condition":"S0 and S255 bind with decoded SizeCode and PEMode fields, reserved bits reject, and the retired compressed word remains owned only by C.B.DIMI.","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/schema/profile-encoding.asl"]}
 pure func BundleTestRetiredCompressedSharedBinding(shared_id: bits(8))
         => bits(64)
 begin

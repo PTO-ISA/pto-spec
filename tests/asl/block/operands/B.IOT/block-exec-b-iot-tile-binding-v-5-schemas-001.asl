@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOT-SCHEMAS-001","source":"asl/block/operands/B.IOT.asl","requirements":["PTO-INST-BLOCK-B-IOT"],"kind":"execution","summary":"B.IOT enforces operation-specific source and destination schemas.","pass_condition":"Local-to-Shared roles, common masks, source-only size zero, and partial GMOV participation are accepted or rejected before effects as specified.","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/operands/tile-bindings.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOT-SCHEMAS-001","source":"asl/block/operands/B.IOT.asl","requirements":["PTO-INST-BLOCK-B-IOT"],"kind":"execution","summary":"Decoded B.IOT enforces operation-specific source and destination schemas.","pass_condition":"Local-to-Shared roles, common masks, source-only size zero, and partial GMOV participation are accepted or rejected before effects as specified.","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/operands/tile-bindings.asl"]}
 pure func BundleTestTEPLStart(selector: bits(10), data_type: bits(5))
         => bits(64)
 begin
