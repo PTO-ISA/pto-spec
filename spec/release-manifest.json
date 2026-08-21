@@ -382,7 +382,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TGEMV.ACC.asl",
-      "sha256": "8a647cafdafb886b146c2128138f7133d00c8c8e65b9c317430c8570f313baf7"
+      "sha256": "00848b8d59af71699b2b5dd9de49de27afc8bd87a363da8a5a05594cc8945f63"
     },
     {
       "path": "asl/block/execution/BSTART.TGEMV.BIAS.asl",
@@ -394,7 +394,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TGEMVMX.ACC.asl",
-      "sha256": "40196251450b7fb82b35b39ef00cf9ca0cd08acb3defd51e9d79f3daf26b47db"
+      "sha256": "4f1a50a2c78b78b2ff316c290b1af5edbceb312cd403091fee7331c7aac909cd"
     },
     {
       "path": "asl/block/execution/BSTART.TGEMVMX.BIAS.asl",
@@ -410,7 +410,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TMATMUL.ACC.asl",
-      "sha256": "2b3a57576197523dcb26cf8bd2c4938f993a62f532174f52c8f01ea545e09851"
+      "sha256": "05f23f4028b3a57dbbe0fd91fa8964d5d95f295bfc3305e0413a5c808912614b"
     },
     {
       "path": "asl/block/execution/BSTART.TMATMUL.BIAS.asl",
@@ -422,7 +422,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TMATMULMX.ACC.asl",
-      "sha256": "ccca4825c053e6b492c4c331bef22b0bb0b2cfe03e71317c15c46773be414e1d"
+      "sha256": "5b940573b1ffef535d6d8d0f1827dda72939fe70e196887d9223b5799bc87b78"
     },
     {
       "path": "asl/block/execution/BSTART.TMATMULMX.BIAS.asl",
@@ -534,7 +534,7 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "db9d836fe184e347ea106f6967de5133df8e9ced38d2396fb31663f749993930"
+      "sha256": "047c7e0c445592d9a4504ebfbd78bdd2cd42d10f1cb991ee4823dfcef2503545"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
@@ -678,7 +678,7 @@
     },
     {
       "path": "asl/block/model/operands/tile-bindings.asl",
-      "sha256": "d09dfd587eb0286c69626ee09415f39101171032ee0a7f09d712c9ccaa6f7603"
+      "sha256": "941d017a2313b96fb07a8c48b49f6e8bb529c4ff23a9db503d743ae9dfcec6ef"
     },
     {
       "path": "asl/block/model/schema/attributes.asl",
@@ -2854,7 +2854,7 @@
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl",
-      "sha256": "f3110add5df6e299cc74b9295e6b0f9131e3e02256afd71d4fe0e1f3f54323b6"
+      "sha256": "063702fae9deff27e0dd871c4a7a2ec3740079dd1ef33ee43c67f1af8aa24596"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
@@ -2866,7 +2866,7 @@
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.asl",
-      "sha256": "6ecb816b8a5b97e6a71cea79de707496f0271f44c98089d92006cd8fdcfd36ee"
+      "sha256": "2c0288b298c6a928fea015181516aad161175b60ed2789e0149a3356bd657f22"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
@@ -2878,7 +2878,7 @@
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.asl",
-      "sha256": "38f1e3d7342aa8bddf9180a29255d37dca47abf0f35735f1ca113e488125103d"
+      "sha256": "8329b166d07df01140a62ce55b138f4009aa23ad8d7fef6d04db6ce5e19e9cfb"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
@@ -2890,7 +2890,7 @@
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC.asl",
-      "sha256": "9a36486c4b56f7b205dc1d8a838adb6f9a8b74eaa086256956c33da14f89b12d"
+      "sha256": "eff7bcecc5036ec1e05ab9d47b5fefb734f5b266d3cd735d7a0d99cb58ba3e37"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
@@ -3086,7 +3086,7 @@
     },
     {
       "path": "asl/tile/model/legality/matrix-shape.asl",
-      "sha256": "e409b7bfbdea4de5bec3d6d8cf70b671fdf7a688e42c135eac6f2d21d08c3664"
+      "sha256": "c94e156dd790cc31f6d85122571ddad1cf8622e363f440cb90cf6400a0f04b25"
     },
     {
       "path": "asl/tile/model/legality/memory-schema.asl",
@@ -3390,15 +3390,15 @@
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "fe7b307f01f5b390d2530b8ce8d55e3ed92df212113ab34462b0e00ba5a208ae"
+      "sha256": "3afccd387117bf2f5cbf8dbfe272392ea30d77e52cebc209bebcc339b67292ca"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "ca38c412fe7e906bb42b3bcb0b6fbb93b53cf94d78b6beeb2f2f649a7263d864"
+      "sha256": "1d5faaa5e2e7333da95e4475ec879df2b8840ba789e0dcc406d5f74cc7a7ef1d"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "9e2eba9ed16aa3466242f0a2065fcf21267362a81689650b3c9861e8c3a7adb1"
+      "sha256": "127f9883c100cb34becd613e954d23b7558efa7b0282ec617f368cadd14ff671"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3436,7 +3436,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "0a92ef28f0e6434ead85fdb858d7517db57e97066d20c03e10018749db6383fa",
+  "content_sha256": "eeed678c3a95d1505adc07f9d1a8fe036f0be610127e4fd7351ea1c70ebe32f2",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3943,7 +3943,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TGEMV.ACC.md",
-      "sha256": "72fd7d7a971b8a19cd547d255cf4ac00dd8db1099277a513084bd750fedc5fd4"
+      "sha256": "3fa2437ba70872c18a8f2cc24e1c3cd4d29f474a1038ea5379b2de56ef1713e9"
     },
     {
       "kind": "generated-documentation",
@@ -3958,7 +3958,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TGEMVMX.ACC.md",
-      "sha256": "42f757ee7985980034ce1b27ba922df613f01dac6446c46293d2d4af7382ae38"
+      "sha256": "78123e25981f26668789a2e274f257f20efb158da324709ac3c33099a9dbea60"
     },
     {
       "kind": "generated-documentation",
@@ -3978,7 +3978,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMUL.ACC.md",
-      "sha256": "f30e833a4704ccada2e9e25bfc19be126ffb45b008dbb5ad0d50e23686e9de50"
+      "sha256": "db01c1dd9e9b6d556c484dc5fcc1633a1ee202fe3de95365e88347507b8d318f"
     },
     {
       "kind": "generated-documentation",
@@ -3993,7 +3993,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMULMX.ACC.md",
-      "sha256": "5f394a694e6bcd9f72c2f5f91fe4d882b2c7eaeff3f03fd28f881d6f65d4e093"
+      "sha256": "d5bfdd94d43264234a554fbfa6e3e389b372865da560ad6e38980d72ba3afdb9"
     },
     {
       "kind": "generated-documentation",
@@ -4133,7 +4133,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/cube-tmatmul.md",
-      "sha256": "ef575ea5046fa2375599bd5493a04ac56861d5ea856d0a3f8639d0411cfe6077"
+      "sha256": "be0dae8e211f0da8200b06480de3ecda2e0073d276b11ef444033dd5493c2e15"
     },
     {
       "kind": "generated-documentation",
@@ -4313,7 +4313,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/operands/tile-bindings.md",
-      "sha256": "41791d3b6030888c40fddca0feb2db25f9dc364ce3fa3ff2f905cbee81f3f606"
+      "sha256": "c8284692e195c793784b0e1c4c5a655c46e6ff8af71324302d6bbb3516b40050"
     },
     {
       "kind": "generated-documentation",
@@ -7033,7 +7033,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.md",
-      "sha256": "d48f07cbd9732b8e6d0751322cb65689e8dcafbfbf294765df2fa2a99f0ec1c3"
+      "sha256": "d1b39fb12316316f4860f786f302283c8c0d5a5a1953c8092a381ecf31339418"
     },
     {
       "kind": "generated-documentation",
@@ -7048,7 +7048,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.md",
-      "sha256": "0bd23a61ffa58082017e5eb98ffdb9697be9e53b8af35c592831bb992cee1e03"
+      "sha256": "8fc71392eb50311cb3222c4cbc027d3eb9f88c44dbb1ac8ab789478231304003"
     },
     {
       "kind": "generated-documentation",
@@ -7063,7 +7063,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.md",
-      "sha256": "f943797b5c3c519ac312ebc02cd59c07c1ba79888e33c58fb5e7d01095327b1e"
+      "sha256": "e2d076c291bf0d95bf6129e91826dd1046385f0d5273de574c382a95f73ee760"
     },
     {
       "kind": "generated-documentation",
@@ -7078,7 +7078,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC.md",
-      "sha256": "3921b3ba3828136af0f50dbba6afda7116536a8f78e141615982a90ef1b2b44a"
+      "sha256": "586a87ae7c8641cda03e6134c4d61666f91588206704ca4012a567f42afe20d2"
     },
     {
       "kind": "generated-documentation",
@@ -7323,7 +7323,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/matrix-shape.md",
-      "sha256": "289c3ad2812fc291b48b760a803c6a175e903fec59b7d24e47984d4ba8c72624"
+      "sha256": "fc608c6262313d219984da2005e75bdbb4138def381f4458d002689a069a57a7"
     },
     {
       "kind": "generated-documentation",

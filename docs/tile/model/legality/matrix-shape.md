@@ -395,7 +395,8 @@ readonly func TileOperandsLegal_TMATMUL_ACC(
 begin
     let output_converted = _BundleFixedPointAttributes.valid &&
         UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0;
-    return TileOperandsLegal_TMATMUL(destination, left, right) &&
+    return destination != accumulator &&
+           TileOperandsLegal_TMATMUL(destination, left, right) &&
            TileCubeDescriptorLegal(_Tiles[[accumulator]]) &&
            _Tiles[[accumulator]].contents_defined &&
            TileMatrixAccumulatorDestinationLegal(accumulator, left, right) &&
@@ -430,7 +431,8 @@ readonly func TileOperandsLegal_TMATMUL_MX_ACC(
 begin
     let output_converted = _BundleFixedPointAttributes.valid &&
         UInt(_BundleFixedPointAttributes.pre_quant_mode) != 0;
-    return TileOperandsLegal_TMATMUL_MX(
+    return destination != accumulator &&
+           TileOperandsLegal_TMATMUL_MX(
                destination, left, left_scale, right, right_scale) &&
            TileCubeDescriptorLegal(_Tiles[[accumulator]]) &&
            _Tiles[[accumulator]].contents_defined &&
