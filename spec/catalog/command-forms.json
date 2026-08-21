@@ -1,6 +1,6 @@
 {
   "form_count": 74,
-  "form_constraint_count": 79,
+  "form_constraint_count": 81,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
