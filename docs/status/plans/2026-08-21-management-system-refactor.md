@@ -1,7 +1,5 @@
 # PTO Specification Management System Refactor Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Replace PTO's remaining PRD/PD decision namespaces with one validated ADR system, derive implementation and release status from repository facts, restore a ten-minute P95 pull-request lane, add non-authoritative nightly full validation, and make the repository easier to navigate without changing ISA semantics.
 
 **Architecture:** ADRs become the sole human-authored architecture-evolution records while ASL and NDF remain the sole current normative semantic source. Python standard-library tools parse JSON-form YAML frontmatter, validate the ADR graph, generate decision/open/readiness indexes, and feed existing release closure; pull-request, nightly, and release workflows remain distinct commit-scoped evidence lanes.
@@ -1389,7 +1387,7 @@ gh pr create --repo PTO-ISA/pto-spec \
   --base main \
   --head codex/management-system-refactor \
   --title "Refactor PTO specification management" \
-  --body-file .superpowers/sdd/2026-08-21-management-system-refactor/pull-request.md
+  --fill
 gh pr checks --repo PTO-ISA/pto-spec --watch
 gh pr merge --repo PTO-ISA/pto-spec --squash --delete-branch
 ```

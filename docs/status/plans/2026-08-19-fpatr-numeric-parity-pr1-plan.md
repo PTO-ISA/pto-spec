@@ -1,7 +1,5 @@
 # FPATR Numeric Parity PR1 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Correct the bit-exact numeric, legality, fault, and atomic-publication behavior of the existing twenty-seven `B.FPATR` modes without changing any command encoding or operand role.
 
 **Architecture:** Keep `B.FPATR` as the required Matrix post-process anchor and retain its mask, match, fields, and closed mode table. Refactor the profile hook into explicit source classification, sign-dependent multiplier selection, mode-specific intermediate rounding/saturation, offset, and final encoding; keep raw RowMax/GroupMax evaluation and complete output publication in the Tile layer.

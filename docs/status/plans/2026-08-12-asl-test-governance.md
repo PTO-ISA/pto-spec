@@ -1,7 +1,5 @@
 # Scheme A ASL Test Governance Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task by task.
-
 **Goal:** Enforce scheme A: all ASL tests live in the exact mirrored `tests/asl/` hierarchy, use concise structured filenames, explain their purpose, and keep normative ASL implementations readable.
 
 **Architecture:** Extend the existing `scripts/asl_tests.py` ownership validator rather than creating a second policy layer. Extend `scripts/asl_units.py` for the source readability invariant. Make `scripts/generate-mnemonic-avs.py` emit the same canonical names, then perform one deterministic repository-wide rename without retaining legacy aliases.
