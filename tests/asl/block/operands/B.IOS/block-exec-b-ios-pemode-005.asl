@@ -1,10 +1,10 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-BINDER-IOS-PEMODE-MATRIX-005","source":"asl/block/model/dispatch/commands.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS source paths exercise all eight PEMode encodings.","pass_condition":"Every decoded B.IOS source PEMode produces the fixed mask table, with encoded zero as the strict no-effect path and SizeCode zero retained.","related_sources":["asl/block/model/schema/profile-encoding.asl","asl/block/model/operands/shared-bindings.asl"]}
-pure func BinderMatrixStart() => bits(64)
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-PEMODE-005","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"Decoded B.IOS source paths exercise all eight PEMode encodings.","pass_condition":"Every mode produces its fixed four-bit semantic mask, while encoded mode zero has no binding effect and retains source-only SizeCode zero.","related_sources":["asl/block/model/schema/profile-encoding.asl","asl/block/model/operands/shared-bindings.asl"]}
+pure func BIOSPEModeStart() => bits(64)
 begin
     return Zeros{64} + 0x00011181;
 end;
 
-pure func BinderMatrixShared(pe_mode: bits(3), shared_id: bits(8)) => bits(64)
+pure func BIOSPEModeSource(pe_mode: bits(3), shared_id: bits(8)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
@@ -18,9 +18,9 @@ begin
     for mode = 0 to 7 do
         let encoded_mode = (Zeros{3} + mode) as bits(3);
         ResetProfileState();
-        let started = ExecuteCommandInstruction(BinderMatrixStart(), 32);
+        let started = ExecuteCommandInstruction(BIOSPEModeStart(), 32);
         let status = ExecuteCommandInstruction(
-            BinderMatrixShared(encoded_mode,
+            BIOSPEModeSource(encoded_mode,
                 (Zeros{8} + mode) as bits(8)), 32);
         assert started == CommandExecution_Executed;
         assert status == CommandExecution_Executed;
