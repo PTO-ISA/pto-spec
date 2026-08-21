@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import resource
 import stat
 import subprocess
 import tempfile
@@ -80,6 +81,34 @@ esac
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout, "aslref:--type-check-strict fixture.asl\n")
+
+    def test_prepared_launcher_raises_soft_stack_to_hard_limit(self) -> None:
+        cache = self.temp / "stack-cache"
+        (cache / ".git").mkdir(parents=True)
+        binary = cache / "_build" / "default" / "asllib" / "aslref.exe"
+        binary.parent.mkdir(parents=True)
+        self._write_executable(
+            binary,
+            "#!/usr/bin/env bash\nprintf 'stack:%s\\n' \"$(ulimit -s)\"\n",
+        )
+
+        result = subprocess.run(
+            [str(LAUNCHER), "--type-check-strict", "fixture.asl"],
+            cwd=ROOT,
+            env={**self.env, "PTO_ASLREF_ROOT": str(cache)},
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        hard_limit = resource.getrlimit(resource.RLIMIT_STACK)[1]
+        expected = (
+            "unlimited"
+            if hard_limit == resource.RLIM_INFINITY
+            else str(hard_limit // 1024)
+        )
+        self.assertEqual(result.stdout, f"stack:{expected}\n")
 
     def test_launcher_rejects_a_dirty_pinned_checkout(self) -> None:
         cache = self.temp / "dirty-cache"
