@@ -3402,11 +3402,11 @@
     },
     {
       "path": "spec/evidence/management-system-refactor-closure.json",
-      "sha256": "ec5c5a61eace6f4e928b78c429842503a7b89106a1ed83db206329d44dce1cac"
+      "sha256": "15776e77c7103c0086b3b93d5731a8b5d22e684860bf0404dccca43ba7194c02"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "52e17ce08e5d9fde9bd4da5889d81af6eaf35f9769c1a07119833e283aa24a0a"
+      "sha256": "a8b08f627d6798ca94638ff14483bc8063510db87fc6337151dd4c3e200842bf"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3456,7 +3456,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "3b793d79b426595d470dcd18cd3ebd5643b36e49746055cbf677c501632c3297",
+  "content_sha256": "11b813eded998e2e2bc3e68c3dbcc901908bbc08564e2d195219746feb5a0932",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

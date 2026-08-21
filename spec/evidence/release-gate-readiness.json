@@ -169,7 +169,7 @@
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
     "scripts/workflow_contract.py": "059376614af3f500d651e7130b9ef0bf52ccd7595d753d3f601dbad42c8e14b1",
     "spec/evidence/architecture-readiness.json": "e6c59424563b2a5736864e9ff0b26bf3a72a8d7e4950510be0afbd73a974528a",
-    "spec/evidence/management-system-refactor-closure.json": "ec5c5a61eace6f4e928b78c429842503a7b89106a1ed83db206329d44dce1cac",
+    "spec/evidence/management-system-refactor-closure.json": "15776e77c7103c0086b3b93d5731a8b5d22e684860bf0404dccca43ba7194c02",
     "spec/evidence/release-traceability-readiness.json": "bba8e11e8dd56b56594c3aa9dfae5353e5bc615539c95333321b1a00e7a39fab",
     "spec/release-inputs.json": "25ac2ac901813ee661fc52a20e989c8a7cfe823d2c2500f5116c3b334081d60c",
     "spec/release-selection.json": "b4a490a1fee2c271d798c31592defae4010575a53fc0ac1097522574044485f7",

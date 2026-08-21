@@ -9,7 +9,7 @@
     "zhoubot"
   ],
   "container_management_present": false,
-  "head_commit": "9a0cff3940c24c8cad91add7f191bff62aefaf88",
+  "head_commit": "d2d6f53d54a4e888036ea3d7869f05cd64b1c5d1",
   "legacy_mapping": {
     "pd": 12,
     "pdr": 0,
@@ -29,7 +29,7 @@
       "git diff --check",
       "git status --short"
     ],
-    "head_commit": "9a0cff3940c24c8cad91add7f191bff62aefaf88",
+    "head_commit": "d2d6f53d54a4e888036ea3d7869f05cd64b1c5d1",
     "results": [
       {
         "command": [
@@ -45,7 +45,7 @@
           "make",
           "pr-check"
         ],
-        "duration_seconds": 163.032,
+        "duration_seconds": 195.494,
         "exit_code": 0,
         "failure_category": "none"
       },
@@ -54,7 +54,7 @@
           "make",
           "repo-check"
         ],
-        "duration_seconds": 54.421,
+        "duration_seconds": 51.771,
         "exit_code": 0,
         "failure_category": "none"
       },
@@ -63,7 +63,7 @@
           "make",
           "setup"
         ],
-        "duration_seconds": 0.963,
+        "duration_seconds": 0.748,
         "exit_code": 0,
         "failure_category": "none"
       },
@@ -72,7 +72,7 @@
           "python3",
           "scripts/manual_semantic_audit.py"
         ],
-        "duration_seconds": 0.111,
+        "duration_seconds": 0.094,
         "exit_code": 0,
         "failure_category": "none"
       },
@@ -81,7 +81,7 @@
           "make",
           "toolchain-check"
         ],
-        "duration_seconds": 0.23,
+        "duration_seconds": 0.209,
         "exit_code": 0,
         "failure_category": "none"
       },
@@ -90,7 +90,7 @@
           "make",
           "check"
         ],
-        "duration_seconds": 1.543,
+        "duration_seconds": 1.46,
         "exit_code": 0,
         "failure_category": "none"
       },
@@ -100,7 +100,7 @@
           "diff",
           "--check"
         ],
-        "duration_seconds": 0.014,
+        "duration_seconds": 0.021,
         "exit_code": 0,
         "failure_category": "none"
       },
@@ -110,7 +110,7 @@
           "status",
           "--short"
         ],
-        "duration_seconds": 0.038,
+        "duration_seconds": 0.032,
         "exit_code": 0,
         "failure_category": "none"
       }
