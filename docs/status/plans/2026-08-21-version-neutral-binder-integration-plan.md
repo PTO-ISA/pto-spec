@@ -254,7 +254,7 @@ Run:
 python3 -m unittest \
   tests.scripts.test_architecture_release_boundary \
   tests.scripts.test_release_closure
-! rg -n '0\.59|0\.58\.3|post-0\.58|mode-function-v2|must not merge until' \
+! rg -n '\b0\.[0-9]+(?:\.[0-9]+)?\b|post-0\.|mode-function-v[0-9]+|must not merge until' \
   docs/status/decisions/0069-b-iot-b-ios-sizecode-pemode.md
 ```
 
