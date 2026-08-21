@@ -3488,7 +3488,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "B.IOS S1, mask=0011",
-          "B.IOS mask=1111, ->S255<001>"
+          "B.IOS mask=1111, ->S255<0001>"
         ],
         "exceptions": [
           "Reserved instruction bits, SizeCode 13..15, and malformed field combinations raise Fault_IllegalInstruction before architectural effects.",

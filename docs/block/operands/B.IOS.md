@@ -144,7 +144,7 @@ end;
 ## Examples
 
 - B.IOS S1, mask=0011
-- B.IOS mask=1111, ->S255<001>
+- B.IOS mask=1111, ->S255<0001>
 
 <!-- SUPPLEMENTARY-BEGIN -->
 TSize zero identifies the Shared source form. A Shared destination uses TSize
