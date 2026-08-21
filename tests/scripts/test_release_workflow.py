@@ -46,33 +46,20 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Start source-contract timing
-        run: scripts/pr_timing.py start --output build/pr-timing/source-contract.started
       - name: Validate source, projection, and publication contracts
         run: |
-          mkdir -p build/pr-timing
-          scripts/pr_timing.py run --output build/pr-timing/check-asl-layout.json -- ./scripts/check-asl-layout
-          scripts/pr_timing.py run --output build/pr-timing/check-ndf.json -- ./scripts/check-ndf
-          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs
-          scripts/pr_timing.py run --output build/pr-timing/check-asl-tests.json -- ./scripts/check-asl-tests
-          scripts/pr_timing.py run --output build/pr-timing/check-release-event-schema.json -- ./scripts/check-release-event-schema
-          scripts/pr_timing.py run --output build/pr-timing/project-asl-catalogs.json -- python3 scripts/project_asl_catalogs.py --root . --check
-          scripts/pr_timing.py run --output build/pr-timing/instruction-docs.json -- python3 scripts/instruction_docs.py --check
-          scripts/pr_timing.py run --output build/pr-timing/generate-mnemonic-avs.json -- python3 scripts/generate-mnemonic-avs.py --check
-          scripts/pr_timing.py run --output build/pr-timing/publication-hygiene.json -- python3 scripts/check-publication-hygiene
-          scripts/pr_timing.py run --output build/pr-timing/release-workflow.json -- ./scripts/check-release-workflow
-          scripts/pr_timing.py run --output build/pr-timing/repository-structure.json -- ./scripts/check-repository --structure-only
-          scripts/pr_timing.py run --output build/pr-timing/diff.json -- git diff --check
-      - name: Finish source-contract timing
-        if: always()
-        run: scripts/pr_timing.py finish --start build/pr-timing/source-contract.started --output build/pr-timing/worker-source-contract.json --run-id "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --worker source-contract
-      - name: Retain source-contract timings
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: pr-timing-source-contract
-          path: build/pr-timing/*.json
-          if-no-files-found: warn
+          ./scripts/check-asl-layout
+          ./scripts/check-ndf
+          ./scripts/check-adrs
+          ./scripts/check-asl-tests
+          ./scripts/check-release-event-schema
+          python3 scripts/project_asl_catalogs.py --root . --check
+          python3 scripts/instruction_docs.py --check
+          python3 scripts/generate-mnemonic-avs.py --check
+          python3 scripts/check-publication-hygiene
+          ./scripts/check-release-workflow
+          ./scripts/check-repository --structure-only
+          git diff --check
   tooling-tests:
     name: PR / tooling-tests
     runs-on: ubuntu-latest
@@ -83,8 +70,6 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-      - name: Start tooling-tests timing
-        run: scripts/pr_timing.py start --output build/pr-timing/tooling-tests.started
       - name: Resolve the exact NDF revision
         id: ndf-revision
         run: echo "sha=$(git -C tools/ndf rev-parse HEAD)" >> "$GITHUB_OUTPUT"
@@ -95,19 +80,7 @@ jobs:
           path: tools/ndf/target
           key: ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.ndf-revision.outputs.sha }}-${{ hashFiles('tools/ndf/Cargo.lock') }}
       - name: Run script and NDF parity tests
-        run: |
-          mkdir -p build/pr-timing
-          scripts/pr_timing.py run --output build/pr-timing/tooling-tests.json -- python3 -m unittest discover -s tests/scripts -p 'test_*.py'
-      - name: Finish tooling-tests timing
-        if: always()
-        run: scripts/pr_timing.py finish --start build/pr-timing/tooling-tests.started --output build/pr-timing/worker-tooling-tests.json --run-id "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --worker tooling-tests
-      - name: Retain tooling-test timings
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: pr-timing-tooling-tests
-          path: build/pr-timing/*.json
-          if-no-files-found: warn
+        run: python3 -m unittest discover -s tests/scripts -p 'test_*.py'
   validate:
     name: PR / validate
     if: always()
@@ -115,16 +88,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Check out timing summarizer
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
-      - name: Merge worker timings
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e
-        with:
-          pattern: pr-timing-*
-          path: build/pr-timing
-          merge-multiple: true
-      - name: Publish observational timing summary
-        run: scripts/pr_timing.py summary --input build/pr-timing/worker-source-contract.json build/pr-timing/worker-tooling-tests.json --budget-seconds 600 --output build/pr-timing-summary.json --markdown-output "$GITHUB_STEP_SUMMARY"
       - name: Require both correctness workers
         env:
           SOURCE_CONTRACT_RESULT: ${{ needs.source-contract.result }}
@@ -317,27 +280,27 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_aslref(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "        run: scripts/pr_timing.py start --output build/pr-timing/source-contract.started\n",
-            "        run: scripts/pr_timing.py start --output build/pr-timing/source-contract.started\n"
+            "      - name: Validate source, projection, and publication contracts\n",
             "      - name: forbidden ASLRef setup\n"
-            "        run: make setup-aslref\n",
+            "        run: make setup-aslref\n"
+            "      - name: Validate source, projection, and publication contracts\n",
         )
         errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("unexpected active line" in error for error in errors))
+        self.assertTrue(any("unexpected" in error for error in errors))
 
     def test_pr_workflow_rejects_opam(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "        run: scripts/pr_timing.py start --output build/pr-timing/source-contract.started\n",
-            "        run: scripts/pr_timing.py start --output build/pr-timing/source-contract.started\n"
+            "      - name: Validate source, projection, and publication contracts\n",
             "      - name: forbidden opam setup\n"
-            "        run: opam install anything\n",
+            "        run: opam install anything\n"
+            "      - name: Validate source, projection, and publication contracts\n",
         )
         errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("unexpected active line" in error for error in errors))
+        self.assertTrue(any("unexpected" in error for error in errors))
 
     def test_pr_workflow_requires_every_lightweight_gate(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/check-ndf.json -- ./scripts/check-ndf\n",
+            "          ./scripts/check-ndf\n",
             "",
         )
         errors = validate_pr_workflow(workflow)
@@ -345,7 +308,7 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_requires_adr_gate(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n",
+            "          ./scripts/check-adrs\n",
             "",
         )
         errors = validate_pr_workflow(workflow)
@@ -353,7 +316,7 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_requires_release_event_schema_gate(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/check-release-event-schema.json -- ./scripts/check-release-event-schema\n",
+            "          ./scripts/check-release-event-schema\n",
             "",
         )
         errors = validate_pr_workflow(workflow)
@@ -386,9 +349,9 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_duplicate_production_gate(self) -> None:
         duplicated = VALID_PR_WORKFLOW.replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n",
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n"
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs-copy.json -- ./scripts/check-adrs\n",
+            "          ./scripts/check-adrs\n",
+            "          ./scripts/check-adrs\n"
+            "          ./scripts/check-adrs\n",
         )
         errors = validate_pr_workflow(duplicated)
         self.assertTrue(any("exactly once" in error and "check-adrs" in error for error in errors), errors)
@@ -403,12 +366,12 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_an_additional_cache(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "      - name: Retain source-contract timings\n",
+            "      - name: Validate source, projection, and publication contracts\n",
             "      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9\n"
             "        with:\n"
             "          path: build\n"
             "          key: generated-output\n"
-            "      - name: Retain source-contract timings\n",
+            "      - name: Validate source, projection, and publication contracts\n",
             1,
         )
         errors = validate_pr_workflow(workflow)
@@ -416,8 +379,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_requires_every_action_to_use_the_exact_pin(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
-            "actions/download-artifact@v4",
+            "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+            "actions/cache@v4",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("commit-pinned" in error for error in errors), errors)
@@ -446,8 +409,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_commented_checker_does_not_count_as_execution(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n",
-            "          # scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n",
+            "          ./scripts/check-adrs\n",
+            "          # ./scripts/check-adrs\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("check-adrs" in error for error in errors), errors)
@@ -475,9 +438,9 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_duplicate_uses_keys(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n",
-            "        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02\n"
-            "        uses: actions/upload-artifact@v4\n",
+            "        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9\n",
+            "        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9\n"
+            "        uses: actions/cache@v4\n",
             1,
         )
         errors = validate_pr_workflow(workflow)
@@ -485,8 +448,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_malformed_uses(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
-            "[actions/download-artifact@v4]",
+            "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+            "[actions/cache@v4]",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(
@@ -500,8 +463,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_unrecognized_action(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
-            "attacker/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
+            "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+            "attacker/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("malformed or unrecognized uses" in error for error in errors), errors)
@@ -514,27 +477,19 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("both worker jobs" in error for error in errors), errors)
 
-    def test_pr_workflow_requires_timed_checker_execution(self) -> None:
+    def test_pr_workflow_rejects_an_extra_checker(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs",
-            "./scripts/check-adrs",
-        )
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("timing wrapper" in error and "check-adrs" in error for error in errors), errors)
-
-    def test_pr_workflow_rejects_an_extra_unwrapped_checker(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n",
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n"
+            "          ./scripts/check-adrs\n",
+            "          ./scripts/check-adrs\n"
             "          ./scripts/check-adrs\n",
         )
         errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("unwrapped checker" in error for error in errors), errors)
+        self.assertTrue(any("exactly once" in error for error in errors), errors)
 
     def test_pr_workflow_rejects_env_prefixed_duplicate_checker(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n",
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n"
+            "          ./scripts/check-adrs\n",
+            "          ./scripts/check-adrs\n"
             "          CHECK_MODE=duplicate ./scripts/check-adrs\n",
         )
         errors = validate_pr_workflow(workflow)
@@ -542,8 +497,8 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_alternate_checker_invocation(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n",
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n"
+            "          ./scripts/check-adrs\n",
+            "          ./scripts/check-adrs\n"
             "          python3 scripts/check-adrs\n",
         )
         errors = validate_pr_workflow(workflow)
@@ -551,76 +506,24 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_obfuscated_forbidden_tool(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n",
-            "          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n"
+            "          ./scripts/check-adrs\n",
+            "          ./scripts/check-adrs\n"
             "          o'p'am --version\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("unexpected active line" in error for error in errors), errors)
 
     def test_source_checker_cannot_move_to_tooling_worker(self) -> None:
-        command = (
-            "          scripts/pr_timing.py run --output "
-            "build/pr-timing/check-adrs.json -- ./scripts/check-adrs\n"
-        )
+        command = "          ./scripts/check-adrs\n"
         workflow = VALID_PR_WORKFLOW.replace(command, "", 1).replace(
-            "          scripts/pr_timing.py run --output build/pr-timing/tooling-tests.json",
-            command + "          scripts/pr_timing.py run --output build/pr-timing/tooling-tests.json",
+            "        run: python3 -m unittest discover -s tests/scripts -p 'test_*.py'",
+            "        run: |\n"
+            + command
+            + "          python3 -m unittest discover -s tests/scripts -p 'test_*.py'",
             1,
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("source-contract" in error and "check-adrs" in error for error in errors), errors)
-
-    def test_worker_finish_must_always_run(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace(
-            "      - name: Finish source-contract timing\n"
-            "        if: always()\n",
-            "      - name: Finish source-contract timing\n",
-            1,
-        )
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("elapsed run record" in error for error in errors), errors)
-
-    def test_pr_workflow_rejects_reused_timing_outputs(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace(
-            "build/pr-timing/check-ndf.json",
-            "build/pr-timing/check-asl-layout.json",
-        )
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("timing output paths" in error for error in errors), errors)
-
-    def test_checker_timing_output_must_stay_under_build_pr_timing(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace(
-            "build/pr-timing/check-adrs.json",
-            "outside/check-adrs.json",
-        )
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("exact timing output" in error for error in errors), errors)
-
-    def test_checker_timing_output_cannot_collide_with_source_worker(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace(
-            "build/pr-timing/check-adrs.json",
-            "build/pr-timing/worker-source-contract.json",
-        )
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("worker timing output" in error for error in errors), errors)
-
-    def test_checker_timing_output_cannot_collide_with_tooling_worker(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace(
-            "build/pr-timing/tooling-tests.json",
-            "build/pr-timing/worker-tooling-tests.json",
-        )
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("worker timing output" in error for error in errors), errors)
-
-    def test_worker_timing_upload_must_be_exact_and_always_run(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace(
-            "          path: build/pr-timing/*.json\n",
-            "          path: build\n",
-            1,
-        )
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("exact timing artifact" in error for error in errors), errors)
 
     def test_source_correctness_step_rejects_false_condition(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
@@ -635,10 +538,9 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_tooling_correctness_step_rejects_false_condition(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "      - name: Run script and NDF parity tests\n        run: |\n",
+            "      - name: Run script and NDF parity tests\n",
             "      - name: Run script and NDF parity tests\n"
-            "        if: false\n"
-            "        run: |\n",
+            "        if: false\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)
@@ -656,10 +558,9 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_tooling_correctness_step_rejects_continue_on_error(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "      - name: Run script and NDF parity tests\n        run: |\n",
+            "      - name: Run script and NDF parity tests\n",
             "      - name: Run script and NDF parity tests\n"
-            "        continue-on-error: true\n"
-            "        run: |\n",
+            "        continue-on-error: true\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)
@@ -677,10 +578,9 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_tooling_correctness_step_rejects_nonexecuting_shell(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "      - name: Run script and NDF parity tests\n        run: |\n",
+            "      - name: Run script and NDF parity tests\n",
             "      - name: Run script and NDF parity tests\n"
-            "        shell: echo {0}\n"
-            "        run: |\n",
+            "        shell: echo {0}\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)
@@ -732,7 +632,7 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
     def test_tooling_cache_cannot_follow_tests(self) -> None:
         cache_start = VALID_PR_WORKFLOW.index("      - name: Restore the NDF tool build\n")
         tests_start = VALID_PR_WORKFLOW.index("      - name: Run script and NDF parity tests\n")
-        finish_start = VALID_PR_WORKFLOW.index("      - name: Finish tooling-tests timing\n")
+        finish_start = VALID_PR_WORKFLOW.index("  validate:\n")
         cache = VALID_PR_WORKFLOW[cache_start:tests_start]
         workflow = (
             VALID_PR_WORKFLOW[:cache_start]
@@ -743,30 +643,22 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)
 
-    def test_checkout_and_timing_start_cannot_be_reordered(self) -> None:
+    def test_checkout_and_correctness_step_cannot_be_reordered(self) -> None:
         checkout_start = VALID_PR_WORKFLOW.index("      - name: Check out repository\n")
-        timing_start = VALID_PR_WORKFLOW.index("      - name: Start source-contract timing\n")
         correctness_start = VALID_PR_WORKFLOW.index(
             "      - name: Validate source, projection, and publication contracts\n"
         )
-        checkout = VALID_PR_WORKFLOW[checkout_start:timing_start]
-        timing = VALID_PR_WORKFLOW[timing_start:correctness_start]
+        tooling_start = VALID_PR_WORKFLOW.index("  tooling-tests:\n")
+        checkout = VALID_PR_WORKFLOW[checkout_start:correctness_start]
+        correctness = VALID_PR_WORKFLOW[correctness_start:tooling_start]
         workflow = (
             VALID_PR_WORKFLOW[:checkout_start]
-            + timing
+            + correctness
             + checkout
-            + VALID_PR_WORKFLOW[correctness_start:]
+            + VALID_PR_WORKFLOW[tooling_start:]
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)
-
-    def test_aggregator_download_must_merge_only_worker_timings(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace(
-            "          pattern: pr-timing-*\n",
-            "          pattern: '*'\n",
-        )
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("exact timing artifacts" in error for error in errors), errors)
 
     def test_aggregator_job_rejects_false_condition(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
@@ -795,16 +687,13 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
                 self.assertTrue(any("validate must use its exact job mapping" in error for error in errors), errors)
 
     def test_aggregator_steps_reject_execution_overrides(self) -> None:
-        for step_name, override in (
-            ("Publish observational timing summary", "        if: false\n"),
-            ("Publish observational timing summary", "        continue-on-error: true\n"),
-            ("Publish observational timing summary", "        shell: echo {0}\n"),
-            ("Require both correctness workers", "        if: false\n"),
-            ("Require both correctness workers", "        continue-on-error: true\n"),
-            ("Require both correctness workers", "        shell: echo {0}\n"),
+        for override in (
+            "        if: false\n",
+            "        continue-on-error: true\n",
+            "        shell: echo {0}\n",
         ):
-            with self.subTest(step_name=step_name, override=override):
-                marker = f"      - name: {step_name}\n"
+            with self.subTest(override=override):
+                marker = "      - name: Require both correctness workers\n"
                 workflow = VALID_PR_WORKFLOW.replace(marker, marker + override, 1)
                 errors = validate_pr_workflow(workflow)
                 self.assertTrue(any("validate must use its exact ordered step mappings" in error for error in errors), errors)
@@ -819,11 +708,7 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
                 errors = validate_pr_workflow(workflow)
                 self.assertTrue(any("validate must use its exact ordered step mappings" in error for error in errors), errors)
 
-    def test_aggregator_steps_reject_reordering_or_removal(self) -> None:
-        summary = (
-            "      - name: Publish observational timing summary\n"
-            "        run: scripts/pr_timing.py summary --input build/pr-timing/worker-source-contract.json build/pr-timing/worker-tooling-tests.json --budget-seconds 600 --output build/pr-timing-summary.json --markdown-output \"$GITHUB_STEP_SUMMARY\"\n"
-        )
+    def test_aggregator_result_step_is_required(self) -> None:
         result = (
             "      - name: Require both correctness workers\n"
             "        env:\n"
@@ -833,37 +718,11 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
             "          test \"$SOURCE_CONTRACT_RESULT\" = success\n"
             "          test \"$TOOLING_TESTS_RESULT\" = success\n"
         )
-        for workflow in (
-            VALID_PR_WORKFLOW.replace(summary + result, result + summary),
-            VALID_PR_WORKFLOW.replace(summary, ""),
-            VALID_PR_WORKFLOW.replace(result, ""),
-        ):
-            with self.subTest(workflow=workflow):
-                errors = validate_pr_workflow(workflow)
-                self.assertTrue(any("validate must use its exact ordered step mappings" in error for error in errors), errors)
-
-    def test_aggregator_actions_reject_unpinned_or_malformed_values(self) -> None:
-        for old, new in (
-            (
-                "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
-                "actions/checkout@v6",
-            ),
-            (
-                "actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e",
-                "[actions/download-artifact@v4]",
-            ),
-        ):
-            with self.subTest(new=new):
-                workflow = replace_last(VALID_PR_WORKFLOW, old, new)
-                errors = validate_pr_workflow(workflow)
-                self.assertTrue(
-                    any(
-                        "validate must use its exact ordered step mappings" in error
-                        or "invalid structure" in error
-                        for error in errors
-                    ),
-                    errors,
-                )
+        errors = validate_pr_workflow(VALID_PR_WORKFLOW.replace(result, ""))
+        self.assertTrue(
+            any("validate must use its exact ordered step mappings" in error for error in errors),
+            errors,
+        )
 
 
 class HostedFullValidationContractTest(unittest.TestCase):

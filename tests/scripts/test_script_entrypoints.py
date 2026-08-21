@@ -41,7 +41,6 @@ class ScriptEntrypointTest(unittest.TestCase):
         for name in (
             "architecture_readiness.py",
             "full_validation_workflow.py",
-            "management_refactor_closure.py",
             "release_selection.py",
             "workflow_contract.py",
         ):

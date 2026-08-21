@@ -24,36 +24,20 @@ jobs:
           fetch-depth: 0
           submodules: recursive
 
-      - name: Start source-contract timing
-        run: scripts/pr_timing.py start --output build/pr-timing/source-contract.started
-
       - name: Validate source, projection, and publication contracts
         run: |
-          mkdir -p build/pr-timing
-          scripts/pr_timing.py run --output build/pr-timing/check-asl-layout.json -- ./scripts/check-asl-layout
-          scripts/pr_timing.py run --output build/pr-timing/check-ndf.json -- ./scripts/check-ndf
-          scripts/pr_timing.py run --output build/pr-timing/check-adrs.json -- ./scripts/check-adrs
-          scripts/pr_timing.py run --output build/pr-timing/check-asl-tests.json -- ./scripts/check-asl-tests
-          scripts/pr_timing.py run --output build/pr-timing/check-release-event-schema.json -- ./scripts/check-release-event-schema
-          scripts/pr_timing.py run --output build/pr-timing/project-asl-catalogs.json -- python3 scripts/project_asl_catalogs.py --root . --check
-          scripts/pr_timing.py run --output build/pr-timing/instruction-docs.json -- python3 scripts/instruction_docs.py --check
-          scripts/pr_timing.py run --output build/pr-timing/generate-mnemonic-avs.json -- python3 scripts/generate-mnemonic-avs.py --check
-          scripts/pr_timing.py run --output build/pr-timing/publication-hygiene.json -- python3 scripts/check-publication-hygiene
-          scripts/pr_timing.py run --output build/pr-timing/release-workflow.json -- ./scripts/check-release-workflow
-          scripts/pr_timing.py run --output build/pr-timing/repository-structure.json -- ./scripts/check-repository --structure-only
-          scripts/pr_timing.py run --output build/pr-timing/diff.json -- git diff --check
-
-      - name: Finish source-contract timing
-        if: always()
-        run: scripts/pr_timing.py finish --start build/pr-timing/source-contract.started --output build/pr-timing/worker-source-contract.json --run-id "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --worker source-contract
-
-      - name: Retain source-contract timings
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: pr-timing-source-contract
-          path: build/pr-timing/*.json
-          if-no-files-found: warn
+          ./scripts/check-asl-layout
+          ./scripts/check-ndf
+          ./scripts/check-adrs
+          ./scripts/check-asl-tests
+          ./scripts/check-release-event-schema
+          python3 scripts/project_asl_catalogs.py --root . --check
+          python3 scripts/instruction_docs.py --check
+          python3 scripts/generate-mnemonic-avs.py --check
+          python3 scripts/check-publication-hygiene
+          ./scripts/check-release-workflow
+          ./scripts/check-repository --structure-only
+          git diff --check
 
   tooling-tests:
     name: PR / tooling-tests
@@ -65,9 +49,6 @@ jobs:
         with:
           fetch-depth: 0
           submodules: recursive
-
-      - name: Start tooling-tests timing
-        run: scripts/pr_timing.py start --output build/pr-timing/tooling-tests.started
 
       - name: Resolve the exact NDF revision
         id: ndf-revision
@@ -81,21 +62,7 @@ jobs:
           key: ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.ndf-revision.outputs.sha }}-${{ hashFiles('tools/ndf/Cargo.lock') }}
 
       - name: Run script and NDF parity tests
-        run: |
-          mkdir -p build/pr-timing
-          scripts/pr_timing.py run --output build/pr-timing/tooling-tests.json -- python3 -m unittest discover -s tests/scripts -p 'test_*.py'
-
-      - name: Finish tooling-tests timing
-        if: always()
-        run: scripts/pr_timing.py finish --start build/pr-timing/tooling-tests.started --output build/pr-timing/worker-tooling-tests.json --run-id "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" --worker tooling-tests
-
-      - name: Retain tooling-test timings
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: pr-timing-tooling-tests
-          path: build/pr-timing/*.json
-          if-no-files-found: warn
+        run: python3 -m unittest discover -s tests/scripts -p 'test_*.py'
 
   validate:
     name: PR / validate
@@ -104,19 +71,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Check out timing summarizer
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-
-      - name: Merge worker timings
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
-        with:
-          pattern: pr-timing-*
-          path: build/pr-timing
-          merge-multiple: true
-
-      - name: Publish observational timing summary
-        run: scripts/pr_timing.py summary --input build/pr-timing/worker-source-contract.json build/pr-timing/worker-tooling-tests.json --budget-seconds 600 --output build/pr-timing-summary.json --markdown-output "$GITHUB_STEP_SUMMARY"
-
       - name: Require both correctness workers
         env:
           SOURCE_CONTRACT_RESULT: ${{ needs.source-contract.result }}

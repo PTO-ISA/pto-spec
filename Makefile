@@ -89,7 +89,6 @@ release-evidence-check:
 	python3 scripts/manual_semantic_audit.py
 	./scripts/generate-release-traceability-readiness --check
 	./scripts/generate-architecture-readiness --check
-	./scripts/generate-management-system-refactor-closure --check
 	./scripts/generate-release-gate-readiness --check
 	./scripts/check-release-closure
 	./scripts/check-binary-closure --release
