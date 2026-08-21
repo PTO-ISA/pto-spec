@@ -3401,12 +3401,8 @@
       "sha256": "f51c7d745d329fde83794ab9ec2521ace511b2b062b536d64b4eeb5f8269372a"
     },
     {
-      "path": "spec/evidence/management-system-refactor-closure.json",
-      "sha256": "15776e77c7103c0086b3b93d5731a8b5d22e684860bf0404dccca43ba7194c02"
-    },
-    {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "a8b08f627d6798ca94638ff14483bc8063510db87fc6337151dd4c3e200842bf"
+      "sha256": "c822b42bc51b7e2312c4e83ef640c359c8eec8181aef34a0a43e24a93380627b"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3418,7 +3414,7 @@
     },
     {
       "path": "spec/release-inputs.json",
-      "sha256": "25ac2ac901813ee661fc52a20e989c8a7cfe823d2c2500f5116c3b334081d60c"
+      "sha256": "a167c0560d09c41ac766edef24f872471f292791ecbfb57cdd11ae6a5665e538"
     },
     {
       "path": "spec/release-selection.json",
@@ -3456,7 +3452,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "11b813eded998e2e2bc3e68c3dbcc901908bbc08564e2d195219746feb5a0932",
+  "content_sha256": "4bd5361401f3d2fdbb3ad784149020e87894fe242d73cd18392858e6af551dc1",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

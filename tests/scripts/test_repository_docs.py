@@ -24,6 +24,8 @@ GUIDANCE_PATHS = (
 )
 
 README_LINKS = (
+    "docs/arch/overview/architecture.md",
+    "docs/arch/overview/instruction-classification.md",
     "docs/development/getting-started.md",
     "docs/development/repository-layout.md",
     "docs/governance/adr-process.md",
@@ -31,7 +33,6 @@ README_LINKS = (
     "docs/releases/index.md",
     "docs/status/decisions/",
     "docs/status/open/",
-    "spec/evidence/management-system-refactor-closure.json",
 )
 
 
@@ -46,12 +47,59 @@ class RepositoryDocumentationTest(unittest.TestCase):
         for target in README_LINKS:
             self.assertEqual(readme.count(f"]({target})"), 1, target)
         for phrase in (
-            "Five-minute quick start",
-            "Normative authority",
-            "Validation lanes",
-            "Repository map",
+            "PTO ISA at a glance",
+            "Architecture scope",
+            "Instruction families",
+            "Start reading",
+            "Quick start",
+            "Project policy",
         ):
             self.assertIn(phrase, readme)
+
+    def test_readme_focuses_on_the_isa_not_repository_governance(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertLess(
+            readme.index("## Architecture scope"),
+            readme.index("## Quick start"),
+        )
+        self.assertLess(
+            readme.index("## Instruction families"),
+            readme.index("## Project policy"),
+        )
+        for phrase in (
+            "Management-system migration",
+            "management-system-refactor-closure",
+            "## Normative authority",
+            "## Validation lanes",
+        ):
+            self.assertNotIn(phrase, readme)
+
+    def test_steady_state_tree_has_no_refactor_timing_infrastructure(self) -> None:
+        removed_paths = (
+            ROOT / "scripts/pr_timing.py",
+            ROOT / "scripts/generate-management-system-refactor-closure",
+            ROOT / "scripts/management_refactor_closure.py",
+            ROOT / "spec/evidence/management-system-refactor-closure.json",
+            ROOT / "docs/status/plans/2026-08-21-management-system-refactor.md",
+            ROOT / "docs/status/plans/2026-08-21-management-system-refactor-design.md",
+        )
+        for path in removed_paths:
+            self.assertFalse(path.exists(), path.relative_to(ROOT))
+
+        active_contracts = (
+            ROOT / "Makefile",
+            ROOT / ".github/workflows/asl.yml",
+            ROOT / "spec/release-inputs.json",
+            ROOT / "scripts/generate-release-gate-readiness",
+        )
+        for path in active_contracts:
+            text = path.read_text(encoding="utf-8")
+            self.assertNotIn("pr_timing", text, path.relative_to(ROOT))
+            self.assertNotIn(
+                "management-system-refactor-closure",
+                text,
+                path.relative_to(ROOT),
+            )
 
     def test_active_guidance_has_no_stale_routes_or_release_only_wording(self) -> None:
         forbidden = (

@@ -6,20 +6,91 @@
 [![License: BSD 3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
 `pto-spec` is the executable ASL1 specification of the PTO Instruction Set
-Architecture. The repository describes scalar, bundle/command, and direct Tile
-behavior in one reviewable model.
+Architecture. It defines a 64-bit scalar ISA, bundle and command forms, direct
+Tile operations, architectural state, legality, faults, completion, profiles,
+and memory ordering in one reviewable model.
 
-The working tree is a **normative draft**. A numbered release is an immutable
-commit whose exact-head release verification and reproducible evidence have
-succeeded; a draft branch, pull request, nightly run, or older successful run is
-not a release.
+The working tree is a normative draft and may contain architecture changes for
+a future release. PTO ISA v0.58.2 is the latest published release; release
+identity is bound to an immutable commit and its reproducible formal evidence.
 
-Management-system migration status and efficiency evidence are recorded in the
-[generated closure record](spec/evidence/management-system-refactor-closure.json).
+## PTO ISA at a glance
 
-## Five-minute quick start
+| Surface | Current executable inventory |
+| --- | ---: |
+| Scalar instruction forms | 466 |
+| Active bundle and command forms | 74 |
+| Direct Tile operations | 109 |
+| Tile execution engines | 4 |
+| Tile semantic classes | 7 |
+| Architecture and instruction ASL units | 840 |
+| Independently runnable AVS points | 3,352 |
 
-Prerequisites for the pull-request lane are Git, GNU Make, and Python 3.11+.
+Direct Tile operations select one of four execution engines: 35 VEC operations,
+10 TLSU operations, 12 CUBE operations, and 52 SFU operations. Classification
+is independent of engine selection, so programming intent and execution
+placement remain separate architecture concepts.
+
+The generated [release-traceability view](spec/evidence/release-traceability-readiness.json)
+contains the complete ASL-to-documentation-to-AVS inventory for the current
+tree.
+
+## Architecture scope
+
+PTO ISA specifies:
+
+- a 64-bit scalar execution surface covering address generation, integer and
+  logical operations, atomics, branches, floating-point support, and system
+  operations;
+- a 32-code scalar register namespace with 24 absolute GPRs and T/U temporary
+  queues, plus predicate state and an independent execution mask;
+- bundle-visible program-control, argument, dimension, data-attribute,
+  ordering-attribute, IO-binding, and completion state;
+- 64 flat T/U/M/N Tile registers with explicit Local and Shared ownership,
+  allocation, descriptors, valid regions, and definedness;
+- direct Tile operations for elementwise computation, reductions and expands,
+  memory and data movement, matrix and matrix-vector work, layout changes, and
+  irregular operations;
+- exact instruction masks, fields, constraints, selector values, decoder
+  witnesses, and architectural effects;
+- explicit legality and fault ordering before effects, including aliasing,
+  rollback, restart, and instruction-granular memory completion;
+- named profiles for behavior that is not portable across implementations.
+
+Hardware pipelines, physical Tile allocation, backend intrinsics, latency,
+throughput, and target scheduling are outside the portable PTO ISA contract.
+
+## Instruction families
+
+| Family | What it defines | Reference |
+| --- | --- | --- |
+| Architecture | Public types, state, profiles, memory model, traps, and classification | [`docs/arch/`](docs/arch/) |
+| Block | `BSTART`, `BSTOP`, bundle configuration, bindings, and block execution | [`docs/block/`](docs/block/) |
+| Scalar | AGU, ALU, AMO, BRU, FSU, SYS, compressed, half-long, and long forms | [`docs/scalar/`](docs/scalar/) |
+| Tile | Direct Tile operations and VEC, TLSU, CUBE, and SFU behavior | [`docs/tile/`](docs/tile/) |
+
+The `B` prefix denotes a bundle instruction. `BLOCKNUM`, `BLOCKID`, and
+`CROSS_BID` instead describe virtual core-block topology. These concepts share
+spelling history but represent different architectural state.
+
+## Start reading
+
+Start with the [architecture overview](docs/arch/overview/architecture.md), then
+use the [instruction classification](docs/arch/overview/instruction-classification.md)
+to understand the seven Tile classes and four execution engines. The block,
+scalar, and Tile references above contain generated ASL mirrors and bounded
+supplementary explanation.
+
+Machine-readable accepted forms and selectors live under
+[`spec/catalog/`](spec/catalog/). Current architecture gaps are listed under
+[`docs/status/open/`](docs/status/open/), while accepted decision history is
+kept under [`docs/status/decisions/`](docs/status/decisions/). Release identities
+and evidence entry points are collected in the
+[release hub](docs/releases/index.md).
+
+## Quick start
+
+The lightweight development path needs Git, GNU Make, and Python 3.11 or newer:
 
 ```bash
 git clone --recurse-submodules https://github.com/PTO-ISA/pto-spec.git
@@ -27,69 +98,25 @@ cd pto-spec
 make pr-check
 ```
 
-Start architecture reading at the [architecture overview](docs/arch/overview/architecture.md),
-then choose the [block](docs/block/), [scalar](docs/scalar/), or
-[Tile](docs/tile/) reference. For environment setup and common failures, use
-the [getting-started guide](docs/development/getting-started.md).
+See [Getting started](docs/development/getting-started.md) for environment setup,
+the full formal-validation prerequisites, and troubleshooting. The
+[repository layout](docs/development/repository-layout.md) maps each source,
+generated projection, and executable evidence surface to its owner.
 
-## Normative authority
+## Project policy
 
-There is one source chain:
+Current architectural meaning has one source chain:
 
 ```text
 ASL/NDF owner -> generated Markdown mirror -> AVS -> commit-scoped evidence
 ```
 
-- ASL under `asl/` owns current architectural state, legality, results, faults,
-  and instruction metadata. NDF clauses inside the owning ASL provide stable
-  requirement identities.
-- Accepted ADRs under [`docs/status/decisions/`](docs/status/decisions/) record
-  reviewed choices and rationale. They do not override the current ASL owner.
-- Generated Markdown, catalogs, the
-  [release-traceability view](spec/evidence/release-traceability-readiness.json),
-  release manifests, changelogs, and review summaries are derived navigation or
-  evidence. They are not independent authority.
-- Unresolved choices live only in the [open-question index](docs/status/open/)
-  until an accepted decision updates the owning ASL/NDF.
+ADRs record why an architectural choice was accepted, rejected, or superseded;
+they do not redefine current ISA behavior. The [ADR process](docs/governance/adr-process.md)
+describes that boundary. Contributor commands and exact-commit release rules
+are documented in [Validation](docs/governance/validation.md), not duplicated
+on this landing page.
 
-See the [ADR and NDF process](docs/governance/adr-process.md) for state and
-ownership rules.
-
-## Validation lanes
-
-| Lane | Trigger | Meaning |
-| --- | --- | --- |
-| Pull request | Push or pull request | Fast structure, projection, tooling, documentation, and hygiene feedback; no release claim |
-| Nightly | Latest `main` on schedule or dispatch | Non-authoritative full-model health for the exact latest `main` commit |
-| Release | Dispatch with one full commit SHA | Authoritative release-candidate verification for that exact commit; does not publish a release |
-
-Run `make pr-check` during ordinary work. Full local verification uses
-`make setup`, `make release-verify`, and `make release-prepare`. The
-[validation guide](docs/governance/validation.md) defines prerequisites,
-fail-closed rules, and the difference between the three lanes.
-
-## Repository map
-
-| Path | Owner |
-| --- | --- |
-| `asl/{arch,block,scalar,tile}/` | Normative ASL/NDF owners |
-| `docs/{arch,block,scalar,tile}/` | Generated ASL mirrors plus bounded supplementary explanation |
-| `tests/asl/` | Independently runnable AVS points, mirrored to ASL owners |
-| `docs/status/` | ADR and open-question records |
-| `spec/catalog/` | Generated accepted-form and selector projections |
-| `spec/evidence/` | Commit-scoped generated evidence and traceability |
-| `scripts/` | Deterministic generation and fail-closed checks |
-| `.github/workflows/` | Pull-request, nightly, and release validation contracts |
-
-The [repository-layout guide](docs/development/repository-layout.md) gives the
-complete ownership map without duplicating ISA semantics. Current release
-identity and evidence entry points are collected in the
-[release hub](docs/releases/index.md).
-
-## Contributing and license
-
-Read [Contributing](CONTRIBUTING.md) before changing ASL, ADRs, tests,
-generators, or governance. Repository policy is in [Governance](GOVERNANCE.md).
-
-The project uses the [BSD 3-Clause License](LICENSE). Permitted external
-evidence and attribution are recorded in [NOTICE](NOTICE).
+Read [Contributing](CONTRIBUTING.md) before changing ASL, tests, generators, or
+documentation. The project uses the [BSD 3-Clause License](LICENSE); permitted
+external evidence and attribution are recorded in [NOTICE](NOTICE).

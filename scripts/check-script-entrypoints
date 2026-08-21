@@ -22,7 +22,6 @@ PYTHON_LAUNCHED = frozenset(
         "full_validation_workflow.py",
         "generate-mnemonic-avs.py",
         "manual_semantic_audit.py",
-        "management_refactor_closure.py",
         "release_selection.py",
         "tile_taxonomy.py",
         "workflow_contract.py",

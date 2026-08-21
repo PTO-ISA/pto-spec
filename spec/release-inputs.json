@@ -11,11 +11,6 @@
       "role": "canonical-input"
     },
     {
-      "generator": "scripts/generate-management-system-refactor-closure",
-      "path": "spec/evidence/management-system-refactor-closure.json",
-      "role": "canonical-input"
-    },
-    {
       "generator": "scripts/generate-release-manifest",
       "path": "spec/evidence/pto-isa-0582-abi-vectors.json",
       "role": "owned-output"
