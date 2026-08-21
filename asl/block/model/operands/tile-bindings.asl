@@ -67,6 +67,20 @@ begin
     return FALSE;
 end;
 
+readonly func BundleMatrixPrimaryDestinationHand()
+    => (boolean, integer {0..3})
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid then
+            return (TRUE,
+                UInt(_BundleTileBindings[[binding]].destination_hand)
+                    as integer {0..3});
+        end;
+    end;
+    return (FALSE, 0);
+end;
+
 readonly func BundleTileDestinationSizeLegal(
     binding: BundleTileBindingIndex) => boolean
 begin
