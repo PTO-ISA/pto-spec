@@ -1,8 +1,43 @@
+---
+{
+  "id": "ADR-0015",
+  "title": "Define explicit tile handoff slots",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-B-IOS-SHARED-STATE-001",
+    "PTO-B-IOT-STREAM-001",
+    "PTO-REQ-SHARED-TILE-001",
+    "PTO-REQ-TILE-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-B-IOS",
+    "PTO-BLOCK-B-IOT",
+    "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+    "PTO-TILE-MODEL-STATE-SHARED-REGISTERS"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0015: Define explicit tile handoff slots
-
-## Status
-
-Accepted.
 
 ## Context
 

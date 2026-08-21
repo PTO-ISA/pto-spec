@@ -1,8 +1,66 @@
+---
+{
+  "id": "ADR-0022",
+  "title": "Bundle operation descriptor and transactional commit",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-B-CATR-CONTROL-001",
+    "PTO-B-DATR-FIELDS-001",
+    "PTO-B-DIM-WRITE-001",
+    "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+    "PTO-B-IOR-BINDING-001",
+    "PTO-B-IOS-SHARED-STATE-001",
+    "PTO-B-IOT-STREAM-001",
+    "PTO-REQ-BUNDLE-STATE-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-B-CATR",
+    "PTO-BLOCK-B-DATR",
+    "PTO-BLOCK-B-DIM",
+    "PTO-BLOCK-B-FPATR",
+    "PTO-BLOCK-B-IOR",
+    "PTO-BLOCK-B-IOS",
+    "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
+    "PTO-BLOCK-MODEL-COMMIT-VALIDATION",
+    "PTO-BLOCK-MODEL-LIFECYCLE-BEGIN",
+    "PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP",
+    "PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+    "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+    "PTO-BLOCK-MODEL-SCHEMA-ATTRIBUTES",
+    "PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS",
+    "PTO-BLOCK-MODEL-SCHEMA-HEADER",
+    "PTO-BLOCK-MODEL-STATE-BINDING-STATE",
+    "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+    "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+    "PTO-BLOCK-MODEL-STATE-TYPES"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0022: Bundle operation descriptor and transactional commit
 
-## Status
-
-Accepted.
+> Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
 
 ## Context
 

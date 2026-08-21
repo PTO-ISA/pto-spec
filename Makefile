@@ -16,7 +16,7 @@ DECODER_GENERATION_INPUTS := $(ASL_UNIT_SOURCES) scripts/generate-asl-decoders \
 
 .PHONY: all setup build clean release-manifest release-evidence-check release-check release-prepare \
 	release-verify repo-check pr-check toolchain-check check test test-parallel ci \
-	check-asl-layout check-ndf check-asl-tests check-projections \
+	check-asl-layout check-ndf check-adrs check-asl-tests check-projections \
 	check-decoder-partition check-publication-hygiene check-release-event-schema \
 	print-asl-sources print-asl-tests
 
@@ -48,6 +48,9 @@ check-asl-layout:
 check-ndf:
 	./scripts/check-ndf
 
+check-adrs:
+	./scripts/check-adrs
+
 check-asl-tests:
 	./scripts/check-asl-tests
 
@@ -69,7 +72,7 @@ check-publication-hygiene:
 check-release-event-schema:
 	./scripts/check-release-event-schema
 
-pr-check: check-asl-layout check-ndf check-asl-tests check-decoder-partition check-projections check-publication-hygiene check-release-event-schema
+pr-check: check-asl-layout check-ndf check-adrs check-asl-tests check-decoder-partition check-projections check-publication-hygiene check-release-event-schema
 	./scripts/check-release-workflow
 	python3 -m unittest discover -s tests/scripts -p 'test_*.py'
 	git diff --check
@@ -85,6 +88,8 @@ release-evidence-check:
 	./scripts/generate-instruction-contract-closure --check
 	python3 scripts/manual_semantic_audit.py
 	./scripts/generate-release-traceability-readiness --check
+	./scripts/generate-architecture-readiness --check
+	./scripts/generate-management-system-refactor-closure --check
 	./scripts/generate-release-gate-readiness --check
 	./scripts/check-release-closure
 	./scripts/check-binary-closure --release

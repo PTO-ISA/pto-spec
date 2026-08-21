@@ -2,10 +2,8 @@
   "authority": "PTO ASL, catalogs, requirements, and accepted ADRs remain normative. The independent executable model is corroborating evidence only.",
   "closure_judgment": {
     "basis": "The exhaustive row-disposition obligation S5-T3-G1 is complete: every PTO scalar form, command form, and direct tile operation has a stable classification and PTO-owned evidence. S5-T3 closes only when the clean independent snapshot passes every archived parser, executable-backend, generated-status, coverage, and documentation gate.",
-    "can_close_s5_t3": false,
-    "remaining_blockers": [
-      "documentation-check returned fail (exit=1); see archived command result."
-    ]
+    "can_close_s5_t3": true,
+    "remaining_blockers": []
   },
   "model_limits": [
     {
@@ -11157,7 +11155,7 @@
       "independent_status": "missing",
       "index": 73,
       "mnemonic": "B.FPATR",
-      "pto_command_disposition": "executed",
+      "pto_command_disposition": "unknown",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
         "PTO-REQ-BUNDLE-DISPATCH-001",
@@ -11165,7 +11163,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "SetBundleFixedPointAttributes",
-      "stable_id": "b_fpatr_32_4f2db11e8e8a",
+      "stable_id": "b_fpatr_32_30c307e06d4a",
       "surface": "command"
     },
     {
@@ -14251,16 +14249,23 @@
       },
       {
         "command": "<independent-gate:documentation-check>",
-        "disposition": "Independent documentation gate failed when regenerated from the clean snapshot; S5-T3 must remain open until this gate passes.",
-        "exit_code": 1,
+        "exit_code": 0,
         "id": "documentation-check",
-        "output_excerpt": "ok: 770 generated SVGs are current\nok: 770 generated SVGs are current\nok: 731 instruction pages and 67 group pages are current\nOK\nOK\nerror: stale translation freshness metadata: <independent-root>/docs/zh/translation-manifest.json\nerror: Chinese translation source/translation hashes are stale\nGenerated 770 SVGs in <host-temp>\nGenerated 770 SVGs in <host-temp>",
-        "result": "fail",
-        "stderr_sha256": "9f839328ae1c601ffd0191a795af89452ab7e04fd0c693b9390cb9f25bce582f",
-        "stdout_sha256": "64c902f105386fdd315d811300ea6b00f78d656a07948aca572fb38cc8c45236"
+        "output_excerpt": "OK\nok: 770 generated SVGs are current\nok: 770 generated SVGs are current\nok: 731 instruction pages and 67 group pages are current\nOK\nOK\nok: documentation integrity checks passed\nGenerated 770 SVGs in <host-temp>\nGenerated 770 SVGs in <host-temp>",
+        "result": "pass",
+        "stderr_sha256": "316bc1a8900abbf9da5ee43bc9ef9a770f297a9eacbbc4d7a96631d750896f86",
+        "stdout_sha256": "6752d729b7a5c3b18e0f8c9ccf0ccd4a06f1cb62e1067eaa8d96c1aecff71910"
       }
     ],
     "kind": "content-addressed independent executable ISA snapshot",
+    "publication": {
+      "commit": "3fc63e5fc1d1913b7c4754944df983d7bd8416c5",
+      "commit_url": "https://github.com/LinxISA/linx-isa/commit/3fc63e5fc1d1913b7c4754944df983d7bd8416c5",
+      "ref": "refs/pull/160/head",
+      "repository": "https://github.com/LinxISA/linx-isa.git",
+      "review_url": "https://github.com/LinxISA/linx-isa/pull/160",
+      "role": "historical-independent-comparison-only"
+    },
     "required_toolchain_checks": [
       {
         "command": "<independent-gate:sail-parser-c-backend-check>",
@@ -14272,10 +14277,10 @@
         "stdout_sha256": "6c0c521edec4b4cb04b87ce492a09f0312d7ec5fdb27fcce0a9a14190cab5764"
       }
     ],
-    "revision_sha256": "fc3cbdfd01e853536ff9fa608e59681c9d910524fb5ab2c458f3a3ce7b863363",
+    "revision_sha256": "c565028c4a6a5b86349863524142fb832079798de325fc617cf664dffa859390",
     "worktree_clean": true
   },
-  "status": "comparison-matrix-closed-gate-open:S5-T3-G2",
+  "status": "comparison-matrix-closed-clean-gates-passed:S5-T3",
   "summary": {
     "classification_counts": {
       "comparable-match": 517,

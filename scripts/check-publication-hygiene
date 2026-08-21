@@ -33,6 +33,26 @@ STALE_URL_PREFIXES = (
 )
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 NUMBERED_HEADING = re.compile(r"^#{1,6}\s+\d+(?:[.)]|\s)")
+ACTIVE_GUIDANCE = (
+    Path("README.md"),
+    Path("CONTRIBUTING.md"),
+    Path("GOVERNANCE.md"),
+    Path("AGENTS.md"),
+    Path(".codex/skills/pto-asl/SKILL.md"),
+    Path(".codex/skills/pto-asl/references/source-map.md"),
+    Path("docs/governance/adr-process.md"),
+    Path("docs/governance/validation.md"),
+    Path("docs/development/getting-started.md"),
+    Path("docs/development/repository-layout.md"),
+    Path("docs/releases/index.md"),
+)
+STALE_GUIDANCE_ROUTES = (
+    "spec/requirements.json",
+    "PRD-",
+    "PD-",
+    "manual exact-head release lane",
+    "manually dispatched",
+)
 
 
 def repository_files() -> list[Path]:
@@ -58,6 +78,22 @@ def main() -> int:
     failures: list[str] = []
     markdown_link_count = 0
     files = repository_files()
+
+    readme = ROOT / "README.md"
+    if readme.is_file() and len(readme.read_text(encoding="utf-8").splitlines()) > 220:
+        failures.append("README.md exceeds the 220-line source limit")
+    codeowners = ROOT / ".github/CODEOWNERS"
+    if not codeowners.is_file() or codeowners.read_text(encoding="utf-8") != "* @zhoubot\n":
+        failures.append(".github/CODEOWNERS must contain exactly '* @zhoubot'")
+    for relative in ACTIVE_GUIDANCE:
+        path = ROOT / relative
+        if not path.is_file():
+            failures.append(f"missing active guidance: {relative}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        for route in STALE_GUIDANCE_ROUTES:
+            if route in text:
+                failures.append(f"stale active-guidance route: {relative}: {route}")
 
     for path in files:
         relative = path.relative_to(ROOT)
@@ -137,6 +173,16 @@ def main() -> int:
                 failures.append(
                     f"broken local Markdown link: {relative}:{line_number}: {target}"
                 )
+
+    changelog = subprocess.run(
+        [str(ROOT / "scripts/generate-changelog"), "--check"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if changelog.returncode != 0:
+        failures.append(changelog.stderr.strip() or "generated changelog is stale")
 
     if failures:
         print("\n".join(failures), file=sys.stderr)

@@ -35,10 +35,6 @@ SURFACES = {"arch", "scalar", "block", "tile"}
 SURFACE_ORDER = ("arch", "block", "scalar", "tile")
 SUPPLEMENTARY_BEGIN = "<!-- SUPPLEMENTARY-BEGIN -->"
 SUPPLEMENTARY_END = "<!-- SUPPLEMENTARY-END -->"
-LEGACY_BANNER = (
-    "> Historical, non-normative material. This page is excluded from the active "
-    "PTO architecture and release closure."
-)
 VERSION_PATTERN = re.compile(r"\b0\.58(?:\.0)?\b")
 
 
@@ -909,6 +905,19 @@ def render_nav(
         by_surface.setdefault(record.surface, {}).setdefault(group, []).append(record)
 
     lines = ["nav:"]
+    if root is not None:
+        lines.extend(
+            [
+                "  - Development:",
+                "      - Getting started: development/getting-started.md",
+                "      - Repository layout: development/repository-layout.md",
+                "  - Governance:",
+                "      - ADR process and decision index: governance/adr-process.md",
+                "      - Validation: governance/validation.md",
+                "  - Releases:",
+                "      - Release index: releases/index.md",
+            ]
+        )
     for surface in SURFACE_ORDER:
         classifications = by_surface.get(surface)
         if not classifications:
@@ -919,7 +928,15 @@ def render_nav(
         status_groups: list[tuple[str, list[Path]]] = []
         for name in ("decisions", "open"):
             directory = root / "docs/status" / name
-            pages = sorted(directory.rglob("*.md")) if directory.exists() else []
+            pages = (
+                sorted(
+                    path
+                    for path in directory.rglob("*.md")
+                    if path.name != "0000-template.md"
+                )
+                if directory.exists()
+                else []
+            )
             if pages:
                 status_groups.append((name, pages))
         if status_groups:
@@ -947,7 +964,6 @@ def _render_mkdocs_config(records: list[DocRecord], root: Path) -> str:
         "site_dir: ../../build/mkdocs-site\n"
         "use_directory_urls: false\n"
         "exclude_docs: |\n"
-        "  status/legacy/**\n"
         "  mkdocs/**\n"
         "  superpowers/**\n"
         "theme:\n"
@@ -957,56 +973,7 @@ def _render_mkdocs_config(records: list[DocRecord], root: Path) -> str:
     )
 
 
-def _render_legacy_page(markdown: str, path: Path) -> str:
-    lines = markdown.splitlines()
-    try:
-        title_index = next(
-            index for index, line in enumerate(lines) if line.startswith("# ")
-        )
-    except StopIteration as error:
-        raise ValueError(f"{path}: legacy Markdown page has no level-one title") from error
-    remainder = lines[title_index + 1 :]
-    while remainder and not remainder[0].strip():
-        remainder.pop(0)
-    if remainder and remainder[0] == LEGACY_BANNER:
-        remainder.pop(0)
-        while remainder and not remainder[0].strip():
-            remainder.pop(0)
-    rendered = [*lines[: title_index + 1], "", LEGACY_BANNER]
-    if remainder:
-        rendered.extend(["", *remainder])
-    return "\n".join(rendered).rstrip() + "\n"
-
-
-def _write_legacy_banners(root: Path) -> None:
-    directory = root / "docs/status/legacy"
-    for path in sorted(directory.rglob("*.md")) if directory.exists() else []:
-        path.write_text(
-            _render_legacy_page(path.read_text(encoding="utf-8"), path),
-            encoding="utf-8",
-        )
-
-
-def check_legacy_banners(root: Path = ROOT) -> list[str]:
-    errors: list[str] = []
-    directory = root / "docs/status/legacy"
-    for path in sorted(directory.rglob("*.md")) if directory.exists() else []:
-        relative = path.relative_to(root).as_posix()
-        current = path.read_text(encoding="utf-8")
-        if '"status": "active"' in current:
-            errors.append(f"{relative}: legacy page declares active status")
-        try:
-            expected = _render_legacy_page(current, path)
-        except ValueError as error:
-            errors.append(str(error))
-        else:
-            if current != expected:
-                errors.append(f"{relative}: missing non-normative legacy banner")
-    return errors
-
-
 def generate_tree(root: Path = ROOT) -> None:
-    _write_legacy_banners(root)
     records = load_doc_index(root)
     for record in records:
         path = root / record.markdown_path
@@ -1202,7 +1169,6 @@ def main(argv: list[str] | None = None) -> int:
             + check_navigation(ROOT)
             + check_navigation_projection(ROOT)
             + check_normative_legacy_links(ROOT)
-            + check_legacy_banners(ROOT)
         )
         if errors:
             print("\n".join(errors), file=sys.stderr)

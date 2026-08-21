@@ -1,8 +1,54 @@
+---
+{
+  "id": "ADR-0025",
+  "title": "Scalar bitfield and byte-reversal bounds",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-BCNT-DECISION-BINDING-001",
+    "PTO-BIC-DECISION-BINDING-001",
+    "PTO-BIS-DECISION-BINDING-001",
+    "PTO-BXS-DECISION-BINDING-001",
+    "PTO-BXU-DECISION-BINDING-001",
+    "PTO-CLZ-DECISION-BINDING-001",
+    "PTO-CTZ-DECISION-BINDING-001",
+    "PTO-REV-DECISION-BINDING-001"
+  ],
+  "affected_units": [
+    "PTO-SCALAR-BCNT",
+    "PTO-SCALAR-BIC",
+    "PTO-SCALAR-BIS",
+    "PTO-SCALAR-BXS",
+    "PTO-SCALAR-BXU",
+    "PTO-SCALAR-CLZ",
+    "PTO-SCALAR-CTZ",
+    "PTO-SCALAR-REV"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0025: Scalar bitfield and byte-reversal bounds
 
 > Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-- Status: accepted
 - Scope: scalar `BXS`, `BXU`, `BIC`, `BIS`, `CLZ`, `CTZ`, `BCNT`, `REV`, and `HL.BFI`
 
 ## Decision

@@ -1,8 +1,50 @@
+---
+{
+  "id": "ADR-0009",
+  "title": "scalar TPC and execution status",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-BARG-CONTINUATION-001",
+    "PTO-BSTART-DECISION-BINDING-001",
+    "PTO-BSTOP-DECISION-BINDING-001",
+    "PTO-C-BSTOP-DECISION-BINDING-001",
+    "PTO-L-BSTOP-DECISION-BINDING-001",
+    "PTO-REQ-BUNDLE-STATE-001",
+    "PTO-REQ-STATE-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
+    "PTO-ARCH-STATE-PROGRAM-COUNTER",
+    "PTO-BLOCK-BSTART",
+    "PTO-BLOCK-BSTOP",
+    "PTO-BLOCK-C-BSTOP",
+    "PTO-BLOCK-L-BSTOP",
+    "PTO-BLOCK-MODEL-STATE-BARG",
+    "PTO-BLOCK-MODEL-STATE-CONTROL-STATE"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0009: scalar TPC and execution status
-
-## Status
-
-Accepted.
 
 ## Context
 

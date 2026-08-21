@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+"""Generate or check PTO management-refactor closure evidence."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import sys
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.management_refactor_closure import (  # noqa: E402
+    build_document,
+    render_document,
+)
+
+
+BASELINE = "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f"
+DEFAULT_OUTPUT = ROOT / "spec/evidence/management-system-refactor-closure.json"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--awaiting-upstream", action="store_true")
+    parser.add_argument("--nightly-event", type=Path)
+    parser.add_argument("--timing-root", type=Path)
+    parser.add_argument("--verification-evidence", type=Path)
+    parser.add_argument("--head", default="HEAD")
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--check", action="store_true")
+    arguments = parser.parse_args()
+    if arguments.check and (
+        arguments.timing_root is None or arguments.verification_evidence is None
+    ):
+        try:
+            document = json.loads(arguments.output.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            print(f"error: invalid closure evidence: {error}", file=sys.stderr)
+            return 1
+        if (
+            document.get("schema") != "pto.management-refactor-closure"
+            or document.get("pr_timing", {}).get("sample_count", 0) < 10
+            or document.get("pr_timing", {}).get("p95_seconds", 601) > 600
+        ):
+            print("error: closure evidence is incomplete", file=sys.stderr)
+            return 1
+        print(f"management refactor closure is current: {arguments.output}")
+        return 0
+    if arguments.timing_root is None or arguments.verification_evidence is None:
+        parser.error("generation requires --timing-root and --verification-evidence")
+    if arguments.awaiting_upstream == (arguments.nightly_event is not None):
+        parser.error("select exactly one of --awaiting-upstream or --nightly-event")
+    nightly = (
+        json.loads(arguments.nightly_event.read_text(encoding="utf-8"))
+        if arguments.nightly_event is not None
+        else None
+    )
+    try:
+        rendered = render_document(
+            build_document(
+                ROOT,
+                baseline_commit=BASELINE,
+                implementation_head=arguments.head,
+                timing_root=arguments.timing_root,
+                verification_path=arguments.verification_evidence,
+                nightly_event=nightly,
+            )
+        )
+        if arguments.check:
+            if (
+                not arguments.output.is_file()
+                or arguments.output.read_text(encoding="utf-8") != rendered
+            ):
+                print(f"error: stale closure evidence {arguments.output}", file=sys.stderr)
+                return 1
+            return 0
+        arguments.output.parent.mkdir(parents=True, exist_ok=True)
+        arguments.output.write_text(rendered, encoding="utf-8")
+    except (OSError, ValueError, json.JSONDecodeError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    print(f"wrote {arguments.output}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

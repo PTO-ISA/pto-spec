@@ -1,6 +1,61 @@
+---
+{
+  "id": "ADR-0053",
+  "title": "PTO ISA 0.58.0 Tile Operation Cleanup",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "PTO ISA maintainers"
+  ],
+  "created": "2026-08-05",
+  "accepted": "2026-08-05",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "d07e1d7e2a9001a4d1c2a9c4a4f212b0ba767092",
+  "target_releases": [
+    "0.58.0"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001",
+    "PTO-ARCH-ENCODING-OWNERSHIP-001",
+    "PTO-MGATHER-BYTE-DISPLACEMENT-001",
+    "PTO-MGATHER-CAS-ATOMIC-001",
+    "PTO-MGATHER-CAS-PUBLICATION-001",
+    "PTO-MGATHER-MASK-PREDICATE-001",
+    "PTO-MGATHER-MASK-PUBLICATION-001",
+    "PTO-MGATHER-MASK-TYPE-002",
+    "PTO-MSCATTER-BYTE-DISPLACEMENT-001",
+    "PTO-MSCATTER-DUPLICATE-ORDER-001",
+    "PTO-MSCATTER-MASK-DUPLICATE-001",
+    "PTO-MSCATTER-MASK-PREDICATE-001",
+    "PTO-MSCATTER-MASK-TYPE-002",
+    "PTO-THISTOGRAM-CONTRACT-001",
+    "PTO-TMRGSORT-CONTRACT-001",
+    "PTO-TSORT-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
+    "PTO-TILE-MGATHER",
+    "PTO-TILE-MGATHER-CAS",
+    "PTO-TILE-MGATHER-MASK",
+    "PTO-TILE-MSCATTER",
+    "PTO-TILE-MSCATTER-MASK",
+    "PTO-TILE-THISTOGRAM",
+    "PTO-TILE-TMRGSORT",
+    "PTO-TILE-TSORT"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0053: PTO ISA 0.58.0 Tile Operation Cleanup
 
-- **Status**: accepted
 - **Date**: 2026-08-05
 - **Deciders**: PTO ISA maintainers
 

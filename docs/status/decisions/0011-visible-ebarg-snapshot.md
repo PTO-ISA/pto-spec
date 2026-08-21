@@ -1,8 +1,39 @@
+---
+{
+  "id": "ADR-0011",
+  "title": "Make EBARG the visible PTO v0 trap snapshot",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-REQ-STATE-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-DATA-TYPES-TRAP-CONTEXT",
+    "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
+    "PTO-ARCH-STATE-TRAP-CONTEXT"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0011: Make EBARG the visible PTO v0 trap snapshot
-
-## Status
-
-Accepted.
 
 ## Context
 

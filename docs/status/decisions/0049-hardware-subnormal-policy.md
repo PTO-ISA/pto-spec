@@ -1,13 +1,68 @@
+---
+{
+  "id": "ADR-0049",
+  "title": "Hardware numeric subnormal policy",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-01",
+  "accepted": "2026-08-01",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "0e0fc43b42a7d9417bb8650e604c02e6b67852f2",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+    "PTO-NUMERIC-FORMAT-DESCRIPTOR-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
+    "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
+    "PTO-ARCH-PROFILE-APPLICABILITY"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": [
+    "PD-04"
+  ]
+}
+---
 # ADR 0049: Hardware numeric subnormal policy
 
 > Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-## Status
+## Decision scope
 
-Accepted for the named `pto-hardware-numeric-0.57.1-ieee-v1` profile. This
-decision completes PD-04 for every otherwise-supported operation/type tuple.
-It does not change the active `pto-v0` raw-carrier profile and does not close
-any operation/type support tuple.
+For the named `pto-hardware-numeric-0.57.1-ieee-v1` profile, this decision
+completes subnormal handling for every otherwise-supported operation/type tuple. It does not
+change the active `pto-v0` raw-carrier profile or close any operation/type
+support tuple.
+
+## Affected domains
+
+- `cube-matrix`
+- `scalar-binary`
+- `scalar-fp-convert`
+- `scalar-fused`
+- `scalar-unary`
+- `tile-binary`
+- `tile-convert`
+- `tile-dequantize`
+- `tile-expand`
+- `tile-fused`
+- `tile-partial`
+- `tile-quantize`
+- `tile-reduction`
+- `tile-unary`
 
 ## Context
 
@@ -16,7 +71,7 @@ but it deliberately left input handling, result underflow, tininess, and mode
 selection open. The hardware profile already required support for every
 subnormal encoding defined by those formats, prohibited flush-to-zero and
 denormals-are-zero behavior, and selected after-rounding tininess detection.
-Leaving PD-04 open despite that profile text would permit an implementation to
+Leaving subnormal handling open despite that profile text would permit an implementation to
 invent hidden mode state or silently apply a backend-specific shortcut.
 
 ## Decision
@@ -79,14 +134,14 @@ subnormal.
 
 ### Domain applicability
 
-The generated subnormal contract enumerates every PD-04 domain, operation key,
+The generated subnormal contract enumerates every affected domain, operation key,
 profile hook, and each operation's eleven conditional format rows from the
-numeric decision-input and contract ledgers. Its 95 compressed operation rows
-therefore represent 1,045 operation/type obligations instead of relying on
+numeric decision-input and contract ledgers. Its 93 compressed operation rows
+therefore represent 1,023 operation/type obligations instead of relying on
 mnemonic families or backend behavior. Operation-specific special values,
 exception flags, range results, approximation error, reduction ties,
-quantization equations, and matrix precision remain owned by PD-05 through
-PD-12. ADR 0050 separately owns the bounded PD-05-SC2 checkpoint for produced
+quantization equations, and matrix precision remain owned by ADR 0088 through
+ADR 0095. ADR 0050 separately owns the bounded checkpoint for produced
 canonical NaNs, comparison NaN/signed-zero results, and MIN/MAX NaN/signed-zero
 results; it does not relax this subnormal policy or create operation/type
 support.
@@ -104,11 +159,11 @@ support.
 
 ## Consequences
 
-PD-04 is complete for the named hardware profile. The accepted numeric
+Subnormal handling is complete for the named hardware profile. The accepted numeric
 decision count increases to two of twelve. This decision does not complete a
 numeric domain because every affected domain still has other open decision
 dimensions, and it does not select a generic implementation-defined variation
-route. PD-12 must still make every remaining target variation discoverable and
+route. ADR 0095 must still make every remaining target variation discoverable and
 bounded.
 
 ## Verification obligations
@@ -126,7 +181,7 @@ The generated evidence binds these assertions, the hardware profile, all
 affected domains and operations, and the accepted decision record.
 
 These assertions are Stage 5 profile-decision evidence. Arithmetic input/output
-and underflow-transition vectors remain required by `S5-T2-C`; accepting PD-04
+and underflow-transition vectors remain required by `S5-T2-C`; accepting this decision
 does not claim that any implementation has passed them. ADR 0050's
 special-value checkpoint likewise remains profile-decision evidence rather
 than an implementation-conformance result.

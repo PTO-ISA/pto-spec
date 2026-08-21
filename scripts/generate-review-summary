@@ -1,0 +1,211 @@
+#!/usr/bin/env python3
+"""Summarize the semantic delta from a merge base to a reviewed head."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+
+ROOT = Path(__file__).resolve().parent.parent
+ADR_ID = re.compile(r'"id"\s*:\s*"(ADR-[0-9]{4})"')
+UNIT_RECORD = re.compile(r"^// PTO-(?:UNIT|INSTRUCTION): (\{.*\})$", re.MULTILINE)
+TEST_RECORD = re.compile(r"^// PTO-TEST: (\{.*\})$", re.MULTILINE)
+NDF_REGION = re.compile(
+    r"^// NDF-BEGIN: (PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*)$"
+    r"(.*?)"
+    r"^// NDF-END: \1$",
+    re.MULTILINE | re.DOTALL,
+)
+
+
+def git(*arguments: str, check: bool = True) -> str:
+    result = subprocess.run(
+        ["git", *arguments], cwd=ROOT, text=True, capture_output=True, check=False
+    )
+    if check and result.returncode != 0:
+        raise ValueError(result.stderr.strip() or f"git {' '.join(arguments)} failed")
+    return result.stdout
+
+
+def content(ref: str, path: str) -> str | None:
+    result = subprocess.run(
+        ["git", "show", f"{ref}:{path}"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return result.stdout if result.returncode == 0 else None
+
+
+def changed_paths(base: str, head: str) -> list[str]:
+    return sorted(
+        value
+        for value in git("diff", "--name-only", "--diff-filter=ACDMRTUXB", base, head).splitlines()
+        if value
+    )
+
+
+def metadata_id(text: str | None, pattern: re.Pattern[str]) -> str | None:
+    if text is None:
+        return None
+    match = pattern.search(text)
+    if match is None:
+        return None
+    if pattern in (UNIT_RECORD, TEST_RECORD):
+        value = json.loads(match.group(1))
+        identifier = value.get("id")
+        return identifier if isinstance(identifier, str) else None
+    return match.group(1)
+
+
+def ndf_clauses(text: str | None) -> dict[str, str]:
+    if text is None:
+        return {}
+    return {match.group(1): match.group(0) for match in NDF_REGION.finditer(text)}
+
+
+def json_at(ref: str, path: str) -> dict[str, object]:
+    raw = content(ref, path)
+    if raw is None:
+        return {}
+    value = json.loads(raw)
+    return value if isinstance(value, dict) else {}
+
+
+def bullet(lines: list[str], values: list[str]) -> None:
+    if values:
+        lines.extend(f"- {value}" for value in values)
+    else:
+        lines.append("- None")
+
+
+def render(base_ref: str, head_ref: str) -> str:
+    base = git("merge-base", base_ref, head_ref).strip()
+    head = git("rev-parse", f"{head_ref}^{{commit}}").strip()
+    paths = changed_paths(base, head)
+
+    adr_ids: set[str] = set()
+    unit_ids: set[str] = set()
+    clause_ids: set[str] = set()
+    test_ids: set[str] = set()
+    for path in paths:
+        old = content(base, path)
+        new = content(head, path)
+        if path.startswith("docs/status/decisions/") and path.endswith(".md"):
+            for text in (old, new):
+                identifier = metadata_id(text, ADR_ID)
+                if identifier:
+                    adr_ids.add(identifier)
+        if path.startswith("asl/") and path.endswith(".asl"):
+            for text in (old, new):
+                identifier = metadata_id(text, UNIT_RECORD)
+                if identifier:
+                    unit_ids.add(identifier)
+            old_clauses = ndf_clauses(old)
+            new_clauses = ndf_clauses(new)
+            clause_ids.update(
+                identifier
+                for identifier in old_clauses.keys() | new_clauses.keys()
+                if old_clauses.get(identifier) != new_clauses.get(identifier)
+            )
+        if path.startswith("tests/asl/") and path.endswith(".asl"):
+            for text in (old, new):
+                identifier = metadata_id(text, TEST_RECORD)
+                if identifier:
+                    test_ids.add(identifier)
+
+    old_manifest = json_at(base, "spec/release-manifest.json")
+    new_manifest = json_at(head, "spec/release-manifest.json")
+    old_fingerprint = old_manifest.get("encoding_projection_sha256")
+    new_fingerprint = new_manifest.get("encoding_projection_sha256")
+    if not isinstance(old_fingerprint, str) or not isinstance(new_fingerprint, str):
+        fingerprint_status = "Unavailable in one or both reviewed commits"
+    elif old_fingerprint == new_fingerprint:
+        fingerprint_status = f"Unchanged: `{new_fingerprint}`"
+    else:
+        fingerprint_status = f"Changed: `{old_fingerprint}` -> `{new_fingerprint}`"
+
+    projection_prefixes = (
+        "docs/arch/", "docs/block/", "docs/scalar/", "docs/tile/",
+        "docs/mkdocs/", "spec/catalog/", "spec/evidence/", "spec/release-manifest.json",
+    )
+    projections = [path for path in paths if path.startswith(projection_prefixes)]
+
+    index = json_at(head, "spec/evidence/adr-index.json")
+    release_required = sorted(
+        record["id"]
+        for record in index.get("records", [])
+        if isinstance(record, dict)
+        and record.get("id") in adr_ids
+        and record.get("release_impact") == "required"
+    )
+    compatibility = (
+        [f"Release-impact ADR: `{identifier}`" for identifier in release_required]
+        or ["No changed ADR declares required release impact"]
+    )
+    compatibility.append(f"Encoding projection: {fingerprint_status}")
+
+    blockers: list[str] = []
+    traceability = json_at(head, "spec/evidence/release-traceability-readiness.json")
+    rows = {
+        row.get("id"): row
+        for row in traceability.get("units", [])
+        if isinstance(row, dict) and isinstance(row.get("id"), str)
+    }
+    for identifier in sorted(unit_ids):
+        row = rows.get(identifier)
+        if row is None:
+            blockers.append(f"`{identifier}` is absent from release traceability")
+        elif not row.get("documentation") or not row.get("tests"):
+            blockers.append(f"`{identifier}` lacks a documentation or AVS projection")
+
+    lines = [
+        "# Review summary",
+        "",
+        "This deterministic report is a review aid, not authority. Current architecture",
+        "meaning remains in the owning ASL/NDF at the reviewed commit.",
+        "",
+        f"- Base ref: `{base_ref}`",
+        f"- Head ref: `{head_ref}` (`{head}`)",
+        f"- Merge base: `{base}`",
+        "",
+        "## Changed ADRs",
+    ]
+    bullet(lines, [f"`{value}`" for value in sorted(adr_ids)])
+    lines.extend(["", "## Changed NDF clauses"])
+    bullet(lines, [f"`{value}`" for value in sorted(clause_ids)])
+    lines.extend(["", "## Changed ASL units"])
+    bullet(lines, [f"`{value}`" for value in sorted(unit_ids)])
+    lines.extend(["", "## Binary fingerprint", f"- {fingerprint_status}"])
+    lines.extend(["", "## Generated projections"])
+    bullet(lines, [f"`{value}`" for value in projections])
+    lines.extend(["", "## AVS points"])
+    bullet(lines, [f"`{value}`" for value in sorted(test_ids)])
+    lines.extend(["", "## Compatibility"])
+    bullet(lines, compatibility)
+    lines.extend(["", "## Blockers"])
+    bullet(lines, blockers or ["None identified by this structural review aid"])
+    return "\n".join(lines) + "\n"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--base", required=True)
+    parser.add_argument("--head", required=True)
+    arguments = parser.parse_args()
+    try:
+        sys.stdout.write(render(arguments.base, arguments.head))
+    except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

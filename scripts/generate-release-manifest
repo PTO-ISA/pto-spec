@@ -13,6 +13,14 @@ import tomllib
 
 
 ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.release_selection import (  # noqa: E402
+    evaluate_release_selection,
+    manifest_selection,
+)
+
 RELEASE = "0.58.2"
 ENCODING_ABI = "pto-isa-0.58.2-mode-function-v1"
 MANIFEST_PATH = Path("spec/release-manifest.json")
@@ -185,6 +193,8 @@ CANONICAL_STATIC_INPUTS = (
     ".aslref-version",
     "specification.toml",
     "spec/release-inputs.json",
+    "spec/release-selection.json",
+    "spec/schemas/pto-release-selection.schema.json",
     "spec/hardware-conformance-profile.json",
     "spec/catalog/command-forms.json",
     "spec/catalog/extension-encoding-reservations.json",
@@ -1256,6 +1266,7 @@ def validate_owned_set() -> None:
 
 def build_artifacts() -> dict[str, dict]:
     metadata = validate_release_metadata()
+    selection = evaluate_release_selection(ROOT)
     tile_catalog, _ = validate_tile_catalog()
     numeric_profile = validate_numeric_profile()
     validate_owned_set()
@@ -1303,6 +1314,7 @@ def build_artifacts() -> dict[str, dict]:
             "repository_implementation_conformance":
                 "b-fpatr-and-tcvt-e8m0-asl-proven-other-numeric-domains-unproven",
         },
+        "release_selection": manifest_selection(selection),
         "hash_contract": {
             "algorithm": "SHA-256",
             "json_encoding": "UTF-8 JSON with lexicographically sorted keys and separators ',' ':'",

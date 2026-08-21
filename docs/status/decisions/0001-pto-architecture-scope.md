@@ -1,6 +1,51 @@
+---
+{
+  "id": "ADR-0001",
+  "title": "Define PTO as a scalar, bundle/command, and tile ISA",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-28",
+  "accepted": "2026-07-28",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "007844f182ca87c843ebf274d7c9509188e68e01",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
+    "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001",
+    "PTO-ARCH-ENCODING-OWNERSHIP-001",
+    "PTO-ARCH-STATE-CLOSURE-001",
+    "PTO-ARCH-TEPL-ALIAS-001",
+    "PTO-ARCH-TILE-EXECUTION-ENGINE-001",
+    "PTO-ARCH-TILE-INSTRUCTION-CLASS-001",
+    "PTO-RELEASE-VERIFICATION",
+    "PTO-SOURCE-HIERARCHY",
+    "PTO-TILE-CAPACITY-PER-PE"
+  ],
+  "affected_units": [
+    "PTO-ARCH-OVERVIEW-ARCHITECTURE",
+    "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
+    "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/4",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0001: Define PTO as a scalar, bundle/command, and tile ISA
 
-- Status: accepted
+> Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
+
 - Formal-model issue: [#4](https://github.com/PTO-ISA/pto-spec/issues/4)
 - Decision date: 2026-07-28
 

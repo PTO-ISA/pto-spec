@@ -14,6 +14,7 @@ MAKEFILE = ROOT / "Makefile"
 RELEASE_GATE = ROOT / "spec/evidence/release-gate-readiness.json"
 SPECIFICATION = ROOT / "specification.toml"
 RELEASE_GENERATOR = ROOT / "scripts/generate-release-manifest"
+TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
 
 
 class ReleaseClosureTest(unittest.TestCase):
@@ -46,6 +47,22 @@ class ReleaseClosureTest(unittest.TestCase):
         self.assertIn("scripts/instruction_contracts.py", gate["sources"])
         self.assertIn("scripts/generate-instruction-contract-closure", gate["sources"])
         self.assertIn("scripts/manual_semantic_audit.py", gate["sources"])
+        for path in (
+            "scripts/management_refactor_closure.py",
+            "scripts/release_selection.py",
+            "spec/evidence/architecture-readiness.json",
+            "spec/evidence/management-system-refactor-closure.json",
+            "spec/release-selection.json",
+            "spec/schemas/pto-release-selection.schema.json",
+        ):
+            self.assertIn(path, gate["sources"])
+        release_closure = next(row for row in gate["gates"] if row["id"] == "RG-06")
+        self.assertIn("spec/release-selection.json", release_closure["evidence"])
+        self.assertIn(
+            "spec/evidence/management-system-refactor-closure.json",
+            release_closure["evidence"],
+        )
+        self.assertIn("scripts/release_selection.py", release_closure["evidence"])
         self.assertIn(
             {
                 "id": "RG-10",
@@ -63,6 +80,8 @@ class ReleaseClosureTest(unittest.TestCase):
             "\t./scripts/generate-instruction-contract-closure --check\n"
             "\tpython3 scripts/manual_semantic_audit.py\n"
             "\t./scripts/generate-release-traceability-readiness --check\n"
+            "\t./scripts/generate-architecture-readiness --check\n"
+            "\t./scripts/generate-management-system-refactor-closure --check\n"
             "\t./scripts/generate-release-gate-readiness --check\n"
             "\t./scripts/check-release-closure\n"
             "\t./scripts/check-binary-closure --release\n"
@@ -110,7 +129,9 @@ class ReleaseClosureTest(unittest.TestCase):
                 "spec/evidence/pto-isa-0582-abi-vectors.json",
                 "spec/evidence/pto-isa-0582-encoding-totality.json",
                 "spec/evidence/pto-isa-0582-hardware-numeric-vectors.json",
+                "spec/evidence/architecture-readiness.json",
                 "spec/evidence/instruction-contract-closure.json",
+                "spec/evidence/management-system-refactor-closure.json",
                 "spec/evidence/release-gate-readiness.json",
                 "spec/evidence/release-traceability-readiness.json",
                 "spec/schemas/pto-spec-release-event-v1.schema.json",
@@ -120,11 +141,30 @@ class ReleaseClosureTest(unittest.TestCase):
             self.assertTrue((ROOT / row["path"]).is_file())
             self.assertTrue((ROOT / row["generator"]).is_file())
 
-    def test_repository_release_closure_is_current_and_legacy_free(self) -> None:
+    def test_release_traceability_links_derived_readiness_subjects(self) -> None:
+        traceability = json.loads(TRACEABILITY.read_text(encoding="utf-8"))
+        units = {row["id"]: row for row in traceability["units"]}
+        requirements = {row["id"]: row for row in traceability["requirements"]}
+
+        self.assertEqual(
+            traceability["derivation"]["architecture_readiness_projection"],
+            "spec/evidence/architecture-readiness.json",
+        )
+        self.assertIn(
+            "ADR-0047",
+            units["PTO-ARCH-DATA-TYPES-ROUNDING"]["readiness_subjects"],
+        )
+        self.assertIn(
+            "ADR-0047",
+            requirements["PTO-TCVT-CONTRACT-001"]["readiness_subjects"],
+        )
+
+    def test_unassigned_main_changes_keep_release_closure_open(self) -> None:
         result = subprocess.run(
             [str(CHECKER)], cwd=ROOT, text=True, capture_output=True, check=False
         )
-        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("release selection contains blockers", result.stderr)
 
     def test_checker_rejects_legacy_and_missing_paths_in_registered_evidence(
         self,

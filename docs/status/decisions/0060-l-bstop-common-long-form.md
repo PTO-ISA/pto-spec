@@ -1,12 +1,45 @@
+---
+{
+  "id": "ADR-0060",
+  "title": "Restore `L.BSTOP` as the common 64-bit bundle stop",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-11",
+  "accepted": "2026-08-11",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "4d115387b8a8a3c135f78189778d38547e75c697",
+  "target_releases": [
+    "0.58.1"
+  ],
+  "affected_ndf": [
+    "PTO-L-BSTOP-DECISION-BINDING-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-L-BSTOP"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0060: Restore `L.BSTOP` as the common 64-bit bundle stop
 
-- Status: accepted
 - Date: 2026-08-11
 - Requirements: PTO-REQ-BUNDLE-DISPATCH-001,
   PTO-REQ-BUNDLE-OPERATION-001, PTO-REQ-BUNDLE-STATE-001
 
-Current release inventory is governed by ADR 0062; numeric inventories below
-are acceptance-time history, not the current active decoder set.
+Current release inventory is governed by ASL and generated projections;
+numeric inventories below are acceptance-time history, not the current active
+decoder set.
 
 ## Context
 

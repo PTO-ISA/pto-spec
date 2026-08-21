@@ -19,10 +19,13 @@ OBSOLETE_PATHS = (
     Path("asl/concurrency.asl"),
     Path("asl/dispatch.asl"),
     Path("docs/instructions"),
+    Path("docs/status/legacy"),
     Path("tests/asl/main.asl"),
     Path("tests/asl/shards"),
 )
-MARKDOWN_ROOTS = frozenset({"arch", "block", "scalar", "tile", "status"})
+MARKDOWN_ROOTS = frozenset(
+    {"arch", "block", "scalar", "tile", "status", "governance", "development", "releases"}
+)
 AGENT_ENTRYPOINTS = (
     Path("AGENTS.md"),
     Path(".codex/skills/pto-asl/SKILL.md"),
@@ -36,17 +39,10 @@ SUPERSEDED_AGENT_ROUTES = (
     "scripts/check-catalogs",
     "ASL_TESTS",
     "make ci",
+    "spec/requirements.json",
+    "PRD-",
+    "PD-",
 )
-ALLOWED_NEGATIVE_LEGACY_LINES = {
-    (
-        Path("AGENTS.md"),
-        "- Never use `docs/status/legacy/` as an architecture, implementation, review,",
-    ),
-    (
-        Path(".codex/skills/pto-asl/references/source-map.md"),
-        "- `docs/status/legacy/` is historical, non-normative, excluded from agent",
-    ),
-}
 
 
 def _at_or_below(path: Path, owner: Path) -> bool:
@@ -92,13 +88,13 @@ def validate(root: Path, tracked: tuple[Path, ...]) -> list[str]:
                 errors.append(f"active Markdown symlink is forbidden: {relative}")
             if relative.suffix == ".md" and not _owned_markdown(relative):
                 errors.append(
-                    "active Markdown is outside the ASL mirror or docs/status "
+                    "active Markdown is outside the ASL mirror or another owned documentation root "
                     f"ownership: {relative}"
                 )
     for path in tracked:
         if path.suffix == ".md" and path.parts[:1] == ("docs",) and not _owned_markdown(path):
             errors.append(
-                "active Markdown is outside the ASL mirror or docs/status "
+                "active Markdown is outside the ASL mirror or another owned documentation root "
                 f"ownership: {path}"
             )
     for relative in AGENT_ENTRYPOINTS:
@@ -109,11 +105,6 @@ def validate(root: Path, tracked: tuple[Path, ...]) -> list[str]:
         for route in SUPERSEDED_AGENT_ROUTES:
             for line in text.splitlines():
                 if route not in line:
-                    continue
-                if route == "docs/status/legacy/" and (
-                    relative,
-                    line.strip(),
-                ) in ALLOWED_NEGATIVE_LEGACY_LINES:
                     continue
                 errors.append(
                     "agent entrypoint routes to superseded contract: "

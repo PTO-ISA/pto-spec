@@ -5,8 +5,8 @@
 // TNOT MUST select VEC Mode 0 Function 16 and MUST complement only the
 // selected 8, 16, 32, or 64-bit integer element width. Supported types,
 // closed unary schema, PadValue, complete preflight, source snapshot, and
-// atomic destination publication MUST follow PRD-071. Rejection MUST precede
-// all architectural effects.
+// atomic destination publication MUST follow ADR-0080 and NDF clause
+// PTO-TNOT-CONTRACT-001. Rejection MUST precede all architectural effects.
 // NDF-END: PTO-TNOT-CONTRACT-001
 // DOC-BEGIN: decode
 readonly func InstructionContractOperation_TNOT() => TileOperation

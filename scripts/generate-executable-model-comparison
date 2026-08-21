@@ -22,6 +22,17 @@ SPEC_FILE = "li" + "nxisa-v" + "0" + "." + "57.json"
 VERSION_TOKEN = "v" + "0" + "57"
 SNAPSHOT_ENV = "PTO_COMPARE_ROOT"
 COMMAND_TIMEOUT_SECONDS = 180
+PUBLIC_SNAPSHOT = {
+    "repository": "https://github.com/LinxISA/linx-isa.git",
+    "ref": "refs/pull/160/head",
+    "commit": "3fc63e5fc1d1913b7c4754944df983d7bd8416c5",
+    "commit_url": (
+        "https://github.com/LinxISA/linx-isa/commit/"
+        "3fc63e5fc1d1913b7c4754944df983d7bd8416c5"
+    ),
+    "review_url": "https://github.com/LinxISA/linx-isa/pull/160",
+    "role": "historical-independent-comparison-only",
+}
 SCALAR_SEMANTIC_DIVERGENCES = {
     "ADDTPC": (
         "PTO uses the accepted signed 4 KiB page displacement; the locked "
@@ -404,10 +415,16 @@ def load_snapshot(root: Path) -> dict[str, Any]:
 def clean_snapshot_metadata(root: Path) -> dict[str, Any]:
     head = git_output(root, ["rev-parse", "HEAD"])
     dirty = git_output(root, ["status", "--porcelain=v1"])
+    if head != PUBLIC_SNAPSHOT["commit"]:
+        raise SystemExit(
+            "independent snapshot must be the reviewed public commit "
+            f"{PUBLIC_SNAPSHOT['commit']}, got {head or 'unknown'}"
+        )
     return {
         "kind": "content-addressed independent executable ISA snapshot",
         "revision_sha256": sha256_text(head or "unknown"),
         "worktree_clean": dirty == "",
+        "publication": PUBLIC_SNAPSHOT,
     }
 
 

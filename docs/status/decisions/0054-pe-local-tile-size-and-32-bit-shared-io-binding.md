@@ -1,11 +1,64 @@
+---
+{
+  "id": "ADR-0054",
+  "title": "PE-Local Tile Size and 32-bit Shared I/O Binding",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "PTO ISA maintainers"
+  ],
+  "created": "2026-08-06",
+  "accepted": "2026-08-06",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "f7d2d0c88e82929a65e9324eadbf6231aa164dcd",
+  "target_releases": [
+    "0.58.0"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
+    "PTO-ARCH-STATE-CLOSURE-001",
+    "PTO-B-IOS-SHARED-STATE-001",
+    "PTO-B-IOT-STREAM-001",
+    "PTO-BSTART-TLOAD-CUBE-001",
+    "PTO-BSTART-TLOAD-MEMORY-001",
+    "PTO-BSTART-TMOV-SHARED-001",
+    "PTO-BSTART-TSTORE-CUBE-001",
+    "PTO-BSTART-TSTORE-MEMORY-001",
+    "PTO-RELEASE-VERIFICATION",
+    "PTO-SOURCE-HIERARCHY",
+    "PTO-TILE-CAPACITY-PER-PE"
+  ],
+  "affected_units": [
+    "PTO-ARCH-OVERVIEW-ARCHITECTURE",
+    "PTO-ARCH-PROGRAMMING-MODEL-SHARED-TILE-REGISTERS",
+    "PTO-ARCH-STATE-TILE-DESCRIPTOR",
+    "PTO-BLOCK-B-IOS",
+    "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-BSTART-TLOAD",
+    "PTO-BLOCK-BSTART-TMOV",
+    "PTO-BLOCK-BSTART-TSTORE"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0054: PE-Local Tile Size and 32-bit Shared I/O Binding
 
-- **Status**: accepted
+> Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
+
 - **Date**: 2026-08-06
 - **Deciders**: PTO ISA maintainers
 
-Current release inventory is governed by ADR 0062; numeric inventories below
-are acceptance-time history, not the current active decoder set.
+Current release inventory is governed by ASL and generated projections;
+numeric inventories below are acceptance-time history, not the current active
+decoder set.
 
 ## Context
 

@@ -1,6 +1,88 @@
+---
+{
+  "id": "ADR-0071",
+  "title": "Local CUBE Matrix Operand Contract",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-20",
+  "accepted": "2026-08-20",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "328ab1989572b93d5ef5b1e2b726e906b30cbb3c",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
+    "PTO-BSTART-TGEMV-BIAS-CONTRACT-001",
+    "PTO-BSTART-TGEMV-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-BIAS-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-CONTRACT-001",
+    "PTO-BSTART-TMATMUL-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMUL-BIAS-CONTRACT-001",
+    "PTO-BSTART-TMATMUL-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-CONTRACT-001",
+    "PTO-CUBE-CELL-STATE-001",
+    "PTO-CUBE-LOCAL-MATRIX-001",
+    "PTO-TGEMV-ACC-CONTRACT-001",
+    "PTO-TGEMV-BIAS-CONTRACT-001",
+    "PTO-TGEMV-CONTRACT-001",
+    "PTO-TGEMV-MX-ACC-CONTRACT-001",
+    "PTO-TGEMV-MX-BIAS-CONTRACT-001",
+    "PTO-TGEMV-MX-CONTRACT-001",
+    "PTO-TMATMUL-ACC-CONTRACT-001",
+    "PTO-TMATMUL-BIAS-CONTRACT-001",
+    "PTO-TMATMUL-CONTRACT-001",
+    "PTO-TMATMUL-MX-ACC-CONTRACT-001",
+    "PTO-TMATMUL-MX-BIAS-CONTRACT-001",
+    "PTO-TMATMUL-MX-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-BSTART-TGEMV",
+    "PTO-BLOCK-BSTART-TGEMV-ACC",
+    "PTO-BLOCK-BSTART-TGEMV-BIAS",
+    "PTO-BLOCK-BSTART-TGEMVMX",
+    "PTO-BLOCK-BSTART-TGEMVMX-ACC",
+    "PTO-BLOCK-BSTART-TGEMVMX-BIAS",
+    "PTO-BLOCK-BSTART-TMATMUL",
+    "PTO-BLOCK-BSTART-TMATMUL-ACC",
+    "PTO-BLOCK-BSTART-TMATMUL-BIAS",
+    "PTO-BLOCK-BSTART-TMATMULMX",
+    "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+    "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-CUBE-PRIMARY",
+    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+    "PTO-TILE-TGEMV",
+    "PTO-TILE-TGEMV-ACC",
+    "PTO-TILE-TGEMV-BIAS",
+    "PTO-TILE-TGEMV-MX",
+    "PTO-TILE-TGEMV-MX-ACC",
+    "PTO-TILE-TGEMV-MX-BIAS",
+    "PTO-TILE-TMATMUL",
+    "PTO-TILE-TMATMUL-ACC",
+    "PTO-TILE-TMATMUL-BIAS",
+    "PTO-TILE-TMATMUL-MX",
+    "PTO-TILE-TMATMUL-MX-ACC",
+    "PTO-TILE-TMATMUL-MX-BIAS"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/104",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0071: Local CUBE Matrix Operand Contract
 
-- Status: accepted
 - Issue: [#104](https://github.com/PTO-ISA/pto-spec/issues/104)
 - Umbrella: [#72](https://github.com/PTO-ISA/pto-spec/pull/72)
 - Baseline: `328ab1989572b93d5ef5b1e2b726e906b30cbb3c`

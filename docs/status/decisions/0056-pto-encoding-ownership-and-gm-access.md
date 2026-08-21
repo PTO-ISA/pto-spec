@@ -1,16 +1,99 @@
+---
+{
+  "id": "ADR-0056",
+  "title": "PTO Encoding Ownership and Per-PE GM Access",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "PTO ISA maintainers"
+  ],
+  "created": "2026-08-08",
+  "accepted": "2026-08-08",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "488955c9918d89dc710719c3c981ff273312915f",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-ENCODING-OWNERSHIP-001",
+    "PTO-ARCH-GM-ACCESS-001",
+    "PTO-BSTART-GMOV-COLLECTIVE-001",
+    "PTO-BSTART-MGATHER-CAS-SCHEMA-001",
+    "PTO-BSTART-MGATHER-MASK-SCHEMA-001",
+    "PTO-BSTART-MGATHER-SCHEMA-001",
+    "PTO-BSTART-MSCATTER-MASK-SCHEMA-001",
+    "PTO-BSTART-MSCATTER-SCHEMA-001",
+    "PTO-BSTART-TLOAD-CUBE-001",
+    "PTO-BSTART-TLOAD-MEMORY-001",
+    "PTO-BSTART-TPREFETCH-MEMORY-001",
+    "PTO-BSTART-TSTORE-CUBE-001",
+    "PTO-BSTART-TSTORE-MEMORY-001",
+    "PTO-GMOV-CORE4-PEER-001",
+    "PTO-MGATHER-BYTE-DISPLACEMENT-001",
+    "PTO-MGATHER-CAS-ATOMIC-001",
+    "PTO-MGATHER-CAS-PUBLICATION-001",
+    "PTO-MGATHER-MASK-PREDICATE-001",
+    "PTO-MGATHER-MASK-PUBLICATION-001",
+    "PTO-MGATHER-MASK-TYPE-002",
+    "PTO-MSCATTER-BYTE-DISPLACEMENT-001",
+    "PTO-MSCATTER-DUPLICATE-ORDER-001",
+    "PTO-MSCATTER-MASK-DUPLICATE-001",
+    "PTO-MSCATTER-MASK-PREDICATE-001",
+    "PTO-MSCATTER-MASK-TYPE-002",
+    "PTO-TLOAD-CUBE-001",
+    "PTO-TLOAD-MEMORY-001",
+    "PTO-TMOV-CONTRACT-001",
+    "PTO-TPREFETCH-FOOTPRINT-001",
+    "PTO-TSTORE-CUBE-001",
+    "PTO-TSTORE-MEMORY-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS",
+    "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
+    "PTO-BLOCK-BSTART-GMOV",
+    "PTO-BLOCK-BSTART-MGATHER",
+    "PTO-BLOCK-BSTART-MGATHER-CAS",
+    "PTO-BLOCK-BSTART-MGATHER-MASK",
+    "PTO-BLOCK-BSTART-MSCATTER",
+    "PTO-BLOCK-BSTART-MSCATTER-MASK",
+    "PTO-BLOCK-BSTART-TLOAD",
+    "PTO-BLOCK-BSTART-TPREFETCH",
+    "PTO-BLOCK-BSTART-TSTORE",
+    "PTO-TILE-GMOV",
+    "PTO-TILE-MGATHER",
+    "PTO-TILE-MGATHER-CAS",
+    "PTO-TILE-MGATHER-MASK",
+    "PTO-TILE-MSCATTER",
+    "PTO-TILE-MSCATTER-MASK",
+    "PTO-TILE-TLOAD",
+    "PTO-TILE-TMOV",
+    "PTO-TILE-TPREFETCH",
+    "PTO-TILE-TSTORE"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/54",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0056: PTO Encoding Ownership and Per-PE GM Access
 
 > Superseded in part by ADR 0074: the retained TLOAD/TSTORE per-PE row-stride
 > selector carries bytes rather than logical elements. Encoding ownership,
 > PE-private resolution, masks, preflight, and ordering remain in force.
 
-- **Status**: accepted
 - **Date**: 2026-08-08
 - **Deciders**: PTO ISA maintainers
 - **Issue**: [#54](https://github.com/PTO-ISA/pto-spec/issues/54)
 
-Current release inventory is governed by ADR 0062; numeric inventories below
-are acceptance-time history, not the current active decoder set.
+Current release inventory is governed by ASL and generated projections;
+numeric inventories below are acceptance-time history, not the current active
+decoder set.
 
 ## Context
 

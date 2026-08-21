@@ -1,8 +1,44 @@
+---
+{
+  "id": "ADR-0010",
+  "title": "PTO v0 ACR routing and context reset",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-REQ-STATE-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-PROFILE-RESET",
+    "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
+    "PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL",
+    "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
+    "PTO-ARCH-SYSTEM-REGISTERS-CONTEXT",
+    "PTO-ARCH-SYSTEM-REGISTERS-INTERRUPT",
+    "PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE",
+    "PTO-ARCH-SYSTEM-REGISTERS-TIMER"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0010: PTO v0 ACR routing and context reset
-
-## Status
-
-Accepted.
 
 ## Context
 

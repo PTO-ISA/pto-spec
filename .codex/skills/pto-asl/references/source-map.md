@@ -20,10 +20,26 @@ code, or diagrams.
 - `docs/{arch,block,scalar,tile}/`, `spec/catalog/`, decoder witnesses, and
   release evidence are generated or checked projections of ASL. They are never
   an independent source of semantics.
-- `spec/requirements.json` traces every accepted surface to its ASL owner and
-  independently executable evidence.
-- `docs/status/legacy/` is historical, non-normative, excluded from agent
-  routing, and never a source for current behavior.
+- `tests/asl/{arch,block,scalar,tile}/` contains independently runnable AVS
+  points that mirror their ASL owner.
+- `spec/evidence/release-traceability-readiness.json` is the current generated
+  ASL-to-page-to-AVS view. Continue from it to the commit-scoped inputs in
+  `spec/release-inputs.json` and the generated release manifest.
+- `spec/evidence/architecture-readiness.json` derives each active ADR lifecycle
+  stage from the ADR index, release traceability, instruction contracts, and
+  exact-commit validation evidence. It is a status projection, not semantics.
+- `spec/release-selection.json` owns release inclusion policy. The generated
+  manifest expands its exact ADR/NDF set and preserves per-NDF digests.
+- `spec/evidence/adr-index.json` is the decision-routing index. Use it to find
+  the accepted or draft record behind a change, then return to the affected
+  ASL/NDF for current meaning.
+
+The two lookup orders are therefore:
+
+```text
+Current semantics: owning ASL/NDF -> generated mirror -> AVS -> commit-scoped evidence
+Decision history: ADR index -> affected ASL/NDF
+```
 
 ## Migration evidence
 

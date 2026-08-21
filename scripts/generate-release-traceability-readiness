@@ -21,6 +21,8 @@ from scripts.ndf import instruction_clause_id, parse_ndf_regions  # noqa: E402
 
 DEFAULT_OUTPUT = ROOT / "spec/evidence/release-traceability-readiness.json"
 INSTRUCTION_CONTRACT_PATH = Path("spec/evidence/instruction-contract-closure.json")
+ADR_INDEX_PATH = Path("spec/evidence/adr-index.json")
+ARCHITECTURE_READINESS_PATH = Path("spec/evidence/architecture-readiness.json")
 SEMANTIC_TEST_KINDS = frozenset(
     {
         "execution",
@@ -51,6 +53,21 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
     contract_by_mnemonic = {
         row["mnemonic"]: row for row in instruction_contract["instructions"]
     }
+    adr_index = json.loads((root / ADR_INDEX_PATH).read_text(encoding="utf-8"))
+    if adr_index.get("schema") != "pto.adr-index":
+        raise ValueError("ADR index has the wrong schema")
+    readiness_by_unit: dict[str, list[str]] = defaultdict(list)
+    readiness_by_requirement: dict[str, list[str]] = defaultdict(list)
+    for record in adr_index.get("records", []):
+        if record.get("status") not in {"draft", "accepted"}:
+            continue
+        adr_id = record.get("id")
+        if not isinstance(adr_id, str):
+            raise ValueError("ADR index contains a malformed active record")
+        for unit_id in record.get("affected_units", []):
+            readiness_by_unit[unit_id].append(adr_id)
+        for requirement in record.get("affected_ndf", []):
+            readiness_by_requirement[requirement].append(adr_id)
 
     tests_by_source: dict[Path, list[str]] = defaultdict(list)
     semantic_tests_by_source: dict[Path, list[str]] = defaultdict(list)
@@ -64,7 +81,7 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
 
     owners_by_requirement: dict[str, list[str]] = defaultdict(list)
     unit_rows: list[dict[str, object]] = []
-    source_paths: set[Path] = {INSTRUCTION_CONTRACT_PATH}
+    source_paths: set[Path] = {ADR_INDEX_PATH, INSTRUCTION_CONTRACT_PATH}
     for unit in units:
         absolute = root / unit.source_path
         document = Path("docs") / unit.source_path.relative_to("asl").with_suffix(".md")
@@ -91,6 +108,7 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
             "mnemonic": unit.mnemonic,
             "tests": sorted(tests_by_source[unit.source_path]),
             "semantic_tests": sorted(semantic_tests_by_source[unit.source_path]),
+            "readiness_subjects": sorted(readiness_by_unit[unit.unit_id]),
         }
         if unit.mnemonic is not None:
             contract = contract_by_mnemonic.get(unit.mnemonic)
@@ -139,6 +157,7 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
             "executable": executable,
             "owners": sorted(owners_by_requirement[requirement]),
             "tests": sorted(tests_by_requirement[requirement]),
+            "readiness_subjects": sorted(readiness_by_requirement[requirement]),
         }
         for requirement, executable in sorted(requirements.items())
     ]
@@ -171,6 +190,7 @@ def build_document(root: Path = ROOT) -> dict[str, object]:
             "documentation_projection": "docs/{arch,block,scalar,tile}",
             "test_projection": "tests/asl/{arch,block,scalar,tile}",
             "instruction_contract_projection": INSTRUCTION_CONTRACT_PATH.as_posix(),
+            "architecture_readiness_projection": ARCHITECTURE_READINESS_PATH.as_posix(),
         },
         "sources": {
             path.as_posix(): _sha256(root / path) for path in sorted(source_paths)

@@ -41,7 +41,6 @@ LAYERS = {
 STATUSES = {"open", "accepted"}
 ACTIVE_MARKDOWN: frozenset[Path] = frozenset()
 BACKUP_SUFFIXES = (".bak", ".old", ".orig", ".save", ".tmp", "~")
-STATUS_LEGACY_PREFIX = Path("docs/status/legacy")
 STATUS_LEGACY_REFERENCE = "docs/status/legacy/"
 
 
@@ -74,12 +73,6 @@ class NdfValidationError(ValueError):
     def __init__(self, errors: list[str]):
         super().__init__("\n".join(errors))
         self.errors = tuple(errors)
-
-
-def is_allowed_legacy_path(path: Path) -> bool:
-    """Return whether *path* is inside the sole permitted historical tree."""
-
-    return path == STATUS_LEGACY_PREFIX or STATUS_LEGACY_PREFIX in path.parents
 
 
 def instruction_clause_id(surface: str, mnemonic: str) -> str:
@@ -425,8 +418,7 @@ def check_repository(root: Path) -> list[str]:
     for path in files:
         relative = path.relative_to(root)
         lower_parts = tuple(part.lower() for part in relative.parts)
-        allowed_legacy = is_allowed_legacy_path(relative)
-        if ("legacy" in lower_parts or "archive" in lower_parts) and not allowed_legacy:
+        if "legacy" in lower_parts or "archive" in lower_parts:
             errors.append(f"forbidden legacy specification path: {relative.as_posix()}")
         if relative.as_posix().startswith(("asl/", "docs/")) and path.name.lower().endswith(
             BACKUP_SUFFIXES

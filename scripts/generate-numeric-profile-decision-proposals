@@ -36,157 +36,6 @@ VARIATION_POINT_CONTRACT = (
 OUTPUT = ROOT / "spec/evidence/numeric-profile-decision-proposals.json"
 
 
-PROPOSALS: dict[str, dict[str, Any]] = {
-    "PD-01": {
-        "proposed_dispositions": [
-            "portable-normative-rule",
-            "named-target-profile-rule",
-            "unsupported-in-profile",
-        ],
-        "proposed_rule": "ADR 0041 closes the A2A3 unsupported-in-profile rule for all six MX CUBE selectors and all 25 TileDataType identities. Legal PTO operations otherwise use pto-numeric-v1 results. A2A3 and A5 may reject only documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
-        "open_items": [
-            "complete every remaining domain operation/type applicability table after the accepted A2A3 MX negative slice",
-            "accept one portable or target disposition for every supported and rejected tuple",
-        ],
-    },
-    "PD-02": {
-        "proposed_dispositions": [
-            "portable-normative-rule",
-            "named-target-profile-rule",
-            "unsupported-in-profile",
-        ],
-        "proposed_rule": "The 0.58.0 contract closes five distinct code namespaces and all 25 TileDataType identities, raw widths, reserved codes, and packed four-bit order. All 16 published public type identities have unambiguous catalog bindings and retain the A2/A3-versus-A5 availability baseline. Operation/type/profile legality and implementation conformance remain open. Backend carrier types cannot create implicit PTO formats.",
-        "open_items": [
-            "bind the specialized floating raw carriers and decide the public roles of F64 and E8M0",
-            "publish bit-exact payload fields and exceptional-value classes for every floating type",
-            "complete scalar and tile operation/type legality matrix",
-            "resolve the E5M2/E5M3FN spelling conflict",
-            "publish positive and negative target-availability vectors for every accepted tuple",
-        ],
-    },
-    "PD-03": {
-        "proposed_dispositions": [
-            "portable-normative-rule",
-            "named-target-profile-rule",
-            "unsupported-in-profile",
-        ],
-        "proposed_rule": "ADR 0047 accepts the separate scalar, fixed-mnemonic, bundle, and public selector mappings; exact RNE, RTM, RTP, RTZ, RNA, RTO, and RHB tie rules; scalar reserved-code RNE fallback; operation defaults; one rounding point for every affected domain; and rounding before saturation. Other numeric result dimensions remain owned by PD-02 and PD-05 through PD-12; PD-04 is separately accepted by ADR 0049.",
-        "open_items": [],
-    },
-    "PD-04": {
-        "proposed_dispositions": [
-            "named-target-profile-rule",
-            "implementation-defined-with-explicit-allowed-set",
-        ],
-        "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.58.1-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
-        "open_items": [],
-    },
-    "PD-05": {
-        "proposed_dispositions": [
-            "portable-normative-rule",
-            "named-target-profile-rule",
-            "implementation-defined-with-explicit-allowed-set",
-        ],
-        "proposed_rule": "ADR 0050 accepts a bounded named-hardware checkpoint for canonical produced NaNs, NaN and signed-zero comparison results, and min/max NaN and signed-zero selection across 8 operations and 154 conditional operation/type tuples. PD-05 remains open for infinity arithmetic, broader NaN creation, conversions, reductions, quantization, matrix operations, and the complete flag/status contract.",
-        "open_items": [
-            "extend bit-exact NaN creation rules beyond comparison and min/max",
-            "define infinity arithmetic and special results for conversions, reductions, quantization, and matrix operations",
-            "complete signaling-NaN flag and status interactions for every affected family",
-        ],
-    },
-    "PD-06": {
-        "proposed_dispositions": ["portable-normative-rule"],
-        "proposed_rule": "NV, DZ, OF, UF, and NX are portable sticky architectural flags with the state, lifecycle, trap envelope, and 30-form producer ownership fixed by ADR 0038. Each of the 19 profile-owned forms still requires an exact produced flag set for every supported operation/type rule.",
-        "open_items": [
-            "accept exact flag conditions for all 19 profile-owned scalar forms",
-            "define tininess detection and NX coupling in every affected operation/type rule",
-            "publish independent simultaneous-flag and special-value vectors",
-        ],
-    },
-    "PD-07": {
-        "proposed_dispositions": [
-            "portable-normative-rule",
-            "named-target-profile-rule",
-            "implementation-defined-with-explicit-allowed-set",
-            "unsupported-in-profile",
-        ],
-        "proposed_rule": "Every conversion cross-product has one deterministic result, an enumerated profile-specific allowed-result set, or pre-effect rejection. The public undefined-overflow wording and CPU-only saturation cannot remain architectural outcomes.",
-        "open_items": [
-            "complete source/destination/rounding/saturation cross-product",
-            "resolve the public CPU-saturation versus implementation default-OFF conflict",
-            "choose overflow, NaN, and infinity results",
-            "define non-saturating narrowing, wrap behavior, and omitted-saturation defaults per profile/type pair",
-        ],
-    },
-    "PD-08": {
-        "proposed_dispositions": [
-            "named-profile-error-bound",
-            "unsupported-in-profile",
-        ],
-        "proposed_rule": "Each elementary function uses a versioned independent high-precision oracle plus a named per-profile ULP or relative-error bound, domain table, monotonicity rule, and special-value table. CPU host-library and hardware primitive results are observations, not the oracle.",
-        "open_items": [
-            "choose oracle and version",
-            "set per-operation/type/profile error bounds",
-            "define domain boundaries and monotonic intervals",
-        ],
-    },
-    "PD-09": {
-        "proposed_dispositions": [
-            "portable-normative-rule",
-            "named-target-profile-rule",
-            "implementation-defined-with-explicit-allowed-set",
-        ],
-        "proposed_rule": "Integer widths, overflow, comparison order, arg ties, and stable ordering are portable and exact. Floating reductions must define an exact tree per profile or a finite/testable allowed-result contract, including NaNs, signed zero, and partial merge order.",
-        "open_items": [
-            "freeze accumulator widths and trees",
-            "define arg and equal-value ties",
-            "bound floating permutation sensitivity and partial merges",
-        ],
-    },
-    "PD-10": {
-        "proposed_dispositions": [
-            "portable-normative-rule",
-            "named-target-profile-rule",
-            "unsupported-in-profile",
-        ],
-        "proposed_rule": "Every accepted quantized format receives equations for scale, zero point, grouping, exponent selection, rounding, clamping, packing, tails, special values, and inverse dequantization. Formats without a complete rule reject in that profile.",
-        "open_items": [
-            "resolve whether the affine parameter is scale or inverse-scale/pre-quant multiplier",
-            "freeze format-specific equations and stochastic-rounding state",
-            "define group axes, sizes, and tails",
-            "define sentinels, packing, round-trip tolerances, and whether SET_QUANT configuration is architectural state",
-        ],
-    },
-    "PD-11": {
-        "proposed_dispositions": [
-            "portable-normative-rule",
-            "named-target-profile-rule",
-            "unsupported-in-profile",
-        ],
-        "proposed_rule": "Publish legal type tuples and, for each tuple/profile, product precision, accumulator width/order, intermediate rounding, saturation, source-accumulator and bias order, MX scale interpretation, and special-value results. Unsupported MX tuples reject before effects.",
-        "open_items": [
-            "complete legal type-tuple table",
-            "freeze dot-product, HF32/TF32 selection, and accumulation arithmetic",
-            "resolve the public A5 MX E4M3-only versus implementation FP4/mixed-FP8 conflict",
-            "define MX scale layout, logical versus capacity K multiples, and non-A5 rejection",
-        ],
-    },
-    "PD-12": {
-        "proposed_dispositions": [
-            "named-target-profile-rule",
-            "implementation-defined-with-explicit-allowed-set",
-            "unsupported-in-profile",
-        ],
-        "proposed_rule": "ADR 0042 inventories all 99 domain/dimension variation points and assigns their current decision owner to pto-numeric-v1. No numeric result is unbounded implementation-defined behavior. A future delegation must name a profile or visible mode, enumerate or mathematically bound allowed results, and provide discovery metadata. Generic validation rejects unknown profiles, unknown modes, and missing rules before effects.",
-        "open_items": [
-            "select one admissible route for every non-portable variation point",
-            "populate a bounded allowed-result contract for every selected delegation",
-            "add unknown-profile, unknown-mode, and missing-rule rejection vectors",
-        ],
-    },
-}
-
-
 def load(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -212,7 +61,7 @@ def generate() -> dict[str, Any]:
 
     require(
         subnormal_contract["schema_version"] == 1
-        and subnormal_contract["decision_id"] == "PD-04"
+        and subnormal_contract["decision_id"] == "ADR-0049"
         and subnormal_contract["status"]
         == "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open"
         and subnormal_contract["acceptance_record"]
@@ -230,7 +79,7 @@ def generate() -> dict[str, Any]:
             "affected_hook_count": 23,
             "accepted_decision_count": 1,
             "accepted_complete_domain_rule_count": 0,
-            "pd04_complete": True,
+            "adr0049_complete": True,
             "s5_t2_a_complete": False,
             "s5_t2_complete": False,
         },
@@ -238,10 +87,10 @@ def generate() -> dict[str, Any]:
     )
     require(
         special_value_contract["schema_version"] == 1
-        and special_value_contract["decision_id"] == "PD-05"
-        and special_value_contract["checkpoint_id"] == "PD-05-SC2"
+        and special_value_contract["decision_id"] == "ADR-0088"
+        and special_value_contract["checkpoint_id"] == "ADR-0088-SC2"
         and special_value_contract["status"]
-        == "named-hardware-special-value-checkpoint-accepted-pd05-open"
+        == "named-hardware-special-value-checkpoint-accepted-adr0088-open"
         and special_value_contract["acceptance_record"]
         == "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
         and special_value_contract["summary"]
@@ -257,7 +106,7 @@ def generate() -> dict[str, Any]:
             "accepted_special_result_rule_count": 3,
             "accepted_complete_domain_rule_count": 0,
             "accepted_complete_decision_count": 0,
-            "pd05_complete": False,
+            "adr0088_complete": False,
             "s5_t2_complete": False,
         },
         "numeric special-value contract drift",
@@ -268,12 +117,9 @@ def generate() -> dict[str, Any]:
         == "decision-inputs-and-identities-closed-profile-decisions-open",
         "decision-input status drift",
     )
-    questions = inputs["decision_questions"]
+    decisions = inputs["decisions"]
     domains = inputs["domain_matrix"]
-    require(
-        {row["id"] for row in questions} == set(PROPOSALS),
-        "question proposal coverage drift",
-    )
+    require(len(decisions) == 12, "numeric decision coverage drift")
     require(identity_catalog["schema_version"] == 1, "identity catalog schema drift")
     require(
         identity_catalog["status"] == "identity-framework-closed-rules-open",
@@ -281,19 +127,19 @@ def generate() -> dict[str, Any]:
     )
     require(
         scalar_flag_contract["schema_version"] == 1
-        and scalar_flag_contract["decision_id"] == "PD-06"
+        and scalar_flag_contract["decision_id"] == "ADR-0089"
         and scalar_flag_contract["status"]
         == "state-owner-matrix-closed-profile-production-open"
         and scalar_flag_contract["summary"]["producer_owner_closed_form_count"] == 30
         and scalar_flag_contract["summary"]["architecture_condition_closed_form_count"]
         == 11
         and scalar_flag_contract["summary"]["profile_condition_open_form_count"] == 19
-        and scalar_flag_contract["summary"]["pd06_complete"] is False,
+        and scalar_flag_contract["summary"]["adr0089_complete"] is False,
         "scalar numeric flag contract drift",
     )
     require(
         rounding_selector_contract["schema_version"] == 1
-        and rounding_selector_contract["decision_id"] == "PD-03"
+        and rounding_selector_contract["decision_id"] == "ADR-0047"
         and rounding_selector_contract["status"]
         == "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open"
         and rounding_selector_contract["summary"]
@@ -306,17 +152,17 @@ def generate() -> dict[str, Any]:
             "affected_operation_count": 100,
             "affected_hook_count": 25,
             "accepted_domain_rounding_rule_count": 16,
-            "pd03_complete": True,
+            "adr0047_complete": True,
         },
         "numeric rounding selector contract drift",
     )
     require(
         format_namespace_contract["schema_version"] == 1
-        and format_namespace_contract["decision_id"] == "PD-02"
+        and format_namespace_contract["decision_id"] == "ADR-0087"
         and format_namespace_contract["status"]
         == "namespace-carrier-and-value-classification-closed-operation-rules-open"
         and format_namespace_contract["classification_checkpoint_id"]
-        == "PD-02-SC2:PD-05-SC1"
+        == "ADR-0087-SC2:ADR-0088-SC1"
         and format_namespace_contract["value_classification"]["status"] == "closed"
         and len(format_namespace_contract["value_classification"]["formats"])
         == 25
@@ -349,14 +195,14 @@ def generate() -> dict[str, Any]:
             "signed_zero_type_count": 13,
             "internally_constrained_type_count": 4,
             "open_residual_count": 8,
-            "pd02_complete": False,
+            "adr0087_complete": False,
         },
         "numeric format namespace contract drift",
     )
     require(
         public_type_baseline["schema_version"] == 1
-        and public_type_baseline["decision_id"] == "PD-02"
-        and public_type_baseline["checkpoint_id"] == "PD-02-SC2"
+        and public_type_baseline["decision_id"] == "ADR-0087"
+        and public_type_baseline["checkpoint_id"] == "ADR-0087-SC2"
         and public_type_baseline["status"]
         == "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open"
         and public_type_baseline["summary"]
@@ -371,7 +217,7 @@ def generate() -> dict[str, Any]:
             "accepted_result_rule_count": 0,
             "accepted_domain_rule_count": 0,
             "open_residual_count": 4,
-            "pd02_complete": False,
+            "adr0087_complete": False,
             "s5_t2_a_complete": False,
             "s5_t2_complete": False,
         },
@@ -379,9 +225,9 @@ def generate() -> dict[str, Any]:
     )
     require(
         public_integer_conversion["schema_version"] == 1
-        and public_integer_conversion["target"] == "S5-T2-A6:PD-07-SC1"
-        and public_integer_conversion["decision_id"] == "PD-07"
-        and public_integer_conversion["checkpoint_id"] == "PD-07-SC1"
+        and public_integer_conversion["target"] == "S5-T2-A6:ADR-0090-SC1"
+        and public_integer_conversion["decision_id"] == "ADR-0090"
+        and public_integer_conversion["checkpoint_id"] == "ADR-0090-SC1"
         and public_integer_conversion["status"]
         == "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open"
         and public_integer_conversion["summary"]
@@ -396,7 +242,7 @@ def generate() -> dict[str, Any]:
             "accepted_domain_rule_count": 0,
             "accepted_profile_support_rule_count": 0,
             "open_residual_count": 6,
-            "pd07_complete": False,
+            "adr0090_complete": False,
             "tile_convert_domain_complete": False,
             "s5_t2_a_complete": False,
             "s5_t2_complete": False,
@@ -420,7 +266,7 @@ def generate() -> dict[str, Any]:
             "bundle_command_form_count": 6,
             "accepted_command_form_count": 74,
             "result_rule_count": 0,
-            "parent_pd01_complete": False,
+            "parent_adr0086_complete": False,
             "cube_matrix_complete": False,
             "s5_t2_complete": False,
         },
@@ -452,44 +298,16 @@ def generate() -> dict[str, Any]:
         "profile partition identity drift",
     )
 
-    decision_proposals = []
-    for question in questions:
-        proposal = PROPOSALS[question["id"]]
-        require(
-            set(proposal["proposed_dispositions"]).issubset(
-                question["permitted_dispositions"]
-            ),
-            f"{question['id']} proposes a forbidden disposition",
-        )
-        accepted = question["status"] == "accepted"
-        require(
-            (
-                accepted
-                and question["selected_disposition"] in proposal["proposed_dispositions"]
-                and isinstance(question["decision_record"], str)
-                and question["decision_record"]
-            )
-            or (
-                not accepted
-                and question["selected_disposition"] is None
-                and question["decision_record"] is None
-            ),
-            f"{question['id']} acceptance state drift",
-        )
-        decision_proposals.append(
-            {
-                "id": question["id"],
-                "title": question["title"],
-                "classification": question["classification"],
-                "source_ids": question["source_ids"],
-                "affected_domains": question["domains"],
-                **proposal,
-                "acceptance_evidence": question["acceptance_evidence"],
-                "status": "accepted" if accepted else "review-required",
-                "accepted": accepted,
-                "acceptance_record": question["decision_record"],
-            }
-        )
+    decision_proposals = [
+        {
+            "adr": decision["adr"],
+            "affected_domains": decision["affected_domains"],
+            "status": decision["status"],
+            "accepted": decision["status"] == "accepted",
+            "acceptance_record": decision["acceptance_record"],
+        }
+        for decision in decisions
+    ]
 
     proposed_profile_ids = [row["proposed_id"] for row in profile_proposals]
     domain_proposals = []
@@ -505,7 +323,7 @@ def generate() -> dict[str, Any]:
                 "operation_count": domain["operation_count"],
                 "operation_keys": domain["operation_keys"],
                 "hooks": domain["hooks"],
-                "decision_question_ids": domain["decision_question_ids"],
+                "decision_adr_ids": domain["decision_adr_ids"],
                 "proposed_profile_ids": proposed_profile_ids,
                 "portable_rule_status": "rule-required",
                 "a2a3_support_status": "operation-type-matrix-required",
@@ -556,7 +374,7 @@ def generate() -> dict[str, Any]:
             "producer_owner_closed_form_count": 30,
             "architecture_condition_closed_form_count": 11,
             "profile_condition_open_form_count": 19,
-            "pd06_complete": False,
+            "adr0089_complete": False,
         },
         "rounding_selector_contract": {
             "path": "spec/evidence/numeric-rounding-selector-contract.json",

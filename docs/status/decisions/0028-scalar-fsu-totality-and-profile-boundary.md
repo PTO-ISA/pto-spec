@@ -1,6 +1,80 @@
+---
+{
+  "id": "ADR-0028",
+  "title": "Scalar FSU totality and numeric-profile boundary",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-FABS-DECISION-BINDING-001",
+    "PTO-FCVTA-DECISION-BINDING-001",
+    "PTO-FCVTM-DECISION-BINDING-001",
+    "PTO-FCVTN-DECISION-BINDING-001",
+    "PTO-FCVTP-DECISION-BINDING-001",
+    "PTO-FCVTZ-DECISION-BINDING-001",
+    "PTO-FMAX-DECISION-BINDING-001",
+    "PTO-FMIN-DECISION-BINDING-001",
+    "PTO-FNE-DECISION-BINDING-001",
+    "PTO-FNES-DECISION-BINDING-001",
+    "PTO-SCVTF-DECISION-BINDING-001",
+    "PTO-UCVTF-DECISION-BINDING-001"
+  ],
+  "affected_units": [
+    "PTO-SCALAR-FABS",
+    "PTO-SCALAR-FADD",
+    "PTO-SCALAR-FCVT",
+    "PTO-SCALAR-FCVTA",
+    "PTO-SCALAR-FCVTM",
+    "PTO-SCALAR-FCVTN",
+    "PTO-SCALAR-FCVTP",
+    "PTO-SCALAR-FCVTZ",
+    "PTO-SCALAR-FDIV",
+    "PTO-SCALAR-FEQ",
+    "PTO-SCALAR-FEQS",
+    "PTO-SCALAR-FEXP",
+    "PTO-SCALAR-FGE",
+    "PTO-SCALAR-FGES",
+    "PTO-SCALAR-FLT",
+    "PTO-SCALAR-FLTS",
+    "PTO-SCALAR-FMADD",
+    "PTO-SCALAR-FMAX",
+    "PTO-SCALAR-FMIN",
+    "PTO-SCALAR-FMSUB",
+    "PTO-SCALAR-FMUL",
+    "PTO-SCALAR-FNE",
+    "PTO-SCALAR-FNES",
+    "PTO-SCALAR-FNMADD",
+    "PTO-SCALAR-FNMSUB",
+    "PTO-SCALAR-FRECIP",
+    "PTO-SCALAR-FSQRT",
+    "PTO-SCALAR-FSUB",
+    "PTO-SCALAR-SCVTF",
+    "PTO-SCALAR-UCVTF"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0028: Scalar FSU totality and numeric-profile boundary
 
-- Status: accepted
+> Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
+
 - Scope: all 30 accepted scalar FSU forms
 - Requirement: PTO-REQ-SCALAR-FP-001, PTO-REQ-SCALAR-OPERAND-001,
   PTO-REQ-SCALAR-EXECUTION-001, PTO-REQ-PROFILE-001

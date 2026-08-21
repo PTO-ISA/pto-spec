@@ -1,12 +1,49 @@
+---
+{
+  "id": "ADR-0064",
+  "title": "B.FPATR Complete-Bundle Matrix PostProcess",
+  "status": "accepted",
+  "authors": [
+    "ckwllawliet <641433195@qq.com>"
+  ],
+  "approvers": [
+    "PTO ISA maintainers"
+  ],
+  "created": "2026-08-11",
+  "accepted": "2026-08-11",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "2c663ce22169ee869f47ba766cc8cb9e52053c49",
+  "target_releases": [
+    "0.58.0"
+  ],
+  "affected_ndf": [
+    "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+    "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+    "PTO-MATRIX-QUANT-BITEXACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
+    "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+    "PTO-BLOCK-B-FPATR"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/64",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0064: B.FPATR Complete-Bundle Matrix PostProcess
 
-- **Status**: accepted
 - **Date**: 2026-08-11
 - **Deciders**: PTO ISA maintainers
 - **Issue**: [#64](https://github.com/PTO-ISA/pto-spec/issues/64)
 
-Current release inventory is governed by ADR 0062; numeric inventories below
-are acceptance-time history, not the current active decoder set.
+Current release inventory is governed by ASL and generated projections;
+numeric inventories below are acceptance-time history, not the current active
+decoder set.
 
 ## Decision
 
@@ -39,8 +76,8 @@ order, with LReLU-only consuming RegSrc0.  Output commits are one atomic group.
 At acceptance time, the 0.58.0 command projection was corrected to 100 command
 forms and 574 total scalar-plus-command forms. Existing twelve CUBE operation
 IDs, selectors, and mathematical operand aliases remained unchanged. The
-earlier open numeric variation point is closed by PRD-174 through PRD-181 in
-ADR 0062. Assigned post-processing modes now have bit-exact conversion,
+earlier open numeric variation point is closed by Decisions 174 through 181 in
+ADR 0085. Assigned post-processing modes now have bit-exact conversion,
 activation, FP19, exceptional-value, saturation/wrap, packing, auxiliary
 reduction, numeric-status, and atomic-publication rules. A nonzero assigned
 mode no longer permits an identity or implementation-selected result.

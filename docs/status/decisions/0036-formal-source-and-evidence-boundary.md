@@ -1,8 +1,37 @@
+---
+{
+  "id": "ADR-0036",
+  "title": "Formal source and evidence boundary",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-15",
+  "accepted": "2026-08-15",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "4d115387b8a8a3c135f78189778d38547e75c697",
+  "target_releases": [
+    "0.58.1"
+  ],
+  "affected_ndf": [
+    "PTO-SOURCE-HIERARCHY"
+  ],
+  "affected_units": [
+    "PTO-ARCH-OVERVIEW-ARCHITECTURE"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0036: Formal source and evidence boundary
-
-## Status
-
-Accepted.
 
 ## Context
 

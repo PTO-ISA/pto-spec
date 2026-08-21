@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the named hardware-profile PD-05 special-value checkpoint."""
+"""Generate the named hardware-profile ADR-0088 special-value checkpoint."""
 
 from __future__ import annotations
 
@@ -26,7 +26,8 @@ OUTPUT = ROOT / "spec/evidence/numeric-special-value-contract.json"
 ACCEPTANCE_RECORD = (
     "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
 )
-PROFILE_ID = "pto-hardware-numeric-0.58.1-ieee-v1"
+PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
+EVIDENCE_PROFILE_ID = "pto-hardware-numeric-0.58.2-ieee-v1"
 
 
 SIGNED_ZERO_ENCODINGS = {
@@ -79,7 +80,10 @@ def generate() -> dict[str, Any]:
     scalar = load(SCALAR_FORMS)
     comparison = load(COMPARISON)
 
-    require(profile["profile_id"] == PROFILE_ID, "hardware profile identity drift")
+    require(
+        profile["profile_id"] == EVIDENCE_PROFILE_ID,
+        "current hardware profile evidence identity drift",
+    )
     require(
         profile["arithmetic"]["canonical_nan_output"]
         == "When the destination format has a NaN encoding, every produced NaN is replaced by that format's canonical NaN encoding.",
@@ -179,6 +183,7 @@ def generate() -> dict[str, Any]:
 
     require(
         comparison["closure_judgment"]["can_close_s5_t3"] is True
+        and comparison["closure_judgment"]["remaining_blockers"] == []
         and comparison["snapshot"]["worktree_clean"] is True,
         "independent comparison closure drift",
     )
@@ -191,12 +196,13 @@ def generate() -> dict[str, Any]:
     tuple_count = sum(len(row["type_names"]) for row in operation_scope)
     return {
         "schema_version": 1,
-        "target": "S5-T2-A2:PD-05-SC2",
-        "decision_id": "PD-05",
-        "checkpoint_id": "PD-05-SC2",
-        "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
+        "target": "S5-T2-A2:ADR-0088-SC2",
+        "decision_id": "ADR-0088",
+        "checkpoint_id": "ADR-0088-SC2",
+        "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "profile_id": PROFILE_ID,
+        "current_profile_evidence_id": EVIDENCE_PROFILE_ID,
         "policy": {
             "produced_nan": "canonical-destination-format-nan",
             "comparison_nan": "NE-true-all-other-relations-false",
@@ -295,7 +301,7 @@ def generate() -> dict[str, Any]:
             "accepted_special_result_rule_count": 3,
             "accepted_complete_domain_rule_count": 0,
             "accepted_complete_decision_count": 0,
-            "pd05_complete": False,
+            "adr0088_complete": False,
             "s5_t2_complete": False,
         },
     }

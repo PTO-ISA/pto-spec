@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 import sys
 
@@ -11,19 +12,43 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.full_validation_workflow import (
+    validate_full_validation_workflow,
+    validate_nightly_workflow,
+    validate_workflow_inventory,
+)
 from scripts.release_workflow import validate_pr_workflow, validate_release_workflow
 
 
 def main() -> int:
-    pr_path = ROOT / ".github/workflows/asl.yml"
-    workflow_path = ROOT / ".github/workflows/release.yml"
-    missing = [path for path in (pr_path, workflow_path) if not path.is_file()]
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--workflows-dir",
+        type=Path,
+        default=ROOT / ".github/workflows",
+    )
+    arguments = parser.parse_args()
+    workflows_dir = arguments.workflows_dir.resolve()
+    paths = sorted(
+        path
+        for path in workflows_dir.iterdir()
+        if path.is_file() and path.suffix.lower() in {".yml", ".yaml"}
+    )
+    workflows = {
+        path.name: path.read_text(encoding="utf-8")
+        for path in paths
+    }
+    required = {"asl.yml", "full-validation.yml", "nightly.yml", "release.yml"}
+    missing = sorted(required - set(workflows))
     if missing:
-        for path in missing:
-            print(f"missing workflow: {path.relative_to(ROOT)}", file=sys.stderr)
+        for name in missing:
+            print(f"missing workflow: {name}", file=sys.stderr)
         return 1
-    errors = validate_pr_workflow(pr_path.read_text(encoding="utf-8"))
-    errors.extend(validate_release_workflow(workflow_path.read_text(encoding="utf-8")))
+    errors = validate_pr_workflow(workflows["asl.yml"])
+    errors.extend(validate_full_validation_workflow(workflows["full-validation.yml"]))
+    errors.extend(validate_nightly_workflow(workflows["nightly.yml"]))
+    errors.extend(validate_release_workflow(workflows["release.yml"]))
+    errors.extend(validate_workflow_inventory(workflows))
     if errors:
         print("release workflow contract failed:", file=sys.stderr)
         for error in errors:

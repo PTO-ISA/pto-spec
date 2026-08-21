@@ -1,10 +1,46 @@
+---
+{
+  "id": "ADR-0013",
+  "title": "Define tile capacity and packed storage",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-REQ-SHARED-TILE-001",
+    "PTO-REQ-TILE-001",
+    "PTO-TILE-CAPACITY-PER-PE"
+  ],
+  "affected_units": [
+    "PTO-ARCH-OVERVIEW-ARCHITECTURE",
+    "PTO-ARCH-STATE-TILE-DESCRIPTOR",
+    "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0013: Define tile capacity and packed storage
 
-## Status
+## Decision scope
 
-Accepted, with the minimum-allocation clause superseded by
+The minimum-allocation clause is superseded by
 [ADR 0054](0054-pe-local-tile-size-and-32-bit-shared-io-binding.md).
-
 ADR 0054 defines the current per-PE TSize map: codes 1 through 7 represent
 128 bytes through 8 KiB. The capacity-accounting, packed-storage, precision,
 and rollback decisions below remain current.

@@ -1,10 +1,46 @@
+---
+{
+  "id": "ADR-0037",
+  "title": "Numeric profile identity and bounded variation framework",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+    "PTO-MATRIX-QUANT-BITEXACT-001",
+    "PTO-TCVT-E8M0-PROFILE-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-PROFILE-APPLICABILITY",
+    "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+    "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
+    "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+    "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+    "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0037: Numeric profile identity and bounded variation framework
 
 > Historical-evidence note: verification paths named below record the evidence used when this ADR was accepted; deleted aggregate checks are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
-
-## Status
-
-Accepted.
 
 ## Context
 
@@ -66,8 +102,8 @@ The identity and selection-framework sub-stage `S5-T2-A1` is closed: all four
 identities have stable spellings, kinds, selection boundaries, and this accepted
 decision record. The remaining numeric decisions are not closed.
 
-`PD-01` remains open until every domain has a complete portable/target support
-and result-rule applicability matrix. `PD-12` remains open until every delegated
+`ADR 0086` remains open until every domain has a complete portable/target support
+and result-rule applicability matrix. `ADR 0095` remains open until every delegated
 variation point has an accepted selector and allowed-result contract. The other
 ten questions, all 20 domain rules, all six oracle qualifications, vectors,
 target captures, differential dispositions, and independent approvals remain

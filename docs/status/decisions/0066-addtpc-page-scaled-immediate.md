@@ -1,6 +1,40 @@
+---
+{
+  "id": "ADR-0066",
+  "title": "ADDTPC page-scaled immediate",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-18",
+  "accepted": "2026-08-18",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "1ab747bae485806b0ab73212baa9abf454856c39",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ADDTPC-PAGE-001",
+    "PTO-HL-ADDTPC-PAGE-001"
+  ],
+  "affected_units": [
+    "PTO-SCALAR-ADDTPC",
+    "PTO-SCALAR-HL-ADDTPC"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0066: ADDTPC page-scaled immediate
 
-- Status: accepted
 - Scope: `ADDTPC`, `HL.ADDTPC`
 - Requirements: PTO-ADDTPC-PAGE-001, PTO-HL-ADDTPC-PAGE-001
 - Supersedes: only the ADDTPC and HL.ADDTPC halfword-scaling clauses of ADR

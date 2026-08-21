@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 from importlib.machinery import SourceFileLoader
 import json
@@ -130,10 +131,43 @@ class ExecutableModelComparisonTest(unittest.TestCase):
             )
         )
         row = next(row for row in evidence["rows"] if row["mnemonic"] == "B.FPATR")
+        catalog = json.loads(
+            (ROOT / "spec/catalog/command-forms.json").read_text(encoding="utf-8")
+        )
+        form = next(row for row in catalog["forms"] if row["mnemonic"] == "B.FPATR")
 
         self.assertEqual(row["classification"], "divergence")
         self.assertEqual(row["independent_status"], "missing")
+        self.assertEqual(row["stable_id"], form["form_id"])
         self.assertIn("no independent comparison row", row["pto_disposition"])
+
+    def test_published_snapshot_has_fetchable_public_provenance(self) -> None:
+        evidence = json.loads(
+            (ROOT / "spec/evidence/executable-model-comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        publication = evidence["snapshot"]["publication"]
+
+        self.assertEqual(
+            publication,
+            {
+                "commit": "3fc63e5fc1d1913b7c4754944df983d7bd8416c5",
+                "commit_url": (
+                    "https://github.com/LinxISA/linx-isa/commit/"
+                    "3fc63e5fc1d1913b7c4754944df983d7bd8416c5"
+                ),
+                "ref": "refs/pull/160/head",
+                "repository": "https://github.com/LinxISA/linx-isa.git",
+                "review_url": "https://github.com/LinxISA/linx-isa/pull/160",
+                "role": "historical-independent-comparison-only",
+            },
+        )
+        self.assertEqual(
+            evidence["snapshot"]["revision_sha256"],
+            hashlib.sha256(publication["commit"].encode("utf-8")).hexdigest(),
+        )
+        self.assertTrue(evidence["closure_judgment"]["can_close_s5_t3"])
 
     def test_published_hl_qpop_keeps_reviewed_encoding_divergence(self) -> None:
         evidence = json.loads(

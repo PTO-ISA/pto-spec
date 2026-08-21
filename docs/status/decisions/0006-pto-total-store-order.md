@@ -1,6 +1,43 @@
+---
+{
+  "id": "ADR-0006",
+  "title": "PTO total store order candidate model",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-28",
+  "accepted": "2026-07-28",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "e4b8d240e358eff9aacc38235f1de8f2a4c5582e",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
+    "PTO-ARCH-MEMORY-MODEL-ATOMICITY",
+    "PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION",
+    "PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS",
+    "PTO-ARCH-MEMORY-MODEL-ORDERING",
+    "PTO-ARCH-OVERVIEW-ARCHITECTURE"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0006: PTO total store order candidate model
 
-- Status: Accepted
 - Date: 2026-07-28
 - Requirement: PTO-REQ-MEMORY-TSO-001
 

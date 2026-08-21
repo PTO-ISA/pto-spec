@@ -136,8 +136,8 @@ def generate() -> dict[str, Any]:
 
     return {
         "schema_version": 1,
-        "target": "S5-T2-A2:PD-06",
-        "decision_id": "PD-06",
+        "target": "S5-T2-A2:ADR-0089",
+        "decision_id": "ADR-0089",
         "status": "state-owner-matrix-closed-profile-production-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "architecture_contract": {
@@ -200,7 +200,7 @@ def generate() -> dict[str, Any]:
             "profile_condition_open_form_count": len(rows) - closed_count,
             "profile_domain_count": len(profile_domains),
             "profile_hook_count": len(profile_hooks),
-            "pd06_complete": False,
+            "adr0089_complete": False,
         },
     }
 

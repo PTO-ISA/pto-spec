@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the fail-closed PD-02 numeric format namespace checkpoint."""
+"""Generate the fail-closed ADR-0087 numeric format namespace checkpoint."""
 
 from __future__ import annotations
 
@@ -182,11 +182,11 @@ def generate() -> dict[str, Any]:
     executable_comparison = load(EXECUTABLE_COMPARISON)
     hardware_profile = load(HARDWARE_PROFILE)
 
-    pd02 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-02")
-    require(pd02["status"] == "decision-required", "PD-02 status drift")
+    adr0087 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-0087")
+    require(adr0087["status"] == "draft", "ADR-0087 status drift")
     require(
-        pd02["selected_disposition"] is None and pd02["decision_record"] is None,
-        "PD-02 must remain unaccepted while format and legality rules are open",
+        adr0087["acceptance_record"] is None,
+        "ADR-0087 must remain unaccepted while format and legality rules are open",
     )
     require(
         scalar_totality["status"] == "closed" and scalar_totality["target"] == "S4-T5",
@@ -198,8 +198,10 @@ def generate() -> dict[str, Any]:
     )
     require(
         executable_comparison["status"]
-        == "comparison-matrix-closed-clean-gates-passed:S5-T3",
-        "independent comparison status drift",
+        == "comparison-matrix-closed-clean-gates-passed:S5-T3"
+        and executable_comparison["closure_judgment"]["can_close_s5_t3"] is True
+        and executable_comparison["closure_judgment"]["remaining_blockers"] == [],
+        "independent comparison is not closed",
     )
 
     tile_rows = [
@@ -343,19 +345,19 @@ def generate() -> dict[str, Any]:
 
     return {
         "schema_version": 1,
-        "target": "S5-T2-A2:PD-02",
-        "decision_id": "PD-02",
-        "checkpoint_id": "PD-02-SC1",
+        "target": "S5-T2-A2:ADR-0087",
+        "decision_id": "ADR-0087",
+        "checkpoint_id": "ADR-0087-SC1",
         "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "classification_acceptance_record": CLASSIFICATION_ACCEPTANCE_RECORD,
-        "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
+        "classification_checkpoint_id": "ADR-0087-SC2:ADR-0088-SC1",
         "policy": {
             "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TLSU/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
             "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
             "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
             "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
-            "pd02_boundary": "The 0.58.0 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
+            "adr0087_boundary": "The 0.58.0 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
             "value_class_boundary": "TileNumericValueClass defines only bit-exact encoding classes and canonical NaN values. It does not select arithmetic results, exception flags, operation/type support, or target conformance.",
         },
         "tile_data_types": tile_rows,
@@ -383,7 +385,6 @@ def generate() -> dict[str, Any]:
             "status": "closed",
         },
         "public_evidence": {
-            "source_ids": pd02["source_ids"],
             "pinned_repository": inputs["public_repository"],
             "pinned_commit": inputs["public_commit"],
             "status": "names-and-target-availability-observed-format-bindings-open",
@@ -408,35 +409,35 @@ def generate() -> dict[str, Any]:
         },
         "open_residuals": [
             {
-                "id": "PD-02-R1",
+                "id": "ADR-0087-R1",
                 "rule": "close every operation/type/profile legality tuple against the 0.58.0 type namespace",
             },
             {
-                "id": "PD-02-R2",
+                "id": "ADR-0087-R2",
                 "rule": "publish independently checked result vectors for every supported floating type",
             },
             {
-                "id": "PD-02-R3",
+                "id": "ADR-0087-R3",
                 "rule": "apply the accepted value classes and canonical NaNs to every supported operation and prove each exceptional result rule",
             },
             {
-                "id": "PD-02-R4",
+                "id": "ADR-0087-R4",
                 "rule": "prove packed-lane ordering and sibling preservation for every packed four-bit operation",
             },
             {
-                "id": "PD-02-R5",
+                "id": "ADR-0087-R5",
                 "rule": "prove E8M0 scale-carrier legality and MX scale application",
             },
             {
-                "id": "PD-02-R6",
+                "id": "ADR-0087-R6",
                 "rule": "prove target availability and rejection before effects for unsupported tuples",
             },
             {
-                "id": "PD-02-R7",
+                "id": "ADR-0087-R7",
                 "rule": "obtain accepted architecture and formal-model review of the numeric result contract",
             },
             {
-                "id": "PD-02-R8",
+                "id": "ADR-0087-R8",
                 "rule": "record downstream byte-and-effect parity for the immutable profile contract",
             },
         ],
@@ -497,7 +498,7 @@ def generate() -> dict[str, Any]:
             "signed_zero_type_count": len(SIGNED_ZERO_TYPES),
             "internally_constrained_type_count": len(INTERNAL_ENCODING_CONSTRAINTS),
             "open_residual_count": 8,
-            "pd02_complete": False,
+            "adr0087_complete": False,
         },
     }
 

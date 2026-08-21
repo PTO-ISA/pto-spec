@@ -9,7 +9,6 @@ import scripts.ndf as ndf_module
 from scripts.ndf import (
     check_repository,
     instruction_clause_id,
-    is_allowed_legacy_path,
     parse_ndf_regions,
 )
 
@@ -94,14 +93,17 @@ class NdfTest(unittest.TestCase):
             check_repository(self.root),
         )
 
-    def test_legacy_markdown_ndf_marker_is_non_normative(self) -> None:
+    def test_legacy_markdown_ndf_marker_is_rejected_with_legacy_tree(self) -> None:
         self.write(
             "docs/status/legacy/root/architecture.md",
             "## Contract {#PTO-TILE-CAPACITY}\n"
             "<!-- ndf: kind=contract level=L1 layer=tile status=accepted -->\n",
         )
 
-        self.assertEqual(check_repository(self.root), [])
+        self.assertIn(
+            "forbidden legacy specification path: docs/status/legacy/root/architecture.md",
+            check_repository(self.root),
+        )
 
     def test_rejects_legacy_archive_and_backup_paths(self) -> None:
         self.write("docs/legacy/old.md", "old\n")
@@ -113,14 +115,13 @@ class NdfTest(unittest.TestCase):
         self.assertIn("forbidden legacy specification path: docs/archive/old.md", errors)
         self.assertIn("forbidden backup specification path: asl/tile/state.asl.bak", errors)
 
-    def test_status_legacy_is_allowed_as_nonnormative_storage(self) -> None:
+    def test_status_legacy_is_rejected(self) -> None:
         self.write("docs/status/legacy/old.md", "# Historical\n")
 
-        self.assertTrue(is_allowed_legacy_path(Path("docs/status/legacy/old.md")))
-        self.assertEqual(check_repository(self.root), [])
-
-    def test_other_legacy_tree_is_not_allowed(self) -> None:
-        self.assertFalse(is_allowed_legacy_path(Path("docs/legacy/old.md")))
+        self.assertIn(
+            "forbidden legacy specification path: docs/status/legacy/old.md",
+            check_repository(self.root),
+        )
 
     def test_normative_asl_reference_into_status_legacy_is_rejected(self) -> None:
         self.write(

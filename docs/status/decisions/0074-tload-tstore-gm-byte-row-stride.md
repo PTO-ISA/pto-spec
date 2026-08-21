@@ -1,6 +1,52 @@
+---
+{
+  "id": "ADR-0074",
+  "title": "TLOAD/TSTORE GM Byte Row Stride",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-20",
+  "accepted": "2026-08-20",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "15dcfc52b2710c28cf7a50da23057b0fcb9fd7c3",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-GM-ACCESS-001",
+    "PTO-B-IOR-BINDING-001",
+    "PTO-BSTART-TLOAD-CUBE-001",
+    "PTO-BSTART-TLOAD-MEMORY-001",
+    "PTO-BSTART-TSTORE-CUBE-001",
+    "PTO-BSTART-TSTORE-MEMORY-001",
+    "PTO-TLOAD-CUBE-001",
+    "PTO-TLOAD-MEMORY-001",
+    "PTO-TSTORE-CUBE-001",
+    "PTO-TSTORE-MEMORY-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS",
+    "PTO-BLOCK-B-IOR",
+    "PTO-BLOCK-BSTART-TLOAD",
+    "PTO-BLOCK-BSTART-TSTORE",
+    "PTO-TILE-TLOAD",
+    "PTO-TILE-TSTORE"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/115",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0074: TLOAD/TSTORE GM Byte Row Stride
 
-- Status: accepted
 - Issue: [#115](https://github.com/PTO-ISA/pto-spec/issues/115)
 - Baseline: `15dcfc52b2710c28cf7a50da23057b0fcb9fd7c3`
 - Requirement: `PTO-ARCH-GM-ACCESS-001`

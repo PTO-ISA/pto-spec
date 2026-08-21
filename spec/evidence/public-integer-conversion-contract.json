@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "target": "S5-T2-A6:PD-07-SC1",
-  "decision_id": "PD-07",
-  "checkpoint_id": "PD-07-SC1",
+  "target": "S5-T2-A6:ADR-0090-SC1",
+  "decision_id": "ADR-0090",
+  "checkpoint_id": "ADR-0090-SC1",
   "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
   "acceptance_record": "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
   "policy": {
@@ -936,27 +936,27 @@
   },
   "open_residuals": [
     {
-      "id": "PD-07-R1",
+      "id": "ADR-0090-R1",
       "rule": "decide same-width integer signedness conversions"
     },
     {
-      "id": "PD-07-R2",
+      "id": "ADR-0090-R2",
       "rule": "complete floating and float/integer conversion results"
     },
     {
-      "id": "PD-07-R3",
+      "id": "ADR-0090-R3",
       "rule": "complete every operation/type/profile support tuple"
     },
     {
-      "id": "PD-07-R4",
+      "id": "ADR-0090-R4",
       "rule": "define overflow, saturation, indefinite, NaN, and infinity results"
     },
     {
-      "id": "PD-07-R5",
+      "id": "ADR-0090-R5",
       "rule": "define rounding and numeric-flag results"
     },
     {
-      "id": "PD-07-R6",
+      "id": "ADR-0090-R6",
       "rule": "publish independent target-conformance vectors"
     }
   ],
@@ -970,11 +970,11 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "d001984ca86695c8f08a10415419ee663e76ab3bc21743f9e70343e20d8efdf3"
+      "sha256": "ab00288a2c1b616b8226656e15b0664f111a12a10704c409ed237353b99f0719"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "53988ce1878c3bf6c72193d154da8c7d9dd3971c6dc5bb0337e9af9a51cca2f0"
+      "sha256": "0669e274fc51f5e0ee902d449ea41a83f9f772e88293f8a13143664156b70478"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -982,19 +982,19 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "8fab6140efb0831df728941e71cf0e93ca0f7506f8c28c952d4fa3530d089648"
+      "sha256": "47014fd70da0967716c8470c4cf9aefc01f7e42cac2b9cc065a82200b316e402"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "7b35e8353c621a7448facada22a4175acc30e14377fdc2a7cb9c130ab1323d56"
+      "sha256": "55eb6eaf63ddfdcd918603a21673b53c198f448c6e8800e3389b28f43410fad8"
     },
     {
       "path": "tests/asl/tile/model/numeric/formats/tile-exec-conversion-001.asl",
-      "sha256": "f40b91fc9e5f3b2034e6d1a59f9c25747e7506d002e487593a0bb7ac043a1512"
+      "sha256": "d6299c98117e52a2c845ca027c52b43feb47ea955b103291cefc1b10a9be03a6"
     },
     {
       "path": "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
-      "sha256": "99d732ce68bea0bc109bc26f9b9ff23ac594d75f6aaf68910bb191b4bae21bb2"
+      "sha256": "81a87fb8cfde29d4ae61854109ab9fb737cac656e0d27cc6f53bb4585e81e080"
     }
   ],
   "summary": {
@@ -1008,7 +1008,7 @@
     "accepted_domain_rule_count": 0,
     "accepted_profile_support_rule_count": 0,
     "open_residual_count": 6,
-    "pd07_complete": false,
+    "adr0090_complete": false,
     "tile_convert_domain_complete": false,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false

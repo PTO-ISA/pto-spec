@@ -1,6 +1,49 @@
+---
+{
+  "id": "ADR-0021",
+  "title": "Scalar PC-relative and return-address state",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-29",
+  "accepted": "2026-07-29",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ADDTPC-PAGE-001",
+    "PTO-BARG-CONTINUATION-001",
+    "PTO-C-SETRET-DECISION-BINDING-001",
+    "PTO-HL-ADDTPC-PAGE-001",
+    "PTO-HL-SETRET-DECISION-BINDING-001",
+    "PTO-SETRET-ADR-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-STATE-PROGRAM-COUNTER",
+    "PTO-BLOCK-MODEL-STATE-BARG",
+    "PTO-SCALAR-ADDTPC",
+    "PTO-SCALAR-C-SETRET",
+    "PTO-SCALAR-HL-ADDTPC",
+    "PTO-SCALAR-HL-SETRET",
+    "PTO-SCALAR-SETRET"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0021: Scalar PC-relative and return-address state
 
-- Status: Accepted
 - Date: 2026-07-29
 - Requirement: PTO-REQ-SCALAR-CONTROL-001
 

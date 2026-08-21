@@ -2,7 +2,7 @@
   "schema_version": 1,
   "catalog_id": "numeric-profile-applicability",
   "status": "a2a3-mx-support-rejection-closed-results-open",
-  "target": "S5-T2-A3:PD-01",
+  "target": "S5-T2-A3:ADR-0086",
   "profiles": [
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -164,7 +164,7 @@
     }
   ],
   "open_parent_decisions": [
-    "PD-01",
+    "ADR-0086",
     "cube-matrix",
     "S5-T2"
   ]

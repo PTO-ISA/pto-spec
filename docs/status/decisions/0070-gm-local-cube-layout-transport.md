@@ -1,6 +1,53 @@
+---
+{
+  "id": "ADR-0070",
+  "title": "GM/Local CUBE Layout Transport",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-20",
+  "accepted": "2026-08-20",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "e9e9934f3cd4e857f44482f5e86779fd726d1733",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-B-DATR-FIELDS-001",
+    "PTO-BSTART-TLOAD-CUBE-001",
+    "PTO-BSTART-TLOAD-MEMORY-001",
+    "PTO-BSTART-TSTORE-CUBE-001",
+    "PTO-BSTART-TSTORE-MEMORY-001",
+    "PTO-CUBE-CELL-STATE-001",
+    "PTO-CUBE-CELL-TRANSPORT-001",
+    "PTO-TLOAD-CUBE-001",
+    "PTO-TLOAD-MEMORY-001",
+    "PTO-TSTORE-CUBE-001",
+    "PTO-TSTORE-MEMORY-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-B-DATR",
+    "PTO-BLOCK-BSTART-TLOAD",
+    "PTO-BLOCK-BSTART-TSTORE",
+    "PTO-TILE-MODEL-SHAPE-CUBE-CELL",
+    "PTO-TILE-TLOAD",
+    "PTO-TILE-TSTORE"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/103",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0070: GM/Local CUBE Layout Transport
 
-- Status: accepted
 - Issue: [#103](https://github.com/PTO-ISA/pto-spec/issues/103)
 - Umbrella: [#72](https://github.com/PTO-ISA/pto-spec/pull/72)
 - Baseline: `15dcfc52b2710c28cf7a50da23057b0fcb9fd7c3`

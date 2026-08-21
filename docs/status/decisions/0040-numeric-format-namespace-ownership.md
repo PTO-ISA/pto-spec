@@ -1,15 +1,57 @@
+---
+{
+  "id": "ADR-0040",
+  "title": "Numeric format namespace ownership",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-B-DATR-FIELDS-001",
+    "PTO-CUBE-CELL-TRANSPORT-001",
+    "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+    "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+    "PTO-TCVT-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
+    "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
+    "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+    "PTO-BLOCK-B-DATR",
+    "PTO-TILE-TCVT"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0040: Numeric format namespace ownership
+
+> Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
 
 > Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-## Status
+## Decision scope
 
-Accepted structural checkpoint; bit-exact formats, target availability, and
-operation/type legality remain open.
+Bit-exact formats, target availability, and operation/type legality remain open.
 
 ## Context
 
-`PD-02` requires a complete bit-level format table and an operation/type/profile
+`ADR 0087` requires a complete bit-level format table and an operation/type/profile
 legality matrix before target numeric conformance can close. PTO currently has
 five distinct numeric type-code namespaces:
 
@@ -34,7 +76,7 @@ their owning PTO rules are accepted.
 
 The generated
 `spec/evidence/numeric-format-namespace-contract.json` is the fail-closed
-structural checkpoint for `PD-02`.
+structural checkpoint for `ADR 0087`.
 
 1. Numeric codes are namespace-local. Equality of code values across scalar,
    TLSU/TALLOC, and bundle namespaces has no architectural meaning unless a
@@ -66,7 +108,7 @@ width, mapped code, reserved code, and packed-four-bit rule without inferring
 target arithmetic from a backend. The generated artifact and repository
 checker fail on namespace, width, mapping, source-hash, or residual drift.
 
-`PD-02` remains open. Closure still requires bit-exact floating layouts,
+`ADR 0087` remains open. Closure still requires bit-exact floating layouts,
 accepted bindings for specialized eight- and four-bit types, the architectural
 role of `E8M0`, the complete scalar/tile operation/type/profile legality
 matrix, target availability, and positive/reserved vectors for every accepted
@@ -75,7 +117,7 @@ count or promote maturity beyond M4.
 
 ADR 0048 subsequently closes the bit-level value-classification checkpoint for
 these carriers. It does not alter this ADR's namespace separation or accept a
-complete PD-02 result decision.
+complete ADR 0087 result decision.
 
 ## Evidence
 

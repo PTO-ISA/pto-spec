@@ -33,6 +33,22 @@ class ScriptEntrypointTest(unittest.TestCase):
         result = self.run_checker({"asl_tests.py": ("VALUE = 1\n", 0o644)})
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_adr_records_module_may_be_non_executable(self) -> None:
+        result = self.run_checker({"adr_records.py": ("VALUE = 1\n", 0o644)})
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_workflow_contract_modules_may_be_non_executable(self) -> None:
+        for name in (
+            "architecture_readiness.py",
+            "full_validation_workflow.py",
+            "management_refactor_closure.py",
+            "release_selection.py",
+            "workflow_contract.py",
+        ):
+            with self.subTest(name=name):
+                result = self.run_checker({name: ("VALUE = 1\n", 0o644)})
+                self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_python_command_without_executable_bit_is_rejected(self) -> None:
         result = self.run_checker(
             {"instruction_docs.py": ("#!/usr/bin/env python3\nVALUE = 1\n", 0o644)}
@@ -43,6 +59,12 @@ class ScriptEntrypointTest(unittest.TestCase):
     def test_executable_python_command_is_accepted(self) -> None:
         result = self.run_checker(
             {"instruction_docs.py": ("#!/usr/bin/env python3\nVALUE = 1\n", 0o755)}
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_check_adrs_is_an_executable_python_command(self) -> None:
+        result = self.run_checker(
+            {"check-adrs": ("#!/usr/bin/env python3\nVALUE = 1\n", 0o755)}
         )
         self.assertEqual(result.returncode, 0, result.stderr)
 

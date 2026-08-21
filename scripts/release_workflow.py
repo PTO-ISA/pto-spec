@@ -5,544 +5,603 @@ from __future__ import annotations
 
 import re
 
-
-JOB_HEADER = re.compile(r"^  ([a-z][a-z0-9-]*):\s*$", re.MULTILINE)
-STEP_HEADER = re.compile(r"^      - .*$", re.MULTILINE)
-UPLOAD_ARTIFACT_SHA = "ea165f8d65b6e75b540449e92b4886f43607fa02"
-CACHE_ACTION_SHA = "55cc8345863c7cc4c66a329aec7e433d2d1c52a9"
-INVALID_STEP_USES = "<invalid-step-uses>"
-YAML_ANCHOR_OR_ALIAS = re.compile(
-    r"^[ \t]*(?:-[ \t]+)?(?:[A-Za-z0-9_-]+:[ \t]+)?"
-    r"[&*][^ \t#\[\]{},]+(?:[ \t]+|$)",
-    re.MULTILINE,
-)
-
-PR_GATES = (
-    "./scripts/check-asl-layout",
-    "./scripts/check-ndf",
-    "./scripts/check-asl-tests",
-    "./scripts/check-release-event-schema",
-    "python3 scripts/project_asl_catalogs.py --root . --check",
-    "python3 scripts/instruction_docs.py --check",
-    "python3 scripts/check-publication-hygiene",
+from scripts.workflow_contract import (
+    CACHE_ACTION_SHA,
+    CHECKOUT_ACTION_SHA,
+    DOWNLOAD_ARTIFACT_SHA,
+    UPLOAD_ARTIFACT_SHA,
+    checkout_step,
+    flow_list as _flow_list,
+    mapping as _mapping,
+    parse_workflow,
+    run_bodies as _run_bodies,
+    run_lines as _run_lines,
+    steps as _steps,
+    validate_exact_workflow,
 )
 
 
-def _job_block(workflow: str, name: str) -> str:
-    matches = list(JOB_HEADER.finditer(workflow))
-    for index, match in enumerate(matches):
-        if match.group(1) != name:
-            continue
-        end = matches[index + 1].start() if index + 1 < len(matches) else len(workflow)
-        return workflow[match.start() : end]
-    return ""
+PR_SOURCE_TIMING_OUTPUTS = {
+    "./scripts/check-asl-layout": "build/pr-timing/check-asl-layout.json",
+    "./scripts/check-ndf": "build/pr-timing/check-ndf.json",
+    "./scripts/check-adrs": "build/pr-timing/check-adrs.json",
+    "./scripts/check-asl-tests": "build/pr-timing/check-asl-tests.json",
+    "./scripts/check-release-event-schema": (
+        "build/pr-timing/check-release-event-schema.json"
+    ),
+    "python3 scripts/project_asl_catalogs.py --root . --check": (
+        "build/pr-timing/project-asl-catalogs.json"
+    ),
+    "python3 scripts/instruction_docs.py --check": (
+        "build/pr-timing/instruction-docs.json"
+    ),
+    "python3 scripts/generate-mnemonic-avs.py --check": (
+        "build/pr-timing/generate-mnemonic-avs.json"
+    ),
+    "python3 scripts/check-publication-hygiene": (
+        "build/pr-timing/publication-hygiene.json"
+    ),
+    "./scripts/check-release-workflow": "build/pr-timing/release-workflow.json",
+    "./scripts/check-repository --structure-only": (
+        "build/pr-timing/repository-structure.json"
+    ),
+    "git diff --check": "build/pr-timing/diff.json",
+}
+PR_GATES = tuple(PR_SOURCE_TIMING_OUTPUTS)
+PR_TOOLING_COMMAND = "python3 -m unittest discover -s tests/scripts -p 'test_*.py'"
+PR_TOOLING_TIMING_OUTPUT = "build/pr-timing/tooling-tests.json"
+PR_WORKER_TIMING_OUTPUTS = {
+    "build/pr-timing/worker-source-contract.json",
+    "build/pr-timing/worker-tooling-tests.json",
+}
 
 
-def _event_block(workflow: str) -> str:
-    match = re.search(
-        r"^on:\s*\n(?P<body>.*?)(?=^[a-z][a-z0-9_-]*:\s*$)",
-        workflow,
-        re.MULTILINE | re.DOTALL,
+def _timing_line(output: str, command: str) -> str:
+    return f"scripts/pr_timing.py run --output {output} -- {command}"
+
+
+def _worker_start_line(worker: str) -> str:
+    return (
+        "scripts/pr_timing.py start --output "
+        f"build/pr-timing/{worker}.started"
     )
-    return match.group("body") if match else ""
 
 
-def _step_blocks(job: str) -> list[str]:
-    matches = list(STEP_HEADER.finditer(job))
+def _worker_finish_line(worker: str) -> str:
+    return (
+        "scripts/pr_timing.py finish "
+        f"--start build/pr-timing/{worker}.started "
+        f"--output build/pr-timing/worker-{worker}.json "
+        '--run-id "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" '
+        f"--worker {worker}"
+    )
+
+
+def _expected_source_run_bodies() -> list[tuple[str, ...]]:
     return [
-        job[match.start() : matches[index + 1].start()]
-        if index + 1 < len(matches)
-        else job[match.start() :]
-        for index, match in enumerate(matches)
+        (_worker_start_line("source-contract"),),
+        (
+            "mkdir -p build/pr-timing",
+            *(
+                _timing_line(output, command)
+                for command, output in PR_SOURCE_TIMING_OUTPUTS.items()
+            ),
+        ),
+        (_worker_finish_line("source-contract"),),
     ]
 
 
-def _direct_mapping_values(step: str, mapping: str, key: str) -> list[str]:
-    """Return direct scalar values below one step-level mapping."""
-
-    lines = step.splitlines()
-    header = f"        {mapping}:"
-    headers = [index for index, line in enumerate(lines) if line == header]
-    if len(headers) != 1:
-        return []
-    values: list[str] = []
-    for line in lines[headers[0] + 1 :]:
-        stripped = line.lstrip(" ")
-        if not stripped or stripped.startswith("#"):
-            continue
-        indentation = len(line) - len(stripped)
-        if indentation <= 8:
-            break
-        if indentation != 10:
-            continue
-        field, separator, value = stripped.partition(":")
-        if separator and field == key:
-            values.append(value.strip())
-    return values
-
-
-def _step_uses(step: str) -> str | None:
-    values: list[str] = []
-    for line in step.splitlines():
-        match = re.fullmatch(r"(?:      - |        )uses:[ \t]*(.*)", line)
-        if match is None:
-            continue
-        raw = match.group(1).strip()
-        if not raw:
-            return None
-        if raw[0] in ("'", '"'):
-            if "\\" in raw:
-                return INVALID_STEP_USES
-            quoted = re.fullmatch(
-                r"(?P<quote>['\"])(?P<value>[^'\"]+)(?P=quote)(?:[ \t]+#.*)?",
-                raw,
-            )
-            if quoted is None:
-                return None
-            values.append(quoted.group("value"))
-        else:
-            values.append(re.sub(r"[ \t]+#.*$", "", raw).strip())
-    return values[0] if len(values) == 1 else None
-
-
-def _standalone_run_position(job: str, command: str) -> int | None:
-    """Return the offset of an exact one-line GitHub Actions run command."""
-
-    match = re.search(
-        rf"^(?:      - run:|        run:)\s*{re.escape(command)}\s*$",
-        job,
-        re.MULTILINE,
-    )
-    return match.start() if match else None
-
-
-def _script_line_positions(job: str, command: str) -> list[int]:
-    """Return offsets for exact commands inside one multi-line run script."""
-
+def _expected_tooling_run_bodies() -> list[tuple[str, ...]]:
     return [
-        match.start()
-        for match in re.finditer(
-            rf"^[ ]{{10}}{re.escape(command)}[ \t]*$", job, re.MULTILINE
-        )
+        (_worker_start_line("tooling-tests"),),
+        ('echo "sha=$(git -C tools/ndf rev-parse HEAD)" >> "$GITHUB_OUTPUT"',),
+        (
+            "mkdir -p build/pr-timing",
+            _timing_line(PR_TOOLING_TIMING_OUTPUT, PR_TOOLING_COMMAND),
+        ),
+        (_worker_finish_line("tooling-tests"),),
     ]
 
 
-def _job_needs(job: str) -> set[str]:
-    list_match = re.search(r"^    needs:\s*\[([^]]+)\]\s*$", job, re.MULTILINE)
-    if list_match:
-        return {item.strip() for item in list_match.group(1).split(",")}
-    scalar_match = re.search(r"^    needs:\s*([a-z][a-z0-9-]*)\s*$", job, re.MULTILINE)
-    return {scalar_match.group(1)} if scalar_match else set()
+def _checkout_step() -> dict[str, object]:
+    return {
+        "name": "Check out repository",
+        "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+        "with": {"fetch-depth": "0", "submodules": "recursive"},
+    }
 
 
-def _has_exact_checkout(job: str) -> bool:
-    return bool(
-        re.search(r"actions/checkout@[0-9a-f]{40}", job)
-        and re.search(
-            r"^\s+ref:\s*\$\{\{\s*inputs\.commit\s*\}\}\s*$",
-            job,
-            re.MULTILINE,
-        )
+def _expected_source_steps() -> list[dict[str, object]]:
+    bodies = _expected_source_run_bodies()
+    return [
+        _checkout_step(),
+        {"name": "Start source-contract timing", "run": bodies[0][0]},
+        {
+            "name": "Validate source, projection, and publication contracts",
+            "run": "\n".join(bodies[1]),
+        },
+        {
+            "name": "Finish source-contract timing",
+            "if": "always()",
+            "run": bodies[2][0],
+        },
+        {
+            "name": "Retain source-contract timings",
+            "if": "always()",
+            "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+            "with": {
+                "name": "pr-timing-source-contract",
+                "path": "build/pr-timing/*.json",
+                "if-no-files-found": "warn",
+            },
+        },
+    ]
+
+
+def _expected_tooling_steps() -> list[dict[str, object]]:
+    bodies = _expected_tooling_run_bodies()
+    return [
+        _checkout_step(),
+        {"name": "Start tooling-tests timing", "run": bodies[0][0]},
+        {
+            "name": "Resolve the exact NDF revision",
+            "id": "ndf-revision",
+            "run": bodies[1][0],
+        },
+        {
+            "name": "Restore the NDF tool build",
+            "id": "ndf-cache",
+            "uses": f"actions/cache@{CACHE_ACTION_SHA}",
+            "with": {
+                "path": "tools/ndf/target",
+                "key": (
+                    "ndf-${{ runner.os }}-${{ runner.arch }}-"
+                    "${{ steps.ndf-revision.outputs.sha }}-"
+                    "${{ hashFiles('tools/ndf/Cargo.lock') }}"
+                ),
+            },
+        },
+        {
+            "name": "Run script and NDF parity tests",
+            "run": "\n".join(bodies[2]),
+        },
+        {
+            "name": "Finish tooling-tests timing",
+            "if": "always()",
+            "run": bodies[3][0],
+        },
+        {
+            "name": "Retain tooling-test timings",
+            "if": "always()",
+            "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+            "with": {
+                "name": "pr-timing-tooling-tests",
+                "path": "build/pr-timing/*.json",
+                "if-no-files-found": "warn",
+            },
+        },
+    ]
+
+
+def _summary_line() -> str:
+    return (
+        "scripts/pr_timing.py summary --input "
+        "build/pr-timing/worker-source-contract.json "
+        "build/pr-timing/worker-tooling-tests.json --budget-seconds 600 "
+        "--output build/pr-timing-summary.json "
+        '--markdown-output "$GITHUB_STEP_SUMMARY"'
     )
 
 
-def _has_timeout(job: str) -> bool:
-    return bool(re.search(r"^    timeout-minutes:\s*[1-9][0-9]*\s*$", job, re.MULTILINE))
+def _expected_validate_steps() -> list[dict[str, object]]:
+    return [
+        {
+            "name": "Check out timing summarizer",
+            "uses": f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+        },
+        {
+            "name": "Merge worker timings",
+            "uses": f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}",
+            "with": {
+                "pattern": "pr-timing-*",
+                "path": "build/pr-timing",
+                "merge-multiple": "true",
+            },
+        },
+        {
+            "name": "Publish observational timing summary",
+            "run": _summary_line(),
+        },
+        {
+            "name": "Require both correctness workers",
+            "env": {
+                "SOURCE_CONTRACT_RESULT": "${{ needs.source-contract.result }}",
+                "TOOLING_TESTS_RESULT": "${{ needs.tooling-tests.result }}",
+            },
+            "run": (
+                'test "$SOURCE_CONTRACT_RESULT" = success\n'
+                'test "$TOOLING_TESTS_RESULT" = success'
+            ),
+        },
+    ]
 
 
-def _validate_toolchain_cache(job: str, name: str) -> list[str]:
-    errors: list[str] = []
-    steps = _step_blocks(job)
-    cache_steps = [
-        step
-        for step in steps
-        if (_step_uses(step) or "").startswith("actions/cache@")
-    ]
-    valid_cache_steps = [
-        step
-        for step in cache_steps
-        if _step_uses(step) == f"actions/cache@{CACHE_ACTION_SHA}"
-    ]
-    if len(cache_steps) != 1 or len(valid_cache_steps) != 1:
-        errors.append(f"{name} must use the commit-pinned verified ASLRef cache action")
-        return errors
-    cache_step = valid_cache_steps[0]
-    paths = _direct_mapping_values(cache_step, "with", "path")
-    keys = _direct_mapping_values(cache_step, "with", "key")
-    required_key_terms = (
-        "runner.os",
-        "runner.arch",
-        "ocaml-5.2.1",
-        ".aslref-version",
-        "scripts/setup-aslref",
-        "scripts/prepare-aslref",
-    )
-    if paths != [".cache/herdtools7"] or len(keys) != 1 or any(
-        term not in keys[0] for term in required_key_terms
-    ):
-        errors.append(
-            f"{name} cache must bind the ASLRef path, platform, OCaml version, pin, and setup scripts"
-        )
-    setup_position = _standalone_run_position(job, "make setup")
-    cache_position = job.find(cache_step)
-    if setup_position is None or setup_position <= cache_position:
-        errors.append(f"{name} must verify the pinned ASLRef checkout after cache restore")
-    return errors
+def _job_fields(job: dict[str, object]) -> dict[str, object]:
+    return {key: value for key, value in job.items() if key != "steps"}
+
+
+def _expected_pr_root_fields() -> dict[str, object]:
+    return {
+        "name": "PR",
+        "on": {
+            "push": {"branches": ["main"]},
+            "pull_request": None,
+        },
+        "permissions": {"contents": "read"},
+        "concurrency": {
+            "group": "pr-${{ github.workflow }}-${{ github.ref }}",
+            "cancel-in-progress": "true",
+        },
+    }
 
 
 def validate_pr_workflow(workflow: str) -> list[str]:
     """Return violations of the intentionally lightweight PR contract."""
 
-    errors: list[str] = []
-    for gate in PR_GATES:
-        if gate not in workflow:
-            errors.append(f"PR workflow must run lightweight gate {gate}")
-    lowered = workflow.lower()
-    forbidden = (
-        "aslref",
-        "setup-ocaml",
-        "make setup",
-        "run-asl-test",
-        "assemble-asl",
-        "toolchain-check",
-        "release-check",
+    root, errors = parse_workflow(workflow, label="PR workflow")
+    if root is None:
+        return errors
+    expected_root_fields = _expected_pr_root_fields()
+    if set(root) != {*expected_root_fields, "jobs"} or any(
+        root.get(key) != value for key, value in expected_root_fields.items()
+    ):
+        errors.append(
+            "PR workflow must use its exact top-level mapping for name, events, "
+            "read-only permissions, concurrency, and jobs"
+        )
+    jobs = _mapping(root.get("jobs"))
+    expected_jobs = {"source-contract", "tooling-tests", "validate"}
+    if set(jobs) != expected_jobs:
+        errors.append(
+            "PR workflow jobs must be exactly source-contract, tooling-tests, and validate"
+        )
+    source_contract = _mapping(jobs.get("source-contract"))
+    tooling_tests = _mapping(jobs.get("tooling-tests"))
+    validate = _mapping(jobs.get("validate"))
+    worker_contracts = (
+        (
+            "source-contract",
+            source_contract,
+            {
+                "name": "PR / source-contract",
+                "runs-on": "ubuntu-latest",
+                "timeout-minutes": "15",
+            },
+            _expected_source_steps(),
+        ),
+        (
+            "tooling-tests",
+            tooling_tests,
+            {
+                "name": "PR / tooling-tests",
+                "runs-on": "ubuntu-latest",
+                "timeout-minutes": "15",
+            },
+            _expected_tooling_steps(),
+        ),
     )
-    if any(token in lowered for token in forbidden):
-        errors.append("PR workflow must not install or execute ASLRef")
+    for worker, job, expected_fields, expected_steps in worker_contracts:
+        if _job_fields(job) != expected_fields:
+            errors.append(f"{worker} must use its exact job mapping")
+        if _steps(job) != expected_steps:
+            errors.append(f"{worker} must use its exact ordered step mappings")
+    expected_validate_fields = {
+        "name": "PR / validate",
+        "if": "always()",
+        "needs": ["source-contract", "tooling-tests"],
+        "runs-on": "ubuntu-latest",
+        "timeout-minutes": "5",
+    }
+    if _job_fields(validate) != expected_validate_fields:
+        errors.append("validate must use its exact job mapping")
+    if _steps(validate) != _expected_validate_steps():
+        errors.append("validate must use its exact ordered step mappings")
+    all_steps = [
+        step
+        for job in (source_contract, tooling_tests, validate)
+        for step in _steps(job)
+    ]
+    allowed_actions = {
+        f"actions/checkout@{CHECKOUT_ACTION_SHA}",
+        f"actions/cache@{CACHE_ACTION_SHA}",
+        f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+        f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}",
+    }
+    for step in all_steps:
+        if "uses" not in step:
+            continue
+        action = step["uses"]
+        if not isinstance(action, str) or action not in allowed_actions:
+            errors.append(
+                "PR workflow has malformed or unrecognized uses; actions must be commit-pinned"
+            )
+
+    timed = re.compile(
+        r"^scripts/pr_timing\.py run --output (?P<output>\S+) -- (?P<command>.+)$"
+    )
+    def timed_commands(job: dict[str, object]) -> list[tuple[str, str]]:
+        commands: list[tuple[str, str]] = []
+        for line in _run_lines(job):
+            match = timed.fullmatch(line)
+            if match:
+                commands.append((match.group("output"), match.group("command")))
+        return commands
+
+    source_timed = timed_commands(source_contract)
+    tooling_timed = timed_commands(tooling_tests)
+    all_timed = source_timed + tooling_timed
+    active_worker_lines = _run_lines(source_contract) + _run_lines(tooling_tests)
+    if any(
+        line in PR_GATES or line == PR_TOOLING_COMMAND for line in active_worker_lines
+    ):
+        errors.append("PR workflow contains an unwrapped checker command")
+    for command, expected_output in PR_SOURCE_TIMING_OUTPUTS.items():
+        if (
+            source_timed.count((expected_output, command)) != 1
+            or sum(actual == command for _, actual in source_timed) != 1
+        ):
+            errors.append(
+                f"source-contract must execute {command} exactly once through the "
+                f"timing wrapper with exact timing output {expected_output}"
+            )
+    if (
+        tooling_timed.count((PR_TOOLING_TIMING_OUTPUT, PR_TOOLING_COMMAND)) != 1
+        or sum(command == PR_TOOLING_COMMAND for _, command in tooling_timed) != 1
+    ):
+        errors.append(
+            "tooling-tests must execute the script unit tests exactly once "
+            "through the timing wrapper with its exact timing output"
+        )
+    if any(command not in PR_GATES for _, command in source_timed) or any(
+        command != PR_TOOLING_COMMAND for _, command in tooling_timed
+    ):
+        errors.append("PR workflow must not execute unrecognized timed commands")
+    timing_outputs = [output for output, _ in all_timed]
+    if len(timing_outputs) != len(set(timing_outputs)):
+        errors.append("PR workflow timing output paths must be unique")
+    if any(output in PR_WORKER_TIMING_OUTPUTS for output in timing_outputs):
+        errors.append("checker timing output must not collide with a worker timing output")
+    if any(
+        not output.startswith("build/pr-timing/") or not output.endswith(".json")
+        for output in timing_outputs
+    ):
+        errors.append("every checker must use its exact timing output under build/pr-timing")
+    if _run_bodies(source_contract) != _expected_source_run_bodies():
+        errors.append("source-contract contains an unexpected active line or run-step body")
+    if _run_bodies(tooling_tests) != _expected_tooling_run_bodies():
+        errors.append("tooling-tests contains an unexpected active line or run-step body")
+
+    for worker, job in (
+        ("source-contract", source_contract),
+        ("tooling-tests", tooling_tests),
+    ):
+        start = _worker_start_line(worker)
+        finish = _worker_finish_line(worker)
+        job_steps = _steps(job)
+        start_indices = [
+            index
+            for index, step in enumerate(job_steps)
+            if _run_lines({"steps": [step]}) == [start]
+        ]
+        finish_indices = [
+            index
+            for index, step in enumerate(job_steps)
+            if _run_lines({"steps": [step]}) == [finish]
+            and step.get("if") == "always()"
+        ]
+        operation_indices = [
+            index
+            for index, step in enumerate(job_steps)
+            if any(timed.fullmatch(line) for line in _run_lines({"steps": [step]}))
+            or step.get("uses") == f"actions/cache@{CACHE_ACTION_SHA}"
+        ]
+        if (
+            len(start_indices) != 1
+            or len(finish_indices) != 1
+            or not operation_indices
+            or not start_indices[0] < min(operation_indices)
+            or not max(operation_indices) < finish_indices[0]
+        ):
+            errors.append(f"{worker} must emit exactly one elapsed run record")
+
+    steps = _steps(tooling_tests)
+    cache_steps = [
+        step for step in steps if step.get("uses") == f"actions/cache@{CACHE_ACTION_SHA}"
+    ]
+    if len(cache_steps) != 1:
+        errors.append("tooling-tests must use one commit-pinned NDF cache action")
+    else:
+        cache_with = _mapping(cache_steps[0].get("with"))
+        path = cache_with.get("path")
+        key = cache_with.get("key")
+        required_key_terms = (
+            "runner.os",
+            "runner.arch",
+            "steps.ndf-revision.outputs.sha",
+            "hashFiles('tools/ndf/Cargo.lock')",
+        )
+        if path != "tools/ndf/target" or not isinstance(key, str) or any(
+            term not in key for term in required_key_terms
+        ):
+            errors.append(
+                "tooling-tests NDF cache must contain only tools/ndf/target "
+                "and bind OS, architecture, submodule SHA, and Cargo.lock"
+            )
+    all_cache_steps = [
+        step
+        for step in all_steps
+        if isinstance(step.get("uses"), str)
+        and str(step["uses"]).startswith("actions/cache@")
+    ]
+    if len(all_cache_steps) != 1:
+        errors.append("the NDF tool build must be the PR workflow's only cache")
+    revision_steps = [step for step in steps if step.get("id") == "ndf-revision"]
+    if len(revision_steps) != 1 or _run_lines({"steps": revision_steps}) != [
+        'echo "sha=$(git -C tools/ndf rev-parse HEAD)" >> "$GITHUB_OUTPUT"'
+    ]:
+        errors.append("tooling-tests must derive the exact NDF submodule SHA")
+
+    for name, job in (("source-contract", source_contract), ("tooling-tests", tooling_tests)):
+        upload_steps = [
+            step
+            for step in _steps(job)
+            if step.get("uses") == f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}"
+        ]
+        if len(upload_steps) != 1:
+            errors.append(f"{name} must upload timing with the commit-pinned action")
+        else:
+            upload = upload_steps[0]
+            upload_with = _mapping(upload.get("with"))
+            if (
+                upload.get("if") != "always()"
+                or upload_with.get("name") != f"pr-timing-{name}"
+                or upload_with.get("path") != "build/pr-timing/*.json"
+            ):
+                errors.append(f"{name} must always upload its exact timing artifact")
+
+    if _flow_list(validate.get("needs")) != {"source-contract", "tooling-tests"}:
+        errors.append("final PR gate must require both worker jobs")
+    if validate.get("name") != "PR / validate" or validate.get("if") != "always()":
+        errors.append("final PR gate must be named PR / validate and always run")
+    validate_lines = _run_lines(validate)
+    for variable in ("SOURCE_CONTRACT_RESULT", "TOOLING_TESTS_RESULT"):
+        if f'test "${variable}" = success' not in validate_lines:
+            errors.append(f"final PR gate must explicitly require {variable} = success")
+    download_steps = [
+        step
+        for step in _steps(validate)
+        if step.get("uses") == f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}"
+    ]
+    download_with = (
+        _mapping(download_steps[0].get("with"))
+        if len(download_steps) == 1
+        else {}
+    )
+    if (
+        download_with.get("pattern") != "pr-timing-*"
+        or download_with.get("path") != "build/pr-timing"
+        or download_with.get("merge-multiple") != "true"
+    ):
+        errors.append("final PR gate must download and merge the exact timing artifacts")
+    summary_line = _summary_line()
+    if len(download_steps) != 1 or validate_lines.count(summary_line) != 1:
+        errors.append("final PR gate must merge timing artifacts into the job summary")
+
     return errors
 
 
+def _release_jobs() -> dict[str, object]:
+    return {
+        "full-validation": {
+            "name": "Release / full validation",
+            "uses": "./.github/workflows/full-validation.yml",
+            "with": {"commit": "${{ inputs.commit }}", "authority": "release"},
+            "permissions": {"contents": "read"},
+        },
+        "release-evidence": {
+            "name": "Release / fail-closed evidence aggregation",
+            "needs": "full-validation",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": "45",
+            "steps": [
+                checkout_step("${{ inputs.commit }}"),
+                {
+                    "name": "Download exact ASL test plan",
+                    "uses": f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "full-validation-plan-release-${{ inputs.commit }}",
+                        "path": "build/planned-asl-test-pages",
+                    },
+                },
+                {
+                    "name": "Download every per-ID result",
+                    "uses": f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "pattern": "full-validation-results-release-${{ inputs.commit }}-*",
+                        "path": "build/asl-test-results",
+                        "merge-multiple": "true",
+                    },
+                },
+                {
+                    "name": "Aggregate exact set equality and regenerate release evidence",
+                    "shell": "bash",
+                    "env": {"COMMIT": "${{ inputs.commit }}"},
+                    "run-sha256": "4f9d45685c49c0b640facd103a378bffb52db4e2a2972852d2a18a84e2ae8ef4",
+                },
+                {
+                    "name": "Upload release evidence",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-release-evidence-${{ inputs.commit }}",
+                        "path": "build/asl-test-matrix.json\n"
+                        "build/asl-test-coverage.json\n"
+                        "spec/evidence/asl-test-matrix.sha256\n"
+                        "spec/release-manifest.json",
+                        "if-no-files-found": "error",
+                        "retention-days": "90",
+                    },
+                },
+            ],
+        },
+        "validate": {
+            "name": "Release / validate",
+            "if": "always()",
+            "needs": ["full-validation", "release-evidence"],
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": "10",
+            "steps": [
+                {
+                    "name": "Require every exact-head release gate",
+                    "shell": "bash",
+                    "env": {
+                        "FULL_VALIDATION_RESULT": "${{ needs.full-validation.result }}",
+                        "RELEASE_EVIDENCE_RESULT": "${{ needs.release-evidence.result }}",
+                    },
+                    "run-sha256": "08951561d771359b1e744c956c4dc5082c0fe03d85dceca5881d0eca4efde269",
+                }
+            ],
+        },
+    }
+
+
 def validate_release_workflow(workflow: str) -> list[str]:
-    """Return fail-closed contract violations for release verification."""
+    """Validate manual release authority and canonical evidence aggregation."""
 
-    errors: list[str] = []
-    if YAML_ANCHOR_OR_ALIAS.search(workflow):
-        errors.append("release workflow must not use YAML anchors or aliases")
-    events = _event_block(workflow)
-    if "workflow_dispatch:" not in events or any(
-        re.search(rf"^  {event}:\s*$", events, re.MULTILINE)
-        for event in ("push", "pull_request", "schedule", "workflow_call")
-    ):
-        errors.append("release verification must be manually dispatched only")
-    if not re.search(r"^      commit:\s*$", events, re.MULTILINE) or not re.search(
-        r"^        required:\s*true\s*$", events, re.MULTILINE
-    ):
-        errors.append("workflow_dispatch must require a commit input")
-
-    job_names = (
-        "identity",
-        "pr-contract",
-        "matrix-plan",
-        "strict-model",
-        "asl-page",
-        "release-evidence",
-        "validate",
+    errors = validate_exact_workflow(
+        workflow,
+        label="release workflow",
+        expected_root={
+            "name": "Release verification",
+            "on": {
+                "workflow_dispatch": {
+                    "inputs": {
+                        "commit": {
+                            "description": "Exact reviewed commit to verify (40 lowercase hexadecimal characters)",
+                            "required": "true",
+                            "type": "string",
+                        }
+                    }
+                }
+            },
+            "permissions": {"contents": "read"},
+            "concurrency": {
+                "group": "release-verification-${{ inputs.commit }}",
+                "cancel-in-progress": "false",
+            },
+        },
+        expected_jobs=_release_jobs(),
     )
-    jobs = {name: _job_block(workflow, name) for name in job_names}
-    for name, job in jobs.items():
-        if not job:
-            errors.append(f"release workflow is missing the {name} job")
-        elif not _has_timeout(job):
-            errors.append(f"{name} must have an explicit timeout")
-
-    identity = jobs["identity"]
-    if not re.search(r"\[\[.*\^\[0-9a-f\]\{40\}\$.*\]\]", identity):
-        errors.append(
-            "identity must reject any commit that is not 40 lowercase hexadecimal characters"
-        )
-    if not _has_exact_checkout(identity) or "git rev-parse HEAD" not in identity:
-        errors.append("identity must check out and prove the exact commit input")
-
-    for name in ("pr-contract", "matrix-plan", "strict-model"):
-        if _job_needs(jobs[name]) != {"identity"}:
-            errors.append(f"{name} must start directly after identity")
-        if not _has_exact_checkout(jobs[name]):
-            errors.append(f"{name} must check out the exact commit input")
-
-    pr_contract = jobs["pr-contract"]
-    if "git rev-parse HEAD" not in pr_contract or "make pr-check" not in pr_contract:
-        errors.append("pr-contract must prove the exact head and run make pr-check")
-    if _standalone_run_position(
-        pr_contract,
-        "python3 scripts/manual_semantic_audit.py",
-    ) is None:
-        errors.append(
-            "pr-contract must prove formal mnemonic implementation closure"
-        )
-
-    matrix_plan = jobs["matrix-plan"]
-    if (
-        "outputs:" not in matrix_plan
-        or "GITHUB_OUTPUT" not in matrix_plan
-        or matrix_plan.count("print-asl-test-matrix") != 1
-        or "--output-dir" not in matrix_plan
-        or "pages:" not in matrix_plan
-    ):
-        errors.append(
-            "matrix-plan must export every page with one print-asl-test-matrix discovery"
-        )
-    if (
-        'ASL_TEST_PAGE_COUNT: "8"' not in workflow
-        or '--page-count "$ASL_TEST_PAGE_COUNT"' not in matrix_plan
-    ):
-        errors.append(
-            "matrix-plan must cap hosted fan-out at eight complete pages"
-        )
-    if re.search(r"(?:^|\s)--page(?:\s|=)", matrix_plan):
-        errors.append("matrix-plan must not regenerate pages in a serial loop")
-    build_directory_positions = _script_line_positions(matrix_plan, "mkdir -p build")
-    matrix_discovery_position = matrix_plan.find("./scripts/print-asl-test-matrix")
-    if (
-        len(build_directory_positions) != 1
-        or matrix_discovery_position < 0
-        or build_directory_positions[0] >= matrix_discovery_position
-    ):
-        errors.append(
-            "matrix-plan must create build before redirecting the ASL plan index"
-        )
-    if "planned-asl-test-pages" not in matrix_plan or not re.search(
-        r"actions/upload-artifact@[0-9a-f]{40}", matrix_plan
-    ):
-        errors.append("matrix-plan must upload the exact planned ASL matrix pages")
-
-    strict_model = jobs["strict-model"]
-    if not re.search(r"ocaml/setup-ocaml@[0-9a-f]{40}", strict_model):
-        errors.append("strict-model must use a commit-pinned OCaml setup action")
-    if "dune-cache: true" not in strict_model:
-        errors.append("strict-model must enable the pinned OCaml dune cache")
-    errors.extend(_validate_toolchain_cache(strict_model, "strict-model"))
-    if (
-        _standalone_run_position(strict_model, "make setup") is None
-        or "make toolchain-check check" not in strict_model
-    ):
-        errors.append(
-            "strict-model must run setup, toolchain canaries, and the normative model"
-        )
-
-    page = jobs["asl-page"]
-    if _job_needs(page) != {"matrix-plan"}:
-        errors.append("ASL pages must start from the completed matrix-plan")
-    if not _has_exact_checkout(page):
-        errors.append("ASL pages must check out the exact commit input")
-    if not re.search(r"fail-fast:\s*false", page):
-        errors.append("ASL pages must record every result with fail-fast disabled")
-    if not re.search(r"max-parallel:\s*8", page):
-        errors.append("ASL pages must match the eight-page hosted fan-out")
-    if not re.search(
-        r"page:\s*\$\{\{\s*fromJSON\(needs\.matrix-plan\.outputs\.pages\)\s*\}\}",
-        page,
-    ):
-        errors.append("ASL jobs must consume the exact pages exported by matrix-plan")
-    if "print-asl-test-matrix" in page or re.search(r"^\s*cmp\s+", page, re.MULTILINE):
-        errors.append("ASL pages must execute the downloaded exact page without rediscovery")
-    if "dune-cache: true" not in page:
-        errors.append("ASL pages must enable the pinned OCaml dune cache")
-    errors.extend(_validate_toolchain_cache(page, "ASL pages"))
-    setup_position = _standalone_run_position(page, "make setup")
-    jobs_command = 'ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"'
-    runner_command = (
-        './scripts/run-asl-page --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" '
-        '-j "$ASL_TEST_JOBS"'
-    )
-    reporter_command = (
-        './scripts/report-asl-page-results --matrix "build/planned-asl-test-pages/'
-        'page-${{ matrix.page }}.json" --results build/asl-test-results'
-    )
-    jobs_positions = _script_line_positions(page, jobs_command)
-    runner_positions = _script_line_positions(page, runner_command)
-    reporter_positions = _script_line_positions(page, reporter_command)
-    execution_position = runner_positions[0] if len(runner_positions) == 1 else -1
-    if (
-        setup_position is None
-        or execution_position < 0
-        or setup_position > execution_position
-    ):
-        errors.append(
-            "each ASL page must prepare pinned ASLRef before parallel test execution"
-        )
-    if len(runner_positions) != 1:
-        errors.append(
-            "ASL pages must invoke exactly one run-asl-page command for every independent point"
-        )
-    if len(runner_positions) != 1:
-        errors.append("ASL pages must use -j configurable parallelism")
-    if len(jobs_positions) != 1:
-        errors.append(
-            "ASL page parallelism must default to the machine core count with a PTO_ASL_TEST_JOBS override"
-        )
-    if len(reporter_positions) != 1 or (
-        execution_position >= 0 and reporter_positions[0] <= execution_position
-    ):
-        errors.append(
-            "ASL pages must report every ASL page result after parallel execution"
-        )
-    report_status_positions = _script_line_positions(page, "report_status=$?")
-    execution_gate_positions = _script_line_positions(
-        page, 'test "$EXECUTION_OUTCOME" = success'
-    )
-    report_gate_positions = _script_line_positions(page, 'test "$report_status" = 0')
-    set_plus_positions = _script_line_positions(page, "set +e")
-    set_minus_positions = _script_line_positions(page, "set -e")
-    exact_execution_block = "\n".join(
-        f"          {line}"
-        for line in (
-            jobs_command,
-            runner_command,
-        )
-    )
-    exact_report_block = "\n".join(
-        f"          {line}"
-        for line in (
-            "set +e",
-            reporter_command,
-            "report_status=$?",
-            "set -e",
-            'test "$EXECUTION_OUTCOME" = success',
-            'test "$report_status" = 0',
-        )
-    )
-    if exact_execution_block not in page or exact_report_block not in page:
-        errors.append(
-            "ASL pages must use separate contiguous fail-closed execution and report blocks"
-        )
-    if not (
-        len(report_status_positions) == 1
-        and len(reporter_positions) == 1
-        and reporter_positions[0] < report_status_positions[0]
-    ):
-        errors.append("ASL pages must capture the page report status fail-closed")
-    if len(execution_gate_positions) != 1:
-        errors.append("ASL pages must explicitly require the execution outcome to pass")
-    if len(report_gate_positions) != 1:
-        errors.append("ASL pages must explicitly require the report status to pass")
-    if not (
-        len(set_plus_positions) == 1
-        and len(set_minus_positions) == 1
-        and len(execution_gate_positions) == 1
-        and len(report_gate_positions) == 1
-        and len(report_status_positions) == 1
-        and len(reporter_positions) == 1
-        and set_plus_positions[0] < reporter_positions[0]
-        and report_status_positions[0] < set_minus_positions[0]
-        and set_minus_positions[0]
-        < execution_gate_positions[0]
-        < report_gate_positions[0]
-    ):
-        errors.append(
-            "ASL pages must restore fail-fast mode before checking execution and report statuses"
-        )
-    report_steps = [step for step in _step_blocks(page) if reporter_command in step]
-    if len(report_steps) != 1 or "        if: always()" not in report_steps[0]:
-        errors.append("ASL page reporting must be a distinct always-run step")
-    execution_steps = [step for step in _step_blocks(page) if runner_command in step]
-    execution_step = execution_steps[0] if len(execution_steps) == 1 else ""
-    report_step = report_steps[0] if len(report_steps) == 1 else ""
-    if (
-        "        id: execute" not in execution_step
-        or "          EXECUTION_OUTCOME: ${{ steps.execute.outcome }}" not in report_step
-    ):
-        errors.append(
-            "ASL page execution outcome must remain visible while always-run reporting enforces it"
-        )
-    if "continue-on-error:" in execution_step:
-        errors.append(
-            "ASL page execution must fail visibly; always-run reporting handles diagnostics"
-        )
-    if re.search(r"\bxargs\b|\brun-asl-test\b", page):
-        errors.append(
-            "ASL pages must use the repository page runner instead of shell-level xargs"
-        )
-    page_steps = _step_blocks(page)
-    if any(_step_uses(step) == INVALID_STEP_USES for step in page_steps):
-        errors.append("ASL page uses values must not contain YAML escapes")
-    upload_steps = [
-        step
-        for step in page_steps
-        if (_step_uses(step) or "").startswith("actions/upload-artifact@")
-    ]
-    result_uploads = (
-        [
-            step
-            for step in upload_steps
-            if _step_uses(step) == f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}"
-        ]
-        if len(upload_steps) == 1
-        else []
-    )
-    result_names = (
-        _direct_mapping_values(result_uploads[0], "with", "name")
-        if len(result_uploads) == 1
-        else []
-    )
-    result_paths = (
-        _direct_mapping_values(result_uploads[0], "with", "path")
-        if len(result_uploads) == 1
-        else []
-    )
-    if result_names != ["asl-test-results-${{ matrix.page }}"] or result_paths != [
-        "build/asl-test-results/*/result.json"
-    ]:
-        errors.append("ASL pages must upload only per-ID result.json artifacts")
-
-    evidence = jobs["release-evidence"]
-    evidence_needs = _job_needs(evidence)
-    for dependency in ("pr-contract", "matrix-plan", "strict-model", "asl-page"):
-        if dependency not in evidence_needs:
-            errors.append(f"release-evidence is missing its {dependency} dependency")
-    if "run-asl-release-suite" not in evidence or "--aggregate-only" not in evidence:
-        errors.append(
-            "release-evidence must run fail-closed aggregate-only result validation"
-        )
-    if "planned-asl-test-pages" not in evidence or "asl-test-results" not in evidence:
-        errors.append(
-            "release-evidence must consume the planned matrix and every result artifact"
-        )
-    if "git diff --exit-code" not in evidence:
-        errors.append(
-            "release-evidence must prove regenerated exact-head evidence is clean"
-        )
-    if not re.search(r"actions/upload-artifact@[0-9a-f]{40}", evidence):
-        errors.append(
-            "release-evidence must upload evidence with a commit-pinned action"
-        )
-    if (
-        "build/asl-test-matrix.json" not in evidence
-        or "spec/evidence/asl-test-matrix.sha256" not in evidence
-    ):
-        errors.append("release-evidence must upload the exact matrix and its checksum")
-
-    validate = jobs["validate"]
-    if "name: Release / validate" not in validate or "if: always()" not in validate:
-        errors.append(
-            "final release gate must be named Release / validate and always run"
-        )
-    needs = _job_needs(validate)
-    for job in job_names[:-1]:
-        if job not in needs:
-            errors.append(f"final release gate is missing its {job} dependency")
-    for variable in (
-        "IDENTITY_RESULT",
-        "PR_CONTRACT_RESULT",
-        "MATRIX_PLAN_RESULT",
-        "STRICT_MODEL_RESULT",
-        "ASL_PAGE_RESULT",
-        "RELEASE_EVIDENCE_RESULT",
-    ):
-        if not re.search(rf'test\s+"\${variable}"\s+=\s+success', validate):
-            errors.append(
-                f"final release gate must explicitly require {variable} = success"
-            )
-
     lowered = workflow.lower()
-    if any(
-        term in lowered for term in ("gh release", "create-release", "git push --tags")
-    ):
-        errors.append("verification workflow must not create a tag or release")
-    obsolete_terms = (
-        "ASL_TEST_" + "SHARD",
-        "test-" + "shard-",
-        "check-asl-test-" + "shards",
-    )
-    if any(term in workflow for term in obsolete_terms):
-        errors.append("release workflow must not use hand-maintained ASL shards")
+    if any(term in lowered for term in ("gh release", "create-release", "git push")):
+        errors.append("release verification must not create a tag or release")
     return errors

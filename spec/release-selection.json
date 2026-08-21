@@ -1,0 +1,21 @@
+{
+  "$schema": "spec/schemas/pto-release-selection.schema.json",
+  "architecture_version": "0.58.2",
+  "baseline_commit": "bc369ec67a07c0260f6ba793fa0d705abb363770",
+  "excluded_draft_adrs": [
+    "ADR-0086",
+    "ADR-0087",
+    "ADR-0088",
+    "ADR-0089",
+    "ADR-0090",
+    "ADR-0091",
+    "ADR-0092",
+    "ADR-0093",
+    "ADR-0094",
+    "ADR-0095"
+  ],
+  "included_ndf_statuses": [
+    "accepted"
+  ],
+  "required_readiness_floor": "executable"
+}

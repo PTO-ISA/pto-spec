@@ -1,12 +1,217 @@
+---
+{
+  "id": "ADR-0032",
+  "title": "Bundle-command totality and PTO-v0 profile boundaries",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-30",
+  "accepted": "2026-07-30",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-B-CATR-CONTROL-001",
+    "PTO-B-DATR-FIELDS-001",
+    "PTO-B-DIM-WRITE-001",
+    "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+    "PTO-B-HINT-LIFECYCLE-001",
+    "PTO-B-IOR-BINDING-001",
+    "PTO-B-IOS-SHARED-STATE-001",
+    "PTO-B-IOT-STREAM-001",
+    "PTO-BARG-CONTINUATION-001",
+    "PTO-BLOCK-ERCOV-RESERVED-001",
+    "PTO-BLOCK-ESAVE-RESERVED-001",
+    "PTO-BLOCK-MSET-FILL-001",
+    "PTO-BLOCK-XB-RESERVED-001",
+    "PTO-BSTART-CALL-DECISION-BINDING-001",
+    "PTO-BSTART-DECISION-BINDING-001",
+    "PTO-BSTART-FP-CONTROL-001",
+    "PTO-BSTART-GMOV-COLLECTIVE-001",
+    "PTO-BSTART-ICALL-DECISION-BINDING-001",
+    "PTO-BSTART-MGATHER-CAS-SCHEMA-001",
+    "PTO-BSTART-MGATHER-MASK-SCHEMA-001",
+    "PTO-BSTART-MGATHER-SCHEMA-001",
+    "PTO-BSTART-MSCATTER-MASK-SCHEMA-001",
+    "PTO-BSTART-MSCATTER-SCHEMA-001",
+    "PTO-BSTART-SFU-DECISION-BINDING-001",
+    "PTO-BSTART-STD-CONTROL-001",
+    "PTO-BSTART-SYS-CONTROL-001",
+    "PTO-BSTART-TEPL-DECISION-BINDING-001",
+    "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
+    "PTO-BSTART-TGEMV-BIAS-CONTRACT-001",
+    "PTO-BSTART-TGEMV-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-BIAS-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-CONTRACT-001",
+    "PTO-BSTART-TLOAD-CUBE-001",
+    "PTO-BSTART-TLOAD-MEMORY-001",
+    "PTO-BSTART-TMATMUL-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMUL-BIAS-CONTRACT-001",
+    "PTO-BSTART-TMATMUL-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-CONTRACT-001",
+    "PTO-BSTART-TMOV-SHARED-001",
+    "PTO-BSTART-TPREFETCH-MEMORY-001",
+    "PTO-BSTART-TSTORE-CUBE-001",
+    "PTO-BSTART-TSTORE-MEMORY-001",
+    "PTO-BSTART-VEC-DECISION-BINDING-001",
+    "PTO-BSTOP-DECISION-BINDING-001",
+    "PTO-C-BSTART-CONTROL-001",
+    "PTO-C-BSTART-FP-CONTROL-001",
+    "PTO-C-BSTART-STD-CONTROL-001",
+    "PTO-C-BSTART-SYS-CONTROL-001",
+    "PTO-C-BSTOP-DECISION-BINDING-001",
+    "PTO-CUBE-CELL-TRANSPORT-001",
+    "PTO-FENTRY-RESTARTABLE-FRAME-001",
+    "PTO-FEXIT-RESTARTABLE-FRAME-001",
+    "PTO-FRET-RA-RESTARTABLE-FRAME-001",
+    "PTO-FRET-STK-RESTARTABLE-FRAME-001",
+    "PTO-HL-QMT-GQM-001",
+    "PTO-HL-QPOP-GQM-001",
+    "PTO-HL-QPUSH-GQM-001",
+    "PTO-L-BSTOP-DECISION-BINDING-001",
+    "PTO-MCOPY-RESTART-001",
+    "PTO-REQ-BUNDLE-STATE-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-B-CATR",
+    "PTO-BLOCK-B-DATR",
+    "PTO-BLOCK-B-DIM",
+    "PTO-BLOCK-B-FPATR",
+    "PTO-BLOCK-B-HINT",
+    "PTO-BLOCK-B-IOR",
+    "PTO-BLOCK-B-IOS",
+    "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-BSTART",
+    "PTO-BLOCK-BSTART-CALL",
+    "PTO-BLOCK-BSTART-FP",
+    "PTO-BLOCK-BSTART-GMOV",
+    "PTO-BLOCK-BSTART-ICALL",
+    "PTO-BLOCK-BSTART-MGATHER",
+    "PTO-BLOCK-BSTART-MGATHER-CAS",
+    "PTO-BLOCK-BSTART-MGATHER-MASK",
+    "PTO-BLOCK-BSTART-MSCATTER",
+    "PTO-BLOCK-BSTART-MSCATTER-MASK",
+    "PTO-BLOCK-BSTART-SFU",
+    "PTO-BLOCK-BSTART-STD",
+    "PTO-BLOCK-BSTART-SYS",
+    "PTO-BLOCK-BSTART-TEPL",
+    "PTO-BLOCK-BSTART-TGEMV",
+    "PTO-BLOCK-BSTART-TGEMV-ACC",
+    "PTO-BLOCK-BSTART-TGEMV-BIAS",
+    "PTO-BLOCK-BSTART-TGEMVMX",
+    "PTO-BLOCK-BSTART-TGEMVMX-ACC",
+    "PTO-BLOCK-BSTART-TGEMVMX-BIAS",
+    "PTO-BLOCK-BSTART-TLOAD",
+    "PTO-BLOCK-BSTART-TMATMUL",
+    "PTO-BLOCK-BSTART-TMATMUL-ACC",
+    "PTO-BLOCK-BSTART-TMATMUL-BIAS",
+    "PTO-BLOCK-BSTART-TMATMULMX",
+    "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+    "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+    "PTO-BLOCK-BSTART-TMOV",
+    "PTO-BLOCK-BSTART-TPREFETCH",
+    "PTO-BLOCK-BSTART-TSTORE",
+    "PTO-BLOCK-BSTART-VEC",
+    "PTO-BLOCK-BSTOP",
+    "PTO-BLOCK-C-B-DIMI",
+    "PTO-BLOCK-C-BSTART",
+    "PTO-BLOCK-C-BSTART-FP",
+    "PTO-BLOCK-C-BSTART-STD",
+    "PTO-BLOCK-C-BSTART-SYS",
+    "PTO-BLOCK-C-BSTOP",
+    "PTO-BLOCK-ERCOV",
+    "PTO-BLOCK-ESAVE",
+    "PTO-BLOCK-FENTRY",
+    "PTO-BLOCK-FEXIT",
+    "PTO-BLOCK-FRET-RA",
+    "PTO-BLOCK-FRET-STK",
+    "PTO-BLOCK-HL-QMT",
+    "PTO-BLOCK-HL-QPOP",
+    "PTO-BLOCK-HL-QPUSH",
+    "PTO-BLOCK-L-BSTOP",
+    "PTO-BLOCK-MCOPY",
+    "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
+    "PTO-BLOCK-MODEL-COMMIT-VALIDATION",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+    "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+    "PTO-BLOCK-MODEL-DISPATCH-DECODE",
+    "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+    "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+    "PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL",
+    "PTO-BLOCK-MODEL-DISPATCH-PARTIAL-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+    "PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-START",
+    "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH",
+    "PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL",
+    "PTO-BLOCK-MODEL-FAULTS-ROLLBACK",
+    "PTO-BLOCK-MODEL-LIFECYCLE-BEGIN",
+    "PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP",
+    "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME",
+    "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+    "PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS",
+    "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+    "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+    "PTO-BLOCK-MODEL-SCHEMA-ATTRIBUTES",
+    "PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS",
+    "PTO-BLOCK-MODEL-SCHEMA-HEADER",
+    "PTO-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING",
+    "PTO-BLOCK-MODEL-STATE-BARG",
+    "PTO-BLOCK-MODEL-STATE-BINDING-STATE",
+    "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+    "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+    "PTO-BLOCK-MODEL-STATE-TYPES",
+    "PTO-BLOCK-MSET",
+    "PTO-BLOCK-XB"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0032: Bundle-command totality and PTO-v0 profile boundaries
 
-- Status: Accepted
+> Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
+
 - Date: 2026-07-30
 - Requirements: PTO-REQ-BUNDLE-DISPATCH-001,
   PTO-REQ-BUNDLE-OPERATION-001, PTO-REQ-BUNDLE-STATE-001
 
-Current release inventory is governed by ADR 0062; numeric inventories below
-are acceptance-time history, not the current active decoder set.
+Current release inventory is governed by ASL and generated projections;
+numeric inventories below are acceptance-time history, not the current active
+decoder set.
 
 ## Context
 
@@ -39,7 +244,7 @@ attempt tick and trap entry remain governed by the common dispatch contract.
 ### Historical PTO-v0 rejection boundary
 
 The rejection list below records the boundary when this ADR was accepted.
-ADR 0062 PRD-149 through PRD-159 subsequently define these mnemonics as formal
+Decisions 149 through 159 in ADR 0084 subsequently define these mnemonics as formal
 PTO instructions; the current ASL MUST execute those accepted contracts rather
 than apply this historical rejection rule.
 
@@ -76,7 +281,8 @@ All remaining forms have a defined effect:
 - `MSET` accepts an XLEN length from 0 through 63 bytes, including zero
   length, and rejects larger values before memory or last-command state
   changes;
-- PRD-152 supersedes the former `MCOPY` 63-byte bound and snapshot rule:
+- Decision 152 in ADR 0084 supersedes the former `MCOPY` 63-byte bound and
+  snapshot rule:
   `MCOPY` accepts its complete XLEN length, rejects wrapping or overlapping
   ranges before effects, and uses trap-preserved restartable memory steps;
 - `MSET` reads destination, fill value, and byte length only from absolute
@@ -141,7 +347,7 @@ representable execution and missing/incompatible binding rollback.
   extension reservations reject outside the active command-form decoder.
 - No command length, argument kind, or hint payload is silently discarded.
 - Frame, context, queue, and cross-block behavior is implemented only where
-  accepted by ADR 0062; reserved extension spellings cannot be mistaken for
+  accepted by ADR 0084; reserved extension spellings cannot be mistaken for
   PTO instructions.
 - Direct tile and bundle commit use the same canonical operation schemas.
 - Future operands require a catalog/default update and executable evidence;

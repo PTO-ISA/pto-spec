@@ -15,231 +15,19 @@ concurrency:
   group: release-verification-${{ inputs.commit }}
   cancel-in-progress: false
 
-env:
-  ASL_TEST_PAGE_COUNT: "8"
-
 jobs:
-  identity:
-    name: Release / exact commit identity
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Validate exact commit input
-        shell: bash
-        env:
-          COMMIT: ${{ inputs.commit }}
-        run: |
-          [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]
-
-      - name: Check out exact commit
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          ref: ${{ inputs.commit }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: recursive
-
-      - name: Prove exact checked-out head
-        shell: bash
-        env:
-          COMMIT: ${{ inputs.commit }}
-        run: |
-          test "$(git rev-parse HEAD)" = "$COMMIT"
-
-  pr-contract:
-    name: Release / lightweight repository contract
-    needs: identity
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    steps:
-      - name: Check out exact commit
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          ref: ${{ inputs.commit }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: recursive
-
-      - name: Prove exact head and run lightweight gates
-        shell: bash
-        env:
-          COMMIT: ${{ inputs.commit }}
-        run: |
-          test "$(git rev-parse HEAD)" = "$COMMIT"
-          make pr-check
-
-      - name: Verify formal mnemonic and reservation contracts
-        run: python3 scripts/manual_semantic_audit.py
-
-  matrix-plan:
-    name: Release / one-pass ASL matrix plan
-    needs: identity
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    outputs:
-      pages: ${{ steps.matrix.outputs.pages }}
-    steps:
-      - name: Check out exact commit
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          ref: ${{ inputs.commit }}
-          fetch-depth: 0
-          persist-credentials: false
-          submodules: recursive
-
-      - name: Export every exact ASL page in one discovery
-        id: matrix
-        shell: bash
-        env:
-          COMMIT: ${{ inputs.commit }}
-        run: |
-          test "$(git rev-parse HEAD)" = "$COMMIT"
-          mkdir -p build
-          ./scripts/print-asl-test-matrix \
-            --page-count "$ASL_TEST_PAGE_COUNT" \
-            --output-dir build/planned-asl-test-pages \
-            > build/asl-test-plan-index.json
-          pages="$(python3 -c 'import json,sys; data=json.load(open(sys.argv[1])); print(json.dumps(data["pages"], separators=(",", ":")))' build/asl-test-plan-index.json)"
-          test "$pages" != "[]"
-          echo "pages=$pages" >> "$GITHUB_OUTPUT"
-          python3 - <<'PY'
-          import json
-          import os
-
-          with open("build/asl-test-plan-index.json") as source:
-              data = json.load(source)
-          summary = (
-              "### Exact ASL matrix\n\n"
-              f"- **{data['test_count']}** independent points\n"
-              f"- **{data['page_count']}** balanced pages\n"
-              f"- Commit `{data['commit']}`\n"
-          )
-          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as destination:
-              destination.write(summary)
-          PY
-
-      - name: Upload exact ASL test plan
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: planned-asl-test-pages
-          path: build/planned-asl-test-pages
-          if-no-files-found: error
-          retention-days: 90
-
-  strict-model:
-    name: Release / strict normative model
-    needs: identity
-    runs-on: ubuntu-latest
-    timeout-minutes: 360
-    steps:
-      - name: Check out exact commit
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          ref: ${{ inputs.commit }}
-          persist-credentials: false
-          submodules: recursive
-
-      - name: Prove exact checked-out head
-        shell: bash
-        env:
-          COMMIT: ${{ inputs.commit }}
-        run: test "$(git rev-parse HEAD)" = "$COMMIT"
-
-      - name: Set up pinned OCaml
-        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
-        with:
-          ocaml-compiler: "5.2.1"
-          dune-cache: true
-
-      - name: Restore verified ASLRef build cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .cache/herdtools7
-          key: aslref-${{ runner.os }}-${{ runner.arch }}-ocaml-5.2.1-${{ hashFiles('.aslref-version', 'scripts/setup-aslref', 'scripts/prepare-aslref') }}
-
-      - name: Verify and prepare pinned ASLRef
-        run: make setup
-
-      - name: Validate toolchain canaries and normative model
-        run: make toolchain-check check
-
-  asl-page:
-    name: Release / ASL page ${{ matrix.page }}
-    needs: matrix-plan
-    runs-on: ubuntu-latest
-    timeout-minutes: 360
-    strategy:
-      fail-fast: false
-      max-parallel: 8
-      matrix:
-        page: ${{ fromJSON(needs.matrix-plan.outputs.pages) }}
-    steps:
-      - name: Check out exact commit
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
-        with:
-          ref: ${{ inputs.commit }}
-          persist-credentials: false
-          submodules: recursive
-
-      - name: Download exact ASL test plan
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
-        with:
-          name: planned-asl-test-pages
-          path: build/planned-asl-test-pages
-
-      - name: Prove exact checked-out head
-        shell: bash
-        env:
-          COMMIT: ${{ inputs.commit }}
-        run: test "$(git rev-parse HEAD)" = "$COMMIT"
-
-      - name: Set up pinned OCaml
-        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
-        with:
-          ocaml-compiler: "5.2.1"
-          dune-cache: true
-
-      - name: Restore verified ASLRef build cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: .cache/herdtools7
-          key: aslref-${{ runner.os }}-${{ runner.arch }}-ocaml-5.2.1-${{ hashFiles('.aslref-version', 'scripts/setup-aslref', 'scripts/prepare-aslref') }}
-
-      - name: Verify and prepare pinned ASLRef
-        run: make setup
-
-      - name: Execute independent ASL points with machine parallelism
-        id: execute
-        shell: bash
-        run: |
-          ASL_TEST_JOBS="${PTO_ASL_TEST_JOBS:-$(getconf _NPROCESSORS_ONLN)}"
-          ./scripts/run-asl-page --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" -j "$ASL_TEST_JOBS"
-
-      - name: Report per-mnemonic results and enforce the page
-        if: always()
-        shell: bash
-        env:
-          EXECUTION_OUTCOME: ${{ steps.execute.outcome }}
-        run: |
-          set +e
-          ./scripts/report-asl-page-results --matrix "build/planned-asl-test-pages/page-${{ matrix.page }}.json" --results build/asl-test-results
-          report_status=$?
-          set -e
-          test "$EXECUTION_OUTCOME" = success
-          test "$report_status" = 0
-
-      - name: Upload per-ID ASL results
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: asl-test-results-${{ matrix.page }}
-          path: build/asl-test-results/*/result.json
-          if-no-files-found: error
-          retention-days: 90
+  full-validation:
+    name: Release / full validation
+    uses: ./.github/workflows/full-validation.yml
+    with:
+      commit: ${{ inputs.commit }}
+      authority: release
+    permissions:
+      contents: read
 
   release-evidence:
     name: Release / fail-closed evidence aggregation
-    needs: [pr-contract, matrix-plan, strict-model, asl-page]
+    needs: full-validation
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -247,19 +35,20 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
           ref: ${{ inputs.commit }}
+          fetch-depth: 0
           persist-credentials: false
           submodules: recursive
 
       - name: Download exact ASL test plan
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
-          name: planned-asl-test-pages
+          name: full-validation-plan-release-${{ inputs.commit }}
           path: build/planned-asl-test-pages
 
       - name: Download every per-ID result
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
-          pattern: asl-test-results-*
+          pattern: full-validation-results-release-${{ inputs.commit }}-*
           path: build/asl-test-results
           merge-multiple: true
 
@@ -292,23 +81,15 @@ jobs:
   validate:
     name: Release / validate
     if: always()
-    needs: [identity, pr-contract, matrix-plan, strict-model, asl-page, release-evidence]
+    needs: [full-validation, release-evidence]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Require every exact-head release gate
         shell: bash
         env:
-          IDENTITY_RESULT: ${{ needs.identity.result }}
-          PR_CONTRACT_RESULT: ${{ needs.pr-contract.result }}
-          MATRIX_PLAN_RESULT: ${{ needs.matrix-plan.result }}
-          STRICT_MODEL_RESULT: ${{ needs.strict-model.result }}
-          ASL_PAGE_RESULT: ${{ needs.asl-page.result }}
+          FULL_VALIDATION_RESULT: ${{ needs.full-validation.result }}
           RELEASE_EVIDENCE_RESULT: ${{ needs.release-evidence.result }}
         run: |
-          test "$IDENTITY_RESULT" = success
-          test "$PR_CONTRACT_RESULT" = success
-          test "$MATRIX_PLAN_RESULT" = success
-          test "$STRICT_MODEL_RESULT" = success
-          test "$ASL_PAGE_RESULT" = success
+          test "$FULL_VALIDATION_RESULT" = success
           test "$RELEASE_EVIDENCE_RESULT" = success

@@ -5,7 +5,8 @@
 // TFMA MUST select VEC Mode 0 Function 28 and MUST execute one same-type fused
 // elementwise left multiplied by right plus addend operation. Supported types,
 // the closed two-B.IOT schema, PadValue, exceptional floating cases, complete
-// preflight, three-source snapshot, and atomic publication MUST follow PRD-081.
+// preflight, three-source snapshot, and atomic publication MUST follow ADR-0080
+// and NDF clause PTO-TFMA-CONTRACT-001.
 // Rejection MUST precede every architectural effect.
 // NDF-END: PTO-TFMA-CONTRACT-001
 // DOC-BEGIN: decode

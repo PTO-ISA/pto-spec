@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the named hardware-profile PD-04 subnormal contract."""
+"""Generate the named hardware-profile ADR-0049 subnormal contract."""
 
 from __future__ import annotations
 
@@ -24,7 +24,8 @@ COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
 ACCEPTANCE_RECORD = "docs/status/decisions/0049-hardware-subnormal-policy.md"
-PROFILE_ID = "pto-hardware-numeric-0.58.1-ieee-v1"
+PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
+EVIDENCE_PROFILE_ID = "pto-hardware-numeric-0.58.2-ieee-v1"
 
 
 # name, ASL enumerator, logical width, minimum positive subnormal,
@@ -80,14 +81,16 @@ def generate() -> dict[str, Any]:
     comparison = load(COMPARISON)
     profile = load(HARDWARE_PROFILE)
 
-    pd04 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-04")
-    require(pd04["status"] == "accepted", "PD-04 status drift")
+    adr0049 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-0049")
+    require(adr0049["status"] == "accepted", "ADR-0049 status drift")
     require(
-        pd04["selected_disposition"] == "named-target-profile-rule"
-        and pd04["decision_record"] == ACCEPTANCE_RECORD,
-        "PD-04 disposition drift",
+        adr0049["acceptance_record"] == ACCEPTANCE_RECORD,
+        "ADR-0049 acceptance record drift",
     )
-    require(profile["profile_id"] == PROFILE_ID, "hardware profile identity drift")
+    require(
+        profile["profile_id"] == EVIDENCE_PROFILE_ID,
+        "current hardware profile evidence identity drift",
+    )
     require(
         profile["subnormal_policy"]
         == {
@@ -97,7 +100,7 @@ def generate() -> dict[str, Any]:
             "flush_to_zero": False,
             "input_subnormals": "preserve exact source value",
             "operation_override": False,
-            "profile_selection": "fixed by pto-hardware-numeric-0.58.1-ieee-v1",
+            "profile_selection": f"fixed by {EVIDENCE_PROFILE_ID}",
             "result_subnormals": "gradual underflow to the destination format",
             "scope": "Every otherwise-supported operation/type tuple whose source or destination format defines subnormal encodings.",
             "tininess_detection": "after-rounding",
@@ -156,7 +159,7 @@ def generate() -> dict[str, Any]:
         )
     domain_rows_by_name = {}
     for row in inputs["domain_matrix"]:
-        if "PD-04" not in row["decision_question_ids"]:
+        if "ADR-0049" not in row["decision_adr_ids"]:
             continue
         operations = operations_by_domain[row["domain"]]
         require(
@@ -181,14 +184,14 @@ def generate() -> dict[str, Any]:
             "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
             "source_rule": "preserve-when-source-format-defines-subnormals",
             "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-            "status": "pd04-rule-accepted-other-numeric-dimensions-open",
+            "status": "adr0049-rule-accepted-other-numeric-dimensions-open",
         }
     require(
-        set(domain_rows_by_name) == set(pd04["domains"]),
-        "PD-04 domain membership drift",
+        set(domain_rows_by_name) == set(adr0049["affected_domains"]),
+        "ADR-0049 domain membership drift",
     )
-    domain_rows = [domain_rows_by_name[name] for name in pd04["domains"]]
-    require(len(domain_rows) == 14, "PD-04 domain count drift")
+    domain_rows = [domain_rows_by_name[name] for name in adr0049["affected_domains"]]
+    require(len(domain_rows) == 14, "ADR-0049 domain count drift")
     operation_rows = [
         {
             "operation_key": operation_key,
@@ -198,16 +201,17 @@ def generate() -> dict[str, Any]:
             "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
             "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
             "tininess_detection": "after-rounding-for-an-applicable-destination",
-            "support_status": "conditional-not-created-by-pd04",
+            "support_status": "conditional-not-created-by-adr0049",
         }
         for row in domain_rows
         for operation_key in row["operation_keys"]
     ]
-    require(len(operation_rows) == 93, "PD-04 operation applicability count drift")
+    require(len(operation_rows) == 93, "ADR-0049 operation applicability count drift")
 
     independent = formats["independent_comparison"]
     require(
-        comparison["closure_judgment"]["can_close_s5_t3"] is True,
+        comparison["closure_judgment"]["can_close_s5_t3"] is True
+        and comparison["closure_judgment"]["remaining_blockers"] == [],
         "comparison closure drift",
     )
     require(
@@ -221,11 +225,12 @@ def generate() -> dict[str, Any]:
     hooks = sorted({hook for row in domain_rows for hook in row["hooks"]})
     return {
         "schema_version": 1,
-        "target": "S5-T2-A2:PD-04",
-        "decision_id": "PD-04",
+        "target": "S5-T2-A2:ADR-0049",
+        "decision_id": "ADR-0049",
         "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "profile_id": PROFILE_ID,
+        "current_profile_evidence_id": EVIDENCE_PROFILE_ID,
         "policy": {
             "input_subnormals": "preserve-exact-source-value",
             "result_subnormals": "gradual-underflow-to-destination-format",
@@ -299,7 +304,7 @@ def generate() -> dict[str, Any]:
             "affected_hook_count": len(hooks),
             "accepted_decision_count": 1,
             "accepted_complete_domain_rule_count": 0,
-            "pd04_complete": True,
+            "adr0049_complete": True,
             "s5_t2_a_complete": False,
             "s5_t2_complete": False,
         },

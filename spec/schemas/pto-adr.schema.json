@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PTO-ISA/pto-spec/spec/schemas/pto-adr.schema.json",
+  "title": "PTO Architecture Decision Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "title", "status", "authors", "approvers", "created",
+    "accepted", "rejected", "superseded", "baseline", "target_releases", "affected_ndf",
+    "affected_units", "resolves", "supersedes", "superseded_by",
+    "implementation_issue", "release_impact", "legacy_ids"
+  ],
+  "properties": {
+    "id": {"type": "string", "pattern": "^ADR-[0-9]{4}$"},
+    "title": {"type": "string", "minLength": 1},
+    "status": {"enum": ["draft", "accepted", "rejected", "superseded"]},
+    "authors": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "approvers": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "created": {"type": "string", "format": "date"},
+    "accepted": {"type": ["string", "null"], "format": "date"},
+    "rejected": {"type": ["string", "null"], "format": "date"},
+    "superseded": {"type": ["string", "null"], "format": "date"},
+    "baseline": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "target_releases": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^([0-9]+\\.[0-9]+\\.[0-9]+|unassigned)$"}
+    },
+    "affected_ndf": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$"}
+    },
+    "affected_units": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$"}
+    },
+    "resolves": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^ADR-[0-9]{4}$"}
+    },
+    "supersedes": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^ADR-[0-9]{4}$"}
+    },
+    "superseded_by": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^ADR-[0-9]{4}$"}
+    },
+    "implementation_issue": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Absolute issue URI with the literal lowercase https:// scheme, a DNS/IPv4-style host, no userinfo or IPv6, optional port 1-65535, and ASCII RFC 3986 path/query/fragment components with valid percent escapes.",
+      "pattern": "^https://[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*(?::(?:[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?(?:/(?:[A-Za-z0-9._~!$&'()*+,;=:@-]|%[0-9A-Fa-f]{2})*)*(?:\\?(?:(?:[A-Za-z0-9._~!$&'()*+,;=:@-]|%[0-9A-Fa-f]{2})|[/?])*)?(?:#(?:(?:[A-Za-z0-9._~!$&'()*+,;=:@-]|%[0-9A-Fa-f]{2})|[/?])*)?(?![\\s\\S])"
+    },
+    "release_impact": {"enum": ["required", "not-required"]},
+    "legacy_ids": {
+      "type": "array", "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(PRD-[0-9]{3}|PDR-[0-9]{3}|PD-[0-9]{2}(?:-[A-Z0-9]+)?)$"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "accepted"}}},
+      "then": {
+        "properties": {
+          "accepted": {"type": "string", "format": "date"},
+          "approvers": {"minItems": 1},
+          "affected_ndf": {"minItems": 1}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "rejected"}}},
+      "then": {"properties": {"rejected": {"type": "string", "format": "date"}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "superseded"}}},
+      "then": {
+        "properties": {
+          "superseded": {"type": "string", "format": "date"},
+          "superseded_by": {"minItems": 1}
+        }
+      }
+    }
+  ]
+}

@@ -4,7 +4,7 @@
   "status": "proposal-complete-two-decisions-accepted",
   "input": {
     "path": "spec/evidence/numeric-profile-decision-inputs.json",
-    "sha256": "d001984ca86695c8f08a10415419ee663e76ab3bc21743f9e70343e20d8efdf3",
+    "sha256": "ab00288a2c1b616b8226656e15b0664f111a12a10704c409ed237353b99f0719",
     "public_repository": "https://github.com/hw-native-sys/pto-isa",
     "public_commit": "712cbe9f23df5d5362be5e8327599f4285317473"
   },
@@ -16,17 +16,17 @@
   },
   "scalar_flag_contract": {
     "path": "spec/evidence/scalar-numeric-flag-contract.json",
-    "sha256": "88f786e3a73a39cd1e5ddd137aa23932c05b5208b945c0a016ed6044686dba55",
+    "sha256": "fb1d759f8c801d815e62cccf82f75e2c55bc9658560d3186ef903516275cf008",
     "status": "state-owner-matrix-closed-profile-production-open",
     "acceptance_record": "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
     "producer_owner_closed_form_count": 30,
     "architecture_condition_closed_form_count": 11,
     "profile_condition_open_form_count": 19,
-    "pd06_complete": false
+    "adr0089_complete": false
   },
   "rounding_selector_contract": {
     "path": "spec/evidence/numeric-rounding-selector-contract.json",
-    "sha256": "a41821eb581ce35c4309d50ab36999ab8d2a58de7b3301b00f080de96a8eed95",
+    "sha256": "e86dd1967ba2d2b7d52d39ed318149336a3f69448789a9a4246a7206fc2fc063",
     "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
     "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
     "scalar_active_selector_count": 8,
@@ -37,11 +37,11 @@
     "affected_operation_count": 100,
     "affected_hook_count": 25,
     "accepted_domain_rounding_rule_count": 16,
-    "pd03_complete": true
+    "adr0047_complete": true
   },
   "subnormal_contract": {
     "path": "spec/evidence/numeric-subnormal-contract.json",
-    "sha256": "55c3a93eebabab8a2e8b0344cdc1efdbaaf2b89bbafedffcfc48d6268eb94258",
+    "sha256": "273eb9349d9147f9a24de9ba2de85d50f1d99beb9e2fcea4f6011f084f273e4a",
     "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
     "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
     "subnormal_capable_type_count": 11,
@@ -55,14 +55,14 @@
     "affected_hook_count": 23,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
-    "pd04_complete": true,
+    "adr0049_complete": true,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
   "special_value_contract": {
     "path": "spec/evidence/numeric-special-value-contract.json",
-    "sha256": "8c19df9119ac530bb6f55c4c94227200efbbe70dc719399da6c63cf9b0655bb2",
-    "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
+    "sha256": "4ebe3ca4d644c2dddbe38e0172c3c871ac95d3f67e3cf231075de709451e37ad",
+    "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
     "acceptance_record": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
     "format_count": 25,
     "nan_capable_type_count": 10,
@@ -75,15 +75,15 @@
     "accepted_special_result_rule_count": 3,
     "accepted_complete_domain_rule_count": 0,
     "accepted_complete_decision_count": 0,
-    "pd05_complete": false,
+    "adr0088_complete": false,
     "s5_t2_complete": false
   },
   "format_namespace_contract": {
     "path": "spec/evidence/numeric-format-namespace-contract.json",
-    "sha256": "681d7a75e1aa58cfb9ba8ed06ce6e6b3a17786c87b11949098fe25470b7b8da1",
+    "sha256": "bb6f7d4165d17ef74386d6973dc077bd1004c8ba5e77bc70ac754942f9b0d169",
     "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
     "acceptance_record": "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
-    "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
+    "classification_checkpoint_id": "ADR-0087-SC2:ADR-0088-SC1",
     "classification_acceptance_record": "docs/status/decisions/0048-numeric-format-value-classification.md",
     "tile_data_type_count": 25,
     "tile_storage_width_counts": {
@@ -112,11 +112,11 @@
     "signed_zero_type_count": 13,
     "internally_constrained_type_count": 4,
     "open_residual_count": 8,
-    "pd02_complete": false
+    "adr0087_complete": false
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
-    "sha256": "53988ce1878c3bf6c72193d154da8c7d9dd3971c6dc5bb0337e9af9a51cca2f0",
+    "sha256": "0669e274fc51f5e0ee902d449ea41a83f9f772e88293f8a13143664156b70478",
     "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
     "acceptance_record": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
     "public_type_count": 16,
@@ -129,13 +129,13 @@
     "accepted_result_rule_count": 0,
     "accepted_domain_rule_count": 0,
     "open_residual_count": 4,
-    "pd02_complete": false,
+    "adr0087_complete": false,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
   "public_integer_conversion": {
     "path": "spec/evidence/public-integer-conversion-contract.json",
-    "sha256": "8945c1eba30fbf5d2ada1997a4d4eb434a46f147ac3f75dd01502f7c45565876",
+    "sha256": "76f2d976a549e5b9e6b77a6be4d74ca5714ef1216e0152dc105932820da38356",
     "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
     "acceptance_record": "docs/status/decisions/0044-public-integer-conversion-result-subset.md",
     "public_integer_type_count": 8,
@@ -148,14 +148,14 @@
     "accepted_domain_rule_count": 0,
     "accepted_profile_support_rule_count": 0,
     "open_residual_count": 6,
-    "pd07_complete": false,
+    "adr0090_complete": false,
     "tile_convert_domain_complete": false,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
   "profile_applicability_contract": {
     "path": "spec/evidence/numeric-profile-applicability-closure.json",
-    "sha256": "816099495add52fc8de82fd3ec8bd837c797181b35ebc7de22b3821736b1c5fb",
+    "sha256": "3632d0897c1f28fbe8f870f33fbd1cbcabf75d5ef24bf9ee1131eccd87fff9cc",
     "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
     "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md",
     "rule_count": 6,
@@ -167,13 +167,13 @@
     "bundle_command_form_count": 6,
     "accepted_command_form_count": 74,
     "result_rule_count": 0,
-    "parent_pd01_complete": false,
+    "parent_adr0086_complete": false,
     "cube_matrix_complete": false,
     "s5_t2_complete": false
   },
   "variation_point_contract": {
     "path": "spec/evidence/numeric-variation-point-ownership.json",
-    "sha256": "6f22107c8e119cd3b732223ee321f21da24aa61cd1ba424b89bbfe797c98a036",
+    "sha256": "7ca6f853670269992e578d00205a328eff3126459e290584e0649e7ef79e0d11",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
     "variation_point_count": 89,
@@ -190,7 +190,7 @@
     "accepted_bounded_result_subset_tuple_count": 48,
     "accepted_unsupported_tuple_count": 150,
     "accepted_domain_result_rule_count": 0,
-    "pd12_complete": false,
+    "adr0095_complete": false,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
@@ -336,114 +336,7 @@
   ],
   "decision_proposals": [
     {
-      "id": "PD-01",
-      "title": "profile identity and support-versus-semantics boundary",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "public-type-system"
-      ],
-      "affected_domains": [
-        "cube-matrix",
-        "scalar-binary",
-        "scalar-fp-convert",
-        "scalar-fp-to-integer",
-        "scalar-fused",
-        "scalar-integer-to-fp",
-        "scalar-unary",
-        "tile-binary",
-        "tile-compare",
-        "tile-convert",
-        "tile-dequantize",
-        "tile-expand",
-        "tile-fused",
-        "tile-order",
-        "tile-partial",
-        "tile-quantize",
-        "tile-reduction",
-        "tile-unary"
-      ],
-      "proposed_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "proposed_rule": "ADR 0041 closes the A2A3 unsupported-in-profile rule for all six MX CUBE selectors and all 25 TileDataType identities. Legal PTO operations otherwise use pto-numeric-v1 results. A2A3 and A5 may reject only documented operation/type tuples; any accepted target-dependent result must be selected by a named profile and bounded rule. CPU observations are never normative.",
-      "open_items": [
-        "complete every remaining domain operation/type applicability table after the accepted A2A3 MX negative slice",
-        "accept one portable or target disposition for every supported and rejected tuple"
-      ],
-      "acceptance_evidence": [
-        "accepted profile taxonomy and version identifiers",
-        "complete domain-to-profile applicability matrix"
-      ],
-      "status": "review-required",
-      "accepted": false,
-      "acceptance_record": null
-    },
-    {
-      "id": "PD-02",
-      "title": "numeric format encodings and target availability",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-type-system",
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
-      ],
-      "affected_domains": [
-        "cube-matrix",
-        "scalar-binary",
-        "scalar-fp-convert",
-        "scalar-fp-to-integer",
-        "scalar-fused",
-        "scalar-integer-to-fp",
-        "scalar-unary",
-        "tile-binary",
-        "tile-compare",
-        "tile-convert",
-        "tile-dequantize",
-        "tile-expand",
-        "tile-fused",
-        "tile-order",
-        "tile-partial",
-        "tile-quantize",
-        "tile-reduction",
-        "tile-unary"
-      ],
-      "proposed_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "proposed_rule": "The 0.58.0 contract closes five distinct code namespaces and all 25 TileDataType identities, raw widths, reserved codes, and packed four-bit order. All 16 published public type identities have unambiguous catalog bindings and retain the A2/A3-versus-A5 availability baseline. Operation/type/profile legality and implementation conformance remain open. Backend carrier types cannot create implicit PTO formats.",
-      "open_items": [
-        "bind the specialized floating raw carriers and decide the public roles of F64 and E8M0",
-        "publish bit-exact payload fields and exceptional-value classes for every floating type",
-        "complete scalar and tile operation/type legality matrix",
-        "resolve the E5M2/E5M3FN spelling conflict",
-        "publish positive and negative target-availability vectors for every accepted tuple"
-      ],
-      "acceptance_evidence": [
-        "bit-level format table",
-        "all operation/type legality matrix",
-        "positive and reserved-format vectors"
-      ],
-      "status": "review-required",
-      "accepted": false,
-      "acceptance_record": null
-    },
-    {
-      "id": "PD-03",
-      "title": "rounding taxonomy, selection, and tie behavior",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-type-system",
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
-      ],
+      "adr": "ADR-0047",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -461,32 +354,13 @@
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
-      ],
-      "proposed_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "proposed_rule": "ADR 0047 accepts the separate scalar, fixed-mnemonic, bundle, and public selector mappings; exact RNE, RTM, RTP, RTZ, RNA, RTO, and RHB tie rules; scalar reserved-code RNE fallback; operation defaults; one rounding point for every affected domain; and rounding before saturation. Other numeric result dimensions remain owned by PD-02 and PD-05 through PD-12; PD-04 is separately accepted by ADR 0049.",
-      "open_items": [],
-      "acceptance_evidence": [
-        "rounding encoding table",
-        "halfway vectors on both signs",
-        "rounding-and-saturation ordering vectors"
       ],
       "status": "accepted",
       "accepted": true,
       "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md"
     },
     {
-      "id": "PD-04",
-      "title": "subnormal handling, FTZ, and numeric mode state",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "public-type-system",
-        "a5-division",
-        "public-target-profiles"
-      ],
+      "adr": "ADR-0049",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -503,31 +377,64 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "proposed_dispositions": [
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set"
-      ],
-      "proposed_rule": "ADR 0049 fixes the pto-hardware-numeric-0.58.1-ieee-v1 rule: preserve every defined input subnormal, use gradual underflow for every defined result subnormal, detect tininess after rounding, expose no FTZ/DAZ architectural state or operation override, and reject a nonconforming configuration before effects. The rule is conditional on independent operation/type support and does not change pto-v0.",
-      "open_items": [],
-      "acceptance_evidence": [
-        "mode-state reset and transition contract",
-        "minimum subnormal and normal-boundary vectors",
-        "per-operation FTZ applicability matrix"
-      ],
       "status": "accepted",
       "accepted": true,
       "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md"
     },
     {
-      "id": "PD-05",
-      "title": "NaN, infinity, signed zero, and payload rules",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-type-system",
-        "a5-division",
-        "cpu-quantization",
-        "a5-quantization"
+      "adr": "ADR-0086",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-fused",
+        "tile-order",
+        "tile-partial",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
       ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-0087",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-fused",
+        "tile-order",
+        "tile-partial",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "status": "draft",
+      "accepted": false,
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-0088",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -547,33 +454,12 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "proposed_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set"
-      ],
-      "proposed_rule": "ADR 0050 accepts a bounded named-hardware checkpoint for canonical produced NaNs, NaN and signed-zero comparison results, and min/max NaN and signed-zero selection across 8 operations and 154 conditional operation/type tuples. PD-05 remains open for infinity arithmetic, broader NaN creation, conversions, reductions, quantization, matrix operations, and the complete flag/status contract.",
-      "open_items": [
-        "extend bit-exact NaN creation rules beyond comparison and min/max",
-        "define infinity arithmetic and special results for conversions, reductions, quantization, and matrix operations",
-        "complete signaling-NaN flag and status interactions for every affected family"
-      ],
-      "acceptance_evidence": [
-        "bit-exact special-value table extending the accepted ADR 0050 checkpoint",
-        "all sign and payload classes",
-        "binary, unary, conversion, compare, reduction, quantization, and matrix vectors"
-      ],
-      "status": "review-required",
+      "status": "draft",
       "accepted": false,
       "acceptance_record": null
     },
     {
-      "id": "PD-06",
-      "title": "scalar numeric exception flags",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "public-type-system"
-      ],
+      "adr": "ADR-0089",
       "affected_domains": [
         "scalar-binary",
         "scalar-fp-convert",
@@ -582,34 +468,12 @@
         "scalar-integer-to-fp",
         "scalar-unary"
       ],
-      "proposed_dispositions": [
-        "portable-normative-rule"
-      ],
-      "proposed_rule": "NV, DZ, OF, UF, and NX are portable sticky architectural flags with the state, lifecycle, trap envelope, and 30-form producer ownership fixed by ADR 0038. Each of the 19 profile-owned forms still requires an exact produced flag set for every supported operation/type rule.",
-      "open_items": [
-        "accept exact flag conditions for all 19 profile-owned scalar forms",
-        "define tininess detection and NX coupling in every affected operation/type rule",
-        "publish independent simultaneous-flag and special-value vectors"
-      ],
-      "acceptance_evidence": [
-        "flag production matrix",
-        "multi-flag priority and stickiness vectors",
-        "reset and trap-preservation tests"
-      ],
-      "status": "review-required",
+      "status": "draft",
       "accepted": false,
       "acceptance_record": null
     },
     {
-      "id": "PD-07",
-      "title": "conversion overflow, saturation, wrap, and indefinite results",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "public-type-system",
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
-      ],
+      "adr": "ADR-0090",
       "affected_domains": [
         "scalar-fp-convert",
         "scalar-fp-to-integer",
@@ -618,40 +482,12 @@
         "tile-dequantize",
         "tile-quantize"
       ],
-      "proposed_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set",
-        "unsupported-in-profile"
-      ],
-      "proposed_rule": "Every conversion cross-product has one deterministic result, an enumerated profile-specific allowed-result set, or pre-effect rejection. The public undefined-overflow wording and CPU-only saturation cannot remain architectural outcomes.",
-      "open_items": [
-        "complete source/destination/rounding/saturation cross-product",
-        "resolve the public CPU-saturation versus implementation default-OFF conflict",
-        "choose overflow, NaN, and infinity results",
-        "define non-saturating narrowing, wrap behavior, and omitted-saturation defaults per profile/type pair"
-      ],
-      "acceptance_evidence": [
-        "complete conversion cross-product",
-        "minimum, maximum, one-past, NaN, and infinity vectors",
-        "saturation-off wrap vectors"
-      ],
-      "status": "review-required",
+      "status": "draft",
       "accepted": false,
       "acceptance_record": null
     },
     {
-      "id": "PD-08",
-      "title": "elementary-function accuracy and domain behavior",
-      "classification": "profile-decision",
-      "source_ids": [
-        "cpu-square-root",
-        "cpu-reciprocal-square-root",
-        "a5-exponential",
-        "a5-logarithm",
-        "a5-square-root",
-        "a5-division"
-      ],
+      "adr": "ADR-0091",
       "affected_domains": [
         "scalar-binary",
         "scalar-unary",
@@ -659,140 +495,43 @@
         "tile-expand",
         "tile-unary"
       ],
-      "proposed_dispositions": [
-        "named-profile-error-bound",
-        "unsupported-in-profile"
-      ],
-      "proposed_rule": "Each elementary function uses a versioned independent high-precision oracle plus a named per-profile ULP or relative-error bound, domain table, monotonicity rule, and special-value table. CPU host-library and hardware primitive results are observations, not the oracle.",
-      "open_items": [
-        "choose oracle and version",
-        "set per-operation/type/profile error bounds",
-        "define domain boundaries and monotonic intervals"
-      ],
-      "acceptance_evidence": [
-        "versioned high-precision oracle",
-        "ULP or relative-error rule",
-        "domain boundary and monotonicity vectors"
-      ],
-      "status": "review-required",
+      "status": "draft",
       "accepted": false,
       "acceptance_record": null
     },
     {
-      "id": "PD-09",
-      "title": "reduction width, order, ties, and stability",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "cpu-reduction",
-        "a2a3-reduction",
-        "a5-reduction"
-      ],
+      "adr": "ADR-0092",
       "affected_domains": [
         "tile-compare",
         "tile-order",
         "tile-partial",
         "tile-reduction"
       ],
-      "proposed_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set"
-      ],
-      "proposed_rule": "Integer widths, overflow, comparison order, arg ties, and stable ordering are portable and exact. Floating reductions must define an exact tree per profile or a finite/testable allowed-result contract, including NaNs, signed zero, and partial merge order.",
-      "open_items": [
-        "freeze accumulator widths and trees",
-        "define arg and equal-value ties",
-        "bound floating permutation sensitivity and partial merges"
-      ],
-      "acceptance_evidence": [
-        "reduction-tree or allowed-result contract",
-        "permutation and tie vectors",
-        "widening, overflow, NaN, zero, and partial-merge vectors"
-      ],
-      "status": "review-required",
+      "status": "draft",
       "accepted": false,
       "acceptance_record": null
     },
     {
-      "id": "PD-10",
-      "title": "quantization and dequantization scale contract",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "cpu-quantization",
-        "a2a3-quantization",
-        "a5-quantization",
-        "cpu-dequantization",
-        "a2a3-dequantization",
-        "a5-dequantization"
-      ],
+      "adr": "ADR-0093",
       "affected_domains": [
         "tile-dequantize",
         "tile-quantize"
       ],
-      "proposed_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "proposed_rule": "Every accepted quantized format receives equations for scale, zero point, grouping, exponent selection, rounding, clamping, packing, tails, special values, and inverse dequantization. Formats without a complete rule reject in that profile.",
-      "open_items": [
-        "resolve whether the affine parameter is scale or inverse-scale/pre-quant multiplier",
-        "freeze format-specific equations and stochastic-rounding state",
-        "define group axes, sizes, and tails",
-        "define sentinels, packing, round-trip tolerances, and whether SET_QUANT configuration is architectural state"
-      ],
-      "acceptance_evidence": [
-        "format-specific quantization equations",
-        "group and tail-boundary vectors",
-        "NaN, infinity, zero, max, tie, clamp, pack, and round-trip vectors"
-      ],
-      "status": "review-required",
+      "status": "draft",
       "accepted": false,
       "acceptance_record": null
     },
     {
-      "id": "PD-11",
-      "title": "matrix product, accumulation, bias, and MX arithmetic",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "cpu-matrix",
-        "a2a3-matrix",
-        "a5-matrix",
-        "public-target-profiles"
-      ],
+      "adr": "ADR-0094",
       "affected_domains": [
         "cube-matrix"
       ],
-      "proposed_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "proposed_rule": "Publish legal type tuples and, for each tuple/profile, product precision, accumulator width/order, intermediate rounding, saturation, source-accumulator and bias order, MX scale interpretation, and special-value results. Unsupported MX tuples reject before effects.",
-      "open_items": [
-        "complete legal type-tuple table",
-        "freeze dot-product, HF32/TF32 selection, and accumulation arithmetic",
-        "resolve the public A5 MX E4M3-only versus implementation FP4/mixed-FP8 conflict",
-        "define MX scale layout, logical versus capacity K multiples, and non-A5 rejection"
-      ],
-      "acceptance_evidence": [
-        "legal type-tuple and accumulator table",
-        "dot-product cancellation and halfway vectors",
-        "bias, accumulate, MX scale, overflow, saturation, and exceptional-value vectors"
-      ],
-      "status": "review-required",
+      "status": "draft",
       "accepted": false,
       "acceptance_record": null
     },
     {
-      "id": "PD-12",
-      "title": "bounded implementation-defined numeric behavior",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "public-type-system"
-      ],
+      "adr": "ADR-0095",
       "affected_domains": [
         "cube-matrix",
         "scalar-binary",
@@ -813,23 +552,7 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "proposed_dispositions": [
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set",
-        "unsupported-in-profile"
-      ],
-      "proposed_rule": "ADR 0042 inventories all 99 domain/dimension variation points and assigns their current decision owner to pto-numeric-v1. No numeric result is unbounded implementation-defined behavior. A future delegation must name a profile or visible mode, enumerate or mathematically bound allowed results, and provide discovery metadata. Generic validation rejects unknown profiles, unknown modes, and missing rules before effects.",
-      "open_items": [
-        "select one admissible route for every non-portable variation point",
-        "populate a bounded allowed-result contract for every selected delegation",
-        "add unknown-profile, unknown-mode, and missing-rule rejection vectors"
-      ],
-      "acceptance_evidence": [
-        "profile discovery and selection contract",
-        "allowed-result sets for every implementation-defined rule",
-        "unknown-profile and missing-rule rejection tests"
-      ],
-      "status": "review-required",
+      "status": "draft",
       "accepted": false,
       "acceptance_record": null
     }
@@ -848,15 +571,15 @@
       "hooks": [
         "ScalarFPBinaryProfile"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-06",
-        "PD-08",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -887,15 +610,15 @@
       "hooks": [
         "ScalarFPUnaryProfile"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-06",
-        "PD-08",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -927,14 +650,14 @@
       "hooks": [
         "ScalarFPFusedProfile"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-06",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -967,14 +690,14 @@
       "hooks": [
         "ScalarFPToIntegerProfile"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-05",
-        "PD-06",
-        "PD-07",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0090",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1003,15 +726,15 @@
       "hooks": [
         "ScalarFPConvertProfile"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-06",
-        "PD-07",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0090",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1041,13 +764,13 @@
       "hooks": [
         "ScalarIntegerToFPProfile"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-06",
-        "PD-07",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0089",
+        "ADR-0090",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1099,14 +822,14 @@
       "hooks": [
         "TileProfileBinary"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-08",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1147,14 +870,14 @@
         "TileReciprocal",
         "TileSquareRoot"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-08",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1183,13 +906,13 @@
       "hooks": [
         "TileProfileMatrixAccumulate"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1219,12 +942,12 @@
       "hooks": [
         "TileProfileCompare"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-05",
-        "PD-09",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0092",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1265,14 +988,14 @@
         "TileProfileReductionInitial",
         "TileProfileReductionStep"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-09",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0092",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1317,14 +1040,14 @@
         "TileExpDifference",
         "TileProfileExpand"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-08",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1353,14 +1076,14 @@
       "hooks": [
         "TileProfileConvert"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-07",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0090",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1389,15 +1112,15 @@
       "hooks": [
         "TileProfileQuantize"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-07",
-        "PD-10",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0090",
+        "ADR-0093",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1426,15 +1149,15 @@
       "hooks": [
         "TileProfileDequantize"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-07",
-        "PD-10",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0090",
+        "ADR-0093",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1466,14 +1189,14 @@
       "hooks": [
         "TileProfilePartialValue"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-09",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0092",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1504,12 +1227,12 @@
         "TileProfileOrderLeft",
         "TileProfileValueIsNaN"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-05",
-        "PD-09",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0092",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",
@@ -1553,14 +1276,14 @@
         "TileProfileMatrixReductionStep",
         "TileProfileMatrixScaledAccumulate"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-11",
-        "PD-12"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0094",
+        "ADR-0095"
       ],
       "proposed_profile_ids": [
         "pto-numeric-v1",

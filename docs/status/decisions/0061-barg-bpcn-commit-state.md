@@ -1,6 +1,50 @@
+---
+{
+  "id": "ADR-0061",
+  "title": "Bundle commit state uses BARG/BPCN",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-11",
+  "accepted": "2026-08-11",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "4d115387b8a8a3c135f78189778d38547e75c697",
+  "target_releases": [
+    "0.58.1"
+  ],
+  "affected_ndf": [
+    "PTO-BARG-CONTINUATION-001",
+    "PTO-BSTART-DECISION-BINDING-001",
+    "PTO-BSTOP-DECISION-BINDING-001",
+    "PTO-C-BSTOP-DECISION-BINDING-001",
+    "PTO-C-SETC-TGT-SNAPSHOT-001",
+    "PTO-L-BSTOP-DECISION-BINDING-001",
+    "PTO-SETC-TGT-ADR-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-BSTART",
+    "PTO-BLOCK-BSTOP",
+    "PTO-BLOCK-C-BSTOP",
+    "PTO-BLOCK-L-BSTOP",
+    "PTO-BLOCK-MODEL-STATE-BARG",
+    "PTO-SCALAR-C-SETC-TGT",
+    "PTO-SCALAR-SETC-TGT"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0061: Bundle commit state uses BARG/BPCN
 
-- Status: accepted
 - Date: 2026-08-11
 - Requirements: PTO-REQ-BUNDLE-STATE-001,
   PTO-REQ-BUNDLE-DISPATCH-001, PTO-REQ-BUNDLE-OPERATION-001

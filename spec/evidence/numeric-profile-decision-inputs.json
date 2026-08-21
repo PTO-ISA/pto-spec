@@ -8,7 +8,7 @@
     "authority": "PTO ASL and accepted architecture decisions define numeric semantics; public implementation evidence exposes choices but cannot select them.",
     "profile_boundary": "Support restrictions, portable result rules, named target result rules, and bounded implementation-defined behavior must be classified separately.",
     "cpu_role": "CPU simulation is an implementation under test and host arithmetic is not a target oracle.",
-    "independent_comparison_role": "The closed executable-ISA comparison validates identities and bounded structural semantics but does not provide S5-T2 numeric differential results.",
+    "independent_comparison_role": "Executable-ISA comparison is separate evidence and does not provide S5-T2 numeric differential results or select numeric decisions.",
     "no_implicit_choice": "A missing profile rule remains open; the generator never chooses the most convenient backend behavior."
   },
   "profile_partition_inputs": [
@@ -227,163 +227,34 @@
       "url": "https://github.com/hw-native-sys/pto-isa/blob/712cbe9f23df5d5362be5e8327599f4285317473/include/pto/npu/a5/TDeQuant.hpp"
     }
   ],
-  "decision_questions": [
+  "decisions": [
     {
-      "id": "PD-01",
-      "title": "profile identity and support-versus-semantics boundary",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "public-type-system"
-      ],
-      "finding": "The public contract names CPU, A2A3, and A5 capability profiles and says profiles narrow support, while the numeric contract also exposes target-dependent result variation.",
-      "unresolved_rule": "Decide whether portable numeric results exist for each domain and which remaining differences are named target-profile rules rather than support restrictions.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "acceptance_evidence": [
-        "accepted profile taxonomy and version identifiers",
-        "complete domain-to-profile applicability matrix"
-      ],
-      "domains": [
-        "cube-matrix",
-        "scalar-binary",
-        "scalar-fp-convert",
-        "scalar-fp-to-integer",
-        "scalar-fused",
-        "scalar-integer-to-fp",
-        "scalar-unary",
-        "tile-binary",
-        "tile-compare",
-        "tile-convert",
-        "tile-dequantize",
-        "tile-expand",
-        "tile-fused",
-        "tile-order",
-        "tile-partial",
-        "tile-quantize",
-        "tile-reduction",
-        "tile-unary"
-      ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
-    },
-    {
-      "id": "PD-02",
-      "title": "numeric format encodings and target availability",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-type-system",
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
-      ],
-      "finding": "The public type names span IEEE, BF16, FP8, specialized eight-bit, four-bit, and integer carriers, but target availability and conversion paths differ.",
-      "unresolved_rule": "Freeze every format encoding, supported operation/type pair, widening or reinterpretation rule, and profile rejection before numeric vectors are generated.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "acceptance_evidence": [
-        "bit-level format table",
-        "all operation/type legality matrix",
-        "positive and reserved-format vectors"
-      ],
-      "domains": [
-        "cube-matrix",
-        "scalar-binary",
-        "scalar-fp-convert",
-        "scalar-fp-to-integer",
-        "scalar-fused",
-        "scalar-integer-to-fp",
-        "scalar-unary",
-        "tile-binary",
-        "tile-compare",
-        "tile-convert",
-        "tile-dequantize",
-        "tile-expand",
-        "tile-fused",
-        "tile-order",
-        "tile-partial",
-        "tile-quantize",
-        "tile-reduction",
-        "tile-unary"
-      ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
-    },
-    {
-      "id": "PD-03",
-      "title": "rounding taxonomy, selection, and tie behavior",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-type-system",
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
-      ],
-      "finding": "The public prose names four directional modes while backend conversion paths expose additional round, odd, part, and saturation combinations.",
-      "unresolved_rule": "Map every encoded or profile-selected rounding value to an exact result rule, including tie behavior, unsupported combinations, and operation-local overrides.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "acceptance_evidence": [
-        "rounding encoding table",
-        "halfway vectors on both signs",
-        "rounding-and-saturation ordering vectors"
-      ],
-      "domains": [
-        "cube-matrix",
-        "scalar-binary",
-        "scalar-fp-convert",
-        "scalar-fp-to-integer",
-        "scalar-fused",
-        "scalar-integer-to-fp",
-        "scalar-unary",
-        "tile-binary",
-        "tile-convert",
-        "tile-dequantize",
-        "tile-expand",
-        "tile-fused",
-        "tile-partial",
-        "tile-quantize",
-        "tile-reduction",
-        "tile-unary"
-      ],
+      "adr": "ADR-0047",
       "status": "accepted",
-      "selected_disposition": "portable-normative-rule",
-      "decision_record": "docs/status/decisions/0047-numeric-rounding-semantics.md"
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-binary",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-fused",
+        "tile-partial",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
+      ],
+      "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md"
     },
     {
-      "id": "PD-04",
-      "title": "subnormal handling, FTZ, and numeric mode state",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "public-type-system",
-        "a5-division",
-        "public-target-profiles"
-      ],
-      "finding": "The public contract allows default FTZ and names target controls, while implementation evidence includes explicit subnormal handling in selected operations.",
-      "unresolved_rule": "Define input and result FTZ separately, the architectural visibility and lifetime of numeric mode state, and whether an operation may override default FTZ.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set"
-      ],
-      "acceptance_evidence": [
-        "mode-state reset and transition contract",
-        "minimum subnormal and normal-boundary vectors",
-        "per-operation FTZ applicability matrix"
-      ],
-      "domains": [
+      "adr": "ADR-0049",
+      "status": "accepted",
+      "affected_domains": [
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -399,33 +270,62 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "status": "accepted",
-      "selected_disposition": "named-target-profile-rule",
-      "decision_record": "docs/status/decisions/0049-hardware-subnormal-policy.md"
+      "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md"
     },
     {
-      "id": "PD-05",
-      "title": "NaN, infinity, signed zero, and payload rules",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-type-system",
-        "a5-division",
-        "cpu-quantization",
-        "a5-quantization"
+      "adr": "ADR-0086",
+      "status": "draft",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-fused",
+        "tile-order",
+        "tile-partial",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
       ],
-      "finding": "ADR 0050 closes canonical produced NaNs plus comparison and min/max NaN and signed-zero selection for a bounded named-hardware operation set. Published and implementation evidence still distinguish propagation, sentinel, payload, infinity, conversion, reduction, quantization, matrix, and flag/status cases without one complete cross-operation rule.",
-      "unresolved_rule": "Complete NaN creation beyond comparison and min/max, signaling flag/status behavior, infinity production, and special-value conversion, reduction, quantization, and matrix results.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set"
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-0087",
+      "status": "draft",
+      "affected_domains": [
+        "cube-matrix",
+        "scalar-binary",
+        "scalar-fp-convert",
+        "scalar-fp-to-integer",
+        "scalar-fused",
+        "scalar-integer-to-fp",
+        "scalar-unary",
+        "tile-binary",
+        "tile-compare",
+        "tile-convert",
+        "tile-dequantize",
+        "tile-expand",
+        "tile-fused",
+        "tile-order",
+        "tile-partial",
+        "tile-quantize",
+        "tile-reduction",
+        "tile-unary"
       ],
-      "acceptance_evidence": [
-        "bit-exact special-value table extending the accepted ADR 0050 checkpoint",
-        "all sign and payload classes",
-        "binary, unary, conversion, compare, reduction, quantization, and matrix vectors"
-      ],
-      "domains": [
+      "acceptance_record": null
+    },
+    {
+      "adr": "ADR-0088",
+      "status": "draft",
+      "affected_domains": [
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -444,29 +344,12 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
+      "acceptance_record": null
     },
     {
-      "id": "PD-06",
-      "title": "scalar numeric exception flags",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "public-type-system"
-      ],
-      "finding": "The formal scalar surface owns NV, DZ, OF, UF, and NX hooks, but the audited public numeric contract does not define a complete producer, stickiness, or priority rule.",
-      "unresolved_rule": "Define per-operation flag production, simultaneous flags, stickiness, reset, and trap interaction for every scalar numeric domain.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule"
-      ],
-      "acceptance_evidence": [
-        "flag production matrix",
-        "multi-flag priority and stickiness vectors",
-        "reset and trap-preservation tests"
-      ],
-      "domains": [
+      "adr": "ADR-0089",
+      "status": "draft",
+      "affected_domains": [
         "scalar-binary",
         "scalar-fp-convert",
         "scalar-fp-to-integer",
@@ -474,34 +357,12 @@
         "scalar-integer-to-fp",
         "scalar-unary"
       ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
+      "acceptance_record": null
     },
     {
-      "id": "PD-07",
-      "title": "conversion overflow, saturation, wrap, and indefinite results",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "public-type-system",
-        "cpu-conversion",
-        "a2a3-conversion",
-        "a5-conversion"
-      ],
-      "finding": "The public contract records undefined hardware overflow where CPU simulation may saturate, and backend paths also expose non-saturating wrap and target-specific control combinations.",
-      "unresolved_rule": "Choose a deterministic result or a bounded implementation-defined result set for every source, destination, rounding, saturation, NaN, infinity, and out-of-range combination.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set",
-        "unsupported-in-profile"
-      ],
-      "acceptance_evidence": [
-        "complete conversion cross-product",
-        "minimum, maximum, one-past, NaN, and infinity vectors",
-        "saturation-off wrap vectors"
-      ],
-      "domains": [
+      "adr": "ADR-0090",
+      "status": "draft",
+      "affected_domains": [
         "scalar-fp-convert",
         "scalar-fp-to-integer",
         "scalar-integer-to-fp",
@@ -509,159 +370,52 @@
         "tile-dequantize",
         "tile-quantize"
       ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
+      "acceptance_record": null
     },
     {
-      "id": "PD-08",
-      "title": "elementary-function accuracy and domain behavior",
-      "classification": "profile-decision",
-      "source_ids": [
-        "cpu-square-root",
-        "cpu-reciprocal-square-root",
-        "a5-exponential",
-        "a5-logarithm",
-        "a5-square-root",
-        "a5-division"
-      ],
-      "finding": "CPU and target implementations use different library, intrinsic, or custom approximation paths, so matching operation names do not establish equal numeric results.",
-      "unresolved_rule": "Define exact rounding or an explicit accuracy bound, monotonicity requirement, domain errors, and special-value results for division, reciprocal, square root, reciprocal square root, logarithm, exponential, and exponential difference.",
-      "permitted_dispositions": [
-        "correctly-rounded-portable-rule",
-        "named-profile-error-bound",
-        "unsupported-in-profile"
-      ],
-      "acceptance_evidence": [
-        "versioned high-precision oracle",
-        "ULP or relative-error rule",
-        "domain boundary and monotonicity vectors"
-      ],
-      "domains": [
+      "adr": "ADR-0091",
+      "status": "draft",
+      "affected_domains": [
         "scalar-binary",
         "scalar-unary",
         "tile-binary",
         "tile-expand",
         "tile-unary"
       ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
+      "acceptance_record": null
     },
     {
-      "id": "PD-09",
-      "title": "reduction width, order, ties, and stability",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "cpu-reduction",
-        "a2a3-reduction",
-        "a5-reduction"
-      ],
-      "finding": "CPU and target reduction trees differ, optimized shapes may change grouping, and selected integer paths widen then narrow with wrap behavior.",
-      "unresolved_rule": "Freeze accumulation width and order, overflow behavior, NaN and signed-zero selection, arg tie-breaking, partial merge behavior, and stable ordering requirements.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set"
-      ],
-      "acceptance_evidence": [
-        "reduction-tree or allowed-result contract",
-        "permutation and tie vectors",
-        "widening, overflow, NaN, zero, and partial-merge vectors"
-      ],
-      "domains": [
+      "adr": "ADR-0092",
+      "status": "draft",
+      "affected_domains": [
         "tile-compare",
         "tile-order",
         "tile-partial",
         "tile-reduction"
       ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
+      "acceptance_record": null
     },
     {
-      "id": "PD-10",
-      "title": "quantization and dequantization scale contract",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "cpu-quantization",
-        "a2a3-quantization",
-        "a5-quantization",
-        "cpu-dequantization",
-        "a2a3-dequantization",
-        "a5-dequantization"
-      ],
-      "finding": "Implementation evidence contains multiple format, shared-exponent, scale, zero-point, clamping, and special-value paths that are not one portable arithmetic rule.",
-      "unresolved_rule": "Define scale and zero-point encoding, grouping axis and size, exponent selection, rounding, clamping, exceptional sentinels, packing, and inverse dequantization for every accepted format.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "acceptance_evidence": [
-        "format-specific quantization equations",
-        "group and tail-boundary vectors",
-        "NaN, infinity, zero, max, tie, clamp, pack, and round-trip vectors"
-      ],
-      "domains": [
+      "adr": "ADR-0093",
+      "status": "draft",
+      "affected_domains": [
         "tile-dequantize",
         "tile-quantize"
       ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
+      "acceptance_record": null
     },
     {
-      "id": "PD-11",
-      "title": "matrix product, accumulation, bias, and MX arithmetic",
-      "classification": "architecture-decision",
-      "source_ids": [
-        "cpu-matrix",
-        "a2a3-matrix",
-        "a5-matrix",
-        "public-target-profiles"
-      ],
-      "finding": "CPU evidence uses host arithmetic and fused accumulation for selected types, while target paths use matrix hardware and A5 adds MX scale formats.",
-      "unresolved_rule": "Define product precision, accumulator width, accumulation order, intermediate rounding, saturation, bias order, source accumulator order, MX scale interpretation, and special-value behavior per type tuple.",
-      "permitted_dispositions": [
-        "portable-normative-rule",
-        "named-target-profile-rule",
-        "unsupported-in-profile"
-      ],
-      "acceptance_evidence": [
-        "legal type-tuple and accumulator table",
-        "dot-product cancellation and halfway vectors",
-        "bias, accumulate, MX scale, overflow, saturation, and exceptional-value vectors"
-      ],
-      "domains": [
+      "adr": "ADR-0094",
+      "status": "draft",
+      "affected_domains": [
         "cube-matrix"
       ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
+      "acceptance_record": null
     },
     {
-      "id": "PD-12",
-      "title": "bounded implementation-defined numeric behavior",
-      "classification": "profile-decision",
-      "source_ids": [
-        "public-target-profiles",
-        "public-portability-rules",
-        "public-type-system"
-      ],
-      "finding": "The public contract permits target variation but does not provide a complete allowed-result set or discovery mechanism for each numeric variation point.",
-      "unresolved_rule": "For every non-portable result, name the selecting profile or visible mode, bound the allowed results, and require generic validation to reject an unknown profile or unconfigured implementation-defined rule.",
-      "permitted_dispositions": [
-        "named-target-profile-rule",
-        "implementation-defined-with-explicit-allowed-set",
-        "unsupported-in-profile"
-      ],
-      "acceptance_evidence": [
-        "profile discovery and selection contract",
-        "allowed-result sets for every implementation-defined rule",
-        "unknown-profile and missing-rule rejection tests"
-      ],
-      "domains": [
+      "adr": "ADR-0095",
+      "status": "draft",
+      "affected_domains": [
         "cube-matrix",
         "scalar-binary",
         "scalar-fp-convert",
@@ -681,9 +435,7 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "status": "decision-required",
-      "selected_disposition": null,
-      "decision_record": null
+      "acceptance_record": null
     }
   ],
   "domain_matrix": [
@@ -707,31 +459,15 @@
         "subnormal handling",
         "NV/DZ/OF/UF/NX flags"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-06",
-        "PD-08",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-exponential",
-        "a5-logarithm",
-        "a5-quantization",
-        "a5-square-root",
-        "cpu-conversion",
-        "cpu-quantization",
-        "cpu-reciprocal-square-root",
-        "cpu-square-root",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -755,31 +491,15 @@
         "signed zero",
         "NV/DZ/OF/UF/NX flags"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-06",
-        "PD-08",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-exponential",
-        "a5-logarithm",
-        "a5-quantization",
-        "a5-square-root",
-        "cpu-conversion",
-        "cpu-quantization",
-        "cpu-reciprocal-square-root",
-        "cpu-square-root",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -804,25 +524,14 @@
         "overflow and underflow",
         "NV/DZ/OF/UF/NX flags"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-06",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -848,25 +557,14 @@
         "saturation or indefinite value",
         "NV/NX flags"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-05",
-        "PD-06",
-        "PD-07",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0090",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -888,26 +586,15 @@
         "overflow and underflow",
         "NV/OF/UF/NX flags"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-06",
-        "PD-07",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0089",
+        "ADR-0090",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -930,21 +617,13 @@
         "overflow",
         "NX flag"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-06",
-        "PD-07",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "cpu-conversion",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0089",
+        "ADR-0090",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -989,30 +668,14 @@
         "divide-by-zero",
         "NaN and infinity"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-08",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-exponential",
-        "a5-logarithm",
-        "a5-quantization",
-        "a5-square-root",
-        "cpu-conversion",
-        "cpu-quantization",
-        "cpu-reciprocal-square-root",
-        "cpu-square-root",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1046,30 +709,14 @@
         "NaN and infinity",
         "saturation"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-08",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-exponential",
-        "a5-logarithm",
-        "a5-quantization",
-        "a5-square-root",
-        "cpu-conversion",
-        "cpu-quantization",
-        "cpu-reciprocal-square-root",
-        "cpu-square-root",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1091,24 +738,13 @@
         "saturation",
         "NaN and infinity"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1130,26 +766,12 @@
         "signed zero",
         "result encoding"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-05",
-        "PD-09",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a2a3-reduction",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "a5-reduction",
-        "cpu-conversion",
-        "cpu-quantization",
-        "cpu-reduction",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0092",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1183,28 +805,14 @@
         "NaN and infinity",
         "arg tie-breaking"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-09",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a2a3-reduction",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "a5-reduction",
-        "cpu-conversion",
-        "cpu-quantization",
-        "cpu-reduction",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0092",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1242,30 +850,14 @@
         "NaN and infinity",
         "saturation"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-08",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-exponential",
-        "a5-logarithm",
-        "a5-quantization",
-        "a5-square-root",
-        "cpu-conversion",
-        "cpu-quantization",
-        "cpu-reciprocal-square-root",
-        "cpu-square-root",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0091",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1287,25 +879,14 @@
         "overflow and underflow",
         "saturation"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-07",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0090",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1327,30 +908,15 @@
         "clamping",
         "exception behavior"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-07",
-        "PD-10",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a2a3-dequantization",
-        "a2a3-quantization",
-        "a5-conversion",
-        "a5-dequantization",
-        "a5-division",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-dequantization",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0090",
+        "ADR-0093",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1372,30 +938,15 @@
         "overflow and underflow",
         "exception behavior"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-07",
-        "PD-10",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a2a3-dequantization",
-        "a2a3-quantization",
-        "a5-conversion",
-        "a5-dequantization",
-        "a5-division",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-dequantization",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0090",
+        "ADR-0093",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1420,28 +971,14 @@
         "NaN and infinity",
         "tie behavior"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-09",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a2a3-reduction",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "a5-reduction",
-        "cpu-conversion",
-        "cpu-quantization",
-        "cpu-reduction",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0092",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1465,26 +1002,12 @@
         "equal-value stability",
         "ascending and descending tie behavior"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-05",
-        "PD-09",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a2a3-reduction",
-        "a5-conversion",
-        "a5-division",
-        "a5-quantization",
-        "a5-reduction",
-        "cpu-conversion",
-        "cpu-quantization",
-        "cpu-reduction",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0092",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1521,28 +1044,14 @@
         "saturation",
         "NaN and infinity"
       ],
-      "decision_question_ids": [
-        "PD-01",
-        "PD-02",
-        "PD-03",
-        "PD-04",
-        "PD-05",
-        "PD-11",
-        "PD-12"
-      ],
-      "source_ids": [
-        "a2a3-conversion",
-        "a2a3-matrix",
-        "a5-conversion",
-        "a5-division",
-        "a5-matrix",
-        "a5-quantization",
-        "cpu-conversion",
-        "cpu-matrix",
-        "cpu-quantization",
-        "public-portability-rules",
-        "public-target-profiles",
-        "public-type-system"
+      "decision_adr_ids": [
+        "ADR-0047",
+        "ADR-0049",
+        "ADR-0086",
+        "ADR-0087",
+        "ADR-0088",
+        "ADR-0094",
+        "ADR-0095"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1552,8 +1061,8 @@
     "source_count": 24,
     "public_contract_source_count": 3,
     "implementation_evidence_source_count": 21,
-    "decision_question_count": 12,
-    "open_decision_question_count": 10,
+    "decision_count": 12,
+    "draft_decision_count": 10,
     "numeric_domain_count": 18,
     "open_numeric_domain_count": 18,
     "selected_profile_rule_count": 0,

@@ -1,15 +1,56 @@
+---
+{
+  "id": "ADR-0043",
+  "title": "Public numeric type identity and target availability",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+    "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+    "PTO-TCVT-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
+    "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
+    "PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES",
+    "PTO-TILE-TCVT"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": [
+    "PD-02-SC2"
+  ]
+}
+---
 # ADR 0043: Public numeric type identity and target availability
 
 > Historical-evidence note: verification paths named below record the evidence used when this ADR was accepted; deleted aggregate checks are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-## Status
+## Decision scope
 
-Accepted structural checkpoint; bit-exact specialized formats, operation/type
-legality, and numeric result rules remain open.
+This ADR is the canonical `ADR 0043` binding and availability checkpoint.
+Bit-exact specialized formats, operation/type legality, and numeric result
+rules remain open.
 
 ## Context
 
-The first `PD-02` checkpoint separated five encoded type namespaces and fixed
+The first `ADR 0087` checkpoint separated five encoded type namespaces and fixed
 their raw-carrier widths, but it deliberately did not bind those catalog names
 to the public PTO type system. Without a checked binding, a familiar spelling
 such as `FP8`, `FPL8`, or `F64` could be mistaken for a published numeric type,
@@ -23,7 +64,7 @@ numeric-result definition.
 ## Decision
 
 The generated `spec/evidence/public-numeric-type-baseline.json` ledger is the
-fail-closed `PD-02-SC2` binding and availability checkpoint.
+fail-closed `ADR 0043` binding and availability checkpoint.
 
 1. The public identities are three base floating types, five A5-only
    specialized floating types, and eight signed or unsigned integer types.
@@ -47,10 +88,10 @@ fail-closed `PD-02-SC2` binding and availability checkpoint.
 
 `S5-T2-A5` closes public type discovery, all 16 accepted catalog bindings,
 and the published A2/A3-versus-A5 type availability baseline. It does not
-accept `PD-02`, populate a domain result rule, select a variation-point route,
+accept `ADR 0087`, populate a domain result rule, select a variation-point route,
 or change the M4 maturity floor.
 
-The remaining `PD-02` work is finite and explicit: complete every scalar and
+The remaining `ADR 0087` work is finite and explicit: complete every scalar and
 tile operation/type/profile legality tuple, publish independent numeric result
 and exception vectors, record downstream byte-and-effect parity for the
 immutable hardware profile, and accept architecture and formal-model review

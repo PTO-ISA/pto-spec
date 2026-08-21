@@ -1,0 +1,69 @@
+name: Nightly main health
+
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-main-health
+  cancel-in-progress: false
+
+jobs:
+  resolve-main:
+    name: Nightly / prove workflow commit is latest main
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      commit: ${{ steps.resolve.outputs.commit }}
+    steps:
+      - name: Check out caller workflow commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Prove caller workflow commit is latest origin main
+        id: resolve
+        shell: bash
+        env:
+          GITHUB_WORKFLOW_SHA: ${{ github.sha }}
+        run: |
+          test "$GITHUB_REF" = refs/heads/main
+          [[ "$GITHUB_WORKFLOW_SHA" =~ ^[0-9a-f]{40}$ ]]
+          test "$GITHUB_SHA" = "$GITHUB_WORKFLOW_SHA"
+          test "$(git rev-parse HEAD)" = "$GITHUB_WORKFLOW_SHA"
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          test "$(git rev-parse origin/main)" = "$GITHUB_WORKFLOW_SHA"
+          echo "commit=$GITHUB_WORKFLOW_SHA" >> "$GITHUB_OUTPUT"
+
+  full-validation:
+    name: Nightly / full validation
+    needs: resolve-main
+    uses: ./.github/workflows/full-validation.yml
+    with:
+      commit: ${{ needs.resolve-main.outputs.commit }}
+      authority: nightly
+    permissions:
+      contents: read
+
+  validate:
+    name: Nightly / health
+    if: always()
+    needs: [resolve-main, full-validation]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Require exact latest-main health
+        shell: bash
+        env:
+          RESOLVE_MAIN_RESULT: ${{ needs.resolve-main.result }}
+          FULL_VALIDATION_RESULT: ${{ needs.full-validation.result }}
+        run: |
+          test "$RESOLVE_MAIN_RESULT" = success
+          test "$FULL_VALIDATION_RESULT" = success

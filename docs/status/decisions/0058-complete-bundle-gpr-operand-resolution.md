@@ -1,6 +1,46 @@
+---
+{
+  "id": "ADR-0058",
+  "title": "Complete-Bundle GPR Operand Resolution",
+  "status": "accepted",
+  "authors": [
+    "ckwllawliet <641433195@qq.com>"
+  ],
+  "approvers": [
+    "PTO ISA maintainers"
+  ],
+  "created": "2026-08-10",
+  "accepted": "2026-08-10",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "3b8cd26c600f0939a143422f175a19cc3ed2999b",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-B-IOR-BINDING-001",
+    "PTO-TCI-CONTRACT-001",
+    "PTO-TMRGSORT-CONTRACT-001",
+    "PTO-TSORT-CONTRACT-001",
+    "PTO-TTRI-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-B-IOR",
+    "PTO-TILE-TCI",
+    "PTO-TILE-TMRGSORT",
+    "PTO-TILE-TSORT",
+    "PTO-TILE-TTRI"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/60",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0058: Complete-Bundle GPR Operand Resolution
 
-- **Status**: accepted
 - **Date**: 2026-08-10
 - **Deciders**: PTO ISA maintainers
 - **Issue**: [#60](https://github.com/PTO-ISA/pto-spec/issues/60)

@@ -1,6 +1,99 @@
+---
+{
+  "id": "ADR-0031",
+  "title": "Scalar SYS totality and PTO-v0 profile boundaries",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-30",
+  "accepted": "2026-07-30",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ACRC-DECISION-BINDING-001",
+    "PTO-ACRE-IMPLICIT-STOP-001",
+    "PTO-BSE-DECISION-BINDING-001",
+    "PTO-BWE-DECISION-BINDING-001",
+    "PTO-BWI-DECISION-BINDING-001",
+    "PTO-BWT-DECISION-BINDING-001",
+    "PTO-C-EBREAK-CAUSE-001",
+    "PTO-C-SSRGET-DIRECT-IDS-001",
+    "PTO-EBREAK-DECISION-BINDING-001",
+    "PTO-FENCE-D-DECISION-BINDING-001",
+    "PTO-FENCE-I-DECISION-BINDING-001",
+    "PTO-HL-SSRGET-DECISION-BINDING-001",
+    "PTO-HL-SSRSET-DECISION-BINDING-001",
+    "PTO-LSRGET-BARG-001",
+    "PTO-SETC-TGT-ADR-CONTRACT-001",
+    "PTO-SSRGET-ADR-CONTRACT-001",
+    "PTO-SSRSET-ADR-CONTRACT-001",
+    "PTO-SSRSWAP-ADR-CONTRACT-001",
+    "PTO-TLB-IA-ADR-CONTRACT-001",
+    "PTO-TLB-IALL-ADR-CONTRACT-001",
+    "PTO-TLB-IAV-ADR-CONTRACT-001",
+    "PTO-TLB-IV-ADR-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL",
+    "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
+    "PTO-ARCH-SYSTEM-REGISTERS-CONTEXT",
+    "PTO-ARCH-SYSTEM-REGISTERS-INTERRUPT",
+    "PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE",
+    "PTO-ARCH-SYSTEM-REGISTERS-TIMER",
+    "PTO-SCALAR-ACRC",
+    "PTO-SCALAR-ACRE",
+    "PTO-SCALAR-ASSERT",
+    "PTO-SCALAR-BC-IALL",
+    "PTO-SCALAR-BC-IVA",
+    "PTO-SCALAR-BSE",
+    "PTO-SCALAR-BWE",
+    "PTO-SCALAR-BWI",
+    "PTO-SCALAR-BWT",
+    "PTO-SCALAR-C-EBREAK",
+    "PTO-SCALAR-C-SSRGET",
+    "PTO-SCALAR-DC-CISW",
+    "PTO-SCALAR-DC-CIVA",
+    "PTO-SCALAR-DC-CSW",
+    "PTO-SCALAR-DC-CVA",
+    "PTO-SCALAR-DC-IALL",
+    "PTO-SCALAR-DC-ISW",
+    "PTO-SCALAR-DC-IVA",
+    "PTO-SCALAR-DC-ZVA",
+    "PTO-SCALAR-EBREAK",
+    "PTO-SCALAR-FENCE-D",
+    "PTO-SCALAR-FENCE-I",
+    "PTO-SCALAR-HL-SSRGET",
+    "PTO-SCALAR-HL-SSRSET",
+    "PTO-SCALAR-IC-IALL",
+    "PTO-SCALAR-IC-IVA",
+    "PTO-SCALAR-LSRGET",
+    "PTO-SCALAR-SETC-TGT",
+    "PTO-SCALAR-SSRGET",
+    "PTO-SCALAR-SSRSET",
+    "PTO-SCALAR-SSRSWAP",
+    "PTO-SCALAR-TLB-IA",
+    "PTO-SCALAR-TLB-IALL",
+    "PTO-SCALAR-TLB-IAV",
+    "PTO-SCALAR-TLB-IV"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0031: Scalar SYS totality and PTO-v0 profile boundaries
 
-- Status: Accepted
 - Date: 2026-07-30
 - Requirements: PTO-REQ-SCALAR-SYS-001, PTO-REQ-SCALAR-SSR-001,
   PTO-REQ-ACRC-001, PTO-REQ-FAULT-001, PTO-REQ-INTERRUPT-001

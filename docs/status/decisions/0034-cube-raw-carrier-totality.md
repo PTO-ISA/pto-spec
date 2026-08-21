@@ -1,6 +1,88 @@
+---
+{
+  "id": "ADR-0034",
+  "title": "CUBE raw-carrier totality and composite preflight",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-30",
+  "accepted": "2026-07-30",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
+    "PTO-BSTART-TGEMV-BIAS-CONTRACT-001",
+    "PTO-BSTART-TGEMV-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-BIAS-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-CONTRACT-001",
+    "PTO-BSTART-TMATMUL-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMUL-BIAS-CONTRACT-001",
+    "PTO-BSTART-TMATMUL-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-CONTRACT-001",
+    "PTO-CUBE-LOCAL-MATRIX-001",
+    "PTO-TGEMV-ACC-CONTRACT-001",
+    "PTO-TGEMV-BIAS-CONTRACT-001",
+    "PTO-TGEMV-CONTRACT-001",
+    "PTO-TGEMV-MX-ACC-CONTRACT-001",
+    "PTO-TGEMV-MX-BIAS-CONTRACT-001",
+    "PTO-TGEMV-MX-CONTRACT-001",
+    "PTO-TMATMUL-ACC-CONTRACT-001",
+    "PTO-TMATMUL-BIAS-CONTRACT-001",
+    "PTO-TMATMUL-CONTRACT-001",
+    "PTO-TMATMUL-MX-ACC-CONTRACT-001",
+    "PTO-TMATMUL-MX-BIAS-CONTRACT-001",
+    "PTO-TMATMUL-MX-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-BSTART-TGEMV",
+    "PTO-BLOCK-BSTART-TGEMV-ACC",
+    "PTO-BLOCK-BSTART-TGEMV-BIAS",
+    "PTO-BLOCK-BSTART-TGEMVMX",
+    "PTO-BLOCK-BSTART-TGEMVMX-ACC",
+    "PTO-BLOCK-BSTART-TGEMVMX-BIAS",
+    "PTO-BLOCK-BSTART-TMATMUL",
+    "PTO-BLOCK-BSTART-TMATMUL-ACC",
+    "PTO-BLOCK-BSTART-TMATMUL-BIAS",
+    "PTO-BLOCK-BSTART-TMATMULMX",
+    "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+    "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-CUBE-PRIMARY",
+    "PTO-TILE-TGEMV",
+    "PTO-TILE-TGEMV-ACC",
+    "PTO-TILE-TGEMV-BIAS",
+    "PTO-TILE-TGEMV-MX",
+    "PTO-TILE-TGEMV-MX-ACC",
+    "PTO-TILE-TGEMV-MX-BIAS",
+    "PTO-TILE-TMATMUL",
+    "PTO-TILE-TMATMUL-ACC",
+    "PTO-TILE-TMATMUL-BIAS",
+    "PTO-TILE-TMATMUL-MX",
+    "PTO-TILE-TMATMUL-MX-ACC",
+    "PTO-TILE-TMATMUL-MX-BIAS"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0034: CUBE raw-carrier totality and composite preflight
 
-- Status: Accepted
+> Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
+
 - Date: 2026-07-30
 - Requirements: PTO-REQ-CUBE-001, PTO-REQ-TILE-LEGALITY-001,
   PTO-REQ-PROFILE-001

@@ -44,14 +44,18 @@
     {
       "command": "make release-check RELEASE_COMMIT=<exact-head>",
       "evidence": [
+        ".github/workflows/full-validation.yml",
+        ".github/workflows/nightly.yml",
         ".github/workflows/release.yml",
         "scripts/asl_tests.py",
         "scripts/check-release-workflow",
+        "scripts/full_validation_workflow.py",
         "scripts/report-asl-page-results",
         "scripts/release_workflow.py",
         "scripts/run-asl-page",
         "scripts/run-asl-release-suite",
-        "scripts/run-asl-test"
+        "scripts/run-asl-test",
+        "scripts/workflow_contract.py"
       ],
       "id": "RG-05",
       "name": "independent exact-head AVS matrix"
@@ -60,13 +64,17 @@
       "command": "scripts/check-release-closure",
       "evidence": [
         "spec/release-inputs.json",
-        "scripts/check-release-closure"
+        "spec/release-selection.json",
+        "spec/evidence/management-system-refactor-closure.json",
+        "scripts/check-release-closure",
+        "scripts/management_refactor_closure.py",
+        "scripts/release_selection.py"
       ],
       "id": "RG-06",
       "name": "fail-closed release provenance"
     },
     {
-      "command": "scripts/check-binary-closure",
+      "command": "scripts/check-binary-closure --release",
       "evidence": [
         "scripts/check-binary-closure"
       ],
@@ -99,61 +107,86 @@
       "name": "formal mnemonic implementation closure"
     }
   ],
+  "hosted_validation": {
+    "nightly": {
+      "authority": "non-authoritative-health",
+      "commit_selection": "caller-workflow-sha-equal-latest-origin-main",
+      "publication_authority": false,
+      "workflow": ".github/workflows/nightly.yml"
+    },
+    "release": {
+      "authority": "sole-publication-gate",
+      "commit_selection": "manual-exact-40-character-commit",
+      "publication_authority": true,
+      "workflow": ".github/workflows/release.yml"
+    }
+  },
   "schema": "pto.release-gate.v2",
   "sources": {
     ".aslref-version": "943437e8563813c276417b022296f0c51b34fadbb8da49ca70dbac7f6589db63",
-    ".github/workflows/asl.yml": "3dc9e14d43b616a2065c166e4e3528147e1c9edd6b9e066db29f38bdf59a414f",
-    ".github/workflows/release.yml": "5f2402317bd7a2ab0240a111c6d889b24158ed4f49670c7402be786d6a8dac55",
-    "CONTRIBUTING.md": "3a3f1620c710739806d6d027058b5597f53c835f7296addc2f93f2f10b638306",
-    "GOVERNANCE.md": "bca735a3a2235052494f37765d3dbfd6034e45c5c3e33ba980a9abcbc00c1d68",
-    "Makefile": "fffaf1437f97207cec7f81632027173280a8b78f1a77156f520aea8ee5e1a86e",
+    ".github/workflows/asl.yml": "e733e82255285c7d223fed2226b234abd4192bbd47c7051ee5f01e5681074f5e",
+    ".github/workflows/full-validation.yml": "f15ca8928a5bb79836750145a3dadf490c82c8ace3a8e8725e656961954d1255",
+    ".github/workflows/nightly.yml": "22218968d1df12cfad8e8de4c2f8e13af4fc4463ab8443f8b87e93392420a694",
+    ".github/workflows/release.yml": "3f3a11cbf431a20388910dc4eae0e3caf32e5a3f40ef917b99e308e0affa7ca0",
+    "CONTRIBUTING.md": "88667954b1e750ca178828b7a20819f19c547f4399ce902993628482000fbc5b",
+    "GOVERNANCE.md": "966d4d59b9960db4dcdb31a2aa3b5572244a7abcb3fb7e49e23fb7a2579b7915",
+    "Makefile": "805f01e72fa297acf63794279ed32efd5466fbc1e088c3e67d59a82e8fe33939",
     "scripts/asl_release_suite.py": "15dd4afb416597380ed72a0df817ae3e80c936850179299e5684eac577cfe8ee",
     "scripts/asl_tests.py": "0d2fe7b89255448ced0ad9737da8c0fe9f2eabba6ae50b54cae5aebfaf0230ab",
-    "scripts/aslref": "7961ad9ccfd89eebbe043fa87974eb6354c9a92271dc69bed7efbceeeeed607f",
-    "scripts/check-active-paths": "43b214cdf80e16a8cf96a0a7d3265b1a8fd6cccf37e28bedb40b052e088ab29f",
+    "scripts/aslref": "c3358b14125ed3720886ac47b6461bef3fa15d6b8f8f4da0b0aac19b3317fe86",
+    "scripts/check-active-paths": "85dce5692c925c2739fadb615acdda33ea67aade9ea8160b54672ebff71a301e",
     "scripts/check-asl-layout": "5283ef77e8650d607c537e29de06fb544add29be6b76caf6e431f1954301e39f",
     "scripts/check-asl-tests": "3a0ef89d06725179960c8a7cd3a319d71f18ef76c798e4863036c860cbab2189",
-    "scripts/check-binary-closure": "1d8c9c6268c3b84621c763aea80187f5e818aad9bc41767a8a6d668610ebeca8",
+    "scripts/check-binary-closure": "9572d34c6b1e002c3270926ea947e9077cbf932510805295a77c6695d5e3d466",
     "scripts/check-ndf": "288f430cfc09ce3b76fea16a8d02d7eb71f67fc199042b76742ecfed8d68ed0e",
-    "scripts/check-pr": "eee82b264cc0fa5fec8c10ab2c2777b8afcdebe5e7a0a283a8faea7f61ee6e4d",
-    "scripts/check-release-closure": "f362bcadd1b89cdae420bc147b87bca8bed1f46073dad04f9eabc4509a41e0c0",
+    "scripts/check-pr": "ddab442ff5cedf00d5fe884c54a762211a537d89162d1ba78a0e20c392d17a5c",
+    "scripts/check-release-closure": "a91a592cc4363f2809d2ac18d5ccd8dfd112d83e7ed696303b84686bfe562d17",
     "scripts/check-release-event-schema": "f00d358cab29a98403ed0e429fd1b4ce509899fad18a79b6c73d4dd8447ec638",
     "scripts/check-release-manifest": "32e3d6b41139090514beab297cdb18328af1e88079093711441ebe71d74cfc3c",
-    "scripts/check-release-workflow": "c2c5f6e548397e427a5164183c991f9da687348a8aea088fab3a679a710853aa",
-    "scripts/check-repository": "2cb5d08a8a5faa8ecde9d1233b1d0feafa7be461b1cfe0560e1c7d0ca849a1c5",
-    "scripts/check-script-entrypoints": "4aa3ea3e1698a31992da201f55509a7bc5909ded1ac5960a97d27ac5fba401ef",
+    "scripts/check-release-workflow": "ac2b47f22ad9d20064be358db26a21659d719d6dfa1efea32a6fadd8e8c752e1",
+    "scripts/check-repository": "649668a6e4569d876b8632b620354e4eb6c449b0e1e1a7884abeade29267efb2",
+    "scripts/check-script-entrypoints": "f01bb4d86ae7e6ba9fda55cd76988c344ba5a3457da23249eec8e1e14b82ec1c",
     "scripts/check-toolchain": "bd1c7bd659e12f24140f0f1f9680d8742caeeb489d447469a943f592365f73cb",
     "scripts/encoding_witness.py": "f7767271a695c7d0e634683d3d5768f476f17a50f587f0e4020bd380d5769202",
+    "scripts/full_validation_workflow.py": "31a90fbd747f782674b0f6964d67b2bdad033954322ffb3c39d7d4f49389dafd",
     "scripts/generate-instruction-contract-closure": "3683bb65d57345b5235a83050f9e2c656dde723174577321a949d7ab1c17c9e7",
+    "scripts/generate-management-system-refactor-closure": "3581f3c72cad039b1b2632f262bb3603e39ea1606568c285cc64e1a4d4110acf",
     "scripts/instruction_contracts.py": "577ec4f3110dfce23da0277b3aabd8a766bfa5d6346e7b63ca8a3b319a85ed33",
-    "scripts/instruction_docs.py": "23fb4e171eeaf3c0b89f6f76da5dcd245c950ba622ea1e4310db005ebab739f4",
+    "scripts/instruction_docs.py": "3bf26b2e47a00959d2b9f12b09fb6f1aed1101ae7cefdb64fbe6c84a5f43981a",
+    "scripts/management_refactor_closure.py": "f7a812b232ed9604cf5fa3ef6cb6cb6acdaf2eb46e941ad521f88445a7812355",
     "scripts/manual_semantic_audit.py": "113c5ff6cfe56baaccc9730ad2d29b8a56ac4536df8a012ae13e01c05c7a45fe",
     "scripts/prepare-aslref": "0aceca8980869c80e3d8b7751bd7fcdc61d1920f027bfd760e1a7b5e3f8f85c6",
     "scripts/print-asl-test-matrix": "1e4b29cb97ba7524e252bb506cf0dd1b8f3d4e3d1108e345d6adf85540937a3d",
     "scripts/project_asl_catalogs.py": "749e10b486c08e32a687364715d0f6dd640edcb91e1862d56a99a66726e7a43f",
     "scripts/release_event.py": "564942755c99289ddf16971e00ac65a5b40bc303875f5c6eacc158f9b1b7643c",
-    "scripts/release_workflow.py": "a0aa5f7e58925f3fcad48326f220f4b938416e1adbd4c820f984991e05070a23",
+    "scripts/release_selection.py": "9781383402c1da8e551f280b4860ef95a643fa599fdcaed6763da4a8e3b7b6bf",
+    "scripts/release_workflow.py": "4d0e58a789e11af042612bfed7b9f0a90cdabee64adbc1bf4df53a7a5cfb6a1b",
     "scripts/report-asl-page-results": "2dde0acdd94de060dc56c409e5d232f2252a2fa605512fe4461c360ffdda3cae",
     "scripts/run-asl-page": "64e7e3a7eaa7db6d264665325fcdf42b1b29cc7c4d7b7e1fd9fde30655c19e7f",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
     "scripts/setup-aslref": "0cbe5e413f53d6d1cce1d2f604a65fd5e7e77cc5eec9c449978f4a5e136d64da",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
-    "spec/evidence/release-traceability-readiness.json": "127f9883c100cb34becd613e954d23b7558efa7b0282ec617f368cadd14ff671",
-    "spec/release-inputs.json": "397e1d3b61121357fea15a1352067f40ac72e508a7e18819ac8b23004d444d0b",
+    "scripts/workflow_contract.py": "059376614af3f500d651e7130b9ef0bf52ccd7595d753d3f601dbad42c8e14b1",
+    "spec/evidence/architecture-readiness.json": "e6c59424563b2a5736864e9ff0b26bf3a72a8d7e4950510be0afbd73a974528a",
+    "spec/evidence/management-system-refactor-closure.json": "15776e77c7103c0086b3b93d5731a8b5d22e684860bf0404dccca43ba7194c02",
+    "spec/evidence/release-traceability-readiness.json": "bba8e11e8dd56b56594c3aa9dfae5353e5bc615539c95333321b1a00e7a39fab",
+    "spec/release-inputs.json": "25ac2ac901813ee661fc52a20e989c8a7cfe823d2c2500f5116c3b334081d60c",
+    "spec/release-selection.json": "b4a490a1fee2c271d798c31592defae4010575a53fc0ac1097522574044485f7",
+    "spec/schemas/pto-release-selection.schema.json": "7fb6f3b9413cd28042f884a4411a067d094c9d3142138b6081b8ced0413a234a",
     "spec/schemas/pto-spec-release-event-v1.schema.json": "0d435c6ca7fba416d9f3886e5ebf617bbc761afab0bad4731326b4d52f6d4b44"
   },
   "summary": {
-    "documentation_page_count": 839,
+    "documentation_page_count": 840,
     "executable_requirement_count": 636,
     "gate_count": 10,
     "mnemonic_count": 634,
     "status": "ready-for-exact-head-verification",
-    "test_count": 3338,
+    "test_count": 3352,
     "test_page_count": 34,
     "test_page_size": 100,
     "uncovered_executable_requirement_count": 0,
     "uncovered_unit_count": 0,
-    "unit_count": 839
+    "unit_count": 840
   }
 }

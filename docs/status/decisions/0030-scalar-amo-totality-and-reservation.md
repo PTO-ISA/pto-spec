@@ -1,8 +1,104 @@
+---
+{
+  "id": "ADR-0030",
+  "title": "Scalar AMO totality, reservations, and restart",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-30",
+  "accepted": "2026-07-30",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-SD-XOR-ADR-CONTRACT-001",
+    "PTO-SW-ADD-ADR-CONTRACT-001",
+    "PTO-SW-AND-ADR-CONTRACT-001",
+    "PTO-SW-OR-ADR-CONTRACT-001",
+    "PTO-SW-SMAX-ADR-CONTRACT-001",
+    "PTO-SW-SMIN-ADR-CONTRACT-001",
+    "PTO-SW-UMAX-ADR-CONTRACT-001",
+    "PTO-SW-UMIN-ADR-CONTRACT-001",
+    "PTO-SW-XOR-ADR-CONTRACT-001",
+    "PTO-SWAPB-ADR-CONTRACT-001",
+    "PTO-SWAPD-ADR-CONTRACT-001",
+    "PTO-SWAPH-ADR-CONTRACT-001",
+    "PTO-SWAPW-ADR-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-SCALAR-CASB",
+    "PTO-SCALAR-CASD",
+    "PTO-SCALAR-CASH",
+    "PTO-SCALAR-CASW",
+    "PTO-SCALAR-DMA",
+    "PTO-SCALAR-HL-CASB",
+    "PTO-SCALAR-HL-CASD",
+    "PTO-SCALAR-HL-CASH",
+    "PTO-SCALAR-HL-CASW",
+    "PTO-SCALAR-LD-ADD",
+    "PTO-SCALAR-LD-AND",
+    "PTO-SCALAR-LD-OR",
+    "PTO-SCALAR-LD-SMAX",
+    "PTO-SCALAR-LD-SMIN",
+    "PTO-SCALAR-LD-UMAX",
+    "PTO-SCALAR-LD-UMIN",
+    "PTO-SCALAR-LD-XOR",
+    "PTO-SCALAR-LR-B",
+    "PTO-SCALAR-LR-D",
+    "PTO-SCALAR-LR-H",
+    "PTO-SCALAR-LR-W",
+    "PTO-SCALAR-LW-ADD",
+    "PTO-SCALAR-LW-AND",
+    "PTO-SCALAR-LW-OR",
+    "PTO-SCALAR-LW-SMAX",
+    "PTO-SCALAR-LW-SMIN",
+    "PTO-SCALAR-LW-UMAX",
+    "PTO-SCALAR-LW-UMIN",
+    "PTO-SCALAR-LW-XOR",
+    "PTO-SCALAR-SC-B",
+    "PTO-SCALAR-SC-D",
+    "PTO-SCALAR-SC-H",
+    "PTO-SCALAR-SC-W",
+    "PTO-SCALAR-SD-ADD",
+    "PTO-SCALAR-SD-AND",
+    "PTO-SCALAR-SD-OR",
+    "PTO-SCALAR-SD-SMAX",
+    "PTO-SCALAR-SD-SMIN",
+    "PTO-SCALAR-SD-UMAX",
+    "PTO-SCALAR-SD-UMIN",
+    "PTO-SCALAR-SD-XOR",
+    "PTO-SCALAR-SW-ADD",
+    "PTO-SCALAR-SW-AND",
+    "PTO-SCALAR-SW-OR",
+    "PTO-SCALAR-SW-SMAX",
+    "PTO-SCALAR-SW-SMIN",
+    "PTO-SCALAR-SW-UMAX",
+    "PTO-SCALAR-SW-UMIN",
+    "PTO-SCALAR-SW-XOR",
+    "PTO-SCALAR-SWAPB",
+    "PTO-SCALAR-SWAPD",
+    "PTO-SCALAR-SWAPH",
+    "PTO-SCALAR-SWAPW"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0030: Scalar AMO totality, reservations, and restart
 
 > Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-- Status: Accepted
 - Date: 2026-07-30
 - Requirements: PTO-REQ-SCALAR-AMO-001, PTO-REQ-SCALAR-OPERAND-001,
   PTO-REQ-MEMORY-001, PTO-REQ-MEMORY-COMPLETION-001,
