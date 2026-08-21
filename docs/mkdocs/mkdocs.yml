@@ -4,13 +4,20 @@ docs_dir: ..
 site_dir: ../../build/mkdocs-site
 use_directory_urls: false
 exclude_docs: |
-  status/legacy/**
   mkdocs/**
   superpowers/**
 theme:
   name: mkdocs
 strict: true
 nav:
+  - Development:
+      - Getting started: development/getting-started.md
+      - Repository layout: development/repository-layout.md
+  - Governance:
+      - ADR process and decision index: governance/adr-process.md
+      - Validation: governance/validation.md
+  - Releases:
+      - Release index: releases/index.md
   - Arch:
       - Data Types:
           - Formats:
@@ -993,18 +1000,39 @@ nav:
           - "ADR 0059: Mnemonic and Encoded-Field Contract Closure": status/decisions/0059-mnemonic-field-encoding-closure.md
           - "ADR 0060: Restore `L.BSTOP` as the common 64-bit bundle stop": status/decisions/0060-l-bstop-common-long-form.md
           - "ADR 0061: Bundle commit state uses BARG/BPCN": status/decisions/0061-barg-bpcn-commit-state.md
-          - "PTO mnemonic review decisions": status/decisions/0062-mnemonic-review-decisions.md
+          - "ADR 0062: PTO mnemonic review decisions (historical summary)": status/decisions/0062-mnemonic-review-decisions.md
           - "ADR 0064: B.FPATR Complete-Bundle Matrix PostProcess": status/decisions/0064-b-fpatr-complete-bundle-postprocess.md
           - "ADR 0065: CUBE Matrix Family Contract": status/decisions/0065-cube-matrix-family-contract.md
           - "ADR 0066: ADDTPC page-scaled immediate": status/decisions/0066-addtpc-page-scaled-immediate.md
           - "ADR 0067: conditional branch extension reservation": status/decisions/0067-conditional-branch-extension-reservation.md
           - "ADR 0068: Extension first-use is a target-profile hook": status/decisions/0068-extension-first-use-profile-hook.md
-          - "ADR 0069: Re-encode B.IOT and B.IOS size and PE mode fields": status/decisions/0069-b-iot-b-ios-sizecode-pemode.md
           - "ADR 0069: Local CUBE CELL State and Geometry": status/decisions/0069-local-cube-cell-state-and-geometry.md
           - "ADR 0070: GM/Local CUBE Layout Transport": status/decisions/0070-gm-local-cube-layout-transport.md
           - "ADR 0071: Local CUBE Matrix Operand Contract": status/decisions/0071-local-cube-matrix-operands.md
           - "ADR 0072: Cooperative Shared CUBE Inputs and Transpose": status/decisions/0072-cooperative-shared-cube-transpose.md
           - "ADR 0073: CUBE Accumulator and Atomic Output Contract": status/decisions/0073-cube-accumulator-atomic-output.md
           - "ADR 0074: TLOAD/TSTORE GM Byte Row Stride": status/decisions/0074-tload-tstore-gm-byte-row-stride.md
+          - "ADR 0075: Block attributes and lifecycle": status/decisions/0075-block-attributes-and-lifecycle.md
+          - "ADR 0076: Block scalar and tile bindings": status/decisions/0076-block-scalar-and-tile-bindings.md
+          - "ADR 0077: Block start and extension reservations": status/decisions/0077-block-start-and-extension-reservations.md
+          - "ADR 0078: TLSU and global-memory operations": status/decisions/0078-tlsu-and-global-memory-operations.md
+          - "ADR 0079: CUBE and matrix operations": status/decisions/0079-cube-and-matrix-operations.md
+          - "ADR 0080: Tile elementwise and irregular operations": status/decisions/0080-tile-elementwise-and-irregular-operations.md
+          - "ADR 0081: Tile scalar and immediate operations": status/decisions/0081-tile-scalar-and-immediate-operations.md
+          - "ADR 0082: Tile reduction, expansion, and generation": status/decisions/0082-tile-reduction-expansion-and-generation.md
+          - "ADR 0083: Tile conversion, layout, and partial operations": status/decisions/0083-tile-conversion-layout-and-partial-operations.md
+          - "ADR 0084: Scalar, system, and queue operations": status/decisions/0084-scalar-system-and-queue-operations.md
+          - "ADR 0085: Numeric post-process and format operations": status/decisions/0085-numeric-postprocess-and-format-operations.md
+          - "ADR 0086: Numeric profile applicability": status/decisions/0086-numeric-profile-applicability.md
+          - "ADR 0087: Numeric format legality": status/decisions/0087-numeric-format-legality.md
+          - "ADR 0088: Numeric special values": status/decisions/0088-numeric-special-values.md
+          - "ADR 0089: Numeric exception flags": status/decisions/0089-numeric-exception-flags.md
+          - "ADR 0090: Conversion range results": status/decisions/0090-conversion-range-results.md
+          - "ADR 0091: Elementary-function accuracy": status/decisions/0091-elementary-function-accuracy.md
+          - "ADR 0092: Reduction order and stability": status/decisions/0092-reduction-order-and-stability.md
+          - "ADR 0093: Quantization contract": status/decisions/0093-quantization-contract.md
+          - "ADR 0094: Matrix numeric contract": status/decisions/0094-matrix-numeric-contract.md
+          - "ADR 0095: Bounded numeric variation": status/decisions/0095-bounded-numeric-variation.md
+          - "ADR 0096: Re-encode B.IOT and B.IOS size and PE mode fields": status/decisions/0096-b-iot-b-ios-sizecode-pemode.md
       - Open:
-          - "Open architecture questions": status/open/index.md
+          - "Open architecture decisions": status/open/index.md

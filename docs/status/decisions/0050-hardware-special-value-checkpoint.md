@@ -1,14 +1,61 @@
+---
+{
+  "id": "ADR-0050",
+  "title": "Hardware special-value result checkpoint",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-01",
+  "accepted": "2026-08-01",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "9574f0293929bf692517dd29de11a8354440c7dc",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-FMAX-DECISION-BINDING-001",
+    "PTO-FMIN-DECISION-BINDING-001",
+    "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+    "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+    "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+    "PTO-TMAX-CONTRACT-001",
+    "PTO-TMIN-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
+    "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
+    "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
+    "PTO-SCALAR-FMAX",
+    "PTO-SCALAR-FMIN",
+    "PTO-TILE-TMAX",
+    "PTO-TILE-TMIN"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": [
+    "PD-05-SC2"
+  ]
+}
+---
 # ADR 0050: Hardware special-value result checkpoint
 
 > Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-## Status
+## Decision scope
 
-Accepted as `PD-05-SC2` for the named
-`pto-hardware-numeric-0.57.1-ieee-v1` profile. This checkpoint fixes canonical
-NaN production and the NaN/signed-zero result subset for comparisons and
-MIN/MAX. It does not complete PD-05, change the active `pto-v0` profile, or
-make an unsupported operation/type tuple legal.
+This decision is the bounded special-value checkpoint for the named
+`pto-hardware-numeric-0.57.1-ieee-v1` profile. It fixes canonical NaN production
+and the NaN/signed-zero result subset for comparisons and MIN/MAX. It does not
+complete ADR 0088, change the active `pto-v0` profile, or make an unsupported
+operation/type tuple legal.
 
 ## Context
 
@@ -84,7 +131,7 @@ condition instead of mutating hidden flag state.
 The helpers are named hardware-profile contracts, not implementations of the
 active raw-carrier profile. `pto-v0` remains unchanged. Every tile operation
 row in the generated evidence is conditional on a separately accepted
-operation/type support tuple. PD-12 still owns generic profile selection and
+operation/type support tuple. ADR 0095 still owns generic profile selection and
 missing-rule rejection.
 
 ## Rejected alternatives
@@ -102,7 +149,7 @@ missing-rule rejection.
 
 ## Consequences
 
-PD-05 gains an accepted, executable special-result checkpoint, but remains
+ADR 0088 gains an accepted, executable special-result checkpoint, but remains
 open. The accepted complete-decision count stays two of twelve, no complete
 numeric domain closes, and the 18 selected generic variation routes do not
 change. Infinity arithmetic, ordinary ordering, operation-specific NaN

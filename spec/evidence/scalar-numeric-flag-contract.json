@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "target": "S5-T2-A2:PD-06",
-  "decision_id": "PD-06",
+  "target": "S5-T2-A2:ADR-0089",
+  "decision_id": "ADR-0089",
   "status": "state-owner-matrix-closed-profile-production-open",
   "acceptance_record": "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
   "architecture_contract": {
@@ -514,13 +514,13 @@
   },
   "tests": [
     "tests/asl/scalar/model/fsu/arithmetic/scalar-state-fp-flag-lifecycle-001.asl:TestScalarFPFlagLifecycle",
-    "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality",
-    "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUFlagAndRoundingHelpers"
+    "scripts/generate-asl-decoders:emit_scalar_fsu_flags_validation",
+    "scripts/generate-asl-decoders:ValidateScalarFPFlagHelpers"
   ],
   "sources": [
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "139632729bc011216e4793652e2f3dbd57acd17164bd0a34c18eb5817da2cf34"
+      "sha256": "bdfcb4df19da4329c5ff0184b34daebf258d832992fa06fb3e0c34ca891c5923"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -536,15 +536,15 @@
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
-      "sha256": "201b595409610c79731244da60c8e1809cb0f3fdd2305d75d3fd156c6c220fbb"
+      "sha256": "c429ac19ea648dd0b0180a736af1fcd3990cb949b2397ca2e33003b3da593295"
     },
     {
       "path": "asl/scalar/model/dispatch/agu.asl",
-      "sha256": "4317f8b3d9028a40d308efafa996197394fe617ecfa7ede309f0491f5910e678"
+      "sha256": "1e22037018ca860fef794052cda29bf99103c543ae2b6391fce292a5cba9f682"
     },
     {
       "path": "asl/scalar/model/dispatch/alu.asl",
-      "sha256": "bc9a765133a19f0a248ccd070e20026f22ab8aebece23475755dd3b566d96349"
+      "sha256": "aae66b82e868949861a1a93427ac9a35091d4ad339ed4535b500b0a1fc408c45"
     },
     {
       "path": "asl/scalar/model/dispatch/amo.asl",
@@ -552,39 +552,63 @@
     },
     {
       "path": "asl/scalar/model/dispatch/bru.asl",
-      "sha256": "f052ce909a69d2e5e8cb63a9fc00945be2dd2c38ea31502e75536843b70e6bff"
+      "sha256": "ff1616fb96e8fa5f6add13f2ce39c54f985d38b558510370dee134cb09d845ee"
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "18fca28c9d66963d31318414790b1795eadff6495410be6104c1042eef72d2e6"
+      "sha256": "212dce7a845a9477d78302be500e95a97cb3ceb037a1ac983a87145d334e520d"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
-      "sha256": "4d7f3b84d7ef9cb271e5ce30e13b6116b3f5b22d11d15079ddf93459f8ac1cc5"
+      "sha256": "07ea4132a13f28b549578473df9ba986a9e6d107c3514ac300b5ea44bc0a54a3"
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
-      "sha256": "5650cb4928d7b61f10bb0bb31fc771517336c6a59b25d8dfbddd711ffc82e823"
+      "sha256": "3962b4109ea93dfb583d5f27b5eff22367ddd1e33b55f364a5ce0b7dfa43e8e5"
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
-      "sha256": "07c654528b9e9c6b4af6c9efb78a4e22f1c0492b80a232670621485c2b8e7409"
+      "sha256": "aa3ddf8835162b5c3f5692bcfb5e9d3aac64407c5feef8a58edddbb7d309657a"
     },
     {
       "path": "asl/arch/profile/applicability.asl",
       "sha256": "b3734d16ed92c3e7f9d8a99047009c8b0996cbeb88a087296c12696d9965de41"
     },
     {
+      "path": "asl/arch/profile/e8m0-conversion.asl",
+      "sha256": "e46324c90eff21e4270558e315c684089f11b6d6a47f6dc4ee0b30411761fd57"
+    },
+    {
+      "path": "asl/arch/profile/extension-first-use.asl",
+      "sha256": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3"
+    },
+    {
+      "path": "asl/arch/profile/matrix-postprocess.asl",
+      "sha256": "7a0423616a2f6910bf77e531c3fb3a22abc4d266db80d6ac4b43a46bb2e7d868"
+    },
+    {
+      "path": "asl/arch/profile/matrix-quantization.asl",
+      "sha256": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440"
+    },
+    {
       "path": "asl/arch/profile/reference-profile.asl",
-      "sha256": "92dcd0a8bb0dfa12323eda7ee29825b732e43953b23b0524eb76f46b2559c1be"
+      "sha256": "a866ccdeef08bde34b1818a0ebc0937044db1b886d1cf9403252fdfbce114e51"
+    },
+    {
+      "path": "asl/arch/profile/reference-quantization.asl",
+      "sha256": "e82820dc13f89142aa0448c4435f6cbd53d4eb0b85c05e63a887452c186d9aef"
     },
     {
       "path": "asl/arch/profile/reset.asl",
-      "sha256": "5adcdb7e373ba4a4bc7632e3f85198888d5de52b9d85f687259855c1d361f1e2"
+      "sha256": "f720ce6f5e3b2b32a1c63702679fe4b5ebfe13dacf7ed90e2734aa4afbf8ead3"
+    },
+    {
+      "path": "asl/arch/profile/trap-context-recovery.asl",
+      "sha256": "59d5ca02ba1d674a2bfac96efa6f569c809dcb8a1ddfdbd610f13f542be82b57"
     },
     {
       "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "32d05fb963c061210b852b39ede4f697ced8beae29e9645cfd4da8bc64276da2"
+      "sha256": "1be39ca1ffda14b703ca03df9654f323d03b9cac620ba37d5cbe6ce8f3f9c486"
     }
   ],
   "summary": {
@@ -594,6 +618,6 @@
     "profile_condition_open_form_count": 19,
     "profile_domain_count": 6,
     "profile_hook_count": 6,
-    "pd06_complete": false
+    "adr0089_complete": false
   }
 }

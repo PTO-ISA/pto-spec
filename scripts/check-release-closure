@@ -11,6 +11,13 @@ from pathlib import Path
 from typing import Iterator
 
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.release_selection import evaluate_release_selection  # noqa: E402
+
+
 PATH_VALUE = re.compile(r"^(?:asl|docs|tests|scripts|spec|\.github)/[A-Za-z0-9_.@/+-]+$")
 OBSOLETE_TEST = re.compile(
     r"tests/asl/(?:main\.asl|shards(?:/|$)|[A-Za-z0-9_-]+-tests\.asl)"
@@ -132,6 +139,12 @@ def validate(root: Path) -> list[str]:
                     )
         except (json.JSONDecodeError, KeyError, TypeError) as error:
             errors.append(f"invalid release manifest: {error}")
+    try:
+        selection = evaluate_release_selection(root)
+        if selection.blockers:
+            errors.append("release selection contains blockers")
+    except (OSError, ValueError, KeyError, TypeError, json.JSONDecodeError) as error:
+        errors.append(f"invalid release selection: {error}")
     return sorted(set(errors))
 
 

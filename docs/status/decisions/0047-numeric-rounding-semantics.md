@@ -1,12 +1,80 @@
+---
+{
+  "id": "ADR-0047",
+  "title": "Numeric rounding semantics",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-01",
+  "accepted": "2026-08-01",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "335323a85ab2d3d2a3aec0d0d93f1ee13c9cd310",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-B-DATR-FIELDS-001",
+    "PTO-FCVTA-DECISION-BINDING-001",
+    "PTO-FCVTM-DECISION-BINDING-001",
+    "PTO-FCVTN-DECISION-BINDING-001",
+    "PTO-FCVTP-DECISION-BINDING-001",
+    "PTO-FCVTZ-DECISION-BINDING-001",
+    "PTO-TCVT-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-DATA-TYPES-ROUNDING",
+    "PTO-BLOCK-B-DATR",
+    "PTO-SCALAR-FCVT",
+    "PTO-SCALAR-FCVTA",
+    "PTO-SCALAR-FCVTM",
+    "PTO-SCALAR-FCVTN",
+    "PTO-SCALAR-FCVTP",
+    "PTO-SCALAR-FCVTZ",
+    "PTO-TILE-TCVT"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": [
+    "PD-03"
+  ]
+}
+---
 # ADR 0047: Numeric rounding semantics
 
 > Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-## Status
+## Decision scope
 
-Accepted. This decision completes PD-03 and supersedes the result-open parts of
-ADR 0039. ADR 0049 separately closes PD-04 for the named hardware profile;
-PD-02 and PD-05 through PD-12 remain outside this decision.
+This decision completes the rounding decision and supersedes the result-open parts of ADR 0039.
+ADR 0049 separately closes subnormal handling for the named hardware profile; ADR 0087 and
+ADR 0088 through ADR 0095 remain outside this decision.
+
+## Affected domains
+
+- `cube-matrix`
+- `scalar-binary`
+- `scalar-fp-convert`
+- `scalar-fp-to-integer`
+- `scalar-fused`
+- `scalar-integer-to-fp`
+- `scalar-unary`
+- `tile-binary`
+- `tile-convert`
+- `tile-dequantize`
+- `tile-expand`
+- `tile-fused`
+- `tile-partial`
+- `tile-quantize`
+- `tile-reduction`
+- `tile-unary`
 
 ## Context
 
@@ -76,9 +144,9 @@ The conversion mnemonic, not `CORE_STATE.FRM`, selects the mode:
 | `FCVTP` | RTP |
 | `FCVTZ` | RTZ |
 
-The finite source is rounded once before PD-07 selects an out-of-range,
+The finite source is rounded once before ADR 0090 selects an out-of-range,
 indefinite, or saturation result. This decision fixes the order but leaves
-those PD-07 results open.
+those ADR 0090 results open.
 
 ### Bundle and public conversion selectors
 
@@ -116,7 +184,7 @@ Only `ACCCVT`, `TCVT`, `TQUANT`, and `TDEQUANT` consume
 `TileNumericSelection`. NONE resolves to RNE except that floating-to-integer
 `TCVT` resolves NONE to RTZ. An explicit bundle code always overrides that
 default. These operations round at the destination-format boundary before
-saturation. Saturation-disabled range results remain PD-07 decisions.
+saturation. Saturation-disabled range results remain ADR 0090 decisions.
 
 ### Operation-fixed domains
 
@@ -134,7 +202,7 @@ All other tile operations ignore bundle `RMode` and use operation-fixed rules:
   conversion.
 
 The generated domain ledger records the rule and saturation ordering for all
-18 PD-03 domains and 102 affected operations.
+16 affected rounding domains and 100 affected operations.
 
 ## Rejected alternatives
 
@@ -150,7 +218,7 @@ The generated domain ledger records the rule and saturation ordering for all
 
 ## Consequences
 
-PD-03 is complete for selector encodings, tie rules, operation defaults,
+This decision is complete for selector encodings, tie rules, operation defaults,
 rounding points, and rounding-before-saturation order. The ASL carries semantic
 rounding values rather than ambiguous raw codes across profile hooks.
 
@@ -158,9 +226,9 @@ This decision does not claim complete numeric results. Format encodings and
 legality, special values, flags, overflow and indefinite results,
 approximation error, reduction tie behavior, quantization equations, matrix
 precision beyond the stated rounding points, and bounded target variation
-remain owned by PD-02 and PD-05 through PD-12. ADR 0049 separately owns PD-04
-subnormal handling for the named hardware profile. Stage 5 therefore remains
-in progress.
+remain owned by ADR 0087 and ADR 0088 through ADR 0095. ADR 0049 separately
+owns subnormal handling for the named hardware profile. Stage 5 therefore
+remains in progress.
 
 ## Evidence
 

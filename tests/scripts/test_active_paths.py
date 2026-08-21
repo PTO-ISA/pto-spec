@@ -53,13 +53,54 @@ class ActivePathCheckTest(unittest.TestCase):
             result = self.run_checker(root, ["tests/asl/shards/hidden.asl"])
 
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("obsolete tracked path", result.stderr)
+        self.assertIn("obsolete tracked path", result.stderr)
+
+    def test_legacy_documentation_tree_is_obsolete(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "docs/status/legacy/page.md"
+            path.parent.mkdir(parents=True)
+            path.write_text("# Historical page\n", encoding="utf-8")
+
+            result = self.run_checker(root, ["docs/status/legacy/page.md"])
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("obsolete", result.stderr)
 
     def test_tracked_markdown_outside_owned_roots_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
 
             result = self.run_checker(root, ["docs/loose.md"])
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("outside the ASL mirror", result.stderr)
+
+    def test_professional_documentation_roots_are_owned(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            paths = [
+                "docs/governance/adr-process.md",
+                "docs/development/getting-started.md",
+                "docs/releases/index.md",
+            ]
+            for value in paths:
+                path = root / value
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("# Owned\n", encoding="utf-8")
+
+            result = self.run_checker(root, paths)
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_unrecognized_documentation_root_remains_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "docs/notes/page.md"
+            path.parent.mkdir(parents=True)
+            path.write_text("# Unowned\n", encoding="utf-8")
+
+            result = self.run_checker(root, ["docs/notes/page.md"])
 
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("outside the ASL mirror", result.stderr)
@@ -125,6 +166,19 @@ class ActivePathCheckTest(unittest.TestCase):
                 root,
                 [".codex/skills/pto-asl/agents/openai.yaml"],
             )
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("agent entrypoint routes to superseded contract", result.stderr)
+
+    def test_agent_entrypoint_rejects_deleted_requirement_route(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "AGENTS.md").write_text(
+                "Start from spec/requirements.json.\n",
+                encoding="utf-8",
+            )
+
+            result = self.run_checker(root, ["AGENTS.md"])
 
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("agent entrypoint routes to superseded contract", result.stderr)

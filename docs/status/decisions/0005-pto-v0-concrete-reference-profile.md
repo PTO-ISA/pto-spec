@@ -1,6 +1,49 @@
+---
+{
+  "id": "ADR-0005",
+  "title": "PTO v0 concrete reference profile",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-28",
+  "accepted": "2026-07-28",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "b04318ee75b253157a792b9d08f75e9e95eacf0f",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
+    "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+    "PTO-MATRIX-QUANT-BITEXACT-001",
+    "PTO-TCVT-E8M0-PROFILE-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-PROFILE-APPLICABILITY",
+    "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+    "PTO-ARCH-PROFILE-EXTENSION-FIRST-USE",
+    "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
+    "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+    "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+    "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+    "PTO-ARCH-PROFILE-RESET",
+    "PTO-ARCH-PROFILE-TRAP-CONTEXT-RECOVERY"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0005: PTO v0 concrete reference profile
 
-- Status: Accepted
 - Date: 2026-07-28
 - Requirement: PTO-REQ-PROFILE-001
 

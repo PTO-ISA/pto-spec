@@ -13,13 +13,19 @@ from pathlib import Path
 PYTHON_LAUNCHED = frozenset(
     {
         "__init__.py",
+        "adr_records.py",
+        "architecture_readiness.py",
         "asl_tests.py",
         "asl_validation_shards.py",
         "encoding_witness.py",
         "evidence_sources.py",
+        "full_validation_workflow.py",
         "generate-mnemonic-avs.py",
         "manual_semantic_audit.py",
+        "management_refactor_closure.py",
+        "release_selection.py",
         "tile_taxonomy.py",
+        "workflow_contract.py",
     }
 )
 PYTHON_SHEBANG = "#!/usr/bin/env python3"

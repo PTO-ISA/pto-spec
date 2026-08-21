@@ -6,7 +6,8 @@
 // value over one ordered Local source. Element-width integer behavior,
 // floating sign clearing, supported types, closed unary schema, PadValue,
 // complete preflight, source snapshot, and atomic destination publication
-// MUST follow PRD-070. Rejection MUST precede all architectural effects.
+// MUST follow ADR-0080 and NDF clause PTO-TABS-CONTRACT-001. Rejection MUST
+// precede all architectural effects.
 // NDF-END: PTO-TABS-CONTRACT-001
 // DOC-BEGIN: decode
 readonly func InstructionContractOperation_TABS() => TileOperation

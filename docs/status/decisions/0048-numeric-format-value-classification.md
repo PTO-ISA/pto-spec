@@ -1,12 +1,80 @@
+---
+{
+  "id": "ADR-0048",
+  "title": "Numeric format value classification",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-01",
+  "accepted": "2026-08-01",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "f0e564328d3c011c51e62ebe961e70309838b844",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-FMAX-DECISION-BINDING-001",
+    "PTO-FMIN-DECISION-BINDING-001",
+    "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+    "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
+    "PTO-TMAX-CONTRACT-001",
+    "PTO-TMIN-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-DATA-TYPES-FORMAT-BF16",
+    "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E1M2X2",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E2M1X2",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E2M3",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E3M2",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E4M3",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E5M2",
+    "PTO-ARCH-DATA-TYPES-FORMAT-E8M0",
+    "PTO-ARCH-DATA-TYPES-FORMAT-FP16",
+    "PTO-ARCH-DATA-TYPES-FORMAT-FP32",
+    "PTO-ARCH-DATA-TYPES-FORMAT-FP64",
+    "PTO-ARCH-DATA-TYPES-FORMAT-HF32",
+    "PTO-ARCH-DATA-TYPES-FORMAT-HIF4X2",
+    "PTO-ARCH-DATA-TYPES-FORMAT-HIF8",
+    "PTO-ARCH-DATA-TYPES-FORMAT-TF32",
+    "PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION",
+    "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
+    "PTO-SCALAR-FMAX",
+    "PTO-SCALAR-FMIN",
+    "PTO-SCALAR-MODEL-FSU-PROFILE",
+    "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+    "PTO-TILE-MODEL-EXECUTION-FUSED-MULTIPLY-ADD",
+    "PTO-TILE-MODEL-EXECUTION-UNARY",
+    "PTO-TILE-MODEL-NUMERIC-FORMATS",
+    "PTO-TILE-MODEL-ORDERING-SORTING",
+    "PTO-TILE-TMAX",
+    "PTO-TILE-TMIN"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": [
+    "PD-05-SC1"
+  ]
+}
+---
 # ADR 0048: Numeric format value classification
 
 > Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-## Status
+## Decision scope
 
-Accepted as the `PD-02-SC2` and `PD-05-SC1` format-classification checkpoint.
-This decision does not complete PD-02 or PD-05 and does not change the M4
-maturity floor.
+ADR 0043 is the canonical `ADR 0043` binding and availability checkpoint.
+This decision is the `ADR 0048` format-classification checkpoint and adds a
+narrower executable value-classification contribution to the continuing ADR 0087
+work. It does not complete ADR 0087 or ADR 0088 or change the M4 maturity floor.
 
 ## Context
 
@@ -144,14 +212,14 @@ profile, the generated format ledger, and the direct assertions together.
 
 ## Remaining boundaries
 
-PD-02 still requires the complete operation/type/profile legality matrix,
+ADR 0087 still requires the complete operation/type/profile legality matrix,
 target support, and result vectors. ADR 0050 now owns the bounded
-PD-05-SC2 hardware special-value checkpoint for produced canonical NaNs,
-comparison NaN/signed-zero results, and MIN/MAX NaN/signed-zero results. PD-05
+ADR 0050 hardware special-value checkpoint for produced canonical NaNs,
+comparison NaN/signed-zero results, and MIN/MAX NaN/signed-zero results. ADR 0088
 still requires infinity arithmetic, broader NaN creation, conversions,
 reductions, quantization, matrix results, and complete flag/status behavior.
 ADR 0049 owns subnormal execution and tininess rules for the named hardware
-profile. PD-06 owns scalar exception flags. No variation route or complete
+profile. ADR 0089 owns scalar exception flags. No variation route or complete
 numeric domain is closed by classification alone.
 
 ## Affected sources

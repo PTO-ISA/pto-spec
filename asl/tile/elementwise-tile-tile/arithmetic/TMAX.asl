@@ -6,7 +6,8 @@
 // over two ordered Local sources. Integer ordering MUST follow signedness.
 // Floating NaN, signaling-NaN status, signed-zero ties, source-encoding
 // legality, closed binary schema, PadValue, complete preflight, source
-// snapshot, and atomic destination publication MUST follow PRD-067.
+// snapshot, and atomic destination publication MUST follow ADR-0080 and NDF
+// clause PTO-TMAX-CONTRACT-001.
 // Rejection MUST precede all architectural effects.
 // NDF-END: PTO-TMAX-CONTRACT-001
 // DOC-BEGIN: decode

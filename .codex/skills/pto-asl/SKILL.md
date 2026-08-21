@@ -13,11 +13,17 @@ Before editing, read:
 
 - `AGENTS.md`
 - the owning source below `asl/{arch,block,scalar,tile}/`
+- `spec/evidence/adr-index.json` for the decision history affecting that owner
 - its exact mirror below `docs/{arch,block,scalar,tile}/`
+- its independently runnable points below `tests/asl/{arch,block,scalar,tile}/`
 - `GOVERNANCE.md`
 - `CONTRIBUTING.md`
 - `docs/status/decisions/` and `docs/status/open/` when the change has linked status metadata
-- `spec/requirements.json`
+- commit-scoped evidence registered by `spec/release-inputs.json`, beginning
+  with `spec/evidence/release-traceability-readiness.json`
+
+Current semantics: owning ASL/NDF -> generated mirror -> AVS -> commit-scoped evidence.
+Decision history: ADR index -> affected ASL/NDF.
 
 For ASLRef setup, versioning, or language behavior, read [references/aslref.md](references/aslref.md). For any normative
 model change or review, also read [references/formal-quality.md](references/formal-quality.md).
@@ -50,7 +56,7 @@ Never turn a repository-maintenance request into a normative modeling change.
 7. Use pure functions for value semantics and thin procedures for architecture-visible state updates.
 8. Add positive, boundary, negative-legality, aliasing, fault, ordering, and state-transition test points under the
    exact mirror in `tests/asl/{arch,block,scalar,tile}/`. Each point has one stable ID and is discovered automatically.
-9. Regenerate ASL-derived catalogs, decoder witnesses, documentation, requirements, coverage, and change
+9. Regenerate ASL-derived catalogs, decoder witnesses, documentation, NDF traceability and coverage, and change
    classification together.
 10. Run the repository validation gate and inspect the output before claiming completion.
 
@@ -163,7 +169,7 @@ git diff --check
 ```
 
 The pull-request lane is intentionally lightweight and does not claim release
-readiness. The manual exact-head release lane is:
+readiness. Exact-commit full validation is:
 
 ```bash
 python3 scripts/manual_semantic_audit.py

@@ -1,8 +1,18 @@
 {
   "evidence": [
     {
+      "generator": "scripts/generate-architecture-readiness",
+      "path": "spec/evidence/architecture-readiness.json",
+      "role": "canonical-input"
+    },
+    {
       "generator": "scripts/generate-instruction-contract-closure",
       "path": "spec/evidence/instruction-contract-closure.json",
+      "role": "canonical-input"
+    },
+    {
+      "generator": "scripts/generate-management-system-refactor-closure",
+      "path": "spec/evidence/management-system-refactor-closure.json",
       "role": "canonical-input"
     },
     {

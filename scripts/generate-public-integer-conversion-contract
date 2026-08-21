@@ -52,12 +52,11 @@ def generate() -> dict[str, Any]:
     inventory = load(NUMERIC_CONTRACTS)
     comparison = load(EXECUTABLE_COMPARISON)
 
-    pd07 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-07")
+    adr0090 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-0090")
     require(
-        pd07["status"] == "decision-required"
-        and pd07["selected_disposition"] is None
-        and pd07["decision_record"] is None,
-        "PD-07 must remain open",
+        adr0090["status"] == "draft"
+        and adr0090["acceptance_record"] is None,
+        "ADR-0090 must remain open",
     )
     require(
         types["summary"]["public_integer_type_count"] == 8
@@ -74,8 +73,10 @@ def generate() -> dict[str, Any]:
         "TCVT numeric ownership drift",
     )
     require(
-        comparison["status"] == "comparison-matrix-closed-clean-gates-passed:S5-T3",
-        "independent comparison status drift",
+        comparison["status"] == "comparison-matrix-closed-clean-gates-passed:S5-T3"
+        and comparison["closure_judgment"]["can_close_s5_t3"] is True
+        and comparison["closure_judgment"]["remaining_blockers"] == [],
+        "independent comparison is not closed",
     )
 
     public_source = next(
@@ -146,9 +147,9 @@ def generate() -> dict[str, Any]:
 
     return {
         "schema_version": 1,
-        "target": "S5-T2-A6:PD-07-SC1",
-        "decision_id": "PD-07",
-        "checkpoint_id": "PD-07-SC1",
+        "target": "S5-T2-A6:ADR-0090-SC1",
+        "decision_id": "ADR-0090",
+        "checkpoint_id": "ADR-0090-SC1",
         "status": "public-integer-conversion-result-subset-closed-profile-support-and-other-results-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "policy": {
@@ -214,24 +215,24 @@ def generate() -> dict[str, Any]:
         },
         "open_residuals": [
             {
-                "id": "PD-07-R1",
+                "id": "ADR-0090-R1",
                 "rule": "decide same-width integer signedness conversions",
             },
             {
-                "id": "PD-07-R2",
+                "id": "ADR-0090-R2",
                 "rule": "complete floating and float/integer conversion results",
             },
             {
-                "id": "PD-07-R3",
+                "id": "ADR-0090-R3",
                 "rule": "complete every operation/type/profile support tuple",
             },
             {
-                "id": "PD-07-R4",
+                "id": "ADR-0090-R4",
                 "rule": "define overflow, saturation, indefinite, NaN, and infinity results",
             },
-            {"id": "PD-07-R5", "rule": "define rounding and numeric-flag results"},
+            {"id": "ADR-0090-R5", "rule": "define rounding and numeric-flag results"},
             {
-                "id": "PD-07-R6",
+                "id": "ADR-0090-R6",
                 "rule": "publish independent target-conformance vectors",
             },
         ],
@@ -264,7 +265,7 @@ def generate() -> dict[str, Any]:
             "accepted_domain_rule_count": 0,
             "accepted_profile_support_rule_count": 0,
             "open_residual_count": 6,
-            "pd07_complete": False,
+            "adr0090_complete": False,
             "tile_convert_domain_complete": False,
             "s5_t2_a_complete": False,
             "s5_t2_complete": False,

@@ -1,40 +1,63 @@
 from __future__ import annotations
 
-import json
-import re
 import unittest
 from pathlib import Path
+
+from scripts.adr_records import load_adrs
+from scripts.asl_units import load_units
+from scripts.ndf import parse_ndf_regions
 
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 class DecisionImplementationClosureTest(unittest.TestCase):
-    def test_accepted_decision_mnemonics_have_owner_local_ndf(self) -> None:
-        owners: dict[str, Path] = {}
-        for path in (ROOT / "asl").rglob("*.asl"):
-            lines = path.read_text(encoding="utf-8").splitlines()
-            if not lines or not lines[0].startswith("// PTO-INSTRUCTION: "):
-                continue
-            metadata = json.loads(lines[0].split(": ", 1)[1])
-            owners[metadata["mnemonic"]] = path
+    def current_impacts(self) -> tuple[set[str], dict[str, str], set[str]]:
+        units = load_units(ROOT / "asl")
+        unit_ids = {unit.unit_id for unit in units}
+        unit_by_source = {unit.source_path: unit.unit_id for unit in units}
+        accepted_ndf: set[str] = set()
+        ndf_owners: dict[str, str] = {}
+        for path in sorted((ROOT / "asl").rglob("*.asl")):
+            source = path.relative_to(ROOT)
+            for clause in parse_ndf_regions(
+                path.read_text(encoding="utf-8"), source
+            ):
+                ndf_owners[clause.clause_id] = unit_by_source[source]
+                if clause.status == "accepted":
+                    accepted_ndf.add(clause.clause_id)
+        return unit_ids, ndf_owners, accepted_ndf
 
-        decision_bound: dict[str, set[str]] = {}
-        for path in (ROOT / "docs/status/decisions").glob("*.md"):
-            text = path.read_text(encoding="utf-8")
-            header = "\n".join(text.splitlines()[:10]).lower()
-            if "status: superseded" in header:
+    def test_accepted_decision_impacts_join_exact_current_owners(self) -> None:
+        unit_ids, ndf_owners, _ = self.current_impacts()
+        records = load_adrs(ROOT / "docs/status/decisions")
+        errors: list[str] = []
+        for record in records:
+            if record.status != "accepted":
                 continue
-            for token in re.findall(r"`([^`]+)`", text):
-                if token in owners:
-                    decision_bound.setdefault(token, set()).add(path.name)
+            for unit_id in record.affected_units:
+                if unit_id not in unit_ids:
+                    errors.append(f"{record.adr_id}: unknown unit {unit_id}")
+            for ndf_id in record.affected_ndf:
+                owner = ndf_owners.get(ndf_id)
+                if owner is None:
+                    errors.append(f"{record.adr_id}: unknown NDF {ndf_id}")
+                elif owner not in record.affected_units:
+                    errors.append(
+                        f"{record.adr_id}: {ndf_id} owner {owner} is not affected"
+                    )
+        self.assertEqual(errors, [])
 
-        missing = {
-            mnemonic: sorted(decisions)
-            for mnemonic, decisions in decision_bound.items()
-            if "// NDF-BEGIN:" not in owners[mnemonic].read_text(encoding="utf-8")
+    def test_every_accepted_ndf_clause_has_an_accepted_adr_owner(self) -> None:
+        _, _, accepted_ndf = self.current_impacts()
+        records = load_adrs(ROOT / "docs/status/decisions")
+        owned_ndf = {
+            ndf_id
+            for record in records
+            if record.status == "accepted"
+            for ndf_id in record.affected_ndf
         }
-        self.assertEqual(missing, {})
+        self.assertEqual(accepted_ndf - owned_ndf, set())
 
 
 if __name__ == "__main__":

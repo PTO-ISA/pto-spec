@@ -1,10 +1,11 @@
 {
   "schema_version": 1,
-  "target": "S5-T2-A2:PD-04",
-  "decision_id": "PD-04",
+  "target": "S5-T2-A2:ADR-0049",
+  "decision_id": "ADR-0049",
   "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
   "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
-  "profile_id": "pto-hardware-numeric-0.58.1-ieee-v1",
+  "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.58.2-ieee-v1",
   "policy": {
     "input_subnormals": "preserve-exact-source-value",
     "result_subnormals": "gradual-underflow-to-destination-format",
@@ -202,7 +203,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-binary",
@@ -220,7 +221,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-fp-convert",
@@ -235,7 +236,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-fused",
@@ -253,7 +254,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "scalar-unary",
@@ -270,7 +271,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-binary",
@@ -308,7 +309,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-convert",
@@ -323,7 +324,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-dequantize",
@@ -338,7 +339,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-expand",
@@ -369,7 +370,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-fused",
@@ -384,7 +385,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-partial",
@@ -402,7 +403,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-quantize",
@@ -417,7 +418,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-reduction",
@@ -444,7 +445,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     },
     {
       "domain": "tile-unary",
@@ -471,7 +472,7 @@
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
       "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "pd04-rule-accepted-other-numeric-dimensions-open"
+      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
     }
   ],
   "operation_type_applicability": [
@@ -495,7 +496,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_ACC",
@@ -517,7 +518,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_BIAS",
@@ -539,7 +540,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_MX",
@@ -561,7 +562,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_MX_ACC",
@@ -583,7 +584,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TGEMV_MX_BIAS",
@@ -605,7 +606,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL",
@@ -627,7 +628,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_ACC",
@@ -649,7 +650,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_BIAS",
@@ -671,7 +672,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_MX",
@@ -693,7 +694,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_MX_ACC",
@@ -715,7 +716,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:CUBE:TMATMUL_MX_BIAS",
@@ -737,7 +738,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fadd_32_b78b658e6740",
@@ -759,7 +760,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fdiv_32_04a5bb6ab56f",
@@ -781,7 +782,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fmul_32_7d521d9d65e7",
@@ -803,7 +804,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fsub_32_a4479d0d4276",
@@ -825,7 +826,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fcvt_32_1102f5aeeda9",
@@ -847,7 +848,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fmadd_32_c616a17bcb12",
@@ -869,7 +870,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fmsub_32_b83012b83148",
@@ -891,7 +892,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fnmadd_32_7f45e606d299",
@@ -913,7 +914,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fnmsub_32_6542d56665b3",
@@ -935,7 +936,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fexp_32_592ef5288c7d",
@@ -957,7 +958,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:frecip_32_3d51f4f727ea",
@@ -979,7 +980,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "scalar:fsqrt_32_84b3495cc6c7",
@@ -1001,7 +1002,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TADD",
@@ -1023,7 +1024,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TADDS",
@@ -1045,7 +1046,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TAND",
@@ -1067,7 +1068,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TANDS",
@@ -1089,7 +1090,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TDIV",
@@ -1111,7 +1112,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TDIVS",
@@ -1133,7 +1134,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TMAX",
@@ -1155,7 +1156,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TMAXS",
@@ -1177,7 +1178,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TMIN",
@@ -1199,7 +1200,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TMINS",
@@ -1221,7 +1222,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TMUL",
@@ -1243,7 +1244,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TMULS",
@@ -1265,7 +1266,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TOR",
@@ -1287,7 +1288,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TORS",
@@ -1309,7 +1310,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TREM",
@@ -1331,7 +1332,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TREMS",
@@ -1353,7 +1354,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TSHL",
@@ -1375,7 +1376,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TSHLS",
@@ -1397,7 +1398,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TSHR",
@@ -1419,7 +1420,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TSHRS",
@@ -1441,7 +1442,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TSUB",
@@ -1463,7 +1464,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TSUBS",
@@ -1485,7 +1486,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TXOR",
@@ -1507,7 +1508,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TXORS",
@@ -1529,7 +1530,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCVT",
@@ -1551,7 +1552,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TDEQUANT",
@@ -1573,7 +1574,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPAND",
@@ -1595,7 +1596,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDADD",
@@ -1617,7 +1618,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDDIV",
@@ -1639,7 +1640,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDEXPDIF",
@@ -1661,7 +1662,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDMAX",
@@ -1683,7 +1684,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDMIN",
@@ -1705,7 +1706,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDMUL",
@@ -1727,7 +1728,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLEXPANDSUB",
@@ -1749,7 +1750,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPAND",
@@ -1771,7 +1772,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDADD",
@@ -1793,7 +1794,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDDIV",
@@ -1815,7 +1816,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDEXPDIF",
@@ -1837,7 +1838,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDMAX",
@@ -1859,7 +1860,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDMIN",
@@ -1881,7 +1882,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDMUL",
@@ -1903,7 +1904,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWEXPANDSUB",
@@ -1925,7 +1926,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TFMA",
@@ -1947,7 +1948,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TPARTADD",
@@ -1969,7 +1970,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TPARTMAX",
@@ -1991,7 +1992,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TPARTMIN",
@@ -2013,7 +2014,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TPARTMUL",
@@ -2035,7 +2036,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TQUANT",
@@ -2057,7 +2058,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLARGMAX",
@@ -2079,7 +2080,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLARGMIN",
@@ -2101,7 +2102,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLMAX",
@@ -2123,7 +2124,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLMIN",
@@ -2145,7 +2146,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLPROD",
@@ -2167,7 +2168,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TCOLSUM",
@@ -2189,7 +2190,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWARGMAX",
@@ -2211,7 +2212,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWARGMIN",
@@ -2233,7 +2234,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWMAX",
@@ -2255,7 +2256,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWMIN",
@@ -2277,7 +2278,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWPROD",
@@ -2299,7 +2300,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TROWSUM",
@@ -2321,7 +2322,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TABS",
@@ -2343,7 +2344,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TEXP",
@@ -2365,7 +2366,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TLOG",
@@ -2387,7 +2388,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TNEG",
@@ -2409,7 +2410,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TNOT",
@@ -2431,7 +2432,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TRECIP",
@@ -2453,7 +2454,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TRELU",
@@ -2475,7 +2476,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TRSQRT",
@@ -2497,7 +2498,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     },
     {
       "operation_key": "tile:TEPL:TSQRT",
@@ -2519,7 +2520,7 @@
       "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
       "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
       "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-pd04"
+      "support_status": "conditional-not-created-by-adr0049"
     }
   ],
   "independent_comparison": {
@@ -2544,11 +2545,11 @@
   "sources": [
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "170deadacb174c933c287231fb67da1046d7989f84b6852bf353d68a495d1755"
+      "sha256": "7d8f47ad85355b978f303cc3a384951268c03cc130fa6f62eb6d797d3a7cb5ec"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "d001984ca86695c8f08a10415419ee663e76ab3bc21743f9e70343e20d8efdf3"
+      "sha256": "ab00288a2c1b616b8226656e15b0664f111a12a10704c409ed237353b99f0719"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
@@ -2556,11 +2557,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "681d7a75e1aa58cfb9ba8ed06ce6e6b3a17786c87b11949098fe25470b7b8da1"
+      "sha256": "bb6f7d4165d17ef74386d6973dc077bd1004c8ba5e77bc70ac754942f9b0d169"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "429fdeb37c2bd4b3e9a0d2c209f959b92c476860e81a3331e5d7df90c95970d3"
+      "sha256": "47014fd70da0967716c8470c4cf9aefc01f7e42cac2b9cc065a82200b316e402"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -2569,6 +2570,14 @@
     {
       "path": "asl/arch/data-types/floating-point.asl",
       "sha256": "3eaa4e906174194125ff651c24703bd9a4704073baf2d37268634bd67d5a06a2"
+    },
+    {
+      "path": "asl/arch/data-types/format-descriptor.asl",
+      "sha256": "28d06bf9eea7977f94fdb7139fa279f7758594423364e00b81bd41a3e671b542"
+    },
+    {
+      "path": "asl/arch/data-types/fp19.asl",
+      "sha256": "3733d0d930df3f890b4aa5237dfface8f0cc2081f42244f45aae711435865fa6"
     },
     {
       "path": "asl/arch/data-types/integer.asl",
@@ -2587,6 +2596,10 @@
       "sha256": "b2d9d280d2b40e6cd0c5e17400e9c2b29aec86fbb651d20404cf7b3a7b6b2cb9"
     },
     {
+      "path": "asl/arch/data-types/numeric-formats.asl",
+      "sha256": "101bbe4d0efa238d214cdf20cb2f9b7a413f86aa12ff1ae1be9638c4ade90c8d"
+    },
+    {
       "path": "asl/arch/data-types/packed.asl",
       "sha256": "4ec9fb1eb2d1b14dcba562a5dc1462724c407fa67e5887ac99eb919887777d42"
     },
@@ -2600,11 +2613,11 @@
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
-      "sha256": "a75d0210fb96b92c7b282d341ec992935be922761c679504f7eb6a6e85c50d94"
+      "sha256": "5e501f8c7040c336e0102e24b702ba7769a4547e97213a8c42566fc677e60086"
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "2f29e933b2295bb8a8c5f16a9950c1b7668c3a593cd8bd55b099c90579b491db"
+      "sha256": "201d9e156faab22d03b1798df4fcc339fe1042ca6bee577e4b4b1490b68eb9fa"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
@@ -2612,11 +2625,11 @@
     },
     {
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl",
-      "sha256": "ec317991843f696e06d7c2456002feef823107ed466de354a8e04c4c4218360d"
+      "sha256": "38814e41be41d630c7839bdd6988e4df6e4ca8eb0667764d6a6e8b6eedd6ace5"
     },
     {
       "path": "docs/status/decisions/0049-hardware-subnormal-policy.md",
-      "sha256": "91f91dca15966df2f292bcdaf8793a24f91839be00be343111a22a71780ac12e"
+      "sha256": "ac969b6247bbaa16e480ae96c9f227f68ffa859d06121df838c8d3b6f141ca3a"
     }
   ],
   "summary": {
@@ -2631,7 +2644,7 @@
     "affected_hook_count": 23,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
-    "pd04_complete": true,
+    "adr0049_complete": true,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   }

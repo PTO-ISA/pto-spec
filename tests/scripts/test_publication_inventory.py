@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 
@@ -20,6 +22,10 @@ HISTORICAL_INVENTORY_ADRS = (
     ROOT / "docs/status/decisions/0060-l-bstop-common-long-form.md",
     ROOT / "docs/status/decisions/0064-b-fpatr-complete-bundle-postprocess.md",
 )
+AUDIT_FREEZE_SCALAR_FORMS = 466
+AUDIT_FREEZE_BLOCK_FORMS = 74
+AUDIT_FREEZE_ENCODED_FORMS = 540
+AUDIT_FREEZE_RESERVATIONS = 40
 
 
 class PublicationInventoryTest(unittest.TestCase):
@@ -27,7 +33,7 @@ class PublicationInventoryTest(unittest.TestCase):
     def normalized(text: str) -> str:
         return " ".join(text.split())
 
-    def test_readme_inventory_matches_release_evidence(self) -> None:
+    def test_readme_routes_detailed_inventory_to_generated_evidence(self) -> None:
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         traceability = json.loads(TRACEABILITY.read_text(encoding="utf-8"))
         reservations = json.loads(RESERVATIONS.read_text(encoding="utf-8"))
@@ -35,39 +41,71 @@ class PublicationInventoryTest(unittest.TestCase):
         counts = manifest["catalog_counts"]
         summary = traceability["summary"]
 
-        self.assertIn(
+        self.assertNotIn(
             f"{counts['scalar_forms']} scalar forms, "
             f"{counts['command_forms']} active block forms, "
             f"{counts['tile_operations_total']} direct Tile operations, and "
             f"{len(reservations['reservations'])} occupied extension reservations",
             readme,
         )
-        self.assertIn(
+        self.assertNotIn(
             f"{summary['unit_count']} ASL units, "
             f"{summary['documentation_page_count']} generated pages, "
             f"{summary['test_count']} independently runnable AVS points, and "
             f"{summary['executable_requirement_count']} executable mnemonic requirements",
             readme,
         )
+        self.assertIn(
+            "[release-traceability view]"
+            "(spec/evidence/release-traceability-readiness.json)",
+            readme,
+        )
+        self.assertIn("[release hub](docs/releases/index.md)", readme)
 
-    def test_audit_adr_owns_current_active_reserved_inventory(self) -> None:
-        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-        reservations = json.loads(RESERVATIONS.read_text(encoding="utf-8"))
+    def test_audit_adr_preserves_historical_active_reserved_inventory(self) -> None:
         text = self.normalized(AUDIT_ADR.read_text(encoding="utf-8"))
-        counts = manifest["catalog_counts"]
-        encoded_forms = counts["scalar_forms"] + counts["command_forms"]
 
-        self.assertIn("## Current active and reserved encoding inventory", text)
+        self.assertIn("## Historical audit provenance", text)
         self.assertIn(
-            f"{counts['scalar_forms']} Scalar forms and "
-            f"{counts['command_forms']} active Block forms, for "
-            f"{encoded_forms} active encoded forms",
+            f"{AUDIT_FREEZE_SCALAR_FORMS} Scalar forms and "
+            f"{AUDIT_FREEZE_BLOCK_FORMS} active Block forms, for "
+            f"{AUDIT_FREEZE_ENCODED_FORMS} active encoded forms",
             text,
         )
         self.assertIn(
-            f"{len(reservations['reservations'])} occupied extension-reservation entries",
+            f"{AUDIT_FREEZE_RESERVATIONS} occupied extension reservations",
             text,
         )
+        self.assertIn(
+            "These totals are historical evidence, not the current release inventory; "
+            "generated catalogs and release evidence remain authoritative.",
+            text,
+        )
+
+    def test_historical_audit_freeze_ignores_future_inventory_fixtures(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest = root / "release-manifest.json"
+            manifest.write_text(
+                json.dumps(
+                    {
+                        "catalog_counts": {
+                            "scalar_forms": 999,
+                            "command_forms": 1,
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            reservations = root / "extension-encoding-reservations.json"
+            reservations.write_text(
+                json.dumps({"reservations": [{}, {}]}), encoding="utf-8"
+            )
+            with (
+                patch(f"{__name__}.MANIFEST", manifest),
+                patch(f"{__name__}.RESERVATIONS", reservations),
+            ):
+                self.test_audit_adr_preserves_historical_active_reserved_inventory()
 
     def test_architecture_scope_matches_current_catalogs(self) -> None:
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
@@ -83,10 +121,11 @@ class PublicationInventoryTest(unittest.TestCase):
             text,
         )
 
-    def test_earlier_inventory_snapshots_defer_to_the_current_audit_adr(self) -> None:
+    def test_earlier_inventory_snapshots_defer_to_generated_inventory(self) -> None:
         marker = (
-            "Current release inventory is governed by ADR 0062; numeric inventories "
-            "below are acceptance-time history, not the current active decoder set."
+            "Current release inventory is governed by ASL and generated projections; "
+            "numeric inventories below are acceptance-time history, not the current "
+            "active decoder set."
         )
         for path in HISTORICAL_INVENTORY_ADRS:
             with self.subTest(path=path.name):

@@ -1,12 +1,44 @@
+---
+{
+  "id": "ADR-0044",
+  "title": "Public integer conversion result subset",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-TCVT-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-TILE-TCVT"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0044: Public integer conversion result subset
 
 > Historical-evidence note: verification paths named below record the evidence used when this ADR was accepted; deleted aggregate checks are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-## Status
+## Decision scope
 
-Accepted executable subset; same-width signedness changes, profile support,
-floating conversion, rounding, saturation, flags, and exceptional results
-remain open.
+Same-width signedness changes, profile support, floating conversion, rounding,
+saturation, flags, and exceptional results remain open.
 
 ## Context
 
@@ -47,7 +79,7 @@ decoded `TCVT` therefore agree for signed widening, unsigned widening, and
 narrowing corners without changing any floating path.
 
 `S5-T2-A6` closes this 48-tuple portable result subset. It does not accept the
-parent `PD-07` decision, complete the `tile-convert` domain, select any of the
+parent `ADR 0090` decision, complete the `tile-convert` domain, select any of the
 99 broad variation-point routes, or change the M4 maturity floor.
 
 ## Evidence

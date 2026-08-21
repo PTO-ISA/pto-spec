@@ -12,27 +12,6 @@ REPOSITORY_CHECK = ROOT / "scripts/check-repository"
 
 
 class PullRequestCheckTest(unittest.TestCase):
-    def test_repository_checker_accepts_non_executable_python_modules(self) -> None:
-        result = subprocess.run(
-            [str(REPOSITORY_CHECK), "--structure-only"],
-            cwd=ROOT,
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-
-        self.assertEqual(result.returncode, 0, result.stderr)
-
-    def test_publication_hygiene_accepts_the_approved_ndf_reference(self) -> None:
-        result = subprocess.run(
-            ["python3", "scripts/check-publication-hygiene"],
-            cwd=ROOT,
-            text=True,
-            capture_output=True,
-        )
-
-        self.assertEqual(result.returncode, 0, result.stderr)
-
     def test_command_contract_is_lightweight(self) -> None:
         result = subprocess.run(
             [str(SCRIPT), "--list"],
@@ -48,10 +27,12 @@ class PullRequestCheckTest(unittest.TestCase):
             [
                 "./scripts/check-asl-layout",
                 "./scripts/check-ndf",
+                "./scripts/check-adrs",
                 "./scripts/check-asl-tests",
                 "./scripts/check-release-event-schema",
                 "./scripts/check-release-workflow",
-                "python3 -m unittest discover -s tests/scripts -p test_*.py",
+                "./scripts/check-repository --structure-only",
+                "python3 -m unittest discover -s tests/scripts -p 'test_*.py'",
                 "python3 scripts/project_asl_catalogs.py --root . --check",
                 "python3 scripts/instruction_docs.py --check",
                 "python3 scripts/generate-mnemonic-avs.py --check",
@@ -70,14 +51,17 @@ class PullRequestCheckTest(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, lowered)
 
-    def test_pull_request_workflow_has_one_lightweight_job(self) -> None:
+    def test_pull_request_workflow_has_parallel_workers_and_stable_aggregator(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
 
         self.assertIn("name: PR", workflow)
+        self.assertIn("name: PR / source-contract", workflow)
+        self.assertIn("name: PR / tooling-tests", workflow)
         self.assertIn("name: PR / validate", workflow)
         for gate in (
             "./scripts/check-asl-layout",
             "./scripts/check-ndf",
+            "./scripts/check-adrs",
             "./scripts/check-asl-tests",
             "./scripts/check-release-event-schema",
             "python3 scripts/project_asl_catalogs.py --root . --check",
@@ -85,7 +69,11 @@ class PullRequestCheckTest(unittest.TestCase):
             "python3 scripts/check-publication-hygiene",
         ):
             self.assertIn(gate, workflow)
-        self.assertEqual(workflow.count("runs-on:"), 1)
+        self.assertEqual(workflow.count("runs-on:"), 3)
+        self.assertIn("needs: [source-contract, tooling-tests]", workflow)
+        self.assertIn("if: always()", workflow)
+        self.assertIn('test "$SOURCE_CONTRACT_RESULT" = success', workflow)
+        self.assertIn('test "$TOOLING_TESTS_RESULT" = success', workflow)
         for forbidden in (
             "setup-ocaml",
             "opam",
@@ -94,6 +82,40 @@ class PullRequestCheckTest(unittest.TestCase):
             "test-" + "shard-",
         ):
             self.assertNotIn(forbidden, workflow)
+
+    def test_pull_request_workflow_executes_each_production_checker_once(self) -> None:
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+
+        result = subprocess.run(
+            [str(SCRIPT), "--list"],
+            cwd=ROOT,
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+        for command in result.stdout.splitlines():
+            self.assertEqual(workflow.count(command), 1, command)
+
+    def test_pull_request_workflow_caches_only_the_ndf_tool_build(self) -> None:
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+
+        self.assertIn("path: tools/ndf/target", workflow)
+        for term in (
+            "runner.os",
+            "runner.arch",
+            "steps.ndf-revision.outputs.sha",
+            "hashFiles('tools/ndf/Cargo.lock')",
+        ):
+            self.assertIn(term, workflow)
+        for forbidden_path in (
+            "build/decoders.asl",
+            "build/validation-index.json",
+            "build/mnemonic-avs",
+            "build/asl-test-results",
+            "spec/catalog",
+            "docs/",
+        ):
+            self.assertNotIn(f"path: {forbidden_path}", workflow)
 
     def test_repository_source_membership_avoids_pipefail_broken_pipe(self) -> None:
         checker = REPOSITORY_CHECK.read_text(encoding="utf-8")

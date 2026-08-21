@@ -1,15 +1,56 @@
+---
+{
+  "id": "ADR-0042",
+  "title": "Numeric variation-point ownership",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
+    "PTO-MATRIX-QUANT-BITEXACT-001",
+    "PTO-TCVT-E8M0-PROFILE-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-PROFILE-APPLICABILITY",
+    "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+    "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
+    "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+    "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+    "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0042: Numeric variation-point ownership
+
+> Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
 
 > Historical-evidence note: verification paths named below record the evidence used when this ADR was accepted; deleted aggregate checks are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
 
-## Status
+## Decision scope
 
-Accepted structural checkpoint; numeric result rules and allowed-result sets
-remain open.
+Numeric result rules and allowed-result sets remain open.
 
 ## Context
 
-`PD-12` requires every target-dependent or implementation-defined numeric
+`ADR 0095` requires every target-dependent or implementation-defined numeric
 result to have a discoverable selector and a finite or mathematically testable
 allowed-result contract. The closed numeric inventory already assigns 108
 operations to 20 domains and 30 hooks, but it did not enumerate the individual
@@ -26,7 +67,7 @@ implication.
 
 The generated
 `spec/evidence/numeric-variation-point-ownership.json` ledger is the
-fail-closed discovery and ownership checkpoint for `PD-12`.
+fail-closed discovery and ownership checkpoint for `ADR 0095`.
 
 1. A variation point is one exact `(numeric domain, open dimension)` pair from
    `spec/evidence/numeric-contracts.json`. The current inventory contains 99
@@ -51,11 +92,11 @@ fail-closed discovery and ownership checkpoint for `PD-12`.
 
 `S5-T2-A4` closes variation-point discovery and current-owner assignment. It
 does not accept a numeric result, delegate a variation point, populate an
-allowed-result set, or close `PD-12`. The generated ledger therefore records
+allowed-result set, or close `ADR 0095`. The generated ledger therefore records
 99 portable-owner rows, zero accepted delegations, zero bounded result
 contracts, and zero accepted domain result rules.
 
-`PD-12` closes only after every non-portable row names its accepted profile or
+`ADR 0095` closes only after every non-portable row names its accepted profile or
 visible selector, bounds its results, and has unknown-selection and
 missing-rule rejection evidence. The other 11 numeric decisions, all 20 domain
 rules, oracle qualification, vectors, differential execution, adjudication,
@@ -65,7 +106,7 @@ The current ASL model has no generic named-target-profile selection boundary.
 This checkpoint therefore proves evidence ownership only; it does not claim
 executable rejection of an unknown profile. When that selection surface is
 introduced, its unknown-profile and missing-rule paths require explicit
-pre-effect tests before `PD-12` can close.
+pre-effect tests before `ADR 0095` can close.
 
 ## Evidence
 

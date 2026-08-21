@@ -5,8 +5,8 @@
 // TNEG MUST select VEC Mode 0 Function 17 and MUST negate integers modulo
 // their element width or toggle only the floating sign bit. Supported types,
 // closed unary schema, PadValue, complete preflight, source snapshot, and
-// atomic destination publication MUST follow PRD-072. Rejection MUST precede
-// all architectural effects.
+// atomic destination publication MUST follow ADR-0080 and NDF clause
+// PTO-TNEG-CONTRACT-001. Rejection MUST precede all architectural effects.
 // NDF-END: PTO-TNEG-CONTRACT-001
 // DOC-BEGIN: decode
 readonly func InstructionContractOperation_TNEG() => TileOperation

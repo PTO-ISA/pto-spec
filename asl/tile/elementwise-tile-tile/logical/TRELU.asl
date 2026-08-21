@@ -6,7 +6,8 @@
 // rectifier over one ordered Local source. Integer signedness, floating NaN
 // and invalid status, supported types, closed unary schema, PadValue,
 // complete preflight, source snapshot, and atomic publication MUST follow
-// PRD-078. Rejection MUST precede all architectural effects.
+// ADR-0080 and NDF clause PTO-TRELU-CONTRACT-001. Rejection MUST precede all
+// architectural effects.
 // NDF-END: PTO-TRELU-CONTRACT-001
 // DOC-BEGIN: decode
 readonly func InstructionContractOperation_TRELU() => TileOperation

@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+"""Validate PTO architecture decision records and their relationships."""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+import subprocess
+import sys
+
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.adr_records import AdrRecord, load_adrs, validate_adr_graph
+from scripts.asl_units import load_units
+from scripts.ndf import parse_ndf_regions
+
+
+def _is_git_repository_root(root: Path) -> bool:
+    result = subprocess.run(
+        ["git", "-C", str(root), "rev-parse", "--show-toplevel"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return (
+        result.returncode == 0
+        and Path(result.stdout.strip()).resolve() == root.resolve()
+    )
+
+
+def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
+    asl_root = root / "asl"
+    units = load_units(asl_root)
+    unit_ids = {unit.unit_id for unit in units}
+    unit_by_source = {unit.source_path: unit.unit_id for unit in units}
+    ndf_owners: dict[str, str] = {}
+    for path in sorted(asl_root.rglob("*.asl")) if asl_root.is_dir() else []:
+        source = path.relative_to(root)
+        owner = unit_by_source[source]
+        for clause in parse_ndf_regions(path.read_text(encoding="utf-8"), source):
+            ndf_owners[clause.clause_id] = owner
+
+    errors: list[str] = []
+    for record in records:
+        for ndf_id in record.affected_ndf:
+            owner = ndf_owners.get(ndf_id)
+            if owner is None:
+                errors.append(
+                    f"{record.adr_id} affected_ndf references unknown current NDF {ndf_id}"
+                )
+            elif owner not in record.affected_units:
+                errors.append(
+                    f"{record.adr_id} affected_ndf {ndf_id} is owned by {owner}, "
+                    "which is absent from affected_units"
+                )
+        for unit_id in record.affected_units:
+            if unit_id not in unit_ids:
+                errors.append(
+                    f"{record.adr_id} affected_units references unknown current ASL unit {unit_id}"
+                )
+    return errors
+
+
+def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
+    errors: list[str] = []
+    for record in records:
+        try:
+            relative = record.path.resolve().relative_to(root.resolve())
+        except ValueError:
+            errors.append(f"{record.adr_id} path is outside repository root {root}")
+            continue
+        result = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(root),
+                "log",
+                "--follow",
+                "--format=%P",
+                "--",
+                relative.as_posix(),
+            ],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        parents = result.stdout.splitlines()
+        if result.returncode != 0 or not parents or not parents[-1].split():
+            diagnostic = result.stderr.strip() or "no first landing commit with a parent"
+            errors.append(f"{record.adr_id} baseline provenance unavailable: {diagnostic}")
+            continue
+        expected = parents[-1].split()[0]
+        if record.baseline != expected:
+            errors.append(
+                f"{record.adr_id} baseline {record.baseline} "
+                f"does not match first-landing parent {expected}"
+            )
+    return errors
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=ROOT)
+    arguments = parser.parse_args()
+    decisions = arguments.root.resolve() / "docs/status/decisions"
+    try:
+        records = load_adrs(decisions)
+    except (OSError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    errors = validate_adr_graph(records)
+    try:
+        if _is_git_repository_root(arguments.root.resolve()):
+            errors.extend(_validate_impacts(records, arguments.root.resolve()))
+            errors.extend(_validate_baselines(records, arguments.root.resolve()))
+    except (OSError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    if errors:
+        print("\n".join(f"error: {error}" for error in errors), file=sys.stderr)
+        return 1
+    print(f"ADR checks passed: {len(records)} records")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

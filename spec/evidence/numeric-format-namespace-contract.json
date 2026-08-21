@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
-  "target": "S5-T2-A2:PD-02",
-  "decision_id": "PD-02",
-  "checkpoint_id": "PD-02-SC1",
+  "target": "S5-T2-A2:ADR-0087",
+  "decision_id": "ADR-0087",
+  "checkpoint_id": "ADR-0087-SC1",
   "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
   "acceptance_record": "docs/status/decisions/0040-numeric-format-namespace-ownership.md",
   "classification_acceptance_record": "docs/status/decisions/0048-numeric-format-value-classification.md",
-  "classification_checkpoint_id": "PD-02-SC2:PD-05-SC1",
+  "classification_checkpoint_id": "ADR-0087-SC2:ADR-0088-SC1",
   "policy": {
     "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TLSU/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
     "reserved_codes": "Every unmapped code rejects before architectural effects; helper fallback values are unreachable after legality succeeds and are not architectural aliases.",
     "raw_carrier_boundary": "Widths and signedness describe Stage 4 raw carriers only. Floating bit layouts and target numeric results remain S5-T2 rules.",
     "four_bit_packing": "E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 use low-index/low-nibble and odd-index/high-nibble packing with sibling preservation on stores.",
-    "pd02_boundary": "The 0.58.0 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
+    "adr0087_boundary": "The 0.58.0 type identities and format contract are fixed, while operation/type legality, target execution results, and implementation conformance remain open under S5-T2.",
     "value_class_boundary": "TileNumericValueClass defines only bit-exact encoding classes and canonical NaN values. It does not select arithmetic results, exception flags, operation/type support, or target conformance."
   },
   "tile_data_types": [
@@ -1851,12 +1851,6 @@
     "status": "closed"
   },
   "public_evidence": {
-    "source_ids": [
-      "public-type-system",
-      "cpu-conversion",
-      "a2a3-conversion",
-      "a5-conversion"
-    ],
     "pinned_repository": "https://github.com/hw-native-sys/pto-isa",
     "pinned_commit": "712cbe9f23df5d5362be5e8327599f4285317473",
     "status": "names-and-target-availability-observed-format-bindings-open"
@@ -1881,35 +1875,35 @@
   },
   "open_residuals": [
     {
-      "id": "PD-02-R1",
+      "id": "ADR-0087-R1",
       "rule": "close every operation/type/profile legality tuple against the 0.58.0 type namespace"
     },
     {
-      "id": "PD-02-R2",
+      "id": "ADR-0087-R2",
       "rule": "publish independently checked result vectors for every supported floating type"
     },
     {
-      "id": "PD-02-R3",
+      "id": "ADR-0087-R3",
       "rule": "apply the accepted value classes and canonical NaNs to every supported operation and prove each exceptional result rule"
     },
     {
-      "id": "PD-02-R4",
+      "id": "ADR-0087-R4",
       "rule": "prove packed-lane ordering and sibling preservation for every packed four-bit operation"
     },
     {
-      "id": "PD-02-R5",
+      "id": "ADR-0087-R5",
       "rule": "prove E8M0 scale-carrier legality and MX scale application"
     },
     {
-      "id": "PD-02-R6",
+      "id": "ADR-0087-R6",
       "rule": "prove target availability and rejection before effects for unsupported tuples"
     },
     {
-      "id": "PD-02-R7",
+      "id": "ADR-0087-R7",
       "rule": "obtain accepted architecture and formal-model review of the numeric result contract"
     },
     {
-      "id": "PD-02-R8",
+      "id": "ADR-0087-R8",
       "rule": "record downstream byte-and-effect parity for the immutable profile contract"
     }
   ],
@@ -1919,12 +1913,13 @@
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl:TestScalarFloating",
     "tests/asl/block/model/state/descriptor-state/block-exec-operation-fields-001.asl:TestBundleOperationDescriptorFields",
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl:TestTlsuAllFourBitTypes",
-    "scripts/generate-asl-decoders:ValidateCanonicalScalarFSUTotality"
+    "scripts/generate-asl-decoders:emit_scalar_fsu_type_validation",
+    "scripts/generate-asl-decoders:emit_scalar_fsu_bounds_validation"
   ],
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "d001984ca86695c8f08a10415419ee663e76ab3bc21743f9e70343e20d8efdf3"
+      "sha256": "ab00288a2c1b616b8226656e15b0664f111a12a10704c409ed237353b99f0719"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -1936,15 +1931,15 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "8fab6140efb0831df728941e71cf0e93ca0f7506f8c28c952d4fa3530d089648"
+      "sha256": "47014fd70da0967716c8470c4cf9aefc01f7e42cac2b9cc065a82200b316e402"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "c4076cf8ac6ebd0c6db8a070b7c290b9928ed7f98c089538ee53ed4644e1531a"
+      "sha256": "7d8f47ad85355b978f303cc3a384951268c03cc130fa6f62eb6d797d3a7cb5ec"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "84985a963489b69436709377d0f09ff4ec8ac7df1f3ca8fb2476f28a84fbb867"
+      "sha256": "2112562e675c68bb4589f7a31104e2abaf5e57a4753d7b8c2098929689e4494f"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -1953,6 +1948,14 @@
     {
       "path": "asl/arch/data-types/floating-point.asl",
       "sha256": "3eaa4e906174194125ff651c24703bd9a4704073baf2d37268634bd67d5a06a2"
+    },
+    {
+      "path": "asl/arch/data-types/format-descriptor.asl",
+      "sha256": "28d06bf9eea7977f94fdb7139fa279f7758594423364e00b81bd41a3e671b542"
+    },
+    {
+      "path": "asl/arch/data-types/fp19.asl",
+      "sha256": "3733d0d930df3f890b4aa5237dfface8f0cc2081f42244f45aae711435865fa6"
     },
     {
       "path": "asl/arch/data-types/integer.asl",
@@ -1971,6 +1974,10 @@
       "sha256": "b2d9d280d2b40e6cd0c5e17400e9c2b29aec86fbb651d20404cf7b3a7b6b2cb9"
     },
     {
+      "path": "asl/arch/data-types/numeric-formats.asl",
+      "sha256": "101bbe4d0efa238d214cdf20cb2f9b7a413f86aa12ff1ae1be9638c4ade90c8d"
+    },
+    {
       "path": "asl/arch/data-types/packed.asl",
       "sha256": "4ec9fb1eb2d1b14dcba562a5dc1462724c407fa67e5887ac99eb919887777d42"
     },
@@ -1984,15 +1991,15 @@
     },
     {
       "path": "asl/arch/data-types/tile-data-types.asl",
-      "sha256": "37eadc437805de4a819f128d640186825f2f2a3d5b7cad9ab997a2e4440ba84e"
+      "sha256": "5e501f8c7040c336e0102e24b702ba7769a4547e97213a8c42566fc677e60086"
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "020cf9fdc98d0868f60d92a6ce00d6ab71d6186792be43fdc40adb6309dbcf5b"
+      "sha256": "201d9e156faab22d03b1798df4fcc339fe1042ca6bee577e4b4b1490b68eb9fa"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "7b35e8353c621a7448facada22a4175acc30e14377fdc2a7cb9c130ab1323d56"
+      "sha256": "55eb6eaf63ddfdcd918603a21673b53c198f448c6e8800e3389b28f43410fad8"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
@@ -2000,15 +2007,19 @@
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
-      "sha256": "201b595409610c79731244da60c8e1809cb0f3fdd2305d75d3fd156c6c220fbb"
+      "sha256": "c429ac19ea648dd0b0180a736af1fcd3990cb949b2397ca2e33003b3da593295"
     },
     {
       "path": "asl/tile/model/state/allocation.asl",
-      "sha256": "5b758cb40554cbbfaa8f4f6bfb8dee776a4c43d50d59b0d985992e8cff6468d1"
+      "sha256": "cd1dbc6453bb220562218fc2f29071985c8e2b5ab29d6ab51a203f0d950877d3"
     },
     {
       "path": "asl/tile/model/state/descriptors.asl",
       "sha256": "9ca25ce75a751e8383666bd4356da82534c93f045cf31fb27ca813586e66f4c5"
+    },
+    {
+      "path": "asl/tile/model/state/feature-map-descriptors.asl",
+      "sha256": "a46fe06bf576cb14534659b67f1fbc75ca5de168b54dd0ff0d5513665047aa1b"
     },
     {
       "path": "asl/tile/model/state/local-registers.asl",
@@ -2016,11 +2027,11 @@
     },
     {
       "path": "asl/tile/model/state/shared-registers.asl",
-      "sha256": "a147185a85e757aa8b84a322db0c197666a8af01998a1fa3385c2699fcb167de"
+      "sha256": "26a4812effcefe98cf24d46772e5124834eb60bf3f62a42299ab5c6482c2cb8a"
     },
     {
       "path": "asl/tile/model/state/types.asl",
-      "sha256": "10409176881b96023854f52db576db1278120f0f8b938dec7927522f9361e4a6"
+      "sha256": "56c82ca1af4faab45b34204e031cace44966a435ee836ebadcf571e22d8073aa"
     },
     {
       "path": "asl/tile/model/memory/addressing.asl",
@@ -2028,15 +2039,15 @@
     },
     {
       "path": "asl/tile/model/memory/atomics.asl",
-      "sha256": "4a9cd06ebeb371c1ae79a8897d44ef8206e7d6754901e788ad5cc4aa2c6b1445"
+      "sha256": "3fe85107f4745fdfbd1513f2485e316778e6ac053f01867f8ee9f6654c4fdeab"
     },
     {
       "path": "asl/tile/model/memory/gather-scatter.asl",
-      "sha256": "333b8afe285b70e2beb132483313e2bd1c9774d7d5144767eb1876f406cb887a"
+      "sha256": "380643b5cf30271df799fe19de34681f77735147d6a6e6ed31e8dad1f1de62e0"
     },
     {
       "path": "asl/tile/model/memory/load-store.asl",
-      "sha256": "dfa0625cb6377a513d3d06ccb045075da137320a5c5a480cce729c26c4ccb8f9"
+      "sha256": "8c8f4ed7e6a848e3e8598933d0e5b5a56927814fb67f43b230036e58e0ad1bd7"
     },
     {
       "path": "asl/tile/model/memory/restart.asl",
@@ -2044,23 +2055,31 @@
     },
     {
       "path": "asl/tile/model/memory/shared-movement.asl",
-      "sha256": "f5bdf3506983c3a7b95f721c16e1b72c97dda87c25167318637b0a63060f53fc"
+      "sha256": "102d2417942518c336bdef1499a0fea3246eb57adf9569c8b565b1c8e7a5c80d"
     },
     {
       "path": "asl/tile/model/memory/stride.asl",
-      "sha256": "84fa5d1f63c26132f1f0c07d6ffad391498765771619dcbc005217ee127e84c7"
+      "sha256": "92960da5561ea8d7b3869d028893279dbde4541b554097cef7eea067224eba46"
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "1752c213edccb63398545c18d48a8ec42454043507d6345b423cf1aa7f89e68a"
+      "sha256": "2b910205a3f06897efc9976b9c2c6959ddb009cdca8d340a71ebf6f74208540b"
+    },
+    {
+      "path": "asl/block/model/dispatch/comparison-schema.asl",
+      "sha256": "b6a54119a0c145199239f959c8635e69ad05d6b802dae3f5aa14b61335b96f5e"
+    },
+    {
+      "path": "asl/block/model/dispatch/cube-destination.asl",
+      "sha256": "0900fe5ae96e561e63b92ef36bafe76e37e2da2a117f4cffbfc0d6aea8190cce"
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "93f6cf85cb27a676a442a46cd6f7f72ea7e3eeedc293cbb66dfb0ae28840233f"
+      "sha256": "047c7e0c445592d9a4504ebfbd78bdd2cd42d10f1cb991ee4823dfcef2503545"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
-      "sha256": "ccde34f4b4d73bd7cc6aa09de33425523dbce0b5af861b75a6532cf3026ac43a"
+      "sha256": "dd1dff7f347f2ec090bf34984a2541be7568bb1f24ae5e4716c8b715ca8852a9"
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
@@ -2068,83 +2087,123 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "02f2e10d51ab5730a2f8d65e8b8fbfa524c57b99a347ba28b9500c40c6282fb5"
+      "sha256": "269dc750635e610b76fc266611a02810f3a0052f6744d56b65e3a0c8c13da1ff"
+    },
+    {
+      "path": "asl/block/model/dispatch/expansion-schema.asl",
+      "sha256": "5cc5f4dd6683bc84d262b63081b800191f4275709e5f027807a658b5ce69e4f1"
+    },
+    {
+      "path": "asl/block/model/dispatch/generation-schema.asl",
+      "sha256": "a1a4e348a9641229b73df1129fac3624d3fd96905eae4a835cdac4ee49f70e67"
+    },
+    {
+      "path": "asl/block/model/dispatch/histogram-schema.asl",
+      "sha256": "5954e97443dbfee83399475432bb504d7e6f2affb54c1c8b4f0643c719127ee6"
     },
     {
       "path": "asl/block/model/dispatch/numeric-control.asl",
       "sha256": "8372aa20c99f953c426e489be3555430cc0fe240d4808fda34180a9a11f5a8f7"
     },
     {
-      "path": "asl/block/model/dispatch/scalar-schema.asl",
-      "sha256": "3647656bebc81da8dd0389b8c925829c9be9b049717dadbde187955ef017ba5a"
+      "path": "asl/block/model/dispatch/partial-schema.asl",
+      "sha256": "e3ad91c81d1ea280a31a110ca57b99a79923343eea8ab2efb9fa45316697d812"
     },
     {
-      "path": "asl/block/model/dispatch/shared-cube.asl",
-      "sha256": "138f9432e0fba1c4626dc51c3db41977f749fc8ff461178077216166ea392c42"
+      "path": "asl/block/model/dispatch/quantization-schema.asl",
+      "sha256": "77f3f85823e2b88b03fe339c9c9d0991b017cf92792769cb7d6b685e4daeedd6"
+    },
+    {
+      "path": "asl/block/model/dispatch/reduction-schema.asl",
+      "sha256": "686548d1463a8806841a2d576efe9d318432e34695e4af50ba8744752d20f0dd"
+    },
+    {
+      "path": "asl/block/model/dispatch/scalar-schema.asl",
+      "sha256": "0ceb74d729f28cef0b59abe67c03827372b17de1a70cb9aa4fa3c5e2930184b9"
+    },
+    {
+      "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
+      "sha256": "f7c1d5c1071c3275321e487f290ec70eb2cc91f70a0f1aed3b2d14cc16f99abb"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "eb0183c2b8f42a20d0b70523d7b0bc55db37286fe510506699056b3b328fb5a6"
+      "sha256": "45381bb17fdd3f4e01be9abfe4188a510e7ba3bc8af003b0dbd3423a6afe1562"
+    },
+    {
+      "path": "asl/block/model/dispatch/sorting-schema.asl",
+      "sha256": "9070d006d8797e399fce16d08146081d55986efd502197090d6ca5cd75624ca1"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
-      "sha256": "e4662b023190abfba80428d2a0ea7b4a2589dc4f1435c3c8e05ba41770c19334"
+      "sha256": "a9cee42a5f6bca111478546b4f3d7b9e8ca2f1abf7729a6902d51431e628c206"
+    },
+    {
+      "path": "asl/block/model/dispatch/tcvt-schema.asl",
+      "sha256": "9711d377ffa6aabf9b64eaa1b958bc3d894eb13fe7a89f3374f2c5c2fe3d0269"
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "6f2301bc5bfff97452a93066bd701d4076798f960cb077a6736adff12144f3f4"
+      "sha256": "81b3b5e3a2cc12030b23702941aaaf933ed020969c21286e8f511a9ad322fde0"
+    },
+    {
+      "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
+      "sha256": "9b358fb3b7754dd2e00e21f8ab25d5e2796c78bf2b630073910c99692d71d7b1"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "a01e328520487c3bb62fbf72a1ea2d4aa4fd8482f408000ba57edb8d61a08ada"
+      "sha256": "83523c52898d93edfebfdcf5275719a922c7b342023b599f3d1377c8ffc1506e"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
-      "sha256": "7133d722585828949c5116e01b927738386bfd78ca3789e0bf2ad4f5c7bf4fc3"
+      "sha256": "500ea0d7053ca2126ac344052ec98b6a97f2cf78660a13bac6da0a7830be6159"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
+      "sha256": "b9216b6761aac69c31235cd8fe0849c381bf89552999b227e7e73b17a1bbf763"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-      "sha256": "20adc13fddbd8623c3529d8985bf82f6820b4eef11fd29aca1e01ee34d976382"
+      "sha256": "17d4b63d3f34e5233a7df6a8f756bd2fc5365d155488eceb99dd13d5368d50a9"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
-      "sha256": "77cc72ed251b0bef87a31d4b0a60c3cb3c9d44dd20e6ba756f0bca808036be1d"
+      "sha256": "fc450443978e981b8863221d0868702b2aae1b111875f30c4624c0362959f19a"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather.asl",
-      "sha256": "7d82e9d2572b1181ed0ac934e77db3c47f4223efc412a84c71ce69489a389fb0"
+      "sha256": "a8f6cad2b3463137d6cb98bb1c01d099d49cf127fbbb23d402b246737bdb46c5"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter-mask.asl",
-      "sha256": "a7f7ebc586067692422412fcb09853581f3eb46016ae66c379daa9716ad5c892"
+      "sha256": "1dbf259ed8c369cd7a549563e9542a87123aa49d09b109e26ea00f66bab48bf5"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mscatter.asl",
-      "sha256": "cb084506f695cde5dabcb4898eaa07bb7b740fca0be6597bfaf5ea9dff6e16b7"
+      "sha256": "65a7f31b640366ca43f586b4ba6918a5f95c13bd3a9c1fce32c53f1974b15f47"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-prefetch.asl",
-      "sha256": "66632bb3fb087c73c90fd6db4f944cc83383aa7462fc7f2ce756b034dd0ead68"
+      "sha256": "b107fe0e545c9d64e35e2689d91fd724a08d3a23981c06a0717d2a137630b6f9"
     },
     {
       "path": "asl/block/model/dispatch/top-level.asl",
-      "sha256": "1f154fe66c4d09c8981a7166c18b8f2cd1313c258e9630c418d0d9e0922f0043"
+      "sha256": "9df548e07c24e683ff375e0cb33a0786432f19455633d4c167d32f2b25161f99"
     },
     {
       "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
-      "sha256": "32d05fb963c061210b852b39ede4f697ced8beae29e9645cfd4da8bc64276da2"
+      "sha256": "1be39ca1ffda14b703ca03df9654f323d03b9cac620ba37d5cbe6ce8f3f9c486"
     },
     {
       "path": "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
-      "sha256": "0cfe31d7d158463b2351634e224020d1fe1f3b5b2a378be0de909340a09e3514"
+      "sha256": "6fd4f3016f503498cf6a1068907f48998e39f3c29b034d7ddfc486cd6494104b"
     },
     {
       "path": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
-      "sha256": "b3bc529241803a91bec919243e98f122a57da14153afd9c5f8ce5f45d5474025"
+      "sha256": "b09efd36ccfc7258d1743c974f42b875ead42137c503f576a12f471f65b52e30"
     },
     {
       "path": "docs/status/decisions/0048-numeric-format-value-classification.md",
-      "sha256": "c90c0327f6c155850377c1917f2d3de193f6e2c58035fac91c904360318288be"
+      "sha256": "ce3ecd1851e22b5517d07076ab8bd2db36b6b4582111c761db19240275853d9c"
     }
   ],
   "summary": {
@@ -2175,6 +2234,6 @@
     "signed_zero_type_count": 13,
     "internally_constrained_type_count": 4,
     "open_residual_count": 8,
-    "pd02_complete": false
+    "adr0087_complete": false
   }
 }

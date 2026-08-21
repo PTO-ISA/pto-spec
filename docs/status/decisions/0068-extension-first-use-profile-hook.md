@@ -1,6 +1,38 @@
+---
+{
+  "id": "ADR-0068",
+  "title": "Extension first-use is a target-profile hook",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-19",
+  "accepted": "2026-08-19",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "69591e45f3aade7d0326da868420e0653894cb61",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-PROFILE-EXTENSION-FIRST-USE"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/100",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0068: Extension first-use is a target-profile hook
 
-- Status: accepted
 - Scope: architecture profile boundary
 - Requirement: PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001
 - Issue: https://github.com/PTO-ISA/pto-spec/issues/100

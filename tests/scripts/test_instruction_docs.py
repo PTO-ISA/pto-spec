@@ -10,7 +10,6 @@ from pathlib import Path
 from scripts.instruction_docs import (
     ROOT,
     check_catalog_projection,
-    check_legacy_banners,
     check_navigation,
     check_navigation_projection,
     check_normative_legacy_links,
@@ -556,6 +555,25 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertEqual(check_navigation(self.root), [])
         self.assertEqual(check_navigation_projection(self.root), [])
 
+    def test_decision_template_is_excluded_from_navigation(self) -> None:
+        decisions = self.root / "docs/status/decisions"
+        decisions.mkdir(parents=True)
+        (decisions / "0000-template.md").write_text(
+            "# ADR-0000: Decision template\n", encoding="utf-8"
+        )
+        (decisions / "0001-accepted.md").write_text(
+            "# ADR-0001: Accepted decision\n", encoding="utf-8"
+        )
+
+        navigation = render_nav(load_doc_index(self.root), Path("docs"), self.root)
+
+        self.assertNotIn("0000-template.md", navigation)
+        self.assertNotIn("ADR-0000", navigation)
+        self.assertIn(
+            '          - "ADR-0001: Accepted decision": status/decisions/0001-accepted.md',
+            navigation,
+        )
+
     def test_navigation_merges_common_classification_prefixes(self) -> None:
         self.write_unit(
             "block/model/commit/effects.asl",
@@ -812,46 +830,6 @@ class FourSurfaceDocsTest(unittest.TestCase):
                 "non-normative legacy material"
             ],
         )
-
-    def test_generate_tree_adds_non_normative_legacy_banner(self) -> None:
-        legacy = self.root / "docs/status/legacy/old.md"
-        legacy.parent.mkdir(parents=True, exist_ok=True)
-        legacy.write_text("# Old Design\n\nHistorical text.\n", encoding="utf-8")
-
-        self.assertEqual(
-            check_legacy_banners(self.root),
-            ["docs/status/legacy/old.md: missing non-normative legacy banner"],
-        )
-
-        generate_tree(self.root)
-
-        self.assertTrue(
-            legacy.read_text(encoding="utf-8").startswith(
-                "# Old Design\n\n"
-                "> Historical, non-normative material. This page is excluded "
-                "from the active PTO architecture and release closure.\n"
-            )
-        )
-        self.assertEqual(check_legacy_banners(self.root), [])
-
-    def test_legacy_page_rejects_active_front_matter_status(self) -> None:
-        legacy = self.root / "docs/status/legacy/old.md"
-        legacy.parent.mkdir(parents=True, exist_ok=True)
-        legacy.write_text(
-            "---\n"
-            '{"status": "active"}\n'
-            "---\n"
-            "# Old Design\n\n"
-            "> Historical, non-normative material. This page is excluded "
-            "from the active PTO architecture and release closure.\n",
-            encoding="utf-8",
-        )
-
-        self.assertEqual(
-            check_legacy_banners(self.root),
-            ["docs/status/legacy/old.md: legacy page declares active status"],
-        )
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,9 +1,68 @@
+---
+{
+  "id": "ADR-0008",
+  "title": "Define the PTO architectural state contract",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-28",
+  "accepted": "2026-07-28",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "007844f182ca87c843ebf274d7c9509188e68e01",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-STATE-CLOSURE-001",
+    "PTO-REQ-BUNDLE-STATE-001",
+    "PTO-REQ-SHARED-TILE-001",
+    "PTO-REQ-STATE-001",
+    "PTO-REQ-TILE-001",
+    "PTO-TILE-CAPACITY-PER-PE"
+  ],
+  "affected_units": [
+    "PTO-ARCH-OVERVIEW-ARCHITECTURE",
+    "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
+    "PTO-ARCH-PROGRAMMING-MODEL-PREDICATE-REGISTERS",
+    "PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS",
+    "PTO-ARCH-PROGRAMMING-MODEL-SHARED-TILE-REGISTERS",
+    "PTO-ARCH-PROGRAMMING-MODEL-TILE-REGISTERS",
+    "PTO-ARCH-STATE-DEFINEDNESS",
+    "PTO-ARCH-STATE-PROGRAM-COUNTER",
+    "PTO-ARCH-STATE-TILE-DESCRIPTOR",
+    "PTO-ARCH-STATE-TRAP-CONTEXT",
+    "PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL",
+    "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
+    "PTO-ARCH-SYSTEM-REGISTERS-CONTEXT",
+    "PTO-BLOCK-B-IOR",
+    "PTO-BLOCK-B-IOS",
+    "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-MODEL-STATE-BINDING-STATE",
+    "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+    "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+    "PTO-BLOCK-MODEL-STATE-TYPES",
+    "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0008: Define the PTO architectural state contract
+
+> Inventory counts in this record are acceptance-time historical context; the current inventory is owned by the ASL tree and its generated projections.
 
 > The `B.Z`/`B.NZ` consumer clause is superseded by ADR 0067. Those spellings
 > are extension-reserved and are not active PTO instructions.
 
-- Status: accepted
 - Decision date: 2026-07-28
 - Requirement: PTO-REQ-STATE-001
 

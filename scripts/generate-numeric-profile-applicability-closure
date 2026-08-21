@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the fail-closed PD-01 A2/A3 MX applicability checkpoint."""
+"""Generate the fail-closed ADR-0086 A2/A3 MX applicability checkpoint."""
 
 from __future__ import annotations
 
@@ -127,9 +127,9 @@ def generate() -> dict[str, Any]:
     operation_by_key = {operation_key(row): row for row in operations["operations"]}
     rules = catalog["rules"]
     require(catalog["schema_version"] == 1, "catalog schema drift")
-    require(catalog["target"] == "S5-T2-A3:PD-01", "catalog target drift")
+    require(catalog["target"] == "S5-T2-A3:ADR-0086", "catalog target drift")
     require(
-        catalog["open_parent_decisions"] == ["PD-01", "cube-matrix", "S5-T2"],
+        catalog["open_parent_decisions"] == ["ADR-0086", "cube-matrix", "S5-T2"],
         "parent decision drift",
     )
     require(len(catalog["profiles"]) == 1, "profile count drift")
@@ -271,14 +271,12 @@ def generate() -> dict[str, Any]:
                 }
             )
 
-    pd01 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-01")
+    adr0086 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-0086")
     cube_matrix = next(
         row for row in inputs["domain_matrix"] if row["domain"] == "cube-matrix"
     )
-    require(
-        pd01["selected_disposition"] is None, "PD-01 parent decision must remain open"
-    )
-    require(pd01["decision_record"] is None, "PD-01 decision record must remain open")
+    require(adr0086["status"] == "draft", "ADR-0086 parent decision must remain draft")
+    require(adr0086["acceptance_record"] is None, "ADR-0086 acceptance record must remain open")
     require(
         cube_matrix["status"] == "profile-rule-required"
         and cube_matrix["selected_profile_rule"] is None,
@@ -288,13 +286,13 @@ def generate() -> dict[str, Any]:
     return {
         "schema_version": 1,
         "artifact_id": "numeric-profile-applicability-closure",
-        "target": "S5-T2-A3:PD-01",
+        "target": "S5-T2-A3:ADR-0086",
         "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "policy": {
             "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
             "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
-            "parent_boundary": "This checkpoint closes only a negative A2/A3 support slice. PD-01, cube-matrix result rules, and S5-T2 remain open.",
+            "parent_boundary": "This checkpoint closes only a negative A2/A3 support slice. ADR-0086, cube-matrix result rules, and S5-T2 remain open.",
         },
         "profiles": catalog["profiles"],
         "rules": rules,
@@ -364,7 +362,7 @@ def generate() -> dict[str, Any]:
             "bundle_command_form_count": 6,
             "accepted_command_form_count": 74,
             "result_rule_count": 0,
-            "parent_pd01_complete": False,
+            "parent_adr0086_complete": False,
             "cube_matrix_complete": False,
             "s5_t2_complete": False,
         },

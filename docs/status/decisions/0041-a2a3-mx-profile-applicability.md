@@ -1,8 +1,63 @@
+---
+{
+  "id": "ADR-0041",
+  "title": "A2/A3 MX CUBE profile applicability",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-BSTART-TGEMVMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-BIAS-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-BIAS-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-CONTRACT-001",
+    "PTO-TGEMV-MX-ACC-CONTRACT-001",
+    "PTO-TGEMV-MX-BIAS-CONTRACT-001",
+    "PTO-TGEMV-MX-CONTRACT-001",
+    "PTO-TMATMUL-MX-ACC-CONTRACT-001",
+    "PTO-TMATMUL-MX-BIAS-CONTRACT-001",
+    "PTO-TMATMUL-MX-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-BSTART-TGEMVMX",
+    "PTO-BLOCK-BSTART-TGEMVMX-ACC",
+    "PTO-BLOCK-BSTART-TGEMVMX-BIAS",
+    "PTO-BLOCK-BSTART-TMATMULMX",
+    "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+    "PTO-BLOCK-BSTART-TMATMULMX-BIAS",
+    "PTO-TILE-TGEMV-MX",
+    "PTO-TILE-TGEMV-MX-ACC",
+    "PTO-TILE-TGEMV-MX-BIAS",
+    "PTO-TILE-TMATMUL-MX",
+    "PTO-TILE-TMATMUL-MX-ACC",
+    "PTO-TILE-TMATMUL-MX-BIAS"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0041: A2/A3 MX CUBE profile applicability
 
-## Status
+## Decision scope
 
-Accepted for a bounded negative applicability checkpoint. Parent `PD-01`,
+This decision is a bounded negative applicability checkpoint. Parent `ADR 0086`,
 `cube-matrix`, and `S5-T2` remain open.
 
 ## Context
@@ -57,6 +112,6 @@ ledger is the machine-readable acceptance package. Its source catalog is
   obligations.
 - No MX numeric result semantics, FP8/FP4 scale behavior, accumulation order,
   rounding, saturation, or exceptional-value rule is accepted here.
-- `PD-01`, the `cube-matrix` domain, and `S5-T2` remain open until every
+- `ADR 0086`, the `cube-matrix` domain, and `S5-T2` remain open until every
   profile applicability and result rule is complete and independently
   verified.

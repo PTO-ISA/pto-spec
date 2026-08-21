@@ -1,6 +1,54 @@
+---
+{
+  "id": "ADR-0003",
+  "title": "Use PTO-owned system-register names",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-28",
+  "accepted": "2026-07-28",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "edf3ae2df13778317674553a1f1d655b46508f99",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-C-SSRGET-DIRECT-IDS-001",
+    "PTO-HL-SSRGET-DECISION-BINDING-001",
+    "PTO-HL-SSRSET-DECISION-BINDING-001",
+    "PTO-SSRGET-ADR-CONTRACT-001",
+    "PTO-SSRSET-ADR-CONTRACT-001",
+    "PTO-SSRSWAP-ADR-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL",
+    "PTO-ARCH-SYSTEM-REGISTERS-ADDRESSING",
+    "PTO-ARCH-SYSTEM-REGISTERS-CONTEXT",
+    "PTO-ARCH-SYSTEM-REGISTERS-INTERRUPT",
+    "PTO-ARCH-SYSTEM-REGISTERS-MAINTENANCE",
+    "PTO-ARCH-SYSTEM-REGISTERS-TIMER",
+    "PTO-SCALAR-C-SSRGET",
+    "PTO-SCALAR-HL-SSRGET",
+    "PTO-SCALAR-HL-SSRSET",
+    "PTO-SCALAR-SSRGET",
+    "PTO-SCALAR-SSRSET",
+    "PTO-SCALAR-SSRSWAP"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/4",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR-0003: Use PTO-owned system-register names
 
-- Status: accepted
 - Formal-model issue: [#4](https://github.com/PTO-ISA/pto-spec/issues/4)
 - Decision date: 2026-07-28
 

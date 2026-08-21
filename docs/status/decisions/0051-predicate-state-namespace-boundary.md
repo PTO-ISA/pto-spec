@@ -1,7 +1,39 @@
+---
+{
+  "id": "ADR-0051",
+  "title": "Predicate state namespace boundary (superseded)",
+  "status": "superseded",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [],
+  "created": "2026-08-01",
+  "accepted": "2026-08-01",
+  "rejected": null,
+  "superseded": "2026-08-11",
+  "baseline": "4d115387b8a8a3c135f78189778d38547e75c697",
+  "target_releases": [
+    "0.58.1"
+  ],
+  "affected_ndf": [
+    "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
+    "PTO-ARCH-PROGRAMMING-MODEL-PREDICATE-REGISTERS"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [
+    "ADR-0077"
+  ],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0051: Predicate state namespace boundary (superseded)
 
-- Status: superseded by PRD-039 in
-  [ADR 0062](0062-mnemonic-review-decisions.md#prd-039-machine-parallel-and-machine-sequential-block-starts-are-extension-reserved)
 - Decision date: 2026-08-01
 
 ## Current boundary

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the fail-closed PD-02 public type and availability baseline."""
+"""Generate the fail-closed ADR-0087 public type and availability baseline."""
 
 from __future__ import annotations
 
@@ -76,23 +76,23 @@ def generate() -> dict[str, Any]:
     namespace = load(FORMAT_NAMESPACE)
     comparison = load(EXECUTABLE_COMPARISON)
 
-    pd02 = next(row for row in inputs["decision_questions"] if row["id"] == "PD-02")
+    adr0087 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-0087")
     require(
-        pd02["status"] == "decision-required"
-        and pd02["selected_disposition"] is None
-        and pd02["decision_record"] is None,
-        "PD-02 must remain open",
+        adr0087["status"] == "draft"
+        and adr0087["acceptance_record"] is None,
+        "ADR-0087 must remain open",
     )
     require(
-        namespace["decision_id"] == "PD-02"
-        and namespace["checkpoint_id"] == "PD-02-SC1"
-        and namespace["summary"]["pd02_complete"] is False,
-        "PD-02 namespace checkpoint drift",
+        namespace["decision_id"] == "ADR-0087"
+        and namespace["checkpoint_id"] == "ADR-0087-SC1"
+        and namespace["summary"]["adr0087_complete"] is False,
+        "ADR-0087 namespace checkpoint drift",
     )
     require(
-        comparison["status"]
-        == "comparison-matrix-closed-clean-gates-passed:S5-T3",
-        "independent comparison status drift",
+        comparison["status"] == "comparison-matrix-closed-clean-gates-passed:S5-T3"
+        and comparison["closure_judgment"]["can_close_s5_t3"] is True
+        and comparison["closure_judgment"]["remaining_blockers"] == [],
+        "independent comparison is not closed",
     )
 
     source_by_id = {row["id"]: row for row in inputs["sources"]}
@@ -188,9 +188,9 @@ def generate() -> dict[str, Any]:
 
     return {
         "schema_version": 1,
-        "target": "S5-T2-A5:PD-02-SC2",
-        "decision_id": "PD-02",
-        "checkpoint_id": "PD-02-SC2",
+        "target": "S5-T2-A5:ADR-0087-SC2",
+        "decision_id": "ADR-0087",
+        "checkpoint_id": "ADR-0087-SC2",
         "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "policy": {
@@ -257,10 +257,10 @@ def generate() -> dict[str, Any]:
             ],
         },
         "open_residuals": [
-            {"id": "PD-02-R1", "rule": "complete every scalar and tile operation/type/profile legality tuple"},
-            {"id": "PD-02-R2", "rule": "publish independent numeric result and exception vectors for every supported tuple"},
-            {"id": "PD-02-R3", "rule": "record downstream byte-and-effect parity for the immutable hardware profile"},
-            {"id": "PD-02-R4", "rule": "accept architecture and formal-model review against the exact 0.58.0 type contract"},
+            {"id": "ADR-0087-R1", "rule": "complete every scalar and tile operation/type/profile legality tuple"},
+            {"id": "ADR-0087-R2", "rule": "publish independent numeric result and exception vectors for every supported tuple"},
+            {"id": "ADR-0087-R3", "rule": "record downstream byte-and-effect parity for the immutable hardware profile"},
+            {"id": "ADR-0087-R4", "rule": "accept architecture and formal-model review against the exact 0.58.0 type contract"},
         ],
         "sources": [
             source("spec/evidence/numeric-profile-decision-inputs.json"),
@@ -279,7 +279,7 @@ def generate() -> dict[str, Any]:
             "accepted_result_rule_count": 0,
             "accepted_domain_rule_count": 0,
             "open_residual_count": 4,
-            "pd02_complete": False,
+            "adr0087_complete": False,
             "s5_t2_a_complete": False,
             "s5_t2_complete": False,
         },

@@ -1,6 +1,72 @@
+---
+{
+  "id": "ADR-0024",
+  "title": "PC-relative and unscaled AGU addressing",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-07-31",
+  "accepted": "2026-07-31",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-HL-SD-UPO-DECISION-BINDING-001",
+    "PTO-HL-SD-UPR-DECISION-BINDING-001",
+    "PTO-HL-SH-UPO-DECISION-BINDING-001",
+    "PTO-HL-SH-UPR-DECISION-BINDING-001",
+    "PTO-HL-SW-UPO-DECISION-BINDING-001",
+    "PTO-HL-SW-UPR-DECISION-BINDING-001",
+    "PTO-SH-PCR-ADR-CONTRACT-001",
+    "PTO-SW-PCR-ADR-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-SCALAR-HL-LB-PCR",
+    "PTO-SCALAR-HL-LBU-PCR",
+    "PTO-SCALAR-HL-LD-PCR",
+    "PTO-SCALAR-HL-LH-PCR",
+    "PTO-SCALAR-HL-LHU-PCR",
+    "PTO-SCALAR-HL-LW-PCR",
+    "PTO-SCALAR-HL-LWU-PCR",
+    "PTO-SCALAR-HL-SB-PCR",
+    "PTO-SCALAR-HL-SD-PCR",
+    "PTO-SCALAR-HL-SD-UPO",
+    "PTO-SCALAR-HL-SD-UPR",
+    "PTO-SCALAR-HL-SH-PCR",
+    "PTO-SCALAR-HL-SH-UPO",
+    "PTO-SCALAR-HL-SH-UPR",
+    "PTO-SCALAR-HL-SW-PCR",
+    "PTO-SCALAR-HL-SW-UPO",
+    "PTO-SCALAR-HL-SW-UPR",
+    "PTO-SCALAR-LB-PCR",
+    "PTO-SCALAR-LBU-PCR",
+    "PTO-SCALAR-LD-PCR",
+    "PTO-SCALAR-LH-PCR",
+    "PTO-SCALAR-LHU-PCR",
+    "PTO-SCALAR-LW-PCR",
+    "PTO-SCALAR-LWU-PCR",
+    "PTO-SCALAR-SB-PCR",
+    "PTO-SCALAR-SD-PCR",
+    "PTO-SCALAR-SH-PCR",
+    "PTO-SCALAR-SW-PCR"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0024: PC-relative and unscaled AGU addressing
 
-- Status: accepted
 - Scope: scalar AGU PC-relative and register-offset writeback forms
 
 ## Decision

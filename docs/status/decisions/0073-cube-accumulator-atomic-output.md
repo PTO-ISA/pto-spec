@@ -1,12 +1,53 @@
+---
+{
+  "id": "ADR-0073",
+  "title": "CUBE Accumulator and Atomic Output Contract",
+  "status": "accepted",
+  "authors": ["Kevin Zhou"],
+  "approvers": ["zhoubot"],
+  "created": "2026-08-21",
+  "accepted": "2026-08-21",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "a4eb5a570f4c87fed8c6fc8b931f07a51c6ac1c1",
+  "target_releases": ["unassigned"],
+  "affected_ndf": [
+    "PTO-CUBE-ACCUMULATOR-OUTPUT-001",
+    "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
+    "PTO-BSTART-TGEMVMX-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMUL-ACC-CONTRACT-001",
+    "PTO-BSTART-TMATMULMX-ACC-CONTRACT-001",
+    "PTO-TGEMV-ACC-CONTRACT-001",
+    "PTO-TGEMV-MX-ACC-CONTRACT-001",
+    "PTO-TMATMUL-ACC-CONTRACT-001",
+    "PTO-TMATMUL-MX-ACC-CONTRACT-001"
+  ],
+  "affected_units": [
+    "PTO-BLOCK-BSTART-TGEMV-ACC",
+    "PTO-BLOCK-BSTART-TGEMVMX-ACC",
+    "PTO-BLOCK-BSTART-TMATMUL-ACC",
+    "PTO-BLOCK-BSTART-TMATMULMX-ACC",
+    "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+    "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+    "PTO-TILE-TMATMUL-ACC",
+    "PTO-TILE-TMATMUL-MX-ACC",
+    "PTO-TILE-TGEMV-ACC",
+    "PTO-TILE-TGEMV-MX-ACC",
+    "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/106",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
+
 # ADR 0073: CUBE Accumulator and Atomic Output Contract
 
-- Status: accepted
-- Issue: [#106](https://github.com/PTO-ISA/pto-spec/issues/106)
-- Umbrella: [#72](https://github.com/PTO-ISA/pto-spec/pull/72)
-- Baseline: `a4eb5a570f4c87fed8c6fc8b931f07a51c6ac1c1`
-- Requirement: `PTO-CUBE-ACCUMULATOR-OUTPUT-001`
-- Depends on: accepted `PTO-CUBE-CELL-STATE-001` and
-  `PTO-CUBE-LOCAL-MATRIX-001`
+Accepted with implementation by pull request 111. It depends on the accepted
+`PTO-CUBE-CELL-STATE-001` and `PTO-CUBE-LOCAL-MATRIX-001` contracts.
 
 ## Decision
 

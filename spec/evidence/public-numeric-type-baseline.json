@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "target": "S5-T2-A5:PD-02-SC2",
-  "decision_id": "PD-02",
-  "checkpoint_id": "PD-02-SC2",
+  "target": "S5-T2-A5:ADR-0087-SC2",
+  "decision_id": "ADR-0087",
+  "checkpoint_id": "ADR-0087-SC2",
   "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
   "acceptance_record": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
   "policy": {
@@ -507,38 +507,38 @@
   },
   "open_residuals": [
     {
-      "id": "PD-02-R1",
+      "id": "ADR-0087-R1",
       "rule": "complete every scalar and tile operation/type/profile legality tuple"
     },
     {
-      "id": "PD-02-R2",
+      "id": "ADR-0087-R2",
       "rule": "publish independent numeric result and exception vectors for every supported tuple"
     },
     {
-      "id": "PD-02-R3",
+      "id": "ADR-0087-R3",
       "rule": "record downstream byte-and-effect parity for the immutable hardware profile"
     },
     {
-      "id": "PD-02-R4",
+      "id": "ADR-0087-R4",
       "rule": "accept architecture and formal-model review against the exact 0.58.0 type contract"
     }
   ],
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ec9e3f2ef160cf84391c1ff38201098642e60b1c3449df2746dd9ab738605c96"
+      "sha256": "ab00288a2c1b616b8226656e15b0664f111a12a10704c409ed237353b99f0719"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "75f6b9d725c47ff06026b4ba7dde7be0e5d1892f2e9b955223602fb2bae402fe"
+      "sha256": "bb6f7d4165d17ef74386d6973dc077bd1004c8ba5e77bc70ac754942f9b0d169"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "10e8bcfed47aee24719038ec07ecefe75aeaf342a0765cb15308da584242e1b8"
+      "sha256": "47014fd70da0967716c8470c4cf9aefc01f7e42cac2b9cc065a82200b316e402"
     },
     {
       "path": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
-      "sha256": "fde24632cca5661ea86892802f8a8703ce0a0034cb8d84680f71e73eac73fffc"
+      "sha256": "4fa14704464afe3ea85b98835f2f6e7d6fa832a1f297100f41414cd3faf66924"
     }
   ],
   "summary": {
@@ -552,7 +552,7 @@
     "accepted_result_rule_count": 0,
     "accepted_domain_rule_count": 0,
     "open_residual_count": 4,
-    "pd02_complete": false,
+    "adr0087_complete": false,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   }

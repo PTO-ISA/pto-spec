@@ -9,15 +9,13 @@ architecture requirement.
 ## Working rules
 
 - Read and follow `.codex/skills/pto-asl/SKILL.md` for ASL, formal-review, and governance work.
-- Start every instruction lookup in `asl/<surface>/<classification>/<mnemonic>.asl`,
-  then read the exact mirrored page under `docs/<surface>/<classification>/` for supplementary
-  explanation and examples. Do not infer semantics from generated catalogs,
-  HTML, spreadsheets, or release projections.
-- Never use `docs/status/legacy/` as an architecture, implementation, review,
-  or agent-routing source. It is excluded from navigation and release closure.
-- For architecture-wide rules, locate the stable NDF `PTO-*` clause in ASL.
-  Continue through generated instruction pages, decision/open metadata, and
-  release evidence in that order; never create a second normative explanation.
+- Current semantics: owning ASL/NDF -> generated mirror -> AVS -> commit-scoped evidence.
+- Decision history: ADR index -> affected ASL/NDF. Use
+  `spec/evidence/adr-index.json` to locate why and when a rule changed, then
+  return to the owning ASL/NDF for current meaning.
+- Do not infer semantics from ADR prose, generated catalogs, HTML, spreadsheets,
+  changelogs, review summaries, or release projections. Never create a second
+  normative explanation.
 - Treat mnemonic ASL metadata and its `DOC-BEGIN` regions as the golden source.
   The corresponding Markdown ASL blocks and MkDocs navigation are generated
   projections and MUST pass `python3 scripts/instruction_docs.py --check`.
@@ -49,7 +47,7 @@ make repo-check              # generated model and release-evidence closure
 git diff --check
 ```
 
-Only the manual exact-head release lane runs the full model:
+Only exact-commit full validation runs the complete model:
 
 ```bash
 make setup

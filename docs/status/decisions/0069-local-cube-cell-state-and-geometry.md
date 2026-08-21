@@ -1,10 +1,42 @@
+---
+{
+  "id": "ADR-0069",
+  "title": "Local CUBE CELL State and Geometry",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-20",
+  "accepted": "2026-08-20",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "0b8ce516ffe998b24c4bae4c1a9dbca2e0d76510",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-CUBE-CELL-STATE-001"
+  ],
+  "affected_units": [
+    "PTO-TILE-MODEL-SHAPE-CUBE-CELL"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/102",
+  "release_impact": "required",
+  "legacy_ids": []
+}
+---
 # ADR 0069: Local CUBE CELL State and Geometry
 
-- Status: accepted
 - Issue: [#102](https://github.com/PTO-ISA/pto-spec/issues/102)
 - Umbrella: [#72](https://github.com/PTO-ISA/pto-spec/pull/72)
 - Baseline: `0b8ce516ffe998b24c4bae4c1a9dbca2e0d76510`
-- Proposed requirement: `PTO-CUBE-CELL-STATE-001`
+- Requirement: `PTO-CUBE-CELL-STATE-001`
 
 ## Decision
 
@@ -98,10 +130,9 @@ This decision allocates no `B.DATR` conversion encoding and defines no
 TLOAD/TSTORE conversion, Matrix operand binding, cooperative Shared execution,
 transpose control, accumulator identity, or post-process output behavior.
 
-## APPLY acceptance criteria
+## Implementation and verification evidence
 
-A later APPLY change must land this decision as accepted together with ASL,
-generated documentation, and independent tests that prove:
+The accepted implementation, generated documentation, and independent tests prove:
 
 1. every b32/b16/b8/b4 layout row and the M16-b4 interleave;
 2. K-fast/N-slow multi-CELL order and partial K/N tails;
@@ -113,5 +144,6 @@ generated documentation, and independent tests that prove:
 7. reset, release, and retry behavior; and
 8. no change to ordinary Tile behavior.
 
-This proposed decision is not executable or release evidence and must not merge
-independently of its APPLY implementation.
+This decision became executable through the implementation linked in the ADR
+frontmatter. Release closure remains commit-scoped and is not implied by the
+accepted ADR status.
