@@ -14,13 +14,19 @@ begin
     assert TileCapacityIsLegal(128);
     assert TileCapacityIsLegal(256);
     assert !TileCapacityIsLegal(262144);
+    assert SharedTileCapacityIsLegal(262144);
     assert TileCapacityIsLegal(8192);
     assert !TileCapacityIsLegal(192);
     assert !TileCapacityIsLegal(32);
     assert TileSizeCodeBytes(1) == 128;
     assert TileSizeCodeBytes(7) == 8192;
+    assert TileSizeCodeBytes(10) == 65536;
+    assert TileSizeCodeBytes(12) == 262144;
     assert !TileSizeCodeIsLegal(0);
-    assert !TileSizeCodeIsLegal(8);
+    assert TileSizeCodeIsLegal(12);
+    assert !TileSizeCodeIsLegal(13);
+    assert LocalTileSizeCodeIsLegal(10);
+    assert !LocalTileSizeCodeIsLegal(11);
 
     assert TileElementBits(TileDataType_FP64) == 64;
     assert TileElementBits(TileDataType_FP32) == 32;

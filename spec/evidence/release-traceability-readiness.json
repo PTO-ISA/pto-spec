@@ -16197,7 +16197,7 @@
     "docs/block/model/state/descriptor-state.md": "b420a5ea75dd2acbc5b2f2014204d1f12d1d2f7d9cf2bf5268e337d8e5fce32d",
     "docs/block/model/state/types.md": "d18aeb6e2c4b1c009a8be2799d9e201d86ca340db9c199060bd491159878d77a",
     "docs/block/operands/B.IOR.md": "761cdc372d08816c38bcf72836d72ed75f9c925d8979e9389d9059875d065b7d",
-    "docs/block/operands/B.IOS.md": "32429a3f54fb4d21fa3a6fbd0b05acc6382def752df27678f907b8c5f0fbccac",
+    "docs/block/operands/B.IOS.md": "8bf26be88ee6cf45b79c73f409cd35592cf4a61180f528ff3fda7c9b611fb58a",
     "docs/block/operands/B.IOT.md": "077f2eed127b7c5d5efaf908bd24a671c879d4985d394743846064229ad7a799",
     "docs/scalar/agu/C.LDI.md": "3a584ed83a2ed0a8f98153f6c0e3830caf7bdfc778f88d903e4af784b29f87bc",
     "docs/scalar/agu/C.LWI.md": "b7ccba28ab903a9451f766b8467e756051c7b4fb54e1850a76c2994b17110f52",
@@ -16984,7 +16984,7 @@
     "tests/asl/arch/programming-model/scalar-registers/arch-state-programming-model-pe-gpr-001.asl": "7c69affbf0458e09198d6a314cc158cfa5348800b1ddd8eae6048b9044c7b91f",
     "tests/asl/arch/programming-model/scalar-registers/arch-static-scalar-registers-contract-001.asl": "f82a27988ff3b68a15ed36203916280aa87a0e83fa226efd43ecf94adb3148bc",
     "tests/asl/arch/programming-model/shared-tile-registers/arch-static-shared-tile-registers-contract-001.asl": "35bb87ae5c03922945f02a951f01e8ddf030c728e61f5d15f06be81d5227ac14",
-    "tests/asl/arch/programming-model/tile-registers/arch-state-register-mapping-001.asl": "89a0ee0ae8f027b1b3ffbc2519e4e9cd401736dff9dcbe068fb6f75a5daf6f13",
+    "tests/asl/arch/programming-model/tile-registers/arch-state-register-mapping-001.asl": "f24de8bff6c85f3f54b8d148412f04f344a29cebee30f5b4c2982296eaeb6fa1",
     "tests/asl/arch/programming-model/tile-registers/arch-static-tile-registers-contract-001.asl": "aba2f93c142c8bfa8b0307b11d54a11d2a01f54a70be5284cd61509d67cafa03",
     "tests/asl/arch/state/definedness/arch-static-definedness-contract-001.asl": "5389abfd59ea0e176acc50273c7920ead6512702a2188556c41a1c8384a9216d",
     "tests/asl/arch/state/numeric-status/arch-state-numeric-status-001.asl": "73c82a0e416a7635964e18f0b52a0330df6edcb3292f9eb65937b9ace7d9948d",
@@ -28746,7 +28746,7 @@
       "kind": "state-transition",
       "path": "tests/asl/arch/programming-model/tile-registers/arch-state-register-mapping-001.asl",
       "requirements": [],
-      "sha256": "89a0ee0ae8f027b1b3ffbc2519e4e9cd401736dff9dcbe068fb6f75a5daf6f13",
+      "sha256": "f24de8bff6c85f3f54b8d148412f04f344a29cebee30f5b4c2982296eaeb6fa1",
       "source": "asl/arch/programming-model/tile-registers.asl"
     },
     {

@@ -3394,7 +3394,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "50f469b66561cd1417f56fb7b3f639d424ff6932c8787a82ff31b747898b877e"
+      "sha256": "6a667052e78aec5f853fe90676199c05361d53b8e0c3a149f001443f4e49f7bb"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3402,11 +3402,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "0568e5c9690c411df7d9f1a2fa8ae634d88cd6446004820198ce7bbd99714543"
+      "sha256": "2b2f883c71870f2b3c4444828713936421f96dfdcce284db05f09dec299a4fbd"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "132e61fc18bd89c4adebfd2e5671513c05826c746ee73de317551ba4d766d596"
+      "sha256": "3dc160483828c77709a2ac6382bab37038b4f96b129b7a91e5eb8341db51ec72"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3452,7 +3452,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "b7e4b53d86861216589aa5179373fa0c05891b5dd54ba747d0b11b74fe736d8a",
+  "content_sha256": "3a84f4422b63b5fbaebc106a784a22910a4d7719cf400e0fb7714a77c787313f",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4384,7 +4384,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/operands/B.IOS.md",
-      "sha256": "32429a3f54fb4d21fa3a6fbd0b05acc6382def752df27678f907b8c5f0fbccac"
+      "sha256": "8bf26be88ee6cf45b79c73f409cd35592cf4a61180f528ff3fda7c9b611fb58a"
     },
     {
       "kind": "generated-documentation",

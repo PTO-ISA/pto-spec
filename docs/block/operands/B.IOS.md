@@ -148,8 +148,8 @@ end;
 
 <!-- SUPPLEMENTARY-BEGIN -->
 TSize zero identifies the Shared source form. A Shared destination uses TSize
-1 through 7 as the same per-PE capacity classes as B.IOT; PE_MASK determines
-how many equal per-PE allocations the core must reserve. Shared physical rows
-and columns obey the same derivation and power-of-two constraints as Local
-Tile descriptors.
+1 through 12 for 128 B through 256 KiB per participating PE; this Shared range
+is wider than the B.IOT Local range. PE_MASK determines how many equal per-PE
+allocations the core must reserve. Shared physical rows and columns obey the
+same derivation and power-of-two constraints as Local Tile descriptors.
 <!-- SUPPLEMENTARY-END -->
