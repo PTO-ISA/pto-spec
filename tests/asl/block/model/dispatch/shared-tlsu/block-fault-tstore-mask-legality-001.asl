@@ -24,7 +24,7 @@ begin
     ConfigureTile(0, 128, 1, 16, 1, 16, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
-    InstallSharedTile(Zeros{8} + 9, _Tiles[[0]], '0001');
+    InstallSharedTile(Zeros{8} + 9, _Tiles[[0]], '1000');
 
     let full_start = ExecuteCommandInstruction(
         StoreMaskTestTLSUStart('00001', Zeros{5} + 24), 32);

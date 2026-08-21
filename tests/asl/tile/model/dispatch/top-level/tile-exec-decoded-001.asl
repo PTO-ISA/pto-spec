@@ -6,12 +6,6 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
-func ConfigureTwoByTwoTyped(index: TileIndex, data_type: TileDataType)
-begin
-    ConfigureTile(index, 256, 2, 2, 2, 2, data_type,
-        TileLayout_RowMajor, TileLocation_Any);
-end;
-
 func SelectTestCUBEDataType(data_type: bits(5))
 begin
     InstallBundleOperationDescriptor(BundleOperationDescriptor {
@@ -63,9 +57,10 @@ begin
     tlsu_operands.destination0 = 3;
     tlsu_operands.address = Zeros{PTO_XLEN} + 512;
     // Direct dispatch receives a fully decoded operand record. Supply the
-    // dense two-element row stride explicitly; scalar0=0 is the architectural
-    // encoded-zero stride, not the bundle-schema omitted-field default.
-    tlsu_operands.scalar0 = Zeros{PTO_XLEN} + 2;
+    // dense two-U64 row stride in bytes explicitly; scalar0=0 is the
+    // architectural encoded-zero stride, not the bundle-schema omitted-field
+    // default.
+    tlsu_operands.scalar0 = Zeros{PTO_XLEN} + 16;
     let (tlsu_status, tlsu_value) = ExecuteTileInstruction(
         TileDecode_TLSU, '000000000000', tlsu_operands);
     assert tlsu_status == TileExecution_Executed;
@@ -73,9 +68,16 @@ begin
     assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 21;
     assert ReadTileElement(3, 1, 1) == Zeros{PTO_XLEN} + 24;
 
-    ConfigureTwoByTwoTyped(4, TileDataType_S16);
-    ConfigureTwoByTwoTyped(5, TileDataType_S16);
-    ConfigureTwoByTwoTyped(6, TileDataType_S32);
+    let cube_left_ready = ConfigureCubeTile(
+        4, 512, 2, 2, TileDataType_S16,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
+    let cube_right_ready = ConfigureCubeTile(
+        5, 512, 2, 2, TileDataType_S16,
+        TileLayout_CUBE_N8, TileLocation_Matrix);
+    let cube_destination_ready = ConfigureCubeTile(
+        6, 512, 2, 2, TileDataType_S32,
+        TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert cube_left_ready && cube_right_ready && cube_destination_ready;
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(4, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(4, 1, 0, Zeros{PTO_XLEN} + 3);

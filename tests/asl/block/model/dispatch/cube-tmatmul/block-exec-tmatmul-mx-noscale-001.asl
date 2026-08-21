@@ -16,7 +16,7 @@ begin
     var instruction: bits(64) = Zeros{64} + 0x00004013;
     instruction[11:9] = '111';
     instruction[8:7] = '10';
-    instruction[18:15] = '0000';
+    instruction[18:15] = '0001';
     instruction[25:20] = Zeros{6};
     instruction[31:26] = Zeros{6} + 1;
     instruction[19] = '1';
