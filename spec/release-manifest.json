@@ -3394,7 +3394,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "fd12bf78da9be0dd2613f33fe32e494f3677192c45e780908b6a53b9c96cfc27"
+      "sha256": "23e9cf680641b30eab987a7df16b2a3402a06145f0ac05bae17e87cf43b94468"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3402,11 +3402,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "15c8b276a69046c62dfb369047e884a8f63ed5149eafb97d84fa367eb8f0d6a6"
+      "sha256": "d7be31a793f72be672a75bffe2ddbbb2383642b2b88a194b588c831dcc7905d0"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "82690f005e01c5ae604d3573e84e69df80379ee98103f8069eb2b32e90f832d3"
+      "sha256": "b5647363dc077cc30421376ca476350de664030c35eb1593e38db00532776732"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3418,7 +3418,7 @@
     },
     {
       "path": "spec/release-selection.json",
-      "sha256": "1e11cf4cee3d96e940085318bb70979a90c7c4a4291e64d9738d466eafc42604"
+      "sha256": "f146bc6da6d22e0dceeb92f9712da1165669df2c35344f75ca8c8db0a5308a49"
     },
     {
       "path": "spec/schemas/pto-release-selection.schema.json",
@@ -3452,7 +3452,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "51ddce087d5dc0858eed4e585fe3bea167a2798cd6e4e0e75d8fdbb63ae67357",
+  "content_sha256": "9b5f289f2cf75112a4c8653b6dd4a7c6ae78b4d8bfedf87925697ffe26e95b80",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -7705,7 +7705,7 @@
   "release": "0.58.3",
   "release_selection": {
     "architecture_version": "0.58.3",
-    "baseline_commit": "09b852b6a020eee19d130ba167878758819b41d3",
+    "baseline_commit": "3c7be2468dc0d9bbd3f2178f20f7626115695360",
     "blockers": [],
     "excluded_draft_adrs": [
       "ADR-0086",
@@ -11736,7 +11736,7 @@
     "included_ndf_statuses": [
       "accepted"
     ],
-    "policy_sha256": "79021ef899e0507399a1077da1710c27a2852b198be2bbefdc07f346c535090c",
+    "policy_sha256": "a0b063f52e411c365b2de70b20d0a0aef18e1cd6dc36d5783ba890b8d50e6408",
     "required_readiness_floor": "executable",
     "selected_adr_ids": [
       "ADR-0001",
