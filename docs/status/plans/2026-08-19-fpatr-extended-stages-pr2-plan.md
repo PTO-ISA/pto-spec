@@ -1,7 +1,5 @@
 # FPATR Extended Stages PR2 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
 **Goal:** Add PTO-owned pre, elementwise/anti-quant, and post extension attributes whose combined D-result behavior completes the accepted FPATR pipeline while leaving transport, layout, synchronization, and memory atomicity out of scope.
 
 **Architecture:** Begin only from merged PR1 and retain the existing required `B.FPATR` anchor. Add three independent command/state units—`B.FPATR.PRE`, `B.FPATR.ELT`, and `B.FPATR.POST`—with separate ASL files, same-basename generated docs, and exact-mirror test directories; resolve their ordered scalar/Local/Shared roles into one preflighted descriptor snapshot and evaluate one deterministic pipeline before atomic publication.

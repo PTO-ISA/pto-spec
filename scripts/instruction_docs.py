@@ -965,7 +965,6 @@ def _render_mkdocs_config(records: list[DocRecord], root: Path) -> str:
         "use_directory_urls: false\n"
         "exclude_docs: |\n"
         "  mkdocs/**\n"
-        "  superpowers/**\n"
         "theme:\n"
         "  name: mkdocs\n"
         "strict: true\n"

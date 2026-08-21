@@ -1,7 +1,5 @@
 # PTO Mnemonic and Field Encoding Closure Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. This plan MUST be executed inline; the user explicitly prohibited subagent execution.
-
 **Goal:** Make ASL the complete source for every PTO mnemonic, encoded-field value, reserved encoding, block composition, and generated instruction explanation, then publish a clean exact-head PTO release.
 
 **Architecture:** Extend the existing ASL metadata graph with shared field-domain contracts and resolved per-instruction contracts. Keep executable ASL authoritative for decode and effects, generate catalogs/Markdown/navigation/tests from the same graph, and split lightweight structural checks from exhaustive release-only ASLRef execution.
