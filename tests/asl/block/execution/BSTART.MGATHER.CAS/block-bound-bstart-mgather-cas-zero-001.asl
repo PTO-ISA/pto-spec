@@ -21,7 +21,7 @@ begin
     instruction[25:20] = Zeros{6} + 63;
     instruction[19] = '1';
     instruction[18:15] = '0000';
-    instruction[11:9] = '111';
+    instruction[11:9] = '000';
     instruction[8:7] = '11';
     return instruction;
 end;
