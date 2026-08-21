@@ -1,5 +1,13 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
 
+// NDF-BEGIN: PTO-CUBE-ACCUMULATOR-OUTPUT-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// Every Matrix ACC form MUST read explicit C and publish distinct D. C's
+// encoded relative selector MUST differ from zero-extended DstTile before
+// allocation, and direct Tile calls MUST use different C/D TileIndex values.
+// C MUST persist while D, reductions, and numeric status publish atomically.
+// NDF-END: PTO-CUBE-ACCUMULATOR-OUTPUT-001
+
 readonly func BundleCubeMatrixSelected() => boolean
 begin
     return _BundleOperation.valid &&
@@ -110,6 +118,17 @@ begin
     return 0;
 end;
 
+readonly func BundleMatrixAccumulatorDestinationIndicesDistinct(
+    function: integer {0..31}) => boolean
+begin
+    if !TileMatrixFunctionUsesAccumulator(function) then return TRUE; end;
+    let (destination_seen, destination_hand) =
+        BundleMatrixPrimaryDestinationHand();
+    if !destination_seen then return FALSE; end;
+    let accumulator = BundleMatrixSourceAt(0);
+    return accumulator != destination_hand;
+end;
+
 func ExecuteBundleTMATMULOperation() => boolean
 begin
     // Zero-mask B.IOT/B.IOS commands do not install bindings.  Their sole
@@ -186,6 +205,10 @@ begin
     if !BundleMatrixLocalMathematicalSourcesLegal(
            function, left_type, right_type, m, n, k, shared_count,
            result_type, BundleMatrixPrimaryDestinationCapacityBytes()) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if !BundleMatrixAccumulatorDestinationIndicesDistinct(function) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
