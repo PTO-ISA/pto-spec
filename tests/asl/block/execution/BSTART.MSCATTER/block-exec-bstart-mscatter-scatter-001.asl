@@ -6,14 +6,15 @@ begin
     return instruction;
 end;
 
-pure func ScatterBinding(source: bits(6), indices: bits(6), mask: bits(4))
+pure func ScatterBinding(source: bits(6), indices: bits(6), pe_mode: bits(3))
     => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00004013;
     instruction[31:26] = indices;
     instruction[25:20] = source;
     instruction[19] = '1';
-    instruction[18:15] = mask;
+    instruction[18:15] = Zeros{4};
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
@@ -47,7 +48,7 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     let tiles = ExecuteCommandInstruction(
-        ScatterBinding(Zeros{6} + 1, Zeros{6} + 2, '0001'), 32);
+        ScatterBinding(Zeros{6} + 1, Zeros{6} + 2, '001'), 32);
     assert tiles == CommandExecution_Executed;
     let scalar = ExecuteCommandInstruction(ScatterIOR(Zeros{5} + 3), 32);
     assert scalar == CommandExecution_Executed;

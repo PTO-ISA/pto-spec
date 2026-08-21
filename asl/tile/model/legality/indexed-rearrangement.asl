@@ -69,15 +69,13 @@ readonly func TileGatherReferencesLegal(
 begin
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
-    let source_payload = source_tile.payload;
-    let index_payload = index_tile.payload;
     for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
-            let index_element = TileLinearIndex(
+            let index_element = TileLogicalLinearIndex(
                 index_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            let raw_index = index_payload[[index_element]];
+            let raw_index = TileReadLogicalElement(index_tile, index_element);
             if TileIndexedRowIsNegative(raw_index, index_tile.data_type) then
                 return FALSE;
             end;
@@ -87,11 +85,11 @@ begin
             if source_row >= source_tile.valid_rows then
                 return FALSE;
             end;
-            let source_element = TileLinearIndex(
+            let source_element = TileLogicalLinearIndex(
                 source_tile,
                 source_row as integer {0..65535},
                 column as integer {0..65535});
-            if source_tile.defined_elements[source_element] == '0' then
+            if !TileLogicalElementDefined(source_tile, source_element) then
                 return FALSE;
             end;
         end;
@@ -105,15 +103,14 @@ readonly func TileScatterReferencesLegal(
 begin
     let destination_tile = _Tiles[[destination]];
     let index_tile = _Tiles[[indices]];
-    let index_payload = index_tile.payload;
-    var selected = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    var selected = Zeros{524288};
     for row = 0 to index_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to index_tile.valid_columns - 1 looplimit 65536 do
-            let index_element = TileLinearIndex(
+            let index_element = TileLogicalLinearIndex(
                 index_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            let raw_index = index_payload[[index_element]];
+            let raw_index = TileReadLogicalElement(index_tile, index_element);
             if TileIndexedRowIsNegative(raw_index, index_tile.data_type) then
                 return FALSE;
             end;
@@ -123,7 +120,7 @@ begin
             if destination_row >= destination_tile.valid_rows then
                 return FALSE;
             end;
-            let destination_element = TileLinearIndex(
+            let destination_element = TileLogicalLinearIndex(
                 destination_tile,
                 destination_row as integer {0..65535},
                 column as integer {0..65535});

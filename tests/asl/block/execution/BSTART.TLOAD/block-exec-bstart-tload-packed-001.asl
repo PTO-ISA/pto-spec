@@ -9,8 +9,8 @@ end;
 pure func TLoadPackedDestination() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00006013;
-    instruction[11:9] = '001';
-    instruction[18:15] = '1111';
+    instruction[18:15] = '0001';
+    instruction[11:9] = '111';
     instruction[19] = '1';
     return instruction;
 end;

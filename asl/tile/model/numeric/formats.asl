@@ -160,21 +160,23 @@ begin
     assert result.columns == source_tile.columns;
     assert result.valid_rows == source_tile.valid_rows;
     assert result.valid_columns == source_tile.valid_columns;
-    let source_payload = source_tile.payload;
     var conversion_flags = Zeros{5};
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
+    result.packed_defined_elements = ZeroPackedTileDefinedElements();
     result.contents_defined = FALSE;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(source_tile,
+            let source_element = TileLogicalLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let destination_element = TileLinearIndex(result,
+            let destination_element = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
             let (converted, flags) = TileConvertValue(
-                source_payload[[source_element]], source_tile.data_type,
+                TileReadLogicalElement(source_tile, source_element),
+                source_tile.data_type,
                 result.data_type, control);
-            result.payload[[destination_element]] = converted;
+            result = TileInfoWithLogicalElement(result, destination_element,
+                converted);
             conversion_flags = conversion_flags OR flags;
         end;
     end;
@@ -212,25 +214,26 @@ begin
     let source_tile = _Tiles[[source]];
     assert result.valid_rows == source_tile.valid_rows;
     assert result.valid_columns == source_tile.valid_columns;
-    let source_payload = source_tile.payload;
     var conversion_flags = Zeros{5};
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
+    result.packed_defined_elements = ZeroPackedTileDefinedElements();
     result.contents_defined = FALSE;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(source_tile,
+            let source_element = TileLogicalLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let destination_element = TileLinearIndex(result,
+            let destination_element = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
             let (converted, flags) = TileProfileQuantize(
-                source_payload[[source_element]],
+                TileReadLogicalElement(source_tile, source_element),
                 scale,
                 zero_point,
                 source_tile.data_type,
                 result.data_type,
                 control);
-            result.payload[[destination_element]] = converted;
+            result = TileInfoWithLogicalElement(result, destination_element,
+                converted);
             conversion_flags = conversion_flags OR flags;
         end;
     end;
@@ -247,25 +250,26 @@ begin
     let source_tile = _Tiles[[source]];
     assert result.valid_rows == source_tile.valid_rows;
     assert result.valid_columns == source_tile.valid_columns;
-    let source_payload = source_tile.payload;
     var conversion_flags = Zeros{5};
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
+    result.packed_defined_elements = ZeroPackedTileDefinedElements();
     result.contents_defined = FALSE;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(source_tile,
+            let source_element = TileLogicalLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let destination_element = TileLinearIndex(result,
+            let destination_element = TileLogicalLinearIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
             let (converted, flags) = TileProfileDequantize(
-                source_payload[[source_element]],
+                TileReadLogicalElement(source_tile, source_element),
                 scale,
                 zero_point,
                 source_tile.data_type,
                 result.data_type,
                 control);
-            result.payload[[destination_element]] = converted;
+            result = TileInfoWithLogicalElement(result, destination_element,
+                converted);
             conversion_flags = conversion_flags OR flags;
         end;
     end;

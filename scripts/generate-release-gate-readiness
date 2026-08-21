@@ -116,7 +116,7 @@ GATES = (
     {
         "id": "RG-07",
         "name": "binary encoding closure",
-        "command": "scripts/check-binary-closure",
+        "command": "scripts/check-binary-closure --release",
         "evidence": ["scripts/check-binary-closure"],
     },
     {

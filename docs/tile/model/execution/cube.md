@@ -58,6 +58,7 @@ func MarkLocalTileValidRegionDefined(tile: TileInfo) => TileInfo
 begin
     var result = tile;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    result.packed_defined_elements = ZeroPackedTileDefinedElements();
     for row = 0 to result.valid_rows - 1 looplimit 65536 do
         for column = 0 to result.valid_columns - 1 looplimit 65536 do
             let element = TileStorageIndex(result,
@@ -66,7 +67,7 @@ begin
         end;
     end;
     result.defined_valid_elements =
-        (result.valid_rows * result.valid_columns) as integer {0..16384};
+        (result.valid_rows * result.valid_columns) as integer {0..524288};
     result.contents_defined = TRUE;
     return result;
 end;
@@ -112,6 +113,7 @@ begin
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
+    result.packed_defined_elements = ZeroPackedTileDefinedElements();
     result.location = TileLocation_Matrix;
     var result_payload: TilePayload = destination_tile.payload;
     let accumulator_payload = accumulator_tile.payload;
@@ -232,6 +234,7 @@ begin
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
+    result.packed_defined_elements = ZeroPackedTileDefinedElements();
     result.location = TileLocation_Matrix;
     var result_payload = destination_tile.payload;
     let accumulator_payload = accumulator_tile.payload;

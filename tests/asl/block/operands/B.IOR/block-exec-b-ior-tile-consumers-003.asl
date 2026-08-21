@@ -21,25 +21,25 @@ begin
     return instruction;
 end;
 
-pure func BundleTestTileDestination(size: bits(3), destination: bits(2),
-                                    pe_mask: bits(4), last: boolean) => bits(64)
+pure func BundleTestTileDestination(size_code: bits(4), destination: bits(2),
+                                    pe_mode: bits(3), last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00006013;
-    instruction[11:9] = size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[19] = if last then '1' else '0';
     return instruction;
 end;
 
-pure func BundleTestTileSourceDestination(size: bits(3), destination: bits(2),
-                                          pe_mask: bits(4), source: bits(6),
+pure func BundleTestTileSourceDestination(size_code: bits(4), destination: bits(2),
+                                          pe_mode: bits(3), source: bits(6),
                                           last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[11:9] = size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[25:20] = source;
     instruction[19] = if last then '1' else '0';
     return instruction;
@@ -57,7 +57,7 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN} + 5);
     WriteGPR(3, Zeros{PTO_XLEN} + 1);
     let tci_destination = ExecuteCommandInstruction(
-        BundleTestTileDestination('001', '00', '1111', TRUE), 32);
+        BundleTestTileDestination('0001', '00', '111', TRUE), 32);
     let tci_ior = ExecuteCommandInstruction(
         BundleTestScalarBinding(Zeros{5}, Zeros{5} + 2,
             Zeros{5} + 3, Zeros{5}), 32);
@@ -78,7 +78,7 @@ begin
         BundleTestTEPLStart(Zeros{10} + 0x066, Zeros{5} + 25), 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     let omitted_destination = ExecuteCommandInstruction(BundleTestTileDestination(
-        '001', '00', '1111', TRUE), 32);
+        '0001', '00', '111', TRUE), 32);
     let omitted_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
     assert omitted_stop == CommandExecution_Executed;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN};
@@ -89,7 +89,7 @@ begin
         BundleTestTEPLStart(Zeros{10} + 0x066, Zeros{5} + 25), 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     let zero_destination = ExecuteCommandInstruction(BundleTestTileDestination(
-        '001', '00', '1111', TRUE), 32);
+        '0001', '00', '111', TRUE), 32);
     let zero_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
         Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
     let zero_stop = ExecuteCommandInstruction(Zeros{64} + 1, 32);
@@ -106,7 +106,7 @@ begin
     let ttri_start = ExecuteCommandInstruction(
         BundleTestTEPLStart(Zeros{10} + 0x067, Zeros{5} + 24), 32);
     let ttri_destination = ExecuteCommandInstruction(BundleTestTileDestination(
-        '001', '00', '1111', TRUE), 32);
+        '0001', '00', '111', TRUE), 32);
     WriteGPR(4, Zeros{PTO_XLEN} + 65536);
     WriteGPR(5, Zeros{PTO_XLEN} + 1);
     let ttri_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
@@ -123,7 +123,7 @@ begin
         let overflow_start = ExecuteCommandInstruction(
             BundleTestTEPLStart(Zeros{10} + 0x067, Zeros{5} + 24), 32);
         let overflow_destination = ExecuteCommandInstruction(BundleTestTileDestination(
-            '001', '00', '1111', TRUE), 32);
+            '0001', '00', '111', TRUE), 32);
         WriteGPR(4, if overflow == 0 then
             Zeros{PTO_XLEN} + 65536 else Ones{PTO_XLEN} - 65535);
         WriteGPR(5, Zeros{PTO_XLEN} + 1);
@@ -137,7 +137,7 @@ begin
     let bool_start = ExecuteCommandInstruction(
         BundleTestTEPLStart(Zeros{10} + 0x066, Zeros{5} + 25), 32);
     let bool_destination = ExecuteCommandInstruction(BundleTestTileDestination(
-        '001', '00', '1111', TRUE), 32);
+        '0001', '00', '111', TRUE), 32);
     WriteGPR(2, Zeros{PTO_XLEN} + 5);
     WriteGPR(3, Zeros{PTO_XLEN} + 2);
     let bool_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
@@ -160,9 +160,9 @@ begin
             BundleTestTEPLStart(Zeros{10} + 0x06c, Zeros{5} + 1), 32);
         SetBundleDimension(0, Zeros{PTO_XLEN} + 4);
         let sort_source = ExecuteCommandInstruction(BundleTestTileSourceDestination(
-            '001', '00', '1111', Zeros{6} + 16, FALSE), 32);
+            '0001', '00', '111', Zeros{6} + 16, FALSE), 32);
         let sort_destination = ExecuteCommandInstruction(BundleTestTileDestination(
-            '001', '00', '1111', TRUE), 32);
+            '0001', '00', '111', TRUE), 32);
         WriteGPR(6, Zeros{PTO_XLEN} + descending);
         let sort_ior = ExecuteCommandInstruction(BundleTestScalarBinding(
             Zeros{5}, Zeros{5} + 6, Zeros{5}, Zeros{5}), 32);
@@ -184,7 +184,7 @@ begin
     let zero_mask_start = ExecuteCommandInstruction(
         BundleTestTEPLStart(Zeros{10} + 0x066, Zeros{5} + 25), 32);
     let zero_mask_destination = ExecuteCommandInstruction(BundleTestTileDestination(
-        '001', '00', '0000', TRUE), 32);
+        '0001', '00', '000', TRUE), 32);
     WriteGPR(2, Zeros{PTO_XLEN} + 5);
     WriteGPR(3, Zeros{PTO_XLEN} + 2);
     let zero_mask_ior = ExecuteCommandInstruction(BundleTestScalarBinding(

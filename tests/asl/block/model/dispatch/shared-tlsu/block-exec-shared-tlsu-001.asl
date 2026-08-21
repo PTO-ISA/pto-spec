@@ -8,14 +8,14 @@ begin
     return instruction;
 end;
 
-pure func BundleTestTileBindingV5(tile_size: bits(3), destination: bits(2),
-                                 pe_mask: bits(4), source0: bits(6),
+pure func BundleTestTileBindingV5(size_code: bits(4), destination: bits(2),
+                                 pe_mode: bits(3), source0: bits(6),
                                  last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[25:20] = source0;
     instruction[19] = if last then '1' else '0';
     return instruction;
@@ -25,19 +25,19 @@ pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = '1111';
-    instruction[11:9] = '000';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '111';
     return instruction;
 end;
 
 pure func BundleTestSharedBindingV6(shared_id: bits(8),
-                                   tile_size: bits(3),
-                                   pe_mask: bits(4)) => bits(64)
+                                   size_code: bits(4),
+                                   pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = pe_mask;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
@@ -53,15 +53,15 @@ begin
     return instruction;
 end;
 
-pure func BundleTestTileDestinationV5(tile_size: bits(3),
+pure func BundleTestTileDestinationV5(size_code: bits(4),
                                       destination: bits(2),
-                                      pe_mask: bits(4), last: boolean)
+                                      pe_mode: bits(3), last: boolean)
                                       => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00006013;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[19] = if last then '1' else '0';
     return instruction;
 end;
@@ -78,7 +78,7 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
     let load_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 17, '001', '1111'), 32);
+        BundleTestSharedBindingV6(Zeros{8} + 17, '0001', '111'), 32);
     let load_address = ExecuteCommandInstruction(
         BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
     assert load_start == CommandExecution_Executed;

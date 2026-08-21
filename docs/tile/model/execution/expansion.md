@@ -223,8 +223,6 @@ begin
 
     let source_tile = _Tiles[[source]];
     let broadcast_tile = _Tiles[[broadcast_source]];
-    let source_payload = source_tile.payload;
-    let broadcast_payload = broadcast_tile.payload;
     var result_tile = _Tiles[[destination]];
     var accumulated_flags = Zeros{5};
 
@@ -232,28 +230,30 @@ begin
         for column = 0 to result_tile.valid_columns - 1 looplimit 65536 do
             let broadcast_row = if axis == TileAxis_Row then row else 0;
             let broadcast_column = if axis == TileAxis_Row then 0 else column;
-            let broadcast_element = TileLinearIndex(broadcast_tile,
+            let broadcast_element = TileLogicalLinearIndex(broadcast_tile,
                 broadcast_row as integer {0..65535},
                 broadcast_column as integer {0..65535});
-            var left = broadcast_payload[[broadcast_element]];
+            var left = TileReadLogicalElement(broadcast_tile,
+                broadcast_element);
             if op != TileExpand_COPY then
-                let source_element = TileLinearIndex(
+                let source_element = TileLogicalLinearIndex(
                     source_tile,
                     row as integer {0..65535},
                     column as integer {0..65535});
-                left = source_payload[[source_element]];
+                left = TileReadLogicalElement(source_tile, source_element);
             end;
             let (value, element_flags) = TileExpandValueWithTypesAndFlags(
                 op,
                 source_tile.data_type,
                 result_tile.data_type,
                 left,
-                broadcast_payload[[broadcast_element]]);
-            let destination_element = TileLinearIndex(
+                TileReadLogicalElement(broadcast_tile, broadcast_element));
+            let destination_element = TileLogicalLinearIndex(
                 result_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result_tile.payload[[destination_element]] = value;
+            result_tile = TileInfoWithLogicalElement(result_tile,
+                destination_element, value);
             accumulated_flags = accumulated_flags OR element_flags;
         end;
     end;

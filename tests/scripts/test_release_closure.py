@@ -65,7 +65,7 @@ class ReleaseClosureTest(unittest.TestCase):
             "\t./scripts/generate-release-traceability-readiness --check\n"
             "\t./scripts/generate-release-gate-readiness --check\n"
             "\t./scripts/check-release-closure\n"
-            "\t./scripts/check-binary-closure\n"
+            "\t./scripts/check-binary-closure --release\n"
             "\t./scripts/check-release-manifest\n",
             makefile,
         )

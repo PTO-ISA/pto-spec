@@ -61,10 +61,10 @@ readonly func TileMatrixVectorQuantContentsLegal(
 begin
     let tile = _Tiles[[source]];
     for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-        let element = TileLinearIndex(
+        let element = TileLogicalLinearIndex(
             tile, 0, column as integer {0..65535});
         if !BundleFPATRQuantParameterWordLegal(
-               mode, tile.payload[[element]]) then
+               mode, TileReadLogicalElement(tile, element)) then
             return FALSE;
         end;
     end;
@@ -76,10 +76,10 @@ readonly func TileMatrixVectorReluContentsLegal(
 begin
     let tile = _Tiles[[source]];
     for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-        let element = TileLinearIndex(
+        let element = TileLogicalLinearIndex(
             tile, 0, column as integer {0..65535});
         if !BundleFPATRReluParameterWordLegal(
-               tile.payload[[element]]) then
+               TileReadLogicalElement(tile, element)) then
             return FALSE;
         end;
     end;

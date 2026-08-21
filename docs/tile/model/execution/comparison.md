@@ -133,18 +133,16 @@ begin
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
     var result = _Tiles[[destination]];
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
     var flags = Zeros{5};
     for row = 0 to left_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to left_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(left_tile,
+            let element = TileLogicalLinearIndex(left_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let (predicate, element_flags) = TileCompareElement(
                 comparison,
                 left_tile.data_type,
-                left_payload[[element]],
-                right_payload[[element]]);
+                TileReadLogicalElement(left_tile, element),
+                TileReadLogicalElement(right_tile, element));
             result = TileInfoWithPredicateBit(
                 result,
                 row as integer {0..65535},
@@ -182,19 +180,18 @@ begin
         comparison);
     let source_tile = _Tiles[[source]];
     var result = _Tiles[[destination]];
-    let payload = source_tile.payload;
     let normalized_scalar = TileRawElementValue(
         scalar,
         source_tile.data_type);
     var flags = Zeros{5};
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(source_tile,
+            let element = TileLogicalLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let (predicate, element_flags) = TileCompareElement(
                 comparison,
                 source_tile.data_type,
-                payload[[element]],
+                TileReadLogicalElement(source_tile, element),
                 normalized_scalar);
             result = TileInfoWithPredicateBit(
                 result,
@@ -221,19 +218,19 @@ begin
     let false_tile = _Tiles[[source_false]];
     let mask_tile = _Tiles[[mask]];
     var result = _Tiles[[destination]];
-    let true_payload = true_tile.payload;
-    let false_payload = false_tile.payload;
     for row = 0 to true_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(true_tile,
+            let element = TileLogicalLinearIndex(true_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             if TilePredicateBitFromInfo(
                 mask_tile,
                 row as integer {0..65535},
                 column as integer {0..65535}) then
-                result.payload[[element]] = true_payload[[element]];
+                result = TileInfoWithLogicalElement(result, element,
+                    TileReadLogicalElement(true_tile, element));
             else
-                result.payload[[element]] = false_payload[[element]];
+                result = TileInfoWithLogicalElement(result, element,
+                    TileReadLogicalElement(false_tile, element));
             end;
         end;
     end;
@@ -253,21 +250,22 @@ begin
     var result = _Tiles[[destination]];
     let true_tile = _Tiles[[source_true]];
     let mask_tile = _Tiles[[mask]];
-    let true_payload = true_tile.payload;
     let normalized_scalar = TileRawElementValue(
         scalar_false,
         true_tile.data_type);
     for row = 0 to true_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to true_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(true_tile,
+            let element = TileLogicalLinearIndex(true_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             if TilePredicateBitFromInfo(
                 mask_tile,
                 row as integer {0..65535},
                 column as integer {0..65535}) then
-                result.payload[[element]] = true_payload[[element]];
+                result = TileInfoWithLogicalElement(result, element,
+                    TileReadLogicalElement(true_tile, element));
             else
-                result.payload[[element]] = normalized_scalar;
+                result = TileInfoWithLogicalElement(
+                    result, element, normalized_scalar);
             end;
         end;
     end;

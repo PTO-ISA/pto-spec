@@ -8,14 +8,14 @@ begin
     return instruction;
 end;
 
-pure func BundleTestTileBindingV5(tile_size: bits(3), destination: bits(2),
-                                 pe_mask: bits(4), source0: bits(6),
+pure func BundleTestTileBindingV5(size_code: bits(4), destination: bits(2),
+                                 pe_mode: bits(3), source0: bits(6),
                                  last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[25:20] = source0;
     instruction[19] = if last then '1' else '0';
     return instruction;
@@ -25,19 +25,19 @@ pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = '1111';
-    instruction[11:9] = '000';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '111';
     return instruction;
 end;
 
 pure func BundleTestSharedBindingV6(shared_id: bits(8),
-                                   tile_size: bits(3),
-                                   pe_mask: bits(4)) => bits(64)
+                                   size_code: bits(4),
+                                   pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = pe_mask;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
@@ -53,15 +53,15 @@ begin
     return instruction;
 end;
 
-pure func BundleTestTileDestinationV5(tile_size: bits(3),
+pure func BundleTestTileDestinationV5(size_code: bits(4),
                                       destination: bits(2),
-                                      pe_mask: bits(4), last: boolean)
+                                      pe_mode: bits(3), last: boolean)
                                       => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00006013;
-    instruction[11:9] = tile_size;
+    instruction[18:15] = size_code;
     instruction[8:7] = destination;
-    instruction[18:15] = pe_mask;
+    instruction[11:9] = pe_mode;
     instruction[19] = if last then '1' else '0';
     return instruction;
 end;
@@ -77,9 +77,9 @@ begin
     let publish_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let publish_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 19, '001', '1111'), 32);
+        BundleTestSharedBindingV6(Zeros{8} + 19, '0001', '111'), 32);
     let publish_local = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('000', '00', '1111', Zeros{6}, TRUE), 32);
+        BundleTestTileBindingV5('0000', '00', '111', Zeros{6}, TRUE), 32);
     let publish_zero_ior = ExecuteCommandInstruction(
         BundleTestScalarBinding(Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
     assert publish_start == CommandExecution_Executed;
@@ -97,7 +97,7 @@ begin
     let broadcast_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 19), 32);
     let broadcast_destination = ExecuteCommandInstruction(
-        BundleTestTileDestinationV5('001', '01', '1111', TRUE), 32);
+        BundleTestTileDestinationV5('0001', '01', '111', TRUE), 32);
     assert broadcast_start == CommandExecution_Executed;
     assert broadcast_shared == CommandExecution_Executed;
     assert broadcast_destination == CommandExecution_Executed;
@@ -114,7 +114,7 @@ begin
     let extract_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{8} + 19), 32);
     let extract_destination = ExecuteCommandInstruction(
-        BundleTestTileDestinationV5('001', '10', '1111', TRUE), 32);
+        BundleTestTileDestinationV5('0001', '10', '111', TRUE), 32);
     assert extract_start == CommandExecution_Executed;
     assert extract_shared == CommandExecution_Executed;
     assert extract_destination == CommandExecution_Executed;

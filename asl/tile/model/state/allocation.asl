@@ -14,7 +14,8 @@ begin
         valid_columns, data_type);
     let derived_rows = DerivedTileRows(capacity_bytes, columns, data_type);
     assert rows <= derived_rows;
-    assert derived_rows * columns <= PTO_MODEL_TILE_ELEMENTS;
+    assert derived_rows * columns <=
+        TileLogicalElementCapacity(capacity_bytes, data_type);
     assert TileCapacityInUseExcept(index) + SharedTileCapacityInUse() +
         TileCoreAllocationBytes(allocation_mask, capacity_bytes) <=
         TileCapacityLimitBytes();
@@ -27,6 +28,8 @@ begin
     _Tiles[[index]].contents_defined = FALSE;
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     _Tiles[[index]].defined_valid_elements = 0;
+    _Tiles[[index]].packed_defined_elements =
+        ZeroPackedTileDefinedElements();
     _Tiles[[index]].capacity_bytes = capacity_bytes;
     _Tiles[[index]].rows = derived_rows;
     _Tiles[[index]].columns = columns;
@@ -73,6 +76,8 @@ begin
     _Tiles[[index]].contents_defined = FALSE;
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     _Tiles[[index]].defined_valid_elements = 0;
+    _Tiles[[index]].packed_defined_elements =
+        ZeroPackedTileDefinedElements();
     _Tiles[[index]].capacity_bytes = capacity_bytes;
     _Tiles[[index]].rows = rows;
     _Tiles[[index]].columns = columns;
@@ -191,6 +196,8 @@ begin
     _Tiles[[index]].contents_defined = FALSE;
     _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     _Tiles[[index]].defined_valid_elements = 0;
+    _Tiles[[index]].packed_defined_elements =
+        ZeroPackedTileDefinedElements();
     _Tiles[[index]].capacity_bytes = 0;
     _Tiles[[index]].rows = 0;
     _Tiles[[index]].columns = 0;

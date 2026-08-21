@@ -64,35 +64,69 @@ begin
     if TileLayoutIsCube(tile.layout) then
         assert TileCubeDescriptorLegal(tile);
     end;
-    var translated_addresses: TilePayload;
+    // Complete packed carriers make the maximum U4 shape representable, but
+    // an interpreter-sized translated-address array is still only a carrier
+    // cache.  The fast case is limited to ordinary reset-backed zero-stride
+    // packed loads and retains the normal translated probe/fault path.
+    var packed_zero_fast = PackedTileDataTypeIsFourBit(tile.data_type) &&
+        !TileLayoutIsCube(tile.layout) &&
+        !_MemoryEventCaptureEnabled &&
+        tile.defined_valid_elements == 0 &&
+        row_stride_bytes == Zeros{PTO_XLEN} &&
+        tile.valid_rows == tile.rows &&
+        tile.valid_columns == tile.columns &&
+        tile.rows * tile.columns ==
+            PackedTileLogicalCapacity(tile.capacity_bytes, tile.data_type);
+    if packed_zero_fast then
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            let address = TileMemoryStridedByteAddress(base_address,
+                0, column as integer {0..65535}, row_stride_bytes,
+                tile.data_type);
+            let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
+            if RaiseDataAccessFault(probe, address) then return; end;
+            if LoadTranslatedUnsigned(probe.translated_address,
+                   TileMemoryElementBytes(tile.data_type)) !=
+                   Zeros{PTO_XLEN} then
+                packed_zero_fast = FALSE;
+            end;
+        end;
+    end;
+    if packed_zero_fast then
+        _Tiles[[destination]] = TileWithPackedZeroValidRegionDefined(tile);
+        return;
+    end;
     var result = tile;
     // Instruction-wide preflight makes tile memory faults precise and
     // restartable: no payload element changes until every access succeeds.
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileStorageIndex(tile,
+            let element = TileLogicalLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryStridedByteAddress(base_address,
                 row as integer {0..65535}, column as integer {0..65535},
                 row_stride_bytes, tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, FALSE);
             if RaiseDataAccessFault(probe, address) then return; end;
-            translated_addresses[[element]] = probe.translated_address;
         end;
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileStorageIndex(tile,
+            let element = TileLogicalLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
+            let address = TileMemoryStridedByteAddress(base_address,
+                row as integer {0..65535}, column as integer {0..65535},
+                row_stride_bytes, tile.data_type);
+            let translated = ProbeTileMemoryAccess(address, tile.data_type,
+                FALSE).translated_address;
             let high_nibble = TileMemoryStridedByteHighNibble(
                 column as integer {0..65535}, tile.data_type);
-            let raw = LoadTranslatedUnsigned(translated_addresses[[element]],
+            let raw = LoadTranslatedUnsigned(translated,
                 TileMemoryElementBytes(tile.data_type));
-            RecordLoadEvent(translated_addresses[[element]],
+            RecordLoadEvent(translated,
                 TileMemoryElementBytes(tile.data_type), raw,
                 CurrentBundleMemoryOrder());
-            result.payload[[element]] = DecodeTileMemoryElementRaw(
-                raw, tile.data_type, high_nibble);
+            result = TileInfoWithLogicalElement(result, element,
+                DecodeTileMemoryElementRaw(raw, tile.data_type, high_nibble));
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -109,35 +143,32 @@ begin
     if TileLayoutIsCube(tile.layout) then
         assert TileCubeDescriptorLegal(tile);
     end;
-    let payload = tile.payload;
-    var original_addresses: TilePayload;
-    var translated_addresses: TilePayload;
-    var high_nibbles: bits(PTO_MODEL_TILE_ELEMENTS);
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileStorageIndex(tile,
+            let element = TileLogicalLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let address = TileMemoryStridedByteAddress(base_address,
                 row as integer {0..65535}, column as integer {0..65535},
                 row_stride_bytes, tile.data_type);
             let probe = ProbeTileMemoryAccess(address, tile.data_type, TRUE);
             if RaiseDataAccessFault(probe, address) then return; end;
-            original_addresses[[element]] = address;
-            translated_addresses[[element]] = probe.translated_address;
-            high_nibbles[element] = if TileMemoryStridedByteHighNibble(
-                column as integer {0..65535}, tile.data_type)
-                then '1' else '0';
         end;
     end;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileStorageIndex(tile,
+            let element = TileLogicalLinearIndex(tile,
                 row as integer {0..65535}, column as integer {0..65535});
+            let address = TileMemoryStridedByteAddress(base_address,
+                row as integer {0..65535}, column as integer {0..65535},
+                row_stride_bytes, tile.data_type);
+            let translated = ProbeTileMemoryAccess(address, tile.data_type,
+                TRUE).translated_address;
             let stored_value = StoreTileMemoryElement(
-                original_addresses[[element]], translated_addresses[[element]],
-                tile.data_type, high_nibbles[element] == '1',
-                payload[[element]]);
-            RecordStoreEvent(translated_addresses[[element]],
+                address, translated, tile.data_type,
+                TileMemoryStridedByteHighNibble(
+                    column as integer {0..65535}, tile.data_type),
+                TileReadLogicalElement(tile, element));
+            RecordStoreEvent(translated,
                 TileMemoryElementBytes(tile.data_type), stored_value,
                 CurrentBundleMemoryOrder());
         end;

@@ -162,8 +162,16 @@ begin
                     CommandDecodedWord(instruction, form, CommandField_imm8));
             end;
         when CommandHandler_BindBundleSharedIO =>
-            let shared_mask = DecodeCommandOperandRaw(instruction, form,
-                CommandField_PE_MASK)[3:0];
+            let pe_mode = DecodeCommandOperandRaw(instruction, form,
+                CommandField_PEMode)[2:0];
+            let shared_size = CommandDecodedSmall(
+                instruction, form, CommandField_SizeCode)
+                as integer {0..12};
+            if !TileSizeCodeIsLegal(shared_size) && shared_size != 0 then
+                SetFault(Fault_IllegalInstruction, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
+            let shared_mask = PTOv0PEMaskOfPEMode(pe_mode);
             if shared_mask == Zeros{4} then
                 // Strict no-op before placement, duplicate, stream, schema,
                 // allocation, descriptor, and operation-specific checks.
@@ -180,8 +188,7 @@ begin
             BindBundleSharedIO(
                 DecodeCommandOperandRaw(instruction, form,
                     CommandField_SharedTID)[7:0],
-                CommandDecodedSmall(instruction, form, CommandField_TSize)
-                    as integer {0..7},
+                shared_size,
                 shared_mask);
         when CommandHandler_BindBundleScalarIO =>
             if !_BundleActive || _BundleBodyActive ||
@@ -195,8 +202,22 @@ begin
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc1),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc2), 3);
         when CommandHandler_BindBundleTileIO =>
-            let pe_mask = DecodeCommandOperandRaw(
-                instruction, form, CommandField_PE_MASK)[3:0];
+            let pe_mode = DecodeCommandOperandRaw(
+                instruction, form, CommandField_PEMode)[2:0];
+            let local_destination =
+                CommandOperandPresent(form, CommandField_DstTile);
+            let encoded_tile_size = CommandDecodedSmall(
+                instruction, form, CommandField_SizeCode);
+            if !local_destination && encoded_tile_size != 0 then
+                SetFault(Fault_IllegalInstruction, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
+            let tile_size = if local_destination then encoded_tile_size else 0;
+            if local_destination && !LocalTileSizeCodeIsLegal(tile_size) then
+                SetFault(Fault_IllegalInstruction, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
+            let pe_mask = PTOv0PEMaskOfPEMode(pe_mode);
             if pe_mask == Zeros{4} then
                 // Strict no-op: zero participation suppresses every later
                 // placement, stream, schema, allocation, and descriptor check.
@@ -211,22 +232,16 @@ begin
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            let tile_size = if CommandOperandPresent(form, CommandField_TSize) then
-                CommandDecodedSmall(instruction, form, CommandField_TSize)
-                else 0;
             let local_to_shared =
                 _BundleOperation.valid &&
                 _BundleOperation.operation_class == BundleOperation_TileMemory &&
                 _BundleOperation.selector_valid &&
                 (_BundleOperation.selector[4:0] == '01001' ||
                  _BundleOperation.selector[4:0] == '01010');
-            let local_destination =
-                CommandOperandPresent(form, CommandField_TSize);
             if !BundleTileMaskCanAppend(pe_mask) ||
                 (local_destination && tile_size == 0) ||
                 (local_to_shared &&
-                 (CommandOperandPresent(form, CommandField_TSize) ||
-                  CommandOperandPresent(form, CommandField_DstTile))) then
+                 CommandOperandPresent(form, CommandField_DstTile)) then
                 SetFault(Fault_TileLegality, ReadTPC());
                 return CommandExecution_Rejected;
             end;

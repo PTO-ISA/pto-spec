@@ -156,13 +156,15 @@ begin
 end;
 
 type TilePayload of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
+type PackedTileDefinedElements of bits(524288);
 
 type TileInfo of record {
     allocated: boolean,
     storage_kind: TileStorageKind,
     contents_defined: boolean,
     defined_elements: bits(PTO_MODEL_TILE_ELEMENTS),
-    defined_valid_elements: integer {0..16384},
+    defined_valid_elements: integer {0..524288},
+    packed_defined_elements: PackedTileDefinedElements,
     capacity_bytes: integer {0..262144},
     rows: integer {0..65535},
     columns: integer {0..65535},

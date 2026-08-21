@@ -11,19 +11,18 @@ begin
         source,
         row_offset,
         column_offset);
-    let source_payload = source_tile.payload;
     var result = destination_tile;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(source_tile,
+            let source_element = TileLogicalLinearIndex(source_tile,
                 (row + row_offset) as integer {0..65535},
                 (column + column_offset) as integer {0..65535});
-            let destination_element = TileLinearIndex(
+            let destination_element = TileLogicalLinearIndex(
                 result,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result.payload[[destination_element]] =
-                source_payload[[source_element]];
+            result = TileInfoWithLogicalElement(result, destination_element,
+                TileReadLogicalElement(source_tile, source_element));
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -46,23 +45,22 @@ begin
         row_offset,
         column_offset);
     let old_payload = old_tile.payload;
-    let source_payload = source_tile.payload;
     var result = destination_tile;
     result.payload = old_payload;
     result.defined_elements = old_tile.defined_elements;
+    result.packed_defined_elements = old_tile.packed_defined_elements;
     result.defined_valid_elements = old_tile.defined_valid_elements;
     result.contents_defined = old_tile.contents_defined;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(source_tile,
+            let source_element = TileLogicalLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let destination_element = TileLinearIndex(
+            let destination_element = TileLogicalLinearIndex(
                 result,
                 (row + row_offset) as integer {0..65535},
                 (column + column_offset) as integer {0..65535});
-            result.payload[[destination_element]] =
-                source_payload[[source_element]];
-            result.defined_elements[destination_element] = '1';
+            result = TileInfoWithLogicalElement(result, destination_element,
+                TileReadLogicalElement(source_tile, source_element));
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -74,18 +72,17 @@ begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     assert TileOperandsLegal_TTRANS(destination, source);
-    let source_payload = source_tile.payload;
     var result = destination_tile;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(source_tile,
+            let source_element = TileLogicalLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let destination_element = TileLinearIndex(
+            let destination_element = TileLogicalLinearIndex(
                 result,
                 column as integer {0..65535},
                 row as integer {0..65535});
-            result.payload[[destination_element]] =
-                source_payload[[source_element]];
+            result = TileInfoWithLogicalElement(result, destination_element,
+                TileReadLogicalElement(source_tile, source_element));
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -103,25 +100,25 @@ begin
         destination,
         source_left,
         source_right);
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
     var result = destination_tile;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let destination_element = TileLinearIndex(
+            let destination_element = TileLogicalLinearIndex(
                 result,
                 row as integer {0..65535},
                 column as integer {0..65535});
             if column < left_tile.valid_columns then
-                let element = TileLinearIndex(left_tile,
+                let element = TileLogicalLinearIndex(left_tile,
                     row as integer {0..65535}, column as integer {0..65535});
-                result.payload[[destination_element]] = left_payload[[element]];
+                result = TileInfoWithLogicalElement(result, destination_element,
+                    TileReadLogicalElement(left_tile, element));
             else
-                let element = TileLinearIndex(right_tile,
+                let element = TileLogicalLinearIndex(right_tile,
                     row as integer {0..65535},
                     (column - left_tile.valid_columns)
                         as integer {0..65535});
-                result.payload[[destination_element]] = right_payload[[element]];
+                result = TileInfoWithLogicalElement(result, destination_element,
+                    TileReadLogicalElement(right_tile, element));
             end;
         end;
     end;

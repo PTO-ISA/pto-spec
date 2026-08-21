@@ -6,13 +6,13 @@ begin
     return instruction;
 end;
 
-pure func GatherBinding(mask: bits(4)) => bits(64)
+pure func GatherBinding(pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
     instruction[25:20] = Zeros{6};
     instruction[19] = '1';
-    instruction[18:15] = mask;
-    instruction[11:9] = '001';
+    instruction[18:15] = '0001';
+    instruction[11:9] = pe_mode;
     instruction[8:7] = '00';
     return instruction;
 end;
@@ -47,7 +47,7 @@ begin
     let attributed = ExecuteCommandInstruction(GatherMaxPad(), 32);
     assert attributed == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
-    let tiles = ExecuteCommandInstruction(GatherBinding('0001'), 32);
+    let tiles = ExecuteCommandInstruction(GatherBinding('001'), 32);
     assert tiles == CommandExecution_Executed;
     let scalar = ExecuteCommandInstruction(GatherIOR(Zeros{5} + 2), 32);
     assert scalar == CommandExecution_Executed;

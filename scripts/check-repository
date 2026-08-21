@@ -179,9 +179,5 @@ if [[ $structure_only == true ]]; then
     exit 0
 fi
 
-./scripts/generate-release-traceability-readiness --check
-./scripts/generate-release-gate-readiness --check
-./scripts/check-release-closure
 ./scripts/check-binary-closure
-./scripts/check-release-manifest
 echo "repository checks passed"

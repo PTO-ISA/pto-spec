@@ -110,7 +110,6 @@ begin
         source);
 
     let source_tile = _Tiles[[source]];
-    let source_payload = source_tile.payload;
     var result_tile = _Tiles[[destination]];
     var accumulated_flags = Zeros{5};
     let outer_count =
@@ -129,14 +128,14 @@ begin
             if axis == TileAxis_Row then outer else 0;
         let first_column =
             if axis == TileAxis_Row then 0 else outer;
-        let first_element = TileLinearIndex(
+        let first_element = TileLogicalLinearIndex(
             source_tile,
             first_row as integer {0..65535},
             first_column as integer {0..65535});
         var accumulator = TileProfileReductionInitial(
             operation,
             source_tile.data_type,
-            source_payload[[first_element]]);
+            TileReadLogicalElement(source_tile, first_element));
         var selected_index: integer {0..65535} = 0;
         let identity_reduction =
             operation == TileReduction_SUM ||
@@ -151,7 +150,7 @@ begin
                     if axis == TileAxis_Row then outer else inner;
                 let column =
                     if axis == TileAxis_Row then inner else outer;
-                let element = TileLinearIndex(
+                let element = TileLogicalLinearIndex(
                     source_tile,
                     row as integer {0..65535},
                     column as integer {0..65535});
@@ -160,7 +159,7 @@ begin
                         operation,
                         source_tile.data_type,
                         accumulator,
-                        source_payload[[element]]);
+                        TileReadLogicalElement(source_tile, element));
                 accumulator = next;
                 accumulated_flags =
                     accumulated_flags OR element_flags;
@@ -177,17 +176,18 @@ begin
             if axis == TileAxis_Row then outer else 0;
         let destination_column =
             if axis == TileAxis_Row then 0 else outer;
-        let destination_element = TileLinearIndex(
+        let destination_element = TileLogicalLinearIndex(
             result_tile,
             destination_row as integer {0..65535},
             destination_column as integer {0..65535});
         if operation == TileReduction_ARGMIN ||
            operation == TileReduction_ARGMAX then
-            result_tile.payload[[destination_element]] =
-                NaturalToWord(
-                    selected_index as integer {0..262144});
+            result_tile = TileInfoWithLogicalElement(result_tile,
+                destination_element, NaturalToWord(
+                    selected_index as integer {0..262144}));
         else
-            result_tile.payload[[destination_element]] = accumulator;
+            result_tile = TileInfoWithLogicalElement(result_tile,
+                destination_element, accumulator);
         end;
     end;
 

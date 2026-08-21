@@ -8,7 +8,9 @@ begin
                tile.columns, tile.data_type) &&
            tile.valid_rows <= tile.rows &&
            tile.valid_columns <= tile.columns &&
-           tile.rows * tile.columns <= PTO_MODEL_TILE_ELEMENTS &&
+           tile.rows * tile.columns <=
+               TileLogicalElementCapacity(tile.capacity_bytes,
+                                          tile.data_type) &&
            TileGenericIndexingPermitted(tile);
 end;
 

@@ -27,6 +27,7 @@ begin
     result.contents_defined = FALSE;
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
+    result.packed_defined_elements = ZeroPackedTileDefinedElements();
     for row = 0 to result.valid_rows - 1 looplimit 65536 do
         let logical_row = position_m + row;
         let batch = logical_row DIVRM rows_per_batch;
@@ -69,20 +70,20 @@ begin
                     input_row,
                     input_column,
                     channel_in_group);
-                value = source_tile.payload[[source_index as
-                    ModelTileElementIndex]];
+                value = TileReadLogicalElement(source_tile,
+                    source_index as PackedTileElementIndex);
             end;
-            let destination_index = TileLinearIndex(
+            let destination_index = TileLogicalLinearIndex(
                 result,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result.payload[[destination_index]] = value;
-            result.defined_elements[destination_index] = '1';
+            result = TileInfoWithLogicalElement(result, destination_index,
+                value);
         end;
     end;
     result.defined_valid_elements =
         (result.valid_rows * result.valid_columns)
-            as integer {0..16384};
+            as integer {0..524288};
     result.contents_defined = TRUE;
     result.location = TileLocation_Matrix;
     result = TileWithPadding(result, TilePad_Null);

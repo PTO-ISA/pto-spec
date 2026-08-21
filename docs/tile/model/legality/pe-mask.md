@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/pe-mask.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-PE-MASK","surface":"tile","classification":["model","legality","pe-mask"],"depends_on":["PTO-TILE-MODEL-STATE-TYPES"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-PE-MASK","surface":"tile","classification":["model","legality","pe-mask"],"depends_on":["PTO-TILE-MODEL-STATE-TYPES","PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY"]}
 pure func PEMaskPopulation(pe_mask: bits(4)) => integer {0..4}
 begin
     var count: integer {0..4} = 0;

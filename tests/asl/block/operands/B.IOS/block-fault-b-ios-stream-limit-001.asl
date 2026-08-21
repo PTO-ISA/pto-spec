@@ -3,7 +3,8 @@ pure func SharedBindingInstruction(id: bits(8)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001013;
     instruction[27:20] = id;
-    instruction[18:15] = '1111';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '111';
     return instruction;
 end;
 

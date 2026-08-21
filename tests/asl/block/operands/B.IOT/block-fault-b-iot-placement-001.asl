@@ -3,6 +3,7 @@ func main() => integer
 begin
     var source = Zeros{64} + 0x00005013;
     source[18:15] = '0001';
+    source[11:9] = '111';
     source[19] = '1';
 
     ResetProfileState();

@@ -56,7 +56,7 @@ begin
         start,
         result.data_type);
     for column = 0 to result.valid_columns - 1 looplimit 65536 do
-        let element = TileLinearIndex(
+        let element = TileLogicalLinearIndex(
             result,
             0,
             column as integer {0..65535});
@@ -65,9 +65,10 @@ begin
             normalized_start - offset
         else
             normalized_start + offset;
-        result.payload[[element]] = TileRawElementValue(
+        result = TileInfoWithLogicalElement(result, element,
+            TileRawElementValue(
             value,
-            result.data_type);
+            result.data_type));
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, TilePad_Null);
@@ -91,14 +92,15 @@ begin
                 column >= boundary
             else
                 column <= boundary;
-            let element = TileLinearIndex(
+            let element = TileLogicalLinearIndex(
                 result,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result.payload[[element]] = if selected then
+            result = TileInfoWithLogicalElement(result, element,
+                if selected then
                 one
             else
-                Zeros{PTO_XLEN};
+                Zeros{PTO_XLEN});
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -112,7 +114,6 @@ begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     assert TileOperandsLegal_TFILLPAD(destination, source, padding);
-    let source_payload = source_tile.payload;
     let typed_padding = TileRawElementValue(
         padding,
         destination_tile.data_type);
@@ -121,21 +122,21 @@ begin
         for column = 0 to destination_tile.columns - 1 looplimit 65536 do
             var value = typed_padding;
             if row < source_tile.valid_rows && column < source_tile.valid_columns then
-                let source_element = TileLinearIndex(source_tile,
+                let source_element = TileLogicalLinearIndex(source_tile,
                     row as integer {0..65535}, column as integer {0..65535});
-                value = source_payload[[source_element]];
+                value = TileReadLogicalElement(source_tile, source_element);
             end;
-            let destination_element = TileLinearIndex(
+            let destination_element = TileLogicalLinearIndex(
                 result,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result.payload[[destination_element]] = value;
-            result.defined_elements[destination_element] = '1';
+            result = TileInfoWithLogicalElement(result, destination_element,
+                value);
         end;
     end;
     result.defined_valid_elements =
         (result.valid_rows * result.valid_columns)
-            as integer {0..16384};
+            as integer {0..524288};
     result.contents_defined = TRUE;
     _Tiles[[destination]] = result;
 end;

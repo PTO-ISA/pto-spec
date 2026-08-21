@@ -6,22 +6,23 @@ begin
     return instruction;
 end;
 
-pure func CasInputs(mask: bits(4)) => bits(64)
+pure func CasInputs(pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00004013;
     instruction[25:20] = Zeros{6};
     instruction[31:26] = Zeros{6} + 1;
-    instruction[18:15] = mask;
+    instruction[18:15] = Zeros{4};
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
-pure func CasOutput(mask: bits(4)) => bits(64)
+pure func CasOutput(pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00005013;
     instruction[25:20] = Zeros{6} + 2;
     instruction[19] = '1';
-    instruction[18:15] = mask;
-    instruction[11:9] = '001';
+    instruction[18:15] = '0001';
+    instruction[11:9] = pe_mode;
     instruction[8:7] = '00';
     return instruction;
 end;
@@ -72,9 +73,9 @@ begin
     assert padded == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
-    let inputs = ExecuteCommandInstruction(CasInputs('0001'), 32);
+    let inputs = ExecuteCommandInstruction(CasInputs('001'), 32);
     assert inputs == CommandExecution_Executed;
-    let output = ExecuteCommandInstruction(CasOutput('0001'), 32);
+    let output = ExecuteCommandInstruction(CasOutput('001'), 32);
     assert output == CommandExecution_Executed;
     let scalar = ExecuteCommandInstruction(CasIOR(), 32);
     assert scalar == CommandExecution_Executed;

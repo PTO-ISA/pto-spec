@@ -42,6 +42,8 @@ begin
         _Tiles[[index]].contents_defined = FALSE;
         _Tiles[[index]].defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
         _Tiles[[index]].defined_valid_elements = 0;
+        _Tiles[[index]].packed_defined_elements =
+            ZeroPackedTileDefinedElements();
         _Tiles[[index]].capacity_bytes = 0;
         _Tiles[[index]].rows = 0;
         _Tiles[[index]].columns = 0;
@@ -65,6 +67,8 @@ begin
         _SharedTiles[[index]].tile.defined_elements =
             Zeros{PTO_MODEL_TILE_ELEMENTS};
         _SharedTiles[[index]].tile.defined_valid_elements = 0;
+        _SharedTiles[[index]].tile.packed_defined_elements =
+            ZeroPackedTileDefinedElements();
         _SharedTiles[[index]].tile.cube_k_repeat = 0;
         _SharedTiles[[index]].tile.cube_n_repeat = 0;
         _SharedTiles[[index]].tile.cube_cell_count = 0;

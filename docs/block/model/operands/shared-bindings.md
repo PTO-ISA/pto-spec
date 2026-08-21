@@ -12,7 +12,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/shared-bindings.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","surface":"block","classification":["model","operands","shared-bindings"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS"]}
-func BindBundleSharedIO(shared_id: bits(8), size_code: integer {0..7},
+func BindBundleSharedIO(shared_id: bits(8), size_code: integer {0..12},
                         pe_mask: bits(4))
 begin
     if !BundleSharedMaskCanAppend(pe_mask) then
@@ -70,7 +70,7 @@ begin
 end;
 
 readonly func BundleSharedBindingSize(ordinal: integer {0..3})
-        => integer {0..7}
+        => integer {0..12}
 begin
     assert _BundleSharedBindings[[ordinal]].valid &&
            !_BundleSharedBindings[[ordinal]].consumed;

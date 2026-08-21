@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/schema/profile-encoding.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING","surface":"block","classification":["model","schema","profile-encoding"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-PROFILE"],"catalog_projection":{"catalog":"command-forms","isa":"PTO Instruction Set Architecture","reviewed_encoding_overlaps":[{"broad_form_id":"b_iot_32_10db6db84f5d","narrow_form_id":"b_iot_32_c11eb189dd83","reason":"source-only form fixes TSize to zero; destination form requires TSize 1..7 and a 2-bit DstTile"},{"broad_form_id":"b_iot_32_8b8bce6bffe8","narrow_form_id":"b_iot_32_2c07e7177fad","reason":"source-only form fixes TSize to zero; destination form requires TSize 1..7 and a 2-bit DstTile"},{"broad_form_id":"c_bstart_std_16_8b40f078c14a","narrow_form_id":"c_bstop_16_ca4743d8a95e","reason":"C.BSTOP fixes the broad C.BSTART.STD BrType field to excluded value 0"}],"schema_version":2,"surface":"command-and-boundary"}}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-SCHEMA-PROFILE-ENCODING","surface":"block","classification":["model","schema","profile-encoding"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-PROFILE"],"catalog_projection":{"catalog":"command-forms","isa":"PTO Instruction Set Architecture","reviewed_encoding_overlaps":[{"broad_form_id":"b_iot_32_10db6db84f5d","narrow_form_id":"b_iot_32_c11eb189dd83","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..10 and a 2-bit DstTile"},{"broad_form_id":"b_iot_32_8b8bce6bffe8","narrow_form_id":"b_iot_32_2c07e7177fad","reason":"source-only form fixes SizeCode to zero; destination form requires SizeCode 1..10 and a 2-bit DstTile"},{"broad_form_id":"c_bstart_std_16_8b40f078c14a","narrow_form_id":"c_bstop_16_ca4743d8a95e","reason":"C.BSTOP fixes the broad C.BSTART.STD BrType field to excluded value 0"}],"schema_version":2,"surface":"command-and-boundary"}}
 pure func PTOv0BundleKindCode(kind: BundleKind) => bits(4)
 begin
     case kind of
@@ -34,6 +34,20 @@ begin
     elsif code == '0111' then return BundleKind_TileMatrix;
     elsif code == '1000' then return BundleKind_FrameTemplate;
     else return BundleKind_Standard;
+    end;
+end;
+
+pure func PTOv0PEMaskOfPEMode(mode: bits(3)) => bits(4)
+begin
+    case mode of
+        when '000' => return '0000';
+        when '001' => return '1000';
+        when '010' => return '0100';
+        when '011' => return '0010';
+        when '100' => return '0001';
+        when '101' => return '1100';
+        when '110' => return '1110';
+        when '111' => return '1111';
     end;
 end;
 

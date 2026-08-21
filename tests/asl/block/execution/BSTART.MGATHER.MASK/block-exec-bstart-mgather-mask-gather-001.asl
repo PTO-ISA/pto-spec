@@ -6,13 +6,13 @@ begin
     return instruction;
 end;
 
-pure func MaskGatherBinding(mask: bits(4)) => bits(64)
+pure func MaskGatherBinding(pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00004013;
     instruction[31:26] = Zeros{6} + 1;
     instruction[19] = '1';
-    instruction[18:15] = mask;
-    instruction[11:9] = '001';
+    instruction[18:15] = Zeros{4};
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
@@ -51,7 +51,7 @@ begin
     assert padded == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 3);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
-    let bound = ExecuteCommandInstruction(MaskGatherBinding('0001'), 32);
+    let bound = ExecuteCommandInstruction(MaskGatherBinding('001'), 32);
     assert bound == CommandExecution_Executed;
     let scalar = ExecuteCommandInstruction(MaskGatherIOR(), 32);
     assert scalar == CommandExecution_Executed;

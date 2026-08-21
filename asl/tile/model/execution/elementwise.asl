@@ -354,15 +354,15 @@ begin
 
     // Snapshot both sources before the first destination write. This defines
     // source/destination aliasing as read-before-write.
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
     for row = 0 to left_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to left_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(left_tile,
+            let element = TileLogicalLinearIndex(left_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            _Tiles[[destination]].payload[[element]] =
+            _Tiles[[destination]] = TileInfoWithLogicalElement(
+                _Tiles[[destination]], element,
                 TileProfileBinary(op, left_tile.data_type,
-                    left_payload[[element]], right_payload[[element]]);
+                    TileReadLogicalElement(left_tile, element),
+                    TileReadLogicalElement(right_tile, element)));
         end;
     end;
     MarkTileValidRegionDefined(destination);
@@ -380,11 +380,12 @@ begin
         result.data_type);
     for row = 0 to result.valid_rows - 1 looplimit 65536 do
         for column = 0 to result.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(
+            let element = TileLogicalLinearIndex(
                 result,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result.payload[[element]] = normalized_scalar;
+            result = TileInfoWithLogicalElement(result, element,
+                normalized_scalar);
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -402,21 +403,20 @@ begin
         scalar);
     let source_tile = _Tiles[[source]];
     var result = _Tiles[[destination]];
-    let source_payload = source_tile.payload;
     let normalized_scalar = TileRawElementValue(
         scalar,
         source_tile.data_type);
     var flags = Zeros{5};
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(source_tile,
+            let element = TileLogicalLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
             let (value, element_flags) = TileProfileBinaryWithFlags(
                 op,
                 source_tile.data_type,
-                source_payload[[element]],
+                TileReadLogicalElement(source_tile, element),
                 normalized_scalar);
-            result.payload[[element]] = value;
+            result = TileInfoWithLogicalElement(result, element, value);
             flags = flags OR element_flags;
         end;
     end;

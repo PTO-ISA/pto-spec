@@ -46,4 +46,6 @@ fi
 # Execute the pinned binary directly once built. `dune exec` holds one workspace
 # lock for the lifetime of ASLRef, which serializes otherwise independent test
 # shards and defeats `make test-parallel`.
+aslref_stack_limit=$(ulimit -Hs)
+ulimit -s "$aslref_stack_limit"
 exec "$aslref_binary" "$@"

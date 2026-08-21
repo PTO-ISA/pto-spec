@@ -8,12 +8,13 @@ begin
     return instruction;
 end;
 
-pure func StoreMaskTestSharedBinding(shared_id: bits(8), pe_mask: bits(4))
+pure func StoreMaskTestSharedBinding(shared_id: bits(8), pe_mode: bits(3))
         => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
     instruction[27:20] = shared_id;
-    instruction[18:15] = pe_mask;
+    instruction[18:15] = Zeros{4};
+    instruction[11:9] = pe_mode;
     return instruction;
 end;
 
@@ -28,7 +29,7 @@ begin
     let full_start = ExecuteCommandInstruction(
         StoreMaskTestTLSUStart('00001', Zeros{5} + 24), 32);
     let full_shared = ExecuteCommandInstruction(
-        StoreMaskTestSharedBinding(Zeros{8} + 9, '0001'), 32);
+        StoreMaskTestSharedBinding(Zeros{8} + 9, '001'), 32);
     assert full_start == CommandExecution_Executed;
     assert full_shared == CommandExecution_Executed;
     let full_completed = ExecuteBundleTileOperation();
@@ -41,7 +42,7 @@ begin
     let partial_start = ExecuteCommandInstruction(
         StoreMaskTestTLSUStart('01110', Zeros{5} + 24), 32);
     let partial_shared = ExecuteCommandInstruction(
-        StoreMaskTestSharedBinding(Zeros{8} + 9, '0001'), 32);
+        StoreMaskTestSharedBinding(Zeros{8} + 9, '001'), 32);
     assert partial_start == CommandExecution_Executed;
     assert partial_shared == CommandExecution_Executed;
     let partial_completed = ExecuteBundleTileOperation();

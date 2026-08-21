@@ -11,7 +11,7 @@ func SetBundleTileBinding(index: BundleTileBindingIndex,
                          last: boolean)
 begin
     if destination_valid &&
-       (destination > 3 || !TileSizeCodeIsLegal(destination_size)) then
+       (destination > 3 || !LocalTileSizeCodeIsLegal(destination_size)) then
         SetFault(Fault_TileLegality, ReadTPC());
         return;
     end;
@@ -85,18 +85,19 @@ readonly func BundleTileDestinationSizeLegal(
     binding: BundleTileBindingIndex) => boolean
 begin
     if !_BundleTileBindings[[binding]].destination_valid then return TRUE; end;
-    return TileSizeCodeIsLegal(
+    return LocalTileSizeCodeIsLegal(
         _BundleTileBindings[[binding]].destination_size);
 end;
 
 readonly func BundleTileDestinationSizeBytes(
     binding: BundleTileBindingIndex)
-    => integer {0,128,256,512,1024,2048,4096,8192}
+    => integer {0,128,256,512,1024,2048,4096,8192,16384,32768,65536}
 begin
     if !_BundleTileBindings[[binding]].destination_valid then return 0; end;
     assert BundleTileDestinationSizeLegal(binding);
     return TileSizeCodeBytes(
-        _BundleTileBindings[[binding]].destination_size as integer {1..7});
+        _BundleTileBindings[[binding]].destination_size as integer {1..10})
+        as integer {128,256,512,1024,2048,4096,8192,16384,32768,65536};
 end;
 
 readonly func BundleTileIsDestination(tile: TileIndex) => boolean
