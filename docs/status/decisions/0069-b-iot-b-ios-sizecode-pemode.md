@@ -1,25 +1,15 @@
 # ADR 0069: Re-encode B.IOT and B.IOS size and PE mode fields
 
-- Status: proposed; merge-gated
+- Status: accepted
 - Date: 2026-08-20
-- Deciders: pending PTO ISA maintainer review
-- Contract: https://github.com/PTO-ISA/pto-spec/issues/118
-- Reviewer precedent: https://github.com/PTO-ISA/pto-spec/issues/113#issuecomment-5359572490
-- Release: post-0.58.3 PTO ISA 0.59.0; `pto-isa-0.59.0-mode-function-v2`
-- Merge gate: PTO 0.58.3 must be published before this implementation may merge.
 
 ## Context
 
-NDF #118 is the active proposed contract for this implementation. It does not
-reopen closed #113 or treat its former handoff as accepted. The current architecture
-stack remains on the 0.58 release line until PTO 0.58.3 is published; this
-candidate is intentionally the first post-0.58.3 hard break.
-
-The 0.58 binders encoded a four-bit `PE_MASK` and a three-bit `TSize` in
+The previous binders encoded a four-bit `PE_MASK` and a three-bit `TSize` in
 different semantic roles. That layout cannot represent the proposed larger
 per-PE capacities or give both Local and Shared binders one common mode
-decoder. The change is an intentional ABI break; the 0.58.2 mode-function
-ABI is not a compatibility target.
+decoder. The new layout is an intentional encoding break. Release identity is
+assigned separately and is not part of this architectural decision.
 
 ## Decision
 
@@ -65,12 +55,9 @@ contracts remain unchanged.
 
 The mnemonic metadata, decoder witnesses, common dispatch path, generated
 catalog, and instruction pages now expose `SizeCode` and `PEMode`. The
-remaining capacity, descriptor/state, ABI version, and downstream consumer
-projections are staged separately and must use this ADR as their active
-encoding decision. Existing 0.58.2 binaries are intentionally rejected by
-the 0.59.0 ABI. An implementation PR may be reviewed early, but it must not
-merge until PTO 0.58.3 has been published; no current tree or evidence claim
-asserts that publication has occurred.
+remaining capacity, descriptor/state, and downstream consumer projections use
+this ADR as their active encoding decision. Binary words using the superseded
+field layout do not retain their former meaning.
 
 ## Supersession
 
@@ -89,5 +76,5 @@ storage, precision, and rollback decisions remain in force.
   Shared binders with different mode semantics.
 - Adding a new B.IOT form or selector would change the approved form inventory
   and is unnecessary for the re-encoding.
-- Preserving the 0.58.2 ABI would make the intentional 0.59.0 encoding break
-  ambiguous and allow incompatible binaries to be mixed.
+- Preserving the previous field layout would leave the larger size classes and
+  common mode decoder unrepresentable.

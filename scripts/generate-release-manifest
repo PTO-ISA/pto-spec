@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the reproducible PTO ISA 0.59.0 release identity artifacts."""
+"""Generate the reproducible PTO ISA 0.58.2 release identity artifacts."""
 
 from __future__ import annotations
 
@@ -13,8 +13,8 @@ import tomllib
 
 
 ROOT = Path(__file__).resolve().parent.parent
-RELEASE = "0.59.0"
-ENCODING_ABI = "pto-isa-0.59.0-mode-function-v2"
+RELEASE = "0.58.2"
+ENCODING_ABI = "pto-isa-0.58.2-mode-function-v1"
 MANIFEST_PATH = Path("spec/release-manifest.json")
 TOTALITY_PATH = Path("spec/evidence/pto-isa-0582-encoding-totality.json")
 ABI_VECTORS_PATH = Path("spec/evidence/pto-isa-0582-abi-vectors.json")
