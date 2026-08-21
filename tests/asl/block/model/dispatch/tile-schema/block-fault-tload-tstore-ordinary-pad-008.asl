@@ -20,9 +20,9 @@ pure func OrdinaryPadTileBinding(load: boolean) => bits(64)
 begin
     var instruction: bits(64) = if load then
         Zeros{64} + 0x00006013 else Zeros{64} + 0x00005013;
-    instruction[18:15] = '0001';
+    instruction[18:15] = if load then '0001' else '0000';
     instruction[19] = '1';
-    if load then instruction[11:9] = '001'; end;
+    instruction[11:9] = '001';
     return instruction;
 end;
 
