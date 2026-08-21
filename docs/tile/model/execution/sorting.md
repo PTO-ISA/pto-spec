@@ -35,17 +35,17 @@ begin
         source_tile.valid_columns as integer {1..65535};
     var result_values = _Tiles[[destination]];
     var result_indices = _Tiles[[destination_indices]];
-    var values = source_tile.payload;
-    var indices: TilePayload;
+    var values = source_tile;
+    var indices = result_indices;
 
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(
+            let element = TileLogicalLinearIndex(
                 source_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            indices[[element]] =
-                Zeros{PTO_XLEN} + (column MOD sort_width);
+            indices = TileInfoWithLogicalElement(indices, element,
+                Zeros{PTO_XLEN} + (column MOD sort_width));
         end;
 
         let group_count: integer {1..65535} =
@@ -63,26 +63,36 @@ begin
                 for offset = 0 to 62 do
                     let left_column = group_begin + offset;
                     if left_column + 1 < group_end then
-                        let left_element = TileLinearIndex(
+                        let left_element = TileLogicalLinearIndex(
                             source_tile,
                             row as integer {0..65535},
                             left_column as integer {0..65535});
-                        let right_element = TileLinearIndex(
+                        let right_element = TileLogicalLinearIndex(
                             source_tile,
                             row as integer {0..65535},
                             (left_column + 1) as integer {0..65535});
                         if !TileSortLeftBefore(
-                               values[[left_element]],
-                               values[[right_element]],
+                               TileReadLogicalElement(values, left_element),
+                               TileReadLogicalElement(values, right_element),
                                descending,
                                source_tile.data_type) then
-                            let left_value = values[[left_element]];
-                            values[[left_element]] = values[[right_element]];
-                            values[[right_element]] = left_value;
+                            let left_value =
+                                TileReadLogicalElement(values, left_element);
+                            let right_value =
+                                TileReadLogicalElement(values, right_element);
+                            values = TileInfoWithLogicalElement(
+                                values, left_element, right_value);
+                            values = TileInfoWithLogicalElement(
+                                values, right_element, left_value);
 
-                            let left_index = indices[[left_element]];
-                            indices[[left_element]] = indices[[right_element]];
-                            indices[[right_element]] = left_index;
+                            let left_index =
+                                TileReadLogicalElement(indices, left_element);
+                            let right_index =
+                                TileReadLogicalElement(indices, right_element);
+                            indices = TileInfoWithLogicalElement(
+                                indices, left_element, right_index);
+                            indices = TileInfoWithLogicalElement(
+                                indices, right_element, left_index);
                         end;
                     end;
                 end;
@@ -90,12 +100,12 @@ begin
         end;
     end;
 
-    result_values.payload = values;
+    result_values = values;
     result_values = TileWithValidRegionDefined(result_values);
     result_values = TileWithPadding(result_values, TilePad_Null);
     result_values.location = TileLocation_Any;
 
-    result_indices.payload = indices;
+    result_indices = indices;
     result_indices = TileWithValidRegionDefined(result_indices);
     result_indices = TileWithPadding(result_indices, TilePad_Null);
     result_indices.location = TileLocation_Any;
@@ -124,8 +134,6 @@ begin
 
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
     let source_has_signaling_nan =
         TileSortSourceHasSignalingNaN(source_left) ||
         TileSortSourceHasSignalingNaN(source_right);
@@ -139,42 +147,44 @@ begin
         var take_left = right_column >= right_tile.valid_columns;
         if left_column < left_tile.valid_columns &&
            right_column < right_tile.valid_columns then
-            let left_element = TileLinearIndex(
+            let left_element = TileLogicalLinearIndex(
                 left_tile,
                 0,
                 left_column);
-            let right_element = TileLinearIndex(
+            let right_element = TileLogicalLinearIndex(
                 right_tile,
                 0,
                 right_column);
             take_left = TileSortLeftBefore(
-                left_payload[[left_element]],
-                right_payload[[right_element]],
+                TileReadLogicalElement(left_tile, left_element),
+                TileReadLogicalElement(right_tile, right_element),
                 descending,
                 left_tile.data_type);
         end;
 
         if take_left then
-            let left_element = TileLinearIndex(
+            let left_element = TileLogicalLinearIndex(
                 left_tile,
                 0,
                 left_column);
-            let output_element = TileLinearIndex(
+            let output_element = TileLogicalLinearIndex(
                 result,
                 0,
                 output_column as integer {0..65535});
-            result.payload[[output_element]] = left_payload[[left_element]];
+            result = TileInfoWithLogicalElement(result, output_element,
+                TileReadLogicalElement(left_tile, left_element));
             left_column = (left_column + 1) as integer {0..65535};
         else
-            let right_element = TileLinearIndex(
+            let right_element = TileLogicalLinearIndex(
                 right_tile,
                 0,
                 right_column);
-            let output_element = TileLinearIndex(
+            let output_element = TileLogicalLinearIndex(
                 result,
                 0,
                 output_column as integer {0..65535});
-            result.payload[[output_element]] = right_payload[[right_element]];
+            result = TileInfoWithLogicalElement(result, output_element,
+                TileReadLogicalElement(right_tile, right_element));
             right_column = (right_column + 1) as integer {0..65535};
         end;
     end;

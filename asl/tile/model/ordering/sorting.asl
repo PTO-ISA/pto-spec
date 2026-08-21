@@ -62,13 +62,13 @@ begin
     let source_tile = _Tiles[[source]];
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(
+            let element = TileLogicalLinearIndex(
                 source_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
             if TileSortValueIsSignalingNaN(
                    source_tile.data_type,
-                   source_tile.payload[[element]]) then
+                   TileReadLogicalElement(source_tile, element)) then
                 return TRUE;
             end;
         end;
@@ -86,17 +86,17 @@ begin
     end;
 
     for column = 0 to source_tile.valid_columns - 2 looplimit 65536 do
-        let left_element = TileLinearIndex(
+        let left_element = TileLogicalLinearIndex(
             source_tile,
             0,
             column as integer {0..65535});
-        let right_element = TileLinearIndex(
+        let right_element = TileLogicalLinearIndex(
             source_tile,
             0,
             (column + 1) as integer {0..65535});
         if !TileSortLeftBefore(
-               source_tile.payload[[left_element]],
-               source_tile.payload[[right_element]],
+               TileReadLogicalElement(source_tile, left_element),
+               TileReadLogicalElement(source_tile, right_element),
                descending,
                source_tile.data_type) then
             return FALSE;

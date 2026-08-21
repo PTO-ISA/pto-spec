@@ -92,7 +92,7 @@ readonly func TileLogicalLinearIndex(tile: TileInfo,
                                      column: integer {0..65535})
                                      => PackedTileElementIndex
 begin
-    if PackedTileDataTypeIsFourBit(tile.data_type) then
+    if TileUsesPackedCarrierRepresentation(tile) then
         return TilePackedLinearIndex(tile, row, column);
     end;
     return TileStorageIndex(tile, row, column) as PackedTileElementIndex;

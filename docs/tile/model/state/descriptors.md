@@ -101,18 +101,17 @@ begin
            data_type == TileDataType_U4X2;
 end;
 
-// The executable payload remains bounded by PTO_MODEL_TILE_ELEMENTS. Packed
-// four-bit descriptors retain their architectural logical-element capacity in
-// sparse boundary state, so Local 64 KiB and Shared 256 KiB shapes remain
-// legal without allocating a maximum payload for every TileInfo.
+// The executable payload remains bounded by PTO_MODEL_TILE_ELEMENTS. Large
+// descriptors retain their architectural logical-element capacity through
+// width-aware Word carriers, so Local 64 KiB and Shared 256 KiB shapes remain
+// legal without allocating a maximum Word per logical element.
 readonly func TileLogicalElementCapacity(
     capacity_bytes: integer {0..262144}, data_type: TileDataType)
     => integer {1..524288}
 begin
-    if TileDataTypeIsFourBit(data_type) then
-        return (capacity_bytes * 2) as integer {1..524288};
-    end;
-    return PTO_MODEL_TILE_ELEMENTS as integer {1..524288};
+    assert capacity_bytes > 0;
+    return ((capacity_bytes * 8) DIVRM TileElementBits(data_type))
+        as integer {1..524288};
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

@@ -56,8 +56,6 @@ begin
     var result = _Tiles[[destination]];
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
     var flags = Zeros{5};
     for row = 0 to result.valid_rows - 1 looplimit 65536 do
         for column = 0 to result.valid_columns - 1 looplimit 65536 do
@@ -69,32 +67,33 @@ begin
                 column < right_tile.valid_columns;
             var value: Word;
             if left_valid && right_valid then
-                let left_element = TileLinearIndex(left_tile,
+                let left_element = TileLogicalLinearIndex(left_tile,
                     row as integer {0..65535}, column as integer {0..65535});
-                let right_element = TileLinearIndex(right_tile,
+                let right_element = TileLogicalLinearIndex(right_tile,
                     row as integer {0..65535}, column as integer {0..65535});
                 let (combined, element_flags) =
                     TileProfilePartialValueWithFlags(
                         op,
                         result.data_type,
-                        left_payload[[left_element]],
-                        right_payload[[right_element]]);
+                        TileReadLogicalElement(left_tile, left_element),
+                        TileReadLogicalElement(right_tile, right_element));
                 value = combined;
                 flags = flags OR element_flags;
             elsif left_valid then
-                let left_element = TileLinearIndex(left_tile,
+                let left_element = TileLogicalLinearIndex(left_tile,
                     row as integer {0..65535}, column as integer {0..65535});
-                value = left_payload[[left_element]];
+                value = TileReadLogicalElement(left_tile, left_element);
             else
-                let right_element = TileLinearIndex(right_tile,
+                let right_element = TileLogicalLinearIndex(right_tile,
                     row as integer {0..65535}, column as integer {0..65535});
-                value = right_payload[[right_element]];
+                value = TileReadLogicalElement(right_tile, right_element);
             end;
-            let destination_element = TileLinearIndex(
+            let destination_element = TileLogicalLinearIndex(
                 result,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            result.payload[[destination_element]] = value;
+            result = TileInfoWithLogicalElement(
+                result, destination_element, value);
         end;
     end;
     result = TileWithValidRegionDefined(result);
@@ -112,10 +111,8 @@ begin
     let destination_tile = _Tiles[[destination]];
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
-    let left_payload = left_tile.payload;
-    let right_payload = right_tile.payload;
-    let left_index_payload = _Tiles[[left_indices]].payload;
-    let right_index_payload = _Tiles[[right_indices]].payload;
+    let left_index_tile = _Tiles[[left_indices]];
+    let right_index_tile = _Tiles[[right_indices]];
     assert _Tiles[[destination_indices]].valid_rows == destination_tile.valid_rows;
     assert _Tiles[[destination_indices]].valid_columns == destination_tile.valid_columns;
     assert destination_tile.data_type == left_tile.data_type;
@@ -126,27 +123,29 @@ begin
             let right_valid = row < right_tile.valid_rows && column < right_tile.valid_columns;
             assert left_valid || right_valid;
             var choose_left = left_valid;
-            var left_element: ModelTileElementIndex = 0;
-            var right_element: ModelTileElementIndex = 0;
+            var left_element: PackedTileElementIndex = 0;
+            var right_element: PackedTileElementIndex = 0;
             if left_valid then
-                left_element = TileLinearIndex(left_tile,
+                left_element = TileLogicalLinearIndex(left_tile,
                     row as integer {0..65535}, column as integer {0..65535});
             end;
             if right_valid then
-                right_element = TileLinearIndex(right_tile,
+                right_element = TileLogicalLinearIndex(right_tile,
                     row as integer {0..65535}, column as integer {0..65535});
             end;
             if left_valid && right_valid then
                 choose_left = TileProfileOrderLeft(
-                    left_payload[[left_element]],
-                    right_payload[[right_element]],
+                    TileReadLogicalElement(left_tile, left_element),
+                    TileReadLogicalElement(right_tile, right_element),
                     maximum,
                     destination_tile.data_type);
             end;
-            let output_value = if choose_left then left_payload[[left_element]]
-                               else right_payload[[right_element]];
-            let output_index = if choose_left then left_index_payload[[left_element]]
-                               else right_index_payload[[right_element]];
+            let output_value = if choose_left then
+                TileReadLogicalElement(left_tile, left_element)
+                else TileReadLogicalElement(right_tile, right_element);
+            let output_index = if choose_left then
+                TileReadLogicalElement(left_index_tile, left_element)
+                else TileReadLogicalElement(right_index_tile, right_element);
             WriteTileElement(destination, row as integer {0..65535},
                 column as integer {0..65535}, output_value);
             WriteTileElement(destination_indices, row as integer {0..65535},
@@ -171,43 +170,41 @@ begin
         source,
         filter,
         selected_byte);
-    let source_payload = source_tile.payload;
-    let filter_payload = filter_tile.payload;
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         var counts: array [[256]] of Word;
         for bin = 0 to 255 do
             counts[[bin]] = Zeros{PTO_XLEN};
         end;
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let source_element = TileLinearIndex(
+            let source_element = TileLogicalLinearIndex(
                 source_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
-            let value = source_payload[[source_element]];
+            let value = TileReadLogicalElement(source_tile, source_element);
             var selected = TRUE;
             if source_tile.data_type == TileDataType_U16 &&
                selected_byte == 0 then
-                let filter_element = TileLinearIndex(
+                let filter_element = TileLogicalLinearIndex(
                     filter_tile,
                     row as integer {0..65535},
                     0);
                 selected = ExtractWordByte(value, 1) ==
-                    filter_payload[[filter_element]][7:0];
+                    TileReadLogicalElement(filter_tile, filter_element)[7:0];
             elsif source_tile.data_type == TileDataType_U32 then
                 if selected_byte <= 2 then
                     selected = ExtractWordByte(value, 3) ==
-                        filter_payload[[
-                            TileLinearIndex(filter_tile, 0, 0)]][7:0];
+                        TileReadLogicalElement(filter_tile,
+                            TileLogicalLinearIndex(filter_tile, 0, 0))[7:0];
                 end;
                 if selected && selected_byte <= 1 then
                     selected = ExtractWordByte(value, 2) ==
-                        filter_payload[[
-                            TileLinearIndex(filter_tile, 1, 0)]][7:0];
+                        TileReadLogicalElement(filter_tile,
+                            TileLogicalLinearIndex(filter_tile, 1, 0))[7:0];
                 end;
                 if selected && selected_byte == 0 then
                     selected = ExtractWordByte(value, 1) ==
-                        filter_payload[[
-                            TileLinearIndex(filter_tile, 2, 0)]][7:0];
+                        TileReadLogicalElement(filter_tile,
+                            TileLogicalLinearIndex(filter_tile, 2, 0))[7:0];
                 end;
             end;
             if selected then
@@ -218,11 +215,11 @@ begin
         var cumulative: Word = Zeros{PTO_XLEN};
         for bin = 0 to 255 do
             cumulative = cumulative + counts[[bin]];
-            let element = TileLinearIndex(
+            let element = TileLogicalLinearIndex(
                 result,
                 row as integer {0..65535},
                 bin as integer {0..65535});
-            result.payload[[element]] = cumulative;
+            result = TileInfoWithLogicalElement(result, element, cumulative);
         end;
     end;
     result = TileWithValidRegionDefined(result);

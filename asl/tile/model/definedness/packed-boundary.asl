@@ -1,8 +1,8 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY","surface":"tile","classification":["model","definedness","packed-boundary"],"depends_on":["PTO-TILE-MODEL-STATE-TYPES"]}
-// Packed four-bit logical elements use the existing 32768 Word payload slots
-// as complete carriers: one Word contains sixteen independent four-bit
-// elements. The companion carrier-bit map is total, so no logical index is a
-// special case and no 524288-Word TileInfo is materialized.
+// Large logical Tiles use the existing 32768 Word payload slots as complete
+// carriers. One carrier holds 16, 8, 4, 2, or 1 logical elements according to
+// element width. The companion definedness map is total, so every accepted
+// 256 KiB descriptor is representable without a 524288-Word TileInfo.
 pure func PackedTileDataTypeIsFourBit(data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_E2M1X2 ||
@@ -14,34 +14,47 @@ end;
 
 pure func PackedTileElementBits(data_type: TileDataType) => integer {4,8,16,32,64}
 begin
-    if PackedTileDataTypeIsFourBit(data_type) then return 4; end;
-    return 8;
+    return TileElementBits(data_type);
+end;
+
+pure func PackedTileElementsPerCarrier(
+    data_type: TileDataType) => integer {1,2,4,8,16}
+begin
+    return (64 DIVRM PackedTileElementBits(data_type))
+        as integer {1,2,4,8,16};
 end;
 
 readonly func PackedTileLogicalCapacity(capacity_bytes: integer {0..262144},
                                         data_type: TileDataType)
                                         => integer {1..524288}
 begin
-    if PackedTileDataTypeIsFourBit(data_type) then
-        return (capacity_bytes * 2) as integer {1..524288};
-    end;
-    return PTO_MODEL_TILE_ELEMENTS as integer {1..524288};
+    assert capacity_bytes > 0;
+    return ((capacity_bytes * 8) DIVRM PackedTileElementBits(data_type))
+        as integer {1..524288};
 end;
 
-readonly func TilePackedCarrierIndex(element: PackedTileElementIndex)
+readonly func TilePackedCarrierIndex(data_type: TileDataType,
+                                     element: PackedTileElementIndex)
     => PackedTileCarrierIndex
 begin
-    return (element DIVRM 16) as PackedTileCarrierIndex;
+    var carrier: integer = 0;
+    carrier = element DIVRM PackedTileElementsPerCarrier(data_type);
+    assert carrier < PTO_MODEL_TILE_ELEMENTS;
+    return carrier as PackedTileCarrierIndex;
 end;
 
-readonly func TilePackedNibbleIndex(element: PackedTileElementIndex)
-    => PackedTileNibbleIndex
+readonly func TilePackedLaneIndex(data_type: TileDataType,
+                                  element: PackedTileElementIndex)
+    => PackedTileLaneIndex
 begin
-    return (element MOD 16) as PackedTileNibbleIndex;
+    var lane: integer = 0;
+    lane = element MOD PackedTileElementsPerCarrier(data_type);
+    assert lane <= 15;
+    return lane as PackedTileLaneIndex;
 end;
 
 pure func PackedTileNibbleFromWord(word: Word,
-                                  nibble: PackedTileNibbleIndex) => bits(4)
+                                  nibble: PackedTileLaneIndex) => bits(4)
 begin
     case nibble of
         when 0 => return word[3:0];
@@ -64,7 +77,7 @@ begin
 end;
 
 pure func PackedTileWordWithNibble(word: Word,
-                                  nibble: PackedTileNibbleIndex,
+                                  nibble: PackedTileLaneIndex,
                                   value: Word) => Word
 begin
     var result = word;
@@ -89,6 +102,81 @@ begin
     return result;
 end;
 
+pure func PackedTileElementFromWord(word: Word,
+                                    lane: PackedTileLaneIndex,
+                                    data_type: TileDataType) => Word
+begin
+    let element_bits = PackedTileElementBits(data_type);
+    if element_bits == 4 then
+        return ZeroExtend{PTO_XLEN}(PackedTileNibbleFromWord(word, lane));
+    elsif element_bits == 8 then
+        assert lane <= 7;
+        if lane == 0 then return ZeroExtend{PTO_XLEN}(word[7:0]);
+        elsif lane == 1 then return ZeroExtend{PTO_XLEN}(word[15:8]);
+        elsif lane == 2 then return ZeroExtend{PTO_XLEN}(word[23:16]);
+        elsif lane == 3 then return ZeroExtend{PTO_XLEN}(word[31:24]);
+        elsif lane == 4 then return ZeroExtend{PTO_XLEN}(word[39:32]);
+        elsif lane == 5 then return ZeroExtend{PTO_XLEN}(word[47:40]);
+        elsif lane == 6 then return ZeroExtend{PTO_XLEN}(word[55:48]);
+        else return ZeroExtend{PTO_XLEN}(word[63:56]);
+        end;
+    elsif element_bits == 16 then
+        assert lane <= 3;
+        if lane == 0 then return ZeroExtend{PTO_XLEN}(word[15:0]);
+        elsif lane == 1 then return ZeroExtend{PTO_XLEN}(word[31:16]);
+        elsif lane == 2 then return ZeroExtend{PTO_XLEN}(word[47:32]);
+        else return ZeroExtend{PTO_XLEN}(word[63:48]);
+        end;
+    elsif element_bits == 32 then
+        assert lane <= 1;
+        if lane == 0 then return ZeroExtend{PTO_XLEN}(word[31:0]);
+        else return ZeroExtend{PTO_XLEN}(word[63:32]);
+        end;
+    end;
+    assert element_bits == 64 && lane == 0;
+    return word;
+end;
+
+pure func PackedTileWordWithElement(word: Word,
+                                    lane: PackedTileLaneIndex,
+                                    data_type: TileDataType,
+                                    value: Word) => Word
+begin
+    let element_bits = PackedTileElementBits(data_type);
+    if element_bits == 4 then
+        return PackedTileWordWithNibble(word, lane, value);
+    end;
+    var result = word;
+    if element_bits == 8 then
+        assert lane <= 7;
+        if lane == 0 then result[7:0] = value[7:0];
+        elsif lane == 1 then result[15:8] = value[7:0];
+        elsif lane == 2 then result[23:16] = value[7:0];
+        elsif lane == 3 then result[31:24] = value[7:0];
+        elsif lane == 4 then result[39:32] = value[7:0];
+        elsif lane == 5 then result[47:40] = value[7:0];
+        elsif lane == 6 then result[55:48] = value[7:0];
+        else result[63:56] = value[7:0];
+        end;
+    elsif element_bits == 16 then
+        assert lane <= 3;
+        if lane == 0 then result[15:0] = value[15:0];
+        elsif lane == 1 then result[31:16] = value[15:0];
+        elsif lane == 2 then result[47:32] = value[15:0];
+        else result[63:48] = value[15:0];
+        end;
+    elsif element_bits == 32 then
+        assert lane <= 1;
+        if lane == 0 then result[31:0] = value[31:0];
+        else result[63:32] = value[31:0];
+        end;
+    else
+        assert element_bits == 64 && lane == 0;
+        result = value;
+    end;
+    return result;
+end;
+
 readonly func ZeroPackedTileDefinedElements() => PackedTileDefinedElements
 begin
     return Zeros{524288};
@@ -99,7 +187,7 @@ readonly func TilePackedLinearIndex(tile: TileInfo,
                                     column: integer {0..65535})
                                     => PackedTileElementIndex
 begin
-    assert PackedTileDataTypeIsFourBit(tile.data_type);
+    assert !TileLayoutIsCube(tile.layout);
     assert row < tile.rows && column < tile.columns;
     var index: integer = 0;
     if tile.layout == TileLayout_RowMajor then
@@ -131,11 +219,18 @@ begin
     return index as PackedTileElementIndex;
 end;
 
+readonly func TileUsesPackedCarrierRepresentation(tile: TileInfo) => boolean
+begin
+    return !TileLayoutIsCube(tile.layout) &&
+           (PackedTileDataTypeIsFourBit(tile.data_type) ||
+            tile.rows * tile.columns > PTO_MODEL_TILE_ELEMENTS);
+end;
+
 readonly func TileLogicalElementDefined(tile: TileInfo,
                                         element: PackedTileElementIndex)
                                         => boolean
 begin
-    if PackedTileDataTypeIsFourBit(tile.data_type) then
+    if TileUsesPackedCarrierRepresentation(tile) then
         return tile.packed_defined_elements[element] == '1';
     end;
     return tile.defined_elements[element as ModelTileElementIndex] == '1';
@@ -144,11 +239,11 @@ end;
 readonly func TileReadLogicalElement(tile: TileInfo,
                                      element: PackedTileElementIndex) => Word
 begin
-    if PackedTileDataTypeIsFourBit(tile.data_type) then
-        let carrier = TilePackedCarrierIndex(element);
-        let nibble = TilePackedNibbleIndex(element);
-        return ZeroExtend{PTO_XLEN}(
-            PackedTileNibbleFromWord(tile.payload[[carrier]], nibble));
+    if TileUsesPackedCarrierRepresentation(tile) then
+        let carrier = TilePackedCarrierIndex(tile.data_type, element);
+        let lane = TilePackedLaneIndex(tile.data_type, element);
+        return PackedTileElementFromWord(
+            tile.payload[[carrier]], lane, tile.data_type);
     end;
     return tile.payload[[element as ModelTileElementIndex]];
 end;
@@ -206,11 +301,11 @@ readonly func TileInfoWithLogicalElementAndDefined(tile: TileInfo,
                                                    defined: boolean) => TileInfo
 begin
     var result = tile;
-    if PackedTileDataTypeIsFourBit(tile.data_type) then
-        let carrier = TilePackedCarrierIndex(element);
-        let nibble = TilePackedNibbleIndex(element);
-        result.payload[[carrier]] = PackedTileWordWithNibble(
-            tile.payload[[carrier]], nibble, value);
+    if TileUsesPackedCarrierRepresentation(tile) then
+        let carrier = TilePackedCarrierIndex(tile.data_type, element);
+        let lane = TilePackedLaneIndex(tile.data_type, element);
+        result.payload[[carrier]] = PackedTileWordWithElement(
+            tile.payload[[carrier]], lane, tile.data_type, value);
         result.packed_defined_elements[element] =
             if defined then '1' else '0';
     else

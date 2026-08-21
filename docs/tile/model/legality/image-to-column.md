@@ -118,8 +118,10 @@ begin
                     input_row,
                     input_column,
                     channel_in_group);
-                if source_index >= PTO_MODEL_TILE_ELEMENTS ||
-                   source_tile.defined_elements[source_index] == '0' then
+                if source_index >= TileLogicalElementCapacity(
+                       source_tile.capacity_bytes, source_tile.data_type) ||
+                   !TileLogicalElementDefined(source_tile,
+                       source_index as PackedTileElementIndex) then
                     return FALSE;
                 end;
             end;

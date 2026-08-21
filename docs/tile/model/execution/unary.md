@@ -433,12 +433,11 @@ begin
     assert TileShapesMatch(_Tiles[[destination]], source_tile);
     assert _Tiles[[destination]].data_type == source_tile.data_type;
 
-    let source_payload = source_tile.payload;
-    var result_payload = _Tiles[[destination]].payload;
+    var result_tile = _Tiles[[destination]];
     var flags = Zeros{5};
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLinearIndex(
+            let element = TileLogicalLinearIndex(
                 source_tile,
                 row as integer {0..65535},
                 column as integer {0..65535});
@@ -446,8 +445,9 @@ begin
                 let (result, element_invalid) = TileFixedUnaryValue(
                     operation,
                     source_tile.data_type,
-                    source_payload[[element]]);
-                result_payload[[element]] = result;
+                    TileReadLogicalElement(source_tile, element));
+                result_tile = TileInfoWithLogicalElement(
+                    result_tile, element, result);
                 if element_invalid then
                     flags = flags OR (Zeros{5} + 1);
                 end;
@@ -456,23 +456,24 @@ begin
                     TileSFUUnarySpecialValue(
                         operation,
                         source_tile.data_type,
-                        source_payload[[element]]);
+                        TileReadLogicalElement(source_tile, element));
                 var result = special_result;
                 var element_flags = special_flags;
                 if !handled then
                     let (profile_result, profile_flags) = TileProfileUnary(
                         operation,
                         source_tile.data_type,
-                        source_payload[[element]]);
+                        TileReadLogicalElement(source_tile, element));
                     result = profile_result;
                     element_flags = profile_flags;
                 end;
-                result_payload[[element]] = result;
+                result_tile = TileInfoWithLogicalElement(
+                    result_tile, element, result);
                 flags = flags OR element_flags;
             end;
         end;
     end;
-    _Tiles[[destination]].payload = result_payload;
+    _Tiles[[destination]] = result_tile;
     MarkTileValidRegionDefined(destination);
     if TileUnaryUsesCompleteElementwiseSchema(operation) then
         ApplyTilePadding(destination, CurrentBundlePadValue());
