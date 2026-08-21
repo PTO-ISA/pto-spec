@@ -15,7 +15,7 @@
   "superseded": null,
   "baseline": "328ab1989572b93d5ef5b1e2b726e906b30cbb3c",
   "target_releases": [
-    "unassigned"
+    "0.58.3"
   ],
   "affected_ndf": [
     "PTO-BSTART-TGEMV-ACC-CONTRACT-001",

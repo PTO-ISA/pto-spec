@@ -161,7 +161,7 @@ class ReleaseSelectionTest(unittest.TestCase):
             any("selected NDF set changed" in row for row in result.blockers)
         )
 
-    def test_repository_policy_freezes_selection_and_reports_main_drift(self) -> None:
+    def test_repository_policy_selects_the_current_release_without_drift(self) -> None:
         self.assertTrue(SELECTION.is_file())
         self.assertTrue(SCHEMA.is_file())
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
@@ -181,10 +181,9 @@ class ReleaseSelectionTest(unittest.TestCase):
         )
 
         self.assertEqual(policy["excluded_draft_adrs"], drafts)
-        self.assertTrue(result.blockers)
-        self.assertTrue(any("published NDF" in row for row in result.blockers))
+        self.assertEqual(result.blockers, ())
         self.assertGreater(len(result.selected_ndf_ids), 100)
-        self.assertEqual(len(result.selected_adr_ids), 76)
+        self.assertEqual(len(result.selected_adr_ids), 77)
 
     def test_repository_manifest_records_exact_selection_expansion(self) -> None:
         manifest = json.loads(
@@ -193,7 +192,7 @@ class ReleaseSelectionTest(unittest.TestCase):
         selection = manifest["release_selection"]
         result = evaluate_release_selection(ROOT)
 
-        self.assertEqual(selection["architecture_version"], "0.58.2")
+        self.assertEqual(selection["architecture_version"], "0.58.3")
         self.assertEqual(selection["required_readiness_floor"], "executable")
         self.assertEqual(
             [row["id"] for row in selection["expanded_ndf"]],

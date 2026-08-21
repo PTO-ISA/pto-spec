@@ -15,7 +15,7 @@
   "superseded": null,
   "baseline": "e9e9934f3cd4e857f44482f5e86779fd726d1733",
   "target_releases": [
-    "unassigned"
+    "0.58.3"
   ],
   "affected_ndf": [
     "PTO-B-DATR-FIELDS-001",

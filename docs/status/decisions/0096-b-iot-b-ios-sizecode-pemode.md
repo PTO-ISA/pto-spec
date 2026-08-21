@@ -10,7 +10,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "bc369ec67a07c0260f6ba793fa0d705abb363770",
-  "target_releases": ["unassigned"],
+  "target_releases": ["0.58.3"],
   "affected_ndf": [
     "PTO-ARCH-GM-ACCESS-001",
     "PTO-B-IOS-SHARED-STATE-001",

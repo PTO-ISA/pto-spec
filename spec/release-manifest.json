@@ -3370,7 +3370,7 @@
     },
     {
       "path": "spec/catalog/extension-encoding-reservations.json",
-      "sha256": "bcda0e5e0677cf1819e9ec7bb92ac05c360978ddbe579b68978a5576490f71ae"
+      "sha256": "f1b424060d3aae9432934724ba66908eab0476dcc4880447eaaca44fd016be8b"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -3394,7 +3394,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "e6c59424563b2a5736864e9ff0b26bf3a72a8d7e4950510be0afbd73a974528a"
+      "sha256": "23e9cf680641b30eab987a7df16b2a3402a06145f0ac05bae17e87cf43b94468"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3402,23 +3402,23 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "c822b42bc51b7e2312c4e83ef640c359c8eec8181aef34a0a43e24a93380627b"
+      "sha256": "d7be31a793f72be672a75bffe2ddbbb2383642b2b88a194b588c831dcc7905d0"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "bba8e11e8dd56b56594c3aa9dfae5353e5bc615539c95333321b1a00e7a39fab"
+      "sha256": "b5647363dc077cc30421376ca476350de664030c35eb1593e38db00532776732"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "7d8f47ad85355b978f303cc3a384951268c03cc130fa6f62eb6d797d3a7cb5ec"
+      "sha256": "117cd8e61f1e82001755cdb1ee98ef224fbd624ddf2adb8577c32d6acf833575"
     },
     {
       "path": "spec/release-inputs.json",
-      "sha256": "a167c0560d09c41ac766edef24f872471f292791ecbfb57cdd11ae6a5665e538"
+      "sha256": "cb956d0b884a05a6d2e9b690cbbec2692c104efc33dcb8adb9eb401f7441bed9"
     },
     {
       "path": "spec/release-selection.json",
-      "sha256": "b4a490a1fee2c271d798c31592defae4010575a53fc0ac1097522574044485f7"
+      "sha256": "f146bc6da6d22e0dceeb92f9712da1165669df2c35344f75ca8c8db0a5308a49"
     },
     {
       "path": "spec/schemas/pto-release-selection.schema.json",
@@ -3430,7 +3430,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "9eb4ddb26ae1812914639fe1bec8bf9dc8b751a80a80987cfcbcfad11f7c69c0"
+      "sha256": "5a570051aaaf1e7fbbcb27eecb5e508eaa8cb106d14064ddb01da700453ba8e1"
     }
   ],
   "catalog_counts": {
@@ -3452,7 +3452,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "4bd5361401f3d2fdbb3ad784149020e87894fe242d73cd18392858e6af551dc1",
+  "content_sha256": "9b5f289f2cf75112a4c8653b6dd4a7c6ae78b4d8bfedf87925697ffe26e95b80",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3470,14 +3470,14 @@
     "note_type_value": 1,
     "section": ".note.pto.isa"
   },
-  "encoding_abi": "pto-isa-0.58.2-mode-function-v1",
-  "encoding_projection_sha256": "c0cd13a16b915b15d409e3881462393312b02c05ceab7349dabad4aae50d5db7",
+  "encoding_abi": "pto-isa-0.58.3-mode-function-v1",
+  "encoding_projection_sha256": "8a48b80e04484c70870f155bf9efc79d2a805cf99e809f4e4e8a7e6a7eb34172",
   "hardware_conformance_profile": {
-    "evidence": "spec/evidence/pto-isa-0582-hardware-numeric-vectors.json",
+    "evidence": "spec/evidence/pto-isa-0583-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
-    "profile_id": "pto-hardware-numeric-0.58.2-ieee-v1",
+    "profile_id": "pto-hardware-numeric-0.58.3-ieee-v1",
     "repository_implementation_conformance": "b-fpatr-and-tcvt-e8m0-asl-proven-other-numeric-domains-unproven",
-    "sha256": "7d8f47ad85355b978f303cc3a384951268c03cc130fa6f62eb6d797d3a7cb5ec"
+    "sha256": "117cd8e61f1e82001755cdb1ee98ef224fbd624ddf2adb8577c32d6acf833575"
   },
   "hash_contract": {
     "algorithm": "SHA-256",
@@ -7688,27 +7688,25 @@
     },
     {
       "kind": "generated-evidence",
-      "path": "spec/evidence/pto-isa-0582-abi-vectors.json",
-      "sha256": "70aca3e8bf478e2c331578702b62bacca67d7b45a925ed8d8bf661d64983a64a"
+      "path": "spec/evidence/pto-isa-0583-abi-vectors.json",
+      "sha256": "cb9d451a648aa4f694aced8ed7ee10550497353698c5e4208bb4b7953bb80174"
     },
     {
       "kind": "generated-evidence",
-      "path": "spec/evidence/pto-isa-0582-encoding-totality.json",
-      "sha256": "be5e368d59557ada9a817f7d0454a6abfd8ed2021132fa2ed596ff6dd00952a5"
+      "path": "spec/evidence/pto-isa-0583-encoding-totality.json",
+      "sha256": "711d23a8e9cd63b5e0da18378503ec1d70e5a2e3b4a32835c46335ffe8850275"
     },
     {
       "kind": "generated-evidence",
-      "path": "spec/evidence/pto-isa-0582-hardware-numeric-vectors.json",
-      "sha256": "01b1b1873d3d2a2ed8430eafb419b52d3d7c96267844c53340f3dde3847c0277"
+      "path": "spec/evidence/pto-isa-0583-hardware-numeric-vectors.json",
+      "sha256": "09d863e39e5fcd932353f4dc3bc5a7d2eed91ec9818c83886747aa69d28c3890"
     }
   ],
-  "release": "0.58.2",
+  "release": "0.58.3",
   "release_selection": {
-    "architecture_version": "0.58.2",
-    "baseline_commit": "bc369ec67a07c0260f6ba793fa0d705abb363770",
-    "blockers": [
-      "published NDF PTO-B-IOS-SHARED-STATE-001 changed; a new release identity and accepted compatibility ADR are required"
-    ],
+    "architecture_version": "0.58.3",
+    "baseline_commit": "3c7be2468dc0d9bbd3f2178f20f7626115695360",
+    "blockers": [],
     "excluded_draft_adrs": [
       "ADR-0086",
       "ADR-0087",
@@ -7804,11 +7802,11 @@
       },
       {
         "id": "PTO-B-IOS-SHARED-STATE-001",
-        "sha256": "08f375a08e32a07c7f4f343bf8adb542df695f4e7ed0d468e3b0f89ea7822c1e"
+        "sha256": "13ab386858f232807c875c461857303e88c81efbb5f550013b24c2d33ee91863"
       },
       {
         "id": "PTO-B-IOT-STREAM-001",
-        "sha256": "4e9ca8ecd01855788c505ba298f08e54b930744f6344f4214789dddba69f87d2"
+        "sha256": "42a55ecf2878376fd4c7d53b54b71906aea57042834cad36c8fa723dd6ffe6a2"
       },
       {
         "id": "PTO-BARG-CONTINUATION-001",
@@ -8380,11 +8378,11 @@
       },
       {
         "id": "PTO-INST-BLOCK-B-IOS",
-        "sha256": "c106954035c4414fb1ec4e3468e883e89ec64ad0c715713a6415da55e6d81098"
+        "sha256": "3d63309035d2cb04794218640397714d20fbb6984b54d17106b8a0899d33974b"
       },
       {
         "id": "PTO-INST-BLOCK-B-IOT",
-        "sha256": "63742acda41c5705f1f69cf107f3826b6fb64131c0cbdbd3d1fa70f9894502a2"
+        "sha256": "c865d22ebb752f65c06409dd5ae6737c714fb1387c1495e5a675c8e226796e1c"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART",
@@ -10648,7 +10646,7 @@
       },
       {
         "id": "PTO-INST-TILE-TLOAD",
-        "sha256": "0b401e2790bf71d1319c6f1a724456666ac79623b2aac636305f02d5a002b679"
+        "sha256": "9106d75afd50112ee39f7df78df0ea459c71ed3a71bd9644b062cae3afd994fe"
       },
       {
         "id": "PTO-INST-TILE-TLOG",
@@ -11738,7 +11736,7 @@
     "included_ndf_statuses": [
       "accepted"
     ],
-    "policy_sha256": "99e909bcd163de5254ad2d85cba8ad59391f5d83f5f869dd4c1d9db35c531fad",
+    "policy_sha256": "a0b063f52e411c365b2de70b20d0a0aef18e1cd6dc36d5783ba890b8d50e6408",
     "required_readiness_floor": "executable",
     "selected_adr_ids": [
       "ADR-0001",
@@ -11816,7 +11814,8 @@
       "ADR-0082",
       "ADR-0083",
       "ADR-0084",
-      "ADR-0085"
+      "ADR-0085",
+      "ADR-0096"
     ]
   },
   "schema_version": 1,

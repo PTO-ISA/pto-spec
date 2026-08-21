@@ -15,8 +15,8 @@ EXPECTED_FORM_COUNT = 540
 EXPECTED_FINGERPRINT = (
     "346a0c85ac884bdc291bd156ac2347c1b7d3c147879127c9c1d88da54c3ab5ea"
 )
-EXPECTED_RELEASE = "0.58.2"
-EXPECTED_ENCODING_ABI = "pto-isa-0.58.2-mode-function-v1"
+EXPECTED_RELEASE = "0.58.3"
+EXPECTED_ENCODING_ABI = "pto-isa-0.58.3-mode-function-v1"
 PROJECTION_KEYS = (
     "form_id",
     "mnemonic",

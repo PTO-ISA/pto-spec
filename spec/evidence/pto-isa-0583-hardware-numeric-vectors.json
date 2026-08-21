@@ -1,6 +1,6 @@
 {
-  "hardware_profile_id": "pto-hardware-numeric-0.58.2-ieee-v1",
-  "hardware_profile_sha256": "7d8f47ad85355b978f303cc3a384951268c03cc130fa6f62eb6d797d3a7cb5ec",
+  "hardware_profile_id": "pto-hardware-numeric-0.58.3-ieee-v1",
+  "hardware_profile_sha256": "117cd8e61f1e82001755cdb1ee98ef224fbd624ddf2adb8577c32d6acf833575",
   "implementation_conformance_status": "b-fpatr-and-tcvt-e8m0-asl-proven-other-numeric-domains-unproven",
   "reference_profile": {
     "bit_exact_surfaces": [
@@ -10,7 +10,7 @@
     "hardware_conformance_claim": false,
     "profile_id": "pto-v0"
   },
-  "release": "0.58.2",
+  "release": "0.58.3",
   "schema_version": 1,
   "vector_groups": {
     "canonical_nan": [

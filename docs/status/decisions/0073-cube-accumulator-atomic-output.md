@@ -10,7 +10,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "a4eb5a570f4c87fed8c6fc8b931f07a51c6ac1c1",
-  "target_releases": ["unassigned"],
+  "target_releases": ["0.58.3"],
   "affected_ndf": [
     "PTO-CUBE-ACCUMULATOR-OUTPUT-001",
     "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
