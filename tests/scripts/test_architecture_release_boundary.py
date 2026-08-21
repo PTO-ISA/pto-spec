@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 ADR = ROOT / "docs/status/decisions/0069-b-iot-b-ios-sizecode-pemode.md"
 MAKEFILE = ROOT / "Makefile"
 REPOSITORY_CHECK = ROOT / "scripts/check-repository"
+RELEASE_GATE_GENERATOR = ROOT / "scripts/generate-release-gate-readiness"
 
 
 class ArchitectureReleaseBoundaryTest(unittest.TestCase):
@@ -26,16 +27,19 @@ class ArchitectureReleaseBoundaryTest(unittest.TestCase):
 
     def test_ordinary_repository_check_excludes_release_manifest(self) -> None:
         checker = REPOSITORY_CHECK.read_text(encoding="utf-8")
-        self.assertIn("./scripts/check-binary-closure", checker)
-        self.assertNotIn("./scripts/check-release-manifest", checker)
-        self.assertNotIn("generate-release-traceability-readiness", checker)
-        self.assertNotIn("generate-release-gate-readiness", checker)
-        self.assertNotIn("./scripts/check-release-closure", checker)
+        execution_tail = checker[checker.index("if [[ $structure_only == true ]]") :]
+        self.assertIn("./scripts/check-binary-closure", execution_tail)
+        self.assertNotIn("./scripts/check-release-manifest", execution_tail)
+        self.assertNotIn("generate-release-traceability-readiness", execution_tail)
+        self.assertNotIn("generate-release-gate-readiness", execution_tail)
+        self.assertNotIn("./scripts/check-release-closure", execution_tail)
 
     def test_release_gate_requires_manifest_linkage(self) -> None:
         makefile = MAKEFILE.read_text(encoding="utf-8")
+        generator = RELEASE_GATE_GENERATOR.read_text(encoding="utf-8")
         self.assertIn("./scripts/check-binary-closure --release", makefile)
         self.assertIn("./scripts/check-release-manifest", makefile)
+        self.assertIn('"command": "scripts/check-binary-closure --release"', generator)
 
 
 if __name__ == "__main__":

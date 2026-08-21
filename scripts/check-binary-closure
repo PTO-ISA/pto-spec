@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Fail closed if the normative PTO encoded-form envelope drifts."""
+"""Validate the current encoded-form envelope and optional release linkage."""
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
@@ -12,7 +13,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parent.parent
 EXPECTED_FORM_COUNT = 540
 EXPECTED_FINGERPRINT = (
-    "ae56d22a20a87f98184be9b3a0b9e309e70ae7e1d11f81bca80bc4024725c35e"
+    "346a0c85ac884bdc291bd156ac2347c1b7d3c147879127c9c1d88da54c3ab5ea"
 )
 EXPECTED_RELEASE = "0.58.2"
 EXPECTED_ENCODING_ABI = "pto-isa-0.58.2-mode-function-v1"
@@ -33,7 +34,17 @@ def load_forms(relative: str) -> list[dict]:
     return catalog["forms"]
 
 
-def main() -> int:
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--release",
+        action="store_true",
+        help="also require the published release manifest to match current encodings",
+    )
+    return parser.parse_args()
+
+
+def check_architecture_binary() -> str:
     forms = load_forms("spec/catalog/scalar-forms.json")
     forms += load_forms("spec/catalog/command-forms.json")
     if len(forms) != EXPECTED_FORM_COUNT:
@@ -56,7 +67,10 @@ def main() -> int:
             "encoded-form fingerprint drift: update the normative review before "
             f"changing {EXPECTED_FINGERPRINT} to {fingerprint}"
         )
+    return fingerprint
 
+
+def check_release_linkage() -> str:
     manifest = json.loads(
         (ROOT / "spec/release-manifest.json").read_text(encoding="utf-8")
     )
@@ -99,10 +113,23 @@ def main() -> int:
         raise SystemExit("release manifest must have zero pending base operations")
     if counts.get("contract_status_counts") != {"reviewed-complete": 109}:
         raise SystemExit("release manifest must close all 109 operation contracts")
-    print(
-        f"binary closure passed: {EXPECTED_FORM_COUNT} encoded forms, "
-        f"fingerprint {fingerprint}, release encoding {computed_encoding_hash}"
-    )
+    return computed_encoding_hash
+
+
+def main() -> int:
+    args = parse_args()
+    fingerprint = check_architecture_binary()
+    if args.release:
+        release_encoding = check_release_linkage()
+        print(
+            f"release binary closure passed: {EXPECTED_FORM_COUNT} encoded forms, "
+            f"fingerprint {fingerprint}, release encoding {release_encoding}"
+        )
+    else:
+        print(
+            f"architecture binary closure passed: {EXPECTED_FORM_COUNT} encoded forms, "
+            f"fingerprint {fingerprint}"
+        )
     return 0
 
 

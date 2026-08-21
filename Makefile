@@ -87,7 +87,7 @@ release-evidence-check:
 	./scripts/generate-release-traceability-readiness --check
 	./scripts/generate-release-gate-readiness --check
 	./scripts/check-release-closure
-	./scripts/check-binary-closure
+	./scripts/check-binary-closure --release
 	./scripts/check-release-manifest
 
 release-prepare: release-evidence-check
