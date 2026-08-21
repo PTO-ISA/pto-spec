@@ -13,7 +13,8 @@ begin
     instruction[31:26] = Zeros{6} + 2;
     instruction[25:20] = Zeros{6} + 1;
     instruction[19] = '1';
-    instruction[18:15] = '0001';
+    instruction[18:15] = '0000';
+    instruction[11:9] = '001';
     return instruction;
 end;
 
