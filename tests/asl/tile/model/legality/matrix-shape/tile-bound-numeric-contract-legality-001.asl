@@ -23,16 +23,19 @@ begin
     SetBundleDataAttributeState(Zeros{5} + 8, Zeros{5}, Zeros{2},
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
-    ConfigureTile(40, 256, 1, 64, 1, 32, TileDataType_E4M3,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(41, 256, 32, 1, 32, 1, TileDataType_E5M2,
-        TileLayout_RowMajor, TileLocation_Any);
+    let left_ready = ConfigureCubeTile(40, 512, 1, 32,
+        TileDataType_E4M3, TileLayout_CUBE_M16, TileLocation_Matrix);
+    let right_ready = ConfigureCubeTile(41, 512, 32, 1,
+        TileDataType_E5M2, TileLayout_CUBE_N8, TileLocation_Matrix);
     ConfigureTile(42, 256, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(43, 256, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(44, 256, 1, 1, 1, 1, TileDataType_FP32,
-        TileLayout_RowMajor, TileLocation_Any);
+    let destination_ready = ConfigureCubeTile(44, 512, 1, 1,
+        TileDataType_FP32, TileLayout_CUBE_M16, TileLocation_Matrix);
+    let accumulated_ready = ConfigureCubeTile(45, 512, 1, 1,
+        TileDataType_FP32, TileLayout_CUBE_M16, TileLocation_Matrix);
+    assert left_ready && right_ready && destination_ready && accumulated_ready;
     for inner = 0 to 31 do
         WriteTileElement(40, 0, inner as integer {0..65535},
             Zeros{PTO_XLEN} + 1);
@@ -46,8 +49,8 @@ begin
     assert TileOperandsLegal_TMATMUL_MX(44, 40, 42, 41, 43);
     TMATMUL_MX(44, 40, 42, 41, 43);
     assert ReadTileElement(44, 0, 0) == Zeros{PTO_XLEN} + 32;
-    TMATMUL_MX_ACC(44, 44, 40, 42, 41, 43);
-    assert ReadTileElement(44, 0, 0) == Zeros{PTO_XLEN} + 64;
+    TMATMUL_MX_ACC(45, 44, 40, 42, 41, 43);
+    assert ReadTileElement(45, 0, 0) == Zeros{PTO_XLEN} + 64;
 
     ConfigureTile(42, 256, 1, 1, 1, 1, TileDataType_E8M0,
         TileLayout_RowMajor, TileLocation_Any);

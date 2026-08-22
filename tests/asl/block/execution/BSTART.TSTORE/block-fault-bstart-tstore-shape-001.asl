@@ -22,10 +22,10 @@ begin
     let shared_id = Zeros{8} + 99;
     _Memory[[0]] = Zeros{8} + 0x5a;
     assert MinimumTileCapacityBytesForShape(
-        32768, 2, 32768, TileDataType_U8) == 0;
+        32768, 9, 32768, TileDataType_U8) == 0;
     let start = ExecuteCommandInstruction(TStoreShapeStart(), 32);
     SetBundleDimension(0, Zeros{PTO_XLEN} + 32768);
-    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 9);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 32768);
     let source = ExecuteCommandInstruction(TStoreShapeShared(shared_id), 32);
     assert start == CommandExecution_Executed;

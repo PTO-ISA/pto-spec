@@ -171,8 +171,9 @@ begin
     destination_alias.destination0 = destination_alias.source0;
     let (destination_alias_status, -) = ExecuteTileInstruction(
         TileDecode_CUBE, Zeros{12} + 2, destination_alias);
-    assert destination_alias_status == TileExecution_Executed;
-    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 11;
+    assert destination_alias_status == TileExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 5;
 end;
 
 func TestCubeCompositePreflight()
