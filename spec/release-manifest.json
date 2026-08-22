@@ -3402,7 +3402,7 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "42fd226af99d8dfe968851674b359f7c4c66a64d4a8f3facdd60f684fb93e714"
+      "sha256": "bd2c6096b5f2d4905c763b6754f6c68dce98e183200aed8ab8ad6a1f8e5665c8"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3452,7 +3452,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "cb726464937b40cd986100499fadbcf338471e5aa83194ff94d4ca4592c7a5e4",
+  "content_sha256": "cca640d91fa6f5d9f0c2b6c38c01935c653ff82b2448735cdce315a5b5731d57",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
