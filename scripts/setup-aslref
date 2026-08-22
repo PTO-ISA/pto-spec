@@ -8,5 +8,22 @@ if ! command -v opam >/dev/null 2>&1; then
     exit 1
 fi
 
-opam install --yes dune menhir zarith
+readonly dune_version=3.21.1
+readonly menhir_version=20250912
+readonly ocamlfind_version=1.9.8
+readonly zarith_version=1.14
+
+# Keep the hosted release toolchain independent of the mutable latest package
+# set.  These versions satisfy the pinned ASLRef source requirements and their
+# upstream archives have stable checksums in the opam repository.
+opam install --yes \
+    "dune.$dune_version" \
+    "menhir.$menhir_version" \
+    "ocamlfind.$ocamlfind_version" \
+    "zarith.$zarith_version"
+
+test "$(opam show dune --field=installed-version)" = "$dune_version"
+test "$(opam show menhir --field=installed-version)" = "$menhir_version"
+test "$(opam show ocamlfind --field=installed-version)" = "$ocamlfind_version"
+test "$(opam show zarith --field=installed-version)" = "$zarith_version"
 "$repo_root/scripts/prepare-aslref"
