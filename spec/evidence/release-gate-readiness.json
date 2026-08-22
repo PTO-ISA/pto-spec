@@ -161,7 +161,7 @@
     "scripts/run-asl-page": "64e7e3a7eaa7db6d264665325fcdf42b1b29cc7c4d7b7e1fd9fde30655c19e7f",
     "scripts/run-asl-release-suite": "56cbd340490c0d4d94990cff0f4607a3c3a53fccee818775b38a37a43a7ff654",
     "scripts/run-asl-test": "152bc50910a4927ff9b78b805fac286d1948be8cbaf5751325a65e8316bf7851",
-    "scripts/setup-aslref": "45126d9779684a793c16351ee86cb0e633793901bc41b81434f9a144edbf6835",
+    "scripts/setup-aslref": "16cbca10651398ae5ee4958fb59426d85cb4a726ea09536843bb49ffa43f9b45",
     "scripts/tile_taxonomy.py": "49385a4413b15eed33e87c20df0e2fb29e9b8171c68167dbea57cc813eb1f59d",
     "scripts/workflow_contract.py": "059376614af3f500d651e7130b9ef0bf52ccd7595d753d3f601dbad42c8e14b1",
     "spec/evidence/architecture-readiness.json": "4b7c05c7bc3fce42cbe6655da1c8781c74619ffc593c844c24375403dece7bdf",
