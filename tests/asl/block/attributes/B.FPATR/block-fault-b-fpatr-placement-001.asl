@@ -32,7 +32,8 @@ end;
 func AssertBFPATRRejectedAfterTileBinding()
 begin
     var source = Zeros{64} + 0x00005013;
-    source[18:15] = '1111';
+    source[18:15] = Zeros{4};
+    source[11:9] = '111';
     source[19] = '1';
     let binding = ExecuteCommandInstruction(source, 32);
     assert binding == CommandExecution_Executed;
@@ -48,7 +49,8 @@ func AssertBFPATRRejectedAfterSharedBinding()
 begin
     var source = Zeros{64} + 0x00001013;
     source[27:20] = Zeros{8} + 7;
-    source[18:15] = '1111';
+    source[18:15] = Zeros{4};
+    source[11:9] = '111';
     let binding = ExecuteCommandInstruction(source, 32);
     assert binding == CommandExecution_Executed;
     assert _BundleSharedBindings[[0]].valid;

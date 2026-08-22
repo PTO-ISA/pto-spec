@@ -14,11 +14,11 @@ pure func BundleTestTileBinding(destination: bits(2), source0: bits(6),
                                source1: bits(6), last: boolean) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00004013;
-    // Generic bundle fixtures use 256-byte source descriptors, so the
-    // destination B.IOT must select the matching per-PE capacity.
-    instruction[11:9] = '010';
+    // Generic bundle fixtures use one-PE 256-byte source descriptors, so the
+    // destination B.IOT uses SizeCode 2 and the matching PE3 mode.
+    instruction[11:9] = '100';
     instruction[8:7] = destination;
-    instruction[18:15] = Zeros{4} + 3;
+    instruction[18:15] = Zeros{4} + 2;
     instruction[25:20] = source0;
     instruction[31:26] = source1;
     instruction[19] = if last then '1' else '0';

@@ -9,10 +9,13 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(1, 1024, 1, 512, 1, 512, TileDataType_FP16,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let left_ready = ConfigureCubeTileForMask(0, 128, 1, 1,
+        TileDataType_FP16, TileLayout_CUBE_M16,
+        TileLocation_Matrix, '1111');
+    let right_ready = ConfigureCubeTileForMask(1, 16384, 1, 512,
+        TileDataType_FP16, TileLayout_CUBE_N8,
+        TileLocation_Matrix, '1111');
+    assert left_ready && right_ready;
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
     for column = 0 to 511 looplimit 512 do
         WriteTileElement(1, 0, column, Zeros{PTO_XLEN} + 0x3c00);

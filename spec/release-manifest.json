@@ -3394,7 +3394,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "6a667052e78aec5f853fe90676199c05361d53b8e0c3a149f001443f4e49f7bb"
+      "sha256": "4b7c05c7bc3fce42cbe6655da1c8781c74619ffc593c844c24375403dece7bdf"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3402,11 +3402,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "2b2f883c71870f2b3c4444828713936421f96dfdcce284db05f09dec299a4fbd"
+      "sha256": "d0248913a33946e44db76f7562db662ce76dce8c84b33129887d6255cf8fd7ae"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "3dc160483828c77709a2ac6382bab37038b4f96b129b7a91e5eb8341db51ec72"
+      "sha256": "9514e318fe5a85588662990d028d4970fc1c808fc690c8aa3ca50e83592dfed3"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3452,7 +3452,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "3a84f4422b63b5fbaebc106a784a22910a4d7719cf400e0fb7714a77c787313f",
+  "content_sha256": "14a8cfdcd6379081dfd141c00cfb093855760c06383e29b9810c564dec293ce8",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
