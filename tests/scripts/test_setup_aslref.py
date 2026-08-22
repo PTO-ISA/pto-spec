@@ -29,10 +29,7 @@ class SetupAslrefContractTest(unittest.TestCase):
         source = SETUP.read_text(encoding="utf-8")
         prepare_offset = source.index('"$repo_root/scripts/prepare-aslref"')
         for package in ("dune", "menhir", "ocamlfind", "zarith"):
-            check = (
-                "opam list --installed --short --columns=package "
-                f"{package}"
-            )
+            check = f"opam var {package}:version"
             self.assertIn(check, source)
             self.assertLess(source.index(check), prepare_offset)
 

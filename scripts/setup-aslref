@@ -22,12 +22,8 @@ opam install --yes \
     "ocamlfind.$ocamlfind_version" \
     "zarith.$zarith_version"
 
-test "$(opam list --installed --short --columns=package dune)" = \
-    "dune.$dune_version"
-test "$(opam list --installed --short --columns=package menhir)" = \
-    "menhir.$menhir_version"
-test "$(opam list --installed --short --columns=package ocamlfind)" = \
-    "ocamlfind.$ocamlfind_version"
-test "$(opam list --installed --short --columns=package zarith)" = \
-    "zarith.$zarith_version"
+test "$(opam var dune:version)" = "$dune_version"
+test "$(opam var menhir:version)" = "$menhir_version"
+test "$(opam var ocamlfind:version)" = "$ocamlfind_version"
+test "$(opam var zarith:version)" = "$zarith_version"
 "$repo_root/scripts/prepare-aslref"
