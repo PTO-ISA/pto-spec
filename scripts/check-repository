@@ -170,7 +170,9 @@ git diff --cached --check
 python3 scripts/project_asl_catalogs.py --root . --check
 python3 scripts/instruction_docs.py --check
 python3 scripts/instruction_contracts.py --check --require-complete
-./scripts/generate-instruction-contract-closure --check
+# The checked-in instruction-contract closure is release evidence. Architecture
+# PRs validate the live contracts above; release-evidence-check owns projection
+# freshness after the pending decisions receive one release identity.
 python3 scripts/generate-mnemonic-avs.py --check
 python3 scripts/check-publication-hygiene
 
