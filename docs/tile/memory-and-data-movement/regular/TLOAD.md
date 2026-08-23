@@ -58,7 +58,7 @@ end;
 
 ```asm
 Local: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM defines ValidCol, ValidRow, and physical Col; optional B.IOR defines the per-PE GM base and byte row stride; one terminating destination B.IOT allocates the result; BSTOP commits.
-Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S255, per-PE TSize, and PE_MASK. Local sources, Shared sources, multiple destinations, and mixed destination domains are illegal.
+Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S63, per-PE TSize, and PE_MASK. Local sources, Shared sources, multiple destinations, and mixed destination domains are illegal.
 ```
 
 ## Operation

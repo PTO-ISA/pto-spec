@@ -17,12 +17,15 @@ begin
     var total: integer = 0;
     for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
         if _SharedTiles[[index]].descriptor_valid then
-            total = total + TileCoreAllocationBytes(
-                _SharedTiles[[index]].allocation_mask,
-                _SharedTiles[[index]].tile.capacity_bytes);
+            total = total + _SharedTiles[[index]].tile.capacity_bytes;
         end;
     end;
     return total;
+end;
+
+pure func SharedTileCapacityLimitBytes() => integer
+begin
+    return PTO_SHARED_TILE_MAX_ALLOCATION_BYTES;
 end;
 
 readonly func CoreTileCapacityInUse() => integer

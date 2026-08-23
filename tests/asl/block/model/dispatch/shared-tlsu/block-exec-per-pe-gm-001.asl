@@ -8,11 +8,11 @@ begin
     return instruction;
 end;
 
-pure func PerPETestSharedBinding(shared_id: bits(8), size_code: bits(4),
+pure func PerPETestSharedBinding(shared_tile_id: bits(6), size_code: bits(4),
                                 pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -50,7 +50,7 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 32);
     let shared = ExecuteCommandInstruction(
-        PerPETestSharedBinding(Zeros{8} + 31, '0011', '111'), 32);
+        PerPETestSharedBinding(Zeros{6} + 31, '0011', '111'), 32);
     let scalar = ExecuteCommandInstruction(
         PerPETestScalarBinding(Zeros{5} + 2, Zeros{5} + 3), 32);
     assert start == CommandExecution_Executed;
@@ -59,13 +59,13 @@ begin
     let completed = ExecuteBundleTileOperation();
     assert completed;
 
-    assert ReadSharedTileWord(Zeros{8} + 31, 0) ==
+    assert ReadSharedTileWord((Zeros{6} + 31) as SharedTileID, 0) ==
         Zeros{PTO_XLEN} + 0x11;
-    assert ReadSharedTileWord(Zeros{8} + 31, 16 as PackedTileElementIndex) ==
+    assert ReadSharedTileWord((Zeros{6} + 31) as SharedTileID, 16 as PackedTileElementIndex) ==
         Zeros{PTO_XLEN} + 0x22;
-    assert ReadSharedTileWord(Zeros{8} + 31, 32 as PackedTileElementIndex) ==
+    assert ReadSharedTileWord((Zeros{6} + 31) as SharedTileID, 32 as PackedTileElementIndex) ==
         Zeros{PTO_XLEN} + 0x33;
-    assert ReadSharedTileWord(Zeros{8} + 31, 48 as PackedTileElementIndex) ==
+    assert ReadSharedTileWord((Zeros{6} + 31) as SharedTileID, 48 as PackedTileElementIndex) ==
         Zeros{PTO_XLEN} + 0x44;
     return 0;
 end;

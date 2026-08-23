@@ -30,7 +30,7 @@ begin
     return result;
 end;
 
-func TMOVLocalToShared(shared_id: bits(8), source: TileIndex,
+func TMOVLocalToShared(shared_tile_id: SharedTileID, source: TileIndex,
                        size_code: integer {1..12}, pe_mask: bits(4),
                        publish: boolean)
 begin
@@ -38,16 +38,16 @@ begin
     let capacity_bytes = TileSizeCodeBytes(size_code);
     let shared_tile = SharedTileFromLocal(source, capacity_bytes);
     if publish && !SharedTileProspectiveFullyInitialized(
-            shared_id, shared_tile, pe_mask) then
+            shared_tile_id, shared_tile, pe_mask) then
         SetFault(Fault_TileLegality, ReadTPC());
         return;
     end;
     let updated = AtomicUpdateSharedTileWithPublication(
-        shared_id, shared_tile, pe_mask, publish);
+        shared_tile_id, shared_tile, pe_mask, publish);
     if !updated then SetFault(Fault_TileLegality, ReadTPC()); end;
 end;
 
-func TMOVSharedToLocal(destination: TileIndex, shared_id: bits(8),
+func TMOVSharedToLocal(destination: TileIndex, shared_tile_id: SharedTileID,
                        shared_tile: TileInfo, pe_mask: bits(4))
 begin
     if pe_mask == Zeros{4} then return; end;
@@ -66,7 +66,7 @@ begin
         if pe_mask[PTOPEMaskBitOfPEIdentity(region)] == '1' then
             _Tiles[[destination]] = TileInfoWithLogicalElement(
                 _Tiles[[destination]], element as PackedTileElementIndex,
-                ReadSharedTileWord(shared_id,
+                ReadSharedTileWord(shared_tile_id,
                     element as PackedTileElementIndex));
         end;
     end;
@@ -74,7 +74,7 @@ begin
     if pe_mask == '1111' then MarkTileValidRegionDefined(destination); end;
 end;
 
-func TLOADShared(shared_id: bits(8), base_addresses: CorePEWords,
+func TLOADShared(shared_tile_id: SharedTileID, base_addresses: CorePEWords,
                  row_stride_bytes: CorePEWords,
                  size_code: integer {1..12},
                  rows: integer {1..65535}, columns: integer {1..65535},
@@ -116,7 +116,7 @@ begin
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;
     tile.cube_storage_bytes = 0;
-    if !SharedTileUpdateCompatible(shared_id, tile, pe_mask) then
+    if !SharedTileUpdateCompatible(shared_tile_id, tile, pe_mask) then
         SetFault(Fault_TileLegality, ReadTPC());
         return;
     end;
@@ -125,7 +125,7 @@ begin
     // probe before publishing the complete carrier state.
     var packed_zero_fast = PackedTileDataTypeIsFourBit(tile.data_type) &&
         !_MemoryEventCaptureEnabled &&
-        !SharedTileRecord(shared_id).descriptor_valid &&
+        !SharedTileRecord(shared_tile_id).descriptor_valid &&
         tile.valid_rows == tile.rows &&
         tile.valid_columns == tile.columns &&
         tile.rows * tile.columns ==
@@ -164,7 +164,7 @@ begin
     end;
     if packed_zero_fast then
         tile = TileWithPackedZeroSelectedMaxRegionDefined(tile, pe_mask);
-        let updated = AtomicUpdateSharedTile(shared_id, tile, pe_mask);
+        let updated = AtomicUpdateSharedTile(shared_tile_id, tile, pe_mask);
         assert updated;
         return;
     end;
@@ -215,13 +215,13 @@ begin
             (tile.valid_rows * tile.valid_columns) as integer {0..524288};
         tile.contents_defined = TRUE;
     end;
-    let updated = AtomicUpdateSharedTile(shared_id, tile, pe_mask);
+    let updated = AtomicUpdateSharedTile(shared_tile_id, tile, pe_mask);
     assert updated;
 end;
 
 func TSTOREShared(base_addresses: CorePEWords,
                   row_stride_bytes: CorePEWords,
-                  shared_id: bits(8),
+                  shared_tile_id: SharedTileID,
                   tile: TileInfo,
                   pe_mask: bits(4))
 begin
@@ -264,7 +264,7 @@ begin
                     address, translated, tile.data_type,
                     TileMemoryStridedByteHighNibble(
                         column as integer {0..65535}, tile.data_type),
-                    ReadSharedTileWord(shared_id, element));
+                    ReadSharedTileWord(shared_tile_id, element));
                 RecordStoreEventForAgent(agent, translated,
                     TileMemoryElementBytes(tile.data_type), stored_value,
                     CurrentBundleMemoryOrder());

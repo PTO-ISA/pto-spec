@@ -7,10 +7,10 @@ begin
 end;
 
 pure func BIOSSizeCodeDestination(size_code: bits(4), pe_mode: bits(3),
-                                  shared_id: bits(8)) => bits(64)
+                                  shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -25,7 +25,7 @@ begin
         let status = ExecuteCommandInstruction(
             BIOSSizeCodeDestination(
                 (Zeros{4} + size) as bits(4), '111',
-                (Zeros{8} + size) as bits(8)), 32);
+                (Zeros{6} + size) as bits(6)), 32);
         assert started == CommandExecution_Executed;
         assert status == CommandExecution_Executed;
         assert _BundleSharedBindings[[0]].valid;

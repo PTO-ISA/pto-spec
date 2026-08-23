@@ -7,11 +7,11 @@ begin
     return instruction;
 end;
 
-pure func SharedByteStrideSource(shared_id: bits(8), pe_mode: bits(3))
+pure func SharedByteStrideSource(shared_tile_id: bits(6), pe_mode: bits(3))
     => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = pe_mode;
     return instruction;
@@ -46,14 +46,14 @@ begin
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 4);
-    InstallSharedTile(Zeros{8} + 7, _Tiles[[0]], '1111');
+    InstallSharedTile((Zeros{6} + 7) as SharedTileID, _Tiles[[0]], '1111');
 
     // Function 1 with no B.IOR/LB2 inherits two physical U64 columns and
     // therefore uses a dense sixteen-byte row pitch.
     let full_start = ExecuteCommandInstruction(
         SharedByteStrideStart('00001'), 32);
     let full_source = ExecuteCommandInstruction(
-        SharedByteStrideSource(Zeros{8} + 7, '111'), 32);
+        SharedByteStrideSource(Zeros{6} + 7, '111'), 32);
     assert full_start == CommandExecution_Executed;
     assert full_source == CommandExecution_Executed;
     let full_completed = ExecuteBundleTileOperation();
@@ -67,7 +67,7 @@ begin
     let partial_start = ExecuteCommandInstruction(
         SharedByteStrideStart('01110'), 32);
     let partial_source = ExecuteCommandInstruction(
-        SharedByteStrideSource(Zeros{8} + 7, '001'), 32);
+        SharedByteStrideSource(Zeros{6} + 7, '001'), 32);
     let partial_ior = ExecuteCommandInstruction(
         SharedByteStrideIOR(Zeros{5} + 2, Zeros{5} + 3), 32);
     assert partial_start == CommandExecution_Executed;
@@ -87,7 +87,7 @@ begin
     let omitted_start = ExecuteCommandInstruction(
         SharedByteStrideStart('01110'), 32);
     let omitted_source = ExecuteCommandInstruction(
-        SharedByteStrideSource(Zeros{8} + 7, '001'), 32);
+        SharedByteStrideSource(Zeros{6} + 7, '001'), 32);
     assert omitted_start == CommandExecution_Executed;
     assert omitted_source == CommandExecution_Executed;
     let omitted_completed = ExecuteBundleTileOperation();

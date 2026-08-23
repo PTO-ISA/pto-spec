@@ -82,9 +82,9 @@ begin
             if _BundleSharedBindings[[binding]].valid &&
                !_BundleSharedBindings[[binding]].consumed &&
                !BundleSharedBindingIsDestination(binding) then
-                let shared_id = BundleSharedBindingId(binding);
-                if SharedTileDescriptorLegal(shared_id) then
-                    return (TRUE, SharedTileRecord(shared_id).tile.data_type);
+                let shared_tile_id = BundleSharedBindingId(binding);
+                if SharedTileDescriptorLegal(shared_tile_id) then
+                    return (TRUE, SharedTileRecord(shared_tile_id).tile.data_type);
                 end;
             end;
         end;

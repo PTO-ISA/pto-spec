@@ -6,10 +6,10 @@ begin
     return instruction;
 end;
 
-pure func TLoadSharedDestination(shared_id: bits(8)) => bits(64)
+pure func TLoadSharedDestination(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0011';
     instruction[11:9] = '101';
     return instruction;
@@ -26,7 +26,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    let shared_id = Zeros{8} + 31;
+    let shared_tile_id = (Zeros{6} + 31) as SharedTileID;
     WritePEGPR(0, 2, Zeros{PTO_XLEN});
     WritePEGPR(1, 2, Zeros{PTO_XLEN} + 0x200);
     WritePEGPR(0, 3, Zeros{PTO_XLEN} + 128);
@@ -40,21 +40,21 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 32);
     let destination_status = ExecuteCommandInstruction(
-        TLoadSharedDestination(shared_id), 32);
+        TLoadSharedDestination(shared_tile_id), 32);
     assert destination_status == CommandExecution_Executed;
     let ior_status = ExecuteCommandInstruction(TLoadSharedIOR(), 32);
     assert ior_status == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
     assert completed;
 
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     assert shared.descriptor_valid;
     assert shared.allocation_mask == '1100';
     assert shared.initialized_mask == '1100';
-    assert ReadSharedTileWord(shared_id, 0) == Zeros{PTO_XLEN} + 0x11;
-    assert ReadSharedTileWord(shared_id, 32 as PackedTileElementIndex) ==
+    assert ReadSharedTileWord(shared_tile_id, 0) == Zeros{PTO_XLEN} + 0x11;
+    assert ReadSharedTileWord(shared_tile_id, 32 as PackedTileElementIndex) ==
         Zeros{PTO_XLEN} + 0x22;
-    assert ReadSharedTileWord(shared_id, 64 as PackedTileElementIndex) ==
-        UndefinedSharedTileWord(shared_id, 64 as PackedTileElementIndex);
+    assert ReadSharedTileWord(shared_tile_id, 64 as PackedTileElementIndex) ==
+        UndefinedSharedTileWord(shared_tile_id, 64 as PackedTileElementIndex);
     return 0;
 end;

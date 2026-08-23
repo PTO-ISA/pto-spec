@@ -265,18 +265,18 @@ class InstructionDocsTest(unittest.TestCase):
                     "encoding": [
                         {
                             "match": "0x00001013",
-                            "mask": "0xf00871ff",
+                            "mask": "0xfc0871ff",
                             "width_bits": 32,
                         }
                     ],
                     "constraints": [],
                     "fields": [
                         {
-                            "name": "SharedTID",
-                            "width": 8,
+                            "name": "SharedTileID",
+                            "width": 6,
                             "signedness": "encoding-defined",
                             "pieces": [
-                                {"instruction_lsb": 20, "value_lsb": 0, "width": 8}
+                                {"instruction_lsb": 20, "value_lsb": 0, "width": 6}
                             ],
                         }
                     ],
@@ -289,8 +289,8 @@ class InstructionDocsTest(unittest.TestCase):
             self.root / "docs/block/operands/B.IOS.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("0x00001013 / 0xf00871ff", rendered)
-        self.assertIn("| b_ios_32_example | SharedTID | 8 |", rendered)
+        self.assertIn("0x00001013 / 0xfc0871ff", rendered)
+        self.assertIn("| b_ios_32_example | SharedTileID | 6 |", rendered)
 
     def test_generate_tree_projects_complete_catalog_contract_without_placeholders(self) -> None:
         self.write_asl(

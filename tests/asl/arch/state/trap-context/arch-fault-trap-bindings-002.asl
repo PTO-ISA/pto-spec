@@ -27,11 +27,12 @@ begin
         FALSE);
     SetBundleTileBinding(15, TRUE, 3, 7, '1111', TRUE, FALSE, 63, 0,
         TRUE);
-    BindBundleSharedIO(Zeros{8} + 0x12, 0, '1111');
-    BindBundleSharedIO(Zeros{8} + 0x34, 7, '1111');
+    BindBundleSharedIO((Zeros{6} + 0x12) as SharedTileID, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 0x34) as SharedTileID, 7, '1111');
+    let expected_shared = (Zeros{6} + 0x12) as SharedTileID;
     _BundleSharedBindings[[0]].consumed = TRUE;
     assert _BundleSharedBindings[[0]].valid;
-    assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].shared_tile_id == expected_shared;
     assert _BundleSharedBindings[[0]].size_code == 0;
     assert _BundleSharedBindings[[0]].pe_mask == '1111';
     assert _BundleSharedBindings[[0]].consumed;
@@ -78,8 +79,8 @@ begin
     assert !_TrapContexts[[1]].bundle_tile_bindings[[0]].last;
     assert _TrapContexts[[1]].bundle_tile_bindings[[15]].valid;
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].valid;
-    assert _TrapContexts[[1]].bundle_shared_bindings[[0]].shared_id ==
-        Zeros{8} + 0x12;
+    assert _TrapContexts[[1]].bundle_shared_bindings[[0]].shared_tile_id ==
+        expected_shared;
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].size_code == 0;
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].pe_mask == '1111';
     assert _TrapContexts[[1]].bundle_shared_bindings[[0]].consumed;
@@ -114,7 +115,7 @@ begin
     _BundleTileBindings[[0]].source1 = 0;
     _BundleTileBindings[[0]].last = TRUE;
     _BundleSharedBindings[[0]].valid = FALSE;
-    _BundleSharedBindings[[0]].shared_id = Zeros{8};
+    _BundleSharedBindings[[0]].shared_tile_id = Zeros{6} as SharedTileID;
     _BundleSharedBindings[[0]].size_code = 3;
     _BundleSharedBindings[[0]].pe_mask = '0101';
     _BundleSharedBindings[[0]].consumed = FALSE;
@@ -149,7 +150,7 @@ begin
     assert _BundleTileBindings[[0]].source1 != 41;
     assert _BundleTileBindings[[0]].last;
     assert !_BundleSharedBindings[[0]].valid;
-    assert _BundleSharedBindings[[0]].shared_id != Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].shared_tile_id != expected_shared;
     assert _BundleSharedBindings[[0]].size_code != 0;
     assert _BundleSharedBindings[[0]].pe_mask != '1111';
     assert !_BundleSharedBindings[[0]].consumed;
@@ -187,7 +188,7 @@ begin
     assert _BundleTileBindings[[0]].source1 == 41;
     assert !_BundleTileBindings[[0]].last;
     assert _BundleSharedBindings[[0]].valid;
-    assert _BundleSharedBindings[[0]].shared_id == Zeros{8} + 0x12;
+    assert _BundleSharedBindings[[0]].shared_tile_id == expected_shared;
     assert _BundleSharedBindings[[0]].size_code == 0;
     assert _BundleSharedBindings[[0]].pe_mask == '1111';
     assert _BundleSharedBindings[[0]].consumed;

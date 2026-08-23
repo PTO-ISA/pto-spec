@@ -18,7 +18,7 @@ end;
 pure func PrefetchSchemaSharedDestination() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = Zeros{8} + 7;
+    instruction[25:20] = Zeros{6} + 7;
     instruction[18:15] = '0001';
     instruction[11:9] = '111';
     return instruction;
@@ -57,7 +57,7 @@ begin
     let shared_completed = ExecuteBundleTileOperation();
     assert !shared_completed;
     assert _LastFault == Fault_TileLegality;
-    assert !SharedTileRecord(Zeros{8} + 7).descriptor_valid;
+    assert !SharedTileRecord((Zeros{6} + 7) as SharedTileID).descriptor_valid;
 
     ResetProfileState();
     StartPrefetchSchemaBlock();

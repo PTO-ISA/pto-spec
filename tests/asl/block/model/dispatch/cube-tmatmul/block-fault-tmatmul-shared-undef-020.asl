@@ -11,10 +11,10 @@ begin
     return Zeros{64} + 0x00002023;
 end;
 
-pure func MatrixSharedUndefinedSource(shared_id: bits(8)) => bits(64)
+pure func MatrixSharedUndefinedSource(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = '111';
     return instruction;
@@ -32,7 +32,7 @@ end;
 
 func main() => integer
 begin
-    let shared_id = Zeros{8} + 77;
+    let shared_tile_id = (Zeros{6} + 13) as SharedTileID;
     ResetProfileState();
     let left_ready = ConfigureCubeTileForMask(0, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_M16,
@@ -45,7 +45,7 @@ begin
     let attributes = ExecuteCommandInstruction(
         MatrixSharedUndefinedFPATR(), 32);
     let shared = ExecuteCommandInstruction(
-        MatrixSharedUndefinedSource(shared_id), 32);
+        MatrixSharedUndefinedSource(shared_tile_id), 32);
     let local = ExecuteCommandInstruction(
         MatrixSharedUndefinedLocal(), 32);
     assert started == CommandExecution_Executed;
@@ -57,7 +57,7 @@ begin
     assert !completed;
     assert _LastFault == Fault_TileLegality;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
-    assert !SharedTileRecord(shared_id).descriptor_valid;
+    assert !SharedTileRecord(shared_tile_id).descriptor_valid;
     assert !_BundleSharedBindings[[0]].consumed;
     return 0;
 end;

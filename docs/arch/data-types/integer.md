@@ -25,6 +25,7 @@ type PERegisterFile of array [[PTO_ABSOLUTE_GPR_COUNT]] of Word;
 type CorePEWords of array [[PTO_MODEL_MEMORY_AGENTS]] of Word;
 type Reg5Selector of integer {0..31};
 type TileIndex of integer {0..PTO_TILE_REGISTER_COUNT-1};
+type SharedTileID of bits(6);
 type SharedTileIndex of integer {0..PTO_SHARED_TILE_COUNT-1};
 type TemporaryQueueIndex of integer {0..PTO_TEMPORARY_QUEUE_DEPTH-1};
 type PredicateIndex of integer {0..PTO_PREDICATE_REGISTER_COUNT-1};

@@ -8,7 +8,7 @@ begin
     assert start_result == CommandExecution_Executed;
     SetBundleFixedPointAttributeState(
         Zeros{6}, Zeros{3}, Zeros{4}, FALSE, FALSE, FALSE, FALSE);
-    BindBundleSharedIO(Zeros{8} + 50, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 50) as SharedTileID, 0, '1111');
 
     let completed = ExecuteBundleTileOperation();
     assert !completed;

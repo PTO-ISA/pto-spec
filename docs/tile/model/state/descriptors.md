@@ -39,8 +39,7 @@ readonly func SharedTileCapacityIsLegal(
 begin
     return capacity_bytes >= PTO_TILE_CELL_BYTES &&
            capacity_bytes MOD PTO_TILE_CELL_BYTES == 0 &&
-           capacity_bytes <= PTO_SHARED_TILE_MAX_ALLOCATION_BYTES &&
-           capacity_bytes <= TileCapacityLimitBytes();
+           capacity_bytes <= SharedTileCapacityLimitBytes();
 end;
 
 pure func TileSizeCodeIsLegal(size_code: integer {0..15}) => boolean
@@ -50,7 +49,7 @@ end;
 
 pure func LocalTileSizeCodeIsLegal(size_code: integer {0..15}) => boolean
 begin
-    return 1 <= size_code && size_code <= 10;
+    return 1 <= size_code && size_code <= 12;
 end;
 
 pure func TileSizeCodeBytes(size_code: integer {1..12})
@@ -103,7 +102,7 @@ end;
 
 // The executable payload remains bounded by PTO_MODEL_TILE_ELEMENTS. Large
 // descriptors retain their architectural logical-element capacity through
-// width-aware Word carriers, so Local 64 KiB and Shared 256 KiB shapes remain
+// width-aware Word carriers, so Local and Shared 256 KiB shapes remain
 // legal without allocating a maximum Word per logical element.
 readonly func TileLogicalElementCapacity(
     capacity_bytes: integer {0..262144}, data_type: TileDataType)

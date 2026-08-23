@@ -847,7 +847,9 @@
             7,
             8,
             9,
-            10
+            10,
+            11,
+            12
           ]
         },
         {
@@ -1057,7 +1059,9 @@
             7,
             8,
             9,
-            10
+            10,
+            11,
+            12
           ]
         },
         {
@@ -1267,7 +1271,9 @@
             7,
             8,
             9,
-            10
+            10,
+            11,
+            12
           ]
         },
         {
@@ -3535,7 +3541,7 @@
       "status": "accepted"
     },
     {
-      "asm": "B.IOS S<SharedTID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTID><SizeCode>",
+      "asm": "B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>",
       "constraints": [
         {
           "field": "SizeCode",
@@ -3574,7 +3580,7 @@
       "encoding": [
         {
           "index": 0,
-          "mask": "0xf00871ff",
+          "mask": "0xfc0871ff",
           "match": "0x00001013",
           "width_bits": 32
         }
@@ -3582,16 +3588,16 @@
       "encoding_kind": "L32",
       "fields": [
         {
-          "name": "SharedTID",
+          "name": "SharedTileID",
           "pieces": [
             {
               "instruction_lsb": 20,
               "value_lsb": 0,
-              "width": 8
+              "width": 6
             }
           ],
           "signedness": "encoding-defined",
-          "width": 8
+          "width": 6
         },
         {
           "name": "SizeCode",
@@ -3624,7 +3630,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleSharedIO",
-      "semantic_summary": "Binds one ordered absolute Core-private Shared register S0..S255 as a source or destination with a common four-PE participation mode decoded to a fixed mask.",
+      "semantic_summary": "Binds one ordered absolute Core-private Shared register S0..S63 as a source or destination with a common four-PE participation mode decoded to a fixed mask.",
       "status": "accepted"
     },
     {
@@ -5493,12 +5499,12 @@
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",
       "narrow_form_id": "b_iot_32_c11eb189dd83",
-      "reason": "source-only form fixes SizeCode to zero; destination form requires SizeCode 1..10 and a 2-bit DstTile"
+      "reason": "source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"
     },
     {
       "broad_form_id": "b_iot_32_8b8bce6bffe8",
       "narrow_form_id": "b_iot_32_2c07e7177fad",
-      "reason": "source-only form fixes SizeCode to zero; destination form requires SizeCode 1..10 and a 2-bit DstTile"
+      "reason": "source-only form fixes SizeCode to zero; destination form requires SizeCode 1..12 and a 2-bit DstTile"
     },
     {
       "broad_form_id": "c_bstart_std_16_8b40f078c14a",

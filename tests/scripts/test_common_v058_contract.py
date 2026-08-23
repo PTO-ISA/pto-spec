@@ -117,7 +117,7 @@ class CommonV058ContractTest(unittest.TestCase):
             [
                 {
                     "index": 0,
-                    "mask": "0xf00871ff",
+                    "mask": "0xfc0871ff",
                     "match": "0x00001013",
                     "width_bits": 32,
                 }

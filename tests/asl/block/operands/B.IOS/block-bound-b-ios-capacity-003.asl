@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-CAPACITY-003","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS","PTO-INST-TILE-TLOAD"],"kind":"boundary","summary":"Decoded B.IOS enforces Shared per-PE and aggregate capacity boundaries.","pass_condition":"128 KiB commits for one or two PEs, 256 KiB commits for one PE, and larger participating sets fault before descriptor publication.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/state/shared-registers.asl","asl/tile/model/capacity/shared.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOS-CAPACITY-003","source":"asl/block/operands/B.IOS.asl","requirements":["PTO-INST-BLOCK-B-IOS","PTO-INST-TILE-TLOAD"],"kind":"boundary","summary":"Decoded B.IOS charges aggregate Shared capacity once, independently of PEMode.","pass_condition":"Two 128 KiB Shared objects exactly fill the independent Shared pool, a third allocation rejects, and one 256 KiB object succeeds for a partial PEMode while excluding another allocation.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/state/shared-registers.asl","asl/tile/model/capacity/shared.asl"]}
 pure func BIOSCapacityStart(data_type: bits(5)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00011181;
@@ -6,11 +6,11 @@ begin
     return instruction;
 end;
 
-pure func BIOSCapacityDestination(shared_id: bits(8), size_code: bits(4),
+pure func BIOSCapacityDestination(shared_tile_id: bits(6), size_code: bits(4),
                                   pe_mode: bits(3)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -30,62 +30,61 @@ func main() => integer
 begin
     ResetProfileState();
     PrepareBIOSCapacity();
-    let shared_128_one = ExecuteCommandInstruction(
-        BIOSCapacityDestination(Zeros{8} + 1, '1011', '001'), 32);
-    assert shared_128_one == CommandExecution_Executed;
-    let shared_128_one_completed = ExecuteBundleTileOperation();
-    assert shared_128_one_completed;
+    let first_128 = ExecuteCommandInstruction(
+        BIOSCapacityDestination(Zeros{6} + 1, '1011', '001'), 32);
+    assert first_128 == CommandExecution_Executed;
+    let first_128_completed = ExecuteBundleTileOperation();
+    assert first_128_completed;
     assert _LastFault == Fault_None;
-    assert SharedTileRecord(Zeros{8} + 1).allocation_mask == '1000';
+    assert SharedTileRecord((Zeros{6} + 1) as SharedTileID)
+        .allocation_mask == '1000';
+    assert SharedTileCapacityInUse() == 131072;
 
-    ResetProfileState();
+    ResetBundleControlState();
     PrepareBIOSCapacity();
-    let shared_128_two = ExecuteCommandInstruction(
-        BIOSCapacityDestination(Zeros{8} + 2, '1011', '101'), 32);
-    assert shared_128_two == CommandExecution_Executed;
-    let shared_128_two_completed = ExecuteBundleTileOperation();
-    assert shared_128_two_completed;
+    let second_128 = ExecuteCommandInstruction(
+        BIOSCapacityDestination(Zeros{6} + 2, '1011', '111'), 32);
+    assert second_128 == CommandExecution_Executed;
+    let second_128_completed = ExecuteBundleTileOperation();
+    assert second_128_completed;
     assert _LastFault == Fault_None;
-    assert SharedTileRecord(Zeros{8} + 2).allocation_mask == '1100';
+    assert SharedTileRecord((Zeros{6} + 2) as SharedTileID)
+        .allocation_mask == '1111';
+    assert SharedTileCapacityInUse() == 262144;
 
-    ResetProfileState();
+    ResetBundleControlState();
     PrepareBIOSCapacity();
-    let shared_128_three = ExecuteCommandInstruction(
-        BIOSCapacityDestination(Zeros{8} + 3, '1011', '110'), 32);
-    assert shared_128_three == CommandExecution_Executed;
-    let shared_128_three_completed = ExecuteBundleTileOperation();
-    assert !shared_128_three_completed;
+    let overflow = ExecuteCommandInstruction(
+        BIOSCapacityDestination(Zeros{6} + 3, '0001', '001'), 32);
+    assert overflow == CommandExecution_Executed;
+    let overflow_completed = ExecuteBundleTileOperation();
+    assert !overflow_completed;
     assert _LastFault == Fault_TileLegality;
-    assert !SharedTileRecord(Zeros{8} + 3).descriptor_valid;
+    assert !SharedTileRecord((Zeros{6} + 3) as SharedTileID)
+        .descriptor_valid;
+    assert SharedTileCapacityInUse() == 262144;
 
     ResetProfileState();
     PrepareBIOSCapacity();
-    let shared_128_four = ExecuteCommandInstruction(
-        BIOSCapacityDestination(Zeros{8} + 4, '1011', '111'), 32);
-    assert shared_128_four == CommandExecution_Executed;
-    let shared_128_four_completed = ExecuteBundleTileOperation();
-    assert !shared_128_four_completed;
-    assert _LastFault == Fault_TileLegality;
-    assert !SharedTileRecord(Zeros{8} + 4).descriptor_valid;
-
-    ResetProfileState();
-    PrepareBIOSCapacity();
-    let shared_256_one = ExecuteCommandInstruction(
-        BIOSCapacityDestination(Zeros{8} + 5, '1100', '001'), 32);
-    assert shared_256_one == CommandExecution_Executed;
-    let shared_256_one_completed = ExecuteBundleTileOperation();
-    assert shared_256_one_completed;
+    let full_256_partial_mode = ExecuteCommandInstruction(
+        BIOSCapacityDestination(Zeros{6} + 5, '1100', '101'), 32);
+    assert full_256_partial_mode == CommandExecution_Executed;
+    let full_256_completed = ExecuteBundleTileOperation();
+    assert full_256_completed;
     assert _LastFault == Fault_None;
-    assert SharedTileRecord(Zeros{8} + 5).allocation_mask == '1000';
+    assert SharedTileRecord((Zeros{6} + 5) as SharedTileID)
+        .allocation_mask == '1100';
+    assert SharedTileCapacityInUse() == 262144;
 
-    ResetProfileState();
+    ResetBundleControlState();
     PrepareBIOSCapacity();
-    let shared_256_two = ExecuteCommandInstruction(
-        BIOSCapacityDestination(Zeros{8} + 6, '1100', '101'), 32);
-    assert shared_256_two == CommandExecution_Executed;
-    let shared_256_two_completed = ExecuteBundleTileOperation();
-    assert !shared_256_two_completed;
+    let after_full = ExecuteCommandInstruction(
+        BIOSCapacityDestination(Zeros{6} + 6, '0001', '100'), 32);
+    assert after_full == CommandExecution_Executed;
+    let after_full_completed = ExecuteBundleTileOperation();
+    assert !after_full_completed;
     assert _LastFault == Fault_TileLegality;
-    assert !SharedTileRecord(Zeros{8} + 6).descriptor_valid;
+    assert !SharedTileRecord((Zeros{6} + 6) as SharedTileID)
+        .descriptor_valid;
     return 0;
 end;

@@ -21,21 +21,21 @@ begin
     return instruction;
 end;
 
-pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
+pure func BundleTestSharedBinding(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = '111';
     return instruction;
 end;
 
-pure func BundleTestSharedBindingV6(shared_id: bits(8),
+pure func BundleTestSharedBindingV6(shared_tile_id: bits(6),
                                    size_code: bits(4),
                                    pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -77,7 +77,7 @@ begin
     let publish_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let publish_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 19, '0001', '111'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 19, '0001', '111'), 32);
     let publish_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('0000', '00', '111', Zeros{6}, TRUE), 32);
     let publish_zero_ior = ExecuteCommandInstruction(
@@ -88,14 +88,14 @@ begin
     assert publish_zero_ior == CommandExecution_Executed;
     let publish_completed = ExecuteBundleTileOperation();
     assert publish_completed;
-    assert SharedTileFullyInitialized(Zeros{8} + 19);
+    assert SharedTileFullyInitialized((Zeros{6} + 19) as SharedTileID);
     assert _Tiles[[0]].allocated;
 
     ResetBundleControlState();
     let broadcast_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01011', Zeros{5} + 24), 32);
     let broadcast_shared = ExecuteCommandInstruction(
-        BundleTestSharedBinding(Zeros{8} + 19), 32);
+        BundleTestSharedBinding(Zeros{6} + 19), 32);
     let broadcast_destination = ExecuteCommandInstruction(
         BundleTestTileDestinationV5('0001', '01', '111', TRUE), 32);
     assert broadcast_start == CommandExecution_Executed;
@@ -112,7 +112,7 @@ begin
     let extract_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
     let extract_shared = ExecuteCommandInstruction(
-        BundleTestSharedBinding(Zeros{8} + 19), 32);
+        BundleTestSharedBinding(Zeros{6} + 19), 32);
     let extract_destination = ExecuteCommandInstruction(
         BundleTestTileDestinationV5('0001', '10', '111', TRUE), 32);
     assert extract_start == CommandExecution_Executed;

@@ -1,17 +1,30 @@
 // PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-TRANSPOSE-011","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"execution","summary":"Shared A and B transpose controls normalize ordinary descriptors before CUBE computation","pass_condition":"all four TransA and TransB combinations produce the same exact logical two-by-two matrix product","related_sources":["asl/tile/model/state/shared-registers.asl","asl/block/attributes/B.FPATR.asl"]}
-func PrepareSharedTransposeOperand(index: TileIndex, shared_id: bits(8),
+func PrepareSharedTransposeOperand(index: TileIndex, shared_tile_id: bits(6),
                                    left: boolean, transpose: boolean)
 begin
-    ConfigureTileForMask(index, 128, 32, 2, 2, 2,
+    let physical_rows = if left && transpose then 2 else
+        (if left then 8 else 2);
+    let physical_columns = if left && transpose then 8 else 2;
+    ConfigureTileForMask(index, 128,
+        DerivedTileRows(128, physical_columns, TileDataType_U16),
+        physical_columns, physical_rows, physical_columns,
         TileDataType_U16, TileLayout_RowMajor,
         TileLocation_Matrix, '1111');
     if left then
-        WriteTileElement(index, 0, 0, Zeros{PTO_XLEN} + 1);
-        WriteTileElement(index, 0, 1,
-            Zeros{PTO_XLEN} + (if transpose then 3 else 2));
-        WriteTileElement(index, 1, 0,
-            Zeros{PTO_XLEN} + (if transpose then 2 else 3));
-        WriteTileElement(index, 1, 1, Zeros{PTO_XLEN} + 4);
+        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+            let base = pe * 2;
+            if transpose then
+                WriteTileElement(index, 0, base, Zeros{PTO_XLEN} + 1);
+                WriteTileElement(index, 1, base, Zeros{PTO_XLEN} + 2);
+                WriteTileElement(index, 0, base + 1, Zeros{PTO_XLEN} + 3);
+                WriteTileElement(index, 1, base + 1, Zeros{PTO_XLEN} + 4);
+            else
+                WriteTileElement(index, base, 0, Zeros{PTO_XLEN} + 1);
+                WriteTileElement(index, base, 1, Zeros{PTO_XLEN} + 2);
+                WriteTileElement(index, base + 1, 0, Zeros{PTO_XLEN} + 3);
+                WriteTileElement(index, base + 1, 1, Zeros{PTO_XLEN} + 4);
+            end;
+        end;
     else
         WriteTileElement(index, 0, 0, Zeros{PTO_XLEN} + 5);
         WriteTileElement(index, 0, 1,
@@ -20,7 +33,7 @@ begin
             Zeros{PTO_XLEN} + (if transpose then 6 else 7));
         WriteTileElement(index, 1, 1, Zeros{PTO_XLEN} + 8);
     end;
-    InstallSharedTile(shared_id, _Tiles[[index]], '1111');
+    InstallSharedTile(shared_tile_id as SharedTileID, _Tiles[[index]], '1111');
 end;
 
 func main() => integer
@@ -30,9 +43,9 @@ begin
         let trans_a = controls MOD 2 == 1;
         let trans_b = controls >= 2;
         PrepareSharedTransposeOperand(
-            10, Zeros{8} + 40, TRUE, trans_a);
+            10, Zeros{6} + 40, TRUE, trans_a);
         PrepareSharedTransposeOperand(
-            11, Zeros{8} + 41, FALSE, trans_b);
+            11, Zeros{6} + 41, FALSE, trans_b);
 
         var start: bits(64) = Zeros{64} + 0x00031181;
         start[31:27] = Zeros{5} + 26;
@@ -44,8 +57,8 @@ begin
         SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
         SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
         SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
-        BindBundleSharedIO(Zeros{8} + 40, 0, '1111');
-        BindBundleSharedIO(Zeros{8} + 41, 0, '1111');
+        BindBundleSharedIO((Zeros{6} + 40) as SharedTileID, 0, '1111');
+        BindBundleSharedIO((Zeros{6} + 41) as SharedTileID, 0, '1111');
         AddBundleTileBinding(
             TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
 

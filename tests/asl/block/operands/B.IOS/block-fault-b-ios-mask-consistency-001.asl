@@ -27,7 +27,7 @@ begin
     shared[11:9] = '101';
     let first = ExecuteCommandInstruction(shared, 32);
     assert first == CommandExecution_Executed;
-    shared[27:20] = Zeros{8} + 1;
+    shared[25:20] = Zeros{6} + 1;
     shared[18:15] = '0000';
     shared[11:9] = '111';
     let second = ExecuteCommandInstruction(shared, 32);

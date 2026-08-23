@@ -13,7 +13,7 @@ begin
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 6);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 5);
-    InstallSharedTile(Zeros{8} + 10, _Tiles[[2]], '1111');
+    InstallSharedTile((Zeros{6} + 10) as SharedTileID, _Tiles[[2]], '1111');
     var start: bits(64) = Zeros{64} + 0x00131181;
     start[31:27] = Zeros{5} + 26;
     let started = ExecuteCommandInstruction(start, 32);
@@ -24,7 +24,7 @@ begin
     SetBundleDataAttributeState(Zeros{5} + 27, Zeros{5}, Zeros{2},
         Zeros{3}, Zeros{3}, FALSE, FALSE);
     _BundleDataAttributesPresent = TRUE;
-    BindBundleSharedIO(Zeros{8} + 10, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 10) as SharedTileID, 0, '1111');
     AddBundleTileBinding(FALSE, 0, 0, '1111', TRUE, FALSE, 1, 0, FALSE);
     AddBundleTileBinding(TRUE, 0, 1, '1111', TRUE, FALSE, 3, 0, TRUE);
     let completed = ExecuteBundleTileOperation();

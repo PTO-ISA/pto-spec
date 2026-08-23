@@ -15,10 +15,10 @@ begin
     return instruction;
 end;
 
-pure func TLoadZeroMaskShared(shared_id: bits(8)) => bits(64)
+pure func TLoadZeroMaskShared(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0001';
     instruction[11:9] = '000';
     return instruction;
@@ -44,19 +44,19 @@ begin
     StopMemoryEventCapture();
 
     ResetProfileState();
-    let shared_id = Zeros{8} + 77;
+    let shared_tile_id = (Zeros{6} + 13) as SharedTileID;
     let shared_start_status = ExecuteCommandInstruction(
         TLoadZeroMaskStart(), 32);
     assert shared_start_status == CommandExecution_Executed;
     let shared_destination_status = ExecuteCommandInstruction(
-        TLoadZeroMaskShared(shared_id), 32);
+        TLoadZeroMaskShared(shared_tile_id), 32);
     assert shared_destination_status == CommandExecution_Executed;
     StartMemoryEventCapture(0);
     let shared_completed = ExecuteBundleTileOperation();
     assert shared_completed;
     assert _LastFault == Fault_None;
     assert _MemoryEventCount == 0;
-    assert !SharedTileRecord(shared_id).descriptor_valid;
+    assert !SharedTileRecord(shared_tile_id).descriptor_valid;
     StopMemoryEventCapture();
     return 0;
 end;

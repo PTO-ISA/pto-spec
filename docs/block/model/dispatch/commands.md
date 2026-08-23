@@ -187,7 +187,7 @@ begin
             end;
             BindBundleSharedIO(
                 DecodeCommandOperandRaw(instruction, form,
-                    CommandField_SharedTID)[7:0],
+                    CommandField_SharedTileID)[5:0] as SharedTileID,
                 shared_size,
                 shared_mask);
         when CommandHandler_BindBundleScalarIO =>

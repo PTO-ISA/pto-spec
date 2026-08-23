@@ -8,11 +8,11 @@ begin
     return instruction;
 end;
 
-pure func TStoreUndefinedShared(shared_id: bits(8), pe_mode: bits(3))
+pure func TStoreUndefinedShared(shared_tile_id: bits(6), pe_mode: bits(3))
     => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = pe_mode;
     return instruction;
@@ -21,21 +21,21 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    let shared_id = Zeros{8} + 42;
+    let shared_tile_id = (Zeros{6} + 42) as SharedTileID;
     assert MinimumTileCapacityBytesForShape(
         1, 1, 1, TileDataType_U8) == 128;
-    assert !SharedTileRecord(shared_id).descriptor_valid;
+    assert !SharedTileRecord(shared_tile_id).descriptor_valid;
     let start = ExecuteCommandInstruction(
         TStoreUndefinedStart('00001', Zeros{5} + 24), 32);
     let source = ExecuteCommandInstruction(
-        TStoreUndefinedShared(shared_id, '111'), 32);
+        TStoreUndefinedShared(shared_tile_id, '111'), 32);
     assert start == CommandExecution_Executed;
     assert source == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
     assert completed;
     assert _LastFault == Fault_None;
-    assert _Memory[[0]] == UndefinedSharedTileWord(shared_id, 0)[7:0];
-    assert !SharedTileRecord(shared_id).descriptor_valid;
+    assert _Memory[[0]] == UndefinedSharedTileWord(shared_tile_id, 0)[7:0];
+    assert !SharedTileRecord(shared_tile_id).descriptor_valid;
     assert _BundleSharedBindings[[0]].consumed;
     return 0;
 end;

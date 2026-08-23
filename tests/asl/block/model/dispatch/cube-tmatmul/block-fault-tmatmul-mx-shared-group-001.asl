@@ -12,7 +12,7 @@ begin
     _BundleDataAttributesPresent = TRUE;
     SetBundleFixedPointAttributeState(
         Zeros{6}, Zeros{3}, Zeros{4}, FALSE, FALSE, FALSE, FALSE);
-    BindBundleSharedIO(Zeros{8} + 60, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 60) as SharedTileID, 0, '1111');
 
     let completed = ExecuteBundleTileOperation();
     assert !completed;

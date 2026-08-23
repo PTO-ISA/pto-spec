@@ -7,10 +7,10 @@ begin
     return instruction;
 end;
 
-pure func TStoreMaskShared(shared_id: bits(8), pe_mode: bits(3)) => bits(64)
+pure func TStoreMaskShared(shared_tile_id: bits(6), pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = pe_mode;
     return instruction;
@@ -23,20 +23,21 @@ begin
     let full_start = ExecuteCommandInstruction(
         TStoreMaskStart('00001', Zeros{5} + 24), 32);
     let full_source = ExecuteCommandInstruction(
-        TStoreMaskShared(Zeros{8} + 7, '111'), 32);
+        TStoreMaskShared(Zeros{6} + 7, '111'), 32);
     assert full_start == CommandExecution_Executed;
     assert full_source == CommandExecution_Executed;
     let full_completed = ExecuteBundleTileOperation();
     assert full_completed;
     assert _LastFault == Fault_None;
-    assert _Memory[[0]] == UndefinedSharedTileWord(Zeros{8} + 7, 0)[7:0];
+    assert _Memory[[0]] ==
+        UndefinedSharedTileWord((Zeros{6} + 7) as SharedTileID, 0)[7:0];
 
     ResetProfileState();
     _Memory[[0]] = Zeros{8} + 0x55;
     let rejected_start = ExecuteCommandInstruction(
         TStoreMaskStart('00001', Zeros{5} + 24), 32);
     let rejected_source = ExecuteCommandInstruction(
-        TStoreMaskShared(Zeros{8} + 7, '001'), 32);
+        TStoreMaskShared(Zeros{6} + 7, '001'), 32);
     assert rejected_start == CommandExecution_Executed;
     assert rejected_source == CommandExecution_Executed;
     let rejected_completed = ExecuteBundleTileOperation();
@@ -48,13 +49,14 @@ begin
     let partial_start = ExecuteCommandInstruction(
         TStoreMaskStart('01110', Zeros{5} + 24), 32);
     let partial_source = ExecuteCommandInstruction(
-        TStoreMaskShared(Zeros{8} + 7, '001'), 32);
+        TStoreMaskShared(Zeros{6} + 7, '001'), 32);
     assert partial_start == CommandExecution_Executed;
     assert partial_source == CommandExecution_Executed;
     let partial_completed = ExecuteBundleTileOperation();
     assert partial_completed;
     assert _LastFault == Fault_None;
-    assert _Memory[[0]] == UndefinedSharedTileWord(Zeros{8} + 7, 0)[7:0];
-    assert !SharedTileRecord(Zeros{8} + 7).descriptor_valid;
+    assert _Memory[[0]] ==
+        UndefinedSharedTileWord((Zeros{6} + 7) as SharedTileID, 0)[7:0];
+    assert !SharedTileRecord((Zeros{6} + 7) as SharedTileID).descriptor_valid;
     return 0;
 end;

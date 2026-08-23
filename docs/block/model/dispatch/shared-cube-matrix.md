@@ -43,6 +43,26 @@ begin
         stored_columns, data_type);
 end;
 
+pure func BundleMatrixCooperativeGroupM(
+    pe_m: integer {1..65535}) => integer {0..65535}
+begin
+    if pe_m > 16383 then return 0; end;
+    return (PTO_MODEL_MEMORY_AGENTS * pe_m) as integer {4..65532};
+end;
+
+readonly func BundleMatrixSharedLeftPrimarySchemaLegal(
+    ordinal: integer {0..3},
+    pe_m: integer {1..65535},
+    k: integer {1..65535},
+    data_type: TileDataType,
+    transpose: boolean) => boolean
+begin
+    let group_m = BundleMatrixCooperativeGroupM(pe_m);
+    if group_m == 0 then return FALSE; end;
+    return BundleMatrixSharedPrimarySchemaLegal(
+        ordinal, group_m as integer {1..65535}, k, data_type, transpose);
+end;
+
 readonly func BundleMatrixSharedSchemasLegal(
     function: integer {0..31},
     left_type: TileDataType,
@@ -71,7 +91,7 @@ begin
     var ordinal: integer {0..4} = 0;
 
     if left_shared then
-        if !BundleMatrixSharedPrimarySchemaLegal(
+        if !BundleMatrixSharedLeftPrimarySchemaLegal(
                ordinal as integer {0..3},
                m, k, left_type,
                _BundleFixedPointAttributes.trans_a) then
@@ -79,9 +99,12 @@ begin
         end;
         ordinal = (ordinal + 1) as integer {0..4};
         if left_scale_present then
+            let group_m = BundleMatrixCooperativeGroupM(m);
+            if group_m == 0 then return FALSE; end;
             if !BundleMatrixSharedSourceSchemaLegal(
                    ordinal as integer {0..3},
-                   m, scale_blocks, scale_blocks,
+                   group_m as integer {1..65535},
+                   scale_blocks, scale_blocks,
                    TileDataType_E8M0) then
                 return FALSE;
             end;
@@ -108,6 +131,106 @@ begin
     return ordinal == shared_count;
 end;
 
+readonly func MaterializeBundleSharedMatrixLeftPrimary(
+    ordinal: integer {0..3},
+    pe_m: integer {1..65535},
+    k: integer {1..65535},
+    data_type: TileDataType,
+    transpose: boolean,
+    pe_identity: MemoryAgentId) => TileInfo
+begin
+    assert BundleMatrixSharedLeftPrimarySchemaLegal(
+        ordinal, pe_m, k, data_type, transpose);
+    let shared_tile_id = BundleSharedBindingId(ordinal);
+    let shared = SharedTileRecord(shared_tile_id);
+    var tile = shared.tile;
+    tile.contents_defined = FALSE;
+    tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
+    tile.defined_valid_elements = 0;
+    tile.rows = DerivedTileRows(tile.capacity_bytes, k, data_type);
+    tile.columns = k;
+    tile.valid_rows = pe_m;
+    tile.valid_columns = k;
+    tile.data_type = data_type;
+    tile.layout = TileLayout_RowMajor;
+    tile.location = TileLocation_Any;
+    tile.cube_k_repeat = 0;
+    tile.cube_n_repeat = 0;
+    tile.cube_cell_count = 0;
+    tile.cube_storage_bytes = 0;
+    for row = 0 to pe_m - 1 looplimit 65536 do
+        for column = 0 to k - 1 looplimit 65536 do
+            let group_row = (pe_identity * pe_m + row)
+                as integer {0..65535};
+            let source_row = if transpose then column else group_row;
+            let source_column = if transpose then group_row else column;
+            let source_element = TileLogicalLinearIndex(
+                shared.tile,
+                source_row as integer {0..65535},
+                source_column as integer {0..65535});
+            let destination_element = TileLogicalLinearIndex(
+                tile,
+                row as integer {0..65535},
+                column as integer {0..65535});
+            tile = TileInfoWithLogicalElement(tile, destination_element,
+                ReadSharedTileWord(shared_tile_id, source_element));
+        end;
+    end;
+    tile.contents_defined = TRUE;
+    tile.defined_valid_elements = (pe_m * k) as integer {0..524288};
+    return tile;
+end;
+
+readonly func MaterializeBundleSharedMatrixLeftScale(
+    ordinal: integer {0..3},
+    pe_m: integer {1..65535},
+    scale_blocks: integer {1..2048},
+    pe_identity: MemoryAgentId) => TileInfo
+begin
+    let group_m = BundleMatrixCooperativeGroupM(pe_m);
+    assert group_m != 0;
+    let shared_tile_id = BundleSharedBindingId(ordinal);
+    let shared = SharedTileRecord(shared_tile_id);
+    assert BundleMatrixSharedSourceSchemaLegal(
+        ordinal, group_m as integer {1..65535},
+        scale_blocks, scale_blocks, TileDataType_E8M0);
+    var tile = shared.tile;
+    tile.contents_defined = FALSE;
+    tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
+    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
+    tile.defined_valid_elements = 0;
+    tile.rows = DerivedTileRows(
+        tile.capacity_bytes, scale_blocks, TileDataType_E8M0);
+    tile.columns = scale_blocks;
+    tile.valid_rows = pe_m;
+    tile.valid_columns = scale_blocks;
+    tile.data_type = TileDataType_E8M0;
+    tile.layout = TileLayout_RowMajor;
+    tile.location = TileLocation_Any;
+    tile.cube_k_repeat = 0;
+    tile.cube_n_repeat = 0;
+    tile.cube_cell_count = 0;
+    tile.cube_storage_bytes = 0;
+    for row = 0 to pe_m - 1 looplimit 65536 do
+        for column = 0 to scale_blocks - 1 looplimit 2048 do
+            let group_row = (pe_identity * pe_m + row)
+                as integer {0..65535};
+            let source_element = TileLogicalLinearIndex(
+                shared.tile, group_row, column as integer {0..65535});
+            let destination_element = TileLogicalLinearIndex(
+                tile, row as integer {0..65535},
+                column as integer {0..65535});
+            tile = TileInfoWithLogicalElement(tile, destination_element,
+                ReadSharedTileWord(shared_tile_id, source_element));
+        end;
+    end;
+    tile.contents_defined = TRUE;
+    tile.defined_valid_elements =
+        (pe_m * scale_blocks) as integer {0..524288};
+    return tile;
+end;
+
 readonly func MaterializeBundleSharedMatrixSource(
     ordinal: integer {0..3},
     valid_rows: integer {1..65535},
@@ -115,15 +238,15 @@ readonly func MaterializeBundleSharedMatrixSource(
     columns: integer {1..65535},
     data_type: TileDataType) => TileInfo
 begin
-    let shared_id = BundleSharedBindingId(ordinal);
+    let shared_tile_id = BundleSharedBindingId(ordinal);
     var tile = MaterializeSharedTileForReadSchema(
-        shared_id, valid_rows, valid_columns, columns,
+        shared_tile_id, valid_rows, valid_columns, columns,
         data_type, TileLayout_RowMajor);
     for element = 0 to tile.rows * tile.columns - 1
         looplimit 524288 do
         let index = element as PackedTileElementIndex;
         tile = TileInfoWithLogicalElement(tile, index,
-            ReadSharedTileWord(shared_id, index));
+            ReadSharedTileWord(shared_tile_id, index));
     end;
     tile.contents_defined = TRUE;
     tile.defined_valid_elements =
@@ -140,8 +263,8 @@ readonly func MaterializeBundleSharedMatrixPrimary(
 begin
     assert BundleMatrixSharedPrimarySchemaLegal(
         ordinal, logical_rows, logical_columns, data_type, transpose);
-    let shared_id = BundleSharedBindingId(ordinal);
-    let shared = SharedTileRecord(shared_id);
+    let shared_tile_id = BundleSharedBindingId(ordinal);
+    let shared = SharedTileRecord(shared_tile_id);
     var tile = shared.tile;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -172,7 +295,7 @@ begin
                 row as integer {0..65535},
                 column as integer {0..65535});
             tile = TileInfoWithLogicalElement(tile, destination_element,
-                ReadSharedTileWord(shared_id, source_element));
+                ReadSharedTileWord(shared_tile_id, source_element));
         end;
     end;
     tile.contents_defined = TRUE;

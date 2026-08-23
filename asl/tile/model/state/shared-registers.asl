@@ -1,47 +1,47 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-STATE-SHARED-REGISTERS","surface":"tile","classification":["model","state","shared-registers"],"depends_on":["PTO-TILE-MODEL-STATE-LOCAL-REGISTERS","PTO-TILE-MODEL-LEGALITY-PE-MASK","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
-pure func SharedTileArrayIndex(shared_id: bits(8)) => SharedTileIndex
+pure func SharedTileArrayIndex(shared_tile_id: SharedTileID) => SharedTileIndex
 begin
-    return UInt(shared_id) as SharedTileIndex;
+    return UInt(shared_tile_id) as SharedTileIndex;
 end;
 
-readonly func SharedTileRecord(shared_id: bits(8)) => SharedTileInfo
+readonly func SharedTileRecord(shared_tile_id: SharedTileID) => SharedTileInfo
 begin
-    return _SharedTiles[[SharedTileArrayIndex(shared_id)]];
+    return _SharedTiles[[SharedTileArrayIndex(shared_tile_id)]];
 end;
 
-readonly func SharedTileAnyQuarterInitialized(shared_id: bits(8)) => boolean
+readonly func SharedTileAnyQuarterInitialized(shared_tile_id: SharedTileID) => boolean
 begin
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     return shared.descriptor_valid && shared.initialized_mask != Zeros{4};
 end;
 
-readonly func SharedTileFullyInitialized(shared_id: bits(8)) => boolean
+readonly func SharedTileFullyInitialized(shared_tile_id: SharedTileID) => boolean
 begin
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     return shared.descriptor_valid &&
            shared.initialized_mask == shared.allocation_mask &&
            shared.tile.contents_defined;
 end;
 
-readonly func SharedTilePublished(shared_id: bits(8)) => boolean
+readonly func SharedTilePublished(shared_tile_id: SharedTileID) => boolean
 begin
-    let shared = SharedTileRecord(shared_id);
-    return SharedTileFullyInitialized(shared_id) && shared.published;
+    let shared = SharedTileRecord(shared_tile_id);
+    return SharedTileFullyInitialized(shared_tile_id) && shared.published;
 end;
 
 readonly func SharedTileCooperativeMatrixReady(
-    shared_id: bits(8)) => boolean
+    shared_tile_id: SharedTileID) => boolean
 begin
-    let shared = SharedTileRecord(shared_id);
-    return SharedTileDescriptorLegal(shared_id) &&
+    let shared = SharedTileRecord(shared_tile_id);
+    return SharedTileDescriptorLegal(shared_tile_id) &&
            shared.allocation_mask == '1111' &&
            shared.initialized_mask == '1111' &&
            shared.published && shared.tile.contents_defined;
 end;
 
-readonly func SharedTileDescriptorLegal(shared_id: bits(8)) => boolean
+readonly func SharedTileDescriptorLegal(shared_tile_id: SharedTileID) => boolean
 begin
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     return shared.descriptor_valid && shared.tile.allocated &&
            shared.allocation_mask != Zeros{4} &&
            (shared.initialized_mask AND NOT shared.allocation_mask) == Zeros{4} &&
@@ -75,7 +75,7 @@ begin
            left.cube_storage_bytes == right.cube_storage_bytes;
 end;
 
-readonly func SharedTileUpdateCompatible(shared_id: bits(8), tile: TileInfo,
+readonly func SharedTileUpdateCompatible(shared_tile_id: SharedTileID, tile: TileInfo,
                                           pe_mask: bits(4)) => boolean
 begin
     if pe_mask == Zeros{4} then return TRUE; end;
@@ -89,47 +89,46 @@ begin
            TileLogicalElementCapacity(tile.capacity_bytes, tile.data_type) then
         return FALSE;
     end;
-    let old = SharedTileRecord(shared_id);
+    let old = SharedTileRecord(shared_tile_id);
     if old.descriptor_valid then
         return (pe_mask AND NOT old.allocation_mask) == Zeros{4} &&
                SharedTileDescriptorsCompatible(old.tile, tile);
     end;
-    return TileCapacityInUse() + SharedTileCapacityInUse() +
-           TileCoreAllocationBytes(pe_mask, tile.capacity_bytes) <=
-               TileCapacityLimitBytes();
+    return SharedTileCapacityInUse() + tile.capacity_bytes <=
+        SharedTileCapacityLimitBytes();
 end;
 
 // Architectural undefined-register behavior is represented deterministically
 // by pto-v0. The returned word is not a portable value and reading it never
 // allocates the register or raises a fault.
-readonly func UndefinedSharedTileWord(shared_id: bits(8),
+readonly func UndefinedSharedTileWord(shared_tile_id: SharedTileID,
                                       element: PackedTileElementIndex) => Word
 begin
-    return ZeroExtend{PTO_XLEN}(shared_id) XOR
+    return ZeroExtend{PTO_XLEN}(shared_tile_id) XOR
         (Zeros{PTO_XLEN} + element);
 end;
 
-readonly func ReadSharedTileWord(shared_id: bits(8),
+readonly func ReadSharedTileWord(shared_tile_id: SharedTileID,
                                  element: PackedTileElementIndex) => Word
 begin
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     if !shared.descriptor_valid then
-        return UndefinedSharedTileWord(shared_id, element);
+        return UndefinedSharedTileWord(shared_tile_id, element);
     end;
     let region = SharedTileElementRegion(shared.tile, element);
     if shared.initialized_mask[PTOPEMaskBitOfPEIdentity(region)] == '0' then
-        return UndefinedSharedTileWord(shared_id, element);
+        return UndefinedSharedTileWord(shared_tile_id, element);
     end;
     return TileReadLogicalElement(shared.tile, element);
 end;
 
 // Consumers observe undefined-register values for uninitialized quarters.
 // Materialization is a read-only snapshot and never changes Shared state.
-readonly func MaterializeSharedTile(shared_id: bits(8),
+readonly func MaterializeSharedTile(shared_tile_id: SharedTileID,
                                     pe_mask: bits(4)) => TileInfo
 begin
-    let shared = SharedTileRecord(shared_id);
-    assert SharedTileDescriptorLegal(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
+    assert SharedTileDescriptorLegal(shared_tile_id);
     var tile = shared.tile;
     tile.contents_defined =
         (pe_mask AND shared.initialized_mask) == pe_mask;
@@ -142,7 +141,7 @@ begin
         let region = SharedTileElementRegion(tile, index);
         if pe_mask[PTOPEMaskBitOfPEIdentity(region)] == '1' then
             tile = TileInfoWithLogicalElement(tile, index,
-                ReadSharedTileWord(shared_id, index));
+                ReadSharedTileWord(shared_tile_id, index));
         end;
     end;
     if tile.contents_defined then
@@ -154,15 +153,15 @@ begin
 end;
 
 readonly func SharedTileReadSchemaLegalAtCapacity(
-    shared_id: bits(8), valid_rows: integer {0..65535},
+    shared_tile_id: SharedTileID, valid_rows: integer {0..65535},
     valid_columns: integer {0..65535}, columns: integer {0..65535},
     data_type: TileDataType, layout: TileLayout,
     capacity_bytes: integer {0..262144}) => boolean
 begin
     if TileLayoutIsCube(layout) then return FALSE; end;
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     if shared.descriptor_valid then
-        return SharedTileDescriptorLegal(shared_id) &&
+        return SharedTileDescriptorLegal(shared_tile_id) &&
                shared.tile.capacity_bytes == capacity_bytes &&
                shared.tile.columns == columns &&
                valid_rows <= shared.tile.valid_rows &&
@@ -178,18 +177,18 @@ begin
 end;
 
 readonly func SharedTileReadSchemaLegal(
-    shared_id: bits(8), valid_rows: integer {0..65535},
+    shared_tile_id: SharedTileID, valid_rows: integer {0..65535},
     valid_columns: integer {0..65535}, columns: integer {0..65535},
     data_type: TileDataType, layout: TileLayout) => boolean
 begin
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     let capacity_bytes = if shared.descriptor_valid then
         shared.tile.capacity_bytes
     else
         MinimumTileCapacityBytesForShape(columns, valid_rows,
             valid_columns, data_type);
     return capacity_bytes != 0 && SharedTileReadSchemaLegalAtCapacity(
-        shared_id, valid_rows, valid_columns, columns, data_type, layout,
+        shared_tile_id, valid_rows, valid_columns, columns, data_type, layout,
         capacity_bytes);
 end;
 
@@ -198,13 +197,13 @@ end;
 // while ReadSharedTileWord supplies deterministic model values without
 // allocating or changing the architectural Shared register.
 readonly func MaterializeSharedTileForReadSchema(
-    shared_id: bits(8), valid_rows: integer {0..65535},
+    shared_tile_id: SharedTileID, valid_rows: integer {0..65535},
     valid_columns: integer {0..65535}, columns: integer {0..65535},
     data_type: TileDataType, layout: TileLayout) => TileInfo
 begin
-    assert SharedTileReadSchemaLegal(shared_id, valid_rows, valid_columns,
+    assert SharedTileReadSchemaLegal(shared_tile_id, valid_rows, valid_columns,
         columns, data_type, layout);
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     let capacity_bytes = if shared.descriptor_valid then
         shared.tile.capacity_bytes
     else
@@ -232,14 +231,14 @@ begin
 end;
 
 readonly func MaterializeSharedTileForReadSchemaAtCapacity(
-    shared_id: bits(8), valid_rows: integer {0..65535},
+    shared_tile_id: SharedTileID, valid_rows: integer {0..65535},
     valid_columns: integer {0..65535}, columns: integer {0..65535},
     data_type: TileDataType, layout: TileLayout,
     capacity_bytes: integer {0..262144}) => TileInfo
 begin
-    assert SharedTileReadSchemaLegalAtCapacity(shared_id, valid_rows,
+    assert SharedTileReadSchemaLegalAtCapacity(shared_tile_id, valid_rows,
         valid_columns, columns, data_type, layout, capacity_bytes);
-    var tile = SharedTileRecord(shared_id).tile;
+    var tile = SharedTileRecord(shared_tile_id).tile;
     tile.allocated = TRUE;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -261,13 +260,13 @@ begin
 end;
 
 readonly func SharedTileProspectiveFullyInitialized(
-    shared_id: bits(8), tile: TileInfo, pe_mask: bits(4)) => boolean
+    shared_tile_id: SharedTileID, tile: TileInfo, pe_mask: bits(4)) => boolean
 begin
     if pe_mask == Zeros{4} ||
-       !SharedTileUpdateCompatible(shared_id, tile, pe_mask) then
+       !SharedTileUpdateCompatible(shared_tile_id, tile, pe_mask) then
         return FALSE;
     end;
-    let old = SharedTileRecord(shared_id);
+    let old = SharedTileRecord(shared_tile_id);
     if !old.descriptor_valid then return TRUE; end;
     return (old.initialized_mask OR pe_mask) == old.allocation_mask;
 end;
@@ -276,14 +275,14 @@ end;
 // initialized writes validate descriptor compatibility before copying any
 // selected fixed-offset quarter into the snapshot. A zero mask is a true NOP.
 func AtomicUpdateSharedTileWithPublication(
-    shared_id: bits(8), tile: TileInfo, pe_mask: bits(4),
+    shared_tile_id: SharedTileID, tile: TileInfo, pe_mask: bits(4),
     publish: boolean) => boolean
 begin
     if pe_mask == Zeros{4} then return TRUE; end;
     assert tile.allocated;
-    let index = SharedTileArrayIndex(shared_id);
+    let index = SharedTileArrayIndex(shared_tile_id);
     let old = _SharedTiles[[index]];
-    if !SharedTileUpdateCompatible(shared_id, tile, pe_mask) then
+    if !SharedTileUpdateCompatible(shared_tile_id, tile, pe_mask) then
         return FALSE;
     end;
     var updated = old;
@@ -331,15 +330,15 @@ begin
     return TRUE;
 end;
 
-func AtomicUpdateSharedTile(shared_id: bits(8), tile: TileInfo,
+func AtomicUpdateSharedTile(shared_tile_id: SharedTileID, tile: TileInfo,
                             pe_mask: bits(4)) => boolean
 begin
     return AtomicUpdateSharedTileWithPublication(
-        shared_id, tile, pe_mask, TRUE);
+        shared_tile_id, tile, pe_mask, TRUE);
 end;
 
-func InstallSharedTile(shared_id: bits(8), tile: TileInfo, pe_mask: bits(4))
+func InstallSharedTile(shared_tile_id: SharedTileID, tile: TileInfo, pe_mask: bits(4))
 begin
-    let updated = AtomicUpdateSharedTile(shared_id, tile, pe_mask);
+    let updated = AtomicUpdateSharedTile(shared_tile_id, tile, pe_mask);
     assert updated;
 end;

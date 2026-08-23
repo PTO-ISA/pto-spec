@@ -4,10 +4,10 @@ begin
     return Zeros{64} + 0x00011181;
 end;
 
-pure func BIOSPEModeSource(pe_mode: bits(3), shared_id: bits(8)) => bits(64)
+pure func BIOSPEModeSource(pe_mode: bits(3), shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = Zeros{4};
     instruction[11:9] = pe_mode;
     return instruction;
@@ -21,7 +21,7 @@ begin
         let started = ExecuteCommandInstruction(BIOSPEModeStart(), 32);
         let status = ExecuteCommandInstruction(
             BIOSPEModeSource(encoded_mode,
-                (Zeros{8} + mode) as bits(8)), 32);
+                (Zeros{6} + mode) as bits(6)), 32);
         assert started == CommandExecution_Executed;
         assert status == CommandExecution_Executed;
         if mode == 0 then

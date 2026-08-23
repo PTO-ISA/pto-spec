@@ -116,7 +116,7 @@ end;
 
 ```asm
 Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and byte row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.
-Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S255, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride.
+Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S63, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride.
 Local CUBE destination: encode B.DATR Layout ND2M32, ND2M16, or ND2N8 with DataType=DTYPE_NONE; require LB0=valid columns and LB1=valid rows, omit LB2, and use one terminating destination B.IOT.
 ```
 

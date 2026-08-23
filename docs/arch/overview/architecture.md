@@ -44,8 +44,10 @@ This page is a generated reference view of the normative ASL unit.
 
 // NDF-BEGIN: PTO-TILE-CAPACITY-PER-PE
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// A decoded Tile size MUST denote one selected PE's capacity; PE_MASK selects
-// how many equal per-PE allocations the processor provides.
+// B.IOT SizeCode MUST denote one selected PE's Local allocation in that PE's
+// independent 256 KiB pool. B.IOS SizeCode MUST denote one complete Core-wide
+// Shared allocation in the independent 256 KiB Shared pool. Local and Shared
+// allocations MUST NOT consume one combined budget.
 // NDF-END: PTO-TILE-CAPACITY-PER-PE
 
 // NDF-BEGIN: PTO-RELEASE-VERIFICATION

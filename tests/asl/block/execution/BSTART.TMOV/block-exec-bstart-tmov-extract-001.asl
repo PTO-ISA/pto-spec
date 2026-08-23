@@ -6,11 +6,11 @@ begin
     return instruction;
 end;
 
-pure func TMOVExtractShared(shared_id: bits(8), pe_mode: bits(3))
+pure func TMOVExtractShared(shared_tile_id: bits(6), pe_mode: bits(3))
     => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = pe_mode;
     return instruction;
@@ -35,19 +35,19 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    let shared_id = Zeros{8} + 42;
+    let shared_tile_id = (Zeros{6} + 42) as SharedTileID;
     _Tiles[[16]].payload[[32]] = Zeros{PTO_XLEN} + 0x77;
-    assert !SharedTileRecord(shared_id).descriptor_valid;
+    assert !SharedTileRecord(shared_tile_id).descriptor_valid;
     TMOVExtractExecute(TMOVExtractStart());
-    TMOVExtractExecute(TMOVExtractShared(shared_id, '001'));
+    TMOVExtractExecute(TMOVExtractShared(shared_tile_id, '001'));
     TMOVExtractExecute(TMOVExtractDestination('001'));
     let completed = ExecuteBundleTileOperation();
     assert completed;
     assert _Tiles[[16]].allocated;
     assert _Tiles[[16]].payload[[0]] ==
-        UndefinedSharedTileWord(shared_id, 0);
+        UndefinedSharedTileWord(shared_tile_id, 0);
     assert _Tiles[[16]].payload[[32]] == Zeros{PTO_XLEN} + 0x77;
     assert !_Tiles[[16]].contents_defined;
-    assert !SharedTileRecord(shared_id).descriptor_valid;
+    assert !SharedTileRecord(shared_tile_id).descriptor_valid;
     return 0;
 end;

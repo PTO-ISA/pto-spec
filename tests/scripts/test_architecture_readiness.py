@@ -117,7 +117,7 @@ class ArchitectureReadinessTest(unittest.TestCase):
         rows = derive_readiness(ROOT, "a" * 40)
         by_id = {row.subject_id: row for row in rows}
 
-        self.assertEqual(len(rows), 87)
+        self.assertEqual(len(rows), 88)
         self.assertEqual(len(by_id), len(rows))
         self.assertEqual(by_id["ADR-0086"].stage, "draft")
         self.assertEqual(by_id["ADR-0095"].stage, "draft")
@@ -128,7 +128,10 @@ class ArchitectureReadinessTest(unittest.TestCase):
             all(
                 row.stage != "architecture-defined"
                 for row in rows
-                if row.subject_id not in {f"ADR-{value:04d}" for value in range(86, 96)}
+                if row.subject_id not in {
+                    *{f"ADR-{value:04d}" for value in range(86, 96)},
+                    "ADR-0097",
+                }
             )
         )
 
@@ -140,7 +143,7 @@ class ArchitectureReadinessTest(unittest.TestCase):
         self.assertNotIn("generated_at", first)
         document = json.loads(first)
         self.assertEqual(document["schema"], "pto.architecture-readiness")
-        self.assertEqual(document["summary"]["subject_count"], 87)
+        self.assertEqual(document["summary"]["subject_count"], 88)
         self.assertEqual(document["summary"]["validated_count"], 0)
         self.assertEqual(document["summary"]["released_count"], 0)
 

@@ -29,21 +29,22 @@ begin
 
     // The first allocating Shared write fixes the allocation mask. Later
     // writes may update a subset, but expansion requires a new Sx.
+    let shared_tile_id = (Zeros{6} + 60) as SharedTileID;
     let shared_first = AtomicUpdateSharedTile(
-        Zeros{8} + 60, _Tiles[[5]], '0011');
+        shared_tile_id, _Tiles[[5]], '0011');
     assert shared_first;
-    assert SharedTileRecord(Zeros{8} + 60).allocation_mask == '0011';
-    assert SharedTileRecord(Zeros{8} + 60).initialized_mask == '0011';
+    assert SharedTileRecord(shared_tile_id).allocation_mask == '0011';
+    assert SharedTileRecord(shared_tile_id).initialized_mask == '0011';
     let shared_subset = AtomicUpdateSharedTile(
-        Zeros{8} + 60, _Tiles[[5]], '0001');
+        shared_tile_id, _Tiles[[5]], '0001');
     assert shared_subset;
-    assert SharedTileRecord(Zeros{8} + 60).allocation_mask == '0011';
+    assert SharedTileRecord(shared_tile_id).allocation_mask == '0011';
     let shared_expansion = AtomicUpdateSharedTile(
-        Zeros{8} + 60, _Tiles[[5]], '0100');
+        shared_tile_id, _Tiles[[5]], '0100');
     assert !shared_expansion;
-    assert SharedTileRecord(Zeros{8} + 60).allocation_mask == '0011';
-    assert SharedTileRecord(Zeros{8} + 60).initialized_mask == '0011';
-    assert SharedTileCapacityInUse() == 512;
+    assert SharedTileRecord(shared_tile_id).allocation_mask == '0011';
+    assert SharedTileRecord(shared_tile_id).initialized_mask == '0011';
+    assert SharedTileCapacityInUse() == 256;
 end;
 func main() => integer
 begin

@@ -84,7 +84,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 | Field | Architectural role |
 | --- | --- |
-| source0 | Local Tile or absolute Shared S0..S255 source |
+| source0 | Local Tile or absolute Shared S0..S63 source |
 | address | per-PE private-GPR GM base address |
 | scalar0 | per-PE private-GPR byte row stride |
 

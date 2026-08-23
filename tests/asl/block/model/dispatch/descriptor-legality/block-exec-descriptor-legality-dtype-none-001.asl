@@ -81,12 +81,12 @@ begin
     // Shared-to-Local TMOV inherits the Shared source descriptor.
     ResetProfileState();
     DTypeNoneConfigureTile(10, TileDataType_E4M3);
-    InstallSharedTile(Zeros{8} + 31, _Tiles[[10]], '1111');
+    InstallSharedTile((Zeros{6} + 31) as SharedTileID, _Tiles[[10]], '1111');
     DTypeNoneInstallOperation(BundleOperation_TileMemory, Zeros{10} + 11,
         DTYPE_NONE);
     SetBundleDataAttributeState(DTYPE_NONE, Zeros{5}, Zeros{2},
         Zeros{3}, Zeros{3}, FALSE, FALSE);
-    BindBundleSharedIO(Zeros{8} + 31, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 31) as SharedTileID, 0, '1111');
     let (shared_valid, shared_type) = ResolveBundleEffectiveDataType();
     assert shared_valid;
     assert shared_type == TileDataType_E4M3;

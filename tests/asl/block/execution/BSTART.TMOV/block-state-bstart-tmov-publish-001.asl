@@ -29,11 +29,11 @@ begin
     return instruction;
 end;
 
-pure func TMOVPublishShared(shared_id: bits(8), size_code: bits(4),
+pure func TMOVPublishShared(shared_tile_id: bits(6), size_code: bits(4),
                             pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -48,24 +48,24 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    let shared_id = Zeros{8} + 7;
+    let shared_tile_id = (Zeros{6} + 7) as SharedTileID;
     ConfigureTileForMask(0, 128, 128, 1, 1, 1, TileDataType_U8,
         TileLayout_RowMajor, TileLocation_Any, '1111');
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
 
     TMOVPublishExecute(TMOVPublishStart('01001'));
     TMOVPublishExecute(TMOVPublishLocalSource(Zeros{6}, '111'));
-    TMOVPublishExecute(TMOVPublishShared(shared_id, '0001', '111'));
+    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0001', '111'));
     let insert_completed = ExecuteBundleTileOperation();
     assert insert_completed;
-    assert SharedTileFullyInitialized(shared_id);
-    assert !SharedTilePublished(shared_id);
-    assert ReadSharedTileWord(shared_id, 0) == Zeros{PTO_XLEN} + 0x5a;
+    assert SharedTileFullyInitialized(shared_tile_id);
+    assert !SharedTilePublished(shared_tile_id);
+    assert ReadSharedTileWord(shared_tile_id, 0) == Zeros{PTO_XLEN} + 0x5a;
 
     ResetBundleControlState();
     ClearFault();
     TMOVPublishExecute(TMOVPublishStart('01011'));
-    TMOVPublishExecute(TMOVPublishShared(shared_id, '0000', '111'));
+    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0000', '111'));
     TMOVPublishExecute(TMOVPublishLocalDestination('01', '111'));
     let rejected_broadcast = ExecuteBundleTileOperation();
     assert !rejected_broadcast;
@@ -76,20 +76,20 @@ begin
     ClearFault();
     TMOVPublishExecute(TMOVPublishStart('01010'));
     TMOVPublishExecute(TMOVPublishLocalSource(Zeros{6}, '111'));
-    TMOVPublishExecute(TMOVPublishShared(shared_id, '0001', '111'));
+    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0001', '111'));
     let publish_completed = ExecuteBundleTileOperation();
     assert publish_completed;
-    assert SharedTilePublished(shared_id);
+    assert SharedTilePublished(shared_tile_id);
 
     ResetBundleControlState();
     ClearFault();
     TMOVPublishExecute(TMOVPublishStart('01011'));
-    TMOVPublishExecute(TMOVPublishShared(shared_id, '0000', '111'));
+    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0000', '111'));
     TMOVPublishExecute(TMOVPublishLocalDestination('01', '111'));
     let broadcast_completed = ExecuteBundleTileOperation();
     assert broadcast_completed;
     assert _Tiles[[16]].allocated;
     assert _Tiles[[16]].payload[[0]] == Zeros{PTO_XLEN} + 0x5a;
-    assert SharedTilePublished(shared_id);
+    assert SharedTilePublished(shared_tile_id);
     return 0;
 end;

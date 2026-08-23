@@ -48,7 +48,7 @@ end;
 func AssertBFPATRRejectedAfterSharedBinding()
 begin
     var source = Zeros{64} + 0x00001013;
-    source[27:20] = Zeros{8} + 7;
+    source[25:20] = Zeros{6} + 7;
     source[18:15] = Zeros{4};
     source[11:9] = '111';
     let binding = ExecuteCommandInstruction(source, 32);

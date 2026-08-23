@@ -25,11 +25,11 @@ B.IOT mask=PE_MASK, <last>, ->DstTile<SizeCode>
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_iot_32_10db6db84f5d | L32 | 32 | 0x00005013 / 0xfc00707f | [{"field":"SizeCode","operator":"one-of","values":[1,2,3,4,5,6,7,8,9,10]},{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
+| b_iot_32_10db6db84f5d | L32 | 32 | 0x00005013 / 0xfc00707f | [{"field":"SizeCode","operator":"one-of","values":[1,2,3,4,5,6,7,8,9,10,11,12]},{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
 | b_iot_32_2c07e7177fad | L32 | 32 | 0x00004013 / 0x0007f07f | [{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]}] |
-| b_iot_32_8b8bce6bffe8 | L32 | 32 | 0x00004013 / 0x0000707f | [{"field":"SizeCode","operator":"one-of","values":[1,2,3,4,5,6,7,8,9,10]},{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
+| b_iot_32_8b8bce6bffe8 | L32 | 32 | 0x00004013 / 0x0000707f | [{"field":"SizeCode","operator":"one-of","values":[1,2,3,4,5,6,7,8,9,10,11,12]},{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
 | b_iot_32_c11eb189dd83 | L32 | 32 | 0x00005013 / 0xfc07f07f | [{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]}] |
-| b_iot_32_efa0fe3fe49a | L32 | 32 | 0x00006013 / 0xfff0707f | [{"field":"SizeCode","operator":"one-of","values":[1,2,3,4,5,6,7,8,9,10]},{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
+| b_iot_32_efa0fe3fe49a | L32 | 32 | 0x00006013 / 0xfff0707f | [{"field":"SizeCode","operator":"one-of","values":[1,2,3,4,5,6,7,8,9,10,11,12]},{"field":"PEMode","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"DstTile","operator":"one-of","values":[0,1,2,3]}] |
 
 ### Fields
 
@@ -71,7 +71,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- | ---: | --- | --- | --- | --- | --- |
 | b_iot_32_10db6db84f5d | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
 | b_iot_32_10db6db84f5d | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
-| b_iot_32_10db6db84f5d | SizeCode | 4 | 1–10 | none | 0, 11–15 | source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE | Encoded zero selects the source-only form and never allocates; it is reserved in destination forms. |
+| b_iot_32_10db6db84f5d | SizeCode | 4 | 1–12 | none | 0, 13–15 | source-only zero or destination capacity code 1..12: 128 B..256 KiB per participating PE | Encoded zero selects the source-only form and never allocates; it is reserved in destination forms. |
 | b_iot_32_10db6db84f5d | PEMode | 3 | 0–7 | none | none | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask | Encoded zero decodes to mask 0000 and makes B.IOT a strict no-op. |
 | b_iot_32_10db6db84f5d | DstTile | 2 | 0–3 | none | none | destination hand selector: 0 T, 1 U, 2 M, or 3 N | destination hand selector: 0 T, 1 U, 2 M, or 3 N |
 | b_iot_32_2c07e7177fad | SrcTile1 | 6 | 0–63 | none | none | second ordered relative Local source in the same 64-entry queue namespace | second ordered relative Local source in the same 64-entry queue namespace |
@@ -81,14 +81,14 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_iot_32_8b8bce6bffe8 | SrcTile1 | 6 | 0–63 | none | none | second ordered relative Local source in the same 64-entry queue namespace | second ordered relative Local source in the same 64-entry queue namespace |
 | b_iot_32_8b8bce6bffe8 | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
 | b_iot_32_8b8bce6bffe8 | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
-| b_iot_32_8b8bce6bffe8 | SizeCode | 4 | 1–10 | none | 0, 11–15 | source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE | Encoded zero selects the source-only form and never allocates; it is reserved in destination forms. |
+| b_iot_32_8b8bce6bffe8 | SizeCode | 4 | 1–12 | none | 0, 13–15 | source-only zero or destination capacity code 1..12: 128 B..256 KiB per participating PE | Encoded zero selects the source-only form and never allocates; it is reserved in destination forms. |
 | b_iot_32_8b8bce6bffe8 | PEMode | 3 | 0–7 | none | none | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask | Encoded zero decodes to mask 0000 and makes B.IOT a strict no-op. |
 | b_iot_32_8b8bce6bffe8 | DstTile | 2 | 0–3 | none | none | destination hand selector: 0 T, 1 U, 2 M, or 3 N | destination hand selector: 0 T, 1 U, 2 M, or 3 N |
 | b_iot_32_c11eb189dd83 | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
 | b_iot_32_c11eb189dd83 | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
 | b_iot_32_c11eb189dd83 | PEMode | 3 | 0–7 | none | none | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask | Encoded zero decodes to mask 0000 and makes B.IOT a strict no-op. |
 | b_iot_32_efa0fe3fe49a | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
-| b_iot_32_efa0fe3fe49a | SizeCode | 4 | 1–10 | none | 0, 11–15 | source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE | Encoded zero selects the source-only form and never allocates; it is reserved in destination forms. |
+| b_iot_32_efa0fe3fe49a | SizeCode | 4 | 1–12 | none | 0, 13–15 | source-only zero or destination capacity code 1..12: 128 B..256 KiB per participating PE | Encoded zero selects the source-only form and never allocates; it is reserved in destination forms. |
 | b_iot_32_efa0fe3fe49a | PEMode | 3 | 0–7 | none | none | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask | Encoded zero decodes to mask 0000 and makes B.IOT a strict no-op. |
 | b_iot_32_efa0fe3fe49a | DstTile | 2 | 0–3 | none | none | destination hand selector: 0 T, 1 U, 2 M, or 3 N | destination hand selector: 0 T, 1 U, 2 M, or 3 N |
 
@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | SrcTile0 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
 | SrcTile1 | second ordered relative Local source in the same 64-entry queue namespace |
 | L | effective-binding sequence terminator; not a source-lifetime marker |
-| SizeCode | source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE |
+| SizeCode | source-only zero or destination capacity code 1..12: 128 B..256 KiB per participating PE |
 | PEMode | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask |
 | DstTile | destination hand selector: 0 T, 1 U, 2 M, or 3 N |
 
@@ -160,13 +160,13 @@ begin
 end;
 
 pure func InstructionContractPerPECapacity_B_IOT(
-    size_code: integer {1..10}) => integer
+    size_code: integer {1..12}) => integer
 begin
     return TileSizeCodeBytes(size_code);
 end;
 
 pure func InstructionContractCoreCapacity_B_IOT(
-    size_code: integer {1..10}, pe_mask: bits(4)) => integer
+    size_code: integer {1..12}, pe_mask: bits(4)) => integer
 begin
     return TileCoreAllocationBytes(pe_mask,
         InstructionContractPerPECapacity_B_IOT(size_code));
@@ -182,13 +182,13 @@ end;
 ## Defaults and encoded zero
 
 - PEMode is a three-bit encoding expanded by the common profile decoder to the fixed four-PE semantic mask: 000 none, 001 PE0, 010 PE1, 011 PE2, 100 PE3, 101 PE0+PE1, 110 PE0+PE1+PE2, and 111 all four PEs.
-- SizeCode=0 is the source-only encoding and never allocates; destination forms require SizeCode=1..10 for 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, and 64 KiB per participating PE.
+- SizeCode=0 is the source-only encoding and never allocates; destination forms require SizeCode=1..12 for 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, and 256 KiB per participating PE.
 - PEMode=000 decodes to no participating PE and is a strict no-op before placement, duplicate, schema, allocation, descriptor, memory, and downstream fault checks.
 
 ## Legality
 
 - The three-bit PEMode field accepts all eight encodings and the common profile decoder expands them exactly to the fixed four-PE semantic mask table.
-- Source-only forms require SizeCode=0. Destination forms require SizeCode=1..10; codes 11..15 are reserved for B.IOT.
+- Source-only forms require SizeCode=0. Destination forms require SizeCode=1..12; codes 13..15 are reserved for B.IOT.
 - PEMode=000 is accepted as the strict no-effect source-bearing encoding; a nonzero decoded mask is a four-PE predicate shared by every effective binding in the block.
 - A participating B.IOT is legal only after BSTART and before the block body. At most four effective Local bindings are accepted in encoded order.
 - The selected operation schema determines ordered Local source and destination roles and must agree with the form fields and SizeCode role.

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-PACKED-CAPACITY-BOUNDARY-001","source":"asl/tile/model/definedness/packed-boundary.asl","requirements":[],"kind":"boundary","summary":"Decoded BSTART.TLOAD Local B.IOT SizeCode=10 and Shared B.IOS SizeCode=12 commit maximum packed U4 shapes through dispatch, binding, translated preflight, and execution before carrier-tail observation.","pass_condition":"The decoded Local path commits a 64 KiB/U4 shape and observes logical indices 32768 and 131071; the decoded Shared path commits a 256 KiB/U4 shape and observes logical indices 393216 and 524287, including complete definedness/value mapping at a non-boundary tail above 32767; equivalent page-faulting translated probes reject both fast-eligible forms before destination or Shared descriptor publication.","related_sources":["asl/block/execution/BSTART.TLOAD.asl","asl/block/model/dispatch/tile-execution.asl","asl/block/model/dispatch/shared-tlsu.asl","asl/block/operands/B.IOT.asl","asl/block/operands/B.IOS.asl","asl/tile/model/memory/load-store.asl","asl/tile/model/memory/shared-movement.asl","asl/tile/model/state/allocation.asl","asl/tile/model/state/shared-registers.asl","asl/tile/model/definedness/elements.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-PACKED-CAPACITY-BOUNDARY-001","source":"asl/tile/model/definedness/packed-boundary.asl","requirements":[],"kind":"boundary","summary":"Decoded BSTART.TLOAD Local B.IOT and Shared B.IOS SizeCode=12 commit maximum packed U4 shapes through dispatch, binding, translated preflight, and execution before carrier-tail observation.","pass_condition":"Both decoded paths commit independent 256 KiB/U4 shapes and observe logical indices 393216 and 524287, including complete definedness/value mapping at a non-boundary tail above 32767; equivalent page-faulting translated probes reject both fast-eligible forms before destination or Shared descriptor publication.","related_sources":["asl/block/execution/BSTART.TLOAD.asl","asl/block/model/dispatch/tile-execution.asl","asl/block/model/dispatch/shared-tlsu.asl","asl/block/operands/B.IOT.asl","asl/block/operands/B.IOS.asl","asl/tile/model/memory/load-store.asl","asl/tile/model/memory/shared-movement.asl","asl/tile/model/state/allocation.asl","asl/tile/model/state/shared-registers.asl","asl/tile/model/definedness/elements.asl"]}
 pure func PackedCapacityStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -9,16 +9,16 @@ end;
 pure func PackedCapacityLocalDestination() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00006013;
-    instruction[18:15] = Zeros{4} + 10;
+    instruction[18:15] = Zeros{4} + 12;
     instruction[11:9] = '001';
     instruction[19] = '1';
     return instruction;
 end;
 
-pure func PackedCapacitySharedDestination(shared_id: bits(8)) => bits(64)
+pure func PackedCapacitySharedDestination(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = Zeros{4} + 12;
     instruction[11:9] = '100';
     return instruction;
@@ -43,7 +43,6 @@ end;
 func main() => integer
 begin
     assert PTO_MODEL_TILE_ELEMENTS == 32768;
-    assert PackedTileLogicalCapacity(65536, TileDataType_U4X2) == 131072;
     assert PackedTileLogicalCapacity(262144, TileDataType_U4X2) == 524288;
 
     // The encoded BSTART.TLOAD + B.IOT path must resolve and commit the
@@ -52,9 +51,9 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN});
     WriteGPR(3, Zeros{PTO_XLEN});
     PreparePackedCapacityBlock();
-    SetBundleDimension(0, Zeros{PTO_XLEN} + 8);
-    SetBundleDimension(1, Zeros{PTO_XLEN} + 16384);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 8);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 16);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 32768);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 16);
     let local_destination_status = ExecuteCommandInstruction(
         PackedCapacityLocalDestination(), 32);
     assert local_destination_status == CommandExecution_Executed;
@@ -63,18 +62,18 @@ begin
     assert _LastFault == Fault_None;
     let local_tile = _BundleTileBindings[[0]].destination;
     assert _Tiles[[local_tile]].allocated;
-    assert _Tiles[[local_tile]].capacity_bytes == 65536;
-    assert _Tiles[[local_tile]].rows == 16384;
-    assert _Tiles[[local_tile]].columns == 8;
-    assert _Tiles[[local_tile]].valid_rows == 16384;
-    assert _Tiles[[local_tile]].valid_columns == 8;
-    let local_tail = TilePackedLinearIndex(_Tiles[[local_tile]], 4096, 0);
-    assert local_tail == 32768;
+    assert _Tiles[[local_tile]].capacity_bytes == 262144;
+    assert _Tiles[[local_tile]].rows == 32768;
+    assert _Tiles[[local_tile]].columns == 16;
+    assert _Tiles[[local_tile]].valid_rows == 32768;
+    assert _Tiles[[local_tile]].valid_columns == 16;
+    let local_tail = TilePackedLinearIndex(_Tiles[[local_tile]], 24576, 0);
+    assert local_tail == 393216;
     assert TileLogicalElementDefined(_Tiles[[local_tile]], local_tail);
     assert TileReadLogicalElement(_Tiles[[local_tile]], local_tail) ==
         Zeros{PTO_XLEN};
-    let local_last = TilePackedLinearIndex(_Tiles[[local_tile]], 16383, 7);
-    assert local_last == 131071;
+    let local_last = TilePackedLinearIndex(_Tiles[[local_tile]], 32767, 15);
+    assert local_last == 524287;
     assert TileLogicalElementDefined(_Tiles[[local_tile]], local_last);
     assert TileReadLogicalElement(_Tiles[[local_tile]], local_last) ==
         Zeros{PTO_XLEN};
@@ -84,7 +83,7 @@ begin
     // quarter, while explicit zero stride keeps every decoded GM access in
     // the pinned 4 KiB model memory and still exercises the full shape.
     ResetProfileState();
-    let shared_id = Zeros{8} + 99;
+    let shared_tile_id = (Zeros{6} + 35) as SharedTileID;
     WritePEGPR(3, 2, Zeros{PTO_XLEN});
     WritePEGPR(3, 3, Zeros{PTO_XLEN});
     PreparePackedCapacityBlock();
@@ -92,12 +91,12 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 32768);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 16);
     let shared_destination_status = ExecuteCommandInstruction(
-        PackedCapacitySharedDestination(shared_id), 32);
+        PackedCapacitySharedDestination(shared_tile_id), 32);
     assert shared_destination_status == CommandExecution_Executed;
     let shared_completed = ExecuteBundleTileOperation();
     assert shared_completed;
     assert _LastFault == Fault_None;
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     assert shared.descriptor_valid;
     assert shared.allocation_mask == '0001';
     assert shared.initialized_mask == '0001';
@@ -105,20 +104,20 @@ begin
     assert shared.tile.rows == 32768;
     assert shared.tile.columns == 16;
     assert !TileLogicalElementDefined(shared.tile, 0);
-    assert ReadSharedTileWord(shared_id, 0) ==
-        UndefinedSharedTileWord(shared_id, 0);
+    assert ReadSharedTileWord(shared_tile_id, 0) ==
+        UndefinedSharedTileWord(shared_tile_id, 0);
     let shared_tail = TilePackedLinearIndex(shared.tile, 24576, 0);
     assert shared_tail == 393216;
     assert TileLogicalElementDefined(shared.tile, shared_tail);
     assert TileReadLogicalElement(shared.tile, shared_tail) ==
         Zeros{PTO_XLEN};
-    assert ReadSharedTileWord(shared_id, shared_tail) == Zeros{PTO_XLEN};
+    assert ReadSharedTileWord(shared_tile_id, shared_tail) == Zeros{PTO_XLEN};
     let shared_last = TilePackedLinearIndex(shared.tile, 32767, 15);
     assert shared_last == 524287;
     assert TileLogicalElementDefined(shared.tile, shared_last);
     assert TileReadLogicalElement(shared.tile, shared_last) ==
         Zeros{PTO_XLEN};
-    assert ReadSharedTileWord(shared_id, shared_last) == Zeros{PTO_XLEN};
+    assert ReadSharedTileWord(shared_tile_id, shared_last) == Zeros{PTO_XLEN};
 
     // A fast-eligible full shape still uses the ordinary translated probe.
     // The final distinct zero-stride byte is outside model memory, so the
@@ -128,9 +127,9 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN} + 4094);
     WriteGPR(3, Zeros{PTO_XLEN});
     PreparePackedCapacityBlock();
-    SetBundleDimension(0, Zeros{PTO_XLEN} + 8);
-    SetBundleDimension(1, Zeros{PTO_XLEN} + 16384);
-    SetBundleDimension(2, Zeros{PTO_XLEN} + 8);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 16);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 32768);
+    SetBundleDimension(2, Zeros{PTO_XLEN} + 16);
     let local_fault_destination_status = ExecuteCommandInstruction(
         PackedCapacityLocalDestination(), 32);
     assert local_fault_destination_status == CommandExecution_Executed;
@@ -141,7 +140,7 @@ begin
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
 
     ResetProfileState();
-    let shared_fault_id = Zeros{8} + 100;
+    let shared_fault_id = (Zeros{6} + 36) as SharedTileID;
     WritePEGPR(3, 2, Zeros{PTO_XLEN} + 4094);
     WritePEGPR(3, 3, Zeros{PTO_XLEN});
     PreparePackedCapacityBlock();

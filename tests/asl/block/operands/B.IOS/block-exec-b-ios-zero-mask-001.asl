@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     var source = Zeros{64} + 0x00001013;
-    source[27:20] = Zeros{8} + 9;
+    source[25:20] = Zeros{6} + 9;
     let standalone = ExecuteCommandInstruction(source, 32);
     assert standalone == CommandExecution_Executed;
     assert _LastFault == Fault_None;

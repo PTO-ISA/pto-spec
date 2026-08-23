@@ -12,7 +12,8 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/operands/shared-bindings.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","surface":"block","classification":["model","operands","shared-bindings"],"depends_on":["PTO-BLOCK-MODEL-SCHEMA-DIMENSIONS"]}
-func BindBundleSharedIO(shared_id: bits(8), size_code: integer {0..12},
+func BindBundleSharedIO(shared_tile_id: SharedTileID,
+                        size_code: integer {0..12},
                         pe_mask: bits(4))
 begin
     if !BundleSharedMaskCanAppend(pe_mask) then
@@ -21,7 +22,7 @@ begin
     end;
     for index = 0 to 3 do
         if _BundleSharedBindings[[index]].valid &&
-           _BundleSharedBindings[[index]].shared_id == shared_id then
+           _BundleSharedBindings[[index]].shared_tile_id == shared_tile_id then
             SetFault(Fault_BundleControl, ReadTPC());
             return;
         end;
@@ -29,7 +30,7 @@ begin
     for index = 0 to 3 do
         if !_BundleSharedBindings[[index]].valid then
             _BundleSharedBindings[[index]].valid = TRUE;
-            _BundleSharedBindings[[index]].shared_id = shared_id;
+            _BundleSharedBindings[[index]].shared_tile_id = shared_tile_id;
             _BundleSharedBindings[[index]].size_code = size_code;
             _BundleSharedBindings[[index]].pe_mask = pe_mask;
             _BundleSharedBindings[[index]].consumed = FALSE;
@@ -62,11 +63,11 @@ begin
     return count;
 end;
 
-readonly func BundleSharedBindingId(ordinal: integer {0..3}) => bits(8)
+readonly func BundleSharedBindingId(ordinal: integer {0..3}) => SharedTileID
 begin
     assert _BundleSharedBindings[[ordinal]].valid &&
            !_BundleSharedBindings[[ordinal]].consumed;
-    return _BundleSharedBindings[[ordinal]].shared_id;
+    return _BundleSharedBindings[[ordinal]].shared_tile_id;
 end;
 
 readonly func BundleSharedBindingSize(ordinal: integer {0..3})

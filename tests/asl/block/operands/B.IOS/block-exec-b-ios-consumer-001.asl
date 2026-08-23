@@ -6,11 +6,11 @@ begin
     return instruction;
 end;
 
-pure func BIOSConsumerDestination(shared_id: bits(8), size_code: bits(4),
+pure func BIOSConsumerDestination(shared_tile_id: bits(6), size_code: bits(4),
                                   pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -31,23 +31,23 @@ begin
     ResetProfileState();
     PrepareBIOSConsumer(1, 1);
     let destination = ExecuteCommandInstruction(
-        BIOSConsumerDestination(Zeros{8} + 91, '1100', '100'), 32);
+        BIOSConsumerDestination(Zeros{6} + 27, '1100', '100'), 32);
     assert destination == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
     assert completed;
     assert _LastFault == Fault_None;
-    assert SharedTileRecord(Zeros{8} + 91).descriptor_valid;
-    assert SharedTileRecord(Zeros{8} + 91).tile.capacity_bytes == 262144;
-    assert SharedTileRecord(Zeros{8} + 91).allocation_mask == '0001';
+    assert SharedTileRecord((Zeros{6} + 27) as SharedTileID).descriptor_valid;
+    assert SharedTileRecord((Zeros{6} + 27) as SharedTileID).tile.capacity_bytes == 262144;
+    assert SharedTileRecord((Zeros{6} + 27) as SharedTileID).allocation_mask == '0001';
 
     ResetProfileState();
     PrepareBIOSConsumer(32769, 32769);
     let overflow_destination = ExecuteCommandInstruction(
-        BIOSConsumerDestination(Zeros{8} + 92, '1100', '100'), 32);
+        BIOSConsumerDestination(Zeros{6} + 28, '1100', '100'), 32);
     assert overflow_destination == CommandExecution_Executed;
     let overflow_completed = ExecuteBundleTileOperation();
     assert !overflow_completed;
     assert _LastFault == Fault_TileLegality;
-    assert !SharedTileRecord(Zeros{8} + 92).descriptor_valid;
+    assert !SharedTileRecord((Zeros{6} + 28) as SharedTileID).descriptor_valid;
     return 0;
 end;

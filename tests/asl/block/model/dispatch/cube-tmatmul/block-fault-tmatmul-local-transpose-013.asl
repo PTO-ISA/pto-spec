@@ -10,9 +10,9 @@ begin
     ConfigureTile(10, 128, 32, 2, 2, 2,
         TileDataType_U16, TileLayout_RowMajor, TileLocation_Matrix);
     MarkTileValidRegionDefined(10);
-    InstallSharedTile(Zeros{8} + 44, _Tiles[[10]], '1111');
+    InstallSharedTile((Zeros{6} + 44) as SharedTileID, _Tiles[[10]], '1111');
     let left_before = _Tiles[[1]];
-    let shared_before = SharedTileRecord(Zeros{8} + 44);
+    let shared_before = SharedTileRecord((Zeros{6} + 44) as SharedTileID);
 
     var start: bits(64) = Zeros{64} + 0x00031181;
     start[31:27] = Zeros{5} + 26;
@@ -24,7 +24,7 @@ begin
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
-    BindBundleSharedIO(Zeros{8} + 44, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 44) as SharedTileID, 0, '1111');
     AddBundleTileBinding(
         TRUE, 0, 1, '1111', TRUE, FALSE, 1, 0, TRUE);
 
@@ -36,7 +36,7 @@ begin
     assert _Tiles[[1]].capacity_bytes == left_before.capacity_bytes;
     assert _Tiles[[1]].layout == left_before.layout;
     assert _Tiles[[1]].payload[[0]] == left_before.payload[[0]];
-    let shared_after = SharedTileRecord(Zeros{8} + 44);
+    let shared_after = SharedTileRecord((Zeros{6} + 44) as SharedTileID);
     assert shared_after.descriptor_valid == shared_before.descriptor_valid;
     assert shared_after.allocation_mask == shared_before.allocation_mask;
     assert shared_after.initialized_mask == shared_before.initialized_mask;
