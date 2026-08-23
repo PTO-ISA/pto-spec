@@ -2,14 +2,16 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(10, 128, 1, 1, 1, 1, TileDataType_U16,
+    ConfigureTile(10, 128, 4, 1, 4, 1, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Matrix);
     ConfigureTile(11, 128, 1, 1, 1, 1, TileDataType_U8,
         TileLayout_RowMajor, TileLocation_Matrix);
-    WriteTileElement(10, 0, 0, Zeros{PTO_XLEN} + 4);
+    for row = 0 to 3 do
+        WriteTileElement(10, row, 0, Zeros{PTO_XLEN} + 4);
+    end;
     WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 5);
-    InstallSharedTile(Zeros{8} + 40, _Tiles[[10]], '1111');
-    InstallSharedTile(Zeros{8} + 41, _Tiles[[11]], '1111');
+    InstallSharedTile((Zeros{6} + 40) as SharedTileID, _Tiles[[10]], '1111');
+    InstallSharedTile((Zeros{6} + 41) as SharedTileID, _Tiles[[11]], '1111');
     var start: bits(64) = Zeros{64} + 0x00031181;
     start[31:27] = Zeros{5} + 26;
     let start_result = ExecuteCommandInstruction(start, 32);
@@ -20,8 +22,8 @@ begin
     _BundleDataAttributesPresent = TRUE;
     SetBundleFixedPointAttributeState(
         Zeros{6}, Zeros{3}, Zeros{4}, FALSE, FALSE, FALSE, FALSE);
-    BindBundleSharedIO(Zeros{8} + 40, 0, '1111');
-    BindBundleSharedIO(Zeros{8} + 41, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 40) as SharedTileID, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 41) as SharedTileID, 0, '1111');
     AddBundleTileBinding(
         TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
 

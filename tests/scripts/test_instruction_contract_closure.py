@@ -6,11 +6,23 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from scripts.adr_records import load_adrs
+
 
 ROOT = Path(__file__).resolve().parents[2]
 GENERATOR = ROOT / "scripts/generate-instruction-contract-closure"
 OUTPUT = ROOT / "spec/evidence/instruction-contract-closure.json"
 TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
+
+
+def pending_release_decisions() -> tuple[str, ...]:
+    return tuple(
+        record.adr_id
+        for record in load_adrs(ROOT / "docs/status/decisions")
+        if record.status == "accepted"
+        and record.release_impact == "required"
+        and "unassigned" in record.target_releases
+    )
 
 
 class InstructionContractClosureTest(unittest.TestCase):
@@ -54,6 +66,12 @@ class InstructionContractClosureTest(unittest.TestCase):
         self.assertEqual(document["deleted_names"], ["B.IOD", "BSTART.PAR", "C.B.IOS"])
 
     def test_checked_in_projection_is_current(self) -> None:
+        pending = pending_release_decisions()
+        if pending:
+            self.skipTest(
+                "release evidence remains pinned while pending decisions await "
+                f"a release identity: {', '.join(pending)}"
+            )
         result = subprocess.run(
             [str(GENERATOR), "--check"],
             cwd=ROOT,

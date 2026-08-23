@@ -91,13 +91,15 @@ end;
 
 readonly func BundleTileDestinationSizeBytes(
     binding: BundleTileBindingIndex)
-    => integer {0,128,256,512,1024,2048,4096,8192,16384,32768,65536}
+    => integer {0,128,256,512,1024,2048,4096,8192,16384,32768,65536,
+                131072,262144}
 begin
     if !_BundleTileBindings[[binding]].destination_valid then return 0; end;
     assert BundleTileDestinationSizeLegal(binding);
     return TileSizeCodeBytes(
-        _BundleTileBindings[[binding]].destination_size as integer {1..10})
-        as integer {128,256,512,1024,2048,4096,8192,16384,32768,65536};
+        _BundleTileBindings[[binding]].destination_size as integer {1..12})
+        as integer {128,256,512,1024,2048,4096,8192,16384,32768,65536,
+                    131072,262144};
 end;
 
 readonly func BundleTileIsDestination(tile: TileIndex) => boolean

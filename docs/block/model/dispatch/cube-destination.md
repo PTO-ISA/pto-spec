@@ -21,7 +21,6 @@ func ResolveBundleTMATMULCubeDestinationGroup(
 begin
     var reserved: array [[PTO_TILE_REGISTER_COUNT]] of boolean;
     var resolved: array [[PTO_BUNDLE_TILE_BINDING_COUNT]] of TileIndex;
-    var required_capacity: integer = 0;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         reserved[[index]] = FALSE;
     end;
@@ -32,10 +31,6 @@ begin
            !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
             let capacity_bytes = BundleTileDestinationSizeBytes(
                 binding as BundleTileBindingIndex);
-            required_capacity = required_capacity +
-                TileCoreAllocationBytes(
-                    _BundleTileBindings[[binding]].pe_mask,
-                    capacity_bytes);
             let hand = UInt(
                 _BundleTileBindings[[binding]].destination_hand);
             var found = FALSE;
@@ -54,8 +49,7 @@ begin
             end;
         end;
     end;
-    if CoreTileCapacityInUse() + required_capacity >
-       TileCapacityLimitBytes() then
+    if !BundleLocalDestinationCapacityGroupFits() then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;

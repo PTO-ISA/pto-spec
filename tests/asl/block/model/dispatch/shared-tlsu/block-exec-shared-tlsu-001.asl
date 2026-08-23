@@ -21,21 +21,21 @@ begin
     return instruction;
 end;
 
-pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
+pure func BundleTestSharedBinding(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = '111';
     return instruction;
 end;
 
-pure func BundleTestSharedBindingV6(shared_id: bits(8),
+pure func BundleTestSharedBindingV6(shared_tile_id: bits(6),
                                    size_code: bits(4),
                                    pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -78,7 +78,7 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
     let load_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 17, '0001', '111'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 17, '0001', '111'), 32);
     let load_address = ExecuteCommandInstruction(
         BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
     assert load_start == CommandExecution_Executed;
@@ -87,9 +87,9 @@ begin
     let load_completed = ExecuteBundleTileOperation();
     assert load_completed;
     assert _BundleSharedBindings[[0]].consumed;
-    assert SharedTileFullyInitialized(Zeros{8} + 17);
-    assert SharedTileRecord(Zeros{8} + 17).tile.capacity_bytes == 128;
-    assert SharedTileRecord(Zeros{8} + 17).tile.payload[[0]] ==
+    assert SharedTileFullyInitialized((Zeros{6} + 17) as SharedTileID);
+    assert SharedTileRecord((Zeros{6} + 17) as SharedTileID).tile.capacity_bytes == 128;
+    assert SharedTileRecord((Zeros{6} + 17) as SharedTileID).tile.payload[[0]] ==
         Zeros{PTO_XLEN} + 0x2a;
 
     // An unmasked Shared store reads all four quarters.
@@ -98,7 +98,7 @@ begin
     let store_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
     let store_shared = ExecuteCommandInstruction(
-        BundleTestSharedBinding(Zeros{8} + 17), 32);
+        BundleTestSharedBinding(Zeros{6} + 17), 32);
     let store_address = ExecuteCommandInstruction(
         BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
     assert store_start == CommandExecution_Executed;
@@ -117,13 +117,13 @@ begin
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
     WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 4);
-    InstallSharedTile(Zeros{8} + 18, _Tiles[[0]], '1111');
+    InstallSharedTile((Zeros{6} + 18) as SharedTileID, _Tiles[[0]], '1111');
     let lb2_store_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
     WriteGPR(2, Zeros{PTO_XLEN});
     WriteGPR(3, Zeros{PTO_XLEN} + 24);
     let lb2_store_shared = ExecuteCommandInstruction(
-        BundleTestSharedBinding(Zeros{8} + 18), 32);
+        BundleTestSharedBinding(Zeros{6} + 18), 32);
     let lb2_store_address = ExecuteCommandInstruction(
         BundleTestScalarBinding(
             Zeros{5},

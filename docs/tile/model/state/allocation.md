@@ -29,9 +29,8 @@ begin
     assert rows <= derived_rows;
     assert derived_rows * columns <=
         TileLogicalElementCapacity(capacity_bytes, data_type);
-    assert TileCapacityInUseExcept(index) + SharedTileCapacityInUse() +
-        TileCoreAllocationBytes(allocation_mask, capacity_bytes) <=
-        TileCapacityLimitBytes();
+    assert LocalTileAllocationFitsExcept(
+        index, allocation_mask, capacity_bytes);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
@@ -79,9 +78,8 @@ begin
     assert valid_rows <= rows && valid_columns <= columns;
     assert rows * columns <= PTO_MODEL_TILE_ELEMENTS;
     assert PredicateTileStorageBytes(rows, columns) <= capacity_bytes;
-    assert TileCapacityInUseExcept(index) + SharedTileCapacityInUse() +
-        TileCoreAllocationBytes(allocation_mask, capacity_bytes) <=
-        TileCapacityLimitBytes();
+    assert LocalTileAllocationFitsExcept(
+        index, allocation_mask, capacity_bytes);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = allocation_mask;
     _Tiles[[index]].allocated = TRUE;
@@ -149,9 +147,8 @@ begin
            valid_columns, data_type, layout) then
         return FALSE;
     end;
-    if TileCapacityInUseExcept(index) + SharedTileCapacityInUse() +
-       TileCoreAllocationBytes(allocation_mask, capacity_bytes) >
-           TileCapacityLimitBytes() then
+    if !LocalTileAllocationFitsExcept(
+           index, allocation_mask, capacity_bytes) then
         return FALSE;
     end;
     let rows = TileCubeStorageRows(layout, valid_rows, data_type);

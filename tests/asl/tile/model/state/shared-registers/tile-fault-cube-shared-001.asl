@@ -6,10 +6,10 @@ begin
         TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix);
     assert configured;
     let cube = _Tiles[[0]];
-    assert !SharedTileUpdateCompatible(Zeros{8}, cube, '0001');
-    assert !SharedTileReadSchemaLegalAtCapacity(Zeros{8}, 16, 16, 16,
+    assert !SharedTileUpdateCompatible(Zeros{6} as SharedTileID, cube, '0001');
+    assert !SharedTileReadSchemaLegalAtCapacity(Zeros{6} as SharedTileID, 16, 16, 16,
         TileDataType_FP16, TileLayout_CUBE_M16, 512);
-    assert !SharedTileRecord(Zeros{8}).descriptor_valid;
+    assert !SharedTileRecord(Zeros{6} as SharedTileID).descriptor_valid;
     assert SharedTileCapacityInUse() == 0;
     return 0;
 end;

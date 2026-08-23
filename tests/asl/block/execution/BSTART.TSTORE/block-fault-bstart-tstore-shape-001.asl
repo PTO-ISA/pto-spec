@@ -7,10 +7,10 @@ begin
     return instruction;
 end;
 
-pure func TStoreShapeShared(shared_id: bits(8)) => bits(64)
+pure func TStoreShapeShared(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = '111';
     return instruction;
@@ -19,7 +19,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    let shared_id = Zeros{8} + 99;
+    let shared_tile_id = (Zeros{6} + 35) as SharedTileID;
     _Memory[[0]] = Zeros{8} + 0x5a;
     assert MinimumTileCapacityBytesForShape(
         32768, 9, 32768, TileDataType_U8) == 0;
@@ -27,13 +27,13 @@ begin
     SetBundleDimension(0, Zeros{PTO_XLEN} + 32768);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 9);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 32768);
-    let source = ExecuteCommandInstruction(TStoreShapeShared(shared_id), 32);
+    let source = ExecuteCommandInstruction(TStoreShapeShared(shared_tile_id), 32);
     assert start == CommandExecution_Executed;
     assert source == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
     assert !completed;
     assert _LastFault == Fault_TileLegality;
     assert _Memory[[0]] == Zeros{8} + 0x5a;
-    assert !SharedTileRecord(shared_id).descriptor_valid;
+    assert !SharedTileRecord(shared_tile_id).descriptor_valid;
     return 0;
 end;

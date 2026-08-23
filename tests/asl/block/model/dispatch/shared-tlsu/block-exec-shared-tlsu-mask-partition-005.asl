@@ -21,21 +21,21 @@ begin
     return instruction;
 end;
 
-pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
+pure func BundleTestSharedBinding(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = '111';
     return instruction;
 end;
 
-pure func BundleTestSharedBindingV6(shared_id: bits(8),
+pure func BundleTestSharedBindingV6(shared_tile_id: bits(6),
                                    size_code: bits(4),
                                    pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -76,7 +76,7 @@ begin
     let insert_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let insert_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '0001', '001'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 23, '0001', '001'), 32);
     let insert_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('0000', '00', '001', Zeros{6}, TRUE), 32);
     assert insert_start == CommandExecution_Executed;
@@ -99,23 +99,23 @@ begin
     let insert_completed = ExecuteBundleTileOperation();
     assert insert_completed;
     assert _BundleSharedBindings[[0]].consumed;
-    assert SharedTileRecord(Zeros{8} + 23).allocation_mask == '1000';
-    assert SharedTileRecord(Zeros{8} + 23).initialized_mask == '1000';
-    assert SharedTileFullyInitialized(Zeros{8} + 23);
+    assert SharedTileRecord((Zeros{6} + 23) as SharedTileID).allocation_mask == '1000';
+    assert SharedTileRecord((Zeros{6} + 23) as SharedTileID).initialized_mask == '1000';
+    assert SharedTileFullyInitialized((Zeros{6} + 23) as SharedTileID);
     assert _Tiles[[0]].allocated;
 
     // A zero-masked Local-to-Shared move is a true no-op: it neither updates
     // the Shared record nor consumes the encoded last-use source lifetime.
     let zero_insert_mask =
-        SharedTileRecord(Zeros{8} + 23).initialized_mask;
+        SharedTileRecord((Zeros{6} + 23) as SharedTileID).initialized_mask;
     let zero_insert_value =
-        ReadSharedTileWord(Zeros{8} + 23, 0);
+        ReadSharedTileWord((Zeros{6} + 23) as SharedTileID, 0);
     ResetBundleControlState();
     ClearFault();
     let zero_insert_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let zero_insert_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '0001', Zeros{3}), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 23, '0001', Zeros{3}), 32);
     let zero_insert_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('0000', '00', Zeros{3}, Zeros{6}, TRUE), 32);
     assert zero_insert_start == CommandExecution_Executed;
@@ -126,9 +126,9 @@ begin
     assert _LastFault == Fault_None;
     assert !_BundleSharedBindings[[0]].consumed;
     assert _Tiles[[0]].allocated;
-    assert SharedTileRecord(Zeros{8} + 23).initialized_mask ==
+    assert SharedTileRecord((Zeros{6} + 23) as SharedTileID).initialized_mask ==
         zero_insert_mask;
-    assert ReadSharedTileWord(Zeros{8} + 23, 0) ==
+    assert ReadSharedTileWord((Zeros{6} + 23) as SharedTileID, 0) ==
         zero_insert_value;
 
     // A zero-masked Shared-to-Local move is a true no-op and therefore does
@@ -138,7 +138,7 @@ begin
     let zero_extract_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
     let zero_extract_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '0000', Zeros{3}), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 23, '0000', Zeros{3}), 32);
     let zero_extract_destination = ExecuteCommandInstruction(
         BundleTestTileDestinationV5('0001', '10', Zeros{3}, TRUE), 32);
     assert zero_extract_start == CommandExecution_Executed;
@@ -158,7 +158,7 @@ begin
     let partition_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01110', Zeros{5} + 24), 32);
     let partition_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '0000', '001'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 23, '0000', '001'), 32);
     let partition_address = ExecuteCommandInstruction(
         BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
     assert partition_start == CommandExecution_Executed;

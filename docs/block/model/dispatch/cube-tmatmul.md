@@ -21,6 +21,17 @@ This page is a generated reference view of the normative ASL unit.
 // C MUST persist while D, reductions, and numeric status publish atomically.
 // NDF-END: PTO-CUBE-ACCUMULATOR-OUTPUT-001
 
+// NDF-BEGIN: PTO-CUBE-SHARED-M-SHARD-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// For every TMATMUL ordinary, ACC, BIAS, or MX form whose left matrix primary
+// is Shared, LB0/LB1/LB2 MUST denote per-PE M/N/K. Shared A MUST have logical
+// shape (4*LB0)xLB2; Shared B MUST have shape LB2xLB1; PE i MUST consume
+// Shared-A rows [i*LB0,(i+1)*LB0) and publish one LB0xLB1 Local result.
+// Shared-B-only forms MUST retain their PE-local A and common Shared B. TGEMV
+// MUST remain Local-only. Every group-shape, capacity, readiness, and output
+// check MUST complete before source consumption or destination effects.
+// NDF-END: PTO-CUBE-SHARED-M-SHARD-001
+
 readonly func BundleCubeMatrixSelected() => boolean
 begin
     return _BundleOperation.valid &&
@@ -119,7 +130,8 @@ begin
 end;
 
 readonly func BundleMatrixPrimaryDestinationCapacityBytes()
-    => integer {0,128,256,512,1024,2048,4096,8192,16384,32768,65536}
+    => integer {0,128,256,512,1024,2048,4096,8192,16384,32768,65536,
+                131072,262144}
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
@@ -290,18 +302,18 @@ begin
                 local_ordinal = (local_ordinal + 1) as integer {0..5};
             end;
         else
-            left = MaterializeBundleSharedMatrixPrimary(
+            left = MaterializeBundleSharedMatrixLeftPrimary(
                 shared_ordinal as integer {0..3},
                 m, k, left_type,
-                _BundleFixedPointAttributes.trans_a);
+                _BundleFixedPointAttributes.trans_a,
+                _CurrentMemoryAgent);
             shared_ordinal = (shared_ordinal + 1) as integer {0..4};
             if left_scale_present then
                 let scale_blocks = ((k + 31) DIVRM 32)
                     as integer {1..2048};
-                left_scale = MaterializeBundleSharedMatrixSource(
+                left_scale = MaterializeBundleSharedMatrixLeftScale(
                     shared_ordinal as integer {0..3},
-                    m, scale_blocks, scale_blocks,
-                    TileDataType_E8M0);
+                    m, scale_blocks, _CurrentMemoryAgent);
                 shared_ordinal = (shared_ordinal + 1) as integer {0..4};
             end;
         end;

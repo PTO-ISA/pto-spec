@@ -1,5 +1,5 @@
 // PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-ROLLBACK-019","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"fault","summary":"Late cooperative CUBE destination failure rolls back every output effect","pass_condition":"an undersized D rejects after complete Shared readiness without allocation consumption Shared mutation or numeric status","related_sources":["asl/block/model/dispatch/cube-destination.asl","asl/block/model/faults/rollback.asl"]}
-func PrepareRollbackShared(index: TileIndex, shared_id: bits(8),
+func PrepareRollbackShared(index: TileIndex, shared_tile_id: bits(6),
                            rows: integer {1..65535},
                            columns: integer {1..65535})
 begin
@@ -8,16 +8,16 @@ begin
         columns, rows, columns, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Matrix, '1111');
     MarkTileValidRegionDefined(index);
-    InstallSharedTile(shared_id, _Tiles[[index]], '1111');
+    InstallSharedTile(shared_tile_id as SharedTileID, _Tiles[[index]], '1111');
 end;
 
 func main() => integer
 begin
     ResetProfileState();
-    PrepareRollbackShared(10, Zeros{8} + 62, 16, 1);
-    PrepareRollbackShared(11, Zeros{8} + 63, 1, 16);
-    let left_before = SharedTileRecord(Zeros{8} + 62);
-    let right_before = SharedTileRecord(Zeros{8} + 63);
+    PrepareRollbackShared(10, Zeros{6} + 62, 64, 1);
+    PrepareRollbackShared(11, Zeros{6} + 63, 1, 16);
+    let left_before = SharedTileRecord((Zeros{6} + 62) as SharedTileID);
+    let right_before = SharedTileRecord((Zeros{6} + 63) as SharedTileID);
     let capacity_before = CoreTileCapacityInUse();
     let status_before = NumericStatusFlags();
 
@@ -31,8 +31,8 @@ begin
     SetBundleDimension(0, Zeros{PTO_XLEN} + 16);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 16);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
-    BindBundleSharedIO(Zeros{8} + 62, 0, '1111');
-    BindBundleSharedIO(Zeros{8} + 63, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 62) as SharedTileID, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 63) as SharedTileID, 0, '1111');
     AddBundleTileBinding(
         TRUE, 0, 3, '1111', FALSE, FALSE, 0, 0, TRUE);
 
@@ -44,8 +44,8 @@ begin
     assert !_BundleSharedBindings[[1]].consumed;
     assert CoreTileCapacityInUse() == capacity_before;
     assert NumericStatusFlags() == status_before;
-    let left_after = SharedTileRecord(Zeros{8} + 62);
-    let right_after = SharedTileRecord(Zeros{8} + 63);
+    let left_after = SharedTileRecord((Zeros{6} + 62) as SharedTileID);
+    let right_after = SharedTileRecord((Zeros{6} + 63) as SharedTileID);
     assert left_after.allocation_mask == left_before.allocation_mask;
     assert left_after.initialized_mask == left_before.initialized_mask;
     assert left_after.tile.payload[[0]] == left_before.tile.payload[[0]];

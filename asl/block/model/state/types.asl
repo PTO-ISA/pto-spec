@@ -81,7 +81,7 @@ type BundleTileBinding of record {
 
 type BundleSharedBinding of record {
     valid: boolean,
-    shared_id: bits(8),
+    shared_tile_id: SharedTileID,
     size_code: integer {0..12},
     pe_mask: bits(4),
     consumed: boolean

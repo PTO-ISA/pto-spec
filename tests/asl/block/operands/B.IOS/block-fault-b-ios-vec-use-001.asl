@@ -6,7 +6,7 @@ begin
     start[31:27] = Zeros{5} + 24;
     let start_result = ExecuteCommandInstruction(start, 32);
     assert start_result == CommandExecution_Executed;
-    BindBundleSharedIO(Zeros{8} + 70, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 6) as SharedTileID, 0, '1111');
 
     let completed = ExecuteBundleTileOperation();
     assert !completed;

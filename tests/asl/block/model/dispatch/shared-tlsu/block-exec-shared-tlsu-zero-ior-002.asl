@@ -21,21 +21,21 @@ begin
     return instruction;
 end;
 
-pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
+pure func BundleTestSharedBinding(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = '111';
     return instruction;
 end;
 
-pure func BundleTestSharedBindingV6(shared_id: bits(8),
+pure func BundleTestSharedBindingV6(shared_tile_id: bits(6),
                                    size_code: bits(4),
                                    pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -78,7 +78,7 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
     let zero_load_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 255, '0001', Zeros{3}), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 63, '0001', Zeros{3}), 32);
     let zero_load_unused_ior = ExecuteCommandInstruction(
         BundleTestScalarBinding(Zeros{5}, Zeros{5} + 2, Zeros{5}, Zeros{5}), 32);
     assert zero_load_start == CommandExecution_Executed;
@@ -88,7 +88,7 @@ begin
     assert zero_load_completed;
     assert _LastFault == Fault_None;
     assert !_BundleSharedBindings[[0]].consumed;
-    assert !SharedTileRecord(Zeros{8} + 255).descriptor_valid;
+    assert !SharedTileRecord((Zeros{6} + 63) as SharedTileID).descriptor_valid;
 
     // Nonzero fields in an otherwise unused B.IOR reject a Shared TMOV before
     // either the Shared destination or Local source lifetime changes.
@@ -99,7 +99,7 @@ begin
     let invalid_publish_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let invalid_publish_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 18, '0001', '111'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 18, '0001', '111'), 32);
     let invalid_publish_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('0000', '00', '111', Zeros{6}, TRUE), 32);
     let invalid_publish_ior = ExecuteCommandInstruction(
@@ -111,7 +111,7 @@ begin
     let invalid_publish_completed = ExecuteBundleTileOperation();
     assert !invalid_publish_completed;
     assert _LastFault == Fault_BundleControl;
-    assert !SharedTileRecord(Zeros{8} + 18).descriptor_valid;
+    assert !SharedTileRecord((Zeros{6} + 18) as SharedTileID).descriptor_valid;
     assert _Tiles[[0]].allocated;
 end;
 func main() => integer

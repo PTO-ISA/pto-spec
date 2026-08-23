@@ -1023,5 +1023,6 @@ nav:
           - "ADR 0094: Matrix numeric contract": status/decisions/0094-matrix-numeric-contract.md
           - "ADR 0095: Bounded numeric variation": status/decisions/0095-bounded-numeric-variation.md
           - "ADR 0096: Re-encode B.IOT and B.IOS size and PE mode fields": status/decisions/0096-b-iot-b-ios-sizecode-pemode.md
+          - "ADR 0097: Local and Shared capacity pools with cooperative M-sharding": status/decisions/0097-local-shared-capacity-and-cooperative-m-sharding.md
       - Open:
           - "Open architecture decisions": status/open/index.md

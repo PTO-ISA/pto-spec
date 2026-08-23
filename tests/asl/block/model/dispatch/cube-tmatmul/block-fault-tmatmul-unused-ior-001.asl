@@ -6,7 +6,7 @@ begin
         TileLayout_RowMajor, TileLocation_Matrix);
     ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U8,
         TileLayout_RowMajor, TileLocation_Matrix);
-    InstallSharedTile(Zeros{8} + 30, _Tiles[[2]], '1111');
+    InstallSharedTile((Zeros{6} + 30) as SharedTileID, _Tiles[[2]], '1111');
     var start: bits(64) = Zeros{64} + 0x00031181;
     start[31:27] = Zeros{5} + 26;
     let start_result = ExecuteCommandInstruction(start, 32);
@@ -17,7 +17,7 @@ begin
     _BundleDataAttributesPresent = TRUE;
     SetBundleFixedPointAttributeState(
         Zeros{6}, Zeros{3}, Zeros{4}, FALSE, FALSE, FALSE, FALSE);
-    BindBundleSharedIO(Zeros{8} + 30, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 30) as SharedTileID, 0, '1111');
     SetBundleScalarBinding(0, 0, 2, 0, 0, 1);
     AddBundleTileBinding(
         TRUE, 0, 1, '1111', TRUE, FALSE, 1, 0, TRUE);

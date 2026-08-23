@@ -71,6 +71,24 @@ begin
 
     ReleaseTile(20);
     assert TileCapacityInUseExcept(63) == 256;
+
+    // Each PE owns an independent 256 KiB Local pool. A full-pool allocation
+    // on one PE does not consume another PE's Local budget, and Shared capacity
+    // remains a separate Core-wide pool.
+    ResetProfileState();
+    assert TileSizeCodeBytes(12) == 262144;
+    ConfigureTileForMask(0, 262144, 32768, 1, 1, 1,
+        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '1000');
+    assert LocalTileAllocationFits('0100', 262144);
+    ConfigureTileForMask(1, 262144, 32768, 1, 1, 1,
+        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '0100');
+    assert !LocalTileAllocationFits('1000', 128);
+    assert !LocalTileAllocationFits('0100', 128);
+    assert LocalTileAllocationFits('0010', 262144);
+    InstallSharedTile((Zeros{6} + 63) as SharedTileID,
+        _Tiles[[0]], '1111');
+    assert SharedTileCapacityInUse() == 262144;
+    assert LocalTileAllocationFits('0010', 262144);
     ResetProfileState();
 end;
 func main() => integer

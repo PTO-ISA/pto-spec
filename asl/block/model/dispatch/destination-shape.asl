@@ -77,6 +77,43 @@ begin
         as integer {0..65535};
 end;
 
+readonly func BundleLocalDestinationCapacityGroupFits() => boolean
+begin
+    var additional0: integer = 0;
+    var additional1: integer = 0;
+    var additional2: integer = 0;
+    var additional3: integer = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid &&
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+            let capacity_bytes = BundleTileDestinationSizeBytes(
+                binding as BundleTileBindingIndex);
+            let mask = _BundleTileBindings[[binding]].pe_mask;
+            if mask[PTOPEMaskBitOfPEIdentity(0)] == '1' then
+                additional0 = additional0 + capacity_bytes;
+            end;
+            if mask[PTOPEMaskBitOfPEIdentity(1)] == '1' then
+                additional1 = additional1 + capacity_bytes;
+            end;
+            if mask[PTOPEMaskBitOfPEIdentity(2)] == '1' then
+                additional2 = additional2 + capacity_bytes;
+            end;
+            if mask[PTOPEMaskBitOfPEIdentity(3)] == '1' then
+                additional3 = additional3 + capacity_bytes;
+            end;
+        end;
+    end;
+    return TileCapacityInUseForPE(0) + additional0 <=
+               TileCapacityLimitBytes() &&
+           TileCapacityInUseForPE(1) + additional1 <=
+               TileCapacityLimitBytes() &&
+           TileCapacityInUseForPE(2) + additional2 <=
+               TileCapacityLimitBytes() &&
+           TileCapacityInUseForPE(3) + additional3 <=
+               TileCapacityLimitBytes();
+end;
+
 func ResolveBundleTileDestinationsWithShapeAndType(
     explicit_shape: boolean,
     explicit_valid_rows: integer {0..65535},
@@ -93,7 +130,6 @@ begin
     end;
     var reserved: array [[PTO_TILE_REGISTER_COUNT]] of boolean;
     var resolved: array [[PTO_BUNDLE_TILE_BINDING_COUNT]] of TileIndex;
-    var required_capacity: integer = 0;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
         reserved[[index]] = FALSE;
     end;
@@ -102,11 +138,6 @@ begin
         if _BundleTileBindings[[binding]].valid &&
            _BundleTileBindings[[binding]].destination_valid &&
             !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
-            required_capacity = required_capacity +
-                TileCoreAllocationBytes(
-                    _BundleTileBindings[[binding]].pe_mask,
-                    BundleTileDestinationSizeBytes(
-                        binding as BundleTileBindingIndex));
             let hand =
                 UInt(_BundleTileBindings[[binding]].destination_hand);
             var found = FALSE;
@@ -125,8 +156,7 @@ begin
             end;
         end;
     end;
-    if CoreTileCapacityInUse() + required_capacity >
-       TileCapacityLimitBytes() then
+    if !BundleLocalDestinationCapacityGroupFits() then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
@@ -311,9 +341,7 @@ begin
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
-    if CoreTileCapacityInUse() + TileCoreAllocationBytes(
-           binding.pe_mask,
-           capacity_bytes) > TileCapacityLimitBytes() then
+    if !LocalTileAllocationFits(binding.pe_mask, capacity_bytes) then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;

@@ -19,7 +19,7 @@ end;
 pure func TMOVZeroShared() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = Zeros{8} + 255;
+    instruction[25:20] = Zeros{6} + 63;
     instruction[18:15] = '0001';
     instruction[11:9] = '000';
     return instruction;
@@ -42,6 +42,6 @@ begin
     assert _LastFault == Fault_None;
     assert BundleTileBindingCount() == 0;
     assert BundleSharedBindingCount() == 0;
-    assert !SharedTileRecord(Zeros{8} + 255).descriptor_valid;
+    assert !SharedTileRecord((Zeros{6} + 63) as SharedTileID).descriptor_valid;
     return 0;
 end;

@@ -22,7 +22,7 @@ begin
            (9 <= function && function <= 12) || function == 14;
 end;
 
-readonly func BundleSharedStoreValidColumns(shared_id: bits(8))
+readonly func BundleSharedStoreValidColumns(shared_tile_id: SharedTileID)
     => integer {0..65535}
 begin
     if _BundleDimensionPresent[[0]] then
@@ -31,12 +31,12 @@ begin
         end;
         return 0;
     end;
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     if shared.descriptor_valid then return shared.tile.valid_columns; end;
     return 1;
 end;
 
-readonly func BundleSharedStoreValidRows(shared_id: bits(8))
+readonly func BundleSharedStoreValidRows(shared_tile_id: SharedTileID)
     => integer {0..65535}
 begin
     if _BundleDimensionPresent[[1]] then
@@ -45,12 +45,12 @@ begin
         end;
         return 0;
     end;
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     if shared.descriptor_valid then return shared.tile.valid_rows; end;
     return 1;
 end;
 
-readonly func BundleSharedStoreColumns(shared_id: bits(8),
+readonly func BundleSharedStoreColumns(shared_tile_id: SharedTileID,
                                         valid_columns: integer {0..65535})
     => integer {0..65535}
 begin
@@ -60,7 +60,7 @@ begin
         end;
         return 0;
     end;
-    let shared = SharedTileRecord(shared_id);
+    let shared = SharedTileRecord(shared_tile_id);
     if shared.descriptor_valid then return shared.tile.columns; end;
     return valid_columns;
 end;
@@ -90,7 +90,7 @@ begin
 end;
 
 readonly func BundleSharedTMOVDestinationSchemaLegal(
-    shared_id: bits(8), function: integer {0..31}) => boolean
+    shared_tile_id: SharedTileID, function: integer {0..31}) => boolean
 begin
     if BundleSharedBindingCount() != 1 ||
        BundleTileBindingCount() != 1 then return FALSE; end;
@@ -103,7 +103,7 @@ begin
        binding.pe_mask != shared_mask then return FALSE; end;
     if shared_mask == Zeros{4} then return TRUE; end;
     let capacity_bytes = TileSizeCodeBytes(
-        binding.destination_size as integer {1..10});
+        binding.destination_size as integer {1..12});
     let valid_rows = BundleDestinationValidRows(FALSE, 0);
     let valid_columns = BundleDestinationValidColumns(FALSE, 0);
     let columns = BundleDestinationPhysicalColumns(FALSE, 0);
@@ -112,15 +112,15 @@ begin
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     let layout = CurrentBundleTileLayout();
-    if !SharedTileReadSchemaLegalAtCapacity(shared_id, valid_rows,
+    if !SharedTileReadSchemaLegalAtCapacity(shared_tile_id, valid_rows,
            valid_columns, columns, data_type, layout, capacity_bytes) then
         return FALSE;
     end;
     if function == 11 then
-        let shared = SharedTileRecord(shared_id);
+        let shared = SharedTileRecord(shared_tile_id);
         return shared_mask == '1111' &&
                shared.allocation_mask == '1111' &&
-               SharedTilePublished(shared_id);
+               SharedTilePublished(shared_tile_id);
     end;
     return function == 12;
 end;
@@ -132,7 +132,7 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    let shared_id = BundleSharedBindingId(0);
+    let shared_tile_id = BundleSharedBindingId(0);
     let shared_size = BundleSharedBindingSize(0);
     let shared_mask = BundleSharedBindingMask(0);
     if shared_mask == Zeros{4} then return TRUE; end;
@@ -189,7 +189,7 @@ begin
                 else TileDenseRowStrideBytes(
                     columns as integer {0..65535}, transfer_data_type);
         end;
-        TLOADShared(shared_id, load_base_addresses, load_row_stride_bytes,
+        TLOADShared(shared_tile_id, load_base_addresses, load_row_stride_bytes,
             shared_size as integer {1..12}, valid_rows as integer {1..65535},
             columns as integer {1..65535},
             valid_rows as integer {1..65535},
@@ -203,22 +203,22 @@ begin
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
-        let store_valid_columns = BundleSharedStoreValidColumns(shared_id);
-        let store_valid_rows = BundleSharedStoreValidRows(shared_id);
+        let store_valid_columns = BundleSharedStoreValidColumns(shared_tile_id);
+        let store_valid_rows = BundleSharedStoreValidRows(shared_tile_id);
         let store_columns = BundleSharedStoreColumns(
-            shared_id, store_valid_columns);
+            shared_tile_id, store_valid_columns);
         let store_data_type = transfer_data_type;
         let store_layout = CurrentBundleTileLayout();
         if store_valid_columns < 1 || store_valid_rows < 1 ||
            store_columns < 1 || store_valid_columns > store_columns ||
-           !SharedTileReadSchemaLegal(shared_id, store_valid_rows,
+           !SharedTileReadSchemaLegal(shared_tile_id, store_valid_rows,
                store_valid_columns, store_columns, store_data_type,
                store_layout) then
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
         let store_tile = MaterializeSharedTileForReadSchema(
-            shared_id, store_valid_rows, store_valid_columns, store_columns,
+            shared_tile_id, store_valid_rows, store_valid_columns, store_columns,
             store_data_type, store_layout);
         var store_base_addresses: CorePEWords;
         var store_row_stride_bytes: CorePEWords;
@@ -236,7 +236,7 @@ begin
                 else TileDenseRowStrideBytes(
                     store_columns as integer {0..65535}, store_data_type);
         end;
-        TSTOREShared(store_base_addresses, store_row_stride_bytes, shared_id,
+        TSTOREShared(store_base_addresses, store_row_stride_bytes, shared_tile_id,
             store_tile, shared_mask);
     elsif function == 9 || function == 10 then
         if !BundleSharedTMOVLocalSchemaLegal() then
@@ -244,10 +244,10 @@ begin
             return FALSE;
         end;
         let binding = _BundleTileBindings[[0]];
-        TMOVLocalToShared(shared_id, binding.source0,
+        TMOVLocalToShared(shared_tile_id, binding.source0,
             shared_size as integer {1..12}, shared_mask, function == 10);
     elsif function == 11 || function == 12 then
-        if !BundleSharedTMOVDestinationSchemaLegal(shared_id, function) ||
+        if !BundleSharedTMOVDestinationSchemaLegal(shared_tile_id, function) ||
            !SelectedBundleTileMasksLegal() then
             if _LastFault == Fault_None then
                 SetFault(Fault_TileLegality, ReadTPC());
@@ -256,7 +256,7 @@ begin
         end;
         let binding = _BundleTileBindings[[0]];
         let capacity_bytes = TileSizeCodeBytes(
-            binding.destination_size as integer {1..10});
+            binding.destination_size as integer {1..12});
         let valid_rows = BundleDestinationValidRows(FALSE, 0);
         let valid_columns = BundleDestinationValidColumns(FALSE, 0);
         let columns = BundleDestinationPhysicalColumns(FALSE, 0);
@@ -264,7 +264,7 @@ begin
             CurrentBundleTileOperationDataTypeCode()
                 as TileDataTypeEncoding);
         let shared_tile = MaterializeSharedTileForReadSchemaAtCapacity(
-            shared_id, valid_rows, valid_columns, columns, data_type,
+            shared_tile_id, valid_rows, valid_columns, columns, data_type,
             CurrentBundleTileLayout(), capacity_bytes);
         if !ResolveBundleTileDestinations() then return FALSE; end;
         let destination = _BundleTileBindings[[0]].destination;
@@ -278,7 +278,7 @@ begin
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
-        TMOVSharedToLocal(destination, shared_id, shared_tile, shared_mask);
+        TMOVSharedToLocal(destination, shared_tile_id, shared_tile, shared_mask);
     else
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;

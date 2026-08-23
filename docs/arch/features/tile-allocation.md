@@ -12,13 +12,13 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/features/tile-allocation.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-FEATURES-TILE-ALLOCATION","surface":"arch","classification":["features","tile-allocation"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY"]}
-// The active architecture exposes 2048 architectural 128-byte cells per PE.
-// Local Tile binders use at most 64 KiB per PE; Shared binders may use the
-// complete 256 KiB per-PE architectural bound.
+// Every PE owns an independent 2048-cell Local pool.  The Core also owns one
+// independent 2048-cell Shared pool.  Local and Shared allocations do not
+// compete for one combined capacity budget.
 constant PTO_TILE_CELL_BYTES = 128;
 constant PTO_TILE_CELL_COUNT = 2048;
 constant PTO_TILE_CAPACITY_BYTES = 262144;
-constant PTO_TILE_MAX_ALLOCATION_BYTES = 65536;
+constant PTO_TILE_MAX_ALLOCATION_BYTES = 262144;
 constant PTO_SHARED_TILE_MAX_ALLOCATION_BYTES = 262144;
 constant PTO_MODEL_MAX_TILE_CAPACITY_BYTES = PTO_TILE_CAPACITY_BYTES;
 constant PTO_RESERVATION_GRANULE_BYTES = 64;
@@ -27,7 +27,7 @@ constant PTO_BUNDLE_SCALAR_BINDING_COUNT = 32;
 constant PTO_BUNDLE_TILE_BINDING_COUNT = 16;
 constant PTO_TILE_BASE_COUNT = 6;
 
-// ASL arrays require static bounds. The executable model uses S64 witnesses
+// ASL arrays require static bounds. The executable model uses S63 witnesses
 // for the 256 KiB Shared boundary, requiring 32,768 element slots. This is a
 // model bound, not a claim that every payload uses that many architectural
 // elements.

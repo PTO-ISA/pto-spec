@@ -27,14 +27,14 @@ begin
     SetBundleDimension(0, Zeros{PTO_XLEN} + 3);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     BindBundleSharedIO(
-        Zeros{8} + code,
+        (Zeros{6} + code) as SharedTileID,
         if load then 1 else 0,
         '0001');
     _Memory[[0]] = Zeros{8} + 0xa5;
     let completed = ExecuteBundleTileOperation();
     return !completed && _LastFault == Fault_TileLegality &&
            CoreTileCapacityInUse() == 0 &&
-           !SharedTileRecord(Zeros{8} + code).descriptor_valid &&
+           !SharedTileRecord((Zeros{6} + code) as SharedTileID).descriptor_valid &&
            _Memory[[0]] == Zeros{8} + 0xa5 && _MemoryEventCount == 0;
 end;
 

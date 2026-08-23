@@ -97,8 +97,7 @@ begin
     let capacity_bytes = BundleTileDestinationSizeBytes(0);
     if !TileCubeDescriptorShapeLegal(capacity_bytes, valid_rows,
            valid_columns, data_type, layout) ||
-       CoreTileCapacityInUse() + TileCoreAllocationBytes(
-           binding.pe_mask, capacity_bytes) > TileCapacityLimitBytes() then
+       !LocalTileAllocationFits(binding.pe_mask, capacity_bytes) then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;

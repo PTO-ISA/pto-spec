@@ -21,21 +21,21 @@ begin
     return instruction;
 end;
 
-pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
+pure func BundleTestSharedBinding(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = '111';
     return instruction;
 end;
 
-pure func BundleTestSharedBindingV6(shared_id: bits(8),
+pure func BundleTestSharedBindingV6(shared_tile_id: bits(6),
                                    size_code: bits(4),
                                    pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;
@@ -76,7 +76,7 @@ begin
     let insert_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let insert_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '0001', '001'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 23, '0001', '001'), 32);
     let insert_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('0000', '00', '001', Zeros{6}, TRUE), 32);
     assert insert_start == CommandExecution_Executed;
@@ -99,9 +99,9 @@ begin
     let insert_completed = ExecuteBundleTileOperation();
     assert insert_completed;
     assert _BundleSharedBindings[[0]].consumed;
-    assert SharedTileRecord(Zeros{8} + 23).allocation_mask == '1000';
-    assert SharedTileRecord(Zeros{8} + 23).initialized_mask == '1000';
-    assert SharedTileFullyInitialized(Zeros{8} + 23);
+    assert SharedTileRecord((Zeros{6} + 23) as SharedTileID).allocation_mask == '1000';
+    assert SharedTileRecord((Zeros{6} + 23) as SharedTileID).initialized_mask == '1000';
+    assert SharedTileFullyInitialized((Zeros{6} + 23) as SharedTileID);
     assert _Tiles[[0]].allocated;
 
     // A read may select an unallocated Shared PE lane. That lane has
@@ -110,7 +110,7 @@ begin
     let partial_broadcast_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
     let partial_broadcast_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '0000', '101'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 23, '0000', '101'), 32);
     let partial_broadcast_destination = ExecuteCommandInstruction(
         BundleTestTileDestinationV5('0001', '00', '101', TRUE), 32);
     assert partial_broadcast_start == CommandExecution_Executed;
@@ -125,7 +125,7 @@ begin
     let partial_store_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01110', Zeros{5} + 24), 32);
     let partial_store_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '0000', '101'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 23, '0000', '101'), 32);
     let partial_store_address = ExecuteCommandInstruction(
         BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
     assert partial_store_start == CommandExecution_Executed;
@@ -146,7 +146,7 @@ begin
     let mismatch_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
     let mismatch_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{8} + 23, '0001', '010'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 23, '0001', '010'), 32);
     let mismatch_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('0000', '00', '010', Zeros{6}, TRUE), 32);
     assert mismatch_start == CommandExecution_Executed;
@@ -156,7 +156,7 @@ begin
     let mismatch_completed = ExecuteBundleTileOperation();
     assert !mismatch_completed;
     assert _LastFault == Fault_TileLegality;
-    assert SharedTileRecord(Zeros{8} + 23).tile.columns == 1;
+    assert SharedTileRecord((Zeros{6} + 23) as SharedTileID).tile.columns == 1;
     assert _Tiles[[0]].allocated;
 end;
 func main() => integer

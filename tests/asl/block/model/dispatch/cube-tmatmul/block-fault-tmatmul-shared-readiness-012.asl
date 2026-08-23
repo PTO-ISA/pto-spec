@@ -2,15 +2,15 @@
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(10, 128, 32, 2, 2, 2,
+    ConfigureTile(10, 128, 32, 2, 8, 2,
         TileDataType_U16, TileLayout_RowMajor, TileLocation_Matrix);
     ConfigureTile(11, 128, 32, 2, 2, 2,
         TileDataType_U16, TileLayout_RowMajor, TileLocation_Matrix);
     MarkTileValidRegionDefined(10);
     MarkTileValidRegionDefined(11);
-    InstallSharedTile(Zeros{8} + 42, _Tiles[[10]], '0011');
-    InstallSharedTile(Zeros{8} + 43, _Tiles[[11]], '1111');
-    let shared_before = SharedTileRecord(Zeros{8} + 42);
+    InstallSharedTile((Zeros{6} + 42) as SharedTileID, _Tiles[[10]], '0011');
+    InstallSharedTile((Zeros{6} + 43) as SharedTileID, _Tiles[[11]], '1111');
+    let shared_before = SharedTileRecord((Zeros{6} + 42) as SharedTileID);
     let status_before = NumericStatusFlags();
 
     var start: bits(64) = Zeros{64} + 0x00031181;
@@ -23,8 +23,8 @@ begin
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 2);
-    BindBundleSharedIO(Zeros{8} + 42, 0, '1111');
-    BindBundleSharedIO(Zeros{8} + 43, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 42) as SharedTileID, 0, '1111');
+    BindBundleSharedIO((Zeros{6} + 43) as SharedTileID, 0, '1111');
     AddBundleTileBinding(
         TRUE, 0, 1, '1111', FALSE, FALSE, 0, 0, TRUE);
 
@@ -33,7 +33,7 @@ begin
     assert _LastFault == Fault_TileLegality;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     assert !_BundleSharedBindings[[0]].consumed;
-    let shared_after = SharedTileRecord(Zeros{8} + 42);
+    let shared_after = SharedTileRecord((Zeros{6} + 42) as SharedTileID);
     assert shared_after.descriptor_valid == shared_before.descriptor_valid;
     assert shared_after.allocation_mask == shared_before.allocation_mask;
     assert shared_after.initialized_mask == shared_before.initialized_mask;

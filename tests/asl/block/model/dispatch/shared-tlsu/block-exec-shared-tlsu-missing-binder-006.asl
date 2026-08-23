@@ -21,21 +21,21 @@ begin
     return instruction;
 end;
 
-pure func BundleTestSharedBinding(shared_id: bits(8)) => bits(64)
+pure func BundleTestSharedBinding(shared_tile_id: bits(6)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = '0000';
     instruction[11:9] = '111';
     return instruction;
 end;
 
-pure func BundleTestSharedBindingV6(shared_id: bits(8),
+pure func BundleTestSharedBindingV6(shared_tile_id: bits(6),
                                    size_code: bits(4),
                                    pe_mode: bits(3)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00001013;
-    instruction[27:20] = shared_id;
+    instruction[25:20] = shared_tile_id;
     instruction[18:15] = size_code;
     instruction[11:9] = pe_mode;
     return instruction;

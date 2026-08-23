@@ -43,7 +43,8 @@ begin
     end;
     for index = 0 to 3 do
         _BundleSharedBindings[[index]].valid = FALSE;
-        _BundleSharedBindings[[index]].shared_id = Zeros{8};
+        _BundleSharedBindings[[index]].shared_tile_id =
+            Zeros{6} as SharedTileID;
         _BundleSharedBindings[[index]].size_code = 0;
         _BundleSharedBindings[[index]].pe_mask = Zeros{4};
         _BundleSharedBindings[[index]].consumed = FALSE;
