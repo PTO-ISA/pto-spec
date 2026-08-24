@@ -150,7 +150,22 @@ begin
     let (destination_seen, destination_hand) =
         BundleMatrixPrimaryDestinationHand();
     if !destination_seen then return FALSE; end;
-    let accumulator = BundleMatrixSourceAt(0);
+    var accumulator: TileIndex = 0;
+    var found = FALSE;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if !found && _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_valid then
+                accumulator = BundleTileArchitecturalSourceIndex(
+                    binding as BundleTileBindingIndex, FALSE);
+                found = TRUE;
+            elsif _BundleTileBindings[[binding]].source1_valid then
+                accumulator = BundleTileArchitecturalSourceIndex(
+                    binding as BundleTileBindingIndex, TRUE);
+                found = TRUE;
+            end;
+        end;
+    end;
+    if !found then return FALSE; end;
     return accumulator != destination_hand;
 end;
 

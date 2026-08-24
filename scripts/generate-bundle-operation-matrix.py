@@ -22,7 +22,7 @@ FORMS = ROOT / "spec/catalog/command-forms.json"
 EFFECT_OWNER = ROOT / "asl/block/model/operands/portable-carriers.asl"
 EVIDENCE = ROOT / "spec/evidence/bundle-operation-fixture-matrix.json"
 TEST_DIR = ROOT / "tests/asl/block/model/operands/subview-descriptor"
-SHARD_SIZE = 4
+SHARD_SIZE = 1
 CELL_SIZE_CODE = 1
 PE_MODE = 0b111
 SHARED_FIXTURE_ID = 16
@@ -278,6 +278,14 @@ def fixture_role_layouts(row: dict) -> dict[str, str]:
     } if recipe else {}
 
 
+def fixture_role_kinds(row: dict) -> dict[str, str]:
+    return {
+        operand["field"]: operand["role"]
+        for operand in row.get("operands", [])
+        if operand["field"].startswith("source")
+    }
+
+
 def role_number(role: str) -> int:
     return int(role[6:] if role.startswith("source") else role[11:])
 
@@ -484,6 +492,7 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
         "fixture_data_type": fixture_data_type(row),
         "fixture_role_data_types": fixture_role_data_types(row),
         "fixture_role_layouts": fixture_role_layouts(row),
+        "fixture_role_kinds": fixture_role_kinds(row),
         "datr_word": (f"0x{datr_word(row):08x}" if datr_word(row) is not None else None),
         "destination_size_code": (
             destination_fixture_size_code(row, role)
@@ -586,45 +595,30 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
         return lines
     if row["family"] == "CUBE":
         source_recipe = cube_source_recipe(row)
-        uses_accumulator = any(
-            operand.get("role") == "accumulator"
-            for operand in row.get("operands", [])
-        )
-        if not row.get("operands"):
-            uses_accumulator = any(
-                field == "source0"
-                for field, _ in row.get("fixture_role_data_types", {}).items()
-            ) and row.get("operation", "").endswith("_ACC")
-        first_tile = 0 if uses_accumulator else 1
-        last_tile = 8
-        loop_limit = 9 if uses_accumulator else 8
-        cube_dtype = dtype_name
-        cube_layout = "TileLayout_CUBE_M16"
-        # Apply role-specific overrides from the catalog recipe, while
-        # retaining a deterministic default for unused fixture registers.
-        for tile in sorted(source_recipe, reverse=True):
+        selected_source = row["role"] if role_kind == "source" else None
+        auxiliary_roles = {"row-scale", "column-scale", "bias"}
+        for field in sorted(
+            row["fixture_role_data_types"], key=role_number
+        ):
+            tile = role_number(field) + 1
             role_dtype, role_layout = source_recipe[tile]
-            if role_dtype != dtype:
-                cube_dtype = (
-                    f"(if tile == {tile} then {DATA_TYPE_NAMES[role_dtype]} "
-                    f"else {cube_dtype})"
-                )
-            if role_layout == "TileLayout_CUBE_N8":
-                cube_layout = (
-                    f"(if tile == {tile} then TileLayout_CUBE_N8 else "
-                    f"{cube_layout})"
-                )
-        lines += [
-            f"    for tile = {first_tile} to {last_tile} looplimit {loop_limit} do",
-            "        let configured = if tile MOD 2 == 1 then",
-            "            ConfigureCubeTileForMask(tile, 128, 1, 1,",
-            f"                {cube_dtype}, {cube_layout}, TileLocation_Matrix, '1111')",
-            "            else ConfigureCubeTileForMask(tile, 128, 1, 1,",
-            f"                {cube_dtype}, {cube_layout}, TileLocation_Matrix, '1111');",
-            "        assert configured;",
-            "        MarkTileValidRegionDefined(tile);",
-            "    end;",
-        ]
+            role_kind_name = row["fixture_role_kinds"][field]
+            if role_kind_name in auxiliary_roles and field != selected_source:
+                rows = row_major_rows(role_dtype, 1)
+                lines += [
+                    f"    ConfigureTileForMask({tile}, 128, {rows}, 1, 1, 1,",
+                    f"        {DATA_TYPE_NAMES[role_dtype]}, TileLayout_RowMajor,",
+                    "        TileLocation_Matrix, '1111');",
+                    f"    MarkTileValidRegionDefined({tile});",
+                ]
+            else:
+                lines += [
+                    f"    let configured_{tile} = ConfigureCubeTileForMask(",
+                    f"        {tile}, 128, 1, 1, {DATA_TYPE_NAMES[role_dtype]},",
+                    f"        {role_layout}, TileLocation_Matrix, '1111');",
+                    f"    assert configured_{tile};",
+                    f"    MarkTileValidRegionDefined({tile});",
+                ]
     else:
         selected_source = row["role"] if role_kind == "source" else None
         selected_tile = (
@@ -1016,6 +1010,8 @@ def build() -> tuple[dict, dict[int, str]]:
     expected_count = sum(len(tile_fields(operation)) or 1 for operation in operations)
     if len(rows) != expected_count or len({row["case_id"] for row in rows}) != len(rows):
         raise ValueError("operation-role matrix is not total and unique")
+    if len(grouped) != len(rows) or any(len(items) != 1 for items in grouped.values()):
+        raise ValueError("each operation-role case must own one independent shard")
     for row in rows:
         if row["role"] != "operation" and row["role"] not in row["all_required_roles"]:
             raise ValueError(f"unknown fixture role {row['role']}")
@@ -1056,6 +1052,7 @@ def build() -> tuple[dict, dict[int, str]]:
             "missing_handler_class_fail": True,
             "duplicate_or_contradictory_class_fail": True,
             "decoded_shared_pe_mode": PE_MODE,
+            "independent_case_results": True,
         },
         "operation_role_matrix": rows,
     }
@@ -1068,6 +1065,13 @@ def main() -> int:
     args = parser.parse_args()
     evidence, shards = build()
     expected_evidence = json.dumps(evidence, indent=2) + "\n"
+    expected_paths = {
+        TEST_DIR / f"block-exec-range-operation-matrix-{shard + 1:03d}.asl"
+        for shard in shards
+    }
+    observed_paths = set(
+        TEST_DIR.glob("block-exec-range-operation-matrix-*.asl")
+    )
     if args.check:
         if not EVIDENCE.exists() or EVIDENCE.read_text(encoding="utf-8") != expected_evidence:
             raise SystemExit(f"stale generated evidence: {EVIDENCE}")
@@ -1075,10 +1079,18 @@ def main() -> int:
             path = TEST_DIR / f"block-exec-range-operation-matrix-{shard + 1:03d}.asl"
             if not path.exists() or path.read_text(encoding="utf-8") != content:
                 raise SystemExit(f"stale generated AVS shard: {path}")
+        extra = sorted(observed_paths - expected_paths)
+        if extra:
+            raise SystemExit(
+                "unexpected generated AVS shard: "
+                + ", ".join(path.as_posix() for path in extra)
+            )
         return 0
     EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
     TEST_DIR.mkdir(parents=True, exist_ok=True)
     EVIDENCE.write_text(expected_evidence, encoding="utf-8")
+    for stale in sorted(observed_paths - expected_paths):
+        stale.unlink()
     for shard, content in shards.items():
         (TEST_DIR / f"block-exec-range-operation-matrix-{shard + 1:03d}.asl").write_text(content, encoding="utf-8")
     return 0

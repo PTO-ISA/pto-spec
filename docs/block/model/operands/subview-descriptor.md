@@ -260,6 +260,19 @@ begin
         else _BundleTileBindings[[binding]].source0;
 end;
 
+readonly func BundleTileArchitecturalSourceIndex(
+    binding: BundleTileBindingIndex, source_select: boolean) => TileIndex
+begin
+    let modifier = if source_select then
+        _BundleTileBindings[[binding]].source1_subview
+        else _BundleTileBindings[[binding]].source0_subview;
+    if modifier.valid && modifier.derived.valid then
+        return modifier.derived.parent;
+    end;
+    return if source_select then _BundleTileBindings[[binding]].source1
+        else _BundleTileBindings[[binding]].source0;
+end;
+
 func MaterializeBundleSubview(
     binding: BundleTileBindingIndex, source_select: boolean,
     descriptor: BundleSubviewDescriptor,

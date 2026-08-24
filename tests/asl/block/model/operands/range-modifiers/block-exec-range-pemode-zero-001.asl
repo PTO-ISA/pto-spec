@@ -76,9 +76,16 @@ begin
     let started = ExecuteCommandInstruction(Zeros{64} + 0x00019181, 32);
     assert started == CommandExecution_Executed;
 end;
+func ResetZeroRangeFixture()
+begin
+    ResetBundleControlState();
+    ClearFault();
+    WriteBPC(Zeros{PTO_XLEN});
+    WriteTPC(Zeros{PTO_XLEN});
+end;
 func AssertZeroSubview(source_select: boolean, reg_src: integer, uimm11: integer, size_code: integer)
 begin
-    ResetProfileState();
+    ResetZeroRangeFixture();
     WriteGPR(reg_src as GPRIndex, Zeros{PTO_XLEN} + 0x3300 + reg_src);
     let before_gpr = ReadGPR(reg_src as GPRIndex);
     WriteTPC(Zeros{PTO_XLEN} + 0x800);
@@ -100,7 +107,7 @@ begin
 end;
 func AssertZeroAssemble(binder: bits(64), init: boolean, last: boolean, reg_src: integer, uimm11: integer, parent_size: integer)
 begin
-    ResetProfileState();
+    ResetZeroRangeFixture();
     WriteGPR(reg_src as GPRIndex, Zeros{PTO_XLEN} + 0x4400 + reg_src);
     let before_gpr = ReadGPR(reg_src as GPRIndex);
     WriteTPC(Zeros{PTO_XLEN} + 0x900);
@@ -122,7 +129,7 @@ begin
 end;
 func AssertZeroIllegal(instruction: bits(64), binder: bits(64))
 begin
-    ResetProfileState();
+    ResetZeroRangeFixture();
     WriteTPC(Zeros{PTO_XLEN} + 0xa00);
     StartBlock();
     let started = ExecuteCommandInstruction(binder, 32);
@@ -151,7 +158,7 @@ begin
     end;
     // Both zero-mode B.IOT and B.IOS groups discard the same raw-legal source
     // modifier; this explicitly exercises the Shared zero path and source1.
-    ResetProfileState();
+    ResetZeroRangeFixture();
     WriteTPC(Zeros{PTO_XLEN} + 0xb00);
     StartBlock();
     let zero_ios_source_binder = ExecuteCommandInstruction(ZeroBIOSSourceBinder(), 32);
@@ -178,7 +185,7 @@ begin
 
     // Corresponding nonzero controls retain exact carriers and therefore read
     // the selected GPR only on the participating path.
-    ResetProfileState();
+    ResetZeroRangeFixture();
     WriteGPR(23, Zeros{PTO_XLEN} + 0x5500);
     StartBlock();
     let nonzero_subview_binder = ExecuteCommandInstruction(NonzeroBIOTSourceBinder(), 32);
@@ -188,7 +195,7 @@ begin
     assert _BundleTileBindings[[0]].source0_subview.valid;
     assert _BundleTileBindings[[0]].source0_subview.reg_src == 23;
     assert _BundleTileBindings[[0]].source0_subview.offset == (Zeros{PTO_XLEN} + 0x5500) + 2047;
-    ResetProfileState();
+    ResetZeroRangeFixture();
     WriteGPR(23, Zeros{PTO_XLEN} + 0x6600);
     StartBlock();
     let nonzero_assemble_binder = ExecuteCommandInstruction(NonzeroBIOTDestinationBinder(), 32);

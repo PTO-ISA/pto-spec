@@ -25,6 +25,27 @@ make repo-check
 git diff --check
 ```
 
+For a focused ASL rerun, list exact stable IDs and execute the resulting page
+with host-sized parallelism:
+
+```bash
+printf '%s\n' \
+  PTO-AVS-BLOCK-B-SUBVIEW-ENCODING-001 \
+  PTO-AVS-BLOCK-B-ASSEMBLE-ENCODING-001 \
+  > build/asl-focused-ids.txt
+./scripts/print-asl-test-matrix \
+  --ids-file build/asl-focused-ids.txt \
+  > build/asl-focused-page.json
+./scripts/run-asl-page \
+  --matrix build/asl-focused-page.json \
+  -j "$(getconf _NPROCESSORS_ONLN)"
+```
+
+Focused selection defaults to one complete page, ignores blank and comment
+lines, rejects duplicate or unknown IDs, and lazily generates only the
+validation shards required by the selected points. Full release planning still
+discovers and validates the complete repository matrix.
+
 Full verification additionally needs OCaml, opam, network access for the pinned
 ASLRef checkout, and enough time to execute every AVS point:
 
@@ -47,6 +68,8 @@ matrix, and reproduce registered evidence.
 - A canary that is expected to fail is proof that rejection works. Do not weaken
   it to make a lane pass.
 - Generated `build/` and `.cache/` output remains untracked.
+- Commands that write the same shared `build/` artifact must run sequentially;
+  only independent ASL point execution is parallelized with `-j`.
 
 Use `scripts/generate-review-summary --base REF --head REF` to enumerate the
 merge-base semantic delta. The report is a deterministic review aid, not a
