@@ -19,7 +19,7 @@ begin
             ConfigureTileForMask(tile, 128,
                 16, 4, 1,
                 4, TileDataType_FP16,
-                TileLayout_RowMajor, TileLocation_Any, '1111');
+                TileLayout_RowMajor, (if tile == 1 then TileLocation_Matrix else TileLocation_Any), '1111');
         end;
         MarkTileValidRegionDefined(tile);
     end;

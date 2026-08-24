@@ -90,7 +90,7 @@ begin
     assert started == CommandExecution_Executed;
     let datr = ExecuteCommandInstruction(Zeros{64} + 0x01901023, 32);
     assert datr == CommandExecution_Executed;
-    let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0818ce13, 32);
+    let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x081a4e13, 32);
     assert bind_0 == CommandExecution_Executed;
     let modifier_0_0 = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);
     assert modifier_0_0 == CommandExecution_Executed;
@@ -142,7 +142,7 @@ begin
     assert started == CommandExecution_Executed;
     let datr = ExecuteCommandInstruction(Zeros{64} + 0x01901023, 32);
     assert datr == CommandExecution_Executed;
-    let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0818ce13, 32);
+    let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x081a4e13, 32);
     assert bind_0 == CommandExecution_Executed;
     let modifier_0_1 = ExecuteCommandInstruction(Zeros{64} + 0x800000d3, 32);
     assert modifier_0_1 == CommandExecution_Executed;
@@ -194,9 +194,9 @@ begin
     assert started == CommandExecution_Executed;
     let datr = ExecuteCommandInstruction(Zeros{64} + 0x01901023, 32);
     assert datr == CommandExecution_Executed;
-    let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0818ce13, 32);
+    let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x081a4e13, 32);
     assert bind_0 == CommandExecution_Executed;
-    let assemble_0 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
+    let assemble_0 = ExecuteCommandInstruction(Zeros{64} + 0x80001a53, 32);
     assert assemble_0 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(75);
     let prepared_stage2 = PrepareSelectedBundleStage2();
@@ -218,7 +218,7 @@ begin
            _Tiles[[observed_destination]].contents_defined;
     let completed_writer_0 = CompleteBundleLocalGenerationWriterEvent(
         BundleLocalGenerationSlot(0, '1111'), _BundleExecutionDomainToken,
-        0, BundleLocalGenerationCellCount(1));
+        0, BundleLocalGenerationCellCount(4));
     assert completed_writer_0;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].published;
     return TRUE;

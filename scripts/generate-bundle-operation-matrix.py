@@ -330,7 +330,14 @@ def binding_groups(row: dict, selected_role: str | None = None) -> list[list[str
     return groups
 
 
-def local_binding(roles: list[str], final: bool) -> int:
+def destination_fixture_size_code(row: dict, role: str) -> int:
+    name = row.get("name", row.get("operation"))
+    if name == "THISTOGRAM" and role == "destination0":
+        return 4
+    return CELL_SIZE_CODE
+
+
+def local_binding(row: dict, roles: list[str], final: bool) -> int:
     last = (1 if final else 0) << 19
     sources = [role for role in roles if role.startswith("source")]
     destinations = [role for role in roles if role.startswith("destination")]
@@ -341,7 +348,8 @@ def local_binding(roles: list[str], final: bool) -> int:
     for position, source in enumerate(sources):
         word |= (role_number(source) + 1) << (20 + position * 6)
     if destinations:
-        word |= (CELL_SIZE_CODE << 15) | (role_number(destinations[0]) << 7)
+        size_code = destination_fixture_size_code(row, destinations[0])
+        word |= (size_code << 15) | (role_number(destinations[0]) << 7)
     return word | (PE_MODE << 9) | last
 
 
@@ -357,8 +365,8 @@ def subview_word(source_select: bool = False, size_code: int = 1) -> int:
     return 0x53 | (1 << 31 if source_select else 0) | (size_code << 7)
 
 
-def assemble_word() -> int:
-    return 0x1053 | (1 << 31) | (1 << 11) | (CELL_SIZE_CODE << 7)
+def assemble_word(size_code: int = CELL_SIZE_CODE) -> int:
+    return 0x1053 | (1 << 31) | (1 << 11) | (size_code << 7)
 
 
 def dimension_words(row: dict) -> list[int]:
@@ -369,7 +377,7 @@ def dimension_words(row: dict) -> list[int]:
         return [0x43 | (4 << 20)]
     if name == "TMRGSORT":
         return []
-    if name in {"TINSERT", "TIMG2COL"}:
+    if name in {"TINSERT", "TIMG2COL", "TEXTRACT"}:
         return [0x43, 0x1043]
     if name == "THISTOGRAM":
         return []
@@ -445,11 +453,11 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
                       "B.ASSEMBLE INIT_LAST" if role_kind == "destination" else "none"),
         "binding_groups": groups,
         "binding_words": [
-            f"0x{(shared_binding(group[0], i) if row['family'] == 'TLSU' else local_binding(group, i == len(groups) - 1)):08x}"
+            f"0x{(shared_binding(group[0], i) if row['family'] == 'TLSU' else local_binding(row, group, i == len(groups) - 1)):08x}"
             for i, group in enumerate(groups)
         ],
         "modifier_word": (f"0x{subview_word(selected_source_select, 1):08x}" if role_kind == "source" else
-                          f"0x{assemble_word():08x}" if role_kind == "destination" else None),
+                          f"0x{assemble_word(destination_fixture_size_code(row, role)):08x}" if role_kind == "destination" else None),
         "modifier_words": (
             [f"0x{subview_word(selected_source_select, 1):08x}"]
             if role_kind == "source" else []
@@ -475,6 +483,10 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
         "fixture_role_data_types": fixture_role_data_types(row),
         "fixture_role_layouts": fixture_role_layouts(row),
         "datr_word": (f"0x{datr_word(row):08x}" if datr_word(row) is not None else None),
+        "destination_size_code": (
+            destination_fixture_size_code(row, role)
+            if role_kind == "destination" else CELL_SIZE_CODE
+        ),
     }
 
 
@@ -487,8 +499,9 @@ def source_valid_columns(row: dict, source: str) -> int:
     if name == "TROWEXPAND":
         return 1
     if name in {
-        "TROWEXPANDADD", "TROWEXPANDSUB", "TROWEXPANDDIV",
-        "TROWEXPANDMAX", "TROWEXPANDMIN",
+        "TROWEXPANDADD", "TROWEXPANDSUB", "TROWEXPANDMUL",
+        "TROWEXPANDDIV", "TROWEXPANDMAX", "TROWEXPANDMIN",
+        "TROWEXPANDEXPDIF",
     }:
         return 1 if source == "source1" else 4
     if name == "TCONCAT":
@@ -637,6 +650,10 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
         ordinary_rows = str(row_major_rows(dtype))
         ordinary_physical_columns = "4"
         ordinary_valid_rows = "1"
+        ordinary_location = (
+            "(if tile == 1 then TileLocation_Matrix else TileLocation_Any)"
+            if operation_name == "TIMG2COL" else "TileLocation_Any"
+        )
         predicate_source_ordinary = (
             operation_name in {"TSEL", "TSELS"} and
             selected_source != "source0"
@@ -663,7 +680,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
             "            ConfigureTileForMask(tile, 128,",
             "                ordinary_rows_placeholder, source_physical_columns_placeholder, ordinary_valid_rows_placeholder,",
             f"                source_valid_columns_placeholder, {local_dtype},",
-            "                TileLayout_RowMajor, TileLocation_Any, '1111');",
+            f"                TileLayout_RowMajor, {ordinary_location}, '1111');",
             "        end;",
             "        MarkTileValidRegionDefined(tile);",
             "    end;",
@@ -774,7 +791,7 @@ def render_case(row: dict) -> list[str]:
         if (row["family"] != "TLSU" and
                 row["role_kind"] == "destination" and
                 row["role"] in group):
-            modifier = assemble_word()
+            modifier = assemble_word(row["destination_size_code"])
             lines += [
                 f"    let assemble_{index} = ExecuteCommandInstruction({asl_word(modifier)}, 32);",
                 f"    assert assemble_{index} == CommandExecution_Executed;",
@@ -820,7 +837,7 @@ def render_case(row: dict) -> list[str]:
             lines += [
                 f"    let completed_writer_{destination_slot} = CompleteBundleLocalGenerationWriterEvent(",
                 f"        BundleLocalGenerationSlot({destination_slot}, '1111'), _BundleExecutionDomainToken,",
-                f"        0, BundleLocalGenerationCellCount({CELL_SIZE_CODE}));",
+                f"        0, BundleLocalGenerationCellCount({row['destination_size_code']}));",
                 f"    assert completed_writer_{destination_slot};",
                 f"    assert _LocalGenerations[[BundleLocalGenerationSlot({destination_slot}, '1111')]].published;",
             ]
@@ -909,7 +926,7 @@ def render_shared_stage3_case(row: dict) -> list[str]:
             "    assert shared == CommandExecution_Executed;",
             f"    let subview = ExecuteCommandInstruction({asl_word(subview_word(False, 1))}, 32);",
             "    assert subview == CommandExecution_Executed;",
-            f"    let local = ExecuteCommandInstruction({asl_word(local_binding(['destination0'], True))}, 32);",
+            f"    let local = ExecuteCommandInstruction({asl_word(local_binding(row, ['destination0'], True))}, 32);",
             "    assert local == CommandExecution_Executed;",
             "    let completed = ExecuteBundleTileOperation();",
             "    assert completed && _LastFault == Fault_None;",
@@ -928,7 +945,7 @@ def render_shared_stage3_case(row: dict) -> list[str]:
             "    assert shared == CommandExecution_Executed;",
             f"    let assemble = ExecuteCommandInstruction({asl_word(assemble_word())}, 32);",
             "    assert assemble == CommandExecution_Executed;",
-            f"    let local = ExecuteCommandInstruction({asl_word(local_binding(['source0'], True))}, 32);",
+            f"    let local = ExecuteCommandInstruction({asl_word(local_binding(row, ['source0'], True))}, 32);",
             "    assert local == CommandExecution_Executed;",
             "    let completed = ExecuteBundleTileOperation();",
             "    assert completed && _LastFault == Fault_None;",

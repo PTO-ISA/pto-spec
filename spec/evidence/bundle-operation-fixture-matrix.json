@@ -129,7 +129,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0002",
@@ -181,7 +182,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0003",
@@ -231,7 +233,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0004",
@@ -283,7 +286,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0005",
@@ -335,7 +339,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0006",
@@ -385,7 +390,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0007",
@@ -437,7 +443,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0008",
@@ -489,7 +496,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0009",
@@ -539,7 +547,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0010",
@@ -591,7 +600,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0011",
@@ -643,7 +653,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0012",
@@ -693,7 +704,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0013",
@@ -745,7 +757,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0014",
@@ -797,7 +810,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0015",
@@ -847,7 +861,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0016",
@@ -899,7 +914,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0017",
@@ -951,7 +967,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0018",
@@ -1001,7 +1018,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0019",
@@ -1053,7 +1071,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0020",
@@ -1105,7 +1124,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0021",
@@ -1155,7 +1175,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0022",
@@ -1207,7 +1228,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0023",
@@ -1259,7 +1281,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0024",
@@ -1309,7 +1332,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0025",
@@ -1361,7 +1385,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0026",
@@ -1413,7 +1438,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0027",
@@ -1463,7 +1489,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0028",
@@ -1515,7 +1542,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0029",
@@ -1567,7 +1595,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0030",
@@ -1617,7 +1646,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0031",
@@ -1669,7 +1699,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0032",
@@ -1721,7 +1752,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0033",
@@ -1771,7 +1803,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0034",
@@ -1823,7 +1856,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0035",
@@ -1875,7 +1909,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0036",
@@ -1925,7 +1960,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0037",
@@ -1977,7 +2013,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0038",
@@ -2029,7 +2066,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0039",
@@ -2079,7 +2117,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0040",
@@ -2129,7 +2168,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0041",
@@ -2177,7 +2217,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0042",
@@ -2227,7 +2268,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0043",
@@ -2275,7 +2317,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0044",
@@ -2325,7 +2368,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0045",
@@ -2373,7 +2417,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0046",
@@ -2423,7 +2468,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0047",
@@ -2471,7 +2517,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0048",
@@ -2521,7 +2568,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0049",
@@ -2569,7 +2617,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0050",
@@ -2619,7 +2668,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0051",
@@ -2667,7 +2717,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0052",
@@ -2717,7 +2768,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0053",
@@ -2765,7 +2817,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0054",
@@ -2815,7 +2868,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0055",
@@ -2863,7 +2917,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0056",
@@ -2913,7 +2968,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0057",
@@ -2961,7 +3017,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0058",
@@ -3018,7 +3075,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0059",
@@ -3075,7 +3133,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0060",
@@ -3132,7 +3191,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0061",
@@ -3187,7 +3247,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0062",
@@ -3238,7 +3299,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0063",
@@ -3287,7 +3349,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0064",
@@ -3344,7 +3407,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0065",
@@ -3401,7 +3465,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0066",
@@ -3458,7 +3523,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0067",
@@ -3513,7 +3579,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0068",
@@ -3563,7 +3630,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0069",
@@ -3611,7 +3679,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0070",
@@ -3661,7 +3730,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0071",
@@ -3709,7 +3779,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0072",
@@ -3759,7 +3830,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0073",
@@ -3807,7 +3879,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0074",
@@ -3857,7 +3930,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0075",
@@ -3905,7 +3979,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0076",
@@ -3955,7 +4030,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0077",
@@ -4003,7 +4079,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0078",
@@ -4053,7 +4130,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0079",
@@ -4101,7 +4179,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0080",
@@ -4151,7 +4230,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0081",
@@ -4199,7 +4279,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0082",
@@ -4249,7 +4330,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0083",
@@ -4297,7 +4379,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0084",
@@ -4347,7 +4430,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0085",
@@ -4395,7 +4479,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0086",
@@ -4445,7 +4530,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0087",
@@ -4493,7 +4579,8 @@
       "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0088",
@@ -4543,7 +4630,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0089",
@@ -4591,7 +4679,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0090",
@@ -4641,7 +4730,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0091",
@@ -4689,7 +4779,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0092",
@@ -4739,7 +4830,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0093",
@@ -4787,7 +4879,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0094",
@@ -4839,7 +4932,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0095",
@@ -4891,7 +4985,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0096",
@@ -4941,7 +5036,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0097",
@@ -4987,7 +5083,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0098",
@@ -5037,7 +5134,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0099",
@@ -5085,7 +5183,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0100",
@@ -5135,7 +5234,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0101",
@@ -5183,7 +5283,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0102",
@@ -5233,7 +5334,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0103",
@@ -5281,7 +5383,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0104",
@@ -5331,7 +5434,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0105",
@@ -5379,7 +5483,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0106",
@@ -5429,7 +5534,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0107",
@@ -5477,7 +5583,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0108",
@@ -5529,7 +5636,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0109",
@@ -5581,7 +5689,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0110",
@@ -5631,7 +5740,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0111",
@@ -5683,7 +5793,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0112",
@@ -5735,7 +5846,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0113",
@@ -5785,7 +5897,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0114",
@@ -5837,7 +5950,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0115",
@@ -5889,7 +6003,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0116",
@@ -5939,7 +6054,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0117",
@@ -5991,7 +6107,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0118",
@@ -6043,7 +6160,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0119",
@@ -6093,7 +6211,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0120",
@@ -6145,7 +6264,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0121",
@@ -6197,7 +6317,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0122",
@@ -6247,7 +6368,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0123",
@@ -6299,7 +6421,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0124",
@@ -6351,7 +6474,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0125",
@@ -6401,7 +6525,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0126",
@@ -6454,7 +6579,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0127",
@@ -6507,7 +6633,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0128",
@@ -6558,7 +6685,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0129",
@@ -6608,7 +6736,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0130",
@@ -6656,7 +6785,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0131",
@@ -6706,7 +6836,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0132",
@@ -6754,7 +6885,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0133",
@@ -6804,7 +6936,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0134",
@@ -6852,7 +6985,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0135",
@@ -6902,7 +7036,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0136",
@@ -6950,7 +7085,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0137",
@@ -7000,7 +7136,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0138",
@@ -7048,7 +7185,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0139",
@@ -7098,7 +7236,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0140",
@@ -7146,7 +7285,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0141",
@@ -7196,7 +7336,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0142",
@@ -7244,7 +7385,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0143",
@@ -7296,7 +7438,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0144",
@@ -7348,7 +7491,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0145",
@@ -7398,7 +7542,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0146",
@@ -7450,7 +7595,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0147",
@@ -7502,7 +7648,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0148",
@@ -7552,7 +7699,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0149",
@@ -7604,7 +7752,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0150",
@@ -7656,7 +7805,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0151",
@@ -7706,7 +7856,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0152",
@@ -7758,7 +7909,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0153",
@@ -7810,7 +7962,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0154",
@@ -7860,7 +8013,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0155",
@@ -7912,7 +8066,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0156",
@@ -7964,7 +8119,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0157",
@@ -8014,7 +8170,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0158",
@@ -8066,7 +8223,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0159",
@@ -8118,7 +8276,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0160",
@@ -8168,7 +8327,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0161",
@@ -8221,7 +8381,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0162",
@@ -8274,7 +8435,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0163",
@@ -8325,7 +8487,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0164",
@@ -8375,7 +8538,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0165",
@@ -8423,7 +8587,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0166",
@@ -8473,7 +8638,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0167",
@@ -8521,7 +8687,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0168",
@@ -8573,7 +8740,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0169",
@@ -8625,7 +8793,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0170",
@@ -8675,7 +8844,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0171",
@@ -8725,7 +8895,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0172",
@@ -8773,7 +8944,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0173",
@@ -8825,7 +8997,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0174",
@@ -8877,7 +9050,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0175",
@@ -8927,7 +9101,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0176",
@@ -8977,7 +9152,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0177",
@@ -9025,7 +9201,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0178",
@@ -9075,7 +9252,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0179",
@@ -9123,7 +9301,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0180",
@@ -9169,7 +9348,8 @@
       "fixture_data_type": 17,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0181",
@@ -9215,7 +9395,8 @@
       "fixture_data_type": 17,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0182",
@@ -9251,7 +9432,7 @@
         ]
       ],
       "binding_words": [
-        "0x0818ce13"
+        "0x081a4e13"
       ],
       "modifier_word": "0x000000d3",
       "modifier_words": [
@@ -9268,7 +9449,8 @@
       "fixture_data_type": 26,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01901023"
+      "datr_word": "0x01901023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0183",
@@ -9304,7 +9486,7 @@
         ]
       ],
       "binding_words": [
-        "0x0818ce13"
+        "0x081a4e13"
       ],
       "modifier_word": "0x800000d3",
       "modifier_words": [
@@ -9321,7 +9503,8 @@
       "fixture_data_type": 26,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01901023"
+      "datr_word": "0x01901023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0184",
@@ -9357,9 +9540,9 @@
         ]
       ],
       "binding_words": [
-        "0x0818ce13"
+        "0x081a4e13"
       ],
-      "modifier_word": "0x800018d3",
+      "modifier_word": "0x80001a53",
       "modifier_words": [],
       "normal_dispatch": "ExecuteBundleTileOperation",
       "expected_fault": null,
@@ -9372,7 +9555,8 @@
       "fixture_data_type": 26,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01901023"
+      "datr_word": "0x01901023",
+      "destination_size_code": 4
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0185",
@@ -9423,7 +9607,8 @@
       "fixture_data_type": 1,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01301023"
+      "datr_word": "0x01301023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0186",
@@ -9472,7 +9657,8 @@
       "fixture_data_type": 1,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01301023"
+      "datr_word": "0x01301023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0187",
@@ -9523,7 +9709,8 @@
       "fixture_data_type": 19,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00101023"
+      "datr_word": "0x00101023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0188",
@@ -9572,7 +9759,8 @@
       "fixture_data_type": 19,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x00101023"
+      "datr_word": "0x00101023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0189",
@@ -9630,7 +9818,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0190",
@@ -9686,7 +9875,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0191",
@@ -9742,7 +9932,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0192",
@@ -9794,7 +9985,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0193",
@@ -9846,7 +10038,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0194",
@@ -9896,7 +10089,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0195",
@@ -9946,7 +10140,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0196",
@@ -9994,7 +10189,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0197",
@@ -10046,7 +10242,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0198",
@@ -10098,7 +10295,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0199",
@@ -10148,7 +10346,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0200",
@@ -10200,7 +10399,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0201",
@@ -10252,7 +10452,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0202",
@@ -10302,7 +10503,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0203",
@@ -10354,7 +10556,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0204",
@@ -10406,7 +10609,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0205",
@@ -10456,7 +10660,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0206",
@@ -10508,7 +10713,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0207",
@@ -10560,7 +10766,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0208",
@@ -10610,7 +10817,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0209",
@@ -10662,7 +10870,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0210",
@@ -10714,7 +10923,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0211",
@@ -10764,7 +10974,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0212",
@@ -10816,7 +11027,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0213",
@@ -10868,7 +11080,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0214",
@@ -10918,7 +11131,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0215",
@@ -10964,7 +11178,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0216",
@@ -11012,7 +11227,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0217",
@@ -11061,7 +11277,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0218",
@@ -11108,7 +11325,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0219",
@@ -11146,7 +11364,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0220",
@@ -11195,7 +11414,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0221",
@@ -11242,7 +11462,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0222",
@@ -11291,7 +11512,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0223",
@@ -11340,7 +11562,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0224",
@@ -11390,7 +11613,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0225",
@@ -11440,7 +11664,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0226",
@@ -11488,7 +11713,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0227",
@@ -11538,7 +11764,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0228",
@@ -11588,7 +11815,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0229",
@@ -11638,7 +11866,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0230",
@@ -11689,7 +11918,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0231",
@@ -11740,7 +11970,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0232",
@@ -11791,7 +12022,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0233",
@@ -11840,7 +12072,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0234",
@@ -11889,7 +12122,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0235",
@@ -11936,7 +12170,8 @@
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": null
+      "datr_word": null,
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0236",
@@ -11996,7 +12231,8 @@
         "source0": "TileLayout_CUBE_M16",
         "source1": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0237",
@@ -12056,7 +12292,8 @@
         "source0": "TileLayout_CUBE_M16",
         "source1": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0238",
@@ -12114,7 +12351,8 @@
         "source0": "TileLayout_CUBE_M16",
         "source1": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0239",
@@ -12181,7 +12419,8 @@
         "source1": "TileLayout_CUBE_N8",
         "source2": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0240",
@@ -12248,7 +12487,8 @@
         "source1": "TileLayout_CUBE_N8",
         "source2": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0241",
@@ -12315,7 +12555,8 @@
         "source1": "TileLayout_CUBE_N8",
         "source2": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0242",
@@ -12380,7 +12621,8 @@
         "source1": "TileLayout_CUBE_N8",
         "source2": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0243",
@@ -12447,7 +12689,8 @@
         "source1": "TileLayout_CUBE_M16",
         "source2": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0244",
@@ -12514,7 +12757,8 @@
         "source1": "TileLayout_CUBE_M16",
         "source2": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0245",
@@ -12581,7 +12825,8 @@
         "source1": "TileLayout_CUBE_M16",
         "source2": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0246",
@@ -12646,7 +12891,8 @@
         "source1": "TileLayout_CUBE_M16",
         "source2": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0247",
@@ -12717,7 +12963,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0248",
@@ -12788,7 +13035,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0249",
@@ -12859,7 +13107,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0250",
@@ -12930,7 +13179,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0251",
@@ -12999,7 +13249,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0252",
@@ -13077,7 +13328,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0253",
@@ -13155,7 +13407,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0254",
@@ -13233,7 +13486,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0255",
@@ -13311,7 +13565,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0256",
@@ -13389,7 +13644,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0257",
@@ -13465,7 +13721,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0258",
@@ -13543,7 +13800,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0259",
@@ -13621,7 +13879,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0260",
@@ -13699,7 +13958,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0261",
@@ -13777,7 +14037,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0262",
@@ -13855,7 +14116,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0263",
@@ -13931,7 +14193,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0264",
@@ -13991,7 +14254,8 @@
         "source0": "TileLayout_CUBE_M16",
         "source1": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0265",
@@ -14051,7 +14315,8 @@
         "source0": "TileLayout_CUBE_M16",
         "source1": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0266",
@@ -14109,7 +14374,8 @@
         "source0": "TileLayout_CUBE_M16",
         "source1": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0267",
@@ -14176,7 +14442,8 @@
         "source1": "TileLayout_CUBE_N8",
         "source2": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0268",
@@ -14243,7 +14510,8 @@
         "source1": "TileLayout_CUBE_N8",
         "source2": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0269",
@@ -14310,7 +14578,8 @@
         "source1": "TileLayout_CUBE_N8",
         "source2": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0270",
@@ -14375,7 +14644,8 @@
         "source1": "TileLayout_CUBE_N8",
         "source2": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0271",
@@ -14442,7 +14712,8 @@
         "source1": "TileLayout_CUBE_M16",
         "source2": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0272",
@@ -14509,7 +14780,8 @@
         "source1": "TileLayout_CUBE_M16",
         "source2": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0273",
@@ -14576,7 +14848,8 @@
         "source1": "TileLayout_CUBE_M16",
         "source2": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0274",
@@ -14641,7 +14914,8 @@
         "source1": "TileLayout_CUBE_M16",
         "source2": "TileLayout_CUBE_N8"
       },
-      "datr_word": "0x00401023"
+      "datr_word": "0x00401023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0275",
@@ -14712,7 +14986,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0276",
@@ -14783,7 +15058,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0277",
@@ -14854,7 +15130,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0278",
@@ -14925,7 +15202,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0279",
@@ -14994,7 +15272,8 @@
         "source2": "TileLayout_CUBE_N8",
         "source3": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0280",
@@ -15072,7 +15351,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0281",
@@ -15150,7 +15430,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0282",
@@ -15228,7 +15509,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0283",
@@ -15306,7 +15588,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0284",
@@ -15384,7 +15667,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0285",
@@ -15460,7 +15744,8 @@
         "source3": "TileLayout_CUBE_M16",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0286",
@@ -15538,7 +15823,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0287",
@@ -15616,7 +15902,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0288",
@@ -15694,7 +15981,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0289",
@@ -15772,7 +16060,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0290",
@@ -15850,7 +16139,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0291",
@@ -15926,7 +16216,8 @@
         "source3": "TileLayout_CUBE_N8",
         "source4": "TileLayout_CUBE_M16"
       },
-      "datr_word": "0x00701023"
+      "datr_word": "0x00701023",
+      "destination_size_code": 1
     }
   ]
 }
