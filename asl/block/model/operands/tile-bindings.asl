@@ -21,6 +21,7 @@ begin
     _BundleTileBindings[[index]].destination_hand =
         Zeros{2} + (destination MOD 4);
     _BundleTileBindings[[index]].destination_allocated_by_bundle = FALSE;
+    _BundleTileBindings[[index]].destination_reused_by_generation = FALSE;
     _BundleTileBindings[[index]].destination_size = destination_size;
     _BundleTileBindings[[index]].pe_mask = pe_mask;
     _BundleTileBindings[[index]].source0_valid = source0_valid;
@@ -65,6 +66,17 @@ begin
         end;
     end;
     return FALSE;
+end;
+
+readonly func BundleTileBindingLastIndex() => integer {0..15}
+begin
+    var last: integer {0..15} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            last = binding as integer {0..15};
+        end;
+    end;
+    return last;
 end;
 
 readonly func BundleMatrixPrimaryDestinationHand()

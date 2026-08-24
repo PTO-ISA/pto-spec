@@ -90,6 +90,8 @@ required_files=(
     scripts/check-release-manifest
     scripts/check-script-entrypoints
     scripts/encoding_witness.py
+    scripts/generate-bundle-operation-matrix.py
+    spec/evidence/bundle-operation-fixture-matrix.json
 )
 
 for path in "${required_files[@]}"; do
@@ -174,6 +176,7 @@ python3 scripts/instruction_contracts.py --check --require-complete
 # PRs validate the live contracts above; release-evidence-check owns projection
 # freshness after the pending decisions receive one release identity.
 python3 scripts/generate-mnemonic-avs.py --check
+python3 scripts/generate-bundle-operation-matrix.py --check
 python3 scripts/check-publication-hygiene
 
 if [[ $structure_only == true ]]; then

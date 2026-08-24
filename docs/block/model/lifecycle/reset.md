@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/lifecycle/reset.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-LIFECYCLE-RESET","surface":"block","classification":["model","lifecycle","reset"],"depends_on":["PTO-BLOCK-MODEL-STATE-BINDING-STATE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-LIFECYCLE-RESET","surface":"block","classification":["model","lifecycle","reset"],"depends_on":["PTO-BLOCK-MODEL-STATE-BINDING-STATE","PTO-BLOCK-MODEL-STATE-SHARED-GENERATION"]}
 func ResetBundleControlState()
 begin
     _BundleActive = FALSE;
@@ -56,6 +56,7 @@ begin
         _BundleTileBindings[[index]].destination = 0;
         _BundleTileBindings[[index]].destination_hand = Zeros{2};
         _BundleTileBindings[[index]].destination_allocated_by_bundle = FALSE;
+        _BundleTileBindings[[index]].destination_reused_by_generation = FALSE;
         _BundleTileBindings[[index]].destination_size = 0;
         _BundleTileBindings[[index]].pe_mask = Zeros{4};
         _BundleTileBindings[[index]].source0_valid = FALSE;
@@ -63,6 +64,36 @@ begin
         _BundleTileBindings[[index]].source0 = 0;
         _BundleTileBindings[[index]].source1 = 0;
         _BundleTileBindings[[index]].last = FALSE;
+        _BundleTileBindings[[index]].source0_subview.valid = FALSE;
+        _BundleTileBindings[[index]].source0_subview.reg_src = 0;
+        _BundleTileBindings[[index]].source0_subview.uimm11 = Zeros{11};
+        _BundleTileBindings[[index]].source0_subview.size_code = 0;
+        _BundleTileBindings[[index]].source0_subview.offset = Zeros{PTO_XLEN};
+        _BundleTileBindings[[index]].source0_subview.init = FALSE;
+        _BundleTileBindings[[index]].source0_subview.last = FALSE;
+        _BundleTileBindings[[index]].source0_subview.derived.valid = FALSE;
+        _BundleTileBindings[[index]].source0_subview.materialized = FALSE;
+        _BundleTileBindings[[index]].source0_subview.materialized_index = 0;
+        _BundleTileBindings[[index]].source1_subview.valid = FALSE;
+        _BundleTileBindings[[index]].source1_subview.reg_src = 0;
+        _BundleTileBindings[[index]].source1_subview.uimm11 = Zeros{11};
+        _BundleTileBindings[[index]].source1_subview.size_code = 0;
+        _BundleTileBindings[[index]].source1_subview.offset = Zeros{PTO_XLEN};
+        _BundleTileBindings[[index]].source1_subview.init = FALSE;
+        _BundleTileBindings[[index]].source1_subview.last = FALSE;
+        _BundleTileBindings[[index]].source1_subview.derived.valid = FALSE;
+        _BundleTileBindings[[index]].source1_subview.materialized = FALSE;
+        _BundleTileBindings[[index]].source1_subview.materialized_index = 0;
+        _BundleTileBindings[[index]].destination_assemble.valid = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.reg_src = 0;
+        _BundleTileBindings[[index]].destination_assemble.uimm11 = Zeros{11};
+        _BundleTileBindings[[index]].destination_assemble.size_code = 0;
+        _BundleTileBindings[[index]].destination_assemble.offset = Zeros{PTO_XLEN};
+        _BundleTileBindings[[index]].destination_assemble.init = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.last = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.derived.valid = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.materialized = FALSE;
+        _BundleTileBindings[[index]].destination_assemble.materialized_index = 0;
     end;
     for index = 0 to 3 do
         _BundleSharedBindings[[index]].valid = FALSE;
@@ -71,8 +102,45 @@ begin
         _BundleSharedBindings[[index]].size_code = 0;
         _BundleSharedBindings[[index]].pe_mask = Zeros{4};
         _BundleSharedBindings[[index]].consumed = FALSE;
+        _BundleSharedBindings[[index]].source0_subview.valid = FALSE;
+        _BundleSharedBindings[[index]].source0_subview.reg_src = 0;
+        _BundleSharedBindings[[index]].source0_subview.uimm11 = Zeros{11};
+        _BundleSharedBindings[[index]].source0_subview.size_code = 0;
+        _BundleSharedBindings[[index]].source0_subview.offset = Zeros{PTO_XLEN};
+        _BundleSharedBindings[[index]].source0_subview.init = FALSE;
+        _BundleSharedBindings[[index]].source0_subview.last = FALSE;
+        _BundleSharedBindings[[index]].source0_subview.derived.valid = FALSE;
+        _BundleSharedBindings[[index]].source0_subview.materialized = FALSE;
+        _BundleSharedBindings[[index]].source0_subview.materialized_index = 0;
+        _BundleSharedBindings[[index]].destination_assemble.valid = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.reg_src = 0;
+        _BundleSharedBindings[[index]].destination_assemble.uimm11 = Zeros{11};
+        _BundleSharedBindings[[index]].destination_assemble.size_code = 0;
+        _BundleSharedBindings[[index]].destination_assemble.offset = Zeros{PTO_XLEN};
+        _BundleSharedBindings[[index]].destination_assemble.init = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.last = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.derived.valid = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.materialized = FALSE;
+        _BundleSharedBindings[[index]].destination_assemble.materialized_index = 0;
     end;
+    _BundleRangeGroup.open = FALSE;
+    _BundleRangeGroup.zero_mode = FALSE;
+    _BundleRangeGroup.kind = BundleRangeGroup_None;
+    _BundleRangeGroup.tile_binding = 0;
+    _BundleRangeGroup.shared_binding = 0;
+    _BundleRangeGroup.source0_allowed = FALSE;
+    _BundleRangeGroup.source1_allowed = FALSE;
+    _BundleRangeGroup.destination_allowed = FALSE;
+    _BundleRangeGroup.source0_seen = FALSE;
+    _BundleRangeGroup.source1_seen = FALSE;
+    _BundleRangeGroup.destination_seen = FALSE;
     _BundleZeroParticipationSeen = FALSE;
+    for generation = 0 to 63 do
+        ClearBundleLocalGenerationState(generation);
+    end;
+    ResetBundleSharedGenerationState();
+    _BundleExecutionDomainToken = 0;
+    _NextBundleExecutionDomainToken = 1;
     _BundleControlAttributes.present = FALSE;
     _BundleControlAttributes.trap_enabled = FALSE;
     _BundleControlAttributes.atomic = FALSE;
@@ -154,6 +222,7 @@ begin
         _TrapContexts[[ring]].bundle_scalar_bindings = _BundleScalarBindings;
         _TrapContexts[[ring]].bundle_tile_bindings = _BundleTileBindings;
         _TrapContexts[[ring]].bundle_shared_bindings = _BundleSharedBindings;
+        _TrapContexts[[ring]].bundle_range_group = _BundleRangeGroup;
         _TrapContexts[[ring]].bundle_zero_participation_seen =
             _BundleZeroParticipationSeen;
         _TrapContexts[[ring]].bundle_control_attributes =
@@ -164,6 +233,10 @@ begin
         _TrapContexts[[ring]].bundle_hint = _BundleHint;
         _TrapContexts[[ring]].bundle_fixed_point_attributes =
             _BundleFixedPointAttributes;
+        _TrapContexts[[ring]].local_generations = _LocalGenerations;
+        _TrapContexts[[ring]].shared_generations = _SharedGenerations;
+        _TrapContexts[[ring]].bundle_execution_domain_token =
+            _BundleExecutionDomainToken;
         _TrapContexts[[ring]].memory_copy_template = _MemoryCopyTemplate;
         _TrapContexts[[ring]].frame_template = _FrameTemplate;
         _TrapContexts[[ring]].t_queue = _TQueue;

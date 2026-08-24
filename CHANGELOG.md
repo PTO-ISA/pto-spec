@@ -3,6 +3,12 @@
 This file is generated from accepted ADR metadata. It is a navigation aid,
 not architecture authority; current meaning remains in the owning ASL/NDF.
 
+## Release 0.58.4
+
+### Cross-cutting
+- [ADR-0097](docs/status/decisions/0097-b-range-modifiers.md): B.SUBVIEW and B.ASSEMBLE range-modifier association
+- [ADR-0098](docs/status/decisions/0098-0583-to-0584-compatibility.md): PTO ISA 0.58.3 to 0.58.4 compatibility boundary
+
 ## Release 0.58.3
 
 ### Architecture

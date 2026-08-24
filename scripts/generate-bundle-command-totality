@@ -44,6 +44,8 @@ EFFECT_BY_HANDLER = {
     "SetBundleFixedPointAttributes": "bundle-fixed-point-attributes",
     "SetBundleDimension": "bundle-dimension",
     "SetBundleHint": "diagnostic-hint-payload",
+    "ApplyBundleSubview": "bundle-range-subview-modifier",
+    "ApplyBundleAssemble": "bundle-range-assemble-modifier",
 }
 
 # Every accepted operand must name the concrete bridge resolver/default and,
@@ -500,7 +502,7 @@ def build_evidence() -> dict:
             "command comparison must cover every canonical command form exactly once"
         )
     if comparison_status_counts != Counter(
-        {"executable-subset": 53, "decode-only": 16, "missing": 5}
+        {"executable-subset": 53, "decode-only": 16, "missing": 7}
     ):
         raise ValueError(
             f"unexpected independent command status counts: {comparison_status_counts}"

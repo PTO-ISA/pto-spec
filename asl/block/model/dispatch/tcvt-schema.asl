@@ -37,7 +37,7 @@ begin
         end;
     end;
 
-    let source = binding.source0;
+    let source = BundleTileSourceIndex(0, FALSE);
     if !TileSourceContentsDefined(source) ||
        !TileSourceEncodingsValid(source) then
         return FALSE;

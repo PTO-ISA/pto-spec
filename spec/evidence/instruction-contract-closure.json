@@ -11,6 +11,320 @@
       "alias_of": null,
       "catalog_records": [
         {
+          "asm": "B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode",
+          "constraints": [
+            {
+              "field": "INIT",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "RegSrc",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23
+              ]
+            },
+            {
+              "field": "ParentSizeCode",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x0000707f",
+              "match": "0x00001053",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "INIT",
+              "pieces": [
+                {
+                  "instruction_lsb": 31,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "uimm11",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 11
+                }
+              ],
+              "signedness": "unsigned",
+              "width": 11
+            },
+            {
+              "name": "RegSrc",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "LAST",
+              "pieces": [
+                {
+                  "instruction_lsb": 11,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "ParentSizeCode",
+              "pieces": [
+                {
+                  "instruction_lsb": 7,
+                  "value_lsb": 0,
+                  "width": 4
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 4
+            }
+          ],
+          "form_id": "b_assemble_32_122000000002",
+          "length_bits": 32,
+          "mnemonic": "B.ASSEMBLE",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Range Modifier",
+          "semantic_handler": "ApplyBundleAssemble",
+          "semantic_summary": "Decodes one destination-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
+          "status": "accepted"
+        }
+      ],
+      "classification": [
+        "operands"
+      ],
+      "contract": {
+        "block_composition": [
+          "Immediately follows B.IOT or B.IOS and is contiguous with the associated modifier group."
+        ],
+        "canonical_assembly": [
+          "B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode"
+        ],
+        "defaults": [
+          "uimm11 is unsigned and zero-extended. RegSrc zero names the architectural zero GPR. INIT=0 encodes MIDDLE/LAST; INIT=1 encodes INIT/INIT_LAST."
+        ],
+        "encoded_fields": [
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "INIT",
+            "form_id": "b_assemble_32_122000000002",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "selects INIT versus MIDDLE/LAST form",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Zero selects MIDDLE/LAST rather than INIT/INIT_LAST."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                2047
+              ]
+            ],
+            "field": "uimm11",
+            "form_id": "b_assemble_32_122000000002",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "unsigned XLEN addend",
+            "signedness": "unsigned",
+            "width": 11,
+            "zero_meaning": "Zero is a real zero displacement."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                23
+              ]
+            ],
+            "field": "RegSrc",
+            "form_id": "b_assemble_32_122000000002",
+            "other_owner_values": [],
+            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
+            "reserved_ranges": [
+              [
+                24,
+                31
+              ]
+            ],
+            "role": "absolute GPR selector",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Zero names the architectural zero GPR."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "LAST",
+            "form_id": "b_assemble_32_122000000002",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "marks the final assembler carrier",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "One closes the modifier sequence at the semantic assembler."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                12
+              ]
+            ],
+            "field": "ParentSizeCode",
+            "form_id": "b_assemble_32_122000000002",
+            "other_owner_values": [],
+            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
+            "reserved_ranges": [
+              [
+                13,
+                15
+              ]
+            ],
+            "role": "raw parent size code",
+            "signedness": "encoding-defined",
+            "width": 4,
+            "zero_meaning": "Zero is the MIDDLE/LAST-only no-parent-size encoding."
+          }
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "B.IOT T0, mask=1111, ->T1<1>; B.ASSEMBLE 1, 1, a0, 0, 10"
+        ],
+        "exceptions": [
+          "Reserved funct3/opcode, RegSrc24..31, and ParentSizeCode13..15 raise Fault_IllegalInstruction before GPR reads, carrier updates, or TPC advance.",
+          "INIT=1 with ParentSizeCode=0 or INIT=0 with a nonzero ParentSizeCode raises Fault_BundleControl.",
+          "Missing, reversed, duplicate, intervening, or role-incompatible groups raise Fault_BundleControl."
+        ],
+        "field_domains": [],
+        "legality": [
+          "RegSrc accepts only absolute GPR selectors 0..23.",
+          "ParentSizeCode raw values 0..12 are decoded; INIT/size combinations select INIT, MIDDLE, LAST, or INIT_LAST and contradictory combinations are BundleControl.",
+          "Local and Shared parent sizes 1..12 are accepted.",
+          "The modifier is legal only in the contiguous immediately preceding binder group and follows source roles."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "INIT",
+            "role": "selects INIT versus MIDDLE/LAST form"
+          },
+          {
+            "field": "LAST",
+            "role": "marks the final assembler carrier"
+          },
+          {
+            "field": "RegSrc",
+            "role": "absolute GPR selector"
+          },
+          {
+            "field": "uimm11",
+            "role": "unsigned XLEN addend"
+          },
+          {
+            "field": "ParentSizeCode",
+            "role": "raw parent size code"
+          }
+        ],
+        "ordering": [
+          "Decode fixed/reserved fields and raw ranges before any GPR read; compute GPR[RegSrc]+ZeroExtend(uimm11) modulo 2^XLEN after group legality."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Store raw INIT/LAST/RegSrc/uimm11/ParentSizeCode and the derived XLEN offset in the destination carrier of the open binder group.",
+          "PEMode=000 on the binder opens a discarded syntactic group; every raw-legal contiguous modifier advances TPC without reads, state, role, or fault effects."
+        ]
+      },
+      "documentation": "docs/block/operands/B.ASSEMBLE.md",
+      "engine": null,
+      "mnemonic": "B.ASSEMBLE",
+      "ndf_clause": "PTO-INST-BLOCK-B-ASSEMBLE",
+      "source": "asl/block/operands/B.ASSEMBLE.asl",
+      "summary": "Decodes one destination-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
+      "surface": "block"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
           "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
           "constraints": [],
           "encoding": [
@@ -3319,7 +3633,7 @@
       "alias_of": null,
       "catalog_records": [
         {
-          "asm": "B.IOS S<SharedTID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTID><SizeCode>",
+          "asm": "B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>",
           "constraints": [
             {
               "field": "SizeCode",
@@ -3358,7 +3672,7 @@
           "encoding": [
             {
               "index": 0,
-              "mask": "0xf00871ff",
+              "mask": "0xfc0871ff",
               "match": "0x00001013",
               "width_bits": 32
             }
@@ -3366,16 +3680,16 @@
           "encoding_kind": "L32",
           "fields": [
             {
-              "name": "SharedTID",
+              "name": "SharedTileID",
               "pieces": [
                 {
                   "instruction_lsb": 20,
                   "value_lsb": 0,
-                  "width": 8
+                  "width": 6
                 }
               ],
               "signedness": "encoding-defined",
-              "width": 8
+              "width": 6
             },
             {
               "name": "SizeCode",
@@ -3408,7 +3722,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Input & Output",
           "semantic_handler": "BindBundleSharedIO",
-          "semantic_summary": "Binds one ordered absolute Core-private Shared register S0..S255 as a source or destination with a common four-PE participation mode decoded to a fixed mask.",
+          "semantic_summary": "Binds one ordered absolute Core-private Shared register S0..S63 as a source or destination with a common four-PE participation mode decoded to a fixed mask.",
           "status": "accepted"
         }
       ],
@@ -3420,10 +3734,10 @@
           "Header command after BSTART and before the first body instruction. A block may contain zero to four effective B.IOS instructions, ordered according to the selected operation schema."
         ],
         "canonical_assembly": [
-          "B.IOS S<SharedTID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTID><SizeCode>"
+          "B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>"
         ],
         "defaults": [
-          "S0 is an ordinary absolute Shared-register name. SizeCode=0 selects the source form; SizeCode=1..12 selects a destination capacity of 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, or 256 KiB per participating PE. Codes 13..15 are reserved.",
+          "S0 is an ordinary absolute Shared-register name. SizeCode=0 selects the source form; SizeCode=1..12 selects a destination capacity of 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, or 256 KiB for the complete Core-wide Shared object. Codes 13..15 are reserved.",
           "PEMode is a three-bit encoding expanded by the common profile decoder to the fixed four-PE semantic mask: 000 none, 001 PE0, 010 PE1, 011 PE2, 100 PE3, 101 PE0+PE1, 110 PE0+PE1+PE2, and 111 all four PEs.",
           "PEMode=000 decodes to no participating PE and is a strict no-op before placement, duplicate, schema, allocation, descriptor, memory, and downstream fault checks."
         ],
@@ -3432,17 +3746,17 @@
             "assigned_ranges": [
               [
                 0,
-                255
+                63
               ]
             ],
-            "field": "SharedTID",
+            "field": "SharedTileID",
             "form_id": "b_ios_32_4ba5ef98fdaa",
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "absolute Core-private Shared register S0 through S255, visible to all four PEs of that core",
+            "role": "absolute Core-private Shared register S0 through S63, visible to all four PEs of that core",
             "signedness": "encoding-defined",
-            "width": 8,
+            "width": 6,
             "zero_meaning": "Encoded zero names S0; it does not mean absence."
           },
           {
@@ -3462,7 +3776,7 @@
                 15
               ]
             ],
-            "role": "role and capacity: 0 source; 1..12 destination with 128 B..256 KiB per participating PE",
+            "role": "role and capacity: 0 source; 1..12 destination with 128 B..256 KiB for the complete Core-wide Shared object",
             "signedness": "encoding-defined",
             "width": 4,
             "zero_meaning": "Encoded zero selects a Shared source and never allocates."
@@ -3488,18 +3802,18 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "B.IOS S1, mask=0011",
-          "B.IOS mask=1111, ->S255<0001>"
+          "B.IOS mask=1111, ->S63<0001>"
         ],
         "exceptions": [
           "Reserved instruction bits, SizeCode 13..15, and malformed field combinations raise Fault_IllegalInstruction before architectural effects.",
-          "A participating B.IOS outside an active header, a duplicate SharedTID, or a fifth effective binding raises Illegal Block Exception before changing the stream.",
+          "A participating B.IOS outside an active header, a duplicate SharedTileID, or a fifth effective binding raises Illegal Block Exception before changing the stream.",
           "A mismatched effective decoded PE mask, incompatible destination descriptor, mask expansion, or operation-schema role mismatch raises Fault_TileLegality before Shared state changes.",
           "PEMode=000 is a strict no-op and cannot raise a downstream schema, duplicate, allocation, descriptor, or memory fault."
         ],
         "field_domains": [],
         "legality": [
-          "All SharedTID codes 0..255 are assigned absolute Core-private Shared-register names S0..S255.",
-          "SizeCode code 0 is the source role; destination codes 1..12 encode 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, and 256 KiB per participating PE. Codes 13..15 are reserved.",
+          "All SharedTileID codes 0..63 are assigned absolute Core-private Shared-register names S0..S63.",
+          "SizeCode code 0 is the source role; destination codes 1..12 encode 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, and 256 KiB for the complete Core-wide Shared object. Codes 13..15 are reserved.",
           "The three-bit PEMode field accepts all eight encodings and the common profile decoder expands them exactly to the fixed four-PE semantic mask table. PEMode=000 is the strict no-effect source-bearing encoding.",
           "A participating B.IOS is legal only after BSTART and before the block body. At most four effective Shared bindings are accepted in encoded order.",
           "Two effective bindings in one block may not name the same Sx. The selected operation schema determines each ordered Shared operand role and must agree with SizeCode source/destination encoding."
@@ -3509,12 +3823,12 @@
         ],
         "operands": [
           {
-            "field": "SharedTID",
-            "role": "absolute Core-private Shared register S0 through S255, visible to all four PEs of that core"
+            "field": "SharedTileID",
+            "role": "absolute Core-private Shared register S0 through S63, visible to all four PEs of that core"
           },
           {
             "field": "SizeCode",
-            "role": "role and capacity: 0 source; 1..12 destination with 128 B..256 KiB per participating PE"
+            "role": "role and capacity: 0 source; 1..12 destination with 128 B..256 KiB for the complete Core-wide Shared object"
           },
           {
             "field": "PEMode",
@@ -3537,7 +3851,7 @@
       "mnemonic": "B.IOS",
       "ndf_clause": "PTO-INST-BLOCK-B-IOS",
       "source": "asl/block/operands/B.IOS.asl",
-      "summary": "Binds one ordered absolute Core-private Shared register S0..S255 as a source or destination with a common four-PE participation mode decoded to a fixed mask.",
+      "summary": "Binds one ordered absolute Core-private Shared register S0..S63 as a source or destination with a common four-PE participation mode decoded to a fixed mask.",
       "surface": "block"
     },
     {
@@ -3560,7 +3874,9 @@
                 7,
                 8,
                 9,
-                10
+                10,
+                11,
+                12
               ]
             },
             {
@@ -3770,7 +4086,9 @@
                 7,
                 8,
                 9,
-                10
+                10,
+                11,
+                12
               ]
             },
             {
@@ -3980,7 +4298,9 @@
                 7,
                 8,
                 9,
-                10
+                10,
+                11,
+                12
               ]
             },
             {
@@ -4093,7 +4413,7 @@
         ],
         "defaults": [
           "PEMode is a three-bit encoding expanded by the common profile decoder to the fixed four-PE semantic mask: 000 none, 001 PE0, 010 PE1, 011 PE2, 100 PE3, 101 PE0+PE1, 110 PE0+PE1+PE2, and 111 all four PEs.",
-          "SizeCode=0 is the source-only encoding and never allocates; destination forms require SizeCode=1..10 for 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, and 64 KiB per participating PE.",
+          "SizeCode=0 is the source-only encoding and never allocates; destination forms require SizeCode=1..12 for 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, 64 KiB, 128 KiB, and 256 KiB per participating PE.",
           "PEMode=000 decodes to no participating PE and is a strict no-op before placement, duplicate, schema, allocation, descriptor, memory, and downstream fault checks."
         ],
         "encoded_fields": [
@@ -4135,7 +4455,7 @@
             "assigned_ranges": [
               [
                 1,
-                10
+                12
               ]
             ],
             "field": "SizeCode",
@@ -4148,11 +4468,11 @@
                 0
               ],
               [
-                11,
+                13,
                 15
               ]
             ],
-            "role": "source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE",
+            "role": "source-only zero or destination capacity code 1..12: 128 B..256 KiB per participating PE",
             "signedness": "encoding-defined",
             "width": 4,
             "zero_meaning": "Encoded zero selects the source-only form and never allocates; it is reserved in destination forms."
@@ -4314,7 +4634,7 @@
             "assigned_ranges": [
               [
                 1,
-                10
+                12
               ]
             ],
             "field": "SizeCode",
@@ -4327,11 +4647,11 @@
                 0
               ],
               [
-                11,
+                13,
                 15
               ]
             ],
-            "role": "source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE",
+            "role": "source-only zero or destination capacity code 1..12: 128 B..256 KiB per participating PE",
             "signedness": "encoding-defined",
             "width": 4,
             "zero_meaning": "Encoded zero selects the source-only form and never allocates; it is reserved in destination forms."
@@ -4442,7 +4762,7 @@
             "assigned_ranges": [
               [
                 1,
-                10
+                12
               ]
             ],
             "field": "SizeCode",
@@ -4455,11 +4775,11 @@
                 0
               ],
               [
-                11,
+                13,
                 15
               ]
             ],
-            "role": "source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE",
+            "role": "source-only zero or destination capacity code 1..12: 128 B..256 KiB per participating PE",
             "signedness": "encoding-defined",
             "width": 4,
             "zero_meaning": "Encoded zero selects the source-only form and never allocates; it is reserved in destination forms."
@@ -4512,7 +4832,7 @@
         "field_domains": [],
         "legality": [
           "The three-bit PEMode field accepts all eight encodings and the common profile decoder expands them exactly to the fixed four-PE semantic mask table.",
-          "Source-only forms require SizeCode=0. Destination forms require SizeCode=1..10; codes 11..15 are reserved for B.IOT.",
+          "Source-only forms require SizeCode=0. Destination forms require SizeCode=1..12; codes 13..15 are reserved for B.IOT.",
           "PEMode=000 is accepted as the strict no-effect source-bearing encoding; a nonzero decoded mask is a four-PE predicate shared by every effective binding in the block.",
           "A participating B.IOT is legal only after BSTART and before the block body. At most four effective Local bindings are accepted in encoded order.",
           "The selected operation schema determines ordered Local source and destination roles and must agree with the form fields and SizeCode role."
@@ -4535,7 +4855,7 @@
           },
           {
             "field": "SizeCode",
-            "role": "source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE"
+            "role": "source-only zero or destination capacity code 1..12: 128 B..256 KiB per participating PE"
           },
           {
             "field": "PEMode",
@@ -4562,6 +4882,288 @@
       "ndf_clause": "PTO-INST-BLOCK-B-IOT",
       "source": "asl/block/operands/B.IOT.asl",
       "summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
+      "surface": "block"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
+          "asm": "B.SUBVIEW SrcSelect, RegSrc, uimm11, SubviewSizeCode",
+          "constraints": [
+            {
+              "field": "SrcSelect",
+              "operator": "one-of",
+              "values": [
+                0,
+                1
+              ]
+            },
+            {
+              "field": "RegSrc",
+              "operator": "one-of",
+              "values": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23
+              ]
+            },
+            {
+              "field": "SubviewSizeCode",
+              "operator": "one-of",
+              "values": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+              ]
+            }
+          ],
+          "encoding": [
+            {
+              "index": 0,
+              "mask": "0x0000787f",
+              "match": "0x00000053",
+              "width_bits": 32
+            }
+          ],
+          "encoding_kind": "L32",
+          "fields": [
+            {
+              "name": "SrcSelect",
+              "pieces": [
+                {
+                  "instruction_lsb": 31,
+                  "value_lsb": 0,
+                  "width": 1
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 1
+            },
+            {
+              "name": "uimm11",
+              "pieces": [
+                {
+                  "instruction_lsb": 20,
+                  "value_lsb": 0,
+                  "width": 11
+                }
+              ],
+              "signedness": "unsigned",
+              "width": 11
+            },
+            {
+              "name": "RegSrc",
+              "pieces": [
+                {
+                  "instruction_lsb": 15,
+                  "value_lsb": 0,
+                  "width": 5
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 5
+            },
+            {
+              "name": "SubviewSizeCode",
+              "pieces": [
+                {
+                  "instruction_lsb": 7,
+                  "value_lsb": 0,
+                  "width": 4
+                }
+              ],
+              "signedness": "encoding-defined",
+              "width": 4
+            }
+          ],
+          "form_id": "b_subview_32_122000000001",
+          "length_bits": 32,
+          "mnemonic": "B.SUBVIEW",
+          "semantic_family": "CMD",
+          "semantic_group": "Bundle Range Modifier",
+          "semantic_handler": "ApplyBundleSubview",
+          "semantic_summary": "Decodes one source-range subview modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
+          "status": "accepted"
+        }
+      ],
+      "classification": [
+        "operands"
+      ],
+      "contract": {
+        "block_composition": [
+          "Immediately follows B.IOT or B.IOS and is contiguous with the associated modifier group."
+        ],
+        "canonical_assembly": [
+          "B.SUBVIEW SrcSelect, RegSrc, uimm11, SubviewSizeCode"
+        ],
+        "defaults": [
+          "uimm11 is unsigned and zero-extended. RegSrc zero names the architectural zero GPR."
+        ],
+        "encoded_fields": [
+          {
+            "assigned_ranges": [
+              [
+                0,
+                1
+              ]
+            ],
+            "field": "SrcSelect",
+            "form_id": "b_subview_32_122000000001",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "selects source0 or source1 carrier",
+            "signedness": "encoding-defined",
+            "width": 1,
+            "zero_meaning": "Zero selects source role zero."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                2047
+              ]
+            ],
+            "field": "uimm11",
+            "form_id": "b_subview_32_122000000001",
+            "other_owner_values": [],
+            "rejection": "none",
+            "reserved_ranges": [],
+            "role": "unsigned XLEN addend",
+            "signedness": "unsigned",
+            "width": 11,
+            "zero_meaning": "Zero is a real zero displacement."
+          },
+          {
+            "assigned_ranges": [
+              [
+                0,
+                23
+              ]
+            ],
+            "field": "RegSrc",
+            "form_id": "b_subview_32_122000000001",
+            "other_owner_values": [],
+            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
+            "reserved_ranges": [
+              [
+                24,
+                31
+              ]
+            ],
+            "role": "absolute GPR selector",
+            "signedness": "encoding-defined",
+            "width": 5,
+            "zero_meaning": "Zero names the architectural zero GPR."
+          },
+          {
+            "assigned_ranges": [
+              [
+                1,
+                12
+              ]
+            ],
+            "field": "SubviewSizeCode",
+            "form_id": "b_subview_32_122000000001",
+            "other_owner_values": [],
+            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
+            "reserved_ranges": [
+              [
+                0,
+                0
+              ],
+              [
+                13,
+                15
+              ]
+            ],
+            "role": "decoded source tile range size",
+            "signedness": "encoding-defined",
+            "width": 4,
+            "zero_meaning": "Zero is reserved."
+          }
+        ],
+        "encoding_class": "standalone-encoded",
+        "examples": [
+          "B.IOT T0, mask=1111; B.SUBVIEW 0, a0, 0, 1"
+        ],
+        "exceptions": [
+          "Reserved funct3/bit11/opcode, RegSrc24..31, and SubviewSizeCode0/13..15 raise Fault_IllegalInstruction before GPR reads, carrier updates, or TPC advance.",
+          "Missing, reversed, duplicate, intervening, or role-incompatible groups raise Fault_BundleControl before carrier updates."
+        ],
+        "field_domains": [],
+        "legality": [
+          "RegSrc accepts only absolute GPR selectors 0..23.",
+          "SubviewSizeCode accepts 1..12 for both Local and Shared groups.",
+          "A modifier is legal only in the contiguous immediately preceding B.IOT/B.IOS group and follows source0, source1, destination role order."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "SrcSelect",
+            "role": "selects source0 or source1 carrier"
+          },
+          {
+            "field": "RegSrc",
+            "role": "absolute GPR selector"
+          },
+          {
+            "field": "uimm11",
+            "role": "unsigned XLEN addend"
+          },
+          {
+            "field": "SubviewSizeCode",
+            "role": "decoded source tile range size"
+          }
+        ],
+        "ordering": [
+          "Decode fixed/reserved fields and raw ranges before any GPR read; compute GPR[RegSrc]+ZeroExtend(uimm11) modulo 2^XLEN after group legality."
+        ],
+        "standalone_opcode": true,
+        "state_effects": [
+          "Store raw RegSrc/uimm11/size and the derived XLEN offset in the source carrier of the open binder group.",
+          "PEMode=000 on the binder opens a discarded syntactic group; every raw-legal contiguous modifier advances TPC without reads, state, role, or fault effects."
+        ]
+      },
+      "documentation": "docs/block/operands/B.SUBVIEW.md",
+      "engine": null,
+      "mnemonic": "B.SUBVIEW",
+      "ndf_clause": "PTO-INST-BLOCK-B-SUBVIEW",
+      "source": "asl/block/operands/B.SUBVIEW.asl",
+      "summary": "Decodes one source-range subview modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
       "surface": "block"
     },
     {
@@ -9923,7 +10525,7 @@
       "contract": {
         "block_composition": [
           "Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and byte row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.",
-          "Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S255, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride.",
+          "Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S63, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride.",
           "Local CUBE destination: encode B.DATR Layout ND2M32, ND2M16, or ND2N8 with DataType=DTYPE_NONE; require LB0=valid columns and LB1=valid rows, omit LB2, and use one terminating destination B.IOT."
         ],
         "canonical_assembly": [
@@ -10439,7 +11041,7 @@
         "legality": [
           "The carrier selects exactly CUBE Function 0 and TileOperation_TMATMUL.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -10749,7 +11351,7 @@
           "The carrier selects exactly CUBE Function 2 and TileOperation_TMATMUL_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
           "C and D are both mandatory. In decoded blocks C's six-bit relative selector must differ from zero-extended DstTile before rename; direct Tile calls require destination TileIndex to differ from accumulator TileIndex.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. C is one explicit Local MxN accumulator source and D is a distinct newly published destination; C's encoded relative selector and D's zero-extended DstTile hand must differ before rename. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -11058,7 +11660,7 @@
         "legality": [
           "The carrier selects exactly CUBE Function 1 and TileOperation_TMATMUL_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -11366,7 +11968,7 @@
         "legality": [
           "The carrier selects exactly CUBE Function 4 and TileOperation_TMATMUL_MX.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -11676,7 +12278,7 @@
           "The carrier selects exactly CUBE Function 6 and TileOperation_TMATMUL_MX_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
           "C and D are both mandatory. In decoded blocks C's six-bit relative selector must differ from zero-extended DstTile before rename; direct Tile calls require destination TileIndex to differ from accumulator TileIndex.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. C is one explicit Local MxN accumulator source and D is a distinct newly published destination; C's encoded relative selector and D's zero-extended DstTile hand must differ before rename. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -11985,7 +12587,7 @@
         "legality": [
           "The carrier selects exactly CUBE Function 5 and TileOperation_TMATMUL_MX_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -124017,7 +124619,7 @@
       "contract": {
         "block_composition": [
           "Local: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM defines ValidCol, ValidRow, and physical Col; optional B.IOR defines the per-PE GM base and byte row stride; one terminating destination B.IOT allocates the result; BSTOP commits.",
-          "Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S255, per-PE TSize, and PE_MASK. Local sources, Shared sources, multiple destinations, and mixed destination domains are illegal."
+          "Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S63, per-PE TSize, and PE_MASK. Local sources, Shared sources, multiple destinations, and mixed destination domains are illegal."
         ],
         "canonical_assembly": [
           "TLOAD <bundle operands>"
@@ -124340,7 +124942,7 @@
         "legality": [
           "The carrier selects exactly CUBE Function 0 and TileOperation_TMATMUL.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -124492,7 +125094,7 @@
           "The carrier selects exactly CUBE Function 2 and TileOperation_TMATMUL_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize.",
           "C and D are both mandatory. In decoded blocks C's six-bit relative selector must differ from zero-extended DstTile before rename; direct Tile calls require destination TileIndex to differ from accumulator TileIndex.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. C is one explicit Local MxN accumulator source and D is a distinct newly published destination; C's encoded relative selector and D's zero-extended DstTile hand must differ before rename. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -124647,7 +125249,7 @@
         "legality": [
           "The carrier selects exactly CUBE Function 1 and TileOperation_TMATMUL_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "AType and BType must be supported ordinary Matrix types from one numeric class. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -124809,7 +125411,7 @@
         "legality": [
           "The carrier selects exactly CUBE Function 4 and TileOperation_TMATMUL_MX.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -124985,7 +125587,7 @@
           "The carrier selects exactly CUBE Function 6 and TileOperation_TMATMUL_MX_ACC.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout; Local C also uses A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Required E8M0 scales remain ordinary row-major Tiles.",
           "C and D are both mandatory. In decoded blocks C's six-bit relative selector must differ from zero-extended DstTile before rename; direct Tile calls require destination TileIndex to differ from accumulator TileIndex.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. C is one explicit Local MxN accumulator source and D is a distinct newly published destination; C's encoded relative selector and D's zero-extended DstTile hand must differ before rename. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -125164,7 +125766,7 @@
         "legality": [
           "The carrier selects exactly CUBE Function 5 and TileOperation_TMATMUL_MX_BIAS.",
           "Local A uses persistent CUBE_M16 or CUBE_M32, Local B uses persistent CUBE_N8, and D is newly allocated in A's M layout. M, N, and K are arbitrary positive values independent of per-PE TSize. Bias remains an ordinary row-major 1xN accumulator-type Tile. Required E8M0 scales remain ordinary row-major Tiles.",
-          "A Shared primary must be fully published with all four fixed quarters ready. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
+          "A Shared primary must be fully published with all four fixed quarters ready. When A is Shared, M, N, and K are per-PE dimensions, Shared A has group shape (4*M)xK, PE i consumes rows [i*M,(i+1)*M), and Shared B has shape KxN. TransA and TransB apply only to their corresponding Shared primary. Right-only Shared inherits Local A layout; all-Shared ACC inherits C layout; all-Shared non-ACC selects M16 through M=16 and M32 through M=32.",
           "Each matrix side independently requires an E8M0 scale exactly when its MX input type is not FP16 or BF16. Bias is one Local row-major 1xN accumulator-type source. Published Shared operands may replace the right group or both matrix groups; supplementary operands and destinations remain Local.",
           "Every common nonzero four-bit PE_MASK is legal; all four PEs complete cooperative Shared readiness while only selected PEs allocate and publish. Mask zero is a strict no-op before descriptor reads, faults, allocation, readiness checks, or lifetime effects.",
           "B.DATR permits only BType, RMode, and Sat. Exactly one B.FPATR is mandatory and closes the conditional postprocess schema."
@@ -134748,7 +135350,7 @@
         "operands": [
           {
             "field": "source0",
-            "role": "Local Tile or absolute Shared S0..S255 source"
+            "role": "Local Tile or absolute Shared S0..S63 source"
           },
           {
             "field": "address",
@@ -136336,8 +136938,8 @@
   ],
   "schema": "pto.instruction-contract-closure.v1",
   "summary": {
-    "encoded_form_count": 540,
-    "mnemonic_count": 634,
+    "encoded_form_count": 542,
+    "mnemonic_count": 636,
     "placeholder_count": 0,
     "selector_operation_count": 109,
     "status": "closed",

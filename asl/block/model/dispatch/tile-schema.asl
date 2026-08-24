@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","surface":"block","classification":["model","dispatch","tile-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-TILE-MODEL-EXECUTION-UNARY"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","surface":"block","classification":["model","dispatch","tile-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-EXECUTION-UNARY"]}
 func BundleTileInstructionOperands(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
     => TileInstructionOperands
@@ -27,21 +27,21 @@ begin
             if _BundleTileBindings[[binding]].source0_valid then
                 case source_count of
                     when 0 => operands.source0 =
-                        _BundleTileBindings[[binding]].source0;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     when 1 => operands.source1 =
-                        _BundleTileBindings[[binding]].source0;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     when 2 => operands.source2 =
-                        _BundleTileBindings[[binding]].source0;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     when 3 => operands.source3 =
-                        _BundleTileBindings[[binding]].source0;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     when 4 => operands.source4 =
-                        _BundleTileBindings[[binding]].source0;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     when 5 => operands.source5 =
-                        _BundleTileBindings[[binding]].source0;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     when 6 => operands.source6 =
-                        _BundleTileBindings[[binding]].source0;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     when 7 => operands.source7 =
-                        _BundleTileBindings[[binding]].source0;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     otherwise => unreachable;
                 end;
                 source_count = source_count + 1;
@@ -49,21 +49,21 @@ begin
             if _BundleTileBindings[[binding]].source1_valid then
                 case source_count of
                     when 0 => operands.source0 =
-                        _BundleTileBindings[[binding]].source1;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     when 1 => operands.source1 =
-                        _BundleTileBindings[[binding]].source1;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     when 2 => operands.source2 =
-                        _BundleTileBindings[[binding]].source1;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     when 3 => operands.source3 =
-                        _BundleTileBindings[[binding]].source1;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     when 4 => operands.source4 =
-                        _BundleTileBindings[[binding]].source1;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     when 5 => operands.source5 =
-                        _BundleTileBindings[[binding]].source1;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     when 6 => operands.source6 =
-                        _BundleTileBindings[[binding]].source1;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     when 7 => operands.source7 =
-                        _BundleTileBindings[[binding]].source1;
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     otherwise => unreachable;
                 end;
                 source_count = source_count + 1;
@@ -331,12 +331,12 @@ begin
     if BundleTileBindingCount() != 1 || BundleSharedBindingCount() != 0 then
         return FALSE;
     end;
-    let binding = _BundleTileBindings[[0]];
-    if !binding.destination_valid || binding.destination_allocated_by_bundle ||
+    if !_BundleTileBindings[[0]].destination_valid ||
+       _BundleTileBindings[[0]].destination_allocated_by_bundle ||
        !BundleTileDestinationSizeLegal(0) ||
-       !binding.source0_valid || !binding.source1_valid || !binding.last then
-        return FALSE;
-    end;
+       !_BundleTileBindings[[0]].source0_valid ||
+       !_BundleTileBindings[[0]].source1_valid ||
+       !_BundleTileBindings[[0]].last then return FALSE; end;
     if !_BundleDimensionPresent[[0]] ||
        UInt(_BundleDimensions[[0]]) < 1 ||
        UInt(_BundleDimensions[[0]]) > 65535 then return FALSE; end;

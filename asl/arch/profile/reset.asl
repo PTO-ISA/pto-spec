@@ -129,6 +129,7 @@ begin
         _TrapContexts[[ring]].bundle_fixed_point_attributes.max_abs_en = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.trans_a = FALSE;
         _TrapContexts[[ring]].bundle_fixed_point_attributes.trans_b = FALSE;
+        _TrapContexts[[ring]].bundle_range_group = _BundleRangeGroup;
         _TrapContexts[[ring]].memory_copy_template = _MemoryCopyTemplate;
         _TrapContexts[[ring]].frame_template = _FrameTemplate;
         _TrapContexts[[ring]].t_queue = _TQueue;

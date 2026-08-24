@@ -52,6 +52,7 @@ begin
     _BundleScalarBindings = _TrapContexts[[target]].bundle_scalar_bindings;
     _BundleTileBindings = _TrapContexts[[target]].bundle_tile_bindings;
     _BundleSharedBindings = _TrapContexts[[target]].bundle_shared_bindings;
+    _BundleRangeGroup = _TrapContexts[[target]].bundle_range_group;
     _BundleZeroParticipationSeen =
         _TrapContexts[[target]].bundle_zero_participation_seen;
     _BundleControlAttributes =
@@ -62,6 +63,10 @@ begin
     _BundleHint = _TrapContexts[[target]].bundle_hint;
     _BundleFixedPointAttributes =
         _TrapContexts[[target]].bundle_fixed_point_attributes;
+    _LocalGenerations = _TrapContexts[[target]].local_generations;
+    _SharedGenerations = _TrapContexts[[target]].shared_generations;
+    _BundleExecutionDomainToken =
+        _TrapContexts[[target]].bundle_execution_domain_token;
     _MemoryCopyTemplate = _TrapContexts[[target]].memory_copy_template;
     _FrameTemplate = _TrapContexts[[target]].frame_template;
     for index = 0 to PTO_TEMPORARY_QUEUE_DEPTH - 1 do

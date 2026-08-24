@@ -36,6 +36,7 @@ class PullRequestCheckTest(unittest.TestCase):
                 "python3 scripts/project_asl_catalogs.py --root . --check",
                 "python3 scripts/instruction_docs.py --check",
                 "python3 scripts/generate-mnemonic-avs.py --check",
+                "python3 scripts/generate-bundle-operation-matrix.py --check",
                 "python3 scripts/check-publication-hygiene",
                 "git diff --check",
             ],

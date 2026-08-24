@@ -7736,12 +7736,175 @@
         "0.58.3"
       ],
       "title": "Re-encode B.IOT and B.IOS size and PE mode fields"
+    },
+    {
+      "accepted": "2026-08-23",
+      "affected_ndf": [
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-B-IOT-STREAM-001",
+        "PTO-CUBE-SHARED-M-SHARD-001",
+        "PTO-TILE-CAPACITY-PER-PE"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-INTEGER",
+        "PTO-ARCH-FEATURES-TILE-ALLOCATION",
+        "PTO-ARCH-OVERVIEW-ARCHITECTURE",
+        "PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY",
+        "PTO-BLOCK-B-IOS",
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+        "PTO-BLOCK-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-CAPACITY-LOCAL",
+        "PTO-TILE-MODEL-CAPACITY-SHARED",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-STATE-DESCRIPTORS",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+        "PTO-TILE-MODEL-STATE-TYPES"
+      ],
+      "approvers": [
+        "PTO ISA maintainers"
+      ],
+      "authors": [
+        "Kevin Zhou <zhoubot@gmail.com>"
+      ],
+      "baseline": "e599a3d36ebfad43362ff591ea5e128816c684c7",
+      "created": "2026-08-23",
+      "id": "ADR-0097",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/132",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0097-local-shared-capacity-and-cooperative-m-sharding.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.4"
+      ],
+      "title": "Local and Shared capacity pools with cooperative M-sharding"
+    },
+    {
+      "accepted": "2026-08-21",
+      "affected_ndf": [
+        "PTO-B-IOT-STREAM-001",
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-B-SUBVIEW-RANGE-001",
+        "PTO-B-ASSEMBLE-RANGE-001",
+        "PTO-B-SUBVIEW-DESCRIPTOR-001",
+        "PTO-BLOCK-TILE-OPERATION-APPLICABILITY-001",
+        "PTO-B-ASSEMBLE-LOCAL-GENERATION-001",
+        "PTO-B-ASSEMBLE-SHARED-GENERATION-001",
+        "PTO-B-ASSEMBLE-SHARED-STANDALONE-001",
+        "PTO-B-ASSEMBLE-CONSUMER-READINESS-001",
+        "PTO-B-ASSEMBLE-SPECULATION-001",
+        "PTO-B-ASSEMBLE-PRODUCER-EFFECT-ELIGIBILITY-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-PROFILE-RESET",
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-B-IOS",
+        "PTO-BLOCK-B-SUBVIEW",
+        "PTO-BLOCK-B-ASSEMBLE",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS",
+        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+        "PTO-BLOCK-MODEL-STATE-CONTROL-STATE",
+        "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+        "PTO-BLOCK-MODEL-STATE-TYPES",
+        "PTO-ARCH-DATA-TYPES-TRAP-CONTEXT",
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-ARCH-PROFILE-TRAP-CONTEXT-RECOVERY",
+        "PTO-ARCH-STATE-TRAP-CONTEXT",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-FAULTS-ROLLBACK",
+        "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+        "PTO-BLOCK-MODEL-STATE-SHARED-GENERATION",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "baseline": "23ca8833fef3f97dbc65beef4924b0b4671cdfdf",
+      "created": "2026-08-21",
+      "id": "ADR-0098",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/122",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0098-b-range-modifiers.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.4"
+      ],
+      "title": "B.SUBVIEW and B.ASSEMBLE range-modifier association"
+    },
+    {
+      "accepted": "2026-08-22",
+      "affected_ndf": [
+        "PTO-B-IOT-STREAM-001",
+        "PTO-B-IOS-SHARED-STATE-001",
+        "PTO-B-SUBVIEW-RANGE-001",
+        "PTO-B-ASSEMBLE-RANGE-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY",
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-B-IOS",
+        "PTO-BLOCK-B-SUBVIEW",
+        "PTO-BLOCK-B-ASSEMBLE",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "ckwllawliet <641433195@qq.com>"
+      ],
+      "baseline": "23ca8833fef3f97dbc65beef4924b0b4671cdfdf",
+      "created": "2026-08-22",
+      "id": "ADR-0099",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/123",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0099-0583-to-0584-compatibility.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.4"
+      ],
+      "title": "PTO ISA 0.58.3 to 0.58.4 compatibility boundary"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 91
+    "record_count": 94
   }
 }

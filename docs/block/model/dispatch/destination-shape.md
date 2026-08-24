@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/destination-shape.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 
 pure func SmallestTilePhysicalColumns(
     valid_columns: integer {1..65535}) => integer {0..65535}
@@ -77,17 +77,6 @@ begin
     else
         return BundleDestinationValidColumns(FALSE, 0);
     end;
-end;
-
-readonly func BundleGroupMaxColumns(columns: integer {0..65535})
-                                      => integer {0..65535}
-begin
-    let group_n = BundleFPATRGroupN(_BundleFixedPointAttributes.group_n_code);
-    if !_BundleFixedPointAttributes.group_max_en || group_n == 0 then
-        return columns;
-    end;
-    return ((columns + (group_n - 1)) DIVRM group_n)
-        as integer {0..65535};
 end;
 
 readonly func BundleLocalDestinationCapacityGroupFits() => boolean
@@ -192,10 +181,12 @@ begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if !shape_source_valid && _BundleTileBindings[[binding]].valid then
             if _BundleTileBindings[[binding]].source0_valid then
-                shape_source = _BundleTileBindings[[binding]].source0;
+                shape_source = BundleTileSourceIndex(
+                    binding as BundleTileBindingIndex, FALSE);
                 shape_source_valid = TRUE;
             elsif _BundleTileBindings[[binding]].source1_valid then
-                shape_source = _BundleTileBindings[[binding]].source1;
+                shape_source = BundleTileSourceIndex(
+                    binding as BundleTileBindingIndex, TRUE);
                 shape_source_valid = TRUE;
             end;
         end;
@@ -391,6 +382,15 @@ end;
 func ResolveBundleTileDestinationsForOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
+    // CUBE matrix handlers own the primary CUBE destination shape and
+    // atomic allocation group.  Leave the binding unresolved here so the
+    // selected handler can apply its authoritative M/N/layout/type rules;
+    // the generic RowMajor resolver would mark the destination as already
+    // allocated and prevent that conversion.
+    if _BundleOperation.valid &&
+       _BundleOperation.operation_class == BundleOperation_TileMatrix then
+        return TRUE;
+    end;
     if TileOperationUsesClosedSortingSchema(operation) then
         let decoded = TileOperationOfIndex(operation);
         let source_left = BundleSortingSourceAt(0);

@@ -1,7 +1,7 @@
 {
   "$schema": "spec/schemas/pto-release-selection.schema.json",
-  "architecture_version": "0.58.3",
-  "baseline_commit": "3c7be2468dc0d9bbd3f2178f20f7626115695360",
+  "architecture_version": "0.58.4",
+  "baseline_commit": "e599a3d36ebfad43362ff591ea5e128816c684c7",
   "excluded_draft_adrs": [
     "ADR-0086",
     "ADR-0087",

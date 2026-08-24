@@ -140,10 +140,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0066-addtpc-page-scaled-immediate.md",
         "spec/catalog/scalar-forms.json",
         "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0066-addtpc-page-scaled-immediate.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 5,
@@ -2421,10 +2421,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0066-addtpc-page-scaled-immediate.md",
         "spec/catalog/scalar-forms.json",
         "spec/evidence/instruction-contract-closure.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0066-addtpc-page-scaled-immediate.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 119,
@@ -9367,10 +9367,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 0,
@@ -9395,10 +9395,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 1,
@@ -9419,10 +9419,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 2,
@@ -9443,10 +9443,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 3,
@@ -9467,10 +9467,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 4,
@@ -9491,10 +9491,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 5,
@@ -9515,10 +9515,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 6,
@@ -9539,10 +9539,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 7,
@@ -9567,10 +9567,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 8,
@@ -9595,10 +9595,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 9,
@@ -9619,10 +9619,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 10,
@@ -9647,10 +9647,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 11,
@@ -9675,10 +9675,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 12,
@@ -9699,10 +9699,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 13,
@@ -9723,10 +9723,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 14,
@@ -9747,10 +9747,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 15,
@@ -9771,10 +9771,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
       "index": 16,
@@ -9795,10 +9795,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 17,
@@ -9819,10 +9819,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 18,
@@ -9843,10 +9843,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 19,
@@ -9867,10 +9867,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 20,
@@ -9891,10 +9891,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 21,
@@ -9915,10 +9915,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 22,
@@ -9939,10 +9939,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 23,
@@ -9963,10 +9963,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 24,
@@ -9987,10 +9987,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 25,
@@ -10011,10 +10011,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 26,
@@ -10035,10 +10035,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 27,
@@ -10059,10 +10059,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 28,
@@ -10083,10 +10083,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 29,
@@ -10107,10 +10107,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 30,
@@ -10131,10 +10131,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 31,
@@ -10155,10 +10155,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 32,
@@ -10183,10 +10183,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 33,
@@ -10207,10 +10207,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 34,
@@ -10231,10 +10231,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 35,
@@ -10255,10 +10255,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 36,
@@ -10279,10 +10279,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 37,
@@ -10303,10 +10303,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 38,
@@ -10327,10 +10327,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 39,
@@ -10351,10 +10351,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 40,
@@ -10375,10 +10375,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 41,
@@ -10399,10 +10399,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 42,
@@ -10423,10 +10423,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 43,
@@ -10447,10 +10447,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 44,
@@ -10471,10 +10471,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 45,
@@ -10495,10 +10495,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 46,
@@ -10519,10 +10519,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 47,
@@ -10543,10 +10543,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
       "index": 48,
@@ -10567,10 +10567,10 @@
       "classification": "non-comparable",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
       "index": 49,
@@ -10591,10 +10591,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 50,
@@ -10615,10 +10615,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 51,
@@ -10639,10 +10639,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
       "index": 52,
@@ -10663,10 +10663,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 53,
@@ -10687,10 +10687,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 54,
@@ -10711,10 +10711,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 55,
@@ -10735,10 +10735,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 56,
@@ -10759,10 +10759,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 57,
@@ -10783,10 +10783,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 58,
@@ -10807,10 +10807,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 59,
@@ -10831,10 +10831,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 60,
@@ -10855,10 +10855,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 61,
@@ -10879,10 +10879,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 62,
@@ -10903,10 +10903,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 63,
@@ -10927,10 +10927,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 64,
@@ -10951,10 +10951,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 65,
@@ -10975,10 +10975,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 66,
@@ -11003,10 +11003,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 67,
@@ -11027,10 +11027,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 68,
@@ -11051,10 +11051,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 69,
@@ -11075,10 +11075,10 @@
       "classification": "comparable-match",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 70,
@@ -11099,10 +11099,10 @@
       "classification": "divergence",
       "encoding_match": true,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
       "index": 71,
@@ -11123,10 +11123,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
       "index": 72,
@@ -11147,10 +11147,10 @@
       "classification": "divergence",
       "encoding_match": false,
       "evidence": [
+        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
         "spec/catalog/command-forms.json",
         "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
       "index": 73,
@@ -11171,10 +11171,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11196,10 +11195,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11221,10 +11219,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11246,10 +11243,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11275,10 +11271,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11300,10 +11295,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11325,10 +11319,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11350,10 +11343,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11375,10 +11367,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11400,10 +11391,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11429,10 +11419,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11458,10 +11447,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11487,10 +11475,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11516,10 +11503,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11545,10 +11531,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11574,10 +11559,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11603,10 +11587,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11632,10 +11615,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11661,10 +11643,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11690,10 +11671,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11719,10 +11699,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11748,10 +11727,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11777,10 +11755,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11806,10 +11783,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11831,10 +11807,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "missing",
@@ -11856,10 +11831,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11881,10 +11855,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11906,10 +11879,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11931,10 +11903,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11960,10 +11931,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -11985,10 +11955,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12010,10 +11979,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12035,10 +12003,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12060,10 +12027,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12085,10 +12051,9 @@
       "bundle_bridge_representable": true,
       "classification": "comparable-match",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12114,10 +12079,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12143,10 +12107,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12172,10 +12135,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12201,10 +12163,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12230,10 +12191,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12259,10 +12219,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12288,10 +12247,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12317,10 +12275,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12346,10 +12303,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12375,10 +12331,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12404,10 +12359,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12433,10 +12387,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12462,10 +12415,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12491,10 +12443,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12520,10 +12471,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12549,10 +12499,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12578,10 +12527,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12607,10 +12555,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12636,10 +12583,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12665,10 +12611,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12694,10 +12639,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12723,10 +12667,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12752,10 +12695,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12781,10 +12723,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12810,10 +12751,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12839,10 +12779,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12868,10 +12807,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12897,10 +12835,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12926,10 +12863,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12955,10 +12891,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -12984,10 +12919,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13013,10 +12947,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13042,10 +12975,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13071,10 +13003,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13100,10 +13031,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13129,10 +13059,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13158,10 +13087,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13187,10 +13115,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13216,10 +13143,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13245,10 +13171,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13274,10 +13199,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13303,10 +13227,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13332,10 +13255,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13361,10 +13283,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13390,10 +13311,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13419,10 +13339,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13448,10 +13367,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13477,10 +13395,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13506,10 +13423,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13535,10 +13451,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13564,10 +13479,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13593,10 +13507,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0035-vec-sfu-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0035-vec-sfu-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "TEPL",
       "independent_status": "selector-manifest",
@@ -13618,9 +13531,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -13642,9 +13555,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -13666,9 +13579,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -13690,9 +13603,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -13714,9 +13627,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -13738,9 +13651,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -13762,9 +13675,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -13786,9 +13699,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -13810,9 +13723,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "header-manifest",
@@ -13834,9 +13747,9 @@
       "bundle_bridge_representable": true,
       "classification": "divergence",
       "evidence": [
+        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md",
         "spec/catalog/tile-operations.json",
-        "spec/evidence/tlsu-totality.json",
-        "docs/status/decisions/0033-tlsu-four-bit-memory-packing.md"
+        "spec/evidence/tlsu-totality.json"
       ],
       "family": "TLSU",
       "independent_status": "missing",
@@ -13858,10 +13771,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -13883,10 +13795,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -13908,10 +13819,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -13933,10 +13843,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -13958,10 +13867,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -13983,10 +13891,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14008,10 +13915,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14033,10 +13939,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14058,10 +13963,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14083,10 +13987,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14108,10 +14011,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14133,10 +14035,9 @@
       "bundle_bridge_representable": true,
       "classification": "non-comparable",
       "evidence": [
+        "docs/status/decisions/0034-cube-raw-carrier-totality.md",
         "spec/catalog/tile-operations.json",
-        "spec/catalog/tile-operations.json",
-        "spec/evidence/release-traceability-readiness.json",
-        "docs/status/decisions/0034-cube-raw-carrier-totality.md"
+        "spec/evidence/release-traceability-readiness.json"
       ],
       "family": "CUBE",
       "independent_status": "header-manifest",
@@ -14152,11 +14053,53 @@
       "selector_match": true,
       "stable_id": "cube:0x016:TGEMV_MX_ACC",
       "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 74,
+      "mnemonic": "B.ASSEMBLE",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ApplyBundleAssemble",
+      "stable_id": "b_assemble_32_122000000002",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 75,
+      "mnemonic": "B.SUBVIEW",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ApplyBundleSubview",
+      "stable_id": "b_subview_32_122000000001",
+      "surface": "command"
     }
   ],
   "schema": "pto.executable-model-comparison.v1",
   "scope": {
-    "command_forms": 74,
+    "command_forms": 76,
     "direct_tile_breakdown": {
       "CUBE": 12,
       "TEPL": 87,
@@ -14164,7 +14107,7 @@
     },
     "direct_tile_operations": 109,
     "scalar_forms": 466,
-    "total_rows": 649
+    "total_rows": 651
   },
   "snapshot": {
     "content_hashes": {
@@ -14284,19 +14227,19 @@
   "summary": {
     "classification_counts": {
       "comparable-match": 517,
-      "divergence": 94,
+      "divergence": 96,
       "non-comparable": 38
     },
     "independent_status_counts": {
       "decode-only": 17,
       "executable-subset": 518,
       "header-manifest": 21,
-      "missing": 7,
+      "missing": 9,
       "selector-manifest": 86
     },
-    "row_count": 649,
+    "row_count": 651,
     "surface_counts": {
-      "command": 74,
+      "command": 76,
       "direct-tile": 109,
       "scalar": 466
     },

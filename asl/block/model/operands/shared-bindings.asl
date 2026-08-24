@@ -50,6 +50,17 @@ begin
     return count;
 end;
 
+readonly func BundleSharedBindingLastIndex() => integer {0..3}
+begin
+    var last: integer {0..3} = 0;
+    for index = 0 to 3 do
+        if _BundleSharedBindings[[index]].valid then
+            last = index as integer {0..3};
+        end;
+    end;
+    return last;
+end;
+
 readonly func BundleSharedBindingId(ordinal: integer {0..3}) => SharedTileID
 begin
     assert _BundleSharedBindings[[ordinal]].valid &&

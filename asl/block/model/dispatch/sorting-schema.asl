@@ -17,13 +17,15 @@ begin
         if _BundleTileBindings[[binding]].valid then
             if _BundleTileBindings[[binding]].source0_valid then
                 if current == ordinal then
-                    selected = _BundleTileBindings[[binding]].source0;
+                    selected = BundleTileSourceIndex(
+                        binding as BundleTileBindingIndex, FALSE);
                 end;
                 current = (current + 1) as integer {0..2};
             end;
             if _BundleTileBindings[[binding]].source1_valid then
                 if current == ordinal then
-                    selected = _BundleTileBindings[[binding]].source1;
+                    selected = BundleTileSourceIndex(
+                        binding as BundleTileBindingIndex, TRUE);
                 end;
                 current = (current + 1) as integer {0..2};
             end;

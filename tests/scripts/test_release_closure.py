@@ -30,13 +30,13 @@ def pending_release_decisions() -> tuple[str, ...]:
 
 
 class ReleaseClosureTest(unittest.TestCase):
-    def test_release_identity_is_0583_and_owns_0583_evidence(self) -> None:
+    def test_working_identity_is_0584_and_published_0583_owns_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
 
-        self.assertIn('architecture_version = "0.58.3"', specification)
+        self.assertIn('architecture_version = "0.58.4"', specification)
         self.assertIn(
-            'encoding_abi = "pto-isa-0.58.3-mode-function-v1"', specification
+            'encoding_abi = "pto-isa-0.58.4-mode-function-v1"', specification
         )
         self.assertIn('RELEASE = "0.58.3"', generator)
         self.assertIn(

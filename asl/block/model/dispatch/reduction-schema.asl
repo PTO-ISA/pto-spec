@@ -64,7 +64,7 @@ begin
         return FALSE;
     end;
 
-    let source = binding.source0;
+    let source = BundleTileSourceIndex(0, FALSE);
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode()
             as TileDataTypeEncoding);

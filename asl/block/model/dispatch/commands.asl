@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMANDS","surface":"block","classification":["model","dispatch","commands"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-START"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMANDS","surface":"block","classification":["model","dispatch","commands"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-START","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS"]}
 readonly func BundleFixedPointAttributesCanBePlaced() => boolean
 begin
     if !_BundleActive ||
@@ -28,6 +28,13 @@ begin
     if !CommandHandlerSupportedPTOv0(handler) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return CommandExecution_Rejected;
+    end;
+    let range_modifier = handler == CommandHandler_ApplyBundleSubview ||
+        handler == CommandHandler_ApplyBundleAssemble;
+    if !range_modifier then
+        // Any non-modifier command terminates the immediately preceding
+        // binder/modifier group.  The association is never retroactive.
+        CloseBundleRangeGroup();
     end;
     if handler == CommandHandler_ExecuteQueueMove then
         let flags = CommandDecodedQueueMoveFlags(instruction, form);
@@ -164,6 +171,8 @@ begin
                 // allocation, descriptor, and operation-specific checks.
                 if _BundleActive && !_BundleBodyActive then
                     _BundleZeroParticipationSeen = TRUE;
+                    OpenBundleRangeSharedGroup(TRUE, shared_size == 0,
+                        shared_size != 0);
                 end;
                 WriteTPC(ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8)));
                 return CommandExecution_Executed;
@@ -177,6 +186,10 @@ begin
                     CommandField_SharedTileID)[5:0] as SharedTileID,
                 shared_size,
                 shared_mask);
+            if _LastFault == Fault_None then
+                OpenBundleRangeSharedGroup(FALSE, shared_size == 0,
+                    shared_size != 0);
+            end;
         when CommandHandler_BindBundleScalarIO =>
             if !_BundleActive || _BundleBodyActive ||
                _BundleScalarBindings[[0]].valid then
@@ -210,6 +223,10 @@ begin
                 // placement, stream, schema, allocation, and descriptor check.
                 if _BundleActive && !_BundleBodyActive then
                     _BundleZeroParticipationSeen = TRUE;
+                    OpenBundleRangeTileGroup(TRUE,
+                        CommandOperandPresent(form, CommandField_SrcTile0),
+                        CommandOperandPresent(form, CommandField_SrcTile1),
+                        CommandOperandPresent(form, CommandField_DstTile));
                 end;
                 WriteTPC(ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8)));
                 return CommandExecution_Executed;
@@ -249,6 +266,76 @@ begin
                 else 0,
                 CommandOperandPresent(form, CommandField_L) &&
                     CommandDecodedBool(instruction, form, CommandField_L));
+            if _LastFault == Fault_None then
+                OpenBundleRangeTileGroup(FALSE,
+                    CommandOperandPresent(form, CommandField_SrcTile0),
+                    CommandOperandPresent(form, CommandField_SrcTile1),
+                    CommandOperandPresent(form, CommandField_DstTile));
+            end;
+        when CommandHandler_ApplyBundleSubview =>
+            let reg_src = CommandDecodedReg5(instruction, form,
+                CommandField_RegSrc);
+            let size_code = CommandDecodedSmall(instruction, form,
+                CommandField_SubviewSizeCode);
+            let source_select = CommandDecodedBool(instruction, form,
+                CommandField_SrcSelect);
+            let uimm11 = DecodeCommandOperandRaw(instruction, form,
+                CommandField_uimm11)[10:0];
+            // Decode legality is checked before PEMode suppression and before
+            // any GPR read.  Reserved selectors/codes therefore leave all
+            // carriers and the range-group state unchanged.
+            if !ScalarSourceSelectorLegal(reg_src) ||
+               !BundleRangeSubviewRawLegal(size_code) then
+                SetFault(Fault_IllegalInstruction, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
+            if !BundleRangeSubviewLegal(source_select, size_code) then
+                if !_BundleRangeGroup.zero_mode &&
+                   _BundleRangeGroup.kind == BundleRangeGroup_Local &&
+                   (size_code == 11 || size_code == 12) then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                else
+                    SetFault(Fault_BundleControl, ReadTPC());
+                end;
+                return CommandExecution_Rejected;
+            end;
+            if !_BundleRangeGroup.zero_mode then
+                let offset = ReadScalarRegisterOperand(reg_src) +
+                    ZeroExtend{PTO_XLEN}(uimm11);
+                RecordBundleRangeSubview(source_select, reg_src, uimm11,
+                    size_code as integer {1..12}, offset);
+            end;
+        when CommandHandler_ApplyBundleAssemble =>
+            let reg_src = CommandDecodedReg5(instruction, form,
+                CommandField_RegSrc);
+            let size_code = CommandDecodedSmall(instruction, form,
+                CommandField_ParentSizeCode);
+            let init = CommandDecodedBool(instruction, form,
+                CommandField_INIT);
+            let last = CommandDecodedBool(instruction, form,
+                CommandField_LAST);
+            let uimm11 = DecodeCommandOperandRaw(instruction, form,
+                CommandField_uimm11)[10:0];
+            if !ScalarSourceSelectorLegal(reg_src) || size_code > 12 then
+                SetFault(Fault_IllegalInstruction, ReadTPC());
+                return CommandExecution_Rejected;
+            end;
+            if !BundleRangeAssembleLegal(init, size_code) then
+                if !_BundleRangeGroup.zero_mode &&
+                   _BundleRangeGroup.kind == BundleRangeGroup_Local &&
+                   (size_code == 11 || size_code == 12) then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                else
+                    SetFault(Fault_BundleControl, ReadTPC());
+                end;
+                return CommandExecution_Rejected;
+            end;
+            if !_BundleRangeGroup.zero_mode then
+                let offset = ReadScalarRegisterOperand(reg_src) +
+                    ZeroExtend{PTO_XLEN}(uimm11);
+                RecordBundleRangeAssemble(init, last, reg_src, uimm11,
+                    size_code as integer {0..12}, offset);
+            end;
         when CommandHandler_ExecuteBundleStart =>
             ExecuteDecodedBundleStart(instruction, form, length_bits);
         when CommandHandler_ExecuteBundleStop =>

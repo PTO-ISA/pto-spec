@@ -72,8 +72,8 @@ begin
         return FALSE;
     end;
 
-    let source_left = binding.source0;
-    let source_right = binding.source1;
+    let source_left = BundleTileSourceIndex(0, FALSE);
+    let source_right = BundleTileSourceIndex(0, TRUE);
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     return TileCompareDataTypeSupported(data_type) &&
@@ -114,9 +114,9 @@ begin
         return FALSE;
     end;
 
-    let mask = inputs.source0;
-    let source_true = inputs.source1;
-    let source_false = result.source0;
+    let mask = BundleTileSourceIndex(0, FALSE);
+    let source_true = BundleTileSourceIndex(0, TRUE);
+    let source_false = BundleTileSourceIndex(1, FALSE);
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     return TileSelectDataTypeSupported(data_type) &&

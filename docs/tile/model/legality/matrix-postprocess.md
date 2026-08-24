@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/matrix-postprocess.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS","surface":"tile","classification":["model","legality","matrix-postprocess"],"depends_on":["PTO-BLOCK-B-FPATR","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS","surface":"tile","classification":["model","legality","matrix-postprocess"],"depends_on":["PTO-BLOCK-B-FPATR","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE"]}
 // PTO-REQ-CUBE-POSTPROCESS-001: auxiliary Matrix operands are completely
 // descriptor- and payload-preflighted before source snapshots or allocation.
 
@@ -38,13 +38,15 @@ begin
         if _BundleTileBindings[[binding]].valid then
             if _BundleTileBindings[[binding]].source0_valid then
                 if seen == ordinal then
-                    return _BundleTileBindings[[binding]].source0;
+                    return BundleTileSourceIndex(
+                        binding as BundleTileBindingIndex, FALSE);
                 end;
                 seen = (seen + 1) as integer {0..8};
             end;
             if _BundleTileBindings[[binding]].source1_valid then
                 if seen == ordinal then
-                    return _BundleTileBindings[[binding]].source1;
+                    return BundleTileSourceIndex(
+                        binding as BundleTileBindingIndex, TRUE);
                 end;
                 seen = (seen + 1) as integer {0..8};
             end;

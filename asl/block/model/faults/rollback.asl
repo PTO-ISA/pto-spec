@@ -3,7 +3,8 @@ func RollBackBundleTileDestinations()
 begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_allocated_by_bundle then
+           _BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+           !_BundleTileBindings[[binding]].destination_reused_by_generation then
             ReleaseTile(_BundleTileBindings[[binding]].destination);
             _BundleTileBindings[[binding]].destination =
                 UInt(_BundleTileBindings[[binding]].destination_hand)
@@ -19,5 +20,6 @@ begin
         // back binding state as live execution, because Tile allocation state
         // itself is not part of the portable trap context.
         _TrapContexts[[ring]].bundle_tile_bindings = _BundleTileBindings;
+        _TrapContexts[[ring]].bundle_range_group = _BundleRangeGroup;
     end;
 end;

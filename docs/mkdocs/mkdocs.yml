@@ -171,6 +171,7 @@ nav:
               - CUBE Tmatmul: block/model/dispatch/cube-tmatmul.md
               - Decode: block/model/dispatch/decode.md
               - Descriptor Legality: block/model/dispatch/descriptor-legality.md
+              - Destination Auxiliary: block/model/dispatch/destination-auxiliary.md
               - Destination Shape: block/model/dispatch/destination-shape.md
               - Expansion Schema: block/model/dispatch/expansion-schema.md
               - Generation Schema: block/model/dispatch/generation-schema.md
@@ -205,8 +206,13 @@ nav:
               - Lifetime: block/model/lifecycle/lifetime.md
               - Reset: block/model/lifecycle/reset.md
           - Operands:
+              - Local Generation: block/model/operands/local-generation.md
+              - Portable Carriers: block/model/operands/portable-carriers.md
+              - Range Modifiers: block/model/operands/range-modifiers.md
               - Scalar Bindings: block/model/operands/scalar-bindings.md
               - Shared Bindings: block/model/operands/shared-bindings.md
+              - Shared Generation: block/model/operands/shared-generation.md
+              - Subview Descriptor: block/model/operands/subview-descriptor.md
               - Tile Bindings: block/model/operands/tile-bindings.md
           - Schema:
               - Attributes: block/model/schema/attributes.md
@@ -218,11 +224,14 @@ nav:
               - Binding State: block/model/state/binding-state.md
               - Control State: block/model/state/control-state.md
               - Descriptor State: block/model/state/descriptor-state.md
+              - Shared Generation State: block/model/state/shared-generation-state.md
               - Types: block/model/state/types.md
       - Operands:
+          - B.ASSEMBLE: block/operands/B.ASSEMBLE.md
           - B.IOR: block/operands/B.IOR.md
           - B.IOS: block/operands/B.IOS.md
           - B.IOT: block/operands/B.IOT.md
+          - B.SUBVIEW: block/operands/B.SUBVIEW.md
   - Scalar:
       - AGU:
           - C.LDI: scalar/agu/C.LDI.md
@@ -1034,5 +1043,7 @@ nav:
           - "ADR 0095: Bounded numeric variation": status/decisions/0095-bounded-numeric-variation.md
           - "ADR 0096: Re-encode B.IOT and B.IOS size and PE mode fields": status/decisions/0096-b-iot-b-ios-sizecode-pemode.md
           - "ADR 0097: Local and Shared capacity pools with cooperative M-sharding": status/decisions/0097-local-shared-capacity-and-cooperative-m-sharding.md
+          - "ADR 0098: B.SUBVIEW and B.ASSEMBLE range-modifier association": status/decisions/0098-b-range-modifiers.md
+          - "ADR 0099: PTO ISA 0.58.3 to 0.58.4 compatibility boundary": status/decisions/0099-0583-to-0584-compatibility.md
       - Open:
           - "Open architecture decisions": status/open/index.md

@@ -204,6 +204,7 @@ begin
     _TrapContexts[[target]].bundle_scalar_bindings = _BundleScalarBindings;
     _TrapContexts[[target]].bundle_tile_bindings = _BundleTileBindings;
     _TrapContexts[[target]].bundle_shared_bindings = _BundleSharedBindings;
+    _TrapContexts[[target]].bundle_range_group = _BundleRangeGroup;
     _TrapContexts[[target]].bundle_zero_participation_seen =
         _BundleZeroParticipationSeen;
     _TrapContexts[[target]].bundle_control_attributes =
@@ -214,6 +215,10 @@ begin
     _TrapContexts[[target]].bundle_hint = _BundleHint;
     _TrapContexts[[target]].bundle_fixed_point_attributes =
         _BundleFixedPointAttributes;
+    _TrapContexts[[target]].local_generations = _LocalGenerations;
+    _TrapContexts[[target]].shared_generations = _SharedGenerations;
+    _TrapContexts[[target]].bundle_execution_domain_token =
+        _BundleExecutionDomainToken;
     _TrapContexts[[target]].memory_copy_template = _MemoryCopyTemplate;
     _TrapContexts[[target]].frame_template = _FrameTemplate;
     _TrapContexts[[target]].t_queue = _TQueue;

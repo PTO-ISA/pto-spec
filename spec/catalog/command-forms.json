@@ -1,6 +1,6 @@
 {
-  "form_count": 74,
-  "form_constraint_count": 81,
+  "form_count": 76,
+  "form_constraint_count": 87,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
@@ -5490,11 +5490,280 @@
       "semantic_handler": "SetBundleFixedPointAttributes",
       "semantic_summary": "Latches complete-bundle matrix post-processing mode, reduction enables, and fixed-point descriptor controls.",
       "status": "accepted"
+    },
+    {
+      "asm": "B.SUBVIEW SrcSelect, RegSrc, uimm11, SubviewSizeCode",
+      "constraints": [
+        {
+          "field": "SrcSelect",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
+          "field": "RegSrc",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "field": "SubviewSizeCode",
+          "operator": "one-of",
+          "values": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x0000787f",
+          "match": "0x00000053",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "SrcSelect",
+          "pieces": [
+            {
+              "instruction_lsb": 31,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "uimm11",
+          "pieces": [
+            {
+              "instruction_lsb": 20,
+              "value_lsb": 0,
+              "width": 11
+            }
+          ],
+          "signedness": "unsigned",
+          "width": 11
+        },
+        {
+          "name": "RegSrc",
+          "pieces": [
+            {
+              "instruction_lsb": 15,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        },
+        {
+          "name": "SubviewSizeCode",
+          "pieces": [
+            {
+              "instruction_lsb": 7,
+              "value_lsb": 0,
+              "width": 4
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 4
+        }
+      ],
+      "form_id": "b_subview_32_122000000001",
+      "length_bits": 32,
+      "mnemonic": "B.SUBVIEW",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Range Modifier",
+      "semantic_handler": "ApplyBundleSubview",
+      "semantic_summary": "Decodes one source-range subview modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
+      "status": "accepted"
+    },
+    {
+      "asm": "B.ASSEMBLE INIT, LAST, RegSrc, uimm11, ParentSizeCode",
+      "constraints": [
+        {
+          "field": "INIT",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
+          "field": "RegSrc",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        },
+        {
+          "field": "ParentSizeCode",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x0000707f",
+          "match": "0x00001053",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "INIT",
+          "pieces": [
+            {
+              "instruction_lsb": 31,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "uimm11",
+          "pieces": [
+            {
+              "instruction_lsb": 20,
+              "value_lsb": 0,
+              "width": 11
+            }
+          ],
+          "signedness": "unsigned",
+          "width": 11
+        },
+        {
+          "name": "RegSrc",
+          "pieces": [
+            {
+              "instruction_lsb": 15,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        },
+        {
+          "name": "LAST",
+          "pieces": [
+            {
+              "instruction_lsb": 11,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
+        },
+        {
+          "name": "ParentSizeCode",
+          "pieces": [
+            {
+              "instruction_lsb": 7,
+              "value_lsb": 0,
+              "width": 4
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 4
+        }
+      ],
+      "form_id": "b_assemble_32_122000000002",
+      "length_bits": 32,
+      "mnemonic": "B.ASSEMBLE",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Range Modifier",
+      "semantic_handler": "ApplyBundleAssemble",
+      "semantic_summary": "Decodes one destination-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
+      "status": "accepted"
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 71,
-  "operand_piece_count": 162,
+  "operand_field_count": 77,
+  "operand_piece_count": 171,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",
@@ -5513,6 +5782,6 @@
     }
   ],
   "schema_version": 2,
-  "semantic_handler_count": 22,
+  "semantic_handler_count": 24,
   "surface": "command-and-boundary"
 }

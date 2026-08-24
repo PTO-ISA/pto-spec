@@ -35,7 +35,7 @@ class DecoderPartitionTest(unittest.TestCase):
 
     def test_decoder_only_output_preserves_complete_identity_counts(self) -> None:
         self.assertIn("constant PTO_SCALAR_FORM_COUNT = 466;", self.decoder)
-        self.assertIn("constant PTO_COMMAND_FORM_COUNT = 74;", self.decoder)
+        self.assertIn("constant PTO_COMMAND_FORM_COUNT = 76;", self.decoder)
         self.assertIn("constant PTO_TILE_OPERATION_COUNT = 109;", self.decoder)
         self.assertIn("pure func DecodeScalarForm", self.decoder)
         self.assertIn("pure func DecodeCommandForm", self.decoder)
