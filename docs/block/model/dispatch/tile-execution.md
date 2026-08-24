@@ -29,6 +29,28 @@ begin
     return TRUE;
 end;
 
+readonly func SelectedBundleClosedSchemasLegal(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    return SelectedBundleClosedBinarySchemaLegal(operation) &&
+           SelectedBundleClosedUnarySchemaLegal(operation) &&
+           SelectedBundleClosedTFMASchemaLegal(operation) &&
+           SelectedBundleClosedQuantizationSchemaLegal(operation) &&
+           SelectedBundleClosedGenerationSchemaLegal(operation) &&
+           SelectedBundleClosedHistogramSchemaLegal(operation) &&
+           SelectedBundleClosedReductionSchemaLegal(operation) &&
+           SelectedBundleClosedSortingSchemaLegal(operation) &&
+           SelectedBundleClosedPartialSchemaLegal(operation) &&
+           SelectedBundleClosedExpansionSchemaLegal(operation) &&
+           SelectedBundleClosedTCVTSchemaLegal(operation) &&
+           SelectedBundleClosedTCMPSchemaLegal(operation) &&
+           SelectedBundleClosedTSELSchemaLegal(operation) &&
+           SelectedBundleClosedTileScalarBinarySchemaLegal(operation) &&
+           SelectedBundleClosedTCMPSSchemaLegal(operation) &&
+           SelectedBundleClosedTSELSSchemaLegal(operation) &&
+           SelectedBundleClosedTEXPANDSSchemaLegal(operation);
+end;
+
 func ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet) => boolean
 begin
@@ -138,71 +160,7 @@ begin
     if !SelectedBundleTileDataAttributesLegal(operation) then
         return FALSE;
     end;
-    if !SelectedBundleClosedBinarySchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedUnarySchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedTFMASchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedQuantizationSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedGenerationSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedHistogramSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedReductionSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedSortingSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedPartialSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedExpansionSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedTCVTSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedTCMPSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedTSELSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedTileScalarBinarySchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedTCMPSSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedTSELSSchemaLegal(operation) then
-        SetFault(Fault_TileLegality, ReadTPC());
-        return FALSE;
-    end;
-    if !SelectedBundleClosedTEXPANDSSchemaLegal(operation) then
+    if !SelectedBundleClosedSchemasLegal(operation) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
