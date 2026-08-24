@@ -9,6 +9,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0097](docs/status/decisions/0097-local-shared-capacity-and-cooperative-m-sharding.md): Local and Shared capacity pools with cooperative M-sharding
 - [ADR-0098](docs/status/decisions/0098-b-range-modifiers.md): B.SUBVIEW and B.ASSEMBLE range-modifier association
 - [ADR-0099](docs/status/decisions/0099-0583-to-0584-compatibility.md): PTO ISA 0.58.3 to 0.58.4 compatibility boundary
+- [ADR-0100](docs/status/decisions/0100-cooperative-group-m-distribution.md): Cooperative Group-M Distribution and Inactive PE Semantics
 
 ## Release 0.58.3
 

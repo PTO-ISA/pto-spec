@@ -2,28 +2,24 @@
 func PrepareSharedTransposeOperand(index: TileIndex, shared_tile_id: bits(6),
                                    left: boolean, transpose: boolean)
 begin
-    let physical_rows = if left && transpose then 2 else
-        (if left then 8 else 2);
-    let physical_columns = if left && transpose then 8 else 2;
+    let physical_rows = 2;
+    let physical_columns = 2;
     ConfigureTileForMask(index, 128,
         DerivedTileRows(128, physical_columns, TileDataType_U16),
         physical_columns, physical_rows, physical_columns,
         TileDataType_U16, TileLayout_RowMajor,
         TileLocation_Matrix, '1111');
     if left then
-        for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-            let base = pe * 2;
-            if transpose then
-                WriteTileElement(index, 0, base, Zeros{PTO_XLEN} + 1);
-                WriteTileElement(index, 1, base, Zeros{PTO_XLEN} + 2);
-                WriteTileElement(index, 0, base + 1, Zeros{PTO_XLEN} + 3);
-                WriteTileElement(index, 1, base + 1, Zeros{PTO_XLEN} + 4);
-            else
-                WriteTileElement(index, base, 0, Zeros{PTO_XLEN} + 1);
-                WriteTileElement(index, base, 1, Zeros{PTO_XLEN} + 2);
-                WriteTileElement(index, base + 1, 0, Zeros{PTO_XLEN} + 3);
-                WriteTileElement(index, base + 1, 1, Zeros{PTO_XLEN} + 4);
-            end;
+        if transpose then
+            WriteTileElement(index, 0, 0, Zeros{PTO_XLEN} + 1);
+            WriteTileElement(index, 1, 0, Zeros{PTO_XLEN} + 2);
+            WriteTileElement(index, 0, 1, Zeros{PTO_XLEN} + 3);
+            WriteTileElement(index, 1, 1, Zeros{PTO_XLEN} + 4);
+        else
+            WriteTileElement(index, 0, 0, Zeros{PTO_XLEN} + 1);
+            WriteTileElement(index, 0, 1, Zeros{PTO_XLEN} + 2);
+            WriteTileElement(index, 1, 0, Zeros{PTO_XLEN} + 3);
+            WriteTileElement(index, 1, 1, Zeros{PTO_XLEN} + 4);
         end;
     else
         WriteTileElement(index, 0, 0, Zeros{PTO_XLEN} + 5);

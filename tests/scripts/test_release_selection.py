@@ -184,7 +184,14 @@ class ReleaseSelectionTest(unittest.TestCase):
         self.assertEqual(policy["excluded_draft_adrs"], drafts)
         self.assertEqual(result.blockers, ())
         self.assertGreater(len(result.selected_ndf_ids), 100)
-        self.assertEqual(len(result.selected_adr_ids), 80)
+        self.assertEqual(
+            set(result.selected_adr_ids),
+            {
+                row["subject_id"]
+                for row in readiness["rows"]
+                if row["stage"] != "draft"
+            },
+        )
 
     def test_repository_manifest_records_exact_selection_expansion(self) -> None:
         manifest = json.loads(

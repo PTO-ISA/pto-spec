@@ -1,24 +1,30 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-MASK-015","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"execution","summary":"Every nonzero four-bit cooperative Matrix mask selects only its Local output producers","pass_condition":"all fifteen masks complete full Shared readiness and publish CUBE D with exact allocation mask and popcount capacity charge","related_sources":["asl/tile/model/legality/pe-mask.asl","asl/block/model/dispatch/cube-destination.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-MASK-015","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-GROUP-M-DISTRIBUTION-001"],"kind":"execution","summary":"Cooperative TMATMUL accepts only all-four participation or the strict zero no-op.","pass_condition":"Every sparse nonzero mask raises TileLegality before Local allocation, while 1111 executes and publishes only the current PE fragment.","related_sources":["asl/tile/model/legality/pe-mask.asl","asl/block/model/dispatch/cube-destination.asl"]}
+
 func PrepareMaskSharedOperand(index: TileIndex, shared_tile_id: bits(6),
-                              value: integer, left: boolean)
+                              value: integer)
 begin
-    let valid_rows = if left then 4 else 1;
-    ConfigureTileForMask(index, 128, 64, 1, valid_rows, 1,
+    ConfigureTileForMask(index, 128, 64, 1, 1, 1,
         TileDataType_U16, TileLayout_RowMajor,
         TileLocation_Matrix, '1111');
-    for row = 0 to valid_rows - 1 do
-        WriteTileElement(index, row, 0, Zeros{PTO_XLEN} + value);
-    end;
-    InstallSharedTile(shared_tile_id as SharedTileID, _Tiles[[index]], '1111');
+    WriteTileElement(index, 0, 0, Zeros{PTO_XLEN} + value);
+    InstallSharedTile(shared_tile_id as SharedTileID,
+        _Tiles[[index]], '1111');
 end;
 
 func main() => integer
 begin
     for raw_mask = 1 to 15 do
-        ResetProfileState();
         let mask = Zeros{4} + raw_mask;
-        PrepareMaskSharedOperand(10, Zeros{6} + 50, 2, TRUE);
-        PrepareMaskSharedOperand(11, Zeros{6} + 51, 3, FALSE);
+        assert BundleTMATMULCooperativeMaskValueLegal(mask) ==
+            (raw_mask == 15);
+    end;
+
+    for representative = 0 to 1 do
+        ResetProfileState();
+        let raw_mask = if representative == 0 then 3 else 15;
+        let mask = Zeros{4} + raw_mask;
+        PrepareMaskSharedOperand(10, Zeros{6} + 50, 2);
+        PrepareMaskSharedOperand(11, Zeros{6} + 51, 3);
         let shared_capacity = CoreTileCapacityInUse();
 
         var start: bits(64) = Zeros{64} + 0x00031181;
@@ -34,14 +40,16 @@ begin
             TRUE, 0, 1, mask, FALSE, FALSE, 0, 0, TRUE);
 
         let completed = ExecuteBundleTileOperation();
-        assert completed;
-        let destination = BundleMatrixDestinationAt(0);
-        assert _TileAllocationMasks[[destination]] == mask;
-        assert _Tiles[[destination]].layout == TileLayout_CUBE_M16;
-        assert ReadTileElement(destination, 0, 0) ==
-            Zeros{PTO_XLEN} + 6;
-        assert CoreTileCapacityInUse() == shared_capacity +
-            PEMaskPopulation(mask) * 128;
+        if representative == 1 then
+            assert completed && _LastFault == Fault_None;
+            let destination = BundleMatrixDestinationAt(0);
+            assert _TileAllocationMasks[[destination]] == '1000';
+            assert CoreTileCapacityInUse() == shared_capacity + 128;
+        else
+            assert !completed && _LastFault == Fault_TileLegality;
+            assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+            assert CoreTileCapacityInUse() == shared_capacity;
+        end;
     end;
     return 0;
 end;

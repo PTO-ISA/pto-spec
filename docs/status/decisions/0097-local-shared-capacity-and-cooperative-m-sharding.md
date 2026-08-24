@@ -14,7 +14,7 @@
   "affected_ndf": [
     "PTO-B-IOS-SHARED-STATE-001",
     "PTO-B-IOT-STREAM-001",
-    "PTO-CUBE-SHARED-M-SHARD-001",
+    "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
     "PTO-TILE-CAPACITY-PER-PE"
   ],
   "affected_units": [
