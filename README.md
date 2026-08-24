@@ -19,12 +19,12 @@ identity is bound to an immutable commit and its reproducible formal evidence.
 | Surface | Current executable inventory |
 | --- | ---: |
 | Scalar instruction forms | 466 |
-| Active bundle and command forms | 74 |
+| Active bundle and command forms | 76 |
 | Direct Tile operations | 109 |
 | Tile execution engines | 4 |
 | Tile semantic classes | 7 |
-| Architecture and instruction ASL units | 840 |
-| Independently runnable AVS points | 3,352 |
+| Architecture and instruction ASL units | 849 |
+| Independently runnable AVS points | 3,675 |
 
 Direct Tile operations select one of four execution engines: 35 VEC operations,
 10 TLSU operations, 12 CUBE operations, and 52 SFU operations. Classification

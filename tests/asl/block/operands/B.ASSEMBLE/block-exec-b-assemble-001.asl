@@ -32,9 +32,16 @@ begin
     let started = ExecuteCommandInstruction(Zeros{64} + 0x00019181, 32);
     assert started == CommandExecution_Executed;
 end;
+func ResetAssembleFixture()
+begin
+    ResetBundleControlState();
+    ClearFault();
+    WriteBPC(Zeros{PTO_XLEN});
+    WriteTPC(Zeros{PTO_XLEN});
+end;
 func AssertAssembleIllegal(instruction: bits(64))
 begin
-    ResetProfileState();
+    ResetAssembleFixture();
     WriteTPC(Zeros{PTO_XLEN} + 0x500);
     StartBlock();
     let started = ExecuteCommandInstruction(LocalAssembleBinder(), 32);
@@ -50,7 +57,7 @@ begin
 end;
 func AssertLocalAssemble(init: boolean, last: boolean, reg_src: integer, uimm11: integer, parent_size: integer)
 begin
-    ResetProfileState();
+    ResetAssembleFixture();
     WriteGPR(reg_src as GPRIndex, Zeros{PTO_XLEN} + 0x1200 + reg_src);
     WriteTPC(Zeros{PTO_XLEN} + 0x580);
     StartBlock();
@@ -70,7 +77,7 @@ begin
 end;
 func AssertSharedAssemble(init: boolean, last: boolean, reg_src: integer, uimm11: integer, parent_size: integer)
 begin
-    ResetProfileState();
+    ResetAssembleFixture();
     WriteGPR(reg_src as GPRIndex, Zeros{PTO_XLEN} + 0x2200 + reg_src);
     WriteTPC(Zeros{PTO_XLEN} + 0x5c0);
     StartBlock();
@@ -114,7 +121,7 @@ begin
     AssertSharedAssemble(FALSE, TRUE, 23, 2047, 0);
 
     // Contradictory INIT/size classes are BundleControl faults.
-    ResetProfileState();
+    ResetAssembleFixture();
     WriteTPC(Zeros{PTO_XLEN} + 0x600);
     StartBlock();
     let contradiction_started = ExecuteCommandInstruction(LocalAssembleBinder(), 32);

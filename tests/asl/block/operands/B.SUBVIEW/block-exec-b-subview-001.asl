@@ -39,9 +39,16 @@ begin
     let started = ExecuteCommandInstruction(Zeros{64} + 0x00019181, 32);
     assert started == CommandExecution_Executed;
 end;
+func ResetSubviewFixture()
+begin
+    ResetBundleControlState();
+    ClearFault();
+    WriteBPC(Zeros{PTO_XLEN});
+    WriteTPC(Zeros{PTO_XLEN});
+end;
 func AssertSubviewIllegal(instruction: bits(64))
 begin
-    ResetProfileState();
+    ResetSubviewFixture();
     WriteTPC(Zeros{PTO_XLEN} + 0x200);
     StartBlock();
     let started = ExecuteCommandInstruction(LocalRangeBinder(), 32);
@@ -60,7 +67,7 @@ begin
 end;
 func AssertLocalSubview(source_select: boolean, reg_src: integer, uimm11: integer, size_code: integer)
 begin
-    ResetProfileState();
+    ResetSubviewFixture();
     WriteGPR(reg_src as GPRIndex, Zeros{PTO_XLEN} + 0x1200 + reg_src);
     WriteTPC(Zeros{PTO_XLEN} + 0x300);
     StartBlock();
@@ -90,7 +97,7 @@ begin
 end;
 func AssertSharedSubview(reg_src: integer, uimm11: integer, size_code: integer)
 begin
-    ResetProfileState();
+    ResetSubviewFixture();
     WriteGPR(reg_src as GPRIndex, Zeros{PTO_XLEN} + 0x2200 + reg_src);
     WriteTPC(Zeros{PTO_XLEN} + 0x380);
     StartBlock();
@@ -124,7 +131,7 @@ begin
     end;
     AssertSharedSubview(23, 2047, 12);
     // XLEN arithmetic wraps in the derived carrier.
-    ResetProfileState();
+    ResetSubviewFixture();
     WriteGPR(2, Ones{PTO_XLEN} - 3);
     WriteTPC(Zeros{PTO_XLEN} + 0x400);
     StartBlock();

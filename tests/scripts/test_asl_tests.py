@@ -5,7 +5,8 @@ import io
 import json
 import tempfile
 import unittest
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
+from dataclasses import replace
 from pathlib import Path
 from subprocess import CompletedProcess, TimeoutExpired
 from unittest.mock import patch
@@ -512,6 +513,146 @@ class AslTestsTest(unittest.TestCase):
         self.assertEqual(
             output.getvalue().strip(),
             json.dumps(payload, separators=(",", ":"), sort_keys=True),
+        )
+
+    def test_focused_matrix_skips_global_repository_discovery(self) -> None:
+        self.write()
+        point = load_test_points(self.root, (unit(),))[0]
+        commit = "9" * 40
+        completed = CompletedProcess(
+            ["git", "rev-parse", "HEAD"], 0, stdout=commit + "\n", stderr=""
+        )
+        output = io.StringIO()
+
+        with (
+            patch(
+                "scripts.asl_tests.load_focused_test_points",
+                return_value=(point,),
+            ) as focused,
+            patch(
+                "scripts.asl_tests._repository",
+                side_effect=AssertionError("global discovery must not run"),
+            ),
+            patch("scripts.asl_tests.subprocess.run", return_value=completed),
+            redirect_stdout(output),
+        ):
+            result = matrix_main(
+                ["--root", str(self.root), "--id", point.test_id]
+            )
+
+        payload = json.loads(output.getvalue())
+        self.assertEqual(result, 0)
+        focused.assert_called_once_with(self.root.resolve(), [point.test_id])
+        self.assertEqual(payload["commit"], commit)
+        self.assertEqual(payload["test_count"], 1)
+        self.assertEqual(payload["include"][0]["id"], point.test_id)
+
+    def test_focused_matrix_defaults_to_one_complete_page(self) -> None:
+        self.write()
+        point = load_test_points(self.root, (unit(),))[0]
+        points = tuple(
+            replace(
+                point,
+                test_id=f"PTO-AVS-ARCH-STATE-REGISTERS-{index:03d}",
+            )
+            for index in range(1, 4)
+        )
+        commit = "8" * 40
+        completed = CompletedProcess(
+            ["git", "rev-parse", "HEAD"], 0, stdout=commit + "\n", stderr=""
+        )
+        output = io.StringIO()
+        selected_ids = [item.test_id for item in points]
+
+        with (
+            patch(
+                "scripts.asl_tests.load_focused_test_points",
+                return_value=points,
+            ),
+            patch("scripts.asl_tests.subprocess.run", return_value=completed),
+            redirect_stdout(output),
+        ):
+            arguments = ["--root", str(self.root)]
+            for test_id in selected_ids:
+                arguments.extend(("--id", test_id))
+            result = matrix_main(arguments)
+
+        payload = json.loads(output.getvalue())
+        self.assertEqual(result, 0)
+        self.assertEqual(payload["page_count"], 1)
+        self.assertEqual(payload["test_count"], 3)
+        self.assertEqual(
+            [entry["id"] for entry in payload["include"]], selected_ids
+        )
+
+    def test_selected_loader_ignores_unselected_invalid_test_body(self) -> None:
+        self.write()
+        invalid = self.path.with_name("arch-state-registers-002.asl")
+        invalid.write_text(
+            '// PTO-TEST: {"id":"PTO-AVS-ARCH-STATE-REGISTERS-002"}\n'
+            "invalid body\n",
+            encoding="utf-8",
+        )
+
+        points = load_test_points(
+            self.root,
+            (unit(),),
+            selected_ids=frozenset({"PTO-AVS-ARCH-STATE-REGISTERS-001"}),
+            validation_resources={},
+        )
+
+        self.assertEqual(
+            [point.test_id for point in points],
+            ["PTO-AVS-ARCH-STATE-REGISTERS-001"],
+        )
+
+    def test_selected_loader_lazily_hashes_only_required_validation(self) -> None:
+        self.write(test_source(validation_entrypoint="ValidateKnown"))
+        requested: list[str] = []
+
+        points = load_test_points(
+            self.root,
+            (unit(),),
+            selected_ids=frozenset({"PTO-AVS-ARCH-STATE-REGISTERS-001"}),
+            validation_resources={},
+            lazy_validation_resource=lambda name: (
+                requested.append(name) or "c" * 64
+            ),
+        )
+
+        self.assertEqual(requested, ["ValidateKnown"])
+        self.assertEqual(points[0].validation_entrypoint, "ValidateKnown")
+        self.assertEqual(points[0].validation_sha256, "c" * 64)
+
+    def test_focused_ids_file_ignores_comments_and_rejects_duplicates(self) -> None:
+        self.write()
+        point = load_test_points(self.root, (unit(),))[0]
+        ids_file = self.root / "ids.txt"
+        ids_file.write_text(
+            f"# focused rerun\n{point.test_id}\n{point.test_id}\n",
+            encoding="utf-8",
+        )
+        output = io.StringIO()
+        errors = io.StringIO()
+
+        with (
+            patch(
+                "scripts.asl_tests.load_focused_test_points",
+                side_effect=ValueError(
+                    "focused ASL test selection contains duplicate IDs"
+                ),
+            ) as focused,
+            redirect_stdout(output),
+            redirect_stderr(errors),
+        ):
+            result = matrix_main(
+                ["--root", str(self.root), "--ids-file", str(ids_file)]
+            )
+
+        self.assertEqual(result, 1)
+        self.assertIn("duplicate IDs", errors.getvalue())
+        focused.assert_called_once_with(
+            self.root.resolve(), [point.test_id, point.test_id]
         )
 
     def test_all_pages_export_discovers_once_and_writes_complete_round_robin_pages(

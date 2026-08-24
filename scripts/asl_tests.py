@@ -292,6 +292,8 @@ def load_test_points(
     units: Sequence[AslUnit],
     *,
     validation_resources: Mapping[str, str] | None = None,
+    selected_ids: frozenset[str] | None = None,
+    lazy_validation_resource: Callable[[str], str] | None = None,
 ) -> tuple[AslTestPoint, ...]:
     """Load all independent tests below *root* and reject ambiguous ownership."""
 
@@ -300,9 +302,26 @@ def load_test_points(
     loaded: list[tuple[AslTestPoint, str, tuple[str, ...]]] = []
     test_root = root / "tests/asl"
     raw_files: list[tuple[Path, Path, str, dict[str, object]]] = []
+    observed_selected_ids: set[str] = set()
     for absolute in sorted(test_root.rglob("*.asl")) if test_root.exists() else []:
         relative = absolute.relative_to(root)
         text = absolute.read_text(encoding="utf-8")
+        if selected_ids is not None:
+            records = [
+                line[len(TEST_PREFIX) :]
+                for line in text.splitlines()
+                if line.startswith(TEST_PREFIX)
+            ]
+            if len(records) != 1:
+                continue
+            try:
+                candidate = json.loads(records[0])
+            except json.JSONDecodeError:
+                continue
+            candidate_id = candidate.get("id") if isinstance(candidate, dict) else None
+            if candidate_id not in selected_ids:
+                continue
+            observed_selected_ids.add(str(candidate_id))
         line_count = len(text.splitlines())
         if line_count > MAX_TEST_LINE_COUNT:
             raise ValueError(
@@ -311,6 +330,10 @@ def load_test_points(
             )
         metadata = _metadata(relative, text)
         raw_files.append((absolute, relative, text, metadata))
+    if selected_ids is not None:
+        missing = sorted(selected_ids - observed_selected_ids)
+        if missing:
+            raise ValueError("unknown ASL test ID " + ", ".join(missing))
     raw_ids: dict[str, list[Path]] = {}
     for _, relative, _, metadata in raw_files:
         test_id = _string(metadata, "id", relative)
@@ -367,12 +390,12 @@ def load_test_points(
                 EMPTY_VALIDATION_SHARD.encode()
             ).hexdigest()
         else:
-            if validation_resources is None:
-                raise ValueError(
-                    f"{relative}: validation resources are required for "
-                    f"{validation_entrypoint}"
-                )
-            validation_sha256 = validation_resources.get(validation_entrypoint, "")
+            validation_sha256 = (
+                validation_resources.get(validation_entrypoint, "")
+                if validation_resources is not None else ""
+            )
+            if not validation_sha256 and lazy_validation_resource is not None:
+                validation_sha256 = lazy_validation_resource(validation_entrypoint)
             if not validation_sha256:
                 raise ValueError(
                     f"{relative}: unknown generated validation entrypoint "
@@ -415,6 +438,54 @@ def load_test_points(
                 )
 
     return tuple(sorted((item[0] for item in loaded), key=lambda point: point.test_id))
+
+
+def _focused_validation_resource(root: Path, entrypoint: str) -> str:
+    completed = subprocess.run(
+        [
+            str(root / "scripts/generate-asl-decoders"),
+            "--kind",
+            "validation-shard",
+            "--entrypoint",
+            entrypoint,
+        ],
+        cwd=root,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise ValueError(
+            f"validation shard generation failed for {entrypoint}:\n"
+            + completed.stdout
+            + completed.stderr
+        )
+    return hashlib.sha256(completed.stdout.encode()).hexdigest()
+
+
+def load_focused_test_points(
+    root: Path, test_ids: Sequence[str]
+) -> tuple[AslTestPoint, ...]:
+    """Load only requested points without generating the global validation index."""
+
+    selected = frozenset(test_ids)
+    if not selected:
+        raise ValueError("focused ASL test selection is empty")
+    if len(selected) != len(test_ids):
+        raise ValueError("focused ASL test selection contains duplicate IDs")
+    invalid = sorted(test_id for test_id in selected if TEST_ID.fullmatch(test_id) is None)
+    if invalid:
+        raise ValueError("invalid ASL test ID " + ", ".join(invalid))
+    units = load_units(root / "asl")
+    return load_test_points(
+        root,
+        units,
+        validation_resources={},
+        selected_ids=selected,
+        lazy_validation_resource=lambda entrypoint: _focused_validation_resource(
+            root, entrypoint
+        ),
+    )
 
 
 def validate_test_coverage(
@@ -538,6 +609,25 @@ def export_matrix_pages(
 
     root = root.resolve()
     commit, entries = _release_matrix(root)
+    return export_matrix_entries(
+        entries,
+        commit,
+        output_dir,
+        page_size=page_size,
+        page_count=page_count,
+    )
+
+
+def export_matrix_entries(
+    entries: Sequence[Mapping[str, object]],
+    commit: str,
+    output_dir: Path,
+    *,
+    page_size: int | None = None,
+    page_count: int | None = None,
+) -> dict[str, object]:
+    """Write already-discovered entries as deterministic exact-commit pages."""
+
     pages = matrix_pages(
         entries,
         commit,
@@ -563,6 +653,24 @@ def export_matrix_pages(
         "pages": list(range(len(pages))),
         "test_count": len(entries),
     }
+
+
+def _read_focused_test_ids(
+    direct_ids: Sequence[str], ids_file: Path | None
+) -> list[str]:
+    selected = list(direct_ids)
+    if ids_file is not None:
+        text = (
+            sys.stdin.read()
+            if str(ids_file) == "-"
+            else ids_file.read_text(encoding="utf-8")
+        )
+        selected.extend(
+            line.strip()
+            for line in text.splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        )
+    return selected
 
 
 def requirement_index(root: Path, units: Sequence[AslUnit]) -> dict[str, bool]:
@@ -1115,6 +1223,8 @@ def matrix_main(argv: Sequence[str] | None = None) -> int:
     page_shape.add_argument("--page-count", type=int)
     parser.add_argument("--page", type=int, default=0)
     parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--id", action="append", default=[])
+    parser.add_argument("--ids-file", type=Path)
     arguments = parser.parse_args(argv)
     if (
         (arguments.page_size is not None and arguments.page_size <= 0)
@@ -1128,7 +1238,35 @@ def matrix_main(argv: Sequence[str] | None = None) -> int:
         return 2
     root = arguments.root.resolve()
     try:
-        if arguments.output_dir is not None:
+        focused_ids = _read_focused_test_ids(arguments.id, arguments.ids_file)
+        if focused_ids:
+            entries = matrix(load_focused_test_points(root, focused_ids))
+            commit = _exact_commit(root)
+            focused_page_count = arguments.page_count
+            if arguments.page_size is None and focused_page_count is None:
+                focused_page_count = 1
+            if arguments.output_dir is not None:
+                payload = export_matrix_entries(
+                    entries,
+                    commit,
+                    arguments.output_dir.resolve(),
+                    page_size=arguments.page_size,
+                    page_count=focused_page_count,
+                )
+            else:
+                pages = matrix_pages(
+                    entries,
+                    commit,
+                    arguments.page_size,
+                    page_count=focused_page_count,
+                )
+                if arguments.page >= len(pages):
+                    raise ValueError(
+                        f"page {arguments.page} is outside matrix page count "
+                        f"{len(pages)}"
+                    )
+                payload = pages[arguments.page]
+        elif arguments.output_dir is not None:
             payload = export_matrix_pages(
                 root,
                 arguments.output_dir.resolve(),
