@@ -111,7 +111,7 @@ class AdrRecordTest(unittest.TestCase):
 
     def test_every_repository_adr_uses_frontmatter(self) -> None:
         records = load_adrs(ROOT / "docs/status/decisions")
-        self.assertEqual(len(records), 92)
+        self.assertEqual(len(records), 94)
         self.assertEqual(validate_adr_graph(records), [])
 
     def test_every_prd_has_exactly_one_adr_owner(self) -> None:
@@ -178,7 +178,7 @@ class AdrRecordTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stderr)
             index = json.loads(output.read_text(encoding="utf-8"))
             self.assertEqual(index["schema"], "pto.adr-index")
-            self.assertEqual(index["summary"]["record_count"], 92)
+            self.assertEqual(index["summary"]["record_count"], 94)
             self.assertEqual(index["summary"]["legacy_id_count"], 198)
             self.assertEqual(
                 len([key for key in index["legacy_map"] if key.startswith("PRD-")]),
