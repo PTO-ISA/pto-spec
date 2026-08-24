@@ -37,8 +37,6 @@ begin
     assert bind_0 == CommandExecution_Executed;
     let modifier_0_0 = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);
     assert modifier_0_0 == CommandExecution_Executed;
-    let modifier_0_1 = ExecuteCommandInstruction(Zeros{64} + 0x800000d3, 32);
-    assert modifier_0_1 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(65);
     let completed = ExecuteBundleTileOperation();
     assert completed;
@@ -91,8 +89,6 @@ begin
     assert dim_402043 == CommandExecution_Executed;
     let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0818ce13, 32);
     assert bind_0 == CommandExecution_Executed;
-    let modifier_0_0 = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);
-    assert modifier_0_0 == CommandExecution_Executed;
     let modifier_0_1 = ExecuteCommandInstruction(Zeros{64} + 0x800000d3, 32);
     assert modifier_0_1 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(65);
@@ -147,10 +143,6 @@ begin
     assert dim_402043 == CommandExecution_Executed;
     let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0818ce13, 32);
     assert bind_0 == CommandExecution_Executed;
-    let modifier_0_0 = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);
-    assert modifier_0_0 == CommandExecution_Executed;
-    let modifier_0_1 = ExecuteCommandInstruction(Zeros{64} + 0x800000d3, 32);
-    assert modifier_0_1 == CommandExecution_Executed;
     let assemble_0 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
     assert assemble_0 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(65);

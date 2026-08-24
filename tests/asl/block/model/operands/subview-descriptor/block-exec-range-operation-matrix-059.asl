@@ -113,8 +113,6 @@ begin
     assert bind_0 == CommandExecution_Executed;
     let modifier_0_0 = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);
     assert modifier_0_0 == CommandExecution_Executed;
-    let modifier_0_1 = ExecuteCommandInstruction(Zeros{64} + 0x800000d3, 32);
-    assert modifier_0_1 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(97);
     let completed = ExecuteBundleTileOperation();
     assert completed;

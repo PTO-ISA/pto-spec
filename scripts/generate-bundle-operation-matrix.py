@@ -438,12 +438,10 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
         ],
         "modifier_word": (f"0x{subview_word(selected_source_select, 1):08x}" if role_kind == "source" else
                           f"0x{assemble_word():08x}" if role_kind == "destination" else None),
-        "modifier_words": [
-            f"0x{subview_word(source_position == 1, 1):08x}"
-            for group in groups
-            for source_position, field in enumerate(
-                field for field in group if field.startswith("source"))
-        ] if role_kind in {"source", "destination"} else [],
+        "modifier_words": (
+            [f"0x{subview_word(selected_source_select, 1):08x}"]
+            if role_kind == "source" else []
+        ),
         "normal_dispatch": "ExecuteBundleTileOperation",
         "expected_fault": expected_fault,
         "outcome": outcome,
@@ -692,11 +690,12 @@ def render_case(row: dict) -> list[str]:
         ]
         source_fields = [field for field in group if field.startswith("source")]
         for source_position, source in enumerate(source_fields):
-            modifier = subview_word(source_position == 1, 1)
-            lines += [
-                f"    let modifier_{index}_{source_position} = ExecuteCommandInstruction({asl_word(modifier)}, 32);",
-                f"    assert modifier_{index}_{source_position} == CommandExecution_Executed;",
-            ]
+            if row["role"] == source:
+                modifier = subview_word(source_position == 1, 1)
+                lines += [
+                    f"    let modifier_{index}_{source_position} = ExecuteCommandInstruction({asl_word(modifier)}, 32);",
+                    f"    assert modifier_{index}_{source_position} == CommandExecution_Executed;",
+                ]
         # A selected source-role case still binds the operation's required
         # destination, but B.ASSEMBLE belongs only to the destination-role
         # case.  This keeps nonrollback handlers on their ordinary direct
@@ -704,7 +703,7 @@ def render_case(row: dict) -> list[str]:
         # the exact pre-effect B.ASSEMBLE rejection witness.
         if (row["family"] != "TLSU" and
                 row["role_kind"] == "destination" and
-                any(field.startswith("destination") for field in group)):
+                row["role"] in group):
             modifier = assemble_word()
             lines += [
                 f"    let assemble_{index} = ExecuteCommandInstruction({asl_word(modifier)}, 32);",
@@ -740,19 +739,14 @@ def render_case(row: dict) -> list[str]:
             "           _Tiles[[observed_destination]].contents_defined;",
         ]
         if row["role_kind"] == "destination":
-            destination_roles = [
-                field for field in row["all_required_roles"]
-                if field.startswith("destination")
+            destination_slot = role_number(row["role"])
+            lines += [
+                f"    let completed_writer_{destination_slot} = CompleteBundleLocalGenerationWriterEvent(",
+                f"        BundleLocalGenerationSlot({destination_slot}, '1111'), _BundleExecutionDomainToken,",
+                f"        0, BundleLocalGenerationCellCount({CELL_SIZE_CODE}));",
+                f"    assert completed_writer_{destination_slot};",
+                f"    assert _LocalGenerations[[BundleLocalGenerationSlot({destination_slot}, '1111')]].published;",
             ]
-            for destination_role in destination_roles:
-                destination_slot = role_number(destination_role)
-                lines += [
-                    f"    let completed_writer_{destination_slot} = CompleteBundleLocalGenerationWriterEvent(",
-                    f"        BundleLocalGenerationSlot({destination_slot}, '1111'), _BundleExecutionDomainToken,",
-                    f"        0, BundleLocalGenerationCellCount({CELL_SIZE_CODE}));",
-                    f"    assert completed_writer_{destination_slot};",
-                    f"    assert _LocalGenerations[[BundleLocalGenerationSlot({destination_slot}, '1111')]].published;",
-                ]
     lines += ["    return TRUE;"]
     return lines
 

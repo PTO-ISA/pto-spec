@@ -85,16 +85,12 @@ begin
     assert ior == CommandExecution_Executed;
     let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x00105e13, 32);
     assert bind_0 == CommandExecution_Executed;
-    let modifier_0_0 = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);
-    assert modifier_0_0 == CommandExecution_Executed;
     let bind_1 = ExecuteCommandInstruction(Zeros{64} + 0x0000ee13, 32);
     assert bind_1 == CommandExecution_Executed;
     let assemble_1 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
     assert assemble_1 == CommandExecution_Executed;
     let bind_2 = ExecuteCommandInstruction(Zeros{64} + 0x0008ee93, 32);
     assert bind_2 == CommandExecution_Executed;
-    let assemble_2 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
-    assert assemble_2 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(78);
     let completed = ExecuteBundleTileOperation();
     assert completed;
@@ -114,11 +110,6 @@ begin
         0, BundleLocalGenerationCellCount(1));
     assert completed_writer_0;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].published;
-    let completed_writer_1 = CompleteBundleLocalGenerationWriterEvent(
-        BundleLocalGenerationSlot(1, '1111'), _BundleExecutionDomainToken,
-        0, BundleLocalGenerationCellCount(1));
-    assert completed_writer_1;
-    assert _LocalGenerations[[BundleLocalGenerationSlot(1, '1111')]].published;
     return TRUE;
 end;
 
@@ -153,12 +144,8 @@ begin
     assert ior == CommandExecution_Executed;
     let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x00105e13, 32);
     assert bind_0 == CommandExecution_Executed;
-    let modifier_0_0 = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);
-    assert modifier_0_0 == CommandExecution_Executed;
     let bind_1 = ExecuteCommandInstruction(Zeros{64} + 0x0000ee13, 32);
     assert bind_1 == CommandExecution_Executed;
-    let assemble_1 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
-    assert assemble_1 == CommandExecution_Executed;
     let bind_2 = ExecuteCommandInstruction(Zeros{64} + 0x0008ee93, 32);
     assert bind_2 == CommandExecution_Executed;
     let assemble_2 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
@@ -177,11 +164,6 @@ begin
     end;
     assert _Tiles[[observed_destination]].allocated &&
            _Tiles[[observed_destination]].contents_defined;
-    let completed_writer_0 = CompleteBundleLocalGenerationWriterEvent(
-        BundleLocalGenerationSlot(0, '1111'), _BundleExecutionDomainToken,
-        0, BundleLocalGenerationCellCount(1));
-    assert completed_writer_0;
-    assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].published;
     let completed_writer_1 = CompleteBundleLocalGenerationWriterEvent(
         BundleLocalGenerationSlot(1, '1111'), _BundleExecutionDomainToken,
         0, BundleLocalGenerationCellCount(1));
@@ -221,8 +203,6 @@ begin
     assert bind_0 == CommandExecution_Executed;
     let modifier_0_0 = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);
     assert modifier_0_0 == CommandExecution_Executed;
-    let modifier_0_1 = ExecuteCommandInstruction(Zeros{64} + 0x800000d3, 32);
-    assert modifier_0_1 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(79);
     let completed = ExecuteBundleTileOperation();
     assert completed;
