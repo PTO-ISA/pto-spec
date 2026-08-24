@@ -112,8 +112,8 @@ begin
     for tile = 1 to 8 looplimit 8 do
         if tile == 1 then
             let configured =
-            ConfigureCubeTileForMask(tile, 128, 1,
-                4, TileDataType_FP16, TileLayout_CUBE_M16,
+            ConfigureCubeTileForMask(tile, 128, 2,
+                2, TileDataType_FP16, TileLayout_CUBE_M16,
                 TileLocation_Matrix, '1111');
             assert configured;
         else
@@ -126,12 +126,12 @@ begin
     end;
     let started = ExecuteCommandInstruction(Zeros{64} + 0x26e19181, 32);
     assert started == CommandExecution_Executed;
-    let dim_400043 = ExecuteCommandInstruction(Zeros{64} + 0x00400043, 32);
-    assert dim_400043 == CommandExecution_Executed;
-    let dim_101043 = ExecuteCommandInstruction(Zeros{64} + 0x00101043, 32);
-    assert dim_101043 == CommandExecution_Executed;
-    let dim_402043 = ExecuteCommandInstruction(Zeros{64} + 0x00402043, 32);
-    assert dim_402043 == CommandExecution_Executed;
+    let dim_200043 = ExecuteCommandInstruction(Zeros{64} + 0x00200043, 32);
+    assert dim_200043 == CommandExecution_Executed;
+    let dim_201043 = ExecuteCommandInstruction(Zeros{64} + 0x00201043, 32);
+    assert dim_201043 == CommandExecution_Executed;
+    let dim_202043 = ExecuteCommandInstruction(Zeros{64} + 0x00202043, 32);
+    assert dim_202043 == CommandExecution_Executed;
     let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0018de13, 32);
     assert bind_0 == CommandExecution_Executed;
     let modifier_0_0 = ExecuteCommandInstruction(Zeros{64} + 0x000000d3, 32);
@@ -178,12 +178,12 @@ begin
     end;
     let started = ExecuteCommandInstruction(Zeros{64} + 0x26e19181, 32);
     assert started == CommandExecution_Executed;
-    let dim_400043 = ExecuteCommandInstruction(Zeros{64} + 0x00400043, 32);
-    assert dim_400043 == CommandExecution_Executed;
-    let dim_101043 = ExecuteCommandInstruction(Zeros{64} + 0x00101043, 32);
-    assert dim_101043 == CommandExecution_Executed;
-    let dim_402043 = ExecuteCommandInstruction(Zeros{64} + 0x00402043, 32);
-    assert dim_402043 == CommandExecution_Executed;
+    let dim_200043 = ExecuteCommandInstruction(Zeros{64} + 0x00200043, 32);
+    assert dim_200043 == CommandExecution_Executed;
+    let dim_201043 = ExecuteCommandInstruction(Zeros{64} + 0x00201043, 32);
+    assert dim_201043 == CommandExecution_Executed;
+    let dim_202043 = ExecuteCommandInstruction(Zeros{64} + 0x00202043, 32);
+    assert dim_202043 == CommandExecution_Executed;
     let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0018de13, 32);
     assert bind_0 == CommandExecution_Executed;
     let assemble_0 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);

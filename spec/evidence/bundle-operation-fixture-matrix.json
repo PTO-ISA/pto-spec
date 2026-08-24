@@ -5,7 +5,7 @@
   "operation_role_case_count": 291,
   "shard_count": 73,
   "normal_dispatch": "ExecuteBundleTileOperation",
-  "fixture_rule": "Every accepted operation-role record has an independent decoded authoritative-family fixture recipe, Local source B.SUBVIEW or Local destination B.ASSEMBLE INIT_LAST or Shared B.IOS role case, all required roles/attributes, and an exact normal or fault assertion.",
+  "fixture_rule": "Every accepted operation-role record has an independent decoded authoritative-family fixture recipe, exactly its selected Local source B.SUBVIEW or Local destination B.ASSEMBLE INIT_LAST or Shared B.IOS role case, all required roles/attributes, and an exact normal or fault assertion.",
   "effect_class_owner": "asl/block/model/operands/portable-carriers.asl::BundleProducerEffectClassOfHandler",
   "handler_effect_classification": {
     "ExecuteTileBinary": "rollback-safe",
@@ -66,7 +66,8 @@
   },
   "outcome_counts": {
     "nonrollback-pre-effect-fault": 1,
-    "normal-success": 269,
+    "normal-success": 267,
+    "predicate-role-pre-effect-fault": 2,
     "shared-stage3-fault": 17,
     "shared-stage3-success": 4
   },
@@ -2192,7 +2193,7 @@
         "source0",
         "destination0"
       ],
-      "decoded_start": "0x21019181",
+      "decoded_start": "0xd9019181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -2223,7 +2224,7 @@
       "row_assertion": "case_0042_normal_commit",
       "shard": 10,
       "gpr_word": null,
-      "fixture_data_type": 4,
+      "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "datr_word": null
@@ -2242,7 +2243,7 @@
         "source0",
         "destination0"
       ],
-      "decoded_start": "0x21019181",
+      "decoded_start": "0xd9019181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -2271,7 +2272,7 @@
       "row_assertion": "case_0043_normal_commit",
       "shard": 10,
       "gpr_word": null,
-      "fixture_data_type": 4,
+      "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "datr_word": null
@@ -3007,11 +3008,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "predicate-role-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (predicate-role-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-015",
-      "row_assertion": "case_0058_normal_commit",
+      "row_assertion": "case_0058_exact_fault",
       "shard": 14,
       "gpr_word": null,
       "fixture_data_type": 4,
@@ -4828,11 +4829,11 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "predicate-role-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (predicate-role-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-024",
-      "row_assertion": "case_0094_normal_commit",
+      "row_assertion": "case_0094_exact_fault",
       "shard": 23,
       "gpr_word": "0x00010013",
       "fixture_data_type": 4,
@@ -9267,7 +9268,7 @@
       "fixture_data_type": 26,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01b01023"
+      "datr_word": "0x01901023"
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0183",
@@ -9320,7 +9321,7 @@
       "fixture_data_type": 26,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01b01023"
+      "datr_word": "0x01901023"
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0184",
@@ -9371,7 +9372,7 @@
       "fixture_data_type": 26,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01b01023"
+      "datr_word": "0x01901023"
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0185",
@@ -9522,7 +9523,7 @@
       "fixture_data_type": 19,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01301023"
+      "datr_word": "0x00101023"
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0188",
@@ -9571,7 +9572,7 @@
       "fixture_data_type": 19,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
-      "datr_word": "0x01301023"
+      "datr_word": "0x00101023"
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0189",

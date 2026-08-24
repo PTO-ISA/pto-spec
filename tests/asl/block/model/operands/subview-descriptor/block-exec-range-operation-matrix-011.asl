@@ -69,18 +69,18 @@ begin
         if tile == 1 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
-                4, TileDataType_FP16, TileLayout_CUBE_M16,
+                4, TileDataType_U8, TileLayout_CUBE_M16,
                 TileLocation_Matrix, '1111');
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
-                16, 4, 1,
-                4, TileDataType_FP16,
+                32, 4, 1,
+                4, TileDataType_U8,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
     end;
-    let started = ExecuteCommandInstruction(Zeros{64} + 0x21019181, 32);
+    let started = ExecuteCommandInstruction(Zeros{64} + 0xd9019181, 32);
     assert started == CommandExecution_Executed;
     let dim_400043 = ExecuteCommandInstruction(Zeros{64} + 0x00400043, 32);
     assert dim_400043 == CommandExecution_Executed;
@@ -121,18 +121,18 @@ begin
         if tile == 0 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
-                4, TileDataType_FP16, TileLayout_CUBE_M16,
+                4, TileDataType_U8, TileLayout_CUBE_M16,
                 TileLocation_Matrix, '1111');
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
-                16, 4, 1,
-                4, TileDataType_FP16,
+                32, 4, 1,
+                4, TileDataType_U8,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
     end;
-    let started = ExecuteCommandInstruction(Zeros{64} + 0x21019181, 32);
+    let started = ExecuteCommandInstruction(Zeros{64} + 0xd9019181, 32);
     assert started == CommandExecution_Executed;
     let dim_400043 = ExecuteCommandInstruction(Zeros{64} + 0x00400043, 32);
     assert dim_400043 == CommandExecution_Executed;

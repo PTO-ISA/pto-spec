@@ -119,7 +119,7 @@ def fixture_data_type(row: dict) -> int:
     """
     name = row.get("name", row.get("operation"))
     if name in {
-        "TAND", "TOR", "TXOR", "TSHL", "TSHR",
+        "TAND", "TOR", "TXOR", "TSHL", "TSHR", "TNOT",
         "TANDS", "TORS", "TXORS", "TSHLS", "TSHRS",
     }:
         return 27  # U8, accepted by the integer/logical schemas.
@@ -157,17 +157,17 @@ def datr_word(row: dict) -> int | None:
     # B.DATR's fixed command discriminator includes bit 12 regardless of
     # which operation-owned union fields are nonzero.
     word = 0x00001023
-    if "DataType" in allowed:
-        word |= dtype << 20
+    encoded_dtype = dtype
     if row["name"] == "TQUANT":
         # Destination type S8, with the default non-saturating controls.
-        word |= 19 << 20
+        encoded_dtype = 19
     elif row["name"] == "TDEQUANT":
         # Destination type FP32, with the default non-saturating controls.
-        word |= 1 << 20
+        encoded_dtype = 1
     elif row["name"] == "THISTOGRAM":
         # Destination type U32 and selected-byte zero.
-        word |= 25 << 20
+        encoded_dtype = 25
+    word |= encoded_dtype << 20
     return word
 
 
@@ -369,6 +369,14 @@ def dimension_words(row: dict) -> list[int]:
         return [0x43 | (4 << 20)]
     if name == "TMRGSORT":
         return []
+    if name in {"TINSERT", "TIMG2COL"}:
+        return [0x43, 0x1043]
+    if name == "THISTOGRAM":
+        return []
+    if name == "TTRANS":
+        return [0x43 | (2 << 20),
+                0x1043 | (2 << 20),
+                0x2043 | (2 << 20)]
     values = (1, 1, 1) if row["family"] == "CUBE" else (4, 1, 4)
     return [0x43 | (values[0] << 20),
             0x1043 | (values[1] << 20),
@@ -413,6 +421,10 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
           effect_classes[handler] == "nonrollback-auxiliary"):
         expected_fault = "Fault_TileLegality"
         outcome = "nonrollback-pre-effect-fault"
+    elif (role_kind == "source" and role == "source0" and
+          row["name"] in {"TSEL", "TSELS"}):
+        expected_fault = "Fault_TileLegality"
+        outcome = "predicate-role-pre-effect-fault"
     shard = case_index // SHARD_SIZE
     test_id = f"PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-{shard + 1:03d}"
     return {
@@ -485,7 +497,23 @@ def source_valid_columns(row: dict, source: str) -> int:
         return 1 if source == "source1" else 4
     if name == "TMRGSORT":
         return 2
+    if name == "TTRANS":
+        return 2
     return 4
+
+
+def source_valid_rows(row: dict, source: str) -> int:
+    name = row.get("name", row.get("operation"))
+    return 2 if name == "TTRANS" else 1
+
+
+def source_fixture_data_type(row: dict, source: str) -> int:
+    name = row.get("name", row.get("operation"))
+    if name == "THISTOGRAM" and source == "source1":
+        return 27
+    if name in {"TGATHER", "TSCATTER"} and source == "source1":
+        return 17
+    return fixture_data_type(row)
 
 
 def source_physical_columns(row: dict, source: str) -> int:
@@ -517,10 +545,17 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
     dtype_name = DATA_TYPE_NAMES[dtype]
     operation_name = row.get("name", row.get("operation"))
     index_source_fixture = operation_name in {"TGATHER", "TSCATTER"}
-    local_dtype = (
-        f"(if tile == 2 then TileDataType_S32 else {dtype_name})"
-        if index_source_fixture else dtype_name
-    )
+    local_dtype = dtype_name
+    for operand in row.get("operands", []):
+        field = operand["field"]
+        if field.startswith("source"):
+            tile = role_number(field) + 1
+            role_dtype = source_fixture_data_type(row, field)
+            if role_dtype != dtype:
+                local_dtype = (
+                    f"(if tile == {tile} then {DATA_TYPE_NAMES[role_dtype]} "
+                    f"else {local_dtype})"
+                )
     gpr2 = (
         "0x3f800000" if operation_name in {"TQUANT", "TDEQUANT"}
         else "0" if operation_name in {"TINSERT", "TIMG2COL"}
@@ -586,25 +621,48 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
             source_valid_columns(row, selected_source)
             if selected_source is not None else 4
         )
+        selected_rows = (
+            source_valid_rows(row, selected_source)
+            if selected_source is not None else 1
+        )
+        selected_dtype = (
+            source_fixture_data_type(row, selected_source)
+            if selected_source is not None else dtype
+        )
         selected_layout = (
             "TileLayout_CUBE_N8"
-            if dtype in {1, 17, 25} or
+            if selected_dtype in {1, 17, 25} or
                (index_source_fixture and selected_source == "source1")
             else "TileLayout_CUBE_M16"
         )
         ordinary_rows = str(row_major_rows(dtype))
         ordinary_physical_columns = "4"
+        ordinary_valid_rows = "1"
+        predicate_source_ordinary = (
+            operation_name in {"TSEL", "TSELS"} and
+            selected_source != "source0"
+        )
+        predicate_lines = (
+            [
+                "        if tile == 1 then",
+                "            ConfigurePredicateTileForMask(tile, 128,",
+                "                16, 4, 1, 4, '1111');",
+                f"        elsif tile == {selected_tile} then",
+            ]
+            if predicate_source_ordinary else
+            [f"        if tile == {selected_tile} then"]
+        )
         lines += [
             "    for tile = 1 to 8 looplimit 8 do",
-            f"        if tile == {selected_tile} then",
+            *predicate_lines,
             "            let configured =",
-            "            ConfigureCubeTileForMask(tile, 128, 1,",
+            f"            ConfigureCubeTileForMask(tile, 128, {selected_rows},",
             f"                {selected_columns}, {local_dtype}, {selected_layout},",
             "                TileLocation_Matrix, '1111');",
             "            assert configured;",
             "        else",
             "            ConfigureTileForMask(tile, 128,",
-            "                ordinary_rows_placeholder, source_physical_columns_placeholder, 1,",
+            "                ordinary_rows_placeholder, source_physical_columns_placeholder, ordinary_valid_rows_placeholder,",
             f"                source_valid_columns_placeholder, {local_dtype},",
             "                TileLayout_RowMajor, TileLocation_Any, '1111');",
             "        end;",
@@ -619,9 +677,10 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
             field = operand["field"]
             if field.startswith("source"):
                 tile = role_number(field) + 1
-                role_dtype = 17 if index_source_fixture and tile == 2 else dtype
+                role_dtype = source_fixture_data_type(row, field)
                 physical_columns = source_physical_columns(row, field)
                 columns = source_valid_columns(row, field)
+                valid_rows = source_valid_rows(row, field)
                 if physical_columns != 4:
                     ordinary_physical_columns = (
                         f"(if tile == {tile} then {physical_columns} else "
@@ -638,13 +697,26 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
                         f"(if tile == {tile} then {columns} else "
                         f"{ordinary_columns})"
                     )
+                if valid_rows != 1:
+                    ordinary_valid_rows = (
+                        f"(if tile == {tile} then {valid_rows} else "
+                        f"{ordinary_valid_rows})"
+                    )
         lines = [
             line.replace("source_valid_columns_placeholder", ordinary_columns)
                 .replace("source_physical_columns_placeholder",
                          ordinary_physical_columns)
                 .replace("ordinary_rows_placeholder", ordinary_rows)
+                .replace("ordinary_valid_rows_placeholder",
+                         ordinary_valid_rows)
             for line in lines
         ]
+        if predicate_source_ordinary:
+            lines += [
+                "    for column = 0 to 3 looplimit 4 do",
+                "        WriteTilePredicateBit(1, 0, column, column MOD 2 == 0);",
+                "    end;",
+            ]
         if operation_name == "TIMG2COL":
             lines += [
                 "    ConfigureTileFeatureMapDescriptor(1,",
@@ -939,7 +1011,7 @@ def build() -> tuple[dict, dict[int, str]]:
     outcome_counts = Counter(row["outcome"] for row in rows)
     if set(outcome_counts) != {
         "normal-success", "shared-stage3-success", "shared-stage3-fault",
-        "nonrollback-pre-effect-fault"
+        "nonrollback-pre-effect-fault", "predicate-role-pre-effect-fault",
     }:
         raise ValueError("matrix outcome classification is incomplete")
     evidence = {
@@ -949,7 +1021,7 @@ def build() -> tuple[dict, dict[int, str]]:
         "operation_role_case_count": len(rows),
         "shard_count": len(grouped),
         "normal_dispatch": "ExecuteBundleTileOperation",
-        "fixture_rule": "Every accepted operation-role record has an independent decoded authoritative-family fixture recipe, Local source B.SUBVIEW or Local destination B.ASSEMBLE INIT_LAST or Shared B.IOS role case, all required roles/attributes, and an exact normal or fault assertion.",
+        "fixture_rule": "Every accepted operation-role record has an independent decoded authoritative-family fixture recipe, exactly its selected Local source B.SUBVIEW or Local destination B.ASSEMBLE INIT_LAST or Shared B.IOS role case, all required roles/attributes, and an exact normal or fault assertion.",
         "effect_class_owner": "asl/block/model/operands/portable-carriers.asl::BundleProducerEffectClassOfHandler",
         "handler_effect_classification": {key: next(iter(value)) for key, value in sorted(handler_rows.items())},
         "effect_class_counts": dict(sorted(Counter(row["handler_effect_class"] for row in rows).items())),

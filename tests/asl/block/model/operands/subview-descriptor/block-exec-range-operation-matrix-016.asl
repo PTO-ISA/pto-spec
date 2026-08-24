@@ -9,7 +9,10 @@ begin
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        if tile == 0 then
+        if tile == 1 then
+            ConfigurePredicateTileForMask(tile, 128,
+                16, 4, 1, 4, '1111');
+        elsif tile == 0 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
                 4, TileDataType_FP16, TileLayout_CUBE_M16,
@@ -22,6 +25,9 @@ begin
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
+    end;
+    for column = 0 to 3 looplimit 4 do
+        WriteTilePredicateBit(1, 0, column, column MOD 2 == 0);
     end;
     let started = ExecuteCommandInstruction(Zeros{64} + 0x21a19181, 32);
     assert started == CommandExecution_Executed;

@@ -12,13 +12,13 @@ begin
         if tile == 2 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
-                4, (if tile == 2 then TileDataType_S32 else TileDataType_FP16), TileLayout_CUBE_N8,
+                4, TileDataType_FP16, TileLayout_CUBE_N8,
                 TileLocation_Matrix, '1111');
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
                 16, 4, 1,
-                4, (if tile == 2 then TileDataType_S32 else TileDataType_FP16),
+                4, TileDataType_FP16,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
@@ -64,13 +64,13 @@ begin
         if tile == 0 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
-                4, (if tile == 2 then TileDataType_S32 else TileDataType_FP16), TileLayout_CUBE_M16,
+                4, TileDataType_FP16, TileLayout_CUBE_M16,
                 TileLocation_Matrix, '1111');
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
                 16, 4, 1,
-                4, (if tile == 2 then TileDataType_S32 else TileDataType_FP16),
+                4, TileDataType_FP16,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);

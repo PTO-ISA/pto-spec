@@ -59,7 +59,7 @@ begin
     return TRUE;
 end;
 
-// RANGE-MATRIX-CASE-0094 TSELS source0 -> case_0094_normal_commit
+// RANGE-MATRIX-CASE-0094 TSELS source0 -> case_0094_exact_fault
 func RunCase_0094() => boolean
 begin
     ResetProfileState();
@@ -98,18 +98,8 @@ begin
     assert modifier_0_0 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(38);
     let completed = ExecuteBundleTileOperation();
-    assert completed;
-    if !completed then assert _LastFault == Fault_TileLegality; end;
-    assert _LastFault == Fault_None;
-    var observed_destination: TileIndex = 0;
-    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
-        if _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_valid then
-            observed_destination = _BundleTileBindings[[binding]].destination;
-        end;
-    end;
-    assert _Tiles[[observed_destination]].allocated &&
-           _Tiles[[observed_destination]].contents_defined;
+    assert !completed;
+    assert _LastFault == Fault_TileLegality;
     return TRUE;
 end;
 
@@ -122,7 +112,10 @@ begin
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        if tile == 2 then
+        if tile == 1 then
+            ConfigurePredicateTileForMask(tile, 128,
+                16, 4, 1, 4, '1111');
+        elsif tile == 2 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
                 4, TileDataType_FP16, TileLayout_CUBE_M16,
@@ -135,6 +128,9 @@ begin
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
+    end;
+    for column = 0 to 3 looplimit 4 do
+        WriteTilePredicateBit(1, 0, column, column MOD 2 == 0);
     end;
     let started = ExecuteCommandInstruction(Zeros{64} + 0x23a19181, 32);
     assert started == CommandExecution_Executed;
@@ -176,7 +172,10 @@ begin
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        if tile == 0 then
+        if tile == 1 then
+            ConfigurePredicateTileForMask(tile, 128,
+                16, 4, 1, 4, '1111');
+        elsif tile == 0 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
                 4, TileDataType_FP16, TileLayout_CUBE_M16,
@@ -189,6 +188,9 @@ begin
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
+    end;
+    for column = 0 to 3 looplimit 4 do
+        WriteTilePredicateBit(1, 0, column, column MOD 2 == 0);
     end;
     let started = ExecuteCommandInstruction(Zeros{64} + 0x23a19181, 32);
     assert started == CommandExecution_Executed;

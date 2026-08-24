@@ -1,17 +1,5 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 
-pure func SmallestTilePhysicalColumns(
-    valid_columns: integer {1..65535}) => integer {0..65535}
-begin
-    var columns: integer = 1;
-    for exponent = 0 to 15 do
-        if valid_columns <= columns then
-            return columns as integer {1..32768};
-        end;
-        columns = columns * 2;
-    end;
-    return 0;
-end;
 readonly func BundleDestinationValidRows(shape_source_valid: boolean,
                                          shape_source: TileIndex)
                                          => integer {0..65535}
@@ -384,6 +372,17 @@ begin
             MarkBundleTIMG2COLDestinationsMatrix();
         end;
         return resolved;
+    end;
+    if TileOperationOfIndex(operation) == TileOperation_TCONCAT then
+        let (legal, valid_rows, valid_columns, physical_columns,
+             data_type) = BundleTCONCATDestinationShape();
+        if !legal then
+            SetFault(Fault_TileAllocation, ReadTPC());
+            return FALSE;
+        end;
+        return ResolveBundleTileDestinationsWithShapeAndType(
+            TRUE, valid_rows, valid_columns, physical_columns,
+            TRUE, data_type);
     end;
     if TileOperationUsesClosedSortingSchema(operation) then
         let decoded = TileOperationOfIndex(operation);
