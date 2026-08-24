@@ -785,6 +785,29 @@ def render_case(row: dict) -> list[str]:
         lines += [
             f"    assert BundleOperationBindingsComplete({row['operation_index']});",
         ]
+    if row["expected_fault"] is None and row["family"] != "TLSU":
+        lines += [
+            "    let prepared_stage2 = PrepareSelectedBundleStage2();",
+            "    assert prepared_stage2;",
+            f"    assert SelectedBundleClosedBinarySchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedUnarySchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedTFMASchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedQuantizationSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedGenerationSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedHistogramSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedReductionSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedSortingSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedPartialSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedExpansionSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedTCVTSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedTCMPSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedTSELSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedTileScalarBinarySchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedTCMPSSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedTSELSSchemaLegal({row['operation_index']});",
+            f"    assert SelectedBundleClosedTEXPANDSSchemaLegal({row['operation_index']});",
+            "    assert SelectedBundleTileMasksLegal();",
+        ]
     if row["operation"] in {"TADD", "TSUB", "TMUL", "TDIV", "TREM", "TMAX", "TMIN"}:
         lines.append(
             f"    assert SelectedBundleClosedBinarySchemaLegal({row['operation_index']});"
