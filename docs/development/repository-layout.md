@@ -27,6 +27,11 @@ ASL source order is derived from `PTO-UNIT` dependency metadata. Test discovery
 comes from `PTO-TEST` records in the mirrored `tests/asl/` tree. There is no
 hand-maintained aggregate semantic source or test owner.
 
+Generated exhaustive matrices follow the same ownership rule: one case per
+result file, one stable `PTO-TEST.id`, and no hidden multi-case shard. Focused
+execution selects exact IDs through `scripts/print-asl-test-matrix --ids-file`;
+only the release lane plans and validates the complete repository matrix.
+
 Use the [architecture overview](../arch/overview/architecture.md) to enter the
 formal reference, the [ADR process](../governance/adr-process.md) for normative
 change control, and the [release hub](../releases/index.md) for commit-scoped

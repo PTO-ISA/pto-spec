@@ -152,9 +152,18 @@ Do not invent missing semantics. Stop at a documented requirement gap and open o
 - Run each new point alone through `scripts/run-asl-test --id`, observe the
   intended RED before production edits, then run the mnemonic family with the
   bounded `-j` parallel runner after GREEN.
-- Build family pages from `scripts/print-asl-test-matrix` after adding or
-  renaming tests. Do not select a newly added point from a stale cached
-  `build/asl-test-matrix.json`.
+- Build a focused family page directly from exact current IDs with
+  `scripts/print-asl-test-matrix --ids-file`; this path discovers only the
+  selected points and lazily generates only their required validation inputs.
+  Do not select a newly added point from a stale cached
+  `build/asl-test-matrix.json`, and do not invoke full release discovery merely
+  to filter a focused family.
+- Keep generated exhaustive coverage at one case per result file. Delete
+  obsolete generated results, reject unexpected extras in generator check
+  mode, and never restore a `SHARD_SIZE` or multi-case grouping abstraction.
+- Reset only the architectural fixture state required by an exhaustive point.
+  Do not call a full profile reset inside a large loop when a small local reset
+  preserves the same observable behavior.
 - Do not lengthen a test to amortize ASLRef startup. Improve assembly/cache and
   parallel scheduling in the runner while preserving independent points.
 
@@ -185,17 +194,21 @@ wrong-commit cache fails closed and tells the caller to run `make setup`. Do not
 ASLRef process: Dune retains the workspace lock for the process lifetime and silently serializes otherwise independent
 shards.
 
-Keep runtime shards focused: assemble only the test-library sources that define a shard's calls, schedule the known
-heavy totality matrices first, and use a bounded job count. The shard checker must inspect only each actual `main()`
-body, prove every canonical call appears exactly once, reject orphan or empty shard files, and prove every declared
-`Test*` or `Validate*` subprogram remains reachable. A call-looking line in dead helper code is not execution evidence.
+Keep runtime results independent: assemble only the test-library sources needed
+by each point, keep one case per result file, schedule known heavy totality
+points first, and use a bounded job count. Coverage checks must inspect each
+actual `main()` body, prove every canonical call appears exactly once, reject
+orphan or empty result files, and prove every declared `Test*` or `Validate*`
+subprogram remains reachable. A call-looking line in dead helper code is not
+execution evidence.
 
 Before committing, confirm:
 
 - ASLRef strict type-checking succeeds.
 - Toolchain canaries pass for accepted, rejected, and failing ASL inputs.
 - Every independent test ID is discoverable through `scripts/print-asl-test-matrix` and executable through
-  `scripts/run-asl-test --id`.
+  `scripts/run-asl-test --id`; focused families use `--ids-file` and must not
+  fall back to full release discovery.
 - Every normative claim has a source and requirement ID.
 - Every accepted scalar form and tile operation has an executable decoder witness.
 - Every scalar semantic primitive and tile handler group has direct executable feature evidence.

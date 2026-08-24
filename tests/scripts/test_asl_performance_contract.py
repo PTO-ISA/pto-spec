@@ -14,8 +14,11 @@ class AslPerformanceContractTest(unittest.TestCase):
     def test_operation_role_cases_have_independent_result_files(self) -> None:
         evidence = json.loads(MATRIX.read_text(encoding="utf-8"))
         case_count = evidence["operation_role_case_count"]
-        self.assertEqual(evidence["shard_count"], case_count)
+        self.assertEqual(evidence["independent_result_file_count"], case_count)
+        self.assertNotIn("shard_count", evidence)
         self.assertTrue(evidence["closure"]["independent_case_results"])
+        for row in evidence["operation_role_matrix"]:
+            self.assertNotIn("shard", row)
 
         paths = sorted(
             MATRIX_DIR.glob("block-exec-range-operation-matrix-*.asl")
@@ -27,6 +30,19 @@ class AslPerformanceContractTest(unittest.TestCase):
                 if line.startswith("// RANGE-MATRIX-CASE-")
             ]
             self.assertEqual(len(cases), 1, path.name)
+
+    def test_operation_role_generator_has_no_legacy_multi_case_sharding(self) -> None:
+        generator = (
+            ROOT / "scripts/generate-bundle-operation-matrix.py"
+        ).read_text(encoding="utf-8")
+        for legacy_term in (
+            "SHARD_SIZE",
+            "render_shard",
+            'item["shard"]',
+            '"shard_count"',
+        ):
+            self.assertNotIn(legacy_term, generator)
+        self.assertIn("render_case_file", generator)
 
     def test_exhaustive_range_tests_use_local_fixture_resets(self) -> None:
         paths = (

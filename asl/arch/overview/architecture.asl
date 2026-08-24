@@ -40,7 +40,7 @@
 // NDF-BEGIN: PTO-RELEASE-VERIFICATION
 // ndf: kind=mechanism level=L2 layer=architecture status=accepted
 // A release candidate MUST be the exact commit that passes the pinned ASL model,
-// every runtime shard, coverage, projections, and release-evidence checks.
+// every independent AVS result, coverage, projections, and release-evidence checks.
 // NDF-END: PTO-RELEASE-VERIFICATION
 
 constant PTO_ARCHITECTURE_VERSION = 0;

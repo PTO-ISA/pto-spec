@@ -52,23 +52,24 @@ opam exec -- dune exec --root=/path/to/herdtools7 asllib/aslref.exe -- --version
 ```
 
 CI fetches exactly the commit in `.aslref-version` and installs the build dependencies. For a one-shot invocation, the
-source-execution path above is sufficient. For repository tests, especially parallel shards, build once and invoke the
-pinned executable directly:
+source-execution path above is sufficient. For repository tests, especially parallel independent points, build once and
+invoke the pinned executable directly:
 
 ```bash
 opam exec -- dune build --root=/path/to/herdtools7 asllib/aslref.exe
 /path/to/herdtools7/_build/default/asllib/aslref.exe --version
 ```
 
-Do not wrap every long-running ASLRef shard in `dune exec`. Dune retains the source workspace lock until the child exits,
-so multiple shards that appear parallel will serialize on the shared build tree. Run `make setup` before scheduling
-shards. Its `scripts/prepare-aslref` step is the sole owner of fetching, checking out, and building the exact pinned
+Do not wrap every long-running ASLRef process in `dune exec`. Dune retains the source workspace lock until the child
+exits, so independent points that appear parallel will serialize on the shared build tree. Run `make setup` before
+scheduling points. Its `scripts/prepare-aslref` step is the sole owner of fetching, checking out, and building the exact pinned
 checkout. The repository `scripts/aslref` wrapper remains the canonical entry point for local and CI validation, but it
 is deliberately read-only: it verifies the prepared checkout origin, commit, and executable, then runs it. If preparation
 is missing or stale, the launcher fails closed and instructs the caller to run `make setup`; it must not mutate a shared
-cache from a parallel shard.
+cache from a parallel worker.
 
-ASLRef parses and types every declaration assembled into a shard, including test functions that its `main()` never
-calls. A parallel shard should therefore include the complete normative specification but only the test-library sources
-needed by that shard. Preserve a canonical full-suite assembly as the coverage reference, and fail closed unless the
-shard mains partition its direct calls exactly once and retain reachability of every declared test entry point.
+ASLRef parses and types every declaration assembled for a point, including test functions that its `main()` never
+calls. Each point should therefore include the complete normative specification but only the test-library and generated
+validation sources it needs. Keep one case per result file, preserve the canonical full repository matrix as the release
+coverage reference, and fail closed unless every selected `main()` calls its intended entry point and every declared
+`Test*` or `Validate*` subprogram remains reachable.

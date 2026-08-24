@@ -44,7 +44,9 @@ printf '%s\n' \
 Focused selection defaults to one complete page, ignores blank and comment
 lines, rejects duplicate or unknown IDs, and lazily generates only the
 validation shards required by the selected points. Full release planning still
-discovers and validates the complete repository matrix.
+discovers and validates the complete repository matrix. Generated exhaustive
+coverage keeps one case per result file; multi-case runtime shards are not an
+accepted optimization.
 
 Full verification additionally needs OCaml, opam, network access for the pinned
 ASLRef checkout, and enough time to execute every AVS point:

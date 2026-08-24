@@ -114,6 +114,37 @@ class RepositoryDocumentationTest(unittest.TestCase):
             for phrase in forbidden:
                 self.assertNotIn(phrase, text, f"{path.relative_to(ROOT)}: {phrase}")
 
+    def test_active_guidance_uses_focused_ids_and_independent_results(self) -> None:
+        required_paths = (
+            ROOT / "AGENTS.md",
+            ROOT / "CONTRIBUTING.md",
+            ROOT / ".codex/skills/pto-asl/SKILL.md",
+            ROOT / "docs/governance/validation.md",
+            ROOT / "docs/development/getting-started.md",
+            ROOT / "docs/development/repository-layout.md",
+        )
+        for path in required_paths:
+            text = path.read_text(encoding="utf-8")
+            normalized = " ".join(text.split())
+            self.assertIn("--ids-file", text, path.relative_to(ROOT))
+            self.assertIn(
+                "one case per result file",
+                normalized,
+                path.relative_to(ROOT),
+            )
+
+        skill = (ROOT / ".codex/skills/pto-asl/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("Build family pages from", skill)
+        self.assertNotIn("Keep runtime shards focused", skill)
+
+        aslref = (
+            ROOT / ".codex/skills/pto-asl/references/aslref.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("one case per result file", " ".join(aslref.split()))
+        self.assertNotIn("parallel shard", aslref)
+
     def test_authority_order_is_explicit_and_singular(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn(

@@ -45,6 +45,21 @@ builds the read-only executable cache.
 
 Architecture changes also follow the [ADR process](../governance/adr-process.md).
 
+For focused executable ASL feedback, keep one case per result file and select
+exact current IDs without planning the full release matrix:
+
+```bash
+./scripts/print-asl-test-matrix \
+  --ids-file build/asl-focused-ids.txt \
+  > build/asl-focused-page.json
+./scripts/run-asl-page \
+  --matrix build/asl-focused-page.json \
+  -j "$(getconf _NPROCESSORS_ONLN)"
+```
+
+Run `make setup` once before parallel execution when the pinned ASLRef cache is
+not already prepared.
+
 ## Troubleshooting
 
 - **Submodule or NDF tool missing:** run `git submodule update --init --recursive`.

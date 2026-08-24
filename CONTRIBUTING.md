@@ -50,6 +50,10 @@ and one owning `source`. Use the repository filename grammar and keep setup
 local. The [repository-layout guide](docs/development/repository-layout.md)
 describes these boundaries and the derived surfaces.
 
+Generated exhaustive coverage also keeps one case per result file. A generator
+must delete obsolete generated results, reject unexpected extras in `--check`
+mode, and must not recreate multi-case shards.
+
 ## Develop and review
 
 Create the regression or contract test first and observe the intended failure.
@@ -66,6 +70,11 @@ merge-base semantic-delta aid. It does not replace source review. A pull request
 must link the governing issue or ADR, identify changed NDF clauses and ASL
 owners, describe compatibility and release impact, and explain any validation
 gap.
+
+For an ASL owner or family rerun, put its exact current IDs in a file and use
+`scripts/print-asl-test-matrix --ids-file`. Run the emitted page through
+`scripts/run-asl-page -j "$(getconf _NPROCESSORS_ONLN)"`; do not build the full
+release matrix merely to select a focused subset.
 
 Commits are signed. Pull requests land only after `PR / validate` succeeds for
 the reviewed head and conversations are resolved. A successful pull request or
