@@ -2,6 +2,15 @@
 // The CUBE Matrix selector and MX side-type rules are kept in one small unit
 // so schema and execution code cannot grow separate function tables.
 
+// NDF-BEGIN: PTO-CUBE-MATRIX-SCALE-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// Each Matrix-MX primary side MUST independently select group-32 E8M0 scale
+// for MX FP8/FP4 carriers or group-64 raw U32 scale for HiF4X2. HiF4X2 MUST
+// be accepted only by Matrix-MX input roles; ordinary Matrix MUST not gain it.
+// Each Local scale MUST use CUBE_M32 and each Shared scale MUST remain an
+// independently bound ordinary Tile with the corresponding primary location.
+// NDF-END: PTO-CUBE-MATRIX-SCALE-001
+
 pure func TileMXInputTypeSupported(data_type: TileDataType) => boolean
 begin
     return data_type == TileDataType_FP16 ||
@@ -9,7 +18,32 @@ begin
            data_type == TileDataType_E4M3 ||
            data_type == TileDataType_E5M2 ||
            data_type == TileDataType_E2M1X2 ||
-           data_type == TileDataType_E1M2X2;
+           data_type == TileDataType_E1M2X2 ||
+           data_type == TileDataType_HiF4X2;
+end;
+
+pure func TileMXScaleGroupSize(data_type: TileDataType)
+    => integer {32,64}
+begin
+    assert TileMXInputTypeNeedsScale(data_type);
+    if data_type == TileDataType_HiF4X2 then return 64; end;
+    return 32;
+end;
+
+pure func TileMXScaleCarrierType(data_type: TileDataType) => TileDataType
+begin
+    assert TileMXInputTypeNeedsScale(data_type);
+    if data_type == TileDataType_HiF4X2 then return TileDataType_U32; end;
+    return TileDataType_E8M0;
+end;
+
+pure func TileMXScaleGroupCount(
+    k: integer {1..65535}, data_type: TileDataType)
+    => integer {1..2048}
+begin
+    let group_size = TileMXScaleGroupSize(data_type);
+    return ((k + (group_size - 1)) DIVRM group_size)
+        as integer {1..2048};
 end;
 
 pure func TileMXInputTypeNeedsScale(data_type: TileDataType) => boolean
@@ -57,6 +91,12 @@ pure func TileMatrixFunctionIsGEMV(function: integer {0..31}) => boolean
 begin
     return function == 16 || function == 17 || function == 18 ||
            function == 20 || function == 21 || function == 22;
+end;
+
+pure func TileMatrixFunctionAllowsCScale(
+    function: integer {0..31}) => boolean
+begin
+    return function == 2 || function == 6;
 end;
 
 pure func TileMatrixLeftGroupSourceCount(

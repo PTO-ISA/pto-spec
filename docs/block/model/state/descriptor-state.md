@@ -130,6 +130,7 @@ begin
     _BundleFixedPointAttributes.max_abs_en = FALSE;
     _BundleFixedPointAttributes.trans_a = FALSE;
     _BundleFixedPointAttributes.trans_b = FALSE;
+    _BundleFixedPointAttributes.c_scale_en = FALSE;
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

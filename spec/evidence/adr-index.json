@@ -7940,12 +7940,63 @@
         "0.58.4"
       ],
       "title": "Cooperative Group-M Distribution and Inactive PE Semantics"
+    },
+    {
+      "accepted": "2026-08-24",
+      "affected_ndf": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-CUBE-CSCALE-001",
+        "PTO-CUBE-HIF4-SCALE-001",
+        "PTO-CUBE-MATRIX-SCALE-001",
+        "PTO-CUBE-MATRIX-SCALE-CELL-001",
+        "PTO-CUBE-SHARED-TRANSPOSE-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-FORMAT-HIF4-SCALE",
+        "PTO-ARCH-PROFILE-MATRIX-POSTPROCESS",
+        "PTO-BLOCK-B-FPATR",
+        "PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL",
+        "PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+        "PTO-BLOCK-MODEL-SCHEMA-ATTRIBUTES",
+        "PTO-BLOCK-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-EXECUTION-CUBE",
+        "PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-POSTPROCESS",
+        "PTO-TILE-MODEL-LEGALITY-MATRIX-SHAPE",
+        "PTO-TILE-MODEL-SHAPE-CUBE-CELL"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Kevin Zhou"
+      ],
+      "baseline": "633e4e24824bc84dfdf2ffffefb62042ad6492d1",
+      "created": "2026-08-24",
+      "id": "ADR-0101",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/136",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0101-matrix-scale-and-cscale.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.4"
+      ],
+      "title": "Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 95
+    "record_count": 96
   }
 }

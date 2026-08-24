@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-CUBE-CELL-WIDTH-001","source":"asl/tile/model/shape/cube-cell.asl","requirements":["PTO-CUBE-CELL-STATE-001"],"kind":"boundary","summary":"CUBE CELL geometry is exactly 128 bytes for each assigned width and layout","pass_condition":"M16 M32 and N8 return the assigned b32 b16 b8 and b4 dimensions while HiF4X2 and b64 reject","related_sources":["asl/arch/data-types/tile-data-types.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-CUBE-CELL-WIDTH-001","source":"asl/tile/model/shape/cube-cell.asl","requirements":["PTO-CUBE-CELL-STATE-001","PTO-CUBE-MATRIX-SCALE-001"],"kind":"boundary","summary":"CUBE CELL geometry is exactly 128 bytes for each assigned width and layout","pass_condition":"M16 M32 and N8 return assigned b32 b16 b8 and packed-b4 dimensions including HiF4X2, while b64 rejects","related_sources":["asl/arch/data-types/tile-data-types.asl"]}
 func main() => integer
 begin
     assert TileCubeCellRows(TileLayout_CUBE_N8, TileDataType_FP32) == 4;
@@ -33,7 +33,11 @@ begin
     assert 16 * 8 * TileElementBits(TileDataType_E4M3) == 1024;
     assert 32 * 8 * TileElementBits(TileDataType_E2M1X2) == 1024;
     assert TileCubeDataTypeSupported(TileDataType_U4X2);
-    assert !TileCubeDataTypeSupported(TileDataType_HiF4X2);
+    assert TileCubeDataTypeSupported(TileDataType_HiF4X2);
+    assert TileCubeCellRows(
+        TileLayout_CUBE_N8, TileDataType_HiF4X2) == 32;
+    assert TileCubeCellColumns(
+        TileLayout_CUBE_M16, TileDataType_HiF4X2) == 16;
     assert !TileCubeDataTypeSupported(TileDataType_FP64);
     assert !TileCubeDataTypeSupported(TileDataType_S64);
     assert !TileCubeDataTypeSupported(TileDataType_U64);

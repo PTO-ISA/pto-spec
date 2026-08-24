@@ -10,6 +10,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0098](docs/status/decisions/0098-b-range-modifiers.md): B.SUBVIEW and B.ASSEMBLE range-modifier association
 - [ADR-0099](docs/status/decisions/0099-0583-to-0584-compatibility.md): PTO ISA 0.58.3 to 0.58.4 compatibility boundary
 - [ADR-0100](docs/status/decisions/0100-cooperative-group-m-distribution.md): Cooperative Group-M Distribution and Inactive PE Semantics
+- [ADR-0101](docs/status/decisions/0101-matrix-scale-and-cscale.md): Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale
 
 ## Release 0.58.3
 

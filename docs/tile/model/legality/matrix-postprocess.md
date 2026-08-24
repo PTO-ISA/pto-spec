@@ -31,9 +31,9 @@ begin
     return 0;
 end;
 
-readonly func BundleMatrixSourceAt(ordinal: integer {0..7}) => TileIndex
+readonly func BundleMatrixSourceAt(ordinal: integer {0..8}) => TileIndex
 begin
-    var seen: integer {0..8} = 0;
+    var seen: integer {0..9} = 0;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
         if _BundleTileBindings[[binding]].valid then
             if _BundleTileBindings[[binding]].source0_valid then
@@ -41,14 +41,39 @@ begin
                     return BundleTileSourceIndex(
                         binding as BundleTileBindingIndex, FALSE);
                 end;
-                seen = (seen + 1) as integer {0..8};
+                seen = (seen + 1) as integer {0..9};
             end;
             if _BundleTileBindings[[binding]].source1_valid then
                 if seen == ordinal then
                     return BundleTileSourceIndex(
                         binding as BundleTileBindingIndex, TRUE);
                 end;
-                seen = (seen + 1) as integer {0..8};
+                seen = (seen + 1) as integer {0..9};
+            end;
+        end;
+    end;
+    return 0;
+end;
+
+readonly func BundleMatrixArchitecturalSourceAt(
+    ordinal: integer {0..8}) => TileIndex
+begin
+    var seen: integer {0..9} = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 looplimit 16 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_valid then
+                if seen == ordinal then
+                    return BundleTileArchitecturalSourceIndex(
+                        binding as BundleTileBindingIndex, FALSE);
+                end;
+                seen = (seen + 1) as integer {0..9};
+            end;
+            if _BundleTileBindings[[binding]].source1_valid then
+                if seen == ordinal then
+                    return BundleTileArchitecturalSourceIndex(
+                        binding as BundleTileBindingIndex, TRUE);
+                end;
+                seen = (seen + 1) as integer {0..9};
             end;
         end;
     end;
@@ -102,7 +127,7 @@ begin
 end;
 
 readonly func BundleMatrixPostProcessSourcesLegal(
-    mathematical_sources: integer {0..5},
+    mathematical_sources: integer {0..6},
     m: integer {1..65535},
     n: integer {1..65535},
     accumulator_type: TileDataType) => boolean
@@ -112,7 +137,7 @@ begin
            accumulator_type) then
         return FALSE;
     end;
-    var ordinal = mathematical_sources as integer {0..7};
+    var ordinal = mathematical_sources as integer {0..8};
     if _BundleFixedPointAttributes.row_max_en &&
        _BundleFixedPointAttributes.row_max_init then
         let row_max = BundleMatrixSourceAt(ordinal);
@@ -120,7 +145,7 @@ begin
                row_max, m, 1, accumulator_type) then
             return FALSE;
         end;
-        ordinal = (ordinal + 1) as integer {0..7};
+        ordinal = (ordinal + 1) as integer {0..8};
     end;
 
     if BundleFPATRModeUsesVectorParameter(
@@ -132,7 +157,7 @@ begin
                quant, _BundleFixedPointAttributes.pre_quant_mode) then
             return FALSE;
         end;
-        ordinal = (ordinal + 1) as integer {0..7};
+        ordinal = (ordinal + 1) as integer {0..8};
     end;
 
     if BundleFPATRReluModeUsesVectorParameter(

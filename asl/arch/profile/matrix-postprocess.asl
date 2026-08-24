@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-MATRIX-POSTPROCESS","surface":"arch","classification":["profile","matrix-postprocess"],"depends_on":["PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","PTO-ARCH-PROFILE-REFERENCE-PROFILE"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-MATRIX-POSTPROCESS","surface":"arch","classification":["profile","matrix-postprocess"],"depends_on":["PTO-ARCH-PROFILE-MATRIX-QUANTIZATION","PTO-ARCH-PROFILE-REFERENCE-PROFILE","PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE"]}
 // Bit-exact B.FPATR conversion, activation, auxiliary reduction, and flags.
 // NDF-BEGIN: PTO-MATRIX-POSTPROCESS-BITEXACT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
@@ -7,6 +7,27 @@
 // canonicalize special results, and publish D, enabled auxiliary outputs, and
 // sticky flags as one non-faulting commit.
 // NDF-END: PTO-MATRIX-POSTPROCESS-BITEXACT-001
+
+implementation func TileProfileMatrixCScale(
+    value: Word, exponent: bits(8)) => Word
+begin
+    let value_class = ClassifyFP32(value[31:0]);
+    if NumericValueClassIsNaN(value_class) ||
+       value_class == NumericValue_PositiveInfinity ||
+       value_class == NumericValue_NegativeInfinity ||
+       value_class == NumericValue_PositiveZero ||
+       value_class == NumericValue_NegativeZero then
+        return value;
+    end;
+    var scaled = ReferenceFP32FiniteValue(value[31:0]);
+    for step = 1 to UInt(exponent) looplimit 255 do
+        scaled = scaled / 2.0;
+    end;
+    let (encoded, flags) = ReferenceFP32FiniteEncoding(
+        scaled, NumericRound_RNE);
+    RecordNumericStatusFlags(flags);
+    return encoded;
+end;
 
 pure func MatrixFloatingSignedZero(
     data_type: TileDataType, negative: boolean) => Word

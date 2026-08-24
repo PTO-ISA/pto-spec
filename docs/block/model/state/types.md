@@ -334,7 +334,8 @@ type BundleFixedPointAttributes of record {
     row_max_init: boolean,
     max_abs_en: boolean,
     trans_a: boolean,
-    trans_b: boolean
+    trans_b: boolean,
+    c_scale_en: boolean
 };
 
 // MCOPY retains the complete operand snapshot and the next byte offset across

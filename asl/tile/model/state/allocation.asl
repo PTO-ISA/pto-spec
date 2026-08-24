@@ -142,7 +142,8 @@ begin
     let columns = TileCubeStorageColumns(layout, valid_columns, data_type);
     let k_repeat = TileCubeKRepeat(
         layout, valid_rows, valid_columns, data_type);
-    let n_repeat = TileCubeNRepeat(layout, valid_columns, data_type);
+    let n_repeat = TileCubeNRepeat(
+        layout, valid_rows, valid_columns, data_type);
     let cell_count = TileCubeCellCount(
         layout, valid_rows, valid_columns, data_type);
     let storage_bytes = TileCubeRequiredBytes(

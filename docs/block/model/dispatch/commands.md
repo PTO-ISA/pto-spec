@@ -151,7 +151,8 @@ begin
                 CommandDecodedBool(instruction, form, CommandField_RowMaxInit),
                 CommandDecodedBool(instruction, form, CommandField_MaxAbsEn),
                 CommandDecodedBool(instruction, form, CommandField_TransA),
-                CommandDecodedBool(instruction, form, CommandField_TransB));
+                CommandDecodedBool(instruction, form, CommandField_TransB),
+                CommandDecodedBool(instruction, form, CommandField_CScaleEn));
         when CommandHandler_SetBundleDimension =>
             if !_BundleActive || _BundleBodyActive then
                 SetFault(Fault_BundleControl, ReadTPC());

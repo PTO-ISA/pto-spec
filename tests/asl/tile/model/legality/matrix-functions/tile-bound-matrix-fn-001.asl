@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-MATRIX-FN-BOUND-001","source":"asl/tile/model/legality/matrix-functions.asl","requirements":[],"kind":"boundary","summary":"CUBE Matrix function and dynamic MX source tables are closed","pass_condition":"all twelve functions are assigned and optional scales change mathematical arity per side","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-MATRIX-FN-BOUND-001","source":"asl/tile/model/legality/matrix-functions.asl","requirements":["PTO-CUBE-MATRIX-SCALE-001"],"kind":"boundary","summary":"CUBE Matrix function and side-specific scale tables are closed.","pass_condition":"All twelve functions are assigned; HiF4X2 is Matrix-MX-only with group-64 U32 scale, while MX FP8/FP4 retain group-32 E8M0 scale.","related_sources":[]}
 func main() => integer
 begin
     assert TileMatrixFunctionAssigned(0);
@@ -18,6 +18,13 @@ begin
         5, TileDataType_E4M3, TileDataType_BF16) == 4;
     assert TileMatrixMathematicalSourceCount(
         6, TileDataType_E4M3, TileDataType_E1M2X2) == 5;
+    assert TileMXInputTypeSupported(TileDataType_HiF4X2);
+    assert TileMXScaleGroupSize(TileDataType_E4M3) == 32;
+    assert TileMXScaleCarrierType(TileDataType_E4M3) == TileDataType_E8M0;
+    assert TileMXScaleGroupCount(33, TileDataType_E4M3) == 2;
+    assert TileMXScaleGroupSize(TileDataType_HiF4X2) == 64;
+    assert TileMXScaleCarrierType(TileDataType_HiF4X2) == TileDataType_U32;
+    assert TileMXScaleGroupCount(65, TileDataType_HiF4X2) == 2;
 
     // Ordinary TMATMUL accepts no Shared source, the right matrix only, or
     // both matrix sides.  Bias/accumulator operands remain Local.

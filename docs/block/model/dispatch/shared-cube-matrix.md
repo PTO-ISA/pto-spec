@@ -114,8 +114,10 @@ begin
         TileMXInputTypeNeedsScale(left_type);
     let right_scale_present = TileMatrixFunctionUsesMX(function) &&
         TileMXInputTypeNeedsScale(right_type);
-    let scale_blocks = ((k + 31) DIVRM 32)
-        as integer {1..2048};
+    let left_scale_groups = if left_scale_present then
+        TileMXScaleGroupCount(k, left_type) else 1;
+    let right_scale_groups = if right_scale_present then
+        TileMXScaleGroupCount(k, right_type) else 1;
     let right_group = TileMatrixRightGroupSourceCount(
         function, right_type);
     let left_shared = shared_count != right_group;
@@ -133,11 +135,11 @@ begin
         end;
         ordinal = (ordinal + 1) as integer {0..4};
         if left_scale_present then
-            if !BundleMatrixSharedSourceSchemaLegal(
+            if !BundleMatrixSharedPrimarySchemaLegal(
                    ordinal as integer {0..3},
-                   m,
-                   scale_blocks, scale_blocks,
-                   TileDataType_E8M0) then
+                   m, left_scale_groups,
+                   TileMXScaleCarrierType(left_type),
+                   _BundleFixedPointAttributes.trans_a) then
                 return FALSE;
             end;
             ordinal = (ordinal + 1) as integer {0..4};
@@ -152,10 +154,11 @@ begin
     end;
     ordinal = (ordinal + 1) as integer {0..4};
     if right_scale_present then
-        if !BundleMatrixSharedSourceSchemaLegal(
+        if !BundleMatrixSharedPrimarySchemaLegal(
                ordinal as integer {0..3},
-               scale_blocks, n, n,
-               TileDataType_E8M0) then
+               right_scale_groups, n,
+               TileMXScaleCarrierType(right_type),
+               _BundleFixedPointAttributes.trans_b) then
             return FALSE;
         end;
         ordinal = (ordinal + 1) as integer {0..4};
@@ -224,32 +227,35 @@ end;
 readonly func MaterializeBundleSharedMatrixLeftScale(
     ordinal: integer {0..3},
     group_m: integer {1..65535},
-    scale_blocks: integer {1..2048},
+    k: integer {1..65535},
+    primary_type: TileDataType,
+    transpose: boolean,
     pe_identity: MemoryAgentId) => TileInfo
 begin
     let m_per_pe = BundleMatrixCooperativeMPerPE(group_m);
     let valid_m = BundleMatrixCooperativeValidM(group_m, pe_identity);
     assert m_per_pe != 0 && valid_m != 0;
     let pe_m = valid_m as integer {1..32};
+    let scale_groups = TileMXScaleGroupCount(k, primary_type);
+    let scale_type = TileMXScaleCarrierType(primary_type);
     let shared_tile_id = BundleSharedBindingId(ordinal);
     let source = if
         _BundleSharedBindings[[ordinal]].source0_subview.valid then
         MaterializeBundleSharedSubview(ordinal)
     else SharedTileRecord(shared_tile_id).tile;
-    assert BundleMatrixSharedSourceSchemaLegal(
-        ordinal, group_m,
-        scale_blocks, scale_blocks, TileDataType_E8M0);
+    assert BundleMatrixSharedPrimarySchemaLegal(
+        ordinal, group_m, scale_groups, scale_type, transpose);
     var tile = source;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.packed_defined_elements = ZeroPackedTileDefinedElements();
     tile.defined_valid_elements = 0;
     tile.rows = DerivedTileRows(
-        tile.capacity_bytes, scale_blocks, TileDataType_E8M0);
-    tile.columns = scale_blocks;
+        tile.capacity_bytes, scale_groups, scale_type);
+    tile.columns = scale_groups;
     tile.valid_rows = pe_m;
-    tile.valid_columns = scale_blocks;
-    tile.data_type = TileDataType_E8M0;
+    tile.valid_columns = scale_groups;
+    tile.data_type = scale_type;
     tile.layout = TileLayout_RowMajor;
     tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
@@ -257,11 +263,15 @@ begin
     tile.cube_cell_count = 0;
     tile.cube_storage_bytes = 0;
     for row = 0 to pe_m - 1 looplimit 65536 do
-        for column = 0 to scale_blocks - 1 looplimit 2048 do
+        for column = 0 to scale_groups - 1 looplimit 2048 do
             let group_row = (pe_identity * m_per_pe + row)
                 as integer {0..65535};
+            let source_row = if transpose then column else group_row;
+            let source_column = if transpose then group_row else column;
             let source_element = TileLogicalLinearIndex(
-                source, group_row, column as integer {0..65535});
+                source,
+                source_row as integer {0..65535},
+                source_column as integer {0..65535});
             let destination_element = TileLogicalLinearIndex(
                 tile, row as integer {0..65535},
                 column as integer {0..65535});
@@ -271,7 +281,7 @@ begin
     end;
     tile.contents_defined = TRUE;
     tile.defined_valid_elements =
-        (pe_m * scale_blocks) as integer {0..524288};
+        (pe_m * scale_groups) as integer {0..524288};
     return tile;
 end;
 

@@ -245,11 +245,14 @@ def cube_source_recipe(row: dict) -> dict[int, tuple[int, str]]:
             dtype = 1
         else:
             dtype = primary_dtype
-        layout = (
-            "TileLayout_CUBE_N8"
-            if role in {"right", "right-matrix"}
-            else "TileLayout_CUBE_M16"
-        )
+        if role in {"row-scale", "column-scale"}:
+            layout = "TileLayout_CUBE_M32"
+        else:
+            layout = (
+                "TileLayout_CUBE_N8"
+                if role in {"right", "right-matrix"}
+                else "TileLayout_CUBE_M16"
+            )
         result[tile] = (dtype, layout)
     return result
 
@@ -594,7 +597,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
     if row["family"] == "CUBE":
         source_recipe = cube_source_recipe(row)
         selected_source = row["role"] if role_kind == "source" else None
-        auxiliary_roles = {"row-scale", "column-scale", "bias"}
+        auxiliary_roles = {"bias"}
         for field in sorted(
             row["fixture_role_data_types"], key=role_number
         ):
