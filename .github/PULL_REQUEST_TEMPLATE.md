@@ -23,7 +23,7 @@ prose.
 ## Release boundary
 
 - [ ] I understand that PR validation is intentionally lightweight.
-- [ ] Full ASLRef verification, every ASL shard, and reproducible release evidence are deferred to the manually dispatched exact-head release workflow.
+- [ ] Full ASLRef verification, every independent AVS result, and reproducible release evidence are deferred to the manually dispatched exact-head release workflow.
 - [ ] Release verification is required for this change, or the reason it is not required is stated below.
 
 Release impact and known gaps:

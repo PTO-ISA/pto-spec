@@ -1313,15 +1313,7 @@ def run_main(argv: Sequence[str] | None = None) -> int:
     arguments = parser.parse_args(argv)
     root = arguments.root.resolve()
     try:
-        units = load_units(root / "asl")
-        points = load_test_points(
-            root,
-            units,
-            validation_resources=load_validation_resources(root),
-        )
-        point = next((item for item in points if item.test_id == arguments.id), None)
-        if point is None:
-            raise ValueError(f"unknown ASL test ID {arguments.id}")
+        point = load_focused_test_points(root, [arguments.id])[0]
     except (OSError, ValueError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 1

@@ -31,6 +31,9 @@ architecture requirement.
 - Do not guess missing preconditions or fault behavior; record an architecture decision gap.
 - Treat fixed array bounds as model bounds, not claims about every implementation.
 - Add executable tests when concrete instruction or state-transition semantics are introduced.
+- Keep generated exhaustive matrices at one case per result file. Do not
+  restore multi-case shards or use a full-matrix discovery pass for a focused
+  rerun; select current IDs with `scripts/print-asl-test-matrix --ids-file`.
 - Preserve exact mask/match, operand-piece, signedness, constraint, selector,
   decoder-witness, and semantic-handler coverage for every accepted operation.
 - Do not encode A2/A3, A5, or CPU implementation behavior as portable PTO semantics without a named target profile.
@@ -46,6 +49,11 @@ make pr-check                # lightweight PR lane; no opam or ASLRef
 make repo-check              # generated model and release-evidence closure
 git diff --check
 ```
+
+For focused ASL feedback, write exact IDs to a file, select them with
+`scripts/print-asl-test-matrix --ids-file`, and execute the resulting page with
+`scripts/run-asl-page -j`. Shared build preparation is sequential; independent
+test points are parallel.
 
 Only exact-commit full validation runs the complete model:
 

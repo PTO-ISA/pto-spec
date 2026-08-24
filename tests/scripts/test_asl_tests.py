@@ -19,6 +19,7 @@ from scripts.asl_tests import (
     matrix,
     matrix_pages,
     matrix_main,
+    run_main,
     validate_test_coverage,
 )
 from scripts.asl_units import AslUnit
@@ -583,6 +584,43 @@ class AslTestsTest(unittest.TestCase):
         self.assertEqual(payload["test_count"], 3)
         self.assertEqual(
             [entry["id"] for entry in payload["include"]], selected_ids
+        )
+
+    def test_single_id_runner_uses_focused_discovery(self) -> None:
+        self.write()
+        point = load_test_points(self.root, (unit(),))[0]
+
+        with (
+            patch(
+                "scripts.asl_tests.load_focused_test_points",
+                return_value=(point,),
+            ) as focused,
+            patch(
+                "scripts.asl_tests.load_validation_resources",
+                side_effect=AssertionError("global validation index must not load"),
+            ),
+            patch(
+                "scripts.asl_tests.execute_test_point",
+                return_value=0,
+            ) as execute,
+        ):
+            result = run_main(
+                [
+                    "--root",
+                    str(self.root),
+                    "--id",
+                    point.test_id,
+                    "--timeout-seconds",
+                    "7",
+                ]
+            )
+
+        self.assertEqual(result, 0)
+        focused.assert_called_once_with(self.root.resolve(), [point.test_id])
+        execute.assert_called_once_with(
+            self.root.resolve(),
+            point,
+            timeout_seconds=7,
         )
 
     def test_selected_loader_ignores_unselected_invalid_test_body(self) -> None:
