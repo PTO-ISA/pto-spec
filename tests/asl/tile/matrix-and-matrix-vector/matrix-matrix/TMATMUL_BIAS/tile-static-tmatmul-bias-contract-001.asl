@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: matrix-and-matrix-vector/matrix-matrix
-    // block: BSTART.TMATMUL.BIAS AType | B.DATR BType, RMode, Sat (optional; BType defaults to AType) | B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one) | B.DIM LB0 M (optional, default 1) | B.DIM LB1 N (optional, default 1) | B.DIM LB2 K (optional, default 1) | B.IOS complete right or both matrix operand groups (optional; common nonzero mask) | B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias | B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations | B.IOT/B.IOR postprocess operands selected by B.FPATR | BSTOP or the next BSTART completion boundary
+    // block: BSTART.TMATMUL.BIAS AType | B.DATR BType, RMode, Sat (optional; BType defaults to AType) | B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB (exactly one) | B.DIM LB0 M or cooperative group_M (optional, default 1) | B.DIM LB1 N (optional, default 1) | B.DIM LB2 K (optional, default 1) | B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111) | B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, B CUBE_N8 primary, 1xN Bias | B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations | B.IOT/B.IOR postprocess operands selected by B.FPATR | BSTOP or the next BSTART completion boundary
     assert DecodeTileOperation(TileDecode_CUBE, '000000000001') == 98;
     assert TileOperationOfIndex(98) == TileOperation_TMATMUL_BIAS;
     assert TileHandlerOfIndex(98) == TileHandler_TMATMUL_BIAS;

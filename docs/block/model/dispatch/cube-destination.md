@@ -13,12 +13,36 @@ This page is a generated reference view of the normative ASL unit.
 ```asl
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","surface":"block","classification":["model","dispatch","cube-destination"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-CUBE-PRIMARY"]}
 
+readonly func BundleTMATMULDestinationCapacityGroupFits(
+    allocation_mask: bits(4)) => boolean
+begin
+    var additional: integer = 0;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid &&
+           !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
+            additional = additional + BundleLocalDestinationAllocationBytes(
+                binding as BundleTileBindingIndex);
+        end;
+    end;
+    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+        if allocation_mask[PTOPEMaskBitOfPEIdentity(pe)] == '1' &&
+           TileCapacityInUseForPE(pe) + additional >
+               TileCapacityLimitBytes() then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
 func ResolveBundleTMATMULCubeDestinationGroup(
     m: integer {1..65535}, n: integer {1..65535},
     accumulator_type: TileDataType,
     output_type: TileDataType,
-    primary_layout: TileLayout) => boolean
+    primary_layout: TileLayout,
+    allocation_mask: bits(4)) => boolean
 begin
+    assert allocation_mask != Zeros{4};
     var reserved: array [[PTO_TILE_REGISTER_COUNT]] of boolean;
     var resolved: array [[PTO_BUNDLE_TILE_BINDING_COUNT]] of TileIndex;
     for index = 0 to PTO_TILE_REGISTER_COUNT - 1 do
@@ -49,7 +73,7 @@ begin
             end;
         end;
     end;
-    if !BundleLocalDestinationCapacityGroupFits() then
+    if !BundleTMATMULDestinationCapacityGroupFits(allocation_mask) then
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
@@ -105,7 +129,6 @@ begin
            !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
             let capacity_bytes = BundleTileDestinationSizeBytes(
                 binding as BundleTileBindingIndex);
-            let allocation_mask = _BundleTileBindings[[binding]].pe_mask;
             if destination_ordinal == 0 then
                 let configured = ConfigureCubeTileForMask(
                     resolved[[binding]], capacity_bytes, m, n,
@@ -147,7 +170,8 @@ func ResolveBundleTMATMULDestination(
     m: integer {1..65535}, n: integer {1..65535},
     accumulator_type: TileDataType,
     cube_primary: boolean,
-    primary_layout: TileLayout) => boolean
+    primary_layout: TileLayout,
+    allocation_mask: bits(4)) => boolean
 begin
     var destination_binding: BundleTileBindingIndex = 0;
     var destination_seen = FALSE;
@@ -172,7 +196,8 @@ begin
     let capacity_bytes = BundleTileDestinationSizeBytes(destination_binding);
     if cube_primary then
         return ResolveBundleTMATMULCubeDestinationGroup(
-            m, n, accumulator_type, output_type, primary_layout);
+            m, n, accumulator_type, output_type, primary_layout,
+            allocation_mask);
     else
         let rows = DerivedTileRows(capacity_bytes, n, output_type);
         if !TileDescriptorShapeLegal(
@@ -194,10 +219,38 @@ end;
 
 func ResolveBundleTMATMULDestination(
     m: integer {1..65535}, n: integer {1..65535},
+    accumulator_type: TileDataType,
+    cube_primary: boolean,
+    primary_layout: TileLayout) => boolean
+begin
+    var allocation_mask = Zeros{4};
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if allocation_mask == Zeros{4} &&
+           _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid then
+            allocation_mask = _BundleTileBindings[[binding]].pe_mask;
+        end;
+    end;
+    return ResolveBundleTMATMULDestination(
+        m, n, accumulator_type, cube_primary, primary_layout,
+        allocation_mask);
+end;
+
+func ResolveBundleTMATMULDestination(
+    m: integer {1..65535}, n: integer {1..65535},
     accumulator_type: TileDataType) => boolean
 begin
+    var allocation_mask = Zeros{4};
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if allocation_mask == Zeros{4} &&
+           _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid then
+            allocation_mask = _BundleTileBindings[[binding]].pe_mask;
+        end;
+    end;
     return ResolveBundleTMATMULDestination(
-        m, n, accumulator_type, FALSE, TileLayout_RowMajor);
+        m, n, accumulator_type, FALSE, TileLayout_RowMajor,
+        allocation_mask);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

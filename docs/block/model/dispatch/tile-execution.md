@@ -77,17 +77,14 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    if !PrepareSelectedBundleStage2() then
+    let matrix_selected = BundleCubeMatrixSelected();
+    if !matrix_selected && !PrepareSelectedBundleStage2() then
         DiscardBundleSubviewMaterializations();
         return FALSE;
     end;
     var specialized = TRUE;
     var specialized_completed = FALSE;
-    if BundleCubeMatrixSelected() then
-        if !ReuseBundleLocalGenerationDestination() then
-            DiscardBundleSubviewMaterializations();
-            return FALSE;
-        end;
+    if matrix_selected then
         specialized_completed = ExecuteBundleTMATMULOperation();
     elsif BundleCubeTransportSelected() then
         if !ReuseBundleLocalGenerationDestination() then
@@ -123,8 +120,10 @@ begin
     end;
     if specialized then
         if specialized_completed && _LastFault == Fault_None then
-            CommitBundleLocalGeneration();
-            RetireBundleConsumerDependencies();
+            if !matrix_selected || !BundleTMATMULCurrentPEInactive() then
+                CommitBundleLocalGeneration();
+                RetireBundleConsumerDependencies();
+            end;
         else
             AbortBundleLocalGenerationsForBundle();
         end;

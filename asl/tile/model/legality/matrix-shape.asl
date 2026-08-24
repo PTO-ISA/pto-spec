@@ -76,7 +76,7 @@ begin
     if shared_count == 0 then
         return m != 0 && n != 0 && k != 0;
     end;
-    return IsNonzeroPowerOfTwo(m) && IsNonzeroPowerOfTwo(n) &&
+    return m >= 1 && m <= 128 && IsNonzeroPowerOfTwo(n) &&
            IsNonzeroPowerOfTwo(k);
 end;
 

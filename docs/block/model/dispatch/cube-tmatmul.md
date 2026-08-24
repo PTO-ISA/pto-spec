@@ -21,16 +21,16 @@ This page is a generated reference view of the normative ASL unit.
 // C MUST persist while D, reductions, and numeric status publish atomically.
 // NDF-END: PTO-CUBE-ACCUMULATOR-OUTPUT-001
 
-// NDF-BEGIN: PTO-CUBE-SHARED-M-SHARD-001
+// NDF-BEGIN: PTO-CUBE-GROUP-M-DISTRIBUTION-001
 // ndf: kind=contract level=L1 layer=block status=accepted
-// For every TMATMUL ordinary, ACC, BIAS, or MX form whose left matrix primary
-// is Shared, LB0/LB1/LB2 MUST denote per-PE M/N/K. Shared A MUST have logical
-// shape (4*LB0)xLB2; Shared B MUST have shape LB2xLB1; PE i MUST consume
-// Shared-A rows [i*LB0,(i+1)*LB0) and publish one LB0xLB1 Local result.
-// Shared-B-only forms MUST retain their PE-local A and common Shared B. TGEMV
-// MUST remain Local-only. Every group-shape, capacity, readiness, and output
-// check MUST complete before source consumption or destination effects.
-// NDF-END: PTO-CUBE-SHARED-M-SHARD-001
+// Every cooperative Local-A/Shared-B or Shared-A/Shared-B TMATMUL form MUST
+// interpret LB0 as Core-total group_M in 1..128 and MUST use PE_MASK=1111.
+// group_M<=64 selects M_per_PE=16; group_M>=65 selects M_per_PE=32; PE i owns
+// valid_M=clamp(group_M-i*M_per_PE,0,M_per_PE). A zero-row PE MUST retain
+// structural, collective, and Shared preflight while suppressing all
+// compute-only Local resolution, dependency, subview, alias, allocation,
+// generation, payload, parameter, and output effects. TGEMV remains Local-only.
+// NDF-END: PTO-CUBE-GROUP-M-DISTRIBUTION-001
 
 readonly func BundleCubeMatrixSelected() => boolean
 begin
@@ -125,8 +125,67 @@ begin
            BundleLocalTileDestinationCount() ==
                BundleMatrixDestinationCount() &&
            BundleTileBindingStreamTerminated() &&
-           BundleOperationScalarBindingSchemaLegal(operation) &&
-           BundleOperationGPRBindingValuesLegal(operation);
+           BundleOperationScalarBindingSchemaLegal(operation);
+end;
+
+pure func BundleTMATMULCooperativeSelected(
+    function: integer {0..31},
+    shared_count: integer {0..4}) => boolean
+begin
+    return shared_count > 0 && !TileMatrixFunctionIsGEMV(function);
+end;
+
+pure func BundleTMATMULCooperativeMaskValueLegal(mask: bits(4)) => boolean
+begin
+    return mask == '1111';
+end;
+
+readonly func BundleTMATMULCooperativeMasksLegal(
+    function: integer {0..31},
+    shared_count: integer {0..4}) => boolean
+begin
+    if !BundleTMATMULCooperativeSelected(function, shared_count) then
+        return TRUE;
+    end;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           !BundleTMATMULCooperativeMaskValueLegal(
+               _BundleTileBindings[[binding]].pe_mask) then
+            return FALSE;
+        end;
+    end;
+    for binding = 0 to 3 do
+        if _BundleSharedBindings[[binding]].valid &&
+           !BundleTMATMULCooperativeMaskValueLegal(
+               _BundleSharedBindings[[binding]].pe_mask) then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
+readonly func BundleTMATMULSelectedMask() => bits(4)
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            return _BundleTileBindings[[binding]].pe_mask;
+        end;
+    end;
+    return Zeros{4};
+end;
+
+readonly func BundleTMATMULCurrentPEInactive() => boolean
+begin
+    if !BundleCubeMatrixSelected() then return FALSE; end;
+    let function = UInt(_BundleOperation.selector[4:0]);
+    let shared_count = BundleSharedBindingCount();
+    if !BundleTMATMULCooperativeSelected(function, shared_count) then
+        return FALSE;
+    end;
+    let group_m = BundleCubeDimensionValue(BundleDimension_LB0);
+    if group_m == 0 || group_m > 128 then return FALSE; end;
+    return BundleMatrixCooperativeValidM(
+        group_m as integer {1..65535}, _CurrentMemoryAgent) == 0;
 end;
 
 readonly func BundleMatrixPrimaryDestinationCapacityBytes()
@@ -209,7 +268,8 @@ begin
        !BundleTMATMULDataAttributesLegal() ||
        !BundleTMATMULDimensionsLegal(shared_count) ||
        !SelectedBundleTileMasksLegal() ||
-       !BundleTMATMULMasksAgree() then
+       !BundleTMATMULMasksAgree() ||
+       !BundleTMATMULCooperativeMasksLegal(function, shared_count) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
@@ -231,6 +291,28 @@ begin
         return FALSE;
     end;
 
+    let cooperative = BundleTMATMULCooperativeSelected(
+        function, shared_count);
+    let valid_m = if cooperative then
+        BundleMatrixCooperativeValidM(m, _CurrentMemoryAgent)
+    else m;
+    if cooperative && valid_m == 0 then
+        ConsumeBundleSharedBindings(shared_count as integer {1..4});
+        FinalizeBundleTileAttempt(TileExecution_Executed);
+        return TRUE;
+    end;
+    let pe_m = valid_m as integer {1..65535};
+
+    // Generic Stage2 Local dependency/subview/generation work occurs only
+    // after group-level and Shared preflight has derived a nonzero current-PE
+    // fragment. Zero-row PEs returned above without touching Local state.
+    if !PrepareSelectedBundleStage2() then return FALSE; end;
+    if !ReuseBundleLocalGenerationDestination() then return FALSE; end;
+    if !BundleOperationGPRBindingValuesLegal(operation) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+
     let mathematical_sources = TileMatrixLocalMathematicalSourceCount(
         function, left_type, right_type, shared_count);
     let result_type = if TileMatrixFunctionUsesMX(function) then
@@ -238,12 +320,12 @@ begin
     else
         TileOrdinaryMatrixAccumulatorType(left_type, right_type);
     if !BundleMatrixPostProcessSourcesLegal(
-           mathematical_sources, m, n, result_type) then
+           mathematical_sources, pe_m, n, result_type) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     if !BundleMatrixLocalMathematicalSourcesLegal(
-           function, left_type, right_type, m, n, k, shared_count,
+           function, left_type, right_type, pe_m, n, k, shared_count,
            result_type, BundleMatrixPrimaryDestinationCapacityBytes()) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
@@ -254,7 +336,7 @@ begin
     end;
     let (layout_found, primary_layout) =
         BundleMatrixCooperativeMLayout(
-            function, right_type, m, shared_count);
+            function, right_type, pe_m, shared_count);
     if !layout_found then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
@@ -262,8 +344,12 @@ begin
     // Every field, stream, Local/Shared descriptor, parameter payload, shape,
     // and capacity rule is now closed. Allocate the atomic destination group
     // before taking the first mathematical or scalar payload snapshot.
+    let allocation_mask = if cooperative then
+        BundleMatrixCooperativeCurrentPEMask(m, _CurrentMemoryAgent)
+    else BundleTMATMULSelectedMask();
     if !ResolveBundleTMATMULDestination(
-           m, n, result_type, TRUE, primary_layout) then
+           pe_m, n, result_type, TRUE, primary_layout,
+           allocation_mask) then
         return FALSE;
     end;
 
@@ -355,11 +441,11 @@ begin
     let right_group = TileMatrixRightGroupSourceCount(
         function, right_type);
     let shape_legal = if shared_count == 0 then
-        TileMatrixCubeInfosMatchDimensions(left, right, m, n, k)
+        TileMatrixCubeInfosMatchDimensions(left, right, pe_m, n, k)
     else if shared_count == right_group then
-        TileMatrixMixedInfosMatchDimensions(left, right, m, n, k)
+        TileMatrixMixedInfosMatchDimensions(left, right, pe_m, n, k)
     else
-        TileMatrixInfosMatchDimensions(left, right, m, n, k);
+        TileMatrixInfosMatchDimensions(left, right, pe_m, n, k);
     let operand_types_legal = left.data_type == left_type &&
         right.data_type == right_type;
     let scales_legal = !TileMatrixFunctionUsesMX(function) ||
@@ -370,7 +456,7 @@ begin
 
     let accumulator_legal = !TileMatrixFunctionUsesAccumulator(function) ||
         TileMatrixLocalCubeAccumulatorSchemaLegal(
-            accumulator, m, n, result_type, primary_layout,
+            accumulator, pe_m, n, result_type, primary_layout,
             BundleMatrixPrimaryDestinationCapacityBytes());
     assert accumulator_legal;
     assert !TileMatrixFunctionUsesBias(function) ||

@@ -1035,5 +1035,6 @@ nav:
           - "ADR 0097: Local and Shared capacity pools with cooperative M-sharding": status/decisions/0097-local-shared-capacity-and-cooperative-m-sharding.md
           - "ADR 0098: B.SUBVIEW and B.ASSEMBLE range-modifier association": status/decisions/0098-b-range-modifiers.md
           - "ADR 0099: PTO ISA 0.58.3 to 0.58.4 compatibility boundary": status/decisions/0099-0583-to-0584-compatibility.md
+          - "ADR 0100: Cooperative Group-M Distribution and Inactive PE Semantics": status/decisions/0100-cooperative-group-m-distribution.md
       - Open:
           - "Open architecture decisions": status/open/index.md

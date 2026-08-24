@@ -52,24 +52,49 @@ begin
         stored_columns, data_type);
 end;
 
-pure func BundleMatrixCooperativeGroupM(
-    pe_m: integer {1..65535}) => integer {0..65535}
+pure func BundleMatrixCooperativeMPerPE(
+    group_m: integer {1..65535}) => integer {0,16,32}
 begin
-    if pe_m > 16383 then return 0; end;
-    return (PTO_MODEL_MEMORY_AGENTS * pe_m) as integer {4..65532};
+    if group_m <= 64 then return 16;
+    elsif group_m <= 128 then return 32;
+    else return 0;
+    end;
+end;
+
+pure func BundleMatrixCooperativeValidM(
+    group_m: integer {1..65535},
+    pe_identity: MemoryAgentId) => integer {0..32}
+begin
+    let m_per_pe = BundleMatrixCooperativeMPerPE(group_m);
+    if m_per_pe == 0 then return 0; end;
+    let first_row = pe_identity * m_per_pe;
+    if first_row >= group_m then return 0; end;
+    let remaining = group_m - first_row;
+    if remaining < m_per_pe then return remaining as integer {1..31}; end;
+    return m_per_pe as integer {16,32};
+end;
+
+pure func BundleMatrixCooperativeCurrentPEMask(
+    group_m: integer {1..65535},
+    pe_identity: MemoryAgentId) => bits(4)
+begin
+    var mask = Zeros{4};
+    if BundleMatrixCooperativeValidM(group_m, pe_identity) != 0 then
+        mask[PTOPEMaskBitOfPEIdentity(pe_identity)] = '1';
+    end;
+    return mask;
 end;
 
 readonly func BundleMatrixSharedLeftPrimarySchemaLegal(
     ordinal: integer {0..3},
-    pe_m: integer {1..65535},
+    group_m: integer {1..65535},
     k: integer {1..65535},
     data_type: TileDataType,
     transpose: boolean) => boolean
 begin
-    let group_m = BundleMatrixCooperativeGroupM(pe_m);
-    if group_m == 0 then return FALSE; end;
+    if BundleMatrixCooperativeMPerPE(group_m) == 0 then return FALSE; end;
     return BundleMatrixSharedPrimarySchemaLegal(
-        ordinal, group_m as integer {1..65535}, k, data_type, transpose);
+        ordinal, group_m, k, data_type, transpose);
 end;
 
 readonly func BundleMatrixSharedSchemasLegal(
@@ -108,11 +133,9 @@ begin
         end;
         ordinal = (ordinal + 1) as integer {0..4};
         if left_scale_present then
-            let group_m = BundleMatrixCooperativeGroupM(m);
-            if group_m == 0 then return FALSE; end;
             if !BundleMatrixSharedSourceSchemaLegal(
                    ordinal as integer {0..3},
-                   group_m as integer {1..65535},
+                   m,
                    scale_blocks, scale_blocks,
                    TileDataType_E8M0) then
                 return FALSE;
@@ -142,14 +165,18 @@ end;
 
 readonly func MaterializeBundleSharedMatrixLeftPrimary(
     ordinal: integer {0..3},
-    pe_m: integer {1..65535},
+    group_m: integer {1..65535},
     k: integer {1..65535},
     data_type: TileDataType,
     transpose: boolean,
     pe_identity: MemoryAgentId) => TileInfo
 begin
     assert BundleMatrixSharedLeftPrimarySchemaLegal(
-        ordinal, pe_m, k, data_type, transpose);
+        ordinal, group_m, k, data_type, transpose);
+    let m_per_pe = BundleMatrixCooperativeMPerPE(group_m);
+    let valid_m = BundleMatrixCooperativeValidM(group_m, pe_identity);
+    assert m_per_pe != 0 && valid_m != 0;
+    let pe_m = valid_m as integer {1..32};
     let shared_tile_id = BundleSharedBindingId(ordinal);
     let source = if
         _BundleSharedBindings[[ordinal]].source0_subview.valid then
@@ -173,7 +200,7 @@ begin
     tile.cube_storage_bytes = 0;
     for row = 0 to pe_m - 1 looplimit 65536 do
         for column = 0 to k - 1 looplimit 65536 do
-            let group_row = (pe_identity * pe_m + row)
+            let group_row = (pe_identity * m_per_pe + row)
                 as integer {0..65535};
             let source_row = if transpose then column else group_row;
             let source_column = if transpose then group_row else column;
@@ -196,19 +223,21 @@ end;
 
 readonly func MaterializeBundleSharedMatrixLeftScale(
     ordinal: integer {0..3},
-    pe_m: integer {1..65535},
+    group_m: integer {1..65535},
     scale_blocks: integer {1..2048},
     pe_identity: MemoryAgentId) => TileInfo
 begin
-    let group_m = BundleMatrixCooperativeGroupM(pe_m);
-    assert group_m != 0;
+    let m_per_pe = BundleMatrixCooperativeMPerPE(group_m);
+    let valid_m = BundleMatrixCooperativeValidM(group_m, pe_identity);
+    assert m_per_pe != 0 && valid_m != 0;
+    let pe_m = valid_m as integer {1..32};
     let shared_tile_id = BundleSharedBindingId(ordinal);
     let source = if
         _BundleSharedBindings[[ordinal]].source0_subview.valid then
         MaterializeBundleSharedSubview(ordinal)
     else SharedTileRecord(shared_tile_id).tile;
     assert BundleMatrixSharedSourceSchemaLegal(
-        ordinal, group_m as integer {1..65535},
+        ordinal, group_m,
         scale_blocks, scale_blocks, TileDataType_E8M0);
     var tile = source;
     tile.contents_defined = FALSE;
@@ -229,7 +258,7 @@ begin
     tile.cube_storage_bytes = 0;
     for row = 0 to pe_m - 1 looplimit 65536 do
         for column = 0 to scale_blocks - 1 looplimit 2048 do
-            let group_row = (pe_identity * pe_m + row)
+            let group_row = (pe_identity * m_per_pe + row)
                 as integer {0..65535};
             let source_element = TileLogicalLinearIndex(
                 source, group_row, column as integer {0..65535});
