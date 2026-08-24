@@ -19883,15 +19883,15 @@
   "sources": {
     "adr_records": {
       "count": 96,
-      "sha256": "08586d328cff069b5b363e326f66ed40abfaefc2d93465e85ff030340e9b12cc"
+      "sha256": "b2daf2f2826db81be7549f15ec5984e118657514e0374af13dcf7286291adccd"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "8dbb168089f48ec483c1b58ba54fb478b9f29ffed1ca0f4303660f9f41575eb0"
+      "sha256": "12147f463a3f66ecb21997a24fc89e22e4c6a0f25896de5d05a19cbf7950482d"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "a760c93d9b8d8a89a5eed6043aadca4346a2786f608ffa45a4c1dd1ce3e5134d",
+      "sha256": "5066922dd1b901c9205288db0c12f48c9db6605e32d18ed1846dc1238a9850d0",
       "test_count": 3688,
       "unit_count": 852
     }

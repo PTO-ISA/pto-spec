@@ -18059,7 +18059,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "86ddd65217cf977a6461d9d5d5bbf685cd02c954c5911fc87d3f712dd6a57c14",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "b73c44e7a96aa6b5bbe8b95714d0e09ddebfccdbe45c43404cb924d6f7e41018",
     "spec/evidence/adr-index.json": "ef8a6568c4b718ae1aa09a24b10e6162f2663c0ab65dd6fe92ac371fc0acd781",
-    "spec/evidence/instruction-contract-closure.json": "8dbb168089f48ec483c1b58ba54fb478b9f29ffed1ca0f4303660f9f41575eb0",
+    "spec/evidence/instruction-contract-closure.json": "12147f463a3f66ecb21997a24fc89e22e4c6a0f25896de5d05a19cbf7950482d",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -18187,7 +18187,7 @@
     "tests/asl/arch/programming-model/scalar-registers/arch-state-programming-model-pe-gpr-001.asl": "7c69affbf0458e09198d6a314cc158cfa5348800b1ddd8eae6048b9044c7b91f",
     "tests/asl/arch/programming-model/scalar-registers/arch-static-scalar-registers-contract-001.asl": "f82a27988ff3b68a15ed36203916280aa87a0e83fa226efd43ecf94adb3148bc",
     "tests/asl/arch/programming-model/shared-tile-registers/arch-static-shared-tile-registers-contract-001.asl": "35bb87ae5c03922945f02a951f01e8ddf030c728e61f5d15f06be81d5227ac14",
-    "tests/asl/arch/programming-model/tile-registers/arch-state-register-mapping-001.asl": "f24de8bff6c85f3f54b8d148412f04f344a29cebee30f5b4c2982296eaeb6fa1",
+    "tests/asl/arch/programming-model/tile-registers/arch-state-register-mapping-001.asl": "33af0553a8e43e68d2a75c4acb5b5a303110072b38503ebfd82dde6ba450ff8d",
     "tests/asl/arch/programming-model/tile-registers/arch-static-tile-registers-contract-001.asl": "aba2f93c142c8bfa8b0307b11d54a11d2a01f54a70be5284cd61509d67cafa03",
     "tests/asl/arch/state/definedness/arch-static-definedness-contract-001.asl": "5389abfd59ea0e176acc50273c7920ead6512702a2188556c41a1c8384a9216d",
     "tests/asl/arch/state/numeric-status/arch-state-numeric-status-001.asl": "73c82a0e416a7635964e18f0b52a0330df6edcb3292f9eb65937b9ace7d9948d",
@@ -30302,7 +30302,7 @@
       "kind": "state-transition",
       "path": "tests/asl/arch/programming-model/tile-registers/arch-state-register-mapping-001.asl",
       "requirements": [],
-      "sha256": "f24de8bff6c85f3f54b8d148412f04f344a29cebee30f5b4c2982296eaeb6fa1",
+      "sha256": "33af0553a8e43e68d2a75c4acb5b5a303110072b38503ebfd82dde6ba450ff8d",
       "source": "asl/arch/programming-model/tile-registers.asl"
     },
     {

@@ -201,16 +201,16 @@ class ReleaseSelectionTest(unittest.TestCase):
         result = evaluate_release_selection(ROOT)
         policy = json.loads(SELECTION.read_text(encoding="utf-8"))
 
-        self.assertEqual(selection["architecture_version"], "0.58.3")
+        self.assertEqual(selection["architecture_version"], "0.58.4")
         self.assertEqual(selection["required_readiness_floor"], "executable")
         self.assertEqual(manifest["release"], selection["architecture_version"])
         self.assertEqual(selection["blockers"], [])
         self.assertEqual(policy["architecture_version"], "0.58.4")
-        self.assertNotEqual(
+        self.assertEqual(
             [row["id"] for row in selection["expanded_ndf"]],
             list(result.selected_ndf_ids),
         )
-        self.assertNotEqual(
+        self.assertEqual(
             selection["selected_adr_ids"], list(result.selected_adr_ids)
         )
         self.assertEqual(result.blockers, ())

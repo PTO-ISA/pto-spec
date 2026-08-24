@@ -12,17 +12,17 @@
     },
     {
       "generator": "scripts/generate-release-manifest",
-      "path": "spec/evidence/pto-isa-0583-abi-vectors.json",
+      "path": "spec/evidence/pto-isa-0584-abi-vectors.json",
       "role": "owned-output"
     },
     {
       "generator": "scripts/generate-release-manifest",
-      "path": "spec/evidence/pto-isa-0583-encoding-totality.json",
+      "path": "spec/evidence/pto-isa-0584-encoding-totality.json",
       "role": "owned-output"
     },
     {
       "generator": "scripts/generate-release-manifest",
-      "path": "spec/evidence/pto-isa-0583-hardware-numeric-vectors.json",
+      "path": "spec/evidence/pto-isa-0584-hardware-numeric-vectors.json",
       "role": "owned-output"
     },
     {
