@@ -73,9 +73,10 @@ count, function-name presence, or enum linkage, and do not hand-edit generated d
 When implementing a frozen mnemonic audit, an accepted ADR-family record is
 the architecture decision input, not implementation evidence. Translate every
 recorded implementation gap into the owning ASL operation, exact embedded
-documentation, and independent tests. Continue until the active inventory is
-`642/642 FORMAL-COMPLETE`; an audit count of `642/642` does not satisfy this
-gate.
+documentation, and independent tests. Continue until
+`python3 scripts/manual_semantic_audit.py` reports every active mnemonic and
+occupied reservation `FORMAL-COMPLETE`; an audit-review count does not satisfy
+this implementation gate.
 
 Do not invent missing semantics. Stop at a documented requirement gap and open or request an architecture decision.
 
@@ -187,12 +188,15 @@ make release-verify RELEASE_COMMIT="$(git rev-parse HEAD)"
 make release-prepare
 ```
 
-For parallel executable tests, run `make setup` first. Its `scripts/prepare-aslref` step serially fetches, checks out,
-and builds the repository-pinned ASLRef executable once. Each shard must then invoke the prepared executable through
-the read-only `scripts/aslref` launcher. The launcher must never fetch, check out, or build: an absent, wrong-origin, or
-wrong-commit cache fails closed and tells the caller to run `make setup`. Do not keep `dune exec` alive around each
-ASLRef process: Dune retains the workspace lock for the process lifetime and silently serializes otherwise independent
-shards.
+For parallel executable tests, run `make setup` first. Its
+`scripts/prepare-aslref` step serially fetches, checks out, and builds the
+repository-pinned ASLRef executable once. Each independent test process then
+invokes the prepared executable through the read-only `scripts/aslref`
+launcher. The launcher must never fetch, check out, or build: an absent,
+wrong-origin, or wrong-commit cache fails closed and tells the caller to run
+`make setup`. Do not keep `dune exec` alive around each ASLRef process: Dune
+retains the workspace lock for the process lifetime and silently serializes
+otherwise independent results.
 
 Keep runtime results independent: assemble only the test-library sources needed
 by each point, keep one case per result file, schedule known heavy totality

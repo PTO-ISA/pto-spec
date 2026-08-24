@@ -145,6 +145,15 @@ class RepositoryDocumentationTest(unittest.TestCase):
         self.assertIn("one case per result file", " ".join(aslref.split()))
         self.assertNotIn("parallel shard", aslref)
 
+    def test_pto_skill_uses_live_inventory_and_independent_processes(self) -> None:
+        skill = (ROOT / ".codex/skills/pto-asl/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("manual_semantic_audit.py", skill)
+        self.assertIn("Each independent test process", skill)
+        self.assertNotRegex(skill, r"\b\d+/\d+ FORMAL-COMPLETE\b")
+        self.assertNotIn("Each shard", skill)
+
     def test_authority_order_is_explicit_and_singular(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn(
