@@ -5,12 +5,18 @@ func RunCase_0173() => boolean
 begin
     ResetProfileState();
     WriteGPR(0, Zeros{PTO_XLEN});
-    WriteGPR(2, Zeros{PTO_XLEN} + 1);
+    WriteGPR(2, Zeros{PTO_XLEN} + 0);
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        let configured = ConfigureCubeTileForMask(tile, 128, 1, 4,
-            TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        let configured = if tile == 1 then
+            ConfigureCubeTileForMask(tile, 128, 1,
+                4, TileDataType_FP16, TileLayout_CUBE_M16,
+                TileLocation_Matrix, '1111')
+            else ConfigureTileForMask(tile, 128,
+                16, 4, 1,
+                4, TileDataType_FP16,
+                TileLayout_RowMajor, TileLocation_Any, '1111');
         assert configured;
         MarkTileValidRegionDefined(tile);
     end;
@@ -50,12 +56,18 @@ func RunCase_0174() => boolean
 begin
     ResetProfileState();
     WriteGPR(0, Zeros{PTO_XLEN});
-    WriteGPR(2, Zeros{PTO_XLEN} + 1);
+    WriteGPR(2, Zeros{PTO_XLEN} + 0);
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        let configured = ConfigureCubeTileForMask(tile, 128, 1, 4,
-            TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        let configured = if tile == 2 then
+            ConfigureCubeTileForMask(tile, 128, 1,
+                1, TileDataType_FP16, TileLayout_CUBE_M16,
+                TileLocation_Matrix, '1111')
+            else ConfigureTileForMask(tile, 128,
+                16, 4, 1,
+                4, TileDataType_FP16,
+                TileLayout_RowMajor, TileLocation_Any, '1111');
         assert configured;
         MarkTileValidRegionDefined(tile);
     end;
@@ -95,12 +107,18 @@ func RunCase_0175() => boolean
 begin
     ResetProfileState();
     WriteGPR(0, Zeros{PTO_XLEN});
-    WriteGPR(2, Zeros{PTO_XLEN} + 1);
+    WriteGPR(2, Zeros{PTO_XLEN} + 0);
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        let configured = ConfigureCubeTileForMask(tile, 128, 1, 4,
-            TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        let configured = if tile == 0 then
+            ConfigureCubeTileForMask(tile, 128, 1,
+                4, TileDataType_FP16, TileLayout_CUBE_M16,
+                TileLocation_Matrix, '1111')
+            else ConfigureTileForMask(tile, 128,
+                16, 4, 1,
+                4, TileDataType_FP16,
+                TileLayout_RowMajor, TileLocation_Any, '1111');
         assert configured;
         MarkTileValidRegionDefined(tile);
     end;
@@ -134,10 +152,10 @@ begin
     end;
     assert _Tiles[[observed_destination]].allocated &&
            _Tiles[[observed_destination]].contents_defined;
-    let completed_writer = CompleteBundleLocalGenerationWriterEvent(
+    let completed_writer_0 = CompleteBundleLocalGenerationWriterEvent(
         BundleLocalGenerationSlot(0, '1111'), _BundleExecutionDomainToken,
         0, BundleLocalGenerationCellCount(1));
-    assert completed_writer;
+    assert completed_writer_0;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].published;
     return TRUE;
 end;
@@ -147,12 +165,18 @@ func RunCase_0176() => boolean
 begin
     ResetProfileState();
     WriteGPR(0, Zeros{PTO_XLEN});
-    WriteGPR(2, Zeros{PTO_XLEN} + 1);
+    WriteGPR(2, Zeros{PTO_XLEN} + 0);
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        let configured = ConfigureCubeTileForMask(tile, 128, 1, 4,
-            TileDataType_FP16, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        let configured = if tile == 1 then
+            ConfigureCubeTileForMask(tile, 128, 1,
+                4, TileDataType_FP16, TileLayout_CUBE_M16,
+                TileLocation_Matrix, '1111')
+            else ConfigureTileForMask(tile, 128,
+                16, 4, 1,
+                4, TileDataType_FP16,
+                TileLayout_RowMajor, TileLocation_Any, '1111');
         assert configured;
         MarkTileValidRegionDefined(tile);
     end;

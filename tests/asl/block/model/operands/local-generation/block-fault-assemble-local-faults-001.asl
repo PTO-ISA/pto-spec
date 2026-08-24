@@ -177,7 +177,7 @@ begin
     // Force the architectural capacity boundary after the decoded sources
     // exist; INIT allocation fails atomically without changing them.
     ResetProfileState(); BeginSource();
-    _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} + 2048;
+    _SystemRegisters.tile_capacity = Zeros{PTO_XLEN} + 1024;
     let allocation_failed = Run(TRUE, FALSE, 4, 0);
     assert !allocation_failed && _LastFault == Fault_TileAllocation;
     assert !_LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open &&

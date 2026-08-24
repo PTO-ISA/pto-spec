@@ -258,7 +258,7 @@ begin
                 SetBundleLocalGenerationFault(hand, participant_mask,
                     Fault_BundleControl); return FALSE;
             end;
-            if writer_raw < 1 || writer_raw > 10 then
+            if writer_raw < 1 || writer_raw > 12 then
                 SetBundleLocalGenerationFault(hand, participant_mask,
                     Fault_TileLegality); return FALSE;
             end;
@@ -286,7 +286,7 @@ begin
             let writer_cells = BundleLocalGenerationCellCount(writer_size)
                 as integer {1..2048};
             if assemble.init && (assemble.size_code < 1 ||
-                                 assemble.size_code > 10) then
+                                 assemble.size_code > 12) then
                 SetBundleLocalGenerationFault(hand, participant_mask,
                     Fault_TileLegality); return FALSE;
             end;

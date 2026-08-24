@@ -72,6 +72,11 @@ begin
     assert init_completed &&
         _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].ready_cells[4] == '1';
     let init_instance = ReadBPC();
+    let init_domain = _BundleExecutionDomainToken;
+    // Model an exact replay restoration. Normal BSTART allocation remains
+    // monotonic; the dedicated dynamic-domain AVS proves distinct executions
+    // receive distinct tokens.
+    _NextBundleExecutionDomainToken = init_domain;
     WriteTPC(init_instance);
     let replay_done = RunWriter(FALSE, FALSE, 0, 4);
     assert replay_done && _LastFault == Fault_None;

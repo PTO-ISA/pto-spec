@@ -16,6 +16,15 @@ begin
     return instruction;
 end;
 
+pure func BIOSCapacityAssemble(size_code: bits(4)) => bits(64)
+begin
+    var instruction = Zeros{64} + 0x00001053;
+    instruction[31] = '1';
+    instruction[11] = '1';
+    instruction[10:7] = size_code;
+    return instruction;
+end;
+
 func PrepareBIOSCapacity()
 begin
     let started = ExecuteCommandInstruction(
@@ -45,6 +54,9 @@ begin
     let second_128 = ExecuteCommandInstruction(
         BIOSCapacityDestination(Zeros{6} + 2, '1011', '111'), 32);
     assert second_128 == CommandExecution_Executed;
+    let second_128_assemble = ExecuteCommandInstruction(
+        BIOSCapacityAssemble('1011'), 32);
+    assert second_128_assemble == CommandExecution_Executed;
     let second_128_completed = ExecuteBundleTileOperation();
     assert second_128_completed;
     assert _LastFault == Fault_None;
@@ -69,6 +81,9 @@ begin
     let full_256_partial_mode = ExecuteCommandInstruction(
         BIOSCapacityDestination(Zeros{6} + 5, '1100', '101'), 32);
     assert full_256_partial_mode == CommandExecution_Executed;
+    let full_256_assemble = ExecuteCommandInstruction(
+        BIOSCapacityAssemble('1100'), 32);
+    assert full_256_assemble == CommandExecution_Executed;
     let full_256_completed = ExecuteBundleTileOperation();
     assert full_256_completed;
     assert _LastFault == Fault_None;

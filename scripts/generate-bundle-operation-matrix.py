@@ -364,6 +364,11 @@ def assemble_word() -> int:
 def dimension_words(row: dict) -> list[int]:
     # One FP16 M16 CELL is a 1x4 logical view. Matrix handlers retain their
     # compact one-value defaults; ordinary Local handlers use the view shape.
+    name = row.get("name", row.get("operation"))
+    if name == "TSORT":
+        return [0x43 | (4 << 20)]
+    if name == "TMRGSORT":
+        return []
     values = (1, 1, 1) if row["family"] == "CUBE" else (4, 1, 4)
     return [0x43 | (values[0] << 20),
             0x1043 | (values[1] << 20),
@@ -467,6 +472,33 @@ def asl_word(value: int) -> str:
     return f"Zeros{{64}} + 0x{value:08x}"
 
 
+def source_valid_columns(row: dict, source: str) -> int:
+    name = row.get("name", row.get("operation"))
+    if name == "TROWEXPAND":
+        return 1
+    if name in {
+        "TROWEXPANDADD", "TROWEXPANDSUB", "TROWEXPANDDIV",
+        "TROWEXPANDMAX", "TROWEXPANDMIN",
+    }:
+        return 1 if source == "source1" else 4
+    if name == "TCONCAT":
+        return 2
+    if name == "TINSERT":
+        return 1 if source == "source1" else 4
+    if name == "TMRGSORT":
+        return 2
+    return 4
+
+
+def row_major_rows(data_type: int, columns: int = 4) -> int:
+    element_bits = (
+        32 if data_type in {1, 17, 25}
+        else 16 if data_type in {4, 26}
+        else 8
+    )
+    return (128 * 8) // element_bits // columns
+
+
 def setup_lines(row: dict, role_kind: str) -> list[str]:
     dtype = fixture_data_type(row)
     dtype_name = DATA_TYPE_NAMES[dtype]
@@ -476,7 +508,11 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
         f"(if tile == 2 then TileDataType_S32 else {dtype_name})"
         if index_source_fixture else dtype_name
     )
-    gpr2 = "0x3f800000" if operation_name in {"TQUANT", "TDEQUANT"} else "1"
+    gpr2 = (
+        "0x3f800000" if operation_name in {"TQUANT", "TDEQUANT"}
+        else "0" if operation_name in {"TINSERT", "TIMG2COL"}
+        else "1"
+    )
     lines = [
         "    ResetProfileState();",
         "    WriteGPR(0, Zeros{PTO_XLEN});",
@@ -528,13 +564,58 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
             "    end;",
         ]
     else:
+        selected_source = row["role"] if role_kind == "source" else None
+        selected_tile = (
+            role_number(selected_source) + 1
+            if selected_source is not None else 0
+        )
+        selected_columns = (
+            source_valid_columns(row, selected_source)
+            if selected_source is not None else 4
+        )
+        selected_layout = (
+            "TileLayout_CUBE_N8"
+            if dtype in {1, 17, 25} or
+               (index_source_fixture and selected_source == "source1")
+            else "TileLayout_CUBE_M16"
+        )
+        ordinary_rows = str(row_major_rows(dtype))
+        if index_source_fixture:
+            ordinary_rows = (
+                f"(if tile == 2 then {row_major_rows(17)} else "
+                f"{ordinary_rows})"
+            )
         lines += [
             "    for tile = 1 to 8 looplimit 8 do",
-            "        let configured = ConfigureCubeTileForMask(tile, 128, 1, 4,",
-            f"            {local_dtype}, {'(if tile == 2 then TileLayout_CUBE_N8 else TileLayout_CUBE_M16)' if index_source_fixture else 'TileLayout_CUBE_M16'}, TileLocation_Matrix, '1111');",
+            f"        let configured = if tile == {selected_tile} then",
+            "            ConfigureCubeTileForMask(tile, 128, 1,",
+            f"                {selected_columns}, {local_dtype}, {selected_layout},",
+            "                TileLocation_Matrix, '1111')",
+            "            else ConfigureTileForMask(tile, 128,",
+            f"                {ordinary_rows}, 4, 1,",
+            f"                source_valid_columns_placeholder, {local_dtype},",
+            "                TileLayout_RowMajor, TileLocation_Any, '1111');",
             "        assert configured;",
             "        MarkTileValidRegionDefined(tile);",
             "    end;",
+        ]
+        # The nonselected Local source shape can differ by role. Expand the
+        # placeholder into one exact ASL conditional derived from the catalog
+        # role numbering used by B.IOT.
+        ordinary_columns = "4"
+        for operand in row.get("operands", []):
+            field = operand["field"]
+            if field.startswith("source"):
+                tile = role_number(field) + 1
+                columns = source_valid_columns(row, field)
+                if columns != 4:
+                    ordinary_columns = (
+                        f"(if tile == {tile} then {columns} else "
+                        f"{ordinary_columns})"
+                    )
+        lines = [
+            line.replace("source_valid_columns_placeholder", ordinary_columns)
+            for line in lines
         ]
     return lines
 
@@ -629,10 +710,10 @@ def render_case(row: dict) -> list[str]:
             for destination_role in destination_roles:
                 destination_slot = role_number(destination_role)
                 lines += [
-                    "    let completed_writer = CompleteBundleLocalGenerationWriterEvent(",
+                    f"    let completed_writer_{destination_slot} = CompleteBundleLocalGenerationWriterEvent(",
                     f"        BundleLocalGenerationSlot({destination_slot}, '1111'), _BundleExecutionDomainToken,",
                     f"        0, BundleLocalGenerationCellCount({CELL_SIZE_CODE}));",
-                    "    assert completed_writer;",
+                    f"    assert completed_writer_{destination_slot};",
                     f"    assert _LocalGenerations[[BundleLocalGenerationSlot({destination_slot}, '1111')]].published;",
                 ]
     lines += ["    return TRUE;"]

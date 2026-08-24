@@ -9,8 +9,14 @@ begin
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        let configured = ConfigureCubeTileForMask(tile, 128, 1, 4,
-            TileDataType_U8, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        let configured = if tile == 2 then
+            ConfigureCubeTileForMask(tile, 128, 1,
+                4, TileDataType_U8, TileLayout_CUBE_M16,
+                TileLocation_Matrix, '1111')
+            else ConfigureTileForMask(tile, 128,
+                32, 4, 1,
+                4, TileDataType_U8,
+                TileLayout_RowMajor, TileLocation_Any, '1111');
         assert configured;
         MarkTileValidRegionDefined(tile);
     end;
@@ -54,8 +60,14 @@ begin
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        let configured = ConfigureCubeTileForMask(tile, 128, 1, 4,
-            TileDataType_U8, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        let configured = if tile == 0 then
+            ConfigureCubeTileForMask(tile, 128, 1,
+                4, TileDataType_U8, TileLayout_CUBE_M16,
+                TileLocation_Matrix, '1111')
+            else ConfigureTileForMask(tile, 128,
+                32, 4, 1,
+                4, TileDataType_U8,
+                TileLayout_RowMajor, TileLocation_Any, '1111');
         assert configured;
         MarkTileValidRegionDefined(tile);
     end;
@@ -89,10 +101,10 @@ begin
     end;
     assert _Tiles[[observed_destination]].allocated &&
            _Tiles[[observed_destination]].contents_defined;
-    let completed_writer = CompleteBundleLocalGenerationWriterEvent(
+    let completed_writer_0 = CompleteBundleLocalGenerationWriterEvent(
         BundleLocalGenerationSlot(0, '1111'), _BundleExecutionDomainToken,
         0, BundleLocalGenerationCellCount(1));
-    assert completed_writer;
+    assert completed_writer_0;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].published;
     return TRUE;
 end;
@@ -106,8 +118,14 @@ begin
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        let configured = ConfigureCubeTileForMask(tile, 128, 1, 4,
-            TileDataType_U8, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        let configured = if tile == 1 then
+            ConfigureCubeTileForMask(tile, 128, 1,
+                4, TileDataType_U8, TileLayout_CUBE_M16,
+                TileLocation_Matrix, '1111')
+            else ConfigureTileForMask(tile, 128,
+                32, 4, 1,
+                4, TileDataType_U8,
+                TileLayout_RowMajor, TileLocation_Any, '1111');
         assert configured;
         MarkTileValidRegionDefined(tile);
     end;
@@ -151,8 +169,14 @@ begin
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     for tile = 1 to 8 looplimit 8 do
-        let configured = ConfigureCubeTileForMask(tile, 128, 1, 4,
-            TileDataType_U8, TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
+        let configured = if tile == 2 then
+            ConfigureCubeTileForMask(tile, 128, 1,
+                4, TileDataType_U8, TileLayout_CUBE_M16,
+                TileLocation_Matrix, '1111')
+            else ConfigureTileForMask(tile, 128,
+                32, 4, 1,
+                4, TileDataType_U8,
+                TileLayout_RowMajor, TileLocation_Any, '1111');
         assert configured;
         MarkTileValidRegionDefined(tile);
     end;

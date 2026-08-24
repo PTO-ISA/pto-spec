@@ -303,13 +303,7 @@ begin
                 return CommandExecution_Rejected;
             end;
             if !BundleRangeSubviewLegal(source_select, size_code) then
-                if !_BundleRangeGroup.zero_mode &&
-                   _BundleRangeGroup.kind == BundleRangeGroup_Local &&
-                   (size_code == 11 || size_code == 12) then
-                    SetFault(Fault_TileLegality, ReadTPC());
-                else
-                    SetFault(Fault_BundleControl, ReadTPC());
-                end;
+                SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
             if !_BundleRangeGroup.zero_mode then

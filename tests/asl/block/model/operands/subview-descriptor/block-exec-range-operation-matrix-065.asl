@@ -61,10 +61,10 @@ begin
     end;
     assert _Tiles[[observed_destination]].allocated &&
            _Tiles[[observed_destination]].contents_defined;
-    let completed_writer = CompleteBundleLocalGenerationWriterEvent(
+    let completed_writer_0 = CompleteBundleLocalGenerationWriterEvent(
         BundleLocalGenerationSlot(0, '1111'), _BundleExecutionDomainToken,
         0, BundleLocalGenerationCellCount(1));
-    assert completed_writer;
+    assert completed_writer_0;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].published;
     return TRUE;
 end;
