@@ -42,6 +42,8 @@ begin
                         BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     when 7 => operands.source7 =
                         BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
+                    when 8 => operands.source8 =
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, FALSE);
                     otherwise => unreachable;
                 end;
                 source_count = source_count + 1;
@@ -63,6 +65,8 @@ begin
                     when 6 => operands.source6 =
                         BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     when 7 => operands.source7 =
+                        BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
+                    when 8 => operands.source8 =
                         BundleTileSourceIndex(binding as BundleTileBindingIndex, TRUE);
                     otherwise => unreachable;
                 end;

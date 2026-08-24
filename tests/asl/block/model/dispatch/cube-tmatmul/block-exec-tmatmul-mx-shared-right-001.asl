@@ -6,8 +6,10 @@ begin
         TileDataType_E4M3, TileLayout_CUBE_M16,
         TileLocation_Matrix, '1111');
     assert left_ready;
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let left_scale_ready = ConfigureCubeTileForMask(1, 128, 1, 1,
+        TileDataType_E8M0, TileLayout_CUBE_M32,
+        TileLocation_Matrix, '1111');
+    assert left_scale_ready;
     ConfigureTile(10, 512, 32, 1, 32, 1, TileDataType_E5M2,
         TileLayout_RowMajor, TileLocation_Matrix);
     ConfigureTile(11, 128, 1, 1, 1, 1, TileDataType_E8M0,
@@ -17,6 +19,7 @@ begin
         WriteTileElement(10, inner, 0, Zeros{PTO_XLEN} + 3);
     end;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
+    MarkTileValidRegionDefined(1);
     WriteTileElement(11, 0, 0, Zeros{PTO_XLEN} + 1);
     InstallSharedTile((Zeros{6} + 42) as SharedTileID, _Tiles[[10]], '1111');
     InstallSharedTile((Zeros{6} + 43) as SharedTileID, _Tiles[[11]], '1111');

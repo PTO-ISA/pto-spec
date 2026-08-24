@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TMATMUL-MX-SCALE-001","source":"asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl","requirements":["PTO-INST-TILE-TMATMUL-MX"],"kind":"boundary","summary":"TMATMULMX scale operands are omitted or required independently from each matrix type","pass_condition":"FP16 sides reject supplied scales while E4M3 sides require correctly shaped E8M0 scales","related_sources":["asl/tile/model/legality/matrix-shape.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TMATMUL-MX-SCALE-001","source":"asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl","requirements":["PTO-INST-TILE-TMATMUL-MX","PTO-CUBE-MATRIX-SCALE-001"],"kind":"boundary","summary":"TMATMULMX scale operands are omitted or required independently from each matrix type.","pass_condition":"FP16 sides reject supplied scales while E4M3 sides require correctly shaped Local CUBE_M32 E8M0 scales.","related_sources":["asl/tile/model/legality/matrix-shape.asl"]}
 func SelectTMATMULMX(data_type: bits(5))
 begin
     InstallBundleOperationDescriptor(BundleOperationDescriptor {
@@ -54,10 +54,13 @@ begin
         TileDataType_E4M3, TileLayout_CUBE_N8,
         TileLocation_Matrix);
     assert mx_left_ready && mx_right_ready;
-    ConfigureTile(3, 128, 16, 8, 1, 1, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Matrix);
-    ConfigureTile(4, 128, 16, 8, 1, 2, TileDataType_E8M0,
-        TileLayout_RowMajor, TileLocation_Matrix);
+    let left_scale_ready = ConfigureCubeTileForMask(3, 128, 1, 1,
+        TileDataType_E8M0, TileLayout_CUBE_M32,
+        TileLocation_Matrix, '1000');
+    let right_scale_ready = ConfigureCubeTileForMask(4, 128, 2, 1,
+        TileDataType_E8M0, TileLayout_CUBE_M32,
+        TileLocation_Matrix, '1000');
+    assert left_scale_ready && right_scale_ready;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN});
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
@@ -66,7 +69,9 @@ begin
     WriteTileElement(2, 1, 1, Zeros{PTO_XLEN});
     WriteTileElement(3, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(4, 0, 1, Zeros{PTO_XLEN});
+    WriteTileElement(4, 1, 0, Zeros{PTO_XLEN});
+    MarkTileValidRegionDefined(3);
+    MarkTileValidRegionDefined(4);
     assert TileMatrixInfoOptionalScalesLegal(
         _Tiles[[1]], _Tiles[[3]], TRUE,
         _Tiles[[2]], _Tiles[[4]], TRUE);

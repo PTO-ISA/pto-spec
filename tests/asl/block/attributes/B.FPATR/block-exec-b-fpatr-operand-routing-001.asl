@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR"],"kind":"execution","summary":"B.FPATR dense scalar/vector parameter and maximum B.IOT routing","pass_condition":"LReLU-only uses RegSrc0, scalar quant/LReLU pack densely, and eight sources/three destinations remain ordered","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001","source":"asl/block/attributes/B.FPATR.asl","requirements":["PTO-INST-BLOCK-B-FPATR","PTO-CUBE-CSCALE-001"],"kind":"execution","summary":"B.FPATR dense scalar/vector parameter and maximum B.IOT routing","pass_condition":"LReLU-only uses RegSrc0, scalar quant/LReLU pack densely, and nine sources/three destinations remain ordered","related_sources":[]}
 func main() => integer
 begin
     ResetProfileState();
@@ -24,7 +24,7 @@ begin
     assert scalar_pair.post_quant_param == Zeros{PTO_XLEN} + 17;
     assert scalar_pair.post_lrelu_param == Zeros{PTO_XLEN} + 19;
 
-    // Worst-case ordered local stream: eight sources and three destinations.
+    // Worst-case ordered local stream: nine sources and three destinations.
     ResetProfileState();
     _BundleOperation.valid = TRUE;
     _BundleOperation.operation_class = BundleOperation_TileMatrix;
@@ -39,6 +39,9 @@ begin
         _BundleTileBindings[[index]].source1_valid = TRUE;
         _BundleTileBindings[[index]].source1 = (base + 1) as TileIndex;
     end;
+    _BundleTileBindings[[4]].valid = TRUE;
+    _BundleTileBindings[[4]].source0_valid = TRUE;
+    _BundleTileBindings[[4]].source0 = 8;
     _BundleTileBindings[[0]].destination_valid = TRUE;
     _BundleTileBindings[[0]].destination = 20;
     _BundleTileBindings[[1]].destination_valid = TRUE;
@@ -54,6 +57,7 @@ begin
     assert ordered.source5 == 5;
     assert ordered.source6 == 6;
     assert ordered.source7 == 7;
+    assert ordered.source8 == 8;
     assert ordered.destination0 == 20;
     assert ordered.destination1 == 21;
     assert ordered.destination2 == 22;
@@ -64,6 +68,7 @@ begin
         _BundleTileBindings[[index]].source0_valid = FALSE;
         _BundleTileBindings[[index]].source1_valid = FALSE;
     end;
+    _BundleTileBindings[[4]].source0_valid = FALSE;
     _BundleTileBindings[[0]].source0_valid = TRUE;
     _BundleTileBindings[[0]].source0 = 0;
     _BundleTileBindings[[0]].source1_valid = TRUE;

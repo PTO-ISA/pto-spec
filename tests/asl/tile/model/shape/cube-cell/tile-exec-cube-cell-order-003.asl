@@ -10,8 +10,8 @@ begin
     tile.columns = 24;
     assert TileCubeKRepeat(tile.layout, tile.valid_rows,
         tile.valid_columns, tile.data_type) == 2;
-    assert TileCubeNRepeat(tile.layout, tile.valid_columns,
-        tile.data_type) == 3;
+    assert TileCubeNRepeat(tile.layout, tile.valid_rows,
+        tile.valid_columns, tile.data_type) == 3;
     assert TileCubeCellCount(tile.layout, tile.valid_rows,
         tile.valid_columns, tile.data_type) == 6;
     assert TileCubePayloadIndex(tile, 0, 0) == 0;

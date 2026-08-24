@@ -35,7 +35,7 @@ begin
     return (candidate, Zeros{5});
 end;
 
-readonly func BundleMatrixLocalMathematicalSourceCount() => integer {0..5}
+readonly func BundleMatrixLocalMathematicalSourceCount() => integer {0..6}
 begin
     let function = UInt(_BundleOperation.selector[4:0]);
     let left_type = TileDataTypeFromEncoding(
@@ -44,8 +44,11 @@ begin
         TileDataTypeFromEncoding(
             _BundleDataAttributes.data_type as TileDataTypeEncoding)
         else left_type;
-    return TileMatrixLocalMathematicalSourceCount(
+    let base = TileMatrixLocalMathematicalSourceCount(
         function, left_type, right_type, BundleSharedBindingCount());
+    return (base +
+        (if _BundleFixedPointAttributes.c_scale_en then 1 else 0))
+        as integer {0..6};
 end;
 
 readonly func BundleMatrixOperationIndex() => integer {0..PTO_TILE_OPERATION_COUNT-1}
@@ -163,8 +166,8 @@ begin
     let relu_source_ordinal = quant_source_ordinal +
         (if BundleFPATRModeUsesVectorParameter(
             _BundleFixedPointAttributes.pre_quant_mode) then 1 else 0);
-    let quant_tile = BundleMatrixSourceAt(quant_source_ordinal as integer {0..7});
-    let relu_tile = BundleMatrixSourceAt(relu_source_ordinal as integer {0..7});
+    let quant_tile = BundleMatrixSourceAt(quant_source_ordinal as integer {0..8});
+    let relu_tile = BundleMatrixSourceAt(relu_source_ordinal as integer {0..8});
     for row = 0 to input.valid_rows - 1 looplimit 65536 do
         for column = 0 to input.valid_columns - 1 looplimit 65536 do
             let element = TileStorageIndex(input, row as integer {0..65535},
@@ -207,7 +210,7 @@ func CommitMatrixResult(destination: TileIndex, result: TileInfo,
 begin
     let mathematical_sources = BundleMatrixLocalMathematicalSourceCount();
     let rowmax_input = BundleMatrixSourceAt(
-        mathematical_sources as integer {0..7});
+        mathematical_sources as integer {0..8});
     let (processed, process_flags) = MatrixPostProcessResult(
         result, intermediate_type);
     let rowmax_destination = BundleMatrixDestinationAt(1);

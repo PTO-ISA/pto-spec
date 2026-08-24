@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","surface":"block","classification":["model","dispatch","cube-tmatmul"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CUBE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-MATRIX-SCALE","PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","PTO-BLOCK-MODEL-FAULTS-ROLLBACK","PTO-TILE-MODEL-LEGALITY-MATRIX-OPERANDS","PTO-TILE-MODEL-EXECUTION-CUBE"]}
 
 // NDF-BEGIN: PTO-CUBE-ACCUMULATOR-OUTPUT-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -105,7 +105,8 @@ begin
         return FALSE;
     end;
     let mathematical_sources = TileMatrixLocalMathematicalSourceCount(
-        function, left_type, right_type, shared_count);
+        function, left_type, right_type, shared_count) +
+        (if _BundleFixedPointAttributes.c_scale_en then 1 else 0);
     let expected_sources = mathematical_sources +
         BundleMatrixPostProcessSourceCount();
     return BundleLocalTileSourceCount() == expected_sources &&
@@ -301,11 +302,18 @@ begin
     end;
 
     let mathematical_sources = TileMatrixLocalMathematicalSourceCount(
-        function, left_type, right_type, shared_count);
+        function, left_type, right_type, shared_count) +
+        (if _BundleFixedPointAttributes.c_scale_en then 1 else 0);
     let result_type = if TileMatrixFunctionUsesMX(function) then
         TileDataType_FP32
     else
         TileOrdinaryMatrixAccumulatorType(left_type, right_type);
+    if _BundleFixedPointAttributes.c_scale_en &&
+       (!TileMatrixFunctionAllowsCScale(function) ||
+        result_type != TileDataType_FP32) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if !BundleMatrixPostProcessSourcesLegal(
            mathematical_sources, pe_m, n, result_type) then
         SetFault(Fault_TileLegality, ReadTPC());
@@ -318,6 +326,12 @@ begin
         return FALSE;
     end;
     if !BundleMatrixAccumulatorDestinationIndicesDistinct(function) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    if _BundleFixedPointAttributes.c_scale_en &&
+       !BundleMatrixCScaleDestinationIndicesDistinct(
+           (mathematical_sources - 1) as integer {0..8}) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
@@ -351,43 +365,44 @@ begin
         TileMXInputTypeNeedsScale(right_type);
     var accumulator: TileIndex = operands.destination0;
     var bias: TileIndex = operands.destination0;
-    var local_ordinal: integer {0..5} = 0;
+    var c_scale: TileIndex = operands.destination0;
+    var local_ordinal: integer {0..6} = 0;
     var shared_ordinal: integer {0..4} = 0;
 
     if TileMatrixFunctionUsesAccumulator(function) then
         accumulator = BundleMatrixSourceAt(
-            local_ordinal as integer {0..7});
-        local_ordinal = (local_ordinal + 1) as integer {0..5};
+            local_ordinal as integer {0..8});
+        local_ordinal = (local_ordinal + 1) as integer {0..6};
     end;
 
     if shared_count == 0 then
         left = _Tiles[[BundleMatrixSourceAt(
-            local_ordinal as integer {0..7})]];
-        local_ordinal = (local_ordinal + 1) as integer {0..5};
+            local_ordinal as integer {0..8})]];
+        local_ordinal = (local_ordinal + 1) as integer {0..6};
         if left_scale_present then
             left_scale = _Tiles[[BundleMatrixSourceAt(
-                local_ordinal as integer {0..7})]];
-            local_ordinal = (local_ordinal + 1) as integer {0..5};
+                local_ordinal as integer {0..8})]];
+            local_ordinal = (local_ordinal + 1) as integer {0..6};
         end;
         right = _Tiles[[BundleMatrixSourceAt(
-            local_ordinal as integer {0..7})]];
-        local_ordinal = (local_ordinal + 1) as integer {0..5};
+            local_ordinal as integer {0..8})]];
+        local_ordinal = (local_ordinal + 1) as integer {0..6};
         if right_scale_present then
             right_scale = _Tiles[[BundleMatrixSourceAt(
-                local_ordinal as integer {0..7})]];
-            local_ordinal = (local_ordinal + 1) as integer {0..5};
+                local_ordinal as integer {0..8})]];
+            local_ordinal = (local_ordinal + 1) as integer {0..6};
         end;
     else
         let right_group = TileMatrixRightGroupSourceCount(
             function, right_type);
         if shared_count == right_group then
             left = _Tiles[[BundleMatrixSourceAt(
-                local_ordinal as integer {0..7})]];
-            local_ordinal = (local_ordinal + 1) as integer {0..5};
+                local_ordinal as integer {0..8})]];
+            local_ordinal = (local_ordinal + 1) as integer {0..6};
             if left_scale_present then
                 left_scale = _Tiles[[BundleMatrixSourceAt(
-                    local_ordinal as integer {0..7})]];
-                local_ordinal = (local_ordinal + 1) as integer {0..5};
+                    local_ordinal as integer {0..8})]];
+                local_ordinal = (local_ordinal + 1) as integer {0..6};
             end;
         else
             left = MaterializeBundleSharedMatrixLeftPrimary(
@@ -397,11 +412,11 @@ begin
                 _CurrentMemoryAgent);
             shared_ordinal = (shared_ordinal + 1) as integer {0..4};
             if left_scale_present then
-                let scale_blocks = ((k + 31) DIVRM 32)
-                    as integer {1..2048};
                 left_scale = MaterializeBundleSharedMatrixLeftScale(
                     shared_ordinal as integer {0..3},
-                    m, scale_blocks, _CurrentMemoryAgent);
+                    m, k, left_type,
+                    _BundleFixedPointAttributes.trans_a,
+                    _CurrentMemoryAgent);
                 shared_ordinal = (shared_ordinal + 1) as integer {0..4};
             end;
         end;
@@ -411,18 +426,25 @@ begin
             _BundleFixedPointAttributes.trans_b);
         shared_ordinal = (shared_ordinal + 1) as integer {0..4};
         if right_scale_present then
-            let scale_blocks = ((k + 31) DIVRM 32)
-                as integer {1..2048};
-            right_scale = MaterializeBundleSharedMatrixSource(
+            let scale_groups = TileMXScaleGroupCount(k, right_type);
+            right_scale = MaterializeBundleSharedMatrixPrimary(
                 shared_ordinal as integer {0..3},
-                scale_blocks, n, n, TileDataType_E8M0);
+                scale_groups, n,
+                TileMXScaleCarrierType(right_type),
+                _BundleFixedPointAttributes.trans_b);
             shared_ordinal = (shared_ordinal + 1) as integer {0..4};
         end;
     end;
 
     if TileMatrixFunctionUsesBias(function) then
         bias = BundleMatrixSourceAt(
-            local_ordinal as integer {0..7});
+            local_ordinal as integer {0..8});
+        local_ordinal = (local_ordinal + 1) as integer {0..6};
+    end;
+
+    if _BundleFixedPointAttributes.c_scale_en then
+        c_scale = BundleMatrixSourceAt(
+            local_ordinal as integer {0..8});
     end;
 
     let right_group = TileMatrixRightGroupSourceCount(
@@ -456,12 +478,14 @@ begin
             left, left_scale, left_scale_present,
             right, right_scale, right_scale_present,
             bias, TileMatrixFunctionUsesBias(function),
-            TileMatrixFunctionUsesAccumulator(function));
+            TileMatrixFunctionUsesAccumulator(function),
+            c_scale, _BundleFixedPointAttributes.c_scale_en);
     else
         TMATMULShared(
             destination, accumulator, left, right, bias,
             TileMatrixFunctionUsesBias(function),
-            TileMatrixFunctionUsesAccumulator(function));
+            TileMatrixFunctionUsesAccumulator(function),
+            c_scale, _BundleFixedPointAttributes.c_scale_en);
     end;
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();

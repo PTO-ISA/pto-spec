@@ -13,18 +13,20 @@ begin
         TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
     assert configured_1;
     MarkTileValidRegionDefined(1);
-    ConfigureTileForMask(2, 128, 128, 1, 1, 1,
-        TileDataType_E8M0, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+    let configured_2 = ConfigureCubeTileForMask(
+        2, 128, 1, 1, TileDataType_E8M0,
+        TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+    assert configured_2;
     MarkTileValidRegionDefined(2);
     let configured_3 = ConfigureCubeTileForMask(
         3, 128, 1, 1, TileDataType_E4M3,
         TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert configured_3;
     MarkTileValidRegionDefined(3);
-    ConfigureTileForMask(4, 128, 128, 1, 1, 1,
-        TileDataType_E8M0, TileLayout_RowMajor,
-        TileLocation_Matrix, '1111');
+    let configured_4 = ConfigureCubeTileForMask(
+        4, 128, 1, 1, TileDataType_E8M0,
+        TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+    assert configured_4;
     MarkTileValidRegionDefined(4);
     let started = ExecuteCommandInstruction(Zeros{64} + 0x38431181, 32);
     assert started == CommandExecution_Executed;

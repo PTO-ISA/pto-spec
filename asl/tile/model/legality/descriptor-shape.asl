@@ -43,7 +43,8 @@ begin
            tile.cube_k_repeat == TileCubeKRepeat(tile.layout,
                tile.valid_rows, tile.valid_columns, tile.data_type) &&
            tile.cube_n_repeat == TileCubeNRepeat(
-               tile.layout, tile.valid_columns, tile.data_type) &&
+               tile.layout, tile.valid_rows, tile.valid_columns,
+               tile.data_type) &&
            tile.cube_cell_count == TileCubeCellCount(tile.layout,
                tile.valid_rows, tile.valid_columns, tile.data_type) &&
            tile.cube_storage_bytes == TileCubeRequiredBytes(tile.layout,

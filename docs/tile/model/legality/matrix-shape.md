@@ -231,20 +231,28 @@ begin
        right_scale_present != right_scale_required then
         return FALSE;
     end;
-    let scale_blocks: integer {0..2048} =
-        ((left.valid_columns + 31) DIVRM 32) as integer {0..2048};
+    let left_groups = if left_scale_present then TileMXScaleGroupCount(
+        left.valid_columns as integer {1..65535}, left_type) else 1;
+    let right_groups = if right_scale_present then TileMXScaleGroupCount(
+        left.valid_columns as integer {1..65535}, right_type) else 1;
     let left_scale_legal = !left_scale_present ||
-        (TileInfoDescriptorLegal(left_scale) &&
-         left_scale.data_type == TileDataType_E8M0 &&
-         left_scale.layout == TileLayout_RowMajor &&
+        (((left_scale.layout == TileLayout_CUBE_M32 && TileCubeDescriptorLegal(left_scale)) ||
+          (left_scale.layout == TileLayout_RowMajor &&
+           left_scale.location == TileLocation_Any &&
+           TileInfoDescriptorLegal(left_scale))) &&
+         left_scale.data_type == TileMXScaleCarrierType(left_type) &&
          left_scale.valid_rows == left.valid_rows &&
-         left_scale.valid_columns == scale_blocks);
+         left_scale.valid_columns == left_groups);
     let right_scale_legal = !right_scale_present ||
-        (TileInfoDescriptorLegal(right_scale) &&
-         right_scale.data_type == TileDataType_E8M0 &&
-         right_scale.layout == TileLayout_RowMajor &&
-         right_scale.valid_rows == scale_blocks &&
-         right_scale.valid_columns == right.valid_columns);
+        (((right_scale.layout == TileLayout_CUBE_M32 && TileCubeDescriptorLegal(right_scale) &&
+           right_scale.valid_rows == right.valid_columns &&
+           right_scale.valid_columns == right_groups) ||
+          (right_scale.layout == TileLayout_RowMajor &&
+           right_scale.location == TileLocation_Any &&
+           TileInfoDescriptorLegal(right_scale) &&
+           right_scale.valid_rows == right_groups &&
+           right_scale.valid_columns == right.valid_columns)) &&
+         right_scale.data_type == TileMXScaleCarrierType(right_type));
     return left_scale_legal && right_scale_legal;
 end;
 

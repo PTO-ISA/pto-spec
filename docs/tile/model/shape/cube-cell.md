@@ -19,6 +19,14 @@ This page is a generated reference view of the normative ASL unit.
 // types or insufficient per-PE capacity before effects.
 // NDF-END: PTO-CUBE-CELL-STATE-001
 
+// NDF-BEGIN: PTO-CUBE-MATRIX-SCALE-CELL-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// Matrix scale Tiles in CUBE_M32 MUST use a two-dimensional 128-byte CellReg
+// grid with column/K repeat fast and 32-row repeat slow. Partial final group
+// slots and final row blocks MUST remain invalid storage tail. This generic
+// grid MUST NOT expand primary A/C/D legality beyond one M16/M32 row block.
+// NDF-END: PTO-CUBE-MATRIX-SCALE-CELL-001
+
 pure func TileLayoutIsCube(layout: TileLayout) => boolean
 begin
     return layout == TileLayout_CUBE_M16 ||
@@ -29,7 +37,7 @@ end;
 pure func TileCubeDataTypeSupported(data_type: TileDataType) => boolean
 begin
     let element_bits = TileElementBits(data_type);
-    return data_type != TileDataType_HiF4X2 && element_bits != 64;
+    return element_bits != 64;
 end;
 
 pure func TileCubeCellRows(layout: TileLayout,
@@ -92,7 +100,8 @@ pure func TileCubeStorageRows(layout: TileLayout,
 begin
     let cell_rows = TileCubeCellRows(layout, data_type);
     if cell_rows == 0 || valid_rows == 0 then return 0; end;
-    if layout == TileLayout_CUBE_N8 then
+    if layout == TileLayout_CUBE_N8 ||
+       layout == TileLayout_CUBE_M32 then
         return TileCubeAlignedExtent(valid_rows,
             cell_rows as integer {1..65535});
     end;
@@ -134,6 +143,7 @@ begin
 end;
 
 pure func TileCubeNRepeat(layout: TileLayout,
+                          valid_rows: integer {0..65535},
                           valid_columns: integer {0..65535},
                           data_type: TileDataType)
     => integer {0..8192}
@@ -141,6 +151,12 @@ begin
     if !TileLayoutIsCube(layout) ||
        !TileCubeDataTypeSupported(data_type) || valid_columns == 0 then
         return 0;
+    end;
+    if layout == TileLayout_CUBE_M32 then
+        let storage_rows = TileCubeStorageRows(
+            layout, valid_rows, data_type);
+        if storage_rows == 0 then return 0; end;
+        return (storage_rows DIVRM 32) as integer {1..2048};
     end;
     if layout != TileLayout_CUBE_N8 then return 1; end;
     let storage_columns = TileCubeStorageColumns(
@@ -157,7 +173,8 @@ pure func TileCubeCellCount(layout: TileLayout,
 begin
     let k_repeat = TileCubeKRepeat(
         layout, valid_rows, valid_columns, data_type);
-    let n_repeat = TileCubeNRepeat(layout, valid_columns, data_type);
+    let n_repeat = TileCubeNRepeat(
+        layout, valid_rows, valid_columns, data_type);
     if k_repeat == 0 || n_repeat == 0 then return 0; end;
     let cells: integer = k_repeat * n_repeat;
     if cells > 16384 then return 0; end;
@@ -273,6 +290,14 @@ begin
         let cell_k = (row DIVRM row_divisor) as integer {0..16383};
         let cell_n = (column DIVRM column_divisor) as integer {0..8191};
         cell_index = cell_n * k_repeat + cell_k;
+        inner_row = row MOD row_divisor;
+        inner_column = column MOD column_divisor;
+    elsif tile.layout == TileLayout_CUBE_M32 then
+        let cell_row = (row DIVRM row_divisor)
+            as integer {0..2047};
+        let cell_column = (column DIVRM column_divisor)
+            as integer {0..65535};
+        cell_index = cell_row * k_repeat + cell_column;
         inner_row = row MOD row_divisor;
         inner_column = column MOD column_divisor;
     else

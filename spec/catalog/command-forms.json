@@ -1,6 +1,6 @@
 {
   "form_count": 76,
-  "form_constraint_count": 87,
+  "form_constraint_count": 88,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
@@ -5139,7 +5139,7 @@
       "status": "accepted"
     },
     {
-      "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB",
+      "asm": "B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn",
       "constraints": [
         {
           "field": "PreQuantMode",
@@ -5263,6 +5263,14 @@
           ]
         },
         {
+          "field": "CScaleEn",
+          "operator": "one-of",
+          "values": [
+            0,
+            1
+          ]
+        },
+        {
           "field": "Reserved",
           "operator": "one-of",
           "values": [
@@ -5294,7 +5302,7 @@
       "encoding": [
         {
           "index": 0,
-          "mask": "0x00007e7f",
+          "mask": "0x00007c7f",
           "match": "0x00002023",
           "width_bits": 32
         }
@@ -5434,16 +5442,28 @@
           "width": 1
         },
         {
-          "name": "Reserved",
+          "name": "CScaleEn",
           "pieces": [
             {
               "instruction_lsb": 9,
               "value_lsb": 0,
-              "width": 2
+              "width": 1
             }
           ],
           "signedness": "encoding-defined",
-          "width": 2
+          "width": 1
+        },
+        {
+          "name": "Reserved",
+          "pieces": [
+            {
+              "instruction_lsb": 10,
+              "value_lsb": 0,
+              "width": 1
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 1
         },
         {
           "name": "Opc1",
@@ -5762,8 +5782,8 @@
     }
   ],
   "isa": "PTO Instruction Set Architecture",
-  "operand_field_count": 77,
-  "operand_piece_count": 171,
+  "operand_field_count": 78,
+  "operand_piece_count": 172,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",

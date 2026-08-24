@@ -18,6 +18,7 @@ begin
             (controls MOD 2 == 1);
         assert _BundleFixedPointAttributes.trans_b ==
             (controls >= 2);
+        assert !_BundleFixedPointAttributes.c_scale_en;
     end;
     return 0;
 end;

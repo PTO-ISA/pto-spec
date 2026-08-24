@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-CUBE","surface":"tile","classification":["model","execution","cube"],"depends_on":["PTO-TILE-MODEL-MEMORY-RESTART","PTO-TILE-MODEL-EXECUTION-COMPLEX"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-CUBE","surface":"tile","classification":["model","execution","cube"],"depends_on":["PTO-TILE-MODEL-MEMORY-RESTART","PTO-TILE-MODEL-EXECUTION-COMPLEX","PTO-TILE-MODEL-EXECUTION-MATRIX-SCALE"]}
 // PTO-REQ-CUBE-001: profile-defined matrix arithmetic with portable integer
 // defaults. CUBE operations name their Local destination D explicitly. ACC
 // forms also name their Local accumulator input C explicitly;
@@ -63,7 +63,9 @@ func MatrixProductResultFromTiles(destination: TileIndex,
                                   accumulator: TileIndex,
                                   left_tile: TileInfo,
                                   right_tile: TileInfo,
-                                  accumulate: boolean) => TileInfo
+                                  accumulate: boolean,
+                                  c_scale: TileIndex,
+                                  c_scale_present: boolean) => TileInfo
 begin
     let destination_tile = _Tiles[[destination]];
     let accumulator_tile = _Tiles[[accumulator]];
@@ -93,6 +95,12 @@ begin
         assert output_converted ||
                accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
     end;
+    if c_scale_present then
+        assert accumulate &&
+               TileMatrixLocalCScaleSchemaLegal(
+                   c_scale,
+                   left_tile.valid_rows as integer {1..65535});
+    end;
 
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
@@ -103,7 +111,6 @@ begin
     result.packed_defined_elements = ZeroPackedTileDefinedElements();
     result.location = TileLocation_Matrix;
     var result_payload: TilePayload = destination_tile.payload;
-    let accumulator_payload = accumulator_tile.payload;
     let control = NumericExecutionControl {
         rounding_mode = DecodeBundleRoundingSelection(
             _BundleDataAttributes.rounding_mode).rounding_mode,
@@ -113,12 +120,11 @@ begin
         for column = 0 to right_tile.valid_columns - 1 looplimit 65536 do
             let result_element = TileStorageIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
-            let accumulator_element = if accumulate then
-                TileStorageIndex(accumulator_tile,
-                    row as integer {0..65535}, column as integer {0..65535})
-                else 0;
-            var sum: Word = if accumulate then
-                accumulator_payload[[accumulator_element]] else Zeros{PTO_XLEN};
+            var sum: Word = MatrixInitialAccumulatorValue(
+                accumulator_tile, accumulate,
+                row as integer {0..65535},
+                column as integer {0..65535},
+                c_scale, c_scale_present);
             for inner = 0 to left_tile.valid_columns - 1 looplimit 65536 do
                 let left_element = TileStorageIndex(left_tile,
                     row as integer {0..65535}, inner as integer {0..65535});
@@ -141,7 +147,7 @@ func MatrixProductResult(destination: TileIndex, accumulator: TileIndex,
                          accumulate: boolean) => TileInfo
 begin
     return MatrixProductResultFromTiles(destination, accumulator,
-        _Tiles[[left]], _Tiles[[right]], accumulate);
+        _Tiles[[left]], _Tiles[[right]], accumulate, 0, FALSE);
 end;
 
 func MatrixBiasResult(input: TileInfo, bias: TileIndex,
@@ -178,7 +184,9 @@ func MatrixMXProductResultFromTiles(destination: TileIndex,
                                     right_tile: TileInfo,
                                     right_scale_tile: TileInfo,
                                     right_scale_present: boolean,
-                                    accumulate: boolean) => TileInfo
+                                    accumulate: boolean,
+                                    c_scale: TileIndex,
+                                    c_scale_present: boolean) => TileInfo
 begin
     let destination_tile = _Tiles[[destination]];
     let accumulator_tile = _Tiles[[accumulator]];
@@ -212,6 +220,12 @@ begin
         assert output_converted ||
                accumulator_tile.capacity_bytes == destination_tile.capacity_bytes;
     end;
+    if c_scale_present then
+        assert accumulate &&
+               TileMatrixLocalCScaleSchemaLegal(
+                   c_scale,
+                   left_tile.valid_rows as integer {1..65535});
+    end;
 
     let left_payload = left_tile.payload;
     let right_payload = right_tile.payload;
@@ -224,32 +238,32 @@ begin
     result.packed_defined_elements = ZeroPackedTileDefinedElements();
     result.location = TileLocation_Matrix;
     var result_payload = destination_tile.payload;
-    let accumulator_payload = accumulator_tile.payload;
     for row = 0 to left_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to right_tile.valid_columns - 1 looplimit 65536 do
             let result_element = TileStorageIndex(result,
                 row as integer {0..65535}, column as integer {0..65535});
-            let accumulator_element = if accumulate then
-                TileStorageIndex(accumulator_tile,
-                    row as integer {0..65535}, column as integer {0..65535})
-                else 0;
-            var sum: Word = if accumulate then
-                accumulator_payload[[accumulator_element]] else Zeros{PTO_XLEN};
+            var sum: Word = MatrixInitialAccumulatorValue(
+                accumulator_tile, accumulate,
+                row as integer {0..65535},
+                column as integer {0..65535},
+                c_scale, c_scale_present);
             for inner = 0 to left_tile.valid_columns - 1 looplimit 65536 do
                 let left_element = TileStorageIndex(left_tile,
                     row as integer {0..65535}, inner as integer {0..65535});
                 let right_element = TileStorageIndex(right_tile,
                     inner as integer {0..65535}, column as integer {0..65535});
-                let scale_block =
-                    (inner DIVRM 32) as integer {0..65535};
                 let left_scale_element = if left_scale_present then
-                    TileStorageIndex(left_scale_tile,
-                        row as integer {0..65535}, scale_block)
+                    MatrixLeftScaleElement(
+                        left_scale_tile, left_tile.data_type,
+                        row as integer {0..65535},
+                        inner as integer {0..65535})
                 else
                     0;
                 let right_scale_element = if right_scale_present then
-                    TileStorageIndex(right_scale_tile,
-                        scale_block, column as integer {0..65535})
+                    MatrixRightScaleElement(
+                        right_scale_tile, right_tile.data_type,
+                        column as integer {0..65535},
+                        inner as integer {0..65535})
                 else
                     0;
                 let left_scale_value = if left_scale_present then
@@ -289,29 +303,31 @@ begin
         destination, accumulator,
         _Tiles[[left]], _Tiles[[left_scale]], left_scale_present,
         _Tiles[[right]], _Tiles[[right_scale]], right_scale_present,
-        accumulate);
+        accumulate, 0, FALSE);
 end;
 
 func MatrixMXProductResultWithOptionalScales(
     destination: TileIndex, accumulator: TileIndex,
     left: TileInfo, left_scale: TileInfo, left_scale_present: boolean,
     right: TileInfo, right_scale: TileInfo, right_scale_present: boolean,
-    accumulate: boolean) => TileInfo
+    accumulate: boolean,
+    c_scale: TileIndex, c_scale_present: boolean) => TileInfo
 begin
     return MatrixMXProductResultFromTiles(destination, accumulator,
         left, left_scale, left_scale_present, right, right_scale,
-        right_scale_present, accumulate);
+        right_scale_present, accumulate, c_scale, c_scale_present);
 end;
 
 func TMATMULShared(destination: TileIndex, accumulator: TileIndex,
                    left: TileInfo, right: TileInfo,
                    bias: TileIndex, use_bias: boolean,
-                   accumulate: boolean)
+                   accumulate: boolean,
+                   c_scale: TileIndex, c_scale_present: boolean)
 begin
     let intermediate_type = TileOrdinaryMatrixAccumulatorType(
         left.data_type, right.data_type);
     let product = MatrixProductResultFromTiles(destination, accumulator,
-        left, right, accumulate);
+        left, right, accumulate, c_scale, c_scale_present);
     let result = if use_bias then
         MatrixBiasResult(product, bias, intermediate_type)
         else product;
@@ -326,7 +342,8 @@ func TMATMULMXShared(destination: TileIndex, accumulator: TileIndex,
 begin
     let intermediate_type = TileDataType_FP32;
     let product = MatrixMXProductResultFromTiles(destination, accumulator,
-        left, left_scale, TRUE, right, right_scale, TRUE, accumulate);
+        left, left_scale, TRUE, right, right_scale, TRUE,
+        accumulate, 0, FALSE);
     let result = if use_bias then
         MatrixBiasResult(product, bias, intermediate_type)
         else product;
@@ -337,14 +354,15 @@ func TMATMULMXSharedWithOptionalScales(
     destination: TileIndex, accumulator: TileIndex,
     left: TileInfo, left_scale: TileInfo, left_scale_present: boolean,
     right: TileInfo, right_scale: TileInfo, right_scale_present: boolean,
-    bias: TileIndex, use_bias: boolean, accumulate: boolean)
+    bias: TileIndex, use_bias: boolean, accumulate: boolean,
+    c_scale: TileIndex, c_scale_present: boolean)
 begin
     let intermediate_type = TileDataType_FP32;
     let product = MatrixMXProductResultWithOptionalScales(
         destination, accumulator,
         left, left_scale, left_scale_present,
         right, right_scale, right_scale_present,
-        accumulate);
+        accumulate, c_scale, c_scale_present);
     let result = if use_bias then
         MatrixBiasResult(product, bias, intermediate_type)
         else product;

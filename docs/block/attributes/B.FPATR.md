@@ -14,14 +14,14 @@ The current instruction contract is owned by the ASL source linked above.
 ## Assembly
 
 ```asm
-B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB
+B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn
 ```
 
 ## Encoding
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| b_fpatr_32_30c307e06d4a | L32 | 32 | 0x00002023 / 0x00007e7f | [{"field":"PreQuantMode","operator":"one-of","values":[0,1,2,3,4,5,12,13,16,17,18,19,20,23,24,25,26,27,28,32,33,34,35,36,37,38,39]},{"field":"ReluMode","operator":"one-of","values":[0,1,2,3]},{"field":"GroupNCode","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9]},{"field":"RowMaxEn","operator":"one-of","values":[0,1]},{"field":"GroupMaxEn","operator":"one-of","values":[0,1]},{"field":"RowMaxInit","operator":"one-of","values":[0,1]},{"field":"MaxAbsEn","operator":"one-of","values":[0,1]},{"field":"Func","operator":"one-of","values":[2]},{"field":"ElementWiseEn","operator":"one-of","values":[0]},{"field":"TransA","operator":"one-of","values":[0,1]},{"field":"TransB","operator":"one-of","values":[0,1]},{"field":"Reserved","operator":"one-of","values":[0]},{"field":"Opc1","operator":"one-of","values":[2]},{"field":"Opcode","operator":"one-of","values":[1]},{"field":"W","operator":"one-of","values":[1]}] |
+| b_fpatr_32_30c307e06d4a | L32 | 32 | 0x00002023 / 0x00007c7f | [{"field":"PreQuantMode","operator":"one-of","values":[0,1,2,3,4,5,12,13,16,17,18,19,20,23,24,25,26,27,28,32,33,34,35,36,37,38,39]},{"field":"ReluMode","operator":"one-of","values":[0,1,2,3]},{"field":"GroupNCode","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9]},{"field":"RowMaxEn","operator":"one-of","values":[0,1]},{"field":"GroupMaxEn","operator":"one-of","values":[0,1]},{"field":"RowMaxInit","operator":"one-of","values":[0,1]},{"field":"MaxAbsEn","operator":"one-of","values":[0,1]},{"field":"Func","operator":"one-of","values":[2]},{"field":"ElementWiseEn","operator":"one-of","values":[0]},{"field":"TransA","operator":"one-of","values":[0,1]},{"field":"TransB","operator":"one-of","values":[0,1]},{"field":"CScaleEn","operator":"one-of","values":[0,1]},{"field":"Reserved","operator":"one-of","values":[0]},{"field":"Opc1","operator":"one-of","values":[2]},{"field":"Opcode","operator":"one-of","values":[1]},{"field":"W","operator":"one-of","values":[1]}] |
 
 ### Fields
 
@@ -38,7 +38,8 @@ B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, Ma
 | b_fpatr_32_30c307e06d4a | ElementWiseEn | 1 | encoding-defined | [{"instruction_lsb":11,"value_lsb":0,"width":1}] |
 | b_fpatr_32_30c307e06d4a | TransA | 1 | encoding-defined | [{"instruction_lsb":7,"value_lsb":0,"width":1}] |
 | b_fpatr_32_30c307e06d4a | TransB | 1 | encoding-defined | [{"instruction_lsb":8,"value_lsb":0,"width":1}] |
-| b_fpatr_32_30c307e06d4a | Reserved | 2 | encoding-defined | [{"instruction_lsb":9,"value_lsb":0,"width":2}] |
+| b_fpatr_32_30c307e06d4a | CScaleEn | 1 | encoding-defined | [{"instruction_lsb":9,"value_lsb":0,"width":1}] |
+| b_fpatr_32_30c307e06d4a | Reserved | 1 | encoding-defined | [{"instruction_lsb":10,"value_lsb":0,"width":1}] |
 | b_fpatr_32_30c307e06d4a | Opc1 | 3 | encoding-defined | [{"instruction_lsb":4,"value_lsb":0,"width":3}] |
 | b_fpatr_32_30c307e06d4a | Opcode | 3 | encoding-defined | [{"instruction_lsb":1,"value_lsb":0,"width":3}] |
 | b_fpatr_32_30c307e06d4a | W | 1 | encoding-defined | [{"instruction_lsb":0,"value_lsb":0,"width":1}] |
@@ -65,7 +66,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | b_fpatr_32_30c307e06d4a | ElementWiseEn | 1 | 0 | none | 1 | fixed complete-bundle selector equal to zero | Fixed zero selects complete-bundle Matrix post-processing. |
 | b_fpatr_32_30c307e06d4a | TransA | 1 | 0–1 | none | none | logical transpose enable for a Shared A primary | Do not transpose Shared A. |
 | b_fpatr_32_30c307e06d4a | TransB | 1 | 0–1 | none | none | logical transpose enable for a Shared B primary | Do not transpose Shared B. |
-| b_fpatr_32_30c307e06d4a | Reserved | 2 | 0 | none | 1–3 | fixed-zero reserved field | Bits 10:9 are fixed zero; every nonzero encoding is reserved. |
+| b_fpatr_32_30c307e06d4a | CScaleEn | 1 | 0–1 | none | none | per-row FP32 accumulator C scaling enable | Do not scale the explicit FP32 accumulator C. |
+| b_fpatr_32_30c307e06d4a | Reserved | 1 | 0 | none | 1 | fixed-zero reserved field | Bit 10 is fixed zero; every nonzero encoding is reserved. |
 | b_fpatr_32_30c307e06d4a | Opc1 | 3 | 2 | none | 0–1, 3–7 | fixed command-class discriminator equal to 2 | Encoded zero supplies numeric zero for the fixed command-class discriminator equal to 2. |
 | b_fpatr_32_30c307e06d4a | Opcode | 3 | 1 | none | 0, 2–7 | fixed block-attribute opcode discriminator equal to 1 | Encoded zero supplies numeric zero for the fixed block-attribute opcode discriminator equal to 1. |
 | b_fpatr_32_30c307e06d4a | W | 1 | 1 | none | 0 | fixed 32-bit command-width discriminator equal to 1 | Encoded zero supplies numeric zero for the fixed 32-bit command-width discriminator equal to 1. |
@@ -95,6 +97,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | ElementWiseEn | fixed complete-bundle selector equal to zero |
 | TransA | logical transpose enable for a Shared A primary |
 | TransB | logical transpose enable for a Shared B primary |
+| CScaleEn | per-row FP32 accumulator C scaling enable |
 | Reserved | fixed-zero reserved field |
 | Opc1 | fixed command-class discriminator equal to 2 |
 | Opcode | fixed block-attribute opcode discriminator equal to 1 |
@@ -371,7 +374,7 @@ end;
 
 ## Defaults and encoded zero
 
-- Encoded PreQuantMode=0 and ReluMode=0 disable pre-quantization and activation. GroupNCode=0 selects no group maximum. All four enable bits default to disabled. TransA=0 and TransB=0 select no logical transpose.
+- Encoded PreQuantMode=0 and ReluMode=0 disable pre-quantization and activation. GroupNCode=0 selects no group maximum. All four reduction enable bits default to disabled. TransA=0 and TransB=0 select no logical transpose; CScaleEn=0 disables accumulator scaling.
 - Omitting B.FPATR is not a default for a CUBE Matrix block: complete-bundle preflight rejects the missing command before allocation or effects.
 
 ## Legality
@@ -381,14 +384,14 @@ end;
 - ReluMode codes 0..3 select None, ReLU, scalar LReLU/PReLU, and vector PReLU; codes 4..7 are reserved.
 - GroupNCode codes 0..9 select 0, 8, 16, 32, 48, 64, 80, 96, 112, and 128 columns; codes 10..15 are reserved.
 - RowMaxInit requires RowMaxEn. GroupMaxEn requires nonzero GroupNCode and nonzero GroupNCode requires GroupMaxEn. MaxAbsEn requires RowMaxEn or GroupMaxEn.
-- TransA and TransB are independent one-bit controls. Matrix operation preflight accepts each only when the corresponding A or B primary is Shared.
-- Func=2, ElementWiseEn=0, Reserved[10:9]=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.
+- TransA and TransB are independent one-bit controls accepted only when the corresponding A or B primary is Shared. CScaleEn is accepted only by FP32 TMATMUL.ACC and TMATMULMX.ACC.
+- Func=2, ElementWiseEn=0, Reserved[10]=0, Opc1=2, Opcode=1, and W=1 are fixed encoding discriminators.
 - Matrix B.DATR supplies only destination conversion controls when B.FPATR is present: None requires RMode=NONE and Sat=0; fixed floating modes require RMode=NONE; fixed shift modes require RMode=NONE and Sat=0; programmable integer modes retain the complete rounding selector and final clamp/wrap control.
 - The derived scalar/vector parameter count, Local source count, and Local destination count must fit the complete-bundle schema without duplicate destinations or illegal source/destination aliases.
 
 ## State effects
 
-- Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field, including TransA and TransB.
+- Latch the accepted fixed-point post-processing descriptor once for the active block; bundle reset clears its presence and every field, including TransA, TransB, and CScaleEn.
 - Trap save and recovery preserve the complete latched descriptor with the pending block.
 - Successful execution selects any activation-dependent multiplier before the destination conversion, preserves raw optional reductions, and atomically commits all enabled outputs through the numeric-profile hook.
 
@@ -411,8 +414,8 @@ end;
 
 ## Examples
 
-- B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0
-- B.FPATR S8Vector, LReLU, 2, 1, 1, 1, 1, 1, 1
+- B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0, 0
+- B.FPATR S8Vector, LReLU, 2, 1, 1, 1, 1, 1, 1, 0
 
 <!-- SUPPLEMENTARY-BEGIN -->
 

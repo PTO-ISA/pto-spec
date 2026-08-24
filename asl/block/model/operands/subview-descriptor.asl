@@ -325,20 +325,7 @@ begin
         (operation_kind == TileOperation_TGEMV_BIAS && source_ordinal == 2) ||
         (operation_kind == TileOperation_TMATMUL_MX_BIAS && source_ordinal == 4) ||
         (operation_kind == TileOperation_TGEMV_MX_BIAS && source_ordinal == 4);
-    let scale_source =
-        (operation_kind == TileOperation_TMATMUL_MX &&
-         (source_ordinal == 1 || source_ordinal == 3)) ||
-        (operation_kind == TileOperation_TMATMUL_MX_BIAS &&
-         (source_ordinal == 1 || source_ordinal == 3)) ||
-        (operation_kind == TileOperation_TMATMUL_MX_ACC &&
-         (source_ordinal == 2 || source_ordinal == 4)) ||
-        (operation_kind == TileOperation_TGEMV_MX &&
-         (source_ordinal == 1 || source_ordinal == 3)) ||
-        (operation_kind == TileOperation_TGEMV_MX_BIAS &&
-         (source_ordinal == 1 || source_ordinal == 3)) ||
-        (operation_kind == TileOperation_TGEMV_MX_ACC &&
-         (source_ordinal == 2 || source_ordinal == 4));
-    let row_major_auxiliary = bias_source || scale_source;
+    let row_major_auxiliary = bias_source;
     if operation_is_cube && !row_major_auxiliary then
         if !ConfigureCubeTileForMask(materialized_index,
                 descriptor.capacity_bytes, descriptor.valid_rows,

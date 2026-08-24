@@ -12,6 +12,7 @@ begin
     _BundleFixedPointAttributes.max_abs_en = TRUE;
     _BundleFixedPointAttributes.trans_a = TRUE;
     _BundleFixedPointAttributes.trans_b = TRUE;
+    _BundleFixedPointAttributes.c_scale_en = TRUE;
     ResetBundleControlState();
     assert !_BundleFixedPointAttributes.valid;
     assert _BundleFixedPointAttributes.pre_quant_mode == Zeros{6};
@@ -23,5 +24,6 @@ begin
     assert !_BundleFixedPointAttributes.max_abs_en;
     assert !_BundleFixedPointAttributes.trans_a;
     assert !_BundleFixedPointAttributes.trans_b;
+    assert !_BundleFixedPointAttributes.c_scale_en;
     return 0;
 end;

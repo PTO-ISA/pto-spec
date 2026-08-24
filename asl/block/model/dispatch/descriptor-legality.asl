@@ -226,6 +226,8 @@ begin
          then 1 else 0) +
         (if TileOperandPresent(operation, TileOperand_source4)
          then 1 else 0) +
+        (if matrix && _BundleFixedPointAttributes.c_scale_en
+         then 1 else 0) +
         (if matrix && _BundleFixedPointAttributes.row_max_en &&
             _BundleFixedPointAttributes.row_max_init
          then 1 else 0) +
@@ -262,10 +264,10 @@ begin
             end;
         end;
     end;
-    // The complete-bundle B.FPATR carrier has eight compact Local source
+    // The complete-bundle B.FPATR carrier has nine compact Local source
     // ordinals and three compact destination ordinals. Reject surplus
     // streams before descriptor allocation or operand consumption.
-    if matrix && (source_count > 8 || destination_count > 3) then
+    if matrix && (source_count > 9 || destination_count > 3) then
         return FALSE;
     end;
     if destination_count != expected_destinations ||
