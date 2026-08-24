@@ -141,7 +141,7 @@ separately selected 0.58.4 candidate but does not publish it.
 The accepted `B.SUBVIEW` and `B.ASSEMBLE` forms increase the common
 encoded-form envelope from 540 to 542 forms. The reviewed encoded-form
 fingerprint for the resulting scalar-plus-command projection is
-`3725501cc03c831ad9a4f549d8234272819c6b7e3382e27e06ec744238ed6319`.
+`a8a02000e08326e696f7f9ee16940b79ba74ebd9a504285626dc360b031a8369`.
 This records the exact catalog change; it does not assign a release identity
 or alter the already-published release manifest.
 
