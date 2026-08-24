@@ -9801,7 +9801,7 @@
       "binding_words": [
         "0x00105e13",
         "0x0000ee13",
-        "0x0008ee93"
+        "0x00096e93"
       ],
       "modifier_word": "0x000000d3",
       "modifier_words": [
@@ -9860,7 +9860,7 @@
       "binding_words": [
         "0x00105e13",
         "0x0000ee13",
-        "0x0008ee93"
+        "0x00096e93"
       ],
       "modifier_word": "0x800018d3",
       "modifier_words": [],
@@ -9917,9 +9917,9 @@
       "binding_words": [
         "0x00105e13",
         "0x0000ee13",
-        "0x0008ee93"
+        "0x00096e93"
       ],
-      "modifier_word": "0x800018d3",
+      "modifier_word": "0x80001953",
       "modifier_words": [],
       "normal_dispatch": "ExecuteBundleTileOperation",
       "expected_fault": null,
@@ -9933,7 +9933,7 @@
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "datr_word": null,
-      "destination_size_code": 1
+      "destination_size_code": 2
     },
     {
       "case_id": "RANGE-MATRIX-CASE-0192",

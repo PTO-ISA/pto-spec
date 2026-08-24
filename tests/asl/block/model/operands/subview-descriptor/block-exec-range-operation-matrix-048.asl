@@ -35,7 +35,7 @@ begin
     assert modifier_0_0 == CommandExecution_Executed;
     let bind_1 = ExecuteCommandInstruction(Zeros{64} + 0x0000ee13, 32);
     assert bind_1 == CommandExecution_Executed;
-    let bind_2 = ExecuteCommandInstruction(Zeros{64} + 0x0008ee93, 32);
+    let bind_2 = ExecuteCommandInstruction(Zeros{64} + 0x00096e93, 32);
     assert bind_2 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(78);
     let prepared_stage2 = PrepareSelectedBundleStage2();
@@ -93,7 +93,7 @@ begin
     assert bind_1 == CommandExecution_Executed;
     let assemble_1 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
     assert assemble_1 == CommandExecution_Executed;
-    let bind_2 = ExecuteCommandInstruction(Zeros{64} + 0x0008ee93, 32);
+    let bind_2 = ExecuteCommandInstruction(Zeros{64} + 0x00096e93, 32);
     assert bind_2 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(78);
     let prepared_stage2 = PrepareSelectedBundleStage2();
@@ -154,9 +154,9 @@ begin
     assert bind_0 == CommandExecution_Executed;
     let bind_1 = ExecuteCommandInstruction(Zeros{64} + 0x0000ee13, 32);
     assert bind_1 == CommandExecution_Executed;
-    let bind_2 = ExecuteCommandInstruction(Zeros{64} + 0x0008ee93, 32);
+    let bind_2 = ExecuteCommandInstruction(Zeros{64} + 0x00096e93, 32);
     assert bind_2 == CommandExecution_Executed;
-    let assemble_2 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
+    let assemble_2 = ExecuteCommandInstruction(Zeros{64} + 0x80001953, 32);
     assert assemble_2 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(78);
     let prepared_stage2 = PrepareSelectedBundleStage2();
@@ -178,7 +178,7 @@ begin
            _Tiles[[observed_destination]].contents_defined;
     let completed_writer_1 = CompleteBundleLocalGenerationWriterEvent(
         BundleLocalGenerationSlot(1, '1111'), _BundleExecutionDomainToken,
-        0, BundleLocalGenerationCellCount(1));
+        0, BundleLocalGenerationCellCount(2));
     assert completed_writer_1;
     assert _LocalGenerations[[BundleLocalGenerationSlot(1, '1111')]].published;
     return TRUE;

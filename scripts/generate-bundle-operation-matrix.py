@@ -334,6 +334,8 @@ def destination_fixture_size_code(row: dict, role: str) -> int:
     name = row.get("name", row.get("operation"))
     if name == "THISTOGRAM" and role == "destination0":
         return 4
+    if name == "TSORT" and role == "destination1":
+        return 2
     return CELL_SIZE_CODE
 
 
