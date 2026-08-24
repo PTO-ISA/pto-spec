@@ -546,8 +546,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
     operation_name = row.get("name", row.get("operation"))
     index_source_fixture = operation_name in {"TGATHER", "TSCATTER"}
     local_dtype = dtype_name
-    for operand in row.get("operands", []):
-        field = operand["field"]
+    for field in row["all_required_roles"]:
         if field.startswith("source"):
             tile = role_number(field) + 1
             role_dtype = source_fixture_data_type(row, field)
@@ -673,8 +672,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
         # placeholder into one exact ASL conditional derived from the catalog
         # role numbering used by B.IOT.
         ordinary_columns = "4"
-        for operand in row.get("operands", []):
-            field = operand["field"]
+        for field in row["all_required_roles"]:
             if field.startswith("source"):
                 tile = role_number(field) + 1
                 role_dtype = source_fixture_data_type(row, field)

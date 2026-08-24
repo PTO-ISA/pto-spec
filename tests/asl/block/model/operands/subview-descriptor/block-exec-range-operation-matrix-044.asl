@@ -18,7 +18,7 @@ begin
         else
             ConfigureTileForMask(tile, 128,
                 16, 4, 1,
-                4, TileDataType_FP16,
+                (if tile == 2 then 1 else 4), TileDataType_FP16,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
@@ -72,7 +72,7 @@ begin
         else
             ConfigureTileForMask(tile, 128,
                 16, 4, 1,
-                4, TileDataType_FP16,
+                (if tile == 2 then 1 else 4), TileDataType_FP16,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
@@ -126,7 +126,7 @@ begin
         else
             ConfigureTileForMask(tile, 128,
                 16, 4, 1,
-                4, TileDataType_FP16,
+                (if tile == 2 then 1 else 4), TileDataType_FP16,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);

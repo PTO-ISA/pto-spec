@@ -75,13 +75,13 @@ begin
         if tile == 1 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
-                4, TileDataType_U16, TileLayout_CUBE_M16,
+                4, (if tile == 2 then TileDataType_U8 else TileDataType_U16), TileLayout_CUBE_M16,
                 TileLocation_Matrix, '1111');
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
-                16, 4, 1,
-                4, TileDataType_U16,
+                (if tile == 2 then 32 else 16), 4, 1,
+                4, (if tile == 2 then TileDataType_U8 else TileDataType_U16),
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
@@ -127,13 +127,13 @@ begin
         if tile == 2 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
-                4, TileDataType_U16, TileLayout_CUBE_M16,
+                4, (if tile == 2 then TileDataType_U8 else TileDataType_U16), TileLayout_CUBE_M16,
                 TileLocation_Matrix, '1111');
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
-                16, 4, 1,
-                4, TileDataType_U16,
+                (if tile == 2 then 32 else 16), 4, 1,
+                4, (if tile == 2 then TileDataType_U8 else TileDataType_U16),
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
@@ -179,13 +179,13 @@ begin
         if tile == 0 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
-                4, TileDataType_U16, TileLayout_CUBE_M16,
+                4, (if tile == 2 then TileDataType_U8 else TileDataType_U16), TileLayout_CUBE_M16,
                 TileLocation_Matrix, '1111');
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
-                16, 4, 1,
-                4, TileDataType_U16,
+                (if tile == 2 then 32 else 16), 4, 1,
+                4, (if tile == 2 then TileDataType_U8 else TileDataType_U16),
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         MarkTileValidRegionDefined(tile);
