@@ -348,12 +348,70 @@ begin
             return FALSE;
         end;
     else
+        let row_broadcast =
+            (operation_kind == TileOperation_TROWEXPAND &&
+             source_ordinal == 0) ||
+            ((operation_kind == TileOperation_TROWEXPANDADD ||
+              operation_kind == TileOperation_TROWEXPANDSUB ||
+              operation_kind == TileOperation_TROWEXPANDMUL ||
+              operation_kind == TileOperation_TROWEXPANDDIV ||
+              operation_kind == TileOperation_TROWEXPANDMAX ||
+              operation_kind == TileOperation_TROWEXPANDMIN ||
+              operation_kind == TileOperation_TROWEXPANDEXPDIF) &&
+             source_ordinal == 1);
+        assert descriptor.valid_columns >= 1;
+        var row_major_columns: integer {1..65535} =
+            if row_broadcast then 1
+            else descriptor.valid_columns as integer {1..65535};
+        let physical_columns_raw = UInt(_BundleDimensions[[2]]);
+        if !row_broadcast && _BundleDimensionPresent[[2]] &&
+           physical_columns_raw >= descriptor.valid_columns &&
+           physical_columns_raw <= 65535 then
+            row_major_columns =
+                physical_columns_raw as integer {1..65535};
+        elsif !row_broadcast then
+            var candidate: integer = 1;
+            for exponent = 0 to 15 do
+                if candidate < descriptor.valid_columns then
+                    candidate = candidate * 2;
+                end;
+            end;
+            if candidate > 65535 then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
+            end;
+            row_major_columns = candidate as integer {1..65535};
+        end;
+        let row_major_rows = DerivedTileRows(descriptor.capacity_bytes,
+            row_major_columns, _Tiles[[parent]].data_type);
+        if row_major_rows == 0 ||
+           !TileDescriptorShapeLegal(descriptor.capacity_bytes,
+               row_major_columns, descriptor.valid_rows,
+               descriptor.valid_columns, _Tiles[[parent]].data_type) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        let image_to_column = operation_kind == TileOperation_TIMG2COL;
         ConfigureTileForMask(materialized_index, descriptor.capacity_bytes,
-            descriptor.rows, descriptor.columns, descriptor.valid_rows,
+            row_major_rows, row_major_columns, descriptor.valid_rows,
             descriptor.valid_columns, _Tiles[[parent]].data_type,
             TileLayout_RowMajor,
-            (if operation_is_cube then TileLocation_Matrix
+            (if operation_is_cube || image_to_column then TileLocation_Matrix
              else TileLocation_Any), mask);
+        if image_to_column && descriptor.offset_cells == 0 &&
+           TileFeatureMapDescriptorStructurallyValid(parent) then
+            let feature = ReadTileFeatureMapDescriptor(parent);
+            ConfigureTileFeatureMapDescriptor(materialized_index,
+                feature.layout, feature.batches, feature.depth,
+                feature.channel_groups, feature.height, feature.width,
+                feature.channels_per_group, feature.filter_height,
+                feature.filter_width, feature.stride_height,
+                feature.stride_width, feature.dilation_height,
+                feature.dilation_width, feature.pad_left, feature.pad_right,
+                feature.pad_top, feature.pad_bottom,
+                feature.logical_channels, feature.padding,
+                feature.transposed);
+        end;
     end;
     for row = 0 to descriptor.valid_rows - 1 looplimit 65536 do
         for column = 0 to descriptor.valid_columns - 1 looplimit 65536 do

@@ -192,6 +192,10 @@ begin
         end;
         MarkTileValidRegionDefined(tile);
     end;
+    ConfigureTileFeatureMapDescriptor(1,
+        TileFeatureMapLayout_NC1HWC0, 1, 1, 1, 1, 1, 4,
+        1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 4,
+        Zeros{PTO_XLEN}, FALSE);
     let started = ExecuteCommandInstruction(Zeros{64} + 0x26419181, 32);
     assert started == CommandExecution_Executed;
     let dim_400043 = ExecuteCommandInstruction(Zeros{64} + 0x00400043, 32);

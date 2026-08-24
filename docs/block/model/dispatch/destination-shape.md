@@ -391,6 +391,13 @@ begin
        _BundleOperation.operation_class == BundleOperation_TileMatrix then
         return TRUE;
     end;
+    if TileOperationOfIndex(operation) == TileOperation_TIMG2COL then
+        let resolved = ResolveBundleTileDestinations();
+        if resolved then
+            MarkBundleTIMG2COLDestinationsMatrix();
+        end;
+        return resolved;
+    end;
     if TileOperationUsesClosedSortingSchema(operation) then
         let decoded = TileOperationOfIndex(operation);
         let source_left = BundleSortingSourceAt(0);

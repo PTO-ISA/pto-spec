@@ -17,7 +17,7 @@ begin
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
-                (if tile == 2 then 8 else 16), 4, 1,
+                16, 4, 1,
                 4, (if tile == 2 then TileDataType_S32 else TileDataType_FP16),
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
@@ -71,7 +71,7 @@ begin
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
-                (if tile == 2 then 8 else 16), 4, 1,
+                16, 4, 1,
                 4, (if tile == 2 then TileDataType_S32 else TileDataType_FP16),
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;

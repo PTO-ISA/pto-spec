@@ -9,3 +9,14 @@ begin
     return ((columns + (group_n - 1)) DIVRM group_n)
         as integer {0..65535};
 end;
+
+func MarkBundleTIMG2COLDestinationsMatrix()
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid then
+            _Tiles[[_BundleTileBindings[[binding]].destination]].location =
+                TileLocation_Matrix;
+        end;
+    end;
+end;

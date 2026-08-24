@@ -490,6 +490,21 @@ def source_valid_columns(row: dict, source: str) -> int:
     return 4
 
 
+def source_physical_columns(row: dict, source: str) -> int:
+    name = row.get("name", row.get("operation"))
+    if name == "TROWEXPAND":
+        return 1
+    if name in {
+        "TROWEXPANDADD", "TROWEXPANDSUB", "TROWEXPANDMUL",
+        "TROWEXPANDDIV", "TROWEXPANDMAX", "TROWEXPANDMIN",
+        "TROWEXPANDEXPDIF",
+    } and source == "source1":
+        return 1
+    if name == "TMRGSORT":
+        return 2
+    return 4
+
+
 def row_major_rows(data_type: int, columns: int = 4) -> int:
     element_bits = (
         32 if data_type in {1, 17, 25}
@@ -580,11 +595,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
             else "TileLayout_CUBE_M16"
         )
         ordinary_rows = str(row_major_rows(dtype))
-        if index_source_fixture:
-            ordinary_rows = (
-                f"(if tile == 2 then {row_major_rows(17)} else "
-                f"{ordinary_rows})"
-            )
+        ordinary_physical_columns = "4"
         lines += [
             "    for tile = 1 to 8 looplimit 8 do",
             f"        if tile == {selected_tile} then",
@@ -595,7 +606,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
             "            assert configured;",
             "        else",
             "            ConfigureTileForMask(tile, 128,",
-            f"                {ordinary_rows}, 4, 1,",
+            "                ordinary_rows_placeholder, source_physical_columns_placeholder, 1,",
             f"                source_valid_columns_placeholder, {local_dtype},",
             "                TileLayout_RowMajor, TileLocation_Any, '1111');",
             "        end;",
@@ -610,7 +621,20 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
             field = operand["field"]
             if field.startswith("source"):
                 tile = role_number(field) + 1
+                role_dtype = 17 if index_source_fixture and tile == 2 else dtype
+                physical_columns = source_physical_columns(row, field)
                 columns = source_valid_columns(row, field)
+                if physical_columns != 4:
+                    ordinary_physical_columns = (
+                        f"(if tile == {tile} then {physical_columns} else "
+                        f"{ordinary_physical_columns})"
+                    )
+                role_rows = row_major_rows(role_dtype, physical_columns)
+                if role_rows != row_major_rows(dtype):
+                    ordinary_rows = (
+                        f"(if tile == {tile} then {role_rows} else "
+                        f"{ordinary_rows})"
+                    )
                 if columns != 4:
                     ordinary_columns = (
                         f"(if tile == {tile} then {columns} else "
@@ -618,8 +642,18 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
                     )
         lines = [
             line.replace("source_valid_columns_placeholder", ordinary_columns)
+                .replace("source_physical_columns_placeholder",
+                         ordinary_physical_columns)
+                .replace("ordinary_rows_placeholder", ordinary_rows)
             for line in lines
         ]
+        if operation_name == "TIMG2COL":
+            lines += [
+                "    ConfigureTileFeatureMapDescriptor(1,",
+                "        TileFeatureMapLayout_NC1HWC0, 1, 1, 1, 1, 1, 4,",
+                "        1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 4,",
+                "        Zeros{PTO_XLEN}, FALSE);",
+            ]
     return lines
 
 
