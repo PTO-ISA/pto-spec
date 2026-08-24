@@ -25,7 +25,7 @@ HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
 ACCEPTANCE_RECORD = "docs/status/decisions/0049-hardware-subnormal-policy.md"
 PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
-EVIDENCE_PROFILE_ID = "pto-hardware-numeric-0.58.3-ieee-v1"
+EVIDENCE_PROFILE_ID = "pto-hardware-numeric-0.58.4-ieee-v1"
 
 
 # name, ASL enumerator, logical width, minimum positive subnormal,

@@ -5,7 +5,7 @@
   "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
   "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "current_profile_evidence_id": "pto-hardware-numeric-0.58.3-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.58.4-ieee-v1",
   "policy": {
     "input_subnormals": "preserve-exact-source-value",
     "result_subnormals": "gradual-underflow-to-destination-format",
@@ -2545,7 +2545,7 @@
   "sources": [
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "117cd8e61f1e82001755cdb1ee98ef224fbd624ddf2adb8577c32d6acf833575"
+      "sha256": "3496d72b34c79bc0451379a6c648d280f2d55fa44ff3dfbf04223c54942b4968"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
@@ -2561,7 +2561,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "47014fd70da0967716c8470c4cf9aefc01f7e42cac2b9cc065a82200b316e402"
+      "sha256": "83bfcb509c6a98c2d40dc3b722ff75aa2cd78eabb1805a6ad8a981f7c397a1fc"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -2581,7 +2581,7 @@
     },
     {
       "path": "asl/arch/data-types/integer.asl",
-      "sha256": "e0a1c1cc57fcb63ed5da2e78295a5a05b50e217f28c8e62ca5fa2dc5ff730b86"
+      "sha256": "90d7132478de54d665d973587b61c3ecfd5e57645e5985aef5918b4b722e816d"
     },
     {
       "path": "asl/arch/data-types/memory-model.asl",
@@ -2617,7 +2617,7 @@
     },
     {
       "path": "asl/arch/data-types/trap-context.asl",
-      "sha256": "201d9e156faab22d03b1798df4fcc339fe1042ca6bee577e4b4b1490b68eb9fa"
+      "sha256": "05bad845c84d9fd35d30af99137b939e70d0d7226f54374b7f5d5e71dd235b7b"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",

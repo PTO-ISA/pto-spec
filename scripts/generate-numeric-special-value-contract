@@ -27,7 +27,7 @@ ACCEPTANCE_RECORD = (
     "docs/status/decisions/0050-hardware-special-value-checkpoint.md"
 )
 PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
-EVIDENCE_PROFILE_ID = "pto-hardware-numeric-0.58.3-ieee-v1"
+EVIDENCE_PROFILE_ID = "pto-hardware-numeric-0.58.4-ieee-v1"
 
 
 SIGNED_ZERO_ENCODINGS = {
