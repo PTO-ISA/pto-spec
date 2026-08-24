@@ -21,6 +21,7 @@ PYTHON_LAUNCHED = frozenset(
         "evidence_sources.py",
         "full_validation_workflow.py",
         "generate-mnemonic-avs.py",
+        "generate-bundle-operation-matrix.py",
         "manual_semantic_audit.py",
         "release_selection.py",
         "tile_taxonomy.py",

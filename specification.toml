@@ -8,8 +8,8 @@ source_roots = ["asl/arch", "asl/block", "asl/scalar", "asl/tile"]
 formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/4"
 
 [release]
-architecture_version = "0.58.3"
-encoding_abi = "pto-isa-0.58.3-mode-function-v1"
+architecture_version = "0.58.4"
+encoding_abi = "pto-isa-0.58.4-mode-function-v1"
 manifest = "spec/release-manifest.json"
 formal_model_issue = "https://github.com/PTO-ISA/pto-spec/issues/18"
 
@@ -31,7 +31,7 @@ time_model = "one-tick-per-decoded-attempt"
 profile = "pto-v0"
 xlen = 64
 scalar_forms = 466
-command_forms = 74
+command_forms = 76
 system_register_definitions = 72
 trap_numbers = 13
 tile_model = "one-level"

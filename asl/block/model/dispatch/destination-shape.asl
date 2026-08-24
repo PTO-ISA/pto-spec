@@ -1,17 +1,5 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 
-pure func SmallestTilePhysicalColumns(
-    valid_columns: integer {1..65535}) => integer {0..65535}
-begin
-    var columns: integer = 1;
-    for exponent = 0 to 15 do
-        if valid_columns <= columns then
-            return columns as integer {1..32768};
-        end;
-        columns = columns * 2;
-    end;
-    return 0;
-end;
 readonly func BundleDestinationValidRows(shape_source_valid: boolean,
                                          shape_source: TileIndex)
                                          => integer {0..65535}
@@ -66,17 +54,6 @@ begin
     end;
 end;
 
-readonly func BundleGroupMaxColumns(columns: integer {0..65535})
-                                      => integer {0..65535}
-begin
-    let group_n = BundleFPATRGroupN(_BundleFixedPointAttributes.group_n_code);
-    if !_BundleFixedPointAttributes.group_max_en || group_n == 0 then
-        return columns;
-    end;
-    return ((columns + (group_n - 1)) DIVRM group_n)
-        as integer {0..65535};
-end;
-
 readonly func BundleLocalDestinationCapacityGroupFits() => boolean
 begin
     var additional0: integer = 0;
@@ -87,7 +64,7 @@ begin
         if _BundleTileBindings[[binding]].valid &&
            _BundleTileBindings[[binding]].destination_valid &&
            !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
-            let capacity_bytes = BundleTileDestinationSizeBytes(
+            let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
             let mask = _BundleTileBindings[[binding]].pe_mask;
             if mask[PTOPEMaskBitOfPEIdentity(0)] == '1' then
@@ -179,10 +156,12 @@ begin
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if !shape_source_valid && _BundleTileBindings[[binding]].valid then
             if _BundleTileBindings[[binding]].source0_valid then
-                shape_source = _BundleTileBindings[[binding]].source0;
+                shape_source = BundleTileSourceIndex(
+                    binding as BundleTileBindingIndex, FALSE);
                 shape_source_valid = TRUE;
             elsif _BundleTileBindings[[binding]].source1_valid then
-                shape_source = _BundleTileBindings[[binding]].source1;
+                shape_source = BundleTileSourceIndex(
+                    binding as BundleTileBindingIndex, TRUE);
                 shape_source_valid = TRUE;
             end;
         end;
@@ -224,7 +203,7 @@ begin
                 else if auxiliary_group then
                     BundleGroupMaxColumns(valid_columns)
                 else valid_columns;
-            let capacity_bytes = BundleTileDestinationSizeBytes(
+            let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
             let rows = DerivedTileRows(capacity_bytes, auxiliary_columns,
                 destination_type);
@@ -273,7 +252,7 @@ begin
                 else if auxiliary_group then
                     BundleGroupMaxColumns(valid_columns)
                 else valid_columns;
-            let capacity_bytes = BundleTileDestinationSizeBytes(
+            let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
             ConfigureTileForMask(resolved[[binding]],
                 capacity_bytes, valid_rows, auxiliary_columns, valid_rows,
@@ -329,7 +308,7 @@ begin
     let binding = _BundleTileBindings[[destination_binding]];
     let source = binding.source0;
     let source_tile = _Tiles[[source]];
-    let capacity_bytes = BundleTileDestinationSizeBytes(
+    let capacity_bytes = BundleLocalDestinationAllocationBytes(
         destination_binding);
     if source_tile.storage_kind != TileStorage_Numeric ||
        source_tile.rows * source_tile.columns >
@@ -378,6 +357,33 @@ end;
 func ResolveBundleTileDestinationsForOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
+    // CUBE matrix handlers own the primary CUBE destination shape and
+    // atomic allocation group.  Leave the binding unresolved here so the
+    // selected handler can apply its authoritative M/N/layout/type rules;
+    // the generic RowMajor resolver would mark the destination as already
+    // allocated and prevent that conversion.
+    if _BundleOperation.valid &&
+       _BundleOperation.operation_class == BundleOperation_TileMatrix then
+        return TRUE;
+    end;
+    if TileOperationOfIndex(operation) == TileOperation_TIMG2COL then
+        let resolved = ResolveBundleTileDestinations();
+        if resolved then
+            MarkBundleTIMG2COLDestinationsMatrix();
+        end;
+        return resolved;
+    end;
+    if TileOperationOfIndex(operation) == TileOperation_TCONCAT then
+        let (legal, valid_rows, valid_columns, physical_columns,
+             data_type) = BundleTCONCATDestinationShape();
+        if !legal then
+            SetFault(Fault_TileAllocation, ReadTPC());
+            return FALSE;
+        end;
+        return ResolveBundleTileDestinationsWithShapeAndType(
+            TRUE, valid_rows, valid_columns, physical_columns,
+            TRUE, data_type);
+    end;
     if TileOperationUsesClosedSortingSchema(operation) then
         let decoded = TileOperationOfIndex(operation);
         let source_left = BundleSortingSourceAt(0);

@@ -27,6 +27,12 @@ begin
         end;
         _BundleSequentialPC = sequential;
         _FrameStackReturnTarget = return_target;
+        // Each dynamic block execution receives a distinct mathematical
+        // domain identity. Static BSTART addresses remain program locations
+        // and never stand in for dynamic replay/squash identity.
+        _BundleExecutionDomainToken = _NextBundleExecutionDomainToken;
+        _NextBundleExecutionDomainToken =
+            _NextBundleExecutionDomainToken + 1;
         // BPC is the address of this BSTART. BPCN is retained in
         // BARG.BPCN until BSTOP or the next BSTART commits the block.
         WriteBPC(start_pc);

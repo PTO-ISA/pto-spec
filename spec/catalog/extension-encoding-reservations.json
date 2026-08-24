@@ -1,6 +1,6 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "release": "0.58.3",
+  "release": "0.58.4",
   "reservation_count": 40,
   "reservations": [
     {

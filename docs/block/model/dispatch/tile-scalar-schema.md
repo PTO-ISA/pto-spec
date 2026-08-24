@@ -205,8 +205,8 @@ begin
         return FALSE;
     end;
 
-    let mask = binding.source0;
-    let source_true = binding.source1;
+    let mask = BundleTileSourceIndex(0, FALSE);
+    let source_true = BundleTileSourceIndex(0, TRUE);
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode()
             as TileDataTypeEncoding);

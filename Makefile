@@ -65,6 +65,7 @@ check-projections:
 	python3 scripts/project_asl_catalogs.py --root . --check
 	python3 scripts/instruction_docs.py --check
 	python3 scripts/generate-mnemonic-avs.py --check
+	python3 scripts/generate-bundle-operation-matrix.py --check
 
 check-publication-hygiene:
 	python3 scripts/check-publication-hygiene

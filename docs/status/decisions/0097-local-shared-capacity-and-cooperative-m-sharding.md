@@ -10,7 +10,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "e599a3d36ebfad43362ff591ea5e128816c684c7",
-  "target_releases": ["unassigned"],
+  "target_releases": ["0.58.4"],
   "affected_ndf": [
     "PTO-B-IOS-SHARED-STATE-001",
     "PTO-B-IOT-STREAM-001",

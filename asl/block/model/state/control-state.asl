@@ -1,5 +1,5 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","surface":"block","classification":["model","state","control-state"],"depends_on":["PTO-BLOCK-MODEL-STATE-TYPES"]}
-// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BARG","_BundleCommitTargetSet","_BundleConditionSet","_SystemBlockTerminalPending","_BundleSequentialPC","_FrameStackReturnTarget","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleDimensionPresent","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleZeroParticipationSeen","_BundleControlAttributes","_BundleDataAttributes","_BundleDataAttributesPresent","_BundleHint","_BundleFixedPointAttributes","_MemoryCopyTemplate","_FrameTemplate","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
+// PTO-STATE: {"id":"PTO-STATE-BLOCK-CONTROL","classification":["block","control"],"scope":"core","owner":"PTO-BLOCK-MODEL-STATE-CONTROL-STATE","members":["_BARG","_BundleCommitTargetSet","_BundleConditionSet","_SystemBlockTerminalPending","_BundleSequentialPC","_FrameStackReturnTarget","_BundleArgument","_BundleArgumentKind","_BundleOperation","_BundleDimensions","_BundleDimensionPresent","_BundleScalarBindings","_BundleTileBindings","_BundleSharedBindings","_BundleRangeGroup","_BundleZeroParticipationSeen","_BundleControlAttributes","_BundleDataAttributes","_BundleDataAttributesPresent","_BundleHint","_BundleFixedPointAttributes","_MemoryCopyTemplate","_FrameTemplate","_LocalGenerations","_SharedGenerations","_BundleExecutionDomainToken","_NextBundleExecutionDomainToken","_TileDataLayoutCapabilities","_FrameDepth","_LastFrameBegin","_LastFrameEnd","_LastFrameSize","_LastQueueLeft","_LastQueueRight","_LastQueueFlags","_LastMemoryCommandAddress","_LastMemoryCommandSize","_LastCrossBlockACR","_LastCrossBlockID","_LastBundleHintPayload"],"depends_on":[]}
 
 // NDF-BEGIN: PTO-REQ-BUNDLE-STATE-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -30,6 +30,7 @@ var _BundleDimensionPresent : BundleDimensionPresenceSnapshot;
 var _BundleScalarBindings : BundleScalarBindingSnapshot;
 var _BundleTileBindings : BundleTileBindingSnapshot;
 var _BundleSharedBindings : BundleSharedBindingSnapshot;
+var _BundleRangeGroup : BundleRangeGroupState;
 var _BundleZeroParticipationSeen : boolean;
 var _BundleControlAttributes : BundleControlAttributes;
 var _BundleDataAttributes : BundleDataAttributes;
@@ -38,6 +39,19 @@ var _BundleHint : BundleHintAttributes;
 var _BundleFixedPointAttributes : BundleFixedPointAttributes;
 var _MemoryCopyTemplate : MemoryCopyTemplateState;
 var _FrameTemplate : FrameTemplateState;
+// Local B.ASSEMBLE generations intentionally live outside the per-block
+// header and therefore survive ClearBundleHeaderState until explicit LAST.
+var _LocalGenerations : LocalGenerationSnapshot;
+// Pending Shared generations are Core-private and remain invisible through
+// the architectural S register file until complete collective publication.
+var _SharedGenerations : SharedGenerationSnapshot;
+// Opaque portable execution-domain identity for dynamic writer speculation.
+// It is execution context, never an encoded operand.
+var _BundleExecutionDomainToken : integer;
+// Mathematical dynamic-domain allocator for the reference model. Its
+// unbounded identity is portable; implementations may use any non-aliasing
+// internal representation.
+var _NextBundleExecutionDomainToken : integer;
 // NORM is mandatory. Other accepted layout bits require an advertised
 // profile/platform capability.
 var _TileDataLayoutCapabilities : bits(32);

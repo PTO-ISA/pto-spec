@@ -2,13 +2,15 @@
   "schema_version": 1,
   "target": "S4-T7",
   "status": "closed",
-  "accepted_form_count": 74,
+  "accepted_form_count": 76,
   "encoding_variant_count": 5,
   "disposition_counts": {
-    "executed": 64,
+    "executed": 66,
     "pto-v0-rejected": 10
   },
   "handler_counts": {
+    "ApplyBundleAssemble": 1,
+    "ApplyBundleSubview": 1,
     "BindBundleScalarIO": 1,
     "BindBundleSharedIO": 1,
     "BindBundleTileIO": 5,
@@ -957,12 +959,12 @@
       "mnemonic": "B.IOS",
       "semantic_handler": "BindBundleSharedIO",
       "decoded_fields": [
-        "SharedTID",
+        "SharedTileID",
         "SizeCode",
         "PEMode"
       ],
       "consumed_fields": [
-        "SharedTID",
+        "SharedTileID",
         "SizeCode",
         "PEMode"
       ],
@@ -1299,7 +1301,7 @@
     },
     {
       "form_index": 73,
-      "form_id": "b_fpatr_32_4f2db11e8e8a",
+      "form_id": "b_fpatr_32_30c307e06d4a",
       "mnemonic": "B.FPATR",
       "semantic_handler": "SetBundleFixedPointAttributes",
       "decoded_fields": [
@@ -1312,6 +1314,8 @@
         "MaxAbsEn",
         "Func",
         "ElementWiseEn",
+        "TransA",
+        "TransB",
         "Reserved",
         "Opc1",
         "Opcode",
@@ -1327,6 +1331,8 @@
         "MaxAbsEn",
         "Func",
         "ElementWiseEn",
+        "TransA",
+        "TransB",
         "Reserved",
         "Opc1",
         "Opcode",
@@ -1334,6 +1340,52 @@
       ],
       "disposition": "executed",
       "effect_class": "bundle-fixed-point-attributes",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 74,
+      "form_id": "b_subview_32_122000000001",
+      "mnemonic": "B.SUBVIEW",
+      "semantic_handler": "ApplyBundleSubview",
+      "decoded_fields": [
+        "SrcSelect",
+        "uimm11",
+        "RegSrc",
+        "SubviewSizeCode"
+      ],
+      "consumed_fields": [
+        "SrcSelect",
+        "uimm11",
+        "RegSrc",
+        "SubviewSizeCode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-range-subview-modifier",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 75,
+      "form_id": "b_assemble_32_122000000002",
+      "mnemonic": "B.ASSEMBLE",
+      "semantic_handler": "ApplyBundleAssemble",
+      "decoded_fields": [
+        "INIT",
+        "uimm11",
+        "RegSrc",
+        "LAST",
+        "ParentSizeCode"
+      ],
+      "consumed_fields": [
+        "INIT",
+        "uimm11",
+        "RegSrc",
+        "LAST",
+        "ParentSizeCode"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-range-assemble-modifier",
       "rejection_precedes_effects": false,
       "sequential_tpc_advance": true
     }
@@ -6824,7 +6876,7 @@
       "tests/asl/block/model/faults/rollback/block-exec-tile-commit-001.asl:TestBundleTileCommitRollback",
       "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl:TestBundleScalarBindingSchemaDefaults"
     ],
-    "canonical_form_case_count": 74,
+    "canonical_form_case_count": 76,
     "decoded_complete_bundle_matrix": [
       {
         "case": "canonical-none-observable-D",
@@ -6896,12 +6948,12 @@
   "independent_comparison": {
     "source": "content-addressed independent executable ISA snapshot",
     "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
-    "matched_form_ids": 74,
+    "matched_form_ids": 76,
     "exact_encoding_matches": 61,
     "accepted_abi_encoding_divergences": 8,
     "executable_subset": 53,
     "decode_only": 16,
-    "missing": 5,
+    "missing": 7,
     "authority": "non-normative structural comparison only",
     "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and the completed direct-operation bundle schema. It stages bundle headers rather than tile payload execution, so the PTO catalogs, ADR 0055, and PTO-owned ASL evidence remain authoritative."
   },

@@ -69,7 +69,7 @@ begin
         end;
     end;
 
-    let source = binding.source0;
+    let source = BundleTileSourceIndex(0, FALSE);
     if !TileDescriptorLegal(source) ||
        _Tiles[[source]].data_type != source_type ||
        _Tiles[[source]].layout != TileLayout_RowMajor ||

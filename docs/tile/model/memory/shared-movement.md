@@ -277,7 +277,7 @@ begin
                     address, translated, tile.data_type,
                     TileMemoryStridedByteHighNibble(
                         column as integer {0..65535}, tile.data_type),
-                    ReadSharedTileWord(shared_tile_id, element));
+                    TileReadLogicalElement(tile, element));
                 RecordStoreEventForAgent(agent, translated,
                     TileMemoryElementBytes(tile.data_type), stored_value,
                     CurrentBundleMemoryOrder());

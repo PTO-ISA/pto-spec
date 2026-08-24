@@ -6461,6 +6461,8 @@ CANONICAL_COMMAND_BLOCK_HANDLERS = {
     "BindBundleSharedIO",
     "BindBundleScalarIO",
     "BindBundleTileIO",
+    "ApplyBundleSubview",
+    "ApplyBundleAssemble",
     "SetBundleHint",
 }
 
@@ -6477,6 +6479,18 @@ def emit_canonical_command_execution_setup(
             "BundleTransfer_Fallthrough, Zeros{PTO_XLEN}, "
             "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, FALSE);"
         )
+    if handler == "ApplyBundleSubview":
+        print(
+            "    AddBundleTileBinding(FALSE, 0, 0, '1111', "
+            "TRUE, FALSE, 1, 0, FALSE);"
+        )
+        print("    OpenBundleRangeTileGroup(FALSE, TRUE, FALSE, FALSE);")
+    elif handler == "ApplyBundleAssemble":
+        print(
+            "    AddBundleTileBinding(TRUE, 0, 1, '1111', "
+            "FALSE, FALSE, 0, 0, FALSE);"
+        )
+        print("    OpenBundleRangeTileGroup(FALSE, FALSE, FALSE, TRUE);")
     if (
         handler == "ExecuteBundleStart"
         and row is not None
@@ -7120,6 +7134,11 @@ def command_execution_rejected(row: dict) -> bool:
 
 
 def canonical_command_execution_witness(row: dict, witness: int) -> int:
+    if row["semantic_handler"] == "ApplyBundleAssemble":
+        witness = encode_field(row, "INIT", witness, 1)
+        witness = encode_field(row, "LAST", witness, 1)
+        witness = encode_field(row, "ParentSizeCode", witness, 1)
+        return witness
     if row["semantic_handler"] in {
         "ExecuteFrameEntry",
         "ExecuteFrameExit",

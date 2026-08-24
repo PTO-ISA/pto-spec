@@ -11,7 +11,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/shared-cube-matrix.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","surface":"block","classification":["model","dispatch","shared-cube-matrix"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SHARED-BINDINGS","PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX","surface":"block","classification":["model","dispatch","shared-cube-matrix"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-TILE-MODEL-LEGALITY-MATRIX-FUNCTIONS","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 
 readonly func BundleMatrixSharedSourceSchemaLegal(
     ordinal: integer {0..3},
@@ -20,13 +20,22 @@ readonly func BundleMatrixSharedSourceSchemaLegal(
     columns: integer {1..65535},
     data_type: TileDataType) => boolean
 begin
-    return !BundleSharedBindingIsDestination(ordinal) &&
-           SharedTileCooperativeMatrixReady(
-               BundleSharedBindingId(ordinal)) &&
-           SharedTileReadSchemaLegal(
-               BundleSharedBindingId(ordinal),
-               valid_rows, valid_columns, columns,
-               data_type, TileLayout_RowMajor);
+    let shared_tile_id = BundleSharedBindingId(ordinal);
+    if BundleSharedBindingIsDestination(ordinal) ||
+       !SharedTileCooperativeMatrixReady(shared_tile_id) then
+        return FALSE;
+    end;
+    if _BundleSharedBindings[[ordinal]].source0_subview.valid then
+        if !BundleSharedSubviewLegal(ordinal) then return FALSE; end;
+        let view = MaterializeBundleSharedSubview(ordinal);
+        return view.valid_rows == valid_rows &&
+               view.valid_columns == valid_columns &&
+               view.columns == columns && view.data_type == data_type &&
+               view.layout == TileLayout_RowMajor;
+    end;
+    return SharedTileReadSchemaLegal(shared_tile_id,
+        valid_rows, valid_columns, columns,
+        data_type, TileLayout_RowMajor);
 end;
 
 readonly func BundleMatrixSharedPrimarySchemaLegal(
@@ -142,8 +151,11 @@ begin
     assert BundleMatrixSharedLeftPrimarySchemaLegal(
         ordinal, pe_m, k, data_type, transpose);
     let shared_tile_id = BundleSharedBindingId(ordinal);
-    let shared = SharedTileRecord(shared_tile_id);
-    var tile = shared.tile;
+    let source = if
+        _BundleSharedBindings[[ordinal]].source0_subview.valid then
+        MaterializeBundleSharedSubview(ordinal)
+    else SharedTileRecord(shared_tile_id).tile;
+    var tile = source;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.packed_defined_elements = ZeroPackedTileDefinedElements();
@@ -166,7 +178,7 @@ begin
             let source_row = if transpose then column else group_row;
             let source_column = if transpose then group_row else column;
             let source_element = TileLogicalLinearIndex(
-                shared.tile,
+                source,
                 source_row as integer {0..65535},
                 source_column as integer {0..65535});
             let destination_element = TileLogicalLinearIndex(
@@ -174,7 +186,7 @@ begin
                 row as integer {0..65535},
                 column as integer {0..65535});
             tile = TileInfoWithLogicalElement(tile, destination_element,
-                ReadSharedTileWord(shared_tile_id, source_element));
+                TileReadLogicalElement(source, source_element));
         end;
     end;
     tile.contents_defined = TRUE;
@@ -191,11 +203,14 @@ begin
     let group_m = BundleMatrixCooperativeGroupM(pe_m);
     assert group_m != 0;
     let shared_tile_id = BundleSharedBindingId(ordinal);
-    let shared = SharedTileRecord(shared_tile_id);
+    let source = if
+        _BundleSharedBindings[[ordinal]].source0_subview.valid then
+        MaterializeBundleSharedSubview(ordinal)
+    else SharedTileRecord(shared_tile_id).tile;
     assert BundleMatrixSharedSourceSchemaLegal(
         ordinal, group_m as integer {1..65535},
         scale_blocks, scale_blocks, TileDataType_E8M0);
-    var tile = shared.tile;
+    var tile = source;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.packed_defined_elements = ZeroPackedTileDefinedElements();
@@ -217,12 +232,12 @@ begin
             let group_row = (pe_identity * pe_m + row)
                 as integer {0..65535};
             let source_element = TileLogicalLinearIndex(
-                shared.tile, group_row, column as integer {0..65535});
+                source, group_row, column as integer {0..65535});
             let destination_element = TileLogicalLinearIndex(
                 tile, row as integer {0..65535},
                 column as integer {0..65535});
             tile = TileInfoWithLogicalElement(tile, destination_element,
-                ReadSharedTileWord(shared_tile_id, source_element));
+                TileReadLogicalElement(source, source_element));
         end;
     end;
     tile.contents_defined = TRUE;
@@ -239,14 +254,17 @@ readonly func MaterializeBundleSharedMatrixSource(
     data_type: TileDataType) => TileInfo
 begin
     let shared_tile_id = BundleSharedBindingId(ordinal);
-    var tile = MaterializeSharedTileForReadSchema(
+    var tile = if
+        _BundleSharedBindings[[ordinal]].source0_subview.valid then
+        MaterializeBundleSharedSubview(ordinal)
+    else MaterializeSharedTileForReadSchema(
         shared_tile_id, valid_rows, valid_columns, columns,
         data_type, TileLayout_RowMajor);
     for element = 0 to tile.rows * tile.columns - 1
         looplimit 524288 do
         let index = element as PackedTileElementIndex;
         tile = TileInfoWithLogicalElement(tile, index,
-            ReadSharedTileWord(shared_tile_id, index));
+            TileReadLogicalElement(tile, index));
     end;
     tile.contents_defined = TRUE;
     tile.defined_valid_elements =
@@ -264,8 +282,11 @@ begin
     assert BundleMatrixSharedPrimarySchemaLegal(
         ordinal, logical_rows, logical_columns, data_type, transpose);
     let shared_tile_id = BundleSharedBindingId(ordinal);
-    let shared = SharedTileRecord(shared_tile_id);
-    var tile = shared.tile;
+    let source = if
+        _BundleSharedBindings[[ordinal]].source0_subview.valid then
+        MaterializeBundleSharedSubview(ordinal)
+    else SharedTileRecord(shared_tile_id).tile;
+    var tile = source;
     tile.contents_defined = FALSE;
     tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     tile.packed_defined_elements = ZeroPackedTileDefinedElements();
@@ -287,7 +308,7 @@ begin
             let source_row = if transpose then column else row;
             let source_column = if transpose then row else column;
             let source_element = TileLogicalLinearIndex(
-                shared.tile,
+                source,
                 source_row as integer {0..65535},
                 source_column as integer {0..65535});
             let destination_element = TileLogicalLinearIndex(
@@ -295,7 +316,7 @@ begin
                 row as integer {0..65535},
                 column as integer {0..65535});
             tile = TileInfoWithLogicalElement(tile, destination_element,
-                ReadSharedTileWord(shared_tile_id, source_element));
+                TileReadLogicalElement(source, source_element));
         end;
     end;
     tile.contents_defined = TRUE;

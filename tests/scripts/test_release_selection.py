@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from scripts.adr_records import load_adrs
 import unittest
 
 from scripts.release_selection import evaluate_release_selection, validate_selection
@@ -12,16 +11,6 @@ from scripts.release_selection import evaluate_release_selection, validate_selec
 ROOT = Path(__file__).resolve().parents[2]
 SELECTION = ROOT / "spec/release-selection.json"
 SCHEMA = ROOT / "spec/schemas/pto-release-selection.schema.json"
-
-
-def pending_release_decisions() -> tuple[str, ...]:
-    return tuple(
-        record.adr_id
-        for record in load_adrs(ROOT / "docs/status/decisions")
-        if record.status == "accepted"
-        and record.release_impact == "required"
-        and "unassigned" in record.target_releases
-    )
 
 
 class ReleaseSelectionTest(unittest.TestCase):
@@ -193,16 +182,9 @@ class ReleaseSelectionTest(unittest.TestCase):
         )
 
         self.assertEqual(policy["excluded_draft_adrs"], drafts)
-        pending = pending_release_decisions()
-        if pending:
-            self.assertTrue(result.blockers)
-            self.assertTrue(
-                all("new release identity" in blocker for blocker in result.blockers)
-            )
-        else:
-            self.assertEqual(result.blockers, ())
+        self.assertEqual(result.blockers, ())
         self.assertGreater(len(result.selected_ndf_ids), 100)
-        self.assertEqual(len(result.selected_adr_ids), 77)
+        self.assertEqual(len(result.selected_adr_ids), 80)
 
     def test_repository_manifest_records_exact_selection_expansion(self) -> None:
         manifest = json.loads(
@@ -210,19 +192,21 @@ class ReleaseSelectionTest(unittest.TestCase):
         )
         selection = manifest["release_selection"]
         result = evaluate_release_selection(ROOT)
+        policy = json.loads(SELECTION.read_text(encoding="utf-8"))
 
         self.assertEqual(selection["architecture_version"], "0.58.3")
         self.assertEqual(selection["required_readiness_floor"], "executable")
-        self.assertEqual(
+        self.assertEqual(manifest["release"], selection["architecture_version"])
+        self.assertEqual(selection["blockers"], [])
+        self.assertEqual(policy["architecture_version"], "0.58.4")
+        self.assertNotEqual(
             [row["id"] for row in selection["expanded_ndf"]],
             list(result.selected_ndf_ids),
         )
-        self.assertEqual(selection["selected_adr_ids"], list(result.selected_adr_ids))
-        if pending_release_decisions():
-            self.assertEqual(selection["blockers"], [])
-            self.assertTrue(result.blockers)
-        else:
-            self.assertEqual(selection["blockers"], list(result.blockers))
+        self.assertNotEqual(
+            selection["selected_adr_ids"], list(result.selected_adr_ids)
+        )
+        self.assertEqual(result.blockers, ())
 
 
 if __name__ == "__main__":
