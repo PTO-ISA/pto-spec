@@ -146,6 +146,20 @@ begin
         as integer {1..2048};
 end;
 
+readonly func BundleLocalDestinationAllocationBytes(
+    binding: BundleTileBindingIndex)
+    => integer {0,128,256,512,1024,2048,4096,8192,16384,32768,65536,
+                131072,262144}
+begin
+    let assemble = _BundleTileBindings[[binding]].destination_assemble;
+    if assemble.valid && assemble.init then
+        assert assemble.size_code >= 1 && assemble.size_code <= 12;
+        return TileSizeCodeBytes(
+            assemble.size_code as integer {1..12});
+    end;
+    return BundleTileDestinationSizeBytes(binding);
+end;
+
 pure func BundleLocalGenerationRangeOverlaps(
     left_offset: integer {0..2047}, left_count: integer {1..2048},
     right_offset: integer {0..2047}, right_count: integer {1..2048}) => boolean

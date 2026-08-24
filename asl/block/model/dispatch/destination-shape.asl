@@ -76,7 +76,7 @@ begin
         if _BundleTileBindings[[binding]].valid &&
            _BundleTileBindings[[binding]].destination_valid &&
            !_BundleTileBindings[[binding]].destination_allocated_by_bundle then
-            let capacity_bytes = BundleTileDestinationSizeBytes(
+            let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
             let mask = _BundleTileBindings[[binding]].pe_mask;
             if mask[PTOPEMaskBitOfPEIdentity(0)] == '1' then
@@ -215,7 +215,7 @@ begin
                 else if auxiliary_group then
                     BundleGroupMaxColumns(valid_columns)
                 else valid_columns;
-            let capacity_bytes = BundleTileDestinationSizeBytes(
+            let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
             let rows = DerivedTileRows(capacity_bytes, auxiliary_columns,
                 destination_type);
@@ -264,7 +264,7 @@ begin
                 else if auxiliary_group then
                     BundleGroupMaxColumns(valid_columns)
                 else valid_columns;
-            let capacity_bytes = BundleTileDestinationSizeBytes(
+            let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
             ConfigureTileForMask(resolved[[binding]],
                 capacity_bytes, valid_rows, auxiliary_columns, valid_rows,
@@ -320,7 +320,7 @@ begin
     let binding = _BundleTileBindings[[destination_binding]];
     let source = binding.source0;
     let source_tile = _Tiles[[source]];
-    let capacity_bytes = BundleTileDestinationSizeBytes(
+    let capacity_bytes = BundleLocalDestinationAllocationBytes(
         destination_binding);
     if source_tile.storage_kind != TileStorage_Numeric ||
        source_tile.rows * source_tile.columns >

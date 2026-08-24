@@ -587,15 +587,18 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
             )
         lines += [
             "    for tile = 1 to 8 looplimit 8 do",
-            f"        let configured = if tile == {selected_tile} then",
+            f"        if tile == {selected_tile} then",
+            "            let configured =",
             "            ConfigureCubeTileForMask(tile, 128, 1,",
             f"                {selected_columns}, {local_dtype}, {selected_layout},",
-            "                TileLocation_Matrix, '1111')",
-            "            else ConfigureTileForMask(tile, 128,",
+            "                TileLocation_Matrix, '1111');",
+            "            assert configured;",
+            "        else",
+            "            ConfigureTileForMask(tile, 128,",
             f"                {ordinary_rows}, 4, 1,",
             f"                source_valid_columns_placeholder, {local_dtype},",
             "                TileLayout_RowMajor, TileLocation_Any, '1111');",
-            "        assert configured;",
+            "        end;",
             "        MarkTileValidRegionDefined(tile);",
             "    end;",
         ]

@@ -83,14 +83,17 @@ begin
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].writer_count == 1;
     let middle_done = RunWriter(FALSE, FALSE, 0, 0);
     assert middle_done && _LastFault == Fault_None;
+    let middle_domain = _BundleExecutionDomainToken;
     assert AllocatedTileCount() == 3;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].writer_count == 2;
     let middle2_done = RunWriter(FALSE, FALSE, 0, 6);
     assert middle2_done && _LastFault == Fault_None;
+    let middle2_domain = _BundleExecutionDomainToken;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].writer_count == 3;
     let last_done = RunWriter(FALSE, TRUE, 0, 2);
     assert last_done && _LastFault == Fault_None;
+    let last_domain = _BundleExecutionDomainToken;
     assert AllocatedTileCount() == 3;
     assert !_LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].open;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].closed;
@@ -100,13 +103,13 @@ begin
     // Complete the closed writer set out of order.  Publication occurs once,
     // atomically, only after the final required cells become ready.
     let last_completed = CompleteBundleLocalGenerationWriterEvent(
-        BundleLocalGenerationSlot(0, '1111'), _BundleExecutionDomainToken,
+        BundleLocalGenerationSlot(0, '1111'), last_domain,
         2, 2);
     let middle2_completed = CompleteBundleLocalGenerationWriterEvent(
-        BundleLocalGenerationSlot(0, '1111'), _BundleExecutionDomainToken,
+        BundleLocalGenerationSlot(0, '1111'), middle2_domain,
         6, 2);
     let middle_completed = CompleteBundleLocalGenerationWriterEvent(
-        BundleLocalGenerationSlot(0, '1111'), _BundleExecutionDomainToken,
+        BundleLocalGenerationSlot(0, '1111'), middle_domain,
         0, 2);
     assert last_completed && middle2_completed && middle_completed;
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].published;
