@@ -1,6 +1,13 @@
 import {defineConfig, devices} from '@playwright/test';
 
 const localChannel = process.env.CI ? undefined : 'chrome';
+const sitePort = Number.parseInt(process.env.PTO_SITE_PORT ?? '3000', 10);
+
+if (!Number.isInteger(sitePort) || sitePort < 1 || sitePort > 65_535) {
+  throw new Error(`PTO_SITE_PORT must be an integer from 1 to 65535; received ${process.env.PTO_SITE_PORT}`);
+}
+
+const siteURL = `http://127.0.0.1:${sitePort}`;
 
 const projects = [
   {
@@ -44,16 +51,16 @@ export default defineConfig({
     ? [['line'], ['html', {open: 'never'}]]
     : 'line',
   use: {
-    baseURL: 'http://127.0.0.1:3000',
+    baseURL: siteURL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
   projects,
   webServer: {
-    command: 'pnpm serve --port 3000 --no-open',
-    url: 'http://127.0.0.1:3000',
+    command: `python3 -m http.server ${sitePort} --bind 127.0.0.1 --directory build`,
+    url: siteURL,
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    timeout: 30_000,
   },
 });
