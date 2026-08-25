@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-PUBLISH-EXEC-003","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":[],"kind":"execution","summary":"Shared TLSU publish, broadcast, and extract preserve descriptor semantics","pass_condition":"publish, broadcast, and extract assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-PUBLISH-EXEC-003","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-INST-BLOCK-B-ASSEMBLE","PTO-B-ASSEMBLE-SHARED-STANDALONE-001"],"kind":"execution","summary":"Shared TLSU publish, broadcast, and extract preserve descriptor semantics","pass_condition":"collective INIT_LAST publish, broadcast, and extract assertions hold","related_sources":["asl/block/operands/B.ASSEMBLE.asl","asl/block/model/operands/shared-generation.asl"]}
 pure func BundleTestTLSUStart(function: bits(5), data_type: bits(5))
         => bits(64)
 begin
@@ -66,6 +66,15 @@ begin
     return instruction;
 end;
 
+pure func BundleTestSharedAssemble(parent_size_code: bits(4)) => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x00001053;
+    instruction[31] = '1';
+    instruction[11] = '1';
+    instruction[10:7] = parent_size_code;
+    return instruction;
+end;
+
 func TestBundleSharedTLSUPublish()
 begin
     // Publish creates a fully initialized register; an explicitly encoded
@@ -78,12 +87,15 @@ begin
         BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let publish_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 19, '0001', '111'), 32);
+    let publish_assemble = ExecuteCommandInstruction(
+        BundleTestSharedAssemble('0001'), 32);
     let publish_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('0000', '00', '111', Zeros{6}, TRUE), 32);
     let publish_zero_ior = ExecuteCommandInstruction(
         BundleTestScalarBinding(Zeros{5}, Zeros{5}, Zeros{5}, Zeros{5}), 32);
     assert publish_start == CommandExecution_Executed;
     assert publish_shared == CommandExecution_Executed;
+    assert publish_assemble == CommandExecution_Executed;
     assert publish_local == CommandExecution_Executed;
     assert publish_zero_ior == CommandExecution_Executed;
     let publish_completed = ExecuteBundleTileOperation();

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":[],"kind":"execution","summary":"Shared TLSU loads and stores use per-PE size and LB stride defaults","pass_condition":"GM-to-Shared, Shared-to-GM, and LB2 stride assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-INST-BLOCK-B-ASSEMBLE","PTO-B-ASSEMBLE-SHARED-STANDALONE-001"],"kind":"execution","summary":"Shared TLSU loads and stores use per-PE size and LB stride defaults","pass_condition":"collective GM-to-Shared assembly, Shared-to-GM, and LB2 stride assertions hold","related_sources":["asl/block/operands/B.ASSEMBLE.asl","asl/block/model/operands/shared-generation.asl"]}
 pure func BundleTestTLSUStart(function: bits(5), data_type: bits(5))
         => bits(64)
 begin
@@ -41,6 +41,15 @@ begin
     return instruction;
 end;
 
+pure func BundleTestSharedAssemble(parent_size_code: bits(4)) => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x00001053;
+    instruction[31] = '1';
+    instruction[11] = '1';
+    instruction[10:7] = parent_size_code;
+    return instruction;
+end;
+
 pure func BundleTestScalarBinding(destination: bits(5), source0: bits(5),
                                   source1: bits(5), source2: bits(5))
                                   => bits(64)
@@ -79,22 +88,31 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
     let load_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 17, '0001', '111'), 32);
+    let load_assemble = ExecuteCommandInstruction(
+        BundleTestSharedAssemble('0001'), 32);
     let load_address = ExecuteCommandInstruction(
         BundleTestScalarBinding('00000', '00010', '00000', '00000'), 32);
     assert load_start == CommandExecution_Executed;
     assert load_shared == CommandExecution_Executed;
+    assert load_assemble == CommandExecution_Executed;
     assert load_address == CommandExecution_Executed;
     let load_completed = ExecuteBundleTileOperation();
     assert load_completed;
     assert _BundleSharedBindings[[0]].consumed;
     assert SharedTileFullyInitialized((Zeros{6} + 17) as SharedTileID);
-    assert SharedTileRecord((Zeros{6} + 17) as SharedTileID).tile.capacity_bytes == 128;
-    assert SharedTileRecord((Zeros{6} + 17) as SharedTileID).tile.payload[[0]] ==
-        Zeros{PTO_XLEN} + 0x2a;
+    let loaded_shared =
+        SharedTileRecord((Zeros{6} + 17) as SharedTileID).tile;
+    assert loaded_shared.capacity_bytes == 128;
+    assert loaded_shared.valid_rows == 1;
+    assert loaded_shared.valid_columns == 1;
+    assert loaded_shared.payload[[0]] == Zeros{PTO_XLEN} + 0x2a;
 
     // An unmasked Shared store reads all four quarters.
     ResetBundleControlState();
     WriteGPR(2, Zeros{PTO_XLEN} + 8);
+    assert ReadPEGPR(0, 2) == Zeros{PTO_XLEN} + 8;
+    assert ReadSharedTileWord((Zeros{6} + 17) as SharedTileID, 0) ==
+        Zeros{PTO_XLEN} + 0x2a;
     let store_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
     let store_shared = ExecuteCommandInstruction(

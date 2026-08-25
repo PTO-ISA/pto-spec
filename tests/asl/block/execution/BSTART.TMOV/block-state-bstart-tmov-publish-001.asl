@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMOV-PUBLISH-001","source":"asl/block/execution/BSTART.TMOV.asl","requirements":["PTO-INST-BLOCK-BSTART-TMOV"],"kind":"state-transition","summary":"INSERT and PUBLISH keep publication distinct and gate BROADCAST","pass_condition":"INSERT remains unpublished, BROADCAST rejects, PUBLISH establishes publication, and BROADCAST then copies the payload","related_sources":["asl/tile/model/state/shared-registers.asl","asl/tile/model/memory/shared-movement.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMOV-PUBLISH-001","source":"asl/block/execution/BSTART.TMOV.asl","requirements":["PTO-INST-BLOCK-BSTART-TMOV","PTO-INST-BLOCK-B-ASSEMBLE","PTO-B-ASSEMBLE-SHARED-STANDALONE-001"],"kind":"state-transition","summary":"INSERT and PUBLISH keep publication distinct and gate BROADCAST","pass_condition":"single-PE INSERT remains unpublished, BROADCAST rejects, collective PUBLISH uses INIT_LAST assembly, and BROADCAST then copies the payload","related_sources":["asl/block/operands/B.ASSEMBLE.asl","asl/block/model/operands/shared-generation.asl","asl/tile/model/state/shared-registers.asl","asl/tile/model/memory/shared-movement.asl"]}
 pure func TMOVPublishStart(function: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -39,6 +39,15 @@ begin
     return instruction;
 end;
 
+pure func TMOVPublishAssemble(parent_size_code: bits(4)) => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x00001053;
+    instruction[31] = '1';
+    instruction[11] = '1';
+    instruction[10:7] = parent_size_code;
+    return instruction;
+end;
+
 func TMOVPublishExecute(instruction: bits(64))
 begin
     let status = ExecuteCommandInstruction(instruction, 32);
@@ -50,12 +59,12 @@ begin
     ResetProfileState();
     let shared_tile_id = (Zeros{6} + 7) as SharedTileID;
     ConfigureTileForMask(0, 128, 128, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any, '1111');
+        TileLayout_RowMajor, TileLocation_Any, '1000');
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
 
     TMOVPublishExecute(TMOVPublishStart('01001'));
-    TMOVPublishExecute(TMOVPublishLocalSource(Zeros{6}, '111'));
-    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0001', '111'));
+    TMOVPublishExecute(TMOVPublishLocalSource(Zeros{6}, '001'));
+    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0001', '001'));
     let insert_completed = ExecuteBundleTileOperation();
     assert insert_completed;
     assert SharedTileFullyInitialized(shared_tile_id);
@@ -72,11 +81,14 @@ begin
     assert _LastFault == Fault_TileLegality;
     assert !_Tiles[[16]].allocated;
 
-    ResetBundleControlState();
-    ClearFault();
+    ResetProfileState();
+    ConfigureTileForMask(0, 128, 128, 1, 1, 1, TileDataType_U8,
+        TileLayout_RowMajor, TileLocation_Any, '1111');
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
     TMOVPublishExecute(TMOVPublishStart('01010'));
     TMOVPublishExecute(TMOVPublishLocalSource(Zeros{6}, '111'));
     TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0001', '111'));
+    TMOVPublishExecute(TMOVPublishAssemble('0001'));
     let publish_completed = ExecuteBundleTileOperation();
     assert publish_completed;
     assert SharedTilePublished(shared_tile_id);

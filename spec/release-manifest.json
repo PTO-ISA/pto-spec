@@ -630,7 +630,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-      "sha256": "18b1228d3cdc8c7bfb1d62b3be1cebdc12d5a68022e978b5932ed3022ad5b838"
+      "sha256": "f8afbda1d02bca81bd6f9016e623a691c866f6c3356a07f5f63c08e4bc9619a1"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
@@ -702,7 +702,7 @@
     },
     {
       "path": "asl/block/model/operands/shared-generation.asl",
-      "sha256": "341221ee2a3984a24ac465797deb20b2f767ae06f8eee5482e8798aa7eed4064"
+      "sha256": "292eb21207da6ff0ca6c56b0be23fda0facd5124e0f82f7abee93e7a463ce88e"
     },
     {
       "path": "asl/block/model/operands/subview-descriptor.asl",
@@ -3234,7 +3234,7 @@
     },
     {
       "path": "asl/tile/model/state/shared-registers.asl",
-      "sha256": "bb44cc6581023f68f37b9ee50da70fb2c9a51c64a91583f62bb1ce304067d3dc"
+      "sha256": "20c3fbef4d8327d9dad3f4dc810c64c279eed18f7facb5521cc2937478a3094c"
     },
     {
       "path": "asl/tile/model/state/types.asl",
@@ -3442,7 +3442,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "d3b54ed8fc89eb320de6cf6de53340989156ea0cfbcf3f9e6dc781ae53ab8269"
+      "sha256": "939e8eab17a600842623a62be70fb50cd52345197a2f63aadc6524261ebc794d"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3450,11 +3450,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "0629adbeb26e3ccebbbd4702bace4378d7c1b3216dc4a8ce7c25a48ea24e93d3"
+      "sha256": "87d56e6d56ecb125e427a05e38912cb7f721d9c5fb44bfc56a5d6ebec40fcceb"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "5066922dd1b901c9205288db0c12f48c9db6605e32d18ed1846dc1238a9850d0"
+      "sha256": "5e6f48d2274797afd2d267b51ded272555ed810f6e656f7a10432cfb3c281e32"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3500,7 +3500,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "ff2232a0838f44bd4c80f203ae07adeee94f1b89bf4a00e898e8325ba053805f",
+  "content_sha256": "a244c1dd9d2407d82218435fac78d731154c8c3aec3be627ab708538d8fa7c16",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4317,7 +4317,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tlsu-layout-conversion.md",
-      "sha256": "55ab3e77c5312c31d8c9de93cab0853034130bc6d3b8c3a6b329d74d219452ff"
+      "sha256": "6cd6a9913600c2c8bb1858b10eca34b8a798a17c8bfb3de7a3bbbe808bdc7118"
     },
     {
       "kind": "generated-documentation",
@@ -4407,7 +4407,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/operands/shared-generation.md",
-      "sha256": "31cc9e247c62c61ee48a18d9ffbe7b5af97a9b5dd6b07bf3349e9dce54ed4f69"
+      "sha256": "aff8fc389aaea39c90f6815d1c67d4b939d33787e431d933954b577096a35638"
     },
     {
       "kind": "generated-documentation",
@@ -7572,7 +7572,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/shared-registers.md",
-      "sha256": "91978bb97e5f418129f14b79a91f3b7db0c23e4bf66162d7db53d68a8a80d4a3"
+      "sha256": "9160a2e0c8aecd6e92aed68958c7dec37458808eafda2d6cbeee93b3a098e24f"
     },
     {
       "kind": "generated-documentation",

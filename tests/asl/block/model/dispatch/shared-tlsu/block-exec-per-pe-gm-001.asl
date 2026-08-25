@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-PER-PE-GM-EXECUTION-001","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TLOAD"],"kind":"execution","summary":"Shared TLOAD resolves B.IOR base and stride independently in every selected PE GPR file.","pass_condition":"Four fixed Shared quarters load from four PE-private base/stride pairs selected by the same encoded RegSrc fields.","related_sources":["asl/tile/model/memory/shared-movement.asl","asl/arch/programming-model/scalar-registers.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-PER-PE-GM-EXECUTION-001","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TLOAD","PTO-INST-BLOCK-B-ASSEMBLE","PTO-B-ASSEMBLE-SHARED-STANDALONE-001"],"kind":"execution","summary":"Shared TLOAD resolves B.IOR base and stride independently in every selected PE GPR file.","pass_condition":"Four fixed Shared quarters assemble from four PE-private base/stride pairs selected by the same encoded RegSrc fields.","related_sources":["asl/block/operands/B.ASSEMBLE.asl","asl/block/model/operands/shared-generation.asl","asl/tile/model/memory/shared-movement.asl","asl/arch/programming-model/scalar-registers.asl"]}
 pure func PerPETestTLSUStart(function: bits(5), data_type: bits(5))
         => bits(64)
 begin
@@ -27,6 +27,15 @@ begin
     return instruction;
 end;
 
+pure func PerPETestSharedAssemble(parent_size_code: bits(4)) => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x00001053;
+    instruction[31] = '1';
+    instruction[11] = '1';
+    instruction[10:7] = parent_size_code;
+    return instruction;
+end;
+
 func main() => integer
 begin
     ResetProfileState();
@@ -51,10 +60,13 @@ begin
     SetBundleDimension(2, Zeros{PTO_XLEN} + 32);
     let shared = ExecuteCommandInstruction(
         PerPETestSharedBinding(Zeros{6} + 31, '0011', '111'), 32);
+    let assembled = ExecuteCommandInstruction(
+        PerPETestSharedAssemble('0011'), 32);
     let scalar = ExecuteCommandInstruction(
         PerPETestScalarBinding(Zeros{5} + 2, Zeros{5} + 3), 32);
     assert start == CommandExecution_Executed;
     assert shared == CommandExecution_Executed;
+    assert assembled == CommandExecution_Executed;
     assert scalar == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
     assert completed;

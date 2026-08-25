@@ -93,15 +93,15 @@ begin
     // Nonzero fields in an otherwise unused B.IOR reject a Shared TMOV before
     // either the Shared destination or Local source lifetime changes.
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
-        TileLayout_RowMajor, TileLocation_Any);
+    ConfigureTileForMask(0, 128, 1, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, TileLocation_Any, '1000');
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
     let invalid_publish_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
     let invalid_publish_shared = ExecuteCommandInstruction(
-        BundleTestSharedBindingV6(Zeros{6} + 18, '0001', '111'), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 18, '0001', '001'), 32);
     let invalid_publish_local = ExecuteCommandInstruction(
-        BundleTestTileBindingV5('0000', '00', '111', Zeros{6}, TRUE), 32);
+        BundleTestTileBindingV5('0000', '00', '001', Zeros{6}, TRUE), 32);
     let invalid_publish_ior = ExecuteCommandInstruction(
         BundleTestScalarBinding(Zeros{5}, Zeros{5} + 2, Zeros{5}, Zeros{5}), 32);
     assert invalid_publish_start == CommandExecution_Executed;

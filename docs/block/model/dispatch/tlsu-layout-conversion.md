@@ -20,6 +20,16 @@ begin
                _BundleDataAttributes.data_layout);
 end;
 
+pure func BundleCubeTransportDataTypeSupported(
+    data_type: TileDataType) => boolean
+begin
+    // HiF4X2 is accepted only by the Matrix-MX input-role contract.  It does
+    // not become a GM/Local CUBE transport type merely because the generic
+    // CUBE CellReg geometry can represent four-bit carriers.
+    return TileCubeDataTypeSupported(data_type) &&
+           data_type != TileDataType_HiF4X2;
+end;
+
 readonly func BundleCubeTransportDimensionsLegal() => boolean
 begin
     if !_BundleDimensionPresent[[0]] ||
@@ -144,7 +154,7 @@ begin
     let (type_valid, data_type) = ResolveBundleEffectiveDataType();
     let layout = TileDataLayoutCubeLayout(
         _BundleDataAttributes.data_layout);
-    if !type_valid || !TileCubeDataTypeSupported(data_type) then
+    if !type_valid || !BundleCubeTransportDataTypeSupported(data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
