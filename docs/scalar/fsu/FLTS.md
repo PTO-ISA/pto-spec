@@ -11,6 +11,64 @@ FLTS performs ordered signaling less-than comparison and returns canonical XLEN 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-flts-purpose role=purpose -->
+## What FLTS does
+
+`FLTS` performs ordered signaling less-than and publishes canonical XLEN one or zero.
+
+<!-- PTO-READER-BLOCK: scalar-flts-mechanism role=mechanism -->
+## Numeric mechanism
+
+`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+
+Any NaN input makes the ordered comparison false.
+
+The signaling form records sticky `NV` for any NaN.
+
+<!-- PTO-READER-BLOCK: scalar-flts-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `RegDst` selects the encoded destination or discard behavior.
+
+- `SrcL` supplies the left scalar source.
+
+- `SrcR` supplies the right scalar source.
+
+- `SrcType` selects the source-carrier width.
+
+- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
+
+- The destination selector writes a GPR, pushes T/U, or discards only the result.
+
+<!-- PTO-READER-BLOCK: scalar-flts-effects role=effects -->
+## Effects and ordering
+
+All explicit sources are snapshotted before numeric-status or destination effects.
+
+Any architecture-produced `NV` is ORed into sticky numeric state before destination publication.
+
+The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-flts-constraints role=constraints -->
+## Type and profile boundaries
+
+`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+
+Numeric flag updates do not themselves raise a synchronous PTO trap.
+
+<!-- PTO-READER-BLOCK: scalar-flts-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+
+`flts.fd a0, a1, ->a2` applies the architecture-owned special-value rule and publishes canonical output before advancing `TPC`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -165,7 +223,3 @@ end;
 
 - flts.fd a0, a1, ->a2
 - flts.fs t#1, u#1, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

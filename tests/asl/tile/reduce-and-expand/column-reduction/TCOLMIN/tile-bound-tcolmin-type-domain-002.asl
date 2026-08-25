@@ -1,0 +1,25 @@
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCOLMIN-TYPE-DOMAIN-002","source":"asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl","requirements":["PTO-INST-TILE-TCOLMIN"],"kind":"boundary","summary":"TCOLMIN discriminates its complete executable helper DataType domain","pass_condition":"all sixteen TileVecArithmetic types pass and representative non-domain carrier, exponent-only, compact, and packed types reject","related_sources":["asl/tile/model/legality/dtype-layout.asl"]}
+func main() => integer
+begin
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_FP64);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_FP32);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_TF32);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_HF32);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_FP16);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_BF16);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_E4M3);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_E5M2);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_S64);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_S32);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_S16);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_S8);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_U64);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_U32);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_U16);
+    assert InstructionContractDataTypeLegal_TCOLMIN(TileDataType_U8);
+    assert !InstructionContractDataTypeLegal_TCOLMIN(TileDataType_HiF8);
+    assert !InstructionContractDataTypeLegal_TCOLMIN(TileDataType_E8M0);
+    assert !InstructionContractDataTypeLegal_TCOLMIN(TileDataType_E3M2);
+    assert !InstructionContractDataTypeLegal_TCOLMIN(TileDataType_U4X2);
+    return 0;
+end;

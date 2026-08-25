@@ -7,6 +7,10 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-DISPATCH-MATRIX-AND-MATRIX-VECTOR}
 
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/dispatch/matrix-and-matrix-vector.asl -->
@@ -15,7 +19,3 @@ This page is a generated reference view of the normative ASL unit.
 // Dispatch ownership for the matrix-and-matrix-vector PTO Tile instruction class.
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

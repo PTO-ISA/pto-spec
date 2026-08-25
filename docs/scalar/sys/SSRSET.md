@@ -11,6 +11,52 @@ SSRSET writes the complete encoded system-register address.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-ssrset-purpose role=purpose -->
+## What SSRSET does
+
+`SSRSET` writes a complete XLEN value to an assigned writable system register.
+
+<!-- PTO-READER-BLOCK: scalar-ssrset-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_ExecuteSystemRegisterSet`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-ssrset-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`SSR_ID` carries the system-register identifier; `SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-ssrset-effects role=effects -->
+## Architectural effects
+
+After writable-access preflight, the complete XLEN source replaces the selected system register and then `TPC` advances.
+
+A rejected write preserves both the source and target register beyond ordinary trap entry.
+
+<!-- PTO-READER-BLOCK: scalar-ssrset-constraints role=constraints -->
+## Placement and rejection
+
+Address, current-ACR permission, and writable access class are checked before `SrcL` is read.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-ssrset-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `ssrset SrcL, SSR_ID` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -138,7 +184,3 @@ end;
 ## Examples
 
 - ssrset SrcL, SSR_ID
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

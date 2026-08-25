@@ -11,6 +11,64 @@ FSUB subtracts the right selected carrier from the left through the active numer
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-fsub-purpose role=purpose -->
+## What FSUB does
+
+`FSUB` subtracts the right carrier from the left through the active numeric profile.
+
+<!-- PTO-READER-BLOCK: scalar-fsub-mechanism role=mechanism -->
+## Numeric mechanism
+
+`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+
+The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+
+In the `pto-v0` reference profile, the right normalized carrier is subtracted from the left modulo the selected width. This deterministic reference rule is not an IEEE-754 or target-hardware claim.
+
+<!-- PTO-READER-BLOCK: scalar-fsub-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `RegDst` selects the encoded destination or discard behavior.
+
+- `SrcL` supplies the left scalar source.
+
+- `SrcR` supplies the right scalar source.
+
+- `SrcType` selects the source-carrier width.
+
+- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
+
+- The destination selector writes a GPR, pushes T/U, or discards only the result.
+
+<!-- PTO-READER-BLOCK: scalar-fsub-effects role=effects -->
+## Effects and ordering
+
+All explicit sources are snapshotted before numeric-status or destination effects.
+
+All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
+
+The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-fsub-constraints role=constraints -->
+## Type and profile boundaries
+
+`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+
+The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+
+<!-- PTO-READER-BLOCK: scalar-fsub-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+
+`fsub.fd a0, a1, ->a2` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -160,7 +218,3 @@ end;
 
 - fsub.fd a0, a1, ->a2
 - fsub.fs t#1, u#1, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

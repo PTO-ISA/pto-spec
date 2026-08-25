@@ -7,6 +7,56 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-GQM}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-gqm-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+General Queue Management models addressed queues, their entries, and the status returned by queue operations. `PTO-STATE-ARCH-GQM` owns the queue tables, entry storage, release/acquire epochs, and event-observation state.
+
+The owner defines initialization, suspension and corruption state, push and pop behavior, and event notification. Instruction decoding remains in the instruction owners that call these helpers.
+
+<!-- PTO-READER-BLOCK: arch-gqm-concepts-state role=concepts-state -->
+## Queue state and result words
+
+Each valid model slot records an address, capacity, count, head, suspended flag, corrupt flag, and entry array. Each entry contains a `Word` value and a release epoch.
+
+`GQMResult` places its primary value in bits `12:0` and its two-bit status in bits `63:62`; all other result bits start at zero. Status `00` is the successful path. A push uses `01` when the queue is suspended or full, while a pop uses `01` when the queue is empty. Status `10` is used when the queue is missing or corrupt.
+
+<!-- PTO-READER-BLOCK: arch-gqm-rules-interactions role=rules-interactions -->
+## Push, pop, and notification
+
+`PushGQMQueueEntry` rejects a missing or corrupt queue, returns remaining capacity for a suspended or full queue, and otherwise inserts at the head or tail selected by `at_head`. A non-relaxed push increments `_GQMReleaseEpoch` and stores that epoch with the entry; a relaxed push stores epoch `0`.
+
+`PopGQMQueueEntry` returns zero data with status `10` for a missing or corrupt queue, status `01` for an empty queue, and otherwise removes the head entry. A non-relaxed pop copies a nonzero entry release epoch into `_LastGQMAcquireEpoch`.
+
+When `notify_event` is true on a successful push or pop, `BroadcastGQMEvent` increments `_GQMEventEpoch` and records the queue address in `_LastGQMEventAddress`.
+
+<!-- PTO-READER-BLOCK: arch-gqm-boundaries role=boundaries -->
+## Capacity and model boundaries
+
+One queue capacity is in the range `0` through `1023`. `PTO_MODEL_GQM_QUEUE_SLOTS` is configurable from `1` through `16` and defaults to `4`, but the owner explicitly treats it as executable verification backing rather than an architectural limit on initialized queues.
+
+Initialization reuses an existing slot for the same address or selects the first free slot. The executable profile must provide enough model slots for its workload; exhaustion reaches an assertion instead of defining a portable queue-count failure result.
+
+<!-- PTO-READER-BLOCK: arch-gqm-example-usage role=example-usage -->
+## Non-normative queue walkthrough
+
+For a capacity-two queue, a successful tail push changes the count from zero to one and reports one remaining entry. A following non-relaxed pop returns the stored value, changes the count back to zero, resets the head to zero, and observes the entry's nonzero release epoch.
+
+This walkthrough is illustrative; the embedded ASL remains the exact source for status fields and state-update order.
+
+<!-- PTO-READER-BLOCK: arch-gqm-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Execution context](execution-context.md) supplies the architectural context on which GQM depends.
+- [Memory ordering](../memory-model/ordering.md) owns the architecture's ordering relations; GQM's epoch fields do not replace that owner.
+- [Trap context](../state/trap-context.md) owns portable save and recovery of execution context.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/programming-model/general-queue-management.asl -->
@@ -293,7 +343,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

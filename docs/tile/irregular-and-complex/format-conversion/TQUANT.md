@@ -11,6 +11,72 @@ Affine-quantize a Local FP32 Tile into a new Local S8 or U8 Tile.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-tquant-purpose role=purpose -->
+## What TQUANT does
+
+`TQUANT` affine-quantizes a Local FP32 Tile into a new Local S8 or U8 Tile.
+
+<!-- PTO-READER-BLOCK: tile-c-tquant-mechanism role=mechanism -->
+## Operation mechanism
+
+For each valid FP32 value `x`, compute `x * multiplier + zero_point`, then apply the selected rounding mode.
+
+Saturation clamps to the S8/U8 range; without saturation, conversion is modulo destination width.
+
+Floating results and element status follow the active named numeric profile; the portable contract owns selection, shape, publication, and fault order.
+
+<!-- PTO-READER-BLOCK: tile-c-tquant-inputs-outputs role=inputs-outputs -->
+## Operands, shape, and type
+
+- `destination0` identifies a newly allocated destination.
+
+- `source0` supplies a persistent source Tile.
+
+- `scalar0` supplies the positive finite FP32 multiplier.
+
+- `scalar1` supplies the destination-typed integer zero point.
+
+- `numeric_control` supplies rounding and saturation control.
+
+- The closed applicable DataType set is `FP32`, `S8`, `U8`.
+
+- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
+
+- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+
+<!-- PTO-READER-BLOCK: tile-c-tquant-effects role=effects -->
+## Definedness, padding, and publication
+
+All source descriptors and payloads are validated and snapshotted before destination publication.
+
+The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+
+Every physical coordinate outside the valid rectangle is undefined Null padding; no selectable PadValue is applicable.
+
+Source Tiles persist and are not modified by successful execution.
+
+<!-- PTO-READER-BLOCK: tile-c-tquant-constraints role=constraints -->
+## Legality, fault, and order boundaries
+
+Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+
+A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+
+`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+
+<!-- PTO-READER-BLOCK: tile-c-tquant-example role=example -->
+## Non-normative example
+
+This example illustrates the current ASL-bound contract and is not a second instruction definition.
+
+`TQUANT <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `irregular-and-complex`
@@ -280,7 +346,3 @@ end;
 ## Examples
 
 - BSTART.SFU TQUANT, FP32; B.DATR S8, RNE, Sat=1; B.DIM LB0=16; B.IOT T1, mask=1111, <last>, ->T0<1>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -34,6 +34,7 @@ _LOAD_PREVIOUS = object()
 @dataclass(frozen=True)
 class ReleaseSelectionResult:
     architecture_version: str
+    publication_version: str
     baseline_commit: str
     included_ndf_statuses: tuple[str, ...]
     excluded_draft_adrs: tuple[str, ...]
@@ -77,6 +78,7 @@ def validate_selection(
     selection: dict[str, object],
     *,
     architecture_version: str,
+    publication_version: str,
     adr_records: tuple[dict[str, object], ...],
     readiness_rows: tuple[dict[str, object], ...],
     ndf_rows: tuple[dict[str, object], ...],
@@ -85,6 +87,7 @@ def validate_selection(
     expected_fields = {
         "$schema",
         "architecture_version",
+        "publication_version",
         "baseline_commit",
         "included_ndf_statuses",
         "excluded_draft_adrs",
@@ -96,6 +99,10 @@ def validate_selection(
         raise ValueError("release selection schema path drift")
     if selection.get("architecture_version") != architecture_version:
         raise ValueError("release selection architecture version mismatch")
+    if selection.get("publication_version") != publication_version:
+        raise ValueError("release selection publication version mismatch")
+    if publication_version.rsplit(".", 1)[0] != architecture_version:
+        raise ValueError("publication version must revise the architecture version")
     baseline = selection.get("baseline_commit")
     if not isinstance(baseline, str) or COMMIT.fullmatch(baseline) is None:
         raise ValueError("release selection baseline_commit is invalid")
@@ -154,7 +161,12 @@ def validate_selection(
     selected_adrs = current_selected_adrs
     digests = current_digests
     blockers: list[str] = []
-    if previous_manifest is not None and previous_manifest.get("release") == architecture_version:
+    previous_identity = None
+    if previous_manifest is not None:
+        previous_identity = previous_manifest.get(
+            "publication_version", previous_manifest.get("release")
+        )
+    if previous_manifest is not None and previous_identity == publication_version:
         previous_selection = previous_manifest.get("release_selection")
         if isinstance(previous_selection, dict):
             previous_rows = previous_selection.get("expanded_ndf", ())
@@ -198,7 +210,10 @@ def validate_selection(
         stage = row.get("stage")
         if stage not in STAGES:
             raise ValueError(f"readiness subject {adr_id} has an invalid stage")
-        if architecture_version in record.get("target_releases", ()):
+        if (
+            architecture_version in record.get("target_releases", ())
+            or publication_version in record.get("target_releases", ())
+        ):
             if adr_id not in selected_adrs or STAGES.index(stage) < floor_index:
                 raise ValueError(
                     f"target release ADR {adr_id} is below required readiness floor"
@@ -206,6 +221,7 @@ def validate_selection(
 
     return ReleaseSelectionResult(
         architecture_version=architecture_version,
+        publication_version=publication_version,
         baseline_commit=baseline,
         included_ndf_statuses=included_statuses,
         excluded_draft_adrs=excluded,
@@ -268,6 +284,7 @@ def evaluate_release_selection(
     selection = json.loads((root / SELECTION_PATH).read_text(encoding="utf-8"))
     metadata = tomllib.loads((root / "specification.toml").read_text(encoding="utf-8"))
     architecture_version = metadata["release"]["architecture_version"]
+    publication_version = metadata["release"]["publication_version"]
     adr_index = json.loads((root / ADR_INDEX_PATH).read_text(encoding="utf-8"))
     readiness = json.loads((root / READINESS_PATH).read_text(encoding="utf-8"))
     if adr_index.get("schema") != "pto.adr-index":
@@ -284,6 +301,7 @@ def evaluate_release_selection(
     return validate_selection(
         selection,
         architecture_version=architecture_version,
+        publication_version=publication_version,
         adr_records=tuple(adr_index["records"]),
         readiness_rows=tuple(readiness["rows"]),
         ndf_rows=_ndf_rows(root),
@@ -294,6 +312,7 @@ def evaluate_release_selection(
 def manifest_selection(result: ReleaseSelectionResult) -> dict[str, object]:
     return {
         "architecture_version": result.architecture_version,
+        "publication_version": result.publication_version,
         "baseline_commit": result.baseline_commit,
         "policy_sha256": result.selection_sha256,
         "included_ndf_statuses": list(result.included_ndf_statuses),

@@ -11,6 +11,56 @@ SBI snapshots its scalar sources, forms its encoded address, and stores one alig
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sbi-purpose role=purpose -->
+## What SBI does
+
+`SBI` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and stores one aligned little-endian `1`-byte value.
+
+<!-- PTO-READER-BLOCK: scalar-sbi-mechanism role=mechanism -->
+## Address and memory mechanism
+
+`SBI` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+
+After complete preflight, the instruction performs one little-endian `1`-byte store from its snapshotted store-data source.
+
+This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+
+<!-- PTO-READER-BLOCK: scalar-sbi-inputs role=inputs-outputs -->
+## Inputs and outputs
+
+- `SrcR` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
+- `SrcL` supplies store data.
+- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+
+<!-- PTO-READER-BLOCK: scalar-sbi-effects role=effects -->
+## Effects and ordering
+
+All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+
+A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `4` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-sbi-constraints role=constraints -->
+## Alignment, faults, and restart
+
+Each effective address must satisfy `1`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+
+A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+
+<!-- PTO-READER-BLOCK: scalar-sbi-example role=example -->
+## Non-normative address example
+
+This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+
+With the base set to `0x100` and the signed immediate set to `2`, the displacement is `2` and base plus displacement is `0x102`. The memory access uses `0x102`. If aligned and permitted, the instruction stores `1` byte at that address.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -157,7 +207,3 @@ end;
 ## Examples
 
 - sbi SrcL, [SrcR, simm]
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

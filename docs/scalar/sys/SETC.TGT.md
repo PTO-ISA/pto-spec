@@ -11,6 +11,52 @@ SETC.TGT snapshots SrcL into BARG.BPCN for the active Standard or Floating block
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-setc-tgt-purpose role=purpose -->
+## What SETC.TGT does
+
+`SETC.TGT` captures a scalar source into the active block's `BARG.BPCN` commit target.
+
+<!-- PTO-READER-BLOCK: scalar-setc-tgt-mechanism role=mechanism -->
+## Block-state mechanism
+
+The ASL DOC region selects `ScalarHandler_SetCommitTarget`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in an active Standard or Floating block and is not legal in a SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-setc-tgt-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-setc-tgt-effects role=effects -->
+## Architectural effects
+
+The snapshotted source replaces only `BARG.BPCN`; every other BARG and block-control field is preserved.
+
+Block applicability is checked before reading `SrcL`, and `TPC` advances only after the new target is stored.
+
+<!-- PTO-READER-BLOCK: scalar-setc-tgt-constraints role=constraints -->
+## Placement and rejection
+
+The operation is assigned only in an active Standard or Floating block.
+
+An inactive body or any block kind other than Standard or Floating raises Illegal Block Exception before reading `SrcL` or changing BARG or `TPC`.
+
+<!-- PTO-READER-BLOCK: scalar-setc-tgt-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `setc.tgt SrcL` in an active Standard or Floating block and trace the source snapshot before the BARG update.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -126,7 +172,3 @@ end;
 ## Examples
 
 - setc.tgt SrcL
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

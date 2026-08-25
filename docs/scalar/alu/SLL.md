@@ -11,6 +11,57 @@ SLL performs a logical left shift of the PTO_XLEN source by the low six bits of 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sll-purpose role=purpose -->
+## What SLL does
+
+`SLL` is a 32-bit scalar ALU instruction. It logically shifts the source left under the complete XLEN value shift rules; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-sll-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then logically shifts the source left under the complete XLEN value shift rules, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-sll-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
+- The 5-bit `SrcL` field selects the scalar value through Reg5.
+- The 5-bit `SrcR` field selects the register shift count through Reg5.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-sll-effects role=effects -->
+## Effects and ordering
+
+Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-sll-constraints role=constraints -->
+## Legality and fault boundary
+
+Register shifting uses only the low 6 right-source bits, so the effective amount is `0..63`; every result is defined at the fixed width.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-sll-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `SLL` example, source `1` shifted left by `3` produces `8`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -136,7 +187,3 @@ end;
 - sll a0, a1, ->a2
 - sll t#1, u#1, ->u
 - sll zero, zero, ->zero
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

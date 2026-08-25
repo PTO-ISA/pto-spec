@@ -11,6 +11,56 @@ LWUI.U snapshots its scalar sources, forms its encoded address, and loads one al
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-lwui-u-purpose role=purpose -->
+## What LWUI.U does
+
+`LWUI.U` is a standalone `32`-bit AGU instruction that forms a signed-immediate address and loads one aligned little-endian `4`-byte value.
+
+<!-- PTO-READER-BLOCK: scalar-lwui-u-mechanism role=mechanism -->
+## Address and memory mechanism
+
+`LWUI.U` sign-extends `simm12` from its complete `-2048..2047` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+
+After complete preflight, the instruction performs one little-endian `4`-byte load and zero-extends the loaded `4`-byte value to `PTO_XLEN` for destination publication.
+
+This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+
+<!-- PTO-READER-BLOCK: scalar-lwui-u-inputs role=inputs-outputs -->
+## Inputs and outputs
+
+- `SrcL` supplies the base; `simm12` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
+- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
+- `simm12` assigns every signed value from `-2048` through `2047`; encoded zero is a zero displacement, not omission.
+
+<!-- PTO-READER-BLOCK: scalar-lwui-u-effects role=effects -->
+## Effects and ordering
+
+All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+
+A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-lwui-u-constraints role=constraints -->
+## Alignment, faults, and restart
+
+Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+
+A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+
+<!-- PTO-READER-BLOCK: scalar-lwui-u-example role=example -->
+## Non-normative address example
+
+This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+
+With the base set to `0x100` and the signed immediate set to `4`, the displacement is `4` and base plus displacement is `0x104`. The memory access uses `0x104`. If permitted, the instruction loads `4` bytes from that aligned address.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -158,7 +208,3 @@ end;
 ## Examples
 
 - lwui.u [SrcL, simm], ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

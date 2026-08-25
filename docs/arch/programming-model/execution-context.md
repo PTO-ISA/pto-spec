@@ -7,6 +7,59 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-execution-context-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+The execution context is the central owner for the principal architecture-visible scalar, control, fault, memory, maintenance, extended-system-register, and trap-context storage used while PTO executes.
+
+A Core has four private scalar register files. An instruction carries one absolute GPR selector, but each PE resolves that selector in its own register file.
+
+<!-- PTO-READER-BLOCK: arch-execution-context-concepts-state role=concepts-state -->
+## Concepts and state families
+
+- `PTO-STATE-ARCH-GPR` owns the PE-private register files, while `PTO-STATE-ARCH-TEMPORARY-QUEUES` owns the T and U value queues together with per-entry validity.
+- `PTO-STATE-ARCH-PROGRAM-CONTROL` owns `PC`, `BPC`, bundle activity, return and commit values, and predicate registers; `PTO-STATE-ARCH-FAULT` owns the last fault and its address.
+- `PTO-STATE-ARCH-MEMORY` owns modeled bytes, reservation state, fence selectors, captured memory events, and the current memory agent.
+- Maintenance epochs, extended system registers, ACR-indexed trap metadata, saved trap contexts, and the current ACR belong to their explicitly declared state families in this unit.
+
+<!-- PTO-READER-BLOCK: arch-execution-context-rules-interactions role=rules-interactions -->
+## Queue rules and interactions
+
+`ReadTemporaryQueue` selects the T queue when `use_t_queue` is true and the U queue otherwise, returning the value at the requested relative index.
+
+`TemporaryQueueSourceAvailable` applies the same T-or-U selection to the validity snapshots and returns the validity entry at the requested relative index. When a push shifts a value, it shifts the corresponding validity entry with that value.
+
+`PushTemporaryQueue` inserts the new value at index `0`, marks that entry valid, and shifts both values and validity from indices `0` through `2` into indices `1` through `3` of the selected queue.
+
+<!-- PTO-READER-BLOCK: arch-execution-context-boundaries role=boundaries -->
+## Boundaries
+
+T and U are independent queues: a push to one queue does not modify the value or validity snapshot of the other queue.
+
+A push retains the four newest entries of the selected queue. The previous index `3` entry is replaced when indices `0` through `2` shift upward.
+
+This unit declares shared architectural storage, but it does not by itself define every transition over that storage. Memory ordering, reset, system-register behavior, and trap recovery remain in their dedicated ASL owners.
+
+<!-- PTO-READER-BLOCK: arch-execution-context-example-usage role=example-usage -->
+## Non-normative queue walkthrough
+
+After reset, suppose the T queue is unavailable at every relative index. Pushing `0x11` makes T index `0` available with value `0x11`; pushing `0x22` next makes index `0` hold `0x22` and index `1` hold the older `0x11`, with both entries available.
+
+Pushing `0x33` to U then changes only U index `0`. The T values from the previous step remain in their T-relative positions.
+
+<!-- PTO-READER-BLOCK: arch-execution-context-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [System-register addressing](../system-registers/addressing.md) is the declared dependency for the execution-context unit.
+- [Memory ordering](../memory-model/ordering.md) interprets the memory events stored here.
+- [Reference profile](../profile/reference-profile.md) provides concrete access and trap-context behavior for the PTO v0 profile.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/programming-model/execution-context.asl -->
@@ -120,7 +173,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

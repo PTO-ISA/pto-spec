@@ -7,6 +7,57 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-FORMAT-HIF8}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-hif8-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit gives `HiF8` its exact eight-bit format description, dynamic dot-field decoding, finite decomposition, value classification, and canonical NaN.
+
+It exists so consumers can reason from raw carriers without substituting a host floating-point type for the architecture-defined encoding.
+
+<!-- PTO-READER-BLOCK: arch-hif8-concepts-state role=concepts-state -->
+## Concepts and visible state
+
+- `HiF8NumericFormatDescriptor` records one sign bit, a variable `0..4`-bit exponent, a `1..3`-bit fraction, one eight-bit lane, and no fixed exponent bias.
+- `HiF8DecodeDotField` maps the carrier's dot field to `HiF8DotField_Denormal` or `HiF8DotField_D0` through `HiF8DotField_D4`, together with the active exponent and fraction widths.
+- `HiF8FiniteDecomposition` returns availability, sign, an integer significand, and a base-two exponent; `ClassifyHiF8` supplies the corresponding value class.
+
+<!-- PTO-READER-BLOCK: arch-hif8-rules-interactions role=rules-interactions -->
+## Rules and interactions
+
+The raw carriers `0x80`, `0x6f`, and `0xef` are non-finite: the first is the quiet NaN and the latter two are positive and negative infinity.
+
+The all-zero carrier is positive zero. Carriers whose low seven bits are in `1..7` classify as signed subnormals; the remaining finite carriers classify as signed normals.
+
+`HiF8CanonicalNaN` returns `0x80`, matching the classification rule rather than inventing a second NaN encoding.
+
+<!-- PTO-READER-BLOCK: arch-hif8-boundaries role=boundaries -->
+## Architectural boundaries
+
+The descriptor advertises zero, subnormal, infinity, and quiet NaN support, but not signed zero or signaling NaN support.
+
+The decomposition reports unavailable for every non-finite carrier; callers must consult availability before using its significand and exponent outputs.
+
+<!-- PTO-READER-BLOCK: arch-hif8-example-usage role=example-usage -->
+## Non-normative reading example
+
+For `0x01`, the decoder selects `HiF8DotField_Denormal`; the value is available, positive, and subnormal, with the exact magnitude represented by the returned integer significand and exponent.
+
+For `0x80`, classification returns `NumericValue_QuietNaN` and finite decomposition reports unavailable.
+
+This is a reading example of the two APIs, not a new arithmetic rule.
+
+<!-- PTO-READER-BLOCK: arch-hif8-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Numeric format dispatch](../numeric-formats.md)
+- [Numeric classification](../numeric-classification.md)
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/formats/hif8.asl -->
@@ -121,7 +172,3 @@ end;
 // DOC-END: operation
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,55 @@ C.SEXT.H sign-extends SrcL[15:0] to XLEN and pushes the result to T.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-c-sext-h-purpose role=purpose -->
+## What C.SEXT.H does
+
+`C.SEXT.H` is a 16-bit scalar ALU instruction. It sign-extends the low 16 source bits to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-c-sext-h-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then sign-extends the low 16 source bits to XLEN, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-sext-h-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `SrcL` field selects a scalar input through Reg5.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-c-sext-h-effects role=effects -->
+## Effects and ordering
+
+Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-sext-h-constraints role=constraints -->
+## Legality and fault boundary
+
+Materialization, movement, and extension are total at their fixed widths and do not raise arithmetic exceptions. A fixed-bit mismatch or unavailable selected T/U source faults before state effects.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-c-sext-h-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `C.SEXT.H` example, source low 16 bits `0x8000` become XLEN value `-32768` after sign extension.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -115,7 +164,3 @@ end;
 ## Examples
 
 - c.sext.h srcl, ->t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

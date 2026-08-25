@@ -7,6 +7,10 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-MEMORY-RESTART}
 
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/restart.asl -->
@@ -15,7 +19,3 @@ This page is a generated reference view of the normative ASL unit.
 // Restart and precise-fault behavior is owned by the memory operations and architecture fault model.
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,60 @@ Inventories an extension-owned execution-context recovery family rejected by PTO
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-ercov-purpose role=purpose -->
+## What ERCOV does
+
+`ERCOV` identifies an extension-owned raw carrier family that PTO inventories but never accepts for execution.
+
+<!-- PTO-READER-BLOCK: block-ercov-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+Every raw carrier matching the `ERCOV` family is reserved in PTO; it is not a standalone command or a Block-body member.
+
+The matched raw carrier uses the `L32` encoding class, but `RegSrc0`, `RegSrc1`, and `RegSrc2` remain uninterpreted.
+
+Profile rejection raises `Fault_IllegalInstruction` unconditionally before register reads, field interpretation, memory access, or architectural effects.
+
+<!-- PTO-READER-BLOCK: block-ercov-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `RegSrc0` — uninterpreted extension field reserved in PTO; `RegSrc1` — uninterpreted extension field reserved in PTO; `RegSrc2` — uninterpreted extension field reserved in PTO.
+- The three displayed fields are collision-protected extension bits, not PTO operands, and are never read.
+- All `32` values of each displayed field remain reserved; zero has no PTO operand meaning.
+
+<!-- PTO-READER-BLOCK: block-ercov-effects role=effects -->
+## State effects and ordering
+
+No source is read and no register, memory, recovery/save, Block, event, or control-flow state changes.
+
+Decode retains only the occupied-family identity so PTO cannot allocate a colliding instruction.
+
+<!-- PTO-READER-BLOCK: block-ercov-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+The complete matched family is reserved and rejection precedes every architectural effect.
+
+The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
+
+Rejection is unconditional and has no restart or retained-progress path.
+
+<!-- PTO-READER-BLOCK: block-ercov-example role=example -->
+## Non-normative worked example
+
+This is a rejection example only; PTO accepts no matching carrier as an executable instruction.
+
+```asm
+ERCOV [RegSrc0=BasePtr, RegSrc1=LenBytes, RegSrc2=Kind] (reserved in PTO)
+```
+
+The shown spelling names reserved extension space; PTO rejects it before interpreting any displayed field.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -124,7 +178,3 @@ end;
 ## Examples
 
 - ERCOV [RegSrc0=BasePtr, RegSrc1=LenBytes, RegSrc2=Kind] (reserved in PTO)
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

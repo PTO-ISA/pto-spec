@@ -11,6 +11,58 @@ BXS extracts an independently selected wrapping scalar field, sign-extends it to
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-bxs-purpose role=purpose -->
+## What BXS does
+
+`BXS` is a 32-bit scalar ALU instruction. It extracts the independently selected wrapping field and sign-extends it to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-bxs-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then extracts the independently selected wrapping field and sign-extends it to XLEN, and only afterward performs the destination effects.
+
+- `imml` and `imms` independently select field width and starting bit; wrapping is part of the selected-field mechanism.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-bxs-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
+- The 5-bit `SrcL` field selects a scalar input through Reg5.
+- The 6-bit `imml` field encodes the selected field width as `N-1`.
+- The 6-bit `imms` field encodes selected-field starting bit `M`.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-bxs-effects role=effects -->
+## Effects and ordering
+
+Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-bxs-constraints role=constraints -->
+## Legality and fault boundary
+
+Field selection may wrap from bit 63 to bit 0; the generated defaults and legality tables below give the exact width and starting-position encodings.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-bxs-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `BXS` example, extracting four-bit field `1110` sign-extends to XLEN value `-2`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -144,7 +196,3 @@ end;
 
 - bxs a0, 60, 8, ->a1
 - bxs t#1, 0, 64, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,56 @@ PRF snapshots its scalar sources, forms its encoded address, and issues a non-bi
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-prf-purpose role=purpose -->
+## What PRF does
+
+`PRF` is a standalone `32`-bit AGU instruction that forms a register-offset address and issues a non-binding prefetch hint with no destination effect.
+
+<!-- PTO-READER-BLOCK: scalar-prf-mechanism role=mechanism -->
+## Address and memory mechanism
+
+`PRF` transforms `SrcR` according to `SrcRType`, shifts the transformed value left by the encoded `shamt`, and adds it modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+
+The formed address is a non-binding one-byte-granularity prefetch hint; legal execution performs no architectural translation, memory access, memory event, reservation update, ordering edge, or cache-placement guarantee.
+
+No encoded destination publishes the hint address, and the instruction performs no base-register update.
+
+<!-- PTO-READER-BLOCK: scalar-prf-inputs role=inputs-outputs -->
+## Inputs and outputs
+
+- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
+- `RegDst` is an ignored alias; every `RegDst` code is an assigned non-writing alias.
+- All `SrcRType` values `0..3` and all `shamt` values `0..31` are assigned; transformation precedes the encoded shift.
+
+<!-- PTO-READER-BLOCK: scalar-prf-effects role=effects -->
+## Effects and ordering
+
+All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+
+A legal hint produces no memory event, reservation change, or destination write and advances `TPC` by `4` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-prf-constraints role=constraints -->
+## Alignment, faults, and restart
+
+A legal prefetch does not perform data alignment, translation, permission, or bounded-memory checks and therefore cannot raise a data-access fault.
+
+A reserved prefetch model rejects before source reads and before any optional address publication.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+
+<!-- PTO-READER-BLOCK: scalar-prf-example role=example -->
+## Non-normative address example
+
+This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+
+With base `0x100`, unchanged offset source `2`, and `shamt=1`, the formed hint address is `0x104`; it is issued only as a non-binding hint and causes no architectural memory or destination effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -161,7 +211,3 @@ end;
 ## Examples
 
 - prf [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>]
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -35,6 +35,10 @@ SURFACES = {"arch", "scalar", "block", "tile"}
 SURFACE_ORDER = ("arch", "block", "scalar", "tile")
 SUPPLEMENTARY_BEGIN = "<!-- SUPPLEMENTARY-BEGIN -->"
 SUPPLEMENTARY_END = "<!-- SUPPLEMENTARY-END -->"
+ZH_CN_REFERENCE_ROOT = Path(
+    "docs/site/i18n/zh-CN/"
+    "docusaurus-plugin-content-docs-reference/current"
+)
 VERSION_PATTERN = re.compile(r"\b0\.58(?:\.0)?\b")
 
 
@@ -117,6 +121,14 @@ class DocRecord:
     @property
     def markdown_path(self) -> Path:
         return doc_path_for(self.source_path)
+
+    @property
+    def requires_bilingual_reader_guide(self) -> bool:
+        return self.surface == "arch" or self.mnemonic is not None
+
+    @property
+    def zh_cn_markdown_path(self) -> Path:
+        return ZH_CN_REFERENCE_ROOT / self.markdown_path.relative_to("docs")
 
 
 def _parse_regions(path: Path, lines: list[str]) -> dict[str, str]:
@@ -328,17 +340,37 @@ def _generated_region(record: InstructionRecord, name: str) -> list[str]:
     ]
 
 
-def _extract_supplementary(markdown: str) -> str:
+def _extract_supplementary(markdown: str, *, allow_legacy: bool = False) -> str:
     if SUPPLEMENTARY_BEGIN not in markdown:
-        return markdown.rstrip()
+        if allow_legacy:
+            return markdown.rstrip()
+        raise ValueError("missing supplementary Markdown region")
+    if markdown.count(SUPPLEMENTARY_BEGIN) != 1:
+        raise ValueError("duplicate supplementary Markdown start marker")
+    if markdown.count(SUPPLEMENTARY_END) != 1:
+        raise ValueError("duplicate or missing supplementary Markdown end marker")
     before, remainder = markdown.split(SUPPLEMENTARY_BEGIN, 1)
     del before
     if SUPPLEMENTARY_END not in remainder:
         raise ValueError("unterminated supplementary Markdown region")
-    supplementary, after = remainder.split(SUPPLEMENTARY_END, 1)
-    if after.strip():
-        raise ValueError("content after supplementary Markdown region")
+    supplementary, _after = remainder.split(SUPPLEMENTARY_END, 1)
     return supplementary.strip("\n")
+
+
+def _reader_guide_section(supplementary: str, *, visible: bool) -> list[str]:
+    if not visible:
+        return [SUPPLEMENTARY_BEGIN, "", SUPPLEMENTARY_END, ""]
+    return [
+        "## Reader guide",
+        "",
+        "> **Non-normative explanation.** Exact behavior remains owned by "
+        "the ASL source and generated contract on this page.",
+        "",
+        SUPPLEMENTARY_BEGIN,
+        supplementary.rstrip(),
+        SUPPLEMENTARY_END,
+        "",
+    ]
 
 
 def _markdown_cell(value: object) -> str:
@@ -694,6 +726,7 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
         "The current instruction contract is owned by the ASL source linked above.",
         "",
     ]
+    lines.extend(_reader_guide_section(supplementary, visible=True))
     if record.surface == "tile":
         lines.extend(
             [
@@ -756,10 +789,6 @@ def render_page(record: InstructionRecord, supplementary: str = "") -> str:
             *_generated_region(record, "operation"),
             "",
             *_resolved_contract_sections(record),
-            SUPPLEMENTARY_BEGIN,
-            supplementary.rstrip(),
-            SUPPLEMENTARY_END,
-            "",
         ]
     )
     return "\n".join(lines)
@@ -815,19 +844,25 @@ def render_unit_page(
         "",
         f"## ASL unit identity {{#{record.unit_id}}}",
         "",
-        "## Normative ASL",
-        "",
-        f"<!-- GENERATED-ASL-BEGIN: unit source={source} -->",
-        "```asl",
-        source_text.rstrip(),
-        "```",
-        "<!-- GENERATED-ASL-END: unit -->",
-        "",
-        SUPPLEMENTARY_BEGIN,
-        supplementary.rstrip(),
-        SUPPLEMENTARY_END,
-        "",
     ]
+    lines.extend(
+        _reader_guide_section(
+            supplementary,
+            visible=record.requires_bilingual_reader_guide or bool(supplementary.strip()),
+        )
+    )
+    lines.extend(
+        [
+            "## Normative ASL",
+            "",
+            f"<!-- GENERATED-ASL-BEGIN: unit source={source} -->",
+            "```asl",
+            source_text.rstrip(),
+            "```",
+            "<!-- GENERATED-ASL-END: unit -->",
+            "",
+        ]
+    )
     return "\n".join(lines)
 
 
@@ -979,12 +1014,26 @@ def generate_tree(root: Path = ROOT) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         supplementary = ""
         if path.exists():
-            supplementary = _extract_supplementary(path.read_text(encoding="utf-8"))
+            supplementary = _extract_supplementary(
+                path.read_text(encoding="utf-8"), allow_legacy=True
+            )
         source_text = (root / record.source_path).read_text(encoding="utf-8")
         path.write_text(
             render_unit_page(record, source_text, supplementary),
             encoding="utf-8",
         )
+        if record.requires_bilingual_reader_guide:
+            localized_path = root / record.zh_cn_markdown_path
+            localized_path.parent.mkdir(parents=True, exist_ok=True)
+            localized_supplementary = ""
+            if localized_path.exists():
+                localized_supplementary = _extract_supplementary(
+                    localized_path.read_text(encoding="utf-8")
+                )
+            localized_path.write_text(
+                render_unit_page(record, source_text, localized_supplementary),
+                encoding="utf-8",
+            )
     mkdocs_directory = root / "docs/mkdocs"
     mkdocs_directory.mkdir(parents=True, exist_ok=True)
     (mkdocs_directory / "generated-nav.yml").write_text(
@@ -1006,11 +1055,27 @@ def _active_markdown_files(root: Path) -> set[Path]:
     return files
 
 
+def _active_zh_cn_markdown_files(root: Path) -> set[Path]:
+    directory = root / ZH_CN_REFERENCE_ROOT
+    if not directory.exists():
+        return set()
+    return {
+        path.relative_to(root)
+        for path in directory.rglob("*.md")
+    }
+
+
 def check_tree(root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     records = load_doc_index(root)
     expected_pages = {record.markdown_path: record for record in records}
+    expected_zh_cn_pages = {
+        record.zh_cn_markdown_path: record
+        for record in records
+        if record.requires_bilingual_reader_guide
+    }
     actual_pages = _active_markdown_files(root)
+    actual_zh_cn_pages = _active_zh_cn_markdown_files(root)
 
     for record in records:
         if record.instruction is not None:
@@ -1047,8 +1112,35 @@ def check_tree(root: Path = ROOT) -> list[str]:
                 if current != expected:
                     errors.append(f"stale generated Markdown page for {identity}")
 
+        if record.requires_bilingual_reader_guide:
+            localized_path = root / record.zh_cn_markdown_path
+            if not localized_path.exists():
+                errors.append(
+                    f"missing zh-CN Markdown page for {identity}: "
+                    f"{record.zh_cn_markdown_path.as_posix()}"
+                )
+            else:
+                localized = localized_path.read_text(encoding="utf-8")
+                try:
+                    localized_expected = render_unit_page(
+                        record,
+                        (root / record.source_path).read_text(encoding="utf-8"),
+                        _extract_supplementary(localized),
+                    )
+                except ValueError as error:
+                    errors.append(
+                        f"invalid zh-CN Markdown regions for {identity}: {error}"
+                    )
+                else:
+                    if localized != localized_expected:
+                        errors.append(
+                            f"stale generated zh-CN Markdown page for {identity}"
+                        )
+
     for path in sorted(actual_pages - set(expected_pages)):
         errors.append(f"missing ASL source for {path.as_posix()}")
+    for path in sorted(actual_zh_cn_pages - set(expected_zh_cn_pages)):
+        errors.append(f"missing active unit for localized page {path.as_posix()}")
     return errors
 
 
@@ -1059,6 +1151,9 @@ def check_version_neutrality(root: Path = ROOT) -> list[str]:
         surface_root = root / "docs" / surface
         if surface_root.exists():
             active_files.extend(surface_root.rglob("*.md"))
+    localized_root = root / ZH_CN_REFERENCE_ROOT
+    if localized_root.exists():
+        active_files.extend(localized_root.rglob("*.md"))
     for path in sorted(active_files):
         for line_number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
             match = VERSION_PATTERN.search(line)

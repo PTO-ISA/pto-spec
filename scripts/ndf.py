@@ -42,6 +42,13 @@ STATUSES = {"open", "accepted"}
 ACTIVE_MARKDOWN: frozenset[Path] = frozenset()
 BACKUP_SUFFIXES = (".bak", ".old", ".orig", ".save", ".tmp", "~")
 STATUS_LEGACY_REFERENCE = "docs/status/legacy/"
+IGNORED_REPOSITORY_SUBTREES = (
+    Path("docs/site/node_modules"),
+    Path("docs/site/.docusaurus"),
+    Path("docs/site/build"),
+    Path("docs/site/test-results"),
+    Path("docs/site/playwright-report"),
+)
 
 
 @dataclass(frozen=True)
@@ -393,7 +400,18 @@ def state_index(root: Path) -> dict[str, PtoState]:
 
 
 def _repository_files(root: Path) -> list[Path]:
-    return sorted(path for path in root.rglob("*") if path.is_file() and ".git" not in path.parts)
+    files: list[Path] = []
+    for path in root.rglob("*"):
+        if not path.is_file() or ".git" in path.parts:
+            continue
+        relative = path.relative_to(root)
+        if any(
+            relative == subtree or subtree in relative.parents
+            for subtree in IGNORED_REPOSITORY_SUBTREES
+        ):
+            continue
+        files.append(path)
+    return sorted(files)
 
 
 def _instruction_identities(root: Path) -> set[str]:

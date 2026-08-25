@@ -11,6 +11,52 @@ LR.D loads one doubleword, establishes a 64-byte-line reservation, and publishes
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-lr-d-purpose role=purpose -->
+## What LR.D does
+
+`LR.D` loads one doubleword, publishes its zero-extended value, and replaces the local reservation with the containing 64-byte line.
+
+<!-- PTO-READER-BLOCK: scalar-lr-d-mechanism role=mechanism -->
+## Atomic mechanism
+
+The ASL DOC contract selects `ScalarHandler_LoadReserved` with an access width of `8` bytes.
+
+`SrcZero` is an ignored five-bit alias field: all 32 encodings select the same operation and consume no source through that field.
+
+<!-- PTO-READER-BLOCK: scalar-lr-d-inputs-outputs role=inputs-outputs -->
+## Inputs and result
+
+`SrcL` carries the Reg5 load address source; `SrcZero` carries the ignored 5-bit alias field; `RegDst` carries the Reg5 loaded-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+
+`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+
+<!-- PTO-READER-BLOCK: scalar-lr-d-effects role=effects -->
+## Effects and ordering
+
+A successful load emits one ordered load event, publishes the old value, and establishes the reservation only after access preflight completes.
+
+After the load, the containing 64-byte line becomes the local reservation and `TPC` advances by `4` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-lr-d-constraints role=constraints -->
+## Legality and precise faults
+
+The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+
+A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+
+<!-- PTO-READER-BLOCK: scalar-lr-d-example role=example -->
+## Non-normative example
+
+This example only shows one accepted spelling; the generated contract below remains authoritative.
+
+For a first reading, use `lr.d [SrcL], ->Rd` and then vary only the ordering or route modifiers described above.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -167,7 +213,3 @@ end;
 - lr.d [a0], ->a1
 - lr.d.aqrl [t#1], ->u
 - lr.d.f [sp], ->t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

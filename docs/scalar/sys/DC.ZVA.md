@@ -11,6 +11,52 @@ DC.ZVA completes the data-cache zero-by-address scope token maintenance operatio
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-dc-zva-purpose role=purpose -->
+## What DC.ZVA does
+
+`DC.ZVA` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+
+<!-- PTO-READER-BLOCK: scalar-dc-zva-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-dc-zva-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-dc-zva-effects role=effects -->
+## Architectural effects
+
+On success, the maintenance record receives `Maintenance_DC_ZVA` and the exact captured operand token.
+
+Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+
+<!-- PTO-READER-BLOCK: scalar-dc-zva-constraints role=constraints -->
+## Placement and rejection
+
+Cache maintenance is a synchronous local hint at every ACR and does not define additional implementation cache contents.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-dc-zva-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `dc.zva SrcL` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -135,7 +181,3 @@ end;
 ## Examples
 
 - dc.zva SrcL
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

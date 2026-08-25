@@ -7,6 +7,58 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-FEATURES-MX-FORMATS}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-mx-formats-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit implements the named hardware numeric profile's subnormal policy, encoding validation, value classification, canonical special values, and special comparison/min-max cases.
+
+It centralizes profile behavior used by multiple scalar and tile numeric operations while leaving ordinary arithmetic to the active operation profile.
+
+<!-- PTO-READER-BLOCK: arch-mx-formats-concepts-state role=concepts-state -->
+## Concepts and visible state
+
+- `HardwareNumericTypeHasSubnormals` selects the declared floating formats with subnormal encodings; the three rule helpers map those types to preserve, gradual-underflow, and after-rounding policies.
+- `TileNumericEncodingValid` checks internal restrictions for `TF32`, `HF32`, `E3M2`, and `E2M3`; other declared types return valid at this boundary.
+- `TileNumericValueClass` dispatches floating, scale, signed-integer, and unsigned-integer carriers to exact classifiers.
+
+<!-- PTO-READER-BLOCK: arch-mx-formats-rules-interactions role=rules-interactions -->
+## Rules and interactions
+
+The named profile requires `flush_to_zero = FALSE`, `denormals_are_zero = FALSE`, and `operation_override = FALSE`.
+
+`HardwareNumericSubnormalBoundaries` returns exact raw minimum subnormal, maximum subnormal, and minimum normal encodings only for supported formats.
+
+`HardwareNumericCanonicalNaNResult` and `HardwareNumericSignedZeroEncodings` return availability. `HardwareNumericComparisonSpecial` and `HardwareNumericMinMaxSpecial` return handled, distinguishing fixed special cases from ordinary evaluation.
+
+<!-- PTO-READER-BLOCK: arch-mx-formats-boundaries role=boundaries -->
+## Architectural boundaries
+
+The boolean configuration inputs describe a candidate conformance configuration; they are not architecture mode bits and expose no FTZ/DAZ state.
+
+Bits above a type's architectural element width are ignored because `Word` is a verification carrier. Only constraints inside the element are checked here.
+
+Availability-returning helpers such as `HardwareNumericSubnormalBoundaries`, `TileNumericCanonicalNaN`, and `HardwareNumericSignedZeroEncodings` use false to mean that no value is available for the requested type. `HardwareNumericComparisonSpecial` and `HardwareNumericMinMaxSpecial` instead return handled; false leaves the case to ordinary evaluation.
+
+<!-- PTO-READER-BLOCK: arch-mx-formats-example-usage role=example-usage -->
+## Non-normative reading example
+
+For `TileDataType_TF32`, `TileNumericEncodingValid` rejects a carrier with nonzero low `13` bits before classification can treat it as a valid value.
+
+For `TileDataType_S32`, `HardwareNumericSignedZeroEncodings` returns availability false. For ordinary non-special `FP32` inputs, `HardwareNumericComparisonSpecial` returns handled false so the caller continues ordinary comparison.
+
+<!-- PTO-READER-BLOCK: arch-mx-formats-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Hardware numeric min/max](minmax-profile.md)
+- [Numeric classification](../data-types/numeric-classification.md)
+- [Numeric format dispatch](../data-types/numeric-formats.md)
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/features/mx-formats.asl -->
@@ -380,7 +432,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,57 @@ HL.ADDIW applies word addition to SrcL[31:0] and the low word of a zero-extended
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-addiw-purpose role=purpose -->
+## What HL.ADDIW does
+
+`HL.ADDIW` is a 48-bit scalar ALU instruction. It performs addition under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-hl-addiw-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then performs addition under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+
+- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-addiw-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
+- The 5-bit `SrcL` field selects a Reg5 scalar value whose low 32 bits participate.
+- The unsigned 24-bit `uimm24` field carries the unsigned split 24-bit immediate.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-hl-addiw-effects role=effects -->
+## Effects and ordering
+
+Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-addiw-constraints role=constraints -->
+## Legality and fault boundary
+
+Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-addiw-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `HL.ADDIW` example, `SrcL=7` and `uimm24=3` produce `10`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -144,7 +195,3 @@ end;
 - hl.addiw a0, 1, ->a0
 - hl.addiw t#1, 16777215, ->u
 - hl.addiw zero, 0, ->zero
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

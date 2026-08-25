@@ -11,6 +11,64 @@ FMAX applies the architecture-owned ordered maximum, NaN, and signed-zero rules 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-fmax-purpose role=purpose -->
+## What FMAX does
+
+`FMAX` applies architecture-owned ordered maximum, NaN, and signed-zero rules to selected carriers.
+
+<!-- PTO-READER-BLOCK: scalar-fmax-mechanism role=mechanism -->
+## Numeric mechanism
+
+`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+
+One NaN selects the numeric operand; two NaNs select the width-specific canonical quiet NaN. A signaling NaN records sticky `NV`.
+
+Signed-zero selection follows the architecture-owned `FMAX` rule.
+
+<!-- PTO-READER-BLOCK: scalar-fmax-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `RegDst` selects the encoded destination or discard behavior.
+
+- `SrcL` supplies the left scalar source.
+
+- `SrcR` supplies the right scalar source.
+
+- `SrcType` selects the source-carrier width.
+
+- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
+
+- The destination selector writes a GPR, pushes T/U, or discards only the result.
+
+<!-- PTO-READER-BLOCK: scalar-fmax-effects role=effects -->
+## Effects and ordering
+
+All explicit sources are snapshotted before numeric-status or destination effects.
+
+Any architecture-produced `NV` is ORed into sticky numeric state before destination publication.
+
+The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-fmax-constraints role=constraints -->
+## Type and profile boundaries
+
+`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+
+Numeric flag updates do not themselves raise a synchronous PTO trap.
+
+<!-- PTO-READER-BLOCK: scalar-fmax-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+
+`fmax.fd a0, a1, ->a2` applies the architecture-owned special-value rule and publishes canonical output before advancing `TPC`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -159,7 +217,3 @@ end;
 
 - fmax.fd a0, a1, ->a2
 - fmax.fs t#1, u#1, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

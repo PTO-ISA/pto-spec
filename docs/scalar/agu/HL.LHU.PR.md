@@ -11,6 +11,62 @@ HL.LHU.PR snapshots its scalar sources, forms its encoded address, and loads one
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-purpose role=purpose -->
+## What HL.LHU.PR does
+
+`HL.LHU.PR` is a standalone `48`-bit scalar AGU instruction that loads one 2-byte little-endian value and zero-extends the transferred bits when the result is narrower than `PTO_XLEN` using `Register` addressing.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-mechanism role=mechanism -->
+## Address and transfer mechanism
+
+The register-offset path applies the encoded `SrcRType` transformation to `SrcR`, shifts that result left by `shamt`, and adds it to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+
+After complete preflight, one aligned little-endian `2`-byte load is performed. Its result is zero-extended before destination publication.
+
+Pre-index mode accesses the updated address and publishes that same updated base only after the memory operation succeeds.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-inputs role=inputs-outputs -->
+## Encoded inputs and outputs
+
+- `RegDst0` is a `5`-bit field selecting the first loaded-value result.
+- `RegDst1` is a `5`-bit field selecting the updated-base result.
+- `SrcL` is a `5`-bit field selecting the address base.
+- `SrcR` is a `5`-bit field selecting the register offset.
+- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
+- `shamt` is a `5`-bit field selecting the post-transformation left shift.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-effects role=effects -->
+## Effects and completion order
+
+All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+
+Successful execution records one relaxed load event; memory and reservation state are preserved.
+
+After all result or writeback publication, `HL.LHU.PR` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-constraints role=constraints -->
+## Legality, faults, and restart
+
+Each accessed address is aligned to the `2`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+
+A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lhu-pr-example role=example -->
+## Non-normative reading walkthrough
+
+This walkthrough explains how to use the page and does not add instruction behavior.
+
+- Start with the canonical assembly `hl.lhu.pr [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->Dst0, Dst1` and identify the encoded address fields.
+- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -169,7 +225,3 @@ end;
 ## Examples
 
 - hl.lhu.pr [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->Dst0, Dst1
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

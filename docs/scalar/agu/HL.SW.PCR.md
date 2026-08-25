@@ -11,6 +11,56 @@ HL.SW.PCR snapshots its scalar sources, forms its encoded address, and stores on
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-sw-pcr-purpose role=purpose -->
+## What HL.SW.PCR does
+
+`HL.SW.PCR` is a standalone `48`-bit AGU instruction that forms a PC-relative address and stores one aligned little-endian `4`-byte value.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-pcr-mechanism role=mechanism -->
+## Address and memory mechanism
+
+`HL.SW.PCR` clears `TPC[1:0]`, sign-extends `simm` from `-268435456..268435455`, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the aligned `TPC` base.
+
+After complete preflight, the instruction performs one little-endian `4`-byte store from its snapshotted store-data source.
+
+This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-pcr-inputs role=inputs-outputs -->
+## Inputs and outputs
+
+- `TPC` supplies the aligned implicit base; `simm` supplies the signed displacement. Every encoded Reg5 source among `SrcL` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
+- `SrcL` supplies store data.
+- `simm` assigns every signed value from `-268435456` through `268435455`; encoded zero is a zero displacement, not omission.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-pcr-effects role=effects -->
+## Effects and ordering
+
+All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+
+A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `6` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-pcr-constraints role=constraints -->
+## Alignment, faults, and restart
+
+Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+
+A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-pcr-example role=example -->
+## Non-normative address example
+
+This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+
+With aligned `TPC=0x100` and the encoded displacement set to `2`, the byte displacement is `8` and the effective address is `0x108`. The memory access uses `0x108`. If aligned and permitted, the instruction stores `4` bytes at that address.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -154,7 +204,3 @@ end;
 ## Examples
 
 - hl.sw.pcr SrcL, [<symbol>]
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

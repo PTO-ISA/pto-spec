@@ -1,0 +1,1289 @@
+#!/usr/bin/env python3
+"""Fail-closed validation for mnemonic reader-guide migration evidence."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import math
+import pathlib
+import re
+import stat
+import sys
+import unicodedata
+import urllib.parse
+import zipfile
+from collections import Counter
+
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+EXPECTED_ARCHIVE_SHA256 = (
+    "46fc43641fe1394f27f4961734940355e83909df08e4e4a489f02ff1e4a28aa5"
+)
+TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
+EVIDENCE_ROOT = ROOT / "spec/evidence/mnemonic-descriptions"
+SURFACES = {"arch", "scalar", "block", "tile"}
+PAGE_KINDS = {
+    "scalar", "header", "tile", "coverage", "readme", "wrapper", "index", "auxiliary"
+}
+PAGE_DISPOSITIONS = {
+    "pending", "mapped-current", "non-mnemonic-input", "omit-old",
+    "needs-architecture-decision",
+}
+COPYRIGHT_DISPOSITIONS = {
+    "licensed-copy", "current-owner-rewrite", "omit-old", "needs-architecture-decision"
+}
+MNEMONIC_REQUIRED_ROLES = {
+    "purpose", "mechanism", "inputs-outputs", "effects", "constraints", "example"
+}
+ARCHITECTURE_REQUIRED_ROLES = {
+    "purpose-scope", "concepts-state", "rules-interactions", "boundaries",
+    "example-usage", "related-owners-navigation",
+}
+CLAIM_DISPOSITIONS = {
+    "current-owner-confirmed", "current-owner-rewrite", "omit-old",
+    "needs-architecture-decision",
+}
+PORTABILITY_CLASSES = {"portable", "named-profile", "implementation-defined", "not-applicable"}
+BLOCK_MARKER = re.compile(
+    r"^<!-- PTO-READER-BLOCK: ([a-z0-9][a-z0-9-]*) role=([a-z0-9][a-z0-9-]*) -->$"
+)
+SHA256 = re.compile(r"^[0-9a-f]{64}$")
+MAX_ARCHIVE_BYTES = 16 * 1024 * 1024
+MAX_ARCHIVE_ENTRIES = 4096
+MAX_ARCHIVE_UNCOMPRESSED_BYTES = 128 * 1024 * 1024
+MAX_ARCHIVE_ENTRY_BYTES = 16 * 1024 * 1024
+MAX_ARCHIVE_COMPRESSION_RATIO = 200
+ALLOWED_ZIP_METHODS = {zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED}
+
+
+class CheckError(ValueError):
+    pass
+
+
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        raise CheckError(message)
+
+
+def sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def sha256_file(path: pathlib.Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def validate_zip_resources(archive: pathlib.Path, entries: list[zipfile.ZipInfo]) -> None:
+    require(archive.stat().st_size <= MAX_ARCHIVE_BYTES, "archive compressed size exceeds limit")
+    require(len(entries) <= MAX_ARCHIVE_ENTRIES, "archive entry count exceeds limit")
+    total = 0
+    for entry in entries:
+        require(not (entry.flag_bits & 0x1), "encrypted archive entries are forbidden")
+        require(entry.compress_type in ALLOWED_ZIP_METHODS, "unsupported archive compression method")
+        mode = (entry.external_attr >> 16) & 0o170000
+        require(mode != stat.S_IFLNK, "archive symlink entries are forbidden")
+        require(entry.file_size <= MAX_ARCHIVE_ENTRY_BYTES, "archive entry size exceeds limit")
+        total += entry.file_size
+        require(total <= MAX_ARCHIVE_UNCOMPRESSED_BYTES,
+                "archive total uncompressed size exceeds limit")
+        if entry.file_size:
+            require(entry.compress_size > 0, "non-empty archive entry has zero compressed size")
+            require(entry.file_size / entry.compress_size <= MAX_ARCHIVE_COMPRESSION_RATIO,
+                    "archive compression ratio exceeds limit")
+
+
+def canonical_json_bytes(value: object) -> bytes:
+    return (
+        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode("utf-8")
+
+
+def normalize_archive_path(name: str) -> str:
+    normalized = unicodedata.normalize("NFC", name.replace("\\", "/"))
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+    parts = pathlib.PurePosixPath(normalized).parts
+    require(bool(parts) and not normalized.startswith("/") and ".." not in parts,
+            "archive path is not normalized relative data")
+    return "/".join(parts)
+
+
+def is_page_path(path: str) -> bool:
+    return pathlib.PurePosixPath(path).suffix.lower() in {".html", ".md"}
+
+
+def page_kind(path: str) -> str:
+    lower = path.casefold()
+    name = pathlib.PurePosixPath(lower).name
+    if name.startswith("readme"):
+        return "readme"
+    if "coverage" in name:
+        return "coverage"
+    if name in {"index.html", "index.md"} or len(pathlib.PurePosixPath(path).parts) == 1:
+        return "index"
+    if "scalar" in name:
+        return "scalar"
+    if "header" in name:
+        return "header"
+    if name.startswith("doc-t"):
+        return "tile"
+    if name.startswith("doc-"):
+        return "wrapper"
+    return "auxiliary"
+
+
+def derive_archive(archive: pathlib.Path) -> tuple[str, list[dict], list[dict]]:
+    pages: list[dict] = []
+    assets: list[dict] = []
+    seen: set[str] = set()
+    with zipfile.ZipFile(archive) as source:
+        entries = source.infolist()
+        validate_zip_resources(archive, entries)
+        digest = sha256_file(archive)
+        require(digest == EXPECTED_ARCHIVE_SHA256,
+                f"comparison archive digest mismatch: {digest}")
+        for entry in entries:
+            if entry.is_dir():
+                continue
+            path = normalize_archive_path(entry.filename)
+            require(path not in seen, "duplicate normalized archive path")
+            seen.add(path)
+            path_digest = sha256_bytes(path.encode("utf-8"))
+            content_hash = hashlib.sha256()
+            with source.open(entry) as content:
+                for chunk in iter(lambda: content.read(1024 * 1024), b""):
+                    content_hash.update(chunk)
+            content_digest = content_hash.hexdigest()
+            if is_page_path(path):
+                pages.append({
+                    "page_id": f"SRC-PAGE-{path_digest[:24].upper()}",
+                    "path_sha256": path_digest,
+                    "content_sha256": content_digest,
+                    "kind": page_kind(path),
+                })
+            else:
+                suffix = pathlib.PurePosixPath(path).suffix.lower()
+                assets.append({
+                    "asset_id": f"SRC-ASSET-{path_digest[:24].upper()}",
+                    "content_sha256": content_digest,
+                    "media_kind": suffix[1:] if suffix else "extensionless",
+                })
+    return digest, sorted(pages, key=lambda x: x["page_id"]), sorted(assets, key=lambda x: x["asset_id"])
+
+
+def read_json(path: pathlib.Path) -> dict:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise CheckError(f"cannot read canonical JSON {path}: {error}") from error
+    require(path.read_bytes() == canonical_json_bytes(data), f"non-canonical JSON serialization: {path}")
+    require(isinstance(data, dict), f"JSON root must be an object: {path}")
+    return data
+
+
+def exact_keys(value: dict, required: set[str], optional: set[str], where: str) -> None:
+    missing = required - value.keys()
+    unknown = value.keys() - required - optional
+    require(not missing, f"{where}: missing fields {sorted(missing)}")
+    require(not unknown, f"{where}: unknown fields {sorted(unknown)}")
+
+
+def required_roles(page_contract: str) -> set[str]:
+    if page_contract == "mnemonic-reader-v1":
+        return MNEMONIC_REQUIRED_ROLES
+    if page_contract == "architecture-reader-v1":
+        return ARCHITECTURE_REQUIRED_ROLES
+    raise CheckError(f"unknown reader page contract: {page_contract}")
+
+
+def derived_risk_tier(expected: dict, shard: dict, guide_body: str = "") -> str:
+    if shard["decision_gaps"] or any(
+        claim.get("portability_class") == "named-profile" for claim in shard["atomic_claims"]
+    ):
+        return "high-risk"
+    # Scalar ALU guides routinely explain that they have no memory, ordering,
+    # or numeric-status effect. Those negative boundaries must not promote an
+    # otherwise ordinary integer operation to high-risk merely because the
+    # words appear in reader-facing prose.
+    if expected.get("surface") == "scalar" and expected.get("classification") == ["alu"]:
+        return "ordinary"
+    searchable = " ".join(
+        [expected.get("surface", ""), expected.get("source", ""),
+         expected.get("documentation", ""), expected.get("mnemonic") or ""]
+        + list(expected.get("classification", [])) + [guide_body]
+    ).casefold()
+    high_markers = {
+        "memory", "matrix", "profile", "ordering", "atomic", "floating", "numeric", "fsu"
+    }
+    if expected.get("surface") == "block" or any(marker in searchable for marker in high_markers):
+        return "high-risk"
+    return "ordinary"
+
+
+def derived_protected_literals(english: dict, guide_body: str) -> list[str]:
+    _, nodes = parse_reader_blocks(guide_body)
+    literals: set[str | tuple[str, str]] = set()
+    identifier = r"(?<![A-Za-z0-9_.-])[A-Z][A-Z0-9]*(?:[._-][A-Z0-9]+)*(?![A-Za-z0-9_.-])"
+    for node in nodes:
+        text = node["text"]
+        if node["kind"] == "code-block":
+            if text:
+                literals.add(text)
+        literals.update(re.findall(identifier, text))
+        literals.update(re.findall(r"(?<!`)`([^`\n]+)`(?!`)", text))
+        literals.update(re.findall(
+            r"(?<!\w)(?:0x[0-9A-Fa-f]+|\d+(?:\.\d+)?)(?!\w)", text
+        ))
+        literals.update(re.findall(
+            r"\$\$([^$]+)\$\$|(?<!\$)\$([^$\n]+)\$(?!\$)", text
+        ))
+    flattened = set()
+    for literal in literals:
+        if isinstance(literal, tuple):
+            flattened.update(value for value in literal if value)
+        elif literal:
+            flattened.add(literal)
+    if english.get("mnemonic"):
+        flattened.add(english["mnemonic"])
+    return sorted(flattened)
+
+
+def embedded_ndf_clause_ids(asl_text: str) -> set[str]:
+    begin_pattern = re.compile(r"^\s*//\s*NDF-BEGIN:\s*([A-Z0-9][A-Z0-9_.-]*)\s*$")
+    end_pattern = re.compile(r"^\s*//\s*NDF-END:\s*([A-Z0-9][A-Z0-9_.-]*)\s*$")
+    clauses: set[str] = set()
+    open_clause: str | None = None
+    for line in asl_text.replace("\r\n", "\n").replace("\r", "\n").split("\n"):
+        begin = begin_pattern.fullmatch(line)
+        end = end_pattern.fullmatch(line)
+        if begin:
+            clause = begin.group(1)
+            require(open_clause is None, f"nested NDF clause {clause}")
+            require(clause not in clauses, f"duplicate NDF clause {clause}")
+            open_clause = clause
+        elif end:
+            clause = end.group(1)
+            require(open_clause == clause, f"mismatched NDF-END {clause}")
+            clauses.add(clause)
+            open_clause = None
+    require(open_clause is None, f"unterminated NDF clause {open_clause}")
+    return clauses
+
+
+def validate_source_inventory(inventory: dict, derived_pages: list[dict] | None,
+                              derived_assets: list[dict] | None,
+                              require_complete: bool) -> set[str]:
+    exact_keys(inventory,
+        {"schema_version", "source_id", "archive_sha256", "parser", "authorization",
+         "default_copyright_disposition", "pages", "asset_manifest"}, set(), "source inventory")
+    require(inventory["schema_version"] == 1, "unsupported source inventory schema")
+    require(inventory["source_id"] == "anonymous-source-001", "unexpected anonymous source ID")
+    require(inventory["archive_sha256"] == EXPECTED_ARCHIVE_SHA256, "inventory archive digest mismatch")
+    require(inventory["default_copyright_disposition"] == "current-owner-rewrite",
+            "current-owner-rewrite must be the closed default")
+    parser = inventory["parser"]
+    exact_keys(parser, {"name", "version", "path_normalization", "page_predicate"}, set(),
+               "source parser")
+    require(parser == {
+        "name": "pto-anonymous-zip-inventory",
+        "version": 1,
+        "path_normalization": "posix-nfc-relative-v1",
+        "page_predicate": "normalized terminal suffix is .html or .md (case-insensitive)",
+    }, "source parser identity/predicate is stale")
+    auth = inventory["authorization"]
+    exact_keys(auth, {"state", "licensed_copy_allowed", "license_compatible", "notice_evidence"}, set(),
+               "source authorization")
+    require(
+        not auth["licensed_copy_allowed"]
+        or (
+            auth["state"] == "durable-authorized"
+            and auth["license_compatible"]
+            and auth["notice_evidence"]
+        ),
+        "licensed-copy requires durable authorization, compatible license, and NOTICE evidence",
+    )
+    pages = inventory["pages"]
+    require(isinstance(pages, list), "source pages must be an array")
+    page_ids = [page.get("page_id") for page in pages if isinstance(page, dict)]
+    require(len(page_ids) == len(set(page_ids)), "duplicate anonymous page ID")
+    expected_by_id = {page["page_id"]: page for page in derived_pages} if derived_pages is not None else None
+    if expected_by_id is not None:
+        require(set(page_ids) == set(expected_by_id), "archive page inventory is not a bijection")
+    else:
+        require(len(pages) == 697, "frozen anonymous page inventory count changed")
+    for page in pages:
+        exact_keys(page,
+            {"page_id", "path_sha256", "content_sha256", "kind", "disposition",
+             "mapped_unit_ids", "mapping_basis"}, set(), f"source page {page.get('page_id')}")
+        require(SHA256.fullmatch(page["path_sha256"] or "") is not None and
+                SHA256.fullmatch(page["content_sha256"] or "") is not None,
+                f"source page {page['page_id']}: invalid anonymous digest")
+        require(page["page_id"] == f"SRC-PAGE-{page['path_sha256'][:24].upper()}",
+                f"source page {page['page_id']}: anonymous ID/hash mismatch")
+        expected = expected_by_id[page["page_id"]] if expected_by_id is not None else None
+        if expected is not None:
+            for field in ("path_sha256", "content_sha256", "kind"):
+                require(page[field] == expected[field], f"source page {page['page_id']}: stale {field}")
+        require(page["kind"] in PAGE_KINDS, f"source page {page['page_id']}: invalid kind")
+        require(page["disposition"] in PAGE_DISPOSITIONS,
+                f"source page {page['page_id']}: invalid disposition")
+        require(isinstance(page["mapped_unit_ids"], list), "mapped_unit_ids must be an array")
+        require(len(page["mapped_unit_ids"]) == len(set(page["mapped_unit_ids"])),
+                f"source page {page['page_id']}: duplicate unit mapping")
+        require(page["mapping_basis"] != "filename-similarity",
+                f"source page {page['page_id']}: implicit filename mapping is forbidden")
+        if page["disposition"] == "mapped-current":
+            require(page["mapped_unit_ids"] and page["mapping_basis"] == "reviewed-alias",
+                    f"source page {page['page_id']}: mapped page lacks reviewed alias")
+        else:
+            require(not page["mapped_unit_ids"],
+                    f"source page {page['page_id']}: non-mapped disposition has unit routes")
+        if require_complete:
+            require(page["disposition"] != "pending",
+                    f"source page {page['page_id']}: disposition is pending")
+    asset_manifest = inventory["asset_manifest"]
+    exact_keys(asset_manifest, {"count", "entries"}, set(), "asset manifest")
+    if derived_assets is None:
+        require(asset_manifest["count"] == len(asset_manifest["entries"]) == 3,
+                "frozen anonymous asset inventory count changed")
+        require(len({item.get("asset_id") for item in asset_manifest["entries"]}) == 3,
+                "duplicate anonymous asset ID")
+        for item in asset_manifest["entries"]:
+            exact_keys(item, {"asset_id", "content_sha256", "media_kind"}, set(),
+                       "anonymous asset")
+            require(SHA256.fullmatch(item["content_sha256"] or "") is not None,
+                    "invalid anonymous asset digest")
+    else:
+        require(asset_manifest["count"] == len(derived_assets), "archive asset count mismatch")
+        require(asset_manifest["entries"] == derived_assets, "archive asset digest manifest mismatch")
+    return set(page_ids)
+
+
+def normalize_text(text: str) -> str:
+    return " ".join(unicodedata.normalize("NFC", text).split())
+
+
+def canonical_fragment_text(kind: str, text: str) -> str:
+    if kind == "code-block":
+        return unicodedata.normalize("NFC", text.replace("\r\n", "\n").replace("\r", "\n"))
+    elif kind == "table-row":
+        return "|".join(normalize_text(cell) for cell in text.strip().strip("|").split("|"))
+    return normalize_text(text)
+
+
+def canonical_fragment(kind: str, text: str) -> str:
+    body = canonical_fragment_text(kind, text)
+    return json.dumps({"kind": kind, "text": body}, ensure_ascii=False,
+                      sort_keys=True, separators=(",", ":"))
+
+
+def validate_renderable_markdown(
+        text: str, repo_root: pathlib.Path | None = None,
+        document_path: pathlib.PurePosixPath | None = None) -> None:
+    rendered_syntax = re.sub(r"(?<!`)`([^`\n]*)`(?!`)", "", text)
+    require(re.search(r"</?[A-Za-z][^>]*>", rendered_syntax) is None,
+            "raw HTML is forbidden in reader guide")
+    require(not re.search(r"!\[[^]]*]\((?:https?:)?//", rendered_syntax),
+            "external images are forbidden")
+    require(not re.search(r"]\((?:https?:)?//", rendered_syntax),
+            "unaudited external URLs are forbidden")
+    require("<!--" not in rendered_syntax and "-->" not in rendered_syntax,
+            "non-marker HTML comments are forbidden in reader guide")
+    require(re.search(r"^\s*(?:import|export)\b", rendered_syntax, flags=re.MULTILINE) is None,
+            "MDX import/export is forbidden in reader guide")
+    require("{" not in rendered_syntax and "}" not in rendered_syntax,
+            "MDX expressions are forbidden in reader guide")
+    require(re.search(r"\[[^]]+]\[[^]]*]", rendered_syntax) is None and
+            re.search(r"^\s*\[[^]]+]:", rendered_syntax, flags=re.MULTILINE) is None,
+            "reference-style links are forbidden; use an audited inline local link")
+    for target in re.findall(r"!?\[[^]]*]\(([^)]+)\)", rendered_syntax):
+        decoded = urllib.parse.unquote(target.strip().split(maxsplit=1)[0])
+        parsed = urllib.parse.urlsplit(decoded)
+        require(not parsed.scheme and not parsed.netloc and "\\" not in decoded,
+                "reader-guide links must be audited local or repository-relative paths")
+        if repo_root is not None and document_path is not None and not decoded.startswith("#"):
+            if decoded.startswith("/"):
+                require(not decoded.startswith("//"), "protocol-relative reader-guide link")
+                continue
+            path_only = parsed.path
+            if not path_only:
+                continue
+            resolved = (repo_root / document_path.parent / path_only).resolve()
+            try:
+                resolved.relative_to(repo_root.resolve())
+            except ValueError as error:
+                raise CheckError("reader-guide link escapes the repository") from error
+            require(resolved.exists(), "reader-guide link target does not exist")
+
+
+def supplementary_body(markdown: str) -> str:
+    begin = "<!-- SUPPLEMENTARY-BEGIN -->"
+    end = "<!-- SUPPLEMENTARY-END -->"
+    require(markdown.count(begin) == 1 and markdown.count(end) == 1,
+            "active documentation must contain exactly one supplementary region")
+    start = markdown.index(begin) + len(begin)
+    finish = markdown.index(end)
+    require(start <= finish, "supplementary markers are reversed")
+    return markdown[start:finish].strip("\n")
+
+
+def outside_supplementary_bytes(markdown: bytes) -> bytes:
+    begin = b"<!-- SUPPLEMENTARY-BEGIN -->"
+    end = b"<!-- SUPPLEMENTARY-END -->"
+    require(markdown.count(begin) == 1 and markdown.count(end) == 1,
+            "localized and English pages require exact supplementary markers")
+    start = markdown.index(begin) + len(begin)
+    finish = markdown.index(end)
+    require(start <= finish, "supplementary markers are reversed")
+    return markdown[:start] + markdown[finish:]
+
+
+def localized_documentation_path(english_documentation_path: str) -> pathlib.PurePosixPath:
+    path = pathlib.PurePosixPath(english_documentation_path)
+    require(path.parts and path.parts[0] == "docs",
+            "English documentation path is outside the generated docs contract")
+    return pathlib.PurePosixPath(
+        "docs/site/i18n/zh-CN/docusaurus-plugin-content-docs-reference/current",
+        *path.parts[1:],
+    )
+
+
+def parse_reader_blocks(
+        body: str, repo_root: pathlib.Path | None = None,
+        document_path: pathlib.PurePosixPath | None = None) -> tuple[list[dict], list[dict]]:
+    """Return block declarations and complete claim-capable Markdown nodes."""
+    lines = body.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    blocks: list[dict] = []
+    nodes: list[dict] = []
+    current: dict | None = None
+    paragraph: list[str] = []
+    fence: list[str] | None = None
+    fence_char = ""
+    fence_length = 0
+
+    def add_node(kind: str, text: str) -> None:
+        require(current is not None, "reader content appears before a stable block marker")
+        if kind != "code-block":
+            validate_renderable_markdown(text, repo_root, document_path)
+        path = f"/blocks/{len(blocks)-1}/nodes/{sum(1 for n in nodes if n['block_id'] == current['block_id'])}"
+        canonical = canonical_fragment(kind, text)
+        nodes.append({"block_id": current["block_id"], "ast_path": path, "kind": kind,
+                      "text": canonical_fragment_text(kind, text),
+                      "fragment_sha256": sha256_bytes(canonical.encode("utf-8"))})
+
+    def flush_paragraph() -> None:
+        nonlocal paragraph
+        if paragraph:
+            add_node("paragraph", "\n".join(paragraph))
+            paragraph = []
+
+    for line in lines + [""]:
+        marker = BLOCK_MARKER.fullmatch(line.strip())
+        if fence is not None:
+            if re.fullmatch(rf"\s*{re.escape(fence_char)}{{{fence_length},}}\s*", line):
+                add_node("code-block", "\n".join(fence))
+                fence = None
+                fence_char = ""
+                fence_length = 0
+            else:
+                fence.append(line)
+            continue
+        if marker:
+            flush_paragraph()
+            block_id, role = marker.groups()
+            require(all(block["block_id"] != block_id for block in blocks),
+                    f"duplicate reader block ID {block_id}")
+            current = {"block_id": block_id, "role": role}
+            blocks.append(current)
+        elif re.fullmatch(r"\s*(`{3,}|~{3,})([A-Za-z0-9_+.-]*)\s*", line):
+            flush_paragraph()
+            require(current is not None, "code block appears before stable block marker")
+            opener = re.fullmatch(r"\s*(`{3,}|~{3,})([A-Za-z0-9_+.-]*)\s*", line)
+            assert opener is not None
+            fence_char = opener.group(1)[0]
+            fence_length = len(opener.group(1))
+            fence = []
+        elif re.match(r"^\s*([-*+] |\d+[.)] )", line):
+            flush_paragraph()
+            add_node("list-item", re.sub(r"^\s*(?:[-*+] |\d+[.)] )", "", line))
+        elif line.lstrip().startswith("|") and line.rstrip().endswith("|"):
+            flush_paragraph()
+            if not re.fullmatch(r"[\s|:=-]+", line):
+                add_node("table-row", line)
+        elif not line.strip():
+            flush_paragraph()
+        elif line.lstrip().startswith("#"):
+            flush_paragraph()
+            heading = re.sub(r"^\s*#{1,6}\s+", "", line)
+            require(heading != line, "malformed reader-guide heading")
+            add_node("heading", heading)
+        elif line.lstrip().startswith("<!--"):
+            flush_paragraph()
+            raise CheckError("non-marker HTML comments are forbidden in reader guide")
+        else:
+            paragraph.append(line)
+    require(fence is None, "unterminated reader-guide code fence")
+    return blocks, nodes
+
+
+def validate_unit_shard(shard: dict, expected: dict, repo_root: pathlib.Path,
+                        source_page_ids: set[str], require_complete: bool,
+                        licensed_copy_allowed: bool = False,
+                        release_hashes: dict[str, str] | None = None) -> dict:
+    exact_keys(shard,
+        {"schema_version", "unit_id", "mnemonic", "surface", "page_contract", "status", "owner", "migration",
+         "reader_roles", "presentation_blocks", "node_dispositions", "atomic_claims", "decision_gaps"},
+        {"risk_tier"}, f"unit {expected['id']}")
+    require(shard["schema_version"] == 1, "unsupported unit shard schema")
+    require(shard["unit_id"] == expected["id"], f"unit filename/ID mismatch for {expected['id']}")
+    require(shard["mnemonic"] == expected["mnemonic"], f"stale mnemonic for {expected['id']}")
+    require(shard["surface"] == expected["surface"] in SURFACES,
+            f"invalid surface for {expected['id']}")
+    require(shard["page_contract"] ==
+            ("architecture-reader-v1" if expected["surface"] == "arch" else "mnemonic-reader-v1"),
+            f"wrong page contract for {expected['id']}")
+    require(shard["status"] in {"pending", "complete", "decision-gap"},
+            f"invalid status for {expected['id']}")
+    owner = shard["owner"]
+    exact_keys(owner, {"asl_path", "documentation_path", "ndf_clause", "contract_artifact"}, set(),
+               f"owner {expected['id']}")
+    require(owner["asl_path"] == expected["source"] and
+            owner["documentation_path"] == expected["documentation"],
+            f"stale owner paths for {expected['id']}")
+    contract = expected.get("instruction_contract") or {}
+    require(owner["ndf_clause"] == contract.get("ndf_clause") and
+            owner["contract_artifact"] == contract.get("artifact"),
+            f"stale owner contract for {expected['id']}")
+    for field in ("asl_path", "documentation_path"):
+        path = pathlib.PurePosixPath(owner[field])
+        require(not path.is_absolute() and ".." not in path.parts,
+                f"unsafe owner path for {expected['id']}")
+        require((repo_root / path).is_file(), f"missing owner file for {expected['id']}: {path}")
+        if release_hashes is not None:
+            require(release_hashes.get(str(path)) == sha256_bytes((repo_root / path).read_bytes()),
+                    f"current release owner hash is stale for {expected['id']}: {path}")
+    embedded_ndf_clauses = embedded_ndf_clause_ids(
+        (repo_root / owner["asl_path"]).read_text(encoding="utf-8")
+    )
+    migration = shard["migration"]
+    exact_keys(migration,
+        {"source_id", "source_page_ids", "mapping_status", "mapping_basis", "copyright_disposition"},
+        set(), f"migration {expected['id']}")
+    require(migration["source_id"] == "anonymous-source-001", "unknown migration source")
+    require(migration["copyright_disposition"] in COPYRIGHT_DISPOSITIONS,
+            f"invalid copyright disposition for {expected['id']}")
+    require(migration["mapping_basis"] != "filename-similarity",
+            f"implicit filename mapping for {expected['id']}")
+    require(len(migration["source_page_ids"]) == len(set(migration["source_page_ids"])),
+            f"duplicate source mapping for {expected['id']}")
+    require(set(migration["source_page_ids"]) <= source_page_ids,
+            f"unknown source page mapping for {expected['id']}")
+    if migration["source_page_ids"]:
+        require(migration["mapping_basis"] == "reviewed-alias",
+                f"unit {expected['id']} lacks explicit reviewed alias mapping")
+    require(migration["copyright_disposition"] != "licensed-copy" or licensed_copy_allowed,
+            f"unit {expected['id']}: licensed-copy is closed until durable authorization is recorded")
+
+    block_ids = [block.get("block_id") for block in shard["presentation_blocks"]]
+    claim_ids = [claim.get("claim_id") for claim in shard["atomic_claims"]]
+    node_ids = [node.get("node_id") for node in shard["node_dispositions"]]
+    require(len(block_ids) == len(set(block_ids)), f"duplicate block ID in {expected['id']}")
+    require(len(claim_ids) == len(set(claim_ids)), f"duplicate claim ID in {expected['id']}")
+    require(len(node_ids) == len(set(node_ids)), f"duplicate node ID in {expected['id']}")
+    contract_roles = required_roles(shard["page_contract"])
+    require(len(shard["reader_roles"]) == len(set(shard["reader_roles"])) and
+            set(shard["reader_roles"]) <= contract_roles,
+            f"unit {expected['id']} has roles outside its page contract")
+    require(all(block.get("role") in contract_roles for block in shard["presentation_blocks"]),
+            f"unit {expected['id']} has a block role outside its page contract")
+
+    document = (repo_root / owner["documentation_path"]).read_text(encoding="utf-8")
+    body = supplementary_body(document)
+    if shard["status"] == "pending":
+        require(not shard["presentation_blocks"] and not shard["node_dispositions"] and
+                not shard["atomic_claims"],
+                f"pending unit {expected['id']} must not publish unreviewed guide bindings")
+        parsed_blocks, parsed_nodes = [], []
+    else:
+        parsed_blocks, parsed_nodes = (
+            parse_reader_blocks(body, repo_root, pathlib.PurePosixPath(owner["documentation_path"]))
+            if body.strip() else ([], [])
+        )
+    declared_blocks = shard["presentation_blocks"]
+    require(parsed_blocks == declared_blocks,
+            f"presentation blocks do not match Markdown for {expected['id']}")
+    parsed_by_path = {(node["block_id"], node["ast_path"]): node for node in parsed_nodes}
+    classifications: dict[tuple[str, str], dict] = {}
+    semantic_bindings: dict[str, tuple[str, str, str]] = {}
+    for node in shard["node_dispositions"]:
+        exact_keys(node,
+            {"node_id", "block_id", "ast_path", "node_kind", "fragment_sha256", "node_disposition"},
+            {"claim_id", "connective_reason"}, f"node disposition {expected['id']}")
+        key = (node["block_id"], node["ast_path"])
+        require(key in parsed_by_path, f"orphan AST binding in {expected['id']}: {key}")
+        require(key not in classifications, f"overlapping AST binding in {expected['id']}: {key}")
+        classifications[key] = node
+        require(node["fragment_sha256"] == parsed_by_path[key]["fragment_sha256"],
+                f"fragment digest mismatch in {expected['id']}: {key}")
+        require(node["node_kind"] == parsed_by_path[key]["kind"],
+                f"claim-capable node kind mismatch in {expected['id']}: {key}")
+        require(node["node_disposition"] in {"semantic-claim", "connective"},
+                f"unknown node disposition in {expected['id']}")
+        if node["node_disposition"] == "semantic-claim":
+            require(set(node) == {"node_id", "block_id", "ast_path", "node_kind", "fragment_sha256",
+                                  "node_disposition", "claim_id"},
+                    f"semantic node has wrong binding fields in {expected['id']}")
+            require(node["claim_id"] in claim_ids, f"semantic node lacks claim in {expected['id']}")
+            require(node["claim_id"] not in semantic_bindings,
+                    f"claim covers multiple nodes in {expected['id']}: {node['claim_id']}")
+            semantic_bindings[node["claim_id"]] = (
+                node["block_id"], node["ast_path"], node["fragment_sha256"]
+            )
+        else:
+            require(set(node) == {"node_id", "block_id", "ast_path", "node_kind", "fragment_sha256",
+                                  "node_disposition", "connective_reason"},
+                    f"connective node has wrong binding fields in {expected['id']}")
+            require(bool(node["connective_reason"].strip()),
+                    f"connective node lacks reason in {expected['id']}")
+    require(set(classifications) == set(parsed_by_path),
+            f"unclassified claim-capable nodes in {expected['id']}")
+
+    claims_by_id = {claim["claim_id"]: claim for claim in shard["atomic_claims"]}
+    require(set(claims_by_id) == set(semantic_bindings),
+            f"orphan or multiply bound claims in {expected['id']}")
+    for claim in shard["atomic_claims"]:
+        exact_keys(claim,
+            {"claim_id", "block_id", "ast_path", "fragment_sha256", "disposition",
+             "owner_reference", "portability_class", "source_section_ids"}, set(),
+            f"claim {claim.get('claim_id')}")
+        key = (claim["block_id"], claim["ast_path"])
+        require(key in parsed_by_path and claim["fragment_sha256"] == parsed_by_path[key]["fragment_sha256"],
+                f"claim fragment binding mismatch in {expected['id']}")
+        require(semantic_bindings[claim["claim_id"]] ==
+                (claim["block_id"], claim["ast_path"], claim["fragment_sha256"]),
+                f"semantic node/atomic claim tuple mismatch in {expected['id']}: {claim['claim_id']}")
+        require(claim["disposition"] in CLAIM_DISPOSITIONS, "invalid claim disposition")
+        require(claim["portability_class"] in PORTABILITY_CLASSES, "invalid portability class")
+        ref = claim["owner_reference"]
+        exact_keys(ref, {"kind", "path", "clause"}, set(), "claim owner reference")
+        require(ref["kind"] in {"asl", "ndf", "instruction-contract"}, "invalid owner reference kind")
+        if ref["kind"] == "asl":
+            require(isinstance(owner["asl_path"], str) and owner["asl_path"] and
+                    ref["path"] == owner["asl_path"] and
+                    (ref["clause"] is None or
+                     (isinstance(ref["clause"], str) and bool(ref["clause"].strip()))),
+                    f"ASL claim reference escapes current owner in {expected['id']}")
+        elif ref["kind"] == "ndf":
+            expected_ndf_match = (
+                ref["clause"] in embedded_ndf_clauses
+                if expected["surface"] == "arch"
+                else isinstance(owner["ndf_clause"], str) and
+                ref["clause"] == owner["ndf_clause"]
+            )
+            require(ref["path"] == owner["asl_path"] and expected_ndf_match,
+                    f"NDF claim reference does not match embedded owner in {expected['id']}")
+        else:
+            require(isinstance(owner["contract_artifact"], str) and owner["contract_artifact"] and
+                    isinstance(owner["ndf_clause"], str) and owner["ndf_clause"] and
+                    ref["path"] == owner["contract_artifact"] and
+                    ref["clause"] == owner["ndf_clause"],
+                    f"instruction-contract claim reference mismatch in {expected['id']}")
+        require(set(claim["source_section_ids"]) <= set(migration["source_page_ids"]),
+                f"claim references a source page not reviewed for unit {expected['id']}")
+    for gap in shard["decision_gaps"]:
+        exact_keys(gap, {"gap_id", "required", "status", "owner_reference"}, set(), "decision gap")
+        require(gap["status"] in {"open", "resolved"}, "invalid decision gap status")
+    risk_tier = derived_risk_tier(expected, shard, body)
+    if shard.get("risk_tier") is not None:
+        require(shard["risk_tier"] == risk_tier,
+                f"unit {expected['id']} risk tier is downgraded or stale")
+    if require_complete:
+        require(shard["status"] == "complete", f"unit {expected['id']} is not complete")
+        require(set(shard["reader_roles"]) == contract_roles and len(shard["reader_roles"]) == 6,
+                f"unit {expected['id']} lacks required reader roles")
+        require({block["role"] for block in shard["presentation_blocks"]} == contract_roles,
+                f"unit {expected['id']} lacks required reader-role blocks")
+        require(parsed_nodes, f"unit {expected['id']} has no reader guide")
+        require(not any(gap.get("required") and gap.get("status") != "resolved"
+                        for gap in shard["decision_gaps"]),
+                f"unit {expected['id']} has unresolved required definition gaps")
+        require(shard.get("risk_tier") in {"ordinary", "high-risk"},
+                f"unit {expected['id']} lacks risk tier")
+        require(all(claim["disposition"] in
+                    {"current-owner-confirmed", "current-owner-rewrite"}
+                    for claim in shard["atomic_claims"]),
+                f"unit {expected['id']} has a non-publishable claim disposition")
+    return {
+        "unit_id": expected["id"], "surface": expected["surface"], "status": shard["status"],
+        "claim_ids": claim_ids, "node_ids": node_ids, "risk_tier": risk_tier,
+        "unresolved_gaps": sum(gap.get("required") and gap.get("status") != "resolved"
+                               for gap in shard["decision_gaps"]),
+        "guide_sha256": sha256_bytes(body.encode("utf-8")),
+        "source_page_ids": list(migration["source_page_ids"]),
+    }
+
+
+def validate_retired_shard(shard: dict, path: pathlib.Path) -> str:
+    exact_keys(shard,
+        {"schema_version", "unit_id", "mnemonic", "surface", "page_contract", "status", "owner", "migration",
+         "reader_roles", "presentation_blocks", "node_dispositions", "atomic_claims",
+         "decision_gaps", "retirement"}, {"risk_tier"}, f"retired unit {path.name}")
+    require(shard["schema_version"] == 1 and shard["status"] == "retired",
+            f"non-current shard lacks retired status: {path}")
+    require(path.stem == shard["unit_id"] and path.parent.name == shard["surface"] in SURFACES,
+            f"retired shard identity/path mismatch: {path}")
+    retirement = shard["retirement"]
+    exact_keys(retirement, {"disposition", "last_active_owner_sha256"}, set(),
+               f"retirement {shard['unit_id']}")
+    require(retirement["disposition"] == "retired-from-active-release",
+            f"retired shard lacks terminal disposition: {path}")
+    require(SHA256.fullmatch(retirement["last_active_owner_sha256"] or "") is not None,
+            f"retired shard lacks last active owner digest: {path}")
+    require(shard["migration"].get("copyright_disposition") in
+            {"current-owner-rewrite", "omit-old", "needs-architecture-decision"},
+            f"retired shard has invalid copyright disposition: {path}")
+    return shard["unit_id"]
+
+
+def validate_translation_shard(shard: dict, english: dict, path: pathlib.Path,
+                               repo_root: pathlib.Path, require_complete: bool) -> dict:
+    exact_keys(shard,
+        {"schema_version", "locale", "unit_id", "surface", "status",
+         "english_unit_shard_sha256", "english_block_ids", "english_node_ids",
+         "english_claim_ids", "locale_documentation_path", "locale_guide_sha256",
+         "protected_literals", "protected_literals_sha256", "block_mappings",
+         "node_mappings", "claim_mappings"}, {"retirement"},
+        f"translation {path.name}")
+    require(shard["schema_version"] == 1 and shard["locale"] == "zh-CN",
+            f"unsupported translation schema/locale: {path}")
+    require(shard["unit_id"] == english["unit_id"] and shard["surface"] == english["surface"],
+            f"translation/English identity mismatch: {path}")
+    require(shard["status"] in {"pending", "complete", "retired"},
+            f"invalid translation status: {path}")
+    english_path = path.parents[3] / english["surface"] / f"{english['unit_id']}.json"
+    require(shard["english_unit_shard_sha256"] == sha256_bytes(english_path.read_bytes()),
+            f"English change stales zh-CN translation: {english['unit_id']}")
+    expected_blocks = [block["block_id"] for block in english["presentation_blocks"]]
+    expected_nodes = [node["node_id"] for node in english["node_dispositions"]]
+    expected_claims = [claim["claim_id"] for claim in english["atomic_claims"]]
+    english_claim_to_node = {
+        node["claim_id"]: node["node_id"] for node in english["node_dispositions"]
+        if node["node_disposition"] == "semantic-claim"
+    }
+    require(shard["english_block_ids"] == expected_blocks,
+            f"zh-CN block-set snapshot is stale: {english['unit_id']}")
+    require(shard["english_node_ids"] == expected_nodes,
+            f"zh-CN node-set snapshot is stale: {english['unit_id']}")
+    require(shard["english_claim_ids"] == expected_claims,
+            f"zh-CN claim-set snapshot is stale: {english['unit_id']}")
+    literals = shard["protected_literals"]
+    require(isinstance(literals, list) and all(isinstance(item, str) and item for item in literals),
+            f"invalid protected literals: {english['unit_id']}")
+    require(literals == sorted(set(literals)),
+            f"protected literals must be sorted and unique: {english['unit_id']}")
+    require(shard["protected_literals_sha256"] == sha256_bytes(canonical_json_bytes(literals)),
+            f"protected literal digest mismatch: {english['unit_id']}")
+    block_ids = [item.get("english_block_id") for item in shard["block_mappings"]]
+    node_ids = [item.get("english_node_id") for item in shard["node_mappings"]]
+    claim_ids = [item.get("english_claim_id") for item in shard["claim_mappings"]]
+    for item in shard["block_mappings"]:
+        exact_keys(item, {"english_block_id", "locale_block_id", "locale_fragment_sha256"}, set(),
+                   f"translation block {english['unit_id']}")
+        require(SHA256.fullmatch(item["locale_fragment_sha256"] or "") is not None,
+                "invalid translated block digest")
+    for item in shard["node_mappings"]:
+        exact_keys(item, {"english_node_id", "locale_node_id", "locale_fragment_sha256"}, set(),
+                   f"translation node {english['unit_id']}")
+        require(SHA256.fullmatch(item["locale_fragment_sha256"] or "") is not None,
+                "invalid translated node digest")
+    for item in shard["claim_mappings"]:
+        exact_keys(item, {"english_claim_id", "locale_node_id"}, set(),
+                   f"translation claim {english['unit_id']}")
+    if shard["status"] == "pending":
+        require(not shard["block_mappings"] and not shard["node_mappings"] and
+                not shard["claim_mappings"] and shard["locale_documentation_path"] is None and
+                shard["locale_guide_sha256"] is None,
+                f"pending translation publishes unreviewed mappings: {english['unit_id']}")
+    if require_complete:
+        require(shard["status"] == "complete", f"zh-CN translation is not complete: {english['unit_id']}")
+        locale_block_ids = [item["locale_block_id"] for item in shard["block_mappings"]]
+        locale_node_ids = [item["locale_node_id"] for item in shard["node_mappings"]]
+        claim_locale_node_ids = [item["locale_node_id"] for item in shard["claim_mappings"]]
+        require(set(block_ids) == set(expected_blocks) and len(block_ids) == len(set(block_ids)) and
+                len(locale_block_ids) == len(set(locale_block_ids)),
+                f"zh-CN block mapping is not a bijection: {english['unit_id']}")
+        require(set(node_ids) == set(expected_nodes) and len(node_ids) == len(set(node_ids)) and
+                len(locale_node_ids) == len(set(locale_node_ids)),
+                f"zh-CN node mapping is not a bijection: {english['unit_id']}")
+        require(set(claim_ids) == set(expected_claims) and len(claim_ids) == len(set(claim_ids)),
+                f"zh-CN claim mapping is not a bijection: {english['unit_id']}")
+        require(len(claim_locale_node_ids) == len(set(claim_locale_node_ids)),
+                f"multiple zh-CN claims map to one locale node: {english['unit_id']}")
+        english_node_to_locale = {
+            item["english_node_id"]: item["locale_node_id"] for item in shard["node_mappings"]
+        }
+        claim_to_locale = {
+            item["english_claim_id"]: item["locale_node_id"] for item in shard["claim_mappings"]
+        }
+        require(all(
+            claim_to_locale[claim_id] == english_node_to_locale[english_claim_to_node[claim_id]]
+            for claim_id in expected_claims
+        ), f"zh-CN claim mapping is not bound to its English semantic node: {english['unit_id']}")
+        locale_path = pathlib.PurePosixPath(shard["locale_documentation_path"] or "")
+        require(locale_path.parts and not locale_path.is_absolute() and ".." not in locale_path.parts,
+                f"invalid zh-CN documentation path: {english['unit_id']}")
+        require(locale_path == localized_documentation_path(
+            english["owner"]["documentation_path"]
+        ), f"zh-CN documentation path is not the exact localized Docusaurus path: {english['unit_id']}")
+        require((repo_root / locale_path).is_file(), f"missing zh-CN documentation: {english['unit_id']}")
+        english_page = repo_root / english["owner"]["documentation_path"]
+        require(english_page.is_file(), f"missing English documentation: {english['unit_id']}")
+        require(outside_supplementary_bytes((repo_root / locale_path).read_bytes()) ==
+                outside_supplementary_bytes(english_page.read_bytes()),
+                f"zh-CN page changes generated bytes outside supplementary: {english['unit_id']}")
+        locale_markdown = (repo_root / locale_path).read_text(encoding="utf-8")
+        locale_body = supplementary_body(locale_markdown)
+        english_body = supplementary_body(english_page.read_text(encoding="utf-8"))
+        require(literals == derived_protected_literals(english, english_body),
+                f"zh-CN protected literals are not derived from English: {english['unit_id']}")
+        require(shard["locale_guide_sha256"] == sha256_bytes(locale_body.encode("utf-8")),
+                f"stale zh-CN guide hash: {english['unit_id']}")
+        # Localized Reader Guides are rendered at the same logical docs route as
+        # the English projection. Resolve their relative links from that
+        # canonical documentation path, not from the on-disk i18n storage tree.
+        locale_blocks, locale_nodes = parse_reader_blocks(
+            locale_body,
+            repo_root,
+            pathlib.PurePosixPath(english["owner"]["documentation_path"]),
+        )
+        parsed_locale_block_ids = [block["block_id"] for block in locale_blocks]
+        require(set(locale_block_ids) == set(parsed_locale_block_ids),
+                f"zh-CN block mappings do not match locale content: {english['unit_id']}")
+        locale_nodes_by_id = {
+            f"{node['block_id']}:{node['ast_path']}": node for node in locale_nodes
+        }
+        require(set(locale_node_ids) == set(locale_nodes_by_id),
+                f"zh-CN node mappings do not match locale content: {english['unit_id']}")
+        for mapping in shard["node_mappings"]:
+            require(mapping["locale_fragment_sha256"] ==
+                    locale_nodes_by_id[mapping["locale_node_id"]]["fragment_sha256"],
+                    f"zh-CN node fragment digest mismatch: {english['unit_id']}")
+        for mapping in shard["block_mappings"]:
+            fragments = [
+                node["fragment_sha256"] for node in locale_nodes
+                if node["block_id"] == mapping["locale_block_id"]
+            ]
+            require(mapping["locale_fragment_sha256"] ==
+                    sha256_bytes(canonical_json_bytes(fragments)),
+                    f"zh-CN block fragment digest mismatch: {english['unit_id']}")
+        require(all(literal in locale_body for literal in literals),
+                f"zh-CN guide does not preserve protected literals: {english['unit_id']}")
+    return {"unit_id": english["unit_id"], "status": shard["status"],
+            "claim_ids": expected_claims, "node_ids": expected_nodes,
+            "risk_tier": english.get("risk_tier"), "path": path,
+            "locale_guide_sha256": shard["locale_guide_sha256"]}
+
+
+def expected_translation_review_artifact_digests(
+        review: dict, translations: dict[str, dict]) -> dict[str, str]:
+    unit_ids = sorted(review["unit_ids"])
+    return {
+        "translation": sha256_bytes(canonical_json_bytes({
+            unit_id: sha256_bytes(translations[unit_id]["path"].read_bytes())
+            for unit_id in unit_ids
+        })),
+        "language_review": sha256_bytes(canonical_json_bytes({
+            unit_id: translations[unit_id].get("locale_guide_sha256") for unit_id in unit_ids
+        })),
+        "verification": sha256_bytes(canonical_json_bytes({
+            "source_commit": review["source_commit"],
+            "unit_risks": review["unit_risks"],
+            "reviewed_claim_ids": sorted(review["reviewed_claim_ids"]),
+            "reviewed_node_ids": sorted(review["reviewed_node_ids"]),
+            "protected_literal_unit_ids": sorted(review["protected_literal_unit_ids"]),
+            "verifier_sample_unit_ids": sorted(review["verifier_sample_unit_ids"]),
+        })),
+    }
+
+
+def validate_translation_reviews(review_root: pathlib.Path, translations: dict[str, dict],
+                                 require_complete: bool) -> dict:
+    reviews = []
+    for path in sorted(review_root.glob("*.json")):
+        review = read_json(path)
+        exact_keys(review,
+            {"schema_version", "locale", "batch_id", "rubric_version", "source_commit",
+             "unit_ids", "unit_risks", "translation_artifact_digests", "reviewed_claim_ids",
+             "reviewed_claim_count", "reviewed_node_ids", "reviewed_node_count",
+             "protected_literal_unit_ids", "verifier_sample_unit_ids", "verifier_sample_count",
+             "unresolved_question_count", "verdict", "contexts", "artifact_digests"},
+            set(), f"translation review {path.name}")
+        require(review["schema_version"] == 1 and review["locale"] == "zh-CN" and
+                review["rubric_version"] == "mnemonic-translation-v1",
+                f"unsupported translation review: {path}")
+        require(re.fullmatch(r"[0-9a-f]{40}", review["source_commit"] or "") is not None,
+                f"invalid translation review source commit: {path}")
+        contexts = review["contexts"]
+        exact_keys(contexts, {"translator", "language_reviewer", "verifier"}, set(),
+                   "translation review contexts")
+        require(len(set(contexts.values())) == 3 and all(contexts.values()),
+                f"translation review contexts must be distinct: {path}")
+        require(review["reviewed_claim_count"] == len(review["reviewed_claim_ids"]) and
+                review["reviewed_node_count"] == len(review["reviewed_node_ids"]) and
+                review["verifier_sample_count"] == len(review["verifier_sample_unit_ids"]),
+                f"translation review counts mismatch: {path}")
+        require(set(review["artifact_digests"]) ==
+                {"translation", "language_review", "verification"} and
+                all(SHA256.fullmatch(value or "") for value in review["artifact_digests"].values()),
+                f"invalid translation review artifact digests: {path}")
+        units = set(review["unit_ids"])
+        require(len(units) == len(review["unit_ids"]),
+                f"translation review has duplicate units: {path}")
+        require(units <= set(translations), f"translation review contains unknown unit: {path}")
+        require(set(review["unit_risks"]) == units and all(
+            review["unit_risks"][unit_id] == translations[unit_id]["risk_tier"]
+            for unit_id in units
+        ), f"translation review risk coverage mismatch: {path}")
+        require(set(review["translation_artifact_digests"]) == units,
+                f"translation review digest set mismatch: {path}")
+        for unit_id, digest in review["translation_artifact_digests"].items():
+            require(digest == sha256_bytes(translations[unit_id]["path"].read_bytes()),
+                    f"zh-CN change stales translation attestation: {unit_id}")
+        reviews.append(review)
+    covered_units: set[str] = set()
+    covered_claims: set[str] = set()
+    covered_nodes: set[str] = set()
+    for review in reviews:
+        if review["verdict"] != "accepted":
+            continue
+        require(review["artifact_digests"] ==
+                expected_translation_review_artifact_digests(review, translations),
+                f"translation review artifact digests do not match computed inputs: {review['batch_id']}")
+        require(review["unresolved_question_count"] == 0,
+                f"accepted translation review has unresolved questions: {review['batch_id']}")
+        units = set(review["unit_ids"])
+        require(all(translations[unit_id]["status"] == "complete" for unit_id in units),
+                f"translation review accepts an incomplete unit: {review['batch_id']}")
+        require(not covered_units & units, "conflicting translation review attestations")
+        covered_units |= units
+        claims = set(review["reviewed_claim_ids"])
+        nodes = set(review["reviewed_node_ids"])
+        expected_claims = {claim for uid in units for claim in translations[uid]["claim_ids"]}
+        expected_nodes = {node for uid in units for node in translations[uid]["node_ids"]}
+        require(claims == expected_claims and not covered_claims & claims,
+                f"translation claim review is not exhaustive: {review['batch_id']}")
+        require(nodes == expected_nodes and not covered_nodes & nodes,
+                f"translation node review is not exhaustive: {review['batch_id']}")
+        covered_claims |= claims
+        covered_nodes |= nodes
+        require(set(review["protected_literal_unit_ids"]) == units,
+                f"protected literals were not reviewed: {review['batch_id']}")
+        sampled = set(review["verifier_sample_unit_ids"])
+        require(sampled <= units and len(sampled) >= min(len(units), max(5, math.ceil(0.2 * len(units)))),
+                f"translation verifier sample is incomplete: {review['batch_id']}")
+        high = {uid for uid in units if translations[uid]["risk_tier"] == "high-risk"}
+        require(high <= sampled,
+                f"high-risk translation lacks verifier coverage: {review['batch_id']}")
+    complete_translation_units = {
+        unit_id for unit_id, translation in translations.items()
+        if translation["status"] == "complete"
+    }
+    require(complete_translation_units <= covered_units,
+            "complete zh-CN translations lack accepted review coverage")
+    if require_complete:
+        require(reviews and all(review["verdict"] == "accepted" for review in reviews),
+                "complete zh-CN translations have non-accepted review attestations")
+        require(covered_units == set(translations), "zh-CN translations lack review coverage")
+    return {"batches": len(reviews), "accepted": sum(r["verdict"] == "accepted" for r in reviews)}
+
+
+def expected_review_artifact_digests(item: dict, units: dict[str, dict]) -> dict[str, str]:
+    unit_ids = sorted(item["unit_risks"])
+    return {
+        "writer": sha256_bytes(canonical_json_bytes({
+            unit_id: units[unit_id]["shard_sha256"] for unit_id in unit_ids
+        })),
+        "semantic_review": sha256_bytes(canonical_json_bytes({
+            unit_id: units[unit_id]["guide_sha256"] for unit_id in unit_ids
+        })),
+        "verification": sha256_bytes(canonical_json_bytes({
+            "source_commit": item["source_commit"],
+            "unit_risks": item["unit_risks"],
+            "reviewed_claim_ids": sorted(item["reviewed_claim_ids"]),
+            "reviewed_node_ids": sorted(item["reviewed_node_ids"]),
+            "deep_reviewed_unit_ids": sorted(item["deep_reviewed_unit_ids"]),
+            "verifier_sample_unit_ids": sorted(item["verifier_sample_unit_ids"]),
+        })),
+    }
+
+
+def validate_reviews(review_root: pathlib.Path, units: dict[str, dict], require_complete: bool) -> dict:
+    attestations = []
+    for path in sorted(review_root.glob("*.json")):
+        item = read_json(path)
+        exact_keys(item,
+            {"schema_version", "batch_id", "rubric_version", "source_commit", "unit_risks",
+             "reviewed_claim_ids", "reviewed_claim_count", "reviewed_node_ids",
+             "reviewed_node_count", "deep_reviewed_unit_ids", "verifier_sample_unit_ids",
+             "verifier_sample_count", "unresolved_question_count", "verdict", "contexts",
+             "artifact_digests"}, set(), f"review {path.name}")
+        require(item["schema_version"] == 1 and item["rubric_version"] == "mnemonic-reader-v1",
+                f"unsupported review schema/rubric: {path}")
+        require(item["verdict"] in {"pending", "accepted", "rejected"}, "invalid review verdict")
+        require(re.fullmatch(r"[0-9a-f]{40}", item["source_commit"] or "") is not None,
+                f"review {path.name}: invalid source commit")
+        contexts = item["contexts"]
+        exact_keys(contexts, {"writer", "semantic_reviewer", "verifier"}, set(), "review contexts")
+        require(len(set(contexts.values())) == 3 and all(contexts.values()),
+                f"review {path.name}: writer/reviewer/verifier contexts must be distinct")
+        require(set(item["artifact_digests"]) == {"writer", "semantic_review", "verification"},
+                f"review {path.name}: incomplete artifact digest roles")
+        for digest in item["artifact_digests"].values():
+            require(isinstance(digest, str) and SHA256.fullmatch(digest), "invalid review artifact digest")
+        require(item["reviewed_claim_count"] == len(item["reviewed_claim_ids"]),
+                f"review {path.name}: reviewed claim count mismatch")
+        require(item["reviewed_node_count"] == len(item["reviewed_node_ids"]),
+                f"review {path.name}: reviewed node count mismatch")
+        require(item["verifier_sample_count"] == len(item["verifier_sample_unit_ids"]),
+                f"review {path.name}: verifier sample count mismatch")
+        attestations.append(item)
+    batch_ids = [item["batch_id"] for item in attestations]
+    require(len(batch_ids) == len(set(batch_ids)), "duplicate/conflicting batch attestations")
+    covered_claims: set[str] = set()
+    covered_nodes: set[str] = set()
+    covered_units: set[str] = set()
+    for item in attestations:
+        if item["verdict"] != "accepted":
+            continue
+        risks = item["unit_risks"]
+        require(isinstance(risks, dict) and risks, f"batch {item['batch_id']} has no units")
+        require(set(risks) <= set(units), f"batch {item['batch_id']} has unknown units")
+        require(all(units[unit_id]["status"] == "complete" for unit_id in risks),
+                f"batch {item['batch_id']} accepts an incomplete unit")
+        require(not (covered_units & set(risks)), "unit occurs in conflicting review batches")
+        covered_units |= set(risks)
+        for unit_id, tier in risks.items():
+            require(tier == units[unit_id]["risk_tier"], f"stale risk tier for {unit_id}")
+        require(item["artifact_digests"] == expected_review_artifact_digests(item, units),
+                f"batch {item['batch_id']} artifact digests do not match computed inputs")
+        claims = set(item["reviewed_claim_ids"])
+        nodes = set(item["reviewed_node_ids"])
+        expected_claims = {claim for uid in risks for claim in units[uid]["claim_ids"]}
+        expected_nodes = {node for uid in risks for node in units[uid]["node_ids"]}
+        require(claims == expected_claims, f"batch {item['batch_id']} lacks 100% claim review")
+        require(nodes == expected_nodes, f"batch {item['batch_id']} lacks connective/node review")
+        require(not (covered_claims & claims) and not (covered_nodes & nodes),
+                f"batch {item['batch_id']} overlaps another attestation")
+        covered_claims |= claims
+        covered_nodes |= nodes
+        high = {uid for uid, tier in risks.items() if tier == "high-risk"}
+        sampled = set(item["verifier_sample_unit_ids"])
+        deep = set(item["deep_reviewed_unit_ids"])
+        require(sampled <= set(risks) and deep <= set(risks),
+                f"batch {item['batch_id']} samples units outside the batch")
+        require(high <= deep and high <= sampled,
+                f"batch {item['batch_id']} lacks high-risk deep/verifier coverage")
+        ordinary = {uid for uid, tier in risks.items() if tier == "ordinary"}
+        ordinary_sample = len(sampled & ordinary)
+        require(ordinary_sample >= min(len(ordinary), max(5, math.ceil(0.2 * len(ordinary)))),
+                f"batch {item['batch_id']} ordinary verifier sample is too small")
+        require(item["unresolved_question_count"] == 0,
+                f"batch {item['batch_id']} has unresolved questions")
+    complete_units = {
+        unit_id for unit_id, unit in units.items() if unit["status"] == "complete"
+    }
+    require(complete_units <= covered_units,
+            "complete units lack accepted review coverage")
+    if require_complete:
+        require(attestations and all(item["verdict"] == "accepted" for item in attestations),
+                "complete units have non-accepted review batches")
+        require(covered_units == set(units), "complete units lack accepted review batches")
+    return {"batches": len(attestations),
+            "accepted": sum(item["verdict"] == "accepted" for item in attestations)}
+
+
+def run_check(repo_root: pathlib.Path, archive: pathlib.Path | None, traceability_path: pathlib.Path,
+              evidence_root: pathlib.Path, require_complete: bool) -> dict:
+    traceability = json.loads(traceability_path.read_text(encoding="utf-8"))
+    current_list = [
+        unit for unit in traceability["units"]
+        if unit.get("surface") == "arch"
+        or (unit.get("mnemonic") is not None and unit.get("surface") in SURFACES)
+    ]
+    current_ids = [unit["id"] for unit in current_list]
+    require(len(current_ids) == len(set(current_ids)), "duplicate current unit IDs")
+    current = {unit["id"]: unit for unit in current_list}
+    inventory = read_json(evidence_root / "sources/anonymous-source-001.json")
+    if archive is None:
+        archive_digest = inventory["archive_sha256"]
+        pages = assets = None
+    else:
+        archive_digest, pages, assets = derive_archive(archive)
+    page_ids = validate_source_inventory(inventory, pages, assets, require_complete)
+    authorization = inventory["authorization"]
+    licensed_copy_allowed = bool(
+        authorization["licensed_copy_allowed"] and authorization["license_compatible"]
+        and authorization["notice_evidence"]
+    )
+
+    found_paths = {
+        path for surface in SURFACES for path in (evidence_root / surface).glob("*.json")
+    }
+    expected_paths = {
+        evidence_root / unit["surface"] / f"{unit_id}.json"
+        for unit_id, unit in current.items()
+    }
+    require(expected_paths <= found_paths,
+            f"active unit shard bijection failed: missing={len(expected_paths-found_paths)}")
+    retired_ids = {
+        validate_retired_shard(read_json(path), path)
+        for path in sorted(found_paths - expected_paths)
+    }
+    units = {}
+    english_shards = {}
+    all_blocks: set[str] = set()
+    all_claims: set[str] = set()
+    all_nodes: set[str] = set()
+    for unit_id in sorted(current):
+        unit = current[unit_id]
+        shard = read_json(evidence_root / unit["surface"] / f"{unit_id}.json")
+        english_shards[unit_id] = shard
+        result = validate_unit_shard(
+            shard, unit, repo_root, page_ids, require_complete, licensed_copy_allowed,
+            traceability.get("sources", {}),
+        )
+        result["shard_sha256"] = sha256_bytes(
+            (evidence_root / unit["surface"] / f"{unit_id}.json").read_bytes()
+        )
+        for label, values, global_seen in (
+            ("block", [b["block_id"] for b in shard["presentation_blocks"]], all_blocks),
+            ("claim", result["claim_ids"], all_claims),
+            ("node", result["node_ids"], all_nodes),
+        ):
+            overlap = global_seen & set(values)
+            require(not overlap, f"duplicate global {label} IDs: {sorted(overlap)}")
+            global_seen.update(values)
+        units[unit_id] = result
+    inventory_mappings = {
+        (page["page_id"], unit_id)
+        for page in inventory["pages"] for unit_id in page["mapped_unit_ids"]
+    }
+    shard_mappings = {
+        (page_id, unit_id)
+        for unit_id, unit in units.items() for page_id in unit["source_page_ids"]
+    }
+    require(inventory_mappings == shard_mappings,
+            "anonymous source inventory and unit shard mappings disagree")
+    reviews = validate_reviews(evidence_root / "reviews", units, require_complete)
+    translation_paths = {
+        path for surface in SURFACES
+        for path in (evidence_root / "translations/zh-CN" / surface).glob("*.json")
+    }
+    expected_translation_paths = {
+        evidence_root / "translations/zh-CN" / unit["surface"] / f"{unit_id}.json"
+        for unit_id, unit in current.items()
+    }
+    require(expected_translation_paths <= translation_paths,
+            f"active zh-CN shard bijection failed: missing={len(expected_translation_paths-translation_paths)}")
+    extra_translations = translation_paths - expected_translation_paths
+    for path in sorted(extra_translations):
+        retired = read_json(path)
+        require(retired.get("status") == "retired" and
+                retired.get("retirement", {}).get("disposition") == "retired-from-active-release",
+                f"non-current translation lacks retained retirement disposition: {path}")
+    translations = {}
+    for unit_id in sorted(current):
+        unit = current[unit_id]
+        path = evidence_root / "translations/zh-CN" / unit["surface"] / f"{unit_id}.json"
+        translations[unit_id] = validate_translation_shard(
+            read_json(path), english_shards[unit_id], path, repo_root, require_complete
+        )
+    translation_reviews = validate_translation_reviews(
+        evidence_root / "translation-reviews/zh-CN", translations, require_complete
+    )
+    status_counts = Counter(unit["status"] for unit in units.values())
+    surface_counts = Counter(unit["surface"] for unit in units.values())
+    summary = {
+        "schema_version": 1,
+        "archive_sha256": archive_digest,
+        "archive_pages_total": len(inventory["pages"]),
+        "archive_pages_dispositioned": sum(
+            page["disposition"] != "pending" for page in inventory["pages"]
+        ),
+        "current_mnemonics": sum(unit.get("mnemonic") is not None for unit in current.values()),
+        "target_pages": len(current),
+        "retired_units_retained": len(retired_ids),
+        "surfaces": dict(sorted(surface_counts.items())),
+        "statuses": dict(sorted(status_counts.items())),
+        "reader_guides_complete": status_counts["complete"],
+        "atomic_claims": len(all_claims),
+        "unresolved_required_definition_gaps": sum(
+            unit["unresolved_gaps"] for unit in units.values()
+        ),
+        "review_batches": reviews,
+        "zh_CN": {
+            "statuses": dict(sorted(Counter(item["status"] for item in translations.values()).items())),
+            "review_batches": translation_reviews,
+        },
+        "mode": "complete" if require_complete else "structural-pending",
+    }
+    if archive_digest == EXPECTED_ARCHIVE_SHA256:
+        require(len(inventory["pages"]) == 697, "frozen archive baseline page count changed")
+    baseline_count = traceability.get("summary", {}).get("mnemonic_count")
+    current_mnemonic_count = sum(unit.get("mnemonic") is not None for unit in current.values())
+    require(baseline_count is None or baseline_count == current_mnemonic_count,
+            "traceability mnemonic summary does not match dynamic owner inventory")
+    if baseline_count == 636:
+        require(len(current) == 708, "frozen bilingual target baseline changed")
+    return summary
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--archive", type=pathlib.Path)
+    parser.add_argument("--traceability", type=pathlib.Path, default=TRACEABILITY)
+    parser.add_argument("--evidence-root", type=pathlib.Path, default=EVIDENCE_ROOT)
+    parser.add_argument("--repo-root", type=pathlib.Path, default=ROOT)
+    parser.add_argument("--require-complete", action="store_true")
+    parser.add_argument("--summary", type=pathlib.Path)
+    parser.add_argument("--update-aggregate", action="store_true")
+    args = parser.parse_args()
+    try:
+        summary = run_check(args.repo_root, args.archive, args.traceability,
+                            args.evidence_root, args.require_complete)
+    except CheckError as error:
+        print(f"mnemonic explanation check failed: {error}", file=sys.stderr)
+        return 1
+    serialized = canonical_json_bytes(summary)
+    aggregate = dict(summary)
+    aggregate.pop("mode", None)
+    aggregate["baseline_commit"] = "564ac2d8d868c441a8dc5e5f4d44efa7533a911d"
+    aggregate["traceability_sha256"] = sha256_bytes(args.traceability.read_bytes())
+    aggregate_path = args.evidence_root / "coverage-summary.json"
+    if args.update_aggregate:
+        aggregate_path.write_bytes(canonical_json_bytes(aggregate))
+    else:
+        try:
+            checked_aggregate = read_json(aggregate_path)
+        except CheckError as error:
+            print(f"mnemonic explanation check failed: {error}", file=sys.stderr)
+            return 1
+        if checked_aggregate != aggregate:
+            print("mnemonic explanation check failed: stale coverage-summary.json", file=sys.stderr)
+            return 1
+    if args.summary:
+        args.summary.parent.mkdir(parents=True, exist_ok=True)
+        args.summary.write_bytes(serialized)
+    sys.stdout.buffer.write(serialized)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

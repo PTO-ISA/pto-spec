@@ -11,6 +11,62 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-tload-purpose role=purpose -->
+## What BSTART.TLOAD contributes
+
+`BSTART.TLOAD` is a 32-bit block-start command for the TLOAD form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+
+<!-- PTO-READER-BLOCK: block-bstart-tload-mechanism role=mechanism -->
+## Placement and mechanism
+
+Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+
+```text
+Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and byte row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.
+Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S63, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride.
+Local CUBE destination: encode B.DATR Layout ND2M32, ND2M16, or ND2N8 with DataType=DTYPE_NONE; require LB0=valid columns and LB1=valid rows, omit LB2, and use one terminating destination B.IOT.
+```
+
+After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+
+<!-- PTO-READER-BLOCK: block-bstart-tload-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+- `B.IOR.RegSrc0` selects the named absolute GPR role; its exact assigned domain remains in the generated contract below.
+- `B.IOR.RegSrc1` selects the named absolute GPR role; its exact assigned domain remains in the generated contract below.
+- `B.DIM.LB0` supplies the named selector or attribute field; its exact assigned domain remains in the generated contract below.
+- `B.DIM.LB1` supplies the named selector or attribute field; its exact assigned domain remains in the generated contract below.
+- `B.DIM.LB2` supplies the named selector or attribute field; its exact assigned domain remains in the generated contract below.
+- `B.IOT/B.IOS` identifies a destination or publication selector; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-bstart-tload-effects role=effects -->
+## Pending state and completion
+
+The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+
+<!-- PTO-READER-BLOCK: block-bstart-tload-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+
+<!-- PTO-READER-BLOCK: block-bstart-tload-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+BSTART.TLOAD DataType
+```
+
+Assume predecessor retirement and target checks succeed. `BSTART.TLOAD DataType` opens the pending `BSTART.TLOAD` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -191,7 +247,3 @@ end;
 - BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP
 - BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP
 - BSTART.TLOAD FP16; B.DATR {ND2M16, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=K; B.DIM LB1=M; B.IOT mask=1111, <last>, ->M<1>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

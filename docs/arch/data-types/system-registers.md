@@ -7,6 +7,60 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-system-register-types-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the shared symbolic namespaces for base system registers, access classes, and cache/TLB maintenance operations.
+
+It supplies typed identities; address mapping, access control, register state, and maintenance effects are owned elsewhere.
+
+<!-- PTO-READER-BLOCK: arch-system-register-types-concepts-state role=concepts-state -->
+## Concepts and visible state
+
+- `SystemRegister` names thread/global pointers, time/cycle, core and thread identity, vendor/version/features, tile capacity, and block identity registers.
+- `SystemRegisterAccess` distinguishes unknown, read-only, write-only, and read-write access classes.
+- `MaintenanceOperation` names data-cache, instruction-cache, bundle-cache, and TLB invalidation or cleaning variants.
+
+<!-- PTO-READER-BLOCK: arch-system-register-types-rules-interactions role=rules-interactions -->
+## Rules and interactions
+
+An enum member identifies a register or operation but does not assign its encoded address.
+
+Access classification is separate from the current access-control ring and concrete read/write behavior.
+
+Maintenance variants remain distinct, including whole-cache, virtual-address, and set/way forms where declared.
+
+<!-- PTO-READER-BLOCK: arch-system-register-types-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not create the system-register file and does not state reset values. Follow the state and addressing owners for those contracts.
+
+A declared maintenance identity does not by itself guarantee instruction availability or define epoch changes; the executing owner supplies those effects.
+
+<!-- PTO-READER-BLOCK: arch-system-register-types-example-usage role=example-usage -->
+## Non-normative reading example
+
+`SystemRegister_TIME` names a system register.
+
+The addressing and timer/state owners define its architectural address and value behavior.
+
+`Maintenance_TLB_IALL` identifies the all-entry TLB operation.
+
+The invoking instruction still owns legality, operands, and visible maintenance state changes.
+
+<!-- PTO-READER-BLOCK: arch-system-register-types-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [System-register addressing](../system-registers/addressing.md)
+- [System-register access control](../system-registers/access-control.md)
+- [Maintenance behavior](../system-registers/maintenance.md)
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/system-registers.asl -->
@@ -56,7 +110,3 @@ type MaintenanceOperation of enumeration {
 };
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

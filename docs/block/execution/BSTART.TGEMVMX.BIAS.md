@@ -11,6 +11,63 @@ Starts CUBE Function 21 for the TGEMV_MX_BIAS M=1 Matrix-vector complete-bundle 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-tgemvmx-bias-purpose role=purpose -->
+## What BSTART.TGEMVMX.BIAS contributes
+
+`BSTART.TGEMVMX.BIAS` is a 32-bit block-start command for the TGEMVMX.BIAS form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+
+<!-- PTO-READER-BLOCK: block-bstart-tgemvmx-bias-mechanism role=mechanism -->
+## Placement and mechanism
+
+Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+
+```text
+BSTART.TGEMVMX.BIAS AType
+B.DATR BType, RMode, Sat (optional; BType defaults to AType)
+B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one)
+B.DIM LB0 M (optional, default 1; TGEMV permits only M=1)
+B.DIM LB1 N (optional, default 1)
+B.DIM LB2 K (optional, default 1)
+B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias
+B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations
+B.IOT/B.IOR postprocess operands selected by B.FPATR
+BSTOP or the next BSTART completion boundary
+```
+
+After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+
+<!-- PTO-READER-BLOCK: block-bstart-tgemvmx-bias-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-bstart-tgemvmx-bias-effects role=effects -->
+## Pending state and completion
+
+The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+
+<!-- PTO-READER-BLOCK: block-bstart-tgemvmx-bias-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+
+<!-- PTO-READER-BLOCK: block-bstart-tgemvmx-bias-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+BSTART.TGEMVMX.BIAS DataType
+```
+
+Assume predecessor retirement and target checks succeed. `BSTART.TGEMVMX.BIAS DataType` opens the pending `BSTART.TGEMVMX.BIAS` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -197,7 +254,3 @@ end;
 ## Examples
 
 - BSTART.TGEMVMX.BIAS AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one); B.DIM LB0 M (optional, default 1; TGEMV permits only M=1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOT ordered Local mathematical sources: A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, 1xN Bias; B.IOT D matching A's CUBE_M16/M32 layout, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

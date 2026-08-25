@@ -11,6 +11,56 @@ Copies peer-resolved Local fragments within a Core4 collective.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-gmov-purpose role=purpose -->
+## What GMOV does
+
+`GMOV` is a selector-encoded Tile operation executed by `TLSU`. It resolves one peer-selected read-old Local fragment for each PE and byte-copies it into the selected new Local fragments; its current instruction contract owns the exact bundle form and publication boundary.
+
+<!-- PTO-READER-BLOCK: tile-gmov-mechanism role=mechanism -->
+## Element and Tile mechanism
+
+After all descriptor and operand checks succeed, the owning ASL handler resolves one peer-selected read-old Local fragment for each PE and byte-copies it into the selected new Local fragments. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+
+The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+
+<!-- PTO-READER-BLOCK: tile-gmov-inputs role=inputs-outputs -->
+## Operand roles and descriptors
+
+- `destination0` has the exact contract role **selected Local destination fragments**.
+- `source0` has the exact contract role **Core4 peer-resolved read-old Local source snapshot**.
+- `scalar0` has the exact contract role **each PE's absolute peer_tid**.
+
+`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+
+<!-- PTO-READER-BLOCK: tile-gmov-effects role=effects -->
+## Publication, definedness, and padding
+
+Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+
+No padding behavior beyond the current handler contract is implied.
+
+The collective changes selected Local destination fragments only; Shared and GM state remain unchanged.
+
+<!-- PTO-READER-BLOCK: tile-gmov-constraints role=constraints -->
+## Type, layout, and fault boundary
+
+The exact accepted type or type-pair set is owned by the generated legality section below; this guide does not widen it.
+
+The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+
+<!-- PTO-READER-BLOCK: tile-gmov-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `GMOV` example, if PE 1 resolves `peer_tid=0`, the selected destination fragment receives PE 0 source bytes and the same definedness.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `memory-and-data-movement`
@@ -129,7 +179,3 @@ end;
 ## Examples
 
 - BSTART.GMOV U8; B.IOT T#1, mask=0101, size=1, ->T; B.IOR zero, a0; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

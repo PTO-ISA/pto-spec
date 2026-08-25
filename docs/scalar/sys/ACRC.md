@@ -11,6 +11,52 @@ ACRC requests context close and marks the final scalar position of the active SY
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-acrc-purpose role=purpose -->
+## What ACRC does
+
+`ACRC` requests architecture-context close and marks the active SYS block terminal.
+
+<!-- PTO-READER-BLOCK: scalar-acrc-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_ArchitectureCloseRequest`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-acrc-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`RST_Type` carries the return-stack record type.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-acrc-effects role=effects -->
+## Architectural effects
+
+A permitted close publishes the service-request trap and request type, increments the request epoch, and marks the SYS block terminal before trap entry.
+
+After recovery, only `BSTOP` or a following `BSTART` may commit; another instruction is rejected before effects.
+
+<!-- PTO-READER-BLOCK: scalar-acrc-constraints role=constraints -->
+## Placement and rejection
+
+Routing and current-ACR permission are established before the terminal marker changes.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-acrc-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `acrc rst_type` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -129,7 +175,3 @@ end;
 ## Examples
 
 - acrc rst_type
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,52 @@ C.EBREAK raises software-breakpoint trap 50 with its 5-bit immediate as cause.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-c-ebreak-purpose role=purpose -->
+## What C.EBREAK does
+
+`C.EBREAK` raises the architectural software-breakpoint trap with its encoded immediate cause.
+
+<!-- PTO-READER-BLOCK: scalar-c-ebreak-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_SoftwareBreakpoint`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-c-ebreak-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`imm5` carries the 5-bit immediate value.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-c-ebreak-effects role=effects -->
+## Architectural effects
+
+The operation raises `Fault_SoftwareBreakpoint`, publishes trap number `50`, and zero-extends the 5-bit immediate into the 24-bit cause field.
+
+Trap entry atomically saves the pre-instruction context and faulting-PC argument before vector transfer.
+
+<!-- PTO-READER-BLOCK: scalar-c-ebreak-constraints role=constraints -->
+## Placement and rejection
+
+All `32` immediate encodings are assigned, including zero as a real cause value.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-c-ebreak-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `c.break imm` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -127,7 +173,3 @@ end;
 ## Examples
 
 - c.break imm
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

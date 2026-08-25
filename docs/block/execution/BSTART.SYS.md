@@ -11,6 +11,55 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-sys-purpose role=purpose -->
+## What BSTART.SYS contributes
+
+`BSTART.SYS` is a 32-bit block-start command for the SYS form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+
+<!-- PTO-READER-BLOCK: block-bstart-sys-mechanism role=mechanism -->
+## Placement and mechanism
+
+Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+
+```text
+BSTART.SYS retires any active predecessor block, then opens one system block whose header commands execute sequentially until BSTOP or the next BSTART.
+SYS has no candidate transfer: BPCN, TYPE, and TAKEN are inapplicable and cannot select the next PC.
+```
+
+After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+
+<!-- PTO-READER-BLOCK: block-bstart-sys-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `simm17` supplies the named selector or attribute field; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-bstart-sys-effects role=effects -->
+## Pending state and completion
+
+The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+
+<!-- PTO-READER-BLOCK: block-bstart-sys-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+
+<!-- PTO-READER-BLOCK: block-bstart-sys-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+BSTART.SYS FALL
+```
+
+Assume predecessor retirement and target checks succeed. `BSTART.SYS FALL` opens the pending `BSTART.SYS` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -122,7 +171,3 @@ end;
 ## Examples
 
 - BSTART.SYS FALL
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

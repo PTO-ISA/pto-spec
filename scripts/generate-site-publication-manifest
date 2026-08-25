@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+"""Generate a deterministic handoff manifest for the PTO Pages controller."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+import subprocess
+import tomllib
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+SITE = ROOT / "docs/site"
+OUTPUT = SITE / "build"
+MANIFEST = OUTPUT / "pto-site-publication.json"
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def git(*arguments: str) -> str:
+    return subprocess.run(
+        ["git", *arguments],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+
+def main() -> int:
+    specification = tomllib.loads(
+        (ROOT / "specification.toml").read_text(encoding="utf-8")
+    )
+    architecture_version = specification["release"]["architecture_version"]
+    publication_version = specification["release"]["publication_version"]
+    if (
+        re.fullmatch(r"(?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*)){3}", publication_version)
+        is None
+        or publication_version.rsplit(".", 1)[0] != architecture_version
+    ):
+        raise ValueError("publication_version must be a four-part revision of architecture_version")
+    commit = git("rev-parse", "HEAD")
+    tag = f"v{publication_version}"
+    tagged = False
+    try:
+        tagged = git("rev-parse", f"{tag}^{{commit}}") == commit
+    except subprocess.CalledProcessError:
+        pass
+    clean = git("status", "--porcelain=v1", "--untracked-files=all") == ""
+
+    files = sorted(
+        path for path in OUTPUT.rglob("*") if path.is_file() and path != MANIFEST
+    )
+    tree = hashlib.sha256()
+    for path in files:
+        relative = path.relative_to(OUTPUT).as_posix()
+        tree.update(relative.encode("utf-8"))
+        tree.update(b"\0")
+        tree.update(bytes.fromhex(sha256(path)))
+        tree.update(b"\n")
+
+    payload = {
+        "schema": "pto.site-publication.v1",
+        "architecture_version": architecture_version,
+        "publication_version": publication_version,
+        "tag": tag,
+        "source_commit": commit,
+        "release_eligible": tagged and clean,
+        "publication_state": "release" if tagged and clean else "preview",
+        "file_count": len(files),
+        "content_bytes": sum(path.stat().st_size for path in files),
+        "site_tree_sha256": tree.hexdigest(),
+        "redirect_manifest_sha256": sha256(SITE / "redirects.json"),
+        "dependency_lock_sha256": sha256(SITE / "pnpm-lock.yaml"),
+    }
+    MANIFEST.write_text(
+        json.dumps(payload, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        f"site publication manifest: {payload['publication_state']} "
+        f"{payload['site_tree_sha256']}"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

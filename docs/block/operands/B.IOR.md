@@ -11,6 +11,53 @@ Bind up to three absolute GPR inputs and one absolute GPR output; TLOAD/TSTORE u
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-b-ior-purpose role=purpose -->
+## What B.IOR contributes
+
+`B.IOR` is a 32-bit block header command that records scalar GPR inputs and an optional scalar destination. It changes pending block metadata rather than executing a tile body operation immediately.
+
+<!-- PTO-READER-BLOCK: block-b-ior-mechanism role=mechanism -->
+## Placement and mechanism
+
+The command belongs to an active header before the first body instruction. Its effective order and arity are checked against the completed operation schema rather than inferred from this command in isolation.
+
+The command records one pending scalar-binding record. Sources are read later according to the selected operation, and executing `B.IOR` alone does not write a GPR destination.
+
+<!-- PTO-READER-BLOCK: block-b-ior-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `RegDst` identifies a destination or publication selector; its exact assigned domain remains in the generated contract below.
+- `RegSrc0` identifies an input source or source-role selector; its exact assigned domain remains in the generated contract below.
+- `RegSrc1` identifies an input source or source-role selector; its exact assigned domain remains in the generated contract below.
+- `RegSrc2` identifies an input source or source-role selector; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-b-ior-effects role=effects -->
+## Pending state and completion
+
+An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+
+<!-- PTO-READER-BLOCK: block-b-ior-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+
+<!-- PTO-READER-BLOCK: block-b-ior-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]
+```
+
+Assume an active compatible header with no earlier conflicting `B.IOR` command. Placing `B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -349,7 +396,3 @@ end;
 ## Examples
 
 - B.IOR a0, a1, zero, ->zero
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

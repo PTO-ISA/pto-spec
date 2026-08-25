@@ -11,6 +11,60 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-tstore-purpose role=purpose -->
+## What BSTART.TSTORE does
+
+`BSTART.TSTORE` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+
+<!-- PTO-READER-BLOCK: block-bstart-tstore-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`BSTART.TSTORE` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+
+The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+
+At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+
+<!-- PTO-READER-BLOCK: block-bstart-tstore-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `DataType` — source element data type; `B.IOR.RegSrc0` — per-PE private-GPR GM base address; `B.IOR.RegSrc1` — per-PE private-GPR byte row stride; `B.DIM.LB0` — ordinary ValidCol or CUBE valid columns; `B.DIM.LB1` — ordinary ValidRow or CUBE valid rows; `B.DIM.LB2` — ordinary physical Col; forbidden for CUBE conversion; `B.IOT/B.IOS` — Local or Shared source and participation mask.
+- Local and CUBE stores use a terminating source `B.IOT`; full and partial Shared stores replace it with source `B.IOS`; optional `B.DATR`, `B.DIM`, and `B.IOR` complete layout, shape, base, and row stride.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-bstart-tstore-effects role=effects -->
+## State effects and ordering
+
+Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+
+After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+
+<!-- PTO-READER-BLOCK: block-bstart-tstore-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through the owner-defined fault; no prose on this page creates an additional fault rule.
+
+Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+
+<!-- PTO-READER-BLOCK: block-bstart-tstore-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+BSTART.TSTORE U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR a0, a1; B.IOT T#1, mask=1111, last; BSTOP
+```
+
+The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -195,7 +249,3 @@ end;
 - BSTART.TSTORE FP16; B.IOS S7, mask=1111; BSTOP
 - BSTART.TSTORE FP16 [TSTORE.SPART form]; B.IOS S7, mask=0011; BSTOP
 - BSTART.TSTORE FP16; B.DATR {M162ND, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=M; B.IOT M#1, mask=1111, <last>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

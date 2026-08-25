@@ -11,6 +11,52 @@ DMA performs an exact 64-byte copy, validates both ranges before effects, snapsh
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-dma-purpose role=purpose -->
+## What DMA does
+
+`DMA` copies exactly `64` bytes from the address in `SrcL` to the address in `SrcR` as one restartable scalar operation.
+
+<!-- PTO-READER-BLOCK: scalar-dma-mechanism role=mechanism -->
+## Atomic mechanism
+
+The ASL DOC contract selects `ExecuteScalarDMACopy64`: it probes the complete source range before the complete destination range.
+
+All source bytes are captured before the first destination write, so exact, forward, and backward overlap follow memmove-style snapshot behavior.
+
+<!-- PTO-READER-BLOCK: scalar-dma-inputs-outputs role=inputs-outputs -->
+## Inputs and result
+
+`SrcL` carries the Reg5 source byte-address source; `SrcR` carries the Reg5 destination byte-address source.
+
+This form has no ordering or route modifier.
+
+<!-- PTO-READER-BLOCK: scalar-dma-effects role=effects -->
+## Effects and ordering
+
+A successful copy emits eight relaxed 8-byte load events followed by eight relaxed 8-byte store events, then advances `TPC` by `4` bytes.
+
+Only a successful destination overlap invalidates the local reservation; unrelated reservation state is preserved.
+
+<!-- PTO-READER-BLOCK: scalar-dma-constraints role=constraints -->
+## Legality and precise faults
+
+Both complete 64-byte ranges must pass preflight before any byte is read or written, and the first failing source-or-destination probe determines the fault.
+
+A fault exposes no event prefix or partial destination update, leaves memory unchanged, and preserves the original `TPC` for full reissue.
+
+<!-- PTO-READER-BLOCK: scalar-dma-example role=example -->
+## Non-normative example
+
+This example only shows one accepted spelling; the generated contract below remains authoritative.
+
+For a first reading, use `dma [SrcL], SrcR` and follow source preflight, destination preflight, the 64-byte snapshot, and the final copy commit; this instruction has no ordering or route modifier.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -147,7 +193,3 @@ end;
 - dma [a0], a1
 - dma [t#1], u#1
 - dma [zero], sp
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

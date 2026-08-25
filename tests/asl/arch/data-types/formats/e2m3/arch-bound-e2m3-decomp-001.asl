@@ -43,6 +43,8 @@ begin
     AssertNumericFiniteDecomposition(TileDataType_E2M3,
         Zeros{PTO_XLEN} + 0x20, TRUE, Zeros{PTO_XLEN}, 0);
     AssertNumericFiniteDecompositionUnavailable(TileDataType_E2M3,
+        Zeros{PTO_XLEN} + 0x40);
+    AssertNumericFiniteDecompositionUnavailable(TileDataType_E2M3,
         Zeros{PTO_XLEN} + 0x80);
     assert TileNumericValueClass(TileDataType_E2M3,
         Zeros{PTO_XLEN} + 0x1f) == NumericValue_PositiveNormal;

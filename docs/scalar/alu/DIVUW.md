@@ -11,6 +11,57 @@ DIVUW computes the unsigned low-32-bit quotient using total fixed-width semantic
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-divuw-purpose role=purpose -->
+## What DIVUW does
+
+`DIVUW` is a 32-bit scalar ALU instruction. It computes the unsigned quotient over the low 32-bit word, followed by sign-extension to XLEN; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-divuw-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then computes the unsigned quotient over the low 32-bit word, followed by sign-extension to XLEN, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-divuw-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
+- The 5-bit `SrcL` field selects the dividend through Reg5.
+- The 5-bit `SrcR` field selects the divisor through Reg5.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-divuw-effects role=effects -->
+## Effects and ordering
+
+Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-divuw-constraints role=constraints -->
+## Legality and fault boundary
+
+A zero divisor returns quotient zero and does not raise an arithmetic exception.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-divuw-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `DIVUW` example, dividend `13` and divisor `5` produce quotient `2`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -123,7 +174,3 @@ end;
 
 - divuw a0, a1, ->a2
 - divuw t#1, zero, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

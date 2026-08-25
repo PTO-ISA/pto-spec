@@ -11,6 +11,56 @@ Canonical Block-start spelling for an operation assigned to the SFU execution en
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-sfu-purpose role=purpose -->
+## What BSTART.SFU contributes
+
+`BSTART.SFU` is the canonical SFU spelling for operations carried by the existing 32-bit `BSTART.TEPL` encoding. It is an encoding alias, not an independently encoded block-start command.
+
+<!-- PTO-READER-BLOCK: block-bstart-sfu-mechanism role=mechanism -->
+## Placement and mechanism
+
+Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+
+```text
+TileOp resolves to one assigned TEPL Mode:Function selector whose execution engine is SFU; the alias adds no encoding bits or ownership.
+The resulting block uses the same descriptor, header composition, commit, and rollback rules as BSTART.TEPL.
+```
+
+Alias resolution maps `TileOp` to an assigned TEPL `Mode:Function` whose execution engine is SFU, then uses the unchanged `BSTART.TEPL` carrier bits and start handler. The resulting descriptor, header execution, commit, and rollback path are the inherited TEPL path; the alias adds no state or encoding field.
+
+<!-- PTO-READER-BLOCK: block-bstart-sfu-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `TileOp` supplies the named selector or attribute field; its exact assigned domain remains in the generated contract below.
+- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-bstart-sfu-effects role=effects -->
+## Pending state and completion
+
+Applicability, SFU-engine matching, carrier fields, and descriptor legality are checked before predecessor retirement. If retirement succeeds, the resolved TEPL descriptor becomes pending; the selected SFU operation executes only when the completed block commits.
+
+<!-- PTO-READER-BLOCK: block-bstart-sfu-constraints role=constraints -->
+## Legality and fault boundary
+
+An unknown `TileOp`, a selector assigned to another engine, a TEPL selector hole, or a reserved `DataType` is rejected before predecessor retirement or new `BARG` effects. A predecessor-retirement failure preserves the predecessor and publishes no alias descriptor.
+
+<!-- PTO-READER-BLOCK: block-bstart-sfu-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+BSTART.SFU TEXP, FP32
+```
+
+`BSTART.SFU TEXP, FP32` resolves TEXP to its assigned SFU `Mode:Function` and emits the existing `BSTART.TEPL` carrier. If predecessor retirement succeeds, that inherited TEPL descriptor remains pending until the completed TEXP block commits.
+<!-- SUPPLEMENTARY-END -->
+
 ## Alias contract
 
 - **Encoding owner:** `BSTART.TEPL`
@@ -170,7 +220,3 @@ end;
 ## Examples
 
 - BSTART.SFU TEXP, FP32
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

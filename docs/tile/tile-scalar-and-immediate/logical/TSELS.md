@@ -11,6 +11,66 @@ Select each result encoding from a Local Tile or private-GPR scalar under one pa
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-tsels-purpose role=purpose -->
+## What TSELS does
+
+`TSELS` selects each result from a Tile source or per-PE scalar under a packed predicate Tile.
+
+<!-- PTO-READER-BLOCK: tile-c-tsels-mechanism role=mechanism -->
+## Operation mechanism
+
+Predicate bit zero selects the false input and bit one selects the true input; selected carrier bits are copied without numeric conversion.
+
+<!-- PTO-READER-BLOCK: tile-c-tsels-inputs-outputs role=inputs-outputs -->
+## Operands, shape, and type
+
+- `destination0` identifies a newly allocated destination.
+
+- `source0` supplies the packed predicate Tile.
+
+- `source1` supplies a persistent source Tile.
+
+- `scalar0` supplies the per-PE scalar operand.
+
+- The closed applicable DataType set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+
+- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
+
+- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+
+<!-- PTO-READER-BLOCK: tile-c-tsels-effects role=effects -->
+## Definedness, padding, and publication
+
+All source descriptors and payloads are validated and snapshotted before destination publication.
+
+The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+
+Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
+
+Source Tiles persist and are not modified by successful execution.
+
+<!-- PTO-READER-BLOCK: tile-c-tsels-constraints role=constraints -->
+## Legality, fault, and order boundaries
+
+Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+
+A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+
+`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+
+<!-- PTO-READER-BLOCK: tile-c-tsels-example role=example -->
+## Non-normative example
+
+This example illustrates the current ASL-bound contract and is not a second instruction definition.
+
+`TSELS <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `tile-scalar-and-immediate`
@@ -186,7 +246,7 @@ end;
 
 - TSELS is selected only by the TEPL raw carrier Mode 1 Function 26 and executes on VEC.
 - Exactly one terminating Local B.IOT supplies packed Predicate, numeric SrcTrue, and one newly allocated numeric destination. B.IOS and additional Tile bindings are illegal.
-- The data DataType is exactly HiF8, E4M3, E5M2, E3M2, E2M3, E8M0, S8, U8, FP16, BF16, S16, U16, FP32, TF32, HF32, S32, or U32; every other type, including FP64, S64, U64, and packed-X2 types, rejects before effects.
+- The data DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.
 - Predicate uses packed predicate-kind storage with matching logical geometry and every valid bit defined. SrcTrue and destination match physical shape, valid shape, row-major layout, and DataType; numeric encoding validity is not required for selected source or scalar carrier payloads.
 - Only RegSrc0 may be nonzero in B.IOR and only PadValueOrByteId is applicable in B.DATR.
 - PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
@@ -217,7 +277,3 @@ end;
 ## Examples
 
 - BSTART.VEC TSELS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarFalseGPR, zero, zero, ->zero (optional); BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

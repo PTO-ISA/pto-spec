@@ -11,6 +11,65 @@ Latches complete-bundle matrix post-processing mode, reduction enables, and fixe
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-b-fpatr-purpose role=purpose -->
+## What B.FPATR contributes
+
+`B.FPATR` is a 32-bit block header command that records the required fixed-point Matrix post-processing descriptor. It changes pending block metadata rather than executing a tile body operation immediately.
+
+<!-- PTO-READER-BLOCK: block-b-fpatr-mechanism role=mechanism -->
+## Placement and mechanism
+
+The command appears exactly once in a CUBE Matrix header, before scalar or tile bindings and before the body. Its operand-stream roles are interpreted by the completed Matrix schema.
+
+The accepted command latches one typed attribute record in pending block state. The selected operation consumes those fields only after the complete header, bindings, dimensions, and body satisfy its schema.
+
+<!-- PTO-READER-BLOCK: block-b-fpatr-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `PreQuantMode` selects Matrix pre-quantization and output conversion; its exact assigned domain remains in the generated contract below.
+- `ReluMode` selects the activation multiplier; its exact assigned domain remains in the generated contract below.
+- `GroupNCode` selects the group-maximum column count; its exact assigned domain remains in the generated contract below.
+- `RowMaxEn` enables row-maximum input and output; its exact assigned domain remains in the generated contract below.
+- `GroupMaxEn` enables group-maximum output; its exact assigned domain remains in the generated contract below.
+- `RowMaxInit` enables initialization from RowMaxIn; its exact assigned domain remains in the generated contract below.
+- `MaxAbsEn` selects maximum-absolute reduction; its exact assigned domain remains in the generated contract below.
+- `Func` carries the fixed function discriminator; its exact assigned domain remains in the generated contract below.
+- `ElementWiseEn` carries the fixed complete-bundle selector; its exact assigned domain remains in the generated contract below.
+- `TransA` enables logical transpose of A; its exact assigned domain remains in the generated contract below.
+- `TransB` enables logical transpose of B; its exact assigned domain remains in the generated contract below.
+- `CScaleEn` enables per-row accumulator C scaling; its exact assigned domain remains in the generated contract below.
+- `Reserved` must retain its fixed reserved value; its exact assigned domain remains in the generated contract below.
+- `Opc1` carries the fixed command-class discriminator; its exact assigned domain remains in the generated contract below.
+- `Opcode` carries the fixed attribute opcode; its exact assigned domain remains in the generated contract below.
+- `W` carries the fixed command-width discriminator; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-b-fpatr-effects role=effects -->
+## Pending state and completion
+
+An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+
+<!-- PTO-READER-BLOCK: block-b-fpatr-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+
+<!-- PTO-READER-BLOCK: block-b-fpatr-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn
+```
+
+Assume an active compatible header with no earlier conflicting `B.FPATR` command. Placing `B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -416,7 +475,3 @@ end;
 
 - B.FPATR None, None, 0, 0, 0, 0, 0, 0, 0, 0
 - B.FPATR S8Vector, LReLU, 2, 1, 1, 1, 1, 1, 1, 0
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

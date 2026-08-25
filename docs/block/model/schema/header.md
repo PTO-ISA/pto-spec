@@ -7,6 +7,10 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-BLOCK-MODEL-SCHEMA-HEADER}
 
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/schema/header.asl -->
@@ -15,7 +19,3 @@ This page is a generated reference view of the normative ASL unit.
 // This unit owns the named block-model concept; executable state is defined by its dependencies.
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

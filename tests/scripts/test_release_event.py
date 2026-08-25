@@ -42,6 +42,14 @@ class ReleaseEventTest(unittest.TestCase):
 
         self.assertEqual(validate_release_event(payload), [])
 
+    def test_four_part_publication_revision_is_accepted(self) -> None:
+        payload = {
+            **VALID_PAYLOAD,
+            "tag": "v0.58.4.1",
+            "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.4.1",
+        }
+        self.assertEqual(validate_release_event(payload), [])
+
     def test_repository_schema_is_accepted_by_the_semantic_checker(self) -> None:
         schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         self.assertEqual(VALIDATE_SCHEMA(schema), [])
@@ -64,7 +72,7 @@ class ReleaseEventTest(unittest.TestCase):
         self.assert_invalid(repository="heng" + "liao1972/DavinciOO")
 
     def test_non_semantic_release_tag_is_rejected(self) -> None:
-        for tag in ("0.58.2", "v0.58.2.0", "v0.x", "v01.58.2"):
+        for tag in ("0.58.2", "v0.58.2.0.1", "v0.x", "v01.58.2"):
             with self.subTest(tag=tag):
                 self.assert_invalid(tag=tag)
 

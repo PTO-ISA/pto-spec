@@ -11,6 +11,52 @@ HL.CASD atomically compares and conditionally replaces one doubleword, then publ
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-casd-purpose role=purpose -->
+## What HL.CASD does
+
+`HL.CASD` atomically compares the doubleword at `SrcL` with `SrcR`; equality stores `SrcD`, while both paths publish the prior 64-bit value.
+
+<!-- PTO-READER-BLOCK: scalar-hl-casd-mechanism role=mechanism -->
+## Atomic mechanism
+
+The ASL DOC contract selects `ScalarHandler_CompareAndSwap` with an access width of `8` bytes.
+
+Match and mismatch both emit one ordered atomic event; only the matching path marks a write as performed.
+
+<!-- PTO-READER-BLOCK: scalar-hl-casd-inputs-outputs role=inputs-outputs -->
+## Inputs and result
+
+`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 expected doubleword source; `SrcD` carries the Reg5 desired doubleword source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+
+`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+
+<!-- PTO-READER-BLOCK: scalar-hl-casd-effects role=effects -->
+## Effects and ordering
+
+After successful preflight, the old value is published even on comparison mismatch; memory changes only on equality.
+
+A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `6` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-hl-casd-constraints role=constraints -->
+## Legality and precise faults
+
+The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+
+A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+
+<!-- PTO-READER-BLOCK: scalar-hl-casd-example role=example -->
+## Non-normative example
+
+This example only shows one accepted spelling; the generated contract below remains authoritative.
+
+For a first reading, use `hl.casd [SrcL], SrcR, SrcD, ->Rd` and then vary only the ordering or route modifiers described above.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -163,7 +209,3 @@ end;
 
 - hl.casd [a0], a1, a2, ->a3
 - hl.casd.aqrlf [t#1], u#1, a0, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

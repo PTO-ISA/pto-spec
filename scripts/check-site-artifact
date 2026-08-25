@@ -1,0 +1,548 @@
+#!/usr/bin/env python3
+"""Validate the generated PTO Docusaurus release artifact."""
+
+from __future__ import annotations
+
+import gzip
+import hashlib
+import json
+import re
+import subprocess
+import sys
+import tomllib
+import math
+from pathlib import Path
+from urllib.parse import quote
+
+
+ROOT = Path(__file__).resolve().parent.parent
+SITE = ROOT / "docs/site"
+OUTPUT = SITE / "build"
+MAX_ARTIFACT_BYTES = 1_000_000_000
+MAX_MAIN_JAVASCRIPT_GZIP = 350 * 1024
+MAX_UNIT_HTML_BYTES = 750_000
+COMMIT = (
+    subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    .stdout.strip()
+)
+
+
+def release_expectations() -> tuple[str, str, int, int]:
+    specification = tomllib.loads(
+        (ROOT / "specification.toml").read_text(encoding="utf-8")
+    )
+    architecture_version = specification["release"]["architecture_version"]
+    publication_version = specification["release"]["publication_version"]
+    if (
+        re.fullmatch(r"(?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*)){3}", publication_version)
+        is None
+        or publication_version.rsplit(".", 1)[0] != architecture_version
+    ):
+        raise ValueError(
+            "publication_version must be a four-part revision of architecture_version"
+        )
+    traceability = json.loads(
+        (ROOT / "spec/evidence/release-traceability-readiness.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    adr_index = json.loads(
+        (ROOT / "spec/evidence/adr-index.json").read_text(encoding="utf-8")
+    )
+
+    adr_ids = {record["id"] for record in adr_index["records"]}
+    ndf_ids = {record["id"] for record in traceability["requirements"]}
+    unit_ids = {record["id"] for record in traceability["units"]}
+    test_ids = {record["id"] for record in traceability["tests"]}
+    unit_by_source = {
+        record["source"]: record["id"] for record in traceability["units"]
+    }
+    edges: set[tuple[str, str, str]] = set()
+    for record in adr_index["records"]:
+        for target in record["affected_ndf"]:
+            if target in ndf_ids:
+                edges.add(("adr-affects-ndf", record["id"], target))
+        for target in record["affected_units"]:
+            if target in unit_ids:
+                edges.add(("adr-affects-asl", record["id"], target))
+    for requirement in traceability["requirements"]:
+        for owner in requirement["owners"]:
+            target = unit_by_source.get(owner)
+            if target is not None:
+                edges.add(("ndf-owned-by-asl", requirement["id"], target))
+        for target in requirement["tests"]:
+            if target in test_ids:
+                edges.add(("ndf-covered-by-avs", requirement["id"], target))
+    for unit in traceability["units"]:
+        for target in unit["tests"]:
+            if target in test_ids:
+                edges.add(("asl-covered-by-avs", unit["id"], target))
+
+    node_count = len(adr_ids | ndf_ids | unit_ids | test_ids)
+    return architecture_version, publication_version, node_count, len(edges)
+
+
+def require_file(relative: str) -> Path:
+    path = OUTPUT / relative
+    if not path.is_file():
+        raise ValueError(f"missing site artifact: {relative}")
+    return path
+
+
+def require_text(relative: str, terms: tuple[str, ...]) -> str:
+    text = require_file(relative).read_text(encoding="utf-8")
+    for term in terms:
+        if term not in text:
+            raise ValueError(f"{relative} is missing required text: {term}")
+    return text
+
+
+def direct_javascript(index_html: str) -> list[Path]:
+    sources = re.findall(r'<script[^>]+src="([^"]+\.js)"', index_html)
+    paths: list[Path] = []
+    for source in sources:
+        relative = source.removeprefix("/")
+        path = OUTPUT / relative
+        if not path.is_file():
+            raise ValueError(f"index references missing JavaScript: {source}")
+        paths.append(path)
+    return paths
+
+
+def file_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def supplementary_sha256(path: Path) -> str:
+    text = path.read_text(encoding="utf-8")
+    begin = "<!-- SUPPLEMENTARY-BEGIN -->"
+    end = "<!-- SUPPLEMENTARY-END -->"
+    if text.count(begin) != 1 or text.count(end) != 1:
+        raise ValueError(f"{path.relative_to(ROOT)} lacks one supplementary region")
+    start = text.index(begin) + len(begin)
+    finish = text.index(end)
+    if start > finish:
+        raise ValueError(f"{path.relative_to(ROOT)} has reversed supplementary markers")
+    body = text[start:finish].strip("\n")
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
+
+
+def encoded_segment(value: str) -> str:
+    """Match JavaScript encodeURIComponent for route segments."""
+    return quote(value, safe="~()*!.'-_")
+
+
+def canonical_unit_route(unit: dict[str, object], locale: str) -> str:
+    mnemonic = unit["mnemonic"]
+    if mnemonic is None:
+        route = f"/units/{encoded_segment(str(unit['id']))}/"
+    else:
+        source_stem = Path(str(unit["source"])).stem
+        segments = [
+            "instructions",
+            str(unit["surface"]),
+            *(str(value) for value in unit["classification"]),
+            source_stem,
+        ]
+        route = "/" + "/".join(encoded_segment(value) for value in segments) + "/"
+    return route if locale == "en" else f"/{locale}{route}"
+
+
+def reference_route(documentation: str, locale: str) -> str:
+    relative = documentation.removeprefix("docs/").removesuffix(".md")
+    if relative.endswith("/index"):
+        relative = relative.removesuffix("/index")
+    route = f"/reference/{relative}/"
+    return route if locale == "en" else f"/{locale}{route}"
+
+
+def expected_reader_projection(
+    unit: dict[str, object], locale: str, documentation_sha256: str
+) -> dict[str, object]:
+    unit_id = str(unit["id"])
+    surface = str(unit["surface"])
+    documentation = str(unit["documentation"])
+    target = surface == "arch" or unit["mnemonic"] is not None
+    english_status = "pending"
+    english_guide_sha256: str | None = None
+    if target:
+        shard = json.loads(
+            (ROOT / f"spec/evidence/mnemonic-descriptions/{surface}/{unit_id}.json")
+            .read_text(encoding="utf-8")
+        )
+        english_status = shard["status"]
+        if english_status == "complete":
+            english_guide_sha256 = supplementary_sha256(ROOT / documentation)
+
+    if locale == "en":
+        return {
+            "documentation": documentation,
+            "documentation_sha256": documentation_sha256,
+            "guide_locale": "en",
+            "guide_content_locale": "en",
+            "guide_sha256": english_guide_sha256,
+            "guide_status": "complete" if english_status == "complete" else "pending",
+            "localized_documentation": documentation,
+            "localized_documentation_sha256": documentation_sha256,
+            "reference_route": reference_route(documentation, locale),
+        }
+
+    if not target:
+        return {
+            "documentation": documentation,
+            "documentation_sha256": documentation_sha256,
+            "guide_locale": locale,
+            "guide_content_locale": "en",
+            "guide_sha256": None,
+            "guide_status": "fallback",
+            "localized_documentation": None,
+            "localized_documentation_sha256": None,
+            "reference_route": reference_route(documentation, locale),
+        }
+
+    translation = json.loads(
+        (ROOT /
+         f"spec/evidence/mnemonic-descriptions/translations/zh-CN/{surface}/{unit_id}.json")
+        .read_text(encoding="utf-8")
+    )
+    if translation["status"] != "complete":
+        return {
+            "documentation": documentation,
+            "documentation_sha256": documentation_sha256,
+            "guide_locale": locale,
+            "guide_content_locale": "en",
+            "guide_sha256": english_guide_sha256,
+            "guide_status": "fallback" if english_status == "complete" else "pending",
+            "localized_documentation": None,
+            "localized_documentation_sha256": None,
+            "reference_route": reference_route(documentation, locale),
+        }
+
+    localized_documentation = str(translation["locale_documentation_path"])
+    localized_path = ROOT / localized_documentation
+    localized_sha256 = file_sha256(localized_path)
+    return {
+        "documentation": localized_documentation,
+        "documentation_sha256": localized_sha256,
+        "guide_locale": locale,
+        "guide_content_locale": locale,
+        "guide_sha256": supplementary_sha256(localized_path),
+        "guide_status": "complete",
+        "localized_documentation": localized_documentation,
+        "localized_documentation_sha256": localized_sha256,
+        "reference_route": reference_route(documentation, locale),
+    }
+
+
+def validate_unit_routes() -> tuple[int, str, int]:
+    traceability = json.loads(
+        (ROOT / "spec/evidence/release-traceability-readiness.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    units = sorted(traceability["units"], key=lambda unit: unit["id"])
+    source_hashes = traceability["sources"]
+    largest_route = ""
+    largest_html_bytes = 0
+    for locale, manifest_relative in (
+        ("en", "pto-unit-routes.json"),
+        ("zh-CN", "zh-CN/pto-unit-routes.json"),
+    ):
+        asset_root = OUTPUT / ("assets/js" if locale == "en" else f"{locale}/assets/js")
+        locale_javascript = [
+            path
+            for path in asset_root.glob("*.js")
+            if b'"kind":"asl"' in path.read_bytes()
+        ]
+        if not locale_javascript:
+            raise ValueError(f"{locale} build has no generated ASL search-index chunks")
+        search_javascript = b"\n".join(
+            path.read_bytes() for path in locale_javascript
+        )
+        manifest = json.loads(require_file(manifest_relative).read_text(encoding="utf-8"))
+        if manifest.get("schema") != "pto.site-unit-routes.v1":
+            raise ValueError(f"{manifest_relative} has an unknown schema")
+        if manifest.get("locale") != locale:
+            raise ValueError(f"{manifest_relative} has the wrong locale")
+        if manifest.get("source_commit") != COMMIT:
+            raise ValueError(f"{manifest_relative} has a stale source commit")
+        entries = manifest.get("entries")
+        if not isinstance(entries, list) or manifest.get("unit_count") != len(units):
+            raise ValueError(f"{manifest_relative} does not contain every released unit")
+
+        expected_entries = []
+        for unit in units:
+            source = unit["source"]
+            documentation = unit["documentation"]
+            source_sha256 = source_hashes[source]
+            documentation_sha256 = source_hashes[documentation]
+            if file_sha256(ROOT / source) != source_sha256:
+                raise ValueError(f"released source hash is stale for {source}")
+            if file_sha256(ROOT / documentation) != documentation_sha256:
+                raise ValueError(
+                    f"released documentation hash is stale for {documentation}"
+                )
+            route = canonical_unit_route(unit, locale)
+            reader_projection = expected_reader_projection(
+                unit, locale, documentation_sha256
+            )
+            expected_entries.append({
+                "id": unit["id"],
+                "mnemonic": unit["mnemonic"],
+                "route": route,
+                "source": source,
+                "source_sha256": source_sha256,
+                **reader_projection,
+            })
+
+            page_relative = f"{route.lstrip('/')}index.html"
+            page = require_file(page_relative)
+            page_bytes = page.stat().st_size
+            if locale == "en" and page_bytes > largest_html_bytes:
+                largest_route = route
+                largest_html_bytes = page_bytes
+            require_text(
+                page_relative,
+                (
+                    unit["id"],
+                    source,
+                    source_sha256,
+                    str(reader_projection["documentation"]),
+                    str(reader_projection["documentation_sha256"]),
+                ),
+            )
+            label = unit["mnemonic"] or unit["id"]
+            search_fragment = json.dumps(
+                {
+                    "id": unit["id"],
+                    "label": label,
+                    "kind": "asl",
+                    "path": source,
+                    "url": route,
+                },
+                separators=(",", ":"),
+            )[:-1].encode("utf-8")
+            if search_fragment not in search_javascript:
+                raise ValueError(
+                    f"search index does not route {unit['id']} to {route}"
+                )
+
+        if entries != expected_entries:
+            raise ValueError(f"{manifest_relative} is not the canonical unit route ledger")
+
+    if largest_html_bytes > MAX_UNIT_HTML_BYTES:
+        raise ValueError(
+            f"largest unit page {largest_route} is {largest_html_bytes} bytes; "
+            f"limit is {MAX_UNIT_HTML_BYTES}"
+        )
+    for test in traceability["tests"]:
+        asset = require_file(f"evidence/test-sources/{test['sha256']}.asl")
+        if file_sha256(asset) != test["sha256"]:
+            raise ValueError(f"lazy test source hash mismatch for {test['id']}")
+
+    return len(units), largest_route, largest_html_bytes
+
+
+def main() -> int:
+    try:
+        architecture_version, publication_version, expected_nodes, expected_edges = (
+            release_expectations()
+        )
+        package = json.loads((SITE / "package.json").read_text(encoding="utf-8"))
+        if package["dependencies"].get("@docusaurus/core") != "3.10.2":
+            raise ValueError("Docusaurus must remain exact-pinned to 3.10.2")
+        if package["dependencies"].get("plotly.js") != (
+            "npm:plotly.js-gl2d-dist-min@4.0.0"
+        ):
+            raise ValueError("Plotly must remain exact-pinned to the reviewed gl2d bundle")
+        if package["dependencies"].get("wavedrom") != "3.6.1":
+            raise ValueError("WaveDrom must remain exact-pinned to 3.6.1")
+
+        index_html = require_text(
+            "index.html",
+            ("PTO Formal Specification", f"v{publication_version}", COMMIT[:12]),
+        )
+        require_text(
+            "instructions/tile/memory-and-data-movement/regular/TLOAD/index.html",
+            (
+                "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
+                "PTO-TLOAD-MEMORY-001",
+                "PTO-TLOAD-CUBE-001",
+                "Non-normative demonstration",
+            ),
+        )
+        require_text(
+            "search/index.html",
+            ("Specification search", str(expected_nodes)),
+        )
+        require_text(
+            "explore/ndf/index.html",
+            (
+                "NDF relationship explorer",
+                str(expected_nodes),
+                str(expected_edges),
+            ),
+        )
+        require_text(
+            "zh-CN/index.html",
+            ("PTO 架构", "先 Scalar，再 Block，最后 Tile"),
+        )
+        expected_index_pages = math.ceil(expected_nodes / 250)
+        static_index_pages = sorted(
+            (OUTPUT / "explore/ndf/index").glob("*/index.html")
+        )
+        if len(static_index_pages) != expected_index_pages:
+            raise ValueError(
+                "static NDF index page count is "
+                f"{len(static_index_pages)}; expected {expected_index_pages}"
+            )
+        require_text(
+            "explore/ndf/index/1/index.html",
+            ("Complete, paginated released identities", "relationships"),
+        )
+        redirects = json.loads((SITE / "redirects.json").read_text(encoding="utf-8"))
+        for redirect in redirects:
+            destination = redirect["to"]
+            for source in redirect["from"]:
+                relative = source.lstrip("/")
+                redirect_path = OUTPUT / relative
+                if redirect_path.is_dir():
+                    redirect_path = redirect_path / "index.html"
+                if not redirect_path.is_file():
+                    raise ValueError(f"missing legacy redirect artifact: {source}")
+                if destination not in redirect_path.read_text(encoding="utf-8"):
+                    raise ValueError(
+                        f"legacy redirect {source} does not target {destination}"
+                    )
+        require_file(".nojekyll")
+        publication_path = require_file("pto-site-publication.json")
+        publication = json.loads(publication_path.read_text(encoding="utf-8"))
+        if publication.get("schema") != "pto.site-publication.v1":
+            raise ValueError("site publication manifest has an unknown schema")
+        if publication.get("source_commit") != COMMIT:
+            raise ValueError("site publication manifest commit does not match HEAD")
+        if publication.get("architecture_version") != architecture_version:
+            raise ValueError("site publication manifest version does not match specification.toml")
+        if publication.get("publication_version") != publication_version:
+            raise ValueError(
+                "site publication manifest publication revision does not match specification.toml"
+            )
+        expected_tag = f"v{publication_version}"
+        if publication.get("tag") != expected_tag:
+            raise ValueError("site publication manifest tag does not match the release version")
+        tagged = False
+        tag_result = subprocess.run(
+            ["git", "rev-parse", f"{expected_tag}^{{commit}}"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if tag_result.returncode == 0:
+            tagged = tag_result.stdout.strip() == COMMIT
+        clean = (
+            subprocess.run(
+                ["git", "status", "--porcelain=v1", "--untracked-files=all"],
+                cwd=ROOT,
+                check=True,
+                text=True,
+                capture_output=True,
+            ).stdout.strip()
+            == ""
+        )
+        expected_eligible = tagged and clean
+        if publication.get("release_eligible") != expected_eligible:
+            raise ValueError("site publication manifest release eligibility is inconsistent")
+        expected_state = "release" if expected_eligible else "preview"
+        if publication.get("publication_state") != expected_state:
+            raise ValueError("site publication manifest state is inconsistent")
+        if publication.get("redirect_manifest_sha256") != file_sha256(
+            SITE / "redirects.json"
+        ):
+            raise ValueError("redirect manifest hash does not match publication manifest")
+        if publication.get("dependency_lock_sha256") != file_sha256(
+            SITE / "pnpm-lock.yaml"
+        ):
+            raise ValueError("dependency lock hash does not match publication manifest")
+
+        artifact_files = [path for path in OUTPUT.rglob("*") if path.is_file()]
+        tree_files = [path for path in artifact_files if path != publication_path]
+        tree = hashlib.sha256()
+        for path in sorted(tree_files):
+            relative = path.relative_to(OUTPUT).as_posix()
+            tree.update(relative.encode("utf-8"))
+            tree.update(b"\0")
+            tree.update(bytes.fromhex(file_sha256(path)))
+            tree.update(b"\n")
+        if publication.get("site_tree_sha256") != tree.hexdigest():
+            raise ValueError("site tree hash does not match publication manifest")
+        if publication.get("file_count") != len(tree_files):
+            raise ValueError("site publication manifest file count is stale")
+        if publication.get("content_bytes") != sum(
+            path.stat().st_size for path in tree_files
+        ):
+            raise ValueError("site publication manifest byte count is stale")
+        artifact_size = sum(path.stat().st_size for path in artifact_files)
+        if artifact_size >= MAX_ARTIFACT_BYTES:
+            raise ValueError(
+                f"site artifact is {artifact_size} bytes; limit is {MAX_ARTIFACT_BYTES}"
+            )
+        symlinks = [path for path in OUTPUT.rglob("*") if path.is_symlink()]
+        if symlinks:
+            raise ValueError(f"site artifact contains symlinks: {symlinks[0]}")
+
+        main_javascript = direct_javascript(index_html)
+        unit_count, largest_unit_route, largest_unit_html = validate_unit_routes()
+        compressed_size = sum(
+            len(gzip.compress(path.read_bytes(), compresslevel=9))
+            for path in main_javascript
+        )
+        if compressed_size > MAX_MAIN_JAVASCRIPT_GZIP:
+            raise ValueError(
+                "direct homepage JavaScript is "
+                f"{compressed_size} gzip bytes; budget is {MAX_MAIN_JAVASCRIPT_GZIP}"
+            )
+        if any(b"scattergl" in path.read_bytes() for path in main_javascript):
+            raise ValueError("Plotly scattergl leaked into the homepage JavaScript")
+        if any(b"renderAny" in path.read_bytes() for path in main_javascript):
+            raise ValueError("WaveDrom leaked into the homepage JavaScript")
+
+        lazy_plotly = [
+            path
+            for path in (OUTPUT / "assets/js").glob("*.js")
+            if b"scattergl" in path.read_bytes()
+        ]
+        if not lazy_plotly:
+            raise ValueError("site artifact has no lazy Plotly scattergl chunk")
+        lazy_wavedrom = [
+            path
+            for path in (OUTPUT / "assets/js").glob("*.js")
+            if b"renderAny" in path.read_bytes() and b"waveSkin" in path.read_bytes()
+        ]
+        if not lazy_wavedrom:
+            raise ValueError("site artifact has no lazy WaveDrom rendering chunk")
+
+        print(
+            "site artifact passed: "
+            f"{len(artifact_files)} files, {artifact_size} bytes, "
+            f"{compressed_size} homepage JS gzip bytes, "
+            f"{len(lazy_plotly)} lazy Plotly chunks, "
+            f"{len(lazy_wavedrom)} lazy WaveDrom chunks, "
+            f"{unit_count} bilingual unit routes, "
+            f"largest unit {largest_unit_route} at {largest_unit_html} bytes, "
+            f"{expected_nodes} graph nodes, {expected_edges} graph edges"
+        )
+        return 0
+    except (KeyError, OSError, ValueError, json.JSONDecodeError) as error:
+        print(f"site artifact check failed: {error}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

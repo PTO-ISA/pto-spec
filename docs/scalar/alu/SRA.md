@@ -11,6 +11,57 @@ SRA performs a arithmetic right shift of the PTO_XLEN source by the low six bits
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sra-purpose role=purpose -->
+## What SRA does
+
+`SRA` is a 32-bit scalar ALU instruction. It arithmetically shifts the source right under the complete XLEN value shift rules; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-sra-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then arithmetically shifts the source right under the complete XLEN value shift rules, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-sra-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
+- The 5-bit `SrcL` field selects the scalar value through Reg5.
+- The 5-bit `SrcR` field selects the register shift count through Reg5.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-sra-effects role=effects -->
+## Effects and ordering
+
+Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-sra-constraints role=constraints -->
+## Legality and fault boundary
+
+Register shifting uses only the low 6 right-source bits, so the effective amount is `0..63`; every result is defined at the fixed width.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-sra-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `SRA` example, source `-8` shifted arithmetically right by `2` produces `-2`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -136,7 +187,3 @@ end;
 - sra a0, a1, ->a2
 - sra t#1, u#1, ->u
 - sra zero, zero, ->zero
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

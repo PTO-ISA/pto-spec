@@ -11,6 +11,54 @@ SETC.LTU - Compare scalar operands and update the bundle commit condition.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-setc-ltu-purpose role=purpose -->
+## What SETC.LTU does
+
+`SETC.LTU` evaluates unsigned less-than and publishes the result as the current Conditional bundle commit decision.
+
+<!-- PTO-READER-BLOCK: scalar-setc-ltu-mechanism role=mechanism -->
+## Mechanism
+
+Placement and the single-setter rule are checked before source readiness or reads.
+
+The snapshotted operands are evaluated for unsigned less-than and canonicalized to XLEN one or zero.
+
+<!-- PTO-READER-BLOCK: scalar-setc-ltu-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `SrcL` supplies the left scalar source.
+
+- `SrcR` supplies the right scalar source.
+
+- `SrcRType` selects the right-source transformation.
+
+<!-- PTO-READER-BLOCK: scalar-setc-ltu-effects role=effects -->
+## Effects and ordering
+
+The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+
+On success, `SETC.LTU` advances `TPC` by `4` bytes. It has no scalar destination and no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-setc-ltu-constraints role=constraints -->
+## Legality and fault order
+
+The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+
+Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-setc-ltu-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`setc.ltu SrcL, SrcR<{.sw, .uw}>` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -132,7 +180,3 @@ end;
 ## Examples
 
 - setc.ltu SrcL, SrcR<{.sw, .uw}>
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

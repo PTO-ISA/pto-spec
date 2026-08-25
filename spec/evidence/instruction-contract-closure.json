@@ -19917,7 +19917,6 @@
           "bc.iall"
         ],
         "defaults": [
-          "Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.",
           "This form has no operand; the semantic operand is the all-zero XLEN value."
         ],
         "encoded_fields": [],
@@ -30576,7 +30575,6 @@
           "dc.iall"
         ],
         "defaults": [
-          "Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.",
           "This form has no operand; the semantic operand is the all-zero XLEN value."
         ],
         "encoded_fields": [],
@@ -32739,7 +32737,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-away mode.",
+          "semantic_summary": "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-to-nearest, ties-away mode.",
           "status": "accepted"
         }
       ],
@@ -32882,7 +32880,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-away mode.",
+          "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-to-nearest, ties-away mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
           "For pto-v0, preserve the normalized source bits, retain the selected integer carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
@@ -32894,7 +32892,7 @@
       "mnemonic": "FCVTA",
       "ndf_clause": "PTO-INST-SCALAR-FCVTA",
       "source": "asl/scalar/fsu/FCVTA.asl",
-      "summary": "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-away mode.",
+      "summary": "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-to-nearest, ties-away mode.",
       "surface": "scalar"
     },
     {
@@ -34350,7 +34348,6 @@
           "fence.i"
         ],
         "defaults": [
-          "Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.",
           "The instruction has no operand or mask field."
         ],
         "encoded_fields": [],
@@ -66499,7 +66496,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. The register offset uses a fixed scale factor of 1; no shamt field is encoded."
         ],
         "encoded_fields": [
           {
@@ -66602,7 +66599,7 @@
         "legality": [
           "Every encoded Reg5 source uses the complete domain: codes 0..23 select absolute GPRs, codes 24..27 select T#1..T#4, and codes 28..31 select U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, code 30 pushes U, code 31 pushes T, and codes 0 and 24..29 discard only that result.",
-          "All four SrcRType values and all shamt values 0..31 are assigned; apply the modifier before the shift.",
+          "All four SrcRType values are assigned; apply the selected modifier with the fixed scale factor of 1.",
           "Each memory address must be aligned to the 1-byte access size; a 1-byte access is the complete transfer unit."
         ],
         "memory_effects": [
@@ -66760,7 +66757,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. The register offset uses a fixed scale factor of 1; no shamt field is encoded."
         ],
         "encoded_fields": [
           {
@@ -66863,7 +66860,7 @@
         "legality": [
           "Every encoded Reg5 source uses the complete domain: codes 0..23 select absolute GPRs, codes 24..27 select T#1..T#4, and codes 28..31 select U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, code 30 pushes U, code 31 pushes T, and codes 0 and 24..29 discard only that result.",
-          "All four SrcRType values and all shamt values 0..31 are assigned; apply the modifier before the shift.",
+          "All four SrcRType values are assigned; apply the selected modifier with the fixed scale factor of 1.",
           "Each memory address must be aligned to the 1-byte access size; a 1-byte access is the complete transfer unit."
         ],
         "memory_effects": [
@@ -67101,7 +67098,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
         ]
@@ -67337,7 +67334,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -67574,7 +67571,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Pre-index mode accesses the updated base and publishes that same updated base only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -67810,7 +67807,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "The pair addresses are address and address plus 1; the instruction performs no base writeback.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -67933,7 +67930,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. The register offset uses a fixed scale factor of 1; no shamt field is encoded."
         ],
         "encoded_fields": [
           {
@@ -68035,7 +68032,7 @@
         "field_domains": [],
         "legality": [
           "Every encoded Reg5 source uses the complete domain: codes 0..23 select absolute GPRs, codes 24..27 select T#1..T#4, and codes 28..31 select U#1..U#4 without consumption.",
-          "All four SrcRType values and all shamt values 0..31 are assigned; apply the modifier before the shift.",
+          "All four SrcRType values are assigned; apply the selected modifier with the fixed scale factor of 1.",
           "Each memory address must be aligned to the 1-byte access size; a 1-byte access is the complete transfer unit."
         ],
         "memory_effects": [
@@ -69486,7 +69483,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm22, multiply it by 8, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm22, multiply it by 8, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
         ]
@@ -69722,7 +69719,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 8, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 8, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -69959,7 +69956,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 8, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 8, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Pre-index mode accesses the updated base and publishes that same updated base only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -70162,7 +70159,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
         ]
@@ -70398,7 +70395,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -70635,7 +70632,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Pre-index mode accesses the updated base and publishes that same updated base only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -70804,7 +70801,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "Reg5 register-offset source",
+            "role": "Reg5 address-base source",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero reads the architectural zero GPR."
@@ -70858,7 +70855,7 @@
           },
           {
             "field": "SrcR",
-            "role": "Reg5 register-offset source"
+            "role": "Reg5 address-base source"
           },
           {
             "field": "simm17",
@@ -70871,7 +70868,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 8, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 8, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "The pair addresses are address and address plus 8; the instruction performs no base writeback.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -71040,7 +71037,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "Reg5 register-offset source",
+            "role": "Reg5 address-base source",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero reads the architectural zero GPR."
@@ -71094,7 +71091,7 @@
           },
           {
             "field": "SrcR",
-            "role": "Reg5 register-offset source"
+            "role": "Reg5 address-base source"
           },
           {
             "field": "simm17",
@@ -71107,7 +71104,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "The pair addresses are address and address plus 8; the instruction performs no base writeback.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -74621,7 +74618,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm22, multiply it by 2, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm22, multiply it by 2, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
         ]
@@ -74857,7 +74854,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 2, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 2, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -75094,7 +75091,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 2, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 2, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Pre-index mode accesses the updated base and publishes that same updated base only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -75297,7 +75294,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
         ]
@@ -75533,7 +75530,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -75770,7 +75767,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Pre-index mode accesses the updated base and publishes that same updated base only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -75939,7 +75936,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "Reg5 register-offset source",
+            "role": "Reg5 address-base source",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero reads the architectural zero GPR."
@@ -75993,7 +75990,7 @@
           },
           {
             "field": "SrcR",
-            "role": "Reg5 register-offset source"
+            "role": "Reg5 address-base source"
           },
           {
             "field": "simm17",
@@ -76006,7 +76003,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 2, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 2, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "The pair addresses are address and address plus 2; the instruction performs no base writeback.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -76175,7 +76172,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "Reg5 register-offset source",
+            "role": "Reg5 address-base source",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero reads the architectural zero GPR."
@@ -76229,7 +76226,7 @@
           },
           {
             "field": "SrcR",
-            "role": "Reg5 register-offset source"
+            "role": "Reg5 address-base source"
           },
           {
             "field": "simm17",
@@ -76242,7 +76239,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "The pair addresses are address and address plus 2; the instruction performs no base writeback.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -78854,7 +78851,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm22, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm22, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
         ]
@@ -79090,7 +79087,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -79327,7 +79324,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Pre-index mode accesses the updated base and publishes that same updated base only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -79530,7 +79527,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
         ]
@@ -79766,7 +79763,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -80003,7 +80000,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "Pre-index mode accesses the updated base and publishes that same updated base only after successful memory completion.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -80172,7 +80169,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "Reg5 register-offset source",
+            "role": "Reg5 address-base source",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero reads the architectural zero GPR."
@@ -80226,7 +80223,7 @@
           },
           {
             "field": "SrcR",
-            "role": "Reg5 register-offset source"
+            "role": "Reg5 address-base source"
           },
           {
             "field": "simm17",
@@ -80239,7 +80236,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "The pair addresses are address and address plus 4; the instruction performs no base writeback.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -80408,7 +80405,7 @@
             "other_owner_values": [],
             "rejection": "none",
             "reserved_ranges": [],
-            "role": "Reg5 register-offset source",
+            "role": "Reg5 address-base source",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero reads the architectural zero GPR."
@@ -80462,7 +80459,7 @@
           },
           {
             "field": "SrcR",
-            "role": "Reg5 register-offset source"
+            "role": "Reg5 address-base source"
           },
           {
             "field": "simm17",
@@ -80475,7 +80472,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.",
+          "Sign-extend simm17, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.",
           "The pair addresses are address and address plus 4; the instruction performs no base writeback.",
           "Snapshot every store-data source before any memory effect or destination publication.",
           "Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire."
@@ -81423,7 +81420,6 @@
           "ic.iall"
         ],
         "defaults": [
-          "Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.",
           "This form has no operand; the semantic operand is the all-zero XLEN value."
         ],
         "encoded_fields": [],
@@ -114022,7 +114018,6 @@
           "tlb.iall"
         ],
         "defaults": [
-          "Every displayed operand is encoded explicitly. Encoded zero is an assigned value and never denotes omission.",
           "This form has no operand; the semantic operand is the all-zero XLEN value."
         ],
         "encoded_fields": [],
@@ -115672,7 +115667,8 @@
         "standalone_opcode": false,
         "state_effects": [
           "Allocate a new Local destination descriptor using B.IOT TSize, resolved dimensions, selected transfer DataType, selected Layout, and PE_MASK.",
-          "On success the full physical destination region is defined: valid coordinates contain gathered data and all other physical coordinates contain the selected pad value."
+          "Initialize every physical destination coordinate from the selected PadValue carrier before enabled valid-lane writes.",
+          "On success overwrite enabled valid coordinates with loaded or observed values, mark the full physical destination defined, set contents_defined=TRUE, and publish atomically."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/irregular/MGATHER.md",
@@ -115840,7 +115836,8 @@
         "standalone_opcode": false,
         "state_effects": [
           "Allocate a new Local destination descriptor using B.IOT TSize, resolved dimensions, selected transfer DataType, selected Layout, and PE_MASK.",
-          "On success the full physical destination is defined: valid coordinates contain the values observed by their atomic operations and all other physical coordinates contain the selected pad value."
+          "Initialize every physical destination coordinate from the selected PadValue carrier before enabled valid-lane writes.",
+          "On success overwrite enabled valid coordinates with loaded or observed values, mark the full physical destination defined, set contents_defined=TRUE, and publish atomically."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/irregular/MGATHER_CAS.md",
@@ -115995,7 +115992,8 @@
         "standalone_opcode": false,
         "state_effects": [
           "Allocate a new Local destination descriptor using B.IOT TSize, resolved dimensions, selected transfer DataType, selected Layout, and PE_MASK.",
-          "On success the full physical destination is defined: enabled valid lanes contain loaded values and every disabled or non-valid coordinate contains PadValue."
+          "Initialize every physical destination coordinate from the selected PadValue carrier before enabled valid-lane writes.",
+          "On success overwrite enabled valid coordinates with loaded or observed values, mark the full physical destination defined, set contents_defined=TRUE, and publish atomically."
         ]
       },
       "documentation": "docs/tile/memory-and-data-movement/irregular/MGATHER_MASK.md",
@@ -116381,7 +116379,7 @@
         "legality": [
           "TABS is BSTART.VEC Mode 0 Function 15 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one Local source and one new Local destination; B.IOR and B.IOS are illegal.",
-          "DataType is one of FP16, FP32, or BF16.",
+          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op."
@@ -116513,7 +116511,7 @@
         "legality": [
           "TADD is selected only by BSTART.VEC Mode 0 Function 0 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination. B.IOR and B.IOS are not accepted; all participating Tiles use one PE_MASK and zero mask is a strict no-op.",
-          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "Both source valid regions are completely defined and source/destination physical shape, valid shape, row-major layout, and DataType match.",
           "B.DATR applicability allows only PadValueOrByteId as PadValue."
         ],
@@ -116796,7 +116794,7 @@
         "legality": [
           "TADDS is selected only by the TEPL raw carrier Mode 1 Function 0; canonical execution-engine assembly is BSTART.VEC TADDS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
-          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
+          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -117494,7 +117492,7 @@
         "legality": [
           "TCMP is selected only by VEC Mode 0 Function 13 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local numeric sources and one new Local predicate destination. B.IOR, B.IOS, and additional bindings are illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "Both sources match physical shape, valid shape, row-major layout, and DataType; every valid source element is defined and every constrained floating encoding is valid.",
           "The destination uses predicate-kind storage with the same Row, Col, ValidRow, and ValidCol. Logical index i occupies bit i mod 8 of byte floor(i/8), and TSize holds at least ceil(Row*Col/8) bytes.",
           "CMode and PadValueOrByteId are the only applicable B.DATR fields. Explicit nondefault Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
@@ -117830,7 +117828,7 @@
         "legality": [
           "TCMPS is selected only by the TEPL raw carrier Mode 1 Function 13 and executes on VEC.",
           "Exactly one terminating Local B.IOT supplies one persistent numeric source and one new packed predicate destination. B.IOS and additional Tile bindings are illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other type rejects before effects.",
+          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "The source is row-major and completely defined. The predicate destination has matching logical geometry and capacity of at least ceil(Row*Col/8) bytes.",
           "Only CMode and PadValueOrByteId are applicable in B.DATR. When B.IOR is present, only RegSrc0 may be nonzero.",
           "PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks."
@@ -119847,7 +119845,7 @@
         "legality": [
           "TCOLMAX is selected by the TEPL raw encoding carrier Mode 2 Function 17; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
@@ -120008,7 +120006,7 @@
         "legality": [
           "TCOLMIN is selected by the TEPL raw encoding carrier Mode 2 Function 18; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
@@ -120169,7 +120167,7 @@
         "legality": [
           "TCOLPROD is selected by the TEPL raw encoding carrier Mode 2 Function 19; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.",
+          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
@@ -120330,7 +120328,7 @@
         "legality": [
           "TCOLSUM is selected by the TEPL raw encoding carrier Mode 2 Function 16; canonical execution-engine assembly is BSTART.SFU and there is no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one persistent Local source and one newly allocated Local destination. B.IOR, B.IOS, a second B.IOT, or a nonterminating binding is illegal.",
-          "The source DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
+          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "The destination DataType equals the source DataType.",
           "The source is a fully defined row-major numeric Tile whose ValidRow, ValidCol, and physical Col exactly match the B.DIM-derived source geometry; every constrained floating encoding is valid.",
           "The destination has ValidRow equal to one, ValidCol equal to source.ValidCol, physical Col equal to source.Col, and capacity-derived physical Rows.",
@@ -121384,7 +121382,7 @@
         "legality": [
           "TDIV retains TEPL carrier Mode 0 Function 3 but is canonically classified as SFU.",
           "Exactly one terminating Local B.IOT supplies ordered numerator and denominator sources plus one new Local destination; B.IOR and B.IOS are illegal and PE_MASK zero is a strict no-op.",
-          "DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.",
+          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "Both source valid rectangles are defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and the selected mask.",
           "Only B.DATR PadValueOrByteId is applicable."
         ],
@@ -121667,7 +121665,7 @@
         "legality": [
           "TDIVS is selected only by the TEPL raw carrier Mode 1 Function 3; canonical execution-engine assembly is BSTART.SFU TDIVS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
-          "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16; every other assigned or reserved DataType rejects before effects.",
+          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -121826,7 +121824,7 @@
         "legality": [
           "TEXP retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
-          "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
+          "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, or E5M2.",
           "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
           "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
@@ -122346,7 +122344,8 @@
         ],
         "defaults": [
           "At BSTART the bundle descriptor begins with zero-valued B.DATR and B.DIM state; omitted optional commands retain those reset values, and an encoded zero is a value rather than absence.",
-          "The TileOperandsLegal_TFILLPAD schema determines which B.IOR, B.IOT, B.IOS, B.DATR, and B.DIM bindings are required or optional for TFILLPAD."
+          "The TileOperandsLegal_TFILLPAD schema determines which B.IOR, B.IOT, B.IOS, B.DATR, and B.DIM bindings are required or optional for TFILLPAD.",
+          "B.IOR.RegSrc0 supplies the padding scalar; omitted B.IOR selects zero and only the low selected-element-width bits participate."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
@@ -122385,8 +122384,8 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Copy the source and fill destination padding elements with the bound scalar.",
-          "After complete preflight, execute TFILLPAD with the operand bindings listed above; destination definedness changes only as specified by that handler."
+          "Snapshot the source and bound scalar, copy every valid source coordinate, and write the bound scalar to every non-valid physical destination coordinate.",
+          "Mark the full physical destination defined, set contents_defined=TRUE, and publish payload, definedness, and descriptor atomically after complete preflight."
         ]
       },
       "documentation": "docs/tile/layout-and-rearrangement/initialization/TFILLPAD.md",
@@ -133203,7 +133202,7 @@
         "legality": [
           "TSEL is selected only by VEC Mode 0 Function 26 and has no standalone opcode.",
           "Exactly two ordered Local B.IOT bindings are required. The first supplies packed Predicate and SrcTrue without Last or a destination; the second supplies SrcFalse and one new terminating destination. B.IOR, B.IOS, and additional bindings are illegal.",
-          "The data DataType is exactly HiF8, E4M3, E5M2, E3M2, E2M3, E8M0, S8, U8, FP16, BF16, S16, U16, FP32, TF32, HF32, S32, or U32; every other type, including FP64, S64, U64, and packed-X2 types, rejects before effects.",
+          "The data DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.",
           "SrcTrue, SrcFalse, and destination match physical shape, valid shape, row-major layout, and DataType; every valid element of both data sources is defined, and numeric encoding validity is not required for selected carrier payloads.",
           "Predicate uses predicate-kind storage, has the same Row, Col, ValidRow, and ValidCol as the data Tiles, and defines every valid predicate bit. An ordinary numeric Tile is not a legal mask.",
           "PadValueOrByteId is the only applicable B.DATR field. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
@@ -133499,7 +133498,7 @@
         "legality": [
           "TSELS is selected only by the TEPL raw carrier Mode 1 Function 26 and executes on VEC.",
           "Exactly one terminating Local B.IOT supplies packed Predicate, numeric SrcTrue, and one newly allocated numeric destination. B.IOS and additional Tile bindings are illegal.",
-          "The data DataType is exactly HiF8, E4M3, E5M2, E3M2, E2M3, E8M0, S8, U8, FP16, BF16, S16, U16, FP32, TF32, HF32, S32, or U32; every other type, including FP64, S64, U64, and packed-X2 types, rejects before effects.",
+          "The data DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.",
           "Predicate uses packed predicate-kind storage with matching logical geometry and every valid bit defined. SrcTrue and destination match physical shape, valid shape, row-major layout, and DataType; numeric encoding validity is not required for selected source or scalar carrier payloads.",
           "Only RegSrc0 may be nonzero in B.IOR and only PadValueOrByteId is applicable in B.DATR.",
           "PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks."
@@ -134463,7 +134462,7 @@
       ],
       "contract": {
         "block_composition": [
-          "BSTART.SFU TSORT, FP32|FP16|BF16",
+          "BSTART.SFU TSORT, FP32|FP16",
           "B.DATR all-zero (optional)",
           "B.DIM LB0=sort_width (optional; zero or omission defaults to 32)",
           "B.IOR Descending (optional; omission defaults to ascending)",
@@ -134960,7 +134959,7 @@
         ],
         "legality": [
           "TSORT uses the TEPL encoding carrier Mode 3 Function 12, canonically assembles with BSTART.SFU, and has no standalone opcode.",
-          "The complete Local binding stream supplies exactly one persistent source and two distinct newly allocated destinations. Value source and value destination are FP32, FP16, or BF16; the index destination is U32. All use the same nonzero valid shape and row-major layout.",
+          "The complete Local binding stream supplies exactly one persistent source and two distinct newly allocated destinations. Value source and value destination are FP32 or FP16; the index destination is U32. All use the same nonzero valid shape and row-major layout.",
           "LB1 and LB2 are absent. B.DATR is all zero. B.IOS is illegal. All B.IOT bindings use one PE_MASK.",
           "Every valid source element is defined and has a valid encoding. Signaling NaN is a legal sortable value and records numeric invalid status rather than causing a Tile legality fault."
         ],

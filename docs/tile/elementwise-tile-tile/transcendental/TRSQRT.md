@@ -11,6 +11,64 @@ Compute one same-type reciprocal-square-root operation for every valid Local Til
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-trsqrt-purpose role=purpose -->
+## What TRSQRT does
+
+`TRSQRT` computes a same-type reciprocal square root for every valid element and publishes a new Local destination.
+
+<!-- PTO-READER-BLOCK: tile-c-trsqrt-mechanism role=mechanism -->
+## Operation mechanism
+
+The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+
+Floating results and element status follow the active named numeric profile; the portable contract owns selection, shape, publication, and fault order.
+
+<!-- PTO-READER-BLOCK: tile-c-trsqrt-inputs-outputs role=inputs-outputs -->
+## Operands, shape, and type
+
+- `destination0` identifies a newly allocated destination.
+
+- `source0` supplies a persistent source Tile.
+
+- The closed applicable DataType set is `FP16`, `FP32`, `BF16`.
+
+- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
+
+- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+
+<!-- PTO-READER-BLOCK: tile-c-trsqrt-effects role=effects -->
+## Definedness, padding, and publication
+
+All source descriptors and payloads are validated and snapshotted before destination publication.
+
+The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+
+Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
+
+Source Tiles persist and are not modified by successful execution.
+
+<!-- PTO-READER-BLOCK: tile-c-trsqrt-constraints role=constraints -->
+## Legality, fault, and order boundaries
+
+Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+
+A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+
+`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+
+<!-- PTO-READER-BLOCK: tile-c-trsqrt-example role=example -->
+## Non-normative example
+
+This example illustrates the current ASL-bound contract and is not a second instruction definition.
+
+`TRSQRT <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `elementwise-tile-tile`
@@ -164,7 +222,3 @@ end;
 ## Examples
 
 - BSTART.SFU TRSQRT, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

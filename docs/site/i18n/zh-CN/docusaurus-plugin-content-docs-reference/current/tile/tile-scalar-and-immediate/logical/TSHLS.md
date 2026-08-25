@@ -1,0 +1,274 @@
+<!-- GENERATED FROM: asl/tile/tile-scalar-and-immediate/logical/TSHLS.asl -->
+# TSHLS
+
+**Normative ASL source:** `asl/tile/tile-scalar-and-immediate/logical/TSHLS.asl`
+
+Shift every valid integer Tile element left by one scalar count.
+
+## Normative identity {#PTO-INST-TILE-TSHLS}
+
+<!-- ndf: kind=executable level=L3 layer=tile status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-tshls-purpose role=purpose -->
+## TSHLS 的作用
+
+`TSHLS` 按一个标量 count 左移每个有效 integer 元素，并发布一个新的 Local 目标。
+
+<!-- PTO-READER-BLOCK: tile-c-tshls-mechanism role=mechanism -->
+## 操作机制
+
+该操作只在有效矩形内按助记符选定的带类型的元素规则求值。
+
+<!-- PTO-READER-BLOCK: tile-c-tshls-inputs-outputs role=inputs-outputs -->
+## 操作数、形状与类型
+
+- `destination0` 标识新分配的目的 Tile。
+
+- `source0` 提供持久源 Tile。
+
+- `scalar0` 提供逐 PE 标量操作数。
+
+- 封闭的适用 DataType 集合为 `S64`、`S32`、`S16`、`S8`、`U64`、`U32`、`U16`、`U8`。
+
+- 除非该助记符显式选择其他允许布局，数据 Tile 使用行主序布局。
+
+- `LB0`、`LB1`、`LB2` 按该助记符契约补全有效形状与物理形状；所有必需有效范围都必须非零。
+
+<!-- PTO-READER-BLOCK: tile-c-tshls-effects role=effects -->
+## 已定义性、填充与发布
+
+所有源描述符与载荷都会在目标发布前完成验证和快照。
+
+完整目标载荷、描述符、已定义性、填充状态与适用数值状态会原子发布；拒绝路径不发布任何部分。
+
+Null 填充让有效矩形外的物理坐标保持未定义；显式非 Null 填充值会用选定带类型的值定义这些位置。
+
+源 Tile 在成功执行后保持不变。
+
+<!-- PTO-READER-BLOCK: tile-c-tshls-constraints role=constraints -->
+## 合法性、故障与顺序边界
+
+完整绑定模式、维度、DataType、布局、源已定义性、数值编码、目标容量与分配都会在效果前预检。
+
+合法性或分配检查失败会引发相应 Tile 故障，不留下部分目标、状态或内存效果。
+
+`PE_MASK=0000` 是严格无操作，发生在操作数读取、分配、故障、数值状态或载荷效果之前。
+
+<!-- PTO-READER-BLOCK: tile-c-tshls-example role=example -->
+## 非规范示例
+
+下面的示例只帮助理解当前 ASL 绑定契约，并不是第二份指令定义。
+
+`TSHLS <bundle operands>` 先完成完整预检与源快照，再原子发布助记符定义的结果与填充状态。
+<!-- SUPPLEMENTARY-END -->
+
+## Classification and execution engine
+
+- **Instruction class:** `tile-scalar-and-immediate`
+- **Execution engine:** `VEC`
+
+## Assembly
+
+```asm
+TSHLS <bundle operands>
+```
+
+## Encoding
+
+| Operation | Encoding carrier | Selector | Function | Mode | Handler |
+| --- | --- | --- | ---: | ---: | --- |
+| TSHLS | TEPL | 0x029 | 9 | 1 | ExecuteTileScalar |
+
+## Encoding class
+
+- **Class:** `selector-encoded-block-operation`
+- **Standalone opcode:** `no`
+
+This operation has no standalone opcode.
+
+## Field value dispositions
+
+### B.DATR.PadValueOrByteId (`PTO-FIELD-BLOCK-PADVALUE-OR-BYTEID`)
+
+Carries the operation-selected PadValue or ByteId union field.
+
+**Encoded zero:** For PadValue operations code zero selects Zero; for ByteId operations it selects ByteId zero.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | Zero-or-ByteId0 |
+| 1 | assigned | Max-or-ByteId1 |
+| 2 | assigned | Min-or-ByteId2 |
+| 3 | assigned | Null-or-ByteId3 |
+
+**Reserved-value behavior:** All four encodings are assigned; the selected operation separately validates whether the field is PadValue, ByteId, or inapplicable.
+
+### B.IOR.RegSrc0 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
+## Operands and results
+
+| Field | Architectural role |
+| --- | --- |
+| destination0 | new Local numeric destination |
+| source0 | persistent Local numeric source |
+| scalar0 | per-participating-PE private-GPR scalar |
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/tile/tile-scalar-and-immediate/logical/TSHLS.asl -->
+```asl
+readonly func InstructionContractOperation_TSHLS() => TileOperation
+begin
+    return TileOperation_TSHLS;
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Block composition
+
+```asm
+BSTART.VEC TSHLS, DataType
+B.DATR PadValue (optional)
+B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional)
+B.DIM LB2=Col (optional)
+B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>
+B.IOR ScalarGPR, zero, zero, ->zero (optional)
+BSTOP
+```
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/tile/tile-scalar-and-immediate/logical/TSHLS.asl -->
+```asl
+pure func InstructionContractDataTypeLegal_TSHLS(
+    data_type: TileDataType) => boolean
+begin
+    return TileBinaryDataTypeSupported(
+        TileBinary_SHL,
+        data_type);
+end;
+
+readonly func InstructionContractOperandsLegal_TSHLS(
+    destination: TileIndex,
+    source: TileIndex,
+    scalar: Word) => boolean
+begin
+    return TileOperandsLegal_ExecuteTileScalar(
+        TileBinary_SHL,
+        destination,
+        source,
+        scalar);
+end;
+
+readonly func InstructionContractHandler_TSHLS() => TileSemanticHandler
+begin
+    return TileHandler_ExecuteTileScalar;
+end;
+
+func InstructionContractExecute_TSHLS(
+    destination: TileIndex,
+    source: TileIndex,
+    scalar: Word)
+begin
+    assert InstructionContractOperandsLegal_TSHLS(
+        destination,
+        source,
+        scalar);
+    ExecuteTileScalar(
+        TileBinary_SHL,
+        destination,
+        source,
+        scalar);
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Defaults and encoded zero
+
+- LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow=1. Omitted LB2 selects Col=ValidCol; every explicitly present dimension must be nonzero.
+- Omitted B.DATR selects PadValue=Null. Explicit PadValue 00, 01, 10, and 11 select Zero, Max, Min, and Null.
+- Omitted B.IOR supplies a zero shift count and therefore preserves every valid source encoding. An explicitly present all-zero B.IOR is distinct but supplies the same value; RegSrc1, RegSrc2, and RegDst must be zero.
+
+## Legality
+
+- TSHLS is selected only by the TEPL raw carrier Mode 1 Function 9; canonical execution-engine assembly is BSTART.VEC TSHLS, DataType.
+- Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.
+- The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.
+- Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.
+- B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
+- Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.
+
+## State effects
+
+- For each valid element compute source << masked_count in the selected element interpretation.
+- Publish valid payload, selected padding definedness, numeric status where applicable, and destination descriptor atomically; the source persists and rejection has no architectural effect.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- none
+
+### Ordering
+
+- Complete schema, attribute, dimension, type, descriptor, source-definedness, scalar-encoding, mask, capacity, and allocation preflight precedes source and scalar snapshots.
+- The source payload and scalar are snapshotted before destination publication, so a source that aliases the renamed destination observes its old value.
+
+## Exceptions
+
+- A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.
+- For element width W, the count is the scalar low log2(W) bits and the stored result is truncated to W bits.
+- CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation.
+
+## Examples
+
+- BSTART.VEC TSHLS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP

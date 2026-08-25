@@ -7,6 +7,49 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-gm-access-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit owns the cross-PE Global Memory addressing contract used by `TLOAD` and `TSTORE`, including `B.IOR` defaults, packed four-bit columns, Shared-store PE-mask legality, and preflight boundaries.
+
+<!-- PTO-READER-BLOCK: arch-gm-access-concepts role=concepts-state -->
+## Address inputs
+
+- A present `B.IOR` supplies absolute GPR selectors for the GM base and row stride in bytes.
+- Each selected PE resolves both selectors in its own private GPR file.
+- Without `B.IOR`, base is zero and stride is the dense physical row width; an explicitly encoded zero stride stays zero.
+
+<!-- PTO-READER-BLOCK: arch-gm-access-rules role=rules-interactions -->
+## Addressing and participation
+
+The byte address is formed from base, row times stride, and column times element size. Packed four-bit data selects `floor(column / 2)` from each byte-aligned row and uses column parity for the nibble.
+
+A zero mask is a no-op. Shared Function `1` requires `'1111'`; otherwise only Function `14` accepts a nonzero subset.
+
+`SharedStorePEMaskLegal` implements that mask rule. `SharedGMPESelected` maps a PE identity through `PTOPEMaskBitOfPEIdentity`.
+
+<!-- PTO-READER-BLOCK: arch-gm-access-boundaries role=boundaries -->
+## Preflight and ordering boundaries
+
+All selected-PE accesses are checked before any effect. The architecture does not order those PE accesses against one another, so programs avoid conflicting GM regions rather than relying on an unstated inter-PE order.
+
+<!-- PTO-READER-BLOCK: arch-gm-access-example role=example-usage -->
+## Non-normative address example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-gm-access-related role=related-owners-navigation -->
+## Related owners
+
+- Scalar-register and Core/PE-topology units define the selector and agent context.
+- Atomicity records resulting memory events; `TLOAD` and `TSTORE` owners define concrete transfers.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/global-memory-access.asl -->
@@ -44,7 +87,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

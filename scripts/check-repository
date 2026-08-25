@@ -21,6 +21,8 @@ fail() {
 }
 
 ./scripts/check-active-paths
+python3 scripts/generate-mnemonic-description-inventory --check
+python3 scripts/check-mnemonic-explanations
 
 required_files=(
     .aslref-version
@@ -70,6 +72,11 @@ required_files=(
     spec/evidence/pto-isa-0584-hardware-numeric-vectors.json
     spec/evidence/release-gate-readiness.json
     spec/evidence/release-traceability-readiness.json
+    spec/evidence/mnemonic-descriptions/schema.json
+    spec/evidence/mnemonic-descriptions/coverage-summary.json
+    scripts/generate-mnemonic-description-inventory
+    scripts/generate-mnemonic-description-coverage
+    scripts/check-mnemonic-explanations
     scripts/generate-release-gate-readiness
     scripts/generate-release-manifest
     scripts/generate-release-traceability-readiness

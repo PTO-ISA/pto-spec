@@ -31,6 +31,10 @@ begin
     assert descriptor.fraction_bits_min == 2 && descriptor.exponent_bias == 15;
     assert descriptor.has_infinity && descriptor.has_quiet_nan;
     assert descriptor.has_signaling_nan && descriptor.has_subnormal;
+    AssertNumericFiniteDecomposition(TileDataType_E5M2, Zeros{PTO_XLEN},
+        FALSE, Zeros{PTO_XLEN}, 0);
+    AssertNumericFiniteDecomposition(TileDataType_E5M2,
+        Zeros{PTO_XLEN} + 0x80, TRUE, Zeros{PTO_XLEN}, 0);
     AssertNumericFiniteDecomposition(TileDataType_E5M2, Zeros{PTO_XLEN} + 1,
         FALSE, Zeros{PTO_XLEN} + 1, -16);
     AssertNumericFiniteDecomposition(TileDataType_E5M2, Zeros{PTO_XLEN} + 3,
@@ -47,6 +51,10 @@ begin
         Zeros{PTO_XLEN} + 0x7e);
     AssertNumericFiniteDecompositionUnavailable(TileDataType_E5M2,
         Zeros{PTO_XLEN} + 0x7d);
+    assert TileNumericValueClass(TileDataType_E5M2,
+        Zeros{PTO_XLEN}) == NumericValue_PositiveZero;
+    assert TileNumericValueClass(TileDataType_E5M2,
+        Zeros{PTO_XLEN} + 0x80) == NumericValue_NegativeZero;
     assert TileNumericValueClass(TileDataType_E5M2,
         Zeros{PTO_XLEN} + 0x7c) == NumericValue_PositiveInfinity;
     assert TileNumericValueClass(TileDataType_E5M2,

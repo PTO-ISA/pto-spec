@@ -22,7 +22,7 @@ REQUIRED_FIELDS = (
 )
 TAG = re.compile(
     r"v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
-    r"(?:\.(?:0|[1-9][0-9]*))?"
+    r"(?:\.(?:0|[1-9][0-9]*)){0,2}"
 )
 COMMIT = re.compile(r"[0-9a-f]{40}")
 SHA256 = re.compile(r"[0-9a-f]{64}")
@@ -53,7 +53,8 @@ def validate_release_event(payload: object) -> list[str]:
     tag = payload.get("tag")
     if not isinstance(tag, str) or TAG.fullmatch(tag) is None:
         errors.append(
-            "tag must match vMAJOR.MINOR or vMAJOR.MINOR.PATCH "
+            "tag must match vMAJOR.MINOR, vMAJOR.MINOR.PATCH, or a four-part "
+            "publication revision "
             "without leading zeroes"
         )
 

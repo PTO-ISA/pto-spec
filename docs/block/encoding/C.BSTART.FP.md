@@ -11,6 +11,60 @@ Starts a compressed FP block with fallthrough, indirect, or return transfer; eve
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-c-bstart-fp-purpose role=purpose -->
+## What C.BSTART.FP does
+
+`C.BSTART.FP` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+
+<!-- PTO-READER-BLOCK: block-c-bstart-fp-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`C.BSTART.FP` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+
+The accepted carrier uses the `C16` encoding class and resolves every displayed field before the command reads bindings or changes state.
+
+At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+
+<!-- PTO-READER-BLOCK: block-c-bstart-fp-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `BrType` — encoded transfer kind: FALL, IND, or RET.
+- After predecessor retirement, this carrier opens one Floating Block; FALL and RET may start without a predecessor, while IND requires an active retiring Standard or Floating BARG.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-c-bstart-fp-effects role=effects -->
+## State effects and ordering
+
+Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+
+After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+
+<!-- PTO-READER-BLOCK: block-c-bstart-fp-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through `Fault_BundleControl`, `Fault_IllegalInstruction`, `Fault_InstructionPC`; no prose on this page creates an additional fault rule.
+
+Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+
+<!-- PTO-READER-BLOCK: block-c-bstart-fp-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+C.BSTART.FP FALL
+```
+
+The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -138,7 +192,3 @@ end;
 - C.BSTART.FP FALL
 - C.BSTART.FP IND
 - C.BSTART.FP RET
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

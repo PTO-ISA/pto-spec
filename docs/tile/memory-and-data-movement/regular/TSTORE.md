@@ -11,6 +11,62 @@ Store one ordinary Local or Shared rectangle, or explicitly convert persistent L
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-tstore-purpose role=purpose -->
+## What TSTORE does
+
+`TSTORE` stores one valid Local or Shared rectangle to GM without modifying the source Tile.
+
+<!-- PTO-READER-BLOCK: tile-c-tstore-mechanism role=mechanism -->
+## Operation mechanism
+
+The complete selected-PE GM footprint is translated and permission-checked before the first store.
+
+After successful preflight, every valid source element is stored with the resolved byte row stride; packed four-bit elements select the byte half by column parity.
+
+<!-- PTO-READER-BLOCK: tile-c-tstore-inputs-outputs role=inputs-outputs -->
+## Operands, shape, and type
+
+- `source0` supplies a persistent source Tile.
+
+- `address` supplies the per-PE GM base address.
+
+- `scalar0` supplies the byte row stride.
+
+- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+
+<!-- PTO-READER-BLOCK: tile-c-tstore-effects role=effects -->
+## Definedness, padding, and publication
+
+The source payload and descriptor persist. Only GM and memory-event state change after successful full-footprint preflight.
+
+A fault produces no partial GM write or memory-event prefix.
+
+Source Tiles persist and are not modified by successful execution.
+
+<!-- PTO-READER-BLOCK: tile-c-tstore-constraints role=constraints -->
+## Legality, fault, and order boundaries
+
+Binding schema, dimensions, DataType, layout, source descriptor or temporary Shared descriptor, and every selected GM access are preflighted before effects.
+
+A legality or GM-access fault produces no partial GM or memory-event effect; TSTORE performs no destination allocation or destination publication.
+
+`PE_MASK=0000` is a strict no-op before operand reads, descriptor checks, faults, GM writes, or memory-event effects.
+
+Overlapping selected-PE GM regions have no architecture-defined store-beat order; software must avoid overlap or establish ordering separately.
+
+<!-- PTO-READER-BLOCK: tile-c-tstore-example role=example -->
+## Non-normative example
+
+This example illustrates the current ASL-bound contract and is not a second instruction definition.
+
+`TSTORE <bundle operands>` completes all shape, descriptor, and GM-access checks before storing the valid rectangle; the source Tile remains unchanged.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `memory-and-data-movement`
@@ -212,7 +268,3 @@ end;
 - BSTART.TSTORE FP16; B.IOS S7, mask=1111; BSTOP
 - BSTART.TSTORE FP16 using Function 14; B.IOS S7, mask=0011; BSTOP
 - BSTART.TSTORE FP16; B.DATR {M162ND, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=M; B.IOT M#1, mask=1111, <last>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -58,7 +58,7 @@ _FIELDS = {
 }
 _ADR_ID = re.compile(r"ADR-[0-9]{4}\Z")
 _BASELINE = re.compile(r"[0-9a-f]{40}\Z")
-_RELEASE = re.compile(r"(?:[0-9]+\.[0-9]+\.[0-9]+|unassigned)\Z")
+_RELEASE = re.compile(r"(?:[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?|unassigned)\Z")
 _NDF_ID = re.compile(r"PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*\Z")
 _LEGACY_ID = re.compile(r"(?:PRD-[0-9]{3}|PDR-[0-9]{3}|PD-[0-9]{2}(?:-[A-Z0-9]+)?)\Z")
 _URI_LABEL = r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?"

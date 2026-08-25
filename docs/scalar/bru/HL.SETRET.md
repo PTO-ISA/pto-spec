@@ -11,6 +11,48 @@ HL.SETRET - Write the architectural return address.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-setret-purpose role=purpose -->
+## What HL.SETRET does
+
+`HL.SETRET` computes and records the architectural return address relative to the current `TPC`.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setret-mechanism role=mechanism -->
+## Mechanism
+
+The unsigned `32`-bit immediate is zero-extended, shifted left by `1`, and added to the snapshotted current `TPC`.
+
+The same target is written to GPR `R10` and bundle-local return-address state; execution does not branch to that target.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setret-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `imm32` supplies the encoded immediate or displacement.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setret-effects role=effects -->
+## Effects and ordering
+
+The return target is published before the normal successful `TPC` advance of `6` bytes.
+
+No memory, reservation, numeric-status, or predicate state changes.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setret-constraints role=constraints -->
+## Legality and fault order
+
+Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setret-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`hl.setret imm, ->Ra` records the return target without transferring control to it.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -114,7 +156,3 @@ end;
 ## Examples
 
 - hl.setret imm, ->Ra
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,52 @@ JR - Jump to the scalar-register target.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-jr-purpose role=purpose -->
+## What JR does
+
+`JR` transfers control to a register-based target plus a signed halfword displacement.
+
+<!-- PTO-READER-BLOCK: scalar-jr-mechanism role=mechanism -->
+## Mechanism
+
+The scalar source is snapshotted, the signed immediate is shifted left by `1`, and the values are added to form the target.
+
+The target must be even. An odd target raises `Fault_InstructionPC` without installing that target.
+
+<!-- PTO-READER-BLOCK: scalar-jr-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `SrcL` supplies the left scalar source.
+
+- `SrcZero` is the explicit zero-valued selector required by this encoding.
+
+- `simm12` supplies a signed encoded immediate.
+
+<!-- PTO-READER-BLOCK: scalar-jr-effects role=effects -->
+## Effects and ordering
+
+The accepted target replaces the control-flow PC as one architectural transition.
+
+The jump has no scalar destination and does not access memory or reservation state.
+
+<!-- PTO-READER-BLOCK: scalar-jr-constraints role=constraints -->
+## Legality and fault order
+
+Encoding and source availability are checked before target formation; target alignment is checked before the PC update.
+
+<!-- PTO-READER-BLOCK: scalar-jr-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`jr SrcL, label` forms and validates the target described above before replacing the PC.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -120,7 +166,3 @@ end;
 ## Examples
 
 - jr SrcL, label
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

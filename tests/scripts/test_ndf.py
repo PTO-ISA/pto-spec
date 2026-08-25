@@ -123,6 +123,14 @@ class NdfTest(unittest.TestCase):
             check_repository(self.root),
         )
 
+    def test_generated_site_dependencies_are_outside_ndf_publication_scan(self) -> None:
+        self.write(
+            "docs/site/node_modules/dependency/legacy/contract.md.old",
+            "generated dependency content\n",
+        )
+
+        self.assertEqual(check_repository(self.root), [])
+
     def test_normative_asl_reference_into_status_legacy_is_rejected(self) -> None:
         self.write(
             "asl/architecture.asl",

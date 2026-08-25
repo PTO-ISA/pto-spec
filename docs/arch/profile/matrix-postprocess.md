@@ -7,6 +7,47 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROFILE-MATRIX-POSTPROCESS}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-matrix-post-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit implements bit-exact matrix accumulator post-processing for `B.FPATR`. It coordinates C-scale multiplication, pre-quantization, activation, destination encoding, auxiliary reductions, and accumulated numeric flags.
+
+<!-- PTO-READER-BLOCK: arch-matrix-post-concepts role=concepts-state -->
+## Processing controls
+
+- `TileProfileMatrixCScale` returns a scaled `Word`. When finite re-encoding produces flags, it records them through `RecordNumericStatusFlags` before returning the encoded value.
+- `MatrixFPATREffectiveControl` applies the effective rounding and saturation controls used after bundle attributes are resolved.
+- `MatrixSelectedMultiplier`, `MatrixActivationWithFlags`, and `MatrixEncodeReal` cover multiplier choice, activation, and final encoding stages.
+
+<!-- PTO-READER-BLOCK: arch-matrix-post-rules role=rules-interactions -->
+## Stage order and status
+
+The raw accumulator is reduced before conversion, an activation-dependent multiplier is selected before destination conversion, special results are canonicalized, and `D`, enabled auxiliary outputs, and sticky flags are published as one non-faulting commit.
+
+The implementation orders pre-quantization, activation, and destination encoding and accumulates flags from those internal stages. Its format helpers select the encoded signed-zero, infinity, or largest-finite representation used by the selected path.
+
+<!-- PTO-READER-BLOCK: arch-matrix-post-boundaries role=boundaries -->
+## Boundaries
+
+The `WithFlags` entry points expose value and five-bit status together; wrapper entry points may return only the value. Auxiliary reduction uses separate step functions, including an absolute-value path that reports its own flags. Concrete bundle legality and publication remain with the matrix operation owners.
+
+<!-- PTO-READER-BLOCK: arch-matrix-post-example role=example-usage -->
+## Non-normative pipeline example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-matrix-post-related role=related-owners-navigation -->
+## Related owners
+
+- Matrix quantization owns bit-exact rounding and format conversion helpers.
+- Reference profile and matrix-scale owners provide profile hooks and resolved scale inputs used by this stage.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/matrix-postprocess.asl -->
@@ -361,7 +402,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

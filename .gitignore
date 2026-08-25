@@ -6,3 +6,8 @@
 __pycache__/
 *.py[cod]
 /spec/evidence/asl-test-matrix.sha256
+/docs/site/node_modules/
+/docs/site/.docusaurus/
+/docs/site/build/
+/docs/site/test-results/
+/docs/site/playwright-report/

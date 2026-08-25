@@ -1,0 +1,265 @@
+{
+  "$defs": {
+    "archiveAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {"pattern": "^SRC-ASSET-[0-9A-F]{24}$", "type": "string"},
+        "content_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+        "media_kind": {"minLength": 1, "type": "string"}
+      },
+      "required": ["asset_id", "content_sha256", "media_kind"],
+      "type": "object"
+    },
+    "atomicClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "ast_path": {"pattern": "^/blocks/[0-9]+/nodes/[0-9]+$", "type": "string"},
+        "block_id": {"pattern": "^[a-z0-9][a-z0-9-]*$", "type": "string"},
+        "claim_id": {"minLength": 1, "type": "string"},
+        "disposition": {"enum": ["current-owner-confirmed", "current-owner-rewrite", "omit-old", "needs-architecture-decision"]},
+        "fragment_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+        "owner_reference": {"$ref": "#/$defs/ownerReference"},
+        "portability_class": {"enum": ["portable", "named-profile", "implementation-defined", "not-applicable"]},
+        "source_section_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true}
+      },
+      "required": ["claim_id", "block_id", "ast_path", "fragment_sha256", "disposition", "owner_reference", "portability_class", "source_section_ids"],
+      "type": "object"
+    },
+    "batchAttestation": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_digests": {"additionalProperties": {"pattern": "^[0-9a-f]{64}$", "type": "string"}, "type": "object"},
+        "batch_id": {"minLength": 1, "type": "string"},
+        "contexts": {
+          "additionalProperties": false,
+          "properties": {"semantic_reviewer": {"minLength": 1, "type": "string"}, "verifier": {"minLength": 1, "type": "string"}, "writer": {"minLength": 1, "type": "string"}},
+          "required": ["writer", "semantic_reviewer", "verifier"],
+          "type": "object"
+        },
+        "deep_reviewed_unit_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "reviewed_claim_count": {"minimum": 0, "type": "integer"},
+        "reviewed_claim_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "reviewed_node_count": {"minimum": 0, "type": "integer"},
+        "reviewed_node_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "rubric_version": {"const": "mnemonic-reader-v1"},
+        "schema_version": {"const": 1},
+        "source_commit": {"pattern": "^[0-9a-f]{40}$", "type": "string"},
+        "unit_risks": {"additionalProperties": {"enum": ["ordinary", "high-risk"]}, "type": "object"},
+        "unresolved_question_count": {"minimum": 0, "type": "integer"},
+        "verdict": {"enum": ["pending", "accepted", "rejected"]},
+        "verifier_sample_count": {"minimum": 0, "type": "integer"},
+        "verifier_sample_unit_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true}
+      },
+      "required": ["schema_version", "batch_id", "rubric_version", "source_commit", "unit_risks", "reviewed_claim_ids", "reviewed_claim_count", "reviewed_node_ids", "reviewed_node_count", "deep_reviewed_unit_ids", "verifier_sample_unit_ids", "verifier_sample_count", "unresolved_question_count", "verdict", "contexts", "artifact_digests"],
+      "type": "object"
+    },
+    "decisionGap": {
+      "additionalProperties": false,
+      "properties": {
+        "gap_id": {"minLength": 1, "type": "string"},
+        "owner_reference": {"minLength": 1, "type": "string"},
+        "required": {"type": "boolean"},
+        "status": {"enum": ["open", "resolved"]}
+      },
+      "required": ["gap_id", "required", "status", "owner_reference"],
+      "type": "object"
+    },
+    "migration": {
+      "additionalProperties": false,
+      "properties": {
+        "copyright_disposition": {"enum": ["licensed-copy", "current-owner-rewrite", "omit-old", "needs-architecture-decision"]},
+        "mapping_basis": {"not": {"const": "filename-similarity"}, "type": "string"},
+        "mapping_status": {"minLength": 1, "type": "string"},
+        "source_id": {"const": "anonymous-source-001"},
+        "source_page_ids": {"items": {"pattern": "^SRC-PAGE-[0-9A-F]{24}$", "type": "string"}, "type": "array", "uniqueItems": true}
+      },
+      "required": ["source_id", "source_page_ids", "mapping_status", "mapping_basis", "copyright_disposition"],
+      "type": "object"
+    },
+    "nodeDisposition": {
+      "additionalProperties": false,
+      "oneOf": [
+        {"properties": {"node_disposition": {"const": "semantic-claim"}}, "required": ["claim_id"], "not": {"required": ["connective_reason"]}},
+        {"properties": {"node_disposition": {"const": "connective"}}, "required": ["connective_reason"], "not": {"required": ["claim_id"]}}
+      ],
+      "properties": {
+        "ast_path": {"pattern": "^/blocks/[0-9]+/nodes/[0-9]+$", "type": "string"},
+        "block_id": {"type": "string"},
+        "claim_id": {"type": "string"},
+        "connective_reason": {"minLength": 1, "type": "string"},
+        "fragment_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+        "node_disposition": {"enum": ["semantic-claim", "connective"]},
+        "node_kind": {"enum": ["heading", "paragraph", "list-item", "table-row", "code-block"]},
+        "node_id": {"minLength": 1, "type": "string"}
+      },
+      "required": ["node_id", "block_id", "ast_path", "node_kind", "fragment_sha256", "node_disposition"],
+      "type": "object"
+    },
+    "ownerReference": {
+      "additionalProperties": false,
+      "oneOf": [
+        {"properties": {"kind": {"const": "asl"}, "path": {"minLength": 1, "type": "string"}, "clause": {"type": ["string", "null"]}}},
+        {"properties": {"kind": {"const": "ndf"}, "path": {"minLength": 1, "type": "string"}, "clause": {"minLength": 1, "type": "string"}}},
+        {"properties": {"kind": {"const": "instruction-contract"}, "path": {"minLength": 1, "type": "string"}, "clause": {"minLength": 1, "type": "string"}}}
+      ],
+      "properties": {"clause": {"type": ["string", "null"]}, "kind": {"enum": ["asl", "ndf", "instruction-contract"]}, "path": {"type": "string"}},
+      "required": ["kind", "path", "clause"],
+      "type": "object"
+    },
+    "owner": {
+      "additionalProperties": false,
+      "properties": {
+        "asl_path": {"pattern": "^asl/(arch|scalar|block|tile)/", "type": "string"},
+        "contract_artifact": {"type": ["string", "null"]},
+        "documentation_path": {"pattern": "^docs/(arch|scalar|block|tile)/", "type": "string"},
+        "ndf_clause": {"type": ["string", "null"]}
+      },
+      "required": ["asl_path", "documentation_path", "ndf_clause", "contract_artifact"],
+      "type": "object"
+    },
+    "presentationBlock": {
+      "additionalProperties": false,
+      "properties": {"block_id": {"pattern": "^[a-z0-9][a-z0-9-]*$", "type": "string"}, "role": {"enum": ["purpose", "mechanism", "inputs-outputs", "effects", "constraints", "example", "purpose-scope", "concepts-state", "rules-interactions", "boundaries", "example-usage", "related-owners-navigation"]}},
+      "required": ["block_id", "role"],
+      "type": "object"
+    },
+    "sourceInventory": {
+      "additionalProperties": false,
+      "properties": {
+        "archive_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+        "asset_manifest": {
+          "additionalProperties": false,
+          "properties": {"count": {"minimum": 0, "type": "integer"}, "entries": {"items": {"$ref": "#/$defs/archiveAsset"}, "type": "array"}},
+          "required": ["count", "entries"],
+          "type": "object"
+        },
+        "authorization": {
+          "additionalProperties": false,
+          "properties": {"license_compatible": {"type": "boolean"}, "licensed_copy_allowed": {"type": "boolean"}, "notice_evidence": {"type": "boolean"}, "state": {"minLength": 1, "type": "string"}},
+          "required": ["state", "licensed_copy_allowed", "license_compatible", "notice_evidence"],
+          "type": "object"
+        },
+        "default_copyright_disposition": {"const": "current-owner-rewrite"},
+        "pages": {"items": {"$ref": "#/$defs/sourcePage"}, "type": "array"},
+        "parser": {
+          "additionalProperties": false,
+          "properties": {"name": {"const": "pto-anonymous-zip-inventory"}, "page_predicate": {"type": "string"}, "path_normalization": {"const": "posix-nfc-relative-v1"}, "version": {"const": 1}},
+          "required": ["name", "version", "path_normalization", "page_predicate"],
+          "type": "object"
+        },
+        "schema_version": {"const": 1},
+        "source_id": {"const": "anonymous-source-001"}
+      },
+      "required": ["schema_version", "source_id", "archive_sha256", "parser", "authorization", "default_copyright_disposition", "pages", "asset_manifest"],
+      "type": "object"
+    },
+    "sourcePage": {
+      "additionalProperties": false,
+      "properties": {
+        "content_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+        "disposition": {"enum": ["pending", "mapped-current", "non-mnemonic-input", "omit-old", "needs-architecture-decision"]},
+        "kind": {"enum": ["scalar", "header", "tile", "coverage", "readme", "wrapper", "index", "auxiliary"]},
+        "mapped_unit_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "mapping_basis": {"not": {"const": "filename-similarity"}, "type": "string"},
+        "page_id": {"pattern": "^SRC-PAGE-[0-9A-F]{24}$", "type": "string"},
+        "path_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"}
+      },
+      "required": ["page_id", "path_sha256", "content_sha256", "kind", "disposition", "mapped_unit_ids", "mapping_basis"],
+      "type": "object"
+    },
+    "unitShard": {
+      "additionalProperties": false,
+      "properties": {
+        "atomic_claims": {"items": {"$ref": "#/$defs/atomicClaim"}, "type": "array"},
+        "decision_gaps": {"items": {"$ref": "#/$defs/decisionGap"}, "type": "array"},
+        "migration": {"$ref": "#/$defs/migration"},
+        "mnemonic": {"type": ["string", "null"]},
+        "node_dispositions": {"items": {"$ref": "#/$defs/nodeDisposition"}, "type": "array"},
+        "owner": {"$ref": "#/$defs/owner"},
+        "page_contract": {"enum": ["mnemonic-reader-v1", "architecture-reader-v1"]},
+        "presentation_blocks": {"items": {"$ref": "#/$defs/presentationBlock"}, "type": "array"},
+        "reader_roles": {"items": {"enum": ["purpose", "mechanism", "inputs-outputs", "effects", "constraints", "example", "purpose-scope", "concepts-state", "rules-interactions", "boundaries", "example-usage", "related-owners-navigation"]}, "maxItems": 6, "type": "array", "uniqueItems": true},
+        "risk_tier": {"enum": ["ordinary", "high-risk"]},
+        "schema_version": {"const": 1},
+        "retirement": {
+          "additionalProperties": false,
+          "properties": {"disposition": {"const": "retired-from-active-release"}, "last_active_owner_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"}},
+          "required": ["disposition", "last_active_owner_sha256"],
+          "type": "object"
+        },
+        "status": {"enum": ["pending", "complete", "decision-gap", "retired"]},
+        "surface": {"enum": ["arch", "scalar", "block", "tile"]},
+        "unit_id": {"minLength": 1, "type": "string"}
+      },
+      "allOf": [
+        {"if": {"properties": {"page_contract": {"const": "mnemonic-reader-v1"}}}, "then": {"properties": {"reader_roles": {"allOf": [{"contains": {"const": "purpose"}}, {"contains": {"const": "mechanism"}}, {"contains": {"const": "inputs-outputs"}}, {"contains": {"const": "effects"}}, {"contains": {"const": "constraints"}}, {"contains": {"const": "example"}}], "minItems": 6}, "presentation_blocks": {"items": {"properties": {"role": {"enum": ["purpose", "mechanism", "inputs-outputs", "effects", "constraints", "example"]}}}}}}},
+        {"if": {"properties": {"page_contract": {"const": "architecture-reader-v1"}}}, "then": {"properties": {"reader_roles": {"allOf": [{"contains": {"const": "purpose-scope"}}, {"contains": {"const": "concepts-state"}}, {"contains": {"const": "rules-interactions"}}, {"contains": {"const": "boundaries"}}, {"contains": {"const": "example-usage"}}, {"contains": {"const": "related-owners-navigation"}}], "minItems": 6}, "presentation_blocks": {"items": {"properties": {"role": {"enum": ["purpose-scope", "concepts-state", "rules-interactions", "boundaries", "example-usage", "related-owners-navigation"]}}}}}}},
+        {"if": {"properties": {"status": {"const": "complete"}}}, "then": {"required": ["risk_tier"], "properties": {"atomic_claims": {"items": {"properties": {"disposition": {"enum": ["current-owner-confirmed", "current-owner-rewrite"]}}}}}}}
+      ],
+      "required": ["schema_version", "unit_id", "mnemonic", "surface", "page_contract", "status", "owner", "migration", "reader_roles", "presentation_blocks", "node_dispositions", "atomic_claims", "decision_gaps"],
+      "type": "object"
+    },
+    "translationShard": {
+      "additionalProperties": false,
+      "properties": {
+        "block_mappings": {"items": {"additionalProperties": false, "properties": {"english_block_id": {"type": "string"}, "locale_block_id": {"type": "string"}, "locale_fragment_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"}}, "required": ["english_block_id", "locale_block_id", "locale_fragment_sha256"], "type": "object"}, "type": "array"},
+        "claim_mappings": {"items": {"additionalProperties": false, "properties": {"english_claim_id": {"type": "string"}, "locale_node_id": {"type": "string"}}, "required": ["english_claim_id", "locale_node_id"], "type": "object"}, "type": "array"},
+        "english_block_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "english_claim_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "english_node_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "english_unit_shard_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+        "locale": {"const": "zh-CN"},
+        "locale_documentation_path": {"type": ["string", "null"]},
+        "locale_guide_sha256": {"anyOf": [{"pattern": "^[0-9a-f]{64}$", "type": "string"}, {"type": "null"}]},
+        "node_mappings": {"items": {"additionalProperties": false, "properties": {"english_node_id": {"type": "string"}, "locale_node_id": {"type": "string"}, "locale_fragment_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"}}, "required": ["english_node_id", "locale_node_id", "locale_fragment_sha256"], "type": "object"}, "type": "array"},
+        "protected_literals": {"items": {"minLength": 1, "type": "string"}, "type": "array", "uniqueItems": true},
+        "protected_literals_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"},
+        "retirement": {"additionalProperties": false, "properties": {"disposition": {"const": "retired-from-active-release"}, "last_active_owner_sha256": {"pattern": "^[0-9a-f]{64}$", "type": "string"}}, "required": ["disposition", "last_active_owner_sha256"], "type": "object"},
+        "schema_version": {"const": 1},
+        "status": {"enum": ["pending", "complete", "retired"]},
+        "surface": {"enum": ["arch", "scalar", "block", "tile"]},
+        "unit_id": {"minLength": 1, "type": "string"}
+      },
+      "required": ["schema_version", "locale", "unit_id", "surface", "status", "english_unit_shard_sha256", "english_block_ids", "english_node_ids", "english_claim_ids", "locale_documentation_path", "locale_guide_sha256", "protected_literals", "protected_literals_sha256", "block_mappings", "node_mappings", "claim_mappings"],
+      "type": "object"
+    },
+    "translationAttestation": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_digests": {"additionalProperties": {"pattern": "^[0-9a-f]{64}$", "type": "string"}, "type": "object"},
+        "batch_id": {"type": "string"},
+        "contexts": {"additionalProperties": false, "properties": {"language_reviewer": {"type": "string"}, "translator": {"type": "string"}, "verifier": {"type": "string"}}, "required": ["translator", "language_reviewer", "verifier"], "type": "object"},
+        "locale": {"const": "zh-CN"},
+        "protected_literal_unit_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "reviewed_claim_count": {"minimum": 0, "type": "integer"},
+        "reviewed_claim_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "reviewed_node_count": {"minimum": 0, "type": "integer"},
+        "reviewed_node_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "rubric_version": {"const": "mnemonic-translation-v1"},
+        "schema_version": {"const": 1},
+        "source_commit": {"pattern": "^[0-9a-f]{40}$", "type": "string"},
+        "translation_artifact_digests": {"additionalProperties": {"pattern": "^[0-9a-f]{64}$", "type": "string"}, "type": "object"},
+        "unit_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+        "unit_risks": {"additionalProperties": {"enum": ["ordinary", "high-risk"]}, "type": "object"},
+        "unresolved_question_count": {"minimum": 0, "type": "integer"},
+        "verdict": {"enum": ["pending", "accepted", "rejected"]},
+        "verifier_sample_count": {"minimum": 0, "type": "integer"},
+        "verifier_sample_unit_ids": {"items": {"type": "string"}, "type": "array", "uniqueItems": true}
+      },
+      "required": ["schema_version", "locale", "batch_id", "rubric_version", "source_commit", "unit_ids", "unit_risks", "translation_artifact_digests", "reviewed_claim_ids", "reviewed_claim_count", "reviewed_node_ids", "reviewed_node_count", "protected_literal_unit_ids", "verifier_sample_unit_ids", "verifier_sample_count", "unresolved_question_count", "verdict", "contexts", "artifact_digests"],
+      "type": "object"
+    }
+  },
+  "$id": "https://pto-isa.github.io/schema/mnemonic-descriptions-v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "This schema enforces standalone record shape. scripts/check-mnemonic-explanations is authoritative for cross-record equality, current-release owner hashes, AST tuple identity, reviewed mappings, derived risk, and computed attestation digests that JSON Schema cannot express.",
+  "oneOf": [
+    {"$ref": "#/$defs/sourceInventory"},
+    {"$ref": "#/$defs/unitShard"},
+    {"$ref": "#/$defs/batchAttestation"},
+    {"$ref": "#/$defs/translationShard"},
+    {"$ref": "#/$defs/translationAttestation"}
+  ],
+  "title": "PTO mnemonic description migration evidence",
+  "type": "object"
+}

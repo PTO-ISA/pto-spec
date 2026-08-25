@@ -7,6 +7,10 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-STATE-LOCAL-REGISTERS}
 
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/state/local-registers.asl -->
@@ -32,7 +36,3 @@ var _TileAllocationMasks : array [[PTO_TILE_REGISTER_COUNT]] of bits(4);
 var _SharedTiles : SharedTileSnapshot;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

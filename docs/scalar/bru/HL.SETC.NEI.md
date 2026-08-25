@@ -11,6 +11,56 @@ HL.SETC.NEI - Compare scalar operands and update the bundle commit condition.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-setc-nei-purpose role=purpose -->
+## What HL.SETC.NEI does
+
+`HL.SETC.NEI` evaluates inequality and publishes the result as the current Conditional bundle commit decision.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-nei-mechanism role=mechanism -->
+## Mechanism
+
+Placement and the single-setter rule are checked before source readiness or reads.
+
+The decoded immediate is logically shifted left by `shamt` before the condition is evaluated.
+
+The snapshotted operands are evaluated for inequality and canonicalized to XLEN one or zero.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-nei-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `SrcL` supplies the left scalar source.
+
+- `shamt` supplies the encoded shift amount.
+
+- `simm24` supplies a signed encoded immediate.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-nei-effects role=effects -->
+## Effects and ordering
+
+The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+
+On success, `HL.SETC.NEI` advances `TPC` by `6` bytes. It has no scalar destination and no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-nei-constraints role=constraints -->
+## Legality and fault order
+
+The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+
+Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-nei-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`hl.setc.nei SrcL, simm` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -132,7 +182,3 @@ end;
 ## Examples
 
 - hl.setc.nei SrcL, simm
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

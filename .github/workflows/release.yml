@@ -78,10 +78,70 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+  release-site:
+    name: Release / static site validity
+    needs: full-validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      artifact-digest: ${{ steps.site-preview.outputs.artifact-digest }}
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Set up Node.js
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: "22"
+
+      - name: Enable the locked package manager
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.30.0 --activate
+
+      - name: Install exact site dependencies
+        run: pnpm --dir docs/site install --frozen-lockfile
+
+      - name: Validate the exact static site artifact
+        shell: bash
+        env:
+          COMMIT: ${{ inputs.commit }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$COMMIT"
+          pnpm --dir docs/site typecheck
+          pnpm --dir docs/site test:unit
+          python3 scripts/check-site-security
+          PTO_SITE_REQUIRE_CLEAN=1 pnpm --dir docs/site build
+          python3 scripts/generate-site-publication-manifest
+          python3 scripts/check-site-artifact
+
+      - name: Install the browser test runtime
+        run: pnpm --dir docs/site exec playwright install --with-deps chromium firefox webkit
+
+      - name: Exercise release site browser paths
+        run: CI=1 PTO_SITE_CROSS_BROWSER=1 pnpm --dir docs/site test:e2e
+
+      - name: Enforce Lighthouse quality budgets
+        run: python3 scripts/check-site-lighthouse
+
+      - name: Upload immutable site preview
+        id: site-preview
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pto-site-preview-${{ inputs.commit }}
+          path: docs/site/build
+          if-no-files-found: error
+          retention-days: 90
+
   validate:
     name: Release / validate
     if: always()
-    needs: [full-validation, release-evidence]
+    needs: [full-validation, release-evidence, release-site]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -90,6 +150,10 @@ jobs:
         env:
           FULL_VALIDATION_RESULT: ${{ needs.full-validation.result }}
           RELEASE_EVIDENCE_RESULT: ${{ needs.release-evidence.result }}
+          RELEASE_SITE_RESULT: ${{ needs.release-site.result }}
+          SITE_ARTIFACT_DIGEST: ${{ needs.release-site.outputs.artifact-digest }}
         run: |
           test "$FULL_VALIDATION_RESULT" = success
           test "$RELEASE_EVIDENCE_RESULT" = success
+          test "$RELEASE_SITE_RESULT" = success
+          [[ "$SITE_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]

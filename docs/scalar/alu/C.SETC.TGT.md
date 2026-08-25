@@ -11,6 +11,55 @@ Snapshot one scalar source value into the active block BARG.BPCN.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-c-setc-tgt-purpose role=purpose -->
+## What C.SETC.TGT does
+
+`C.SETC.TGT` is a 16-bit scalar ALU instruction. It captures the selected scalar value as the active block commit target; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-tgt-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then captures the selected scalar value as the active block commit target, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-tgt-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `SrcL` field selects an absolute GPR, T#1..T#4, or U#1..U#4 scalar value.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-tgt-effects role=effects -->
+## Effects and ordering
+
+The selected source is captured before `BARG.BPCN` changes, so source aliasing cannot observe the new commit target.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-tgt-constraints role=constraints -->
+## Legality and fault boundary
+
+The instruction is legal only in an active Standard or Floating block and may complete successfully at most once in that block. Target alignment is deferred to the block-commit boundary.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-tgt-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `C.SETC.TGT` example, a snapshotted source value `0x100` becomes the active `BARG.BPCN`; target alignment is still checked later at block commit.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -119,7 +168,3 @@ end;
 
 - c.setc.tgt a0
 - c.setc.tgt T#1
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

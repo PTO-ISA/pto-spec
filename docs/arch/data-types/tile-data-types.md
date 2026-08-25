@@ -7,6 +7,56 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-tile-data-types-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit owns tile hands, the public five-bit data-type namespace, tile data-layout and storage-layout enums, pad values, and location intent.
+
+It is the boundary between encoded `DataType` fields and the typed values consumed by numeric and tile execution owners.
+
+<!-- PTO-READER-BLOCK: arch-tile-data-types-concepts-state role=concepts-state -->
+## Concepts and visible state
+
+- `TileHand` names `T`, `U`, `M`, and `N`; `TileDataType` contains 15 floating/scale members, five signed integer members, and five unsigned integer members.
+- `TileDataTypeEncoding` is `bits(5)`. Codes `0..14`, `16..20`, and `24..28` are assigned; `15`, `21..23`, and `29..31` are reserved.
+- The unit separately defines transformation-oriented `TileDataLayout`, physical `TileLayout`, `TilePadValue`, and `TileLocation` namespaces.
+
+<!-- PTO-READER-BLOCK: arch-tile-data-types-rules-interactions role=rules-interactions -->
+## Rules and interactions
+
+`TileDataTypeEncodingValid` accepts exactly the three assigned code ranges; `TileDataTypeFromEncoding` requires validity before mapping.
+
+`TileDataTypeToEncoding` is the reverse mapping. Code `0` means `TileDataType_FP64`, not absent or inherited.
+
+`DTYPE_NONE` is code `31` and is only a field-level sentinel; it is deliberately not a `TileDataType` and has no width, format, or arithmetic semantics.
+
+<!-- PTO-READER-BLOCK: arch-tile-data-types-boundaries role=boundaries -->
+## Architectural boundaries
+
+Reserved data-type codes reject before architectural effects and remain available for future extension.
+
+`TileLayout_ImplementationDefined` exists for non-architectural model fixtures; no assigned `B.DATR` layout code maps to it.
+
+<!-- PTO-READER-BLOCK: arch-tile-data-types-example-usage role=example-usage -->
+## Non-normative reading example
+
+Encoding `2` passes validation and maps to `TileDataType_TF32`; encoding `31` does not map to a data type even though the separate `DTYPE_NONE` sentinel has that bit pattern.
+
+After decoding a data type, follow `TileNumericFormatDescriptor` for format metadata and the consuming instruction for operation support.
+
+<!-- PTO-READER-BLOCK: arch-tile-data-types-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Numeric format dispatch](numeric-formats.md)
+- [Packed concept](packed.md)
+- [Hardware numeric profile](../features/mx-formats.md)
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/tile-data-types.asl -->
@@ -175,7 +225,3 @@ type TileLocation of enumeration {
 };
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

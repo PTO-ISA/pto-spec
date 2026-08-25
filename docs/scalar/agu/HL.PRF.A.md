@@ -11,6 +11,60 @@ HL.PRF.A snapshots its scalar sources, forms its encoded address, and issues a n
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-prf-a-purpose role=purpose -->
+## What HL.PRF.A does
+
+`HL.PRF.A` is a standalone `48`-bit scalar AGU instruction that forms a non-binding prefetch hint without performing an architectural memory access using `Register` addressing.
+
+<!-- PTO-READER-BLOCK: scalar-hl-prf-a-mechanism role=mechanism -->
+## Address and transfer mechanism
+
+The register-offset path applies the encoded `SrcRType` transformation to `SrcR`, shifts that result left by `shamt`, and adds it to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+
+A legal `model` selects the hint level. The hint performs no translation, permission check, alignment check, memory access, memory event, reservation update, ordering edge, or cache-placement guarantee.
+
+The effective address is published through `RegDst` after source snapshot.
+
+<!-- PTO-READER-BLOCK: scalar-hl-prf-a-inputs role=inputs-outputs -->
+## Encoded inputs and outputs
+
+- `RegDst` is a `5`-bit field selecting the effective-address result.
+- `SrcL` is a `5`-bit field selecting the address base.
+- `SrcR` is a `5`-bit field selecting the register offset.
+- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
+- `model` is a `5`-bit field selecting the prefetch hint level.
+- `shamt` is a `5`-bit field selecting the post-transformation left shift.
+
+<!-- PTO-READER-BLOCK: scalar-hl-prf-a-effects role=effects -->
+## Effects and completion order
+
+All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+
+A legal hint records no architectural memory event and does not change reservation state.
+
+After all result or writeback publication, `HL.PRF.A` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+
+<!-- PTO-READER-BLOCK: scalar-hl-prf-a-constraints role=constraints -->
+## Legality, faults, and restart
+
+`model` values `0`, `1`, and `2` are assigned; values `3..31` are reserved and cause `Fault_IllegalInstruction` before source reads or address publication.
+
+A legal prefetch hint cannot raise a data-access fault because it performs no architectural access. Fixed-bit mismatches or unavailable selected T/U sources are rejected before effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-prf-a-example role=example -->
+## Non-normative reading walkthrough
+
+This walkthrough explains how to use the page and does not add instruction behavior.
+
+- Start with the canonical assembly `hl.prf.a{.l1,.l2,.l3} [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->{t, u, Rd}` and identify the encoded address fields.
+- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -168,7 +222,3 @@ end;
 ## Examples
 
 - hl.prf.a{.l1,.l2,.l3} [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

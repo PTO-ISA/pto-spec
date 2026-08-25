@@ -1,0 +1,279 @@
+import json
+import re
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[2]
+SITE = ROOT / "docs/site"
+
+
+class SiteContractTests(unittest.TestCase):
+    def test_site_uses_exact_reviewed_dependencies(self) -> None:
+        package = json.loads((SITE / "package.json").read_text(encoding="utf-8"))
+        self.assertEqual(package["dependencies"]["@docusaurus/core"], "3.10.2")
+        self.assertEqual(
+            package["dependencies"]["@docusaurus/plugin-client-redirects"],
+            "3.10.2",
+        )
+        self.assertEqual(package["dependencies"]["react"], "19.2.8")
+        self.assertEqual(
+            package["dependencies"]["plotly.js"],
+            "npm:plotly.js-gl2d-dist-min@4.0.0",
+        )
+        self.assertEqual(package["devDependencies"]["@playwright/test"], "1.62.1")
+        self.assertEqual(package["devDependencies"]["@axe-core/playwright"], "4.13.0")
+        self.assertEqual(package["devDependencies"]["lighthouse"], "13.4.1")
+        self.assertEqual(
+            package["pnpm"]["overrides"]["serialize-javascript"], "7.1.0"
+        )
+        for group in ("dependencies", "devDependencies"):
+            for name, version in package[group].items():
+                self.assertNotIn("latest", version, name)
+                self.assertNotIn("*", version, name)
+
+    def test_site_configuration_preserves_release_and_locale_contracts(self) -> None:
+        config = (SITE / "docusaurus.config.ts").read_text(encoding="utf-8")
+        for term in (
+            "url: 'https://pto-isa.github.io'",
+            "baseUrl: '/'",
+            "locales: ['en', 'zh-CN']",
+            "beforeDefaultRemarkPlugins",
+            "sidebarItemsGenerator",
+            "'./plugins/pto-content/index.ts'",
+        ):
+            self.assertIn(term, config)
+        navigation = [
+            config.index("label: 'PTO Architecture'"),
+            config.index("label: 'Scalar'"),
+            config.index("label: 'Block'"),
+            config.index("label: 'Tile'"),
+            config.index("label: 'ADR / NDF'"),
+            config.index("label: 'Search'"),
+        ]
+        self.assertEqual(navigation, sorted(navigation))
+
+    def test_homepage_is_a_human_reading_path(self) -> None:
+        homepage = (SITE / "src/pages/index.tsx").read_text(encoding="utf-8")
+        for term in (
+            "PTO Architecture",
+            "Scalar, then Block, then Tile",
+            "ADR explains why. NDF points to what is current.",
+            "surface=scalar",
+            "surface=block",
+            "surface=tile",
+            "surfaceCounts",
+            "recordCounts",
+        ):
+            self.assertIn(term, homepage)
+
+    def test_source_backed_routes_use_page_specific_data(self) -> None:
+        plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
+        self.assertIn("actions.createData", plugin)
+        self.assertIn("modules: {unitData: unit.module}", plugin)
+        self.assertIn("component: '@site/src/routes/UnitWorkbench'", plugin)
+        self.assertIn("modules: {graph: graphDataModule}", plugin)
+        self.assertIn("modules: {search: searchDataModule}", plugin)
+        self.assertIn("component: '@site/src/routes/NdfIndexPage'", plugin)
+        self.assertIn("pto.site-unit-routes.v1", plugin)
+        self.assertIn("pto-unit-routes.json", plugin)
+        self.assertIn("PTO-EVIDENCE-RELEASE-TRACEABILITY", plugin)
+        self.assertIn("clauseSha256", plugin)
+        self.assertIn("PTO_SITE_REQUIRE_RELEASE", plugin)
+        self.assertIn("--porcelain=v1", plugin)
+        self.assertNotIn("setGlobalData(content)", plugin)
+        repository_links = (
+            SITE / "plugins/pto-content/remark-repository-links.ts"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "return `/${relative}${suffix}`",
+            repository_links,
+        )
+        self.assertNotIn("pathname://", repository_links)
+        publication_hygiene = (
+            ROOT / "scripts/check-publication-hygiene"
+        ).read_text(encoding="utf-8")
+        self.assertIn("canonical_markdown_source(path).parent", publication_hygiene)
+
+    def test_reader_guides_are_typed_locale_specific_non_normative_projections(self) -> None:
+        plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
+        types = (SITE / "src/types/pto.ts").read_text(encoding="utf-8")
+        workbench = (SITE / "src/components/UnitWorkbenchView.tsx").read_text(
+            encoding="utf-8"
+        )
+        renderer = (SITE / "src/components/ReaderGuide.tsx").read_text(
+            encoding="utf-8"
+        )
+        for term in (
+            "PTO-READER-BLOCK",
+            "safeReaderHref",
+            "raw HTML is forbidden",
+            "complete zh-CN translation lacks a current accepted review",
+            "guide_content_locale",
+            "localized_documentation_sha256",
+            "reference_route",
+        ):
+            self.assertIn(term, plugin)
+        self.assertIn("interface PtoDocumentationIdentity", types)
+        self.assertNotIn("text: string;\n  githubUrl: string;\n  locale", types)
+        self.assertIn(
+            "<ReaderGuide guide={unitData.readerGuide} mnemonic={Boolean(presentation.mnemonic)} />",
+            workbench,
+        )
+        self.assertLess(
+            workbench.index("<ReaderGuide guide={unitData.readerGuide}"),
+            workbench.index("<EncodingBitfield"),
+        )
+        self.assertIn("Reader guide · non-normative explanation", renderer)
+        self.assertIn("Understand this instruction", renderer)
+        self.assertIn("理解这条指令", renderer)
+        self.assertNotIn("dangerouslySetInnerHTML", renderer)
+
+    def test_reader_guide_fences_and_locale_hashes_fail_closed(self) -> None:
+        plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
+        self.assertIn("isCommonMarkFenceClose(line, fenceToken)", plugin)
+        self.assertIn("renderedReaderSyntax(line)", plugin)
+        self.assertIn("text.replace(/`[^`\\n]*`/g, '')", plugin)
+        self.assertIn("candidate.length < opener.length", plugin)
+        self.assertIn(
+            "character === opener[0]",
+            plugin,
+            "a closing fence may contain only the opener character",
+        )
+        self.assertNotIn("line.trim().startsWith(fenceToken)", plugin)
+        self.assertRegex(plugin, re.compile(r"fenceToken = opening\[1\]"))
+        self.assertIn(
+            "translation.locale_guide_sha256 !== localizedGuide.sha256",
+            plugin,
+        )
+        self.assertNotIn(
+            "translation.locale_guide_sha256 !== localizedDocumentationSha256",
+            plugin,
+        )
+
+    def test_architecture_reader_guide_links_every_owned_ndf_clause(self) -> None:
+        plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
+        self.assertIn("[...requirementIds]", plugin)
+        self.assertIn("reader guide cannot locate exact NDF owner", plugin)
+        self.assertIn("href: identity.sourceUrl", plugin)
+
+    def test_interactive_routes_keep_static_fallbacks(self) -> None:
+        explorer = (SITE / "src/components/NdfGlobalExplorer.tsx").read_text(
+            encoding="utf-8"
+        )
+        workbench = (SITE / "src/components/UnitWorkbenchView.tsx").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("BrowserOnly", explorer)
+        self.assertIn("GraphIndex", explorer)
+        self.assertIn("api.purge", explorer)
+        self.assertIn("TloadStateTransitionDemo", workbench)
+        self.assertIn("EvidenceIndex", workbench)
+
+    def test_artifact_gate_exhaustively_checks_bilingual_unit_routes(self) -> None:
+        checker = (ROOT / "scripts/check-site-artifact").read_text(encoding="utf-8")
+        for term in (
+            "validate_unit_routes",
+            'pto.site-unit-routes.v1',
+            'zh-CN/pto-unit-routes.json',
+            'search index does not route',
+            'documentation_sha256',
+            'expected_reader_projection',
+            'guide_content_locale',
+            'localized_documentation_sha256',
+            'MAX_UNIT_HTML_BYTES',
+            'evidence/test-sources',
+            'WaveDrom must remain exact-pinned to 3.6.1',
+            'WaveDrom leaked into the homepage JavaScript',
+            'site artifact has no lazy WaveDrom rendering chunk',
+        ):
+            self.assertIn(term, checker)
+
+        lighthouse = (ROOT / "scripts/check-site-lighthouse").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("largest_unit_route", lighthouse)
+        self.assertIn("largest unit desktop", lighthouse)
+
+    def test_design_contract_is_active(self) -> None:
+        self.assertIn("- Status: Active", DESIGN_TEXT)
+        self.assertIn("asl/**/*.asl", DESIGN_TEXT)
+        self.assertIn("site validity is release-blocking", DESIGN_TEXT.lower())
+
+    def test_site_workflow_is_read_only_and_commit_pinned(self) -> None:
+        workflow = (ROOT / ".github/workflows/site.yml").read_text(encoding="utf-8")
+        self.assertIn("permissions:\n  contents: read", workflow)
+        self.assertIn(
+            "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+            workflow,
+        )
+        self.assertIn(
+            "actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903",
+            workflow,
+        )
+        self.assertIn("pnpm@10.30.0", workflow)
+        self.assertNotIn("contents: write", workflow)
+
+    def test_release_workflow_blocks_on_site_validity(self) -> None:
+        workflow = (ROOT / ".github/workflows/release.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("release-site:", workflow)
+        self.assertIn("name: pto-site-preview-${{ inputs.commit }}", workflow)
+        self.assertIn("artifact-digest: ${{ steps.site-preview.outputs.artifact-digest }}", workflow)
+        self.assertIn("SITE_ARTIFACT_DIGEST", workflow)
+        self.assertIn("RELEASE_SITE_RESULT", workflow)
+        self.assertIn("PTO_SITE_CROSS_BROWSER=1", workflow)
+        self.assertIn("PTO_SITE_REQUIRE_CLEAN=1", workflow)
+        self.assertIn("python3 scripts/check-site-lighthouse", workflow)
+        self.assertIn('test "$RELEASE_SITE_RESULT" = success', workflow)
+
+    def test_site_security_policy_mitigates_unpatched_image_parsers(self) -> None:
+        security = (ROOT / "scripts/check-site-security").read_text(encoding="utf-8")
+        self.assertIn('MITIGATED_ADVISORIES = {"1138808", "1138809"}', security)
+        for suffix in ('.icns', '.jxl', '.heif'):
+            self.assertIn(f'"{suffix}"', security)
+        for magic in ("ICNS", "JXL", "HEIF", "vulnerable_image_magic"):
+            self.assertIn(magic, security)
+        self.assertIn("site image reference escapes docs/", security)
+        self.assertIn("unquote(parsed.path)", security)
+        self.assertIn('decoded.startswith("@site/")', security)
+        self.assertNotIn('"--prod"', security)
+        self.assertIn("pnpm", security)
+        self.assertIn("audit", security)
+        publication = (ROOT / "scripts/check-publication-hygiene").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn('Path("docs/site/pnpm-lock.yaml")', publication)
+
+    def test_redirect_manifest_is_nonempty_and_unique(self) -> None:
+        redirects = json.loads((SITE / "redirects.json").read_text(encoding="utf-8"))
+        sources = [source for redirect in redirects for source in redirect["from"]]
+        self.assertGreaterEqual(len(sources), 8)
+        self.assertEqual(len(sources), len(set(sources)))
+        for redirect in redirects:
+            self.assertTrue(redirect["to"].startswith("/"))
+
+    def test_publication_handoff_is_content_addressed(self) -> None:
+        generator = (ROOT / "scripts/generate-site-publication-manifest").read_text(
+            encoding="utf-8"
+        )
+        handoff = (SITE / "deployment/README.md").read_text(encoding="utf-8")
+        for field in (
+            "architecture_version",
+            "publication_version",
+            "site_tree_sha256",
+            "redirect_manifest_sha256",
+            "dependency_lock_sha256",
+            "source_commit",
+            "release_eligible",
+        ):
+            self.assertIn(field, generator)
+            self.assertIn(field, handoff)
+
+
+DESIGN_TEXT = (ROOT / "DESIGN.md").read_text(encoding="utf-8")
+
+
+if __name__ == "__main__":
+    unittest.main()

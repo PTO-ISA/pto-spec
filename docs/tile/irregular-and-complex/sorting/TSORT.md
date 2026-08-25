@@ -11,6 +11,70 @@ Stably sort independent row groups and return values with original within-group 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-tsort-purpose role=purpose -->
+## What TSORT does
+
+`TSORT` stably sorts independent row groups and publishes values with original within-group U32 indices.
+
+<!-- PTO-READER-BLOCK: tile-c-tsort-mechanism role=mechanism -->
+## Operation mechanism
+
+Each valid row is split from column zero into consecutive groups of the selected width; the final short group never reads padding.
+
+Sorting is stable. Numeric values precede NaNs in both directions, NaNs retain source order, and signed zeros compare equal.
+
+<!-- PTO-READER-BLOCK: tile-c-tsort-inputs-outputs role=inputs-outputs -->
+## Operands, shape, and type
+
+- `destination0` identifies a newly allocated destination.
+
+- `destination1` identifies a newly allocated index destination.
+
+- `source0` supplies a persistent source Tile.
+
+- `sort_width` selects the row-group width.
+
+- `flag0` carries its mnemonic-defined operand.
+
+- The closed applicable DataType set is `FP32`, `FP16`.
+
+- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
+
+- `LB0` selects `sort_width` and defaults to `32` when omitted or zero. `LB1` and `LB2` must be absent; source and both destinations retain the same nonzero valid shape.
+
+<!-- PTO-READER-BLOCK: tile-c-tsort-effects role=effects -->
+## Definedness, padding, and publication
+
+All source descriptors and payloads are validated and snapshotted before destination publication.
+
+The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+
+Physical coordinates outside the valid rectangle are undefined Null padding; every B.DATR field must remain zero.
+
+Source Tiles persist and are not modified by successful execution.
+
+<!-- PTO-READER-BLOCK: tile-c-tsort-constraints role=constraints -->
+## Legality, fault, and order boundaries
+
+Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+
+A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+
+`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+
+<!-- PTO-READER-BLOCK: tile-c-tsort-example role=example -->
+## Non-normative example
+
+This example illustrates the current ASL-bound contract and is not a second instruction definition.
+
+`TSORT <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `irregular-and-complex`
@@ -233,7 +297,7 @@ end;
 ## Block composition
 
 ```asm
-BSTART.SFU TSORT, FP32|FP16|BF16
+BSTART.SFU TSORT, FP32|FP16
 B.DATR all-zero (optional)
 B.DIM LB0=sort_width (optional; zero or omission defaults to 32)
 B.IOR Descending (optional; omission defaults to ascending)
@@ -314,7 +378,7 @@ end;
 ## Legality
 
 - TSORT uses the TEPL encoding carrier Mode 3 Function 12, canonically assembles with BSTART.SFU, and has no standalone opcode.
-- The complete Local binding stream supplies exactly one persistent source and two distinct newly allocated destinations. Value source and value destination are FP32, FP16, or BF16; the index destination is U32. All use the same nonzero valid shape and row-major layout.
+- The complete Local binding stream supplies exactly one persistent source and two distinct newly allocated destinations. Value source and value destination are FP32 or FP16; the index destination is U32. All use the same nonzero valid shape and row-major layout.
 - LB1 and LB2 are absent. B.DATR is all zero. B.IOS is illegal. All B.IOT bindings use one PE_MASK.
 - Every valid source element is defined and has a valid encoding. Signaling NaN is a legal sortable value and records numeric invalid status rather than causing a Tile legality fault.
 
@@ -345,7 +409,3 @@ end;
 ## Examples
 
 - BSTART.SFU TSORT, FP32; B.DIM LB0=16; B.IOR a0; B.IOT T0, mask=1111, ->T0<TSize>; B.IOT mask=1111, <last>, ->T1<TSize>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

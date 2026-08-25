@@ -11,6 +11,64 @@ Compute the bitwise XOR of corresponding integer elements.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-txor-purpose role=purpose -->
+## What TXOR does
+
+`TXOR` computes bitwise XOR for corresponding integer elements and publishes a new Local destination.
+
+<!-- PTO-READER-BLOCK: tile-c-txor-mechanism role=mechanism -->
+## Operation mechanism
+
+The operation evaluates only the valid rectangle using the mnemonic-selected typed element rule.
+
+<!-- PTO-READER-BLOCK: tile-c-txor-inputs-outputs role=inputs-outputs -->
+## Operands, shape, and type
+
+- `destination0` identifies a newly allocated destination.
+
+- `source0` supplies a persistent source Tile.
+
+- `source1` supplies a persistent source Tile.
+
+- The closed applicable DataType set is `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+
+- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
+
+- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+
+<!-- PTO-READER-BLOCK: tile-c-txor-effects role=effects -->
+## Definedness, padding, and publication
+
+All source descriptors and payloads are validated and snapshotted before destination publication.
+
+The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+
+Null padding leaves physical coordinates outside the valid rectangle undefined; an explicit non-Null PadValue defines those coordinates with the selected typed value.
+
+Source Tiles persist and are not modified by successful execution.
+
+<!-- PTO-READER-BLOCK: tile-c-txor-constraints role=constraints -->
+## Legality, fault, and order boundaries
+
+Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+
+A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+
+`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+
+<!-- PTO-READER-BLOCK: tile-c-txor-example role=example -->
+## Non-normative example
+
+This example illustrates the current ASL-bound contract and is not a second instruction definition.
+
+`TXOR <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `elementwise-tile-tile`
@@ -145,7 +203,3 @@ end;
 ## Examples
 
 - BSTART.VEC TXOR, U8; B.DIM LB0=ValidCol; B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

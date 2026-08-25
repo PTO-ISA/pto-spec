@@ -7,6 +7,7 @@ from scripts.workflow_contract import (
     CACHE_ACTION_SHA,
     CHECKOUT_ACTION_SHA,
     DOWNLOAD_ARTIFACT_SHA,
+    SETUP_NODE_ACTION_SHA,
     UPLOAD_ARTIFACT_SHA,
     checkout_step,
     flow_list as _flow_list,
@@ -326,10 +327,64 @@ def _release_jobs() -> dict[str, object]:
                 },
             ],
         },
+        "release-site": {
+            "name": "Release / static site validity",
+            "needs": "full-validation",
+            "runs-on": "ubuntu-latest",
+            "timeout-minutes": "45",
+            "outputs": {
+                "artifact-digest": "${{ steps.site-preview.outputs.artifact-digest }}"
+            },
+            "steps": [
+                checkout_step("${{ inputs.commit }}"),
+                {
+                    "name": "Set up Node.js",
+                    "uses": f"actions/setup-node@{SETUP_NODE_ACTION_SHA}",
+                    "with": {"node-version": "22"},
+                },
+                {
+                    "name": "Enable the locked package manager",
+                    "run-sha256": "c33c9a67a3d846a5acb1336aecd50a61a05b445f03812d36427443e618b4c24f",
+                },
+                {
+                    "name": "Install exact site dependencies",
+                    "run-sha256": "aff9ceeba433670fa1ce05da644f09bdbc274c678106c74c89a12cd7c57fa234",
+                },
+                {
+                    "name": "Validate the exact static site artifact",
+                    "shell": "bash",
+                    "env": {"COMMIT": "${{ inputs.commit }}"},
+                    "run-sha256": "d85c41260c3c8b95b7b2c394507edc9763987f4985f18b6cce5ef236860f9905",
+                },
+                {
+                    "name": "Install the browser test runtime",
+                    "run-sha256": "23449948affe7c2113b3e1c885e9ca0705068e87d6c1cbcebe06cab3ca2cde06",
+                },
+                {
+                    "name": "Exercise release site browser paths",
+                    "run-sha256": "4b59b15e682bff8ca74bc5c25b948029766bf72cead0eb27a9e4b2a218368d5a",
+                },
+                {
+                    "name": "Enforce Lighthouse quality budgets",
+                    "run-sha256": "715b0a71ccc3e1b71907c2746198b3a09a5bf913ef7c005844611118a1aff7d4",
+                },
+                {
+                    "name": "Upload immutable site preview",
+                    "id": "site-preview",
+                    "uses": f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}",
+                    "with": {
+                        "name": "pto-site-preview-${{ inputs.commit }}",
+                        "path": "docs/site/build",
+                        "if-no-files-found": "error",
+                        "retention-days": "90",
+                    },
+                },
+            ],
+        },
         "validate": {
             "name": "Release / validate",
             "if": "always()",
-            "needs": ["full-validation", "release-evidence"],
+            "needs": ["full-validation", "release-evidence", "release-site"],
             "runs-on": "ubuntu-latest",
             "timeout-minutes": "10",
             "steps": [
@@ -339,8 +394,10 @@ def _release_jobs() -> dict[str, object]:
                     "env": {
                         "FULL_VALIDATION_RESULT": "${{ needs.full-validation.result }}",
                         "RELEASE_EVIDENCE_RESULT": "${{ needs.release-evidence.result }}",
+                        "RELEASE_SITE_RESULT": "${{ needs.release-site.result }}",
+                        "SITE_ARTIFACT_DIGEST": "${{ needs.release-site.outputs.artifact-digest }}",
                     },
-                    "run-sha256": "08951561d771359b1e744c956c4dc5082c0fe03d85dceca5881d0eca4efde269",
+                    "run-sha256": "9bc522e05c09d2cc8563987bfe45aceacb1d03cc0977bb16534843980ca9e7b6",
                 }
             ],
         },

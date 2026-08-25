@@ -11,6 +11,60 @@ Fills a bounded byte range from three absolute GPR operands after complete acces
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-mset-purpose role=purpose -->
+## What MSET does
+
+`MSET` is a standalone all-or-nothing memory command: it preflights the complete destination range before filling, and any fault requires a full reissue with no retained partial progress.
+
+<!-- PTO-READER-BLOCK: block-mset-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`MSET` executes as a standalone `32`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+
+The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+
+The command snapshots destination, fill byte, and complete `0..63` length, then preflights the complete destination range before the first store.
+
+<!-- PTO-READER-BLOCK: block-mset-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `RegSrc0` — absolute GPR containing destination byte address; `RegSrc1` — absolute GPR whose low eight bits are replicated; `RegSrc2` — absolute GPR containing complete unsigned byte length.
+- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-mset-effects role=effects -->
+## State effects and ordering
+
+All three GPR values are snapshotted before range validation or memory effects.
+
+After full-range preflight, bytes fill in increasing address order; success invalidates an overlapping reservation, records command state, and retires once without saved progress.
+
+<!-- PTO-READER-BLOCK: block-mset-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
+
+A `Fault_DataPage` during preflight leaves the complete range, reservation, last-command state, and `TPC` unchanged; recovery performs a full reissue.
+
+<!-- PTO-READER-BLOCK: block-mset-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+MSET [a0, a1, a2]
+```
+
+The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -143,7 +197,3 @@ end;
 
 - MSET [a0, a1, a2]
 - MSET [zero, zero, zero]
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

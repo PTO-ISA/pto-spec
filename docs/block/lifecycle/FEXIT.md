@@ -11,6 +11,60 @@ Destroys a restartable stack frame and restores one inclusive callee-save regist
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-fexit-purpose role=purpose -->
+## What FEXIT does
+
+`FEXIT` is a standalone frame-lifecycle command that validates its register range and stack state before publishing frame or control-flow effects.
+
+<!-- PTO-READER-BLOCK: block-fexit-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`FEXIT` executes as a standalone `32`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+
+The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+
+The command snapshots every required source before its first visible effect, then follows the owner-defined commit or restart boundary.
+
+<!-- PTO-READER-BLOCK: block-fexit-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `DstBegin` — first register in the inclusive R2..R23 ring range; `DstEnd` — last register in the inclusive R2..R23 ring range; `uimm` — frame byte count, encoded in multiples of eight.
+- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-fexit-effects role=effects -->
+## State effects and ordering
+
+Source validation and snapshot precede every register, queue, frame, memory, event, or control-flow effect.
+
+The command commits at the restart boundaries named by its memory contract; earlier committed steps remain visible only where the owner explicitly permits restart progress.
+
+<!-- PTO-READER-BLOCK: block-fexit-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
+
+Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+
+<!-- PTO-READER-BLOCK: block-fexit-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+FEXIT [RegDst0 ~ RegDstn], sp!, uimm
+```
+
+The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -132,7 +186,3 @@ end;
 ## Examples
 
 - FEXIT [RegDst0 ~ RegDstn], sp!, uimm
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

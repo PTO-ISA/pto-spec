@@ -7,6 +7,52 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-STATE-TRAP-CONTEXT}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-trap-context-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit owns portable trap-context save, recoverability checking, and recovery, together with implementation-defined hooks whose default bodies call the portable path.
+
+<!-- PTO-READER-BLOCK: arch-trap-context-concepts-state role=concepts-state -->
+## Saved context
+
+`SavePortableTrapContext` marks the target ACR context valid and snapshots the source ACR, TPC, BPC, `core_state`, bundle control and argument state, scalar/Tile/Shared bindings, local and Shared generations, templates, temporary queues, and predicate registers.
+
+The snapshot is indexed by the target `AccessControlRing`; the saved `source_acr` identifies the ACR restored after recovery.
+
+<!-- PTO-READER-BLOCK: arch-trap-context-rules-interactions role=rules-interactions -->
+## Recoverability and recovery
+
+`PortableTrapContextRecoverable` requires a valid saved context and zero low bits in both saved BPC and saved TPC. `RecoverPortableTrapContext` returns `FALSE` immediately when that condition is not met.
+
+On success, recovery restores every portable field saved by the owner, sets `_CurrentACR` to the saved source ACR, clears the target context's valid bit, and returns `TRUE`.
+
+`SaveTrapContext`, `TrapContextRecoverable`, and `RecoverTrapContext` are implementation-defined profile hooks. Their bodies in this owner delegate to the corresponding portable helpers.
+
+<!-- PTO-READER-BLOCK: arch-trap-context-boundaries role=boundaries -->
+## Architectural boundaries
+
+Portable recovery deliberately checks `PortableTrapContextRecoverable` directly instead of dispatching through the active profile override. A profile may require additional context-register state, but the portable save helper does not create such target-specific state.
+
+An unsuccessful portable recovery performs none of the restore assignments and does not invalidate the saved context.
+
+<!-- PTO-READER-BLOCK: arch-trap-context-example-usage role=example-usage -->
+## Non-normative recovery walkthrough
+
+For an aligned valid snapshot saved from ACR3 into target ACR1, successful portable recovery restores the snapshot, selects ACR3 as current, and consumes the ACR1 snapshot by clearing its valid bit. If either saved low address bit is one, recovery instead returns `FALSE` before changing the live context.
+
+<!-- PTO-READER-BLOCK: arch-trap-context-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Program counter](program-counter.md) owns the TPC and BPC accessors used during save and recovery.
+- [Access control](../system-registers/access-control.md) owns ACR state and trap-target selection.
+- [Memory ordering](../memory-model/ordering.md) is the declared dependency for this unit.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/state/trap-context.asl -->
@@ -155,7 +201,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

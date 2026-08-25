@@ -7,6 +7,48 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-memory-events-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the bounded event records used to construct and inspect a PTO total-store-order candidate execution. It supports explicit event construction and optional capture from production memory helpers.
+
+<!-- PTO-READER-BLOCK: arch-memory-events-concepts role=concepts-state -->
+## Event kinds and fields
+
+- Loads and atomics are reads; initial writes, stores, and write-performing atomics are writes.
+- Two events share a location only when both address and `size_bytes` match.
+- Data event classes use `0001` for reads, `0010` for writes, and `0011` for atomics; fence events carry separate predecessor and successor masks.
+
+<!-- PTO-READER-BLOCK: arch-memory-events-rules role=rules-interactions -->
+## Capture lifecycle
+
+- `StartMemoryEventCapture` resets the sequence, selects a `MemoryAgentId`, and enables capture.
+- `SelectMemoryEventAgent` changes the agent used by subsequent wrappers.
+- `StopMemoryEventCapture` disables automatic recording without deleting the captured sequence.
+- `AddMemoryEvent` appends one event and advances `_MemoryEventCount`; specialized helpers normalize access values before appending.
+
+<!-- PTO-READER-BLOCK: arch-memory-events-boundaries role=boundaries -->
+## Verification boundary
+
+The event array bound and `PTO_MODEL_MEMORY_EVENTS` assertion are model-checking infrastructure. They do not impose an architectural limit on the number of agents or the length of a real execution. Instruction and device fence classes remain explicit mask space even though this candidate model records data events.
+
+<!-- PTO-READER-BLOCK: arch-memory-events-example role=example-usage -->
+## Non-normative capture example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-memory-events-related role=related-owners-navigation -->
+## Related owners
+
+- Address-space helpers provide bounded byte storage beneath event-producing operations.
+- Atomicity assigns coherence and reads-from data; ordering evaluates the complete candidate.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/memory-events.asl -->
@@ -199,7 +241,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

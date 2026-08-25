@@ -11,6 +11,57 @@ Compute the same-type natural exponential of every valid Local Tile element.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-texp-purpose role=purpose -->
+## What TEXP does
+
+`TEXP` is a selector-encoded Tile operation executed by `SFU`. It applies the selected same-type natural exponential to every valid floating element; its current instruction contract owns the exact bundle form and publication boundary.
+
+<!-- PTO-READER-BLOCK: tile-texp-mechanism role=mechanism -->
+## Element and Tile mechanism
+
+After all descriptor and operand checks succeed, the owning ASL handler applies the selected same-type natural exponential to every valid floating element. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+
+The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+
+<!-- PTO-READER-BLOCK: tile-texp-inputs role=inputs-outputs -->
+## Operand roles and descriptors
+
+- `destination0` has the exact contract role **new Local floating destination**.
+- `source0` has the exact contract role **persistent Local floating source**.
+
+Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
+Every source coordinate read by the operation must be defined before execution reaches destination publication.
+`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+
+<!-- PTO-READER-BLOCK: tile-texp-effects role=effects -->
+## Publication, definedness, and padding
+
+Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+
+Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+
+The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+
+<!-- PTO-READER-BLOCK: tile-texp-constraints role=constraints -->
+## Type, layout, and fault boundary
+
+The accepted data-type set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `E4M3`, `E5M2`.
+
+The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+
+<!-- PTO-READER-BLOCK: tile-texp-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `TEXP` example, input zero produces same-type positive one.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `elementwise-tile-tile`
@@ -134,7 +185,7 @@ end;
 
 - TEXP retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.
 - Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.
-- The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.
+- The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, or E5M2.
 - Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.
 - PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
 - Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.
@@ -163,7 +214,3 @@ end;
 ## Examples
 
 - BSTART.SFU TEXP, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

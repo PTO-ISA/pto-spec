@@ -11,6 +11,56 @@ HL.SWIP snapshots its scalar sources, forms its encoded address, and stores two 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-swip-purpose role=purpose -->
+## What HL.SWIP does
+
+`HL.SWIP` is a standalone `48`-bit AGU instruction that forms a signed-immediate address and stores two adjacent aligned little-endian `4`-byte values.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swip-mechanism role=mechanism -->
+## Address and memory mechanism
+
+`HL.SWIP` sign-extends `simm17` from its complete `-65536..65535` domain, multiplies it by `4`, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+
+The instruction preflights two adjacent `4`-byte addresses, then stores the two snapshotted data values in increasing-address order.
+
+This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swip-inputs role=inputs-outputs -->
+## Inputs and outputs
+
+- `SrcR` supplies the base; `simm17` supplies the signed displacement. Every encoded Reg5 source among `SrcD`, `SrcD1`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
+- `SrcD` supplies first store value; `SrcD1` supplies second store value.
+- `simm17` assigns every signed value from `-65536` through `65535`; encoded zero is a zero displacement, not omission.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swip-effects role=effects -->
+## Effects and ordering
+
+All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+
+After both addresses pass preflight, success records two relaxed store events in address order, updates overlapping reservation state only after complete preflight, and advances `TPC` by `6` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swip-constraints role=constraints -->
+## Alignment, faults, and restart
+
+Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+
+A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swip-example role=example -->
+## Non-normative address example
+
+This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+
+With the base set to `0x100` and the signed immediate set to `2`, the displacement is `8` and base plus displacement is `0x108`. The memory access uses `0x108`. The second `4`-byte store uses `0x10c` after both addresses pass preflight.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -45,7 +95,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- | ---: | --- | --- | --- | --- | --- |
 | hl_swip_48_e2fca8cde001 | SrcD | 5 | 0–31 | none | none | Reg5 first store-data source | Encoded zero reads the architectural zero GPR. |
 | hl_swip_48_e2fca8cde001 | SrcD1 | 5 | 0–31 | none | none | Reg5 second store-data source | Encoded zero reads the architectural zero GPR. |
-| hl_swip_48_e2fca8cde001 | SrcR | 5 | 0–31 | none | none | Reg5 register-offset source | Encoded zero reads the architectural zero GPR. |
+| hl_swip_48_e2fca8cde001 | SrcR | 5 | 0–31 | none | none | Reg5 address-base source | Encoded zero reads the architectural zero GPR. |
 | hl_swip_48_e2fca8cde001 | simm17 | 17 | 0–131071 | none | none | signed address displacement | Encoded zero supplies a zero displacement; it does not denote omission. |
 
 ## Operands and results
@@ -54,7 +104,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- |
 | SrcD | Reg5 first store-data source |
 | SrcD1 | Reg5 second store-data source |
-| SrcR | Reg5 register-offset source |
+| SrcR | Reg5 address-base source |
 | simm17 | signed address displacement |
 
 ## Decode
@@ -134,7 +184,7 @@ end;
 
 ## State effects
 
-- Sign-extend simm17, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcL base.
+- Sign-extend simm17, multiply it by 4, and add it modulo 2^PTO_XLEN to the SrcR base.
 - The pair addresses are address and address plus 4; the instruction performs no base writeback.
 - Snapshot every store-data source before any memory effect or destination publication.
 - Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire.
@@ -161,7 +211,3 @@ end;
 ## Examples
 
 - hl.swip SrcD, SrcD1, [SrcR, simm]
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

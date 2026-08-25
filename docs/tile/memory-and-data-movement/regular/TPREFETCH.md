@@ -11,6 +11,52 @@ Prefetches a typed, strided GM rectangle for all four PEs without producing a Ti
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tprefetch-purpose role=purpose -->
+## Purpose
+
+`TPREFETCH` prefetches a typed, strided GM rectangle for all four PEs without a Tile destination.
+
+<!-- PTO-READER-BLOCK: tile-tprefetch-mechanism role=mechanism -->
+## Execution mechanism
+
+The ASL DOC contract selects `TileHandler_TPREFETCH` through the instruction's selector-encoded block carrier.
+
+All four PE address footprints are preflighted before the first request or event; no Tile or Shared destination exists.
+
+<!-- PTO-READER-BLOCK: tile-tprefetch-inputs-outputs role=inputs-outputs -->
+## Operands and descriptors
+
+`address` is the per-PE GM base; `scalar0` is the per-PE logical row stride in elements; `positive0` is the ValidCol; `positive1` is the ValidRow; `positive2` is the physical Col.
+
+`TPREFETCH` produces no destination descriptor or Tile state; its only successful architectural contribution is the typed memory-event sequence.
+
+<!-- PTO-READER-BLOCK: tile-tprefetch-effects role=effects -->
+## Publication and ordering
+
+Success emits TLOAD-equivalent typed load events for the strided rectangle but exposes no architectural cache placement or retention state.
+
+The block aq/rl attributes provide the same PTO-TSO ordering used by TLOAD.
+
+<!-- PTO-READER-BLOCK: tile-tprefetch-constraints role=constraints -->
+## Legality, padding, and faults
+
+Dimensions, data attributes, and the combined four-PE memory footprint are validated before the first request or event.
+
+Any memory fault rejects the whole prefetch without a partial event sequence and without changing Tile, Shared, descriptor, payload, definedness, or allocation state.
+
+<!-- PTO-READER-BLOCK: tile-tprefetch-example role=example -->
+## Non-normative contract sketch
+
+This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
+
+Read `BSTART.TPREFETCH U8; B.DIM zero, 16, ->LB0; B.DIM zero, 4, ->LB1; B.DIM zero, 32, ->LB2; B.IOR zero, a0; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `memory-and-data-movement`
@@ -136,7 +182,3 @@ end;
 ## Examples
 
 - BSTART.TPREFETCH U8; B.DIM zero, 16, ->LB0; B.DIM zero, 4, ->LB1; B.DIM zero, 32, ->LB2; B.IOR zero, a0; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

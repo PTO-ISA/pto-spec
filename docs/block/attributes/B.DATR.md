@@ -11,6 +11,56 @@ Latches the optional per-block tile layout, data type, padding, comparison, roun
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-b-datr-purpose role=purpose -->
+## What B.DATR contributes
+
+`B.DATR` is a 32-bit block header command that records the optional data-layout, data-type, conversion, and numeric attributes. It changes pending block metadata rather than executing a tile body operation immediately.
+
+<!-- PTO-READER-BLOCK: block-b-datr-mechanism role=mechanism -->
+## Placement and mechanism
+
+The command belongs to the active block header before the first body instruction. Duplicate or misplaced use is rejected before pending header state changes.
+
+The accepted command latches one typed attribute record in pending block state. The selected operation consumes those fields only after the complete header, bindings, dimensions, and body satisfy its schema.
+
+<!-- PTO-READER-BLOCK: block-b-datr-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `Layout` selects tile layout or an assigned conversion layout; its exact assigned domain remains in the generated contract below.
+- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+- `PadValueOrByteId` supplies the operation-selected padding value or byte identifier; its exact assigned domain remains in the generated contract below.
+- `CMode` selects the comparison predicate; its exact assigned domain remains in the generated contract below.
+- `RMode` selects the rounding mode; its exact assigned domain remains in the generated contract below.
+- `Sat` enables saturation; its exact assigned domain remains in the generated contract below.
+- `Canonicalize` enables private-format canonicalization; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-b-datr-effects role=effects -->
+## Pending state and completion
+
+An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+
+<!-- PTO-READER-BLOCK: block-b-datr-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+
+<!-- PTO-READER-BLOCK: block-b-datr-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
+```
+
+Assume an active compatible header with no earlier conflicting `B.DATR` command. Placing `B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -231,14 +281,3 @@ end;
 
 - B.DATR {NORM, FP32, Zero, None, RNE, 0, 0}
 - B.DATR {ND2M16, DTYPE_NONE, Null, None, Default, 0, 0}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-DataType code 31 is canonically spelled `DTYPE_NONE`. It is a valid encoded
-field value, but it is not a `TileDataType` and has no width, arithmetic
-meaning, or implicit U8/U32 default. Effective type resolution uses a concrete
-`B.DATR.DataType`, then a concrete `BSTART.DataType`, then—only for TMOV—the
-bound Local or Shared source descriptor. Thus `B.DATR DTYPE_NONE` preserves a
-concrete BSTART type while its layout, padding, rounding, and other controls
-still apply. If a concrete type remains unresolved, complete-bundle preflight
-raises `Fault_TileLegality` before destination allocation or source effects.
-<!-- SUPPLEMENTARY-END -->

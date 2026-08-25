@@ -1,0 +1,199 @@
+#!/usr/bin/env python3
+"""Fail closed on unsafe site inputs and unmitigated dependency advisories."""
+
+from __future__ import annotations
+
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+from urllib.parse import unquote, urlsplit
+
+
+ROOT = Path(__file__).resolve().parent.parent
+SITE = ROOT / "docs/site"
+IGNORED = {
+    SITE / "node_modules",
+    SITE / ".docusaurus",
+    SITE / "build",
+    SITE / "test-results",
+    SITE / "playwright-report",
+}
+SAFE_IMAGE_SUFFIXES = {".gif", ".jpg", ".jpeg", ".png", ".svg", ".webp"}
+IMAGE_SUFFIXES = SAFE_IMAGE_SUFFIXES | {
+    ".avif",
+    ".bmp",
+    ".heic",
+    ".heif",
+    ".icns",
+    ".jxl",
+    ".tiff",
+}
+MITIGATED_ADVISORIES = {"1138808", "1138809"}
+MARKDOWN_IMAGE = re.compile(r"!\[[^\]]*\]\(([^)]+)\)")
+MDX_IMAGE_IMPORT = re.compile(
+    r"^\s*import\s+[^\n]+?\s+from\s+['\"]([^'\"]+\.(?:avif|bmp|gif|heic|heif|icns|jpe?g|jxl|png|svg|tiff|webp))['\"]",
+    re.IGNORECASE | re.MULTILINE,
+)
+
+
+def below(path: Path, owner: Path) -> bool:
+    return path == owner or owner in path.parents
+
+
+def vulnerable_image_magic(data: bytes) -> str | None:
+    if data.startswith(b"icns"):
+        return "ICNS"
+    if data.startswith(b"\xff\x0a") or data.startswith(
+        b"\x00\x00\x00\x0cJXL \r\n\x87\n"
+    ):
+        return "JXL"
+    if len(data) >= 12 and data[4:8] == b"ftyp":
+        brands = {data[8:12], data[16:20] if len(data) >= 20 else b""}
+        if brands & {b"heic", b"heix", b"hevc", b"hevx", b"mif1", b"msf1"}:
+            return "HEIF"
+    return None
+
+
+def safe_image_magic(path: Path, data: bytes) -> bool:
+    suffix = path.suffix.lower()
+    if suffix == ".png":
+        return data.startswith(b"\x89PNG\r\n\x1a\n")
+    if suffix in {".jpg", ".jpeg"}:
+        return data.startswith(b"\xff\xd8\xff")
+    if suffix == ".gif":
+        return data.startswith((b"GIF87a", b"GIF89a"))
+    if suffix == ".webp":
+        return len(data) >= 12 and data.startswith(b"RIFF") and data[8:12] == b"WEBP"
+    if suffix == ".svg":
+        try:
+            text = path.read_text(encoding="utf-8").lower()
+        except UnicodeDecodeError:
+            return False
+        compact = text.lstrip("\ufeff\t\r\n ")
+        if compact.startswith("<?xml"):
+            marker = compact.find("?>")
+            compact = compact[marker + 2 :].lstrip() if marker >= 0 else ""
+        return (
+            compact.startswith("<svg")
+            and "<script" not in compact
+            and "javascript:" not in compact
+            and 'href="http' not in compact
+            and "href='http" not in compact
+        )
+    return True
+
+
+def check_images() -> list[str]:
+    errors: list[str] = []
+    docs_root = (ROOT / "docs").resolve()
+    for markdown in sorted((ROOT / "docs").rglob("*")):
+        if (
+            not markdown.is_file()
+            or markdown.suffix.lower() not in {".md", ".mdx"}
+            or any(below(markdown, ignored) for ignored in IGNORED)
+        ):
+            continue
+        text = markdown.read_text(encoding="utf-8")
+        targets = [match.group(1).strip() for match in MARKDOWN_IMAGE.finditer(text)]
+        targets.extend(match.group(1) for match in MDX_IMAGE_IMPORT.finditer(text))
+        for raw_target in targets:
+            target = raw_target.strip()
+            if target.startswith("<") and ">" in target:
+                target = target[1 : target.index(">")]
+            else:
+                target = target.split()[0]
+            parsed = urlsplit(target)
+            if parsed.scheme in {"http", "https", "data"}:
+                continue
+            decoded = unquote(parsed.path)
+            if decoded.startswith("@site/"):
+                resolved = (SITE / decoded.removeprefix("@site/")).resolve()
+            elif decoded.startswith("/"):
+                resolved = (SITE / "static" / decoded.lstrip("/")).resolve()
+            else:
+                resolved = (markdown.parent / decoded).resolve()
+            try:
+                resolved.relative_to(docs_root)
+            except ValueError:
+                errors.append(
+                    "site image reference escapes docs/: "
+                    f"{markdown.relative_to(ROOT)} -> {raw_target}"
+                )
+
+    for path in sorted((ROOT / "docs").rglob("*")):
+        if not path.is_file() or any(below(path, ignored) for ignored in IGNORED):
+            continue
+        if path.is_symlink() and path.suffix.lower() in IMAGE_SUFFIXES:
+            errors.append(f"site image symlink is forbidden: {path.relative_to(ROOT)}")
+            continue
+        data = path.read_bytes()
+        detected = vulnerable_image_magic(data[:32])
+        if detected is not None:
+            errors.append(
+                f"{detected} content is forbidden from site inputs regardless of suffix: "
+                f"{path.relative_to(ROOT)}"
+            )
+            continue
+        suffix = path.suffix.lower()
+        if suffix in IMAGE_SUFFIXES and suffix not in SAFE_IMAGE_SUFFIXES:
+            errors.append(
+                f"unreviewed image format is forbidden from site inputs: {path.relative_to(ROOT)}"
+            )
+        elif suffix in SAFE_IMAGE_SUFFIXES and not safe_image_magic(path, data):
+            errors.append(
+                f"image content does not match the reviewed safe format: {path.relative_to(ROOT)}"
+            )
+    return errors
+
+
+def audit() -> tuple[list[str], list[str]]:
+    result = subprocess.run(
+        ["pnpm", "--dir", "docs/site", "audit", "--json"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    try:
+        report = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        return [f"pnpm audit did not return JSON: {error}"], []
+
+    errors: list[str] = []
+    mitigated: list[str] = []
+    for advisory_id, advisory in sorted(report.get("advisories", {}).items()):
+        severity = advisory.get("severity")
+        if severity not in {"high", "critical"}:
+            continue
+        if (
+            advisory_id in MITIGATED_ADVISORIES
+            and advisory.get("module_name") == "image-size"
+            and advisory.get("patched_versions") == "<0.0.0"
+        ):
+            mitigated.append(advisory_id)
+            continue
+        errors.append(
+            f"unmitigated {severity} dependency advisory {advisory_id}: "
+            f"{advisory.get('module_name')} {advisory.get('title')}"
+        )
+    return errors, mitigated
+
+
+def main() -> int:
+    errors = check_images()
+    audit_errors, mitigated = audit()
+    errors.extend(audit_errors)
+    if errors:
+        print("\n".join(errors), file=sys.stderr)
+        return 1
+    print(
+        "site security passed: no unmitigated high advisories; "
+        f"image-format policy mitigates {len(mitigated)} image-size advisories"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

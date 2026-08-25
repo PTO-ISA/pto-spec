@@ -71,7 +71,7 @@ def validate_schema(schema: object) -> list[str]:
             "type": "string",
             "pattern": (
                 r"^v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
-                r"(?:\.(?:0|[1-9][0-9]*))?$"
+                r"(?:\.(?:0|[1-9][0-9]*)){0,2}$"
             ),
         },
         "commit": {"type": "string", "pattern": r"^[0-9a-f]{40}$"},
@@ -81,7 +81,7 @@ def validate_schema(schema: object) -> list[str]:
             "pattern": (
                 r"^https://github\.com/PTO-ISA/pto-spec/releases/tag/"
                 r"v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
-                r"(?:\.(?:0|[1-9][0-9]*))?$"
+                r"(?:\.(?:0|[1-9][0-9]*)){0,2}$"
             ),
         },
         "release_manifest_sha256": {
@@ -112,10 +112,10 @@ def main() -> int:
     sample = {
         "schema_version": "1",
         "repository": "PTO-ISA/pto-spec",
-        "tag": "v0.58.4",
+        "tag": "v0.58.4.1",
         "commit": "0123456789abcdef0123456789abcdef01234567",
         "release_id": 123,
-        "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.4",
+        "release_url": "https://github.com/PTO-ISA/pto-spec/releases/tag/v0.58.4.1",
         "release_manifest_sha256": "a" * 64,
         "published_at": "2026-08-10T00:00:00Z",
     }

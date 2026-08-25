@@ -11,6 +11,52 @@ BSE publishes the SendEvent nonblocking execution-control request.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-bse-purpose role=purpose -->
+## What BSE does
+
+`BSE` publishes its assigned nonblocking execution-control request using a snapshotted scalar operand.
+
+<!-- PTO-READER-BLOCK: scalar-bse-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_ExecuteControlRequest`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-bse-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-bse-effects role=effects -->
+## Architectural effects
+
+The snapshotted `SrcL` value is published with `ExecutionControl_SendEvent`, and the architecture-request epoch increments before `TPC` advances.
+
+The request is nonblocking in the portable model and creates no separate sleep, mailbox, timeout-counter, or pending-wake state.
+
+<!-- PTO-READER-BLOCK: scalar-bse-constraints role=constraints -->
+## Placement and rejection
+
+Every assigned Reg5 selector follows the common scalar-source rule.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-bse-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `bse SrcL` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -129,7 +175,3 @@ end;
 ## Examples
 
 - bse SrcL
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

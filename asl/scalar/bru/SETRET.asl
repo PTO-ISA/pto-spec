@@ -3,9 +3,9 @@
 // NDF-BEGIN: PTO-SETRET-ADR-CONTRACT-001
 // ndf: kind=contract level=L1 layer=scalar status=accepted
 // Decisions: ADR-0026, ADR-0027.
-// SETRET MUST compute pre-increment TPC plus the signed halfword-scaled
-// immediate, update architectural ra and retained return state atomically,
-// then retire sequentially without installing a direct branch target.
+// SETRET MUST compute pre-increment TPC plus the zero-extended unsigned
+// halfword-scaled immediate, update architectural ra and retained return state
+// atomically, then retire sequentially without installing a direct branch target.
 // NDF-END: PTO-SETRET-ADR-CONTRACT-001
 // DOC-BEGIN: decode
 readonly func InstructionContractOperation_SETRET() => ScalarOperation

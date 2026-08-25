@@ -11,6 +11,57 @@ FADD adds two selected FP64 or FP32 carriers through the active numeric profile 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-fadd-purpose role=purpose -->
+## What FADD does
+
+`FADD` adds two selected FP64 or FP32 carriers through the active numeric profile, publishes the profile result, and accumulates the returned five-bit status vector into sticky numeric state.
+
+<!-- PTO-READER-BLOCK: scalar-fadd-mechanism role=mechanism -->
+## Profile-mediated mechanism
+
+`SrcType=00` selects complete FP64 carriers, while `SrcType=01` selects FP32 carriers from the zero-extended low 32 bits. The instruction calls the active profile's binary-add operation using active rounding.
+
+The selected profile returns a result plus `NV`, `DZ`, `OF`, `UF`, and `NX`; `FADD` ORs those bits into the existing sticky `CORE_STATE[36:32]` field.
+
+In the `pto-v0` reference profile, addition is deterministic raw-carrier modular arithmetic and returns zero flags. That reference behavior is not an IEEE-754 or target-hardware conformance claim.
+
+<!-- PTO-READER-BLOCK: scalar-fadd-inputs role=inputs-outputs -->
+## Inputs and destination
+
+- `SrcL` and `SrcR` accept every Reg5 source selector, including non-consuming T/U sources.
+- `RegDst` values `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only the result.
+
+All displayed operand fields are encoded. Encoded zero is a value: source selector `0` reads the zero GPR, destination `0` discards, and `SrcType=00` selects FP64.
+
+<!-- PTO-READER-BLOCK: scalar-fadd-effects role=effects -->
+## Effects and ordering
+
+Type legality is checked before the first source read or profile call. Both sources are then snapshotted before flag accumulation or destination publication.
+
+Produced flags are ORed into sticky numeric status, the result is published or discarded, and `TPC` advances by `4` bytes. Numeric flags do not themselves raise a synchronous PTO trap.
+
+`FADD` has no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-fadd-constraints role=constraints -->
+## Type and profile boundaries
+
+`SrcType=10` and `SrcType=11` are reserved and raise `Fault_IllegalInstruction` before source, profile, destination, flag, queue, or `TPC` effects. An unavailable selected T/U source has the same pre-effect fault boundary.
+
+The portable contract owns carrier selection, snapshotting, flag accumulation, destination publication, and rejection ordering. The active named numeric profile owns the arithmetic result and produced status vector.
+
+<!-- PTO-READER-BLOCK: scalar-fadd-example role=example -->
+## Non-normative usage example
+
+This example illustrates selection and publication; it does not define floating-point arithmetic independently of the active profile.
+
+`fadd.fd a0, a1, ->a2` selects the FP64 carrier path, snapshots both sources, invokes profile addition with active rounding, accumulates returned flags, writes the returned carrier to `a2`, and then advances `TPC` by `4` bytes.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -160,7 +211,3 @@ end;
 
 - fadd.fd a0, a1, ->a2
 - fadd.fs t#1, u#1, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

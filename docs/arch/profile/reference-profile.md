@@ -7,6 +7,61 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROFILE-REFERENCE-PROFILE}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-reference-profile-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+The reference profile supplies deterministic implementations for profile-defined hooks so the PTO v0 model can execute numeric, address, access-control, tile, and trap-context behavior without relying on host-library choices.
+
+These functions define the reference profile, not a required microarchitecture. For example, the fixed `18`-term exponential algorithm is executable reference behavior rather than a promise to call a host `libm` implementation.
+
+<!-- PTO-READER-BLOCK: arch-reference-profile-concepts-state role=concepts-state -->
+## Profile mechanisms
+
+- Time is read from `_SystemRegisters.cycle`; scalar numeric hooks cover binary, unary, fused, and conversion operations.
+- Tile hooks cover unary operations, floating comparison, reduction, expansion, ordering, matrix accumulation, fused multiply-add, bias, and scaled accumulation.
+- Address hooks select atomic addresses, translate data addresses, and decide whether an access is permitted for the current ACR.
+- Trap handling snapshots architectural control, bundle, binding, generation, queue, and predicate state into an ACR-indexed trap context and context-register image.
+
+<!-- PTO-READER-BLOCK: arch-reference-profile-rules-interactions role=rules-interactions -->
+## Rules and interactions
+
+`FloatingRoundNearest` rounds to the nearest integer and selects the even integer when the fractional part is exactly `0.5`.
+
+`FloatingExponential` starts with `1.0` and accumulates `18` Taylor terms in a fixed order, making the reference result independent of a host exponential routine.
+
+`ScalarFPBinaryProfile` returns a raw `Word` result together with a 5-bit status field; division by a zero carrier returns all-one result bits and returns `Zeros{5} + 2` in that field.
+
+`SaveTrapContext` records the source ACR, `TPC`, `BPC`, bundle execution state, bindings, generation state, T/U queues, and predicates in the saved trap context, and it writes the selected context-register image.
+
+<!-- PTO-READER-BLOCK: arch-reference-profile-boundaries role=boundaries -->
+## Profile boundaries
+
+For this reference profile, `AtomicAddress` and `TranslateDataAddress` return the supplied address unchanged.
+
+`DataAccessPermitted` computes the exclusive end address and rejects an access when that boundary exceeds `PTO_MODEL_MEMORY_BYTES`. Within that modeled memory, ACR `0` and `1` can access the full bounded range, while ACR `2` through `15` require the exclusive end address to be no greater than `3072`.
+
+Scalar `MIN` and `MAX` totality arms in this profile are not the decoded `FMIN` and `FMAX` special-value contract; scalar dispatch owns their NaN and signed-zero behavior.
+
+<!-- PTO-READER-BLOCK: arch-reference-profile-example-usage role=example-usage -->
+## Non-normative examples
+
+With `FloatingRoundNearest`, `2.5` rounds to `2` and `3.5` rounds to `4`, because both ties select an even result.
+
+For an access beginning at `3000` with size `72`, the exclusive end address is `3072`, so ACR `2` remains inside its reference-profile region. Increasing the size to `73` makes the exclusive end address `3073` and the same access is rejected.
+
+<!-- PTO-READER-BLOCK: arch-reference-profile-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Profile applicability](applicability.md) determines where the concrete reference-profile hooks apply.
+- [Profile reset](reset.md) initializes the state consumed by these implementations.
+- [Trap-context recovery](trap-context-recovery.md) restores the state captured by `SaveTrapContext`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reference-profile.asl -->
@@ -470,7 +525,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -12,6 +12,7 @@ DOWNLOAD_ARTIFACT_SHA = "95815c38cf2ff2164869cbab79da8d1f422bc89e"
 CACHE_ACTION_SHA = "55cc8345863c7cc4c66a329aec7e433d2d1c52a9"
 CHECKOUT_ACTION_SHA = "d23441a48e516b6c34aea4fa41551a30e30af803"
 OCAML_ACTION_SHA = "15d660006c1d3110d77c34b7faa3bddefe8b82f0"
+SETUP_NODE_ACTION_SHA = "2028fbc5c25fe9cf00d9f06a71cc4710d4507903"
 YAML_ANCHOR_OR_ALIAS = re.compile(
     r"^[ \t]*(?:-[ \t]+)?(?:[A-Za-z0-9_-]+:[ \t]+)?"
     r"[&*][^ \t#\[\]{},]+(?:[ \t]+|$)",

@@ -33,6 +33,8 @@ begin
     assert descriptor.has_zero && descriptor.has_signed_zero && descriptor.has_subnormal;
     assert !descriptor.has_infinity && descriptor.has_quiet_nan;
     assert !descriptor.has_signaling_nan;
+    AssertNumericFiniteDecomposition(TileDataType_E4M3, Zeros{PTO_XLEN},
+        FALSE, Zeros{PTO_XLEN}, 0);
     AssertNumericFiniteDecomposition(TileDataType_E4M3, Zeros{PTO_XLEN} + 1,
         FALSE, Zeros{PTO_XLEN} + 1, -9);
     AssertNumericFiniteDecomposition(TileDataType_E4M3, Zeros{PTO_XLEN} + 7,
@@ -49,6 +51,8 @@ begin
         Zeros{PTO_XLEN} + 0xff);
     assert !NumericValueClassIsInfinity(TileNumericValueClass(
         TileDataType_E4M3, Zeros{PTO_XLEN} + 0x78));
+    assert TileNumericValueClass(TileDataType_E4M3,
+        Zeros{PTO_XLEN}) == NumericValue_PositiveZero;
     assert TileNumericValueClass(TileDataType_E4M3,
         Zeros{PTO_XLEN} + 0x7f) == NumericValue_QuietNaN;
     assert TileNumericValueClass(TileDataType_E4M3,

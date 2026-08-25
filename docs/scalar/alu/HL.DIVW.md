@@ -11,6 +11,58 @@ HL.DIVW computes a signed low-32-bit quotient/remainder pair from source snapsho
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-divw-purpose role=purpose -->
+## What HL.DIVW does
+
+`HL.DIVW` is a 48-bit scalar ALU instruction. It computes the signed quotient and remainder together from source snapshots; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-hl-divw-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then computes the signed quotient and remainder together from source snapshots, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-divw-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst0` field selects the quotient Reg5 target or discards the quotient.
+- The 5-bit `RegDst1` field selects the remainder Reg5 target or discards the remainder.
+- The 5-bit `SrcL` field selects the dividend through Reg5.
+- The 5-bit `SrcR` field selects the divisor through Reg5.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-hl-divw-effects role=effects -->
+## Effects and ordering
+
+All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-divw-constraints role=constraints -->
+## Legality and fault boundary
+
+Zero divisors and signed-minimum divided by negative one use total definitions; both outputs are computed before either destination is written.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-divw-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `HL.DIVW` example, dividend `13` and divisor `5` produce quotient `2` and remainder `3` in destination order.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -136,7 +188,3 @@ end;
 
 - hl.divw a0, a1, ->a2, a3
 - hl.divw t#1, zero, ->u, u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

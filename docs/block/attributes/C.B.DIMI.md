@@ -11,6 +11,60 @@ Writes one selected bundle-local LB from a zero-extended eight-bit immediate exa
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-c-b-dimi-purpose role=purpose -->
+## What C.B.DIMI does
+
+`C.B.DIMI` is a compressed Block-header attribute that writes one selected bundle-local dimension exactly once.
+
+<!-- PTO-READER-BLOCK: block-c-b-dimi-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`C.B.DIMI` is legal only after `BSTART` in the active header and before the first body operation; standalone or body placement raises `Fault_BundleControl`.
+
+The accepted carrier uses the `C16` encoding class and resolves every displayed field before the command reads bindings or changes state.
+
+`C.B.DIMI` and `B.DIM` share one write-once presence bit for each of `LB0`, `LB1`, and `LB2`.
+
+<!-- PTO-READER-BLOCK: block-c-b-dimi-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `LoopNest` — encoded LB0, LB1, or LB2 selector; `imm8` — unsigned eight-bit bundle-local dimension value.
+- `LoopNest` selects `LB0..LB2`; `imm8` is zero-extended, and code `3` is reserved before Block state changes.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-c-b-dimi-effects role=effects -->
+## State effects and ordering
+
+Placement and duplicate-write checks precede the dimension update.
+
+Success publishes the selected raw LB value and its shared presence bit atomically, then advances `TPC` by `2` bytes.
+
+<!-- PTO-READER-BLOCK: block-c-b-dimi-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through `Fault_BundleControl`, `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
+
+A second write through either `C.B.DIMI` or `B.DIM` rejects before changing the first value or presence bit.
+
+<!-- PTO-READER-BLOCK: block-c-b-dimi-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+C.B.DIMI 0, ->LB0
+```
+
+After an active `BSTART`, this header command writes numeric zero to `LB0`; the same LB cannot be written again before the Block body.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -135,7 +189,3 @@ end;
 
 - C.B.DIMI 0, ->LB0
 - C.B.DIMI 255, ->LB2
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

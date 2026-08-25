@@ -11,6 +11,54 @@ CMP.GEUI - Compare scalar operands and write the encoded boolean result.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-cmp-geui-purpose role=purpose -->
+## What CMP.GEUI does
+
+`CMP.GEUI` evaluates unsigned greater-than-or-equal over decoded scalar operands and publishes canonical XLEN one or zero.
+
+<!-- PTO-READER-BLOCK: scalar-cmp-geui-mechanism role=mechanism -->
+## Mechanism
+
+The instruction snapshots its operands, prepares the decoded immediate, and then evaluates unsigned greater-than-or-equal.
+
+`uimm12` is zero-extended to XLEN before any shift or comparison.
+
+A true relation becomes XLEN one; a false relation becomes XLEN zero.
+
+<!-- PTO-READER-BLOCK: scalar-cmp-geui-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `RegDst` selects the encoded destination or discard behavior.
+
+- `SrcL` supplies the left scalar source.
+
+- `uimm12` supplies an unsigned encoded immediate.
+
+<!-- PTO-READER-BLOCK: scalar-cmp-geui-effects role=effects -->
+## Effects and ordering
+
+The canonical boolean is published through the encoded destination, then `TPC` advances by `4` bytes.
+
+The instruction does not modify commit state and does not access memory or reservation state.
+
+<!-- PTO-READER-BLOCK: scalar-cmp-geui-constraints role=constraints -->
+## Legality and fault order
+
+Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-cmp-geui-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`cmp.geui SrcL, uimm, ->{t, u, Rd}` publishes XLEN one when its condition is true and XLEN zero otherwise.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -123,7 +171,3 @@ end;
 ## Examples
 
 - cmp.geui SrcL, uimm, ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

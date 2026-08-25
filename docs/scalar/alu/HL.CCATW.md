@@ -11,6 +11,59 @@ HL.CCATW logically right-shifts {SrcL[31:0], SrcR[31:0]}, sign-extends the low t
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-ccatw-purpose role=purpose -->
+## What HL.CCATW does
+
+`HL.CCATW` is a 48-bit scalar ALU instruction. It concatenates the two source portions, applies the encoded logical right shift, and separates the result into low and high word destinations; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ccatw-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then concatenates the two source portions, applies the encoded logical right shift, and separates the result into low and high word destinations, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ccatw-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst0` field selects the first, low-result Reg5 target or discards that result.
+- The 5-bit `RegDst1` field selects the second, high-result Reg5 target or discards that result.
+- The 5-bit `SrcL` field selects the upper concatenation source low word through Reg5.
+- The 5-bit `SrcR` field selects the lower concatenation source low word through Reg5.
+- The 7-bit `shamt` field encodes the unsigned seven-bit logical-right shift amount.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ccatw-effects role=effects -->
+## Effects and ordering
+
+All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ccatw-constraints role=constraints -->
+## Legality and fault boundary
+
+Every encoded concatenation shift is defined and zero-filling. A fixed-bit mismatch or unavailable selected T/U source faults before either destination effect.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ccatw-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `HL.CCATW` example, with shift `0`, upper source `1`, and lower source `2`, the ordered low and high results are `2` then `1`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -155,7 +208,3 @@ end;
 - hl.ccatw a0, a1, 0, ->a2, a3
 - hl.ccatw t#1, u#1, 64, ->zero, a0
 - hl.ccatw a0, a1, 127, ->t, t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

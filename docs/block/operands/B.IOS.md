@@ -11,6 +11,52 @@ Binds one ordered absolute Core-private Shared register S0..S63 as a source or d
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-b-ios-purpose role=purpose -->
+## What B.IOS contributes
+
+`B.IOS` is a 32-bit block header command that records ordered Core-wide Shared tile sources and destinations. It changes pending block metadata rather than executing a tile body operation immediately.
+
+<!-- PTO-READER-BLOCK: block-b-ios-mechanism role=mechanism -->
+## Placement and mechanism
+
+The command belongs to an active header before the first body instruction. Its effective order and arity are checked against the completed operation schema rather than inferred from this command in isolation.
+
+The common PE-mode decoder forms the four-PE mask once. A zero mask is a strict no-op; an effective Shared source is read-only, while an effective destination is recorded for atomic publication after complete validation.
+
+<!-- PTO-READER-BLOCK: block-b-ios-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `SharedTileID` selects the absolute Shared register; its exact assigned domain remains in the generated contract below.
+- `SizeCode` selects source-only or destination capacity; its exact assigned domain remains in the generated contract below.
+- `PEMode` encodes the participating-PE mode; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-b-ios-effects role=effects -->
+## Pending state and completion
+
+An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+
+<!-- PTO-READER-BLOCK: block-b-ios-constraints role=constraints -->
+## Legality and fault boundary
+
+The contract separates raw decode failures, header-stream errors, and tile-legality failures. Zero-mask bindings bypass downstream schema, duplicate, allocation, descriptor, and memory checks as a strict no-op.
+
+<!-- PTO-READER-BLOCK: block-b-ios-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>
+```
+
+Assume an active compatible header with no earlier conflicting `B.IOS` command. Placing `B.IOS S<SharedTileID>, mask=<PE_MASK> | B.IOS mask=<PE_MASK>, ->S<SharedTileID><SizeCode>` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -144,12 +190,3 @@ end;
 
 - B.IOS S1, mask=0011
 - B.IOS mask=1111, ->S63<0001>
-
-<!-- SUPPLEMENTARY-BEGIN -->
-TSize zero identifies the Shared source form. A Shared destination uses TSize
-1 through 12 for one complete Core-wide 128 B through 256 KiB object, using
-the same byte table as B.IOT. PE_MASK selects participating payload quarters
-and does not multiply the Shared capacity charge. Shared physical rows and
-columns obey the same derivation and power-of-two constraints as Local Tile
-descriptors.
-<!-- SUPPLEMENTARY-END -->

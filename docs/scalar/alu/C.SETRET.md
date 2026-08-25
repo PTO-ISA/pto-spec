@@ -11,6 +11,55 @@ Materialize an unsigned halfword-scaled TPC-relative return address in ra and ca
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-c-setret-purpose role=purpose -->
+## What C.SETRET does
+
+`C.SETRET` is a 16-bit scalar ALU instruction. It forms the halfword-scaled TPC-relative return address and records it in both the return register and captured return state; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-c-setret-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then forms the halfword-scaled TPC-relative return address and records it in both the return register and captured return state, and only afterward performs the destination effects.
+
+- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-setret-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The unsigned 5-bit `uimm5` field carries the unsigned five-bit halfword displacement from the pre-increment `TPC`.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-c-setret-effects role=effects -->
+## Effects and ordering
+
+The return address is computed before the return register and captured return state are updated.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-setret-constraints role=constraints -->
+## Legality and fault boundary
+
+Every encoded immediate is assigned; the instruction does not dereference the target and does not form a call by itself.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-c-setret-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `C.SETRET` example, pre-increment `TPC=0x100` and `uimm5=1` produce return address `0x102` in both `ra` and captured return state.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -118,7 +167,3 @@ end;
 
 - c.setret 0, ->ra
 - c.setret 31, ->ra
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

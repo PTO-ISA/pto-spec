@@ -11,6 +11,57 @@ SUBIW performs unsigned-immediate word subtraction and sign-extends the result t
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-subiw-purpose role=purpose -->
+## What SUBIW does
+
+`SUBIW` is a 32-bit scalar ALU instruction. It performs subtraction under the low 32-bit word, followed by sign-extension to XLEN result rules; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-subiw-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then performs subtraction under the low 32-bit word, followed by sign-extension to XLEN result rules, and only afterward performs the destination effects.
+
+- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-subiw-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst` field selects the Reg5 scalar result target or discards the result.
+- The 5-bit `SrcL` field selects a Reg5 scalar value whose low 32 bits participate.
+- The unsigned 12-bit `uimm12` field carries the unsigned 12-bit immediate.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-subiw-effects role=effects -->
+## Effects and ordering
+
+Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-subiw-constraints role=constraints -->
+## Legality and fault boundary
+
+Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-subiw-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `SUBIW` example, `SrcL=7` and `uimm12=3` produce `4`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -134,7 +185,3 @@ end;
 - subiw a0, 1, ->a0
 - subiw u#1, 4095, ->t
 - subiw zero, 0, ->zero
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

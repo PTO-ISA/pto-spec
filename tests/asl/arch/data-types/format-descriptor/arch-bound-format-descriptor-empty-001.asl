@@ -8,11 +8,13 @@ begin
     assert descriptor.lane_bits == 0;
     assert descriptor.lanes_per_carrier == 0;
     assert descriptor.sign_bits == 0;
+    assert descriptor.sign_bit == 0;
     assert descriptor.exponent_bits_min == 0;
     assert descriptor.exponent_bits_max == 0;
     assert descriptor.fraction_bits_min == 0;
     assert descriptor.fraction_bits_max == 0;
     assert !descriptor.exponent_bias_available;
+    assert descriptor.exponent_bias == 0;
     assert descriptor.required_low_zero_bits == 0;
     assert descriptor.required_high_zero_bits == 0;
     assert !descriptor.has_zero;

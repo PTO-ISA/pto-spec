@@ -7,6 +7,48 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-MEMORY-MODEL-ATOMICITY}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-atomicity-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit connects production memory operations to the bounded candidate-execution event model. It records loads, stores, atomics, and data fences when capture is enabled, and maintains per-location coherence and reads-from information.
+
+<!-- PTO-READER-BLOCK: arch-atomicity-concepts role=concepts-state -->
+## Event relationships
+
+- `NextMemoryCoherenceRank` scans earlier writes with the same address and `size_bytes` to allocate the next rank.
+- `ResolveCapturedReadFrom` searches earlier same-location writes whose `write_value` equals the captured `read_value`.
+- `SetMemoryReadFrom` writes the selected source index after checking that both event indices already exist.
+
+<!-- PTO-READER-BLOCK: arch-atomicity-rules role=rules-interactions -->
+## Recording rules
+
+- Load records are added first and then resolved to a captured source when one is found.
+- Store records receive a fresh coherence rank before publication.
+- Atomic records receive a rank only when `write_performed` is true; they still record the read outcome and attempt reads-from resolution.
+- Wrapper forms use `_CurrentMemoryAgent`; explicit forms accept a `MemoryAgentId`.
+
+<!-- PTO-READER-BLOCK: arch-atomicity-boundaries role=boundaries -->
+## Boundaries
+
+All record helpers are effect-free while `_MemoryEventCaptureEnabled` is false. Captured source selection is based on preceding events, equal locations, and equal values; the complete candidate-execution legality decision remains in the memory-ordering owners.
+
+<!-- PTO-READER-BLOCK: arch-atomicity-example role=example-usage -->
+## Non-normative event example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-atomicity-related role=related-owners-navigation -->
+## Related owners
+
+- `PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS` defines event records and capture storage.
+- Memory ordering consumes coherence and reads-from relations to check a candidate execution.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/atomicity.asl -->
@@ -115,7 +157,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

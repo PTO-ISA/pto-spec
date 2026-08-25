@@ -7,6 +7,50 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-core-pe-topology-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit collects the fixed namespace sizes used by the PTO programming model and defines the representation bridge between semantic PE identities and the four-bit PE mask.
+
+It is the place to check counts and identity-to-mask indexing. It does not define instruction behavior or memory ordering.
+
+<!-- PTO-READER-BLOCK: arch-core-pe-topology-concepts-state role=concepts-state -->
+## Namespaces and identities
+
+The scalar namespace has `32` register encodings, including `24` absolute GPRs and two temporary queues of depth `4`. The unit also fixes `8` predicate registers of width `32`, `16` ACRs, `64` Tile registers, and `64` Shared Tile registers.
+
+Semantic PE identities are the integers `0` through `3`, conventionally read as PE0 through PE3.
+
+<!-- PTO-READER-BLOCK: arch-core-pe-topology-rules-interactions role=rules-interactions -->
+## Identity-to-mask rule
+
+`PTOPEMaskBitOfPEIdentity` maps a semantic PE identity to the corresponding mask index by subtracting it from `3`.
+
+This bridge is necessary because PE0 occupies the high bit of the four-bit architectural mask: PE0 maps to bit `3`, PE1 to bit `2`, PE2 to bit `1`, and PE3 to bit `0`.
+
+<!-- PTO-READER-BLOCK: arch-core-pe-topology-boundaries role=boundaries -->
+## Model boundaries
+
+`PTO_MODEL_MEMORY_AGENTS` and `PTO_MODEL_MEMORY_EVENTS` size the executable model at `4` agents and `16` events. Their `PTO_MODEL_` names identify them as model bounds; this page does not generalize those values into additional implementation requirements.
+
+<!-- PTO-READER-BLOCK: arch-core-pe-topology-example-usage role=example-usage -->
+## Non-normative indexing example
+
+When a reader starts with semantic PE2, apply the bridge before indexing a mask: `3 - 2` gives mask bit `1`. Directly using `2` as the bit index would select the wrong semantic PE.
+
+<!-- PTO-READER-BLOCK: arch-core-pe-topology-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Architecture overview](../overview/architecture.md) is the dependency that establishes the top-level architecture identity.
+- [Scalar registers](scalar-registers.md) uses the current memory-agent identity for per-PE GPR access.
+- [Tile registers](tile-registers.md) is the named Tile-register programming-model owner.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/programming-model/core-pe-topology.asl -->
@@ -35,7 +79,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

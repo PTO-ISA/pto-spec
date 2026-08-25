@@ -7,6 +7,10 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-TILE-MODEL-DISPATCH-IRREGULAR-AND-COMPLEX}
 
+<!-- SUPPLEMENTARY-BEGIN -->
+
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/dispatch/irregular-and-complex.asl -->
@@ -15,7 +19,3 @@ This page is a generated reference view of the normative ASL unit.
 // Dispatch ownership for the irregular-and-complex PTO Tile instruction class.
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

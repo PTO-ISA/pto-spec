@@ -11,6 +11,59 @@ HL.LWI.U snapshots its scalar sources, forms its encoded address, and loads one 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-lwi-u-purpose role=purpose -->
+## What HL.LWI.U does
+
+`HL.LWI.U` is a standalone `48`-bit scalar AGU instruction that loads one 4-byte little-endian value and sign-extends the transferred bits when the result is narrower than `PTO_XLEN` using `Immediate` addressing.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lwi-u-mechanism role=mechanism -->
+## Address and transfer mechanism
+
+The address path sign-extends `simm22`, scales it by `1`, and adds the displacement to the snapshotted `SrcL` value modulo `2^PTO_XLEN`.
+
+After complete preflight, one aligned little-endian `4`-byte load is performed. Its result is sign-extended before destination publication.
+
+This form does not publish an address-base writeback.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lwi-u-inputs role=inputs-outputs -->
+## Encoded inputs and outputs
+
+- `RegDst` is a `5`-bit field selecting the loaded-value result.
+- `SrcL` is a `5`-bit field selecting the address base.
+- `simm22` is a `22`-bit field selecting the signed displacement before the `1` scale factor.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lwi-u-effects role=effects -->
+## Effects and completion order
+
+All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+
+Successful execution records one relaxed load event; memory and reservation state are preserved.
+
+After all result or writeback publication, `HL.LWI.U` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lwi-u-constraints role=constraints -->
+## Legality, faults, and restart
+
+Each accessed address is aligned to the `4`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+
+A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+
+<!-- PTO-READER-BLOCK: scalar-hl-lwi-u-example role=example -->
+## Non-normative reading walkthrough
+
+This walkthrough explains how to use the page and does not add instruction behavior.
+
+- Start with the canonical assembly `hl.lwi.u [SrcL, simm], ->{t, u, Rd}` and identify the encoded address fields.
+- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -158,7 +211,3 @@ end;
 ## Examples
 
 - hl.lwi.u [SrcL, simm], ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -7,6 +7,51 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-format-descriptor-purpose role=purpose-scope -->
+## Purpose and scope
+
+`NumericFormatDescriptor` records whether numeric-format metadata is available and, when it is, describes carrier width, logical lanes, field widths and positions, constrained zero bits, exponent bias, and supported value classes.
+
+<!-- PTO-READER-BLOCK: arch-format-descriptor-concepts role=concepts-state -->
+## Descriptor structure
+
+`NumericFormatKind` distinguishes unavailable metadata, fixed binary formats, `HiF8`, and `E8M0`. The width fields describe the carrier, each logical lane, the number of lanes, and the sign, exponent, and fraction fields.
+
+The remaining fields state whether an exponent bias exists, how many high or low bits are constrained to zero, and whether zero, signed zero, subnormal, infinity, quiet NaN, and signaling NaN classes exist.
+
+<!-- PTO-READER-BLOCK: arch-format-descriptor-rules role=rules-interactions -->
+## How consumers use it
+
+The embedded `PTO-NUMERIC-FORMAT-DESCRIPTOR-001` contract assigns one exact descriptor to each floating or scale Tile data type and assigns the unavailable result to integer Tile data types.
+
+A descriptor reports capabilities and layout; format-specific decomposition and classification functions still own the interpretation of raw encodings.
+
+<!-- PTO-READER-BLOCK: arch-format-descriptor-boundaries role=boundaries -->
+## Unavailable descriptor
+
+`UnavailableNumericFormatDescriptor` sets `available` to false, selects `NumericFormatKind_Unavailable`, zeros every width, position, bias, and constrained-bit field, and clears every special-value capability.
+
+The focused boundary AVS checks the unavailable descriptor fields listed above; this sentence records evidence scope rather than defining another descriptor rule.
+
+<!-- PTO-READER-BLOCK: arch-format-descriptor-example role=example-usage -->
+## Non-normative reading example
+
+This example is an inspection pattern, not a new format rule.
+
+Before decoding a Tile data type as floating point, inspect `available` and `kind`; then use the field widths and constrained-bit counts to select the format-specific validity, decomposition, and classification owner.
+
+<!-- PTO-READER-BLOCK: arch-format-descriptor-related role=related-owners-navigation -->
+## Related owners
+
+- [Tile data types](tile-data-types.md) defines the assigned Tile data-type vocabulary.
+- [Numeric formats](numeric-formats.md) dispatches assigned types to their exact descriptor and value helpers.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/format-descriptor.asl -->
@@ -90,7 +135,3 @@ end;
 // DOC-END: operation
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

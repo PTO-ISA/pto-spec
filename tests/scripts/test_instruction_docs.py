@@ -9,6 +9,7 @@ from pathlib import Path
 
 from scripts.instruction_docs import (
     ROOT,
+    ZH_CN_REFERENCE_ROOT,
     check_catalog_projection,
     check_navigation,
     check_navigation_projection,
@@ -504,6 +505,74 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertIn("This paragraph explains why TADD exists.", first)
         self.assertIn("<!-- SUPPLEMENTARY-BEGIN -->", first)
         self.assertEqual(first, second)
+
+    def test_reader_guide_precedes_assembly_and_generated_asl(self) -> None:
+        self.write_asl()
+        page = self.root / "docs/tile/elementwise-tile-tile/arithmetic/TADD.md"
+        page.parent.mkdir(parents=True, exist_ok=True)
+        page.write_text(
+            "# Legacy TADD\n\nThis paragraph explains why TADD exists.\n",
+            encoding="utf-8",
+        )
+
+        generate_tree(self.root)
+        rendered = page.read_text(encoding="utf-8")
+
+        self.assertLess(rendered.index("## Reader guide"), rendered.index("## Assembly"))
+        self.assertLess(
+            rendered.index("This paragraph explains why TADD exists."),
+            rendered.index("<!-- GENERATED-ASL-BEGIN: decode"),
+        )
+        self.assertIn("**Non-normative explanation.**", rendered)
+
+    def test_check_rejects_missing_supplementary_markers(self) -> None:
+        self.write_asl()
+        generate_tree(self.root)
+        page = self.root / "docs/tile/elementwise-tile-tile/arithmetic/TADD.md"
+        rendered = page.read_text(encoding="utf-8")
+        page.write_text(
+            rendered.replace("<!-- SUPPLEMENTARY-BEGIN -->\n\n<!-- SUPPLEMENTARY-END -->\n", ""),
+            encoding="utf-8",
+        )
+
+        self.assertIn(
+            "invalid Markdown regions for TADD: "
+            "missing supplementary Markdown region",
+            check_tree(self.root),
+        )
+
+    def test_generate_tree_preserves_zh_cn_supplementary_projection(self) -> None:
+        self.write_asl()
+        generate_tree(self.root)
+        relative = Path("tile/elementwise-tile-tile/arithmetic/TADD.md")
+        english = self.root / "docs" / relative
+        localized = self.root / ZH_CN_REFERENCE_ROOT / relative
+        self.assertTrue(localized.is_file())
+
+        localized_text = localized.read_text(encoding="utf-8")
+        localized.write_text(
+            localized_text.replace(
+                "<!-- SUPPLEMENTARY-BEGIN -->\n\n<!-- SUPPLEMENTARY-END -->",
+                "<!-- SUPPLEMENTARY-BEGIN -->\n"
+                "这段补充说明解释 TADD 为什么存在。\n"
+                "<!-- SUPPLEMENTARY-END -->",
+            ),
+            encoding="utf-8",
+        )
+        generate_tree(self.root)
+
+        regenerated = localized.read_text(encoding="utf-8")
+        self.assertIn("这段补充说明解释 TADD 为什么存在。", regenerated)
+        self.assertEqual([], check_tree(self.root))
+        english_outside = english.read_text(encoding="utf-8").split(
+            "<!-- SUPPLEMENTARY-BEGIN -->", 1
+        )[0] + english.read_text(encoding="utf-8").split(
+            "<!-- SUPPLEMENTARY-END -->", 1
+        )[1]
+        localized_outside = regenerated.split(
+            "<!-- SUPPLEMENTARY-BEGIN -->", 1
+        )[0] + regenerated.split("<!-- SUPPLEMENTARY-END -->", 1)[1]
+        self.assertEqual(english_outside, localized_outside)
 
     def test_render_nav_is_stable_by_surface_and_classification(self) -> None:
         self.write_asl()

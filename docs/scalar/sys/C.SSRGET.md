@@ -11,6 +11,52 @@ C.SSRGET reads the complete encoded system-register address.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-c-ssrget-purpose role=purpose -->
+## What C.SSRGET does
+
+`C.SSRGET` reads one assigned short system-register ID and pushes the complete XLEN value to T.
+
+<!-- PTO-READER-BLOCK: scalar-c-ssrget-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_ExecuteCompressedSystemRegisterGet`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-c-ssrget-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`SSRID` carries the short system-register identifier.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-c-ssrget-effects role=effects -->
+## Architectural effects
+
+Direct IDs `0`, `1`, and `16` read `THREAD_PTR`, `GLOBAL_PTR`, or `TIME` and push the complete XLEN value to T.
+
+A rejected read does not modify the selected destination or temporary-queue order beyond ordinary trap entry.
+
+<!-- PTO-READER-BLOCK: scalar-c-ssrget-constraints role=constraints -->
+## Placement and rejection
+
+Every other five-bit ID is reserved; access and queue state are preserved on rejection except for ordinary trap entry.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-c-ssrget-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `c.ssrget SSR-ID, ->t` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -146,7 +192,3 @@ end;
 ## Examples
 
 - c.ssrget SSR-ID, ->t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

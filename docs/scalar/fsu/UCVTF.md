@@ -11,6 +11,66 @@ UCVTF converts an unsigned 64-bit or zero-extended unsigned 32-bit source to flo
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-ucvtf-purpose role=purpose -->
+## What UCVTF does
+
+`UCVTF` converts unsigned 64-bit or 32-bit integer input to floating carrier code `0..14` through the active numeric profile.
+
+<!-- PTO-READER-BLOCK: scalar-ucvtf-mechanism role=mechanism -->
+## Numeric mechanism
+
+`SrcType=00` selects an unsigned 64-bit integer carrier; `SrcType=01` selects the zero-extended low 32-bit unsigned integer carrier.
+
+The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+
+In the `pto-v0` reference profile, normalized source bits are retained in the selected destination-carrier width. This deterministic reference rule is not an IEEE-754 or target-hardware claim.
+
+<!-- PTO-READER-BLOCK: scalar-ucvtf-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `DstType` selects the destination-carrier code.
+
+- `RegDst` selects the encoded destination or discard behavior.
+
+- `SrcL` supplies the left scalar source.
+
+- `SrcType` selects the source-carrier width.
+
+- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
+
+- The destination selector writes a GPR, pushes T/U, or discards only the result.
+
+<!-- PTO-READER-BLOCK: scalar-ucvtf-effects role=effects -->
+## Effects and ordering
+
+All explicit sources are snapshotted before numeric-status or destination effects.
+
+All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
+
+The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-ucvtf-constraints role=constraints -->
+## Type and profile boundaries
+
+`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+
+Destination carrier codes `0..14` are assigned; `15..31` are reserved and reject before effects.
+
+The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+
+<!-- PTO-READER-BLOCK: scalar-ucvtf-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+
+`ucvtf.ud2fd a0, ->a1` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -163,7 +223,3 @@ end;
 
 - ucvtf.ud2fd a0, ->a1
 - ucvtf.uw2fs t#1, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

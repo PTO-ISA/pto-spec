@@ -7,6 +7,55 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-FEATURES-MINMAX-PROFILE}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-minmax-profile-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit supplies the named hardware numeric profile's ordinary floating ordering key and min/max selection after special NaN and signed-zero cases have been resolved.
+
+The returned availability bit keeps unsupported data types explicit instead of imposing an ordering on every `TileDataType`.
+
+<!-- PTO-READER-BLOCK: arch-minmax-profile-concepts-state role=concepts-state -->
+## Concepts and visible state
+
+- `HardwareNumericFloatingOrderKey` validates the carrier and maps supported binary floating encodings to monotonically increasing unsigned keys.
+- Negative carriers are bitwise inverted; nonnegative carriers have their sign bit toggled at the architectural width.
+- `HardwareNumericFloatingMinMax` first calls `HardwareNumericMinMaxSpecial`, then compares ordinary keys only when neither operand is a special case.
+
+<!-- PTO-READER-BLOCK: arch-minmax-profile-rules-interactions role=rules-interactions -->
+## Rules and interactions
+
+The ordering-key helper supports `FP64`; `FP32`, `TF32`, and `HF32`; `FP16` and `BF16`; plus `E4M3` and `E5M2`.
+
+Invalid encodings and all other data types return unavailable with a zero placeholder key.
+
+For maximum, the larger unsigned key wins; for minimum, the smaller key wins. Equal keys select the left raw carrier.
+
+<!-- PTO-READER-BLOCK: arch-minmax-profile-boundaries role=boundaries -->
+## Architectural boundaries
+
+NaN and signed-zero tie behavior is not derived from the ordinary key. It is resolved by `HardwareNumericMinMaxSpecial` before key comparison.
+
+This is a named profile implementation, not a portable ordering promise for formats that return unavailable.
+
+<!-- PTO-READER-BLOCK: arch-minmax-profile-example-usage role=example-usage -->
+## Non-normative reading example
+
+For two valid positive `FP32` normals, toggling the sign bit yields keys ordered like their numeric values, so the requested min or max selects the corresponding raw carrier.
+
+If either operand is an invalid `TF32` carrier, ordinary key selection reports unavailable rather than silently comparing the upper bits.
+
+<!-- PTO-READER-BLOCK: arch-minmax-profile-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Hardware numeric format policy](mx-formats.md)
+- [Numeric classification](../data-types/numeric-classification.md)
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/features/minmax-profile.asl -->
@@ -90,7 +139,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

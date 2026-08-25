@@ -7,6 +7,43 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROFILE-TRAP-CONTEXT-RECOVERY}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-trap-recovery-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit implements PTO v0 validation and restoration of a saved trap context. Recovery is a checked, one-use state transition: an invalid envelope returns false without restoring execution state.
+
+<!-- PTO-READER-BLOCK: arch-trap-recovery-concepts role=concepts-state -->
+## Recoverability checks
+
+`TrapContextRecoverable` requires a valid saved context, control bit `4` set, legal `EBARG` control, matching low `4` ACR bits in control and `ECSTATE`, and even recovered `BPC` and `TPC` values. It reads context registers `0x0f40`, `0x0f00`, `0x0f41`, and `0x0f43`.
+
+<!-- PTO-READER-BLOCK: arch-trap-recovery-rules role=rules-interactions -->
+## Restoration sequence
+
+`RecoverTrapContext` first repeats the recoverability check. On success it restores `TPC`, `BPC`, core state, bundle arguments and activity, bundle descriptors and bindings, generation state, templates, queues, predicates, return address, and the current ACR from the saved context and context registers.
+
+<!-- PTO-READER-BLOCK: arch-trap-recovery-boundaries role=boundaries -->
+## One-use and failure boundaries
+
+Failed validation returns false before restoration. Successful recovery clears control bit `4`, writes the updated control register, invalidates the saved context, and returns true. A second recovery attempt therefore requires a newly saved valid context.
+
+<!-- PTO-READER-BLOCK: arch-trap-recovery-example role=example-usage -->
+## Non-normative recovery walkthrough
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-trap-recovery-related role=related-owners-navigation -->
+## Related owners
+
+- Reference profile defines the PTO v0 context-register encoding helpers used here.
+- Fault precision and trap-context state own entry and saved-state creation that precede recovery.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/trap-context-recovery.asl -->
@@ -97,7 +134,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

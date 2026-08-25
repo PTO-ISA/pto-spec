@@ -11,6 +11,58 @@ Scatter exact-one source lanes to GM at signed or unsigned byte displacements.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-mscatter-mask-purpose role=purpose -->
+## What MSCATTER_MASK does
+
+`MSCATTER_MASK` is a selector-encoded Tile operation executed by `TLSU`. It stores only exact-one predicate lanes at their indexed GM byte displacements; its current instruction contract owns the exact bundle form and publication boundary.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-mask-mechanism role=mechanism -->
+## Element and Tile mechanism
+
+After all descriptor and operand checks succeed, the owning ASL handler stores only exact-one predicate lanes at their indexed GM byte displacements. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+
+The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-mask-inputs role=inputs-outputs -->
+## Operand roles and descriptors
+
+- `address` has the exact contract role **base-address**.
+- `source0` has the exact contract role **source data**.
+- `source1` has the exact contract role **byte-displacement indices**.
+- `source2` has the exact contract role **exact zero-or-one predicate mask**.
+
+Every source coordinate read by the operation must be defined before execution reaches destination publication.
+`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-mask-effects role=effects -->
+## Publication, definedness, and padding
+
+GM writes and memory events begin only after complete source, predicate, address, and permission preflight; the operation has no Tile destination.
+
+No padding behavior beyond the current handler contract is implied.
+
+The operation preflights every enabled GM address before the first store or memory event and allocates no destination Tile.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-mask-constraints role=constraints -->
+## Type, layout, and fault boundary
+
+Index Tiles use `S32`, `U32`, `S64`, or `U64`. Packed four-bit transfer types `E2M1X2`, `E1M2X2`, `HiF4X2`, `S4X2`, and `U4X2` are rejected because this indexed transfer has no nibble selector.
+
+The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+
+<!-- PTO-READER-BLOCK: tile-mscatter-mask-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `MSCATTER_MASK` example, source value `7` with mask `1` is stored, while the same lane with mask `0` generates no address.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `memory-and-data-movement`
@@ -148,7 +200,3 @@ end;
 ## Examples
 
 - BSTART.MSCATTER.MASK DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK; B.IOT MaskTile, mask=PE_MASK, <last>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

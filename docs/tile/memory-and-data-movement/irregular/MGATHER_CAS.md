@@ -11,6 +11,59 @@ Atomically compare and conditionally replace GM elements at signed or unsigned b
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-mgather-cas-purpose role=purpose -->
+## What MGATHER_CAS does
+
+`MGATHER_CAS` is a selector-encoded Tile operation executed by `TLSU`. It uses index, expected, and replacement Tiles to perform per-element GM compare-and-swap and records each observed old value; its current instruction contract owns the exact bundle form and publication boundary.
+
+<!-- PTO-READER-BLOCK: tile-mgather-cas-mechanism role=mechanism -->
+## Element and Tile mechanism
+
+After all descriptor and operand checks succeed, the owning ASL handler uses index, expected, and replacement Tiles to perform per-element GM compare-and-swap and records each observed old value. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+
+The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+
+<!-- PTO-READER-BLOCK: tile-mgather-cas-inputs role=inputs-outputs -->
+## Operand roles and descriptors
+
+- `destination0` has the exact contract role **observed-old-values destination**.
+- `address` has the exact contract role **base-address**.
+- `source0` has the exact contract role **byte-displacement indices**.
+- `source1` has the exact contract role **expected values**.
+- `source2` has the exact contract role **replacement values**.
+
+Every source coordinate read by the operation must be defined before execution reaches destination publication.
+`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+
+<!-- PTO-READER-BLOCK: tile-mgather-cas-effects role=effects -->
+## Publication, definedness, and padding
+
+After complete atomic-address preflight, the selected PadValue carrier initializes every physical destination coordinate; observed old values then overwrite valid coordinates.
+
+On success the full physical destination is marked defined and `contents_defined=TRUE`; payload, definedness, and descriptor publish together.
+
+The operation preflights every enabled GM address before the first load, atomic event, or destination update; a failed access leaves no partial destination or event.
+
+<!-- PTO-READER-BLOCK: tile-mgather-cas-constraints role=constraints -->
+## Type, layout, and fault boundary
+
+Index Tiles use `S32`, `U32`, `S64`, or `U64`. Packed four-bit transfer types `E2M1X2`, `E1M2X2`, `HiF4X2`, `S4X2`, and `U4X2` are rejected because this indexed transfer has no nibble selector.
+
+The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+
+<!-- PTO-READER-BLOCK: tile-mgather-cas-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `MGATHER_CAS` example, an indexed old value `5`, expected value `5`, and replacement `9` publish observed value `5` and replace GM with `9`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `memory-and-data-movement`
@@ -126,7 +179,8 @@ end;
 ## State effects
 
 - Allocate a new Local destination descriptor using B.IOT TSize, resolved dimensions, selected transfer DataType, selected Layout, and PE_MASK.
-- On success the full physical destination is defined: valid coordinates contain the values observed by their atomic operations and all other physical coordinates contain the selected pad value.
+- Initialize every physical destination coordinate from the selected PadValue carrier before enabled valid-lane writes.
+- On success overwrite enabled valid coordinates with loaded or observed values, mark the full physical destination defined, set contents_defined=TRUE, and publish atomically.
 
 ## Memory effects and ordering
 
@@ -150,7 +204,3 @@ end;
 ## Examples
 
 - BSTART.MGATHER.CAS DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

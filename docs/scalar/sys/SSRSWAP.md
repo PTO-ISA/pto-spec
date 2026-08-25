@@ -11,6 +11,52 @@ SSRSWAP atomically swaps the complete encoded system-register address.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-ssrswap-purpose role=purpose -->
+## What SSRSWAP does
+
+`SSRSWAP` atomically exchanges an assigned RW system register and publishes its old XLEN value.
+
+<!-- PTO-READER-BLOCK: scalar-ssrswap-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_ExecuteSystemRegisterSwap`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-ssrswap-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`RegDst` carries the Reg5 destination: discard, R1..R23, push U, or push T; `SSR_ID` carries the system-register identifier; `SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-ssrswap-effects role=effects -->
+## Architectural effects
+
+After read/write preflight, the selected RW system register is atomically exchanged with snapshotted `SrcL`, and its old XLEN value is published through `RegDst`.
+
+A rejected swap performs no register, destination, queue, read-side-effect, or `TPC` update beyond ordinary trap entry.
+
+<!-- PTO-READER-BLOCK: scalar-ssrswap-constraints role=constraints -->
+## Placement and rejection
+
+Both permissions and the RW access class are established before either source or old-register value is consumed.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-ssrswap-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `ssrswap SrcL, SSR_ID, ->{t, u, Rd}` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -141,7 +187,3 @@ end;
 ## Examples
 
 - ssrswap SrcL, SSR_ID, ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,56 @@ HL.LDI snapshots its scalar sources, forms its encoded address, and loads one al
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-purpose role=purpose -->
+## What HL.LDI does
+
+`HL.LDI` is a standalone 48-bit load that forms a scaled signed-immediate address and transfers one aligned little-endian 8-byte value to a Reg5 destination.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-mechanism role=mechanism -->
+## Address and load mechanism
+
+The instruction sign-extends `simm22`, multiplies it by `8`, and adds the scaled displacement to the snapshotted `SrcL` base modulo `2^PTO_XLEN`.
+
+After complete access preflight, `HL.LDI` performs one little-endian 8-byte load and preserves the complete 64-bit loaded bit pattern for destination publication.
+
+This form performs no base-register update and does not return an address in place of loaded data.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-inputs role=inputs-outputs -->
+## Inputs and destination
+
+- `SrcL` accepts the complete Reg5 source domain, including non-consuming `T#1..T#4` and `U#1..U#4` selectors.
+- `simm22` covers every signed 22-bit value from `-2097152` through `2097151`; encoded zero means a zero displacement.
+- `RegDst` values `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only the loaded result.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-effects role=effects -->
+## Effects and ordering
+
+All scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+
+A successful attempt emits one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `6` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-constraints role=constraints -->
+## Alignment, faults, and restart
+
+The effective address must be aligned to the 8-byte transfer size. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+
+A fault emits no successful memory event, performs no partial destination or memory effect, preserves pending writeback, and leaves the faulting `TPC` available for a complete reissue.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected T/U source raises `Fault_IllegalInstruction` before instruction effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-ldi-example role=example -->
+## Non-normative address example
+
+This example illustrates the current address rule and does not replace the normative load contract.
+
+With a base of `0x100` and `simm22=2`, the scaled displacement is `16`, so `HL.LDI` accesses `0x110`. If that address is aligned and permitted, it loads the eight bytes beginning there and advances `TPC` by `6` bytes.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -158,7 +208,3 @@ end;
 ## Examples
 
 - hl.ldi [SrcL, simm], ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

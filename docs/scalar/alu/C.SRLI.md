@@ -11,6 +11,55 @@ C.SRLI snapshots the pre-instruction T#1 value, logically shifts it right by uim
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-c-srli-purpose role=purpose -->
+## What C.SRLI does
+
+`C.SRLI` is a 16-bit scalar ALU instruction. It logically shifts the source right under the complete XLEN value shift rules; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-c-srli-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then logically shifts the source right under the complete XLEN value shift rules, and only afterward performs the destination effects.
+
+- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-srli-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The unsigned 5-bit `uimm5` field carries the unsigned five-bit logical-right shift amount.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-c-srli-effects role=effects -->
+## Effects and ordering
+
+Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-srli-constraints role=constraints -->
+## Legality and fault boundary
+
+All 6 encoded shift bits are assigned, giving amounts `0..63`; fixed-width shifting is total and raises no arithmetic exception.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-c-srli-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `C.SRLI` example, source `16` shifted logically right by `2` produces `4`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -116,7 +165,3 @@ end;
 ## Examples
 
 - c.srli t#1, 31, ->t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -35,6 +35,7 @@ class ReleaseClosureTest(unittest.TestCase):
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
 
         self.assertIn('architecture_version = "0.58.4"', specification)
+        self.assertIn('publication_version = "0.58.4.1"', specification)
         self.assertIn(
             'encoding_abi = "pto-isa-0.58.4-mode-function-v1"', specification
         )
@@ -88,6 +89,7 @@ class ReleaseClosureTest(unittest.TestCase):
             "\t./scripts/generate-release-traceability-readiness --check\n"
             "\t./scripts/generate-architecture-readiness --check\n"
             "\t./scripts/generate-release-gate-readiness --check\n"
+            "\tpython3 scripts/check-mnemonic-explanations --require-complete\n"
             "\t./scripts/check-release-closure\n"
             "\t./scripts/check-binary-closure --release\n"
             "\t./scripts/check-release-manifest\n",
@@ -138,12 +140,23 @@ class ReleaseClosureTest(unittest.TestCase):
                 "spec/evidence/instruction-contract-closure.json",
                 "spec/evidence/release-gate-readiness.json",
                 "spec/evidence/release-traceability-readiness.json",
+                "spec/evidence/mnemonic-descriptions/coverage-summary.json",
                 "spec/schemas/pto-spec-release-event-v1.schema.json",
             },
         )
         for row in registry["evidence"]:
             self.assertTrue((ROOT / row["path"]).is_file())
             self.assertTrue((ROOT / row["generator"]).is_file())
+        guide_summary = next(
+            row
+            for row in registry["evidence"]
+            if row["path"]
+            == "spec/evidence/mnemonic-descriptions/coverage-summary.json"
+        )
+        self.assertEqual(
+            guide_summary["generator"],
+            "scripts/generate-mnemonic-description-coverage",
+        )
 
     def test_release_traceability_links_derived_readiness_subjects(self) -> None:
         traceability = json.loads(TRACEABILITY.read_text(encoding="utf-8"))

@@ -11,6 +11,52 @@ Load one ordinary Local or Shared rectangle, or explicitly convert one GM rectan
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tload-purpose role=purpose -->
+## Purpose
+
+`TLOAD` loads one ordinary Local or Shared rectangle, or converts GM data into persistent Local CUBE storage.
+
+<!-- PTO-READER-BLOCK: tile-tload-mechanism role=mechanism -->
+## Execution mechanism
+
+The ASL DOC contract selects `TileHandler_TLOAD` through the instruction's selector-encoded block carrier.
+
+The completed schema chooses exactly one Local or Shared destination domain; GM base, row stride, dimensions, layout, DataType, capacity, and the whole selected footprint are resolved before the first load.
+
+<!-- PTO-READER-BLOCK: tile-tload-inputs-outputs role=inputs-outputs -->
+## Operands and descriptors
+
+`destination0` is the new Local destination or absolute Shared destination; `address` is the per-PE private-GPR GM base address; `scalar0` is the per-PE private-GPR byte row stride.
+
+Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+
+<!-- PTO-READER-BLOCK: tile-tload-effects role=effects -->
+## Publication and ordering
+
+Success atomically publishes the complete Local destination or only the selected Shared quarters, including descriptor, payload, definedness, and CUBE padding when requested.
+
+Memory events use the block ordering attributes. Encoded-zero stride is a real zero stride, while omission selects the derived dense stride.
+
+<!-- PTO-READER-BLOCK: tile-tload-constraints role=constraints -->
+## Legality, padding, and faults
+
+Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+
+`PE_MASK=0000` is a strict no-op before reads, allocation, faults, numeric status, padding, or descriptor effects. Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+
+<!-- PTO-READER-BLOCK: tile-tload-example role=example -->
+## Non-normative contract sketch
+
+This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
+
+Read `BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `memory-and-data-movement`
@@ -164,11 +210,3 @@ end;
 - BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP
 - BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP
 - BSTART.TLOAD FP16; B.DATR {ND2N8, DTYPE_NONE, Max, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=K; B.IOT mask=1111, <last>, ->N<3>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-Both Local (`B.IOT`) and Shared (`B.IOS`) destination forms use LB0 as valid
-columns, LB1 as valid rows, and LB2 as physical Col. The embedded shape helper
-checks the same per-PE TSize/Col/dtype derivation for both forms before memory
-probing. An explicit B.IOR supplies base and row stride; omission uses base zero
-and LB2 as the dense row stride, while an encoded zero stride remains zero.
-<!-- SUPPLEMENTARY-END -->

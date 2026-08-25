@@ -11,6 +11,59 @@ HL.BFI inserts ascending low source bits into an inclusive wrapping destination 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-bfi-purpose role=purpose -->
+## What HL.BFI does
+
+`HL.BFI` is a 48-bit scalar ALU instruction. It inserts ascending low source bits into the selected inclusive wrapping interval of the base value; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-hl-bfi-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then inserts ascending low source bits into the selected inclusive wrapping interval of the base value, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-bfi-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
+- The 5-bit `SrcL` field selects the base value through Reg5.
+- The 5-bit `SrcR` field selects the insertion bits through Reg5.
+- The 6-bit `immr` field encodes the inclusive interval first destination bit.
+- The 6-bit `imms` field encodes the inclusive interval last destination bit.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-hl-bfi-effects role=effects -->
+## Effects and ordering
+
+Every scalar source is snapshotted before the destination effect. The completed value is then routed only through `RegDst` using the current scalar destination map; `immr` and `imms` select the insertion interval and are not publication targets.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-bfi-constraints role=constraints -->
+## Legality and fault boundary
+
+Field selection may wrap from bit 63 to bit 0; the generated defaults and legality tables below give the exact width and starting-position encodings.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-bfi-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `HL.BFI` example, base `0`, insertion source `0x7`, `immr=2`, and `imms=4` produce result `0x1c`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -149,7 +202,3 @@ end;
 - hl.bfi a0, a1, 8, 15, ->a2
 - hl.bfi t#1, u#1, 63, 0, ->t
 - hl.bfi a0, zero, 0, 63, ->a0
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

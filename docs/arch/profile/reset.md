@@ -7,6 +7,46 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROFILE-RESET}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-profile-reset-purpose role=purpose-scope -->
+## Purpose and scope
+
+`ResetProfileState` constructs the complete initial state for the PTO v0 reference profile. It resets scalar, queue, predicate, memory, Tile, bundle, maintenance, trap-context, system-register, and ACR state in one explicit procedure.
+
+<!-- PTO-READER-BLOCK: arch-profile-reset-concepts role=concepts-state -->
+## Major reset groups
+
+- Every PE GPR, temporary queue entry, `_PredicateRegisters` backing entry, and modeled memory byte is cleared.
+- Local and Shared Tile descriptors are invalidated; allocation, publication, definedness, geometry, and cube-storage fields are reset.
+- Program counters, bundle state, reservations, event capture, cache epochs, maintenance records, and control requests return to their defined initial values.
+- Every saved trap context is invalidated. Some backing fields are assigned reset values, but those assignments do not make the invalid context payload meaningful.
+
+<!-- PTO-READER-BLOCK: arch-profile-reset-rules role=rules-interactions -->
+## Profile-specific initialization
+
+Context-family extended registers in low indices `0x0f00` through `0x0fb7` are cleared in every ACR bank. PTO v0 then enables external and timer interrupt collection by writing `3` at low index `0x0f07`. System identity fields include version `1` and Tile capacity `PTO_MODEL_MAX_TILE_CAPACITY_BYTES`.
+
+<!-- PTO-READER-BLOCK: arch-profile-reset-boundaries role=boundaries -->
+## Completion boundary
+
+The procedure selects current ACR `0` before calling `ClearFault`, so the final fault-report fields are cleared in that ring. Decoder-generated state and dependent reset helpers are part of the declared owner chain; this page does not infer reset values not present in that chain.
+
+<!-- PTO-READER-BLOCK: arch-profile-reset-example role=example-usage -->
+## Non-normative verification example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-profile-reset-related role=related-owners-navigation -->
+## Related owners
+
+- Predicate access helpers own visible reads, including the `P0` rule; reset here initializes backing storage.
+- Tile feature-map descriptors, memory events, bundle control, and trap context supply specialized reset helpers used here.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reset.asl -->
@@ -171,7 +211,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

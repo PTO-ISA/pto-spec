@@ -18,6 +18,7 @@ class ReleaseSelectionTest(unittest.TestCase):
         return {
             "$schema": "spec/schemas/pto-release-selection.schema.json",
             "architecture_version": "0.58.2",
+            "publication_version": "0.58.2.0",
             "baseline_commit": "b" * 40,
             "included_ndf_statuses": ["accepted"],
             "excluded_draft_adrs": ["ADR-0002"],
@@ -70,6 +71,7 @@ class ReleaseSelectionTest(unittest.TestCase):
         return validate_selection(
             selection or self.selection(),
             architecture_version="0.58.2",
+            publication_version="0.58.2.0",
             adr_records=adrs or default_adrs,
             readiness_rows=readiness or default_readiness,
             ndf_rows=ndf or default_ndf,
@@ -128,6 +130,7 @@ class ReleaseSelectionTest(unittest.TestCase):
     def test_hidden_change_to_released_ndf_becomes_release_blocker(self) -> None:
         previous = {
             "release": "0.58.2",
+            "publication_version": "0.58.2.0",
             "release_selection": {
                 "expanded_ndf": [
                     {"id": "PTO-EXAMPLE-001", "sha256": "0" * 64}
@@ -145,6 +148,7 @@ class ReleaseSelectionTest(unittest.TestCase):
         _, _, ndf = self.facts()
         previous = {
             "release": "0.58.2",
+            "publication_version": "0.58.2.0",
             "release_selection": {
                 "expanded_ndf": [
                     {"id": "PTO-EXAMPLE-001", "sha256": "1" * 64}
@@ -161,6 +165,30 @@ class ReleaseSelectionTest(unittest.TestCase):
         self.assertTrue(
             any("selected NDF set changed" in row for row in result.blockers)
         )
+
+    def test_new_publication_revision_gets_a_fresh_ndf_selection(self) -> None:
+        selection = self.selection()
+        selection["publication_version"] = "0.58.2.1"
+        adrs, readiness, ndf = self.facts()
+        previous = {
+            "release": "0.58.2",
+            "publication_version": "0.58.2.0",
+            "release_selection": {
+                "expanded_ndf": [
+                    {"id": "PTO-EXAMPLE-001", "sha256": "0" * 64}
+                ]
+            },
+        }
+        result = validate_selection(
+            selection,
+            architecture_version="0.58.2",
+            publication_version="0.58.2.1",
+            adr_records=adrs,
+            readiness_rows=readiness,
+            ndf_rows=ndf,
+            previous_manifest=previous,
+        )
+        self.assertEqual(result.blockers, ())
 
     def test_repository_policy_selects_the_current_release_without_drift(self) -> None:
         self.assertTrue(SELECTION.is_file())
@@ -202,10 +230,15 @@ class ReleaseSelectionTest(unittest.TestCase):
         policy = json.loads(SELECTION.read_text(encoding="utf-8"))
 
         self.assertEqual(selection["architecture_version"], "0.58.4")
+        self.assertEqual(selection["publication_version"], "0.58.4.1")
         self.assertEqual(selection["required_readiness_floor"], "executable")
         self.assertEqual(manifest["release"], selection["architecture_version"])
+        self.assertEqual(
+            manifest["publication_version"], selection["publication_version"]
+        )
         self.assertEqual(selection["blockers"], [])
         self.assertEqual(policy["architecture_version"], "0.58.4")
+        self.assertEqual(policy["publication_version"], "0.58.4.1")
         self.assertEqual(
             [row["id"] for row in selection["expanded_ndf"]],
             list(result.selected_ndf_ids),

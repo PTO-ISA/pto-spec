@@ -11,6 +11,52 @@ SWAPD atomically replaces one doubleword and publishes the prior value.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-swapd-purpose role=purpose -->
+## What SWAPD does
+
+`SWAPD` atomically replaces one doubleword with `SrcR` and publishes the prior 64-bit value.
+
+<!-- PTO-READER-BLOCK: scalar-swapd-mechanism role=mechanism -->
+## Atomic mechanism
+
+The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `8` bytes.
+
+The read and write probes must resolve to the same translated location before the atomic exchange can commit.
+
+<!-- PTO-READER-BLOCK: scalar-swapd-inputs-outputs role=inputs-outputs -->
+## Inputs and result
+
+`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 doubleword replacement source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+
+`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+
+<!-- PTO-READER-BLOCK: scalar-swapd-effects role=effects -->
+## Effects and ordering
+
+On success, one atomic event records the exchange and the old value is published only after the memory update commits.
+
+A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-swapd-constraints role=constraints -->
+## Legality and precise faults
+
+The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+
+A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+
+<!-- PTO-READER-BLOCK: scalar-swapd-example role=example -->
+## Non-normative example
+
+This example only shows one accepted spelling; the generated contract below remains authoritative.
+
+For a first reading, use `swapd [SrcL], SrcR, ->Rd` and then vary only the ordering or route modifiers described above.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -160,7 +206,3 @@ end;
 - swapd [a0], a1, ->a2
 - swapd.aqrl [t#1], u#1, ->u
 - swapd.f [sp], zero, ->t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

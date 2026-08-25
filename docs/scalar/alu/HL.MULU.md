@@ -11,6 +11,58 @@ HL.MULU computes an unsigned 128-bit scalar product and publishes its low half f
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-mulu-purpose role=purpose -->
+## What HL.MULU does
+
+`HL.MULU` is a 48-bit scalar ALU instruction. It computes the complete unsigned 128-bit product and separates its low and high halves; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-hl-mulu-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then computes the complete unsigned 128-bit product and separates its low and high halves, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-mulu-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst0` field selects the Reg5 target for the low product or accumulator half.
+- The 5-bit `RegDst1` field selects the Reg5 target for the high product or accumulator half.
+- The 5-bit `SrcL` field selects the left multiplicand or additive operand through Reg5.
+- The 5-bit `SrcR` field selects the right multiplicand through Reg5.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-hl-mulu-effects role=effects -->
+## Effects and ordering
+
+All results are computed before publication. The destinations are then updated in encoded order (`RegDst0`, `RegDst1`), which also defines the order of duplicate-register writes or queue pushes.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 6 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-hl-mulu-constraints role=constraints -->
+## Legality and fault boundary
+
+Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-mulu-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `HL.MULU` example, sources `6` and `7` produce low result `42`; wide pair forms also produce high result `0`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -129,7 +181,3 @@ end;
 ## Examples
 
 - hl.mulu srcl, srcr, ->dst0, dst1
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,60 @@ Queries, initializes, notifies, suspends, or restores one General Queue Manageme
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-hl-qmt-purpose role=purpose -->
+## What HL.QMT does
+
+`HL.QMT` is a standalone General Queue Management command whose queue update, status result, and optional event are one ordered instruction effect.
+
+<!-- PTO-READER-BLOCK: block-hl-qmt-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`HL.QMT` executes as a standalone `48`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+
+The accepted carrier uses the `HL48` encoding class and resolves every displayed field before the command reads bindings or changes state.
+
+The command snapshots every required source before its first visible effect, then follows the owner-defined commit or restart boundary.
+
+<!-- PTO-READER-BLOCK: block-hl-qmt-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `SrcL` — Reg5 source of the queue address; `SrcR` — Reg5 capacity source, read only when i=1; `RegDst` — Reg5 destination for the operation result; `i` — initialize-or-replace selector; `e` — post-primary-operation event selector; `s` — post-event suspend selector; `r` — post-event restore selector.
+- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-hl-qmt-effects role=effects -->
+## State effects and ordering
+
+Source validation and snapshot precede every register, queue, frame, memory, event, or control-flow effect.
+
+The command publishes its state and result as one ordered instruction effect, then advances or transfers control as defined by the owner.
+
+<!-- PTO-READER-BLOCK: block-hl-qmt-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
+
+Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+
+<!-- PTO-READER-BLOCK: block-hl-qmt-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+hl.qmt a0, ->a1
+```
+
+The shown accepted spelling resolves its fields from the current carrier, snapshots required sources, and then follows the owner-defined state and ordering transition.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -162,7 +216,3 @@ end;
 - hl.qmt a0, ->a1
 - hl.qmt.ie t#1, u#1, ->t#2
 - hl.qmt.s sp, ->u#1
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

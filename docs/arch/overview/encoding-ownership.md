@@ -7,6 +7,46 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-encoding-ownership-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit separates accepted PTO encodings from permanently reserved extension roots and deleted names. Its catalog projection records reservation witnesses; the embedded NDF clauses own their architectural status.
+
+<!-- PTO-READER-BLOCK: arch-encoding-ownership-concepts role=concepts-state -->
+## Ownership categories
+
+- Accepted scalar, block, and Tile encodings are owned by PTO instruction sources.
+- Two-level vector, machine-block, extended `BSTART`, and `B.TEXT` roots remain reserved extension space.
+- Block-body conditional-branch roots remain separately reserved for the conditional-branch extension space.
+- `B.IOD`, `BSTART.PAR`, and `C.B.IOS` are deleted names and are not aliases.
+
+<!-- PTO-READER-BLOCK: arch-encoding-ownership-rules role=rules-interactions -->
+## Reservation checks
+
+`VectorExtensionRoot64Reserved` recognizes first words whose low `7` bits are `0x7f`. `ConditionalBranchExtensionRoot32Reserved` recognizes the reserved `0x27` and `0x37` roots with their function fields. `BTextExtensionRoot32Reserved` recognizes low `7` bits equal to `0x03`.
+
+<!-- PTO-READER-BLOCK: arch-encoding-ownership-boundaries role=boundaries -->
+## Reserved versus active
+
+Reserved spellings such as `B.EQ`, `B.NE`, `B.LT`, `B.GE`, `B.LTU`, `B.GEU`, `B.Z`, and `B.NZ` are not active instructions and are not emitted as canonical PTO assembly. A reservation protects future space; it does not define execution behavior.
+
+<!-- PTO-READER-BLOCK: arch-encoding-ownership-example role=example-usage -->
+## Non-normative decoder example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-encoding-ownership-related role=related-owners-navigation -->
+## Related owners
+
+- Instruction classification explains active Tile classes and execution engines.
+- Individual instruction ASL and generated catalogs own accepted encodings and decoder witnesses; profile questions return to those current owners.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/overview/encoding-ownership.asl -->
@@ -56,7 +96,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,56 @@ HL.SWI.U snapshots its scalar sources, forms its encoded address, and stores one
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-swi-u-purpose role=purpose -->
+## What HL.SWI.U does
+
+`HL.SWI.U` is a standalone `48`-bit AGU instruction that forms a signed-immediate address and stores one aligned little-endian `4`-byte value.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swi-u-mechanism role=mechanism -->
+## Address and memory mechanism
+
+`HL.SWI.U` sign-extends `simm22` from its complete `-2097152..2097151` domain, uses it without scaling, and adds the displacement modulo `2^PTO_XLEN` to the snapshotted `SrcR` base.
+
+After complete preflight, the instruction performs one little-endian `4`-byte store from its snapshotted store-data source.
+
+This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swi-u-inputs role=inputs-outputs -->
+## Inputs and outputs
+
+- `SrcR` supplies the base; `simm22` supplies the signed displacement. Every encoded Reg5 source among `SrcD`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
+- `SrcD` supplies store data.
+- `simm22` assigns every signed value from `-2097152` through `2097151`; encoded zero is a zero displacement, not omission.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swi-u-effects role=effects -->
+## Effects and ordering
+
+All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+
+A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `6` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swi-u-constraints role=constraints -->
+## Alignment, faults, and restart
+
+Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+
+A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-swi-u-example role=example -->
+## Non-normative address example
+
+This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+
+With the base set to `0x100` and the signed immediate set to `4`, the displacement is `4` and base plus displacement is `0x104`. The memory access uses `0x104`. If permitted, the instruction stores `4` bytes at that aligned address.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -131,7 +181,7 @@ end;
 
 ## State effects
 
-- Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcL base.
+- Sign-extend simm22, multiply it by 1, and add it modulo 2^PTO_XLEN to the SrcR base.
 - Snapshot every store-data source before any memory effect or destination publication.
 - Successful execution advances TPC by 6 bytes; a rejected or faulting attempt does not retire.
 
@@ -157,7 +207,3 @@ end;
 ## Examples
 
 - hl.swi.u SrcD, [SrcR, simm]
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

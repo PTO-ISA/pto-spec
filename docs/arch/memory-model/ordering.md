@@ -7,6 +7,61 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-MEMORY-MODEL-ORDERING}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-memory-ordering-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit decides whether a captured candidate memory execution is allowed by PTO-TSO. It validates the event set, builds the required ordering relations, and rejects any candidate whose required relation contains a cycle.
+
+The final query, `MemoryExecutionAllowedTSO`, requires candidate validity and acyclicity of both the same-location execution relation and the externally visible preserved-order relation.
+
+<!-- PTO-READER-BLOCK: arch-memory-ordering-concepts-state role=concepts-state -->
+## Event relations
+
+- Coherence orders writes to the same location by increasing `coherence_rank`; reads-from connects a write to a read whose `read_from` field names that write.
+- External reads-from keeps reads whose source is an initial write or belongs to a different agent; from-read connects a read to a distinct coherence successor of the write it observed.
+- Same-agent program order at one location and preserved program order across locations provide the two program-order views used by the acyclicity checks.
+- A fence contributes an edge only when it lies between two events from the same agent and both event classes match its predecessor and successor masks.
+
+<!-- PTO-READER-BLOCK: arch-memory-ordering-rules-interactions role=rules-interactions -->
+## Candidate rules
+
+Every accessed location has exactly one initial-write event, and each initial write has coherence rank `0`.
+
+Every later write to a location has a unique nonzero coherence rank with an immediate predecessor at the preceding rank.
+
+Every read names an in-range write to the same location and carries the value written by that source. A successful atomic write immediately follows its read source in coherence order.
+
+PTO-TSO preserves read-to-memory and memory-to-write program order. A write followed by a read of another location is the relaxed pair unless an atomic event, acquire/release order, or a matching fence restores the edge.
+
+<!-- PTO-READER-BLOCK: arch-memory-ordering-boundaries role=boundaries -->
+## Boundaries and fail-closed cases
+
+Mixed-size or partially overlapping accesses are rejected when their ranges overlap but they do not describe the same location. This owner therefore does not silently invent byte-level coherence for such candidates.
+
+An atomic event does not create a from-read edge to its own write side; from-read considers only a distinct coherence successor.
+
+An empty event set is not a valid candidate execution, although the acyclicity helper itself treats an empty relation as acyclic.
+
+<!-- PTO-READER-BLOCK: arch-memory-ordering-example-usage role=example-usage -->
+## Non-normative analysis example
+
+For a store-buffering candidate, record each agent's store and later read, assign each read to the initial write it observed, and run the validity and acyclicity queries. The relaxed write-to-read pair can leave the candidate allowed when no stronger edge closes a cycle.
+
+If matching fences are inserted between each store and read, `MemoryFenceOrders` contributes preserved-program-order edges. Each read of an initial write also has a from-read edge, which `MemoryFromReadBefore` derives from the read's `read_from` source and the later coherence successor at that location; together these edges form a cycle, so `MemoryExecutionAllowedTSO` rejects the observed outcome.
+
+<!-- PTO-READER-BLOCK: arch-memory-ordering-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Atomicity](atomicity.md) is this unit's declared dependency and defines the event properties on which ordering relies.
+- [Memory events](memory-events.md) defines event construction and capture.
+- [Execution context](../programming-model/execution-context.md) owns the captured event array, event count, fence selectors, and current memory agent.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/ordering.asl -->
@@ -223,7 +278,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

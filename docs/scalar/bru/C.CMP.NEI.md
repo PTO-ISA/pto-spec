@@ -11,6 +11,50 @@ C.CMP.NEI - Compare scalar operands and write the encoded boolean result.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-c-cmp-nei-purpose role=purpose -->
+## What C.CMP.NEI does
+
+`C.CMP.NEI` evaluates inequality over decoded scalar operands and publishes canonical XLEN one or zero.
+
+<!-- PTO-READER-BLOCK: scalar-c-cmp-nei-mechanism role=mechanism -->
+## Mechanism
+
+The compact form snapshots implicit `T#1` as its left operand, compares it with the decoded signed immediate, and pushes the canonical result to T.
+
+The source snapshot precedes the T push, so queue publication cannot change the value already selected.
+
+<!-- PTO-READER-BLOCK: scalar-c-cmp-nei-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- Implicit `T#1` is the left source, and the implicit output is a T push.
+
+- `simm5` supplies a signed encoded immediate.
+
+<!-- PTO-READER-BLOCK: scalar-c-cmp-nei-effects role=effects -->
+## Effects and ordering
+
+The canonical boolean is pushed implicitly to T, then `TPC` advances by `2` bytes.
+
+There is no encoded destination field; the instruction does not modify commit state or access memory or reservation state.
+
+<!-- PTO-READER-BLOCK: scalar-c-cmp-nei-constraints role=constraints -->
+## Legality and fault order
+
+Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-c-cmp-nei-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`c.cmp.nei t#1, simm, ->t` publishes XLEN one when its condition is true and XLEN zero otherwise.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -117,7 +161,3 @@ end;
 ## Examples
 
 - c.cmp.nei t#1, simm, ->t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

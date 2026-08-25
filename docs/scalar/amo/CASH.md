@@ -11,6 +11,52 @@ CASH atomically compares and conditionally replaces one halfword, then publishes
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-cash-purpose role=purpose -->
+## What CASH does
+
+`CASH` atomically compares the halfword at `SrcL` with `SrcR`; equality stores `SrcD`, while both paths publish the prior 16-bit value.
+
+<!-- PTO-READER-BLOCK: scalar-cash-mechanism role=mechanism -->
+## Atomic mechanism
+
+The ASL DOC contract selects `ScalarHandler_CompareAndSwap` with an access width of `2` bytes.
+
+Match and mismatch both emit one ordered atomic event; only the matching path marks a write as performed.
+
+<!-- PTO-READER-BLOCK: scalar-cash-inputs-outputs role=inputs-outputs -->
+## Inputs and result
+
+`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 expected halfword source; `SrcD` carries the Reg5 desired halfword source; `RegDst` carries the Reg5 old-value destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit.
+
+`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering.
+
+<!-- PTO-READER-BLOCK: scalar-cash-effects role=effects -->
+## Effects and ordering
+
+After successful preflight, the old value is published even on comparison mismatch; memory changes only on equality.
+
+A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-cash-constraints role=constraints -->
+## Legality and precise faults
+
+The effective address must be aligned to `2` bytes. Alignment, translation, and permission checks precede architectural effects.
+
+A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+
+<!-- PTO-READER-BLOCK: scalar-cash-example role=example -->
+## Non-normative example
+
+This example only shows one accepted spelling; the generated contract below remains authoritative.
+
+For a first reading, use `cash [SrcL], SrcR, SrcD, ->Rd` and then vary only the ordering or route modifiers described above.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -156,7 +202,3 @@ end;
 
 - cash [a0], a1, a2, ->a3
 - cash.aqrl [t#1], u#1, a0, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

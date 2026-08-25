@@ -11,6 +11,56 @@ Transpose the source Tile into the destination.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-ttrans-purpose role=purpose -->
+## What TTRANS does
+
+`TTRANS` transposes the source Tile into its destination.
+
+<!-- PTO-READER-BLOCK: tile-c-ttrans-mechanism role=mechanism -->
+## Operation mechanism
+
+After the complete bundle schema is accepted, source row and column coordinates exchange roles in the destination.
+
+<!-- PTO-READER-BLOCK: tile-c-ttrans-inputs-outputs role=inputs-outputs -->
+## Operands, shape, and type
+
+- `destination0` identifies the destination.
+
+- `source0` supplies a persistent source Tile.
+
+- The closed applicable DataType set is `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `HiF8`, `E4M3`, `E5M2`, `E3M2`, `E2M3`, `E2M1X2`, `E1M2X2`, `E8M0`, `S64`, `S32`, `S16`, `S8`, `S4X2`, `U64`, `U32`, `U16`, `U8`, `U4X2`.
+
+- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+
+<!-- PTO-READER-BLOCK: tile-c-ttrans-effects role=effects -->
+## Definedness, padding, and publication
+
+All source descriptors and payloads are validated and snapshotted before destination publication.
+
+The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+
+Source Tiles persist and are not modified by successful execution.
+
+<!-- PTO-READER-BLOCK: tile-c-ttrans-constraints role=constraints -->
+## Legality, fault, and order boundaries
+
+Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+
+A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+
+<!-- PTO-READER-BLOCK: tile-c-ttrans-example role=example -->
+## Non-normative example
+
+This example illustrates the current ASL-bound contract and is not a second instruction definition.
+
+`TTRANS <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `layout-and-rearrangement`
@@ -130,7 +180,3 @@ end;
 ## Examples
 
 - BSTART.SFU TTRANS, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

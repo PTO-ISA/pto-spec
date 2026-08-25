@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""Generate or verify the mnemonic-description aggregate coverage evidence."""
+
+from __future__ import annotations
+
+import argparse
+import subprocess
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--check", action="store_true")
+    arguments = parser.parse_args()
+    command = ["python3", "scripts/check-mnemonic-explanations"]
+    if not arguments.check:
+        command.append("--update-aggregate")
+    return subprocess.run(command, cwd=ROOT, check=False).returncode
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

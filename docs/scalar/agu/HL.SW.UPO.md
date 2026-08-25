@@ -11,6 +11,56 @@ HL.SW.UPO snapshots its scalar sources, forms its encoded address, and stores on
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-sw-upo-purpose role=purpose -->
+## What HL.SW.UPO does
+
+`HL.SW.UPO` is a standalone `48`-bit AGU instruction that forms a register-offset address and stores one aligned little-endian `4`-byte value.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-upo-mechanism role=mechanism -->
+## Address and memory mechanism
+
+`HL.SW.UPO` transforms `SrcR` according to `SrcRType` and adds the unscaled result modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+
+After complete preflight, the instruction performs one little-endian `4`-byte store from its snapshotted store-data source.
+
+Post-index mode accesses the original base and publishes base plus offset only after successful memory completion.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-upo-inputs role=inputs-outputs -->
+## Inputs and outputs
+
+- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcD`, `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
+- `SrcD` supplies store data; `RegDst` receives the updated base; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
+- All `SrcRType` values `0..3` are assigned; the selected transformation is applied before the form's fixed scaling.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-upo-effects role=effects -->
+## Effects and ordering
+
+All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+
+A successful attempt records one relaxed store event, invalidates an overlapping reservation but preserves a nonoverlapping one, and advances `TPC` by `6` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-upo-constraints role=constraints -->
+## Alignment, faults, and restart
+
+Each effective address must satisfy `4`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+
+A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sw-upo-example role=example -->
+## Non-normative address example
+
+This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+
+With base `0x100`, unchanged offset source `4`, and the fixed shift `0`, the aligned displacement is `4` and base plus displacement is `0x104`. The memory access uses `0x100`, and the aligned computed sum is published only after success. If permitted, the instruction stores `4` bytes at that aligned address.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -166,7 +216,3 @@ end;
 ## Examples
 
 - hl.sw.upo SrcD, [SrcL, SrcR<{.sw,.uw,.neg}>], ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

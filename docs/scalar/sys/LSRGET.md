@@ -11,6 +11,52 @@ LSRGET reads one assigned word from the active block BARG view.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-lsrget-purpose role=purpose -->
+## What LSRGET does
+
+`LSRGET` reads an assigned word from the active BARG view and publishes it through Reg5 destination mapping.
+
+<!-- PTO-READER-BLOCK: scalar-lsrget-mechanism role=mechanism -->
+## Block-state mechanism
+
+The ASL DOC region selects `ScalarHandler_ExecuteLocalStateRegisterGet`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in any active block for which the selected BARG word is applicable.
+
+<!-- PTO-READER-BLOCK: scalar-lsrget-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`LSR_ID` carries the active BARG word identifier; `RegDst` carries the Reg5 destination: discard, R1..R23, push U, or push T.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-lsrget-effects role=effects -->
+## Architectural effects
+
+Assigned IDs select `BARG.BPC`, `BARG.BPCN`, or the canonical packed BARG control word and publish it through `RegDst`.
+
+The read leaves BARG and system-register state unchanged; publication occurs only after applicability checks.
+
+<!-- PTO-READER-BLOCK: scalar-lsrget-constraints role=constraints -->
+## Placement and rejection
+
+IDs `0`, `1`, and `2` are assigned; `1` applies only to Standard and Floating blocks, and higher IDs are reserved.
+
+An inactive body, an unassigned ID, or a selected BARG word that does not apply to the active block raises Illegal Block Exception before destination, queue, system-state, or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-lsrget-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `lsrget LSR_ID, ->{t, u, Rd}` and trace the selected BARG word through applicability checks before publication.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -140,7 +186,3 @@ end;
 ## Examples
 
 - lsrget LSR_ID, ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

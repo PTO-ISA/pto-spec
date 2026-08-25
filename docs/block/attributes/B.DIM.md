@@ -11,6 +11,51 @@ Writes one selected bundle-local LB register from an absolute GPR plus immediate
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-b-dim-purpose role=purpose -->
+## What B.DIM contributes
+
+`B.DIM` is a 32-bit block header command that writes one block-local dimension register during header construction. It changes pending block metadata rather than executing a tile body operation immediately.
+
+<!-- PTO-READER-BLOCK: block-b-dim-mechanism role=mechanism -->
+## Placement and mechanism
+
+The command belongs to an active header before the first body instruction. Its effective order and arity are checked against the completed operation schema rather than inferred from this command in isolation.
+
+The command adds the unsigned immediate to the selected absolute GPR, keeps the low 16 bits, zero-extends that value, and writes the selected `LB0`, `LB1`, or `LB2` slot once.
+
+<!-- PTO-READER-BLOCK: block-b-dim-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `RegSrc` identifies an input source or source-role selector; its exact assigned domain remains in the generated contract below.
+- `uimm17` supplies the encoded offset or addend; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-b-dim-effects role=effects -->
+## Pending state and completion
+
+An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+
+<!-- PTO-READER-BLOCK: block-b-dim-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+
+<!-- PTO-READER-BLOCK: block-b-dim-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+B.DIM RegSrc, uimm, ->LB2
+```
+
+Assume an active compatible header with no earlier conflicting `B.DIM` command. Placing `B.DIM RegSrc, uimm, ->LB2` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -160,15 +205,3 @@ end;
 
 - B.DIM a0, 16, ->LB0
 - B.DIM zero, 0, ->LB2
-
-<!-- SUPPLEMENTARY-BEGIN -->
-`LB0` carries valid columns, `LB1` carries valid rows, and `LB2` carries the
-physical column count. For a destination allocation, LB2 must be a nonzero
-power of two. The physical row count is not encoded by B.DIM; it is derived
-from the destination TSize, data type, and LB2 as specified by the embedded ASL
-contracts and `DerivedTileRows`.
-
-Matrix operations use valid rows as M and valid columns as N. K comes from the
-matching source descriptors and must also be a nonzero power of two. LB2 still
-describes the destination physical Col; it is not a second encoding of K.
-<!-- SUPPLEMENTARY-END -->

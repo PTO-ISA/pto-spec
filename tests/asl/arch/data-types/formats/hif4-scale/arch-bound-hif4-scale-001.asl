@@ -13,6 +13,13 @@ begin
     scale[16] = '1';
     assert HiF4ScaleExponentIncrement(scale, 0) == 2;
     assert HiF4ScaleFiniteValue(scale, 0) == FP19PowerOfTwo(-46);
+    assert HiF4ScaleExponentIncrement(scale, 3) == 2;
+    assert HiF4ScaleExponentIncrement(scale, 4) == 1;
+    assert HiF4ScaleExponentIncrement(scale, 7) == 1;
     assert HiF4ScaleExponentIncrement(scale, 8) == 0;
+
+    scale[15] = '1';
+    scale[31] = '1';
+    assert HiF4ScaleExponentIncrement(scale, 63) == 2;
     return 0;
 end;

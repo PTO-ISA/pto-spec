@@ -11,6 +11,48 @@ J - Jump to the PC-relative target.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-j-purpose role=purpose -->
+## What J does
+
+`J` transfers control to a signed PC-relative halfword target.
+
+<!-- PTO-READER-BLOCK: scalar-j-mechanism role=mechanism -->
+## Mechanism
+
+The current PC is snapshotted, the signed displacement is shifted left by `1`, and the values are added to form the target.
+
+The target PC is written directly; the ordinary sequential advance is not added afterward.
+
+<!-- PTO-READER-BLOCK: scalar-j-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `simm22` supplies a signed encoded immediate.
+
+<!-- PTO-READER-BLOCK: scalar-j-effects role=effects -->
+## Effects and ordering
+
+The accepted target replaces the control-flow PC as one architectural transition.
+
+The jump has no scalar destination and does not access memory or reservation state.
+
+<!-- PTO-READER-BLOCK: scalar-j-constraints role=constraints -->
+## Legality and fault order
+
+Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-j-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`j label` forms and validates the target described above before replacing the PC.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -114,7 +156,3 @@ end;
 ## Examples
 
 - j label
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

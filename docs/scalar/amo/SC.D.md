@@ -11,6 +11,52 @@ SC.D conditionally stores one doubleword when the local 64-byte-line reservation
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sc-d-purpose role=purpose -->
+## What SC.D does
+
+`SC.D` conditionally stores one doubleword when the local 64-byte-line reservation matches and publishes status zero for success or one for a miss.
+
+<!-- PTO-READER-BLOCK: scalar-sc-d-mechanism role=mechanism -->
+## Atomic mechanism
+
+The ASL DOC contract selects `ScalarHandler_StoreConditional` with an access width of `8` bytes.
+
+Every attempt clears the reservation. A reservation miss is probe-free, while a matching attempt performs write preflight before memory or destination effects.
+
+<!-- PTO-READER-BLOCK: scalar-sc-d-inputs-outputs role=inputs-outputs -->
+## Inputs and result
+
+`SrcL` carries the Reg5 doubleword store-value source; `SrcR` carries the Reg5 store-address source; `RegDst` carries the Reg5 success-status destination; `aq` carries the acquire ordering bit; `rl` carries the release ordering bit; `far` carries the flat-address routing hint.
+
+`aq` and `rl` select relaxed, acquire, release, or acquire-release ordering; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+
+<!-- PTO-READER-BLOCK: scalar-sc-d-effects role=effects -->
+## Effects and ordering
+
+A matching nonfaulting attempt stores the low-width source and emits one ordered store event; a miss leaves memory untouched and emits no event.
+
+Success, miss, and line-matched fault all clear the reservation; success or miss advances `TPC` by `4` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-sc-d-constraints role=constraints -->
+## Legality and precise faults
+
+The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+
+A reservation miss is probe-free. A line-matched fault clears the reservation but publishes no status, event, memory update, or `TPC` advance; recovery reissue misses without a new LR.
+
+<!-- PTO-READER-BLOCK: scalar-sc-d-example role=example -->
+## Non-normative example
+
+This example only shows one accepted spelling; the generated contract below remains authoritative.
+
+For a first reading, use `sc.d SrcL, [SrcR], ->Rd` and then vary only the ordering or route modifiers described above.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -165,7 +211,3 @@ end;
 - sc.d a0, [a1], ->a2
 - sc.d.aqrl t#1, [u#1], ->u
 - sc.d.f zero, [sp], ->t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

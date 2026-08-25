@@ -11,6 +11,59 @@ CASW atomically compares and conditionally replaces one word, then publishes the
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-casw-purpose role=purpose -->
+## What CASW does
+
+`CASW` atomically reads one aligned 4-byte word, compares it with an expected word, conditionally stores a desired word, and publishes the prior memory value after either a nonfaulting match or mismatch.
+
+<!-- PTO-READER-BLOCK: scalar-casw-mechanism role=mechanism -->
+## Compare-and-swap mechanism
+
+Before any effect, `CASW` snapshots the address source `SrcL`, expected source `SrcR`, and desired source `SrcD`, then completes alignment plus read/write translation and permission preflight for one translated location.
+
+The comparison uses the low 4 bytes of `SrcR`. On equality, the instruction stores the low 4 bytes of `SrcD`; on mismatch, it preserves memory.
+
+Both outcomes emit one ordered atomic event. A matching event records `write_performed=true`; a mismatching event records `write_performed=false` and acts as an ordered atomic read without a coherence write.
+
+The prior 32-bit word is sign-extended to XLEN before destination publication.
+
+<!-- PTO-READER-BLOCK: scalar-casw-inputs role=inputs-outputs -->
+## Inputs, ordering, and output
+
+- `SrcL`, `SrcR`, and `SrcD` accept every Reg5 source selector, including non-consuming T/U sources; `RegDst` accepts every Reg5 destination or discard selector.
+- `aq=0,rl=0` selects relaxed ordering; `aq=1,rl=0` acquire; `aq=0,rl=1` release; and `aq=1,rl=1` acquire-release.
+
+The short form has no far-address field and always uses the default flat-address route.
+
+<!-- PTO-READER-BLOCK: scalar-casw-effects role=effects -->
+## Architectural effects
+
+On a match, `CASW` writes the desired low word, emits one read/write atomic event, and invalidates an overlapping local 64-byte-line reservation.
+
+On a mismatch, it leaves memory and the reservation unchanged while still emitting the ordered atomic read event.
+
+Every nonfaulting outcome publishes the sign-extended prior word and advances `TPC` by `4` bytes; a fault publishes no destination.
+
+<!-- PTO-READER-BLOCK: scalar-casw-constraints role=constraints -->
+## Alignment and precise faults
+
+The effective address must be aligned to `4` bytes. Alignment, read access, write access, and translated-address equality are checked before memory, destination, event, reservation, or `TPC` effects.
+
+On fault, trap entry preserves the original `TPC`; recovery restores it so the complete instruction can be reissued without retained progress.
+
+<!-- PTO-READER-BLOCK: scalar-casw-example role=example -->
+## Non-normative walkthrough
+
+This walkthrough illustrates the current contract; it does not replace the atomic operation.
+
+Suppose memory holds the word `0x80000001`, the expected word matches, and the desired XLEN value is `0x1122334455667788`. `CASW.aqrl` stores `0x55667788`, publishes the prior word sign-extended to XLEN, emits one acquire-release atomic event with `write_performed=true`, and invalidates an overlapping reservation.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -156,7 +209,3 @@ end;
 
 - casw [a0], a1, a2, ->a3
 - casw.aqrl [t#1], u#1, a0, ->u
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

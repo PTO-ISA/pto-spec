@@ -11,6 +11,54 @@ Records one optional per-block branch, temperature, prefetch-size, or trace-boun
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-b-hint-purpose role=purpose -->
+## What B.HINT contributes
+
+`B.HINT` is a 32-bit block header command that records optional branch, temperature, prefetch-size, or trace-boundary hints. It changes pending block metadata rather than executing a tile body operation immediately.
+
+<!-- PTO-READER-BLOCK: block-b-hint-mechanism role=mechanism -->
+## Placement and mechanism
+
+The ordinary hint form is optional at most once in an already active block header, after `BSTART` and before the first body instruction.
+
+Ordinary hint fields are retained as non-functional pending metadata. The TRACE form instead behaves as a block start: it first retires an active predecessor when retirement succeeds, then opens an empty trace block and records whether the boundary is begin or end. TRACE does not complete the newly opened block by itself.
+
+<!-- PTO-READER-BLOCK: block-b-hint-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `V` marks the branch hint valid; its exact assigned domain remains in the generated contract below.
+- `L/UL` selects likely or unlikely when the hint is valid; its exact assigned domain remains in the generated contract below.
+- `temp` selects the temperature hint; its exact assigned domain remains in the generated contract below.
+- `prefetch_size` selects the cache-line prefetch count; its exact assigned domain remains in the generated contract below.
+- `B/E` selects the trace begin or end boundary; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-b-hint-effects role=effects -->
+## Pending state and completion
+
+An accepted ordinary hint updates the pending hint record and hint epoch without changing body-visible data. An accepted TRACE form installs the empty trace block only after predecessor retirement; a predecessor retirement failure leaves the predecessor authoritative and opens no trace block.
+
+<!-- PTO-READER-BLOCK: block-b-hint-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+
+<!-- PTO-READER-BLOCK: block-b-hint-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+B.HINT {BR.{likely, unlikely}, TEMP.{hot, warm, cool, none}, PRFSIZE}
+```
+
+Assume an active compatible header with no earlier conflicting `B.HINT` command. Placing `B.HINT {BR.{likely, unlikely}, TEMP.{hot, warm, cool, none}, PRFSIZE}` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -140,7 +188,3 @@ end;
 
 - B.HINT {BR.likely, TEMP.hot, 64}
 - B.HINT TRACE.begin
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

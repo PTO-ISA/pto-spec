@@ -46,6 +46,7 @@ ACTIVE_GUIDANCE = (
     Path("docs/development/repository-layout.md"),
     Path("docs/releases/index.md"),
 )
+MACHINE_DEPENDENCY_LOCKS = (Path("docs/site/pnpm-lock.yaml"),)
 STALE_GUIDANCE_ROUTES = (
     "spec/requirements.json",
     "PRD-",
@@ -72,6 +73,15 @@ def markdown_target(raw: str) -> str:
     if value.startswith("<") and ">" in value:
         return value[1 : value.index(">")]
     return value.split(maxsplit=1)[0]
+
+
+def canonical_markdown_source(path: Path) -> Path:
+    relative = path.relative_to(ROOT)
+    parts = relative.parts
+    marker = ("docusaurus-plugin-content-docs-reference", "current")
+    if len(parts) >= 7 and parts[:3] == ("docs", "site", "i18n") and parts[4:6] == marker:
+        return ROOT / "docs" / Path(*parts[6:])
+    return path
 
 
 def main() -> int:
@@ -119,7 +129,9 @@ def main() -> int:
         for allowed_reference in ALLOWED_EXTERNAL_REFERENCES:
             identity_body = identity_body.replace(allowed_reference.lower(), "")
         if any(term in identity_body for term in FORBIDDEN_TERMS) or (
-            LEGACY_RELEASE.search(identity_body) and not migrated
+            LEGACY_RELEASE.search(identity_body)
+            and not migrated
+            and relative not in MACHINE_DEPENDENCY_LOCKS
         ):
             failures.append(f"forbidden source identity in file: {relative}")
         for prefix in STALE_URL_PREFIXES:
@@ -161,7 +173,9 @@ def main() -> int:
                     f"absolute local Markdown link: {relative}:{line_number}: {target}"
                 )
                 continue
-            destination = (path.parent / unquote(parsed.path)).resolve()
+            destination = (
+                canonical_markdown_source(path).parent / unquote(parsed.path)
+            ).resolve()
             try:
                 destination.relative_to(ROOT)
             except ValueError:

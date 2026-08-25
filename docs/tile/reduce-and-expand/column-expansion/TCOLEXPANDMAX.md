@@ -11,6 +11,58 @@ Take the typed maximum of a full-shape source and a broadcast one-row vector.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tcolexpandmax-purpose role=purpose -->
+## What TCOLEXPANDMAX does
+
+`TCOLEXPANDMAX` is a selector-encoded Tile operation executed by `SFU`. It selects the typed maximum of each full-shape element and its same-column broadcast value; its current instruction contract owns the exact bundle form and publication boundary.
+
+<!-- PTO-READER-BLOCK: tile-tcolexpandmax-mechanism role=mechanism -->
+## Element and Tile mechanism
+
+After all descriptor and operand checks succeed, the owning ASL handler selects the typed maximum of each full-shape element and its same-column broadcast value. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+
+The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+
+<!-- PTO-READER-BLOCK: tile-tcolexpandmax-inputs role=inputs-outputs -->
+## Operand roles and descriptors
+
+- `destination0` has the exact contract role **new Local same-type numeric destination**.
+- `source0` has the exact contract role **persistent Local full-shape numeric source**.
+- `source1` has the exact contract role **persistent Local one-row broadcast source**.
+
+Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
+Every source coordinate read by the operation must be defined before execution reaches destination publication.
+`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+
+<!-- PTO-READER-BLOCK: tile-tcolexpandmax-effects role=effects -->
+## Publication, definedness, and padding
+
+Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+
+Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+
+The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+
+<!-- PTO-READER-BLOCK: tile-tcolexpandmax-constraints role=constraints -->
+## Type, layout, and fault boundary
+
+The exact accepted type or type-pair set is owned by the generated legality section below; this guide does not widen it.
+
+The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+
+<!-- PTO-READER-BLOCK: tile-tcolexpandmax-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `TCOLEXPANDMAX` example, full-shape row `[1, 5]` with broadcast row `[3, 4]` produces `[3, 5]`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `reduce-and-expand`
@@ -177,7 +229,3 @@ end;
 ## Examples
 
 - BSTART.SFU TCOLEXPANDMAX, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, BroadcastTile, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

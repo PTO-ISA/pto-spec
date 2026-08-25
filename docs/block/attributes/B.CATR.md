@@ -11,6 +11,55 @@ Defines one optional block control record for post-commit trap, transactional vi
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-b-catr-purpose role=purpose -->
+## What B.CATR contributes
+
+`B.CATR` is a 32-bit block header command that records optional block control, ordering, remote-execution, and reduction attributes. It changes pending block metadata rather than executing a tile body operation immediately.
+
+<!-- PTO-READER-BLOCK: block-b-catr-mechanism role=mechanism -->
+## Placement and mechanism
+
+The command belongs to the active block header before the first body instruction. Duplicate or misplaced use is rejected before pending header state changes.
+
+The accepted command latches one typed attribute record in pending block state. The selected operation consumes those fields only after the complete header, bindings, dimensions, and body satisfy its schema.
+
+<!-- PTO-READER-BLOCK: block-b-catr-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `DR` selects multidimensional or operation-defined reduction mode; its exact assigned domain remains in the generated contract below.
+- `trap` requests a synchronous post-commit trap; its exact assigned domain remains in the generated contract below.
+- `far` requests routing-selected remote execution; its exact assigned domain remains in the generated contract below.
+- `atom` selects whole-block transactional visibility; its exact assigned domain remains in the generated contract below.
+- `aq` selects acquire ordering; its exact assigned domain remains in the generated contract below.
+- `rl` selects release ordering; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-b-catr-effects role=effects -->
+## Pending state and completion
+
+An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+
+<!-- PTO-READER-BLOCK: block-b-catr-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+
+<!-- PTO-READER-BLOCK: block-b-catr-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}
+```
+
+Assume an active compatible header with no earlier conflicting `B.CATR` command. Placing `B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -143,7 +192,3 @@ end;
 ## Examples
 
 - B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

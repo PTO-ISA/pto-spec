@@ -11,6 +11,57 @@ Generate one ascending or descending typed integer sequence in a new single-row 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tci-purpose role=purpose -->
+## What TCI does
+
+`TCI` is a selector-encoded Tile operation executed by `SFU`. It forms one typed single-row sequence from the bound start value, increasing or decreasing by logical column; its current instruction contract owns the exact bundle form and publication boundary.
+
+<!-- PTO-READER-BLOCK: tile-tci-mechanism role=mechanism -->
+## Element and Tile mechanism
+
+After all descriptor and operand checks succeed, the owning ASL handler forms one typed single-row sequence from the bound start value, increasing or decreasing by logical column. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+
+The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+
+<!-- PTO-READER-BLOCK: tile-tci-inputs role=inputs-outputs -->
+## Operand roles and descriptors
+
+- `destination0` has the exact contract role **new Local S32, S16, U32, or U16 destination**.
+- `scalar0` has the exact contract role **typed sequence start**.
+- `flag0` has the exact contract role **ascending or descending direction**.
+
+Participating source and destination descriptors use the row-major and shape relationships stated by the current contract.
+`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+
+<!-- PTO-READER-BLOCK: tile-tci-effects role=effects -->
+## Publication, definedness, and padding
+
+Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+
+Physical coordinates outside the valid rectangle follow the contract-selected padding rule; `Null` padding remains undefined when that rule applies.
+
+The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+
+<!-- PTO-READER-BLOCK: tile-tci-constraints role=constraints -->
+## Type, layout, and fault boundary
+
+The accepted data-type set is `S32`, `S16`, `U32`, `U16`.
+
+The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+
+<!-- PTO-READER-BLOCK: tile-tci-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `TCI` example, start `2` in ascending mode over three valid columns produces `[2, 3, 4]`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `irregular-and-complex`
@@ -160,7 +211,3 @@ end;
 ## Examples
 
 - BSTART.SFU TCI, U16; B.DIM LB0=16; B.IOR a0, a1; B.IOT mask=1111, <last>, ->T0<1>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

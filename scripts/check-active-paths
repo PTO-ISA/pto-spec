@@ -24,7 +24,24 @@ OBSOLETE_PATHS = (
     Path("tests/asl/shards"),
 )
 MARKDOWN_ROOTS = frozenset(
-    {"arch", "block", "scalar", "tile", "status", "governance", "development", "releases"}
+    {
+        "arch",
+        "block",
+        "scalar",
+        "tile",
+        "status",
+        "governance",
+        "development",
+        "releases",
+        "site",
+    }
+)
+GENERATED_SITE_PATHS = (
+    Path("docs/site/node_modules"),
+    Path("docs/site/.docusaurus"),
+    Path("docs/site/build"),
+    Path("docs/site/test-results"),
+    Path("docs/site/playwright-report"),
 )
 AGENT_ENTRYPOINTS = (
     Path("AGENTS.md"),
@@ -84,6 +101,8 @@ def validate(root: Path, tracked: tuple[Path, ...]) -> list[str]:
     if docs.exists():
         for absolute in sorted(docs.rglob("*")):
             relative = absolute.relative_to(root)
+            if any(_at_or_below(relative, generated) for generated in GENERATED_SITE_PATHS):
+                continue
             if absolute.is_symlink() and relative.suffix == ".md":
                 errors.append(f"active Markdown symlink is forbidden: {relative}")
             if relative.suffix == ".md" and not _owned_markdown(relative):
@@ -92,6 +111,9 @@ def validate(root: Path, tracked: tuple[Path, ...]) -> list[str]:
                     f"ownership: {relative}"
                 )
     for path in tracked:
+        if any(_at_or_below(path, generated) for generated in GENERATED_SITE_PATHS):
+            errors.append(f"generated site path must not be tracked: {path}")
+            continue
         if path.suffix == ".md" and path.parts[:1] == ("docs",) and not _owned_markdown(path):
             errors.append(
                 "active Markdown is outside the ASL mirror or another owned documentation root "

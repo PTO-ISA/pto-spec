@@ -11,6 +11,66 @@ FMADD computes one fused SrcL multiplied by SrcR plus SrcA operation through the
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-fmadd-purpose role=purpose -->
+## What FMADD does
+
+`FMADD` computes fused left times right plus addend through the active numeric profile.
+
+<!-- PTO-READER-BLOCK: scalar-fmadd-mechanism role=mechanism -->
+## Numeric mechanism
+
+`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+
+The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
+
+In the `pto-v0` reference profile, carrier multiplication plus the addend is evaluated modulo the selected width. This deterministic reference rule is not an IEEE-754 or target-hardware claim.
+
+<!-- PTO-READER-BLOCK: scalar-fmadd-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `RegDst` selects the encoded destination or discard behavior.
+
+- `SrcA` supplies the addend source.
+
+- `SrcL` supplies the left scalar source.
+
+- `SrcR` supplies the right scalar source.
+
+- `SrcType` selects the source-carrier width.
+
+- Reg5 source selectors may read GPR, T, or U state without consuming temporary entries.
+
+- The destination selector writes a GPR, pushes T/U, or discards only the result.
+
+<!-- PTO-READER-BLOCK: scalar-fmadd-effects role=effects -->
+## Effects and ordering
+
+All explicit sources are snapshotted before numeric-status or destination effects.
+
+All five profile-returned flags are ORed into sticky numeric state; the operation cannot clear an existing flag.
+
+The result is published or discarded, then `TPC` advances by `4` bytes. The instruction has no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-fmadd-constraints role=constraints -->
+## Type and profile boundaries
+
+`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+
+The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
+
+<!-- PTO-READER-BLOCK: scalar-fmadd-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not define arithmetic independently of the normative rule or active profile.
+
+`fmadd.fd a0, a1, a2, ->a3` selects its carriers, snapshots its sources, invokes the active profile, accumulates returned flags, publishes the result, and then advances `TPC`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -163,7 +223,3 @@ end;
 
 - fmadd.fd a0, a1, a2, ->a3
 - fmadd.fs t#1, u#1, a0, ->t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

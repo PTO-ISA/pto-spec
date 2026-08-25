@@ -11,6 +11,56 @@ HL.SETC.ANDI - Combine scalar comparison results and update the bundle commit co
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-setc-andi-purpose role=purpose -->
+## What HL.SETC.ANDI does
+
+`HL.SETC.ANDI` derives a bitwise-AND condition and publishes it as the current Conditional bundle commit decision.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-andi-mechanism role=mechanism -->
+## Mechanism
+
+After placement and single-setter checks, the instruction snapshots its operands and applies bitwise AND.
+
+The decoded immediate is logically shifted left by `shamt` before the condition is evaluated.
+
+Zero selects a false commit condition; any nonzero combined value selects true.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-andi-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `SrcL` supplies the left scalar source.
+
+- `shamt` supplies the encoded shift amount.
+
+- `simm24` supplies a signed encoded immediate.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-andi-effects role=effects -->
+## Effects and ordering
+
+The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+
+On success, `HL.SETC.ANDI` advances `TPC` by `6` bytes. It has no scalar destination and no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-andi-constraints role=constraints -->
+## Legality and fault order
+
+The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+
+Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-hl-setc-andi-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`hl.setc.andi SrcL, simm` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -132,7 +182,3 @@ end;
 ## Examples
 
 - hl.setc.andi SrcL, simm
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

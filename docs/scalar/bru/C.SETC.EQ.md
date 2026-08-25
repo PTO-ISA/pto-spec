@@ -11,6 +11,52 @@ C.SETC.EQ - Compare scalar operands and update the bundle commit condition.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-c-setc-eq-purpose role=purpose -->
+## What C.SETC.EQ does
+
+`C.SETC.EQ` evaluates equality and publishes the result as the current Conditional bundle commit decision.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-eq-mechanism role=mechanism -->
+## Mechanism
+
+Placement and the single-setter rule are checked before source readiness or reads.
+
+The snapshotted operands are evaluated for equality and canonicalized to XLEN one or zero.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-eq-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `SrcL` supplies the left scalar source.
+
+- `SrcR` supplies the right scalar source.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-eq-effects role=effects -->
+## Effects and ordering
+
+The canonical condition is written atomically to `_CommitArgument` and `BARG.TAKEN`, and the condition-set marker becomes true.
+
+On success, `C.SETC.EQ` advances `TPC` by `2` bytes. It has no scalar destination and no memory or reservation effect.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-eq-constraints role=constraints -->
+## Legality and fault order
+
+The instruction is valid only in the applicable Conditional bundle context, and only one successful condition setter may occur.
+
+Wrong placement or a repeated setter raises an Illegal Block Exception before source reads; encoding or unavailable-source failures raise `Fault_IllegalInstruction` before commit or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-c-setc-eq-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`c.setc.eq srcL, srcR` evaluates the described condition, writes the canonical decision to commit state, and advances `TPC` only after that update.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -129,7 +175,3 @@ end;
 ## Examples
 
 - c.setc.eq srcL, srcR
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -7,6 +7,56 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-INTEGER}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-integer-types-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit names the fixed-width carriers and bounded index domains shared by scalar, block, tile, memory, system-register, and trap owners.
+
+Central type ownership lets ASL signatures expose which architectural domain an integer belongs to instead of passing unconstrained integers everywhere.
+
+<!-- PTO-READER-BLOCK: arch-integer-types-concepts-state role=concepts-state -->
+## Concepts and visible state
+
+- `Word`, `DoubleWord`, `HalfWord`, and `Byte` are `PTO_XLEN`, `PTO_XLEN * 2`, `32`, and `8` bits respectively; `PredicateWord` uses `PTO_PREDICATE_WIDTH`.
+- Register and binding indices are bounded by their owning count constants, including `GPRIndex`, `TileIndex`, `PredicateIndex`, and the bundle binding index types.
+- Address-facing types separate `ModelAddress`, 24-bit `SystemRegisterAddress`, and 16-bit-file `SystemRegisterFileIndex`; traps use six-bit `TrapNumber` and `0..63` `InterruptID`.
+
+<!-- PTO-READER-BLOCK: arch-integer-types-rules-interactions role=rules-interactions -->
+## Rules and interactions
+
+Array types such as `PERegisterFile` and `CorePEWords` derive their extents from model constants rather than introducing new architectural counts.
+
+`SharedTileID` is a six-bit carrier, while `SharedTileIndex` is a bounded integer index; callers must not treat those distinct roles as interchangeable.
+
+Packed tile indices have explicit model bounds: element `0..524287`, carrier `0..PTO_MODEL_TILE_ELEMENTS-1`, and lane `0..15`.
+
+<!-- PTO-READER-BLOCK: arch-integer-types-boundaries role=boundaries -->
+## Architectural boundaries
+
+Bounds containing `PTO_MODEL_*` are verification-model bounds. They are not claims that every implementation has the same physical capacity.
+
+This unit defines types only; state allocation, access checks, faults, and instruction effects remain in the owners that consume them.
+
+<!-- PTO-READER-BLOCK: arch-integer-types-example-usage role=example-usage -->
+## Non-normative reading example
+
+A function accepting `TileIndex` can only receive an index in `0..PTO_TILE_REGISTER_COUNT-1`; a six-bit `SharedTileID` still requires an explicit mapping before it can serve as a `SharedTileIndex`.
+
+Read a model-bound array extent as a type-checking contract for this ASL model, then follow the consuming state owner for architecture-visible capacity rules.
+
+<!-- PTO-READER-BLOCK: arch-integer-types-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Tile data types](tile-data-types.md)
+- [Memory model types](memory-model.md)
+- [System register types](system-registers.md)
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/integer.asl -->
@@ -45,7 +95,3 @@ type TrapNumber of bits(6);
 type InterruptID of integer {0..63};
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

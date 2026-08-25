@@ -11,6 +11,57 @@ Extract a rectangular source region at the encoded row and column offsets.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-textract-purpose role=purpose -->
+## What TEXTRACT does
+
+`TEXTRACT` is a selector-encoded Tile operation executed by `SFU`. It copies the rectangle beginning at the encoded row and column offsets into the destination; its current instruction contract owns the exact bundle form and publication boundary.
+
+<!-- PTO-READER-BLOCK: tile-textract-mechanism role=mechanism -->
+## Element and Tile mechanism
+
+After all descriptor and operand checks succeed, the owning ASL handler copies the rectangle beginning at the encoded row and column offsets into the destination. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+
+The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+
+<!-- PTO-READER-BLOCK: tile-textract-inputs role=inputs-outputs -->
+## Operand roles and descriptors
+
+- `destination0` has the exact contract role **destination**.
+- `source0` has the exact contract role **source**.
+- `natural0` has the exact contract role **row-offset**.
+- `natural1` has the exact contract role **column-offset**.
+
+The assembled bundle schema fixes descriptor, shape, layout, and applicability checks before the handler runs.
+
+<!-- PTO-READER-BLOCK: tile-textract-effects role=effects -->
+## Publication, definedness, and padding
+
+Destination-visible state is published only after complete preflight; where the contract names atomic publication, payload, descriptor, definedness, padding, and status become visible together.
+
+No padding behavior beyond the current handler contract is implied.
+
+The operation has no GM memory effect; descriptor, payload, definedness, padding, and numeric-status changes are limited to those listed by the current contract.
+
+<!-- PTO-READER-BLOCK: tile-textract-constraints role=constraints -->
+## Type, layout, and fault boundary
+
+The exact accepted type or type-pair set is owned by the generated legality section below; this guide does not widen it.
+
+The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+
+<!-- PTO-READER-BLOCK: tile-textract-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `TEXTRACT` example, a one-by-one destination at row offset `1` and column offset `1` receives source element `[1,1]`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `layout-and-rearrangement`
@@ -145,7 +196,3 @@ end;
 ## Examples
 
 - BSTART.SFU TEXTRACT, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; B.IOR; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

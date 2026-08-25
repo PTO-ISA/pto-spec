@@ -11,6 +11,52 @@ ASSERT raises the architecture assertion trap exactly when its snapshotted scala
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-assert-purpose role=purpose -->
+## What ASSERT does
+
+`ASSERT` tests a snapshotted scalar condition and raises the architecture assertion trap when it is zero.
+
+<!-- PTO-READER-BLOCK: scalar-assert-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_ArchitectureAssert`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-assert-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-assert-effects role=effects -->
+## Architectural effects
+
+The scalar condition is snapshotted; zero raises `Fault_Assert` at the faulting PC, while nonzero retires without another architectural effect.
+
+The condition is read only after placement and decode checks, and `TPC` advances only on the nonfaulting path.
+
+<!-- PTO-READER-BLOCK: scalar-assert-constraints role=constraints -->
+## Placement and rejection
+
+Every available Reg5 source selector is assigned.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-assert-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `assert SrcL` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -128,7 +174,3 @@ end;
 ## Examples
 
 - assert SrcL
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

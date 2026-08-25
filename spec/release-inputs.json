@@ -31,6 +31,11 @@
       "role": "canonical-input"
     },
     {
+      "generator": "scripts/generate-mnemonic-description-coverage",
+      "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
+      "role": "canonical-input"
+    },
+    {
       "generator": "scripts/generate-release-traceability-readiness",
       "path": "spec/evidence/release-traceability-readiness.json",
       "role": "canonical-input"

@@ -83,6 +83,7 @@ class ActivePathCheckTest(unittest.TestCase):
                 "docs/governance/adr-process.md",
                 "docs/development/getting-started.md",
                 "docs/releases/index.md",
+                "docs/site/README.md",
             ]
             for value in paths:
                 path = root / value
@@ -92,6 +93,29 @@ class ActivePathCheckTest(unittest.TestCase):
             result = self.run_checker(root, paths)
 
             self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_untracked_generated_site_markdown_is_ignored(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "docs/site/node_modules/package/README.md"
+            path.parent.mkdir(parents=True)
+            path.write_text("# Dependency\n", encoding="utf-8")
+
+            result = self.run_checker(root, [])
+
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_tracked_generated_site_path_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "docs/site/build/index.md"
+            path.parent.mkdir(parents=True)
+            path.write_text("# Generated\n", encoding="utf-8")
+
+            result = self.run_checker(root, ["docs/site/build/index.md"])
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("generated site path must not be tracked", result.stderr)
 
     def test_unrecognized_documentation_root_remains_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

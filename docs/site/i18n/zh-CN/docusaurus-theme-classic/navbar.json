@@ -1,0 +1,12 @@
+{
+  "title": {"message": "PTO 规范"},
+  "item.label.PTO Architecture": {"message": "PTO 架构"},
+  "item.label.Scalar": {"message": "标量"},
+  "item.label.Block": {"message": "Block"},
+  "item.label.Tile": {"message": "Tile"},
+  "item.label.ADR / NDF": {"message": "ADR / NDF"},
+  "item.label.ADR process": {"message": "ADR 流程"},
+  "item.label.NDF Explorer": {"message": "NDF 探索器"},
+  "item.label.Search": {"message": "搜索"},
+  "item.label.GitHub": {"message": "GitHub"}
+}

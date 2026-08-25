@@ -11,6 +11,61 @@ HL.SB.PO snapshots its scalar sources, forms its encoded address, and stores one
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-hl-sb-po-purpose role=purpose -->
+## What HL.SB.PO does
+
+`HL.SB.PO` is a standalone `48`-bit scalar AGU instruction that stores one 1-byte little-endian value using `Register` addressing.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sb-po-mechanism role=mechanism -->
+## Address and transfer mechanism
+
+The register-offset path applies the encoded `SrcRType` transformation to `SrcR` and adds the transformed offset to the snapshotted `SrcL` value modulo `2^PTO_XLEN`. The scale factor is fixed at `1`; no `shamt` field is encoded.
+
+After complete preflight, one aligned little-endian `1`-byte store commits at the selected address.
+
+Post-index mode accesses the original base and publishes base plus offset only after the memory operation succeeds.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sb-po-inputs role=inputs-outputs -->
+## Encoded inputs and outputs
+
+- `RegDst` is a `5`-bit field selecting the updated-base result.
+- `SrcD` is a `5`-bit field selecting the first store-data value.
+- `SrcL` is a `5`-bit field selecting the address base.
+- `SrcR` is a `5`-bit field selecting the register offset.
+- `SrcRType` is a `2`-bit field selecting the register-offset transformation.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sb-po-effects role=effects -->
+## Effects and completion order
+
+All explicit and implicit scalar sources are snapshotted before any memory or destination effect, so aliases use pre-instruction values.
+
+Successful execution records one relaxed store event; an overlapping reservation is invalidated only after complete preflight.
+
+After all result or writeback publication, `HL.SB.PO` advances `TPC` by `6` bytes; a rejected or faulting attempt does not retire.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sb-po-constraints role=constraints -->
+## Legality, faults, and restart
+
+Each accessed address is aligned to the `1`-byte transfer unit. Misalignment selects `Fault_DataAlignment` before translation; a later permission or bounded-memory failure selects `Fault_DataPage` at the original address.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected T/U source selects `Fault_IllegalInstruction` before instruction effects.
+
+A fault records no successful memory event and commits no partial memory, result, or writeback effect. Re-execution recomputes the source snapshots, address, preflight, transfer, and publication from the beginning.
+
+<!-- PTO-READER-BLOCK: scalar-hl-sb-po-example role=example -->
+## Non-normative reading walkthrough
+
+This walkthrough explains how to use the page and does not add instruction behavior.
+
+- Start with the canonical assembly `hl.sb.po SrcD, [SrcL, SrcR<{.sw,.uw,.neg}>], ->{t, u, Rd}` and identify the encoded address fields.
+- Then compare the address mode, transfer action, completion effects, and fault boundary above with the exact generated ASL contract below.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -128,13 +183,13 @@ end;
 ## Defaults and encoded zero
 
 - Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
-- SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift.
+- SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. The register offset uses a fixed scale factor of 1; no shamt field is encoded.
 
 ## Legality
 
 - Every encoded Reg5 source uses the complete domain: codes 0..23 select absolute GPRs, codes 24..27 select T#1..T#4, and codes 28..31 select U#1..U#4 without consumption.
 - Every Reg5 destination is assigned: codes 1..23 write GPRs, code 30 pushes U, code 31 pushes T, and codes 0 and 24..29 discard only that result.
-- All four SrcRType values and all shamt values 0..31 are assigned; apply the modifier before the shift.
+- All four SrcRType values are assigned; apply the selected modifier with the fixed scale factor of 1.
 - Each memory address must be aligned to the 1-byte access size; a 1-byte access is the complete transfer unit.
 
 ## State effects
@@ -166,7 +221,3 @@ end;
 ## Examples
 
 - hl.sb.po SrcD, [SrcL, SrcR<{.sw,.uw,.neg}>], ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

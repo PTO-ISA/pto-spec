@@ -11,6 +11,61 @@ Begins a predicate-masked TLSU byte-displacement gather block.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-mgather-mask-purpose role=purpose -->
+## What BSTART.MGATHER.MASK contributes
+
+`BSTART.MGATHER.MASK` is a 32-bit block-start command for the MGATHER.MASK form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-mask-mechanism role=mechanism -->
+## Placement and mechanism
+
+Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+
+```text
+BSTART.MGATHER.MASK DataType
+B.DATR PadValue, Layout (optional)
+B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional)
+B.DIM LB2=Col (optional)
+B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>
+B.IOR BaseGPR, zero, zero, ->zero
+BSTOP
+```
+
+After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-mask-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-mask-effects role=effects -->
+## Pending state and completion
+
+The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-mask-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-mask-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+BSTART.MGATHER.MASK DataType
+```
+
+Assume predecessor retirement and target checks succeed. `BSTART.MGATHER.MASK DataType` opens the pending `BSTART.MGATHER.MASK` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -178,7 +233,3 @@ end;
 ## Examples
 
 - BSTART.MGATHER.MASK DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

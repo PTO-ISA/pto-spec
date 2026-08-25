@@ -7,6 +7,52 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-SYSTEM-REGISTERS-ACCESS-CONTROL}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-access-control-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit defines current Access Control Ring state, its four-bit representation, portable trap targets, permitted service requests, and trap-vector lookup.
+
+<!-- PTO-READER-BLOCK: arch-access-control-concepts-state role=concepts-state -->
+## ACR state and encoding
+
+`CurrentACR` returns `_CurrentACR`. `AccessControlRingBits` maps ring values `0` through `15` to the corresponding four-bit binary value.
+
+`SetCurrentACR` updates both `_CurrentACR` and `core_state[3:0]`, keeping the stored ring and its system-register representation synchronized.
+
+<!-- PTO-READER-BLOCK: arch-access-control-rules-interactions role=rules-interactions -->
+## Trap and service routing
+
+`TrapTargetForFault` maps source ACR0 to target ACR0 and every nonzero source to target ACR1. `TrapTargetForInterrupt` uses the same rule.
+
+From ACR1, service request types `0000` and `0010` are permitted. From ACR2 through ACR15, request types whose unsigned value is at most `2` are permitted; ACR0 permits none.
+
+For a permitted request, type `0001` targets ACR1 and every other permitted type targets ACR0.
+
+<!-- PTO-READER-BLOCK: arch-access-control-boundaries role=boundaries -->
+## Trap-vector lookup boundary
+
+`TrapVectorEntry` reads extended-system-register index `target * 4096 + 0x0f01`. A nonzero entry is the vector base; a zero entry falls back to the supplied fault address.
+
+`ServiceRequestTarget` asserts that the request is permitted. Callers must establish permission before asking for a target.
+
+<!-- PTO-READER-BLOCK: arch-access-control-example-usage role=example-usage -->
+## Non-normative routing example
+
+A type-`0001` request from ACR2 is permitted and targets ACR1. The same request from ACR1 is not permitted, so it must not be passed to `ServiceRequestTarget`.
+
+<!-- PTO-READER-BLOCK: arch-access-control-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Execution context](../programming-model/execution-context.md) is the declared dependency.
+- [Context registers](context.md) defines the ring-plus-low-index addressing rule.
+- [Trap context](../state/trap-context.md) saves the source ACR and restores it after portable recovery.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/system-registers/access-control.asl -->
@@ -85,7 +131,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -22,6 +22,7 @@ from scripts.release_selection import (  # noqa: E402
 )
 
 RELEASE = "0.58.4"
+PUBLICATION_VERSION = "0.58.4.1"
 ENCODING_ABI = "pto-isa-0.58.4-mode-function-v1"
 MANIFEST_PATH = Path("spec/release-manifest.json")
 TOTALITY_PATH = Path("spec/evidence/pto-isa-0584-encoding-totality.json")
@@ -268,6 +269,7 @@ def validate_release_metadata() -> dict:
     release = metadata.get("release", {})
     expected = {
         "architecture_version": RELEASE,
+        "publication_version": PUBLICATION_VERSION,
         "encoding_abi": ENCODING_ABI,
         "manifest": str(MANIFEST_PATH),
     }
@@ -1302,6 +1304,7 @@ def build_artifacts() -> dict[str, dict]:
     manifest = {
         "schema_version": 1,
         "release": RELEASE,
+        "publication_version": PUBLICATION_VERSION,
         "specification_status": metadata["specification"]["status"],
         "encoding_abi": ENCODING_ABI,
         "content_sha256": content_hash,

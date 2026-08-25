@@ -11,6 +11,56 @@ C.ADDI snapshots one complete Reg5 source, sign-extends simm5, adds modulo 2^XLE
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-c-addi-purpose role=purpose -->
+## What C.ADDI does
+
+`C.ADDI` is a 16-bit scalar ALU instruction. It performs addition under the complete XLEN value result rules; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-c-addi-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then performs addition under the complete XLEN value result rules, and only afterward performs the destination effects.
+
+- The immediate width and extension rule come from the encoded field shown below; encoded zero supplies numeric zero unless the generated contract states another zero meaning.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-addi-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `SrcL` field selects an addend through Reg5.
+- The signed 5-bit `simm5` field carries the signed five-bit addend.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-c-addi-effects role=effects -->
+## Effects and ordering
+
+Any scalar source is snapshotted before publication, and the completed instruction pushes exactly one result to T.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 2 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-c-addi-constraints role=constraints -->
+## Legality and fault boundary
+
+Fixed-width arithmetic follows the operation’s wraparound rule without an arithmetic exception. A fixed-bit mismatch or unavailable selected T/U source raises `Fault_IllegalInstruction` before publication and before `TPC` advances.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-c-addi-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `C.ADDI` example, `SrcL=7` and `simm5=3` produce `10`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -120,7 +170,3 @@ end;
 ## Examples
 
 - c.addi t#1, -1, ->t
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

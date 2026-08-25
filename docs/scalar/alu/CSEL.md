@@ -11,6 +11,59 @@ CSEL snapshots three Reg5 sources, selects SrcL for a nonzero predicate or its o
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-csel-purpose role=purpose -->
+## What CSEL does
+
+`CSEL` is a 32-bit scalar ALU instruction. It selects the left value for a nonzero predicate, otherwise selecting the optionally negated right value; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-csel-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then selects the left value for a nonzero predicate, otherwise selecting the optionally negated right value, and only afterward performs the destination effects.
+
+- `SrcRType` chooses the right-source transformation before the operation-specific arithmetic or logical step.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-csel-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `SrcP` field selects the predicate value through Reg5.
+- The 5-bit `SrcL` field selects the value used for a true predicate.
+- The 5-bit `SrcR` field selects the value used for a false predicate.
+- The 2-bit `SrcRType` field selects the CSEL transformation applied to the false-side source.
+- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-csel-effects role=effects -->
+## Effects and ordering
+
+Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-csel-constraints role=constraints -->
+## Legality and fault boundary
+
+All three sources are read before selection; an unavailable T/U source faults with `Fault_IllegalInstruction` before publication even when the predicate would choose the other side.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-csel-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `CSEL` example, predicate `0`, false-side value `3`, and the negating selector publish `-3` modulo `2^PTO_XLEN`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -153,7 +206,3 @@ end;
 - csel a0, a1, a2, ->a3
 - csel t#1, u#1, a0.neg, ->u
 - csel zero, a0, a1, ->zero
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

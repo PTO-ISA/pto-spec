@@ -1,0 +1,984 @@
+#!/usr/bin/env python3
+"""Generate publication-safe mnemonic-description migration scaffolding.
+
+The comparison archive is never unpacked.  Only anonymous path/content hashes,
+coarse page kinds, and terminal review state are written to the repository.
+"""
+
+from __future__ import annotations
+
+import argparse
+import copy
+import hashlib
+import html.parser
+import json
+import pathlib
+import re
+import stat
+import unicodedata
+import zipfile
+from collections import Counter
+
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+EXPECTED_ARCHIVE_SHA256 = (
+    "46fc43641fe1394f27f4961734940355e83909df08e4e4a489f02ff1e4a28aa5"
+)
+BASELINE_COMMIT = "564ac2d8d868c441a8dc5e5f4d44efa7533a911d"
+TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
+EVIDENCE_ROOT = ROOT / "spec/evidence/mnemonic-descriptions"
+SURFACES = {"arch", "scalar", "block", "tile"}
+MAX_ARCHIVE_BYTES = 16 * 1024 * 1024
+MAX_ARCHIVE_ENTRIES = 4096
+MAX_ARCHIVE_UNCOMPRESSED_BYTES = 128 * 1024 * 1024
+MAX_ARCHIVE_ENTRY_BYTES = 16 * 1024 * 1024
+MAX_ARCHIVE_COMPRESSION_RATIO = 200
+ALLOWED_ZIP_METHODS = {zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED}
+MNEMONIC = re.compile(r"^[A-Za-z][A-Za-z0-9_.]*$")
+
+
+def sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def sha256_file(path: pathlib.Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def validate_zip_resources(archive: pathlib.Path, entries: list[zipfile.ZipInfo]) -> None:
+    if archive.stat().st_size > MAX_ARCHIVE_BYTES:
+        raise SystemExit("archive compressed size exceeds limit")
+    if len(entries) > MAX_ARCHIVE_ENTRIES:
+        raise SystemExit("archive entry count exceeds limit")
+    total = 0
+    for entry in entries:
+        mode = (entry.external_attr >> 16) & 0o170000
+        ratio = entry.file_size / entry.compress_size if entry.compress_size else float("inf")
+        if entry.flag_bits & 0x1:
+            raise SystemExit("encrypted archive entries are forbidden")
+        if entry.compress_type not in ALLOWED_ZIP_METHODS:
+            raise SystemExit("unsupported archive compression method")
+        if mode == stat.S_IFLNK:
+            raise SystemExit("archive symlink entries are forbidden")
+        if entry.file_size > MAX_ARCHIVE_ENTRY_BYTES:
+            raise SystemExit("archive entry size exceeds limit")
+        total += entry.file_size
+        if total > MAX_ARCHIVE_UNCOMPRESSED_BYTES:
+            raise SystemExit("archive total uncompressed size exceeds limit")
+        if entry.file_size and (
+            entry.compress_size == 0 or ratio > MAX_ARCHIVE_COMPRESSION_RATIO
+        ):
+            raise SystemExit("archive compression ratio exceeds limit")
+
+
+def canonical_bytes(value: object) -> bytes:
+    return (
+        json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode("utf-8")
+
+
+def normalize_archive_path(name: str) -> str:
+    normalized = unicodedata.normalize("NFC", name.replace("\\", "/"))
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+    parts = pathlib.PurePosixPath(normalized).parts
+    if not parts or normalized.startswith("/") or ".." in parts:
+        raise ValueError("archive contains a non-relative or traversing entry")
+    return "/".join(parts)
+
+
+def is_page_path(path: str) -> bool:
+    return pathlib.PurePosixPath(path).suffix.lower() in {".html", ".md"}
+
+
+def page_kind(path: str) -> str:
+    """Classify without retaining the source spelling in public evidence."""
+    lower = path.casefold()
+    name = pathlib.PurePosixPath(lower).name
+    if name.startswith("readme"):
+        return "readme"
+    if "coverage" in name:
+        return "coverage"
+    if name in {"index.html", "index.md"} or len(pathlib.PurePosixPath(path).parts) == 1:
+        return "index"
+    if "scalar" in name:
+        return "scalar"
+    if "header" in name:
+        return "header"
+    if name.startswith("doc-t"):
+        return "tile"
+    if name.startswith("doc-"):
+        return "wrapper"
+    return "auxiliary"
+
+
+class DeclaredPageParser(html.parser.HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.main_depth = 0
+        self.capture: str | None = None
+        self.buffer: list[str] = []
+        self.titles: list[str] = []
+        self.headings: list[str] = []
+        self.eyebrows: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attributes = dict(attrs)
+        if tag == "main":
+            self.main_depth += 1
+        if tag == "title" or (self.main_depth and tag == "h2") or (
+            self.main_depth and tag == "p" and "eyebrow" in (attributes.get("class") or "").split()
+        ):
+            self.capture = tag if tag != "p" else "eyebrow"
+            self.buffer = []
+
+    def handle_endtag(self, tag: str) -> None:
+        if self.capture and (tag == self.capture or (tag == "p" and self.capture == "eyebrow")):
+            value = " ".join("".join(self.buffer).split())
+            if value:
+                if self.capture == "title":
+                    self.titles.append(value)
+                elif self.capture == "h2":
+                    self.headings.append(value)
+                else:
+                    self.eyebrows.append(value)
+            self.capture = None
+            self.buffer = []
+        if tag == "main" and self.main_depth:
+            self.main_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if self.capture:
+            self.buffer.append(data)
+
+
+def declared_page_identity(path: str, content: bytes) -> tuple[str | None, str | None]:
+    suffix = pathlib.PurePosixPath(path).suffix.lower()
+    text = content.decode("utf-8", errors="replace")
+    if suffix == ".md":
+        heading = re.search(r"^#\s+(.+?)\s*$", text, flags=re.MULTILINE)
+        return (heading.group(1).strip() if heading else None), None
+    parser = DeclaredPageParser()
+    parser.feed(text)
+    candidate = parser.headings[0] if parser.headings else None
+    if candidate is None and parser.titles:
+        candidate = parser.titles[0].split(" - ", 1)[0].strip()
+    declared_surface = next(
+        (value.casefold() for value in parser.eyebrows
+         if value.casefold() in {"scalar", "header", "tile"}),
+        None,
+    )
+    return candidate, declared_surface
+
+
+def scalar_mapping_plan(archive: pathlib.Path, traceability: pathlib.Path,
+                        inventory: dict) -> tuple[dict, dict[str, list[str]], dict]:
+    current = [unit for unit in current_units(traceability) if unit["surface"] == "scalar"]
+    by_mnemonic: dict[str, dict] = {}
+    for unit in current:
+        key = unit["mnemonic"].casefold()
+        if key in by_mnemonic:
+            raise SystemExit("current Scalar mnemonics are not case-insensitively unique")
+        by_mnemonic[key] = unit
+
+    page_by_id = {page["page_id"]: page for page in inventory["pages"]}
+    mappings: dict[str, list[str]] = {unit["id"]: [] for unit in current}
+    counts = Counter()
+    conflicts: list[str] = []
+    with zipfile.ZipFile(archive) as source:
+        entries = source.infolist()
+        validate_zip_resources(archive, entries)
+        for entry in entries:
+            if entry.is_dir():
+                continue
+            normalized = normalize_archive_path(entry.filename)
+            if not is_page_path(normalized):
+                continue
+            path_digest = sha256_bytes(normalized.encode("utf-8"))
+            page_id = f"SRC-PAGE-{path_digest[:24].upper()}"
+            page = page_by_id.get(page_id)
+            if page is None:
+                raise SystemExit(f"archive page is absent from anonymous inventory: {page_id}")
+            with source.open(entry) as content_stream:
+                content = content_stream.read(MAX_ARCHIVE_ENTRY_BYTES + 1)
+            if len(content) > MAX_ARCHIVE_ENTRY_BYTES:
+                raise SystemExit("archive entry size exceeds limit")
+            candidate, declared_surface = declared_page_identity(normalized, content)
+            if declared_surface != "scalar":
+                continue
+            if not candidate or not MNEMONIC.fullmatch(candidate):
+                page.update({
+                    "disposition": "non-mnemonic-input",
+                    "mapped_unit_ids": [],
+                    "mapping_basis": "reviewed-internal-title",
+                })
+                counts["non_mnemonic"] += 1
+                continue
+            exact = by_mnemonic.get(candidate.casefold())
+            legacy = (
+                by_mnemonic.get(candidate[2:].casefold())
+                if candidate.casefold().startswith("l.") and len(candidate) > 2 else None
+            )
+            target = exact or legacy
+            if exact is not None and legacy is not None and exact["id"] != legacy["id"]:
+                conflicts.append(page_id)
+                target = exact
+            if target is None:
+                page.update({
+                    "disposition": "omit-old",
+                    "mapped_unit_ids": [],
+                    "mapping_basis": "reviewed-internal-title",
+                })
+                counts["omit_old"] += 1
+                continue
+            page.update({
+                "disposition": "mapped-current",
+                "mapped_unit_ids": [target["id"]],
+                "mapping_basis": "reviewed-alias",
+            })
+            mappings[target["id"]].append(page_id)
+            counts["exact" if exact is not None else "legacy_l_prefix"] += 1
+
+    for page_ids in mappings.values():
+        page_ids.sort()
+    multiple = sorted(unit_id for unit_id, page_ids in mappings.items() if len(page_ids) > 1)
+    summary = {
+        "exact": counts["exact"],
+        "legacy_l_prefix": counts["legacy_l_prefix"],
+        "non_mnemonic": counts["non_mnemonic"],
+        "omit_old": counts["omit_old"],
+        "mapped_units": sum(bool(page_ids) for page_ids in mappings.values()),
+        "multiple_page_units": len(multiple),
+        "ambiguous_exact_legacy_pages": len(conflicts),
+    }
+    return inventory, mappings, summary
+
+
+def block_tile_mapping_plan(archive: pathlib.Path, traceability: pathlib.Path,
+                            inventory: dict) -> tuple[dict, dict[str, dict[str, list[str]]], dict]:
+    units_by_surface: dict[str, dict[str, dict]] = {}
+    for surface in ("block", "tile"):
+        units = [unit for unit in current_units(traceability) if unit["surface"] == surface]
+        by_mnemonic: dict[str, dict] = {}
+        for unit in units:
+            key = unit["mnemonic"].casefold()
+            if key in by_mnemonic:
+                raise SystemExit(f"current {surface} mnemonics are not case-insensitively unique")
+            by_mnemonic[key] = unit
+        units_by_surface[surface] = by_mnemonic
+    page_by_id = {page["page_id"]: page for page in inventory["pages"]}
+    mappings = {
+        surface: {unit["id"]: [] for unit in units.values()}
+        for surface, units in units_by_surface.items()
+    }
+    counts = {surface: Counter() for surface in ("block", "tile")}
+    with zipfile.ZipFile(archive) as source:
+        entries = source.infolist()
+        validate_zip_resources(archive, entries)
+        for entry in entries:
+            if entry.is_dir():
+                continue
+            normalized = normalize_archive_path(entry.filename)
+            if not is_page_path(normalized):
+                continue
+            path_digest = sha256_bytes(normalized.encode("utf-8"))
+            page_id = f"SRC-PAGE-{path_digest[:24].upper()}"
+            page = page_by_id.get(page_id)
+            if page is None:
+                raise SystemExit(f"archive page is absent from anonymous inventory: {page_id}")
+            with source.open(entry) as content_stream:
+                content = content_stream.read(MAX_ARCHIVE_ENTRY_BYTES + 1)
+            candidate, declared_surface = declared_page_identity(normalized, content)
+            if declared_surface not in {"header", "tile"}:
+                continue
+            surface = "block" if declared_surface == "header" else "tile"
+            if candidate and surface == "tile" and candidate.casefold().endswith(" intrinsic"):
+                candidate = candidate[:-len(" Intrinsic")].strip()
+            if not candidate or not MNEMONIC.fullmatch(candidate):
+                page.update({
+                    "disposition": "non-mnemonic-input",
+                    "mapped_unit_ids": [],
+                    "mapping_basis": "reviewed-internal-title",
+                })
+                counts[surface]["non_mnemonic"] += 1
+                continue
+            target = units_by_surface[surface].get(candidate.casefold())
+            if target is None:
+                page.update({
+                    "disposition": "omit-old",
+                    "mapped_unit_ids": [],
+                    "mapping_basis": "reviewed-internal-title",
+                })
+                counts[surface]["omit_old"] += 1
+                continue
+            page.update({
+                "disposition": "mapped-current",
+                "mapped_unit_ids": [target["id"]],
+                "mapping_basis": "reviewed-alias",
+            })
+            mappings[surface][target["id"]].append(page_id)
+            counts[surface]["exact"] += 1
+    summary = {}
+    for surface in ("block", "tile"):
+        for page_ids in mappings[surface].values():
+            page_ids.sort()
+        summary[surface] = {
+            "exact": counts[surface]["exact"],
+            "non_mnemonic": counts[surface]["non_mnemonic"],
+            "omit_old": counts[surface]["omit_old"],
+            "mapped_units": sum(bool(ids) for ids in mappings[surface].values()),
+            "multiple_page_units": sum(len(ids) > 1 for ids in mappings[surface].values()),
+            "unmapped_current_units": sum(not ids for ids in mappings[surface].values()),
+            "ambiguous_pages": 0,
+        }
+    return inventory, mappings, summary
+
+
+def auxiliary_page_closure_plan(archive: pathlib.Path, inventory: dict) -> tuple[dict, dict]:
+    page_by_id = {page["page_id"]: page for page in inventory["pages"]}
+    closed = 0
+    unresolved: list[str] = []
+    with zipfile.ZipFile(archive) as source:
+        entries = source.infolist()
+        validate_zip_resources(archive, entries)
+        for entry in entries:
+            if entry.is_dir():
+                continue
+            normalized = normalize_archive_path(entry.filename)
+            if not is_page_path(normalized):
+                continue
+            path_digest = sha256_bytes(normalized.encode("utf-8"))
+            page_id = f"SRC-PAGE-{path_digest[:24].upper()}"
+            page = page_by_id[page_id]
+            if page["disposition"] != "pending":
+                continue
+            with source.open(entry) as content_stream:
+                content = content_stream.read(MAX_ARCHIVE_ENTRY_BYTES + 1)
+            candidate, declared_surface = declared_page_identity(normalized, content)
+            parser = DeclaredPageParser()
+            if pathlib.PurePosixPath(normalized).suffix.lower() == ".html":
+                parser.feed(content.decode("utf-8", errors="replace"))
+            aggregate_marker = any(
+                value.casefold() in {"overview", "coverage", "readme", "index", "wrapper"}
+                for value in parser.eyebrows
+            )
+            clearly_non_mnemonic = (
+                declared_surface is None
+                and (not candidate or not MNEMONIC.fullmatch(candidate) or aggregate_marker)
+            )
+            if not clearly_non_mnemonic:
+                unresolved.append(page_id)
+                continue
+            page.update({
+                "disposition": "non-mnemonic-input",
+                "mapped_unit_ids": [],
+                "mapping_basis": "reviewed-internal-title",
+            })
+            closed += 1
+    if unresolved:
+        raise SystemExit(
+            "unresolved pending pages require explicit mnemonic review: "
+            + ", ".join(sorted(unresolved))
+        )
+    return inventory, {"closed_non_mnemonic": closed, "remaining_pending": 0}
+
+
+def validate_frozen_scalar_mappings(evidence_root: pathlib.Path, traceability: pathlib.Path,
+                                    inventory: dict) -> dict:
+    scalar_units = {
+        unit["id"]: unit for unit in current_units(traceability) if unit["surface"] == "scalar"
+    }
+    inventory_mappings: dict[str, list[str]] = {unit_id: [] for unit_id in scalar_units}
+    counts = Counter()
+    for page in inventory["pages"]:
+        if page["kind"] != "scalar":
+            continue
+        disposition = page["disposition"]
+        if disposition == "mapped-current":
+            mapped = page["mapped_unit_ids"]
+            if (len(mapped) != 1 or mapped[0] not in scalar_units or
+                    page["mapping_basis"] != "reviewed-alias"):
+                raise SystemExit("invalid frozen Scalar reviewed-alias mapping")
+            inventory_mappings[mapped[0]].append(page["page_id"])
+            counts["mapped-current"] += 1
+        elif disposition in {"non-mnemonic-input", "omit-old"}:
+            if page["mapped_unit_ids"] or page["mapping_basis"] != "reviewed-internal-title":
+                raise SystemExit("invalid frozen Scalar terminal disposition")
+            counts[disposition] += 1
+        else:
+            raise SystemExit("Scalar source page lacks reviewed terminal disposition")
+    for unit_id, page_ids in inventory_mappings.items():
+        page_ids.sort()
+        shard_path = evidence_root / "scalar" / f"{unit_id}.json"
+        shard = json.loads(shard_path.read_text(encoding="utf-8"))
+        migration = shard["migration"]
+        expected_status = (
+            "mapped-current-multiple" if len(page_ids) > 1
+            else "mapped-current" if page_ids else "pending"
+        )
+        unmapped_state = (
+            (migration.get("mapping_status"), migration.get("mapping_basis"))
+            in {("pending", "unreviewed"), ("current-owner-only", "current-owner-only")}
+        )
+        if (
+            shard.get("status") not in {"pending", "complete"}
+            or migration.get("source_page_ids") != page_ids
+            or (page_ids and migration.get("mapping_status") not in
+                {expected_status, "reviewed-alias"})
+            or (page_ids and migration.get("mapping_basis") != "reviewed-alias")
+            or (not page_ids and not unmapped_state)
+            or migration.get("copyright_disposition") != "current-owner-rewrite"
+        ):
+            raise SystemExit(f"frozen Scalar inventory/shard mapping mismatch: {unit_id}")
+    summary = {
+        "mapped_pages": counts["mapped-current"],
+        "non_mnemonic": counts["non-mnemonic-input"],
+        "omit_old": counts["omit-old"],
+        "mapped_units": sum(bool(page_ids) for page_ids in inventory_mappings.values()),
+        "multiple_page_units": sum(len(page_ids) > 1 for page_ids in inventory_mappings.values()),
+    }
+    if inventory["archive_sha256"] == EXPECTED_ARCHIVE_SHA256 and summary != {
+        "mapped_pages": 518,
+        "non_mnemonic": 2,
+        "omit_old": 31,
+        "mapped_units": 402,
+        "multiple_page_units": 115,
+    }:
+        raise SystemExit("frozen Scalar mapping baseline counts changed")
+    return summary
+
+
+def validate_frozen_block_tile_mappings(evidence_root: pathlib.Path,
+                                        traceability: pathlib.Path, inventory: dict) -> dict:
+    summaries = {}
+    units_by_surface = {
+        surface: {
+            unit["id"]: unit for unit in current_units(traceability)
+            if unit["surface"] == surface
+        }
+        for surface in ("block", "tile")
+    }
+    all_target_ids = {
+        unit_id: surface for surface, units in units_by_surface.items() for unit_id in units
+    }
+    mappings = {
+        surface: {unit_id: [] for unit_id in units}
+        for surface, units in units_by_surface.items()
+    }
+    terminal_counts = Counter()
+    for page in inventory["pages"]:
+        if page["disposition"] == "mapped-current" and page["mapped_unit_ids"]:
+            unit_id = page["mapped_unit_ids"][0]
+            surface = all_target_ids.get(unit_id)
+            if surface is not None:
+                if len(page["mapped_unit_ids"]) != 1 or page["mapping_basis"] != "reviewed-alias":
+                    raise SystemExit(f"invalid frozen {surface} reviewed-alias mapping")
+                mappings[surface][unit_id].append(page["page_id"])
+        elif (page["kind"] != "scalar" and
+              page["disposition"] in {"non-mnemonic-input", "omit-old"}):
+            if page["mapped_unit_ids"] or page["mapping_basis"] != "reviewed-internal-title":
+                raise SystemExit("invalid frozen Block/Tile terminal disposition")
+            terminal_counts[page["disposition"]] += 1
+    for surface in ("block", "tile"):
+        inventory_mappings = mappings[surface]
+        for unit_id, page_ids in inventory_mappings.items():
+            page_ids.sort()
+            shard_path = evidence_root / surface / f"{unit_id}.json"
+            shard = json.loads(shard_path.read_text(encoding="utf-8"))
+            migration = shard["migration"]
+            expected_status = (
+                "mapped-current-multiple" if len(page_ids) > 1
+                else "mapped-current" if page_ids else "pending"
+            )
+            unmapped_state = (
+                (migration.get("mapping_status"), migration.get("mapping_basis"))
+                in {("pending", "unreviewed"), ("current-owner-only", "current-owner-only")}
+            )
+            if (
+                shard.get("status") not in {"pending", "complete"}
+                or migration.get("source_page_ids") != page_ids
+                or (page_ids and migration.get("mapping_status") not in
+                    {expected_status, "reviewed-alias"})
+                or (page_ids and migration.get("mapping_basis") != "reviewed-alias")
+                or (not page_ids and not unmapped_state)
+                or migration.get("copyright_disposition") != "current-owner-rewrite"
+            ):
+                raise SystemExit(f"frozen {surface} inventory/shard mapping mismatch: {unit_id}")
+            translation_path = (
+                evidence_root / "translations/zh-CN" / surface / f"{unit_id}.json"
+            )
+            translation = json.loads(translation_path.read_text(encoding="utf-8"))
+            if (translation.get("status") not in {"pending", "complete"} or
+                    translation.get("english_unit_shard_sha256") != sha256_bytes(shard_path.read_bytes())):
+                raise SystemExit(f"frozen {surface} pending translation hash mismatch: {unit_id}")
+        summaries[surface] = {
+            "mapped_pages": sum(len(ids) for ids in inventory_mappings.values()),
+            "mapped_units": sum(bool(ids) for ids in inventory_mappings.values()),
+            "multiple_page_units": sum(len(ids) > 1 for ids in inventory_mappings.values()),
+            "unmapped_current_units": sum(not ids for ids in inventory_mappings.values()),
+        }
+    summaries["terminal_pages"] = {
+        "non_mnemonic": terminal_counts["non-mnemonic-input"],
+        "omit_old": terminal_counts["omit-old"],
+        "pending": sum(page["disposition"] == "pending" for page in inventory["pages"]),
+    }
+    expected = {
+        "block": {"mapped_pages": 11, "mapped_units": 11,
+                  "multiple_page_units": 0, "unmapped_current_units": 50},
+        "tile": {"mapped_pages": 91, "mapped_units": 91,
+                 "multiple_page_units": 0, "unmapped_current_units": 18},
+        "terminal_pages": {"non_mnemonic": 15, "omit_old": 29, "pending": 0},
+    }
+    if inventory["archive_sha256"] == EXPECTED_ARCHIVE_SHA256 and summaries != expected:
+        raise SystemExit("frozen Block/Tile mapping baseline counts changed")
+    return summaries
+
+
+def archive_inventory(archive: pathlib.Path) -> dict:
+    pages = []
+    assets = []
+    normalized_seen: set[str] = set()
+    with zipfile.ZipFile(archive) as source:
+        entries = source.infolist()
+        validate_zip_resources(archive, entries)
+        archive_digest = sha256_file(archive)
+        if archive_digest != EXPECTED_ARCHIVE_SHA256:
+            raise SystemExit(
+                "comparison archive digest mismatch: expected "
+                f"{EXPECTED_ARCHIVE_SHA256}, got {archive_digest}"
+            )
+        for entry in entries:
+            if entry.is_dir():
+                continue
+            normalized = normalize_archive_path(entry.filename)
+            if normalized in normalized_seen:
+                raise SystemExit("comparison archive contains duplicate normalized paths")
+            normalized_seen.add(normalized)
+            content_hash = hashlib.sha256()
+            with source.open(entry) as content:
+                for chunk in iter(lambda: content.read(1024 * 1024), b""):
+                    content_hash.update(chunk)
+            content_digest = content_hash.hexdigest()
+            path_digest = sha256_bytes(normalized.encode("utf-8"))
+            if is_page_path(normalized):
+                pages.append(
+                    {
+                        "page_id": f"SRC-PAGE-{path_digest[:24].upper()}",
+                        "path_sha256": path_digest,
+                        "content_sha256": content_digest,
+                        "kind": page_kind(normalized),
+                        "disposition": "pending",
+                        "mapped_unit_ids": [],
+                        "mapping_basis": "unreviewed",
+                    }
+                )
+            else:
+                suffix = pathlib.PurePosixPath(normalized).suffix.lower()
+                assets.append(
+                    {
+                        "asset_id": f"SRC-ASSET-{path_digest[:24].upper()}",
+                        "content_sha256": content_digest,
+                        "media_kind": suffix[1:] if suffix else "extensionless",
+                    }
+                )
+
+    pages.sort(key=lambda item: item["page_id"])
+    assets.sort(key=lambda item: item["asset_id"])
+    return {
+        "schema_version": 1,
+        "source_id": "anonymous-source-001",
+        "archive_sha256": archive_digest,
+        "parser": {
+            "name": "pto-anonymous-zip-inventory",
+            "version": 1,
+            "path_normalization": "posix-nfc-relative-v1",
+            "page_predicate": "normalized terminal suffix is .html or .md (case-insensitive)",
+        },
+        "authorization": {
+            "state": "undocumented",
+            "licensed_copy_allowed": False,
+            "license_compatible": False,
+            "notice_evidence": False,
+        },
+        "default_copyright_disposition": "current-owner-rewrite",
+        "pages": pages,
+        "asset_manifest": {"count": len(assets), "entries": assets},
+    }
+
+
+def frozen_inventory(evidence_root: pathlib.Path) -> dict:
+    path = evidence_root / "sources/anonymous-source-001.json"
+    if not path.is_file():
+        raise SystemExit(
+            "source inventory is absent; regeneration requires explicit --archive"
+        )
+    try:
+        inventory = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise SystemExit(f"invalid frozen source inventory: {error}") from error
+    if path.read_bytes() != canonical_bytes(inventory):
+        raise SystemExit("frozen source inventory is not canonical JSON")
+    if inventory.get("archive_sha256") != EXPECTED_ARCHIVE_SHA256:
+        raise SystemExit("frozen source inventory digest mismatch")
+    pages = inventory.get("pages")
+    if not isinstance(pages, list) or len(pages) != 697:
+        raise SystemExit("frozen source inventory page count mismatch")
+    page_ids = [page.get("page_id") for page in pages if isinstance(page, dict)]
+    if len(page_ids) != 697 or len(set(page_ids)) != 697:
+        raise SystemExit("frozen source inventory page IDs are not unique")
+    for page in pages:
+        if (
+            len(page.get("path_sha256", "")) != 64
+            or len(page.get("content_sha256", "")) != 64
+            or page.get("page_id") !=
+                f"SRC-PAGE-{page.get('path_sha256', '')[:24].upper()}"
+            or page.get("kind") not in {
+                "scalar", "header", "tile", "coverage", "readme", "wrapper", "index", "auxiliary"
+            }
+        ):
+            raise SystemExit("frozen source inventory contains an invalid anonymous page")
+    assets = inventory.get("asset_manifest", {})
+    if assets.get("count") != 3 or len(assets.get("entries", [])) != 3:
+        raise SystemExit("frozen source inventory asset manifest mismatch")
+    return inventory
+
+
+def verify_derived_inventory(frozen: dict, derived: dict) -> None:
+    frozen_pages = {page["page_id"]: page for page in frozen["pages"]}
+    derived_pages = {page["page_id"]: page for page in derived["pages"]}
+    if set(frozen_pages) != set(derived_pages):
+        raise SystemExit("explicit archive does not match frozen anonymous page IDs")
+    for page_id, expected in derived_pages.items():
+        for field in ("path_sha256", "content_sha256", "kind"):
+            if frozen_pages[page_id].get(field) != expected[field]:
+                raise SystemExit(f"explicit archive stales anonymous page {page_id}")
+    if frozen["asset_manifest"] != derived["asset_manifest"]:
+        raise SystemExit("explicit archive stales anonymous asset manifest")
+
+
+def current_units(traceability: pathlib.Path) -> list[dict]:
+    payload = json.loads(traceability.read_text(encoding="utf-8"))
+    units = [
+        unit
+        for unit in payload["units"]
+        if unit.get("mnemonic") is not None and unit.get("surface") in SURFACES
+    ]
+    return sorted(units, key=lambda item: item["id"])
+
+
+def target_units(traceability: pathlib.Path) -> list[dict]:
+    payload = json.loads(traceability.read_text(encoding="utf-8"))
+    units = [
+        unit for unit in payload["units"]
+        if unit.get("surface") == "arch"
+        or (unit.get("mnemonic") is not None and unit.get("surface") in SURFACES)
+    ]
+    return sorted(units, key=lambda item: item["id"])
+
+
+def pending_unit_shard(unit: dict) -> dict:
+    contract = unit.get("instruction_contract") or {}
+    return {
+        "schema_version": 1,
+        "unit_id": unit["id"],
+        "mnemonic": unit["mnemonic"],
+        "surface": unit["surface"],
+        "page_contract": (
+            "architecture-reader-v1" if unit["surface"] == "arch" else "mnemonic-reader-v1"
+        ),
+        "status": "pending",
+        "owner": {
+            "asl_path": unit["source"],
+            "documentation_path": unit["documentation"],
+            "ndf_clause": contract.get("ndf_clause"),
+            "contract_artifact": contract.get("artifact"),
+        },
+        "migration": {
+            "source_id": "anonymous-source-001",
+            "source_page_ids": [],
+            "mapping_status": "pending",
+            "mapping_basis": "unreviewed",
+            "copyright_disposition": "current-owner-rewrite",
+        },
+        "reader_roles": [],
+        "presentation_blocks": [],
+        "node_dispositions": [],
+        "atomic_claims": [],
+        "decision_gaps": [],
+    }
+
+
+def pending_translation_shard(unit: dict, english_shard: dict) -> dict:
+    empty_literals: list[str] = []
+    return {
+        "schema_version": 1,
+        "locale": "zh-CN",
+        "unit_id": unit["id"],
+        "surface": unit["surface"],
+        "status": "pending",
+        "english_unit_shard_sha256": sha256_bytes(canonical_bytes(english_shard)),
+        "english_block_ids": [],
+        "english_node_ids": [],
+        "english_claim_ids": [],
+        "locale_documentation_path": None,
+        "locale_guide_sha256": None,
+        "protected_literals": empty_literals,
+        "protected_literals_sha256": sha256_bytes(canonical_bytes(empty_literals)),
+        "block_mappings": [],
+        "node_mappings": [],
+        "claim_mappings": [],
+    }
+
+
+def refresh_pending_translation_shard(translation: dict, english_shard: dict) -> dict:
+    if translation.get("status") != "pending":
+        raise SystemExit("source mapping may refresh only pending zh-CN translations")
+    refreshed = copy.deepcopy(translation)
+    refreshed["english_unit_shard_sha256"] = sha256_bytes(canonical_bytes(english_shard))
+    return refreshed
+
+
+def write_json(path: pathlib.Path, value: object, check: bool, *, bootstrap: bool = False) -> bool:
+    expected = canonical_bytes(value)
+    actual = path.read_bytes() if path.exists() else None
+    if bootstrap and actual is not None:
+        return False
+    if actual == expected:
+        return False
+    if check:
+        raise SystemExit(f"stale generated mnemonic-description inventory: {path}")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(expected)
+    return True
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--archive", type=pathlib.Path)
+    parser.add_argument("--traceability", type=pathlib.Path, default=TRACEABILITY)
+    parser.add_argument("--evidence-root", type=pathlib.Path, default=EVIDENCE_ROOT)
+    parser.add_argument("--check", action="store_true")
+    parser.add_argument("--map-scalar", action="store_true")
+    parser.add_argument("--map-block-tile", action="store_true")
+    parser.add_argument("--close-auxiliary-pages", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    args = parser.parse_args()
+
+    source_path = args.evidence_root / "sources/anonymous-source-001.json"
+    if args.archive is None:
+        inventory = frozen_inventory(args.evidence_root)
+    else:
+        derived_inventory = archive_inventory(args.archive)
+        if source_path.is_file():
+            inventory = frozen_inventory(args.evidence_root)
+            verify_derived_inventory(inventory, derived_inventory)
+        else:
+            inventory = derived_inventory
+    scalar_mappings: dict[str, list[str]] = {}
+    block_tile_mappings: dict[str, dict[str, list[str]]] = {}
+    mapping_summary: dict | None = None
+    if sum((args.map_scalar, args.map_block_tile, args.close_auxiliary_pages)) > 1:
+        raise SystemExit("select one mapping surface per invocation")
+    if args.map_scalar:
+        if args.archive is None:
+            raise SystemExit("--map-scalar requires explicit --archive")
+        inventory, scalar_mappings, mapping_summary = scalar_mapping_plan(
+            args.archive, args.traceability, copy.deepcopy(inventory)
+        )
+        if args.dry_run:
+            print(canonical_bytes(mapping_summary).decode("utf-8"), end="")
+            return 0
+    elif args.map_block_tile:
+        if args.archive is None:
+            raise SystemExit("--map-block-tile requires explicit --archive")
+        inventory, block_tile_mappings, mapping_summary = block_tile_mapping_plan(
+            args.archive, args.traceability, copy.deepcopy(inventory)
+        )
+        if args.dry_run:
+            print(canonical_bytes(mapping_summary).decode("utf-8"), end="")
+            return 0
+    elif args.close_auxiliary_pages:
+        if args.archive is None:
+            raise SystemExit("--close-auxiliary-pages requires explicit --archive")
+        inventory, mapping_summary = auxiliary_page_closure_plan(
+            args.archive, copy.deepcopy(inventory)
+        )
+        if args.dry_run:
+            print(canonical_bytes(mapping_summary).decode("utf-8"), end="")
+            return 0
+    elif args.dry_run:
+        raise SystemExit("--dry-run requires a mapping surface")
+
+    changed = write_json(
+        args.evidence_root / "sources/anonymous-source-001.json",
+        inventory,
+        args.check,
+        bootstrap=not (args.map_scalar or args.map_block_tile or args.close_auxiliary_pages),
+    )
+    current = target_units(args.traceability)
+    mnemonic_count = sum(unit.get("mnemonic") is not None for unit in current)
+    surface_counts = {
+        surface: sum(unit["surface"] == surface for unit in current)
+        for surface in sorted(SURFACES)
+    }
+    changed |= write_json(
+        args.evidence_root / "coverage-summary.json",
+        {
+            "schema_version": 1,
+            "baseline_commit": BASELINE_COMMIT,
+            "traceability_sha256": sha256_bytes(args.traceability.read_bytes()),
+            "archive_sha256": inventory["archive_sha256"],
+            "archive_pages_total": len(inventory["pages"]),
+            "archive_pages_dispositioned": 0,
+            "current_mnemonics": mnemonic_count,
+            "target_pages": len(current),
+            "retired_units_retained": 0,
+            "surfaces": surface_counts,
+            "statuses": {"pending": len(current)},
+            "reader_guides_complete": 0,
+            "atomic_claims": 0,
+            "unresolved_required_definition_gaps": 0,
+            "review_batches": {"accepted": 0, "batches": 0},
+            "zh_CN": {
+                "statuses": {"pending": len(current)},
+                "review_batches": {"accepted": 0, "batches": 0},
+            },
+        },
+        args.check,
+        bootstrap=True,
+    )
+    expected_paths = set()
+    expected_translation_paths = set()
+    for unit in current:
+        path = args.evidence_root / unit["surface"] / f"{unit['id']}.json"
+        expected_paths.add(path)
+        english_shard = pending_unit_shard(unit)
+        mapped_surface = (
+            (args.map_scalar and unit["surface"] == "scalar")
+            or (args.map_block_tile and unit["surface"] in {"block", "tile"})
+        )
+        if mapped_surface:
+            if not path.is_file():
+                raise SystemExit(f"missing pending mapped-surface shard: {path}")
+            english_shard = json.loads(path.read_text(encoding="utf-8"))
+            if english_shard.get("status") != "pending":
+                raise SystemExit(f"source mapping may update only pending shards: {path}")
+            page_ids = (
+                scalar_mappings[unit["id"]] if unit["surface"] == "scalar"
+                else block_tile_mappings[unit["surface"]][unit["id"]]
+            )
+            english_shard["migration"].update({
+                "source_page_ids": page_ids,
+                "mapping_status": (
+                    "mapped-current-multiple" if len(page_ids) > 1
+                    else "mapped-current" if page_ids else "pending"
+                ),
+                "mapping_basis": "reviewed-alias" if page_ids else "unreviewed",
+                "copyright_disposition": "current-owner-rewrite",
+            })
+        changed |= write_json(
+            path, english_shard, args.check,
+            bootstrap=not mapped_surface,
+        )
+        actual_english_shard = json.loads(path.read_text(encoding="utf-8"))
+        translation_path = (
+            args.evidence_root / "translations/zh-CN" / unit["surface"] / f"{unit['id']}.json"
+        )
+        expected_translation_paths.add(translation_path)
+        if mapped_surface:
+            if not translation_path.is_file():
+                raise SystemExit(f"missing pending zh-CN mapped-surface shard: {translation_path}")
+            translation = json.loads(translation_path.read_text(encoding="utf-8"))
+            translation = refresh_pending_translation_shard(
+                translation, actual_english_shard
+            )
+            changed |= write_json(
+                translation_path, translation, args.check, bootstrap=False
+            )
+        else:
+            changed |= write_json(
+                translation_path,
+                pending_translation_shard(unit, actual_english_shard),
+                args.check,
+                bootstrap=True,
+            )
+
+    existing = {
+        path
+        for surface in sorted(SURFACES)
+        for path in (args.evidence_root / surface).glob("*.json")
+    }
+    existing_translations = {
+        path
+        for surface in sorted(SURFACES)
+        for path in (args.evidence_root / "translations/zh-CN" / surface).glob("*.json")
+    }
+    missing_translations = expected_translation_paths - existing_translations
+    if args.check and missing_translations:
+        raise SystemExit(
+            "missing current translation shards: "
+            + ", ".join(str(path) for path in sorted(missing_translations))
+        )
+    retired_translations = existing_translations - expected_translation_paths
+    unresolved_translations = []
+    for path in sorted(retired_translations):
+        try:
+            shard = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            unresolved_translations.append(path)
+            continue
+        if shard.get("status") != "retired" or shard.get("retirement", {}).get(
+            "disposition"
+        ) != "retired-from-active-release":
+            unresolved_translations.append(path)
+    if unresolved_translations:
+        raise SystemExit(
+            "retired translation shards require an explicit retained disposition: "
+            + ", ".join(str(path) for path in unresolved_translations)
+        )
+    frozen_scalar_summary = validate_frozen_scalar_mappings(
+        args.evidence_root, args.traceability, inventory
+    )
+    frozen_block_tile_summary = validate_frozen_block_tile_mappings(
+        args.evidence_root, args.traceability, inventory
+    )
+    extras = sorted(existing - expected_paths)
+    if extras:
+        unresolved = []
+        for path in extras:
+            try:
+                shard = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                unresolved.append(path)
+                continue
+            if shard.get("status") != "retired" or shard.get("retirement", {}).get(
+                "disposition"
+            ) != "retired-from-active-release":
+                unresolved.append(path)
+        if unresolved:
+            raise SystemExit(
+                "retired unit shards require an explicit retained disposition: "
+                + ", ".join(str(path) for path in unresolved)
+            )
+    print(
+        "mnemonic description inventory: "
+        f"pages={len(inventory['pages'])} assets={inventory['asset_manifest']['count']} "
+        f"units={len(current)} changed={'yes' if changed else 'no'}"
+    )
+    if mapping_summary is not None:
+        print("mapping summary: " + json.dumps(mapping_summary, sort_keys=True))
+    elif args.check:
+        print("frozen Scalar mappings: " + json.dumps(frozen_scalar_summary, sort_keys=True))
+        print("frozen Block/Tile mappings: " + json.dumps(
+            frozen_block_tile_summary, sort_keys=True
+        ))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

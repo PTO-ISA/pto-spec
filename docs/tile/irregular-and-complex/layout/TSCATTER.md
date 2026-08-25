@@ -11,6 +11,66 @@ Scatter values to distinct destination rows selected independently at each sourc
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-tscatter-purpose role=purpose -->
+## What TSCATTER does
+
+`TSCATTER` writes source values into distinct destination rows selected by an index Tile.
+
+<!-- PTO-READER-BLOCK: tile-c-tscatter-mechanism role=mechanism -->
+## Operation mechanism
+
+Every physical destination coordinate is first initialized to typed zero.
+
+For source coordinate `[r,c]`, index value `k` writes the exact source bits to destination `[k,c]`; duplicate destination coordinates are illegal.
+
+<!-- PTO-READER-BLOCK: tile-c-tscatter-inputs-outputs role=inputs-outputs -->
+## Operands, shape, and type
+
+- `destination0` identifies a newly allocated destination.
+
+- `source0` supplies a persistent source Tile.
+
+- `source1` supplies the index Tile.
+
+- Value Tiles accept the non-packed types `FP64`, `FP32`, `TF32`, `HF32`, `FP16`, `BF16`, `HiF8`, `E4M3`, `E5M2`, `E3M2`, `E2M3`, `E8M0`, `S64`, `S32`, `S16`, `S8`, `U64`, `U32`, `U16`, `U8`.
+
+- The index Tile accepts exactly `S16`, `U16`, `S32`, `U32`, `S64`, `U64`.
+
+- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
+
+- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+
+<!-- PTO-READER-BLOCK: tile-c-tscatter-effects role=effects -->
+## Definedness, padding, and publication
+
+All source descriptors and payloads are validated and snapshotted before destination publication.
+
+The complete destination payload, descriptor, definedness, padding state, and applicable numeric status publish atomically; rejection publishes none.
+
+Source Tiles persist and are not modified by successful execution.
+
+<!-- PTO-READER-BLOCK: tile-c-tscatter-constraints role=constraints -->
+## Legality, fault, and order boundaries
+
+Complete binding schema, dimensions, DataType, layout, source definedness, numeric encoding, destination capacity, and allocation are preflighted before effects.
+
+A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+
+`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+
+<!-- PTO-READER-BLOCK: tile-c-tscatter-example role=example -->
+## Non-normative example
+
+This example illustrates the current ASL-bound contract and is not a second instruction definition.
+
+`TSCATTER <bundle operands>` performs complete preflight and source snapshotting before atomically publishing the mnemonic-defined result and padding state.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `irregular-and-complex`
@@ -137,7 +197,3 @@ end;
 ## Examples
 
 - BSTART.SFU TSCATTER, U16; B.DIM LB0=2; B.DIM LB1=4; B.IOT ValueSrc, IndexSrc, mask=1111, <last>, ->Dst<2>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

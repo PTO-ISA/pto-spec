@@ -11,6 +11,54 @@ Decodes one source-range subview modifier and retains its XLEN-wrapped derived o
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-b-subview-purpose role=purpose -->
+## What B.SUBVIEW contributes
+
+`B.SUBVIEW` is a 32-bit block header command that attaches one source-subview modifier to an open Local or Shared binder group. It changes pending block metadata rather than executing a tile body operation immediately.
+
+<!-- PTO-READER-BLOCK: block-b-subview-mechanism role=mechanism -->
+## Placement and mechanism
+
+The modifier is valid only while it remains contiguous with the `B.IOT` or `B.IOS` binder group that opened its carrier. Intervening, reversed, or duplicate modifiers are rejected before carrier state changes.
+
+The command records its raw selector and range fields in the open binder carrier together with the derived XLEN offset. A binder whose decoded PE mask is zero keeps only a discarded syntactic group and performs no source read or role effect.
+
+<!-- PTO-READER-BLOCK: block-b-subview-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `SrcSelect` selects source carrier zero or one; its exact assigned domain remains in the generated contract below.
+- `RegSrc` selects the named absolute GPR role; its exact assigned domain remains in the generated contract below.
+- `uimm11` supplies the encoded offset or addend; its exact assigned domain remains in the generated contract below.
+- `SubviewSizeCode` supplies the subview range size code; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-b-subview-effects role=effects -->
+## Pending state and completion
+
+An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+
+<!-- PTO-READER-BLOCK: block-b-subview-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved encodings are rejected before reads or pending-state changes. Placement, duplicate, role, or completed-schema mismatches fail before body effects.
+
+<!-- PTO-READER-BLOCK: block-b-subview-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+B.IOT SrcTile0, mask=PE_MASK, <last>
+B.SUBVIEW 0, RegSrc, uimm11, SubviewSizeCode
+```
+
+The source form of `B.IOT` opens a group whose source-zero carrier is exact. The immediately following `B.SUBVIEW 0` modifies that source carrier only; it cannot be separated from the binder or redirected to a destination carrier.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -126,7 +174,3 @@ end;
 ## Examples
 
 - B.IOT T0, mask=1111; B.SUBVIEW 0, a0, 0, 1
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

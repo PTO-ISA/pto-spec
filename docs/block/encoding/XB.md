@@ -11,6 +11,60 @@ Inventories an extension-owned cross-block transfer encoding that PTO rejects be
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-xb-purpose role=purpose -->
+## What XB does
+
+`XB` identifies extension-owned encoding space that PTO inventories but always rejects before field interpretation or architectural effects.
+
+<!-- PTO-READER-BLOCK: block-xb-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`XB` executes as a standalone `32`-bit command and does not require placement inside a `BSTART`/`BSTOP` body.
+
+The matched raw family uses the `L32` encoding class, but PTO rejects it before either displayed field is interpreted.
+
+Decode retains only collision identity; profile rejection precedes operand interpretation, memory, Block state, and control-flow effects.
+
+<!-- PTO-READER-BLOCK: block-xb-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `ACR-ID` — uninterpreted extension field reserved in PTO; `CROSS-BID` — uninterpreted extension field reserved in PTO.
+- All operands are resolved from the accepted carrier or named architectural state; no body-local hidden operand stream is created.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-xb-effects role=effects -->
+## State effects and ordering
+
+The form always raises `Fault_IllegalInstruction` and changes no Block, memory, or control-flow state.
+
+The occupied raw encoding remains collision-protected for its complete field family.
+
+<!-- PTO-READER-BLOCK: block-xb-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through `Fault_IllegalInstruction`; no prose on this page creates an additional fault rule.
+
+Rejection occurs before effects unless the current owner explicitly defines a restart boundary with retained progress; completion order remains the ASL order.
+
+<!-- PTO-READER-BLOCK: block-xb-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+XB ACR-ID, C-ID (reserved in PTO)
+```
+
+The shown spelling identifies occupied extension space only; PTO rejects every matching carrier before interpreting either displayed field.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -122,7 +176,3 @@ end;
 ## Examples
 
 - XB ACR-ID, C-ID (reserved in PTO)
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

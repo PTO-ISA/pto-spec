@@ -7,6 +7,49 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-fault-precision-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit centralizes fault, service-request, and interrupt entry plus trap-status packing. For synchronous `SetFaultWithCause`, context save and redirection to a target `AccessControlRing` occur only when the code is not `Fault_None`.
+
+<!-- PTO-READER-BLOCK: arch-fault-precision-concepts role=concepts-state -->
+## Trap-entry state
+
+- `SetFaultWithCause` records the fault code, address, cause, and trap status for every input code.
+- When the code is not `Fault_None`, it saves context, selects the target `AccessControlRing` as current, and redirects `TPC`. For `Fault_None`, it keeps the source ring and performs neither the save nor the redirect.
+- `RaiseServiceRequest` checks permission, saves a resume `TPC` four bytes past the source `TPC`, and enters the service target.
+- `RaiseInterrupt` marks the interrupt pending and enters only when that interrupt is enabled.
+
+<!-- PTO-READER-BLOCK: arch-fault-precision-rules role=rules-interactions -->
+## State-transition rules
+
+- Synchronous fault entry sets asynchronous false and makes the trap argument valid for nonzero faults.
+- Interrupt entry sets asynchronous true, records trap number `44`, and places the `InterruptID` in argument `0`.
+- `ClearFault` clears current-ring fault reporting without reconstructing an earlier context.
+- `PackTrapStatus` and `UnpackTrapStatus` map asynchronous, argument-valid, 24-bit cause, and 6-bit number fields.
+
+<!-- PTO-READER-BLOCK: arch-fault-precision-boundaries role=boundaries -->
+## Commit boundaries
+
+`Fault_BundlePostCommit` is represented as a successful-commit boundary trap: the continuation has already been chosen when the context is saved. A denied service request instead raises `Fault_IllegalInstruction` and returns false.
+
+<!-- PTO-READER-BLOCK: arch-fault-precision-example role=example-usage -->
+## Non-normative reading example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-fault-precision-related role=related-owners-navigation -->
+## Related owners
+
+- `PTO-ARCH-STATE-TRAP-CONTEXT` owns the saved-context representation.
+- Trap-context recovery defines the inverse profile path for a recoverable saved context.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/fault-precision.asl -->
@@ -137,7 +180,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

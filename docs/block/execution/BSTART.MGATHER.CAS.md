@@ -11,6 +11,62 @@ Begins a TLSU byte-displacement atomic compare-and-swap gather block.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-mgather-cas-purpose role=purpose -->
+## What BSTART.MGATHER.CAS contributes
+
+`BSTART.MGATHER.CAS` is a 32-bit block-start command for the MGATHER.CAS form. It establishes the pending block identity and selectors; the completed block, not the start command alone, owns body execution and result commitment.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-cas-mechanism role=mechanism -->
+## Placement and mechanism
+
+Header commands execute sequentially after the start, while `BSTOP` or the next `BSTART` is the boundary that validates and retires the completed block. The current owner gives this exact composition checklist:
+
+```text
+BSTART.MGATHER.CAS DataType
+B.DATR PadValue, Layout (optional)
+B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow (optional)
+B.DIM LB2=Col (optional)
+B.IOT IndexTile, ExpectedTile, mask=PE_MASK
+B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
+B.IOR BaseGPR, zero, zero, ->zero
+BSTOP
+```
+
+After any active predecessor is retired successfully, the command initializes the new pending `BARG` or operation descriptor and continues header execution at the sequential PC. No block destination or memory result becomes visible merely because the start decoded.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-cas-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `DataType` selects the element data type or inheritance sentinel; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-cas-effects role=effects -->
+## Pending state and completion
+
+The start transition is all-or-nothing with predecessor retirement for applicability and target checks. After the start succeeds, the later completion boundary validates the full composition before any body result can commit.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-cas-constraints role=constraints -->
+## Legality and fault boundary
+
+Reserved selectors, invalid targets, malformed completed composition, or failed predecessor retirement are rejected before new-block or body effects.
+
+<!-- PTO-READER-BLOCK: block-bstart-mgather-cas-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+BSTART.MGATHER.CAS DataType
+```
+
+Assume predecessor retirement and target checks succeed. `BSTART.MGATHER.CAS DataType` opens the pending `BSTART.MGATHER.CAS` form; subsequent header/body commands remain provisional until `BSTOP` or the next `BSTART` validates the complete composition.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -179,7 +235,3 @@ end;
 ## Examples
 
 - BSTART.MGATHER.CAS DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

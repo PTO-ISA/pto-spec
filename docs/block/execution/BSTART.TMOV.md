@@ -11,6 +11,60 @@ Closes the current bundle, initializes the next bundle descriptor, and selects i
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-tmov-purpose role=purpose -->
+## What BSTART.TMOV does
+
+`BSTART.TMOV` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmov-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`BSTART.TMOV` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+
+The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+
+At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmov-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `DataType` — concrete source/destination Tile type or DTYPE_NONE source-descriptor inference; `B.DATR.Layout` — Local or Shared Tile layout selection; `B.DIM.LB0/LB1/LB2` — ValidCol, ValidRow, and physical Col; `B.IOT` — Local source and/or renamed Local destination; `B.IOS` — absolute Shared source or atomic Shared destination.
+- Function 2 uses one terminating `B.IOT` for a Local source and renamed Local destination; L2S uses source `B.IOT` plus destination `B.IOS`; S2L uses source `B.IOS` plus destination `B.IOT`, with matching masks.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmov-effects role=effects -->
+## State effects and ordering
+
+Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+
+After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmov-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through the owner-defined fault; no prose on this page creates an additional fault rule.
+
+Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmov-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+BSTART.TMOV U8; B.IOT T#1, mask=1111, ->U<1>, last; BSTOP
+```
+
+The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -141,10 +195,3 @@ end;
 - BSTART.TMOV U8; B.IOT T#1, mask=1111, ->U<1>, last; BSTOP
 - BSTART.TMOV U8 [TMOV.L2S.INSERT form]; B.IOT T#1, mask=0011, last; B.IOS mask=0011, ->S7<1>; BSTOP
 - BSTART.TMOV U8 [TMOV.S2L.EXTRACT form]; B.IOS S7, mask=0011; B.IOT mask=0011, ->T<1>, last; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-`BSTART.TMOV` accepts DataType code 31, canonically spelled `DTYPE_NONE`. When
-neither B.DATR nor BSTART supplies a concrete type, TMOV inherits the bound
-Local or Shared source descriptor type. The sentinel itself is never installed
-in a tile descriptor and never supplies an element width or numeric default.
-<!-- SUPPLEMENTARY-END -->

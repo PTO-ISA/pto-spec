@@ -11,6 +11,62 @@ Generate an exact typed lower or upper triangular matrix in a new Local Tile.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-c-ttri-purpose role=purpose -->
+## What TTRI does
+
+`TTRI` generates an exact typed lower or upper triangular matrix in a new Local Tile.
+
+<!-- PTO-READER-BLOCK: tile-c-ttri-mechanism role=mechanism -->
+## Operation mechanism
+
+Lower orientation writes typed one when `c <= r + diagonal`; upper orientation writes typed one when `c >= r + diagonal`.
+
+The signed boundary comparison does not wrap, and all other valid coordinates receive typed zero.
+
+<!-- PTO-READER-BLOCK: tile-c-ttri-inputs-outputs role=inputs-outputs -->
+## Operands, shape, and type
+
+- `destination0` identifies a newly allocated destination.
+
+- `flag0` selects lower or upper orientation.
+
+- `diagonal` supplies the signed diagonal displacement.
+
+- The closed applicable DataType set is `FP32`, `FP16`, `S32`, `S16`, `U32`, `U16`.
+
+- Data Tiles use row-major layout unless this mnemonic explicitly selects another permitted layout.
+
+- `LB0`, `LB1`, and `LB2` complete the valid and physical shape according to this mnemonic’s contract; every required valid extent is nonzero.
+
+<!-- PTO-READER-BLOCK: tile-c-ttri-effects role=effects -->
+## Definedness, padding, and publication
+
+There is no source Tile or source snapshot. Complete type, dimension, orientation, diagonal, mask, capacity, and allocation preflight precedes generation.
+
+The triangular payload, destination descriptor, valid-region definedness, and undefined Null padding publish atomically; rejection publishes none.
+
+<!-- PTO-READER-BLOCK: tile-c-ttri-constraints role=constraints -->
+## Legality, fault, and order boundaries
+
+The destination-only binding, dimensions, DataType, row-major layout, all-zero B.DATR, orientation, diagonal, capacity, and allocation are preflighted before effects.
+
+A failed legality or allocation check raises the applicable Tile fault without partial destination, status, or memory effects.
+
+`PE_MASK=0000` is a strict no-op before operand reads, allocation, faults, numeric status, or payload effects.
+
+<!-- PTO-READER-BLOCK: tile-c-ttri-example role=example -->
+## Non-normative example
+
+This example illustrates the current ASL-bound contract and is not a second instruction definition.
+
+`TTRI <bundle operands>` performs destination-only preflight, generates the triangular payload without a source snapshot, and atomically publishes the result with Null padding.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `irregular-and-complex`
@@ -335,7 +391,3 @@ end;
 ## Examples
 
 - BSTART.SFU TTRI, FP16; B.DIM LB0=16; B.DIM LB1=8; B.IOR a0, a1; B.IOT mask=1111, <last>, ->T0<2>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

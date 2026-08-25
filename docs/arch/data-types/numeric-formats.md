@@ -7,6 +7,57 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-numeric-formats-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit is the central dispatcher from `TileDataType` to each floating or scale format descriptor and exact finite decomposition.
+
+It gives consumers one typed entry point while preserving each format file as the owner of its own raw encoding.
+
+<!-- PTO-READER-BLOCK: arch-numeric-formats-concepts-state role=concepts-state -->
+## Concepts and visible state
+
+- `TileNumericFormatDescriptor` dispatches all declared floating and scale data types from `FP64` through `HiF4X2` to their format-specific descriptors.
+- `TileNumericFiniteDecomposition` dispatches the same formats to exact finite decomposition and narrows the `Word` carrier to the architectural width where required.
+- The decomposition tuple is availability, sign, integer significand, and integer exponent, representing `(-1)^sign * UInt(significand) * 2^exponent`.
+
+<!-- PTO-READER-BLOCK: arch-numeric-formats-rules-interactions role=rules-interactions -->
+## Rules and interactions
+
+Valid finite floating or scale encodings decompose without host floating-point arithmetic.
+
+Invalid internal encodings, infinities, NaNs, and integer `TileDataType` members report unavailable.
+
+An unhandled descriptor request returns `UnavailableNumericFormatDescriptor`; an unhandled decomposition returns `(FALSE, FALSE, Zeros{PTO_XLEN}, 0)`.
+
+<!-- PTO-READER-BLOCK: arch-numeric-formats-boundaries role=boundaries -->
+## Architectural boundaries
+
+This unit does not reinterpret the returned tuple with host arithmetic. The integer significand and exponent are the exact interchange contract.
+
+Format availability is not the same as operation support. A consuming instruction or named profile may further restrict accepted data types.
+
+<!-- PTO-READER-BLOCK: arch-numeric-formats-example-usage role=example-usage -->
+## Non-normative reading example
+
+For `TileDataType_TF32`, the dispatcher passes `value[31:0]` to `TF32FiniteDecomposition`; required low-zero bits are therefore checked by the `TF32` owner.
+
+For `TileDataType_S32`, no floating decomposition branch exists, so availability is false rather than an invented integer decomposition.
+
+<!-- PTO-READER-BLOCK: arch-numeric-formats-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Tile data-type namespace](tile-data-types.md)
+- [Numeric classification](numeric-classification.md)
+- [TF32 format](formats/tf32.md)
+- [HiF8 format](formats/hif8.md)
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/numeric-formats.asl -->
@@ -72,7 +123,3 @@ end;
 // DOC-END: operation
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

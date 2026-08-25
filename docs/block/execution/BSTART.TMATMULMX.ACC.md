@@ -11,6 +11,60 @@ Starts CUBE Function 6 for the TMATMUL_MX_ACC Matrix-matrix complete-bundle oper
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-purpose role=purpose -->
+## What BSTART.TMATMULMX.ACC does
+
+`BSTART.TMATMULMX.ACC` opens an active Block descriptor for `TileOperation_TMATMUL_MX_ACC`; the body supplies the attributes and bindings required before completion.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`BSTART.TMATMULMX.ACC` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+
+The accepted carrier uses the `L32` encoding class and resolves every displayed field before the command reads bindings or changes state.
+
+At completion, the descriptor runs `TileOperation_TMATMUL_MX_ACC` only after schema, type, dimension, descriptor, readiness, alias, and capacity preflight succeeds.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `DataType` — tile element data type selector.
+- The Block schema is completed by the ordered companion carriers `BSTART.TMATMULMX.ACC`, `B.DATR`, `B.FPATR`, `B.DIM`, `B.IOS`, `B.IOT`, `B.IOT/B.IOR`; omitted optional carriers take only the defaults named by this owner.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-effects role=effects -->
+## State effects and ordering
+
+Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+
+After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through `Fault_BundleControl`, `Fault_IllegalInstruction`, `Fault_TileLegality`; no prose on this page creates an additional fault rule.
+
+Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+
+<!-- PTO-READER-BLOCK: block-bstart-tmatmulmx-acc-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+BSTART.TMATMULMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one); B.DIM LB0 M or cooperative group_M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A with encoded selector distinct from DstTile, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout with a distinct encoded destination index, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
+```
+
+The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -202,7 +256,3 @@ end;
 ## Examples
 
 - BSTART.TMATMULMX.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one); B.DIM LB0 M or cooperative group_M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A with encoded selector distinct from DstTile, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale; B.IOT D matching A's CUBE_M16/M32 layout with a distinct encoded destination index, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

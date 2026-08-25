@@ -11,6 +11,60 @@ Canonical Block-start spelling for an operation assigned to the VEC execution en
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-bstart-vec-purpose role=purpose -->
+## What BSTART.VEC does
+
+`BSTART.VEC` opens an active Block descriptor; the body supplies the attributes and bindings required before completion.
+
+<!-- PTO-READER-BLOCK: block-bstart-vec-mechanism role=mechanism -->
+## Placement and execution mechanism
+
+`BSTART.VEC` must appear as the starter of its Block. Later attributes, dimensions, and bindings accumulate in the active descriptor until `BSTOP` or the next accepted `BSTART` completion boundary.
+
+The accepted carrier uses the `encoding-alias` encoding class and resolves every displayed field before the command reads bindings or changes state.
+
+At completion, the descriptor runs its selected Block operation only after all schema and state preflight succeeds.
+
+<!-- PTO-READER-BLOCK: block-bstart-vec-inputs role=inputs-outputs -->
+## Carrier, bindings, and inputs
+
+- Encoded operands: `TileOp` — assigned VEC operation mnemonic that resolves the Mode:Function selector; `DataType` — tile element data type selector.
+- `BSTART.VEC` resolves `TileOp` through the `BSTART.TEPL` carrier and then uses that owner's descriptor, body composition, commit, and rollback rules.
+- Encoded zero remains an assigned value or a specifically documented rejection; it never silently means an omitted operand.
+
+<!-- PTO-READER-BLOCK: block-bstart-vec-effects role=effects -->
+## State effects and ordering
+
+Starting the Block records the selected carrier and leaves operation execution deferred until the completion boundary.
+
+After complete preflight and computation, every enabled output publishes as the owner-defined atomic group; successful mathematical sources remain available unless the contract explicitly consumes them.
+
+<!-- PTO-READER-BLOCK: block-bstart-vec-constraints role=constraints -->
+## Legality, faults, and atomicity
+
+Fixed bits, reserved values, selector domains, and required Block placement are checked before architectural effects.
+
+The current owner reports invalid schema, state, address, or continuation conditions through the owner-defined fault; no prose on this page creates an additional fault rule.
+
+Complete schema, binding, readiness, alias, capacity, and allocation preflight precedes source snapshots and every destination publication.
+
+<!-- PTO-READER-BLOCK: block-bstart-vec-example role=example -->
+## Non-normative worked example
+
+This example demonstrates placement and carrier flow only; exact behavior remains in the current ASL and instruction contract.
+
+```asm
+BSTART.VEC TADD, FP32
+```
+
+The starter establishes the descriptor first; the following carriers fill its declared schema, and the final completion boundary triggers validation and operation execution.
+<!-- SUPPLEMENTARY-END -->
+
 ## Alias contract
 
 - **Encoding owner:** `BSTART.TEPL`
@@ -170,7 +224,3 @@ end;
 ## Examples
 
 - BSTART.VEC TADD, FP32
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

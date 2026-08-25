@@ -11,6 +11,52 @@ TLB.IA completes the 16-bit ASID token in bits 15:0 maintenance operation synchr
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-tlb-ia-purpose role=purpose -->
+## What TLB.IA does
+
+`TLB.IA` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-ia-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-ia-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-ia-effects role=effects -->
+## Architectural effects
+
+On success, the maintenance record receives `Maintenance_TLB_IA` and the exact captured operand token.
+
+Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-ia-constraints role=constraints -->
+## Placement and rejection
+
+TLB maintenance is accepted only at `ACR0`; ring permission is checked before operand validation. Operand bits `63:16` must be zero, and bits `15:0` carry the ASID token.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-ia-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `tlb.ia SrcL` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -136,7 +182,3 @@ end;
 ## Examples
 
 - tlb.ia SrcL
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

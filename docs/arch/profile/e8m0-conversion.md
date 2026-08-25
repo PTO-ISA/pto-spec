@@ -7,6 +7,49 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROFILE-E8M0-CONVERSION}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-e8m0-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit supplies the PTO reference conversion path for `TCVT` with destination type `E8M0`. It defines accepted source types, exponent selection under `RMode`, exceptional encodings, saturation endpoints, and five-bit numeric status.
+
+<!-- PTO-READER-BLOCK: arch-e8m0-concepts role=concepts-state -->
+## Inputs and representation
+
+- Supported sources are `FP16`, `BF16`, and `FP32`; other source-to-`E8M0` pairs fail the type-pair predicate.
+- Finite positive input is decomposed into a significand and base-two exponent.
+- Encoded finite results use exponent plus `127`, producing codes from `0x00` through `0xfe`; `0xff` is used by the exceptional paths.
+
+<!-- PTO-READER-BLOCK: arch-e8m0-rules role=rules-interactions -->
+## Conversion rules
+
+- Exact powers of two preserve their exponent and report no inexact status.
+- Non-powers use `ReferenceE8M0RoundExponent`, which implements `RTM`, `RTP`, `RTZ`, `RTO`, `RNE`, `RNA`, and `RHB` choices.
+- Zero, negative values, and NaNs return `0xff` with `NV`.
+- `ReferenceFloatToE8M0` also routes `NumericValue_InvalidEncoding` to `0xff` with `NV`.
+- Positive infinity and finite overflow or underflow choose `0xff` without saturation or the finite endpoint with saturation, and report the corresponding `OF` or `UF` plus `NX`.
+
+<!-- PTO-READER-BLOCK: arch-e8m0-boundaries role=boundaries -->
+## Boundaries
+
+`TileProfileConvert` delegates only destination `E8M0` to this path. Non-floating integer destinations use `NormalizeTileInteger`; other floating destinations are returned unchanged by this owner. `Canonicalize` remains a representation concern outside this conversion helper.
+
+<!-- PTO-READER-BLOCK: arch-e8m0-example role=example-usage -->
+## Non-normative conversion example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-e8m0-related role=related-owners-navigation -->
+## Related owners
+
+- Reference quantization provides shared finite-value and numeric helpers.
+- Numeric-format owners classify source encodings; `TCVT` owns operation legality and publication.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/e8m0-conversion.asl -->
@@ -182,7 +225,3 @@ end;
 // DOC-END: operation
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

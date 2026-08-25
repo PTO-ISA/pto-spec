@@ -7,6 +7,56 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-NUMERIC-CLASSIFICATION}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-numeric-classification-purpose-scope role=purpose-scope -->
+## Purpose and scope
+
+This unit defines the common value classes and numeric-policy records used across every tile numeric format.
+
+A shared classification vocabulary lets format owners report exact bit-pattern categories without selecting an arithmetic result or target implementation.
+
+<!-- PTO-READER-BLOCK: arch-numeric-classification-concepts-state role=concepts-state -->
+## Concepts and visible state
+
+- `NumericValueClass` includes invalid encoding; signed zero, subnormal, normal, and infinity; plus quiet and signaling NaN.
+- Input and result subnormal policies are separate: `NumericInputSubnormalRule` and `NumericResultSubnormalRule` do not collapse into one switch.
+- `TileNumericSelection` carries whether an operation default is used, the selected `NumericRoundingMode`, and a saturating flag.
+
+<!-- PTO-READER-BLOCK: arch-numeric-classification-rules-interactions role=rules-interactions -->
+## Rules and interactions
+
+`NumericValueClassIsNaN`, `NumericValueClassIsInfinity`, `NumericValueClassIsZero`, and `NumericValueClassIsSubnormal` test only their named class pairs.
+
+`NumericTininessDetectionRule` distinguishes not-applicable from after-rounding detection.
+
+Classification is a format property. It does not itself choose exception flags, rounding, saturation, or an operation result.
+
+<!-- PTO-READER-BLOCK: arch-numeric-classification-boundaries role=boundaries -->
+## Architectural boundaries
+
+The input/result subnormal enums describe the named hardware numeric profile, not general `pto-v0` arithmetic behavior.
+
+A value class does not prove that an operation supports the corresponding data type; support remains with the active operation and profile owner.
+
+<!-- PTO-READER-BLOCK: arch-numeric-classification-example-usage role=example-usage -->
+## Non-normative reading example
+
+`NumericValue_NegativeZero` makes `NumericValueClassIsZero` true, but it does not make `NumericValueClassIsSubnormal` true.
+
+A consumer may branch on NaN classification before ordinary comparison, then return to its own profile owner for the exact selected result.
+
+<!-- PTO-READER-BLOCK: arch-numeric-classification-related-owners role=related-owners-navigation -->
+## Related owners
+
+- [Numeric format dispatch](numeric-formats.md)
+- [Rounding types](rounding.md)
+- [Hardware numeric profile](../features/mx-formats.md)
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/numeric-classification.asl -->
@@ -77,7 +127,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

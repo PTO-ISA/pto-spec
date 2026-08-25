@@ -11,6 +11,56 @@ LD snapshots its scalar sources, forms its encoded address, and loads one aligne
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-ld-purpose role=purpose -->
+## What LD does
+
+`LD` is a standalone `32`-bit AGU instruction that forms a register-offset address and loads one aligned little-endian `8`-byte value.
+
+<!-- PTO-READER-BLOCK: scalar-ld-mechanism role=mechanism -->
+## Address and memory mechanism
+
+`LD` transforms `SrcR` according to `SrcRType`, shifts the transformed value left by the encoded `shamt`, and adds it modulo `2^PTO_XLEN` to the snapshotted `SrcL` base.
+
+After complete preflight, the instruction performs one little-endian `8`-byte load and preserves the complete 64-bit loaded pattern for destination publication.
+
+This form performs no base-register writeback; its effective address is used only by the selected memory operation.
+
+<!-- PTO-READER-BLOCK: scalar-ld-inputs role=inputs-outputs -->
+## Inputs and outputs
+
+- `SrcL` supplies the base; `SrcR` supplies the offset; `SrcRType` supplies the offset transformation. Every encoded Reg5 source among `SrcL`, `SrcR` uses codes `0..23` for GPRs, `24..27` for `T#1..T#4`, and `28..31` for `U#1..U#4` without consumption.
+- `RegDst` receives the loaded result; destination codes `1..23` write GPRs, `30` pushes U, `31` pushes T, and `0` plus `24..29` discard only that result.
+- All `SrcRType` values `0..3` and all `shamt` values `0..31` are assigned; transformation precedes the encoded shift.
+
+<!-- PTO-READER-BLOCK: scalar-ld-effects role=effects -->
+## Effects and ordering
+
+All explicit and implicit scalar sources are snapshotted before memory or destination effects, so aliases observe pre-instruction values.
+
+A successful attempt records one relaxed load event, preserves memory and reservation state, publishes or discards the loaded value, and advances `TPC` by `4` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-ld-constraints role=constraints -->
+## Alignment, faults, and restart
+
+Each effective address must satisfy `8`-byte alignment. Misalignment raises `Fault_DataAlignment` before translation; a later permission or bounded-memory failure raises `Fault_DataPage` at the original address.
+
+A fault records no successful memory event, performs no partial memory, destination, or writeback effect, preserves pending writeback, and leaves the faulting `TPC` available for full reissue.
+
+A fixed-bit mismatch, reserved field value, or unavailable selected `T`/`U` source raises `Fault_IllegalInstruction` before instruction effects.
+
+<!-- PTO-READER-BLOCK: scalar-ld-example role=example -->
+## Non-normative address example
+
+This example demonstrates the address calculation only; exact behavior remains in the current ASL and instruction contract.
+
+With base `0x100`, unchanged offset source `4`, and `shamt=1`, the aligned displacement is `8` and base plus displacement is `0x108`. The memory access uses `0x108`. If permitted, the instruction loads `8` bytes from that aligned address.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -165,7 +215,3 @@ end;
 ## Examples
 
 - ld [SrcL, SrcR<{.sw,.uw,.neg}><<<shamt>], ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

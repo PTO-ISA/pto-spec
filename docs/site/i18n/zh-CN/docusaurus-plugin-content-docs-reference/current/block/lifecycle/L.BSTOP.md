@@ -1,0 +1,154 @@
+<!-- GENERATED FROM: asl/block/lifecycle/L.BSTOP.asl -->
+# L.BSTOP
+
+**Normative ASL source:** `asl/block/lifecycle/L.BSTOP.asl`
+
+Commits the current bundle and transfers to its selected continuation.
+
+## Normative identity {#PTO-INST-BLOCK-L-BSTOP}
+
+<!-- ndf: kind=executable level=L3 layer=block status=accepted -->
+
+The current instruction contract is owned by the ASL source linked above.
+
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-l-bstop-purpose role=purpose -->
+## L.BSTOP 的作用
+
+`L.BSTOP` 是 Block 完成边界；它先验证并提交活动描述符，再选择下一架构 PC。
+
+<!-- PTO-READER-BLOCK: block-l-bstop-mechanism role=mechanism -->
+## 放置与执行机制
+
+`L.BSTOP` 不是 Block 体属性；它完成已经活动的 Block，没有兼容活动 Block 时属于非法。
+
+已接受载体使用 `L64` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
+
+命令会在第一个可见效果前快照所有必需源，随后遵循归属单元定义的提交或重启边界。
+
+<!-- PTO-READER-BLOCK: block-l-bstop-inputs role=inputs-outputs -->
+## 载体、绑定与输入
+
+- 该指令没有编码操作数字段。
+- 所有操作数都来自已接受载体或命名架构状态；命令不会创建 Block 体私有的隐藏操作数流。
+- 编码零仍是已分配值或明确规定的拒绝值；它不会静默表示省略操作数。
+
+<!-- PTO-READER-BLOCK: block-l-bstop-effects role=effects -->
+## 状态效果与顺序
+
+完成操作会先执行选定的活动操作，再清除 Block 私有描述符、绑定、属性与活动状态字段。
+
+只有 Block 提交后才发布通过验证的后继地址；被拒绝的完成会保留故障契约要求的状态。
+
+<!-- PTO-READER-BLOCK: block-l-bstop-constraints role=constraints -->
+## 合法性、故障与原子性
+
+固定比特、保留值、选择器取值域与必需的 Block 放置关系都在架构效果之前检查。
+
+当前归属单元通过 `Fault_BundleControl` 报告无效模式、状态、地址或后继条件；本页说明文字不创建额外故障规则。
+
+除非当前归属单元明确规定带保留进度的重启边界，否则拒绝发生在效果之前；完成顺序始终采用 ASL 顺序。
+
+<!-- PTO-READER-BLOCK: block-l-bstop-example role=example -->
+## 非规范示例
+
+该示例只演示放置关系与载体流；精确行为仍由当前 ASL 和指令契约定义。
+
+```asm
+L.BSTOP
+```
+
+此处完成指令作用于已经活动且兼容的 Block；若没有该活动状态，相同编码会在提交前引发故障。
+<!-- SUPPLEMENTARY-END -->
+
+## Assembly
+
+```asm
+L.BSTOP
+```
+
+## Encoding
+
+| Form | Kind | Bits | Match / mask | Constraints |
+| --- | --- | ---: | --- | --- |
+| l_bstop_64_94c7f0a5e8b3 | L64 | 32 | 0x0000000f / 0xffffffff | [] |
+| l_bstop_64_94c7f0a5e8b3 | L64 | 32 | 0x00000001 / 0xffffffff | [] |
+
+## Encoding class
+
+- **Class:** `standalone-encoded`
+- **Standalone opcode:** `yes`
+
+## Operands and results
+
+This instruction has no explicit operand fields.
+
+## Decode
+
+<!-- GENERATED-ASL-BEGIN: decode source=asl/block/lifecycle/L.BSTOP.asl -->
+```asl
+readonly func InstructionContractMatches_L_BSTOP(operation: CommandOperation) => boolean
+begin
+    return (operation == CommandOperation_l_bstop_64_94c7f0a5e8b3);
+end;
+```
+<!-- GENERATED-ASL-END: decode -->
+
+## Operation
+
+<!-- GENERATED-ASL-BEGIN: operation source=asl/block/lifecycle/L.BSTOP.asl -->
+```asl
+readonly func InstructionContractHandler_L_BSTOP() => CommandSemanticHandler
+begin
+    return CommandHandler_ExecuteBundleStop;
+end;
+
+pure func InstructionContractCommitsActiveBundle_L_BSTOP()
+    => boolean
+begin
+    return TRUE;
+end;
+
+pure func InstructionContractClearsHeaderState_L_BSTOP()
+    => boolean
+begin
+    return TRUE;
+end;
+```
+<!-- GENERATED-ASL-END: operation -->
+
+## Defaults and encoded zero
+
+- The instruction has no encoded operand field and therefore no operand default.
+
+## Legality
+
+- The low 32-bit word is exactly 0x0000000f and the high 32-bit word is exactly 0x00000001.
+
+## State effects
+
+- Commits the active block, selects BARG.BPCN for DIRECT/CALL/IND/ICALL/RET or taken COND, otherwise selects the sequential PC.
+- After successful commit, clears BARG, BPC, descriptor fields, dimensions, operand bindings, attributes, and active/body state.
+
+## Memory effects and ordering
+
+### Memory effects
+
+- Commits every architecture-visible memory effect of the active block before selecting its continuation.
+
+### Ordering
+
+- Validate the active block and final BARG continuation, execute the selected block operation, then select BARG.BPCN or the sequential PC and clear block-private state.
+
+## Exceptions
+
+- No active block raises Fault_BundleControl.
+- Schema, applicability, execution, or final-PC faults reject before block-private state is cleared.
+
+## Examples
+
+- L.BSTOP

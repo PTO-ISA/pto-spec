@@ -1,5 +1,7 @@
 ASLREF ?= ./scripts/aslref
 RELEASE_COMMIT ?=
+PTO_SITE_REQUIRE_RELEASE ?= 0
+SITE_DIR := docs/site
 
 # ASL source order is generated from unit metadata and its dependency graph.
 ASL_SOURCE_ORDER := build/asl-source-order.txt
@@ -18,7 +20,9 @@ DECODER_GENERATION_INPUTS := $(ASL_UNIT_SOURCES) scripts/generate-asl-decoders \
 	release-verify repo-check pr-check toolchain-check check test test-parallel ci \
 	check-asl-layout check-ndf check-adrs check-asl-tests check-projections \
 	check-decoder-partition check-publication-hygiene check-release-event-schema \
-	print-asl-sources print-asl-tests
+	check-mnemonic-explanations \
+	print-asl-sources print-asl-tests site-install site-check site-e2e site-quality \
+	site-release-check
 
 all: ci
 
@@ -64,6 +68,8 @@ check-decoder-partition: $(DECODER_SPEC) $(VALIDATION_INDEX)
 check-projections:
 	python3 scripts/project_asl_catalogs.py --root . --check
 	python3 scripts/instruction_docs.py --check
+	python3 scripts/generate-mnemonic-description-inventory --check
+	python3 scripts/check-mnemonic-explanations
 	python3 scripts/generate-mnemonic-avs.py --check
 	python3 scripts/generate-bundle-operation-matrix.py --check
 
@@ -72,6 +78,10 @@ check-publication-hygiene:
 
 check-release-event-schema:
 	./scripts/check-release-event-schema
+
+check-mnemonic-explanations:
+	python3 scripts/generate-mnemonic-description-inventory --check
+	./scripts/generate-mnemonic-description-coverage --check
 
 pr-check: check-asl-layout check-ndf check-adrs check-asl-tests check-decoder-partition check-projections check-publication-hygiene check-release-event-schema
 	./scripts/check-release-workflow
@@ -91,6 +101,7 @@ release-evidence-check:
 	./scripts/generate-release-traceability-readiness --check
 	./scripts/generate-architecture-readiness --check
 	./scripts/generate-release-gate-readiness --check
+	python3 scripts/check-mnemonic-explanations --require-complete
 	./scripts/check-release-closure
 	./scripts/check-binary-closure --release
 	./scripts/check-release-manifest
@@ -126,6 +137,29 @@ print-asl-sources: $(ASL_SOURCE_ORDER)
 
 print-asl-tests:
 	@find tests/asl -type f -name '*.asl' | sort
+
+site-install:
+	pnpm --dir $(SITE_DIR) install --frozen-lockfile
+
+site-check:
+	pnpm --dir $(SITE_DIR) typecheck
+	pnpm --dir $(SITE_DIR) test:unit
+	python3 scripts/check-site-security
+	pnpm --dir $(SITE_DIR) clear
+	PTO_SITE_REQUIRE_RELEASE=$(PTO_SITE_REQUIRE_RELEASE) pnpm --dir $(SITE_DIR) build
+	python3 scripts/generate-site-publication-manifest
+	python3 scripts/check-site-artifact
+
+site-e2e:
+	pnpm --dir $(SITE_DIR) test:e2e
+
+site-quality:
+	python3 scripts/check-site-lighthouse
+
+site-release-check:
+	$(MAKE) --no-print-directory site-check PTO_SITE_REQUIRE_RELEASE=1
+	$(MAKE) --no-print-directory site-e2e
+	$(MAKE) --no-print-directory site-quality
 
 clean:
 	rm -rf build

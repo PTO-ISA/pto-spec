@@ -11,6 +11,52 @@ SD.OR atomically replaces the aligned 64-bit memory value with its bitwise OR wi
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-sd-or-purpose role=purpose -->
+## What SD.OR does
+
+`SD.OR` atomically applies bitwise OR to one doubleword and stores the result without publishing the old value.
+
+<!-- PTO-READER-BLOCK: scalar-sd-or-mechanism role=mechanism -->
+## Atomic mechanism
+
+The ASL DOC contract selects `ScalarHandler_AtomicReadModifyWrite` with an access width of `8` bytes.
+
+Read and write access are preflighted before the same-location atomic read-modify-write is allowed to commit.
+
+<!-- PTO-READER-BLOCK: scalar-sd-or-inputs-outputs role=inputs-outputs -->
+## Inputs and result
+
+`SrcL` carries the Reg5 atomic address source; `SrcR` carries the Reg5 atomic operand source; `far` carries the flat-address routing hint; `rl` carries the release ordering bit.
+
+`rl` selects relaxed or release ordering; this form has no acquire bit; `far` is a profile routing hint and does not change the architectural result in the reference profile.
+
+<!-- PTO-READER-BLOCK: scalar-sd-or-effects role=effects -->
+## Effects and ordering
+
+This store-only form has no destination field; successful commit updates memory and emits one atomic event.
+
+A completed write invalidates an overlapping local 64-byte-line reservation, preserves a nonoverlapping reservation, and advances `TPC` by `4` bytes.
+
+<!-- PTO-READER-BLOCK: scalar-sd-or-constraints role=constraints -->
+## Legality and precise faults
+
+The effective address must be aligned to `8` bytes. Alignment, translation, and permission checks precede architectural effects.
+
+A failing preflight publishes no destination, memory event, reservation update, or retirement effect; the saved original `TPC` supports full reissue.
+
+<!-- PTO-READER-BLOCK: scalar-sd-or-example role=example -->
+## Non-normative example
+
+This example only shows one accepted spelling; the generated contract below remains authoritative.
+
+For a first reading, use `sd.or [SrcL], SrcR` and then vary only the ordering or route modifiers described above.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -143,7 +189,3 @@ end;
 - sd.or [a0], a1
 - sd.or.rl [t#1], u#1
 - sd.or.f [sp], a0
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

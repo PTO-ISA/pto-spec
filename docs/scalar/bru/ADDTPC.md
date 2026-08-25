@@ -11,6 +11,50 @@ ADDTPC - Add a signed 4 KiB page displacement to the current TPC.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-addtpc-purpose role=purpose -->
+## What ADDTPC does
+
+`ADDTPC` materializes a page-relative address from the current `TPC` without performing a control transfer.
+
+<!-- PTO-READER-BLOCK: scalar-addtpc-mechanism role=mechanism -->
+## Mechanism
+
+The signed `20`-bit immediate is extended, shifted left by `12`, and added to the snapshotted current `TPC` modulo `2^PTO_XLEN`.
+
+The computed address is published through the encoded destination; it is not installed as the next `TPC`.
+
+<!-- PTO-READER-BLOCK: scalar-addtpc-inputs-outputs role=inputs-outputs -->
+## Inputs and output
+
+- `RegDst` selects the encoded destination or discard behavior.
+
+- `imm20` supplies the encoded immediate or displacement.
+
+<!-- PTO-READER-BLOCK: scalar-addtpc-effects role=effects -->
+## Effects and ordering
+
+The result is published through the encoded destination, then successful dispatch advances `TPC` by `4` bytes.
+
+The instruction does not branch and does not access memory or reservation state.
+
+<!-- PTO-READER-BLOCK: scalar-addtpc-constraints role=constraints -->
+## Legality and fault order
+
+Encoding, reserved field values, and source availability are checked before destination, control, or `TPC` effects.
+
+<!-- PTO-READER-BLOCK: scalar-addtpc-example role=example -->
+## Non-normative example
+
+This example illustrates the current owner and does not create a second semantic definition.
+
+`addtpc simm, ->{t, u, Rd}` publishes the page-relative address as data and then continues sequentially.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -145,7 +189,3 @@ end;
 ## Examples
 
 - addtpc simm, ->{t, u, Rd}
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

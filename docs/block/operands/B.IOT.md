@@ -11,6 +11,55 @@ Binds an ordered Local Tile source/destination sequence with one common four-PE 
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: block-b-iot-purpose role=purpose -->
+## What B.IOT contributes
+
+`B.IOT` is a 32-bit block header command that records ordered Local tile sources and destinations for the selected block operation. It changes pending block metadata rather than executing a tile body operation immediately.
+
+<!-- PTO-READER-BLOCK: block-b-iot-mechanism role=mechanism -->
+## Placement and mechanism
+
+The command belongs to an active header before the first body instruction. Its effective order and arity are checked against the completed operation schema rather than inferred from this command in isolation.
+
+The common PE-mode decoder forms the four-PE mask once. A zero mask is a strict no-op; an effective Local source is read-only, while an effective destination is recorded for atomic publication after complete validation.
+
+<!-- PTO-READER-BLOCK: block-b-iot-inputs role=inputs-outputs -->
+## Operands and header roles
+
+- `SrcTile0` selects the first ordered Local source; its exact assigned domain remains in the generated contract below.
+- `SrcTile1` selects the second ordered Local source; its exact assigned domain remains in the generated contract below.
+- `L` terminates the effective Local-binding sequence; its exact assigned domain remains in the generated contract below.
+- `SizeCode` selects source-only or destination capacity; its exact assigned domain remains in the generated contract below.
+- `PEMode` encodes the participating-PE mode; its exact assigned domain remains in the generated contract below.
+- `DstTile` selects the Local destination hand; its exact assigned domain remains in the generated contract below.
+
+<!-- PTO-READER-BLOCK: block-b-iot-effects role=effects -->
+## Pending state and completion
+
+An accepted header command changes only its pending record or carrier. Architectural tile, Shared, GPR, memory, and completion effects remain deferred to the completed block unless this owner's contract explicitly identifies an immediate header-state update.
+
+<!-- PTO-READER-BLOCK: block-b-iot-constraints role=constraints -->
+## Legality and fault boundary
+
+The contract separates raw decode failures, header-stream errors, and tile-legality failures. Zero-mask bindings bypass downstream schema, duplicate, allocation, descriptor, and memory checks as a strict no-op.
+
+<!-- PTO-READER-BLOCK: block-b-iot-example role=example -->
+## Non-normative worked example
+
+This worked example is non-normative; it illustrates the current owner without replacing it.
+
+```asm
+B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<SizeCode>
+```
+
+Assume an active compatible header with no earlier conflicting `B.IOT` command. Placing `B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<SizeCode>` at the next header slot records this command's pending fields; it does not by itself execute the eventual body operation.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -219,11 +268,3 @@ end;
 ## Examples
 
 - B.IOT SrcTile0, mask=PE_MASK, <last>, ->DstTile<SizeCode>
-
-<!-- SUPPLEMENTARY-BEGIN -->
-Destination TSize is a per-selected-PE capacity. Core allocation is the
-embedded `InstructionContractCoreCapacity_B_IOT` result, namely
-`popcount(PE_MASK)` equal per-PE allocations. PE_MASK does not partition one
-Tile payload. Physical rows are derived from this per-PE capacity, data type,
-and the power-of-two physical Col supplied by the block schema.
-<!-- SUPPLEMENTARY-END -->

@@ -7,6 +7,47 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROFILE-MATRIX-QUANTIZATION}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-matrix-quant-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit provides the bit-exact numeric helpers used by matrix `PreQuant` and destination conversion. It covers FP19 parameters, signed integer rounding and saturation, binary16 and FP8 encoding, and floating destination selection.
+
+<!-- PTO-READER-BLOCK: arch-matrix-quant-concepts role=concepts-state -->
+## Numeric building blocks
+
+- `MatrixQuantParameter`, `MatrixShiftParameter`, and `MatrixQuantOffset` decode scaling and offset controls.
+- `MatrixRoundMagnitude`, `MatrixRoundAndSaturateSigned`, and `MatrixShiftS32ToS16` implement integer rounding, narrowing, and status.
+- `ReferenceBinary16Encoding`, `ReferenceFP8Encoding`, and `ReferenceMatrixFloatingEncoding` produce destination encodings and flags.
+
+<!-- PTO-READER-BLOCK: arch-matrix-quant-rules role=rules-interactions -->
+## Quantization path
+
+Matrix `PreQuant` multiplies by the selected FP19 scale, rounds and always saturates at its assigned `S5`, `S9`, or `S17` intermediate, adds the signed offset, and only then performs final destination encoding. Shift modes apply their assigned one-through-sixteen-bit ASR and saturate the `S16` result.
+
+Final integer destination encoding is a distinct stage: `ReferenceMatrixIntegerEncoding` clamps an out-of-range final value only when `control.saturating` is selected. Floating encoders separately classify exact, inexact, overflow, underflow, and special results and return an encoded `Word` with five-bit status.
+
+<!-- PTO-READER-BLOCK: arch-matrix-quant-boundaries role=boundaries -->
+## Format boundaries
+
+Binary16 logic distinguishes `FP16` and `BF16`. FP8 candidate selection compares neighboring finite encodings under the requested rounding rule. `ReferenceMatrixFloatingEncoding` routes `FP32`, binary16, and FP8 destinations to their format-specific owners; unsupported type pairs are handled by callers.
+
+<!-- PTO-READER-BLOCK: arch-matrix-quant-example role=example-usage -->
+## Non-normative rounding example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-matrix-quant-related role=related-owners-navigation -->
+## Related owners
+
+- Reference quantization provides shared real-value and FP32 helpers.
+- FP19 defines scale representation; matrix post-process orders these helpers within the complete result pipeline.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/matrix-quantization.asl -->
@@ -485,7 +526,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

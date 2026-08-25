@@ -1,0 +1,50 @@
+name: Site
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Site / validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Set up Node.js
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: "22"
+
+      - name: Enable the locked package manager
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.30.0 --activate
+
+      - name: Install exact site dependencies
+        run: pnpm --dir docs/site install --frozen-lockfile
+
+      - name: Validate the static site contract
+        run: make site-check
+
+      - name: Install the browser test runtime
+        run: pnpm --dir docs/site exec playwright install --with-deps chromium
+
+      - name: Exercise desktop, mobile, locale, WebGL, and no-JavaScript paths
+        env:
+          CI: "1"
+        run: make site-e2e

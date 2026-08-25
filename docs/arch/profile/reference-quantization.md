@@ -7,6 +7,48 @@ This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION}
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-reference-quant-purpose role=purpose-scope -->
+## Purpose and scope
+
+This unit supplies deterministic PTO v0 reference implementations for FP32 finite conversion, affine quantization to `S8` or `U8`, and dequantization back to `FP32`.
+
+<!-- PTO-READER-BLOCK: arch-reference-quant-concepts role=concepts-state -->
+## Value helpers
+
+- `ReferencePowerOfTwo` constructs powers from exponent `-149` through `127`.
+- `ReferenceFP32FiniteValue` decodes finite FP32 sign, exponent, and fraction into a real value.
+- `ReferenceIntegerValue` normalizes a Tile integer and interprets it with the source type's signedness.
+- `ReferenceFP32FiniteEncoding` performs the inverse finite encoding with status.
+
+<!-- PTO-READER-BLOCK: arch-reference-quant-rules role=rules-interactions -->
+## Quantize and dequantize
+
+`TileProfileQuantize` accepts `FP32` input and `S8` or `U8` output. It checks that the FP32 scale is finite and nonzero, computes `source * scale + zero_point`, rounds under the selected mode, and optionally clamps to the destination range.
+
+`TileProfileDequantize` accepts `S8` or `U8` input and `FP32` output. It computes `(source - zero_point) * scale` and returns the reference FP32 encoding.
+
+<!-- PTO-READER-BLOCK: arch-reference-quant-boundaries role=boundaries -->
+## Exceptional and profile boundaries
+
+Quantizing NaN produces zero with `NV`; infinity selects the signed integer endpoint with overflow/inexact status. The scale may not be NaN, infinite, or zero. These are PTO v0 `implementation` functions, so other named profiles require their own reviewed definitions.
+
+<!-- PTO-READER-BLOCK: arch-reference-quant-example role=example-usage -->
+## Non-normative affine example
+
+Use this example block only as a reading aid: apply the rules above, then confirm the result in the normative ASL owner. It does not add an architectural contract.
+
+<!-- PTO-READER-BLOCK: arch-reference-quant-related role=related-owners-navigation -->
+## Related owners
+
+- Reference profile supplies common numeric policy such as rounding selection.
+- Tile numeric formats classify encodings; matrix quantization reuses these reference helpers for broader formats.
+<!-- SUPPLEMENTARY-END -->
+
 ## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reference-quantization.asl -->
@@ -185,7 +227,3 @@ begin
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

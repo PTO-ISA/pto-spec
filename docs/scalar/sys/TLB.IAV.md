@@ -11,6 +11,52 @@ TLB.IAV completes the canonical 48-bit virtual address with ASID scope maintenan
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-tlb-iav-purpose role=purpose -->
+## What TLB.IAV does
+
+`TLB.IAV` completes its assigned synchronous cache or translation-maintenance request and records the exact operation token.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-iav-mechanism role=mechanism -->
+## System mechanism
+
+The ASL DOC region selects `ScalarHandler_ExecuteMaintenance`. Placement and encoded legality are checked before sources or system state can change.
+
+The instruction occupies one scalar operation position in the body of an active SYS block.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-iav-inputs-outputs role=inputs-outputs -->
+## Inputs and outputs
+
+`SrcL` carries the Reg5 source: R0..R23, T#1..T#4, or U#1..U#4.
+
+Encoded zero is an assigned field value, never an omitted operand.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-iav-effects role=effects -->
+## Architectural effects
+
+On success, the maintenance record receives `Maintenance_TLB_IAV` and the exact captured operand token.
+
+Exactly one selected cache or TLB epoch advances before `TPC`; the operation is a synchronous local hint completion.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-iav-constraints role=constraints -->
+## Placement and rejection
+
+TLB maintenance is accepted only at `ACR0`; ring permission is checked before operand validation. The operand must be a canonical 48-bit virtual address carrying the ASID scope.
+
+Invalid SYS-block placement is rejected before field checks. Reserved encodings or denied access produce no destination, queue, system-state, or `TPC` effect beyond the ordinary trap envelope.
+
+<!-- PTO-READER-BLOCK: scalar-tlb-iav-example role=example -->
+## Non-normative example
+
+This spelling example is illustrative; exact legality and effects remain in the generated contract below.
+
+Start with `tlb.iav SrcL` and trace its encoded fields through preflight before following the selected system effect.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -136,7 +182,3 @@ end;
 ## Examples
 
 - tlb.iav SrcL
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

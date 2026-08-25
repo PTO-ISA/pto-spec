@@ -11,6 +11,58 @@ REV reverses the bytes of an independently selected wrapping scalar field, zero-
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: scalar-rev-purpose role=purpose -->
+## What REV does
+
+`REV` is a 32-bit scalar ALU instruction. It reverses byte order inside the selected wrapping field and zero-fills result bits above that field; its current instruction contract defines the result publication path and any additional state effect.
+
+<!-- PTO-READER-BLOCK: scalar-rev-mechanism role=mechanism -->
+## How the result is formed
+
+Execution snapshots the encoded inputs, then reverses byte order inside the selected wrapping field and zero-fills result bits above that field, and only afterward performs the destination effects.
+
+- The operation-specific width, signedness, and immediate rules are fixed by the mnemonic and the encoded fields shown below.
+- Result publication uses the width and extension rule fixed by this mnemonic's current contract.
+
+<!-- PTO-READER-BLOCK: scalar-rev-inputs role=inputs-outputs -->
+## Inputs and destinations
+
+- The 5-bit `RegDst` field selects the Reg5 result target or discards the result.
+- The 5-bit `SrcL` field selects a scalar input through Reg5.
+- The 6-bit `imml` field encodes the selected field width as `N-1`.
+- The 6-bit `immr` field encodes selected-field starting bit `M`.
+
+These roles come from the current instruction contract. T/U sources are read and snapshotted without being removed from their queues; exact encoded-zero meanings appear in the generated defaults below.
+
+<!-- PTO-READER-BLOCK: scalar-rev-effects role=effects -->
+## Effects and ordering
+
+Every scalar source is snapshotted before the destination effect. The completed value is then routed through `RegDst` using the current scalar destination map.
+
+This ALU operation has no memory effect. After its successful architectural effects, `TPC` advances by 4 bytes.
+
+The operation does not introduce a hidden scalar publication target or an implicit memory access. Architectural changes remain limited to the state effects enumerated by the current contract.
+
+<!-- PTO-READER-BLOCK: scalar-rev-constraints role=constraints -->
+## Legality and fault boundary
+
+A selected width that is not a whole number of bytes produces zero; this is a defined result, not a fault.
+
+The generated legality table is authoritative for assigned field values, reserved encodings, and destination discard codes. Decode and source availability are checked before architectural effects.
+
+<!-- PTO-READER-BLOCK: scalar-rev-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `REV` example, reversing the two selected bytes of `0x1234` produces `0x3412`.
+<!-- SUPPLEMENTARY-END -->
+
 ## Assembly
 
 ```asm
@@ -144,7 +196,3 @@ end;
 - rev a0, 0, 64, ->a1
 - rev u#1, 60, 16, ->t
 - rev a0, 0, 7, ->zero
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

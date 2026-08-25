@@ -11,6 +11,52 @@ Form the origin-anchored union of two Local Tiles and add overlap elements.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tpartadd-purpose role=purpose -->
+## Purpose
+
+`TPARTADD` forms an origin-anchored union and adds overlap elements.
+
+<!-- PTO-READER-BLOCK: tile-tpartadd-mechanism role=mechanism -->
+## Execution mechanism
+
+The ASL DOC contract selects `TileHandler_ExecuteTilePartial` through the instruction's selector-encoded block carrier.
+
+Two origin-anchored Local source rectangles are snapshotted after coverage, type, layout, definedness, encoding, mask, and allocation preflight.
+
+<!-- PTO-READER-BLOCK: tile-tpartadd-inputs-outputs role=inputs-outputs -->
+## Operands and descriptors
+
+`destination0` is the new Local union destination; `source0` is the persistent Local left source anchored at origin; `source1` is the persistent Local right source anchored at origin.
+
+Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+
+<!-- PTO-READER-BLOCK: tile-tpartadd-effects role=effects -->
+## Publication and ordering
+
+Overlap coordinates apply the selected typed operation; coordinates covered by only one source copy that source bit-for-bit.
+
+The result, sticky numeric flags, descriptor, and undefined Null padding outside the valid rectangle publish atomically.
+
+<!-- PTO-READER-BLOCK: tile-tpartadd-constraints role=constraints -->
+## Legality, padding, and faults
+
+Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+
+Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+
+<!-- PTO-READER-BLOCK: tile-tpartadd-example role=example -->
+## Non-normative contract sketch
+
+This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
+
+Read `BSTART.SFU TPARTADD, S16; B.DIM LB0=16; B.IOT Left, Right, mask=1111, <last>, ->Dst<1>; BSTOP` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `irregular-and-complex`
@@ -152,7 +198,3 @@ end;
 ## Examples
 
 - BSTART.SFU TPARTADD, S16; B.DIM LB0=16; B.IOT Left, Right, mask=1111, <last>, ->Dst<1>; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

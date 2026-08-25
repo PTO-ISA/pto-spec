@@ -11,6 +11,58 @@ Gather enabled GM elements at byte displacements and pad disabled destination la
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-mgather-mask-purpose role=purpose -->
+## What MGATHER_MASK does
+
+`MGATHER_MASK` is a selector-encoded Tile operation executed by `TLSU`. It gathers only lanes whose predicate is exactly one and fills disabled lanes with the selected padding value; its current instruction contract owns the exact bundle form and publication boundary.
+
+<!-- PTO-READER-BLOCK: tile-mgather-mask-mechanism role=mechanism -->
+## Element and Tile mechanism
+
+After all descriptor and operand checks succeed, the owning ASL handler gathers only lanes whose predicate is exactly one and fills disabled lanes with the selected padding value. Source payloads are snapshotted before destination writes whenever the contract permits aliasing.
+
+The handler uses the resolved valid region rather than treating physical padding as input data. Its operation-specific dtype, layout, rounding, saturation, and profile hooks remain the executable definition.
+
+<!-- PTO-READER-BLOCK: tile-mgather-mask-inputs role=inputs-outputs -->
+## Operand roles and descriptors
+
+- `destination0` has the exact contract role **destination**.
+- `address` has the exact contract role **base-address**.
+- `source0` has the exact contract role **byte-displacement indices**.
+- `source1` has the exact contract role **exact zero-or-one predicate mask**.
+
+Every source coordinate read by the operation must be defined before execution reaches destination publication.
+`PE_MASK=0000` is a strict no-op before descriptor, allocation, payload, numeric-status, or memory effects.
+
+<!-- PTO-READER-BLOCK: tile-mgather-mask-effects role=effects -->
+## Publication, definedness, and padding
+
+After enabled-lane preflight, the selected PadValue carrier initializes every physical destination coordinate; enabled loads then overwrite their valid coordinates.
+
+On success the full physical destination is marked defined and `contents_defined=TRUE`; payload, definedness, and descriptor publish together.
+
+The operation preflights every enabled GM address before the first load, atomic event, or destination update; a failed access leaves no partial destination or event.
+
+<!-- PTO-READER-BLOCK: tile-mgather-mask-constraints role=constraints -->
+## Type, layout, and fault boundary
+
+Index Tiles use `S32`, `U32`, `S64`, or `U64`. Packed four-bit transfer types `E2M1X2`, `E1M2X2`, `HiF4X2`, `S4X2`, and `U4X2` are rejected because this indexed transfer has no nibble selector.
+
+The generated legality and exception sections below are authoritative for dtype pairs, layout, dimensions, capacity, definedness, padding controls, profile behavior, and fault class. Legality and allocation failures occur before partial architectural effects.
+
+<!-- PTO-READER-BLOCK: tile-mgather-mask-example role=example -->
+## Non-normative worked example
+
+This example illustrates the current ASL owner and does not replace the normative operation.
+
+For a small `MGATHER_MASK` example, a mask lane `0` performs no GM read and receives padding, while a lane `1` gathers its indexed element.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `memory-and-data-movement`
@@ -124,7 +176,8 @@ end;
 ## State effects
 
 - Allocate a new Local destination descriptor using B.IOT TSize, resolved dimensions, selected transfer DataType, selected Layout, and PE_MASK.
-- On success the full physical destination is defined: enabled valid lanes contain loaded values and every disabled or non-valid coordinate contains PadValue.
+- Initialize every physical destination coordinate from the selected PadValue carrier before enabled valid-lane writes.
+- On success overwrite enabled valid coordinates with loaded or observed values, mark the full physical destination defined, set contents_defined=TRUE, and publish atomically.
 
 ## Memory effects and ordering
 
@@ -148,7 +201,3 @@ end;
 ## Examples
 
 - BSTART.MGATHER.MASK DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, MaskTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->

@@ -11,6 +11,52 @@ Multiply matrices and accumulate into the supplied accumulator Tile.
 
 The current instruction contract is owned by the ASL source linked above.
 
+## Reader guide
+
+> **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
+
+<!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tmatmul-acc-purpose role=purpose -->
+## Purpose
+
+`TMATMUL_ACC` multiplies matrices and accumulates into the supplied accumulator Tile.
+
+<!-- PTO-READER-BLOCK: tile-tmatmul-acc-mechanism role=mechanism -->
+## Execution mechanism
+
+The ASL DOC contract selects `TileHandler_TMATMUL_ACC` through the instruction's selector-encoded block carrier.
+
+Matrix schema, M/K/N dimensions, operand layouts, DataTypes, descriptor shapes, aliases, masks, capacity, and every required Bias, accumulator, or E8M0 scale Tile are preflighted before source snapshots.
+
+<!-- PTO-READER-BLOCK: tile-tmatmul-acc-inputs-outputs role=inputs-outputs -->
+## Operands and descriptors
+
+`destination0` is the destination; `source0` is the accumulator; `source1` is the left; `source2` is the right.
+
+Sources remain persistent unless the current contract explicitly names a consumed or replaced state; destination descriptors are published only after complete preflight.
+
+<!-- PTO-READER-BLOCK: tile-tmatmul-acc-effects role=effects -->
+## Publication and ordering
+
+All persistent inputs are snapshotted before computation; the destination and any enabled auxiliary output publish as one atomic group.
+
+The destination uses this operation's CUBE layout and final output type; this mnemonic snapshots its accumulator input before computation and preserves that input after success or rejection.
+
+<!-- PTO-READER-BLOCK: tile-tmatmul-acc-constraints role=constraints -->
+## Legality, padding, and faults
+
+Malformed bindings, unsupported types or layouts, invalid shapes, undefined consumed elements, illegal attributes, or insufficient destination capacity are rejected before source snapshots or publication.
+
+Allocation failure raises the owner-defined Tile allocation fault; other rejected schema or value conditions raise the owner-defined legality, bundle-control, or memory fault without partial effects.
+
+<!-- PTO-READER-BLOCK: tile-tmatmul-acc-example role=example -->
+## Non-normative contract sketch
+
+This is a non-normative contract schema sketch; it organizes fields and bindings but is not claimed to be directly assembleable.
+
+Read `BSTART.TMATMUL.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one); B.DIM LB0 M or cooperative group_M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A with encoded selector distinct from DstTile, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout with a distinct encoded destination index, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary` as a non-normative binding walkthrough, then use the generated contract below for exact dimensions, attributes, and fault behavior.
+<!-- SUPPLEMENTARY-END -->
+
 ## Classification and execution engine
 
 - **Instruction class:** `matrix-and-matrix-vector`
@@ -156,7 +202,3 @@ end;
 ## Examples
 
 - BSTART.TMATMUL.ACC AType; B.DATR BType, RMode, Sat (optional; BType defaults to AType); B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one); B.DIM LB0 M or cooperative group_M (optional, default 1); B.DIM LB1 N (optional, default 1); B.DIM LB2 K (optional, default 1); B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111); B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A with encoded selector distinct from DstTile, A CUBE_M16/M32 primary, B CUBE_N8 primary; B.IOT D matching A's CUBE_M16/M32 layout with a distinct encoded destination index, optional RowMaxOut, optional GroupMaxOut destinations; B.IOT/B.IOR postprocess operands selected by B.FPATR; BSTOP or the next BSTART completion boundary
-
-<!-- SUPPLEMENTARY-BEGIN -->
-
-<!-- SUPPLEMENTARY-END -->
