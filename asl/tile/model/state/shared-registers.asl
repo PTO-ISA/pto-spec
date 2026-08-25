@@ -192,6 +192,22 @@ begin
         capacity_bytes);
 end;
 
+readonly func MaterializeSharedTileReadValues(
+    shared_tile_id: SharedTileID, tile: TileInfo) => TileInfo
+begin
+    var result = tile;
+    for row = 0 to result.valid_rows - 1 looplimit 65536 do
+        for column = 0 to result.valid_columns - 1 looplimit 65536 do
+            let element = TileLogicalLinearIndex(
+                result, row as integer {0..65535},
+                column as integer {0..65535});
+            result = TileInfoWithLogicalElement(result, element,
+                ReadSharedTileWord(shared_tile_id, element));
+        end;
+    end;
+    return result;
+end;
+
 // Reading an unallocated Sx is the Tile analogue of reading an undefined
 // scalar register.  The operation receives a temporary read-only descriptor,
 // while ReadSharedTileWord supplies deterministic model values without
@@ -227,7 +243,7 @@ begin
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;
     tile.cube_storage_bytes = 0;
-    return tile;
+    return MaterializeSharedTileReadValues(shared_tile_id, tile);
 end;
 
 readonly func MaterializeSharedTileForReadSchemaAtCapacity(
@@ -256,7 +272,7 @@ begin
     tile.cube_n_repeat = 0;
     tile.cube_cell_count = 0;
     tile.cube_storage_bytes = 0;
-    return tile;
+    return MaterializeSharedTileReadValues(shared_tile_id, tile);
 end;
 
 readonly func SharedTileProspectiveFullyInitialized(

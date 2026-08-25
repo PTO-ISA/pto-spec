@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-SHARED-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD"],"kind":"execution","summary":"Shared TLOAD uses the selected PE-private base and byte-stride GPRs and updates only selected quarters.","pass_condition":"Mask 0011 loads quarters zero and one from PE0 and PE1 while the other Shared quarters remain uninitialized.","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/tile/model/memory/shared-movement.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TLOAD-SHARED-001","source":"asl/block/execution/BSTART.TLOAD.asl","requirements":["PTO-INST-BLOCK-BSTART-TLOAD","PTO-INST-TILE-TLOAD","PTO-INST-BLOCK-B-ASSEMBLE","PTO-B-ASSEMBLE-SHARED-STANDALONE-001"],"kind":"execution","summary":"Shared TLOAD uses the selected PE-private base and byte-stride GPRs and updates only selected quarters.","pass_condition":"Mask 0011 assembles quarters zero and one from PE0 and PE1 while the other Shared quarters remain uninitialized.","related_sources":["asl/block/operands/B.ASSEMBLE.asl","asl/block/model/operands/shared-generation.asl","asl/block/model/dispatch/shared-tlsu.asl","asl/tile/model/memory/shared-movement.asl"]}
 pure func TLoadSharedStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -23,6 +23,15 @@ begin
     return instruction;
 end;
 
+pure func TLoadSharedAssemble() => bits(64)
+begin
+    var instruction: bits(64) = Zeros{64} + 0x00001053;
+    instruction[31] = '1';
+    instruction[11] = '1';
+    instruction[10:7] = '0011';
+    return instruction;
+end;
+
 func main() => integer
 begin
     ResetProfileState();
@@ -42,6 +51,8 @@ begin
     let destination_status = ExecuteCommandInstruction(
         TLoadSharedDestination(shared_tile_id), 32);
     assert destination_status == CommandExecution_Executed;
+    let assemble_status = ExecuteCommandInstruction(TLoadSharedAssemble(), 32);
+    assert assemble_status == CommandExecution_Executed;
     let ior_status = ExecuteCommandInstruction(TLoadSharedIOR(), 32);
     assert ior_status == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();

@@ -631,7 +631,12 @@
       ],
       "tests": [
         "PTO-AVS-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS-STATIC-001",
-        "PTO-AVS-BLOCK-SHARED-STANDALONE-COMPAT-001"
+        "PTO-AVS-BLOCK-SHARED-STANDALONE-COMPAT-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-PER-PE-GM-EXECUTION-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-PUBLISH-EXEC-003",
+        "PTO-AVS-BLOCK-TLOAD-SHARED-001",
+        "PTO-AVS-BLOCK-TMOV-PUBLISH-001"
       ]
     },
     {
@@ -3725,7 +3730,12 @@
         "PTO-AVS-BLOCK-B-ASSEMBLE-ENCODING-001",
         "PTO-AVS-BLOCK-RANGE-GROUP-ORDER-001",
         "PTO-AVS-BLOCK-RANGE-PEMODE-ZERO-001",
-        "PTO-AVS-BLOCK-SUBVIEW-CUBE-DESCRIPTOR-001"
+        "PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-PER-PE-GM-EXECUTION-001",
+        "PTO-AVS-BLOCK-SHARED-TLSU-PUBLISH-EXEC-003",
+        "PTO-AVS-BLOCK-SUBVIEW-CUBE-DESCRIPTOR-001",
+        "PTO-AVS-BLOCK-TLOAD-SHARED-001",
+        "PTO-AVS-BLOCK-TMOV-PUBLISH-001"
       ]
     },
     {
@@ -16510,7 +16520,7 @@
     "asl/block/model/dispatch/tile-scalar-schema.asl": "9df397a10cb810ebf78d5fa8c4357c224fe46688ed58b52544cdf9d3225480be",
     "asl/block/model/dispatch/tile-schema.asl": "3f36feeac1ff52e1398401fb30e84a5f109d8f4ad0454394c75d88ef81068243",
     "asl/block/model/dispatch/tlsu-gmov.asl": "500ea0d7053ca2126ac344052ec98b6a97f2cf78660a13bac6da0a7830be6159",
-    "asl/block/model/dispatch/tlsu-layout-conversion.asl": "18b1228d3cdc8c7bfb1d62b3be1cebdc12d5a68022e978b5932ed3022ad5b838",
+    "asl/block/model/dispatch/tlsu-layout-conversion.asl": "f8afbda1d02bca81bd6f9016e623a691c866f6c3356a07f5f63c08e4bc9619a1",
     "asl/block/model/dispatch/tlsu-mgather-cas.asl": "17d4b63d3f34e5233a7df6a8f756bd2fc5365d155488eceb99dd13d5368d50a9",
     "asl/block/model/dispatch/tlsu-mgather-mask.asl": "fc450443978e981b8863221d0868702b2aae1b111875f30c4624c0362959f19a",
     "asl/block/model/dispatch/tlsu-mgather.asl": "a8f6cad2b3463137d6cb98bb1c01d099d49cf127fbbb23d402b246737bdb46c5",
@@ -16528,7 +16538,7 @@
     "asl/block/model/operands/range-modifiers.asl": "cf4eec08ff8113867c31bc0c7446ea5d0f99d8f3a2e908f259ea605fc46d8b70",
     "asl/block/model/operands/scalar-bindings.asl": "a5b468e7912a7a5513eabbad1024ae41e5a7b553e59fae1d02ed1f9cc5a08c7a",
     "asl/block/model/operands/shared-bindings.asl": "e8b086dc35c630bc7c53ffde8b01b1445849af4a07cf805ed1f448f22f330559",
-    "asl/block/model/operands/shared-generation.asl": "341221ee2a3984a24ac465797deb20b2f767ae06f8eee5482e8798aa7eed4064",
+    "asl/block/model/operands/shared-generation.asl": "292eb21207da6ff0ca6c56b0be23fda0facd5124e0f82f7abee93e7a463ce88e",
     "asl/block/model/operands/subview-descriptor.asl": "eb258e699e40f3e7745711d03c04cf91c7c622154dfa2e469355e0bc984f3cfb",
     "asl/block/model/operands/tile-bindings.asl": "a665e375253d3ce95a886f3000ea97deb7e75c3490e3ad623c7bff92e69cac5c",
     "asl/block/model/schema/attributes.asl": "90dc72291f078c79f3bc5ebb44a2c18c757785ef8720d49adf552763292597a2",
@@ -17161,7 +17171,7 @@
     "asl/tile/model/state/descriptors.asl": "41af55eaac4358a2614688bedfdec6283440a9ea26c2a266c2e53cf6e9641552",
     "asl/tile/model/state/feature-map-descriptors.asl": "39a77bbb4b0fe2e80a9e4ec62781d64cfc7e62f0a42c35dd9422b589218d4fef",
     "asl/tile/model/state/local-registers.asl": "645fda7cae232d5180641ea966a673abbab33cb9bc2f4085aedfae4d84b69f6a",
-    "asl/tile/model/state/shared-registers.asl": "bb44cc6581023f68f37b9ee50da70fb2c9a51c64a91583f62bb1ce304067d3dc",
+    "asl/tile/model/state/shared-registers.asl": "20c3fbef4d8327d9dad3f4dc810c64c279eed18f7facb5521cc2937478a3094c",
     "asl/tile/model/state/types.asl": "8c7bebec13dbb28f61188e72635a203899309286a0da292aef6cda8a0fbd1fcf",
     "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl": "1b362aa9e1df6949c0e1e49e15b4cf87ec40508e70ae6abbea27002e9066b515",
     "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl": "f1130fda49efa99867b2e6af9ff1554c39c73d5a1a1837df9c7c9e3bbd06d8c3",
@@ -17362,7 +17372,7 @@
     "docs/block/model/dispatch/tile-scalar-schema.md": "dfff2efcd9fdd2bb16e4cf14c86a38cea06b52b705d0218e1501897bf80e4c77",
     "docs/block/model/dispatch/tile-schema.md": "59911a172bd2c96939cdfa2112267129a427bf47513e28b594c94df27c5e8231",
     "docs/block/model/dispatch/tlsu-gmov.md": "a8adbfb2fc5eeb9425b7ff574877f007dda0b8455a7bcb37be226434fac1f6ec",
-    "docs/block/model/dispatch/tlsu-layout-conversion.md": "55ab3e77c5312c31d8c9de93cab0853034130bc6d3b8c3a6b329d74d219452ff",
+    "docs/block/model/dispatch/tlsu-layout-conversion.md": "6cd6a9913600c2c8bb1858b10eca34b8a798a17c8bfb3de7a3bbbe808bdc7118",
     "docs/block/model/dispatch/tlsu-mgather-cas.md": "436e94dc700f0244a13880c07ae5d195188eb58b3ca9918074649522b038aaa9",
     "docs/block/model/dispatch/tlsu-mgather-mask.md": "e7f5f2a7f47084375d6d1d2234819980352263964f9a44db711f8c76bb688689",
     "docs/block/model/dispatch/tlsu-mgather.md": "35e93e9fe1f222ee0caee14bc775375d3b76f505571c3a697b842b573d201683",
@@ -17380,7 +17390,7 @@
     "docs/block/model/operands/range-modifiers.md": "2a4d609839fb1013fac04fbe5dbec65e752c6f679228e2399e6ab4e6d0e0e2d2",
     "docs/block/model/operands/scalar-bindings.md": "a1220492555047c82328e3c22335db0041120f8561bc9221e8e5231414c36ec7",
     "docs/block/model/operands/shared-bindings.md": "ce5685b1eab04f4b222b91bb2ac034c6e5c7ac6c2bcca6b991d0444ef9e0c058",
-    "docs/block/model/operands/shared-generation.md": "31cc9e247c62c61ee48a18d9ffbe7b5af97a9b5dd6b07bf3349e9dce54ed4f69",
+    "docs/block/model/operands/shared-generation.md": "aff8fc389aaea39c90f6815d1c67d4b939d33787e431d933954b577096a35638",
     "docs/block/model/operands/subview-descriptor.md": "8b1bf88910c0a7faa37e2d8f6573daf5fc106ac400acb40eafc3c5de267fed6b",
     "docs/block/model/operands/tile-bindings.md": "1e3cf668b18f5107bb89e35db630babcaeb7a8cb9575981f67dbea2a51f3b417",
     "docs/block/model/schema/attributes.md": "b8fcf102274512de929cfd971f29a4a4172f9e538b3820f065b123311eef295e",
@@ -18013,7 +18023,7 @@
     "docs/tile/model/state/descriptors.md": "428c7c94e32de082ad152fcaad60534f5c77d37937c4b67da3e7683f2f79f4b4",
     "docs/tile/model/state/feature-map-descriptors.md": "5523f054d53404a135b45b66f59afc84a885fccee4356aedcda783776ef71c8f",
     "docs/tile/model/state/local-registers.md": "3a0a559e81791b26b2352bdc4e2bcb342045bcc84690d7087821b353bed3716a",
-    "docs/tile/model/state/shared-registers.md": "91978bb97e5f418129f14b79a91f3b7db0c23e4bf66162d7db53d68a8a80d4a3",
+    "docs/tile/model/state/shared-registers.md": "9160a2e0c8aecd6e92aed68958c7dec37458808eafda2d6cbeee93b3a098e24f",
     "docs/tile/model/state/types.md": "73b24ac448bcb26960125fd39ca745161a9b5f809f3c1a995b3d162791d32e6d",
     "docs/tile/reduce-and-expand/column-expansion/TCOLEXPAND.md": "b078f1cb41aec78df897ba990426e2ef560c5b687a76efdc44434012b5996271",
     "docs/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.md": "b6c67702199f32ef3b8699304bdd5ce232cf338740b40e362d7cbd1e29a049c1",
@@ -18369,7 +18379,7 @@
     "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-cube-002.asl": "3d15bfdc8484a2b7977c176f9bb336df5a994eb0c7448b7d8dc1ea4df62a9147",
     "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-cube-stride-007.asl": "4289a390839ce9a9b1d15933530faa7858b7361f1c5564c220eb64f7c9de003c",
     "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-packed-001.asl": "70d67491612719385388b5e2669094459f81664e0dc9116c0fa4cb207a9f31ba",
-    "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-shared-001.asl": "9f1a3353e0fc6c8a419460887db1029da2ba64ab747326b1a35f63873281b110",
+    "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-shared-001.asl": "6e213a64db5143c6397695395febedda54f98992ef132c350b158b9fa9b372a3",
     "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-stride-001.asl": "724bea021a103f8b12c0e27ac7b9d909f26609d19d7e08849e52fa35ee8913a7",
     "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-zero-mask-001.asl": "71d9eae4dd8365c8ee0b3407ac416df3d7298e536887cde8bb1638411c5fde56",
     "tests/asl/block/execution/BSTART.TLOAD/block-fault-bstart-tload-cube-access-003.asl": "b68230367e24345fa982499bae38706164bfd9e8961ee1460035ee78d5b5edee",
@@ -18403,7 +18413,7 @@
     "tests/asl/block/execution/BSTART.TMOV/block-decode-bstart-tmov-canonical-001.asl": "7c50091cb50cb37ab5de1c8f4e9f7b8231f799ca70e2bbd1a0cb21cecb027ca1",
     "tests/asl/block/execution/BSTART.TMOV/block-decode-bstart-tmov-forms-001.asl": "c296b699bb5471d2f83f06743fa9b7ec3c720dc5a781515fdbbe6476b5782ee4",
     "tests/asl/block/execution/BSTART.TMOV/block-exec-bstart-tmov-extract-001.asl": "86f2f28518c03d5926e0ebb210e85c9166304a4c7b422eb74d807d6aad8261f9",
-    "tests/asl/block/execution/BSTART.TMOV/block-state-bstart-tmov-publish-001.asl": "b73c36501d4fd3826f4e818ef276ef28c1365b6a2f643c6e9025d01ddae1aa44",
+    "tests/asl/block/execution/BSTART.TMOV/block-state-bstart-tmov-publish-001.asl": "d3b7f6838d5ea4dc7d4ac8c13b8c716f62db232977e6a9ec2f47d98aacb1db4e",
     "tests/asl/block/execution/BSTART.TPREFETCH/block-bound-bstart-tprefetch-defaults-001.asl": "24f34fcfaeb4ba168bc992690d85df12f8c421cb61e6cb4fd62eacdef29f14f0",
     "tests/asl/block/execution/BSTART.TPREFETCH/block-bound-bstart-tprefetch-schema-001.asl": "90d62c8b33c053965bfa236bef955c168ced55a8d348a30ff3a99c90a9b03e05",
     "tests/asl/block/execution/BSTART.TPREFETCH/block-decode-bstart-tprefetch-canonical-001.asl": "3d05bf3763f39b1c0170f8c571e746fd396aebae13b32ecd517f027f5e452fbe",
@@ -18557,14 +18567,14 @@
     "tests/asl/block/model/dispatch/scalar-schema/block-static-scalar-schema-contract-001.asl": "26a1eef09b2ff830e33b85e1d1b8c73c4108c6b9e26a061638a938d9f5366c4b",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-transpose-002.asl": "fc9538d3ba766ac00a59249f5626bd7419cf9983f1a52abd70e68531bbd3c00e",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-static-shared-cube-matrix-contract-001.asl": "9a87138fcf0fe7bba46f6d3447358753f3997f7110d0b9785d0858890355faf7",
-    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-per-pe-gm-001.asl": "6cbcd423b59ab79fe9d2d2208badb3bd8d6ee7c9d887ea5efab2d3af3dedd810",
-    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl": "4833b6bcb0e492a69ecd15bce1f615ba8d5b473d54e7daf7a80dca4d395046d1",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-per-pe-gm-001.asl": "b398421107121b5551c5e9cc77949c2ceed6275f03543a55a422925c0d6801aa",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl": "7e16668a172a6c766c0769d83164a3e9e8669e93b489e73dc303544e6098a650",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-byte-stride-007.asl": "cd1319cfd8b323e1df7e7524b69fa17eb0a616758f9263ab22642b771fc64b19",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-mask-partition-005.asl": "0b62b614ba68bd229ec0940d9ee13c8f76a5be537fd448a383df4e2eb002dc9c",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-missing-binder-006.asl": "a956a84b1a13ce8a5b6f16a428e49515e84c8a17f16bd5bb2d1db562edbcfb8d",
     "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-partial-004.asl": "afb1ca04b30be4b81e81c209c3294a5a4358c56ad46078651ad6aea827dc5c0c",
-    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-publish-003.asl": "149de33bafd7b75ddbdf77ac7a8a8361e2c96d109cae13e26ce90ef4d465aba5",
-    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-zero-ior-002.asl": "4fafa72239e37411e850963e0c076d8c1e8c433f33c942b7bdd26e92932a41f6",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-publish-003.asl": "d8cc19117da8f64691d3ea63076f3006d22bf8226f594cdc42b582207933ad30",
+    "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-zero-ior-002.asl": "26bb7151c2ea13e6981a97deee5a3a17813e16e639fac22697a0705e255e5ad5",
     "tests/asl/block/model/dispatch/shared-tlsu/block-fault-tstore-mask-legality-001.asl": "9131d4b6ff7df0506d459567257f340f5db331cb837b66bd3d2348f9d403a311",
     "tests/asl/block/model/dispatch/shared-tlsu/block-static-shared-tlsu-contract-001.asl": "c3a2dd790c901b04c97861fff2f41a07cf5816b66ce5994fc16c1f053bec868c",
     "tests/asl/block/model/dispatch/sorting-schema/block-bound-sorting-schema-001.asl": "74effe307ff4ddaebef4742d268cbe892b66bbbef63e4f2fa200ea01679a21d4",
@@ -37131,8 +37141,11 @@
       "id": "PTO-AVS-BLOCK-SHARED-TLSU-GM-EXEC-001",
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-001.asl",
-      "requirements": [],
-      "sha256": "4833b6bcb0e492a69ecd15bce1f615ba8d5b473d54e7daf7a80dca4d395046d1",
+      "requirements": [
+        "PTO-INST-BLOCK-B-ASSEMBLE",
+        "PTO-B-ASSEMBLE-SHARED-STANDALONE-001"
+      ],
+      "sha256": "7e16668a172a6c766c0769d83164a3e9e8669e93b489e73dc303544e6098a650",
       "source": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
@@ -37157,17 +37170,22 @@
       "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-per-pe-gm-001.asl",
       "requirements": [
         "PTO-ARCH-GM-ACCESS-001",
-        "PTO-INST-TILE-TLOAD"
+        "PTO-INST-TILE-TLOAD",
+        "PTO-INST-BLOCK-B-ASSEMBLE",
+        "PTO-B-ASSEMBLE-SHARED-STANDALONE-001"
       ],
-      "sha256": "6cbcd423b59ab79fe9d2d2208badb3bd8d6ee7c9d887ea5efab2d3af3dedd810",
+      "sha256": "b398421107121b5551c5e9cc77949c2ceed6275f03543a55a422925c0d6801aa",
       "source": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-SHARED-TLSU-PUBLISH-EXEC-003",
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-publish-003.asl",
-      "requirements": [],
-      "sha256": "149de33bafd7b75ddbdf77ac7a8a8361e2c96d109cae13e26ce90ef4d465aba5",
+      "requirements": [
+        "PTO-INST-BLOCK-B-ASSEMBLE",
+        "PTO-B-ASSEMBLE-SHARED-STANDALONE-001"
+      ],
+      "sha256": "d8cc19117da8f64691d3ea63076f3006d22bf8226f594cdc42b582207933ad30",
       "source": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
@@ -37175,7 +37193,7 @@
       "kind": "execution",
       "path": "tests/asl/block/model/dispatch/shared-tlsu/block-exec-shared-tlsu-zero-ior-002.asl",
       "requirements": [],
-      "sha256": "4fafa72239e37411e850963e0c076d8c1e8c433f33c942b7bdd26e92932a41f6",
+      "sha256": "26bb7151c2ea13e6981a97deee5a3a17813e16e639fac22697a0705e255e5ad5",
       "source": "asl/block/model/dispatch/shared-tlsu.asl"
     },
     {
@@ -37567,9 +37585,11 @@
       "path": "tests/asl/block/execution/BSTART.TLOAD/block-exec-bstart-tload-shared-001.asl",
       "requirements": [
         "PTO-INST-BLOCK-BSTART-TLOAD",
-        "PTO-INST-TILE-TLOAD"
+        "PTO-INST-TILE-TLOAD",
+        "PTO-INST-BLOCK-B-ASSEMBLE",
+        "PTO-B-ASSEMBLE-SHARED-STANDALONE-001"
       ],
-      "sha256": "9f1a3353e0fc6c8a419460887db1029da2ba64ab747326b1a35f63873281b110",
+      "sha256": "6e213a64db5143c6397695395febedda54f98992ef132c350b158b9fa9b372a3",
       "source": "asl/block/execution/BSTART.TLOAD.asl"
     },
     {
@@ -38263,9 +38283,11 @@
       "kind": "state-transition",
       "path": "tests/asl/block/execution/BSTART.TMOV/block-state-bstart-tmov-publish-001.asl",
       "requirements": [
-        "PTO-INST-BLOCK-BSTART-TMOV"
+        "PTO-INST-BLOCK-BSTART-TMOV",
+        "PTO-INST-BLOCK-B-ASSEMBLE",
+        "PTO-B-ASSEMBLE-SHARED-STANDALONE-001"
       ],
-      "sha256": "b73c36501d4fd3826f4e818ef276ef28c1365b6a2f643c6e9025d01ddae1aa44",
+      "sha256": "d3b7f6838d5ea4dc7d4ac8c13b8c716f62db232977e6a9ec2f47d98aacb1db4e",
       "source": "asl/block/execution/BSTART.TMOV.asl"
     },
     {

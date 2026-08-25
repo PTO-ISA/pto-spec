@@ -169,6 +169,10 @@ begin
     if destination_offset + source_elements > parent_elements then
         return FALSE;
     end;
+    if candidate.tile.valid_rows == 0 ||
+       candidate.tile.valid_columns == 0 then
+        return FALSE;
+    end;
     var working = _SharedGenerations[[index]].working_tile;
     for element = 0 to source_elements - 1 looplimit 524288 do
         let source_index = element as PackedTileElementIndex;
@@ -182,7 +186,16 @@ begin
     end;
     _SharedGenerations[[index]].working_tile = working;
     let working_columns = working.columns as integer {1..65535};
-    let required_rows = ((destination_offset + source_elements +
+    let last_valid_row = (candidate.tile.valid_rows - 1)
+        as integer {0..65534};
+    let last_valid_column = (candidate.tile.valid_columns - 1)
+        as integer {0..65534};
+    let candidate_valid_extent =
+        (TileLogicalLinearIndex(candidate.tile, last_valid_row,
+             last_valid_column) + 1) as integer {1..524288};
+    let required_end = destination_offset + candidate_valid_extent;
+    if required_end > parent_elements then return FALSE; end;
+    let required_rows = ((required_end +
         (working_columns - 1)) DIVRM working_columns)
         as integer {1..65535};
     if _SharedGenerations[[index]].working_tile.valid_rows < required_rows then
