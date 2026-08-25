@@ -19978,13 +19978,78 @@
         "PTO-TILE-MODEL-SHAPE-CUBE-CELL"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0102"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-FCVTA-DECISION-BINDING-001",
+        "PTO-MGATHER-BYTE-DISPLACEMENT-001",
+        "PTO-SETRET-ADR-CONTRACT-001",
+        "PTO-TSEL-CONTRACT-001",
+        "PTO-TSORT-CONTRACT-001"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0102",
+      "test_ids": [
+        "PTO-AVS-BLOCK-MGATHER-FAULT-001",
+        "PTO-AVS-BLOCK-MGATHER-GATHER-001",
+        "PTO-AVS-BLOCK-MGATHER-S4-INDEX-002",
+        "PTO-AVS-BLOCK-MGATHER-SCHEMA-001",
+        "PTO-AVS-BLOCK-MGATHER-SIGNED-001",
+        "PTO-AVS-BLOCK-MGATHER-STAGE2-WIDTH-001",
+        "PTO-AVS-BLOCK-MGATHER-U4-INDEX-003",
+        "PTO-AVS-BRU-SETRET-ALIAS-001",
+        "PTO-AVS-BRU-SETRET-BOUND-001",
+        "PTO-AVS-BRU-SETRET-EXEC-001",
+        "PTO-AVS-FSU-FCVTA-BOUND-001",
+        "PTO-AVS-FSU-FCVTA-DST-001",
+        "PTO-AVS-FSU-FCVTA-EXEC-001",
+        "PTO-AVS-FSU-FCVTA-FLAGS-001",
+        "PTO-AVS-FSU-FCVTA-ROUND-001",
+        "PTO-AVS-FSU-FCVTA-RSVD-001",
+        "PTO-AVS-FSU-FCVTA-SNAP-001",
+        "PTO-AVS-FSU-FCVTA-SRC-001",
+        "PTO-AVS-FSU-FCVTA-TYPE-001",
+        "PTO-AVS-SCALAR-FCVTA-DECODE-001",
+        "PTO-AVS-SCALAR-SETRET-DECODE-001",
+        "PTO-AVS-TILE-MGATHER-BYTES-001",
+        "PTO-AVS-TILE-MGATHER-STATIC-001",
+        "PTO-AVS-TILE-TSEL-BUNDLE-001",
+        "PTO-AVS-TILE-TSEL-DATR-001",
+        "PTO-AVS-TILE-TSEL-EXACT-001",
+        "PTO-AVS-TILE-TSEL-MASK-001",
+        "PTO-AVS-TILE-TSEL-MASK-ZERO-001",
+        "PTO-AVS-TILE-TSEL-PACKED-001",
+        "PTO-AVS-TILE-TSEL-PADDING-001",
+        "PTO-AVS-TILE-TSEL-SCHEMA-001",
+        "PTO-AVS-TILE-TSEL-STATIC-001",
+        "PTO-AVS-TILE-TSEL-TYPES-001",
+        "PTO-AVS-TILE-TSORT-BUNDLE-001",
+        "PTO-AVS-TILE-TSORT-GROUPS-001",
+        "PTO-AVS-TILE-TSORT-SHAPE-001",
+        "PTO-AVS-TILE-TSORT-SNAN-001",
+        "PTO-AVS-TILE-TSORT-STATIC-001",
+        "PTO-AVS-TILE-TSORT-TYPES-001"
+      ],
+      "unit_ids": [
+        "PTO-SCALAR-FCVTA",
+        "PTO-SCALAR-SETRET",
+        "PTO-TILE-MGATHER",
+        "PTO-TILE-TSEL",
+        "PTO-TILE-TSORT"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 96,
-      "sha256": "b2daf2f2826db81be7549f15ec5984e118657514e0374af13dcf7286291adccd"
+      "count": 97,
+      "sha256": "0d5805f3b30af51a180b1892f4ae7aed48e1117e02c0d33510ac8a252154f65b"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -19992,7 +20057,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "5534d129cdb9ad28271d93fcbaf9a301a5c6a046f683686cc10238d45955e5ee",
+      "sha256": "498cdfa71f635a786a9f7d24611dbb426dd8856ca020966d6eea164a1bded089",
       "test_count": 3717,
       "unit_count": 852
     }
@@ -20012,13 +20077,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 10,
-      "executable": 82,
+      "executable": 83,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 92,
+    "subject_count": 93,
     "validated_count": 0
   }
 }

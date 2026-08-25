@@ -12,6 +12,11 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0100](docs/status/decisions/0100-cooperative-group-m-distribution.md): Cooperative Group-M Distribution and Inactive PE Semantics
 - [ADR-0101](docs/status/decisions/0101-matrix-scale-and-cscale.md): Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale
 
+## Release 0.58.4.1
+
+### Cross-cutting
+- [ADR-0102](docs/status/decisions/0102-0584-1-publication-contract-corrections.md): PTO ISA 0.58.4.1 publication-contract correction boundary
+
 ## Release 0.58.3
 
 ### Architecture

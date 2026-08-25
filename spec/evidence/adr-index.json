@@ -7991,12 +7991,52 @@
         "0.58.4"
       ],
       "title": "Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale"
+    },
+    {
+      "accepted": "2026-08-26",
+      "affected_ndf": [
+        "PTO-FCVTA-DECISION-BINDING-001",
+        "PTO-MGATHER-BYTE-DISPLACEMENT-001",
+        "PTO-SETRET-ADR-CONTRACT-001",
+        "PTO-TSEL-CONTRACT-001",
+        "PTO-TSORT-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-FCVTA",
+        "PTO-SCALAR-SETRET",
+        "PTO-TILE-MGATHER",
+        "PTO-TILE-TSEL",
+        "PTO-TILE-TSORT"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "2052214b8e4b046aa77f68dc0ba8ca23447ae00d",
+      "created": "2026-08-26",
+      "id": "ADR-0102",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/18",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0102-0584-1-publication-contract-corrections.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.4.1"
+      ],
+      "title": "PTO ISA 0.58.4.1 publication-contract correction boundary"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 96
+    "record_count": 97
   }
 }

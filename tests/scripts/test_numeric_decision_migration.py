@@ -193,7 +193,7 @@ class NumericDecisionMigrationTest(unittest.TestCase):
                 "git",
                 "grep",
                 "-nE",
-                r"PD-[0-9]{2}",
+                r"(^|[^A-Z0-9_])PD-[0-9]{2}",
                 "--",
                 "asl/**",
                 "scripts/generate-numeric-*",

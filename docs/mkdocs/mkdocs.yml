@@ -1050,5 +1050,6 @@ nav:
           - "ADR 0099: PTO ISA 0.58.3 to 0.58.4 compatibility boundary": status/decisions/0099-0583-to-0584-compatibility.md
           - "ADR 0100: Cooperative Group-M Distribution and Inactive PE Semantics": status/decisions/0100-cooperative-group-m-distribution.md
           - "ADR 0101: Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale": status/decisions/0101-matrix-scale-and-cscale.md
+          - "ADR 0102: PTO ISA 0.58.4.1 publication-contract correction boundary": status/decisions/0102-0584-1-publication-contract-corrections.md
       - Open:
           - "Open architecture decisions": status/open/index.md
