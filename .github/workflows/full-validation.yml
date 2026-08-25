@@ -148,7 +148,7 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$COMMIT"
 
       - name: Set up pinned OCaml
-        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
+        uses: ocaml/setup-ocaml@f92e0606b7ae4873dd1238465ea4bf6f8e40d85c # v3
         with:
           ocaml-compiler: "5.2.1"
           dune-cache: true
@@ -197,7 +197,7 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "$COMMIT"
 
       - name: Set up pinned OCaml
-        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
+        uses: ocaml/setup-ocaml@f92e0606b7ae4873dd1238465ea4bf6f8e40d85c # v3
         with:
           ocaml-compiler: "5.2.1"
           dune-cache: true
