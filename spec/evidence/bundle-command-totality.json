@@ -3,7 +3,7 @@
   "target": "S4-T7",
   "status": "closed",
   "accepted_form_count": 76,
-  "encoding_variant_count": 5,
+  "encoding_variant_count": 0,
   "disposition_counts": {
     "executed": 66,
     "pto-v0-rejected": 10
@@ -1316,6 +1316,7 @@
         "ElementWiseEn",
         "TransA",
         "TransB",
+        "CScaleEn",
         "Reserved",
         "Opc1",
         "Opcode",
@@ -1333,6 +1334,7 @@
         "ElementWiseEn",
         "TransA",
         "TransB",
+        "CScaleEn",
         "Reserved",
         "Opc1",
         "Opcode",
@@ -1390,93 +1392,7 @@
       "sequential_tpc_advance": true
     }
   ],
-  "encoding_variant_matrix": [
-    {
-      "form_index": 47,
-      "form_id": "bstart_tmov_32_211446509efb",
-      "mnemonic": "BSTART.TMOV",
-      "variant_name": "TMOV.L2S.INSERT",
-      "function": 9,
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x07ffffff",
-          "match": "0x00911181",
-          "width_bits": 32
-        }
-      ],
-      "operation_identity_rule": "same-form-identity",
-      "decoder_disposition": "executed"
-    },
-    {
-      "form_index": 47,
-      "form_id": "bstart_tmov_32_211446509efb",
-      "mnemonic": "BSTART.TMOV",
-      "variant_name": "TMOV.L2S.PUBLISH",
-      "function": 10,
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x07ffffff",
-          "match": "0x00a11181",
-          "width_bits": 32
-        }
-      ],
-      "operation_identity_rule": "same-form-identity",
-      "decoder_disposition": "executed"
-    },
-    {
-      "form_index": 47,
-      "form_id": "bstart_tmov_32_211446509efb",
-      "mnemonic": "BSTART.TMOV",
-      "variant_name": "TMOV.S2L.BROADCAST",
-      "function": 11,
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x07ffffff",
-          "match": "0x00b11181",
-          "width_bits": 32
-        }
-      ],
-      "operation_identity_rule": "same-form-identity",
-      "decoder_disposition": "executed"
-    },
-    {
-      "form_index": 47,
-      "form_id": "bstart_tmov_32_211446509efb",
-      "mnemonic": "BSTART.TMOV",
-      "variant_name": "TMOV.S2L.EXTRACT",
-      "function": 12,
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x07ffffff",
-          "match": "0x00c11181",
-          "width_bits": 32
-        }
-      ],
-      "operation_identity_rule": "same-form-identity",
-      "decoder_disposition": "executed"
-    },
-    {
-      "form_index": 50,
-      "form_id": "bstart_tstore_32_4048b6e8b0f4",
-      "mnemonic": "BSTART.TSTORE",
-      "variant_name": "TSTORE.SPART",
-      "function": 14,
-      "encoding": [
-        {
-          "index": 0,
-          "mask": "0x07ffffff",
-          "match": "0x00e11181",
-          "width_bits": 32
-        }
-      ],
-      "operation_identity_rule": "same-form-identity",
-      "decoder_disposition": "executed"
-    }
-  ],
+  "encoding_variant_matrix": [],
   "bundle_tile_bridge": {
     "bound_operand_fields": [
       "address",

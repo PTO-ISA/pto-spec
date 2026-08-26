@@ -185,12 +185,15 @@ type TileInfo of record {
 // Requirement reference PTO-REQ-SHARED-TILE-001: S0..S63 are absolute,
 // core-private architectural
 // Shared registers. Each record is persistent descriptor-plus-payload state;
-// initialized_mask identifies the fixed-offset quarters whose payload has
-// been written. All four PEs in one core address the same 64 records.
+// initialized_mask identifies producer-written coverage metadata.
+// whole_parent_ready is hardware-maintained parent-level readiness; it is
+// independent of the producer mask and consumer participation mask. All four
+// PEs in one core address the same 64 records.
 type SharedTileInfo of record {
     descriptor_valid: boolean,
     allocation_mask: bits(4),
     initialized_mask: bits(4),
+    whole_parent_ready: boolean,
     published: boolean,
     tile: TileInfo
 };

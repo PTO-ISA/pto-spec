@@ -21,6 +21,7 @@ This page is a generated reference view of the normative ASL unit.
 // TLOAD/TSTORE/MGATHER/MSCATTER and destination-free TPREFETCH.
 
 type ScatterLaneOrder of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
+type CorePETileInfos of array [[PTO_MODEL_MEMORY_AGENTS]] of TileInfo;
 
 readonly func SharedTileElementRegion(tile: TileInfo,
                                   element: PackedTileElementIndex)
@@ -285,6 +286,92 @@ begin
                 RecordStoreEventForAgent(agent, translated,
                     TileMemoryElementBytes(tile.data_type), stored_value,
                     CurrentBundleMemoryOrder());
+            end;
+        end;
+    end;
+end;
+
+
+func TMOVSharedToLocalPerPE(destination: TileIndex,
+                           per_pe_tiles: CorePETileInfos,
+                           pe_mask: bits(4))
+begin
+    if pe_mask == Zeros{4} then return; end;
+    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+        let agent = pe as MemoryAgentId;
+        if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
+            let source_tile = per_pe_tiles[[agent]];
+            let destination_tile = _Tiles[[destination]];
+            assert source_tile.allocated && source_tile.contents_defined;
+            assert destination_tile.capacity_bytes == source_tile.capacity_bytes;
+            assert destination_tile.rows == source_tile.rows &&
+                   destination_tile.columns == source_tile.columns &&
+                   destination_tile.valid_rows == source_tile.valid_rows &&
+                   destination_tile.valid_columns == source_tile.valid_columns &&
+                   destination_tile.data_type == source_tile.data_type &&
+                   destination_tile.layout == source_tile.layout;
+            for element = 0 to source_tile.rows * source_tile.columns - 1
+                looplimit 524288 do
+                let value = TileReadLogicalElement(source_tile,
+                    element as PackedTileElementIndex);
+                _Tiles[[destination]] = TileInfoWithLogicalElement(
+                    _Tiles[[destination]],
+                    element as PackedTileElementIndex, value);
+            end;
+        end;
+    end;
+    _Tiles[[destination]].contents_defined = pe_mask == '1111';
+    if pe_mask == '1111' then MarkTileValidRegionDefined(destination); end;
+end;
+
+func TSTORESharedPerPE(base_addresses: CorePEWords,
+                       row_stride_bytes: CorePEWords,
+                       per_pe_tiles: CorePETileInfos,
+                       pe_mask: bits(4))
+begin
+    if pe_mask == Zeros{4} then return; end;
+    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+        let agent = pe as MemoryAgentId;
+        if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
+            let tile = per_pe_tiles[[agent]];
+            assert tile.allocated && tile.contents_defined;
+            for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+                for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+                    let address = TileMemoryStridedByteAddress(
+                        base_addresses[[agent]], row as integer {0..65535},
+                        column as integer {0..65535},
+                        row_stride_bytes[[agent]], tile.data_type);
+                    let probe = ProbeTileMemoryAccess(address,
+                        tile.data_type, TRUE);
+                    if RaiseDataAccessFault(probe, address) then return; end;
+                end;
+            end;
+        end;
+    end;
+    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+        let agent = pe as MemoryAgentId;
+        if pe_mask[PTOPEMaskBitOfPEIdentity(agent)] == '1' then
+            let tile = per_pe_tiles[[agent]];
+            for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+                for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+                    let address = TileMemoryStridedByteAddress(
+                        base_addresses[[agent]], row as integer {0..65535},
+                        column as integer {0..65535},
+                        row_stride_bytes[[agent]], tile.data_type);
+                    let translated = ProbeTileMemoryAccess(address,
+                        tile.data_type, TRUE).translated_address;
+                    let stored_value = StoreTileMemoryElement(
+                        address, translated, tile.data_type,
+                        TileMemoryStridedByteHighNibble(
+                            column as integer {0..65535}, tile.data_type),
+                        TileReadLogicalElement(tile,
+                            TileLogicalLinearIndex(tile,
+                                row as integer {0..65535},
+                                column as integer {0..65535})));
+                    RecordStoreEventForAgent(agent, translated,
+                        TileMemoryElementBytes(tile.data_type), stored_value,
+                        CurrentBundleMemoryOrder());
+                end;
             end;
         end;
     end;

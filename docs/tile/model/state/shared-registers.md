@@ -16,6 +16,14 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/state/shared-registers.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-STATE-SHARED-REGISTERS","surface":"tile","classification":["model","state","shared-registers"],"depends_on":["PTO-TILE-MODEL-STATE-LOCAL-REGISTERS","PTO-TILE-MODEL-LEGALITY-PE-MASK","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
+
+// NDF-BEGIN: PTO-B-SHARED-WHOLE-PARENT-READY-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// Shared producer participation, logical coverage, whole_parent_ready, and
+// published visibility MUST remain distinct. Every Shared source consumer MUST
+// wait/no-op before payload access until whole_parent_ready and published are
+// both true; producer and consumer masks are independent.
+// NDF-END: PTO-B-SHARED-WHOLE-PARENT-READY-001
 pure func SharedTileArrayIndex(shared_tile_id: SharedTileID) => SharedTileIndex
 begin
     return UInt(shared_tile_id) as SharedTileIndex;
@@ -43,7 +51,8 @@ end;
 readonly func SharedTilePublished(shared_tile_id: SharedTileID) => boolean
 begin
     let shared = SharedTileRecord(shared_tile_id);
-    return SharedTileFullyInitialized(shared_tile_id) && shared.published;
+    return SharedTileFullyInitialized(shared_tile_id) &&
+           shared.whole_parent_ready && shared.published;
 end;
 
 readonly func SharedTileCooperativeMatrixReady(
@@ -51,9 +60,8 @@ readonly func SharedTileCooperativeMatrixReady(
 begin
     let shared = SharedTileRecord(shared_tile_id);
     return SharedTileDescriptorLegal(shared_tile_id) &&
-           shared.allocation_mask == '1111' &&
-           shared.initialized_mask == '1111' &&
-           shared.published && shared.tile.contents_defined;
+           shared.whole_parent_ready && shared.published &&
+           shared.tile.contents_defined;
 end;
 
 readonly func SharedTileDescriptorLegal(shared_tile_id: SharedTileID) => boolean
@@ -324,6 +332,7 @@ begin
         updated.allocation_mask = pe_mask;
         updated.tile = tile;
         updated.initialized_mask = pe_mask;
+        updated.whole_parent_ready = publish;
         updated.published = publish;
         updated.tile.contents_defined = TRUE;
         updated.tile.defined_valid_elements =
@@ -356,6 +365,8 @@ begin
                 (updated.tile.valid_rows * updated.tile.valid_columns)
                     as integer {0..524288};
         end;
+        updated.whole_parent_ready = old.whole_parent_ready ||
+            (publish && updated.tile.contents_defined);
         updated.published = old.published ||
             (publish && updated.tile.contents_defined);
     end;

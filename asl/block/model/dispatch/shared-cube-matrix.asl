@@ -303,14 +303,15 @@ readonly func MaterializeBundleSharedMatrixPrimary(
     logical_rows: integer {1..65535},
     logical_columns: integer {1..65535},
     data_type: TileDataType,
-    transpose: boolean) => TileInfo
+    transpose: boolean,
+    pe_identity: MemoryAgentId) => TileInfo
 begin
     assert BundleMatrixSharedPrimarySchemaLegal(
         ordinal, logical_rows, logical_columns, data_type, transpose);
     let shared_tile_id = BundleSharedBindingId(ordinal);
     let source = if
         _BundleSharedBindings[[ordinal]].source0_subview.valid then
-        MaterializeBundleSharedSubview(ordinal)
+        MaterializeBundleSharedSubviewForPE(ordinal, pe_identity)
     else SharedTileRecord(shared_tile_id).tile;
     var tile = source;
     tile.contents_defined = FALSE;

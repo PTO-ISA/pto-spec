@@ -169,9 +169,8 @@ end;
 ## Block composition
 
 ```asm
-Local source: BSTART.TSTORE DataType; optional B.DATR Layout; optional B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies each PE's GM base and byte row stride; exactly one terminating source B.IOT supplies the Local Tile; BSTOP commits.
-Shared full source: the Function 1 form replaces B.IOT with one source B.IOS and requires PE_MASK=1111 for any nonzero access.
-Shared partial source: the Function 14 TSTORE.SPART form uses one source B.IOS and accepts any nonzero PE subset. It has no Local form.
+Local source: BSTART.TSTORE DataType; optional B.DATR Layout; optional B.DIM; optional B.IOR; exactly one terminating source B.IOT; BSTOP commits.
+Shared source: BSTART.TSTORE DataType; optional B.DATR/B.DIM/B.IOR; exactly one source B.IOS with any nonzero consumer PE_MASK; optional B.SUBVIEW selects an explicit per-PE source range; BSTOP commits.
 Local CUBE source: Function 1 encodes B.DATR Layout M322ND, M162ND, or N82ND with DataType=DTYPE_NONE; requires LB0=valid columns and LB1=valid rows, omits LB2, and uses one terminating source B.IOT.
 ```
 
@@ -207,24 +206,23 @@ end;
 ## Defaults and encoded zero
 
 - DataType is explicit. Optional B.DATR omission retains the default NORM layout.
-- For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For an unallocated Shared source they default to 1, 1, and ValidCol.
+- For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For a pending Shared source they default to 1, 1, and ValidCol.
 - An unallocated Shared source derives the smallest legal 128 B through 8 KiB per-PE capacity that contains the completed shape; Rows are then derived from capacity, Col, and DataType. Every selected source element is an undefined-register value and the temporary descriptor is never written back.
 - Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride.
 
 ## Legality
 
-- DataType accepts 0..14, 16..20, and 24..28; all other codes are reserved before effects.
-- The Function 1 carrier accepts exactly one Local source B.IOT or one Shared source B.IOS. The Function 14 TSTORE.SPART carrier accepts exactly one Shared source B.IOS. Source/destination role mismatches and mixed Local/Shared sources are illegal.
-- A nonzero Function 1 Shared store requires PE_MASK=1111. Function 14 accepts every nonzero subset. PE_MASK=0000 is a strict no-op before schema, descriptor, GPR, memory, fault, or source-consumption effects.
-- ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the resolved valid rectangle must fit the source descriptor or the derived temporary descriptor.
-- For an allocated Shared source, DataType, Layout, and physical Col agree with the persistent descriptor; an explicitly reduced valid rectangle may not exceed the descriptor's valid region.
-- Local CUBE conversion accepts only Layout codes 24 through 26, requires explicit DTYPE_NONE, explicit nonzero LB0/LB1, absent LB2, one persistent Matrix-location CUBE source, a supported non-64-bit non-HiF4X2 dtype, and no B.IOS.
+- TSTORE is selected only by TLSU Function 1 and has no standalone opcode. Former independent Shared movement encodings are reserved.
+- DataType accepts 0..14, 16..20, and 24..28; codes 15, 21..23, and 29..31 are reserved and reject before effects.
+- The completed block has exactly one source domain. Function 1 accepts one Local B.IOT or one Shared B.IOS. Shared PE_MASK selects participating consumer PEs and does not infer quarters or ranges; B.SUBVIEW carries explicit source geometry.
+- PE_MASK=0000 is a strict no-op before schema, descriptor, GPR, memory, fault, or source-consumption effects.
+- ValidCol and ValidRow are nonzero, ValidCol does not exceed physical Col, and the valid rectangle fits the persistent source descriptor.
 
 ## State effects
 
-- Reads one Local or Shared source without modifying its payload, descriptor, allocation mask, initialized mask, or lifetime.
-- A Shared undefined-source read remains non-allocating and non-mutating. On success only GM and memory-event state change; the source binding is consumed by normal block completion.
-- A successful CUBE form preserves the complete persistent Matrix descriptor, payload, definedness, allocation mask, and lifetime while storing only its LB1 by LB0 valid rectangle.
+- Reads one Local or published, whole-parent-ready Shared source without modifying its payload, descriptor, producer mask, readiness, or lifetime.
+- On success only GM and memory-event state change; the source binding is consumed by normal block completion.
+- A Shared source that is pending or incomplete causes no payload read and no GM effect.
 
 ## Memory effects and ordering
 
@@ -240,12 +238,11 @@ end;
 
 ## Exceptions
 
-- Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, illegal or inconsistent PE mask, malformed binding schema, or memory translation/permission/alignment fault rejects before the first GM write.
-- A completely unallocated or selected-quarter-uninitialized Shared source is not itself an exception; it supplies undefined-register values through a read-only operation-derived descriptor.
+- Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, illegal PE mask, unpublished or not-whole-parent-ready Shared source, or GM translation, permission, or alignment fault raises the applicable fault before the first GM write.
+- A Shared source is hardware-waiting/no-effect until whole-parent readiness and publication are true; undefined Shared payload is not a legal source path.
 
 ## Examples
 
-- BSTART.TSTORE U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR a0, a1; B.IOT T#1, mask=1111, last; BSTOP
+- BSTART.TSTORE U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR a0, a1; B.IOT T1, mask=1111, last; BSTOP
+- BSTART.TSTORE FP16; B.IOS S7, mask=0011; B.SUBVIEW 0, a0, 0, 7; BSTOP
 - BSTART.TSTORE FP16; B.IOS S7, mask=1111; BSTOP
-- BSTART.TSTORE FP16 [TSTORE.SPART form]; B.IOS S7, mask=0011; BSTOP
-- BSTART.TSTORE FP16; B.DATR {M162ND, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=M; B.IOT M#1, mask=1111, <last>; BSTOP

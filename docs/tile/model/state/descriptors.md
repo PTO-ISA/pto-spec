@@ -34,7 +34,7 @@ readonly func TileCapacityIsLegal(capacity_bytes: integer {0..262144}) => boolea
 begin
     return capacity_bytes >= PTO_TILE_CELL_BYTES &&
            capacity_bytes MOD PTO_TILE_CELL_BYTES == 0 &&
-           capacity_bytes <= PTO_TILE_MAX_ALLOCATION_BYTES &&
+           capacity_bytes <= 65536 &&
            capacity_bytes <= TileCapacityLimitBytes();
 end;
 
@@ -53,7 +53,7 @@ end;
 
 pure func LocalTileSizeCodeIsLegal(size_code: integer {0..15}) => boolean
 begin
-    return 1 <= size_code && size_code <= 12;
+    return 1 <= size_code && size_code <= 10;
 end;
 
 pure func TileSizeCodeBytes(size_code: integer {1..12})

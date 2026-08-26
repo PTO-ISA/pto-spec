@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: memory-and-data-movement/regular
-    // block: Local: BSTART.TSTORE DataType; optional B.DATR Layout; optional B.DIM; optional B.IOR; one source B.IOT; BSTOP | Shared full: BSTART.TSTORE DataType; optional B.DATR/B.DIM/B.IOR; one source B.IOS with PE_MASK=1111; BSTOP | Shared partial: BSTART.TSTORE DataType using Function 14; optional B.DATR/B.DIM/B.IOR; one source B.IOS with any nonzero PE subset; BSTOP
+    // block: Local: BSTART.TSTORE DataType; optional B.DATR Layout; optional B.DIM; optional B.IOR; one source B.IOT; BSTOP | Shared full: BSTART.TSTORE DataType; optional B.DATR/B.DIM/B.IOR; one source B.IOS with PE_MASK=1111; BSTOP | Shared partial: BSTART.TSTORE DataType using reserved legacy Shared movement form; optional B.DATR/B.DIM/B.IOR; one source B.IOS with any nonzero PE subset; BSTOP
     assert DecodeTileOperation(TileDecode_TLSU, '000000000001') == 88;
     assert TileOperationOfIndex(88) == TileOperation_TSTORE;
     assert TileHandlerOfIndex(88) == TileHandler_TSTORE;

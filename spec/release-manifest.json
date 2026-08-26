@@ -146,7 +146,7 @@
     },
     {
       "path": "asl/arch/features/tile-allocation.asl",
-      "sha256": "283dd38bd0cee98503ac39f60944d3659c17204cebfdc1a87e5429acc6d41591"
+      "sha256": "6cde19e4a201671ffb45f6d57a48a91e9721512f0d052497980cb33fec81848e"
     },
     {
       "path": "asl/arch/memory-model/address-space.asl",
@@ -162,7 +162,7 @@
     },
     {
       "path": "asl/arch/memory-model/global-memory-access.asl",
-      "sha256": "5178cc379ad2890b767a7f266173e4cce751792c479a20a8ccc824973ab26c70"
+      "sha256": "b52b8820dceab5f08c6784f0166c59a4c95e300c992f7b10f02a21b273723ac0"
     },
     {
       "path": "asl/arch/memory-model/memory-events.asl",
@@ -414,31 +414,31 @@
     },
     {
       "path": "asl/block/execution/BSTART.TMATMUL.ACC.asl",
-      "sha256": "462e09315e8dfa576d0a726a9e892151172de5f85cea5e84e7c3fb1754f32f36"
+      "sha256": "5a84b964e23212b05de6ad972125b78319c2500719ce685e9fe5fd2c91af7251"
     },
     {
       "path": "asl/block/execution/BSTART.TMATMUL.BIAS.asl",
-      "sha256": "f5da14b838b23609028769bb8f830f734b2b84e3ef5e4be2ed15e58ceb51ff44"
+      "sha256": "09843a4eb4bae2269e2b62d4c8b2205e08233e21ca5651e904bcea894f718675"
     },
     {
       "path": "asl/block/execution/BSTART.TMATMUL.asl",
-      "sha256": "c0426b83a0b0d5fc7555855cf2d451c14cf9b07f95d21fca3f1d42c02d50065b"
+      "sha256": "3124db0a0634751262bbefb10289d62ecac39a3fc6435f5309eec701415c2e6b"
     },
     {
       "path": "asl/block/execution/BSTART.TMATMULMX.ACC.asl",
-      "sha256": "1c279fb0fe75aabe68d318639a4474b285afc6bd2f09c3cd666861c9f3ffcf1a"
+      "sha256": "11e2185a08429f5285771ca1245b7901844ceac7e454b0d056daa8ec59d3fe53"
     },
     {
       "path": "asl/block/execution/BSTART.TMATMULMX.BIAS.asl",
-      "sha256": "b33a67bc31177d2d8bf5cd3fefeb1ea94e499b1df8332f61946cec1555b4fd5c"
+      "sha256": "e31fcc59727afaf929d5d8269bebf5f75f1cf51544917c8bd6120be435af4362"
     },
     {
       "path": "asl/block/execution/BSTART.TMATMULMX.asl",
-      "sha256": "2671ea654e25b510d8c5254fced58eb3776290593dbd938633f1b5347c88a8bc"
+      "sha256": "28262a78c2d53d57fc269cc98f387e59203243da2c5c8a86bf4f3670c9070ae6"
     },
     {
       "path": "asl/block/execution/BSTART.TMOV.asl",
-      "sha256": "718f96e1c4edcb172bad05e35a6c827e7778920f2250e2e5bee85f5305dd8211"
+      "sha256": "6d288eada706e989668f12db3e3112913382a0e22c2f4334af17f81b0e861ff6"
     },
     {
       "path": "asl/block/execution/BSTART.TPREFETCH.asl",
@@ -446,7 +446,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TSTORE.asl",
-      "sha256": "c3faeb5085d8d28af36f0178375413d9322fc81a2fc75c6a4335c804f1a1584f"
+      "sha256": "f1f8c1f6f468b978171a48c7426b250df771112e0e9518bbed857676ba224895"
     },
     {
       "path": "asl/block/execution/BSTART.VEC.asl",
@@ -538,7 +538,7 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "4890c3b70917a190e2c7d7f1622b4f953080fe717a0986bc67e56df151dfbada"
+      "sha256": "513fbf21974f558b4d1ca1a6bafbeb8b40d5545ece88c429856acf58d64c234f"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
@@ -594,11 +594,11 @@
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
-      "sha256": "64b284e7769d6e0310198df674e149e6a0c965a6b7ff185ffd9595c253865e02"
+      "sha256": "da6ad11fb6c09d448458ffb68e10188882f6a7817e10e3b71efe3d1d32885dad"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "fde1d45c492053b52ad87844b6e3cdd893efa472eaf373420a5cf0cb745e9fb0"
+      "sha256": "94e57139f940dacb40c1efc1a1bcb5c53eea269f820373aee87df3010b4ff0f1"
     },
     {
       "path": "asl/block/model/dispatch/sorting-schema.asl",
@@ -702,7 +702,7 @@
     },
     {
       "path": "asl/block/model/operands/shared-generation.asl",
-      "sha256": "292eb21207da6ff0ca6c56b0be23fda0facd5124e0f82f7abee93e7a463ce88e"
+      "sha256": "5bda7d3c0efbc67230a798f893799c12d969ca9d533e01f9f03f8ea00955ded6"
     },
     {
       "path": "asl/block/model/operands/subview-descriptor.asl",
@@ -766,7 +766,7 @@
     },
     {
       "path": "asl/block/operands/B.IOT.asl",
-      "sha256": "1e0d4e6486a418049a49de1c3cb6404968c80433a50bdd1eea2ca7abaa801123"
+      "sha256": "5224166d3f92e1cf0d249f6b990f9752caae9a9800bc54d902800c64639bc26d"
     },
     {
       "path": "asl/block/operands/B.SUBVIEW.asl",
@@ -2894,27 +2894,27 @@
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl",
-      "sha256": "86d9f0e39d92fda5efc9e2bbff828d0bf7ae0b2a69468dcdcceb1c371747e1bb"
+      "sha256": "823d01c0d9dc4e828c29d58f893d4e05b70a6ee6260fe6185268e0c0599604bb"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl",
-      "sha256": "57557d788d295671e094e32ea81c7e1cfbeec6b8304b04c1670f3771b5915a94"
+      "sha256": "8723354cfa93f3906bd467c39a1e68a81b6e164350dbd2e383d64ad77e78196d"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl",
-      "sha256": "30acdd02a50bfee65403c679a44024c4405f767f839ee376e3ee3b1f2e5b4ad4"
+      "sha256": "f3e01960bc9e802a95b2d0d6482a9f9a46398853f9d6a280177fb2e49c6db167"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl",
-      "sha256": "30a0e75a1ede4c12b62b5c381868af0752959419dca9442f1d9c089d290ca5d7"
+      "sha256": "6e90a68cafbc8887c5320d71ee2c8044f43404c1d22e7154b4f5842f9acaf0c3"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.asl",
-      "sha256": "9cc73dfe90d8d9f99c799e6076e09b318bf054d40ba477db668da79b96c5b259"
+      "sha256": "1c620e88281d6c61c196f6c7db205418caed2917b5b4d0bf30ca3be6b3f3582d"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl",
-      "sha256": "278ae935e24ad446747bd636b95553344503830c01b4d9b6d39e96817622e86b"
+      "sha256": "a0219b13267eaefbc11779a01bd17a24727dc397c7bf2bc8018a442c70cf0e4e"
     },
     {
       "path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.asl",
@@ -2974,7 +2974,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/regular/TSTORE.asl",
-      "sha256": "07499f62577d34763568ca7f0de40104d1ab2dd935efe45f47c6269be224b7b8"
+      "sha256": "65283117b772dfe1983111a131231d4e7cd9d039210c51697b431f906ba42e8e"
     },
     {
       "path": "asl/tile/model/capacity/local.asl",
@@ -3182,7 +3182,7 @@
     },
     {
       "path": "asl/tile/model/memory/shared-movement.asl",
-      "sha256": "26e77e0c1f583875466dd680b300a5358bb2f94aea8dd39246b0f0a8fb4a8e87"
+      "sha256": "0a56f576590adfed7f7bc227e6065188771a02678a8da5a94cb8ca768428443b"
     },
     {
       "path": "asl/tile/model/memory/stride.asl",
@@ -3222,7 +3222,7 @@
     },
     {
       "path": "asl/tile/model/state/descriptors.asl",
-      "sha256": "41af55eaac4358a2614688bedfdec6283440a9ea26c2a266c2e53cf6e9641552"
+      "sha256": "48f1420999d8c356f350ff422a4c55c1065e0959f7b7d56dd8020cf082bccea8"
     },
     {
       "path": "asl/tile/model/state/feature-map-descriptors.asl",
@@ -3234,11 +3234,11 @@
     },
     {
       "path": "asl/tile/model/state/shared-registers.asl",
-      "sha256": "20c3fbef4d8327d9dad3f4dc810c64c279eed18f7facb5521cc2937478a3094c"
+      "sha256": "58da66d62a6e9fb88b283b725fbc11dff724d8d708accd1c70beb9a1e73851b1"
     },
     {
       "path": "asl/tile/model/state/types.asl",
-      "sha256": "8c7bebec13dbb28f61188e72635a203899309286a0da292aef6cda8a0fbd1fcf"
+      "sha256": "0fc88a974e9e23ec6b26f62d4d6d0c46168f37adb7601948113500d21a81d9ca"
     },
     {
       "path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl",
@@ -3414,7 +3414,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "638390644f2b652d641d61e16e089f7fc53459d654b2af7a64c504ee75bcefec"
+      "sha256": "2df86181747660ba95dd1dff1d16c9b98896db686714424f32cfaa72974115e9"
     },
     {
       "path": "spec/catalog/extension-encoding-reservations.json",
@@ -3442,15 +3442,15 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "04b507b217ec45618e841d341b47d7f41d296d9800f2bad5783e491bb6e5c5c6"
+      "sha256": "97c5f263f97ab822befdd4809293bbffcdb05408a3d8b031d8978022a54f884e"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "5382bc482db5c09b0d179a93225abb2a49fcd568b3377988312fa1121758f5ca"
+      "sha256": "606416c5fafdcf8cc9a4758845706c6f4f578c19b01bc001b4790b419845efc2"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "93326060e4e0e453e3c371c3fc0db252edf16062b75b994426eeac5ad7bbb0d9"
+      "sha256": "a9c0c10fff051bc8998f917e3c2c235215ed08000b3f1071a057043e910577bd"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
@@ -3458,7 +3458,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "e9ea68a894c64f522e7bdb99604385580585a14f3c4b7dd99ace329b5028eeef"
+      "sha256": "f1d6ef8da001438116ca64854dfc58779a5007eb2d6bd7a112af5520ecc36a51"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3504,7 +3504,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "58cea867c98c57660ad4a392debcbeeb29a3cfb88b121ec8aba40052c6be5488",
+  "content_sha256": "1be6bcdd5e395ee194462ee59f74faa0bdb1e56158abf23f167139875ab7ced4",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3523,7 +3523,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.4-mode-function-v1",
-  "encoding_projection_sha256": "6555adeeed2adb75327c53f5280560ec9505d334b46d1626b847440265e79e7d",
+  "encoding_projection_sha256": "338dd22f8485ecd60c492c3e54b283a81b8b1e8072a6f29c9e0ef44462cb0049",
   "hardware_conformance_profile": {
     "evidence": "spec/evidence/pto-isa-0584-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
@@ -3716,7 +3716,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/features/tile-allocation.md",
-      "sha256": "290e49cd94ee72d8d3c13ef681e8d21326b7126d80d10682ece85d9d8c72767f"
+      "sha256": "a6260a1a79ff874fdabb936dcff443fb5e4da233989b8c62c7196f5dc8e82e4e"
     },
     {
       "kind": "generated-documentation",
@@ -3736,7 +3736,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/memory-model/global-memory-access.md",
-      "sha256": "ddf9ce7e02763f060fd7383697285976d0da4ff1faf190eb31f99f6e152dc164"
+      "sha256": "c8cc725974d82488a0190e7a130017a719fb4f3174e49a9ec57743a2c9dbfaa6"
     },
     {
       "kind": "generated-documentation",
@@ -4051,37 +4051,37 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMUL.ACC.md",
-      "sha256": "2a04f40032b1fda93419c99c1075212bd6a4d050daad257e29aa4e2c686c8d35"
+      "sha256": "8bcf2011aed8584603aeff63fd33be2e5621a130b5f4e6c39274fb63a43cf34e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMUL.BIAS.md",
-      "sha256": "68d50d80a6a179cbd7a3aea130254ddedcc5d5d7183d21354251c0a9d49c01be"
+      "sha256": "f4aecd502dc5b7cfd1f831a199d4ce56c17b0b286abc17317f2f3e0b54e3d152"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMUL.md",
-      "sha256": "e727138d773ba4b23de86bd5bc5fcf051cf32a943d280a5e86bf9ba86df8ac8c"
+      "sha256": "bd27ee9c1d7c4eb5a186b0f62c81533e1bb3633fd205b1a7a57e429aa73e20e0"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMULMX.ACC.md",
-      "sha256": "bb4f2e5f7bc9efb34f0bab1b5df6e76b02057a2a6ff95069074a4c342ba9c385"
+      "sha256": "dc320831b597eca964a24c32d950a1345cbec1b7a0ca8437f351c4b4ef39befd"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMULMX.BIAS.md",
-      "sha256": "511dd2a5200a329bf4f067b5c88ef4405774cf91faf203ba432f17dd75a3fddc"
+      "sha256": "972f3884c51b397d7cca23e132557a2df83d049c26e9d150ee9a9b18e2a2036c"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMATMULMX.md",
-      "sha256": "e3e8f38c98a70e280b64289becc6696de01ec389cbc8cf5c02f0e7a2639139cb"
+      "sha256": "904bb29b32132aedbd3fa53b821ed4a62af34f56a9249bfa162dcbe4f61af4cb"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMOV.md",
-      "sha256": "79a4297bf5fafcfd2c0170aa85fdcd95b47ec9477762e31b14b09c8dfeda9ccc"
+      "sha256": "67e80ebc1e1cc01c6be56e1ad68fe65bf8859f79f786f386075ddef8d5886535"
     },
     {
       "kind": "generated-documentation",
@@ -4091,7 +4091,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TSTORE.md",
-      "sha256": "5e77210adc1b0aa050ce0147aae3e7d9868dd2593245bebe2e0f78b8e0aadc97"
+      "sha256": "1d4424b1e98c805380c859a927c8c416632809cac4ee67f81a3a6790711e4583"
     },
     {
       "kind": "generated-documentation",
@@ -4206,7 +4206,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/cube-tmatmul.md",
-      "sha256": "fb20a4c8e8456b7b096c57c05cb129e7fd2cd51433904311cd76b84325253a0d"
+      "sha256": "eaf2dc4000083c13f90a75baeed4674b39af2f90fdec29c1c8d78e024d364faf"
     },
     {
       "kind": "generated-documentation",
@@ -4276,12 +4276,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/shared-cube-matrix.md",
-      "sha256": "b763b038389fdc9fcd60e06096ef8ee362c82b82c334e196a54cbedfd4d07d1c"
+      "sha256": "649e9715e9642c311ba6ccfc0051cf8ff5a2c97555ab7d98766cf4a48edcab5c"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/shared-tlsu.md",
-      "sha256": "73eca6144ab5b3d32b5a13f31453b7e08b3f3bc8a361ca9c645360df51e06aab"
+      "sha256": "948f3bdd824b4cfa0faf85e72ecd6c3bb5d0090ec096ff5023ac58773fd0fc7a"
     },
     {
       "kind": "generated-documentation",
@@ -4411,7 +4411,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/operands/shared-generation.md",
-      "sha256": "d25c943248505ffbce5d0ab24d4a529b542549c156d235ea2da853f4172d5438"
+      "sha256": "cf4a5f8e6d13e922c94c7fd2ab75ef3d53f50e3ee73d3819978b0b9150b859c8"
     },
     {
       "kind": "generated-documentation",
@@ -4491,7 +4491,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/operands/B.IOT.md",
-      "sha256": "11f2212ac9c777cb9429d62cc2127156fd253db4e18ef4695ad57bd0ca2bdf9d"
+      "sha256": "80a70b6f49aa58282616c904be40dbd868fb9a59acd3eacbbdf0f9df3c5e2f9b"
     },
     {
       "kind": "generated-documentation",
@@ -7151,32 +7151,32 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.md",
-      "sha256": "5f055cc2cd578a8e32c4f05d0a4173e45a9628480b56aabecc27f42c083cdd3a"
+      "sha256": "3879c4cdcc731edd75e7f2f71a11e1413fc28879d146db4a746d3d5afa1460d5"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.md",
-      "sha256": "cd4bc4d70a6ee70884448c0763726659d6facd4c6bcfb4062f6af6fda6fcb210"
+      "sha256": "43919c052b836cb130341061b3675e991d639823de1014df9d857a60523956fe"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.md",
-      "sha256": "f9907f973e71eb1a8dacc879eaa3fb6f2a47e27ff483b92764200ea939ffc90b"
+      "sha256": "544cab4f0ff409d8ee2fa079e497aba1120611134663ba27eb1ad5ce4b41de53"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.md",
-      "sha256": "3bdc563f3f67e68768930d1d49cca079548e3a87e99e92df6c0cd44e9d47eeee"
+      "sha256": "3bdac8ed0d53cf45dc2fe0a1159d8b6e90f0d66a8c2a0f0206b3abf433309afa"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.md",
-      "sha256": "c2ea7ac33bebf6f2ceb6933a5241c115cf80e2d6a17348086cd305db122fde6f"
+      "sha256": "808877d8a857e552a7bbbdb2e85d98b9636a922bdec9801e8bcb704b0222502f"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.md",
-      "sha256": "c5881fdd46f3e4b9f690bddb32413a10dfeb616e56a332e337294fef80a8ab53"
+      "sha256": "5d007cc86f9bc658d3439f89deffffffa38a65209dbde058c821e6df5471f0da"
     },
     {
       "kind": "generated-documentation",
@@ -7251,7 +7251,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/regular/TSTORE.md",
-      "sha256": "44542ad7347dfd137516e3e45eb9ac9952c5054cd880aed9e415c7c151f03576"
+      "sha256": "950383f53049bf99adbcdd2ab2dcb4ac092010b60077c035322a52896db5e983"
     },
     {
       "kind": "generated-documentation",
@@ -7511,7 +7511,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/shared-movement.md",
-      "sha256": "18d5503c38d77d356971a225e61875309d2c2b24a56a6ba7a4d9512a79e688f6"
+      "sha256": "e58a994f8796e2ab89c2da8566965dbec06ab923baccb88e5ec4ad01f2b7af4d"
     },
     {
       "kind": "generated-documentation",
@@ -7561,7 +7561,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/descriptors.md",
-      "sha256": "756086bb2772d81d9950d5ca50dc870d1a255135d5771317a8214d4f5a1ec589"
+      "sha256": "b1f38ca85cad74a7ea1616d0db54dbd068293d5286b34db2858052ef89877fe7"
     },
     {
       "kind": "generated-documentation",
@@ -7576,12 +7576,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/shared-registers.md",
-      "sha256": "ba60d54f76d7c1de32e3f6bdf1b4d38b1b838d427ac86fa8c5af6b98ef4c77df"
+      "sha256": "4fdf83fdd6dd2fcbd763c045f97a5cce830a464fa7c79efda7539ffce06b2f20"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/types.md",
-      "sha256": "5f1c1250bee4ad9b7d6b8ff3aa5375467672f1afe13f4433eab94e7512b01e03"
+      "sha256": "7c3ac3cb4d4b06323cfae1d347e8b5bb950c9f5b4d51a285929bf2714efed4c2"
     },
     {
       "kind": "generated-documentation",
@@ -7801,12 +7801,12 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0584-abi-vectors.json",
-      "sha256": "01d3765feeb5d4c518a22d8fe42b58a56e4a79b499f9c448f24b615172b04ecb"
+      "sha256": "b64fd310d44e362c169a2576db7455dbdf8fa897507641a0e19e6e97bdd275c0"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0584-encoding-totality.json",
-      "sha256": "0ba8d3ea60f2dbf5915ee35b58e576bb0b2cd49ba01f0849e4401bbfed7f115d"
+      "sha256": "5b1ff93dda905fa7fe6e58c750137007a082c4a9ce9d0bafc38701a8fb40c0eb"
     },
     {
       "kind": "generated-evidence",
@@ -7871,7 +7871,7 @@
       },
       {
         "id": "PTO-ARCH-GM-ACCESS-001",
-        "sha256": "4b28fddd4d690adcb503972cdd817d52bdfcdf6d340910d630cc7c4bb8c83a6e"
+        "sha256": "71058c839ccdb9218860a1289240778707b420ab2df57857cb80f26761ca54eb"
       },
       {
         "id": "PTO-ARCH-STATE-CLOSURE-001",
@@ -7947,7 +7947,11 @@
       },
       {
         "id": "PTO-B-IOT-STREAM-001",
-        "sha256": "dec9656aec1905756a5851b69a891161fb04e184e1f59adc91bb409fa9d948a8"
+        "sha256": "24ae80f571b501224961ef9ddad81fca438398b3135372916808dd75dc309a72"
+      },
+      {
+        "id": "PTO-B-SHARED-WHOLE-PARENT-READY-001",
+        "sha256": "44921213e4a681711da0d41b92ed545b78df3eba80dc2913a6c0ee7377ee57fd"
       },
       {
         "id": "PTO-B-SUBVIEW-DESCRIPTOR-001",
@@ -7956,6 +7960,10 @@
       {
         "id": "PTO-B-SUBVIEW-RANGE-001",
         "sha256": "4642c79744d7ee4ab8e05d718500c1aabfc2adea8941a4f6b5e07532df2cfa12"
+      },
+      {
+        "id": "PTO-B-SUBVIEW-SHARED-PER-PE-001",
+        "sha256": "964edd765124ebcc41f5adbece31211292e1666382ba1d65d89559904f92108f"
       },
       {
         "id": "PTO-BARG-CONTINUATION-001",
@@ -8123,7 +8131,7 @@
       },
       {
         "id": "PTO-BSTART-TSTORE-MEMORY-001",
-        "sha256": "7b559368580945e1b1c36b03a6bff404d31ad43ccea823b719d51369d23de2df"
+        "sha256": "90feba3a5939989334dd957c4cc42436475c5eaddcffd6838d978867d0c52089"
       },
       {
         "id": "PTO-BSTART-VEC-DECISION-BINDING-001",
@@ -8559,7 +8567,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-B-IOT",
-        "sha256": "d76bee90cf53f6c0fa868b327fde790e16f70c69e628dc2d289f4887fad30152"
+        "sha256": "50f2fa3f2109226f71bfde9ae092562e5cf8026486f0c6b845055734c962a17f"
       },
       {
         "id": "PTO-INST-BLOCK-B-SUBVIEW",
@@ -8651,31 +8659,31 @@
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMATMUL",
-        "sha256": "5b1865afaed3793f357f17e64016a65d0d257a4830f270d523a3ba5d2a112a2d"
+        "sha256": "c2b1c008d531331e8efbe0f0256cf3a4287274357df95a8632bfa28cd72407cb"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMATMUL-ACC",
-        "sha256": "67e6f52b0b0bf629084895129190ca911dfb501fa2e97181bfbb2d694f1d318a"
+        "sha256": "b93754315ef6653d5f3c14e82505e6f8d65632a8e0537d3caecef7d4a0786bbe"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMATMUL-BIAS",
-        "sha256": "ae48cfead38083b42252a331361f82e9720850c969f01cef7d28eac7bf3c5717"
+        "sha256": "ca18522ba76314a01653d6ea42b01325a98c736c5709ca755b558d757da840cb"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMATMULMX",
-        "sha256": "47c2de927b1ad6ed69959c8488a7aeb4806353275193d6f0c03ed9ce13280d41"
+        "sha256": "b7e92690821d0af18eb9e7d1c145b10d2f7d738774dc05449cde540e0c32eaba"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMATMULMX-ACC",
-        "sha256": "8c4284d36dcb4f22a33d9a275fa1fb6b5dd8696d6fe2e11331def489230e3edf"
+        "sha256": "9ccaf713aa4651aca341a1414b98d3863895a6b8e3aa0b3760d37190950cf99a"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMATMULMX-BIAS",
-        "sha256": "b0120ff0c54585f064250e5c560fb337156ffc9bcf314934bf21402b290795ae"
+        "sha256": "5a114a1b1821428ed8d05914bf21fba734789b3d42b5e51a539bf9aaf8632be4"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMOV",
-        "sha256": "b4de083a907d3619c0c348839531b23d731810c2677c96c94e83eb08ef8fe512"
+        "sha256": "07050904be0b329092a444aa4ac47c05c5313af56a327f495c17e131c1c6d881"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TPREFETCH",
@@ -8683,7 +8691,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TSTORE",
-        "sha256": "d1d602584b307d7d0986d8804415179a631610211d52752f3d71734f20dcafec"
+        "sha256": "e9bc879392d817705adf55ea88392996afa9205774cfc7135fe477758bbacbb7"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-VEC",
@@ -10835,27 +10843,27 @@
       },
       {
         "id": "PTO-INST-TILE-TMATMUL",
-        "sha256": "d11add31cbde311b51a6d4c7b46484acb0ccc73404ebfc5977ee1310b7d655c1"
+        "sha256": "e684e67f134197094eb69e7a12e5d95694c5b563aed6145811403d81a2211d71"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-ACC",
-        "sha256": "c8749df60a7964d254aa605944038e5824342f0b0271e7a9f4b8c7adc50491d5"
+        "sha256": "958fe509aa5af1a06a2997f32d94c4b4d43fa88ff1f769816eb8e31ab72a7194"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-BIAS",
-        "sha256": "33d1587345b8701e2b8f5e183841a0998b06c2a8ad5486738aaec0958ab97fcf"
+        "sha256": "cb7951d5b9830c38e827b5526b1d305ae29129426a8700832040c24f35dc7df3"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-MX",
-        "sha256": "214c8536924735ab267c047d22bf4b0cb9e5e8a0b567ce2b486d8414b2979f49"
+        "sha256": "f3a4111c72a7969b2e32b043fe48dc7717c946d67cc33e06a1fb414f19c768d4"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-MX-ACC",
-        "sha256": "0b15c8845547f1bc292c19aa76aa0366e0ab6fb2c7a678ed1a11394001edc9a5"
+        "sha256": "64546b53eb34be57b9f2944b9515f1b5409158780704d3a50792bbc63ae3e15b"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-MX-BIAS",
-        "sha256": "98b554300a34894e5a8c6a173d02d1d9a799fb4809504527f41d92c1b6bc6ff1"
+        "sha256": "89ee5b6b66dc8ee3af5164e9d2560c3b9862d442c933f92ae31cff08251cfca6"
       },
       {
         "id": "PTO-INST-TILE-TMAX",
@@ -11043,7 +11051,7 @@
       },
       {
         "id": "PTO-INST-TILE-TSTORE",
-        "sha256": "8eff2590004fc2f4578479040408f3a48d951853ecc1cab282d60c62e253d5c1"
+        "sha256": "d35c15f0e047480b51c419fb6efdffcd8625dd026d64435dbaa2c62f7368d691"
       },
       {
         "id": "PTO-INST-TILE-TSUB",
@@ -11068,6 +11076,10 @@
       {
         "id": "PTO-INST-TILE-TXORS",
         "sha256": "1016a8d85852e96dd2f352b9b339495ade6709db6056ac61a2bd3b82c451af37"
+      },
+      {
+        "id": "PTO-ISA-LEGACY-SHARED-MOVEMENT-001",
+        "sha256": "7f6029c6cdcfcc8d14da32eb78fae1c27a9ca0be906b7d43725d5d08246c5938"
       },
       {
         "id": "PTO-J-DECISION-BINDING-001",
@@ -11655,27 +11667,27 @@
       },
       {
         "id": "PTO-TMATMUL-ACC-CONTRACT-001",
-        "sha256": "34413cc48c021c17dd07ea5707b9714df63a679b89517dbaac75505b2fcdf416"
+        "sha256": "ec2bc06163643377278284c913e6d530f48e85fb0aeaaed73da0f63ca806d79c"
       },
       {
         "id": "PTO-TMATMUL-BIAS-CONTRACT-001",
-        "sha256": "570674853388ade8ee53fe84a053b8168425b11c424b25dbb07daddf5fc75924"
+        "sha256": "8701f979b3be2d115e31298213d4318a96f2e69fa3d3261b588ed5ad353b6ec7"
       },
       {
         "id": "PTO-TMATMUL-CONTRACT-001",
-        "sha256": "9f9019c6020fba9d07456844e8955dedbcf58344522a111156672ad58f7f6983"
+        "sha256": "3aff576115362abd37c04f10310ebab7a911b678a6ac8cd553f5cc7124b741d1"
       },
       {
         "id": "PTO-TMATMUL-MX-ACC-CONTRACT-001",
-        "sha256": "d9994ff2e90cb028bc85fb432cf9d1822728f29619ed7833162401a664cb2d09"
+        "sha256": "701df0458be908ec45f661f7c01e9d617e6d43601c1c5b1ac478504f451f4628"
       },
       {
         "id": "PTO-TMATMUL-MX-BIAS-CONTRACT-001",
-        "sha256": "6c334786b4cbecbee9417e8a2d58a19990ae1d3c846bbd135825778c42fecd26"
+        "sha256": "b118ee04f5a1b982911993c0c94a890f287976abbd296f0286b55293bae5e7e3"
       },
       {
         "id": "PTO-TMATMUL-MX-CONTRACT-001",
-        "sha256": "a912358e2376cb41b07d5dc163f3c99dd55dfc9c6cfedfdb08c974b44a80649e"
+        "sha256": "a5a1a11e447c4918d1d47f721b6ba8e23046a6519210c869fa5229e0eaf67243"
       },
       {
         "id": "PTO-TMAX-CONTRACT-001",
@@ -11867,7 +11879,7 @@
       },
       {
         "id": "PTO-TSTORE-MEMORY-001",
-        "sha256": "16e1b54526b5c2398af0bce18b6fb4986c4c10c1e4752739ea1cb9d412cb12fb"
+        "sha256": "5c665ab4797703849c8eb28140045b350e2aa1e1ca2073aed4ccb42b93e6d600"
       },
       {
         "id": "PTO-TSUB-CONTRACT-001",
@@ -12003,7 +12015,10 @@
       "ADR-0099",
       "ADR-0100",
       "ADR-0101",
-      "ADR-0102"
+      "ADR-0102",
+      "ADR-0105",
+      "ADR-0106",
+      "ADR-0107"
     ]
   },
   "schema_version": 1,

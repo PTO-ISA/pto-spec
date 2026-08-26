@@ -14,8 +14,13 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ## Release 0.58.4.1
 
+### Block
+- [ADR-0106](docs/status/decisions/0106-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets
+
 ### Cross-cutting
 - [ADR-0102](docs/status/decisions/0102-0584-1-publication-contract-corrections.md): PTO ISA 0.58.4.1 publication-contract correction boundary
+- [ADR-0105](docs/status/decisions/0105-shared-whole-parent-readiness.md): Shared whole-parent readiness and single-issuer publication
+- [ADR-0107](docs/status/decisions/0107-remove-legacy-shared-movement.md): Remove legacy Shared movement Functions
 
 ## Release 0.58.3
 
