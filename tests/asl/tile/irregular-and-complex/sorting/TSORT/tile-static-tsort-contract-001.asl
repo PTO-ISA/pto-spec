@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: irregular-and-complex/sorting
     // block: BSTART.SFU TSORT, FP32|FP16 | B.DATR all-zero (optional) | B.DIM LB0=sort_width (optional; zero or omission defaults to 32) | B.IOR Descending (optional; omission defaults to ascending) | B.IOT Local source and two new Local destinations, common PE_MASK, <last> | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001101100') == 78;
-    assert TileOperationOfIndex(78) == TileOperation_TSORT;
-    assert TileHandlerOfIndex(78) == TileHandler_TSORT;
-    assert TileClassOfIndex(78) == TileClass_IrregularAndComplex;
-    assert TileEngineOfIndex(78) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001101100') == 77;
+    assert TileOperationOfIndex(77) == TileOperation_TSORT;
+    assert TileHandlerOfIndex(77) == TileHandler_TSORT;
+    assert TileClassOfIndex(77) == TileClass_IrregularAndComplex;
+    assert TileEngineOfIndex(77) == TileEngine_SFU;
     assert InstructionContractOperation_TSORT() == TileOperation_TSORT;
     assert InstructionContractHandler_TSORT() == TileHandler_TSORT;
     return 0;

@@ -191,6 +191,15 @@ begin
            operation == TileBinary_SHR;
 end;
 
+// The closed elementwise family is also defined for Local CUBE M16/M32.
+// CUBE_N8 remains a matrix/transport layout and is not an elementwise class.
+pure func TileElementwiseLayoutSupported(layout: TileLayout) => boolean
+begin
+    return layout == TileLayout_RowMajor ||
+           layout == TileLayout_CUBE_M16 ||
+           layout == TileLayout_CUBE_M32;
+end;
+
 pure func TileVecScalarIntegerDataTypeSupported(
     data_type: TileDataType) => boolean
 begin

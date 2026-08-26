@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: irregular-and-complex/format-conversion
     // block: BSTART.SFU TQUANT, FP32 | B.DATR S8|U8, RMode, Sat | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional, default 1) | B.DIM LB2=Col (optional, default ValidCol) | B.IOR MultiplierFP32, ZeroPoint (optional; omission selects 1.0 and 0) | B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001101010') == 76;
-    assert TileOperationOfIndex(76) == TileOperation_TQUANT;
-    assert TileHandlerOfIndex(76) == TileHandler_TQUANT;
-    assert TileClassOfIndex(76) == TileClass_IrregularAndComplex;
-    assert TileEngineOfIndex(76) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001101010') == 75;
+    assert TileOperationOfIndex(75) == TileOperation_TQUANT;
+    assert TileHandlerOfIndex(75) == TileHandler_TQUANT;
+    assert TileClassOfIndex(75) == TileClass_IrregularAndComplex;
+    assert TileEngineOfIndex(75) == TileEngine_SFU;
     assert InstructionContractOperation_TQUANT() == TileOperation_TQUANT;
     assert InstructionContractHandler_TQUANT() == TileHandler_TQUANT;
     return 0;

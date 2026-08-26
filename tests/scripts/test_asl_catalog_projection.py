@@ -80,6 +80,12 @@ class AslCatalogProjectionTest(unittest.TestCase):
                 "L.BSTART.STD.FALL",
                 "L.BSTART.SYS.FALL",
                 "V.*",
+                "BSTART.TEPL selector 0x065",
+                "BSTART.TEPL selector 0x06E",
+                "BSTART.TEPL selector 0x071",
+                "BSTART.TEPL selector 0x072",
+                "BSTART.TEPL selector 0x073",
+                "BSTART.TEPL selector 0x074",
             },
         )
         vector_root = next(item for item in reservations if item["mnemonic"] == "V.*")

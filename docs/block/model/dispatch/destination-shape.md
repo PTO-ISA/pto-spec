@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/destination-shape.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 
 readonly func BundleDestinationValidRows(shape_source_valid: boolean,
                                          shape_source: TileIndex)
@@ -34,7 +34,6 @@ begin
         return 1;
     end;
 end;
-
 readonly func BundleDestinationValidColumns(shape_source_valid: boolean,
                                             shape_source: TileIndex)
                                             => integer {0..65535}
@@ -52,7 +51,6 @@ begin
         return 1;
     end;
 end;
-
 readonly func BundleDestinationPhysicalColumns(shape_source_valid: boolean,
                                                shape_source: TileIndex)
                                                => integer {0..65535}
@@ -70,7 +68,6 @@ begin
         return BundleDestinationValidColumns(FALSE, 0);
     end;
 end;
-
 readonly func BundleLocalDestinationCapacityGroupFits() => boolean
 begin
     var additional0: integer = 0;
@@ -382,6 +379,13 @@ begin
     if _BundleOperation.valid &&
        _BundleOperation.operation_class == BundleOperation_TileMatrix then
         return TRUE;
+    end;
+    let decoded_operation = TileOperationOfIndex(operation);
+    if decoded_operation == TileOperation_TPERMUTE ||
+       decoded_operation == TileOperation_TSHUF ||
+       decoded_operation == TileOperation_TPACK ||
+       decoded_operation == TileOperation_TUNPACK then
+        return ResolveBundleCellRearrangementDestination();
     end;
     if TileOperationOfIndex(operation) == TileOperation_TIMG2COL then
         let resolved = ResolveBundleTileDestinations();

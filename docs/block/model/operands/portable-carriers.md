@@ -417,7 +417,6 @@ begin
              TileHandler_ExecuteTileCompareScalar,
              TileHandler_ExecuteTileExpand,
              TileHandler_ExecuteTileFillScalar,
-             TileHandler_ExecuteTilePartial,
              TileHandler_ExecuteTileReduction,
              TileHandler_ExecuteTileScalar,
              TileHandler_ExecuteTileSelect,
@@ -431,7 +430,6 @@ begin
              TileHandler_TCVT,
              TileHandler_TDEQUANT,
              TileHandler_TEXTRACT,
-             TileHandler_TFILLPAD,
              TileHandler_TFMA,
              TileHandler_TGATHER,
              TileHandler_THISTOGRAM,
@@ -442,7 +440,10 @@ begin
              TileHandler_TMRGSORT,
              TileHandler_TQUANT,
              TileHandler_TSORT,
-             TileHandler_TTRANS,
+             TileHandler_TPERMUTE,
+             TileHandler_TSHUF,
+             TileHandler_TPACK,
+             TileHandler_TUNPACK,
              TileHandler_TTRI =>
             return BundleProducerEffect_RollbackSafe;
         when TileHandler_MGATHER_CAS,

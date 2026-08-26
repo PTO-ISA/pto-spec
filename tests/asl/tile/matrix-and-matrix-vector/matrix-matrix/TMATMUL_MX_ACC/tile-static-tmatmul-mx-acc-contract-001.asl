@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: matrix-and-matrix-vector/matrix-matrix
     // block: BSTART.TMATMULMX.ACC AType | B.DATR BType, RMode, Sat (optional; BType defaults to AType) | B.FPATR PreQuantMode, ReluMode, GroupNCode, RowMaxEn, GroupMaxEn, RowMaxInit, MaxAbsEn, TransA, TransB, CScaleEn (exactly one) | B.DIM LB0 M or cooperative group_M (optional, default 1) | B.DIM LB1 N (optional, default 1) | B.DIM LB2 K (optional, default 1) | B.IOS complete right or both matrix operand groups (optional; cooperative mask 1111) | B.IOT ordered Local mathematical sources: C CUBE_M16/M32 accumulator matching A with encoded selector distinct from DstTile, A CUBE_M16/M32 primary, optional A scale, B CUBE_N8 primary, optional B scale, optional U8 CScale CUBE_M32 [M,1] | B.IOT D matching A's CUBE_M16/M32 layout with a distinct encoded destination index, optional RowMaxOut, optional GroupMaxOut destinations | B.IOT/B.IOR postprocess operands selected by B.FPATR | BSTOP or the next BSTART completion boundary
-    assert DecodeTileOperation(TileDecode_CUBE, '000000000110') == 102;
-    assert TileOperationOfIndex(102) == TileOperation_TMATMUL_MX_ACC;
-    assert TileHandlerOfIndex(102) == TileHandler_TMATMUL_MX_ACC;
-    assert TileClassOfIndex(102) == TileClass_MatrixAndMatrixVector;
-    assert TileEngineOfIndex(102) == TileEngine_CUBE;
+    assert DecodeTileOperation(TileDecode_CUBE, '000000000110') == 96;
+    assert TileOperationOfIndex(96) == TileOperation_TMATMUL_MX_ACC;
+    assert TileHandlerOfIndex(96) == TileHandler_TMATMUL_MX_ACC;
+    assert TileClassOfIndex(96) == TileClass_MatrixAndMatrixVector;
+    assert TileEngineOfIndex(96) == TileEngine_CUBE;
     assert InstructionContractOperation_TMATMUL_MX_ACC() == TileOperation_TMATMUL_MX_ACC;
     assert InstructionContractHandler_TMATMUL_MX_ACC() == TileHandler_TMATMUL_MX_ACC;
     assert InstructionContractCubeFunction_TMATMUL_MX_ACC() == 6;

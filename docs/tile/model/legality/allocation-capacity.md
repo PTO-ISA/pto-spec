@@ -99,35 +99,5 @@ begin
     end;
     return TRUE;
 end;
-
-readonly func TilePartialCoverageLegal(destination: TileIndex,
-                                        source_left: TileIndex,
-                                        source_right: TileIndex) => boolean
-begin
-    if !TileDescriptorLegal(destination) ||
-       !TileDescriptorLegal(source_left) ||
-       !TileDescriptorLegal(source_right) then
-        return FALSE;
-    end;
-    let destination_tile = _Tiles[[destination]];
-    let left_tile = _Tiles[[source_left]];
-    let right_tile = _Tiles[[source_right]];
-    if left_tile.valid_rows > destination_tile.valid_rows ||
-       left_tile.valid_columns > destination_tile.valid_columns ||
-       right_tile.valid_rows > destination_tile.valid_rows ||
-       right_tile.valid_columns > destination_tile.valid_columns then
-        return FALSE;
-    end;
-    for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
-            let left_valid = row < left_tile.valid_rows &&
-                             column < left_tile.valid_columns;
-            let right_valid = row < right_tile.valid_rows &&
-                              column < right_tile.valid_columns;
-            if !left_valid && !right_valid then return FALSE; end;
-        end;
-    end;
-    return TRUE;
-end;
 ```
 <!-- GENERATED-ASL-END: unit -->

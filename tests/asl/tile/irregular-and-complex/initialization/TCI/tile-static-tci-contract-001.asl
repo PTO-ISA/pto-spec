@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: irregular-and-complex/initialization
     // block: BSTART.SFU TCI, S32|S16|U32|U16 | B.DATR all-zero (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional, default 1; when present must equal 1) | B.DIM LB2=Col (optional, default ValidCol) | B.IOR Start, Direction (optional; omission selects 0 and ascending) | B.IOT mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001100110') == 73;
-    assert TileOperationOfIndex(73) == TileOperation_TCI;
-    assert TileHandlerOfIndex(73) == TileHandler_TCI;
-    assert TileClassOfIndex(73) == TileClass_IrregularAndComplex;
-    assert TileEngineOfIndex(73) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001100110') == 72;
+    assert TileOperationOfIndex(72) == TileOperation_TCI;
+    assert TileHandlerOfIndex(72) == TileHandler_TCI;
+    assert TileClassOfIndex(72) == TileClass_IrregularAndComplex;
+    assert TileEngineOfIndex(72) == TileEngine_SFU;
     assert InstructionContractOperation_TCI() == TileOperation_TCI;
     assert InstructionContractHandler_TCI() == TileHandler_TCI;
     return 0;

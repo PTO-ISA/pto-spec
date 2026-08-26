@@ -1930,6 +1930,9 @@ def render_concept_avs(root: Path, unit: AslUnit) -> tuple[Path, str]:
         raise ValueError(f"{unit.source_path}: concept AVS cannot own a mnemonic")
     identity = sanitize(unit.unit_id.removeprefix("PTO-"))
     test_id = f"PTO-AVS-{identity}-STATIC-001"
+    if len(test_id) > 64:
+        identity = identity.replace("CELL-REARRANGEMENT", "CELL-REARR")
+        test_id = f"PTO-AVS-{identity}-STATIC-001"
     clauses = parse_ndf_regions(
         (root / unit.source_path).read_text(encoding="utf-8"), unit.source_path
     )

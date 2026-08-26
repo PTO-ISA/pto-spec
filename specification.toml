@@ -37,7 +37,7 @@ system_register_definitions = 72
 trap_numbers = 13
 tile_model = "one-level"
 tile_registers = 64
-pto_operations = 109
+pto_operations = 107
 hierarchical_calls = false
 
 [memory_order]

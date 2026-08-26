@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: memory-and-data-movement/pe-movement
     // block: BSTART.GMOV DataType | B.DATR Layout (optional) | B.IOT source, destination, PE_MASK, TSize, L=1 | B.IOR peer_tid (optional) | BSTOP
-    assert DecodeTileOperation(TileDecode_TLSU, '000000001101') == 96;
-    assert TileOperationOfIndex(96) == TileOperation_GMOV;
-    assert TileHandlerOfIndex(96) == TileHandler_GMOV;
-    assert TileClassOfIndex(96) == TileClass_MemoryAndDataMovement;
-    assert TileEngineOfIndex(96) == TileEngine_TLSU;
+    assert DecodeTileOperation(TileDecode_TLSU, '000000001101') == 90;
+    assert TileOperationOfIndex(90) == TileOperation_GMOV;
+    assert TileHandlerOfIndex(90) == TileHandler_GMOV;
+    assert TileClassOfIndex(90) == TileClass_MemoryAndDataMovement;
+    assert TileEngineOfIndex(90) == TileEngine_TLSU;
     assert InstructionContractOperation_GMOV() == TileOperation_GMOV;
     assert InstructionContractHandler_GMOV() == TileHandler_GMOV;
     return 0;

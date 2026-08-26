@@ -16,87 +16,27 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/indexed-layout.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT","surface":"tile","classification":["model","legality","indexed-layout"],"depends_on":["PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA"]}
-pure func TilePartialDataTypeSupported(
-    data_type: TileDataType) => boolean
-begin
-    return data_type == TileDataType_FP32 ||
-           data_type == TileDataType_FP16 ||
-           data_type == TileDataType_BF16 ||
-           data_type == TileDataType_S32 ||
-           data_type == TileDataType_S16 ||
-           data_type == TileDataType_S8 ||
-           data_type == TileDataType_U32 ||
-           data_type == TileDataType_U16 ||
-           data_type == TileDataType_U8;
-end;
-
-pure func TilePartialDataTypeSupportedForOperation(
-    operation: TilePartialOperation,
-    data_type: TileDataType) => boolean
-begin
-    return TilePartialDataTypeSupported(data_type);
-end;
-
-readonly func TileOperandsLegal_ExecuteTilePartial(
-    op: TilePartialOperation, destination: TileIndex,
-    source_left: TileIndex, source_right: TileIndex) => boolean
-begin
-    if op == TilePartial_ARGMAX || op == TilePartial_ARGMIN ||
-       !TilePartialCoverageLegal(destination, source_left, source_right) then
-        return FALSE;
-    end;
-    let data_type = _Tiles[[destination]].data_type;
-    if !TilePartialDataTypeSupportedForOperation(op, data_type) ||
-       _Tiles[[source_left]].data_type != data_type ||
-       _Tiles[[source_right]].data_type != data_type ||
-       _Tiles[[destination]].layout != TileLayout_RowMajor ||
-       _Tiles[[source_left]].layout != TileLayout_RowMajor ||
-       _Tiles[[source_right]].layout != TileLayout_RowMajor ||
-       !TileSourceContentsDefined(source_left) ||
-       !TileSourceContentsDefined(source_right) then
-        return FALSE;
-    end;
-    return !TileDataTypeIsFloating(data_type) ||
-           (TileSourceEncodingsValid(source_left) &&
-            TileSourceEncodingsValid(source_right));
-end;
-
 readonly func TileOperandsLegal_TFMA(
     destination: TileIndex, source_left: TileIndex,
     source_right: TileIndex, addend: TileIndex) => boolean
 begin
-    return TileDescriptorLegal(destination) &&
-           TileSourceContentsDefined(source_left) &&
-           TileSourceContentsDefined(source_right) &&
-           TileSourceContentsDefined(addend) &&
+    return TileElementwiseDescriptorLegal(destination) &&
+           TileElementwiseSourceContentsDefined(source_left) &&
+           TileElementwiseSourceContentsDefined(source_right) &&
+           TileElementwiseSourceContentsDefined(addend) &&
            TileFusedMultiplyAddDataTypeSupported(
                _Tiles[[destination]].data_type) &&
-           TileLogicalShapeMatch(destination, source_left) &&
-           TileLogicalShapeMatch(destination, source_right) &&
-           TileLogicalShapeMatch(destination, addend) &&
+           TileElementwiseShapeAndTypeMatch(destination, source_left) &&
+           TileElementwiseShapeAndTypeMatch(destination, source_right) &&
+           TileElementwiseShapeAndTypeMatch(destination, addend) &&
            _Tiles[[destination]].data_type == _Tiles[[source_left]].data_type &&
            _Tiles[[destination]].data_type == _Tiles[[source_right]].data_type &&
            _Tiles[[destination]].data_type == _Tiles[[addend]].data_type &&
-           _Tiles[[destination]].layout == TileLayout_RowMajor &&
+           TileElementwiseLayoutSupported(_Tiles[[destination]].layout) &&
            (!TileDataTypeIsFloating(_Tiles[[destination]].data_type) ||
-            (TileSourceEncodingsValid(source_left) &&
-             TileSourceEncodingsValid(source_right) &&
-             TileSourceEncodingsValid(addend)));
-end;
-
-readonly func TileOperandsLegal_ExecuteTilePartialArg(
-    maximum: boolean, destination: TileIndex, destination_indices: TileIndex,
-    source_left: TileIndex, source_right: TileIndex,
-    left_indices: TileIndex, right_indices: TileIndex) => boolean
-begin
-    if destination == destination_indices then return FALSE; end;
-    return TilePartialCoverageLegal(destination, source_left, source_right) &&
-           TileDescriptorLegal(destination_indices) &&
-           TileLogicalShapeMatch(destination_indices, destination) &&
-           TileLogicalShapeMatch(left_indices, source_left) &&
-           TileLogicalShapeMatch(right_indices, source_right) &&
-           _Tiles[[destination]].data_type == _Tiles[[source_left]].data_type &&
-           _Tiles[[destination]].data_type == _Tiles[[source_right]].data_type;
+            (TileElementwiseSourceEncodingsValid(source_left) &&
+             TileElementwiseSourceEncodingsValid(source_right) &&
+             TileElementwiseSourceEncodingsValid(addend)));
 end;
 
 pure func TileHistogramSourceDataTypeSupported(

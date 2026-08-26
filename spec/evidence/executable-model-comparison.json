@@ -19,11 +19,11 @@
       "id": "predicate-p0-p7-difference"
     },
     {
-      "disposition": "PTO-v0 bundle commit resolves the complete direct-operation schema from ordered B.IOT/B.IOR bindings, bundle headers, and operation defaults. All 109 direct tile operations are schema-representable; malformed or surplus bindings still reject before tile effects.",
+      "disposition": "PTO-v0 bundle commit resolves the complete direct-operation schema from ordered B.IOT/B.IOR bindings, bundle headers, and operation defaults. All 107 direct tile operations are schema-representable; malformed or surplus bindings still reject before tile effects.",
       "id": "bundle-bridge-operand-boundary"
     },
     {
-      "disposition": "PTO defines 87 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
+      "disposition": "PTO defines 85 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
       "id": "tepl-selector-boundary"
     },
     {
@@ -14102,10 +14102,10 @@
     "command_forms": 76,
     "direct_tile_breakdown": {
       "CUBE": 12,
-      "TEPL": 87,
+      "TEPL": 85,
       "TLSU": 10
     },
-    "direct_tile_operations": 109,
+    "direct_tile_operations": 107,
     "scalar_forms": 466,
     "total_rows": 651
   },

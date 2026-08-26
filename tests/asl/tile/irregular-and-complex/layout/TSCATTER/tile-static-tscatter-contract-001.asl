@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: irregular-and-complex/layout
     // block: BSTART.SFU TSCATTER, ValueDataType | B.DATR Layout (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT ValueSrc, IndexSrc, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001110000') == 82;
-    assert TileOperationOfIndex(82) == TileOperation_TSCATTER;
-    assert TileHandlerOfIndex(82) == TileHandler_TSCATTER;
-    assert TileClassOfIndex(82) == TileClass_IrregularAndComplex;
-    assert TileEngineOfIndex(82) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001110000') == 80;
+    assert TileOperationOfIndex(80) == TileOperation_TSCATTER;
+    assert TileHandlerOfIndex(80) == TileHandler_TSCATTER;
+    assert TileClassOfIndex(80) == TileClass_IrregularAndComplex;
+    assert TileEngineOfIndex(80) == TileEngine_SFU;
     assert InstructionContractOperation_TSCATTER() == TileOperation_TSCATTER;
     assert InstructionContractHandler_TSCATTER() == TileHandler_TSCATTER;
     return 0;

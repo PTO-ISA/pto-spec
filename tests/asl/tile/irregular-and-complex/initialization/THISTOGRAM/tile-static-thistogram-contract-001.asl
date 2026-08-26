@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: irregular-and-complex/initialization
     // block: BSTART.SFU THISTOGRAM, U16|U32 | B.DATR DstDataType=U32, ByteId=0..3 (mandatory) | B.IOT SourceTile, FilterTile, mask=PE_MASK, <last>, ->DstTile<TSize> | BSTOP
-    assert DecodeTileOperation(TileDecode_TEPL, '000001101000') == 75;
-    assert TileOperationOfIndex(75) == TileOperation_THISTOGRAM;
-    assert TileHandlerOfIndex(75) == TileHandler_THISTOGRAM;
-    assert TileClassOfIndex(75) == TileClass_IrregularAndComplex;
-    assert TileEngineOfIndex(75) == TileEngine_SFU;
+    assert DecodeTileOperation(TileDecode_TEPL, '000001101000') == 74;
+    assert TileOperationOfIndex(74) == TileOperation_THISTOGRAM;
+    assert TileHandlerOfIndex(74) == TileHandler_THISTOGRAM;
+    assert TileClassOfIndex(74) == TileClass_IrregularAndComplex;
+    assert TileEngineOfIndex(74) == TileEngine_SFU;
     assert InstructionContractOperation_THISTOGRAM() == TileOperation_THISTOGRAM;
     assert InstructionContractHandler_THISTOGRAM() == TileHandler_THISTOGRAM;
     return 0;

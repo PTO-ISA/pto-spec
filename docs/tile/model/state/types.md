@@ -43,15 +43,6 @@ type TileUnaryOperation of enumeration {
     TileUnary_RSQRT
 };
 
-type TilePartialOperation of enumeration {
-    TilePartial_ADD,
-    TilePartial_MUL,
-    TilePartial_MAX,
-    TilePartial_MIN,
-    TilePartial_ARGMAX,
-    TilePartial_ARGMIN
-};
-
 type TileComparison of enumeration {
     TileComparison_EQ,
     TileComparison_NE,

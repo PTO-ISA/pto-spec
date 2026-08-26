@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block","classification":["model","dispatch","tile-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-PARTIAL-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block","classification":["model","dispatch","tile-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"]}
 readonly func BundleTileTypesMatch(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
     operands: TileInstructionOperands,
@@ -22,12 +22,12 @@ begin
     return SelectedBundleClosedBinarySchemaLegal(operation) &&
            SelectedBundleClosedUnarySchemaLegal(operation) &&
            SelectedBundleClosedTFMASchemaLegal(operation) &&
+           SelectedBundleCellRearrangementSchemaLegal(operation) &&
            SelectedBundleClosedQuantizationSchemaLegal(operation) &&
            SelectedBundleClosedGenerationSchemaLegal(operation) &&
            SelectedBundleClosedHistogramSchemaLegal(operation) &&
            SelectedBundleClosedReductionSchemaLegal(operation) &&
            SelectedBundleClosedSortingSchemaLegal(operation) &&
-           SelectedBundleClosedPartialSchemaLegal(operation) &&
            SelectedBundleClosedExpansionSchemaLegal(operation) &&
            SelectedBundleClosedTCVTSchemaLegal(operation) &&
            SelectedBundleClosedTCMPSchemaLegal(operation) &&
@@ -65,7 +65,11 @@ begin
         return FALSE;
     end;
     let matrix_selected = BundleCubeMatrixSelected();
-    if !matrix_selected && !PrepareSelectedBundleStage2() then
+    var stage2_prepared = TRUE;
+    if !matrix_selected then
+        stage2_prepared = PrepareSelectedBundleStage2();
+    end;
+    if !matrix_selected && !stage2_prepared then
         DiscardBundleSubviewMaterializations();
         return FALSE;
     end;
@@ -151,6 +155,14 @@ begin
     if !SelectedBundleTileDataAttributesLegal(operation) then
         return FALSE;
     end;
+    // Cell-rearrangement B.IOR/B.IOT shape is bundle structure.  Report
+    // omitted or surplus controls as BundleControl before the generic closed
+    // schema maps a failed operand contract to TileLegality.
+    if TileOperationUsesCellRearrangementSchema(operation) &&
+       !SelectedBundleCellRearrangementSchemaLegal(operation) then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return FALSE;
+    end;
     if !SelectedBundleClosedSchemasLegal(operation) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
@@ -171,7 +183,7 @@ begin
     let operands = BundleTileInstructionOperands(operation);
     let (status, -) =
         ExecuteTileInstructionWithoutTimeWithAcceptedApplicabilityRules(
-            rules, family, code, operands);
+        rules, family, code, operands);
     if _LastFault != Fault_None || status != TileExecution_Executed then
         RollBackBundleTileDestinations();
         AbortBundleLocalGenerationsForBundle();
