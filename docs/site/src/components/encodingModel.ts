@@ -2,6 +2,7 @@ export interface EncodingSegment {
   bits: string;
   fieldName?: string;
   fixed: boolean;
+  kind: 'field' | 'constant' | 'unspecified';
   name: string;
   pieceId?: string;
   value?: string;
@@ -64,6 +65,16 @@ export function formatFixedValue(match: bigint, localLsb: number, width: number)
   if (width === 1) return String(value);
   if (width <= 4) return `0b${value.toString(2).padStart(width, '0')}`;
   return `0x${value.toString(16).padStart(Math.ceil(width / 4), '0')}`;
+}
+
+export function formatFixedBits(match: bigint, localLsb: number, width: number): string {
+  const value = (match >> BigInt(localLsb)) & ((1n << BigInt(width)) - 1n);
+  return value.toString(2).padStart(width, '0');
+}
+
+export function formatConstantToken(match: bigint, localLsb: number, width: number): string {
+  const bits = formatFixedBits(match, localLsb, width);
+  return width === 1 ? bits : `${width}'b${bits}`;
 }
 
 export function parseEncodingForm(formValue: unknown): EncodingWordModel[] {
@@ -181,11 +192,15 @@ export function parseEncodingForm(formValue: unknown): EncodingWordModel[] {
         localLsb -= 1;
       }
       const width = localMsb - localLsb + 1;
+      const unnamedFixedBits = identity.fixed && !identity.fieldName
+        ? formatConstantToken(word.match, localLsb, width)
+        : null;
       fields.push({
         bits: bitRange(word.offset + localMsb, word.offset + localLsb),
         ...(identity.fieldName ? {fieldName: identity.fieldName} : {}),
         fixed: identity.fixed,
-        name: identity.name,
+        kind: identity.fieldName ? 'field' : identity.fixed ? 'constant' : 'unspecified',
+        name: unnamedFixedBits ?? identity.name,
         ...(identity.pieceId ? {pieceId: identity.pieceId} : {}),
         ...(identity.fixed ? {value: formatFixedValue(word.match, localLsb, width)} : {}),
         width,

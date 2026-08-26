@@ -1,0 +1,1179 @@
+{
+  "schema": "pto.site-instruction-projection.v1",
+  "unitId": "PTO-TILE-TLOAD",
+  "ownerSource": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
+  "ownerSourceSha256": "3ff6f061442dd8eaa0120f70a6af36dc9cc05ff6ef89393d6761375960149119",
+  "composition": {
+    "owner": "PTO-TILE-TLOAD",
+    "variants": [
+      {
+        "id": "ordinary-local",
+        "label": {
+          "en": "Ordinary Local destination",
+          "zh-CN": "普通 Local 目标"
+        },
+        "summary": {
+          "en": "Load a two-dimensional row-major GM range into one newly allocated Local Tile.",
+          "zh-CN": "把 GM 中的二维行主序范围载入一个新分配的 Local Tile。"
+        },
+        "canonicalCommandCount": {
+          "en": "3-command minimum; 8-command complete form",
+          "zh-CN": "最短 3 条命令；完整形态 8 条命令"
+        },
+        "canonicalMinCommands": 3,
+        "canonicalMaxCommands": 8,
+        "minimumSequence": [
+          "BSTART.TLOAD U8",
+          "B.IOT mask=1111, <last>, ->T<1>",
+          "BSTOP"
+        ],
+        "completeSequence": [
+          "BSTART.TLOAD U8",
+          "B.DATR {NORM, DTYPE_NONE, Zero, EQ, Default, 0, 0}",
+          "B.DIM zero, 64, ->LB0",
+          "B.DIM zero, 8, ->LB1",
+          "B.DIM zero, 64, ->LB2",
+          "B.IOR zero, a0",
+          "B.IOT mask=1111, <last>, ->T<1>",
+          "BSTOP"
+        ],
+        "relationships": [
+          {
+            "en": "B.IOT is the single Local destination and is mutually exclusive with B.IOS.",
+            "zh-CN": "B.IOT 是唯一的 Local 目标，并与 B.IOS 互斥。"
+          },
+          {
+            "en": "B.DIM may appear once for each of LB0, LB1, and LB2; a second write to the same LB is illegal.",
+            "zh-CN": "B.DIM 可分别为 LB0、LB1、LB2 各出现一次；重复写同一个 LB 非法。"
+          },
+          {
+            "en": "B.DATR and B.IOR are optional only as complete commands; encoded zero fields are present values, not omission.",
+            "zh-CN": "B.DATR 与 B.IOR 只能整条省略；已编码的零字段是显式值，不代表省略。"
+          }
+        ],
+        "commands": [
+          {
+            "mnemonic": "BSTART.TLOAD",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Open the block, select TLSU Function 0, and supply the transfer element type.",
+              "zh-CN": "打开 block、选择 TLSU Function 0，并提供传输元素类型。"
+            },
+            "parameters": [
+              {
+                "name": "DataType",
+                "meaning": {
+                  "en": "Element type for GM accesses, dense-stride derivation, and the destination descriptor.",
+                  "zh-CN": "用于 GM 访问、紧密行跨度推导和目标描述符的元素类型。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.DATR",
+            "minOccurrences": 0,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "optional",
+            "role": {
+              "en": "Select ordinary layout attributes; omission selects NORM.",
+              "zh-CN": "选择普通布局属性；省略时选择 NORM。"
+            },
+            "parameters": [
+              {
+                "name": "Layout",
+                "meaning": {
+                  "en": "Must remain NORM for ordinary TLOAD.",
+                  "zh-CN": "普通 TLOAD 必须保持 NORM。"
+                },
+                "omission": {
+                  "en": "NORM layout.",
+                  "zh-CN": "NORM 布局。"
+                }
+              },
+              {
+                "name": "PadValueOrByteId",
+                "meaning": {
+                  "en": "Must be zero; ordinary TLOAD has no directional or tail padding control.",
+                  "zh-CN": "必须为零；普通 TLOAD 没有方向 padding 或尾部 padding 控制。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.DIM",
+            "minOccurrences": 0,
+            "maxOccurrences": 3,
+            "repeatable": true,
+            "requirement": "optional",
+            "role": {
+              "en": "Write the valid rectangle and physical row width, one write-once LB per command.",
+              "zh-CN": "写入有效矩形与物理行宽；每条命令写一个只能写一次的 LB。"
+            },
+            "parameters": [
+              {
+                "name": "LB0 / ValidCol",
+                "meaning": {
+                  "en": "Valid elements per row.",
+                  "zh-CN": "每行的有效元素数。"
+                },
+                "omission": {
+                  "en": "Common destination-shape default; source-free Local TLOAD resolves to 1.",
+                  "zh-CN": "采用公共目标形状缺省；无源 Local TLOAD 解析为 1。"
+                }
+              },
+              {
+                "name": "LB1 / ValidRow",
+                "meaning": {
+                  "en": "Number of valid rows.",
+                  "zh-CN": "有效行数。"
+                },
+                "omission": {
+                  "en": "Common destination-shape default; source-free Local TLOAD resolves to 1.",
+                  "zh-CN": "采用公共目标形状缺省；无源 Local TLOAD 解析为 1。"
+                }
+              },
+              {
+                "name": "LB2 / Col",
+                "meaning": {
+                  "en": "Physical columns in elements; ValidCol must not exceed Col.",
+                  "zh-CN": "以元素计的物理列数；ValidCol 不得超过 Col。"
+                },
+                "omission": {
+                  "en": "Resolved ValidCol.",
+                  "zh-CN": "解析后的 ValidCol。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.IOR",
+            "minOccurrences": 0,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "optional",
+            "role": {
+              "en": "Bind the two per-PE private-GPR address inputs.",
+              "zh-CN": "绑定两个逐 PE 私有 GPR 地址输入。"
+            },
+            "parameters": [
+              {
+                "name": "RegSrc0",
+                "meaning": {
+                  "en": "Per-PE GM base byte address.",
+                  "zh-CN": "逐 PE 的 GM 基地址（字节地址）。"
+                },
+                "omission": {
+                  "en": "Base address zero.",
+                  "zh-CN": "基地址为零。"
+                }
+              },
+              {
+                "name": "RegSrc1",
+                "meaning": {
+                  "en": "Per-PE XLEN byte distance between adjacent row starts.",
+                  "zh-CN": "逐 PE 的相邻行起点间 XLEN 字节距离。"
+                },
+                "omission": {
+                  "en": "Dense byte stride ceil(Col * element_bits / 8); an explicitly selected zero GPR is a real zero stride that aliases rows.",
+                  "zh-CN": "紧密字节跨度 ceil(Col * element_bits / 8)；显式选择零 GPR 得到真实零跨度，会使各行别名。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.IOT",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Allocate one Local destination and terminate the Tile-binding stream.",
+              "zh-CN": "分配一个 Local 目标并终止 Tile 绑定流。"
+            },
+            "parameters": [
+              {
+                "name": "DstTile",
+                "meaning": {
+                  "en": "Destination hand T, U, M, or N.",
+                  "zh-CN": "目标 hand：T、U、M 或 N。"
+                }
+              },
+              {
+                "name": "SizeCode",
+                "meaning": {
+                  "en": "Capacity code 1..12: 128 B through 256 KiB per participating PE.",
+                  "zh-CN": "容量码 1..12：每个参与 PE 为 128 B 至 256 KiB。"
+                }
+              },
+              {
+                "name": "PEMode",
+                "meaning": {
+                  "en": "Three-bit participation mode decoded to the fixed four-PE mask.",
+                  "zh-CN": "三位参与模式，解码为固定的四 PE mask。"
+                }
+              },
+              {
+                "name": "L",
+                "meaning": {
+                  "en": "Terminates this one-entry destination stream; it is not a source-lifetime flag.",
+                  "zh-CN": "终止这一项目标流；它不是源生命周期标志。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "BSTOP",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Close the block and commit only after complete schema and GM-footprint preflight.",
+              "zh-CN": "关闭 block，并只在完整 schema 与 GM footprint 预检查成功后提交。"
+            },
+            "parameters": []
+          }
+        ]
+      },
+      {
+        "id": "cube-local",
+        "label": {
+          "en": "Local CUBE conversion",
+          "zh-CN": "Local CUBE 转换"
+        },
+        "summary": {
+          "en": "Load a two-dimensional ordinary GM range and convert it into persistent Local CUBE storage.",
+          "zh-CN": "载入二维普通 GM 范围，并转换为持久的 Local CUBE 存储。"
+        },
+        "canonicalCommandCount": {
+          "en": "6-command minimum; 7-command complete form",
+          "zh-CN": "最短 6 条命令；完整形态 7 条命令"
+        },
+        "canonicalMinCommands": 6,
+        "canonicalMaxCommands": 7,
+        "minimumSequence": [
+          "BSTART.TLOAD FP16",
+          "B.DATR {ND2N8, DTYPE_NONE, Max, EQ, Default, 0, 0}",
+          "B.DIM a1, 0, ->LB0",
+          "B.DIM a2, 0, ->LB1",
+          "B.IOT mask=1111, <last>, ->N<3>",
+          "BSTOP"
+        ],
+        "completeSequence": [
+          "BSTART.TLOAD FP16",
+          "B.DATR {ND2N8, DTYPE_NONE, Max, EQ, Default, 0, 0}",
+          "B.DIM a1, 0, ->LB0",
+          "B.DIM a2, 0, ->LB1",
+          "B.IOR a0, a3",
+          "B.IOT mask=1111, <last>, ->N<3>",
+          "BSTOP"
+        ],
+        "relationships": [
+          {
+            "en": "B.DATR is conditionally required by the CUBE form and must select ND2M32, ND2M16, or ND2N8 with DTYPE_NONE.",
+            "zh-CN": "CUBE 形态条件必选 B.DATR，并必须用 DTYPE_NONE 选择 ND2M32、ND2M16 或 ND2N8。"
+          },
+          {
+            "en": "Exactly two B.DIM commands write LB0 and LB1; LB2 is mutually exclusive with CUBE geometry and is forbidden.",
+            "zh-CN": "恰好两条 B.DIM 写 LB0 与 LB1；LB2 与 CUBE 几何互斥，禁止出现。"
+          },
+          {
+            "en": "PadValueOrByteId fills only physical CUBE CELL tail positions after all valid GM reads succeed; it is not directional padding.",
+            "zh-CN": "PadValueOrByteId 仅在所有有效 GM 读取成功后填充物理 CUBE CELL 尾部；它不是方向 padding。"
+          }
+        ],
+        "commands": [
+          {
+            "mnemonic": "BSTART.TLOAD",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Open TLOAD and supply the concrete transfer element type.",
+              "zh-CN": "打开 TLOAD 并提供具体传输元素类型。"
+            },
+            "parameters": [
+              {
+                "name": "DataType",
+                "meaning": {
+                  "en": "Concrete b32, b16, b8, or b4 type supported by the selected CUBE mapping.",
+                  "zh-CN": "所选 CUBE 映射支持的具体 b32、b16、b8 或 b4 类型。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.DATR",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "conditional",
+            "role": {
+              "en": "Conditionally required to select GM-to-Local CUBE conversion and tail PadValue.",
+              "zh-CN": "CUBE 形态条件必选，用于选择 GM 到 Local CUBE 转换和尾部 PadValue。"
+            },
+            "parameters": [
+              {
+                "name": "Layout",
+                "meaning": {
+                  "en": "ND2M32, ND2M16, or ND2N8.",
+                  "zh-CN": "ND2M32、ND2M16 或 ND2N8。"
+                }
+              },
+              {
+                "name": "DataType",
+                "meaning": {
+                  "en": "Must be DTYPE_NONE so BSTART remains the source dtype.",
+                  "zh-CN": "必须为 DTYPE_NONE，使 BSTART 继续拥有源 dtype。"
+                }
+              },
+              {
+                "name": "PadValueOrByteId",
+                "meaning": {
+                  "en": "Zero, Max, Min, or Null for physical CELL tail positions only.",
+                  "zh-CN": "仅用于物理 CELL 尾部位置的 Zero、Max、Min 或 Null。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.DIM",
+            "minOccurrences": 2,
+            "maxOccurrences": 2,
+            "repeatable": true,
+            "requirement": "conditional",
+            "role": {
+              "en": "Conditionally required CUBE valid-shape inputs; write LB0 and LB1 exactly once.",
+              "zh-CN": "CUBE 形态条件必选的有效形状输入；LB0 与 LB1 各写一次。"
+            },
+            "parameters": [
+              {
+                "name": "LB0 / ValidCol",
+                "meaning": {
+                  "en": "Explicit nonzero valid columns.",
+                  "zh-CN": "显式非零有效列数。"
+                }
+              },
+              {
+                "name": "LB1 / ValidRow",
+                "meaning": {
+                  "en": "Explicit nonzero valid rows.",
+                  "zh-CN": "显式非零有效行数。"
+                }
+              },
+              {
+                "name": "LB2 / Col",
+                "meaning": {
+                  "en": "Forbidden; Layout, DataType, and the valid shape derive CELL geometry.",
+                  "zh-CN": "禁止；CELL 几何由 Layout、DataType 与有效形状推导。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.IOR",
+            "minOccurrences": 0,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "optional",
+            "role": {
+              "en": "Bind per-PE GM base and byte row stride.",
+              "zh-CN": "绑定逐 PE 的 GM 基地址与字节行跨度。"
+            },
+            "parameters": [
+              {
+                "name": "RegSrc0",
+                "meaning": {
+                  "en": "Per-PE GM base byte address.",
+                  "zh-CN": "逐 PE 的 GM 基字节地址。"
+                },
+                "omission": {
+                  "en": "Base address zero.",
+                  "zh-CN": "基地址为零。"
+                }
+              },
+              {
+                "name": "RegSrc1",
+                "meaning": {
+                  "en": "Per-PE byte row stride.",
+                  "zh-CN": "逐 PE 的字节行跨度。"
+                },
+                "omission": {
+                  "en": "Dense byte stride derived from LB0 ValidCol and DataType.",
+                  "zh-CN": "由 LB0 ValidCol 与 DataType 推导紧密字节跨度。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.IOT",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Allocate one persistent Local CUBE destination and terminate the binding stream.",
+              "zh-CN": "分配一个持久 Local CUBE 目标并终止绑定流。"
+            },
+            "parameters": [
+              {
+                "name": "DstTile",
+                "meaning": {
+                  "en": "Destination hand T, U, M, or N.",
+                  "zh-CN": "目标 hand：T、U、M 或 N。"
+                }
+              },
+              {
+                "name": "SizeCode",
+                "meaning": {
+                  "en": "Per-participating-PE destination capacity code.",
+                  "zh-CN": "每个参与 PE 的目标容量码。"
+                }
+              },
+              {
+                "name": "PEMode",
+                "meaning": {
+                  "en": "Three-bit participation mode decoded to the fixed four-PE mask.",
+                  "zh-CN": "三位参与模式，解码为固定四 PE mask。"
+                }
+              },
+              {
+                "name": "L",
+                "meaning": {
+                  "en": "Terminates the Local binding stream.",
+                  "zh-CN": "终止 Local 绑定流。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "BSTOP",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Close the block; publish descriptor, payload, definedness, and tail padding only after complete preflight.",
+              "zh-CN": "关闭 block；仅在完整预检查后发布描述符、payload、definedness 与尾部 padding。"
+            },
+            "parameters": []
+          },
+          {
+            "mnemonic": "B.IOS",
+            "minOccurrences": 0,
+            "maxOccurrences": 0,
+            "repeatable": false,
+            "requirement": "forbidden",
+            "role": {
+              "en": "CUBE conversion has no Shared destination form.",
+              "zh-CN": "CUBE 转换没有 Shared 目标形态。"
+            },
+            "parameters": []
+          }
+        ]
+      },
+      {
+        "id": "ordinary-shared",
+        "label": {
+          "en": "Ordinary Shared destination",
+          "zh-CN": "普通 Shared 目标"
+        },
+        "summary": {
+          "en": "Load a two-dimensional ordinary GM range into one absolute Core-private Shared register.",
+          "zh-CN": "把二维普通 GM 范围载入一个绝对编号的 Core-private Shared 寄存器。"
+        },
+        "canonicalCommandCount": {
+          "en": "6-command minimum; 8-command complete form",
+          "zh-CN": "最短 6 条命令；完整形态 8 条命令"
+        },
+        "canonicalMinCommands": 6,
+        "canonicalMaxCommands": 8,
+        "minimumSequence": [
+          "BSTART.TLOAD FP16",
+          "B.DIM zero, 32, ->LB0",
+          "B.DIM zero, 4, ->LB1",
+          "B.DIM zero, 32, ->LB2",
+          "B.IOS mask=0011, ->S7<1>",
+          "BSTOP"
+        ],
+        "completeSequence": [
+          "BSTART.TLOAD FP16",
+          "B.DATR {NORM, DTYPE_NONE, Zero, EQ, Default, 0, 0}",
+          "B.DIM zero, 32, ->LB0",
+          "B.DIM zero, 4, ->LB1",
+          "B.DIM zero, 32, ->LB2",
+          "B.IOR a0, a1",
+          "B.IOS mask=0011, ->S7<1>",
+          "BSTOP"
+        ],
+        "relationships": [
+          {
+            "en": "B.IOS is the single Shared destination and is mutually exclusive with B.IOT.",
+            "zh-CN": "B.IOS 是唯一 Shared 目标，并与 B.IOT 互斥。"
+          },
+          {
+            "en": "All three B.DIM commands are required: LB0 ValidCol, LB1 ValidRow, and LB2 physical Col.",
+            "zh-CN": "三条 B.DIM 都必选：LB0 ValidCol、LB1 ValidRow 与 LB2 物理 Col。"
+          },
+          {
+            "en": "Shared TLOAD is ordinary layout only; B.DATR is optional but every padding field must remain zero.",
+            "zh-CN": "Shared TLOAD 仅支持普通布局；B.DATR 可选，但所有 padding 字段必须保持零。"
+          }
+        ],
+        "commands": [
+          {
+            "mnemonic": "BSTART.TLOAD",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Open TLOAD and supply the transfer element type.",
+              "zh-CN": "打开 TLOAD 并提供传输元素类型。"
+            },
+            "parameters": [
+              {
+                "name": "DataType",
+                "meaning": {
+                  "en": "Element type for GM access and the Shared descriptor.",
+                  "zh-CN": "用于 GM 访问和 Shared 描述符的元素类型。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.DATR",
+            "minOccurrences": 0,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "optional",
+            "role": {
+              "en": "Retain ordinary NORM layout; Shared TLOAD cannot select CUBE conversion.",
+              "zh-CN": "保持普通 NORM 布局；Shared TLOAD 不能选择 CUBE 转换。"
+            },
+            "parameters": [
+              {
+                "name": "Layout",
+                "meaning": {
+                  "en": "Must remain NORM.",
+                  "zh-CN": "必须保持 NORM。"
+                },
+                "omission": {
+                  "en": "NORM layout.",
+                  "zh-CN": "NORM 布局。"
+                }
+              },
+              {
+                "name": "PadValueOrByteId",
+                "meaning": {
+                  "en": "Must remain zero; Shared TLOAD has no padding control.",
+                  "zh-CN": "必须保持零；Shared TLOAD 没有 padding 控制。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.DIM",
+            "minOccurrences": 3,
+            "maxOccurrences": 3,
+            "repeatable": true,
+            "requirement": "required",
+            "role": {
+              "en": "Supply every Shared TLOAD dimension explicitly, one write-once LB per command.",
+              "zh-CN": "显式提供 Shared TLOAD 的全部维度；每条命令写一个只能写一次的 LB。"
+            },
+            "parameters": [
+              {
+                "name": "LB0 / ValidCol",
+                "meaning": {
+                  "en": "Explicit nonzero valid columns.",
+                  "zh-CN": "显式非零有效列数。"
+                }
+              },
+              {
+                "name": "LB1 / ValidRow",
+                "meaning": {
+                  "en": "Explicit nonzero valid rows.",
+                  "zh-CN": "显式非零有效行数。"
+                }
+              },
+              {
+                "name": "LB2 / Col",
+                "meaning": {
+                  "en": "Explicit nonzero physical columns; ValidCol must not exceed Col.",
+                  "zh-CN": "显式非零物理列数；ValidCol 不得超过 Col。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.IOR",
+            "minOccurrences": 0,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "optional",
+            "role": {
+              "en": "Bind the two per-PE private-GPR address inputs.",
+              "zh-CN": "绑定两个逐 PE 私有 GPR 地址输入。"
+            },
+            "parameters": [
+              {
+                "name": "RegSrc0",
+                "meaning": {
+                  "en": "Per-PE GM base byte address.",
+                  "zh-CN": "逐 PE 的 GM 基字节地址。"
+                },
+                "omission": {
+                  "en": "Base address zero.",
+                  "zh-CN": "基地址为零。"
+                }
+              },
+              {
+                "name": "RegSrc1",
+                "meaning": {
+                  "en": "Per-PE byte row stride.",
+                  "zh-CN": "逐 PE 的字节行跨度。"
+                },
+                "omission": {
+                  "en": "Dense byte stride ceil(Col * element_bits / 8).",
+                  "zh-CN": "紧密字节跨度 ceil(Col * element_bits / 8)。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "B.IOS",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Name the absolute Shared destination and its allocation and participation fields.",
+              "zh-CN": "指定绝对 Shared 目标及其分配与参与字段。"
+            },
+            "parameters": [
+              {
+                "name": "SharedTileID",
+                "meaning": {
+                  "en": "Absolute destination S0 through S63.",
+                  "zh-CN": "绝对目标 S0 至 S63。"
+                }
+              },
+              {
+                "name": "SizeCode",
+                "meaning": {
+                  "en": "Capacity code 1..12: 128 B through 256 KiB for the complete Core-wide Shared object.",
+                  "zh-CN": "容量码 1..12：整个 Core-wide Shared 对象为 128 B 至 256 KiB。"
+                }
+              },
+              {
+                "name": "PEMode",
+                "meaning": {
+                  "en": "Three-bit participation mode decoded to the fixed four-PE mask; selected quarters are updated.",
+                  "zh-CN": "三位参与模式，解码为固定四 PE mask；只更新选中的 quarter。"
+                }
+              }
+            ]
+          },
+          {
+            "mnemonic": "BSTOP",
+            "minOccurrences": 1,
+            "maxOccurrences": 1,
+            "repeatable": false,
+            "requirement": "required",
+            "role": {
+              "en": "Close the block and atomically publish selected Shared quarters after complete preflight.",
+              "zh-CN": "关闭 block，并在完整预检查后原子发布选中的 Shared quarter。"
+            },
+            "parameters": []
+          },
+          {
+            "mnemonic": "B.IOT",
+            "minOccurrences": 0,
+            "maxOccurrences": 0,
+            "repeatable": false,
+            "requirement": "forbidden",
+            "role": {
+              "en": "Local and Shared destination domains cannot be mixed.",
+              "zh-CN": "Local 与 Shared 目标域不能混用。"
+            },
+            "parameters": []
+          }
+        ]
+      }
+    ]
+  },
+  "semanticExecution": {
+    "owner": "PTO-TILE-TLOAD",
+    "stages": [
+      {
+        "id": "bundle",
+        "label": {
+          "en": "1. Bundle structure",
+          "zh-CN": "1. Bundle 结构"
+        },
+        "summary": {
+          "en": "Validate one Local or one Shared destination, at most one B.IOR, and the dimension-presence rules for the selected form.",
+          "zh-CN": "验证恰好一个 Local 或 Shared 目标、至多一条 B.IOR，以及所选形态的维度出现规则。"
+        },
+        "sharedRegions": [
+          {
+            "sourcePath": "asl/block/model/dispatch/tile-schema.asl",
+            "label": {
+              "en": "B.IOR operand resolution",
+              "zh-CN": "B.IOR 操作数解析"
+            },
+            "purpose": {
+              "en": "Resolve RegSrc0 as GM base and RegSrc1 as byte row stride, including omission defaults.",
+              "zh-CN": "把 RegSrc0 解析为 GM 基地址、RegSrc1 解析为字节行跨度，并处理整条省略缺省。"
+            },
+            "symbols": [
+              "BundleTileInstructionOperands"
+            ]
+          },
+          {
+            "sourcePath": "asl/block/model/dispatch/destination-shape.asl",
+            "label": {
+              "en": "Local destination-shape defaults",
+              "zh-CN": "Local 目标形状缺省"
+            },
+            "purpose": {
+              "en": "Resolve Local ValidRow, ValidCol, and physical Col when B.DIM fields are omitted.",
+              "zh-CN": "在省略 B.DIM 字段时解析 Local ValidRow、ValidCol 与物理 Col。"
+            },
+            "symbols": [
+              "BundleDestinationValidRows",
+              "BundleDestinationValidColumns",
+              "BundleDestinationPhysicalColumns"
+            ]
+          }
+        ],
+        "status": "complete",
+        "gap": null,
+        "ownerSymbols": [],
+        "facts": [
+          {
+            "kind": "inputs",
+            "label": {
+              "en": "Inputs",
+              "zh-CN": "输入"
+            },
+            "items": [
+              {
+                "en": "BSTART.TLOAD selects TLSU Function 0 and carries the transfer DataType.",
+                "zh-CN": "BSTART.TLOAD 选择 TLSU Function 0 并携带传输 DataType。"
+              },
+              {
+                "en": "Optional B.DATR, B.DIM, and B.IOR add layout/pad, shape, and GM address inputs.",
+                "zh-CN": "可选 B.DATR、B.DIM、B.IOR 分别增加 layout/pad、形状和 GM 地址输入。"
+              }
+            ]
+          },
+          {
+            "kind": "checks",
+            "label": {
+              "en": "Checks",
+              "zh-CN": "检查"
+            },
+            "items": [
+              {
+                "en": "Exactly one destination domain is selected: Local B.IOT or Shared B.IOS.",
+                "zh-CN": "恰好选择一个目标域：Local B.IOT 或 Shared B.IOS。"
+              },
+              {
+                "en": "Each LB register is written at most once and at most one B.IOR is consumed.",
+                "zh-CN": "每个 LB 最多写一次，并且最多消费一条 B.IOR。"
+              }
+            ]
+          },
+          {
+            "kind": "faults",
+            "label": {
+              "en": "Failure",
+              "zh-CN": "失败"
+            },
+            "items": [
+              {
+                "en": "Malformed, mixed-domain, duplicate, or incomplete bindings reject before the load executes.",
+                "zh-CN": "畸形、混合目标域、重复或不完整绑定会在载入执行前拒绝。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "decode",
+        "label": {
+          "en": "2. Decode and bind",
+          "zh-CN": "2. Decode 与绑定"
+        },
+        "summary": {
+          "en": "Bind the flattened Local destination, GM base, and byte row stride used by the executable Tile handler.",
+          "zh-CN": "绑定可执行 Tile handler 使用的扁平 Local 目标、GM 基地址与字节行跨度。"
+        },
+        "sharedRegions": [],
+        "status": "source-gap",
+        "gap": {
+          "en": "The current owner exposes instruction selection but no operand-binding Decode procedure.",
+          "zh-CN": "当前 owner 仅暴露指令选择，没有操作数绑定 Decode 过程。"
+        },
+        "ownerSymbols": [
+          "InstructionContractOperation_TLOAD"
+        ],
+        "facts": [
+          {
+            "kind": "inputs",
+            "label": {
+              "en": "Source binding",
+              "zh-CN": "源绑定"
+            },
+            "items": [
+              {
+                "en": "The owner selects TileOperation_TLOAD; operand binding remains in the shared bundle dispatcher.",
+                "zh-CN": "owner 选择 TileOperation_TLOAD；操作数绑定仍由共享 bundle dispatcher 完成。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "inputs",
+        "label": {
+          "en": "3. Derive range and addresses",
+          "zh-CN": "3. 推导范围与地址"
+        },
+        "summary": {
+          "en": "Form the ValidRow by ValidCol coordinate range and map every selected coordinate to a byte address, including packed four-bit nibble selection.",
+          "zh-CN": "形成 ValidRow × ValidCol 坐标范围，并把每个选中坐标映射为字节地址，包括 packed four-bit nibble 选择。"
+        },
+        "sharedRegions": [
+          {
+            "sourcePath": "asl/tile/model/memory/stride.asl",
+            "label": {
+              "en": "Byte-strided GM addressing",
+              "zh-CN": "字节跨度 GM 寻址"
+            },
+            "purpose": {
+              "en": "Compute dense byte stride and base + row * row_stride_bytes + column byte offset.",
+              "zh-CN": "计算紧密字节跨度，以及 base + row * row_stride_bytes + column 字节偏移。"
+            },
+            "symbols": [
+              "TileDenseRowStrideBytes",
+              "TileMemoryStridedByteAddress",
+              "TileMemoryStridedByteHighNibble"
+            ]
+          },
+          {
+            "sourcePath": "asl/block/model/dispatch/shared-tlsu.asl",
+            "label": {
+              "en": "Shared bundle input resolution",
+              "zh-CN": "Shared bundle 输入解析"
+            },
+            "purpose": {
+              "en": "Read per-PE private GPR inputs, explicit Shared dimensions, dtype, layout, destination identity, capacity, and mask.",
+              "zh-CN": "读取逐 PE 私有 GPR 输入、显式 Shared 维度、dtype、layout、目标身份、容量与 mask。"
+            },
+            "symbols": [
+              "ExecuteBundleSharedTLSUOperation"
+            ]
+          }
+        ],
+        "status": "complete",
+        "gap": null,
+        "ownerSymbols": [
+          "InstructionContractGMAddress_TLOAD",
+          "InstructionContractDenseStride_TLOAD"
+        ],
+        "facts": [
+          {
+            "kind": "reads",
+            "label": {
+              "en": "Read state",
+              "zh-CN": "读取状态"
+            },
+            "items": [
+              {
+                "en": "B.IOR.RegSrc0 reads each selected PE private GPR as the GM base byte address.",
+                "zh-CN": "B.IOR.RegSrc0 读取每个选中 PE 的私有 GPR 作为 GM 基字节地址。"
+              },
+              {
+                "en": "B.IOR.RegSrc1 reads the byte distance between adjacent row starts.",
+                "zh-CN": "B.IOR.RegSrc1 读取相邻行起点间的字节距离。"
+              },
+              {
+                "en": "B.DIM resolves ValidCol, ValidRow, and physical Col; BSTART/B.DATR resolve dtype and layout.",
+                "zh-CN": "B.DIM 解析 ValidCol、ValidRow 和物理 Col；BSTART/B.DATR 解析 dtype 与 layout。"
+              }
+            ]
+          },
+          {
+            "kind": "inputs",
+            "label": {
+              "en": "Address calculation",
+              "zh-CN": "地址计算"
+            },
+            "items": [
+              {
+                "en": "Each selected coordinate uses base + row * row_stride_bytes + the dtype-dependent column byte offset.",
+                "zh-CN": "每个选中坐标使用 base + row * row_stride_bytes + dtype 相关列字节偏移。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "legality",
+        "label": {
+          "en": "4. Legality",
+          "zh-CN": "4. 合法性"
+        },
+        "summary": {
+          "en": "Reject invalid dtype, shape, destination domain, dimension presence, layout direction, and non-CUBE PadValue use before effects.",
+          "zh-CN": "在产生效果前拒绝非法 dtype、形状、目标域、维度出现方式、layout 方向，以及非 CUBE 的 PadValue 使用。"
+        },
+        "sharedRegions": [
+          {
+            "sourcePath": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
+            "label": {
+              "en": "CUBE legality and allocation",
+              "zh-CN": "CUBE 合法性与分配"
+            },
+            "purpose": {
+              "en": "Require explicit LB0/LB1, absent LB2, load-direction layout, supported dtype, Local destination, and rollback on failure.",
+              "zh-CN": "要求显式 LB0/LB1、缺少 LB2、load 方向 layout、受支持 dtype、Local 目标，并在失败时回滚。"
+            },
+            "symbols": [
+              "BundleCubeTransportDimensionsLegal",
+              "BundleCubeTransportDataAttributesLegal",
+              "BundleCubeTransportBindingsLegal",
+              "ExecuteBundleCubeTransportOperation"
+            ]
+          }
+        ],
+        "status": "complete",
+        "gap": null,
+        "ownerSymbols": [
+          "InstructionContractDataTypeLegal_TLOAD",
+          "InstructionContractDestinationShapeLegal_TLOAD",
+          "InstructionContractCubeDimensionsLegal_TLOAD"
+        ],
+        "facts": [
+          {
+            "kind": "checks",
+            "label": {
+              "en": "Constraints",
+              "zh-CN": "约束"
+            },
+            "items": [
+              {
+                "en": "ValidRow and ValidCol are nonzero, ValidCol does not exceed physical Col, and capacity contains the resolved shape.",
+                "zh-CN": "ValidRow 与 ValidCol 非零，ValidCol 不超过物理 Col，容量能够容纳解析后的形状。"
+              },
+              {
+                "en": "CUBE requires load-direction layout, supported dtype, explicit LB0/LB1, absent LB2, and a Local destination.",
+                "zh-CN": "CUBE 要求 load 方向 layout、受支持 dtype、显式 LB0/LB1、缺少 LB2 以及 Local 目标。"
+              },
+              {
+                "en": "PadValue is zero for ordinary Local/Shared and applies only to Local CUBE physical CELL tails.",
+                "zh-CN": "普通 Local/Shared 的 PadValue 为零；它只用于 Local CUBE 物理 CELL 尾部。"
+              }
+            ]
+          },
+          {
+            "kind": "faults",
+            "label": {
+              "en": "Faults",
+              "zh-CN": "Fault"
+            },
+            "items": [
+              {
+                "en": "Unsupported dtype/layout, invalid dimensions, schema mismatch, or insufficient capacity rejects before publication.",
+                "zh-CN": "不支持的 dtype/layout、非法维度、schema 不匹配或容量不足会在发布前拒绝。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "preflight",
+        "label": {
+          "en": "5. Complete-footprint preflight",
+          "zh-CN": "5. 完整 footprint 预检查"
+        },
+        "summary": {
+          "en": "Probe every selected GM element before any destination payload or Shared record becomes visible.",
+          "zh-CN": "在任何目标 payload 或 Shared 记录可见之前，探测所有选中的 GM 元素。"
+        },
+        "sharedRegions": [
+          {
+            "sourcePath": "asl/tile/model/memory/load-store.asl",
+            "label": {
+              "en": "Local preflight and load",
+              "zh-CN": "Local 预检查与载入"
+            },
+            "purpose": {
+              "en": "Probe the full Local footprint, then load and publish the complete destination and CUBE tail PadValue.",
+              "zh-CN": "探测完整 Local footprint，然后载入并发布完整目标及 CUBE 尾部 PadValue。"
+            },
+            "symbols": [
+              "TLOAD"
+            ]
+          },
+          {
+            "sourcePath": "asl/tile/model/memory/shared-movement.asl",
+            "label": {
+              "en": "Shared preflight and atomic update",
+              "zh-CN": "Shared 预检查与原子更新"
+            },
+            "purpose": {
+              "en": "Probe selected Shared quarters before AtomicUpdateSharedTile publishes the candidate.",
+              "zh-CN": "在 AtomicUpdateSharedTile 发布候选记录前探测选中的 Shared quarter。"
+            },
+            "symbols": [
+              "TLOADShared"
+            ]
+          }
+        ],
+        "status": "complete",
+        "gap": null,
+        "ownerSymbols": [],
+        "facts": [
+          {
+            "kind": "reads",
+            "label": {
+              "en": "Read footprint",
+              "zh-CN": "读取 footprint"
+            },
+            "items": [
+              {
+                "en": "Every selected ValidRow × ValidCol GM element is translated and permission-checked before payload writes.",
+                "zh-CN": "每个选中的 ValidRow × ValidCol GM 元素都在 payload 写入前完成地址转换与权限检查。"
+              }
+            ]
+          },
+          {
+            "kind": "faults",
+            "label": {
+              "en": "Fault boundary",
+              "zh-CN": "Fault 边界"
+            },
+            "items": [
+              {
+                "en": "Any access fault leaves the prior Local/Shared destination and bundle-visible state unpublished.",
+                "zh-CN": "任何访问 fault 都不会发布 Local/Shared 目标或 bundle 可见状态。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "operation",
+        "label": {
+          "en": "6. Execute the load",
+          "zh-CN": "6. 执行载入"
+        },
+        "summary": {
+          "en": "Use typed locals for destination shape, dtype, layout, base, and byte stride, then call the shared memory helpers through mnemonic-specific executable wrappers.",
+          "zh-CN": "使用具名 typed locals 表达目标形状、dtype、layout、base 与字节跨度，再通过 mnemonic-specific 可执行 wrapper 调用共享内存 helper。"
+        },
+        "sharedRegions": [],
+        "status": "source-gap",
+        "gap": {
+          "en": "The current owner binds the generic Tile handler; executable effects remain in the referenced shared modules.",
+          "zh-CN": "当前 owner 绑定通用 Tile handler；可执行效果位于下方引用的共享模块。"
+        },
+        "ownerSymbols": [
+          "InstructionContractHandler_TLOAD"
+        ],
+        "facts": [
+          {
+            "kind": "reads",
+            "label": {
+              "en": "Reads",
+              "zh-CN": "读取"
+            },
+            "items": [
+              {
+                "en": "Read GM values for the complete valid rectangle using the resolved dtype, layout, base, and byte stride.",
+                "zh-CN": "使用解析后的 dtype、layout、base 与字节跨度读取完整有效矩形的 GM 值。"
+              }
+            ]
+          },
+          {
+            "kind": "writes",
+            "label": {
+              "en": "State writes",
+              "zh-CN": "状态写入"
+            },
+            "items": [
+              {
+                "en": "Populate a new Local Tile or selected quarters of one absolute Shared Tile; source GPRs and GM are unchanged.",
+                "zh-CN": "填充一个新 Local Tile 或一个绝对 Shared Tile 的选中 quarter；源 GPR 与 GM 不变。"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "effects",
+        "label": {
+          "en": "7. Publish, commit, or no effect",
+          "zh-CN": "7. 发布、提交或无效果"
+        },
+        "summary": {
+          "en": "Zero mask has no effect; success publishes only the destination after preflight; fault preserves the prior destination and aborts bundle-local generations.",
+          "zh-CN": "零 mask 无效果；成功时只在预检查后发布目标；fault 保留先前目标并中止 bundle-local generation。"
+        },
+        "sharedRegions": [
+          {
+            "sourcePath": "asl/block/model/dispatch/tile-execution.asl",
+            "label": {
+              "en": "Bundle commit or abort",
+              "zh-CN": "Bundle 提交或中止"
+            },
+            "purpose": {
+              "en": "Commit Local generations and retire dependencies only on success; otherwise abort generations.",
+              "zh-CN": "仅在成功时提交 Local generation 并退役依赖；否则中止 generation。"
+            },
+            "symbols": [
+              "ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules"
+            ]
+          }
+        ],
+        "status": "complete",
+        "gap": null,
+        "ownerSymbols": [
+          "InstructionContractZeroMaskNoEffect_TLOAD"
+        ],
+        "facts": [
+          {
+            "kind": "commit",
+            "label": {
+              "en": "Commit / result",
+              "zh-CN": "提交 / 结果"
+            },
+            "items": [
+              {
+                "en": "PE mask 0000 is a strict no-effect path.",
+                "zh-CN": "PE mask 0000 是严格无效果路径。"
+              },
+              {
+                "en": "On success the complete Local destination or selected Shared quarters publish atomically after preflight.",
+                "zh-CN": "成功时，完整 Local 目标或选中的 Shared quarter 在预检查后原子发布。"
+              },
+              {
+                "en": "CUBE tail PadValue is applied only after all valid GM reads succeed.",
+                "zh-CN": "CUBE 尾部 PadValue 只在全部有效 GM 读取成功后应用。"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

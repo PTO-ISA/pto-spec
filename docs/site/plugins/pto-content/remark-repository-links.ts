@@ -6,7 +6,9 @@ const GITHUB_REPOSITORY = 'https://github.com/PTO-ISA/pto-spec';
 
 interface MarkdownNode {
   type?: string;
+  depth?: number;
   url?: string;
+  value?: string;
   children?: MarkdownNode[];
 }
 
@@ -66,6 +68,71 @@ function splitSuffix(url: string): {target: string; suffix: string} {
 function isInside(parent: string, candidate: string): boolean {
   const relative = path.relative(parent, candidate);
   return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+}
+
+function isGeneratedAslReference(markdownPath: string, repositoryRoot: string): boolean {
+  const relative = path.relative(path.join(repositoryRoot, 'docs'), markdownPath).split(path.sep);
+  if (['arch', 'block', 'scalar', 'tile'].includes(relative[0] ?? '')) return true;
+  return (
+    relative[0] === 'site' &&
+    relative[1] === 'i18n' &&
+    relative[3] === 'docusaurus-plugin-content-docs-reference' &&
+    relative[4] === 'current' &&
+    ['arch', 'block', 'scalar', 'tile'].includes(relative[5] ?? '')
+  );
+}
+
+function readerFacingText(value: string): string {
+  return value
+    .replace(/non-normative/gi, 'illustrative')
+    .replace(/非规范性?/g, '示例性');
+}
+
+function plainText(node: MarkdownNode): string {
+  return typeof node.value === 'string'
+    ? node.value
+    : (node.children ?? []).map(plainText).join('');
+}
+
+function replaceHeading(node: MarkdownNode, labels: Record<string, string>): void {
+  if (node.type !== 'heading') return;
+  const replacement = labels[plainText(node).trim()];
+  if (replacement === undefined) return;
+  node.children = [{type: 'text', value: replacement}];
+}
+
+export function presentGeneratedAslReference(tree: MarkdownNode): void {
+  if (tree.type !== 'root' || tree.children === undefined) return;
+  const sourceIdentity: MarkdownNode[] = [];
+  const visible: MarkdownNode[] = [];
+  for (const node of tree.children) {
+    const text = plainText(node).trim();
+    if (node.type === 'paragraph' && text.startsWith('Normative ASL source:')) {
+      sourceIdentity.push(node);
+      continue;
+    }
+    if (
+      (node.type === 'blockquote' && /Non-normative explanation/i.test(text)) ||
+      (node.type === 'paragraph' && text === 'The current instruction contract is owned by the ASL source linked above.')
+    ) {
+      continue;
+    }
+    replaceHeading(node, {
+      'Normative identity': 'Instruction identity',
+      'Reader guide': 'Behavior',
+      Assembly: 'Assembly syntax',
+      Operation: 'ASL execution definition',
+      'Normative ASL': 'ASL definition',
+    });
+    visible.push(node);
+  }
+  if (sourceIdentity.length > 0) {
+    visible.push(
+      {type: 'heading', depth: 2, children: [{type: 'text', value: 'Sources and release identity'}]},
+      ...sourceIdentity,
+    );
+  }
+  tree.children = visible;
 }
 
 export function rewriteRepositoryLink(
@@ -131,7 +198,11 @@ function transformTree(
   markdownPath: string,
   repositoryRoot: string,
   commit: string,
+  readerFacing: boolean,
 ): void {
+  if (readerFacing && node.type === 'text' && typeof node.value === 'string') {
+    node.value = readerFacingText(node.value);
+  }
   if (
     (node.type === 'link' || node.type === 'definition') &&
     typeof node.url === 'string'
@@ -144,7 +215,7 @@ function transformTree(
     );
   }
   for (const child of node.children ?? []) {
-    transformTree(child, markdownPath, repositoryRoot, commit);
+    transformTree(child, markdownPath, repositoryRoot, commit, readerFacing);
   }
 }
 
@@ -166,6 +237,14 @@ export default function ptoRepositoryLinksRemarkPlugin(
         `[pto-repository-links] Markdown source is outside docs/: ${markdownPath}`,
       );
     }
-    transformTree(tree, markdownPath, repositoryRoot, commit);
+    const generatedReference = isGeneratedAslReference(markdownPath, repositoryRoot);
+    if (generatedReference) presentGeneratedAslReference(tree);
+    transformTree(
+      tree,
+      markdownPath,
+      repositoryRoot,
+      commit,
+      generatedReference,
+    );
   };
 }

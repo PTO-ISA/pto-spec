@@ -4,6 +4,7 @@ const {resolve} = require('node:path');
 const test = require('node:test');
 const {
   formatFixedValue,
+  formatConstantToken,
   parseEncodingForm,
 } = require('./encodingModel.ts');
 
@@ -100,6 +101,21 @@ test('B.FPATR retains names for mask-fixed operand pieces', () => {
         segment.value === expected.value),
       `${expected.fieldName} must remain named and expose ${expected.value}`,
     );
+  }
+});
+
+test('unnamed fixed selectors render their concrete bit pattern', () => {
+  const form = catalogForms().find((candidate) => candidate.mnemonic === 'ADD');
+  assert.ok(form);
+  const segments = parseEncodingForm(form).flatMap((word: {fields: unknown[]}) => word.fields);
+  const fixedSelectors = segments.filter(
+    (segment: {fixed: boolean; fieldName?: string}) => segment.fixed && !segment.fieldName,
+  );
+  assert.ok(fixedSelectors.length > 0);
+  for (const segment of fixedSelectors as Array<{name: string; width: number; bits: string}>) {
+    const {lsb} = range(segment.bits);
+    assert.equal(segment.name, formatConstantToken(BigInt(form.encoding[0].match), lsb, segment.width));
+    assert.match(segment.name, segment.width === 1 ? /^[01]$/ : /^\d+'b[01]+$/);
   }
 });
 

@@ -1,17 +1,21 @@
 import React from 'react';
 import type {PtoUnitWorkbenchData} from '@site/src/types/pto';
 import ASLViewer from './ASLViewer';
-import DocumentationIdentity from './DocumentationIdentity';
+import AssemblerSymbols from './AssemblerSymbols';
 import EncodingBitfield from './EncodingBitfield';
 import EvidenceIndex from './EvidenceIndex';
 import GeneratedMetadata from './GeneratedMetadata';
+import InstructionOverview from './InstructionOverview';
+import InstructionComposition from './InstructionComposition';
+import InstructionContractSummary from './InstructionContractSummary';
 import NdfClause from './NdfClause';
 import ReaderGuide from './ReaderGuide';
-import SourceIdentity from './SourceIdentity';
+import SemanticExecution from './SemanticExecution';
+import SourceLedger from './SourceLedger';
 import TloadStateTransitionDemo from './TloadStateTransitionDemo';
-import {LanguageFallbackNotice, releaseStatus} from './releasePresentation';
+import {LanguageFallbackNotice} from './releasePresentation';
 import styles from './PtoWorkbench.module.css';
-import {firstText, list, record} from './data';
+import {firstText, record} from './data';
 
 export interface UnitPresentation {
   title: string;
@@ -42,7 +46,6 @@ export default function UnitWorkbenchView({unitData}: {unitData: PtoUnitWorkbenc
   const data = record(unitData);
   const metadata = record(data.metadata) as PtoUnitWorkbenchData['metadata'];
   const unit = record(data.unit) as PtoUnitWorkbenchData['unit'];
-  const tests = list(data.tests).map(record);
   const presentation = unitPresentation(unitData);
 
   return (
@@ -50,34 +53,71 @@ export default function UnitWorkbenchView({unitData}: {unitData: PtoUnitWorkbenc
       <LanguageFallbackNotice guide={unitData.readerGuide} />
       <header className={styles.hero}>
         <div>
-          <span className={styles.eyebrow}>ASL unit workbench · {releaseStatus(unitData.release)}</span>
           <h1>{presentation.title}</h1>
           {presentation.summary && <p>{presentation.summary}</p>}
         </div>
         {presentation.identity && <code className={styles.badge}>{presentation.identity}</code>}
       </header>
-      <SourceIdentity release={unitData.release} source={unitData.source} />
-      <DocumentationIdentity documentation={unitData.documentation} />
+      {!unitData.composition && (
+        <InstructionOverview
+          metadata={metadata}
+          mnemonic={Boolean(presentation.mnemonic)}
+          chinese={unitData.readerGuide.locale === 'zh-CN'}
+        />
+      )}
+      {unitData.composition && (
+        <InstructionComposition
+          composition={unitData.composition}
+          chinese={unitData.readerGuide.locale === 'zh-CN'}
+          ownerSourceUrl={unitData.source.githubUrl}
+          ndfClauses={unitData.ndfClauses}
+          apiForms={Array.isArray(metadata.assembly)
+            ? metadata.assembly.filter((value): value is string => typeof value === 'string')
+            : []}
+        />
+      )}
+      {presentation.mnemonic && (
+        <AssemblerSymbols
+          symbols={unitData.assemblerSymbols}
+          chinese={unitData.readerGuide.locale === 'zh-CN'}
+        />
+      )}
+      {unitData.encoding && unitData.encoding.catalogForms.length > 0 && (
+        <EncodingBitfield
+          encoding={unitData.encoding}
+          entryOnly={Boolean(unitData.composition)}
+          chinese={unitData.readerGuide.locale === 'zh-CN'}
+        />
+      )}
+      {!unitData.semanticExecution && (
+        <InstructionContractSummary
+          metadata={metadata}
+          chinese={unitData.readerGuide.locale === 'zh-CN'}
+        />
+      )}
+      {unitData.semanticExecution ? (
+        <SemanticExecution
+          execution={unitData.semanticExecution}
+          chinese={unitData.readerGuide.locale === 'zh-CN'}
+        />
+      ) : (
+        <ASLViewer source={unitData.source} chinese={unitData.readerGuide.locale === 'zh-CN'} />
+      )}
       <ReaderGuide guide={unitData.readerGuide} mnemonic={Boolean(presentation.mnemonic)} />
-      <div className={styles.grid}>
-        <div className={styles.stack}>
-          {unitData.encoding && unitData.encoding.catalogForms.length > 0 && (
-            <EncodingBitfield encoding={unitData.encoding} />
-          )}
-          <ASLViewer source={unitData.source} />
-          {presentation.mnemonic === 'TLOAD' && (
-            <TloadStateTransitionDemo
-              sourceUrl={firstText(record(unitData.source), ['githubUrl'])}
-              evidenceIds={tests.map((test) => firstText(test, ['id'])).filter(Boolean)}
-            />
-          )}
-          <GeneratedMetadata metadata={metadata} unit={unit} />
-        </div>
-        <aside className={styles.stack} aria-label="Normative clauses and release evidence">
-          <NdfClause clauses={unitData.ndfClauses} release={unitData.release} />
-          <EvidenceIndex tests={unitData.tests} adrs={unitData.adrs} evidence={unitData.evidence} />
-        </aside>
-      </div>
+      {presentation.mnemonic === 'TLOAD' && <TloadStateTransitionDemo />}
+      <NdfClause
+        clauses={unitData.ndfClauses}
+        release={unitData.release}
+        chinese={unitData.readerGuide.locale === 'zh-CN'}
+      />
+      <EvidenceIndex tests={unitData.tests} adrs={unitData.adrs} evidence={unitData.evidence} />
+      <GeneratedMetadata metadata={metadata} unit={unit} />
+      <SourceLedger
+        release={unitData.release}
+        source={unitData.source}
+        documentation={unitData.documentation}
+        guide={unitData.readerGuide}
+      />
     </main>
   );
 }

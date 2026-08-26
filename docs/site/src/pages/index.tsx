@@ -153,7 +153,7 @@ function Home(): ReactNode {
                 {release.releaseEligible ? (
                   <Translate id="homepage.release.status">Latest verified release</Translate>
                 ) : (
-                  <Translate id="homepage.release.previewStatus">Unpublished release preview</Translate>
+                  <Translate id="homepage.release.candidateStatus">Release candidate</Translate>
                 )}
               </span>
               <a href={releaseUrl}>{release.tag}</a>

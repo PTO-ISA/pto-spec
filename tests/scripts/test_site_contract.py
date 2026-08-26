@@ -120,14 +120,86 @@ class SiteContractTests(unittest.TestCase):
             "<ReaderGuide guide={unitData.readerGuide} mnemonic={Boolean(presentation.mnemonic)} />",
             workbench,
         )
-        self.assertLess(
-            workbench.index("<ReaderGuide guide={unitData.readerGuide}"),
-            workbench.index("<EncodingBitfield"),
+        overview = (SITE / "src/components/InstructionOverview.tsx").read_text(
+            encoding="utf-8"
         )
-        self.assertIn("Reader guide · non-normative explanation", renderer)
-        self.assertIn("Understand this instruction", renderer)
-        self.assertIn("理解这条指令", renderer)
+        asl_viewer = (SITE / "src/components/ASLViewer.tsx").read_text(
+            encoding="utf-8"
+        )
+        ledger = (SITE / "src/components/SourceLedger.tsx").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("What this instruction is", overview)
+        self.assertNotIn("At a glance", overview)
+        self.assertIn("Assembly syntax", overview)
+        self.assertIn("Behavior", renderer)
+        self.assertIn("ASL pseudocode", asl_viewer)
+        self.assertIn("Sources and release identity", ledger)
+        self.assertIn("sourceLedgerDetails", ledger)
+        self.assertIn("Show commit, paths, hashes, version", ledger)
+        for retired_copy in (
+            "Reader guide · non-normative explanation",
+            "Understand this instruction",
+            "理解这条指令",
+        ):
+            self.assertNotIn(retired_copy, renderer)
+        self.assertLess(workbench.index("<InstructionOverview"), workbench.index("<InstructionComposition"))
+        self.assertLess(workbench.index("<InstructionComposition"), workbench.index("<AssemblerSymbols"))
+        self.assertLess(workbench.index("<AssemblerSymbols"), workbench.index("<EncodingBitfield"))
+        self.assertLess(workbench.index("<EncodingBitfield"), workbench.index("<InstructionContractSummary"))
+        self.assertLess(workbench.index("<InstructionContractSummary"), workbench.index("<SemanticExecution"))
+        self.assertLess(workbench.index("<SemanticExecution"), workbench.index("<ReaderGuide"))
+        self.assertLess(workbench.index("<EncodingBitfield"), workbench.index("<SourceLedger"))
         self.assertNotIn("dangerouslySetInnerHTML", renderer)
+
+    def test_tload_bundle_and_semantic_depth_are_source_backed(self) -> None:
+        owner = (
+            ROOT / "asl/tile/memory-and-data-movement/regular/TLOAD.asl"
+        ).read_text(encoding="ascii")
+        projection = json.loads(
+            (SITE / "data/instruction-projections/PTO-TILE-TLOAD.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
+        workbench = (SITE / "src/components/UnitWorkbenchView.tsx").read_text(
+            encoding="utf-8"
+        )
+        ndf = (SITE / "src/components/NdfClause.tsx").read_text(encoding="utf-8")
+        identity = (SITE / "src/components/SemanticIdPath.tsx").read_text(
+            encoding="utf-8"
+        )
+        for term in (
+            "canonicalMinCommands",
+            "minimumSequence",
+            "Ordinary Local destination",
+            "Local CUBE conversion",
+            "Ordinary Shared destination",
+        ):
+            self.assertIn(term, json.dumps(projection))
+        self.assertEqual(projection["schema"], "pto.site-instruction-projection.v1")
+        self.assertEqual(projection["ownerSource"], "asl/tile/memory-and-data-movement/regular/TLOAD.asl")
+        self.assertNotIn("PTO-PAGE-COMPOSITION", owner)
+        self.assertNotIn("PTO-PAGE-SEMANTICS", owner)
+        for term in (
+            "parseInstructionComposition",
+            "loadSiteInstructionProjection",
+            "parseSemanticExecutionProjection",
+            "extractAslFunctionRegion",
+            "ownerSourceSha256",
+            "fragmentSha256",
+            "composition command has no owning unit",
+            "shared source is invalid or outside ASL",
+        ):
+            self.assertIn(term, plugin)
+        self.assertLess(workbench.index("<InstructionComposition"), workbench.index("<AssemblerSymbols"))
+        self.assertIn("semanticExecution", workbench)
+        self.assertIn("draggable", ndf)
+        self.assertIn("Restore default order", ndf)
+        self.assertIn("canonicalIds", ndf)
+        self.assertIn("navigator.clipboard.writeText(identity.fullId)", identity)
+        self.assertIn("identity.facets.slice(-4)", identity)
+        self.assertIn("facts", projection["semanticExecution"]["stages"][0])
 
     def test_reader_guide_fences_and_locale_hashes_fail_closed(self) -> None:
         plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
@@ -174,8 +246,13 @@ class SiteContractTests(unittest.TestCase):
         checker = (ROOT / "scripts/check-site-artifact").read_text(encoding="utf-8")
         for term in (
             "validate_unit_routes",
+            "validate_instruction_coverage",
             'pto.site-unit-routes.v1',
+            'pto.site-instruction-coverage.v1',
             'zh-CN/pto-unit-routes.json',
+            'zh-CN/pto-instruction-coverage.json',
+            'UnitWorkbenchView.arm-style.v1',
+            'unexplained_omissions',
             'search index does not route',
             'documentation_sha256',
             'expected_reader_projection',

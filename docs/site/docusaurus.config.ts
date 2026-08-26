@@ -4,6 +4,9 @@ import type {PluginOptions as DocsPluginOptions} from '@docusaurus/plugin-conten
 import {themes as prismThemes} from 'prism-react-renderer';
 import {readFileSync} from 'node:fs';
 import ptoRepositoryLinksRemarkPlugin from './plugins/pto-content/remark-repository-links';
+import {registerAslPrism} from './src/theme/aslPrism';
+
+registerAslPrism();
 
 const redirects = JSON.parse(
   readFileSync(new URL('./redirects.json', import.meta.url), 'utf8'),
@@ -42,7 +45,7 @@ function addStableCategoryKeys<T>(
     const path = [...ancestors, sidebarKeySegment(category.label)];
     return {
       ...category,
-      key: category.key ?? `pto-category:${path.join('/')}`,
+      key: `pto-category:${path.join('/')}`,
       items: addStableCategoryKeys(category.items, path),
     } as T;
   });
@@ -52,8 +55,12 @@ const stableSidebarItemsGenerator: NonNullable<
   DocsPluginOptions['sidebarItemsGenerator']
 > = async ({
   defaultSidebarItemsGenerator,
+  item,
   ...args
-}) => addStableCategoryKeys(await defaultSidebarItemsGenerator(args));
+}) => addStableCategoryKeys(
+  await defaultSidebarItemsGenerator({item, ...args}),
+  [sidebarKeySegment(item.dirName)],
+);
 
 const config: Config = {
   title: 'PTO Formal Specification',
@@ -133,6 +140,11 @@ const config: Config = {
         {
           to: '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/',
           label: 'PTO Architecture',
+          position: 'left',
+        },
+        {
+          to: '/reference/arch/overview/architecture/',
+          label: 'Reference',
           position: 'left',
         },
         {
