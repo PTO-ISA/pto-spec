@@ -14,8 +14,8 @@ EXPECTED_CLASSES = {
     "reduce-and-expand": "TCOLARGMAX TCOLARGMIN TCOLEXPAND TCOLEXPANDADD TCOLEXPANDDIV TCOLEXPANDEXPDIF TCOLEXPANDMAX TCOLEXPANDMIN TCOLEXPANDMUL TCOLEXPANDSUB TCOLMAX TCOLMIN TCOLPROD TCOLSUM TROWARGMAX TROWARGMIN TROWEXPAND TROWEXPANDADD TROWEXPANDDIV TROWEXPANDEXPDIF TROWEXPANDMAX TROWEXPANDMIN TROWEXPANDMUL TROWEXPANDSUB TROWMAX TROWMIN TROWPROD TROWSUM",
     "memory-and-data-movement": "GMOV MGATHER MGATHER_CAS MGATHER_MASK MSCATTER MSCATTER_MASK TLOAD TPREFETCH TSTORE",
     "matrix-and-matrix-vector": "TGEMV TGEMV_ACC TGEMV_BIAS TGEMV_MX TGEMV_MX_ACC TGEMV_MX_BIAS TMATMUL TMATMUL_ACC TMATMUL_BIAS TMATMUL_MX TMATMUL_MX_ACC TMATMUL_MX_BIAS",
-    "layout-and-rearrangement": "TCONCAT TEXTRACT TFILLPAD TIMG2COL TINSERT TMOV TTRANS",
-    "irregular-and-complex": "TCI TDEQUANT TGATHER THISTOGRAM TMRGSORT TPARTADD TPARTMAX TPARTMIN TPARTMUL TQUANT TSCATTER TSORT TTRI",
+    "layout-and-rearrangement": "TCONCAT TEXTRACT TIMG2COL TINSERT TMOV TPACK TPERMUTE TSHUF TUNPACK",
+    "irregular-and-complex": "TCI TDEQUANT TGATHER THISTOGRAM TMRGSORT TQUANT TSCATTER TSORT TTRI",
 }
 
 EXPECTED_CLASSES = {
@@ -57,8 +57,8 @@ class TileClassificationTest(unittest.TestCase):
                 "reduce-and-expand": 28,
                 "memory-and-data-movement": 9,
                 "matrix-and-matrix-vector": 12,
-                "layout-and-rearrangement": 7,
-                "irregular-and-complex": 13,
+                "layout-and-rearrangement": 9,
+                "irregular-and-complex": 9,
             },
         )
 
@@ -76,7 +76,7 @@ class TileClassificationTest(unittest.TestCase):
             if record.mnemonic in SFU_ELEMENTWISE:
                 self.assertEqual(engine, "SFU")
 
-        self.assertEqual(by_engine, {"VEC": 31, "SFU": 56, "TLSU": 10, "CUBE": 12})
+        self.assertEqual(by_engine, {"VEC": 31, "SFU": 54, "TLSU": 10, "CUBE": 12})
 
         actual_vec = {record.mnemonic for record in self.tile if record.engine == "VEC"}
         self.assertEqual(actual_vec, EXPECTED_VEC)

@@ -3,7 +3,13 @@
   "deleted_names": [
     "B.IOD",
     "BSTART.PAR",
-    "C.B.IOS"
+    "C.B.IOS",
+    "TFILLPAD",
+    "TPARTADD",
+    "TPARTMAX",
+    "TPARTMIN",
+    "TPARTMUL",
+    "TTRANS"
   ],
   "instructions": [
     {
@@ -122207,134 +122213,6 @@
               "operand": "source0"
             },
             {
-              "operand": "scalar0"
-            }
-          ],
-          "classification": "layout-and-rearrangement",
-          "command_mnemonic": "BSTART.TEPL",
-          "contract_status": "reviewed-complete",
-          "datr_contract": {
-            "allowed_nonzero_fields": [
-              "Layout"
-            ],
-            "pad_union": "must-zero"
-          },
-          "disposition": "accepted-direct-operation",
-          "effect_contract": "TFILLPAD",
-          "engine": "SFU",
-          "family": "TEPL",
-          "fault_contract": "ExecuteTileInstruction",
-          "function": 5,
-          "legality_handler": "TileOperandsLegal_TFILLPAD",
-          "mode": 3,
-          "name": "TFILLPAD",
-          "operands": [
-            {
-              "field": "destination0",
-              "role": "destination"
-            },
-            {
-              "field": "source0",
-              "role": "source"
-            },
-            {
-              "field": "scalar0",
-              "role": "padding"
-            }
-          ],
-          "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-          "selector": "0x065",
-          "semantic_handler": "TFILLPAD",
-          "state_effects": [
-            "operand:destination0:destination",
-            "operand:source0:source",
-            "operand:scalar0:padding"
-          ]
-        }
-      ],
-      "classification": [
-        "layout-and-rearrangement",
-        "initialization"
-      ],
-      "contract": {
-        "block_composition": [
-          "BSTART.SFU TFILLPAD, DataType",
-          "B.DATR (optional)",
-          "B.DIM LB0",
-          "B.DIM (LB1/LB2 for 2D)",
-          "B.IOT",
-          "BSTOP"
-        ],
-        "canonical_assembly": [
-          "TFILLPAD <bundle operands>"
-        ],
-        "defaults": [
-          "At BSTART the bundle descriptor begins with zero-valued B.DATR and B.DIM state; omitted optional commands retain those reset values, and an encoded zero is a value rather than absence.",
-          "The TileOperandsLegal_TFILLPAD schema determines which B.IOR, B.IOT, B.IOS, B.DATR, and B.DIM bindings are required or optional for TFILLPAD.",
-          "B.IOR.RegSrc0 supplies the padding scalar; omitted B.IOR selects zero and only the low selected-element-width bits participate."
-        ],
-        "encoded_fields": [],
-        "encoding_class": "selector-encoded-block-operation",
-        "examples": [
-          "BSTART.SFU TFILLPAD, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP"
-        ],
-        "exceptions": [
-          "ExecuteTileInstruction supplies the operation fault contract; illegal bundles and reserved selector combinations reject before architectural effects.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "TFILLPAD is selected only by its BSTART carrier and selector/function assignment; it has no standalone opcode.",
-          "Before effects, TileOperandsLegal_TFILLPAD validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.",
-          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"PadValueOrByteId\",\"Layout\"],\"pad_union\":\"pad-value\"}]."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "destination0",
-            "role": "destination"
-          },
-          {
-            "field": "source0",
-            "role": "source"
-          },
-          {
-            "field": "scalar0",
-            "role": "padding"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": false,
-        "state_effects": [
-          "Snapshot the source and bound scalar, copy every valid source coordinate, and write the bound scalar to every non-valid physical destination coordinate.",
-          "Mark the full physical destination defined, set contents_defined=TRUE, and publish payload, definedness, and descriptor atomically after complete preflight."
-        ]
-      },
-      "documentation": "docs/tile/layout-and-rearrangement/initialization/TFILLPAD.md",
-      "engine": "SFU",
-      "mnemonic": "TFILLPAD",
-      "ndf_clause": "PTO-INST-TILE-TFILLPAD",
-      "source": "asl/tile/layout-and-rearrangement/initialization/TFILLPAD.asl",
-      "summary": "Copy the source and fill destination padding elements with the bound scalar.",
-      "surface": "tile"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "arguments": [
-            {
-              "operand": "destination0"
-            },
-            {
-              "operand": "source0"
-            },
-            {
               "operand": "source1"
             },
             {
@@ -128446,9 +128324,6 @@
         {
           "arguments": [
             {
-              "constant": "TilePartial_ADD"
-            },
-            {
               "operand": "destination0"
             },
             {
@@ -128456,88 +128331,91 @@
             },
             {
               "operand": "source1"
+            },
+            {
+              "operand": "scalar0"
             }
           ],
-          "classification": "irregular-and-complex",
+          "classification": "layout-and-rearrangement",
           "command_mnemonic": "BSTART.TEPL",
           "contract_status": "reviewed-complete",
           "datr_contract": {
-            "allowed_nonzero_fields": [],
+            "allowed_nonzero_fields": [
+              "Layout"
+            ],
             "pad_union": "must-zero"
           },
           "disposition": "accepted-direct-operation",
-          "effect_contract": "ExecuteTilePartial",
+          "effect_contract": "TPACK",
           "engine": "SFU",
           "family": "TEPL",
           "fault_contract": "ExecuteTileInstruction",
-          "function": 17,
-          "legality_handler": "TileOperandsLegal_ExecuteTilePartial",
+          "function": 23,
+          "legality_handler": "TileOperandsLegal_TPACK",
           "mode": 3,
-          "name": "TPARTADD",
+          "name": "TPACK",
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local union destination"
+              "role": "destination"
             },
             {
               "field": "source0",
-              "role": "persistent Local left source anchored at origin"
+              "role": "source0"
             },
             {
               "field": "source1",
-              "role": "persistent Local right source anchored at origin"
+              "role": "source1"
+            },
+            {
+              "field": "scalar0",
+              "role": "pack-control"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-          "selector": "0x071",
-          "semantic_handler": "ExecuteTilePartial",
+          "selector": "0x077",
+          "semantic_handler": "TPACK",
           "state_effects": [
-            "operand:destination0:new-local-union-destination",
-            "operand:source0:persistent-origin-anchored-left-source",
-            "operand:source1:persistent-origin-anchored-right-source",
-            "runtime:NumericStatusFlags:overlap-operation-status",
-            "runtime:TilePad_Null:physical-padding"
+            "operand:destination0:destination",
+            "operand:source0:source0",
+            "operand:source1:source1",
+            "operand:scalar0:pack-control"
           ]
         }
       ],
       "classification": [
-        "irregular-and-complex",
-        "union"
+        "layout-and-rearrangement",
+        "layout"
       ],
       "contract": {
         "block_composition": [
-          "BSTART.SFU TPARTADD, FP32|FP16|BF16|S32|S16|S8|U32|U16|U8",
-          "B.DIM LB0=ValidCol",
-          "B.DIM LB1=ValidRow (optional; omission defaults to 1)",
-          "B.DIM LB2=Col (optional; omission defaults to ValidCol)",
-          "B.IOT exactly two persistent Local sources and one new Local destination, common PE_MASK, <last>",
+          "BSTART.SFU TPACK, U32",
+          "B.DATR Layout (optional)",
+          "B.DIM LB0/LB1/LB2 (optional)",
+          "B.IOT source0, source1, ->destination",
+          "B.IOR pack_control",
           "BSTOP"
         ],
         "canonical_assembly": [
-          "TPARTADD <bundle operands>"
+          "TPACK <bundle operands>"
         ],
         "defaults": [
-          "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow one; omitted LB2 selects physical Col equal to ValidCol.",
-          "B.DATR, B.IOR, and B.IOS are absent. Both sources and the destination use the BSTART DataType and row-major layout.",
-          "Each source rectangle is anchored at origin. A coordinate covered by exactly one source is copied bit-for-bit; a coordinate covered by both sources applies the selected typed operation. Physical padding is Null."
+          "A nonzero PE mask requires exactly one B.IOR control input; RegSrc1, RegSrc2, and RegDst are zero."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TPARTADD, S16; B.DIM LB0=16; B.IOT Left, Right, mask=1111, <last>, ->Dst<1>; BSTOP"
+          "BSTART.SFU TPACK, U32; B.DATR Layout; B.IOT source0, source1, ->destination; B.IOR a0; BSTOP"
         ],
         "exceptions": [
-          "Missing, surplus, shared, scalar, data-attribute, malformed, unterminated, mixed-mask, type, layout, shape, undefined-source, or invalid-floating-encoding input raises Fault_TileLegality before effects.",
-          "An unrepresentable destination shape, unavailable renamed destination, insufficient TSize, or exhausted Tile capacity raises Fault_TileAllocation before effects.",
-          "PE_MASK zero completes as a strict no-op before descriptor reads, source reads, allocation, faults, numeric status, padding, or payload effects."
+          "Illegal field widths reject with Fault_TileLegality before effects.",
+          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior."
         ],
         "field_domains": [],
         "legality": [
-          "TPARTADD uses the TEPL encoding carrier Mode 3 Function 17, canonically assembles with BSTART.SFU, and has no standalone opcode.",
-          "Exactly two persistent nonempty Local sources and one newly allocated Local destination are supplied by a terminated B.IOT stream. B.DATR, B.IOR, and B.IOS are illegal.",
-          "Source and destination DataType is exactly one of FP32, FP16, BF16, S32, S16, S8, U32, U16, or U8. All are row-major and use one PE_MASK.",
-          "Both source valid rectangles are origin-anchored, fit within ValidRow by ValidCol, and at least one source covers the entire destination valid rectangle. Thus no valid destination coordinate is uncovered.",
-          "Every valid source element is defined; floating encodings are valid."
+          "TPACK accepts only Local U32 CUBE_M16 or CUBE_M32 sources and a fresh matching destination.",
+          "The control selects two low-order byte fields with widths 1..3 whose sum is at most four.",
+          "The result is raw zero-filled field assembly with no numeric conversion."
         ],
         "memory_effects": [
           "none"
@@ -128545,34 +128423,35 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local union destination"
+            "role": "destination"
           },
           {
             "field": "source0",
-            "role": "persistent Local left source anchored at origin"
+            "role": "source0"
           },
           {
             "field": "source1",
-            "role": "persistent Local right source anchored at origin"
+            "role": "source1"
+          },
+          {
+            "field": "scalar0",
+            "role": "pack-control"
           }
         ],
         "ordering": [
-          "Complete schema, type, shape, capacity, coverage, mask, destination-name, source-definedness, source-encoding, and allocation preflight precedes both source snapshots.",
-          "The sources persist. The result payload, sticky numeric flags, Null padding definedness, and renamed destination descriptor publish atomically; rejection publishes none."
+          "Control and source validation precede destination publication."
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "At an overlap coordinate, typed addition is applied with the common DataType's exact arithmetic, ordering, rounding, NaN, signed-zero, and status behavior.",
-          "At a coordinate covered by only one source, that source element is copied bit-for-bit without arithmetic status.",
-          "Every physical destination coordinate outside ValidRow by ValidCol is undefined Null padding."
+          "Pack corresponding source U32 words independently in every active CUBE word group."
         ]
       },
-      "documentation": "docs/tile/irregular-and-complex/union/TPARTADD.md",
+      "documentation": "docs/tile/layout-and-rearrangement/layout/TPACK.md",
       "engine": "SFU",
-      "mnemonic": "TPARTADD",
-      "ndf_clause": "PTO-INST-TILE-TPARTADD",
-      "source": "asl/tile/irregular-and-complex/union/TPARTADD.asl",
-      "summary": "Form the origin-anchored union of two Local Tiles and add overlap elements.",
+      "mnemonic": "TPACK",
+      "ndf_clause": "PTO-INST-TILE-TPACK",
+      "source": "asl/tile/layout-and-rearrangement/layout/TPACK.asl",
+      "summary": "Pack two low-order raw byte fields into Local U32 CUBE words.",
       "surface": "tile"
     },
     {
@@ -128582,9 +128461,6 @@
         {
           "arguments": [
             {
-              "constant": "TilePartial_MAX"
-            },
-            {
               "operand": "destination0"
             },
             {
@@ -128592,88 +128468,93 @@
             },
             {
               "operand": "source1"
+            },
+            {
+              "operand": "source2"
             }
           ],
-          "classification": "irregular-and-complex",
+          "classification": "layout-and-rearrangement",
           "command_mnemonic": "BSTART.TEPL",
           "contract_status": "reviewed-complete",
           "datr_contract": {
-            "allowed_nonzero_fields": [],
+            "allowed_nonzero_fields": [
+              "Layout"
+            ],
             "pad_union": "must-zero"
           },
           "disposition": "accepted-direct-operation",
-          "effect_contract": "ExecuteTilePartial",
+          "effect_contract": "TPERMUTE",
           "engine": "SFU",
           "family": "TEPL",
           "fault_contract": "ExecuteTileInstruction",
-          "function": 19,
-          "legality_handler": "TileOperandsLegal_ExecuteTilePartial",
+          "function": 21,
+          "legality_handler": "TileOperandsLegal_TPERMUTE",
           "mode": 3,
-          "name": "TPARTMAX",
+          "name": "TPERMUTE",
           "operands": [
             {
               "field": "destination0",
-              "role": "new Local union destination"
+              "role": "destination"
             },
             {
               "field": "source0",
-              "role": "persistent Local left source anchored at origin"
+              "role": "source0"
             },
             {
               "field": "source1",
-              "role": "persistent Local right source anchored at origin"
+              "role": "source1"
+            },
+            {
+              "field": "source2",
+              "role": "indices"
             }
           ],
           "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-          "selector": "0x073",
-          "semantic_handler": "ExecuteTilePartial",
+          "selector": "0x075",
+          "semantic_handler": "TPERMUTE",
           "state_effects": [
-            "operand:destination0:new-local-union-destination",
-            "operand:source0:persistent-origin-anchored-left-source",
-            "operand:source1:persistent-origin-anchored-right-source",
-            "runtime:NumericStatusFlags:overlap-operation-status",
-            "runtime:TilePad_Null:physical-padding"
+            "operand:destination0:destination",
+            "operand:source0:source0",
+            "operand:source1:source1",
+            "operand:source2:indices"
           ]
         }
       ],
       "classification": [
-        "irregular-and-complex",
-        "union"
+        "layout-and-rearrangement",
+        "layout"
       ],
       "contract": {
         "block_composition": [
-          "BSTART.SFU TPARTMAX, FP32|FP16|BF16|S32|S16|S8|U32|U16|U8",
-          "B.DIM LB0=ValidCol",
-          "B.DIM LB1=ValidRow (optional; omission defaults to 1)",
-          "B.DIM LB2=Col (optional; omission defaults to ValidCol)",
-          "B.IOT exactly two persistent Local sources and one new Local destination, common PE_MASK, <last>",
+          "BSTART.SFU TPERMUTE, DataType",
+          "B.DATR Layout (optional)",
+          "B.DIM LB0/LB1/LB2 (optional)",
+          "B.IOT source0, source1",
+          "B.IOT indices, ->destination",
           "BSTOP"
         ],
         "canonical_assembly": [
-          "TPARTMAX <bundle operands>"
+          "TPERMUTE <bundle operands>"
         ],
         "defaults": [
-          "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow one; omitted LB2 selects physical Col equal to ValidCol.",
-          "B.DATR, B.IOR, and B.IOS are absent. Both sources and the destination use the BSTART DataType and row-major layout.",
-          "Each source rectangle is anchored at origin. A coordinate covered by exactly one source is copied bit-for-bit; a coordinate covered by both sources applies the selected typed operation. Physical padding is Null."
+          "B.DATR has no effect other than selecting CUBE_M16 or CUBE_M32; padding and numeric fields remain zero.",
+          "A nonzero PE mask requires two ordered B.IOT bindings and no B.IOR."
         ],
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TPARTMAX, S16; B.DIM LB0=16; B.IOT Left, Right, mask=1111, <last>, ->Dst<1>; BSTOP"
+          "BSTART.SFU TPERMUTE, U32; B.DATR Layout; B.IOT source0, source1; B.IOT indices, ->destination; BSTOP"
         ],
         "exceptions": [
-          "Missing, surplus, shared, scalar, data-attribute, malformed, unterminated, mixed-mask, type, layout, shape, undefined-source, or invalid-floating-encoding input raises Fault_TileLegality before effects.",
-          "An unrepresentable destination shape, unavailable renamed destination, insufficient TSize, or exhausted Tile capacity raises Fault_TileAllocation before effects.",
-          "PE_MASK zero completes as a strict no-op before descriptor reads, source reads, allocation, faults, numeric status, padding, or payload effects."
+          "Illegal raw indices reject before any destination effect with Fault_TileLegality.",
+          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior."
         ],
         "field_domains": [],
         "legality": [
-          "TPARTMAX uses the TEPL encoding carrier Mode 3 Function 19, canonically assembles with BSTART.SFU, and has no standalone opcode.",
-          "Exactly two persistent nonempty Local sources and one newly allocated Local destination are supplied by a terminated B.IOT stream. B.DATR, B.IOR, and B.IOS are illegal.",
-          "Source and destination DataType is exactly one of FP32, FP16, BF16, S32, S16, S8, U32, U16, or U8. All are row-major and use one PE_MASK.",
-          "Both source valid rectangles are origin-anchored, fit within ValidRow by ValidCol, and at least one source covers the entire destination valid rectangle. Thus no valid destination coordinate is uncovered.",
-          "Every valid source element is defined; floating encodings are valid."
+          "TPERMUTE accepts only Local CUBE_M16 or CUBE_M32 data Tiles with matching dtype and geometry.",
+          "indices is Local U8 with the same CUBE layout and supplies one byte index for every valid destination byte.",
+          "The destination is fresh; source0 and source1 may alias, while indices is distinct from both sources.",
+          "Raw bytes are rearranged without numerical conversion."
         ],
         "memory_effects": [
           "none"
@@ -128681,306 +128562,35 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local union destination"
+            "role": "destination"
           },
           {
             "field": "source0",
-            "role": "persistent Local left source anchored at origin"
+            "role": "source0"
           },
           {
             "field": "source1",
-            "role": "persistent Local right source anchored at origin"
+            "role": "source1"
+          },
+          {
+            "field": "source2",
+            "role": "indices"
           }
         ],
         "ordering": [
-          "Complete schema, type, shape, capacity, coverage, mask, destination-name, source-definedness, source-encoding, and allocation preflight precedes both source snapshots.",
-          "The sources persist. The result payload, sticky numeric flags, Null padding definedness, and renamed destination descriptor publish atomically; rejection publishes none."
+          "All index legality and source reads precede destination publication."
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "At an overlap coordinate, typed maximum selection is applied with the common DataType's exact arithmetic, ordering, rounding, NaN, signed-zero, and status behavior.",
-          "At a coordinate covered by only one source, that source element is copied bit-for-bit without arithmetic status.",
-          "Every physical destination coordinate outside ValidRow by ValidCol is undefined Null padding."
+          "Perform per-row two-source raw-byte table lookup and publish only the destination valid region."
         ]
       },
-      "documentation": "docs/tile/irregular-and-complex/union/TPARTMAX.md",
+      "documentation": "docs/tile/layout-and-rearrangement/layout/TPERMUTE.md",
       "engine": "SFU",
-      "mnemonic": "TPARTMAX",
-      "ndf_clause": "PTO-INST-TILE-TPARTMAX",
-      "source": "asl/tile/irregular-and-complex/union/TPARTMAX.asl",
-      "summary": "Form the origin-anchored union of two Local Tiles and select the maximum of overlap elements.",
-      "surface": "tile"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "arguments": [
-            {
-              "constant": "TilePartial_MIN"
-            },
-            {
-              "operand": "destination0"
-            },
-            {
-              "operand": "source0"
-            },
-            {
-              "operand": "source1"
-            }
-          ],
-          "classification": "irregular-and-complex",
-          "command_mnemonic": "BSTART.TEPL",
-          "contract_status": "reviewed-complete",
-          "datr_contract": {
-            "allowed_nonzero_fields": [],
-            "pad_union": "must-zero"
-          },
-          "disposition": "accepted-direct-operation",
-          "effect_contract": "ExecuteTilePartial",
-          "engine": "SFU",
-          "family": "TEPL",
-          "fault_contract": "ExecuteTileInstruction",
-          "function": 20,
-          "legality_handler": "TileOperandsLegal_ExecuteTilePartial",
-          "mode": 3,
-          "name": "TPARTMIN",
-          "operands": [
-            {
-              "field": "destination0",
-              "role": "new Local union destination"
-            },
-            {
-              "field": "source0",
-              "role": "persistent Local left source anchored at origin"
-            },
-            {
-              "field": "source1",
-              "role": "persistent Local right source anchored at origin"
-            }
-          ],
-          "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-          "selector": "0x074",
-          "semantic_handler": "ExecuteTilePartial",
-          "state_effects": [
-            "operand:destination0:new-local-union-destination",
-            "operand:source0:persistent-origin-anchored-left-source",
-            "operand:source1:persistent-origin-anchored-right-source",
-            "runtime:NumericStatusFlags:overlap-operation-status",
-            "runtime:TilePad_Null:physical-padding"
-          ]
-        }
-      ],
-      "classification": [
-        "irregular-and-complex",
-        "union"
-      ],
-      "contract": {
-        "block_composition": [
-          "BSTART.SFU TPARTMIN, FP32|FP16|BF16|S32|S16|S8|U32|U16|U8",
-          "B.DIM LB0=ValidCol",
-          "B.DIM LB1=ValidRow (optional; omission defaults to 1)",
-          "B.DIM LB2=Col (optional; omission defaults to ValidCol)",
-          "B.IOT exactly two persistent Local sources and one new Local destination, common PE_MASK, <last>",
-          "BSTOP"
-        ],
-        "canonical_assembly": [
-          "TPARTMIN <bundle operands>"
-        ],
-        "defaults": [
-          "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow one; omitted LB2 selects physical Col equal to ValidCol.",
-          "B.DATR, B.IOR, and B.IOS are absent. Both sources and the destination use the BSTART DataType and row-major layout.",
-          "Each source rectangle is anchored at origin. A coordinate covered by exactly one source is copied bit-for-bit; a coordinate covered by both sources applies the selected typed operation. Physical padding is Null."
-        ],
-        "encoded_fields": [],
-        "encoding_class": "selector-encoded-block-operation",
-        "examples": [
-          "BSTART.SFU TPARTMIN, S16; B.DIM LB0=16; B.IOT Left, Right, mask=1111, <last>, ->Dst<1>; BSTOP"
-        ],
-        "exceptions": [
-          "Missing, surplus, shared, scalar, data-attribute, malformed, unterminated, mixed-mask, type, layout, shape, undefined-source, or invalid-floating-encoding input raises Fault_TileLegality before effects.",
-          "An unrepresentable destination shape, unavailable renamed destination, insufficient TSize, or exhausted Tile capacity raises Fault_TileAllocation before effects.",
-          "PE_MASK zero completes as a strict no-op before descriptor reads, source reads, allocation, faults, numeric status, padding, or payload effects."
-        ],
-        "field_domains": [],
-        "legality": [
-          "TPARTMIN uses the TEPL encoding carrier Mode 3 Function 20, canonically assembles with BSTART.SFU, and has no standalone opcode.",
-          "Exactly two persistent nonempty Local sources and one newly allocated Local destination are supplied by a terminated B.IOT stream. B.DATR, B.IOR, and B.IOS are illegal.",
-          "Source and destination DataType is exactly one of FP32, FP16, BF16, S32, S16, S8, U32, U16, or U8. All are row-major and use one PE_MASK.",
-          "Both source valid rectangles are origin-anchored, fit within ValidRow by ValidCol, and at least one source covers the entire destination valid rectangle. Thus no valid destination coordinate is uncovered.",
-          "Every valid source element is defined; floating encodings are valid."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "destination0",
-            "role": "new Local union destination"
-          },
-          {
-            "field": "source0",
-            "role": "persistent Local left source anchored at origin"
-          },
-          {
-            "field": "source1",
-            "role": "persistent Local right source anchored at origin"
-          }
-        ],
-        "ordering": [
-          "Complete schema, type, shape, capacity, coverage, mask, destination-name, source-definedness, source-encoding, and allocation preflight precedes both source snapshots.",
-          "The sources persist. The result payload, sticky numeric flags, Null padding definedness, and renamed destination descriptor publish atomically; rejection publishes none."
-        ],
-        "standalone_opcode": false,
-        "state_effects": [
-          "At an overlap coordinate, typed minimum selection is applied with the common DataType's exact arithmetic, ordering, rounding, NaN, signed-zero, and status behavior.",
-          "At a coordinate covered by only one source, that source element is copied bit-for-bit without arithmetic status.",
-          "Every physical destination coordinate outside ValidRow by ValidCol is undefined Null padding."
-        ]
-      },
-      "documentation": "docs/tile/irregular-and-complex/union/TPARTMIN.md",
-      "engine": "SFU",
-      "mnemonic": "TPARTMIN",
-      "ndf_clause": "PTO-INST-TILE-TPARTMIN",
-      "source": "asl/tile/irregular-and-complex/union/TPARTMIN.asl",
-      "summary": "Form the origin-anchored union of two Local Tiles and select the minimum of overlap elements.",
-      "surface": "tile"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "arguments": [
-            {
-              "constant": "TilePartial_MUL"
-            },
-            {
-              "operand": "destination0"
-            },
-            {
-              "operand": "source0"
-            },
-            {
-              "operand": "source1"
-            }
-          ],
-          "classification": "irregular-and-complex",
-          "command_mnemonic": "BSTART.TEPL",
-          "contract_status": "reviewed-complete",
-          "datr_contract": {
-            "allowed_nonzero_fields": [],
-            "pad_union": "must-zero"
-          },
-          "disposition": "accepted-direct-operation",
-          "effect_contract": "ExecuteTilePartial",
-          "engine": "SFU",
-          "family": "TEPL",
-          "fault_contract": "ExecuteTileInstruction",
-          "function": 18,
-          "legality_handler": "TileOperandsLegal_ExecuteTilePartial",
-          "mode": 3,
-          "name": "TPARTMUL",
-          "operands": [
-            {
-              "field": "destination0",
-              "role": "new Local union destination"
-            },
-            {
-              "field": "source0",
-              "role": "persistent Local left source anchored at origin"
-            },
-            {
-              "field": "source1",
-              "role": "persistent Local right source anchored at origin"
-            }
-          ],
-          "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-          "selector": "0x072",
-          "semantic_handler": "ExecuteTilePartial",
-          "state_effects": [
-            "operand:destination0:new-local-union-destination",
-            "operand:source0:persistent-origin-anchored-left-source",
-            "operand:source1:persistent-origin-anchored-right-source",
-            "runtime:NumericStatusFlags:overlap-operation-status",
-            "runtime:TilePad_Null:physical-padding"
-          ]
-        }
-      ],
-      "classification": [
-        "irregular-and-complex",
-        "union"
-      ],
-      "contract": {
-        "block_composition": [
-          "BSTART.SFU TPARTMUL, FP32|FP16|BF16|S32|S16|U32|U16",
-          "B.DIM LB0=ValidCol",
-          "B.DIM LB1=ValidRow (optional; omission defaults to 1)",
-          "B.DIM LB2=Col (optional; omission defaults to ValidCol)",
-          "B.IOT exactly two persistent Local sources and one new Local destination, common PE_MASK, <last>",
-          "BSTOP"
-        ],
-        "canonical_assembly": [
-          "TPARTMUL <bundle operands>"
-        ],
-        "defaults": [
-          "LB0 is required and supplies nonzero ValidCol. Omitted LB1 selects ValidRow one; omitted LB2 selects physical Col equal to ValidCol.",
-          "B.DATR, B.IOR, and B.IOS are absent. Both sources and the destination use the BSTART DataType and row-major layout.",
-          "Each source rectangle is anchored at origin. A coordinate covered by exactly one source is copied bit-for-bit; a coordinate covered by both sources applies the selected typed operation. Physical padding is Null."
-        ],
-        "encoded_fields": [],
-        "encoding_class": "selector-encoded-block-operation",
-        "examples": [
-          "BSTART.SFU TPARTMUL, S16; B.DIM LB0=16; B.IOT Left, Right, mask=1111, <last>, ->Dst<1>; BSTOP"
-        ],
-        "exceptions": [
-          "Missing, surplus, shared, scalar, data-attribute, malformed, unterminated, mixed-mask, type, layout, shape, undefined-source, or invalid-floating-encoding input raises Fault_TileLegality before effects.",
-          "An unrepresentable destination shape, unavailable renamed destination, insufficient TSize, or exhausted Tile capacity raises Fault_TileAllocation before effects.",
-          "PE_MASK zero completes as a strict no-op before descriptor reads, source reads, allocation, faults, numeric status, padding, or payload effects."
-        ],
-        "field_domains": [],
-        "legality": [
-          "TPARTMUL uses the TEPL encoding carrier Mode 3 Function 18, canonically assembles with BSTART.SFU, and has no standalone opcode.",
-          "Exactly two persistent nonempty Local sources and one newly allocated Local destination are supplied by a terminated B.IOT stream. B.DATR, B.IOR, and B.IOS are illegal.",
-          "Source and destination DataType is exactly one of FP32, FP16, BF16, S32, S16, U32, or U16. All are row-major and use one PE_MASK.",
-          "Both source valid rectangles are origin-anchored, fit within ValidRow by ValidCol, and at least one source covers the entire destination valid rectangle. Thus no valid destination coordinate is uncovered.",
-          "Every valid source element is defined; floating encodings are valid."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "destination0",
-            "role": "new Local union destination"
-          },
-          {
-            "field": "source0",
-            "role": "persistent Local left source anchored at origin"
-          },
-          {
-            "field": "source1",
-            "role": "persistent Local right source anchored at origin"
-          }
-        ],
-        "ordering": [
-          "Complete schema, type, shape, capacity, coverage, mask, destination-name, source-definedness, source-encoding, and allocation preflight precedes both source snapshots.",
-          "The sources persist. The result payload, sticky numeric flags, Null padding definedness, and renamed destination descriptor publish atomically; rejection publishes none."
-        ],
-        "standalone_opcode": false,
-        "state_effects": [
-          "At an overlap coordinate, typed multiplication is applied with the common DataType's exact arithmetic, ordering, rounding, NaN, signed-zero, and status behavior.",
-          "At a coordinate covered by only one source, that source element is copied bit-for-bit without arithmetic status.",
-          "Every physical destination coordinate outside ValidRow by ValidCol is undefined Null padding."
-        ]
-      },
-      "documentation": "docs/tile/irregular-and-complex/union/TPARTMUL.md",
-      "engine": "SFU",
-      "mnemonic": "TPARTMUL",
-      "ndf_clause": "PTO-INST-TILE-TPARTMUL",
-      "source": "asl/tile/irregular-and-complex/union/TPARTMUL.asl",
-      "summary": "Form the origin-anchored union of two Local Tiles and multiply overlap elements.",
+      "mnemonic": "TPERMUTE",
+      "ndf_clause": "PTO-INST-TILE-TPERMUTE",
+      "source": "asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl",
+      "summary": "Permute raw bytes from two Local CUBE sources by a Local U8 index Tile.",
       "surface": "tile"
     },
     {
@@ -134319,6 +133929,143 @@
               "operand": "destination0"
             },
             {
+              "operand": "source0"
+            },
+            {
+              "operand": "source1"
+            },
+            {
+              "operand": "scalar0"
+            }
+          ],
+          "classification": "layout-and-rearrangement",
+          "command_mnemonic": "BSTART.TEPL",
+          "contract_status": "reviewed-complete",
+          "datr_contract": {
+            "allowed_nonzero_fields": [
+              "Layout"
+            ],
+            "pad_union": "must-zero"
+          },
+          "disposition": "accepted-direct-operation",
+          "effect_contract": "TSHUF",
+          "engine": "SFU",
+          "family": "TEPL",
+          "fault_contract": "ExecuteTileInstruction",
+          "function": 22,
+          "legality_handler": "TileOperandsLegal_TSHUF",
+          "mode": 3,
+          "name": "TSHUF",
+          "operands": [
+            {
+              "field": "destination0",
+              "role": "destination"
+            },
+            {
+              "field": "source0",
+              "role": "source"
+            },
+            {
+              "field": "source1",
+              "role": "controls"
+            },
+            {
+              "field": "scalar0",
+              "role": "shuffle-control"
+            }
+          ],
+          "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+          "selector": "0x076",
+          "semantic_handler": "TSHUF",
+          "state_effects": [
+            "operand:destination0:destination",
+            "operand:source0:source",
+            "operand:source1:controls",
+            "operand:scalar0:shuffle-control"
+          ]
+        }
+      ],
+      "classification": [
+        "layout-and-rearrangement",
+        "layout"
+      ],
+      "contract": {
+        "block_composition": [
+          "BSTART.SFU TSHUF, DataType",
+          "B.DATR Layout (optional)",
+          "B.DIM LB0/LB1/LB2 (optional)",
+          "B.IOT source, controls, ->destination",
+          "B.IOR shuffle_control",
+          "BSTOP"
+        ],
+        "canonical_assembly": [
+          "TSHUF <bundle operands>"
+        ],
+        "defaults": [
+          "A nonzero PE mask requires exactly one B.IOR control input; RegSrc1, RegSrc2, and RegDst are zero."
+        ],
+        "encoded_fields": [],
+        "encoding_class": "selector-encoded-block-operation",
+        "examples": [
+          "BSTART.SFU TSHUF, U32; B.DATR Layout; B.IOT source, controls, ->destination; B.IOR a0; BSTOP"
+        ],
+        "exceptions": [
+          "Reserved control encodings reject with Fault_TileLegality before effects.",
+          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior."
+        ],
+        "field_domains": [],
+        "legality": [
+          "TSHUF accepts Local CUBE_M16 or CUBE_M32 data and U32 control Tiles with matching geometry.",
+          "The control word selects UP, DOWN, BFLY, or IDX; segment and boundary fields are checked before execution.",
+          "Raw 32-bit words are shuffled without byte permutation."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "destination0",
+            "role": "destination"
+          },
+          {
+            "field": "source0",
+            "role": "source"
+          },
+          {
+            "field": "source1",
+            "role": "controls"
+          },
+          {
+            "field": "scalar0",
+            "role": "shuffle-control"
+          }
+        ],
+        "ordering": [
+          "Source and control snapshots precede destination publication."
+        ],
+        "standalone_opcode": false,
+        "state_effects": [
+          "Perform independent PTX-style word shuffles for each active CUBE row/group."
+        ]
+      },
+      "documentation": "docs/tile/layout-and-rearrangement/layout/TSHUF.md",
+      "engine": "SFU",
+      "mnemonic": "TSHUF",
+      "ndf_clause": "PTO-INST-TILE-TSHUF",
+      "source": "asl/tile/layout-and-rearrangement/layout/TSHUF.asl",
+      "summary": "Shuffle raw 32-bit words across Local CUBE rows with an explicit control GPR.",
+      "surface": "tile"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
+          "arguments": [
+            {
+              "operand": "destination0"
+            },
+            {
               "operand": "destination1"
             },
             {
@@ -135767,121 +135514,6 @@
               "operand": "destination0"
             },
             {
-              "operand": "source0"
-            }
-          ],
-          "classification": "layout-and-rearrangement",
-          "command_mnemonic": "BSTART.TEPL",
-          "contract_status": "reviewed-complete",
-          "datr_contract": {
-            "allowed_nonzero_fields": [
-              "Layout"
-            ],
-            "pad_union": "must-zero"
-          },
-          "disposition": "accepted-direct-operation",
-          "effect_contract": "TTRANS",
-          "engine": "SFU",
-          "family": "TEPL",
-          "fault_contract": "ExecuteTileInstruction",
-          "function": 14,
-          "legality_handler": "TileOperandsLegal_TTRANS",
-          "mode": 3,
-          "name": "TTRANS",
-          "operands": [
-            {
-              "field": "destination0",
-              "role": "destination"
-            },
-            {
-              "field": "source0",
-              "role": "source"
-            }
-          ],
-          "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
-          "selector": "0x06E",
-          "semantic_handler": "TTRANS",
-          "state_effects": [
-            "operand:destination0:destination",
-            "operand:source0:source"
-          ]
-        }
-      ],
-      "classification": [
-        "layout-and-rearrangement",
-        "layout"
-      ],
-      "contract": {
-        "block_composition": [
-          "BSTART.SFU TTRANS, DataType",
-          "B.DATR (optional)",
-          "B.DIM LB0",
-          "B.DIM (LB1/LB2 for 2D)",
-          "B.IOT",
-          "BSTOP"
-        ],
-        "canonical_assembly": [
-          "TTRANS <bundle operands>"
-        ],
-        "defaults": [
-          "At BSTART the bundle descriptor begins with zero-valued B.DATR and B.DIM state; omitted optional commands retain those reset values, and an encoded zero is a value rather than absence.",
-          "The TileOperandsLegal_TTRANS schema determines which B.IOR, B.IOT, B.IOS, B.DATR, and B.DIM bindings are required or optional for TTRANS."
-        ],
-        "encoded_fields": [],
-        "encoding_class": "selector-encoded-block-operation",
-        "examples": [
-          "BSTART.SFU TTRANS, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP"
-        ],
-        "exceptions": [
-          "ExecuteTileInstruction supplies the operation fault contract; illegal bundles and reserved selector combinations reject before architectural effects.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
-        ],
-        "field_domains": [],
-        "legality": [
-          "TTRANS is selected only by its BSTART carrier and selector/function assignment; it has no standalone opcode.",
-          "Before effects, TileOperandsLegal_TTRANS validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.",
-          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}]."
-        ],
-        "memory_effects": [
-          "none"
-        ],
-        "operands": [
-          {
-            "field": "destination0",
-            "role": "destination"
-          },
-          {
-            "field": "source0",
-            "role": "source"
-          }
-        ],
-        "ordering": [
-          "none"
-        ],
-        "standalone_opcode": false,
-        "state_effects": [
-          "Transpose the source Tile into the destination.",
-          "After complete preflight, execute TTRANS with the operand bindings listed above; destination definedness changes only as specified by that handler."
-        ]
-      },
-      "documentation": "docs/tile/layout-and-rearrangement/layout/TTRANS.md",
-      "engine": "SFU",
-      "mnemonic": "TTRANS",
-      "ndf_clause": "PTO-INST-TILE-TTRANS",
-      "source": "asl/tile/layout-and-rearrangement/layout/TTRANS.asl",
-      "summary": "Transpose the source Tile into the destination.",
-      "surface": "tile"
-    },
-    {
-      "alias_engine": null,
-      "alias_of": null,
-      "catalog_records": [
-        {
-          "arguments": [
-            {
-              "operand": "destination0"
-            },
-            {
               "operand": "flag0"
             },
             {
@@ -136482,6 +136114,131 @@
         {
           "arguments": [
             {
+              "operand": "destination0"
+            },
+            {
+              "operand": "source0"
+            },
+            {
+              "operand": "scalar0"
+            }
+          ],
+          "classification": "layout-and-rearrangement",
+          "command_mnemonic": "BSTART.TEPL",
+          "contract_status": "reviewed-complete",
+          "datr_contract": {
+            "allowed_nonzero_fields": [
+              "Layout"
+            ],
+            "pad_union": "must-zero"
+          },
+          "disposition": "accepted-direct-operation",
+          "effect_contract": "TUNPACK",
+          "engine": "SFU",
+          "family": "TEPL",
+          "fault_contract": "ExecuteTileInstruction",
+          "function": 24,
+          "legality_handler": "TileOperandsLegal_TUNPACK",
+          "mode": 3,
+          "name": "TUNPACK",
+          "operands": [
+            {
+              "field": "destination0",
+              "role": "destination"
+            },
+            {
+              "field": "source0",
+              "role": "source"
+            },
+            {
+              "field": "scalar0",
+              "role": "unpack-control"
+            }
+          ],
+          "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+          "selector": "0x078",
+          "semantic_handler": "TUNPACK",
+          "state_effects": [
+            "operand:destination0:destination",
+            "operand:source0:source",
+            "operand:scalar0:unpack-control"
+          ]
+        }
+      ],
+      "classification": [
+        "layout-and-rearrangement",
+        "layout"
+      ],
+      "contract": {
+        "block_composition": [
+          "BSTART.SFU TUNPACK, U32",
+          "B.DATR Layout (optional)",
+          "B.DIM LB0/LB1/LB2 (optional)",
+          "B.IOT source, ->destination",
+          "B.IOR unpack_control",
+          "BSTOP"
+        ],
+        "canonical_assembly": [
+          "TUNPACK <bundle operands>"
+        ],
+        "defaults": [
+          "A nonzero PE mask requires exactly one B.IOR control input; RegSrc1, RegSrc2, and RegDst are zero."
+        ],
+        "encoded_fields": [],
+        "encoding_class": "selector-encoded-block-operation",
+        "examples": [
+          "BSTART.SFU TUNPACK, U32; B.DATR Layout; B.DIM LB0; B.IOT source, ->destination; B.IOR a0; BSTOP"
+        ],
+        "exceptions": [
+          "Illegal offset/count fields reject with Fault_TileLegality before effects.",
+          "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior."
+        ],
+        "field_domains": [],
+        "legality": [
+          "TUNPACK accepts only Local U32 CUBE_M16 or CUBE_M32 sources and a fresh matching destination.",
+          "The control selects one contiguous byte field with offset 0..3 and count 1..4 within a U32 word.",
+          "The result is zero-extended raw extraction."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "destination0",
+            "role": "destination"
+          },
+          {
+            "field": "source0",
+            "role": "source"
+          },
+          {
+            "field": "scalar0",
+            "role": "unpack-control"
+          }
+        ],
+        "ordering": [
+          "Control and source validation precede destination publication."
+        ],
+        "standalone_opcode": false,
+        "state_effects": [
+          "Extract and zero-extend one byte field in each active CUBE word group."
+        ]
+      },
+      "documentation": "docs/tile/layout-and-rearrangement/layout/TUNPACK.md",
+      "engine": "SFU",
+      "mnemonic": "TUNPACK",
+      "ndf_clause": "PTO-INST-TILE-TUNPACK",
+      "source": "asl/tile/layout-and-rearrangement/layout/TUNPACK.asl",
+      "summary": "Extract and zero-extend a raw byte field from Local U32 CUBE words.",
+      "surface": "tile"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
+          "arguments": [
+            {
               "constant": "TileBinary_XOR"
             },
             {
@@ -136899,9 +136656,9 @@
   "schema": "pto.instruction-contract-closure.v1",
   "summary": {
     "encoded_form_count": 542,
-    "mnemonic_count": 636,
+    "mnemonic_count": 634,
     "placeholder_count": 0,
-    "selector_operation_count": 109,
+    "selector_operation_count": 107,
     "status": "closed",
     "unresolved_field_count": 0
   }

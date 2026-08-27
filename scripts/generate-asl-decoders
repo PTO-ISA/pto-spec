@@ -86,6 +86,14 @@ TILE_DATR_PAD_UNION_ENUM = {
     "must-zero": "TileDATRPadUnion_MustZero",
 }
 TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS = {
+    "ExecuteTileBinary",
+    "ExecuteTileScalar",
+    "ExecuteTileUnary",
+    "TFMA",
+    "TPERMUTE",
+    "TSHUF",
+    "TPACK",
+    "TUNPACK",
     "TGATHER",
     "THISTOGRAM",
     "TIMG2COL",

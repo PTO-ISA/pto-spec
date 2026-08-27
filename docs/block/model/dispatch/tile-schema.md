@@ -371,7 +371,7 @@ begin
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     return TileVecArithmeticDataTypeSupported(data_type) &&
-           CurrentBundleTileLayout() == TileLayout_RowMajor;
+           TileElementwiseLayoutSupported(CurrentBundleTileLayout());
 end;
 
 pure func TileOperationUsesClosedUnarySchema(
@@ -417,7 +417,7 @@ begin
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     return TileUnaryDataTypeSupported(unary, data_type) &&
-           CurrentBundleTileLayout() == TileLayout_RowMajor;
+           TileElementwiseLayoutSupported(CurrentBundleTileLayout());
 end;
 
 pure func TileOperationUsesClosedTFMASchema(
@@ -468,8 +468,9 @@ begin
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     return TileFusedMultiplyAddDataTypeSupported(data_type) &&
-           CurrentBundleTileLayout() == TileLayout_RowMajor;
+           TileElementwiseLayoutSupported(CurrentBundleTileLayout());
 end;
+
 
 readonly func BundleLocalTileSourceCount() => integer {0..32}
 begin

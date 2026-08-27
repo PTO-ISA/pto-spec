@@ -19,7 +19,9 @@ This page is a generated reference view of the normative ASL unit.
 
 readonly func BundleCubeTransportSelected() => boolean
 begin
-    return _BundleDataAttributesPresent &&
+    return _BundleOperation.valid &&
+           _BundleOperation.operation_class == BundleOperation_TileMemory &&
+           _BundleDataAttributesPresent &&
            TileDataLayoutIsCubeConversion(
                _BundleDataAttributes.data_layout);
 end;

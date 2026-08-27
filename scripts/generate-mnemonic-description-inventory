@@ -530,9 +530,9 @@ def validate_frozen_block_tile_mappings(evidence_root: pathlib.Path,
     expected = {
         "block": {"mapped_pages": 11, "mapped_units": 11,
                   "multiple_page_units": 0, "unmapped_current_units": 50},
-        "tile": {"mapped_pages": 91, "mapped_units": 91,
-                 "multiple_page_units": 0, "unmapped_current_units": 18},
-        "terminal_pages": {"non_mnemonic": 15, "omit_old": 29, "pending": 0},
+        "tile": {"mapped_pages": 86, "mapped_units": 86,
+                 "multiple_page_units": 0, "unmapped_current_units": 21},
+        "terminal_pages": {"non_mnemonic": 15, "omit_old": 34, "pending": 0},
     }
     if inventory["archive_sha256"] == EXPECTED_ARCHIVE_SHA256 and summaries != expected:
         raise SystemExit("frozen Block/Tile mapping baseline counts changed")

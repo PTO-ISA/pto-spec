@@ -88,6 +88,19 @@ begin
            SelectedBundleComparisonShapeMatches(source);
 end;
 
+readonly func SelectedBundleTileScalarElementwiseSourceLegal(
+    source: TileIndex,
+    data_type: TileDataType) => boolean
+begin
+    return TileDescriptorLegal(source) &&
+           _Tiles[[source]].storage_kind == TileStorage_Numeric &&
+           _Tiles[[source]].data_type == data_type &&
+           TileElementwiseLayoutSupported(_Tiles[[source]].layout) &&
+           TileSourceContentsDefined(source) &&
+           TileSourceEncodingsValid(source) &&
+           SelectedBundleComparisonShapeMatches(source);
+end;
+
 readonly func SelectedBundleClosedTileScalarBinarySchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -115,8 +128,8 @@ begin
         CurrentBundleTileOperationDataTypeCode()
             as TileDataTypeEncoding);
     if !TileBinaryDataTypeSupported(binary, data_type) ||
-       CurrentBundleTileLayout() != TileLayout_RowMajor ||
-       !SelectedBundleTileScalarSourceLegal(
+       !TileElementwiseLayoutSupported(CurrentBundleTileLayout()) ||
+       !SelectedBundleTileScalarElementwiseSourceLegal(
            binding.source0,
            data_type) then
         return FALSE;

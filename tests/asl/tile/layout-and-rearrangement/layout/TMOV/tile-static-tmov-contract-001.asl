@@ -4,11 +4,11 @@ func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
     // block: BSTART.TLSU TMOV, DataType | B.DIM LB0 | B.DIM (LB1/LB2 for 2D) | B.IOT | BSTOP
-    assert DecodeTileOperation(TileDecode_TLSU, '000000000010') == 89;
-    assert TileOperationOfIndex(89) == TileOperation_TMOV;
-    assert TileHandlerOfIndex(89) == TileHandler_TMOV;
-    assert TileClassOfIndex(89) == TileClass_LayoutAndRearrangement;
-    assert TileEngineOfIndex(89) == TileEngine_TLSU;
+    assert DecodeTileOperation(TileDecode_TLSU, '000000000010') == 83;
+    assert TileOperationOfIndex(83) == TileOperation_TMOV;
+    assert TileHandlerOfIndex(83) == TileHandler_TMOV;
+    assert TileClassOfIndex(83) == TileClass_LayoutAndRearrangement;
+    assert TileEngineOfIndex(83) == TileEngine_TLSU;
     assert InstructionContractOperation_TMOV() == TileOperation_TMOV;
     assert InstructionContractHandler_TMOV() == TileHandler_TMOV;
     return 0;

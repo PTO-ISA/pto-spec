@@ -166,6 +166,7 @@ nav:
               - Effects: block/model/commit/effects.md
               - Validation: block/model/commit/validation.md
           - Dispatch:
+              - Cell Rearrangement Schema: block/model/dispatch/cell-rearrangement-schema.md
               - Commands: block/model/dispatch/commands.md
               - Comparison Schema: block/model/dispatch/comparison-schema.md
               - CUBE Destination: block/model/dispatch/cube-destination.md
@@ -179,7 +180,6 @@ nav:
               - Histogram Schema: block/model/dispatch/histogram-schema.md
               - Matrix Scale: block/model/dispatch/matrix-scale.md
               - Numeric Control: block/model/dispatch/numeric-control.md
-              - Partial Schema: block/model/dispatch/partial-schema.md
               - Quantization Schema: block/model/dispatch/quantization-schema.md
               - Reduction Schema: block/model/dispatch/reduction-schema.md
               - Scalar Schema: block/model/dispatch/scalar-schema.md
@@ -780,21 +780,17 @@ nav:
           - Sorting:
               - TMRGSORT: tile/irregular-and-complex/sorting/TMRGSORT.md
               - TSORT: tile/irregular-and-complex/sorting/TSORT.md
-          - Union:
-              - TPARTADD: tile/irregular-and-complex/union/TPARTADD.md
-              - TPARTMAX: tile/irregular-and-complex/union/TPARTMAX.md
-              - TPARTMIN: tile/irregular-and-complex/union/TPARTMIN.md
-              - TPARTMUL: tile/irregular-and-complex/union/TPARTMUL.md
       - Layout And Rearrangement:
-          - Initialization:
-              - TFILLPAD: tile/layout-and-rearrangement/initialization/TFILLPAD.md
           - Layout:
               - TCONCAT: tile/layout-and-rearrangement/layout/TCONCAT.md
               - TEXTRACT: tile/layout-and-rearrangement/layout/TEXTRACT.md
               - TIMG2COL: tile/layout-and-rearrangement/layout/TIMG2COL.md
               - TINSERT: tile/layout-and-rearrangement/layout/TINSERT.md
               - TMOV: tile/layout-and-rearrangement/layout/TMOV.md
-              - TTRANS: tile/layout-and-rearrangement/layout/TTRANS.md
+              - TPACK: tile/layout-and-rearrangement/layout/TPACK.md
+              - TPERMUTE: tile/layout-and-rearrangement/layout/TPERMUTE.md
+              - TSHUF: tile/layout-and-rearrangement/layout/TSHUF.md
+              - TUNPACK: tile/layout-and-rearrangement/layout/TUNPACK.md
       - Matrix And Matrix Vector:
           - Matrix Matrix:
               - TMATMUL: tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.md
@@ -1051,6 +1047,7 @@ nav:
           - "ADR 0100: Cooperative Group-M Distribution and Inactive PE Semantics": status/decisions/0100-cooperative-group-m-distribution.md
           - "ADR 0101: Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale": status/decisions/0101-matrix-scale-and-cscale.md
           - "ADR 0102: PTO ISA 0.58.4.1 publication-contract correction boundary": status/decisions/0102-0584-1-publication-contract-corrections.md
+          - "ADR 0103: Private CUBE vector execution and CELL rearrangement": status/decisions/0103-private-cube-vector-and-cell-rearrangement.md
           - "ADR 0105: Shared whole-parent readiness and single-issuer publication": status/decisions/0105-shared-whole-parent-readiness.md
           - "ADR 0106: Shared source B.SUBVIEW uses per-PE offsets": status/decisions/0106-shared-source-subview-per-pe.md
           - "ADR 0107: Remove legacy Shared movement Functions": status/decisions/0107-remove-legacy-shared-movement.md

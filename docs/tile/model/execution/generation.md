@@ -112,37 +112,5 @@ begin
     result.location = TileLocation_Any;
     _Tiles[[destination]] = result;
 end;
-
-func TFILLPAD(destination: TileIndex, source: TileIndex, padding: Word)
-begin
-    let destination_tile = _Tiles[[destination]];
-    let source_tile = _Tiles[[source]];
-    assert TileOperandsLegal_TFILLPAD(destination, source, padding);
-    let typed_padding = TileRawElementValue(
-        padding,
-        destination_tile.data_type);
-    var result = destination_tile;
-    for row = 0 to destination_tile.rows - 1 looplimit 65536 do
-        for column = 0 to destination_tile.columns - 1 looplimit 65536 do
-            var value = typed_padding;
-            if row < source_tile.valid_rows && column < source_tile.valid_columns then
-                let source_element = TileLogicalLinearIndex(source_tile,
-                    row as integer {0..65535}, column as integer {0..65535});
-                value = TileReadLogicalElement(source_tile, source_element);
-            end;
-            let destination_element = TileLogicalLinearIndex(
-                result,
-                row as integer {0..65535},
-                column as integer {0..65535});
-            result = TileInfoWithLogicalElement(result, destination_element,
-                value);
-        end;
-    end;
-    result.defined_valid_elements =
-        (result.valid_rows * result.valid_columns)
-            as integer {0..524288};
-    result.contents_defined = TRUE;
-    _Tiles[[destination]] = result;
-end;
 ```
 <!-- GENERATED-ASL-END: unit -->

@@ -16,26 +16,79 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/legality/operand-schema.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","surface":"tile","classification":["model","legality","operand-schema"],"depends_on":["PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY"]}
+
+readonly func TileElementwiseDescriptorLegal(index: TileIndex) => boolean
+begin
+    let tile = _Tiles[[index]];
+    if TileLayoutIsCube(tile.layout) then
+        return TileCubeDescriptorLegal(tile);
+    end;
+    return TileDescriptorLegal(index);
+end;
+
+readonly func TileElementwiseShapeAndTypeMatch(
+    left: TileIndex, right: TileIndex) => boolean
+begin
+    if !TileElementwiseDescriptorLegal(left) ||
+       !TileElementwiseDescriptorLegal(right) then
+        return FALSE;
+    end;
+    return _Tiles[[left]].rows == _Tiles[[right]].rows &&
+           _Tiles[[left]].columns == _Tiles[[right]].columns &&
+           _Tiles[[left]].valid_rows == _Tiles[[right]].valid_rows &&
+           _Tiles[[left]].valid_columns == _Tiles[[right]].valid_columns &&
+           _Tiles[[left]].layout == _Tiles[[right]].layout &&
+           _Tiles[[left]].storage_kind == _Tiles[[right]].storage_kind &&
+           _Tiles[[left]].data_type == _Tiles[[right]].data_type;
+end;
+
+readonly func TileElementwiseSourceContentsDefined(index: TileIndex)
+    => boolean
+begin
+    return TileElementwiseDescriptorLegal(index) &&
+           _Tiles[[index]].contents_defined;
+end;
+
+readonly func TileElementwiseSourceEncodingsValid(index: TileIndex)
+    => boolean
+begin
+    if !TileElementwiseSourceContentsDefined(index) then return FALSE; end;
+    let tile = _Tiles[[index]];
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLogicalLinearIndex(tile,
+                row as integer {0..65535},
+                column as integer {0..65535});
+            if !TileNumericEncodingValid(
+                   tile.data_type,
+                   TileReadLogicalElement(tile, element)) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
 readonly func TileOperandsLegal_ExecuteTileBinary(
     op: TileBinaryOperation, destination: TileIndex,
     source_left: TileIndex, source_right: TileIndex) => boolean
 begin
-    if !TileShapeAndTypeMatch(source_left, source_right) ||
-       !TileShapeAndTypeMatch(destination, source_left) then return FALSE; end;
+    if !TileElementwiseShapeAndTypeMatch(source_left, source_right) ||
+       !TileElementwiseShapeAndTypeMatch(destination, source_left) then return FALSE; end;
     if TileBinaryUsesClosedElementwiseContract(op) then
-        if !TileSourceContentsDefined(source_left) ||
-           !TileSourceContentsDefined(source_right) ||
+        if !TileElementwiseSourceContentsDefined(source_left) ||
+           !TileElementwiseSourceContentsDefined(source_right) ||
            !TileBinaryDataTypeSupported(
                op,
                _Tiles[[source_left]].data_type) ||
-           _Tiles[[source_left]].layout != TileLayout_RowMajor then
+           !TileElementwiseLayoutSupported(_Tiles[[source_left]].layout) then
             return FALSE;
         end;
     end;
     if (op == TileBinary_MAX || op == TileBinary_MIN) &&
        TileDataTypeIsFloating(_Tiles[[source_left]].data_type) &&
-       (!TileSourceEncodingsValid(source_left) ||
-        !TileSourceEncodingsValid(source_right)) then
+       (!TileElementwiseSourceEncodingsValid(source_left) ||
+        !TileElementwiseSourceEncodingsValid(source_right)) then
         return FALSE;
     end;
     if (op == TileBinary_DIV || op == TileBinary_REM) &&
@@ -58,15 +111,15 @@ end;
 readonly func TileOperandsLegal_ExecuteTileUnary(
     op: TileUnaryOperation, destination: TileIndex, source: TileIndex) => boolean
 begin
-    if !TileShapeAndTypeMatch(destination, source) then return FALSE; end;
+    if !TileElementwiseShapeAndTypeMatch(destination, source) then return FALSE; end;
     if TileUnaryUsesCompleteElementwiseSchema(op) then
-        if !TileSourceContentsDefined(source) ||
+        if !TileElementwiseSourceContentsDefined(source) ||
            !TileUnaryDataTypeSupported(op, _Tiles[[source]].data_type) ||
-           _Tiles[[source]].layout != TileLayout_RowMajor then
+           !TileElementwiseLayoutSupported(_Tiles[[source]].layout) then
             return FALSE;
         end;
         if TileDataTypeIsFloating(_Tiles[[source]].data_type) &&
-           !TileSourceEncodingsValid(source) then
+           !TileElementwiseSourceEncodingsValid(source) then
             return FALSE;
         end;
     end;
@@ -82,12 +135,12 @@ begin
                            op == TileBinary_XOR) &&
                           TileVecScalarIntegerDataTypeSupported(
                               _Tiles[[source]].data_type);
-    if !TileShapeAndTypeMatch(destination, source) ||
+    if !TileElementwiseShapeAndTypeMatch(destination, source) ||
        _Tiles[[source]].storage_kind != TileStorage_Numeric ||
-       _Tiles[[source]].layout != TileLayout_RowMajor ||
+       !TileElementwiseLayoutSupported(_Tiles[[source]].layout) ||
        !TileBinaryDataTypeSupported(op, _Tiles[[source]].data_type) ||
-       !TileSourceContentsDefined(source) ||
-       (!carrier_logical && !TileSourceEncodingsValid(source)) then
+       !TileElementwiseSourceContentsDefined(source) ||
+       (!carrier_logical && !TileElementwiseSourceEncodingsValid(source)) then
         return FALSE;
     end;
     let normalized_scalar = TileRawElementValue(

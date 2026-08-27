@@ -150,3 +150,4 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Tile
 - [ADR-0044](docs/status/decisions/0044-public-integer-conversion-result-subset.md): Public integer conversion result subset
+- [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
