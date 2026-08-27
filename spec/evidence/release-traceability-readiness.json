@@ -15612,7 +15612,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TPACK.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0103"
+      ],
       "tests": [
         "PTO-AVS-TILE-TPACK-FIELDS-001"
       ]
@@ -15623,7 +15625,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0103"
+      ],
       "tests": [
         "PTO-AVS-TILE-TPERMUTE-BYTE-TABLE-001"
       ]
@@ -16111,7 +16115,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TSHUF.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0103"
+      ],
       "tests": [
         "PTO-AVS-TILE-TSHUF-BFLY-001"
       ]
@@ -16239,7 +16245,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TUNPACK.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0103"
+      ],
       "tests": [
         "PTO-AVS-TILE-TUNPACK-FIELD-001"
       ]
@@ -17054,11 +17062,11 @@
     "asl/tile/irregular-and-complex/layout/TSCATTER.asl": "4826ef15b0fd8f3d5baa19c92e5512fa061d5dabfdd094faa264b6385793104a",
     "asl/tile/irregular-and-complex/sorting/TMRGSORT.asl": "bab8b53c32c4f4a56c7a95919419a3309b0aefa33c9381669caf06f440e0e95a",
     "asl/tile/irregular-and-complex/sorting/TSORT.asl": "e6912ac54151cc977f8545b5ab33b892e9a62b291b7a0509a57b9c71678a76a6",
-    "asl/tile/layout-and-rearrangement/layout/TCONCAT.asl": "723aafd1f859eb06c9fbaa3fe61eaeca300754eb305f32752824dcde4d88eb0c",
-    "asl/tile/layout-and-rearrangement/layout/TEXTRACT.asl": "0209901a5cb12070acd90d80c5d135b9e1911741358e83e167553be6bc45251e",
+    "asl/tile/layout-and-rearrangement/layout/TCONCAT.asl": "6dab4943fa82ac8c94aa02797e1c4ff0dc483eade778854d22a4a8f8345f1582",
+    "asl/tile/layout-and-rearrangement/layout/TEXTRACT.asl": "8de8eb4a5a6d206783073c07dc88a4f02456c2491ab6ceff64d3ff7ca96812e5",
     "asl/tile/layout-and-rearrangement/layout/TIMG2COL.asl": "52e1c10776add9b26e0953e24d2e68f32dd2618b97752ed127ff224fb490b1a6",
-    "asl/tile/layout-and-rearrangement/layout/TINSERT.asl": "76938c4846c1378ac86696f43f1cc7b018d8048f9e1ca759c7b8b692304515f6",
-    "asl/tile/layout-and-rearrangement/layout/TMOV.asl": "a793deac4defa4b633a0b996d55f4b69c3a8448205e9e08ad37d1bba20daab5e",
+    "asl/tile/layout-and-rearrangement/layout/TINSERT.asl": "f1ed676c34403356355be992d9f4a3025b5dd7ae2f38859dc6f2c049830ecd50",
+    "asl/tile/layout-and-rearrangement/layout/TMOV.asl": "d7e55b0adf7a3ec7fdeb74b2902c222038056fddf641eb7bcc677f90e7ba8e0e",
     "asl/tile/layout-and-rearrangement/layout/TPACK.asl": "3744e3f592f0b88d44806845a029be372fc48a8565a8ff4702d07a3631a5a7a0",
     "asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl": "455ba580be500adcba1b4597a270d7bb5f583eb7da95462288c5e2e60d18b19b",
     "asl/tile/layout-and-rearrangement/layout/TSHUF.asl": "33ff7ddba75203adb60983616329e8e294b786b70714ea622c0aee936045855c",
@@ -17904,11 +17912,11 @@
     "docs/tile/irregular-and-complex/layout/TSCATTER.md": "02fe19be96148e2eb6d29938dbcf392afe0a1c822d416b61480697df73af7a09",
     "docs/tile/irregular-and-complex/sorting/TMRGSORT.md": "c421fdda6b8211111cef97c476821b80054efac1150ad70eb5f54c9d6d4627ee",
     "docs/tile/irregular-and-complex/sorting/TSORT.md": "1ed4ef8ac8ee57dd40a1e2cf4a75be0af4aba9dea93d4d8160ca0790aaec80b9",
-    "docs/tile/layout-and-rearrangement/layout/TCONCAT.md": "632d8238a7596a5e2575eda7b0f89ebcbd39aebd8e44a4b19d70667f1febb9d1",
-    "docs/tile/layout-and-rearrangement/layout/TEXTRACT.md": "1931e02aeea4557c13d936b9e1fb4ee079081575aa3791cc477a333ad540d983",
+    "docs/tile/layout-and-rearrangement/layout/TCONCAT.md": "8e3a26700a318ff1c63345a6b9c42932c32e1de8890c16f998259b645d9e7326",
+    "docs/tile/layout-and-rearrangement/layout/TEXTRACT.md": "7b0713d40e714e2cfd3d5a803672386f25c7f78600a06e8fdf21ae6774e98864",
     "docs/tile/layout-and-rearrangement/layout/TIMG2COL.md": "187a99af407ec90e7a8c28cec5ece255f8808a867fd7119ed1b8905755e3b08e",
-    "docs/tile/layout-and-rearrangement/layout/TINSERT.md": "e0ee3397f3e616940a018d5b61d0e83bddede0345884b0797e615cd896d99899",
-    "docs/tile/layout-and-rearrangement/layout/TMOV.md": "cf641629c02f8d60215067f55b8bb247c0df33119ae6f856bf4a3eb34d469a09",
+    "docs/tile/layout-and-rearrangement/layout/TINSERT.md": "aae06a6a279434441d62e6ade75995e679a4c2b150f349ff00ee72306e9da188",
+    "docs/tile/layout-and-rearrangement/layout/TMOV.md": "98ffeae61958fb84278fbe188f70c1ffda84cfbf83da6db025ed081d4d1ec120",
     "docs/tile/layout-and-rearrangement/layout/TPACK.md": "d9377b324733d5dabcf4f19c96b40123f7525d61ca076bbd04ac2280a9c4e938",
     "docs/tile/layout-and-rearrangement/layout/TPERMUTE.md": "4bc97b9efd443a5e86c201a469c3c55f29ced5c6605edc93664caea287bdc5d6",
     "docs/tile/layout-and-rearrangement/layout/TSHUF.md": "1a66f2b0a0bfb27004ce0054385dba06156f64031b275d612e984bf12afd9123",
@@ -18043,7 +18051,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "41e484180c41760e06bd5cb95f056fc7e60ff3c45fb5b91a0d1eea429ad8b608",
+    "spec/evidence/adr-index.json": "bbba08f1daee7080b5922f0e47da406542c6b5851ebf42d5350f3c29eb3ac2eb",
     "spec/evidence/instruction-contract-closure.json": "dd272cb06bd5c85c51b52f81ee705133a698bd684cdede8ea87b57c04d901ba3",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -21429,16 +21437,16 @@
     "tests/asl/tile/irregular-and-complex/sorting/TSORT/tile-exec-tsort-groups-001.asl": "b015d8eb7dcb05c45dab40f84f88b8e70499a25bd914f87e61cd7d98e61345f8",
     "tests/asl/tile/irregular-and-complex/sorting/TSORT/tile-static-tsort-contract-001.asl": "ef53888a540b9a8f7683e857b48cfd5b1242d2cb90915fb4270a459ed376ae06",
     "tests/asl/tile/layout-and-rearrangement/layout/TCONCAT/tile-exec-tconcat-columns-001.asl": "bf32bb345b3fc751fd63e6599a1d9ec97516c2310859af4f0ee7aae1f280e7db",
-    "tests/asl/tile/layout-and-rearrangement/layout/TCONCAT/tile-static-tconcat-contract-001.asl": "617bd0a0eea7a1cdddd64a7a6521fad3341420526d1dcbfd1cafb5d64d8967aa",
+    "tests/asl/tile/layout-and-rearrangement/layout/TCONCAT/tile-static-tconcat-contract-001.asl": "3fa2d6dc767417446439edd9e0c76acf63949cdad38203042e8f85958aa05827",
     "tests/asl/tile/layout-and-rearrangement/layout/TEXTRACT/tile-exec-textract-window-001.asl": "78483b95534d505b740a5e36e6606d2c14e934cf7ba56c59818aa6575147dfa1",
-    "tests/asl/tile/layout-and-rearrangement/layout/TEXTRACT/tile-static-textract-contract-001.asl": "d4d01ea3cd9f6b5741a296fdb7a2ace3bd83ad1a73a62b2be9811965a4d2efb5",
+    "tests/asl/tile/layout-and-rearrangement/layout/TEXTRACT/tile-static-textract-contract-001.asl": "0863c836aebba47d321b3dc8a593cf2283eecc4334f46ea6e14b925272296867",
     "tests/asl/tile/layout-and-rearrangement/layout/TIMG2COL/tile-exec-timg2col-map-001.asl": "f8cce242b5faf20b69598a6981936c1ce879fc2e3172493531d0e53969472877",
     "tests/asl/tile/layout-and-rearrangement/layout/TIMG2COL/tile-exec-timg2col-pad-001.asl": "6a8ddab45ad9f2fc1eb1bbc68d1881bab9dcf7eb4cc87b7045360e8aacdd4f8b",
     "tests/asl/tile/layout-and-rearrangement/layout/TIMG2COL/tile-static-timg2col-contract-001.asl": "08b391603dac09425db768fc17956a6842a437dfcfd3d31692916fb92fb45348",
     "tests/asl/tile/layout-and-rearrangement/layout/TINSERT/tile-exec-tinsert-old-001.asl": "45f40be2b243cb4e0c08c82628c728b75a8d8a86b85c25c0de122a130e6418fc",
-    "tests/asl/tile/layout-and-rearrangement/layout/TINSERT/tile-static-tinsert-contract-001.asl": "3f4ebb4bc6755ad03c23ba8ec736b2b55d7d451d382ae76f2bf8b4d2d56941c2",
+    "tests/asl/tile/layout-and-rearrangement/layout/TINSERT/tile-static-tinsert-contract-001.asl": "37817c85342bcb9c9a1a816a3834f7d11243b1bc2d3e3581dcdd063276c60e40",
     "tests/asl/tile/layout-and-rearrangement/layout/TMOV/tile-exec-tmov-defined-001.asl": "a90d4c20660b02903054d8046c5bc8390063b768c51e7984961209ebf1eb7ab6",
-    "tests/asl/tile/layout-and-rearrangement/layout/TMOV/tile-static-tmov-contract-001.asl": "56f7e3afb3b391b0edcc72da40c2afc58802998fd303e3a69bb4a49d3598a83d",
+    "tests/asl/tile/layout-and-rearrangement/layout/TMOV/tile-static-tmov-contract-001.asl": "7c036f2b85bfafbd92357f2a14a6ae109ad16988ffa0b0e6e17c3069ab667ce5",
     "tests/asl/tile/layout-and-rearrangement/layout/TPACK/tile-exec-tpack-fields-001.asl": "f3269ea2913bebdd8053337720a0a8da08e97661a112006f849efd8eff9c7e2f",
     "tests/asl/tile/layout-and-rearrangement/layout/TPACK/tile-static-tpack-contract-001.asl": "94f5ade767e412e858f01a8b835ff9a28f429817e6c9daa71f951574c5b7851c",
     "tests/asl/tile/layout-and-rearrangement/layout/TPERMUTE/tile-exec-tpermute-byte-table-001.asl": "310c6441f9c7354a8a040e9577437ff333506e4ca555591e970d78d628a75d9a",
@@ -21494,7 +21502,7 @@
     "tests/asl/tile/memory-and-data-movement/regular/TPREFETCH/tile-static-tprefetch-contract-001.asl": "cee5a825ea39937646910d5798314aee006b79acad1018217ced170b6d486ef9",
     "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-exec-tstore-direct-001.asl": "738d80dfdc91fe0c130edcd8b0b9c34dd52abb4455e2342cd668eb7819ca43f1",
     "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-fault-tstore-precise-001.asl": "cfe9daf86d20821d28491a365baafcf16e8edfc165fe7b9c15f8628e69548854",
-    "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-static-tstore-contract-001.asl": "2c2fa127922c3c061ec2ba85ccd99058a7a19c2bc21cb9f91e43150ec59a23bb",
+    "tests/asl/tile/memory-and-data-movement/regular/TSTORE/tile-static-tstore-contract-001.asl": "e6abba7df6fa17602918d3f2417b6e228882964e0f7e20f0ae701c80894dc49f",
     "tests/asl/tile/model/capacity/local/tile-bound-local-capacity-isolation-002.asl": "2a9e3c183b3bc1b77c93178a3e423e19f82cebf3ece2c8e123c91fdf7b9d8da2",
     "tests/asl/tile/model/capacity/local/tile-static-local-contract-001.asl": "9ee6439efa04ac4278df60700bcf0b0a43fce401f8c5d9d6aac0a743ec88a534",
     "tests/asl/tile/model/capacity/shared/tile-bound-shared-capacity-isolation-002.asl": "ae99e06a4c7f63bf29a22f5487e435736ba04215bc05075d5e13eee7fa461257",
@@ -55146,7 +55154,7 @@
       "requirements": [
         "PTO-INST-TILE-TCONCAT"
       ],
-      "sha256": "617bd0a0eea7a1cdddd64a7a6521fad3341420526d1dcbfd1cafb5d64d8967aa",
+      "sha256": "3fa2d6dc767417446439edd9e0c76acf63949cdad38203042e8f85958aa05827",
       "source": "asl/tile/layout-and-rearrangement/layout/TCONCAT.asl"
     },
     {
@@ -55694,7 +55702,7 @@
       "requirements": [
         "PTO-INST-TILE-TEXTRACT"
       ],
-      "sha256": "d4d01ea3cd9f6b5741a296fdb7a2ace3bd83ad1a73a62b2be9811965a4d2efb5",
+      "sha256": "0863c836aebba47d321b3dc8a593cf2283eecc4334f46ea6e14b925272296867",
       "source": "asl/tile/layout-and-rearrangement/layout/TEXTRACT.asl"
     },
     {
@@ -56145,7 +56153,7 @@
       "requirements": [
         "PTO-INST-TILE-TINSERT"
       ],
-      "sha256": "3f4ebb4bc6755ad03c23ba8ec736b2b55d7d451d382ae76f2bf8b4d2d56941c2",
+      "sha256": "37817c85342bcb9c9a1a816a3834f7d11243b1bc2d3e3581dcdd063276c60e40",
       "source": "asl/tile/layout-and-rearrangement/layout/TINSERT.asl"
     },
     {
@@ -56846,7 +56854,7 @@
       "requirements": [
         "PTO-INST-TILE-TMOV"
       ],
-      "sha256": "56f7e3afb3b391b0edcc72da40c2afc58802998fd303e3a69bb4a49d3598a83d",
+      "sha256": "7c036f2b85bfafbd92357f2a14a6ae109ad16988ffa0b0e6e17c3069ab667ce5",
       "source": "asl/tile/layout-and-rearrangement/layout/TMOV.asl"
     },
     {
@@ -58672,7 +58680,7 @@
       "requirements": [
         "PTO-INST-TILE-TSTORE"
       ],
-      "sha256": "2c2fa127922c3c061ec2ba85ccd99058a7a19c2bc21cb9f91e43150ec59a23bb",
+      "sha256": "e6abba7df6fa17602918d3f2417b6e228882964e0f7e20f0ae701c80894dc49f",
       "source": "asl/tile/memory-and-data-movement/regular/TSTORE.asl"
     },
     {
@@ -81781,7 +81789,9 @@
         "ndf_clause": "PTO-INST-TILE-TPACK"
       },
       "mnemonic": "TPACK",
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0103"
+      ],
       "semantic_tests": [
         "PTO-AVS-TILE-TPACK-FIELDS-001"
       ],
@@ -81805,7 +81815,9 @@
         "ndf_clause": "PTO-INST-TILE-TPERMUTE"
       },
       "mnemonic": "TPERMUTE",
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0103"
+      ],
       "semantic_tests": [
         "PTO-AVS-TILE-TPERMUTE-BYTE-TABLE-001"
       ],
@@ -81829,7 +81841,9 @@
         "ndf_clause": "PTO-INST-TILE-TSHUF"
       },
       "mnemonic": "TSHUF",
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0103"
+      ],
       "semantic_tests": [
         "PTO-AVS-TILE-TSHUF-BFLY-001"
       ],
@@ -81853,7 +81867,9 @@
         "ndf_clause": "PTO-INST-TILE-TUNPACK"
       },
       "mnemonic": "TUNPACK",
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0103"
+      ],
       "semantic_tests": [
         "PTO-AVS-TILE-TUNPACK-FIELD-001"
       ],

@@ -2850,11 +2850,11 @@
     },
     {
       "path": "asl/tile/layout-and-rearrangement/layout/TCONCAT.asl",
-      "sha256": "723aafd1f859eb06c9fbaa3fe61eaeca300754eb305f32752824dcde4d88eb0c"
+      "sha256": "6dab4943fa82ac8c94aa02797e1c4ff0dc483eade778854d22a4a8f8345f1582"
     },
     {
       "path": "asl/tile/layout-and-rearrangement/layout/TEXTRACT.asl",
-      "sha256": "0209901a5cb12070acd90d80c5d135b9e1911741358e83e167553be6bc45251e"
+      "sha256": "8de8eb4a5a6d206783073c07dc88a4f02456c2491ab6ceff64d3ff7ca96812e5"
     },
     {
       "path": "asl/tile/layout-and-rearrangement/layout/TIMG2COL.asl",
@@ -2862,11 +2862,11 @@
     },
     {
       "path": "asl/tile/layout-and-rearrangement/layout/TINSERT.asl",
-      "sha256": "76938c4846c1378ac86696f43f1cc7b018d8048f9e1ca759c7b8b692304515f6"
+      "sha256": "f1ed676c34403356355be992d9f4a3025b5dd7ae2f38859dc6f2c049830ecd50"
     },
     {
       "path": "asl/tile/layout-and-rearrangement/layout/TMOV.asl",
-      "sha256": "a793deac4defa4b633a0b996d55f4b69c3a8448205e9e08ad37d1bba20daab5e"
+      "sha256": "d7e55b0adf7a3ec7fdeb74b2902c222038056fddf641eb7bcc677f90e7ba8e0e"
     },
     {
       "path": "asl/tile/layout-and-rearrangement/layout/TPACK.asl",
@@ -3434,7 +3434,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "7d955aa010db5e11f22415b0e655263fb951236b64297ba151cf8a728f4a6351"
+      "sha256": "fa88cfcc2979b5bf36d1a96ae1eba2356d32fded1c5ddb871a0b170018ee8a49"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3442,15 +3442,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "3884637b9914cebbf2df591d92bdfabd1db0baa89e3a68b2b483b8dc53f0be05"
+      "sha256": "a8edf06dd0543884c76cf958543c971627d6f53f49770471c83c50c05adb66c2"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "343120536642b1327857d48765658c778c9b263cb410c9a64b9854cdd10685e1"
+      "sha256": "d8e80526d22f847974b486a750b0632754bef9f6b3aa89871dddd53d2665d008"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "aae6701668a444e8a4f15a1edec3d9a5892bd15962ec4d461f4551cfee068d51"
+      "sha256": "fe9e5e514c11ecdd8029b94852785ac670137f093736d943952523a2c70281a9"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3496,7 +3496,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "401b7b8d7908f68439c2d3d2ba2b83fad9b568a8b896a6b2fa9620bab19143e6",
+  "content_sha256": "15921af1fe499dd00091f588c72e8df21315457b79e63c94e4e7f19331c00923",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -7088,12 +7088,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/layout-and-rearrangement/layout/TCONCAT.md",
-      "sha256": "632d8238a7596a5e2575eda7b0f89ebcbd39aebd8e44a4b19d70667f1febb9d1"
+      "sha256": "8e3a26700a318ff1c63345a6b9c42932c32e1de8890c16f998259b645d9e7326"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/layout-and-rearrangement/layout/TEXTRACT.md",
-      "sha256": "1931e02aeea4557c13d936b9e1fb4ee079081575aa3791cc477a333ad540d983"
+      "sha256": "7b0713d40e714e2cfd3d5a803672386f25c7f78600a06e8fdf21ae6774e98864"
     },
     {
       "kind": "generated-documentation",
@@ -7103,12 +7103,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/layout-and-rearrangement/layout/TINSERT.md",
-      "sha256": "e0ee3397f3e616940a018d5b61d0e83bddede0345884b0797e615cd896d99899"
+      "sha256": "aae06a6a279434441d62e6ade75995e679a4c2b150f349ff00ee72306e9da188"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/layout-and-rearrangement/layout/TMOV.md",
-      "sha256": "cf641629c02f8d60215067f55b8bb247c0df33119ae6f856bf4a3eb34d469a09"
+      "sha256": "98ffeae61958fb84278fbe188f70c1ffda84cfbf83da6db025ed081d4d1ec120"
     },
     {
       "kind": "generated-documentation",

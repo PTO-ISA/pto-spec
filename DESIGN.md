@@ -760,8 +760,9 @@ following are true for the same immutable release candidate commit:
 - Docusaurus application under `docs/site/`.
 - English and `zh-CN` locale framework.
 - Latest-release landing page and global specification search.
-- One source-backed workbench for each of the 852 released ASL units, in both
-  locale trees.
+- One source-backed workbench for every released ASL unit, in both locale
+  trees; the exact count is derived from the release catalog rather than
+  duplicated in this design contract.
 - Generated per-locale unit route ledgers with exact ASL and Markdown projection
   hashes.
 - Exact ASL source embedding and generated NDF clause views.

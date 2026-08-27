@@ -201,6 +201,11 @@ class SiteContractTests(unittest.TestCase):
             self.assertIn(term, json.dumps(projection))
         self.assertEqual(projection["schema"], "pto.site-instruction-projection.v1")
         self.assertEqual(projection["ownerSource"], "asl/tile/memory-and-data-movement/regular/TLOAD.asl")
+        projection_text = json.dumps(projection)
+        self.assertIn("complete Shared logical parent", projection_text)
+        self.assertIn("B.ASSEMBLE", projection_text)
+        self.assertNotIn("selected Shared quarters", projection_text)
+        self.assertNotIn("selected Shared quarter", projection_text)
         self.assertNotIn("PTO-PAGE-COMPOSITION", owner)
         self.assertNotIn("PTO-PAGE-SEMANTICS", owner)
         for term in (
@@ -253,6 +258,11 @@ class SiteContractTests(unittest.TestCase):
 
     def test_tile_high_level_assembly_dimensions_are_structured_and_fail_closed(self) -> None:
         plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
+        traceability = json.loads(
+            (ROOT / "spec/evidence/release-traceability-readiness.json").read_text(
+                encoding="utf-8"
+            )
+        )
         self.assertIn("has non-structured B.DIM projection", plugin)
         self.assertIn("dimensionBindings", plugin)
         self.assertNotIn("line.matchAll(/LB", plugin)
@@ -261,12 +271,13 @@ class SiteContractTests(unittest.TestCase):
         ambiguous_owners = []
         structured_dimension = re.compile(
             r"^B\.DIM (?:"
-            r"LB[0-2]/[A-Za-z][A-Za-z0-9_]*,\s*"
-            r"LB[0-2]/[A-Za-z][A-Za-z0-9_]*,\s*"
-            r"LB[0-2]/[A-Za-z][A-Za-z0-9_]*(?:\s+\([^)]*\))?"
+            r"LB[0-2]\s*(?:/|=)\s*[A-Za-z][A-Za-z0-9_]*,\s*"
+            r"LB[0-2]\s*(?:/|=)\s*[A-Za-z][A-Za-z0-9_]*,\s*"
+            r"LB[0-2]\s*(?:/|=)\s*[A-Za-z][A-Za-z0-9_]*(?:\s+\([^)]*\))?"
             r"|LB[0-2](?:\s*=\s*|\s+)[A-Za-z][A-Za-z0-9_]*"
             r"(?:\s+or\s+cooperative\s+group_M)?(?:\s+\([^)]*\))?"
-            r"|LB[0-2])$"
+            r"|LB[0-2]/LB[0-2]/LB[0-2](?:\s+\(optional\))?"
+            r"|LB[0-2](?:\s+\(optional\))?)$"
         )
         for source_path in sorted((ROOT / "asl/tile").rglob("*.asl")):
             first_line = source_path.read_text(encoding="ascii").splitlines()[0]
@@ -275,22 +286,22 @@ class SiteContractTests(unittest.TestCase):
             metadata = json.loads(first_line.removeprefix("// PTO-INSTRUCTION: "))
             if metadata.get("mnemonic") is not None:
                 owners.append(metadata["id"])
-                block = metadata.get("contract", {}).get("block_composition", [])
+                block = list(dict.fromkeys([
+                    *metadata.get("block", []),
+                    *metadata.get("contract", {}).get("block_composition", []),
+                ]))
                 invalid = [
                     line for line in block
                     if line.startswith("B.DIM") and structured_dimension.fullmatch(line) is None
                 ]
                 if invalid:
                     ambiguous_owners.append((metadata["mnemonic"], invalid))
-        self.assertEqual(len(owners), 109)
-        known_ambiguous = {
-            "TCONCAT", "TEXTRACT", "TFILLPAD", "TINSERT", "TMOV", "TTRANS"
+        expected_owners = {
+            unit["id"] for unit in traceability["units"]
+            if unit["surface"] == "tile" and unit["mnemonic"] is not None
         }
-        self.assertLessEqual(
-            {mnemonic for mnemonic, _ in ambiguous_owners},
-            known_ambiguous,
-            f"unexpected ambiguous B.DIM owners: {ambiguous_owners}",
-        )
+        self.assertSetEqual(set(owners), expected_owners)
+        self.assertEqual(ambiguous_owners, [])
         for bad_form in (
             "B.DIM (LB1/LB2 for 2D)",
             "B.DIM LB1/LB2 for 2D",
@@ -311,7 +322,9 @@ class SiteContractTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
-        self.assertEqual(len(traceability["requirements"]), 1020)
+        requirement_ids = [row["id"] for row in traceability["requirements"]]
+        self.assertGreater(len(requirement_ids), 0)
+        self.assertEqual(len(requirement_ids), len(set(requirement_ids)))
         self.assertIn("...instructionContracts.keys()", plugin)
         self.assertNotIn("filter((id) => !instructionContractIds.has(id))", plugin)
         self.assertIn("entryKind: 'instruction-contract'", plugin)

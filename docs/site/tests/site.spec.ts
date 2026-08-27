@@ -1,9 +1,22 @@
 import {expect, test} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import {readFileSync} from 'node:fs';
+import {resolve} from 'node:path';
 import {isCommonMarkFenceClose} from '../plugins/pto-content/index';
 
 const tloadRoute =
   '/instructions/tile/memory-and-data-movement/regular/TLOAD/';
+const traceability = JSON.parse(readFileSync(
+  resolve(process.cwd(), '../../spec/evidence/release-traceability-readiness.json'),
+  'utf8',
+)) as {units: Array<{mnemonic: string | null; surface: 'arch' | 'scalar' | 'block' | 'tile'}>};
+const instructionUnits = traceability.units.filter((unit) => unit.mnemonic !== null);
+const instructionSurfaceTotals = Object.fromEntries(
+  ['scalar', 'block', 'tile'].map((surface) => [
+    surface,
+    instructionUnits.filter((unit) => unit.surface === surface).length,
+  ]),
+) as {scalar: number; block: number; tile: number};
 
 test('reader-guide code fences use CommonMark closing rules', () => {
   expect(isCommonMarkFenceClose('```', '```')).toBe(true);
@@ -26,7 +39,7 @@ test('latest release landing page teaches the architecture before implementation
   const scalarCard = page.getByRole('heading', {name: 'Scalar', level: 3}).locator('xpath=ancestor::article[1]');
   await scalarCard.getByRole('link', {name: /Browse Scalar units/}).click();
   await expect(page).toHaveURL(/\/instructions\/\?surface=scalar/);
-  await expect(page.getByRole('status')).toContainText('466 instructions');
+  await expect(page.getByRole('status')).toContainText(`${instructionSurfaceTotals.scalar} instructions`);
   await page.goto('/');
   await page.getByRole('searchbox').fill('TLOAD');
   await page.getByRole('button', {name: 'Search specification'}).click();
@@ -44,12 +57,14 @@ test('instruction coverage matrix closes the released bilingual inventory', asyn
   ]));
   for (const matrix of matrices) {
     expect(matrix.schema).toBe('pto.site-instruction-coverage.v1');
-    expect(matrix.instruction_count).toBe(636);
-    expect(matrix.surface_totals).toEqual({scalar: 466, block: 61, tile: 109});
+    expect(matrix.instruction_count).toBe(instructionUnits.length);
+    expect(matrix.surface_totals).toEqual(instructionSurfaceTotals);
     expect(matrix.unexplained_omissions).toBe(0);
-    expect(matrix.entries).toHaveLength(636);
+    expect(matrix.entries).toHaveLength(instructionUnits.length);
     expect(matrix.entries.filter((entry: {surface: string; bundle_source: string}) =>
-      entry.surface === 'tile' && entry.bundle_source === 'owner-metadata')).toHaveLength(109);
+      entry.surface === 'tile' && entry.bundle_source === 'owner-metadata')).toHaveLength(
+        instructionSurfaceTotals.tile,
+      );
   }
   expect(matrices[0].entries.every((entry: {route: string}) => !entry.route.startsWith('/zh-CN/'))).toBe(true);
   expect(matrices[1].entries.every((entry: {route: string}) => entry.route.startsWith('/zh-CN/'))).toBe(true);
@@ -58,9 +73,9 @@ test('instruction coverage matrix closes the released bilingual inventory', asyn
 test('instruction and NDF indexes route every identity to one canonical page', async ({page}) => {
   await page.goto('/instructions/');
   await expect(page.getByRole('heading', {name: 'Instruction index', level: 1})).toBeVisible();
-  await expect(page.getByRole('status')).toContainText('636 instructions');
+  await expect(page.getByRole('status')).toContainText(`${instructionUnits.length} instructions`);
   await page.getByRole('button', {name: 'Tile', exact: true}).click();
-  await expect(page.getByRole('status')).toContainText('109 instructions');
+  await expect(page.getByRole('status')).toContainText(`${instructionSurfaceTotals.tile} instructions`);
   await page.getByRole('searchbox', {name: 'Search instructions'}).fill('TLOAD');
   await page.getByRole('link', {name: 'TLOAD', exact: true}).click();
   await expect(page).toHaveURL(tloadRoute);
@@ -73,7 +88,11 @@ test('instruction and NDF indexes route every identity to one canonical page', a
   await ndfCard.getByRole('link', {name: 'contract', exact: true}).click();
   await expect(page).toHaveURL('/ndf/PTO-TLOAD-MEMORY-001/');
   await expect(page.getByText(/byte row stride/).first()).toBeVisible();
-  await expect(page.getByRole('link', {name: 'TLOAD', exact: true})).toHaveAttribute('href', tloadRoute);
+  const ownerPages = page.getByRole('region', {name: 'Instruction and unit pages'});
+  await expect(ownerPages.getByRole('link', {name: 'TLOAD', exact: true})).toHaveAttribute(
+    'href',
+    tloadRoute,
+  );
 
   await page.goto('/zh-CN/instructions/');
   await expect(page.getByRole('heading', {name: '指令索引', level: 1})).toBeVisible();
@@ -89,19 +108,19 @@ test('instruction rail and facet buttons share the URL-selected surface', async 
   const filters = page.getByRole('region', {name: 'Instruction filters'});
   await expect(rail.locator('[data-navigation-id="scalar"]')).toHaveAttribute('data-section-current', 'true');
   await expect(filters.getByRole('button', {name: 'Scalar', exact: true})).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByRole('status')).toContainText('466 instructions');
+  await expect(page.getByRole('status')).toContainText(`${instructionSurfaceTotals.scalar} instructions`);
 
   await rail.locator('[data-navigation-id="block"]').click();
   await expect(page).toHaveURL('/instructions/?surface=block');
   await expect(rail.locator('[data-navigation-id="block"]')).toHaveAttribute('data-section-current', 'true');
   await expect(filters.getByRole('button', {name: 'Block', exact: true})).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByRole('status')).toContainText('61 instructions');
+  await expect(page.getByRole('status')).toContainText(`${instructionSurfaceTotals.block} instructions`);
 
   await filters.getByRole('button', {name: 'Tile', exact: true}).click();
   await expect(page).toHaveURL('/instructions/?surface=tile');
   await expect(rail.locator('[data-navigation-id="tile"]')).toHaveAttribute('data-section-current', 'true');
   await expect(filters.getByRole('button', {name: 'Tile', exact: true})).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.getByRole('status')).toContainText('109 instructions');
+  await expect(page.getByRole('status')).toContainText(`${instructionSurfaceTotals.tile} instructions`);
 
   await page.goBack();
   await expect(page).toHaveURL('/instructions/?surface=block');
@@ -335,14 +354,16 @@ test('source-declared bundle template covers representative Tile families', asyn
   await expect(page.getByRole('heading', {name: 'Operation source binding'})).toBeVisible();
 
   await page.goto('/instructions/tile/memory-and-data-movement/regular/TSTORE/');
-  for (const variant of ['Local', 'Shared full', 'Shared partial', 'Local CUBE']) {
+  for (const variant of ['Local', 'Shared']) {
     await expect(page.getByRole('heading', {name: variant, exact: true})).toBeVisible();
   }
-  const sharedFullVariant = page.getByRole('heading', {name: 'Shared full', exact: true}).locator('..');
-  await expect(sharedFullVariant.getByText(/one source B\.IOS/).first()).toBeVisible();
-  await expect(sharedFullVariant.getByText(/PE_MASK=1111/).first()).toBeVisible();
-  const cubeVariant = page.getByRole('heading', {name: 'Local CUBE', exact: true}).locator('..');
-  await expect(cubeVariant.getByText(/B\.DATR \{M162ND, DTYPE_NONE/).first()).toBeVisible();
+  const sharedVariant = page.getByRole('heading', {name: 'Shared', exact: true}).locator('..');
+  await expect(sharedVariant.getByText(/one source B\.IOS/).first()).toBeVisible();
+  await expect(sharedVariant.getByText(/any nonzero consumer PE_MASK/).first()).toBeVisible();
+  await expect(sharedVariant.getByText(/optional B\.SUBVIEW/).first()).toBeVisible();
+  await expect(page.getByRole('region', {name: 'Instruction contract'})).toContainText(
+    'B.SUBVIEW is the explicit source range mechanism',
+  );
   await expect(page.getByText('Bundle source gap', {exact: true})).toHaveCount(0);
 
   await page.goto('/instructions/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL/');
@@ -401,7 +422,7 @@ test('TLOAD workbench preserves source identity and evidence interaction', async
   await expect(sharedDimension.getByText('Required', {exact: true})).toBeVisible();
   await expect(sharedDimension).toContainText('exactly 3');
   await expect(sharedDimension).toContainText('LB2 / Col');
-  await expect(composition.getByRole('region', {name: 'Minimum legal bundle'}).getByText('B.IOS mask=0011, ->S7<1>', {exact: true})).toBeVisible();
+  await expect(composition.getByRole('region', {name: 'Minimum legal bundle'}).getByText('B.IOS mask=0001, ->S7<1>', {exact: true})).toBeVisible();
   await composition.getByRole('tab', {name: 'Local CUBE conversion'}).click();
   const bundleAssemblyLayer = composition.getByRole('region', {name: '2. Complete Bundle Assembly'});
   await expect(bundleAssemblyLayer.getByText(/physical CUBE CELL tail/)).toBeVisible();

@@ -110,7 +110,8 @@ end;
 BSTART.SFU TCONCAT, DataType
 B.DATR (optional)
 B.DIM LB0
-B.DIM (LB1/LB2 for 2D)
+B.DIM LB1 (optional)
+B.DIM LB2 (optional)
 B.IOT
 BSTOP
 ```
@@ -188,4 +189,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TCONCAT, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP
+- BSTART.SFU TCONCAT, DataType; B.DATR (optional); B.DIM LB0; B.DIM LB1 (optional); B.DIM LB2 (optional); B.IOT; BSTOP

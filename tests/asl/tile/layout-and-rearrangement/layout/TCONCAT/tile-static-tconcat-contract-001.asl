@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
-    // block: BSTART.SFU TCONCAT, DataType | B.DATR (optional) | B.DIM LB0 | B.DIM (LB1/LB2 for 2D) | B.IOT | BSTOP
+    // block: BSTART.SFU TCONCAT, DataType | B.DATR (optional) | B.DIM LB0 | B.DIM LB1 (optional) | B.DIM LB2 (optional) | B.IOT | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001100000') == 68;
     assert TileOperationOfIndex(68) == TileOperation_TCONCAT;
     assert TileHandlerOfIndex(68) == TileHandler_TCONCAT;

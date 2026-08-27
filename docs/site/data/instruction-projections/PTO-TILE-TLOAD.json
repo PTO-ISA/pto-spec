@@ -2,7 +2,7 @@
   "schema": "pto.site-instruction-projection.v1",
   "unitId": "PTO-TILE-TLOAD",
   "ownerSource": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
-  "ownerSourceSha256": "3ff6f061442dd8eaa0120f70a6af36dc9cc05ff6ef89393d6761375960149119",
+  "ownerSourceSha256": "4e6997ee955ecf4aa0915cb518d17f4856dcd2583fa10003cb55a9e493964f13",
   "composition": {
     "owner": "PTO-TILE-TLOAD",
     "variants": [
@@ -484,8 +484,8 @@
           "zh-CN": "普通 Shared 目标"
         },
         "summary": {
-          "en": "Load a two-dimensional ordinary GM range into one absolute Core-private Shared register.",
-          "zh-CN": "把二维普通 GM 范围载入一个绝对编号的 Core-private Shared 寄存器。"
+          "en": "Load a complete two-dimensional logical parent into one absolute Core-private Shared register from one participating issuer.",
+          "zh-CN": "由一个参与 issuer 把完整二维逻辑 parent 载入一个绝对编号的 Core-private Shared 寄存器。"
         },
         "canonicalCommandCount": {
           "en": "6-command minimum; 8-command complete form",
@@ -498,7 +498,7 @@
           "B.DIM zero, 32, ->LB0",
           "B.DIM zero, 4, ->LB1",
           "B.DIM zero, 32, ->LB2",
-          "B.IOS mask=0011, ->S7<1>",
+          "B.IOS mask=0001, ->S7<1>",
           "BSTOP"
         ],
         "completeSequence": [
@@ -508,7 +508,7 @@
           "B.DIM zero, 4, ->LB1",
           "B.DIM zero, 32, ->LB2",
           "B.IOR a0, a1",
-          "B.IOS mask=0011, ->S7<1>",
+          "B.IOS mask=0001, ->S7<1>",
           "BSTOP"
         ],
         "relationships": [
@@ -523,6 +523,10 @@
           {
             "en": "Shared TLOAD is ordinary layout only; B.DATR is optional but every padding field must remain zero.",
             "zh-CN": "Shared TLOAD 仅支持普通布局；B.DATR 可选，但所有 padding 字段必须保持零。"
+          },
+          {
+            "en": "This canonical form has one participating issuer and publishes the complete logical parent. Multiple issuers require B.ASSEMBLE with explicit writer ranges.",
+            "zh-CN": "该 canonical 形态只有一个参与 issuer，并发布完整逻辑 parent。多个 issuer 必须使用带显式 writer range 的 B.ASSEMBLE。"
           }
         ],
         "commands": [
@@ -618,15 +622,15 @@
             "repeatable": false,
             "requirement": "optional",
             "role": {
-              "en": "Bind the two per-PE private-GPR address inputs.",
-              "zh-CN": "绑定两个逐 PE 私有 GPR 地址输入。"
+              "en": "Bind the participating issuer's two private-GPR address inputs.",
+              "zh-CN": "绑定参与 issuer 的两个私有 GPR 地址输入。"
             },
             "parameters": [
               {
                 "name": "RegSrc0",
                 "meaning": {
-                  "en": "Per-PE GM base byte address.",
-                  "zh-CN": "逐 PE 的 GM 基字节地址。"
+                  "en": "The participating issuer's GM base byte address.",
+                  "zh-CN": "参与 issuer 的 GM 基字节地址。"
                 },
                 "omission": {
                   "en": "Base address zero.",
@@ -636,8 +640,8 @@
               {
                 "name": "RegSrc1",
                 "meaning": {
-                  "en": "Per-PE byte row stride.",
-                  "zh-CN": "逐 PE 的字节行跨度。"
+                  "en": "The participating issuer's byte row stride.",
+                  "zh-CN": "参与 issuer 的字节行跨度。"
                 },
                 "omission": {
                   "en": "Dense byte stride ceil(Col * element_bits / 8).",
@@ -674,8 +678,8 @@
               {
                 "name": "PEMode",
                 "meaning": {
-                  "en": "Three-bit participation mode decoded to the fixed four-PE mask; selected quarters are updated.",
-                  "zh-CN": "三位参与模式，解码为固定四 PE mask；只更新选中的 quarter。"
+                  "en": "Three-bit participation mode. This canonical direct form selects exactly one issuer; wider producer masks require B.ASSEMBLE writer ranges.",
+                  "zh-CN": "三位参与模式。该 canonical direct 形态只选择一个 issuer；更宽的 producer mask 必须提供 B.ASSEMBLE writer range。"
                 }
               }
             ]
@@ -687,8 +691,8 @@
             "repeatable": false,
             "requirement": "required",
             "role": {
-              "en": "Close the block and atomically publish selected Shared quarters after complete preflight.",
-              "zh-CN": "关闭 block，并在完整预检查后原子发布选中的 Shared quarter。"
+              "en": "Close the block and atomically publish the complete Shared logical parent after complete preflight.",
+              "zh-CN": "关闭 block，并在完整预检查后原子发布完整 Shared 逻辑 parent。"
             },
             "parameters": []
           },
@@ -1031,8 +1035,8 @@
               "zh-CN": "Shared 预检查与原子更新"
             },
             "purpose": {
-              "en": "Probe selected Shared quarters before AtomicUpdateSharedTile publishes the candidate.",
-              "zh-CN": "在 AtomicUpdateSharedTile 发布候选记录前探测选中的 Shared quarter。"
+              "en": "Probe the complete Shared parent footprint for a singleton issuer before atomic publication; multi-issuer assembly uses explicit writer ranges.",
+              "zh-CN": "单一 issuer 在原子发布前探测完整 Shared parent footprint；多 issuer assembly 使用显式 writer range。"
             },
             "symbols": [
               "TLOADShared"
@@ -1112,8 +1116,8 @@
             },
             "items": [
               {
-                "en": "Populate a new Local Tile or selected quarters of one absolute Shared Tile; source GPRs and GM are unchanged.",
-                "zh-CN": "填充一个新 Local Tile 或一个绝对 Shared Tile 的选中 quarter；源 GPR 与 GM 不变。"
+                "en": "Populate a new Local Tile or the complete logical parent of one absolute Shared Tile; source GPRs and GM are unchanged.",
+                "zh-CN": "填充一个新 Local Tile 或一个绝对 Shared Tile 的完整逻辑 parent；源 GPR 与 GM 不变。"
               }
             ]
           }
@@ -1163,8 +1167,8 @@
                 "zh-CN": "PE mask 0000 是严格无效果路径。"
               },
               {
-                "en": "On success the complete Local destination or selected Shared quarters publish atomically after preflight.",
-                "zh-CN": "成功时，完整 Local 目标或选中的 Shared quarter 在预检查后原子发布。"
+                "en": "On success the complete Local destination or complete Shared logical parent publishes atomically after preflight.",
+                "zh-CN": "成功时，完整 Local 目标或完整 Shared 逻辑 parent 在预检查后原子发布。"
               },
               {
                 "en": "CUBE tail PadValue is applied only after all valid GM reads succeed.",

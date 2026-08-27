@@ -1827,17 +1827,27 @@ function highLevelAssembly(
     const compact = body.match(
       /^LB([0-2])\/([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\/([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\/([A-Za-z][A-Za-z0-9_]*)(?:\s+\([^)]*\))?$/,
     );
+    const compactAssigned = body.match(
+      /^LB([0-2])\s*=\s*([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\s*=\s*([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\s*=\s*([A-Za-z][A-Za-z0-9_]*)(?:\s+\([^)]*\))?$/,
+    );
     const single = body.match(
       /^LB([0-2])(?:\s*=\s*|\s+)([A-Za-z][A-Za-z0-9_]*)(?:\s+or\s+cooperative\s+group_M)?(?:\s+\([^)]*\))?$/,
     );
-    const bare = body.match(/^LB([0-2])$/);
+    const groupedBare = body.match(
+      /^LB([0-2])\/LB([0-2])\/LB([0-2])(?:\s+\(optional\))?$/,
+    );
+    const bare = body.match(/^LB([0-2])(?:\s+\(optional\))?$/);
     const candidates: Array<[string, string | null]> = compact !== null
       ? [[compact[1], compact[2]], [compact[3], compact[4]], [compact[5], compact[6]]]
-      : single !== null
-        ? [[single[1], single[2] === 'group_M' ? 'M' : single[2]]]
-        : bare !== null
-          ? [[bare[1], null]]
-          : [];
+      : compactAssigned !== null
+        ? [[compactAssigned[1], compactAssigned[2]], [compactAssigned[3], compactAssigned[4]], [compactAssigned[5], compactAssigned[6]]]
+        : single !== null
+          ? [[single[1], single[2] === 'group_M' ? 'M' : single[2]]]
+          : groupedBare !== null
+            ? [[groupedBare[1], null], [groupedBare[2], null], [groupedBare[3], null]]
+            : bare !== null
+              ? [[bare[1], null]]
+              : [];
     if (candidates.length === 0) {
       fail(`${unit.id} has non-structured B.DIM projection: ${line}`);
     }
