@@ -7990,7 +7990,7 @@
       "authors": [
         "Codex"
       ],
-      "baseline": "b4f47dd0bf134e11c412250c1664844151cb0d55",
+      "baseline": "23c577a468f443638e0353905f6303ed6b3ae2ed",
       "created": "2026-08-25",
       "id": "ADR-0103",
       "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/151",

@@ -13,7 +13,7 @@
   "accepted": "2026-08-25",
   "rejected": null,
   "superseded": null,
-  "baseline": "b4f47dd0bf134e11c412250c1664844151cb0d55",
+  "baseline": "23c577a468f443638e0353905f6303ed6b3ae2ed",
   "target_releases": [
     "unassigned"
   ],
