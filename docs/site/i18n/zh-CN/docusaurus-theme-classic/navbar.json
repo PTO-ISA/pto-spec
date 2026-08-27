@@ -1,6 +1,6 @@
 {
   "title": {"message": "PTO 规范"},
-  "item.label.PTO Architecture": {"message": "PTO 架构"},
+  "item.label.Architecture": {"message": "架构"},
   "item.label.Scalar": {"message": "标量"},
   "item.label.Block": {"message": "Block"},
   "item.label.Tile": {"message": "Tile"},

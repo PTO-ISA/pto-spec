@@ -17,7 +17,7 @@ test('latest release landing page teaches the architecture before implementation
   page,
 }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', {level: 1})).toContainText('PTO Architecture');
+  await expect(page.getByRole('heading', {level: 1})).toContainText('Architecture');
   await expect(page.getByText(/^v\d+\.\d+\.\d+\.\d+$/, {exact: true})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Scalar', level: 3})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Block', level: 3})).toBeVisible();
@@ -195,17 +195,82 @@ test('representative mnemonic, model, and architecture units use the generic wor
   await expect(page.getByText(/Page 2 of \d+/)).toBeVisible();
 });
 
+test('custom routes expose the stable desktop rail and accessible mobile navigation', async ({page}, testInfo) => {
+  const routes = [
+    {path: '/', current: 'home'},
+    {path: '/architecture/', current: 'architecture'},
+    {path: tloadRoute, current: 'tile'},
+    {path: '/explore/ndf/', current: 'ndf'},
+  ];
+  for (const route of routes) {
+    await page.goto(route.path);
+    if (testInfo.project.name === 'desktop-chromium') {
+      const rail = page.locator('aside[aria-label="Left specification navigation"]');
+      await expect(rail).toBeVisible();
+      await expect(rail.getByRole('navigation', {name: 'Specification navigation'})).toBeVisible();
+      await expect(rail.locator(`[data-navigation-id="${route.current}"]`)).toHaveAttribute('data-section-current', 'true');
+      await expect(rail.locator('[data-current-page="true"]')).toHaveAttribute('aria-current', 'page');
+      await expect(rail.locator('[data-current-page="true"]')).toHaveAttribute('href', route.path);
+      await expect(rail.locator('[data-navigation-id="architecture"]')).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+    } else {
+      const drawer = page.locator('details').filter({has: page.getByText('Browse specification', {exact: true})}).first();
+      await expect(drawer.getByText('Browse specification', {exact: true})).toBeVisible();
+      await drawer.getByText('Browse specification', {exact: true}).focus();
+      await drawer.getByText('Browse specification', {exact: true}).press('Enter');
+      await expect(drawer).toHaveAttribute('open', '');
+      await expect(drawer.getByRole('navigation', {name: 'Specification navigation'})).toBeVisible();
+      await expect(drawer.locator(`[data-navigation-id="${route.current}"]`)).toHaveAttribute('data-section-current', 'true');
+      await expect(drawer.locator('[data-current-page="true"]')).toHaveAttribute('aria-current', 'page');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+    }
+  }
+});
+
+test('Architecture landing is source-backed and exposes every required mental-model topic', async ({page}) => {
+  await page.goto('/architecture/');
+  await expect(page.getByRole('heading', {name: 'Architecture', level: 1})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Architecture mental model'})).toBeVisible();
+  for (const topic of [
+    'Programming and execution model',
+    'Architectural state',
+    'Registers and Tile storage',
+    'Memory model',
+    'Types and shape model',
+    'Faults, exceptions, and diagnostics',
+    'Version and compatibility',
+  ]) {
+    await expect(page.getByRole('heading', {name: topic, exact: true})).toBeVisible();
+  }
+  await expect(page.locator('[data-source-owner][data-guide-sha256]').first()).toBeVisible();
+  await expect(page.getByText('Current owner-declared boundary', {exact: true})).toHaveCount(4);
+  await expect(page.locator('[role="note"][data-source-sha256][data-guide-sha256]')).toHaveCount(4);
+  await expect(page.getByText('PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT', {exact: true}).first()).toBeVisible();
+  await expect(page.getByText('PTO-ARCH-MEMORY-MODEL-ORDERING', {exact: true}).first()).toBeVisible();
+  await expect(page.getByRole('link', {name: 'Open original ASL ↗'}).first()).toHaveAttribute(
+    'href',
+    /github\.com\/PTO-ISA\/pto-spec\/blob\/[0-9a-f]{40}\/asl\/arch\//,
+  );
+  const provenance = page.getByRole('region', {name: 'Sources and release identity'});
+  await expect(provenance.locator('details')).not.toHaveAttribute('open', '');
+});
+
 test('reference pages expose the default left navigation and top entry point', async ({page}, testInfo) => {
   await page.goto('/reference/scalar/alu/ADD/');
   const sidebar = page.getByRole('navigation', {name: 'Docs sidebar'});
   if (testInfo.project.name === 'desktop-chromium') {
     await expect(sidebar).toHaveCount(1);
     await expect(sidebar).toBeVisible();
-    await expect(sidebar.getByText('PTO Architecture', {exact: true})).toBeVisible();
+    await expect(sidebar.getByText('Architecture', {exact: true})).toBeVisible();
     await expect(sidebar.getByText('Scalar instructions', {exact: true})).toBeVisible();
     await expect(sidebar.getByText('Block instructions', {exact: true})).toBeVisible();
     await expect(sidebar.getByText('Tile instructions', {exact: true})).toBeVisible();
     await expect(page.getByRole('link', {name: 'Reference', exact: true})).toBeVisible();
+    await page.goto('/zh-CN/reference/arch/overview/architecture/');
+    const chineseSidebar = page.getByRole('navigation', {name: '文档侧边栏'});
+    await expect(chineseSidebar).toBeVisible();
+    await expect(chineseSidebar.getByText('架构', {exact: true})).toBeVisible();
+    await expect(chineseSidebar.getByText('PTO 架构', {exact: true})).toHaveCount(0);
   } else {
     await expect(page.getByRole('heading', {name: 'ADD', level: 1})).toBeVisible();
   }
@@ -440,8 +505,23 @@ test('NDF explorer keeps an indexed fallback and exact-source navigation', async
 test('Simplified Chinese framework route is generated', async ({page}) => {
   await page.goto('/zh-CN/');
   await expect(page.getByRole('heading', {level: 1})).toContainText(
-    'PTO 架构',
+    '架构',
   );
+  const chineseDrawer = page.locator('details').filter({has: page.getByText('浏览规范', {exact: true})}).first();
+  if (await chineseDrawer.isVisible()) {
+    await chineseDrawer.getByText('浏览规范', {exact: true}).click();
+    await expect(chineseDrawer.getByRole('navigation', {name: '规范导航'}).getByText('架构', {exact: true})).toBeVisible();
+  } else {
+    await expect(page.locator('aside[aria-label="左侧规范导航"]').getByText('架构', {exact: true})).toBeVisible();
+  }
+  await page.goto('/zh-CN/architecture/');
+  await expect(page.getByRole('heading', {name: '架构', level: 1})).toBeVisible();
+  await expect(page.getByRole('heading', {name: '架构心智模型'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: '编程与执行模型', exact: true})).toBeVisible();
+  await expect(page.getByRole('heading', {name: '架构状态', exact: true})).toBeVisible();
+  await expect(page.getByRole('heading', {name: '寄存器与 Tile 存储', exact: true})).toBeVisible();
+  await expect(page.getByRole('heading', {name: '内存模型', exact: true})).toBeVisible();
+  await page.goto('/zh-CN/');
   await page.getByRole('searchbox').fill('TLOAD');
   await page.getByRole('button', {name: '搜索规范'}).click();
   await expect(page).toHaveURL(/\/zh-CN\/search\/\?q=TLOAD/);
@@ -489,8 +569,20 @@ test.describe('no JavaScript fallback', () => {
 });
 
 test('critical routes have no serious WCAG violations', async ({page}) => {
-  for (const route of ['/', tloadRoute, '/explore/ndf/?q=PTO-TLOAD-MEMORY-001']) {
+  for (const route of [
+    '/',
+    '/architecture/',
+    '/zh-CN/architecture/',
+    tloadRoute,
+    '/explore/ndf/?q=PTO-TLOAD-MEMORY-001',
+    '/reference/governance/adr-process/',
+  ]) {
     await page.goto(route);
+    const mobileNavigation = page.locator('summary').filter({hasText: /Browse specification|浏览规范/}).first();
+    if (await mobileNavigation.isVisible()) {
+      await mobileNavigation.focus();
+      await mobileNavigation.press('Enter');
+    }
     const result = await new AxeBuilder({page})
       .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
       .analyze();

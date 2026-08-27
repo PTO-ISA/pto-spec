@@ -501,7 +501,27 @@ def main() -> int:
         )
         require_text(
             "zh-CN/index.html",
-            ("PTO 架构", "先 Scalar，再 Block，最后 Tile"),
+            ("架构", "先 Scalar，再 Block，最后 Tile"),
+        )
+        require_text(
+            "architecture/index.html",
+            (
+                "Architecture mental model",
+                "Programming and execution model",
+                "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
+                "PTO-ARCH-MEMORY-MODEL-ORDERING",
+                "Current owner-declared boundary",
+            ),
+        )
+        require_text(
+            "zh-CN/architecture/index.html",
+            (
+                "架构心智模型",
+                "编程与执行模型",
+                "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
+                "PTO-ARCH-MEMORY-MODEL-ORDERING",
+                "当前 owner 声明的边界",
+            ),
         )
         expected_index_pages = math.ceil(expected_nodes / 250)
         static_index_pages = sorted(

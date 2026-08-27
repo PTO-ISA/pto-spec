@@ -1,12 +1,12 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Head from '@docusaurus/Head';
-import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import Translate, {translate} from '@docusaurus/Translate';
 import {usePluginData} from '@docusaurus/useGlobalData';
 import type {PtoReleaseIdentity} from '@site/src/types/pto';
 import {useLocalizedPath} from '@site/src/components/releasePresentation';
+import PortalShell from '@site/src/components/PortalShell';
 
 import styles from './index.module.css';
 
@@ -134,13 +134,14 @@ function Home(): ReactNode {
   ) as PtoPluginData;
   const releaseUrl = `${REPOSITORY_URL}/releases/tag/${release.tag}`;
   const architectureRoute = useLocalizedPath(
-    '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/',
+    '/architecture/',
   );
 
   return (
-    <Layout
-      title={`${release.tag} PTO Architecture`}
-      description="Read the PTO Architecture, Scalar, Block, and Tile surfaces, then trace ADR and NDF records to exact released sources.">
+    <PortalShell
+      title={`${release.tag} Architecture`}
+      description="Read the Architecture, Scalar, Block, and Tile surfaces, then trace ADR and NDF records to exact released sources."
+      currentPageLabel={translate({id: 'portal.current.home', message: 'Home'})}>
       <Head>
         <meta property="og:type" content="website" />
       </Head>
@@ -174,7 +175,7 @@ function Home(): ReactNode {
               <div>
                 <p className={styles.kicker}>PTO ISA / FORMAL SPECIFICATION</p>
                 <h1>
-                  <Translate id="homepage.hero.title">PTO Architecture</Translate>
+                  <Translate id="homepage.hero.title">Architecture</Translate>
                 </h1>
                 <p className={styles.lede}>
                   <Translate id="homepage.hero.subtitle">
@@ -331,7 +332,7 @@ function Home(): ReactNode {
           </div>
         </section>
       </main>
-    </Layout>
+    </PortalShell>
   );
 }
 

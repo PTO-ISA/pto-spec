@@ -3,7 +3,7 @@
 ## Source of truth
 
 - Status: Active
-- Last refreshed: 2026-08-26
+- Last refreshed: 2026-08-27
 - Primary product surface: PTO Formal Specification Portal at
   `https://pto-isa.github.io/`
 - Product owner: `PTO-ISA/pto-spec`
@@ -163,7 +163,7 @@ asl/**/*.asl
 
 ### Primary navigation
 
-- PTO Architecture
+- Architecture
 - Reference
 - Scalar
 - Block
@@ -175,15 +175,34 @@ Scalar, Block, and Tile navigation uses an exact released-surface facet. It must
 not be implemented as a free-text search whose substring matches can cross
 surface boundaries.
 
-Reference pages use a persistent desktop sidebar ordered as PTO Architecture,
-Scalar, Block, Tile, ADR/architecture records, then development/releases. The
-top navbar exposes a direct Reference entry; tablet and phone layouts use the
-Docusaurus collapsible navigation instead of forcing a narrow fixed sidebar.
+Every primary reading route uses a stable left navigation rail on desktop,
+including the homepage, Architecture landing page, instruction workbenches,
+Reference pages, NDF exploration, and ADR/Decision entry points. The rail is
+ordered as Home, Architecture, Scalar, Block, Tile, Reference, NDF, Decisions,
+and Search. It shows hierarchy and the current route, may collapse individual
+groups, and is never fully hidden by default on desktop. The top navbar remains
+a compact set of direct entries rather than the only navigation surface.
+
+The native Docusaurus Reference sidebar remains the stable left navigation for
+Reference and Decision documents. It uses the same `Architecture`/`架构`
+terminology, exposes the Architecture, Scalar, Block, Tile, ADR, development,
+and release hierarchy, and marks the exact current document; the global top
+navbar retains Home, NDF, and Search access without duplicating two rails.
+Custom routes use the shared `PortalShell` and `SpecNavigation` components
+instead of duplicating route-specific navigation. At tablet and phone widths
+the persistent rail becomes a clearly labelled navigation button and in-flow
+drawer; it does not overlay or obscure the document.
+
+English uses `Architecture`. Simplified Chinese uses the concise label `架构`.
+Navigation must not use `PTO Architecture`, `PTO架构`, `PTO ISA`, or `PTO 手册`
+as sibling labels for the same destination. Formal release identity and the
+normative product name remain unchanged where those names are actual source or
+version identities.
 
 ### Default flow
 
 ```text
-PTO Architecture
+Architecture
     -> Scalar
     -> Block
     -> Tile
@@ -204,6 +223,31 @@ PTO Architecture
 Homepage prose is an orientation layer, not a second semantic manual. It may
 summarize released inventory and repository structure, but every semantic claim
 must resolve to the embedded ASL/NDF owner.
+
+### Architecture landing-page reading order
+
+The `/architecture/` route is a reader-first map over current architecture
+owners, not a replacement architecture manual. It presents:
+
+1. a compact mental model connecting program, Core/PE execution, Scalar and
+   Block/bundle control, Tile operations, state, and memory;
+2. a relationship table and a typical implementation reading path before any
+   source inventory;
+3. source-backed topics for execution/programming model, architecture state,
+   register classes, memory model, type/shape model, fault/diagnostic model,
+   and version/compatibility;
+4. short reader-guide excerpts projected from the exact owning units, with
+   direct links to their workbenches and original ASL;
+5. explicit source gaps when the current owners distribute or omit a requested
+   contract, rather than a generic explanation that invents one; and
+6. a collapsed provenance ledger after the human reading path.
+
+The site build owns the topic-to-owner map and validates every referenced unit,
+source path, source hash, reviewed reader-guide hash, and exact block identity.
+Typical scenarios and source boundaries are exact bound reader-guide blocks,
+not hand-written architectural claims. React renders the projection and may
+supply localized navigation labels, but it must not carry a second copy of
+architectural semantics.
 
 ### Core routes
 
@@ -319,6 +363,9 @@ and rerunning the normative verification flow.
 ### Shared components
 
 - `GlobalSpecSearch`
+- `PortalShell`
+- `SpecNavigation`
+- `ArchitectureOverview`
 - `ReleaseIdentity`
 - `SourceIdentity`
 - `SourceLedger`
@@ -339,6 +386,19 @@ and rerunning the normative verification flow.
 
 ### Component contracts
 
+- `PortalShell` supplies the shared desktop rail and mobile navigation drawer
+  to custom routes without duplicating the native Reference sidebar. It keeps
+  the document in normal flow and never narrows the content below its readable
+  responsive width.
+- `SpecNavigation` owns one locale-aware route tree. It exposes the current
+  location through visible styling and `aria-current`, keeps desktop navigation
+  visible by default, and provides an explicit mobile open/close control with
+  keyboard and screen-reader semantics.
+- `ArchitectureOverview` consumes only build-generated architecture topic data
+  resolved from released ASL units and their reviewed reader-guide projections.
+  It renders a mental model, topic relationships, scenarios, exact owner links,
+  source boundaries, and a collapsed provenance ledger. Missing or distributed
+  contracts remain visible as source gaps.
 - `ASLViewer` receives build-generated source text, line information, content
   hash, and exact release permalink. It shows the operation region first,
   decode second, and the complete owner on demand. It never accepts hand-written
@@ -407,6 +467,11 @@ and rerunning the normative verification flow.
     actions are keyboard accessible;
   - focus order follows reading order;
   - focus remains visible in light and dark themes.
+  - the mobile specification-navigation control is reachable before document
+    content, announces expanded state, and returns focus predictably when
+    closed;
+  - the current left-navigation item uses `aria-current="page"`; group labels
+    and disclosure controls have explicit accessible names;
   - NDF reordering provides Move up, Move down, and Restore default order
     controls with polite announcements; the drag handle is separate from body
     selection and links.
@@ -428,12 +493,15 @@ and rerunning the normative verification flow.
 
 ## Responsive behavior
 
-- Desktop: full workbench, Plotly/WebGL exploration, animation, filtering,
-  zooming, and side-by-side source/evidence views.
-- Tablet: retain full capability with smaller local graph limits and stacked
-  detail panes.
+- Desktop: persistent left navigation plus the full workbench, Plotly/WebGL
+  exploration, animation, filtering, zooming, and side-by-side source/evidence
+  views. The rail participates in layout and never overlays the document.
+- Tablet: the left rail becomes a visible in-flow navigation drawer/button;
+  retain full capability with smaller local graph limits and stacked detail
+  panes.
 - Phone: preserve complete readable source, NDF, generated contracts, and
-  evidence; default large graphs to a local neighborhood or indexed list.
+  evidence; expose the same navigation hierarchy through the labelled drawer;
+  default large graphs to a local neighborhood or indexed list.
 - WebGL unavailable: use static SVG, tables, and relationship lists.
 - Touch devices: do not depend on hover; selection opens explicit details.
 - Touch devices use the same NDF move buttons when native drag is unsuitable;
@@ -462,6 +530,9 @@ and rerunning the normative verification flow.
   boundaries.
 - Default language: English.
 - Supported locales: `en` and `zh-CN` from the first framework release.
+- Use `Architecture` in English navigation and `架构` in Simplified Chinese.
+  Do not mix `PTO Architecture`, `PTO架构`, `PTO ISA`, or `PTO 手册` as labels
+  for the same navigation level.
 - Chinese coverage may grow incrementally across landing pages, navigation,
   guides, and demonstrations.
 - ASL/NDF source, stable IDs, paths, and evidence identities are never

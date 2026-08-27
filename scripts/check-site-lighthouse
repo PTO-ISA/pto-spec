@@ -139,6 +139,10 @@ def main() -> int:
         wait_for_server(server)
         enforce("home desktop", run_lighthouse("/", "home-desktop", desktop=True))
         enforce(
+            "Architecture desktop",
+            run_lighthouse("/architecture/", "architecture-desktop", desktop=True),
+        )
+        enforce(
             "TLOAD desktop",
             run_lighthouse(
                 "/instructions/tile/memory-and-data-movement/regular/TLOAD/",

@@ -98,6 +98,45 @@ export interface PtoReaderGuide {
   owners: PtoReaderGuideOwnerLink[];
 }
 
+export interface PtoArchitectureOwnerProjection {
+  id: string;
+  label: string;
+  route: string;
+  referenceRoute: string;
+  sourcePath: string;
+  sourceSha256: string;
+  sourceUrl: string;
+  guideStatus: PtoReaderGuideStatus;
+  guideSha256: string;
+  contentLocale: string;
+  blocks: PtoReaderGuideBlock[];
+}
+
+export interface PtoArchitectureBoundGuideBlock {
+  ownerId: string;
+  sourcePath: string;
+  sourceSha256: string;
+  guideSha256: string;
+  block: PtoReaderGuideBlock;
+}
+
+export interface PtoArchitectureTopicProjection {
+  id: string;
+  label: string;
+  scenario: PtoArchitectureBoundGuideBlock;
+  sourceBoundary: PtoArchitectureBoundGuideBlock | null;
+  primary: PtoArchitectureOwnerProjection;
+  related: PtoArchitectureOwnerProjection[];
+}
+
+export interface PtoArchitectureGuide {
+  schema: 'pto.site-architecture-guide.v1';
+  locale: string;
+  release: PtoReleaseIdentity;
+  entry: PtoArchitectureOwnerProjection;
+  topics: PtoArchitectureTopicProjection[];
+}
+
 export interface PtoNdfClause {
   id: string;
   kind: string;

@@ -138,8 +138,8 @@ const config: Config = {
       hideOnScroll: false,
       items: [
         {
-          to: '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/',
-          label: 'PTO Architecture',
+          to: '/architecture/',
+          label: 'Architecture',
           position: 'left',
         },
         {
@@ -186,8 +186,8 @@ const config: Config = {
           title: 'Specification',
           items: [
             {
-              label: 'PTO Architecture',
-              to: '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/',
+              label: 'Architecture',
+              to: '/architecture/',
             },
             {
               label: 'Scalar surface',

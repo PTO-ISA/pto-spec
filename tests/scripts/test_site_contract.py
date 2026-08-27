@@ -44,7 +44,7 @@ class SiteContractTests(unittest.TestCase):
         ):
             self.assertIn(term, config)
         navigation = [
-            config.index("label: 'PTO Architecture'"),
+            config.index("label: 'Architecture'"),
             config.index("label: 'Scalar'"),
             config.index("label: 'Block'"),
             config.index("label: 'Tile'"),
@@ -56,7 +56,7 @@ class SiteContractTests(unittest.TestCase):
     def test_homepage_is_a_human_reading_path(self) -> None:
         homepage = (SITE / "src/pages/index.tsx").read_text(encoding="utf-8")
         for term in (
-            "PTO Architecture",
+            "Architecture",
             "Scalar, then Block, then Tile",
             "ADR explains why. NDF points to what is current.",
             "surface=scalar",
@@ -75,6 +75,9 @@ class SiteContractTests(unittest.TestCase):
         self.assertIn("modules: {graph: graphDataModule}", plugin)
         self.assertIn("modules: {search: searchDataModule}", plugin)
         self.assertIn("component: '@site/src/routes/NdfIndexPage'", plugin)
+        self.assertIn("component: '@site/src/routes/Architecture'", plugin)
+        self.assertIn("modules: {architecture: architectureDataModule}", plugin)
+        self.assertIn("pto.site-architecture-guide.v1", plugin)
         self.assertIn("pto.site-unit-routes.v1", plugin)
         self.assertIn("pto-unit-routes.json", plugin)
         self.assertIn("PTO-EVIDENCE-RELEASE-TRACEABILITY", plugin)
@@ -82,6 +85,20 @@ class SiteContractTests(unittest.TestCase):
         self.assertIn("PTO_SITE_REQUIRE_RELEASE", plugin)
         self.assertIn("--porcelain=v1", plugin)
         self.assertNotIn("setGlobalData(content)", plugin)
+        portal_shell = (SITE / "src/components/PortalShell.tsx").read_text(
+            encoding="utf-8"
+        )
+        navigation = (SITE / "src/components/SpecNavigation.tsx").read_text(
+            encoding="utf-8"
+        )
+        architecture = (SITE / "src/routes/Architecture.tsx").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("Left specification navigation", portal_shell)
+        self.assertIn("Browse specification", portal_shell)
+        self.assertIn("aria-current", navigation)
+        self.assertIn("Architecture mental model", architecture)
+        self.assertIn("Sources and release identity", architecture)
         repository_links = (
             SITE / "plugins/pto-content/remark-repository-links.ts"
         ).read_text(encoding="utf-8")

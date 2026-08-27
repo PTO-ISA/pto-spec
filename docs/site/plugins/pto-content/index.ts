@@ -5,6 +5,8 @@ import path from 'node:path';
 import type {LoadContext, Plugin} from '@docusaurus/types';
 import type {
   PtoAdrRecord,
+  PtoArchitectureGuide,
+  PtoArchitectureOwnerProjection,
   PtoArtifactEvidence,
   PtoDocumentationIdentity,
   PtoGraphEdge,
@@ -96,6 +98,102 @@ interface LoadedPtoContent {
   ndfIndexPages: PtoNdfIndexPageData[];
   adrDecisions: Record<string, PtoReaderNode[]>;
 }
+
+interface ArchitectureTopicDefinition {
+  id: string;
+  label: {en: string; 'zh-CN': string};
+  primary: string;
+  boundaryOwner?: string;
+  related: Array<{id: string; label: {en: string; 'zh-CN': string}}>;
+}
+
+const ARCHITECTURE_ENTRY = 'PTO-ARCH-OVERVIEW-ARCHITECTURE';
+
+const ARCHITECTURE_TOPICS: ArchitectureTopicDefinition[] = [
+  {
+    id: 'execution-model',
+    label: {en: 'Programming and execution model', 'zh-CN': '编程与执行模型'},
+    primary: 'PTO-ARCH-DISPATCH-TOP-LEVEL',
+    boundaryOwner: 'PTO-ARCH-DISPATCH-TOP-LEVEL',
+    related: [
+      {id: 'PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION', label: {en: 'Instruction classes and Tile engines', 'zh-CN': '指令分类与 Tile 执行引擎'}},
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY', label: {en: 'Core and PE topology', 'zh-CN': 'Core 与 PE 拓扑'}},
+      {id: 'PTO-BLOCK-BSTART', label: {en: 'Block/bundle start and completion boundary', 'zh-CN': 'Block/bundle 开始与完成边界'}},
+      {id: 'PTO-TILE-TLOAD', label: {en: 'Source-backed Tile bundle example', 'zh-CN': '源对齐的 Tile bundle 示例'}},
+    ],
+  },
+  {
+    id: 'architectural-state',
+    label: {en: 'Architectural state', 'zh-CN': '架构状态'},
+    primary: 'PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT',
+    related: [
+      {id: 'PTO-ARCH-STATE-DEFINEDNESS', label: {en: 'Definedness boundary', 'zh-CN': 'Definedness 边界'}},
+      {id: 'PTO-ARCH-STATE-PROGRAM-COUNTER', label: {en: 'Program-control state', 'zh-CN': '程序控制状态'}},
+      {id: 'PTO-ARCH-STATE-TRAP-CONTEXT', label: {en: 'Saved trap context', 'zh-CN': '保存的 trap context'}},
+      {id: 'PTO-ARCH-GQM', label: {en: 'General queue state', 'zh-CN': '通用队列状态'}},
+    ],
+  },
+  {
+    id: 'registers',
+    label: {en: 'Registers and Tile storage', 'zh-CN': '寄存器与 Tile 存储'},
+    primary: 'PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY',
+    related: [
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS', label: {en: 'PE-private GPRs', 'zh-CN': 'PE 私有 GPR'}},
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-PREDICATE-REGISTERS', label: {en: 'Predicate registers', 'zh-CN': 'Predicate 寄存器'}},
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-TILE-REGISTERS', label: {en: 'Local Tile registers', 'zh-CN': 'Local Tile 寄存器'}},
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-SHARED-TILE-REGISTERS', label: {en: 'Shared Tile registers', 'zh-CN': 'Shared Tile 寄存器'}},
+      {id: 'PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS', label: {en: 'System-register namespace', 'zh-CN': 'System register 命名空间'}},
+    ],
+  },
+  {
+    id: 'memory-model',
+    label: {en: 'Memory model', 'zh-CN': '内存模型'},
+    primary: 'PTO-ARCH-MEMORY-MODEL-ORDERING',
+    related: [
+      {id: 'PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE', label: {en: 'Address space', 'zh-CN': '地址空间'}},
+      {id: 'PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS', label: {en: 'Global Memory access', 'zh-CN': 'Global Memory 访问'}},
+      {id: 'PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS', label: {en: 'Memory events', 'zh-CN': 'Memory event'}},
+      {id: 'PTO-ARCH-MEMORY-MODEL-ATOMICITY', label: {en: 'Atomicity and coherence', 'zh-CN': 'Atomicity 与 coherence'}},
+      {id: 'PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION', label: {en: 'Memory fault precision', 'zh-CN': '内存 fault 精确性'}},
+    ],
+  },
+  {
+    id: 'types-and-shape',
+    label: {en: 'Types and shape model', 'zh-CN': '类型与 shape 模型'},
+    primary: 'PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES',
+    boundaryOwner: 'PTO-ARCH-PROGRAMMING-MODEL-TILE-REGISTERS',
+    related: [
+      {id: 'PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR', label: {en: 'Format descriptors', 'zh-CN': 'Format descriptor'}},
+      {id: 'PTO-ARCH-STATE-TILE-DESCRIPTOR', label: {en: 'Tile descriptor state', 'zh-CN': 'Tile descriptor 状态'}},
+      {id: 'PTO-ARCH-FEATURES-TILE-ALLOCATION', label: {en: 'Tile allocation and capacity', 'zh-CN': 'Tile allocation 与容量'}},
+      {id: 'PTO-BLOCK-B-DIM', label: {en: 'B.DIM dimensions', 'zh-CN': 'B.DIM 维度'}},
+      {id: 'PTO-TILE-TLOAD', label: {en: 'TLOAD shape consumer', 'zh-CN': 'TLOAD shape 消费者'}},
+    ],
+  },
+  {
+    id: 'faults',
+    label: {en: 'Faults, exceptions, and diagnostics', 'zh-CN': 'Fault、exception 与 diagnostic'},
+    primary: 'PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION',
+    boundaryOwner: 'PTO-ARCH-DATA-TYPES-FAULT',
+    related: [
+      {id: 'PTO-ARCH-DATA-TYPES-FAULT', label: {en: 'Fault identities', 'zh-CN': 'Fault 标识'}},
+      {id: 'PTO-ARCH-STATE-TRAP-CONTEXT', label: {en: 'Trap context state', 'zh-CN': 'Trap context 状态'}},
+      {id: 'PTO-ARCH-PROFILE-TRAP-CONTEXT-RECOVERY', label: {en: 'Trap recovery profile path', 'zh-CN': 'Trap recovery profile 路径'}},
+    ],
+  },
+  {
+    id: 'versioning',
+    label: {en: 'Version and compatibility', 'zh-CN': '版本与兼容性'},
+    primary: 'PTO-ARCH-OVERVIEW-ARCHITECTURE',
+    boundaryOwner: 'PTO-ARCH-PROFILE-APPLICABILITY',
+    related: [
+      {id: 'PTO-ARCH-PROFILE-APPLICABILITY', label: {en: 'Profile applicability', 'zh-CN': 'Profile 适用性'}},
+      {id: 'PTO-ARCH-PROFILE-REFERENCE-PROFILE', label: {en: 'PTO v0 reference profile', 'zh-CN': 'PTO v0 reference profile'}},
+      {id: 'PTO-ARCH-PROFILE-EXTENSION-FIRST-USE', label: {en: 'Extension first-use policy', 'zh-CN': '扩展首次使用策略'}},
+      {id: 'PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION', label: {en: 'Compatibility aliases', 'zh-CN': '兼容 alias'}},
+    ],
+  },
+];
 
 interface ReaderPresentationBlock {
   block_id: string;
@@ -1612,6 +1710,104 @@ function unitRoute(unit: TraceabilityUnit): string {
   return `/${segments.join('/')}/`;
 }
 
+function architectureGuide(
+  context: LoadContext,
+  release: PtoReleaseIdentity,
+  units: Array<{data: PtoUnitWorkbenchData; route: string}>,
+): PtoArchitectureGuide {
+  const locale = context.i18n.currentLocale;
+  const chinese = locale === 'zh-CN';
+  const unitsById = new Map(
+    units.map((unit) => [String(unit.data.unit.id ?? unit.data.metadata.id), unit]),
+  );
+  const owner = (
+    id: string,
+    label: string,
+    includeGuide: boolean,
+  ): PtoArchitectureOwnerProjection => {
+    const unit = unitsById.get(id);
+    if (unit === undefined) fail(`architecture landing references missing unit ${id}`);
+    const guide = unit.data.readerGuide;
+    if (guide.blocks.length === 0) {
+      fail(`architecture landing owner has no reviewed reader guide: ${id}`);
+    }
+    if (locale !== context.i18n.defaultLocale && guide.contentLocale !== locale) {
+      fail(`architecture landing owner lacks ${locale} projection: ${id}`);
+    }
+    if (guide.sha256 === null) {
+      fail(`architecture landing owner has no reviewed guide hash: ${id}`);
+    }
+    const blocks = includeGuide
+      ? guide.blocks.filter((block) => block.role !== 'example-usage')
+      : [];
+    if (includeGuide && blocks.length === 0) {
+      fail(`architecture landing owner has no reader-facing contract blocks: ${id}`);
+    }
+    return {
+      id,
+      label,
+      route: localizedRoute(context, unit.route),
+      referenceRoute: unit.data.documentation.referenceRoute,
+      sourcePath: unit.data.source.path,
+      sourceSha256: unit.data.source.sha256,
+      sourceUrl: unit.data.source.githubUrl,
+      guideStatus: guide.status,
+      guideSha256: guide.sha256,
+      contentLocale: guide.contentLocale,
+      blocks,
+    };
+  };
+  const boundBlock = (
+    id: string,
+    role: PtoReaderGuideRole,
+  ) => {
+    const unit = unitsById.get(id);
+    if (unit === undefined) fail(`architecture block binding references missing unit ${id}`);
+    const guide = unit.data.readerGuide;
+    if (guide.sha256 === null) fail(`architecture block binding has no guide hash: ${id}`);
+    const matches = guide.blocks.filter((block) => block.role === role);
+    if (matches.length !== 1) {
+      fail(`architecture block binding ${id}/${role} resolves ${matches.length} blocks`);
+    }
+    return {
+      ownerId: id,
+      sourcePath: unit.data.source.path,
+      sourceSha256: unit.data.source.sha256,
+      guideSha256: guide.sha256,
+      block: matches[0],
+    };
+  };
+  const entry = owner(
+    ARCHITECTURE_ENTRY,
+    chinese ? '架构所有者' : 'Architecture owner',
+    true,
+  );
+  return {
+    schema: 'pto.site-architecture-guide.v1',
+    locale,
+    release,
+    entry,
+    topics: ARCHITECTURE_TOPICS.map((topic) => ({
+      id: topic.id,
+      label: chinese ? topic.label['zh-CN'] : topic.label.en,
+      scenario: boundBlock(topic.primary, 'example-usage'),
+      sourceBoundary: topic.boundaryOwner === undefined
+        ? null
+        : boundBlock(topic.boundaryOwner, 'boundaries'),
+      primary: owner(
+        topic.primary,
+        chinese ? topic.label['zh-CN'] : topic.label.en,
+        true,
+      ),
+      related: topic.related.map((related) => owner(
+        related.id,
+        chinese ? related.label['zh-CN'] : related.label.en,
+        false,
+      )),
+    })),
+  };
+}
+
 function catalogEncoding(
   unit: TraceabilityUnit,
   catalogs: PtoCatalogs,
@@ -2411,6 +2607,10 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
           };
         }),
       );
+      const architectureDataModule = await actions.createData(
+        'architecture-guide.json',
+        JSON.stringify(architectureGuide(context, content.release, content.units)),
+      );
       const graphDataModule = await actions.createData(
         'ndf-graph.json',
         JSON.stringify(content.graph),
@@ -2437,6 +2637,12 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
           modules: {unitData: unit.module},
         });
       }
+      actions.addRoute({
+        path: localizedRoute(context, '/architecture/'),
+        component: '@site/src/routes/Architecture',
+        exact: true,
+        modules: {architecture: architectureDataModule},
+      });
       actions.addRoute({
         path: localizedRoute(context, '/explore/ndf/'),
         component: '@site/src/routes/NdfExplorer',

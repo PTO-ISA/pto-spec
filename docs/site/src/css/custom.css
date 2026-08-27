@@ -22,6 +22,7 @@
   --pto-text-muted: #546474;
   --pto-surface-subtle: #f4f7f9;
   --pto-surface-focus: #f2f8fb;
+  --pto-nav-active: #0c4e6c;
 }
 
 [data-theme='dark'] {
@@ -38,6 +39,7 @@
   --pto-text-muted: #a5b5c2;
   --pto-surface-subtle: #101d28;
   --pto-surface-focus: #172b39;
+  --pto-nav-active: #a8e0f0;
 }
 
 .navbar {
