@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-ASSEMBLE-ENCODING-001","source":"asl/block/operands/B.ASSEMBLE.asl","requirements":["PTO-INST-BLOCK-B-ASSEMBLE","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"B.ASSEMBLE executes every INIT/MIDDLE/LAST/INIT_LAST control, Local and Shared parent boundaries, and all raw-legality and contradictory-control faults.","pass_condition":"each legal control preserves exact fields and XLEN offset in the destination carrier; every reserved raw form, contradictory INIT/size class, and all Local/Shared parent codes 1..12 remain accepted","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/operands/range-modifiers.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-ASSEMBLE-ENCODING-001","source":"asl/block/operands/B.ASSEMBLE.asl","requirements":["PTO-INST-BLOCK-B-ASSEMBLE","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"B.ASSEMBLE executes every INIT/MIDDLE/LAST/INIT_LAST control, Local 1..10 and Shared 1..12 parent boundaries, and all raw-legality and contradictory-control faults.","pass_condition":"each legal control preserves exact fields and XLEN offset in the destination carrier; Local 11/12 and every reserved raw form fault before state changes, while Shared parent codes 1..12 remain accepted","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/operands/range-modifiers.asl"]}
 pure func AssembleInstruction(init: boolean, last: boolean, reg_src: integer, uimm11: integer, parent_size: integer) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00001053;
@@ -75,6 +75,21 @@ begin
                         else Zeros{PTO_XLEN} + 0x1200 + reg_src;
     assert _BundleTileBindings[[0]].destination_assemble.offset == expected_base + uimm11;
 end;
+func AssertLocalAssembleBoundary(parent_size: integer)
+begin
+    ResetAssembleFixture();
+    WriteTPC(Zeros{PTO_XLEN} + 0x5e0);
+    StartBlock();
+    let started = ExecuteCommandInstruction(LocalAssembleBinder(), 32);
+    assert started == CommandExecution_Executed;
+    let before_tpc = ReadTPC();
+    let rejected = ExecuteCommandInstruction(
+        AssembleInstruction(TRUE, FALSE, 0, 0, parent_size), 32);
+    assert rejected == CommandExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTPC() == before_tpc;
+    assert !_BundleTileBindings[[0]].destination_assemble.valid;
+end;
 func AssertSharedAssemble(init: boolean, last: boolean, reg_src: integer, uimm11: integer, parent_size: integer)
 begin
     ResetAssembleFixture();
@@ -105,7 +120,9 @@ begin
     AssertLocalAssemble(TRUE, FALSE, 0, 0, 1);   // INIT, Local boundary 1
     AssertLocalAssemble(FALSE, FALSE, 23, 2047, 0); // MIDDLE
     AssertLocalAssemble(FALSE, TRUE, 0, 0, 0);   // LAST
-    AssertLocalAssemble(TRUE, TRUE, 23, 2047, 12); // INIT_LAST, Local boundary 12
+    AssertLocalAssemble(TRUE, TRUE, 23, 2047, 10); // INIT_LAST, Local boundary 10
+    AssertLocalAssembleBoundary(11);
+    AssertLocalAssembleBoundary(12);
     // Shared explicitly covers both parent boundaries and INIT_LAST.
     AssertSharedAssemble(TRUE, TRUE, 0, 0, 1);
     AssertSharedAssemble(TRUE, TRUE, 23, 2047, 12);

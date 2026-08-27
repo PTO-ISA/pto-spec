@@ -8319,12 +8319,56 @@
         "0.58.5"
       ],
       "title": "PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary"
+    },
+    {
+      "accepted": "2026-08-27",
+      "affected_ndf": [
+        "PTO-B-IOT-STREAM-001",
+        "PTO-TILE-CAPACITY-PER-PE",
+        "PTO-B-SUBVIEW-RANGE-001",
+        "PTO-B-ASSEMBLE-RANGE-001",
+        "PTO-INST-BLOCK-B-ASSEMBLE",
+        "PTO-INST-BLOCK-B-SUBVIEW"
+      ],
+      "affected_units": [
+        "PTO-ARCH-OVERVIEW-ARCHITECTURE",
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-B-SUBVIEW",
+        "PTO-BLOCK-B-ASSEMBLE",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS",
+        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+        "PTO-TILE-MODEL-STATE-DESCRIPTORS"
+      ],
+      "approvers": [
+        "PTO ISA maintainers"
+      ],
+      "authors": [
+        "PTO ISA maintainers"
+      ],
+      "baseline": "7dc8b7e5b121d2b2499a2273bebff29e2cd86812",
+      "created": "2026-08-27",
+      "id": "ADR-0109",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/166",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0109-local-single-object-cap.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Local single-object cap versus aggregate Local pool"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 102
+    "record_count": 103
   }
 }

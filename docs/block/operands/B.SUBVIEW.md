@@ -148,7 +148,7 @@ end;
 ## Legality
 
 - RegSrc accepts only absolute GPR selectors 0..23.
-- SubviewSizeCode accepts 1..12 for both Local and Shared groups.
+- SubviewSizeCode raw values 1..12 are decoded; Local-associated groups require 1..10 and Shared-associated groups accept 1..12.
 - A modifier is legal only in the contiguous immediately preceding B.IOT/B.IOS group and follows source0, source1, destination role order.
 
 ## State effects

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-SUBVIEW-ENCODING-001","source":"asl/block/operands/B.SUBVIEW.asl","requirements":["PTO-INST-BLOCK-B-SUBVIEW","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"B.SUBVIEW executes the exact 0x53 decoder matrix for both source selectors, every legal size and boundary, and all raw-legality.","pass_condition":"each legal field combination reaches the selected Local or Shared carrier with the exact XLEN-wrapped offset; every reserved form faults before reads or state changes","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/operands/range-modifiers.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-SUBVIEW-ENCODING-001","source":"asl/block/operands/B.SUBVIEW.asl","requirements":["PTO-INST-BLOCK-B-SUBVIEW","PTO-INST-BLOCK-B-IOT","PTO-INST-BLOCK-B-IOS"],"kind":"execution","summary":"B.SUBVIEW executes the exact 0x53 decoder matrix with Local 1..10 and Shared 1..12 role-dependent size legality.","pass_condition":"each legal field combination reaches the selected Local or Shared carrier with the exact XLEN-wrapped offset; Local 11/12 and every reserved form fault before reads or state changes","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/operands/range-modifiers.asl"]}
 pure func SubviewInstruction(source_select: boolean, reg_src: integer, uimm11: integer, size_code: integer) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00000053;
@@ -95,6 +95,23 @@ begin
         assert !_BundleTileBindings[[0]].source1_subview.valid;
     end;
 end;
+func AssertLocalSubviewBoundary(size_code: integer)
+begin
+    ResetSubviewFixture();
+    WriteTPC(Zeros{PTO_XLEN} + 0x340);
+    StartBlock();
+    let started = ExecuteCommandInstruction(LocalRangeBinder(), 32);
+    assert started == CommandExecution_Executed;
+    let before_tpc = ReadTPC();
+    let rejected = ExecuteCommandInstruction(
+        SubviewInstruction(FALSE, 0, 0, size_code), 32);
+    assert rejected == CommandExecution_Rejected;
+    assert _LastFault == Fault_TileLegality;
+    assert ReadTPC() == before_tpc;
+    assert _BundleRangeGroup.open;
+    assert !_BundleRangeGroup.source0_seen;
+    assert !_BundleTileBindings[[0]].source0_subview.valid;
+end;
 func AssertSharedSubview(reg_src: integer, uimm11: integer, size_code: integer)
 begin
     ResetSubviewFixture();
@@ -117,17 +134,19 @@ func main() => integer
 begin
     assert DecodeCommandForm(SubviewInstruction(FALSE, 0, 0, 1), 32) == 74;
     // Both source selectors, RegSrc 0/23, uimm 0/2047, and every Local size.
-    for size = 1 to 12 looplimit 12 do
+    for size = 1 to 10 looplimit 10 do
         AssertLocalSubview(size == 2,
                            if size == 1 then 0 else 23,
-                           if size == 12 then 2047 else 0, size);
+                           if size == 10 then 2047 else 0, size);
     end;
     // Explicit SrcSelect=1 boundary and RegSrc/uimm upper extremes.
-    AssertLocalSubview(TRUE, 23, 2047, 12);
+    AssertLocalSubview(TRUE, 23, 2047, 10);
+    AssertLocalSubviewBoundary(11);
+    AssertLocalSubviewBoundary(12);
     // Shared reaches the complete 1..12 range, including both boundaries.
     for size = 1 to 12 looplimit 12 do
         AssertSharedSubview(if size == 1 then 0 else 23,
-                            if size == 12 then 2047 else 0, size);
+                            if size == 10 then 2047 else 0, size);
     end;
     AssertSharedSubview(23, 2047, 12);
     // XLEN arithmetic wraps in the derived carrier.

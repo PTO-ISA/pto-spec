@@ -12,6 +12,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0105](docs/status/decisions/0105-shared-whole-parent-readiness.md): Shared whole-parent readiness and single-issuer publication
 - [ADR-0107](docs/status/decisions/0107-remove-legacy-shared-movement.md): Remove legacy Shared movement Functions
 - [ADR-0108](docs/status/decisions/0108-0584-1-to-0585-compatibility.md): PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary
+- [ADR-0109](docs/status/decisions/0109-local-single-object-cap.md): Local single-object cap versus aggregate Local pool
 
 ### Tile
 - [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
