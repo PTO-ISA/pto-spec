@@ -838,6 +838,7 @@
         "PTO-AVS-BLOCK-SHARED-TLSU-PARTIAL-EXEC-004",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-WAIT-002",
         "PTO-AVS-BLOCK-TMOV-PUBLISH-001",
+        "PTO-AVS-BLOCK-TSTORE-SHAPE-001",
         "PTO-AVS-BLOCK-TSTORE-UNDEF-001",
         "PTO-AVS-TILE-MODEL-STATE-SHARED-REGISTERS-STATIC-001",
         "PTO-AVS-TILE-TLOAD-SHARED-PARENT-002"
@@ -16660,7 +16661,7 @@
     "asl/block/operands/B.ASSEMBLE.asl": "78b3638e1d09e55d9ac1c45f0589c4c86cb5d355d4ae8b6e79c510a42b1a60e4",
     "asl/block/operands/B.IOR.asl": "eb0b9933c0d814dc8e3f36004a591dd28c1b02f3e5f4a037497f75bb793dad26",
     "asl/block/operands/B.IOS.asl": "0c7d045bd4c238d157db74af1fe843e0303e15821838534f900181e00dd5becb",
-    "asl/block/operands/B.IOT.asl": "066dd30914b3fd534e1b4841cce38626f70fa6bc3f278e28e3351622b4c66716",
+    "asl/block/operands/B.IOT.asl": "408a302d902ad9f215b7770810cbfbbada81fef9bc7b45c4ce249f918ec03df5",
     "asl/block/operands/B.SUBVIEW.asl": "b0534c4209577c2219191c45aa76fb6170c1bb26544ec89f95b78d504f073c83",
     "asl/scalar/agu/C.LDI.asl": "cf9ea86090f7fbf98a32a47f33692aff5ba8b400d32e1224eb4780714dbab1f2",
     "asl/scalar/agu/C.LWI.asl": "f21a22f2790b6f3746f7472ceea78e1e15b2b428b8c9e042ee9d6334db9a957b",
@@ -17272,7 +17273,7 @@
     "asl/tile/model/shape/rows-columns.asl": "b88e329ffc836c8df374dbb848df723f6cd78710c2f5b631a2646b07952a8c11",
     "asl/tile/model/shape/valid-region.asl": "64cadbd12ae6a7f7f5ce06f8c3844cfe72055441b6f479bb10091cdadec64c98",
     "asl/tile/model/state/allocation.asl": "bb35c4add7234eaa16cb749cff0d6989501416da2d2e0438e7cd00ade14e5fe5",
-    "asl/tile/model/state/descriptors.asl": "f9de1db84f2a8c25677615f3494af46766d6f28dd125381d5a8fee389024f9c9",
+    "asl/tile/model/state/descriptors.asl": "c4f6631fb3663fdfd90a2b097e9599f4a65195a41066e7e8a0757ad55266c0d8",
     "asl/tile/model/state/feature-map-descriptors.asl": "39a77bbb4b0fe2e80a9e4ec62781d64cfc7e62f0a42c35dd9422b589218d4fef",
     "asl/tile/model/state/local-registers.asl": "645fda7cae232d5180641ea966a673abbab33cb9bc2f4085aedfae4d84b69f6a",
     "asl/tile/model/state/shared-registers.asl": "7c3b7357033ea1ec576d73174ef73b0833fb2ef2c1fc823f964feb31f7144879",
@@ -17362,7 +17363,7 @@
     "docs/arch/memory-model/global-memory-access.md": "c8cc725974d82488a0190e7a130017a719fb4f3174e49a9ec57743a2c9dbfaa6",
     "docs/arch/memory-model/memory-events.md": "1f0a3b02c574d17e6ca97ced3ce8f02ad64610b4cf9360aab3b2611ed57587f2",
     "docs/arch/memory-model/ordering.md": "dd69a837c3abfa89efb46b08c811fe5624f10f896539b72110099f8c0aca88df",
-    "docs/arch/overview/architecture.md": "9cd5d1cf8f49b5850bc826664a126a5fbd943f4161899b7bf85783ccc83d6dfd",
+    "docs/arch/overview/architecture.md": "da241b587e29bb555c828bb81f7605414bf850cc1880259aa1c608fa225b7428",
     "docs/arch/overview/encoding-ownership.md": "3165aff5966c7232d47ec71045fa6d488616f56a20c132e001f6cc7cd07d8084",
     "docs/arch/overview/instruction-classification.md": "3808b2079e0f194e993e31f5f5de9f927e11b413fd6694ba69f1907054c89892",
     "docs/arch/profile/applicability.md": "b9bb5e1a0402d73367969fa54b60bd8f85a8d30a77d3f4b494b8915c28beea3f",
@@ -17510,7 +17511,7 @@
     "docs/block/operands/B.ASSEMBLE.md": "8b5e3e09ca6e2da2061b4d699b72bc5504b7b15d606c01dc9bed43c461e26a47",
     "docs/block/operands/B.IOR.md": "fba8a0f5e85d3801833956d948cb79fe934bccfa458bca411bc0dab0ad945ff9",
     "docs/block/operands/B.IOS.md": "fc402a95da77bb5af74330546e50ba0cc82b86fca81b3e896d6e34eba13b654f",
-    "docs/block/operands/B.IOT.md": "418e8709ef67bba47a0cdd85e7e5d744f90e14f11e6162355ee1746b5a0778fc",
+    "docs/block/operands/B.IOT.md": "a5548819e8a3637709340cb619a28ac7899645e196b6ce17a76b10125d8773b1",
     "docs/block/operands/B.SUBVIEW.md": "4ad4c3a7cf07bf34d8a75174f4b70dbec8e984c0850414a463a9b05a59b8203b",
     "docs/scalar/agu/C.LDI.md": "2cdeb0ecec2fafe0f7cb16a55d894a53c6efc6f1a1287167bba190e87e072855",
     "docs/scalar/agu/C.LWI.md": "03dc7a0b1e0b3420254f3d0de555f5650917b52b5608553cf7ce001048eca43f",
@@ -18122,7 +18123,7 @@
     "docs/tile/model/shape/rows-columns.md": "de9f5a01121d40c47313aa3f622a642573ec75730ae34d51dead89459c5532e5",
     "docs/tile/model/shape/valid-region.md": "d614988d48438db2612555267a9ff08983900d7358b3cc44dcc6c1790ddbf228",
     "docs/tile/model/state/allocation.md": "90b32619ac0047734b3a1fa2c9f97ba6ec32f394c209e2daf817a41d49447293",
-    "docs/tile/model/state/descriptors.md": "79b4c5ef4f0adab98f5e21abc2e8cc12946d2572ca41910ff4d8790ea3b2ad2a",
+    "docs/tile/model/state/descriptors.md": "0893bccad588c85ca74c86881da3130108a520a543ff83e32ed6c5a5c3203c03",
     "docs/tile/model/state/feature-map-descriptors.md": "8bcf1e829e1658e3e3471008ac2f9e69e42195f4164e06ffee6e91e4ef36d089",
     "docs/tile/model/state/local-registers.md": "8c58d4f8b34d8d2f986f456ccb1424d5db07225eb2fe8ac77c0cbee52e3ab5f9",
     "docs/tile/model/state/shared-registers.md": "eeaa25015fd70c3d5228afa1c5f88aadfdb4dbe199ca1a5f2747320bb91017ce",
@@ -18242,7 +18243,7 @@
     "tests/asl/arch/features/mx-formats/arch-static-mx-formats-contract-001.asl": "e2cc6dac92985fab4e817e325de7276a4b12df3e8cbcfdbf36bd39feb59a5231",
     "tests/asl/arch/features/predication/arch-static-predication-contract-001.asl": "a7e5fc50fc0bc49f6ef6acd07bf03721e844b3366e538ba21290d17c43c93a51",
     "tests/asl/arch/features/shared-tile-state/arch-static-shared-tile-state-contract-001.asl": "60415cb0ae49dfdd41fd3fbecb59ccf58a42c4a81be250cbdbdd784ffb0f1328",
-    "tests/asl/arch/features/tile-allocation/arch-bound-tile-sizecode-map-002.asl": "53bf9e2dc8fe1ae7a21b12cd8a44a8caaba082e85b673a30b4e5f1fc5e60faca",
+    "tests/asl/arch/features/tile-allocation/arch-bound-tile-sizecode-map-002.asl": "18ebe3432213ce4d36660ca51ec1a8e3141cc6914272291ac756b07d8ea44db2",
     "tests/asl/arch/features/tile-allocation/arch-state-allocation-lifecycle-001.asl": "873cd964c7ef99c2594c7a9a2bea93b89e00c502b8e29056041e7b037865149f",
     "tests/asl/arch/features/tile-allocation/arch-static-tile-allocation-contract-001.asl": "fd4f06e6a0cf9b114880651be2ddb3cf0db6f5ca52ea68fcbee22792de5f3d3f",
     "tests/asl/arch/memory-model/address-space/arch-static-address-space-contract-001.asl": "a7e74bf7d9cdd980710e50f02da4a461e67160e0444569f713ffc3a628a81a0e",
@@ -18539,6 +18540,7 @@
     "tests/asl/block/execution/BSTART.TPREFETCH/block-exec-bstart-tprefetch-packed-001.asl": "c021f47ab702000dbc6179a6de8ac45c3719c72706b615bdf5f3760e8bc56886",
     "tests/asl/block/execution/BSTART.TPREFETCH/block-fault-bstart-tprefetch-range-preflight-001.asl": "c3941e63962c2afea6609731b441cc6606ae1b745b7feeb06e1597e578c64982",
     "tests/asl/block/execution/BSTART.TSTORE/block-bound-bstart-tstore-mask-001.asl": "f97884edc1de476bff3aef181988d38697614deecacddf5758647491e12ef92e",
+    "tests/asl/block/execution/BSTART.TSTORE/block-bound-bstart-tstore-shape-001.asl": "6b3475bfe6ee08a829e9039a5878c767c7a5faa41f965f98692f52a80c083ee3",
     "tests/asl/block/execution/BSTART.TSTORE/block-decode-bstart-tstore-canonical-001.asl": "5639387e4ef77e43998432976c8701818c670d12c38755ecd3f66ecf16780326",
     "tests/asl/block/execution/BSTART.TSTORE/block-decode-bstart-tstore-forms-001.asl": "56638b7d38beb48b5db37e2ca15de90b667aa2747d0e5a89545e3f5e5894d833",
     "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-cube-002.asl": "a00c3e8459d6f2b99ebff07dde08aa32276928ccf228b64588965c95d58d155b",
@@ -18546,7 +18548,6 @@
     "tests/asl/block/execution/BSTART.TSTORE/block-exec-bstart-tstore-stride-001.asl": "03cfc4310adad44671590fbcf4b2a46d2222124fbeee92a869b6b62459161ec9",
     "tests/asl/block/execution/BSTART.TSTORE/block-fault-bstart-tstore-cube-access-003.asl": "302b724cf0edf0a0bf3af81e7372bba87e86894caddfb9e8764d994408bb2b4f",
     "tests/asl/block/execution/BSTART.TSTORE/block-fault-bstart-tstore-cube-descriptor-004.asl": "e0926389e8fe6955db9c4bfc51c733a111fe718432d35ae68c5f2f3917514b54",
-    "tests/asl/block/execution/BSTART.TSTORE/block-fault-bstart-tstore-shape-001.asl": "3d7297325523b94b5fe7c8042d23e4164ca81cd0f09adc3f6e17846119fa5788",
     "tests/asl/block/execution/BSTART.TSTORE/block-state-bstart-tstore-undef-001.asl": "a4867f0d21fd474b120f8c58d2e6d8088b5bdbe605df0da116b2bee52e87f65b",
     "tests/asl/block/execution/BSTART.VEC/block-bound-bstart-vec-engine-001.asl": "5bba040e6998aa7093c6795c0d347ddfda885d447a22eb6daf3f4b90cc55ecae",
     "tests/asl/block/execution/BSTART.VEC/block-decode-bstart-vec-canonical-001.asl": "4087c1972ea2bfdd73ef43588218e320255807f1192d1a03b4ed0d2e9c151d3b",
@@ -19084,7 +19085,7 @@
     "tests/asl/block/operands/B.IOT/block-exec-b-iot-pemode-004.asl": "2a852f000046410e182a7f8f4ac641ecc6a6eaf727d77b91de41157fa009ee7c",
     "tests/asl/block/operands/B.IOT/block-exec-b-iot-sizecode-010-001.asl": "ceb286dab40fa043743de1ce85673b4a52115bc5c88796ec3179704aa8166bee",
     "tests/asl/block/operands/B.IOT/block-exec-b-iot-sizecode-012-001.asl": "b9734285fb960e5f6511532af4aec77369a0250a66f0d70f44d82d96fe8e4f45",
-    "tests/asl/block/operands/B.IOT/block-exec-b-iot-sizecodes-002.asl": "0442e6adc14d9d4c2fa5ed831a1e7776bc9406e0805fabde4fc8c13f21d1090b",
+    "tests/asl/block/operands/B.IOT/block-exec-b-iot-sizecodes-002.asl": "3d23dcfede40d2336bcfff764b1f77cd0f8af6f5fceef8d4f381c908a9081849",
     "tests/asl/block/operands/B.IOT/block-exec-b-iot-tile-binding-v-5-schemas-001.asl": "e6b4cc21b1d53a85a3b7c47d4b56dcb4b012033a65b91cd09c330f4b9077baea",
     "tests/asl/block/operands/B.IOT/block-exec-b-iot-zero-mask-001.asl": "7311af3c5c72ab362759b3c8851c97515a3c0eda41a611294ea94f010e340ec1",
     "tests/asl/block/operands/B.IOT/block-fault-b-iot-last-order-001.asl": "5de9a502195bd2038851e97004689d4d1ed3340e74a2f5e534a9c04518ce4689",
@@ -21755,7 +21756,7 @@
     "tests/asl/tile/model/state/allocation/tile-fault-cube-reconfigure-002.asl": "999f9b2a27e09baa81fb27ec6934947e9987f32880125c88d818fa06fb07d5ac",
     "tests/asl/tile/model/state/allocation/tile-state-cube-allocate-001.asl": "98b1a87c3736c35aec627bd9249037ac3ebdd39f43949bd6ece2634e71c95f28",
     "tests/asl/tile/model/state/allocation/tile-static-allocation-contract-001.asl": "237cdbc4a7da29afbe3ab57e7911c10f8a08f281941ae2fbcf262149e01afec7",
-    "tests/asl/tile/model/state/descriptors/tile-bound-sizecode-shape-002.asl": "570cb8302e3e96a66ab1eff42506795ce6c69dce328da649a69812babcbbf36a",
+    "tests/asl/tile/model/state/descriptors/tile-bound-sizecode-shape-002.asl": "d25e9b01d4310aee042c8c94c0ee766483f5cdf0ec79dac2619c17f233db5e67",
     "tests/asl/tile/model/state/descriptors/tile-static-descriptors-contract-001.asl": "c5c90ff7d4d7a937efbd4edb2e0acfd30ab1d3e262f3458dc06c52ebe1082534",
     "tests/asl/tile/model/state/feature-map-descriptors/tile-state-feature-map-001.asl": "1bd4c7eb7a61c13c42bccfc87aadbb8796ba6aed8bf11331e65606a27d98984d",
     "tests/asl/tile/model/state/feature-map-descriptors/tile-static-feature-map-descriptors-contract-001.asl": "970da5886027d6fee3b96b256f13fb762e7c457c9ee06c6a42f395f1c0a447ee",
@@ -30589,7 +30590,7 @@
       "requirements": [
         "PTO-TILE-CAPACITY-PER-PE"
       ],
-      "sha256": "53bf9e2dc8fe1ae7a21b12cd8a44a8caaba082e85b673a30b4e5f1fc5e60faca",
+      "sha256": "18ebe3432213ce4d36660ca51ec1a8e3141cc6914272291ac756b07d8ea44db2",
       "source": "asl/arch/features/tile-allocation.asl"
     },
     {
@@ -31633,7 +31634,7 @@
       "requirements": [
         "PTO-INST-BLOCK-B-IOT"
       ],
-      "sha256": "0442e6adc14d9d4c2fa5ed831a1e7776bc9406e0805fabde4fc8c13f21d1090b",
+      "sha256": "3d23dcfede40d2336bcfff764b1f77cd0f8af6f5fceef8d4f381c908a9081849",
       "source": "asl/block/operands/B.IOT.asl"
     },
     {
@@ -38732,12 +38733,13 @@
     },
     {
       "id": "PTO-AVS-BLOCK-TSTORE-SHAPE-001",
-      "kind": "fault",
-      "path": "tests/asl/block/execution/BSTART.TSTORE/block-fault-bstart-tstore-shape-001.asl",
+      "kind": "boundary",
+      "path": "tests/asl/block/execution/BSTART.TSTORE/block-bound-bstart-tstore-shape-001.asl",
       "requirements": [
+        "PTO-B-SHARED-WHOLE-PARENT-READY-001",
         "PTO-INST-BLOCK-BSTART-TSTORE"
       ],
-      "sha256": "3d7297325523b94b5fe7c8042d23e4164ca81cd0f09adc3f6e17846119fa5788",
+      "sha256": "6b3475bfe6ee08a829e9039a5878c767c7a5faa41f965f98692f52a80c083ee3",
       "source": "asl/block/execution/BSTART.TSTORE.asl"
     },
     {
@@ -54316,7 +54318,7 @@
       "requirements": [
         "PTO-TILE-CAPACITY-PER-PE"
       ],
-      "sha256": "570cb8302e3e96a66ab1eff42506795ce6c69dce328da649a69812babcbbf36a",
+      "sha256": "d25e9b01d4310aee042c8c94c0ee766483f5cdf0ec79dac2619c17f233db5e67",
       "source": "asl/tile/model/state/descriptors.asl"
     },
     {

@@ -766,7 +766,7 @@
     },
     {
       "path": "asl/block/operands/B.IOT.asl",
-      "sha256": "066dd30914b3fd534e1b4841cce38626f70fa6bc3f278e28e3351622b4c66716"
+      "sha256": "408a302d902ad9f215b7770810cbfbbada81fef9bc7b45c4ce249f918ec03df5"
     },
     {
       "path": "asl/block/operands/B.SUBVIEW.asl",
@@ -3214,7 +3214,7 @@
     },
     {
       "path": "asl/tile/model/state/descriptors.asl",
-      "sha256": "f9de1db84f2a8c25677615f3494af46766d6f28dd125381d5a8fee389024f9c9"
+      "sha256": "c4f6631fb3663fdfd90a2b097e9599f4a65195a41066e7e8a0757ad55266c0d8"
     },
     {
       "path": "asl/tile/model/state/feature-map-descriptors.asl",
@@ -3434,7 +3434,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "66a381ca16094f6615e1d9f2a44243d6a40af20eb681829749db53b6a200c067"
+      "sha256": "bdfe52945405feebc9a8a261176f2af23f0c302729ad3a98b983a79d25fbe37a"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3442,15 +3442,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "d1f925df7093e8f13895fddc674892cadca9206a26c358cc0137a9de40ffa85b"
+      "sha256": "0ad4802374aecdab5b9e51cb751c8d0c9f5bf8790fc90087ceb6f90174594c7d"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "717719cf586cc2de418a5710ef1140775a2b80cb14f0ed0d64cf4f9b73cdef39"
+      "sha256": "2e6c1186f1dd599d25a2b30a4be1649741d523348a9d36d7a585f36a9ccb2ea7"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "1384978aa3424f4b1d299120884e177ef48c240fabcab8c435d722bd2ca6e18f"
+      "sha256": "97304fc20c80b40a82e7e432d0b7aa075540335b307c8bd5be30416a969a21de"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3496,7 +3496,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "0969ddc8ba1a7188a7fded374f3963fff0173783e367abe5eab45a3571e02173",
+  "content_sha256": "ad74fca3f1962731866dfe8a8c6dec4774084b91f918fae135cc9608ddecdeca",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3743,7 +3743,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/overview/architecture.md",
-      "sha256": "9cd5d1cf8f49b5850bc826664a126a5fbd943f4161899b7bf85783ccc83d6dfd"
+      "sha256": "da241b587e29bb555c828bb81f7605414bf850cc1880259aa1c608fa225b7428"
     },
     {
       "kind": "generated-documentation",
@@ -4483,7 +4483,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/operands/B.IOT.md",
-      "sha256": "418e8709ef67bba47a0cdd85e7e5d744f90e14f11e6162355ee1746b5a0778fc"
+      "sha256": "a5548819e8a3637709340cb619a28ac7899645e196b6ce17a76b10125d8773b1"
     },
     {
       "kind": "generated-documentation",
@@ -7543,7 +7543,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/descriptors.md",
-      "sha256": "79b4c5ef4f0adab98f5e21abc2e8cc12946d2572ca41910ff4d8790ea3b2ad2a"
+      "sha256": "0893bccad588c85ca74c86881da3130108a520a543ff83e32ed6c5a5c3203c03"
     },
     {
       "kind": "generated-documentation",
@@ -8549,7 +8549,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-B-IOT",
-        "sha256": "cd1ef59a9677c34a03436c266ac83d20356df90ab2e32ea753eea29a4149866c"
+        "sha256": "c64ac4985cf1e6edffe25ec8d0235b0b669e29db830142eb0150c74884733a0b"
       },
       {
         "id": "PTO-INST-BLOCK-B-SUBVIEW",

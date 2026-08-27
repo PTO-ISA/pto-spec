@@ -19986,6 +19986,7 @@
         "PTO-AVS-BLOCK-SUBVIEW-SHARED-001",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-WAIT-002",
         "PTO-AVS-BLOCK-TMOV-PUBLISH-001",
+        "PTO-AVS-BLOCK-TSTORE-SHAPE-001",
         "PTO-AVS-BLOCK-TSTORE-UNDEF-001",
         "PTO-AVS-TILE-CUBE-SHARED-REJECT-001",
         "PTO-AVS-TILE-MODEL-MEMORY-SHARED-MOVEMENT-STATIC-001",
@@ -20933,7 +20934,7 @@
   "sources": {
     "adr_records": {
       "count": 102,
-      "sha256": "7aa31d26e0c7246125d3ec4029afaafea7836a935505a97cc2c6a99a26a252f7"
+      "sha256": "c4e4588b5e345cfcf0bc57c21aa8a6fb5a74f36b6844e610c9de11f28715f082"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -20941,7 +20942,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "1384978aa3424f4b1d299120884e177ef48c240fabcab8c435d722bd2ca6e18f",
+      "sha256": "97304fc20c80b40a82e7e432d0b7aa075540335b307c8bd5be30416a969a21de",
       "test_count": 3707,
       "unit_count": 850
     }
