@@ -23,6 +23,8 @@ import type {
   PtoNdfOwnerRoute,
   PtoNdfGraphData,
   PtoNdfIndexPageData,
+  PtoNavigationData,
+  PtoNavigationNode,
   PtoReleaseIdentity,
   PtoSemanticExecution,
   PtoSemanticIdentity,
@@ -1982,6 +1984,190 @@ function instructionIndexData(
   return {release, entries};
 }
 
+interface NavigationLeafInput {
+  id: string;
+  label: string;
+  kind: 'unit' | 'ndf' | 'adr';
+  route: string;
+  segments: string[];
+}
+
+function humanizeNavigationSegment(value: string): string {
+  const acronyms = new Set(['adr', 'agu', 'alu', 'amo', 'asl', 'avs', 'bru', 'fsu', 'ndf', 'sys']);
+  return value
+    .split('-')
+    .filter(Boolean)
+    .map((word, index) => {
+      const lower = word.toLocaleLowerCase();
+      if (acronyms.has(lower)) return lower.toLocaleUpperCase();
+      return index === 0 ? lower[0].toLocaleUpperCase() + lower.slice(1) : lower;
+    })
+    .join(' ');
+}
+
+function navigationLeaf(entry: NavigationLeafInput): PtoNavigationNode {
+  return {
+    id: `${entry.kind}:${entry.id}`,
+    label: entry.label,
+    kind: entry.kind,
+    route: entry.route,
+    count: null,
+    children: [],
+  };
+}
+
+function navigationLeafCount(node: PtoNavigationNode): number {
+  return node.kind === 'branch'
+    ? node.children.reduce((total, child) => total + navigationLeafCount(child), 0)
+    : 1;
+}
+
+function navigationBranch(
+  id: string,
+  label: string,
+  route: string | null,
+  children: PtoNavigationNode[],
+): PtoNavigationNode {
+  const node: PtoNavigationNode = {id, label, kind: 'branch', route, count: 0, children};
+  node.count = navigationLeafCount(node);
+  return node;
+}
+
+function navigationPage(id: string, label: string, route: string): PtoNavigationNode {
+  return {id, label, kind: 'page', route, count: null, children: []};
+}
+
+function navigationHierarchyChildren(
+  prefix: string,
+  entries: NavigationLeafInput[],
+  depth = 0,
+): PtoNavigationNode[] {
+  const direct = entries
+    .filter((entry) => entry.segments.length <= depth)
+    .sort((left, right) => left.label.localeCompare(right.label) || left.id.localeCompare(right.id))
+    .map(navigationLeaf);
+  const grouped = new Map<string, NavigationLeafInput[]>();
+  for (const entry of entries) {
+    const segment = entry.segments[depth];
+    if (segment === undefined) continue;
+    grouped.set(segment, [...(grouped.get(segment) ?? []), entry]);
+  }
+  const branches = [...grouped.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([segment, children]) => navigationBranch(
+      `${prefix}:${segment}`,
+      humanizeNavigationSegment(segment),
+      null,
+      navigationHierarchyChildren(`${prefix}:${segment}`, children, depth + 1),
+    ));
+  return [...branches, ...direct];
+}
+
+function navigationData(
+  context: LoadContext,
+  content: LoadedPtoContent,
+): PtoNavigationData {
+  const chinese = context.i18n.currentLocale === 'zh-CN';
+  const localePath = (route: string): string => localizedRoute(context, route);
+  const unitEntries = (surface: 'arch' | 'scalar' | 'block' | 'tile'): NavigationLeafInput[] =>
+    content.units
+      .filter(({data}) => String(data.unit.surface ?? data.metadata.surface) === surface)
+      .map(({data, route}) => {
+        const classification = Array.isArray(data.unit.classification)
+          ? data.unit.classification.filter((value): value is string => typeof value === 'string')
+          : [];
+        const mnemonic = typeof data.unit.mnemonic === 'string' ? data.unit.mnemonic : null;
+        const unitId = String(data.unit.id ?? data.metadata.id);
+        return {
+          id: unitId,
+          label: mnemonic ?? unitId,
+          kind: 'unit',
+          route: localePath(route),
+          segments: classification.length > 0 ? classification : ['other'],
+        };
+      });
+  const architecture = navigationBranch(
+    'architecture',
+    chinese ? '架构' : 'Architecture',
+    localePath('/architecture/'),
+    navigationHierarchyChildren('architecture', unitEntries('arch')),
+  );
+  const surface = (name: 'scalar' | 'block' | 'tile'): PtoNavigationNode => navigationBranch(
+    name,
+    name[0].toLocaleUpperCase() + name.slice(1),
+    localePath(`/instructions/?surface=${name}`),
+    navigationHierarchyChildren(`instructions:${name}`, unitEntries(name)),
+  );
+  const instructions = navigationBranch(
+    'instructions',
+    chinese ? '指令与执行单元' : 'Instructions and execution units',
+    localePath('/instructions/'),
+    [surface('scalar'), surface('block'), surface('tile')],
+  );
+  const ndfEntries: NavigationLeafInput[] = content.ndfCatalog.entries.map((entry) => ({
+    id: entry.id,
+    label: entry.id,
+    kind: 'ndf',
+    route: entry.route,
+    segments: [entry.layer, entry.kind, entry.level],
+  }));
+  const ndf = navigationBranch(
+    'ndf',
+    'NDF',
+    localePath('/ndf/'),
+    navigationHierarchyChildren('ndf', ndfEntries),
+  );
+  const adrEntries: NavigationLeafInput[] = content.search.entries
+    .filter((entry) => entry.kind === 'adr')
+    .map((entry) => ({
+      id: entry.id,
+      label: entry.label.startsWith(entry.id) ? entry.label : `${entry.id} · ${entry.label}`,
+      kind: 'adr',
+      route: entry.url,
+      segments: [],
+    }));
+  const decisions = navigationBranch(
+    'decisions',
+    chinese ? 'Decision / ADR' : 'Decisions / ADR',
+    localePath('/reference/governance/adr-process/'),
+    navigationHierarchyChildren('decisions', adrEntries),
+  );
+  const records = navigationBranch(
+    'records',
+    chinese ? '规范记录' : 'Specification records',
+    null,
+    [
+      ndf,
+      navigationPage('ndf-explorer', chinese ? 'NDF 关系图' : 'NDF graph', localePath('/explore/ndf/')),
+      decisions,
+    ],
+  );
+  const project = navigationBranch(
+    'project',
+    chinese ? '项目' : 'Project',
+    null,
+    [
+      navigationPage('getting-started', chinese ? '开始使用' : 'Getting started', localePath('/reference/development/getting-started/')),
+      navigationPage('repository-layout', chinese ? '仓库结构' : 'Repository layout', localePath('/reference/development/repository-layout/')),
+      navigationPage('adr-process', chinese ? 'ADR 流程' : 'ADR process', localePath('/reference/governance/adr-process/')),
+      navigationPage('validation', chinese ? '验证流程' : 'Validation', localePath('/reference/governance/validation/')),
+      navigationPage('releases', chinese ? '发布记录' : 'Releases', localePath('/reference/releases/')),
+    ],
+  );
+  const sections = [
+    navigationPage('home', chinese ? '首页' : 'Home', localePath('/')),
+    architecture,
+    instructions,
+    records,
+    project,
+    navigationPage('search', chinese ? '搜索' : 'Search', localePath('/search/')),
+  ];
+  return {
+    totalLeaves: sections.reduce((total, section) => total + navigationLeafCount(section), 0),
+    sections,
+  };
+}
+
 function ndfCatalogData(
   root: string,
   context: LoadContext,
@@ -2952,6 +3138,7 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         release: content.release,
         surfaceCounts,
         recordCounts,
+        navigation: navigationData(context, content),
       });
       const unitModules = await Promise.all(
         content.units.map(async (unit, index) => {

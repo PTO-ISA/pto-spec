@@ -1,4 +1,4 @@
-import React, {type ReactNode} from 'react';
+import React, {type ReactNode, useRef, useState} from 'react';
 import Layout from '@theme/Layout';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import SpecNavigation from './SpecNavigation';
@@ -17,18 +17,35 @@ export default function PortalShell({
 }): React.JSX.Element {
   const {i18n} = useDocusaurusContext();
   const chinese = i18n.currentLocale === 'zh-CN';
+  const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false);
+  const mobileToggle = useRef<HTMLButtonElement>(null);
+  const closeMobileNavigation = (): void => {
+    setMobileNavigationOpen(false);
+    mobileToggle.current?.focus();
+  };
   return (
     <Layout title={title} description={description}>
       <div className={styles.shell}>
-        <aside className={styles.desktopRail} aria-label={chinese ? '左侧规范导航' : 'Left specification navigation'}>
-          <SpecNavigation currentPageLabel={currentPageLabel ?? title} />
-        </aside>
-        <div className={styles.mobileNavigation}>
-          <details>
-            <summary>{chinese ? '浏览规范' : 'Browse specification'}</summary>
+        <aside className={styles.navigationRail} aria-label={chinese ? '左侧规范导航' : 'Left specification navigation'}>
+          <button
+            ref={mobileToggle}
+            className={styles.mobileNavigationToggle}
+            type="button"
+            aria-controls="pto-specification-navigation"
+            aria-expanded={mobileNavigationOpen}
+            onClick={() => setMobileNavigationOpen((open) => !open)}>
+            {chinese ? '浏览规范' : 'Browse specification'}
+          </button>
+          <div
+            id="pto-specification-navigation"
+            className={styles.navigationPanel}
+            data-mobile-open={mobileNavigationOpen ? 'true' : 'false'}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') closeMobileNavigation();
+            }}>
             <SpecNavigation currentPageLabel={currentPageLabel ?? title} />
-          </details>
-        </div>
+          </div>
+        </aside>
         <div className={styles.content}>{children}</div>
       </div>
     </Layout>
