@@ -1,12 +1,12 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Head from '@docusaurus/Head';
-import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import Translate, {translate} from '@docusaurus/Translate';
 import {usePluginData} from '@docusaurus/useGlobalData';
 import type {PtoReleaseIdentity} from '@site/src/types/pto';
 import {useLocalizedPath} from '@site/src/components/releasePresentation';
+import PortalShell from '@site/src/components/PortalShell';
 
 import styles from './index.module.css';
 
@@ -54,7 +54,7 @@ const surfaceIntroductions: SurfaceIntroduction[] = [
         AGU · ALU · AMO · BRU · FSU · SYS
       </Translate>
     ),
-    to: '/search/?kind=asl&surface=scalar',
+    to: '/instructions/?surface=scalar',
     action: <Translate id="homepage.surface.scalar.action">Browse Scalar units</Translate>,
   },
   {
@@ -71,7 +71,7 @@ const surfaceIntroductions: SurfaceIntroduction[] = [
         Lifecycle · Execution · Attributes · Operands · Encoding
       </Translate>
     ),
-    to: '/search/?kind=asl&surface=block',
+    to: '/instructions/?surface=block',
     action: <Translate id="homepage.surface.block.action">Browse Block units</Translate>,
   },
   {
@@ -88,7 +88,7 @@ const surfaceIntroductions: SurfaceIntroduction[] = [
         Elementwise · Reduce/expand · Layout · Matrix · Memory/data movement
       </Translate>
     ),
-    to: '/search/?kind=asl&surface=tile',
+    to: '/instructions/?surface=tile',
     action: <Translate id="homepage.surface.tile.action">Browse Tile units</Translate>,
   },
 ];
@@ -134,13 +134,14 @@ function Home(): ReactNode {
   ) as PtoPluginData;
   const releaseUrl = `${REPOSITORY_URL}/releases/tag/${release.tag}`;
   const architectureRoute = useLocalizedPath(
-    '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/',
+    '/architecture/',
   );
 
   return (
-    <Layout
-      title={`${release.tag} PTO Architecture`}
-      description="Read the PTO Architecture, Scalar, Block, and Tile surfaces, then trace ADR and NDF records to exact released sources.">
+    <PortalShell
+      title={`${release.tag} Architecture`}
+      description="Read the Architecture, Scalar, Block, and Tile surfaces, then trace ADR and NDF records to exact released sources."
+      currentPageLabel={translate({id: 'portal.current.home', message: 'Home'})}>
       <Head>
         <meta property="og:type" content="website" />
       </Head>
@@ -153,7 +154,7 @@ function Home(): ReactNode {
                 {release.releaseEligible ? (
                   <Translate id="homepage.release.status">Latest verified release</Translate>
                 ) : (
-                  <Translate id="homepage.release.previewStatus">Unpublished release preview</Translate>
+                  <Translate id="homepage.release.candidateStatus">Release candidate</Translate>
                 )}
               </span>
               <a href={releaseUrl}>{release.tag}</a>
@@ -174,7 +175,7 @@ function Home(): ReactNode {
               <div>
                 <p className={styles.kicker}>PTO ISA / FORMAL SPECIFICATION</p>
                 <h1>
-                  <Translate id="homepage.hero.title">PTO Architecture</Translate>
+                  <Translate id="homepage.hero.title">Architecture</Translate>
                 </h1>
                 <p className={styles.lede}>
                   <Translate id="homepage.hero.subtitle">
@@ -300,7 +301,7 @@ function Home(): ReactNode {
                   NDF identities are embedded in their owning ASL sources. The explorer connects clauses to owners, tests, and ADR history without inventing new semantics.
                 </Translate>
               </p>
-              <Link to="/explore/ndf/">
+              <Link to="/ndf/">
                 <Translate id="homepage.records.ndf.action">Explore NDF relationships →</Translate>
               </Link>
             </article>
@@ -331,7 +332,7 @@ function Home(): ReactNode {
           </div>
         </section>
       </main>
-    </Layout>
+    </PortalShell>
   );
 }
 

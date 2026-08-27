@@ -5,6 +5,8 @@ import path from 'node:path';
 import type {LoadContext, Plugin} from '@docusaurus/types';
 import type {
   PtoAdrRecord,
+  PtoArchitectureGuide,
+  PtoArchitectureOwnerProjection,
   PtoArtifactEvidence,
   PtoDocumentationIdentity,
   PtoGraphEdge,
@@ -12,10 +14,18 @@ import type {
   PtoGraphNode,
   PtoGraphNodeKind,
   PtoJsonValue,
+  PtoInstructionComposition,
+  PtoInstructionIndexData,
+  PtoHighLevelAssembly,
   PtoNdfClause,
+  PtoNdfCatalogData,
+  PtoNdfDetailData,
+  PtoNdfOwnerRoute,
   PtoNdfGraphData,
   PtoNdfIndexPageData,
   PtoReleaseIdentity,
+  PtoSemanticExecution,
+  PtoSemanticIdentity,
   PtoReaderGuide,
   PtoReaderGuideBlock,
   PtoReaderGuideOwnerLink,
@@ -28,6 +38,7 @@ import type {
   PtoUnitEncoding,
   PtoUnitWorkbenchData,
 } from '../../src/types/pto';
+import {legacyReferenceRoute, unitRoute} from './routes';
 
 const TLOAD_ROUTE =
   '/instructions/tile/memory-and-data-movement/regular/TLOAD/';
@@ -91,7 +102,107 @@ interface LoadedPtoContent {
   graph: PtoNdfGraphData;
   search: PtoSearchData;
   ndfIndexPages: PtoNdfIndexPageData[];
+  adrDecisions: Record<string, PtoReaderNode[]>;
+  instructionIndex: PtoInstructionIndexData;
+  ndfCatalog: PtoNdfCatalogData;
+  ndfDetails: PtoNdfDetailData[];
 }
+
+interface ArchitectureTopicDefinition {
+  id: string;
+  label: {en: string; 'zh-CN': string};
+  primary: string;
+  boundaryOwner?: string;
+  related: Array<{id: string; label: {en: string; 'zh-CN': string}}>;
+}
+
+const ARCHITECTURE_ENTRY = 'PTO-ARCH-OVERVIEW-ARCHITECTURE';
+
+const ARCHITECTURE_TOPICS: ArchitectureTopicDefinition[] = [
+  {
+    id: 'execution-model',
+    label: {en: 'Programming and execution model', 'zh-CN': '编程与执行模型'},
+    primary: 'PTO-ARCH-DISPATCH-TOP-LEVEL',
+    boundaryOwner: 'PTO-ARCH-DISPATCH-TOP-LEVEL',
+    related: [
+      {id: 'PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION', label: {en: 'Instruction classes and Tile engines', 'zh-CN': '指令分类与 Tile 执行引擎'}},
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY', label: {en: 'Core and PE topology', 'zh-CN': 'Core 与 PE 拓扑'}},
+      {id: 'PTO-BLOCK-BSTART', label: {en: 'Block/bundle start and completion boundary', 'zh-CN': 'Block/bundle 开始与完成边界'}},
+      {id: 'PTO-TILE-TLOAD', label: {en: 'Source-backed Tile bundle example', 'zh-CN': '源对齐的 Tile bundle 示例'}},
+    ],
+  },
+  {
+    id: 'architectural-state',
+    label: {en: 'Architectural state', 'zh-CN': '架构状态'},
+    primary: 'PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT',
+    related: [
+      {id: 'PTO-ARCH-STATE-DEFINEDNESS', label: {en: 'Definedness boundary', 'zh-CN': 'Definedness 边界'}},
+      {id: 'PTO-ARCH-STATE-PROGRAM-COUNTER', label: {en: 'Program-control state', 'zh-CN': '程序控制状态'}},
+      {id: 'PTO-ARCH-STATE-TRAP-CONTEXT', label: {en: 'Saved trap context', 'zh-CN': '保存的 trap context'}},
+      {id: 'PTO-ARCH-GQM', label: {en: 'General queue state', 'zh-CN': '通用队列状态'}},
+    ],
+  },
+  {
+    id: 'registers',
+    label: {en: 'Registers and Tile storage', 'zh-CN': '寄存器与 Tile 存储'},
+    primary: 'PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY',
+    related: [
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS', label: {en: 'PE-private GPRs', 'zh-CN': 'PE 私有 GPR'}},
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-PREDICATE-REGISTERS', label: {en: 'Predicate registers', 'zh-CN': 'Predicate 寄存器'}},
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-TILE-REGISTERS', label: {en: 'Local Tile registers', 'zh-CN': 'Local Tile 寄存器'}},
+      {id: 'PTO-ARCH-PROGRAMMING-MODEL-SHARED-TILE-REGISTERS', label: {en: 'Shared Tile registers', 'zh-CN': 'Shared Tile 寄存器'}},
+      {id: 'PTO-ARCH-DATA-TYPES-SYSTEM-REGISTERS', label: {en: 'System-register namespace', 'zh-CN': 'System register 命名空间'}},
+    ],
+  },
+  {
+    id: 'memory-model',
+    label: {en: 'Memory model', 'zh-CN': '内存模型'},
+    primary: 'PTO-ARCH-MEMORY-MODEL-ORDERING',
+    related: [
+      {id: 'PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE', label: {en: 'Address space', 'zh-CN': '地址空间'}},
+      {id: 'PTO-ARCH-MEMORY-MODEL-GLOBAL-MEMORY-ACCESS', label: {en: 'Global Memory access', 'zh-CN': 'Global Memory 访问'}},
+      {id: 'PTO-ARCH-MEMORY-MODEL-MEMORY-EVENTS', label: {en: 'Memory events', 'zh-CN': 'Memory event'}},
+      {id: 'PTO-ARCH-MEMORY-MODEL-ATOMICITY', label: {en: 'Atomicity and coherence', 'zh-CN': 'Atomicity 与 coherence'}},
+      {id: 'PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION', label: {en: 'Memory fault precision', 'zh-CN': '内存 fault 精确性'}},
+    ],
+  },
+  {
+    id: 'types-and-shape',
+    label: {en: 'Types and shape model', 'zh-CN': '类型与 shape 模型'},
+    primary: 'PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES',
+    boundaryOwner: 'PTO-ARCH-PROGRAMMING-MODEL-TILE-REGISTERS',
+    related: [
+      {id: 'PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR', label: {en: 'Format descriptors', 'zh-CN': 'Format descriptor'}},
+      {id: 'PTO-ARCH-STATE-TILE-DESCRIPTOR', label: {en: 'Tile descriptor state', 'zh-CN': 'Tile descriptor 状态'}},
+      {id: 'PTO-ARCH-FEATURES-TILE-ALLOCATION', label: {en: 'Tile allocation and capacity', 'zh-CN': 'Tile allocation 与容量'}},
+      {id: 'PTO-BLOCK-B-DIM', label: {en: 'B.DIM dimensions', 'zh-CN': 'B.DIM 维度'}},
+      {id: 'PTO-TILE-TLOAD', label: {en: 'TLOAD shape consumer', 'zh-CN': 'TLOAD shape 消费者'}},
+    ],
+  },
+  {
+    id: 'faults',
+    label: {en: 'Faults, exceptions, and diagnostics', 'zh-CN': 'Fault、exception 与 diagnostic'},
+    primary: 'PTO-ARCH-MEMORY-MODEL-FAULT-PRECISION',
+    boundaryOwner: 'PTO-ARCH-DATA-TYPES-FAULT',
+    related: [
+      {id: 'PTO-ARCH-DATA-TYPES-FAULT', label: {en: 'Fault identities', 'zh-CN': 'Fault 标识'}},
+      {id: 'PTO-ARCH-STATE-TRAP-CONTEXT', label: {en: 'Trap context state', 'zh-CN': 'Trap context 状态'}},
+      {id: 'PTO-ARCH-PROFILE-TRAP-CONTEXT-RECOVERY', label: {en: 'Trap recovery profile path', 'zh-CN': 'Trap recovery profile 路径'}},
+    ],
+  },
+  {
+    id: 'versioning',
+    label: {en: 'Version and compatibility', 'zh-CN': '版本与兼容性'},
+    primary: 'PTO-ARCH-OVERVIEW-ARCHITECTURE',
+    boundaryOwner: 'PTO-ARCH-PROFILE-APPLICABILITY',
+    related: [
+      {id: 'PTO-ARCH-PROFILE-APPLICABILITY', label: {en: 'Profile applicability', 'zh-CN': 'Profile 适用性'}},
+      {id: 'PTO-ARCH-PROFILE-REFERENCE-PROFILE', label: {en: 'PTO v0 reference profile', 'zh-CN': 'PTO v0 reference profile'}},
+      {id: 'PTO-ARCH-PROFILE-EXTENSION-FIRST-USE', label: {en: 'Extension first-use policy', 'zh-CN': '扩展首次使用策略'}},
+      {id: 'PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION', label: {en: 'Compatibility aliases', 'zh-CN': '兼容 alias'}},
+    ],
+  },
+];
 
 interface ReaderPresentationBlock {
   block_id: string;
@@ -337,12 +448,7 @@ export function isCommonMarkFenceClose(line: string, opener: string): boolean {
 }
 
 function referenceRoute(documentationPath: string, locale: string, defaultLocale: string): string {
-  if (!documentationPath.startsWith('docs/') || !documentationPath.endsWith('.md')) {
-    fail(`cannot derive reference route for ${documentationPath}`);
-  }
-  let relative = documentationPath.slice('docs/'.length, -'.md'.length);
-  if (relative.endsWith('/index')) relative = relative.slice(0, -'/index'.length);
-  const route = `/reference/${relative}/`.replace(/\/+/g, '/');
+  const route = legacyReferenceRoute(documentationPath);
   return locale === defaultLocale ? route : `/${locale}${route}`;
 }
 
@@ -598,6 +704,88 @@ function parseReaderGuide(
   return {blocks, sha256: sha256(body)};
 }
 
+function decisionSection(markdown: string, sourcePath: string): string {
+  const normalized = markdown.replace(/\r\n?/g, '\n');
+  const lines = normalized.split('\n');
+  const separators = lines.flatMap((line, index) => line === '---' ? [index] : []);
+  if (separators.length < 2) fail(`${sourcePath} has no complete ADR frontmatter`);
+  const body = lines.slice(separators[1] + 1);
+  const heading = body.findIndex((line) => /^#\s+/.test(line));
+  if (heading < 0) fail(`${sourcePath} has no ADR title heading`);
+  return body.slice(heading + 1).join('\n').trim();
+}
+
+function parseDecisionNodes(
+  root: string,
+  release: PtoReleaseIdentity,
+  sourcePath: string,
+  markdown: string,
+): PtoReaderNode[] {
+  const body = decisionSection(markdown, sourcePath);
+  const lines = body.split('\n');
+  const nodes: PtoReaderNode[] = [];
+  let paragraph: string[] = [];
+  let fence: string[] | null = null;
+  let fenceToken = '';
+  let fenceLanguage: string | null = null;
+  const inline = (value: string): PtoReaderInline[] =>
+    parseReaderInline(root, release.commit, sourcePath, value, 'en', 'en');
+  const flushParagraph = (): void => {
+    if (paragraph.length === 0) return;
+    nodes.push({kind: 'paragraph', children: inline(paragraph.join(' '))});
+    paragraph = [];
+  };
+
+  for (const line of [...lines, '']) {
+    if (fence !== null) {
+      if (isCommonMarkFenceClose(line, fenceToken)) {
+        nodes.push({kind: 'code-block', language: fenceLanguage, text: fence.join('\n')});
+        fence = null;
+        fenceToken = '';
+        fenceLanguage = null;
+      } else {
+        fence.push(line);
+      }
+      continue;
+    }
+    if (/^(?:`{3,}|~{3,})/.test(line.trim())) {
+      flushParagraph();
+      const opening = line.trim().match(/^(`{3,}|~{3,})(.*)$/);
+      if (opening === null) fail(`malformed Decision code fence in ${sourcePath}`);
+      fenceToken = opening[1];
+      fenceLanguage = opening[2].trim() || null;
+      fence = [];
+    } else if (/^\s*(?:[-*+] |\d+[.)] )/.test(line)) {
+      flushParagraph();
+      const ordered = /^\s*\d+[.)] /.test(line);
+      const text = line.replace(/^\s*(?:[-*+] |\d+[.)] )/, '');
+      nodes.push({kind: 'list-item', ordered, children: inline(text)});
+    } else if (line.trimStart().startsWith('|') && line.trimEnd().endsWith('|')) {
+      flushParagraph();
+      if (!/^[\s|:=-]+$/.test(line)) {
+        const cells = line.trim().replace(/^\||\|$/g, '').split('|').map((cell) => inline(cell.trim()));
+        nodes.push({kind: 'table-row', cells});
+      }
+    } else if (!line.trim()) {
+      flushParagraph();
+    } else if (line.trimStart().startsWith('#')) {
+      flushParagraph();
+      const heading = line.match(/^\s*(#{2,6})\s+(.+)$/);
+      if (heading === null) fail(`malformed Decision heading in ${sourcePath}`);
+      nodes.push({kind: 'heading', level: heading[1].length, children: inline(heading[2])});
+    } else if (line.trimStart().startsWith('<!--')) {
+      flushParagraph();
+      if (!line.trimEnd().endsWith('-->')) fail(`unterminated Decision comment in ${sourcePath}`);
+    } else {
+      const renderedSyntax = renderedReaderSyntax(line);
+      if (/<\/?[A-Za-z][^>]*>/.test(renderedSyntax)) fail(`raw HTML is forbidden in ${sourcePath}`);
+      paragraph.push(line);
+    }
+  }
+  if (fence !== null) fail(`unterminated Decision code fence in ${sourcePath}`);
+  return nodes;
+}
+
 function approvedReaderGuides(root: string): {
   acceptedEnglishUnits: Set<string>;
   acceptedTranslations: Map<string, string>;
@@ -847,7 +1035,466 @@ function parseUnitMetadata(
   }
 }
 
-function parseNdfClauses(source: string, sourcePath: string): PtoNdfClause[] {
+interface SiteInstructionProjection {
+  schema: string;
+  unitId: string;
+  ownerSource: string;
+  ownerSourceSha256: string;
+  composition?: unknown;
+  semanticExecution?: unknown;
+}
+
+function loadSiteInstructionProjection(
+  root: string,
+  unit: TraceabilityUnit,
+  ownerSourceText: string,
+): {path: string; data: SiteInstructionProjection} | null {
+  const projectionPath = `docs/site/data/instruction-projections/${unit.id}.json`;
+  if (!existsSync(path.join(root, projectionPath))) return null;
+  const data = readJson<SiteInstructionProjection>(root, projectionPath);
+  if (
+    data.schema !== 'pto.site-instruction-projection.v1' ||
+    data.unitId !== unit.id ||
+    data.ownerSource !== unit.source ||
+    data.ownerSourceSha256 !== sha256(ownerSourceText)
+  ) {
+    fail(`${projectionPath} is stale or bound to the wrong owner`);
+  }
+  return {path: projectionPath, data};
+}
+
+function parseInstructionComposition(
+  value: unknown,
+  sourcePath: string,
+  unitId: string,
+  traceability: TraceabilityData,
+  release: PtoReleaseIdentity,
+): PtoInstructionComposition | null {
+  if (value === undefined || value === null) return null;
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    fail(`${sourcePath} PTO-PAGE-COMPOSITION must be an object`);
+  }
+  const composition = value as PtoInstructionComposition;
+  if (composition.owner !== unitId || !Array.isArray(composition.variants) || composition.variants.length === 0) {
+    fail(`${sourcePath} PTO-PAGE-COMPOSITION owner or variants are invalid`);
+  }
+  const localized = (candidate: unknown, field: string): void => {
+    if (
+      candidate === null ||
+      typeof candidate !== 'object' ||
+      Array.isArray(candidate) ||
+      typeof (candidate as Record<string, unknown>).en !== 'string' ||
+      typeof (candidate as Record<string, unknown>)['zh-CN'] !== 'string' ||
+      !(candidate as Record<string, string>).en.trim() ||
+      !(candidate as Record<string, string>)['zh-CN'].trim()
+    ) {
+      fail(`${sourcePath} PTO-PAGE-COMPOSITION ${field} must contain en and zh-CN`);
+    }
+  };
+  const commandUnits = new Map(
+    traceability.units
+      .filter((candidate) => candidate.mnemonic !== null)
+      .map((candidate) => [candidate.mnemonic!, candidate]),
+  );
+  for (const variant of composition.variants) {
+    if (
+      typeof variant.id !== 'string' ||
+      !Number.isInteger(variant.canonicalMinCommands) ||
+      !Number.isInteger(variant.canonicalMaxCommands) ||
+      variant.canonicalMinCommands < 1 ||
+      variant.canonicalMaxCommands < variant.canonicalMinCommands ||
+      !Array.isArray(variant.minimumSequence) ||
+      variant.minimumSequence.length !== variant.canonicalMinCommands ||
+      !Array.isArray(variant.completeSequence) ||
+      variant.completeSequence.length !== variant.canonicalMaxCommands ||
+      !Array.isArray(variant.relationships) ||
+      !Array.isArray(variant.commands) ||
+      variant.commands.length === 0
+    ) {
+      fail(`${sourcePath} has an invalid PTO-PAGE-COMPOSITION variant`);
+    }
+    localized(variant.label, `${variant.id}.label`);
+    localized(variant.summary, `${variant.id}.summary`);
+    localized(variant.canonicalCommandCount, `${variant.id}.canonicalCommandCount`);
+    variant.relationships.forEach((relationship, index) =>
+      localized(relationship, `${variant.id}.relationships[${index}]`));
+    for (const command of variant.commands) {
+      if (
+        typeof command.mnemonic !== 'string' ||
+        !Number.isInteger(command.minOccurrences) ||
+        !Number.isInteger(command.maxOccurrences) ||
+        command.minOccurrences < 0 ||
+        command.maxOccurrences < command.minOccurrences ||
+        typeof command.repeatable !== 'boolean' ||
+        command.repeatable !== (command.maxOccurrences > 1) ||
+        !['required', 'optional', 'conditional', 'forbidden'].includes(command.requirement) ||
+        !Array.isArray(command.parameters)
+      ) {
+        fail(`${sourcePath} has an invalid PTO-PAGE-COMPOSITION command`);
+      }
+      localized(command.role, `${variant.id}.${command.mnemonic}.role`);
+      for (const [index, parameter] of command.parameters.entries()) {
+        if (typeof parameter.name !== 'string' || !parameter.name.trim()) {
+          fail(`${sourcePath} has an invalid ${variant.id}.${command.mnemonic} parameter`);
+        }
+        localized(parameter.meaning, `${variant.id}.${command.mnemonic}.parameters[${index}].meaning`);
+        if (parameter.omission !== undefined) {
+          localized(parameter.omission, `${variant.id}.${command.mnemonic}.parameters[${index}].omission`);
+        }
+      }
+      const referenceUnit = commandUnits.get(command.mnemonic);
+      if (referenceUnit === undefined) {
+        fail(`${sourcePath} composition command has no owning unit: ${command.mnemonic}`);
+      }
+      command.reference = {
+        id: referenceUnit.id,
+        route: unitRoute(referenceUnit),
+        sourcePath: referenceUnit.source,
+        sourceUrl: sourceUrl(release.commit, referenceUnit.source),
+      };
+    }
+    const sequenceLines = [...variant.minimumSequence, ...variant.completeSequence];
+    for (const line of sequenceLines) {
+      if (
+        typeof line !== 'string' ||
+        !variant.commands.some((command) =>
+          line === command.mnemonic || line.startsWith(`${command.mnemonic} `))
+      ) {
+        fail(`${sourcePath} has an unowned ${variant.id} sequence line: ${String(line)}`);
+      }
+    }
+  }
+  return composition;
+}
+
+function parseSemanticExecution(
+  root: string,
+  release: PtoReleaseIdentity,
+  source: string,
+  sourcePath: string,
+  unitId: string,
+): unknown {
+  const matches = [...source.matchAll(
+    /^\/\/ PTO-PAGE-SEMANTICS-BEGIN\s*$\n([\s\S]*?)^\/\/ PTO-PAGE-SEMANTICS-END\s*$/gm,
+  )];
+  if (matches.length === 0) return null;
+  if (matches.length !== 1) fail(`${sourcePath} has duplicate PTO-PAGE-SEMANTICS metadata`);
+  let raw: unknown;
+  try {
+    raw = JSON.parse(
+      matches[0][1]
+        .split(/\r?\n/)
+        .map((line) => line.replace(/^\/\/(?: )?/, ''))
+        .join('\n'),
+    );
+  } catch (error) {
+    fail(`invalid PTO-PAGE-SEMANTICS metadata in ${sourcePath}: ${String(error)}`);
+  }
+  if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
+    fail(`${sourcePath} PTO-PAGE-SEMANTICS must be an object`);
+  }
+  const metadata = raw as Record<string, unknown>;
+  if (metadata.owner !== unitId || !Array.isArray(metadata.stages) || metadata.stages.length === 0) {
+    fail(`${sourcePath} PTO-PAGE-SEMANTICS owner or stages are invalid`);
+  }
+  const localized = (candidate: unknown, field: string): {en: string; 'zh-CN': string} => {
+    if (
+      candidate === null ||
+      typeof candidate !== 'object' ||
+      Array.isArray(candidate) ||
+      typeof (candidate as Record<string, unknown>).en !== 'string' ||
+      typeof (candidate as Record<string, unknown>)['zh-CN'] !== 'string'
+    ) {
+      fail(`${sourcePath} PTO-PAGE-SEMANTICS ${field} must contain en and zh-CN`);
+    }
+    return candidate as {en: string; 'zh-CN': string};
+  };
+  const region = (
+    exactSourcePath: string,
+    exactSource: string,
+    regionName: string,
+    marker: 'DOC' | 'PTO-SITE-REGION',
+    id: string,
+    label: {en: string; 'zh-CN': string},
+    purpose: {en: string; 'zh-CN': string},
+  ) => {
+    if (!exactSourcePath.startsWith('asl/')) {
+      fail(`${sourcePath} semantic region escapes ASL owners: ${exactSourcePath}`);
+    }
+    const begin = `// ${marker}-BEGIN: ${regionName}`;
+    const end = `// ${marker}-END: ${regionName}`;
+    const lines = exactSource.replace(/\r\n?/g, '\n').split('\n');
+    const starts = lines.flatMap((line, index) => line.trim() === begin ? [index] : []);
+    const finishes = lines.flatMap((line, index) => line.trim() === end ? [index] : []);
+    if (starts.length !== 1 || finishes.length !== 1 || finishes[0] <= starts[0]) {
+      fail(`${exactSourcePath} must contain one ordered ${marker} region ${regionName}`);
+    }
+    const text = lines.slice(starts[0] + 1, finishes[0]).join('\n');
+    return {
+      id,
+      label,
+      purpose,
+      sourcePath: exactSourcePath,
+      sourceUrl: sourceUrl(release.commit, exactSourcePath, starts[0] + 2, finishes[0]),
+      sourceSha256: sha256(exactSource),
+      fragmentSha256: sha256(text),
+      startLine: starts[0] + 2,
+      endLine: finishes[0],
+      text,
+    };
+  };
+
+  return {
+    owner: unitId,
+    stages: metadata.stages.map((stageValue, stageIndex) => {
+      if (stageValue === null || typeof stageValue !== 'object' || Array.isArray(stageValue)) {
+        fail(`${sourcePath} has invalid semantic stage ${stageIndex}`);
+      }
+      const stage = stageValue as Record<string, unknown>;
+      if (
+        typeof stage.id !== 'string' ||
+        typeof stage.ownerRegion !== 'string' ||
+        !Array.isArray(stage.sharedRegions)
+      ) {
+        fail(`${sourcePath} has invalid semantic stage ${stageIndex}`);
+      }
+      const label = localized(stage.label, `${stage.id}.label`);
+      const summary = localized(stage.summary, `${stage.id}.summary`);
+      return {
+        id: stage.id,
+        label,
+        summary,
+        ownerRegion: region(
+          sourcePath,
+          source,
+          stage.ownerRegion,
+          'DOC',
+          `${stage.id}-owner`,
+          label,
+          summary,
+        ),
+        sharedRegions: stage.sharedRegions.map((sharedValue, sharedIndex) => {
+          if (sharedValue === null || typeof sharedValue !== 'object' || Array.isArray(sharedValue)) {
+            fail(`${sourcePath} has invalid ${stage.id} shared region ${sharedIndex}`);
+          }
+          const shared = sharedValue as Record<string, unknown>;
+          if (typeof shared.sourcePath !== 'string' || typeof shared.region !== 'string') {
+            fail(`${sourcePath} has invalid ${stage.id} shared region ${sharedIndex}`);
+          }
+          const sharedSource = readText(root, shared.sourcePath);
+          return region(
+            shared.sourcePath,
+            sharedSource,
+            shared.region,
+            'PTO-SITE-REGION',
+            `${stage.id}-shared-${sharedIndex + 1}`,
+            localized(shared.label, `${stage.id}.shared[${sharedIndex}].label`),
+            localized(shared.purpose, `${stage.id}.shared[${sharedIndex}].purpose`),
+          );
+        }),
+      };
+    }),
+  };
+}
+
+function extractAslFunctionRegion(
+  release: PtoReleaseIdentity,
+  sourcePath: string,
+  sourceText: string,
+  symbol: string,
+  id: string,
+  label: {en: string; 'zh-CN': string},
+  purpose: {en: string; 'zh-CN': string},
+) {
+  const lines = sourceText.replace(/\r\n?/g, '\n').split('\n');
+  const declaration = new RegExp(`^(?:(?:pure|readonly|impdef) )?func ${symbol.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+  const starts = lines.flatMap((line, index) => declaration.test(line) ? [index] : []);
+  if (starts.length !== 1) {
+    fail(`${sourcePath} must define exactly one top-level function ${symbol}`);
+  }
+  const nextFunction = /^(?:(?:pure|readonly|impdef) )?func [A-Za-z_][A-Za-z0-9_]*\b/;
+  let end = lines.findIndex((line, index) => index > starts[0] && nextFunction.test(line));
+  if (end < 0) end = lines.length;
+  while (end > starts[0] + 1 && !lines[end - 1].trim()) end -= 1;
+  const text = lines.slice(starts[0], end).join('\n');
+  return {
+    id,
+    label,
+    purpose,
+    sourcePath,
+    sourceUrl: sourceUrl(release.commit, sourcePath, starts[0] + 1, end),
+    sourceSha256: sha256(sourceText),
+    fragmentSha256: sha256(text),
+    startLine: starts[0] + 1,
+    endLine: end,
+    text,
+  };
+}
+
+function parseSemanticExecutionProjection(
+  root: string,
+  release: PtoReleaseIdentity,
+  raw: unknown,
+  projectionPath: string,
+  unit: TraceabilityUnit,
+  ownerSourceText: string,
+): PtoSemanticExecution | null {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw !== 'object' || Array.isArray(raw)) {
+    fail(`${projectionPath} semanticExecution must be an object`);
+  }
+  const metadata = raw as Record<string, unknown>;
+  if (metadata.owner !== unit.id || !Array.isArray(metadata.stages) || metadata.stages.length === 0) {
+    fail(`${projectionPath} semanticExecution owner or stages are invalid`);
+  }
+  const localized = (candidate: unknown, field: string): {en: string; 'zh-CN': string} => {
+    if (
+      candidate === null || typeof candidate !== 'object' || Array.isArray(candidate) ||
+      typeof (candidate as Record<string, unknown>).en !== 'string' ||
+      typeof (candidate as Record<string, unknown>)['zh-CN'] !== 'string'
+    ) fail(`${projectionPath} ${field} must contain en and zh-CN`);
+    return candidate as {en: string; 'zh-CN': string};
+  };
+  const combineRegions = (
+    regions: ReturnType<typeof extractAslFunctionRegion>[],
+    id: string,
+    label: {en: string; 'zh-CN': string},
+    purpose: {en: string; 'zh-CN': string},
+  ) => {
+    if (regions.length === 0) fail(`${projectionPath} region ${id} has no symbols`);
+    const sourcePath = regions[0].sourcePath;
+    if (!regions.every((region) =>
+      region.sourcePath === sourcePath &&
+      region.sourceSha256 === regions[0].sourceSha256)) {
+      fail(`${projectionPath} region ${id} mixes source owners`);
+    }
+    const text = regions.map((region) => region.text).join('\n\n');
+    const startLine = Math.min(...regions.map((region) => region.startLine));
+    const endLine = Math.max(...regions.map((region) => region.endLine));
+    return {
+      id,
+      label,
+      purpose,
+      sourcePath,
+      sourceUrl: sourceUrl(release.commit, sourcePath, startLine, endLine),
+      sourceSha256: regions[0].sourceSha256,
+      fragmentSha256: sha256(text),
+      startLine,
+      endLine,
+      text,
+    };
+  };
+  return {
+    owner: unit.id,
+    stages: metadata.stages.map((stageValue, stageIndex) => {
+      if (stageValue === null || typeof stageValue !== 'object' || Array.isArray(stageValue)) {
+        fail(`${projectionPath} has invalid semantic stage ${stageIndex}`);
+      }
+      const stage = stageValue as Record<string, unknown>;
+      if (
+        typeof stage.id !== 'string' ||
+        !['complete', 'source-gap'].includes(String(stage.status)) ||
+        !Array.isArray(stage.facts) ||
+        !Array.isArray(stage.ownerSymbols) ||
+        !Array.isArray(stage.sharedRegions)
+      ) fail(`${projectionPath} has invalid semantic stage ${stageIndex}`);
+      const label = localized(stage.label, `${stage.id}.label`);
+      const summary = localized(stage.summary, `${stage.id}.summary`);
+      const status = stage.status as 'complete' | 'source-gap';
+      const gap = stage.gap === null || stage.gap === undefined
+        ? undefined
+        : localized(stage.gap, `${stage.id}.gap`);
+      if ((status === 'source-gap') !== (gap !== undefined)) {
+        fail(`${projectionPath} ${stage.id} gap status is inconsistent`);
+      }
+      const facts = stage.facts.map((factValue, factIndex) => {
+        if (factValue === null || typeof factValue !== 'object' || Array.isArray(factValue)) {
+          fail(`${projectionPath} has invalid ${stage.id} fact ${factIndex}`);
+        }
+        const fact = factValue as Record<string, unknown>;
+        if (
+          !['inputs', 'checks', 'faults', 'reads', 'writes', 'commit'].includes(String(fact.kind)) ||
+          !Array.isArray(fact.items) || fact.items.length === 0
+        ) fail(`${projectionPath} has invalid ${stage.id} fact ${factIndex}`);
+        return {
+          kind: fact.kind as 'inputs' | 'checks' | 'faults' | 'reads' | 'writes' | 'commit',
+          label: localized(fact.label, `${stage.id}.facts[${factIndex}].label`),
+          items: fact.items.map((item, itemIndex) =>
+            localized(item, `${stage.id}.facts[${factIndex}].items[${itemIndex}]`)),
+        };
+      });
+      const ownerSymbols = stage.ownerSymbols.map((symbol) => {
+        if (typeof symbol !== 'string') fail(`${projectionPath} has invalid owner symbol`);
+        return extractAslFunctionRegion(
+          release, unit.source, ownerSourceText, symbol,
+          `${stage.id}-owner-symbol-${symbol}`, label, summary,
+        );
+      });
+      const ownerRegions = ownerSymbols.length === 0 ? [] : [
+        combineRegions(ownerSymbols, `${stage.id}-owner`, label, summary),
+      ];
+      const sharedRegions = stage.sharedRegions.map((sharedValue, sharedIndex) => {
+        if (sharedValue === null || typeof sharedValue !== 'object' || Array.isArray(sharedValue)) {
+          fail(`${projectionPath} has invalid shared region`);
+        }
+        const shared = sharedValue as Record<string, unknown>;
+        if (typeof shared.sourcePath !== 'string' || !shared.sourcePath.startsWith('asl/') || !Array.isArray(shared.symbols)) {
+          fail(`${projectionPath} shared source is invalid or outside ASL`);
+        }
+        const sharedSource = readText(root, shared.sourcePath);
+        const sharedLabel = localized(shared.label, `${stage.id}.shared[${sharedIndex}].label`);
+        const purpose = localized(shared.purpose, `${stage.id}.shared[${sharedIndex}].purpose`);
+        const regions = shared.symbols.map((symbol) => {
+          if (typeof symbol !== 'string') fail(`${projectionPath} has invalid shared symbol`);
+          return extractAslFunctionRegion(
+            release, shared.sourcePath as string, sharedSource, symbol,
+            `${stage.id}-shared-symbol-${sharedIndex + 1}-${symbol}`,
+            sharedLabel, purpose,
+          );
+        });
+        return combineRegions(
+          regions,
+          `${stage.id}-shared-${sharedIndex + 1}`,
+          sharedLabel,
+          purpose,
+        );
+      });
+      if (ownerRegions.length === 0 && sharedRegions.length === 0) {
+        fail(`${projectionPath} stage ${stage.id} has no exact source region`);
+      }
+      return {id: stage.id, label, summary, status, ...(gap ? {gap} : {}), facts, ownerRegions, sharedRegions};
+    }),
+  };
+}
+
+function ndfIdentity(id: string, unit?: TraceabilityUnit): PtoSemanticIdentity {
+  const facets: PtoSemanticIdentity['facets'] = [];
+  if (unit !== undefined) {
+    facets.push({role: 'surface', label: unit.surface.toLocaleUpperCase('en-US')});
+    facets.push({role: 'owner', label: unit.mnemonic ?? unit.id});
+    const ownerSlug = (unit.mnemonic ?? unit.id)
+      .toLocaleUpperCase('en-US')
+      .replace(/[^A-Z0-9]+/g, '-');
+    const instructionPrefix = `PTO-INST-${unit.surface.toLocaleUpperCase('en-US')}-${ownerSlug}`;
+    const ownerPrefix = `PTO-${ownerSlug}-`;
+    let remainder = id === instructionPrefix ? 'INSTRUCTION' :
+      id.startsWith(ownerPrefix) ? id.slice(ownerPrefix.length) : id.slice('PTO-'.length);
+    const caseMatch = remainder.match(/-(\d{3})$/);
+    if (caseMatch !== null) remainder = remainder.slice(0, -caseMatch[0].length);
+    facets.push({role: 'category', label: remainder});
+    if (caseMatch !== null) facets.push({role: 'case', label: caseMatch[1]});
+  } else {
+    facets.push({role: 'category', label: id.slice('PTO-'.length)});
+  }
+  return {fullId: id, kind: 'ndf', anchor: `ndf-${id.toLocaleLowerCase('en-US')}`, facets};
+}
+
+function parseNdfClauses(
+  source: string,
+  sourcePath: string,
+  release?: PtoReleaseIdentity,
+  unit?: TraceabilityUnit,
+): PtoNdfClause[] {
   const lines = source.split(/\r?\n/);
   const clauses: PtoNdfClause[] = [];
 
@@ -881,16 +1528,24 @@ function parseNdfClauses(source: string, sourcePath: string): PtoNdfClause[] {
       fail(`unterminated NDF clause ${id}`);
     }
 
+    const text = body.join('\n');
     clauses.push({
       id,
       kind: metadata[1],
       level: metadata[2],
       layer: metadata[3],
       status: metadata[4],
-      text: body.join('\n'),
+      text,
       sourcePath,
       startLine: index + 1,
       endLine: endIndex + 1,
+      sourceSha256: sha256(source),
+      clauseSha256: sha256(text),
+      githubUrl: release === undefined
+        ? ''
+        : sourceUrl(release.commit, sourcePath, index + 1, endIndex + 1),
+      affectedUnits: unit === undefined ? [] : [unit.id],
+      identity: ndfIdentity(id, unit),
     });
     index = endIndex;
   }
@@ -989,6 +1644,7 @@ function instructionTests(
   traceability: TraceabilityData,
   testIds: Set<string>,
 ): PtoTestEvidence[] {
+  const unitBySource = new Map(traceability.units.map((unit) => [unit.source, unit]));
   return traceability.tests
     .filter((test) => testIds.has(test.id))
     .sort((left, right) => left.id.localeCompare(right.id))
@@ -1008,6 +1664,21 @@ function instructionTests(
       if (stringValue(metadata, 'source') !== test.source) {
         fail(`test source mismatch for ${test.path}`);
       }
+      const owner = unitBySource.get(test.source);
+      if (owner === undefined) fail(`test source has no owning unit: ${test.source}`);
+      const caseMatch = test.id.match(/-(\d{3})$/);
+      if (caseMatch === null) fail(`AVS identity has no case index: ${test.id}`);
+      const identity: PtoSemanticIdentity = {
+        fullId: test.id,
+        kind: 'avs',
+        anchor: `avs-${test.id.toLocaleLowerCase('en-US')}`,
+        facets: [
+          {role: 'surface', label: owner.surface.toLocaleUpperCase('en-US')},
+          {role: 'owner', label: owner.mnemonic ?? owner.id},
+          {role: 'category', label: test.kind.toLocaleUpperCase('en-US')},
+          {role: 'case', label: caseMatch[1]},
+        ],
+      };
       return {
         ...test,
         summary: stringValue(metadata, 'summary'),
@@ -1015,6 +1686,10 @@ function instructionTests(
         sourceText,
         sourceAssetUrl: `/evidence/test-sources/${digest}.asl`,
         githubUrl: sourceUrl(commit, test.path),
+        identity,
+        ownerId: owner.id,
+        ownerMnemonic: owner.mnemonic,
+        surface: owner.surface,
       };
     });
 }
@@ -1025,18 +1700,456 @@ interface PtoCatalogs {
   tileOperations: Record<string, PtoJsonValue>[];
 }
 
-function unitRoute(unit: TraceabilityUnit): string {
-  if (unit.mnemonic === null) {
-    return `/units/${encodeURIComponent(unit.id)}/`;
+function architectureGuide(
+  context: LoadContext,
+  release: PtoReleaseIdentity,
+  units: Array<{data: PtoUnitWorkbenchData; route: string}>,
+): PtoArchitectureGuide {
+  const locale = context.i18n.currentLocale;
+  const chinese = locale === 'zh-CN';
+  const unitsById = new Map(
+    units.map((unit) => [String(unit.data.unit.id ?? unit.data.metadata.id), unit]),
+  );
+  const owner = (
+    id: string,
+    label: string,
+    includeGuide: boolean,
+  ): PtoArchitectureOwnerProjection => {
+    const unit = unitsById.get(id);
+    if (unit === undefined) fail(`architecture landing references missing unit ${id}`);
+    const guide = unit.data.readerGuide;
+    if (guide.blocks.length === 0) {
+      fail(`architecture landing owner has no reviewed reader guide: ${id}`);
+    }
+    if (locale !== context.i18n.defaultLocale && guide.contentLocale !== locale) {
+      fail(`architecture landing owner lacks ${locale} projection: ${id}`);
+    }
+    if (guide.sha256 === null) {
+      fail(`architecture landing owner has no reviewed guide hash: ${id}`);
+    }
+    const blocks = includeGuide
+      ? guide.blocks.filter((block) => block.role !== 'example-usage')
+      : [];
+    if (includeGuide && blocks.length === 0) {
+      fail(`architecture landing owner has no reader-facing contract blocks: ${id}`);
+    }
+    return {
+      id,
+      label,
+      route: localizedRoute(context, unit.route),
+      referenceRoute: unit.data.documentation.referenceRoute,
+      sourcePath: unit.data.source.path,
+      sourceSha256: unit.data.source.sha256,
+      sourceUrl: unit.data.source.githubUrl,
+      guideStatus: guide.status,
+      guideSha256: guide.sha256,
+      contentLocale: guide.contentLocale,
+      blocks,
+    };
+  };
+  const boundBlock = (
+    id: string,
+    role: PtoReaderGuideRole,
+  ) => {
+    const unit = unitsById.get(id);
+    if (unit === undefined) fail(`architecture block binding references missing unit ${id}`);
+    const guide = unit.data.readerGuide;
+    if (guide.sha256 === null) fail(`architecture block binding has no guide hash: ${id}`);
+    const matches = guide.blocks.filter((block) => block.role === role);
+    if (matches.length !== 1) {
+      fail(`architecture block binding ${id}/${role} resolves ${matches.length} blocks`);
+    }
+    return {
+      ownerId: id,
+      sourcePath: unit.data.source.path,
+      sourceSha256: unit.data.source.sha256,
+      guideSha256: guide.sha256,
+      block: matches[0],
+    };
+  };
+  const entry = owner(
+    ARCHITECTURE_ENTRY,
+    chinese ? '架构所有者' : 'Architecture owner',
+    true,
+  );
+  return {
+    schema: 'pto.site-architecture-guide.v1',
+    locale,
+    release,
+    entry,
+    topics: ARCHITECTURE_TOPICS.map((topic) => ({
+      id: topic.id,
+      label: chinese ? topic.label['zh-CN'] : topic.label.en,
+      scenario: boundBlock(topic.primary, 'example-usage'),
+      sourceBoundary: topic.boundaryOwner === undefined
+        ? null
+        : boundBlock(topic.boundaryOwner, 'boundaries'),
+      primary: owner(
+        topic.primary,
+        chinese ? topic.label['zh-CN'] : topic.label.en,
+        true,
+      ),
+      related: topic.related.map((related) => owner(
+        related.id,
+        chinese ? related.label['zh-CN'] : related.label.en,
+        false,
+      )),
+    })),
+  };
+}
+
+function highLevelAssembly(
+  unit: TraceabilityUnit,
+  metadata: Record<string, PtoJsonValue>,
+): PtoHighLevelAssembly | null {
+  if (unit.surface !== 'tile' || unit.mnemonic === null) return null;
+  const contractValue = metadata.contract;
+  if (contractValue === null || typeof contractValue !== 'object' || Array.isArray(contractValue)) {
+    fail(`${unit.id} has no contract for high-level Tile assembly`);
   }
-  const stem = path.posix.basename(unit.source, '.asl');
-  const segments = [
-    'instructions',
-    unit.surface,
-    ...unit.classification,
-    stem,
-  ].map((segment) => encodeURIComponent(segment));
-  return `/${segments.join('/')}/`;
+  const contract = contractValue as Record<string, PtoJsonValue>;
+  const contractBlockLines = (Array.isArray(contract.block_composition) ? contract.block_composition : [])
+    .filter((value): value is string => typeof value === 'string');
+  const metadataBlockLines = (Array.isArray(metadata.block) ? metadata.block : [])
+    .filter((value): value is string => typeof value === 'string');
+  const blockLines = [...new Set([...contractBlockLines, ...metadataBlockLines])];
+  if (blockLines.length === 0) fail(`${unit.id} has no block composition for high-level Tile assembly`);
+  const parameters: PtoHighLevelAssembly['parameters'] = [];
+  const seenParameters = new Set<string>();
+  const addParameter = (display: string, source: string, role: string): void => {
+    if (seenParameters.has(display)) return;
+    seenParameters.add(display);
+    parameters.push({display, source, role});
+  };
+  const dimensionBindings = new Map<string, {semantic: string | null; source: string}>();
+  for (const line of blockLines.filter((value) => value.startsWith('B.DIM'))) {
+    const body = line.slice('B.DIM'.length).trim();
+    const compact = body.match(
+      /^LB([0-2])\/([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\/([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\/([A-Za-z][A-Za-z0-9_]*)(?:\s+\([^)]*\))?$/,
+    );
+    const compactAssigned = body.match(
+      /^LB([0-2])\s*=\s*([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\s*=\s*([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\s*=\s*([A-Za-z][A-Za-z0-9_]*)(?:\s+\([^)]*\))?$/,
+    );
+    const single = body.match(
+      /^LB([0-2])(?:\s*=\s*|\s+)([A-Za-z][A-Za-z0-9_]*)(?:\s+or\s+cooperative\s+group_M)?(?:\s+\([^)]*\))?$/,
+    );
+    const groupedBare = body.match(
+      /^LB([0-2])\/LB([0-2])\/LB([0-2])(?:\s+\(optional\))?$/,
+    );
+    const bare = body.match(/^LB([0-2])(?:\s+\(optional\))?$/);
+    const candidates: Array<[string, string | null]> = compact !== null
+      ? [[compact[1], compact[2]], [compact[3], compact[4]], [compact[5], compact[6]]]
+      : compactAssigned !== null
+        ? [[compactAssigned[1], compactAssigned[2]], [compactAssigned[3], compactAssigned[4]], [compactAssigned[5], compactAssigned[6]]]
+        : single !== null
+          ? [[single[1], single[2] === 'group_M' ? 'M' : single[2]]]
+          : groupedBare !== null
+            ? [[groupedBare[1], null], [groupedBare[2], null], [groupedBare[3], null]]
+            : bare !== null
+              ? [[bare[1], null]]
+              : [];
+    if (candidates.length === 0) {
+      fail(`${unit.id} has non-structured B.DIM projection: ${line}`);
+    }
+    for (const [slot, semantic] of candidates) {
+      const key = `LB${slot}`;
+      const previous = dimensionBindings.get(key);
+      if (previous !== undefined && previous.semantic !== semantic) {
+        fail(`${unit.id} assigns ${key} to conflicting high-level dimensions`);
+      }
+      dimensionBindings.set(key, {semantic, source: line});
+    }
+  }
+  for (const [slot, binding] of [...dimensionBindings.entries()].sort()) {
+    addParameter(
+      binding.semantic === null ? slot : `${slot}:${binding.semantic}`,
+      binding.source,
+      'dimension',
+    );
+  }
+  const parameterPatterns: Array<[RegExp, string, string]> = [
+    [/\bAType\b/, 'DataTypeA', 'left data type'],
+    [/\bBType\b/, 'DataTypeB', 'right data type'],
+    [/\bDataType\b/, 'DataType', 'data type'],
+    [/\bLayout\b/, 'Layout', 'layout'],
+    [/\bPadValue\b/, 'PadValue', 'padding value'],
+    [/\bByteId\b/, 'ByteId', 'byte selector'],
+    [/\bDstDataType\b/, 'DstDataType', 'destination data type'],
+  ];
+  for (const [pattern, display, role] of parameterPatterns) {
+    const source = blockLines.find((line) => pattern.test(line));
+    if (source !== undefined) addParameter(display, source, role);
+  }
+  const operandValues = Array.isArray(contract.operands) ? contract.operands : [];
+  const operands = operandValues.map((value, index) => {
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+      fail(`${unit.id} contract.operands[${index}] is malformed`);
+    }
+    const operand = value as Record<string, PtoJsonValue>;
+    const field = stringValue(operand, 'field');
+    const role = stringValue(operand, 'role');
+    if (field === null || role === null) fail(`${unit.id} contract.operands[${index}] lacks field or role`);
+    return {field, role, index};
+  });
+  const outputOperands = operands.filter(({field}) => /^destination\d+$/.test(field));
+  const displayField = (field: string, output: boolean): string => {
+    const indexed = field.match(/^(source|destination|scalar|natural|positive|flag)(\d+)$/);
+    if (indexed !== null) {
+      const [, kind, index] = indexed;
+      if (kind === 'source') return `SrcTile${index}`;
+      if (kind === 'destination') return outputOperands.length === 1 ? 'DstTile' : `DstTile${index}`;
+      return `${kind[0].toLocaleUpperCase()}${kind.slice(1)}${index}`;
+    }
+    const named: Record<string, string> = {
+      address: 'Address',
+      comparison: 'Comparison',
+      diagonal: 'Diagonal',
+      numeric_control: 'NumericControl',
+      selected_byte: 'SelectedByte',
+      sort_width: 'SortWidth',
+    };
+    const display = named[field];
+    if (display === undefined || output) fail(`${unit.id} has unsupported high-level operand field ${field}`);
+    return display;
+  };
+  const inputs = operands
+    .filter((operand) => !outputOperands.includes(operand))
+    .map(({field, role, index}) => ({
+      display: displayField(field, false),
+      source: `contract.operands[${index}].${field}`,
+      role,
+    }));
+  const outputs = outputOperands.map(({field, role, index}) => ({
+    display: displayField(field, true),
+    source: `contract.operands[${index}].${field}`,
+    role,
+  }));
+  const parameterText = parameters.length > 0
+    ? ` <${parameters.map(({display}) => display).join(', ')}>`
+    : '';
+  const inputText = inputs.length > 0 ? ` ${inputs.map(({display}) => display).join(', ')}` : '';
+  const outputText = outputs.length > 0 ? ` -> ${outputs.map(({display}) => display).join(', ')}` : '';
+  const attributes = blockLines.map((line, index) => ({
+    display: line.match(/\b(B(?:START)?(?:\.[A-Z0-9]+)+)\b/)?.[1] ?? `BundleRule${index + 1}`,
+    source: line,
+    role: 'ASL-owned block composition',
+  }));
+  return {
+    form: `${unit.mnemonic}${parameterText}${inputText}${outputText}`,
+    parameters,
+    inputs,
+    outputs,
+    attributes,
+    basis: [...new Set([
+      ...blockLines,
+      ...operands.map(({index}) => `contract.operands[${index}]`),
+    ])],
+  };
+}
+
+function instructionIndexData(
+  context: LoadContext,
+  release: PtoReleaseIdentity,
+  units: Array<{data: PtoUnitWorkbenchData; route: string}>,
+): PtoInstructionIndexData {
+  const entries = units
+    .filter(({data}) => typeof data.unit.mnemonic === 'string')
+    .map(({data, route}) => {
+      const surface = String(data.unit.surface ?? data.metadata.surface);
+      if (!['scalar', 'block', 'tile'].includes(surface)) {
+        fail(`instruction index has unsupported surface ${surface}`);
+      }
+      const classification = Array.isArray(data.unit.classification)
+        ? data.unit.classification.filter((value): value is string => typeof value === 'string')
+        : [];
+      return {
+        id: String(data.unit.id ?? data.metadata.id),
+        mnemonic: String(data.unit.mnemonic),
+        surface: surface as 'scalar' | 'block' | 'tile',
+        classification,
+        route: localizedRoute(context, route),
+        summary: stringValue(data.metadata, 'summary') ?? stringValue(data.unit, 'summary') ?? '',
+        sourcePath: data.source.path,
+        sourceSha256: data.source.sha256,
+      };
+    })
+    .sort(
+      (left, right) =>
+        left.surface.localeCompare(right.surface) ||
+        left.mnemonic.localeCompare(right.mnemonic) ||
+        left.id.localeCompare(right.id),
+    );
+  return {release, entries};
+}
+
+function ndfCatalogData(
+  root: string,
+  context: LoadContext,
+  release: PtoReleaseIdentity,
+  traceability: TraceabilityData,
+  adrIndex: AdrIndexData,
+  graph: PtoNdfGraphData,
+  requirementSources: Map<string, RequirementSourceIdentity>,
+  evidence: PtoArtifactEvidence[],
+  units: Array<{data: PtoUnitWorkbenchData; route: string}>,
+): {catalog: PtoNdfCatalogData; details: PtoNdfDetailData[]} {
+  const unitsById = new Map(
+    units.map((unit) => [String(unit.data.unit.id ?? unit.data.metadata.id), unit]),
+  );
+  const clauses = new Map<string, PtoNdfClause>();
+  const occurrenceOwners = new Map<string, Set<string>>();
+  for (const unit of units) {
+    const unitId = String(unit.data.unit.id ?? unit.data.metadata.id);
+    for (const clause of unit.data.ndfClauses) {
+      const previous = clauses.get(clause.id);
+      if (previous !== undefined && (
+        previous.clauseSha256 !== clause.clauseSha256 ||
+        previous.sourceSha256 !== clause.sourceSha256 ||
+        previous.text !== clause.text
+      )) {
+        fail(`NDF catalog has inconsistent duplicate clause ${clause.id}`);
+      }
+      clauses.set(clause.id, clause);
+      occurrenceOwners.set(clause.id, new Set([
+        ...(occurrenceOwners.get(clause.id) ?? []),
+        unitId,
+      ]));
+    }
+  }
+  const instructionContracts = new Map(
+    traceability.units
+      .filter((unit) => typeof unit.instruction_contract?.ndf_clause === 'string')
+      .map((unit) => [unit.instruction_contract?.ndf_clause as string, unit]),
+  );
+  const expectedIds = traceability.requirements
+    .map((requirement) => requirement.id)
+    .sort();
+  const actualIds = [...new Set([...clauses.keys(), ...instructionContracts.keys()])].sort();
+  if (JSON.stringify(actualIds) !== JSON.stringify(expectedIds)) {
+    fail(`NDF catalog does not equal release requirements: ${actualIds.length}/${expectedIds.length}`);
+  }
+  const ownerRoute = (unitId: string): PtoNdfOwnerRoute => {
+    const unit = unitsById.get(unitId);
+    if (unit === undefined) fail(`NDF catalog references missing affected unit ${unitId}`);
+    return {
+      id: unitId,
+      mnemonic: typeof unit.data.unit.mnemonic === 'string' ? unit.data.unit.mnemonic : null,
+      surface: String(unit.data.unit.surface ?? unit.data.metadata.surface),
+      route: localizedRoute(context, unit.route),
+      sourcePath: unit.data.source.path,
+    };
+  };
+  const graphNodes = new Map(graph.nodes.map((node) => [node.id, node]));
+  const relationships = new Map<string, PtoNdfDetailData['relationships']>();
+  const relationshipHref = (node: PtoGraphNode): {href: string; external: boolean} => {
+    if (node.kind === 'asl') {
+      const owner = unitsById.get(node.id);
+      if (owner === undefined) fail(`NDF relationship references missing ASL unit ${node.id}`);
+      return {href: localizedRoute(context, owner.route), external: false};
+    }
+    if (node.kind === 'ndf') {
+      const instructionOwner = instructionContracts.get(node.id);
+      if (instructionOwner !== undefined) {
+        const owner = unitsById.get(instructionOwner.id);
+        if (owner === undefined) fail(`NDF relationship references missing instruction unit ${instructionOwner.id}`);
+        return {href: localizedRoute(context, owner.route), external: false};
+      }
+      return {href: localizedRoute(context, `/ndf/${encodeURIComponent(node.id)}/`), external: false};
+    }
+    if (node.sourceUrl === null) fail(`NDF relationship ${node.id} has no source URL`);
+    return {href: node.sourceUrl, external: true};
+  };
+  for (const edge of graph.edges) {
+    const addRelationship = (
+      center: string,
+      otherId: string,
+      direction: 'incoming' | 'outgoing',
+    ): void => {
+      const node = graphNodes.get(otherId);
+      if (node === undefined) fail(`NDF relationship references missing graph node ${otherId}`);
+      relationships.set(center, [
+        ...(relationships.get(center) ?? []),
+        {kind: edge.kind, direction, node, ...relationshipHref(node)},
+      ]);
+    };
+    addRelationship(edge.source, edge.target, 'outgoing');
+    addRelationship(edge.target, edge.source, 'incoming');
+  }
+  const requirementsById = new Map(
+    traceability.requirements.map((requirement) => [requirement.id, requirement]),
+  );
+  const adrRecordsById = new Map(adrIndex.records.map((record) => [record.id, record]));
+  const details = [...clauses.keys()].sort().map((id) => {
+    const clause = clauses.get(id);
+    if (clause === undefined) fail(`NDF catalog lost ${id}`);
+    const requirement = requirementsById.get(id);
+    if (requirement === undefined) fail(`NDF detail references missing requirement ${id}`);
+    const ownerIds = [...new Set([
+      ...(occurrenceOwners.get(id) ?? []),
+      ...clause.affectedUnits,
+    ])].sort();
+    const adrIds = new Set(requirement.readiness_subjects);
+    for (const record of adrIndex.records) {
+      if (record.affected_ndf.includes(id)) adrIds.add(record.id);
+    }
+    const missingAdrs = [...adrIds].filter((adrId) => !adrRecordsById.has(adrId));
+    if (missingAdrs.length > 0) fail(`NDF detail ${id} references missing ADRs: ${missingAdrs.join(', ')}`);
+    return {
+      release,
+      clause,
+      owners: ownerIds.map(ownerRoute),
+      adrs: [...adrIds].sort().map((adrId) => publicAdr(root, release, adrRecordsById.get(adrId)!)),
+      tests: instructionTests(root, release.commit, traceability, new Set(requirement.tests))
+        .map(({sourceText: _sourceText, ...test}) => test),
+      evidence,
+      relationships: (relationships.get(id) ?? []).sort(
+        (left, right) => left.node.id.localeCompare(right.node.id) || left.kind.localeCompare(right.kind),
+      ),
+      relationshipFallbackRoute: localizedRoute(context, '/explore/ndf/'),
+    };
+  });
+  const detailsById = new Map(details.map((detail) => [detail.clause.id, detail]));
+  const entries = expectedIds.map((id): PtoNdfCatalogData['entries'][number] => {
+    const detail = detailsById.get(id);
+    if (detail !== undefined) {
+      const {clause, owners} = detail;
+      return {
+        id,
+        entryKind: 'clause',
+        kind: clause.kind,
+        level: clause.level,
+        layer: clause.layer,
+        status: clause.status,
+        text: clause.text,
+        route: localizedRoute(context, `/ndf/${encodeURIComponent(id)}/`),
+        sourcePath: clause.sourcePath,
+        sourceSha256: clause.sourceSha256,
+        clauseSha256: clause.clauseSha256,
+        owners,
+      };
+    }
+    const instructionOwner = instructionContracts.get(id);
+    const identity = requirementSources.get(id);
+    if (instructionOwner === undefined || identity === undefined) {
+      fail(`NDF catalog cannot resolve instruction-contract identity ${id}`);
+    }
+    const owner = ownerRoute(instructionOwner.id);
+    return {
+      id,
+      entryKind: 'instruction-contract',
+      kind: 'instruction-contract',
+      level: instructionOwner.surface,
+      layer: 'instruction',
+      status: requirementsById.get(id)?.executable ? 'executable' : 'contract',
+      text: null,
+      route: owner.route,
+      sourcePath: identity.sourcePath,
+      sourceSha256: identity.sourceSha256,
+      clauseSha256: identity.clauseSha256,
+      owners: [owner],
+    };
+  });
+  return {catalog: {release, entries}, details};
 }
 
 function catalogEncoding(
@@ -1095,7 +2208,63 @@ function catalogEncoding(
   fail(`mnemonic unit ${unit.id} has unsupported surface ${unit.surface}`);
 }
 
+function assemblerSymbols(
+  metadata: Record<string, PtoJsonValue>,
+  encoding: PtoUnitEncoding,
+): PtoUnitWorkbenchData['assemblerSymbols'] {
+  const contract = metadata.contract;
+  const contractRecord =
+    contract !== null && typeof contract === 'object' && !Array.isArray(contract)
+      ? contract as Record<string, PtoJsonValue>
+      : {};
+  const roles = new Map<string, string>();
+  if (Array.isArray(contractRecord.operands)) {
+    for (const value of contractRecord.operands) {
+      if (value === null || typeof value !== 'object' || Array.isArray(value)) continue;
+      const operand = value as Record<string, PtoJsonValue>;
+      const field = stringValue(operand, 'field');
+      const role = stringValue(operand, 'role');
+      if (field && role) roles.set(field, role);
+    }
+  }
+  const zeroMeanings =
+    contractRecord.field_zero_meanings !== null &&
+    typeof contractRecord.field_zero_meanings === 'object' &&
+    !Array.isArray(contractRecord.field_zero_meanings)
+      ? contractRecord.field_zero_meanings as Record<string, PtoJsonValue>
+      : {};
+  const symbols = new Map<string, PtoUnitWorkbenchData['assemblerSymbols'][number]>();
+  for (const form of encoding.catalogForms) {
+    const fields = Array.isArray(form.fields) ? form.fields : [];
+    for (const value of fields) {
+      if (value === null || typeof value !== 'object' || Array.isArray(value)) continue;
+      const field = value as Record<string, PtoJsonValue>;
+      const name = stringValue(field, 'name');
+      if (!name || symbols.has(name)) continue;
+      symbols.set(name, {
+        field: name,
+        width: field.width === undefined ? '—' : String(field.width),
+        signedness: stringValue(field, 'signedness') ?? '—',
+        role: roles.get(name) ?? '—',
+        zeroMeaning: stringValue(zeroMeanings, name) ?? '—',
+      });
+    }
+  }
+  for (const [field, role] of roles) {
+    if (symbols.has(field)) continue;
+    symbols.set(field, {
+      field,
+      width: '—',
+      signedness: '—',
+      role,
+      zeroMeaning: stringValue(zeroMeanings, field) ?? '—',
+    });
+  }
+  return [...symbols.values()];
+}
+
 function unitAdrs(
+  root: string,
   release: PtoReleaseIdentity,
   unit: TraceabilityUnit,
   requirementIds: Set<string>,
@@ -1125,7 +2294,7 @@ function unitAdrs(
   }
   return [...requested]
     .sort((left, right) => left.localeCompare(right))
-    .map((id) => publicAdr(release.commit, recordsById.get(id)!));
+    .map((id) => publicAdr(root, release, recordsById.get(id)!));
 }
 
 function buildUnitData(
@@ -1162,7 +2331,7 @@ function buildUnitData(
     fail(`metadata and traceability mnemonics disagree for ${unit.source}`);
   }
 
-  const ndfClauses = parseNdfClauses(sourceText, unit.source);
+  const ndfClauses = parseNdfClauses(sourceText, unit.source, release, unit);
   const requirementIds = new Set(ndfClauses.map((clause) => clause.id));
   for (const clause of ndfClauses) {
     const requirement = requirementsById.get(clause.id);
@@ -1226,6 +2395,8 @@ function buildUnitData(
       }),
   );
 
+  const encoding = catalogEncoding(unit, catalogs, metadata);
+  const siteProjection = loadSiteInstructionProjection(root, unit, sourceText);
   return {
     release,
     source,
@@ -1235,13 +2406,36 @@ function buildUnitData(
     ndfClauses,
     unit: unit as unknown as Record<string, PtoJsonValue>,
     tests,
-    adrs: unitAdrs(release, unit, requirementIds, requirementsById, adrIndex),
+    adrs: unitAdrs(root, release, unit, requirementIds, requirementsById, adrIndex),
     evidence,
-    encoding: catalogEncoding(unit, catalogs, metadata),
+    encoding,
+    assemblerSymbols: assemblerSymbols(metadata, encoding),
+    composition: parseInstructionComposition(
+      siteProjection?.data.composition,
+      siteProjection?.path ?? unit.source,
+      unit.id,
+      traceability,
+      release,
+    ),
+    semanticExecution: parseSemanticExecutionProjection(
+      root,
+      release,
+      siteProjection?.data.semanticExecution,
+      siteProjection?.path ?? unit.source,
+      unit,
+      sourceText,
+    ),
+    highLevelAssembly: highLevelAssembly(unit, metadata),
   };
 }
 
-function publicAdr(commit: string, record: AdrIndexRecord): PtoAdrRecord {
+function publicAdr(root: string, release: PtoReleaseIdentity, record: AdrIndexRecord): PtoAdrRecord {
+  if (!record.path.startsWith('docs/status/decisions/')) {
+    fail(`ADR source is outside canonical decision owners: ${record.path}`);
+  }
+  const source = readText(root, record.path);
+  const decisionNumber = record.id.match(/^ADR-(\d{4})$/)?.[1];
+  if (decisionNumber === undefined) fail(`invalid ADR identity ${record.id}`);
   return {
     id: record.id,
     title: record.title,
@@ -1251,7 +2445,18 @@ function publicAdr(commit: string, record: AdrIndexRecord): PtoAdrRecord {
     affectedNdf: record.affected_ndf,
     affectedUnits: record.affected_units,
     targetReleases: record.target_releases,
-    githubUrl: sourceUrl(commit, record.path),
+    decisionAssetUrl: `/evidence/decisions/${record.id}.json`,
+    githubUrl: sourceUrl(release.commit, record.path),
+    sourceSha256: sha256(source),
+    identity: {
+      fullId: record.id,
+      kind: 'adr',
+      anchor: `adr-${record.id.toLocaleLowerCase('en-US')}`,
+      facets: [
+        {role: 'decision', label: 'ADR'},
+        {role: 'case', label: decisionNumber},
+      ],
+    },
   };
 }
 
@@ -1482,6 +2687,11 @@ function searchData(
   requirementSources: Map<string, RequirementSourceIdentity>,
 ): PtoSearchData {
   const entries = new Map<string, PtoSearchEntry>();
+  const instructionContracts = new Map(
+    traceability.units
+      .filter((unit) => typeof unit.instruction_contract?.ndf_clause === 'string')
+      .map((unit) => [unit.instruction_contract?.ndf_clause as string, unit]),
+  );
   const addEntry = (entry: PtoSearchEntry): void => {
     if (entries.has(entry.id)) {
       fail(`search index contains duplicate identity ${entry.id}`);
@@ -1513,12 +2723,18 @@ function searchData(
   for (const requirement of traceability.requirements) {
     const identity = requirementSources.get(requirement.id);
     if (identity === undefined) fail(`missing search source for ${requirement.id}`);
+    const instructionOwner = instructionContracts.get(requirement.id);
     addEntry({
       id: requirement.id,
       label: requirement.id,
       kind: 'ndf',
       path: identity.sourcePath,
-      url: identity.sourceUrl,
+      url: localizedRoute(
+        context,
+        instructionOwner === undefined
+          ? `/ndf/${encodeURIComponent(requirement.id)}/`
+          : unitRoute(instructionOwner),
+      ),
       sha256: identity.clauseSha256,
       startLine: identity.startLine,
       endLine: identity.endLine,
@@ -1673,11 +2889,32 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
       if (tload === undefined || unitRoute(tload) !== TLOAD_ROUTE) {
         fail(`TLOAD route must remain ${TLOAD_ROUTE}`);
       }
+      const instructionIndex = instructionIndexData(context, release, units);
+      const {catalog: ndfCatalog, details: ndfDetails} = ndfCatalogData(
+        root,
+        context,
+        release,
+        traceability,
+        adrIndex,
+        graph,
+        requirementSources,
+        evidence,
+        units,
+      );
 
       return {
         units,
         release,
         graph,
+        instructionIndex,
+        ndfCatalog,
+        ndfDetails,
+        adrDecisions: Object.fromEntries(
+          adrIndex.records.map((record) => [
+            record.id,
+            parseDecisionNodes(root, release, record.path, readText(root, record.path)),
+          ]),
+        ),
         search: searchData(
           context,
           release,
@@ -1721,6 +2958,16 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
           const publicData = {
             ...unit.data,
             tests: unit.data.tests.map(({sourceText: _sourceText, ...test}) => test),
+            semanticExecution: unit.data.semanticExecution === null ? null : {
+              ...unit.data.semanticExecution,
+              stages: unit.data.semanticExecution.stages.map((stage) => ({
+                ...stage,
+                sharedRegions: stage.sharedRegions.map(({text: _text, ...region}) => ({
+                  ...region,
+                  sourceAssetUrl: `/evidence/asl-fragments/${region.fragmentSha256}.asl`,
+                })),
+              })),
+            },
           };
           return {
             ...unit,
@@ -1730,6 +2977,27 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
             ),
           };
         }),
+      );
+      const architectureDataModule = await actions.createData(
+        'architecture-guide.json',
+        JSON.stringify(architectureGuide(context, content.release, content.units)),
+      );
+      const instructionIndexModule = await actions.createData(
+        'instruction-index.json',
+        JSON.stringify(content.instructionIndex),
+      );
+      const ndfCatalogModule = await actions.createData(
+        'ndf-catalog.json',
+        JSON.stringify(content.ndfCatalog),
+      );
+      const ndfDetailModules = await Promise.all(
+        content.ndfDetails.map(async (detail, index) => ({
+          detail,
+          module: await actions.createData(
+            `ndf-detail-${String(index + 1).padStart(4, '0')}.json`,
+            JSON.stringify(detail),
+          ),
+        })),
       );
       const graphDataModule = await actions.createData(
         'ndf-graph.json',
@@ -1755,6 +3023,32 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
           component: '@site/src/routes/UnitWorkbench',
           exact: true,
           modules: {unitData: unit.module},
+        });
+      }
+      actions.addRoute({
+        path: localizedRoute(context, '/architecture/'),
+        component: '@site/src/routes/Architecture',
+        exact: true,
+        modules: {architecture: architectureDataModule},
+      });
+      actions.addRoute({
+        path: localizedRoute(context, '/instructions/'),
+        component: '@site/src/routes/InstructionIndex',
+        exact: true,
+        modules: {index: instructionIndexModule},
+      });
+      actions.addRoute({
+        path: localizedRoute(context, '/ndf/'),
+        component: '@site/src/routes/NdfCatalog',
+        exact: true,
+        modules: {catalog: ndfCatalogModule},
+      });
+      for (const entry of ndfDetailModules) {
+        actions.addRoute({
+          path: localizedRoute(context, `/ndf/${encodeURIComponent(entry.detail.clause.id)}/`),
+          component: '@site/src/routes/NdfDetail',
+          exact: true,
+          modules: {detail: entry.module},
         });
       }
       actions.addRoute({
@@ -1815,6 +3109,142 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         'utf8',
       );
 
+      const instructionCoverage = content.units
+        .filter(({data}) => typeof data.unit.mnemonic === 'string')
+        .map(({data, route}) => {
+          const docRegion = (name: string): string | null => {
+            const match = data.source.text.match(
+              new RegExp(`^// DOC-BEGIN: ${name}\\s*$\\n([\\s\\S]*?)^// DOC-END: ${name}\\s*$`, 'm'),
+            );
+            return match?.[1]?.trim() ?? null;
+          };
+          const decode = docRegion('decode');
+          const operation = docRegion('operation');
+          const contract = data.metadata.contract !== null &&
+            typeof data.metadata.contract === 'object' &&
+            !Array.isArray(data.metadata.contract)
+            ? data.metadata.contract as Record<string, PtoJsonValue>
+            : {};
+          const assemblyCount = Array.isArray(data.metadata.assembly)
+            ? data.metadata.assembly.length : 0;
+          const bundleLines = Array.isArray(data.metadata.block)
+            ? data.metadata.block.filter((line) => typeof line === 'string' && !line.startsWith('#')).length
+            : 0;
+          const bundleRuleCount = Array.isArray(contract.block_composition)
+            ? contract.block_composition.length : 0;
+          const exampleCount = Array.isArray(contract.examples) ? contract.examples.length : 0;
+          const constraintCount = ['legality', 'exceptions'].reduce(
+            (sum, key) => sum + (Array.isArray(contract[key]) ? contract[key].length : 0), 0,
+          );
+          const stateContractCount = ['operands', 'state_effects', 'memory_effects', 'ordering'].reduce(
+            (sum, key) => sum + (Array.isArray(contract[key]) ? contract[key].length : 0), 0,
+          );
+          const encodedFieldCount = data.encoding.catalogForms.reduce(
+            (sum, form) => sum + (Array.isArray(form.fields) ? form.fields.length : 0),
+            0,
+          );
+          const decodeStatus = decode === null ? 'missing' :
+            /\bDecode_[A-Za-z0-9_]+\s*\(/.test(decode) ? 'complete' : 'source-binding';
+          const operationStatus = operation === null ? 'missing' :
+            /\bExecuteDecoded_[A-Za-z0-9_]+\s*\(/.test(operation) ? 'complete' : 'source-binding';
+          const explainedGaps: string[] = [];
+          const unexplainedGaps: string[] = [];
+          if (data.encoding.catalogForms.length === 0) {
+            explainedGaps.push('owner is an encoding alias or has no standalone encoded form');
+          }
+          if (decodeStatus !== 'complete') {
+            explainedGaps.push(decodeStatus === 'missing'
+              ? 'owner has no DOC decode region'
+              : 'owner exposes exact instruction-selection/source binding without an operand-binding Decode procedure');
+          }
+          if (operationStatus !== 'complete') {
+            explainedGaps.push(operationStatus === 'missing'
+              ? 'owner has no DOC operation region'
+              : 'owner exposes exact handler/helper binding without a mnemonic-specific ExecuteDecoded procedure');
+          }
+          if (exampleCount === 0) explainedGaps.push('owner contract declares no example');
+          if (constraintCount === 0) explainedGaps.push('owner contract declares no explicit legality or exception list');
+          if (stateContractCount === 0) explainedGaps.push('owner contract declares no operand/effect/ordering list');
+          const bundleStatus = String(data.unit.surface ?? data.metadata.surface) !== 'tile'
+            ? 'not-applicable'
+            : data.composition !== null
+              ? 'complete'
+              : bundleLines > 0 && bundleRuleCount <= bundleLines
+                ? 'complete'
+                : 'source-gap';
+          if (bundleStatus === 'source-gap') {
+            explainedGaps.push('owner bundle rules are not fully expanded by source block-sequence metadata');
+          }
+          if (assemblyCount === 0) unexplainedGaps.push('missing assembly metadata');
+          if (encodedFieldCount > 0 && data.assemblerSymbols.length === 0) {
+            unexplainedGaps.push('encoded fields lack assembler-symbol projection');
+          }
+          const localizedInstructionRoute = localizedRoute(context, route);
+          const localePrefix = locale === context.i18n.defaultLocale ? '/' : `/${locale}/`;
+          if (!localizedInstructionRoute.startsWith(localePrefix)) {
+            unexplainedGaps.push('route escapes locale tree');
+          }
+          return {
+            id: String(data.unit.id ?? data.metadata.id),
+            mnemonic: String(data.unit.mnemonic),
+            surface: String(data.unit.surface ?? data.metadata.surface),
+            route: localizedInstructionRoute,
+            layout_contract: 'UnitWorkbenchView.arm-style.v1',
+            source: data.source.path,
+            source_sha256: data.source.sha256,
+            encoding: data.encoding.catalogForms.length > 0 ? 'complete' : 'explained-gap',
+            syntax: assemblyCount > 0 ? 'complete' : 'missing',
+            assembler_symbols: encodedFieldCount === 0 || data.assemblerSymbols.length > 0
+              ? 'complete' : 'missing',
+            decode_source: decodeStatus,
+            operation_source: operationStatus,
+            behavior: data.readerGuide.status,
+            constraints_faults: constraintCount > 0 ? 'complete' : 'explained-gap',
+            state_reads_writes_result: stateContractCount > 0 ? 'complete' : 'explained-gap',
+            bundle_source: bundleLines > 0 ? 'owner-metadata' : 'not-applicable',
+            bundle_status: bundleStatus,
+            bundle_lines: bundleLines,
+            bundle_rules: bundleRuleCount,
+            decisions: data.adrs.length,
+            ndf_owners: data.readerGuide.owners.filter((owner) => owner.kind === 'ndf').length,
+            evidence: data.tests.length,
+            source_records: data.readerGuide.owners.length > 0 && data.tests.length > 0
+              ? 'complete' : 'explained-gap',
+            examples: exampleCount,
+            locale,
+            content_locale: data.readerGuide.contentLocale,
+            locale_status: data.readerGuide.status,
+            specialized_projection: data.composition !== null || data.semanticExecution !== null,
+            explained_gaps: explainedGaps,
+            unexplained_gaps: unexplainedGaps,
+          };
+        });
+      const surfaceTotals = Object.fromEntries(
+        ['scalar', 'block', 'tile'].map((surface) => [surface,
+          instructionCoverage.filter((entry) => entry.surface === surface).length]),
+      );
+      const unexplainedOmissions = instructionCoverage.reduce(
+        (sum, entry) => sum + entry.unexplained_gaps.length, 0,
+      );
+      const matrix = {
+        schema: 'pto.site-instruction-coverage.v1',
+        locale,
+        source_commit: content.release.commit,
+        instruction_count: instructionCoverage.length,
+        surface_totals: surfaceTotals,
+        layout_contract: 'UnitWorkbenchView.arm-style.v1',
+        unexplained_omissions: unexplainedOmissions,
+        entries: instructionCoverage,
+      };
+      writeFileSync(
+        path.join(outDir, 'pto-instruction-coverage.json'),
+        `${JSON.stringify(matrix, null, 2)}\n`,
+        'utf8',
+      );
+      if (unexplainedOmissions !== 0) {
+        fail(`instruction coverage has ${unexplainedOmissions} unexplained omissions for ${locale}`);
+      }
+
       const siteOutDir = locale === context.i18n.defaultLocale
         ? outDir
         : path.dirname(outDir);
@@ -1835,6 +3265,38 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
       }
       for (const [digest, source] of testSources) {
         writeFileSync(path.join(sourceDirectory, `${digest}.asl`), source, 'utf8');
+      }
+
+      const fragmentDirectory = path.join(siteOutDir, 'evidence/asl-fragments');
+      mkdirSync(fragmentDirectory, {recursive: true});
+      const fragments = new Map<string, string>();
+      for (const {data} of content.units) {
+        for (const stage of data.semanticExecution?.stages ?? []) {
+          for (const region of stage.sharedRegions) {
+            if (region.text === undefined || sha256(region.text) !== region.fragmentSha256) {
+              fail(`build content has stale shared ASL fragment ${region.id}`);
+            }
+            const previous = fragments.get(region.fragmentSha256);
+            if (previous !== undefined && previous !== region.text) {
+              fail(`shared ASL fragment hash collision for ${region.id}`);
+            }
+            fragments.set(region.fragmentSha256, region.text);
+          }
+        }
+      }
+      for (const [digest, source] of fragments) {
+        writeFileSync(path.join(fragmentDirectory, `${digest}.asl`), source, 'utf8');
+      }
+
+      const decisionDirectory = path.join(siteOutDir, 'evidence/decisions');
+      mkdirSync(decisionDirectory, {recursive: true});
+      for (const [id, nodes] of Object.entries(content.adrDecisions)) {
+        if (!/^ADR-\d{4}$/.test(id)) fail(`unsafe ADR asset identity ${id}`);
+        writeFileSync(
+          path.join(decisionDirectory, `${id}.json`),
+          `${JSON.stringify(nodes)}\n`,
+          'utf8',
+        );
       }
     },
   };

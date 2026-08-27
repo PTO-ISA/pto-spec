@@ -20,7 +20,6 @@ export default function GeneratedMetadata({metadata, unit}: GeneratedMetadataPro
 
   return (
     <section className={styles.section} aria-labelledby="generated-metadata-heading">
-      <span className={styles.eyebrow}>Generated projection · not a semantic owner</span>
       <h2 id="generated-metadata-heading">Unit metadata</h2>
       {entries.length === 0 ? <p>No generated metadata is attached to this unit.</p> : (
         <details className={styles.generatedRecord}>

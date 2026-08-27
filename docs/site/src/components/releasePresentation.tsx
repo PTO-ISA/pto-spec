@@ -5,7 +5,7 @@ import type {PtoReaderGuide, PtoReleaseIdentity} from '@site/src/types/pto';
 export function releaseStatus(release: PtoReleaseIdentity): string {
   return release.releaseEligible
     ? 'Latest verified release'
-    : 'Unpublished release preview';
+    : 'Release candidate';
 }
 
 export function useLocalizedPath(path: string): string {

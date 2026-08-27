@@ -112,7 +112,8 @@ end;
 BSTART.SFU TEXTRACT, DataType
 B.DATR (optional)
 B.DIM LB0
-B.DIM (LB1/LB2 for 2D)
+B.DIM LB1 (optional)
+B.DIM LB2 (optional)
 B.IOT
 B.IOR
 BSTOP
@@ -195,4 +196,4 @@ end;
 
 ## Examples
 
-- BSTART.SFU TEXTRACT, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; B.IOR; BSTOP
+- BSTART.SFU TEXTRACT, DataType; B.DATR (optional); B.DIM LB0; B.DIM LB1 (optional); B.DIM LB2 (optional); B.IOT; B.IOR; BSTOP

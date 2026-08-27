@@ -1,11 +1,46 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import styles from './PtoWorkbench.module.css';
 import {firstText, itemSearchText, list, record, sourceHref, type UnknownRecord} from './data';
+import AslCode from './AslCode';
+import {ReaderNodes} from './ReaderGuide';
+import SemanticIdPath, {CopyIdentityButton} from './SemanticIdPath';
+import type {PtoReaderNode, PtoSemanticIdentity} from '@site/src/types/pto';
 
 interface EvidenceGroup {
   id: string;
   label: string;
   items: UnknownRecord[];
+}
+
+function DecisionRecord({id, url}: {id: string; url: string}): React.JSX.Element {
+  const [nodes, setNodes] = useState<PtoReaderNode[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void fetch(url)
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json() as Promise<PtoReaderNode[]>;
+      })
+      .then((value) => {
+        if (!Array.isArray(value)) throw new TypeError('Decision asset must be an array');
+        if (active) setNodes(value);
+      })
+      .catch((reason: unknown) => {
+        if (active) setError(`Decision record could not be loaded: ${String(reason)}`);
+      });
+    return () => { active = false; };
+  }, [url]);
+
+  return (
+    <div className={styles.decisionBody}>
+      <h4>Decision record</h4>
+      {nodes === null && error === null && <p role="status">Loading {id}…</p>}
+      {error && <p role="alert">{error}</p>}
+      {nodes !== null && <ReaderNodes nodes={nodes} />}
+    </div>
+  );
 }
 
 export interface EvidenceIndexProps {
@@ -41,9 +76,9 @@ function EvidenceSource({id, url}: {id: string; url: string}): React.JSX.Element
       {loading && <p role="status">Loading exact commit-scoped source…</p>}
       {error && <p role="alert">{error}</p>}
       {source !== null && (
-        <pre tabIndex={0} aria-label={`Exact test source for ${id}`}>
-          <code className="language-asl">{source}</code>
-        </pre>
+        <div className={styles.source} tabIndex={0}>
+          <AslCode text={source} label={`Exact test source for ${id}`} />
+        </div>
       )}
     </details>
   );
@@ -51,7 +86,7 @@ function EvidenceSource({id, url}: {id: string; url: string}): React.JSX.Element
 
 export default function EvidenceIndex({tests, adrs, evidence}: EvidenceIndexProps): React.JSX.Element {
   const [query, setQuery] = useState('');
-  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(['tests', 'evidence', 'adrs']));
+  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(['adrs']));
   const [pages, setPages] = useState<Record<string, number>>({});
   const groups = useMemo<EvidenceGroup[]>(() => [
     {id: 'tests', label: 'Executable evidence', items: list(tests).map(record)},
@@ -81,7 +116,6 @@ export default function EvidenceIndex({tests, adrs, evidence}: EvidenceIndexProp
 
   return (
     <section className={styles.section} aria-labelledby="evidence-heading">
-      <span className={styles.eyebrow}>Release evidence · status preserved</span>
       <h2 id="evidence-heading">Evidence index</h2>
       <div className={styles.toolbar} role="search">
         <label className={styles.srOnly} htmlFor="evidence-search">Search evidence by identity or path</label>
@@ -106,23 +140,35 @@ export default function EvidenceIndex({tests, adrs, evidence}: EvidenceIndexProp
                 const passCondition = firstText(item, ['passCondition']);
                 const sourceAssetUrl = firstText(item, ['sourceAssetUrl']);
                 const role = firstText(item, ['role', 'kind']);
-                const hash = firstText(item, ['sha256']);
+                const hash = firstText(item, ['sha256', 'sourceSha256']);
+                const decisionAssetUrl = firstText(item, ['decisionAssetUrl']);
+                const identity = item.identity as PtoSemanticIdentity | undefined;
+                const affectedUnits = list(item.affectedUnits).map(String);
+                const affectedNdf = list(item.affectedNdf).map(String);
                 return (
-                  <li className={styles.evidenceItem} key={`${group.id}-${id}-${index}`}>
-                    <details className={styles.evidenceEntry}>
+                  <li className={styles.evidenceItem} id={identity?.anchor} key={`${group.id}-${id}-${index}`}>
+                    <details className={styles.evidenceEntry} open={decisionAssetUrl && index === 0 ? true : undefined}>
                       <summary>
-                        <code>{id}</code>
-                        <span>{title || path}{status ? ` · ${status}` : ''}</span>
+                        <span className={styles.evidenceSummary}>{title || path}{status ? ` · ${status}` : ''}</span>
+                        {identity ? <SemanticIdPath identity={identity} copyable={false} /> : <code>{id}</code>}
                       </summary>
-                      <dl className={styles.evidenceDetails}>
-                        <dt>Path</dt><dd><code>{path}</code></dd>
-                        {role && <><dt>Kind / role</dt><dd>{role}</dd></>}
-                        {requirements.length > 0 && <><dt>Requirements</dt><dd>{requirements.join(', ')}</dd></>}
-                        {passCondition && <><dt>Pass condition</dt><dd>{passCondition}</dd></>}
-                        {hash && <><dt>SHA-256</dt><dd><code>{hash}</code></dd></>}
-                      </dl>
+                      {identity && <div className={styles.evidenceIdentityAction}><CopyIdentityButton identity={identity} /></div>}
+                      {decisionAssetUrl && <DecisionRecord id={id} url={decisionAssetUrl} />}
                       {sourceAssetUrl && <EvidenceSource id={id} url={sourceAssetUrl} />}
-                      {href && <a href={href}>Open exact source ↗<span className={styles.srOnly}> for {id}</span></a>}
+                      <details className={styles.recordProvenance}>
+                        <summary>Sources and references</summary>
+                        <dl className={styles.evidenceDetails}>
+                          <dt>Complete stable ID</dt><dd><code>{id}</code></dd>
+                          <dt>Path</dt><dd><code>{path}</code></dd>
+                          {role && <><dt>Kind / role</dt><dd>{role}</dd></>}
+                          {requirements.length > 0 && <><dt>Requirements</dt><dd>{requirements.join(', ')}</dd></>}
+                          {affectedUnits.length > 0 && <><dt>Affected units</dt><dd>{affectedUnits.join(', ')}</dd></>}
+                          {affectedNdf.length > 0 && <><dt>Affected NDF</dt><dd>{affectedNdf.join(', ')}</dd></>}
+                          {passCondition && <><dt>Pass condition</dt><dd>{passCondition}</dd></>}
+                          {hash && <><dt>SHA-256</dt><dd><code>{hash}</code></dd></>}
+                        </dl>
+                        {href && <a href={href}>{decisionAssetUrl ? 'Open exact decision source' : 'Open exact source'} ↗<span className={styles.srOnly}> for {id}</span></a>}
+                      </details>
                     </details>
                   </li>
                 );

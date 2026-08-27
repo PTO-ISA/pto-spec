@@ -2,7 +2,7 @@
   "homepage.release.status": {"message": "最新验证版本"},
   "homepage.release.previewStatus": {"message": "未发布的版本预览"},
   "homepage.release.scope": {"message": "生产站点仅展示正式发布版"},
-  "homepage.hero.title": {"message": "PTO 架构"},
+  "homepage.hero.title": {"message": "架构"},
   "homepage.hero.subtitle": {"message": "一个正式发布的架构，按照标量、Block 和直接 Tile 指令表面的顺序阅读。"},
   "homepage.hero.action": {"message": "从架构所有者开始"},
   "homepage.hero.sourceAction": {"message": "打开原始 ASL 源文件"},
@@ -46,5 +46,6 @@
   "homepage.search.label": {"message": "搜索 PTO 形式规范"},
   "homepage.search.placeholder": {"message": "搜索指令名、NDF ID、unit、测试、字段、引擎、家族或源路径"},
   "homepage.search.submit": {"message": "搜索规范"},
-  "homepage.search.hint": {"message": "可尝试 ADD、BSTART.TEPL、TLOAD、NDF 标识或精确源路径。"}
+  "homepage.search.hint": {"message": "可尝试 ADD、BSTART.TEPL、TLOAD、NDF 标识或精确源路径。"},
+  "portal.current.home": {"message": "首页"}
 }

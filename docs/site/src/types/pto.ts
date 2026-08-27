@@ -63,6 +63,18 @@ export type PtoReaderNode =
   | {kind: 'table-row'; cells: PtoReaderInline[][]}
   | {kind: 'code-block'; language: string | null; text: string};
 
+export interface PtoSemanticIdentityFacet {
+  role: 'namespace' | 'surface' | 'owner' | 'category' | 'case' | 'decision';
+  label: string;
+}
+
+export interface PtoSemanticIdentity {
+  fullId: string;
+  kind: 'ndf' | 'avs' | 'adr';
+  anchor: string;
+  facets: PtoSemanticIdentityFacet[];
+}
+
 export interface PtoReaderGuideBlock {
   id: string;
   role: PtoReaderGuideRole;
@@ -86,6 +98,45 @@ export interface PtoReaderGuide {
   owners: PtoReaderGuideOwnerLink[];
 }
 
+export interface PtoArchitectureOwnerProjection {
+  id: string;
+  label: string;
+  route: string;
+  referenceRoute: string;
+  sourcePath: string;
+  sourceSha256: string;
+  sourceUrl: string;
+  guideStatus: PtoReaderGuideStatus;
+  guideSha256: string;
+  contentLocale: string;
+  blocks: PtoReaderGuideBlock[];
+}
+
+export interface PtoArchitectureBoundGuideBlock {
+  ownerId: string;
+  sourcePath: string;
+  sourceSha256: string;
+  guideSha256: string;
+  block: PtoReaderGuideBlock;
+}
+
+export interface PtoArchitectureTopicProjection {
+  id: string;
+  label: string;
+  scenario: PtoArchitectureBoundGuideBlock;
+  sourceBoundary: PtoArchitectureBoundGuideBlock | null;
+  primary: PtoArchitectureOwnerProjection;
+  related: PtoArchitectureOwnerProjection[];
+}
+
+export interface PtoArchitectureGuide {
+  schema: 'pto.site-architecture-guide.v1';
+  locale: string;
+  release: PtoReleaseIdentity;
+  entry: PtoArchitectureOwnerProjection;
+  topics: PtoArchitectureTopicProjection[];
+}
+
 export interface PtoNdfClause {
   id: string;
   kind: string;
@@ -96,6 +147,11 @@ export interface PtoNdfClause {
   sourcePath: string;
   startLine: number;
   endLine: number;
+  sourceSha256: string;
+  clauseSha256: string;
+  githubUrl: string;
+  affectedUnits: string[];
+  identity: PtoSemanticIdentity;
 }
 
 export interface PtoTestEvidence {
@@ -111,6 +167,10 @@ export interface PtoTestEvidence {
   sourceText?: string;
   sourceAssetUrl: string;
   githubUrl: string;
+  identity: PtoSemanticIdentity;
+  ownerId: string;
+  ownerMnemonic: string | null;
+  surface: string;
 }
 
 export interface PtoAdrRecord {
@@ -122,7 +182,10 @@ export interface PtoAdrRecord {
   affectedNdf: string[];
   affectedUnits: string[];
   targetReleases: string[];
+  decisionAssetUrl: string;
   githubUrl: string;
+  sourceSha256: string;
+  identity: PtoSemanticIdentity;
 }
 
 export interface PtoArtifactEvidence {
@@ -143,6 +206,110 @@ export interface PtoUnitEncoding {
   tileOperation?: Record<string, PtoJsonValue>;
 }
 
+export interface PtoAssemblerSymbol {
+  field: string;
+  width: string;
+  signedness: string;
+  role: string;
+  zeroMeaning: string;
+}
+
+export interface PtoLocalizedText {
+  en: string;
+  'zh-CN': string;
+}
+
+export interface PtoInstructionCompositionParameter {
+  name: string;
+  meaning: PtoLocalizedText;
+  omission?: PtoLocalizedText;
+}
+
+export interface PtoInstructionCompositionReference {
+  id: string;
+  route: string;
+  sourcePath: string;
+  sourceUrl: string;
+}
+
+export interface PtoInstructionCompositionCommand {
+  mnemonic: string;
+  minOccurrences: number;
+  maxOccurrences: number;
+  repeatable: boolean;
+  requirement: 'required' | 'optional' | 'conditional' | 'forbidden';
+  role: PtoLocalizedText;
+  parameters: PtoInstructionCompositionParameter[];
+  reference?: PtoInstructionCompositionReference;
+}
+
+export interface PtoInstructionCompositionVariant {
+  id: string;
+  label: PtoLocalizedText;
+  summary: PtoLocalizedText;
+  canonicalCommandCount: PtoLocalizedText;
+  canonicalMinCommands: number;
+  canonicalMaxCommands: number;
+  minimumSequence: string[];
+  completeSequence: string[];
+  relationships: PtoLocalizedText[];
+  commands: PtoInstructionCompositionCommand[];
+}
+
+export interface PtoInstructionComposition {
+  owner: string;
+  variants: PtoInstructionCompositionVariant[];
+}
+
+export interface PtoSemanticSourceRegion {
+  id: string;
+  label: PtoLocalizedText;
+  purpose: PtoLocalizedText;
+  sourcePath: string;
+  sourceUrl: string;
+  sourceSha256: string;
+  fragmentSha256: string;
+  startLine: number;
+  endLine: number;
+  text?: string;
+  sourceAssetUrl?: string;
+}
+
+export interface PtoSemanticExecutionStage {
+  id: string;
+  label: PtoLocalizedText;
+  summary: PtoLocalizedText;
+  status: 'complete' | 'source-gap';
+  gap?: PtoLocalizedText;
+  facts: Array<{
+    kind: 'inputs' | 'checks' | 'faults' | 'reads' | 'writes' | 'commit';
+    label: PtoLocalizedText;
+    items: PtoLocalizedText[];
+  }>;
+  ownerRegions: PtoSemanticSourceRegion[];
+  sharedRegions: PtoSemanticSourceRegion[];
+}
+
+export interface PtoSemanticExecution {
+  owner: string;
+  stages: PtoSemanticExecutionStage[];
+}
+
+export interface PtoHighLevelAssemblyBinding {
+  display: string;
+  source: string;
+  role: string;
+}
+
+export interface PtoHighLevelAssembly {
+  form: string;
+  parameters: PtoHighLevelAssemblyBinding[];
+  inputs: PtoHighLevelAssemblyBinding[];
+  outputs: PtoHighLevelAssemblyBinding[];
+  attributes: PtoHighLevelAssemblyBinding[];
+  basis: string[];
+}
+
 export interface PtoUnitWorkbenchData {
   release: PtoReleaseIdentity;
   source: PtoSourceIdentity;
@@ -155,6 +322,10 @@ export interface PtoUnitWorkbenchData {
   adrs: PtoAdrRecord[];
   evidence: PtoArtifactEvidence[];
   encoding: PtoUnitEncoding;
+  assemblerSymbols: PtoAssemblerSymbol[];
+  composition: PtoInstructionComposition | null;
+  semanticExecution: PtoSemanticExecution | null;
+  highLevelAssembly: PtoHighLevelAssembly | null;
 }
 
 /** Compatibility name for the first TLOAD workbench implementation. */
@@ -215,6 +386,67 @@ export interface PtoNdfIndexPageData {
   pageCount: number;
   total: number;
   entries: PtoNdfIndexEntry[];
+}
+
+export interface PtoInstructionIndexEntry {
+  id: string;
+  mnemonic: string;
+  surface: 'scalar' | 'block' | 'tile';
+  classification: string[];
+  route: string;
+  summary: string;
+  sourcePath: string;
+  sourceSha256: string;
+}
+
+export interface PtoInstructionIndexData {
+  release: PtoReleaseIdentity;
+  entries: PtoInstructionIndexEntry[];
+}
+
+export interface PtoNdfOwnerRoute {
+  id: string;
+  mnemonic: string | null;
+  surface: string;
+  route: string;
+  sourcePath: string;
+}
+
+export interface PtoNdfCatalogEntry {
+  id: string;
+  entryKind: 'clause' | 'instruction-contract';
+  kind: string;
+  level: string;
+  layer: string;
+  status: string;
+  text: string | null;
+  route: string;
+  sourcePath: string;
+  sourceSha256: string;
+  clauseSha256: string;
+  owners: PtoNdfOwnerRoute[];
+}
+
+export interface PtoNdfCatalogData {
+  release: PtoReleaseIdentity;
+  entries: PtoNdfCatalogEntry[];
+}
+
+export interface PtoNdfDetailData {
+  release: PtoReleaseIdentity;
+  clause: PtoNdfClause;
+  owners: PtoNdfOwnerRoute[];
+  adrs: PtoAdrRecord[];
+  tests: PtoTestEvidence[];
+  evidence: PtoArtifactEvidence[];
+  relationships: Array<{
+    kind: PtoGraphEdgeKind;
+    direction: 'incoming' | 'outgoing';
+    node: PtoGraphNode;
+    href: string;
+    external: boolean;
+  }>;
+  relationshipFallbackRoute: string;
 }
 
 export type PtoSearchEntryKind = 'adr' | 'ndf' | 'asl' | 'avs';

@@ -7,6 +7,12 @@ import type {
 } from '@site/src/types/pto';
 import styles from './PtoWorkbench.module.css';
 
+function readerFacingText(value: string): string {
+  return value
+    .replace(/non-normative/gi, 'illustrative')
+    .replace(/非规范性?/g, '示例性');
+}
+
 function Inline({content}: {content: PtoReaderInline[]}): React.JSX.Element {
   return (
     <>
@@ -14,7 +20,7 @@ function Inline({content}: {content: PtoReaderInline[]}): React.JSX.Element {
         const key = `${item.kind}-${index}`;
         switch (item.kind) {
           case 'text':
-            return <React.Fragment key={key}>{item.text}</React.Fragment>;
+            return <React.Fragment key={key}>{readerFacingText(item.text)}</React.Fragment>;
           case 'code':
             return <code key={key}>{item.text}</code>;
           case 'strong':
@@ -58,16 +64,16 @@ function renderSingleNode(node: PtoReaderNode, key: string): React.ReactNode {
   }
 }
 
-function BlockBody({block}: {block: PtoReaderGuideBlock}): React.JSX.Element {
+export function ReaderNodes({nodes}: {nodes: PtoReaderNode[]}): React.JSX.Element {
   const rendered: React.ReactNode[] = [];
   let index = 0;
-  while (index < block.nodes.length) {
-    const node = block.nodes[index];
+  while (index < nodes.length) {
+    const node = nodes[index];
     if (node.kind === 'list-item') {
       const ordered = node.ordered;
       const items: Extract<PtoReaderNode, {kind: 'list-item'}>[] = [];
-      while (index < block.nodes.length) {
-        const candidate = block.nodes[index];
+      while (index < nodes.length) {
+        const candidate = nodes[index];
         if (candidate.kind !== 'list-item' || candidate.ordered !== ordered) break;
         items.push(candidate);
         index += 1;
@@ -82,8 +88,8 @@ function BlockBody({block}: {block: PtoReaderGuideBlock}): React.JSX.Element {
     }
     if (node.kind === 'table-row') {
       const rows: Extract<PtoReaderNode, {kind: 'table-row'}>[] = [];
-      while (index < block.nodes.length && block.nodes[index].kind === 'table-row') {
-        rows.push(block.nodes[index] as Extract<PtoReaderNode, {kind: 'table-row'}>);
+      while (index < nodes.length && nodes[index].kind === 'table-row') {
+        rows.push(nodes[index] as Extract<PtoReaderNode, {kind: 'table-row'}>);
         index += 1;
       }
       const [header, ...body] = rows;
@@ -108,18 +114,22 @@ function BlockBody({block}: {block: PtoReaderGuideBlock}): React.JSX.Element {
   return <>{rendered}</>;
 }
 
+function BlockBody({block}: {block: PtoReaderGuideBlock}): React.JSX.Element {
+  return <ReaderNodes nodes={block.nodes} />;
+}
+
 const ZH_ROLE_LABELS: Record<PtoReaderGuideBlock['role'], string> = {
   purpose: '用途',
-  mechanism: '工作机制',
+  mechanism: '执行过程',
   'inputs-outputs': '输入与输出',
   effects: '架构效果',
   constraints: '约束与非法情形',
-  example: '非规范性示例',
+  example: '示例演示',
   'purpose-scope': '目的与范围',
   'concepts-state': '概念与架构状态',
   'rules-interactions': '规则与交互',
   boundaries: '边界与未定义范围',
-  'example-usage': '非规范性使用示例',
+  'example-usage': '使用示例',
   'related-owners-navigation': '相关规范所有者',
 };
 
@@ -137,22 +147,13 @@ export default function ReaderGuide({
     <section className={`${styles.section} ${styles.readerGuide}`} aria-labelledby="reader-guide-title">
       <div className={styles.readerGuideHeader}>
         <div>
-          <span className={styles.readerGuideBadge}>
-            {chinese ? '读者指南 · 非规范性说明' : 'Reader guide · non-normative explanation'}
-          </span>
           <h2 id="reader-guide-title">
             {chinese
-              ? mnemonic ? '理解这条指令' : '理解这一架构条目'
-              : mnemonic ? 'Understand this instruction' : 'Understand this architecture entry'}
+              ? mnemonic ? '行为' : '架构行为'
+              : mnemonic ? 'Behavior' : 'Architecture behavior'}
           </h2>
         </div>
-        <span className={styles.readerGuideStatus}>{guide.contentLocale}</span>
       </div>
-      <p className={styles.readerGuideBoundary}>
-        {chinese
-          ? '本指南帮助阅读与实现，不定义指令语义。发生差异时，下面链接的 ASL/NDF 所有者始终优先。'
-          : 'This guide supports reading and implementation; it does not define instruction semantics. The linked ASL/NDF owners below always take precedence.'}
-      </p>
       {fallback && (
         <div className="alert alert--info" role="note">
           {guide.blocks.length > 0
@@ -177,18 +178,6 @@ export default function ReaderGuide({
           <BlockBody block={block} />
         </article>
       ))}
-      <div className={styles.readerOwners}>
-        <h3>{chinese ? '精确规范所有者' : 'Exact normative owners'}</h3>
-        <ul>
-          {guide.owners.map((owner) => (
-            <li key={`${owner.kind}-${owner.id}`}>
-              <span>{owner.kind.toUpperCase()}</span>{' '}
-              <a href={owner.href}>{owner.id}</a>{' '}
-              <code>{owner.path}</code>
-            </li>
-          ))}
-        </ul>
-      </div>
     </section>
   );
 }

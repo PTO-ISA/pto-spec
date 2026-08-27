@@ -9,5 +9,6 @@ __pycache__/
 /docs/site/node_modules/
 /docs/site/.docusaurus/
 /docs/site/build/
+/docs/site/evidence/
 /docs/site/test-results/
 /docs/site/playwright-report/

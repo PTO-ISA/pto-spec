@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
-    // block: BSTART.TLSU TMOV, DataType | B.DIM LB0 | B.DIM (LB1/LB2 for 2D) | B.IOT | BSTOP
+    // block: BSTART.TLSU TMOV, DataType | B.DIM LB0 | B.DIM LB1 (optional) | B.DIM LB2 (optional) | B.IOT | BSTOP
     assert DecodeTileOperation(TileDecode_TLSU, '000000000010') == 83;
     assert TileOperationOfIndex(83) == TileOperation_TMOV;
     assert TileHandlerOfIndex(83) == TileHandler_TMOV;

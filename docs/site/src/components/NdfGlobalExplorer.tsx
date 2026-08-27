@@ -154,12 +154,12 @@ function WebGlExplorer({graph, initialQuery}: {graph: PtoNdfGraphData; initialQu
       const themeStyle = getComputedStyle(document.documentElement);
       const cssColor = (name: string, fallback: string) => themeStyle.getPropertyValue(name).trim() || fallback;
       const colorByKind: Record<string, string> = {
-        ndf: cssColor('--ifm-color-primary', '#1688b8'),
-        asl: cssColor('--ifm-color-info-dark', '#486fd1'),
+        ndf: cssColor('--ifm-color-primary', '#f15b61'),
+        asl: cssColor('--pto-highlight', '#d9b85c'),
         avs: cssColor('--ifm-color-success-dark', '#2f8d60'),
         adr: cssColor('--ifm-color-warning-dark', '#98691d'),
       };
-      const edgeColor = cssColor('--ifm-color-emphasis-400', dark ? '#526070' : '#bcc6d1');
+      const edgeColor = cssColor('--ifm-color-emphasis-400', dark ? '#4a4547' : '#b9b0a8');
       void api.react(plotElement, [
         {type: 'scattergl', mode: 'lines', x: edgeX, y: edgeY, hoverinfo: 'skip', line: {color: edgeColor, width: 1}},
         {
@@ -167,7 +167,7 @@ function WebGlExplorer({graph, initialQuery}: {graph: PtoNdfGraphData; initialQu
           text: nodes.map((node, index) => `${nodeId(node, index)} · ${firstText(node, ['kind'], 'node')}`),
           customdata: nodes.map((_, index) => index),
           hovertemplate: '%{text}<extra></extra>',
-          marker: {color: nodes.map((node) => colorByKind[firstText(node, ['kind'])] ?? '#13a8d2'), size: 7, opacity: .88},
+          marker: {color: nodes.map((node) => colorByKind[firstText(node, ['kind'])] ?? '#f15b61'), size: 7, opacity: .88},
         },
       ], {
         autosize: true, dragmode: 'pan', hovermode: 'closest', margin: {l: 16, r: 16, t: 16, b: 16},

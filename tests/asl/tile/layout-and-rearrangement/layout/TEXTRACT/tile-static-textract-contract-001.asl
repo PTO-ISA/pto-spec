@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: layout-and-rearrangement/layout
-    // block: BSTART.SFU TEXTRACT, DataType | B.DATR (optional) | B.DIM LB0 | B.DIM (LB1/LB2 for 2D) | B.IOT | B.IOR | BSTOP
+    // block: BSTART.SFU TEXTRACT, DataType | B.DATR (optional) | B.DIM LB0 | B.DIM LB1 (optional) | B.DIM LB2 (optional) | B.IOT | B.IOR | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000001100010') == 69;
     assert TileOperationOfIndex(69) == TileOperation_TEXTRACT;
     assert TileHandlerOfIndex(69) == TileHandler_TEXTRACT;

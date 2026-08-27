@@ -1,9 +1,9 @@
 import React from 'react';
-import Layout from '@theme/Layout';
 import type {PtoSearchData} from '@site/src/types/pto';
 import SearchWorkbench from '@site/src/components/SearchWorkbench';
 import styles from '@site/src/components/PtoWorkbench.module.css';
 import {LanguageFallbackNotice, releaseStatus} from '@site/src/components/releasePresentation';
+import PortalShell from '@site/src/components/PortalShell';
 
 export interface SearchRouteProps {
   search: PtoSearchData;
@@ -11,7 +11,7 @@ export interface SearchRouteProps {
 
 export default function Search({search}: SearchRouteProps): React.JSX.Element {
   return (
-    <Layout title="Search the formal specification" description="Search released PTO ASL, NDF, AVS, and ADR identities.">
+    <PortalShell title="Search the formal specification" description="Search released PTO ASL, NDF, AVS, and ADR identities.">
       <main className={styles.page}>
         <LanguageFallbackNotice />
         <header className={styles.hero}>
@@ -24,6 +24,6 @@ export default function Search({search}: SearchRouteProps): React.JSX.Element {
         </header>
         <SearchWorkbench search={search} />
       </main>
-    </Layout>
+    </PortalShell>
   );
 }

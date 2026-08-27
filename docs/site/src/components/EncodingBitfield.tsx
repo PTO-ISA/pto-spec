@@ -14,7 +14,7 @@ function waveDromSource(word: EncodingWordModel): WaveDromRegisterSource {
     reg: word.fields.slice().reverse().map((field) => ({
       bits: field.width,
       name: field.name,
-      ...(field.value ? {attr: field.value} : {}),
+      ...(field.kind === 'field' && field.value ? {attr: field.value} : {}),
     })),
     config: {
       bits: word.width,
@@ -26,7 +26,15 @@ function waveDromSource(word: EncodingWordModel): WaveDromRegisterSource {
   };
 }
 
-export default function EncodingBitfield({encoding}: {encoding: unknown}): React.JSX.Element {
+export default function EncodingBitfield({
+  encoding,
+  entryOnly = false,
+  chinese = false,
+}: {
+  encoding: unknown;
+  entryOnly?: boolean;
+  chinese?: boolean;
+}): React.JSX.Element {
   const data = record(encoding);
   const operation = record(data.tileOperation);
   if (!Array.isArray(data.catalogForms) || data.catalogForms.length === 0) {
@@ -41,8 +49,18 @@ export default function EncodingBitfield({encoding}: {encoding: unknown}): React
 
   return (
     <section className={styles.section} aria-labelledby="encoding-heading">
-      <span className={styles.eyebrow}>Generated from released catalog</span>
-      <h2 id="encoding-heading">Encoding</h2>
+      <h2 id="encoding-heading">
+        {entryOnly
+          ? (chinese ? '入口指令编码：BSTART' : 'Entry instruction encoding: BSTART')
+          : (chinese ? '编码' : 'Encoding')}
+      </h2>
+      {entryOnly && (
+        <p className={styles.encodingScopeNote}>
+          {chinese
+            ? '这里只编码 bundle 的 BSTART 入口，不是完整 TLOAD。完整语义还需要上面的 B.DATR、B.DIM、B.IOR、B.IOT/B.IOS 与 BSTOP。'
+            : 'This encodes only the bundle-entry BSTART command, not the complete TLOAD. The complete operation also requires the B.DATR, B.DIM, B.IOR, B.IOT/B.IOS, and BSTOP structure shown above.'}
+        </p>
+      )}
       {forms.map((commandForm, formIndex) => {
         const words = parseEncodingForm(commandForm);
         const assembly = firstText(commandForm, ['asm', 'mnemonic'], firstText(operation, ['command_mnemonic']));
@@ -61,13 +79,13 @@ export default function EncodingBitfield({encoding}: {encoding: unknown}): React
                   <div className={styles.tableViewport} tabIndex={0}>
                     <table>
                       <caption>Generated encoding fields{assembly ? ` for ${assembly}` : ''}{words.length > 1 ? `, word ${wordPosition + 1}` : ''}</caption>
-                      <thead><tr><th>Field</th><th>Bit range</th><th>Fixed value</th></tr></thead>
+                      <thead><tr><th>Decoded item</th><th>Bit range</th><th>Value</th></tr></thead>
                       <tbody>
                         {word.fields.map((field, index) => (
                           <tr key={`accessible-${field.name}-${field.bits}-${index}`}>
-                            <td>{field.name || `Field ${index + 1}`}</td>
+                            <td>{field.kind === 'constant' ? 'Constant' : field.name || `Field ${index + 1}`}</td>
                             <td>{field.bits || 'not specified'}</td>
-                            <td>{field.value || 'variable'}</td>
+                            <td>{field.kind === 'constant' ? field.name : field.value || (field.kind === 'field' ? 'variable' : 'unspecified')}</td>
                           </tr>
                         ))}
                       </tbody>

@@ -3,7 +3,7 @@
 ## Source of truth
 
 - Status: Active
-- Last refreshed: 2026-08-25
+- Last refreshed: 2026-08-27
 - Primary product surface: PTO Formal Specification Portal at
   `https://pto-isa.github.io/`
 - Product owner: `PTO-ISA/pto-spec`
@@ -26,6 +26,11 @@
     assets, SSG, versioning, internationalization, and GitHub Pages deployment
   - Plotly.js documentation for WebGL traces, animations, React integration,
     partial bundles, updates, and WebGL context limits
+  - Arm A64 instruction-reference composition, using `ADD (immediate)` as the
+    concrete page study: short purpose, encoding diagram, per-variant assembly,
+    shared decode pseudocode, assembler symbols, operation pseudocode, then
+    operational information
+  - `.codex/skills/pto-asl/references/arm-style.md`
 
 ## Normative ownership
 
@@ -48,8 +53,11 @@ asl/**/*.asl
   owners. They must not be rewritten by hand in Markdown, React components, or
   visualization data.
 - Hand-written documentation may demonstrate behavior through examples,
-  animation, diagrams, implementation guidance, and common pitfalls. It must be
-  visibly labeled non-normative and must not redefine instruction semantics.
+  animation, diagrams, implementation guidance, and common pitfalls. The UI
+  presents these as reader aids without repeated legalistic status banners;
+  semantic authority is established once, through the directly embedded ASL
+  and the source ledger at the end of the page. Reader aids must not redefine
+  instruction semantics.
 - If an ASL/NDF explanation is insufficient, improve the owning ASL/NDF source,
   regenerate every projection, add or update evidence, and run the required
   validation workflow. Do not repair the gap only in the website.
@@ -64,7 +72,10 @@ asl/**/*.asl
 - Trust signals: exact release identity, commit SHA, source path, line range,
   content hash, validation state, and direct links to evidence.
 - Visual posture: a restrained specification manual combined with a professional
-  engineering workbench.
+  engineering workbench. The dark-first palette uses obsidian neutrals,
+  oxidized red for primary/current-route emphasis, and brushed gold for focus,
+  source identity, and selected-data highlights. It is Huawei/Ascend-inspired
+  in tone without claiming or reproducing an official brand system.
 - Avoid:
   - cyberpunk neon and decorative particle effects;
   - excessive glass effects, gradients, shadows, or marketing cards;
@@ -155,21 +166,53 @@ asl/**/*.asl
 
 ### Primary navigation
 
-- PTO Architecture
+- Architecture
+- All instructions
 - Scalar
 - Block
 - Tile
-- ADR / NDF
+- NDF
+- NDF graph
+- Decisions / ADR
 - Search
 
 Scalar, Block, and Tile navigation uses an exact released-surface facet. It must
 not be implemented as a free-text search whose substring matches can cross
 surface boundaries.
 
+Every primary reading route uses a stable left navigation rail on desktop,
+including the homepage, Architecture landing page, instruction workbenches,
+NDF indexes and exploration, and ADR/Decision entry points. The rail is ordered
+as Home, Architecture, All instructions, Scalar, Block, Tile, NDF, NDF graph,
+Decisions, and Search. On the instruction index, the `surface` URL query
+parameter is the canonical selected facet; rail links, filter buttons, browser
+history, and current-route state must remain synchronized with it. The rail
+shows hierarchy and the current route, may collapse individual groups, and is
+never fully hidden by default on desktop. The top navbar remains a compact set
+of direct entries rather than the only navigation surface.
+
+The native Docusaurus Reference sidebar remains the stable left navigation for
+governance, status, development, and release documents that are not canonical
+unit workbenches. Architecture, Scalar, Block, and Tile unit documents do not
+remain in that sidebar: their legacy `/reference/...` URLs redirect to the one
+canonical unit page. The Reference sidebar marks the exact current project
+record, while the global top navbar retains Home, Architecture, instructions,
+NDF, and Search access without duplicating two rails. Custom routes use the
+shared `PortalShell` and `SpecNavigation` components instead of duplicating
+route-specific navigation. At tablet and phone widths the persistent rail
+becomes a clearly labelled navigation button and in-flow drawer; it does not
+overlay or obscure the document.
+
+English uses `Architecture`. Simplified Chinese uses the concise label `架构`.
+Navigation must not use `PTO Architecture`, `PTO架构`, `PTO ISA`, or `PTO 手册`
+as sibling labels for the same destination. Formal release identity and the
+normative product name remain unchanged where those names are actual source or
+version identities.
+
 ### Default flow
 
 ```text
-PTO Architecture
+Architecture
     -> Scalar
     -> Block
     -> Tile
@@ -191,14 +234,42 @@ Homepage prose is an orientation layer, not a second semantic manual. It may
 summarize released inventory and repository structure, but every semantic claim
 must resolve to the embedded ASL/NDF owner.
 
+### Architecture landing-page reading order
+
+The `/architecture/` route is a reader-first map over current architecture
+owners, not a replacement architecture manual. It presents:
+
+1. a compact mental model connecting program, Core/PE execution, Scalar and
+   Block/bundle control, Tile operations, state, and memory;
+2. a relationship table and a typical implementation reading path before any
+   source inventory;
+3. source-backed topics for execution/programming model, architecture state,
+   register classes, memory model, type/shape model, fault/diagnostic model,
+   and version/compatibility;
+4. short reader-guide excerpts projected from the exact owning units, with
+   direct links to their workbenches and original ASL;
+5. explicit source gaps when the current owners distribute or omit a requested
+   contract, rather than a generic explanation that invents one; and
+6. a collapsed provenance ledger after the human reading path.
+
+The site build owns the topic-to-owner map and validates every referenced unit,
+source path, source hash, reviewed reader-guide hash, and exact block identity.
+Typical scenarios and source boundaries are exact bound reader-guide blocks,
+not hand-written architectural claims. React renders the projection and may
+supply localized navigation labels, but it must not carry a second copy of
+architectural semantics.
+
 ### Core routes
 
 - `/` — latest release landing page and global search.
 - `/search` — implementation-oriented search results and filters.
+- `/instructions/` — complete released instruction index with Scalar, Block,
+  and Tile facets; surface subroutes retain the active facet.
 - `/architecture/` — architecture, state, memory, profile, and instruction
   classification entry points.
 - `/instructions/<surface>/<classification>/<mnemonic>/` — instruction
   workbench.
+- `/ndf/` — complete source-backed NDF index.
 - `/ndf/<clause-id>/` — readable clause, owner, references, evidence index, and
   local relationship graph.
 - `/explore/ndf/` — repository-wide Plotly/WebGL relationship explorer.
@@ -208,22 +279,80 @@ must resolve to the embedded ASL/NDF owner.
 - `/project/` — governance, contribution, repository layout, ADRs, and open
   questions.
 
+### One canonical unit page
+
+Generated Markdown under `docs/{arch,scalar,block,tile}/` remains the checked-in
+ASL projection and reader-guide source, but it is not published as a second
+instruction/reference page. Every released unit has one canonical workbench
+route that renders the Markdown reader blocks, exact embedded ASL, NDF,
+Decision/AVS evidence, and provenance together. Legacy `/reference/...` unit
+URLs redirect to that canonical route. The Docusaurus Reference plugin retains
+only governance, status, development, and release documents that are not unit
+workbenches.
+
+The instruction and NDF indexes are generated from the same release
+traceability graph and route manifest. They never maintain a second handwritten
+catalog. Every NDF detail route resolves the exact canonical clause body and
+links every owning/affected unit back to its canonical workbench.
+
 ### Content hierarchy on an instruction route
 
-- Identity, release, commit, source path, and hash.
-- Canonical assembly and generated encoding.
-- Embedded ASL decode and operation regions.
-- Generated legality, defaults, operands, state, memory, ordering, and fault
-  contracts.
-- Interactive demonstration labeled non-normative.
-- NDF clauses and dependency neighborhood.
-- Expandable, searchable evidence index.
-- Decision history and exact source links.
+1. Mnemonic, one-sentence purpose, and stable instruction identity.
+2. For bundle-defined Tile operations, the complete bundle/block syntax comes
+   first: ordered BSTART/B.xxx/BSTOP rail, legal variants, minimum and complete
+   examples, occurrence constraints, parameter sources, defaults, mutual
+   exclusions, and links to every command owner.
+3. The BSTART encoding follows under the explicit title `Entry instruction
+   encoding`. It must never imply that the entry command is the whole Tile
+   operation.
+4. Exact decode ASL that binds encoded fields into small typed locals and
+   rejects reserved combinations before effects.
+5. An assembler-symbol table generated from the same ASL/catalog owner,
+   explaining each visible operand, option, default, and assigned value.
+6. A semantic execution path ordered as bundle inputs, decode/bind, derived
+   state, legality, complete-footprint preflight, operation, and publish/commit.
+   Every stage embeds its exact mnemonic-owner DOC region. When a stage executes
+   a shared helper, it embeds the exact referenced ASL fragment with module,
+   lines, source hash, fragment hash, and source link.
+7. Human-readable operational information: effects, ordering, fault boundary,
+   aliases, constraints, and bounded walkthroughs.
+8. NDF and ADR bodies expanded inline from their canonical sources. Stable ID
+   chips and human-readable content are primary; provenance is collapsed below.
+9. A final source ledger containing release, commit, ASL path and hash,
+   generated-document path and hash, and exact ASL/NDF owner links.
+
+Release and source provenance stays available but does not interrupt the
+reader-first explanation at the top of the page.
+
+### Arm-style embedding contract
+
+The Arm `ADD (immediate)` page is a structural reference, not a semantic source.
+Its important property is that encoding, decode, symbols, and operation are
+separate projections of one instruction definition:
+
+- the register diagram appears once, before variant-specific assembly forms;
+- each assembly placeholder links conceptually to one symbol definition;
+- decode pseudocode is embedded in place and only performs field binding and
+  legality preparation;
+- operation pseudocode is embedded separately and performs the architectural
+  computation and writeback;
+- shared helpers remain links/references rather than copied implementations;
+- operational notes follow the exact pseudocode instead of interrupting it.
+
+PTO must preserve the same separation. A `DOC-BEGIN: decode` region that merely
+returns an operation or handler enum is instruction-selection linkage, not a
+reader-visible decode. The portal must label it as such and must not present it
+as Encoding/Decode ASL. Promoting it to a true Decode section requires enhancing
+the owning ASL to expose field binding and legality, regenerating projections,
+and rerunning the normative verification flow.
 
 ## Design principles
 
-- Source before interpretation: place exact owner identity and embedded source
-  ahead of hand-written explanation.
+- Human reading before provenance chrome: begin with what the instruction is,
+  its assembly syntax, and its behavior; place commit and source identity in the
+  final source ledger.
+- Source inside the explanation: the working-mechanism section embeds the exact
+  ASL operation region instead of paraphrasing it into a second semantic source.
 - One context per implementation task: instruction, NDF, source, and evidence
   views remain in the same workbench route.
 - Progressive disclosure: readable contract first, deeper source and graph views
@@ -239,9 +368,12 @@ must resolve to the embedded ASL/NDF owner.
 
 ## Visual language
 
-- Color: neutral light reading surfaces; dark engineering workbench surfaces;
-  blue and cyan for selection and data focus; restrained green, amber, and red
-  only for explicit validated, pending, and failing states.
+- Color: dark-first obsidian reading and workbench surfaces; vivid signal red
+  for brand, primary actions, and current-route emphasis; high-contrast gold/
+  yellow for focus,
+  source identity, and selected-data highlights. Light mode remains available
+  as a warm neutral fallback. Green, amber, and danger colors retain distinct
+  status meanings; brand red never means failure by itself.
 - Typography: highly readable sans-serif UI text, stable monospace source and
   identifiers, and a restrained heading scale suitable for dense reference
   pages.
@@ -263,12 +395,23 @@ must resolve to the embedded ASL/NDF owner.
 ### Shared components
 
 - `GlobalSpecSearch`
+- `PortalShell`
+- `SpecNavigation`
+- `ArchitectureOverview`
 - `ReleaseIdentity`
 - `SourceIdentity`
+- `SourceLedger`
+- `AssemblySyntax`
 - `ASLViewer`
 - `GeneratedContract`
 - `EncodingBitfield`
 - `NdfClause`
+- `InstructionIndex`
+- `NdfIndex`
+- `NdfDetail`
+- `InstructionComposition`
+- `SemanticExecution`
+- `SemanticIdPath`
 - `NdfNeighborhood`
 - `NdfGlobalExplorer`
 - `EvidenceIndex`
@@ -278,9 +421,74 @@ must resolve to the embedded ASL/NDF owner.
 
 ### Component contracts
 
+- `PortalShell` supplies the shared desktop rail and mobile navigation drawer
+  to custom routes without duplicating the native Reference sidebar. It keeps
+  the document in normal flow and never narrows the content below its readable
+  responsive width.
+- `SpecNavigation` owns one locale-aware route tree. It exposes the current
+  location through visible styling and `aria-current`, keeps desktop navigation
+  visible by default, and provides an explicit mobile open/close control with
+  keyboard and screen-reader semantics.
+- `ArchitectureOverview` consumes only build-generated architecture topic data
+  resolved from released ASL units and their reviewed reader-guide projections.
+  It renders a mental model, topic relationships, scenarios, exact owner links,
+  source boundaries, and a collapsed provenance ledger. Missing or distributed
+  contracts remain visible as source gaps.
 - `ASLViewer` receives build-generated source text, line information, content
-  hash, and exact release permalink. It never accepts hand-written semantic
-  replacement text.
+  hash, and exact release permalink. It shows the operation region first,
+  decode second, and the complete owner on demand. It never accepts hand-written
+  semantic replacement text.
+- `InstructionComposition` consumes only structured owner metadata parsed by
+  the build plugin. It is generic across bundle instruction families and
+  renders ordered rails, variants, constraints, defaults, examples, command
+  detail routes, and exact command-owner links. React contains no TLOAD
+  semantic strings beyond presentation labels.
+- Every Tile composition rail and generated Markdown block-composition section
+  consumes the same ASL-owned `contract.block_composition` projection. A second
+  `metadata.block` form may provide additional structural detail only when the
+  build validates it against the same owner; it must not silently omit a legal
+  variant declared by the contract.
+- `InstructionIndex`, `NdfIndex`, and `NdfDetail` consume only build-generated
+  release data. Index entries link to canonical workbench/detail routes and
+  preserve stable identity, source path, and hash.
+- `SemanticExecution` consumes owner-declared stage bindings. Owner DOC regions
+  must surround executable ASL. Shared-module fragments are extracted from
+  explicit source markers at build time; missing, duplicate, reversed, non-ASL,
+  or hash-inconsistent regions fail the build.
+- `SemanticIdPath` never guesses owner boundaries by splitting a stable ID.
+  Build-time schema data supplies surface, owner, category/kind, and case or
+  decision number. The default view shows the most useful two to four facets;
+  the complete ID remains in the copy action, search index, deep-link anchor,
+  tooltip, provenance, and accessible name.
+- `NdfClause` renders canonical body text expanded by default. Mouse drag and
+  keyboard/touch move buttons may temporarily reorder whole cards in the
+  current page session. Reordering never changes URL, source order, identity,
+  hash, relationship data, or canonical source; reload restores source order
+  and a reset action restores it immediately.
+- ADR/NDF content assets are parsed once from canonical sources and reused by
+  every referring route. ADR cards render the actual Context/Decision/Rationale/
+  Consequences structure present in the source, including lists, tables, and
+  code. NDF cards render the exact owning clause body. A link-only card is a
+  product defect.
+- ASL code uses one repository-owned Prism grammar for workbench sources,
+  generated reference fences, and expandable AVS sources. Keywords, functions,
+  built-ins, literals, comments, and operators are distinguishable in light and
+  dark themes; line numbers retain WCAG contrast, and source meaning never
+  depends on color alone.
+- `AssemblySyntax` reads canonical forms from the ASL-owned instruction metadata
+  already present in route data. It never maintains a separate syntax table.
+- Every Tile page begins its Assembly section with one uniform high-level call
+  grammar: `Mnemonic <shape/type/attribute parameters> inputs -> outputs`.
+  Build-time projection derives parameter labels from ASL-owned BSTART/B.DATR/
+  B.DIM composition and derives input/output order from `contract.operands`.
+  The page exposes a binding table from every high-level placeholder back to
+  its exact source field/declaration. LinxISA v0.58 Tile syntax is a structural reading
+  reference; current PTO owning ASL wins on explicit destinations, operand
+  order, and the removal of legacy `.reuse` spellings.
+- `AssemblerSymbols` joins catalog fields with ASL-owned operand roles, defaults,
+  assigned values, and reserved-value behavior. It never invents descriptions.
+- `SourceLedger` is the last major section on a workbench route and consolidates
+  release, commit, ASL/NDF owners, generated projection paths, and hashes.
 - `GeneratedContract` consumes catalog or ASL-derived data and marks its source
   artifact.
 - `EvidenceIndex` supports filtering, per-group expand/collapse, expand all,
@@ -288,8 +496,8 @@ must resolve to the embedded ASL/NDF owner.
 - `NdfGlobalExplorer` dynamically loads the smallest reviewed Plotly/WebGL
   bundle, uses deterministic build-generated positions, and opens a readable
   clause detail panel on selection.
-- `StateTransitionDemo` is explicitly non-normative and cites the ASL functions
-  and evidence it demonstrates.
+- `StateTransitionDemo` is presented as an interactive walkthrough and cites the
+  ASL functions and evidence it demonstrates in the final source ledger.
 - A large WebGL component is mounted only after an explicit user action and is
   purged when hidden or unmounted.
 
@@ -310,15 +518,29 @@ must resolve to the embedded ASL/NDF owner.
     actions are keyboard accessible;
   - focus order follows reading order;
   - focus remains visible in light and dark themes.
+  - the mobile specification-navigation control is reachable before document
+    content, announces expanded state, and returns focus predictably when
+    closed;
+  - the current left-navigation item uses `aria-current="page"`; group labels
+    and disclosure controls have explicit accessible names;
+  - NDF reordering provides Move up, Move down, and Restore default order
+    controls with polite announcements; the drag handle is separate from body
+    selection and links.
 - Contrast/readability:
   - code, identifiers, metadata, and status text meet contrast requirements;
   - status never depends on color alone.
+  - ordinary text meets at least 4.5:1 contrast and meaningful UI boundaries
+    meet at least 3:1; dark red is not used for small text on dark surfaces;
+  - focus uses the gold focus-ring token and remains visible in forced-colors
+    mode; red/gold categories always retain text, shape, or role labels.
 - Screen-reader semantics:
   - every interactive graph has a concise text summary and a structured list or
     table fallback;
   - dynamic selection and search results use polite announcements;
   - source line numbers are not read as part of every code line unless
     explicitly requested.
+  - Semantic ID chips expose their role labels and the complete stable ID in
+    the group and copy-button accessible names.
 - Reduced motion and sensory considerations:
   - animations become step changes when reduced motion is requested;
   - no flashing, looping, or background motion;
@@ -326,14 +548,19 @@ must resolve to the embedded ASL/NDF owner.
 
 ## Responsive behavior
 
-- Desktop: full workbench, Plotly/WebGL exploration, animation, filtering,
-  zooming, and side-by-side source/evidence views.
-- Tablet: retain full capability with smaller local graph limits and stacked
-  detail panes.
+- Desktop: persistent left navigation plus the full workbench, Plotly/WebGL
+  exploration, animation, filtering, zooming, and side-by-side source/evidence
+  views. The rail participates in layout and never overlays the document.
+- Tablet: the left rail becomes a visible in-flow navigation drawer/button;
+  retain full capability with smaller local graph limits and stacked detail
+  panes.
 - Phone: preserve complete readable source, NDF, generated contracts, and
-  evidence; default large graphs to a local neighborhood or indexed list.
+  evidence; expose the same navigation hierarchy through the labelled drawer;
+  default large graphs to a local neighborhood or indexed list.
 - WebGL unavailable: use static SVG, tables, and relationship lists.
 - Touch devices: do not depend on hover; selection opens explicit details.
+- Touch devices use the same NDF move buttons when native drag is unsuitable;
+  no persistence or account state is introduced.
 
 ## Interaction states
 
@@ -345,6 +572,8 @@ must resolve to the embedded ASL/NDF owner.
   source/evidence fallback.
 - Success: show the exact validated release and commit, not a generic green
   dashboard state.
+- Reordered NDF view: announce the temporary move; Restore default order returns
+  to canonical source order; reload always discards session order.
 - Disabled: explain missing browser capability or unavailable relationship and
   offer the fallback.
 - Offline/slow network: documentation routes remain usable after their static
@@ -356,15 +585,34 @@ must resolve to the embedded ASL/NDF owner.
   boundaries.
 - Default language: English.
 - Supported locales: `en` and `zh-CN` from the first framework release.
+- Use `Architecture` in English navigation and `架构` in Simplified Chinese.
+  Do not mix `PTO Architecture`, `PTO架构`, `PTO ISA`, or `PTO 手册` as labels
+  for the same navigation level.
 - Chinese coverage may grow incrementally across landing pages, navigation,
   guides, and demonstrations.
 - ASL/NDF source, stable IDs, paths, and evidence identities are never
   translated.
 - Missing Chinese content falls back visibly to English. Machine translation is
   not presented as reviewed content.
-- Use `normative`, `generated projection`, `non-normative demonstration`,
-  `decision history`, `executable evidence`, and `commit-scoped evidence`
-  consistently.
+- Prefer direct section titles such as `Assembly syntax`, `Encoding`,
+  `Assembler symbols`, `Decode ASL`, `Operation ASL`, `Behavior`, `NDF clauses`,
+  `Evidence`, and `Sources and release identity`. Put the one-sentence
+  instruction definition directly beneath the mnemonic title.
+- Instruction pages do not explain their own projection machinery in eyebrow
+  labels. Remove labels such as `At a glance`, `Generated from released
+  catalog`, `Embedded directly`, and similar source-status microcopy; establish
+  provenance through the final source ledger instead.
+- NDF clause bodies are visible in place under their stable IDs. Their source
+  links remain available, but the reader does not have to open a disclosure to
+  read current clause text.
+- NDF and ADR card headers prioritize a human title/status plus two to four
+  semantic ID facets. Commit, path, hashes, version, and other provenance live
+  in a collapsed `Sources and references` section without weakening build-time
+  validation.
+- Do not show `Unpublished`, `preview`, or repetitive `non-normative` banners in
+  page chrome. An unreleased build uses the neutral label `Release candidate`;
+  release eligibility and exact provenance remain machine-readable and visible
+  in the final source ledger.
 
 ## Repository layout
 
@@ -407,6 +655,12 @@ build/site-data/             # Disposable per-route site data
     files, not injected as global page data;
   - raw source inclusion follows an explicit generated allowlist;
   - every entry carries release, commit, path, line, and content-hash identity;
+  - NDF/ADR records are parsed once from allowlisted canonical paths and reused
+    across routes; missing IDs, duplicate IDs, source-hash mismatches, reversed
+    regions, and unallowlisted paths fail closed;
+  - bundle composition and semantic-stage metadata remain ASCII-compatible
+    owner data; localized JSON strings may use Unicode escapes so ASLRef input
+    remains ASCII while the site renders reviewed `zh-CN` text;
   - deterministic graph layout is computed during build. Plotly renders and
     interacts with the result but does not own the dependency graph.
 - Plotly/WebGL:
@@ -506,13 +760,20 @@ following are true for the same immutable release candidate commit:
 - Docusaurus application under `docs/site/`.
 - English and `zh-CN` locale framework.
 - Latest-release landing page and global specification search.
-- One source-backed workbench for each of the 852 released ASL units, in both
-  locale trees.
+- One source-backed workbench for every released ASL unit, in both locale
+  trees; the exact count is derived from the release catalog rather than
+  duplicated in this design contract.
 - Generated per-locale unit route ledgers with exact ASL and Markdown projection
   hashes.
 - Exact ASL source embedding and generated NDF clause views.
+- TLOAD bundle-first prototype with Ordinary Local, Local CUBE, and Ordinary
+  Shared variants, entry-encoding separation, executable owner stages, and
+  exact shared-helper fragments.
+- Inline canonical NDF and ADR content, source-derived semantic ID paths, and
+  session-only accessible NDF card reordering.
 - Searchable and collapsible evidence index.
-- One TLOAD-only state-transition demonstration, explicitly non-normative.
+- One TLOAD-only interactive state-transition walkthrough whose source citations
+  are consolidated with the page provenance.
 - One repository-wide Plotly/WebGL NDF relationship explorer.
 - Static and non-WebGL fallbacks.
 - Immutable release preview and release-blocking site validation.

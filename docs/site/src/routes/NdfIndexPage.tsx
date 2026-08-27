@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from '@docusaurus/Link';
-import Layout from '@theme/Layout';
 import type {PtoNdfIndexPageData} from '@site/src/types/pto';
 import styles from '@site/src/components/PtoWorkbench.module.css';
 import {
@@ -8,6 +7,7 @@ import {
   releaseStatus,
   useLocalizedPath,
 } from '@site/src/components/releasePresentation';
+import PortalShell from '@site/src/components/PortalShell';
 
 export default function NdfIndexPage({
   index,
@@ -18,7 +18,7 @@ export default function NdfIndexPage({
   const previous = useLocalizedPath(`/explore/ndf/index/${index.page - 1}/`);
   const next = useLocalizedPath(`/explore/ndf/index/${index.page + 1}/`);
   return (
-    <Layout
+    <PortalShell
       title={`Static relationship index ${index.page}`}
       description="No-JavaScript index of released PTO NDF, ASL, AVS, and ADR relationships.">
       <main className={styles.page}>
@@ -64,6 +64,6 @@ export default function NdfIndexPage({
           ))}
         </section>
       </main>
-    </Layout>
+    </PortalShell>
   );
 }

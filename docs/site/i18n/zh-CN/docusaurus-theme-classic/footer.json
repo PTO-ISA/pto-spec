@@ -2,7 +2,7 @@
   "link.title.Specification": {"message": "规范"},
   "link.title.Records": {"message": "记录"},
   "link.title.Project": {"message": "项目"},
-  "link.item.label.PTO Architecture": {"message": "PTO 架构"},
+  "link.item.label.Architecture": {"message": "架构"},
   "link.item.label.Scalar surface": {"message": "Scalar 标量表面"},
   "link.item.label.Block surface": {"message": "Block 表面"},
   "link.item.label.Tile surface": {"message": "Tile 表面"},

@@ -345,8 +345,125 @@ def validate_unit_routes() -> tuple[int, str, int]:
         asset = require_file(f"evidence/test-sources/{test['sha256']}.asl")
         if file_sha256(asset) != test["sha256"]:
             raise ValueError(f"lazy test source hash mismatch for {test['id']}")
+    fragments = sorted((OUTPUT / "evidence/asl-fragments").glob("*.asl"))
+    if not fragments:
+        raise ValueError("site artifact has no source-aligned shared ASL fragments")
+    for fragment in fragments:
+        if fragment.stem != file_sha256(fragment):
+            raise ValueError(f"shared ASL fragment digest mismatch: {fragment.name}")
 
     return len(units), largest_route, largest_html_bytes
+
+
+def validate_instruction_coverage() -> int:
+    traceability = json.loads(
+        (ROOT / "spec/evidence/release-traceability-readiness.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    instructions = sorted(
+        (unit for unit in traceability["units"] if unit["mnemonic"] is not None),
+        key=lambda unit: unit["id"],
+    )
+    expected_ids = [unit["id"] for unit in instructions]
+    expected_surface_totals = {
+        surface: sum(unit["surface"] == surface for unit in instructions)
+        for surface in ("scalar", "block", "tile")
+    }
+    required_fields = {
+        "id", "mnemonic", "surface", "route", "layout_contract", "source",
+        "source_sha256", "encoding", "syntax", "assembler_symbols",
+        "decode_source", "operation_source", "behavior", "bundle_source",
+        "constraints_faults", "state_reads_writes_result", "bundle_status",
+        "bundle_lines", "bundle_rules",
+        "decisions", "ndf_owners", "evidence", "source_records", "examples",
+        "locale", "content_locale", "locale_status", "specialized_projection",
+        "explained_gaps", "unexplained_gaps",
+    }
+    for locale, relative in (
+        ("en", "pto-instruction-coverage.json"),
+        ("zh-CN", "zh-CN/pto-instruction-coverage.json"),
+    ):
+        matrix = json.loads(require_file(relative).read_text(encoding="utf-8"))
+        if matrix.get("schema") != "pto.site-instruction-coverage.v1":
+            raise ValueError(f"{relative} has an unknown schema")
+        if matrix.get("locale") != locale or matrix.get("source_commit") != COMMIT:
+            raise ValueError(f"{relative} has stale locale or commit identity")
+        if matrix.get("layout_contract") != "UnitWorkbenchView.arm-style.v1":
+            raise ValueError(f"{relative} has the wrong page-layout contract")
+        if matrix.get("instruction_count") != len(instructions):
+            raise ValueError(f"{relative} does not cover every released instruction")
+        if matrix.get("surface_totals") != expected_surface_totals:
+            raise ValueError(f"{relative} has stale instruction surface totals")
+        if matrix.get("unexplained_omissions") != 0:
+            raise ValueError(f"{relative} retains unexplained omissions")
+        entries = matrix.get("entries")
+        if not isinstance(entries, list) or [entry.get("id") for entry in entries] != expected_ids:
+            raise ValueError(f"{relative} is not the canonical instruction inventory")
+        for unit, entry in zip(instructions, entries, strict=True):
+            if set(entry) != required_fields:
+                raise ValueError(f"{relative} {unit['id']} has a malformed coverage row")
+            expected_route = canonical_unit_route(unit, locale)
+            if (
+                entry["mnemonic"] != unit["mnemonic"] or
+                entry["surface"] != unit["surface"] or
+                entry["route"] != expected_route or
+                entry["source"] != unit["source"] or
+                entry["source_sha256"] != traceability["sources"][unit["source"]] or
+                entry["layout_contract"] != "UnitWorkbenchView.arm-style.v1" or
+                entry["locale"] != locale or
+                entry["unexplained_gaps"] != []
+            ):
+                raise ValueError(f"{relative} {unit['id']} is stale")
+            if entry["syntax"] != "complete" or entry["assembler_symbols"] != "complete":
+                raise ValueError(f"{relative} {unit['id']} lacks syntax or symbol coverage")
+            if entry["decode_source"] not in {"complete", "source-binding", "missing"}:
+                raise ValueError(f"{relative} {unit['id']} has invalid decode status")
+            if entry["operation_source"] not in {"complete", "source-binding", "missing"}:
+                raise ValueError(f"{relative} {unit['id']} has invalid operation status")
+            if (entry["decode_source"] != "complete" or entry["operation_source"] != "complete") and not entry["explained_gaps"]:
+                raise ValueError(f"{relative} {unit['id']} has an unexplained source gap")
+            if unit["surface"] == "tile" and (
+                entry["bundle_source"] != "owner-metadata" or entry["bundle_lines"] < 1
+            ):
+                raise ValueError(f"{relative} {unit['id']} lacks owner-backed bundle coverage")
+            if unit["surface"] == "tile" and entry["bundle_status"] not in {"complete", "source-gap"}:
+                raise ValueError(f"{relative} {unit['id']} has invalid bundle status")
+            if entry["bundle_status"] == "source-gap" and not entry["explained_gaps"]:
+                raise ValueError(f"{relative} {unit['id']} has an unexplained bundle gap")
+            page_relative = f"{expected_route.lstrip('/')}index.html"
+            require_text(
+                page_relative,
+                (
+                    "Assembly syntax",
+                    "Assembler symbols",
+                    "Behavior",
+                    "NDF clauses",
+                    "Evidence index",
+                    "Sources and release identity",
+                ) if locale == "en" else (
+                    "汇编格式",
+                    "汇编符号",
+                    "行为",
+                    "NDF 条款",
+                    "Evidence index",
+                    "来源与发布信息",
+                ),
+            )
+            if unit["surface"] == "tile":
+                require_text(
+                    page_relative,
+                    (
+                        "High Level Assembly",
+                        "Complete Bundle Assembly",
+                        "Show High Level Assembly operands mapped to the owning ASL",
+                    ) if locale == "en" else (
+                        "高层汇编",
+                        "完整 Bundle Assembly",
+                        "显示高层汇编 operand 到 owning ASL 的映射",
+                    ),
+                )
+    return len(instructions)
 
 
 def main() -> int:
@@ -374,8 +491,40 @@ def main() -> int:
                 "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
                 "PTO-TLOAD-MEMORY-001",
                 "PTO-TLOAD-CUBE-001",
-                "Non-normative demonstration",
+                "TLOAD state-transition walkthrough",
             ),
+        )
+        require_text(
+            "instructions/tile/memory-and-data-movement/regular/TSTORE/index.html",
+            ("Local CUBE", "M162ND", "PTO-TSTORE-CUBE-001"),
+        )
+        require_text(
+            "instructions/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL/index.html",
+            (
+                "TMATMUL &lt;LB0:M, LB1:N, LB2:K, DataTypeA, DataTypeB&gt; "
+                "SrcTile0, SrcTile1 -&gt; DstTile",
+                "Show High Level Assembly operands mapped to the owning ASL",
+            ),
+        )
+        require_text(
+            "instructions/index.html",
+            ("Instruction index", "PTO-TILE-TLOAD", "PTO-SCALAR-ADD"),
+        )
+        require_text(
+            "zh-CN/instructions/index.html",
+            ("指令索引", "PTO-TILE-TLOAD", "PTO-SCALAR-ADD"),
+        )
+        require_text(
+            "ndf/index.html",
+            ("NDF index", "PTO-TLOAD-MEMORY-001"),
+        )
+        require_text(
+            "ndf/PTO-TLOAD-MEMORY-001/index.html",
+            ("PTO-TLOAD-MEMORY-001", "byte row stride", "PTO-TILE-TLOAD"),
+        )
+        require_text(
+            "zh-CN/ndf/PTO-TLOAD-MEMORY-001/index.html",
+            ("PTO-TLOAD-MEMORY-001", "PTO-TILE-TLOAD"),
         )
         require_text(
             "search/index.html",
@@ -391,7 +540,27 @@ def main() -> int:
         )
         require_text(
             "zh-CN/index.html",
-            ("PTO 架构", "先 Scalar，再 Block，最后 Tile"),
+            ("架构", "先 Scalar，再 Block，最后 Tile"),
+        )
+        require_text(
+            "architecture/index.html",
+            (
+                "Architecture mental model",
+                "Programming and execution model",
+                "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
+                "PTO-ARCH-MEMORY-MODEL-ORDERING",
+                "Current owner-declared boundary",
+            ),
+        )
+        require_text(
+            "zh-CN/architecture/index.html",
+            (
+                "架构心智模型",
+                "编程与执行模型",
+                "PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT",
+                "PTO-ARCH-MEMORY-MODEL-ORDERING",
+                "当前 owner 声明的边界",
+            ),
         )
         expected_index_pages = math.ceil(expected_nodes / 250)
         static_index_pages = sorted(
@@ -420,6 +589,14 @@ def main() -> int:
                     raise ValueError(
                         f"legacy redirect {source} does not target {destination}"
                     )
+        require_text(
+            "reference/scalar/alu/ADD/index.html",
+            ("/instructions/scalar/alu/ADD/",),
+        )
+        require_text(
+            "zh-CN/reference/arch/overview/architecture/index.html",
+            ("/zh-CN/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/",),
+        )
         require_file(".nojekyll")
         publication_path = require_file("pto-site-publication.json")
         publication = json.loads(publication_path.read_text(encoding="utf-8"))
@@ -499,6 +676,7 @@ def main() -> int:
 
         main_javascript = direct_javascript(index_html)
         unit_count, largest_unit_route, largest_unit_html = validate_unit_routes()
+        instruction_count = validate_instruction_coverage()
         compressed_size = sum(
             len(gzip.compress(path.read_bytes(), compresslevel=9))
             for path in main_javascript
@@ -535,6 +713,7 @@ def main() -> int:
             f"{len(lazy_plotly)} lazy Plotly chunks, "
             f"{len(lazy_wavedrom)} lazy WaveDrom chunks, "
             f"{unit_count} bilingual unit routes, "
+            f"{instruction_count} bilingual instruction coverage rows, "
             f"largest unit {largest_unit_route} at {largest_unit_html} bytes, "
             f"{expected_nodes} graph nodes, {expected_edges} graph edges"
         )

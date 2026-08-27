@@ -1,12 +1,15 @@
 import {execFileSync} from 'node:child_process';
-import {existsSync, statSync} from 'node:fs';
+import {existsSync, readFileSync, statSync} from 'node:fs';
 import path from 'node:path';
+import {unitRoute, type UnitRouteInput} from './routes.ts';
 
 const GITHUB_REPOSITORY = 'https://github.com/PTO-ISA/pto-spec';
 
 interface MarkdownNode {
   type?: string;
+  depth?: number;
   url?: string;
+  value?: string;
   children?: MarkdownNode[];
 }
 
@@ -68,13 +71,78 @@ function isInside(parent: string, candidate: string): boolean {
   return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
 }
 
+function isGeneratedAslReference(markdownPath: string, repositoryRoot: string): boolean {
+  const relative = path.relative(path.join(repositoryRoot, 'docs'), markdownPath).split(path.sep);
+  if (['arch', 'block', 'scalar', 'tile'].includes(relative[0] ?? '')) return true;
+  return (
+    relative[0] === 'site' &&
+    relative[1] === 'i18n' &&
+    relative[3] === 'docusaurus-plugin-content-docs-reference' &&
+    relative[4] === 'current' &&
+    ['arch', 'block', 'scalar', 'tile'].includes(relative[5] ?? '')
+  );
+}
+
+function readerFacingText(value: string): string {
+  return value
+    .replace(/non-normative/gi, 'illustrative')
+    .replace(/非规范性?/g, '示例性');
+}
+
+function plainText(node: MarkdownNode): string {
+  return typeof node.value === 'string'
+    ? node.value
+    : (node.children ?? []).map(plainText).join('');
+}
+
+function replaceHeading(node: MarkdownNode, labels: Record<string, string>): void {
+  if (node.type !== 'heading') return;
+  const replacement = labels[plainText(node).trim()];
+  if (replacement === undefined) return;
+  node.children = [{type: 'text', value: replacement}];
+}
+
+export function presentGeneratedAslReference(tree: MarkdownNode): void {
+  if (tree.type !== 'root' || tree.children === undefined) return;
+  const sourceIdentity: MarkdownNode[] = [];
+  const visible: MarkdownNode[] = [];
+  for (const node of tree.children) {
+    const text = plainText(node).trim();
+    if (node.type === 'paragraph' && text.startsWith('Normative ASL source:')) {
+      sourceIdentity.push(node);
+      continue;
+    }
+    if (
+      (node.type === 'blockquote' && /Non-normative explanation/i.test(text)) ||
+      (node.type === 'paragraph' && text === 'The current instruction contract is owned by the ASL source linked above.')
+    ) {
+      continue;
+    }
+    replaceHeading(node, {
+      'Normative identity': 'Instruction identity',
+      'Reader guide': 'Behavior',
+      Assembly: 'Assembly syntax',
+      Operation: 'ASL execution definition',
+      'Normative ASL': 'ASL definition',
+    });
+    visible.push(node);
+  }
+  if (sourceIdentity.length > 0) {
+    visible.push(
+      {type: 'heading', depth: 2, children: [{type: 'text', value: 'Sources and release identity'}]},
+      ...sourceIdentity,
+    );
+  }
+  tree.children = visible;
+}
+
 export function rewriteRepositoryLink(
   url: string,
   markdownPath: string,
   repositoryRoot: string,
   commit: string,
+  unitRoutesByDocumentation: Map<string, string> = new Map(),
 ): string {
-  if (!isRelativeFileLink(url)) return url;
   const {target, suffix} = splitSuffix(url);
   if (target === '') return url;
 
@@ -85,6 +153,19 @@ export function rewriteRepositoryLink(
     markdownParts[1] === 'i18n' &&
     markdownParts[3] === 'docusaurus-plugin-content-docs-reference' &&
     markdownParts[4] === 'current';
+  const localePrefix = localized ? `/${markdownParts[2]}` : '';
+  const canonicalUnitRoute = (documentation: string): string | null => {
+    const route = unitRoutesByDocumentation.get(documentation);
+    return route === undefined ? null : `${localePrefix}${route}${suffix}`;
+  };
+  if (target.startsWith('/') && /^\/(?:arch|block|scalar|tile)\/.+\.md$/i.test(target)) {
+    const route = canonicalUnitRoute(`docs${target}`);
+    if (route === null) {
+      throw new Error(`[pto-repository-links] no canonical unit route for ${target}`);
+    }
+    return route;
+  }
+  if (!isRelativeFileLink(url)) return url;
   const canonicalMarkdownPath = localized
     ? path.join(docsRoot, ...markdownParts.slice(5))
     : markdownPath;
@@ -98,6 +179,8 @@ export function rewriteRepositoryLink(
       ? path.join(absoluteTarget, 'index.md')
       : absoluteTarget;
     const relative = path.relative(docsRoot, markdownTarget).split(path.sep).join('/');
+    const unitRouteTarget = canonicalUnitRoute(`docs/${relative}`);
+    if (unitRouteTarget !== null) return unitRouteTarget;
     const excluded =
       relative.startsWith('site/') ||
       relative.startsWith('mkdocs/') ||
@@ -131,7 +214,12 @@ function transformTree(
   markdownPath: string,
   repositoryRoot: string,
   commit: string,
+  readerFacing: boolean,
+  unitRoutesByDocumentation: Map<string, string>,
 ): void {
+  if (readerFacing && node.type === 'text' && typeof node.value === 'string') {
+    node.value = readerFacingText(node.value);
+  }
   if (
     (node.type === 'link' || node.type === 'definition') &&
     typeof node.url === 'string'
@@ -141,10 +229,11 @@ function transformTree(
       markdownPath,
       repositoryRoot,
       commit,
+      unitRoutesByDocumentation,
     );
   }
   for (const child of node.children ?? []) {
-    transformTree(child, markdownPath, repositoryRoot, commit);
+    transformTree(child, markdownPath, repositoryRoot, commit, readerFacing, unitRoutesByDocumentation);
   }
 }
 
@@ -155,6 +244,15 @@ export default function ptoRepositoryLinksRemarkPlugin(
     options.repositoryRoot ?? process.cwd(),
   );
   const commit = options.commit ?? currentCommit(repositoryRoot);
+  const traceability = JSON.parse(
+    readFileSync(
+      path.join(repositoryRoot, 'spec/evidence/release-traceability-readiness.json'),
+      'utf8',
+    ),
+  ) as {units: UnitRouteInput[]};
+  const unitRoutesByDocumentation = new Map(
+    traceability.units.map((unit) => [unit.documentation, unitRoute(unit)]),
+  );
 
   return (tree: MarkdownNode, file: MarkdownFile): void => {
     if (file.path === undefined) {
@@ -166,6 +264,15 @@ export default function ptoRepositoryLinksRemarkPlugin(
         `[pto-repository-links] Markdown source is outside docs/: ${markdownPath}`,
       );
     }
-    transformTree(tree, markdownPath, repositoryRoot, commit);
+    const generatedReference = isGeneratedAslReference(markdownPath, repositoryRoot);
+    if (generatedReference) presentGeneratedAslReference(tree);
+    transformTree(
+      tree,
+      markdownPath,
+      repositoryRoot,
+      commit,
+      generatedReference,
+      unitRoutesByDocumentation,
+    );
   };
 }

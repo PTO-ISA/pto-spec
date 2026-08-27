@@ -2,12 +2,16 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import path from 'node:path';
 import ptoRepositoryLinksRemarkPlugin, {
+  presentGeneratedAslReference,
   rewriteRepositoryLink,
 } from './remark-repository-links.ts';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..', '..', '..', '..');
 const markdownPath = path.join(repositoryRoot, 'docs', 'guides', 'example.md');
 const commit = '0123456789abcdef0123456789abcdef01234567';
+const unitRoutes = new Map([
+  ['docs/arch/overview/architecture.md', '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/'],
+]);
 
 test('rewrites repository-relative links that escape docs and preserves fragments', () => {
   assert.equal(
@@ -66,8 +70,9 @@ test('projects existing Markdown links to docs-root absolute file references', (
       repositoryLayout,
       repositoryRoot,
       commit,
+      unitRoutes,
     ),
-    '/arch/overview/architecture.md#state',
+    '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/#state',
   );
   const localizedRepositoryLayout = path.join(
     repositoryRoot,
@@ -86,8 +91,9 @@ test('projects existing Markdown links to docs-root absolute file references', (
       localizedRepositoryLayout,
       repositoryRoot,
       commit,
+      unitRoutes,
     ),
-    '/arch/overview/architecture.md#state',
+    '/zh-CN/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/#state',
   );
 });
 
@@ -127,4 +133,31 @@ test('fails closed when a relative link escapes the repository', () => {
       ),
     /escapes repository root/,
   );
+});
+
+test('presents generated ASL references in reader-first language with provenance last', () => {
+  const tree = {
+    type: 'root',
+    children: [
+      {type: 'heading', depth: 1, children: [{type: 'text', value: 'ADD'}]},
+      {type: 'paragraph', children: [{type: 'text', value: 'Normative ASL source: '}, {type: 'inlineCode', value: 'asl/scalar/alu/ADD.asl'}]},
+      {type: 'heading', depth: 2, children: [{type: 'text', value: 'Normative identity'}]},
+      {type: 'paragraph', children: [{type: 'text', value: 'The current instruction contract is owned by the ASL source linked above.'}]},
+      {type: 'heading', depth: 2, children: [{type: 'text', value: 'Reader guide'}]},
+      {type: 'blockquote', children: [{type: 'paragraph', children: [{type: 'text', value: 'Non-normative explanation.'}]}]},
+      {type: 'heading', depth: 2, children: [{type: 'text', value: 'Assembly'}]},
+      {type: 'heading', depth: 2, children: [{type: 'text', value: 'Operation'}]},
+    ],
+  };
+
+  presentGeneratedAslReference(tree);
+
+  const renderedText = JSON.stringify(tree);
+  assert.match(renderedText, /Instruction identity/);
+  assert.match(renderedText, /Behavior/);
+  assert.match(renderedText, /Assembly syntax/);
+  assert.match(renderedText, /ASL execution definition/);
+  assert.doesNotMatch(renderedText, /Non-normative explanation/);
+  assert.equal(tree.children.at(-2).children[0].value, 'Sources and release identity');
+  assert.match(JSON.stringify(tree.children.at(-1)), /asl\/scalar\/alu\/ADD\.asl/);
 });

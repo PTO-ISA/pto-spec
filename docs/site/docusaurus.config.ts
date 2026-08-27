@@ -4,10 +4,27 @@ import type {PluginOptions as DocsPluginOptions} from '@docusaurus/plugin-conten
 import {themes as prismThemes} from 'prism-react-renderer';
 import {readFileSync} from 'node:fs';
 import ptoRepositoryLinksRemarkPlugin from './plugins/pto-content/remark-repository-links';
+import {legacyReferenceRoute, unitRoute, type UnitRouteInput} from './plugins/pto-content/routes';
+import {registerAslPrism} from './src/theme/aslPrism';
 
-const redirects = JSON.parse(
+registerAslPrism();
+
+const checkedRedirects = JSON.parse(
   readFileSync(new URL('./redirects.json', import.meta.url), 'utf8'),
 ) as Array<{from: string[]; to: string}>;
+const traceability = JSON.parse(
+  readFileSync(
+    new URL('../../spec/evidence/release-traceability-readiness.json', import.meta.url),
+    'utf8',
+  ),
+) as {units: UnitRouteInput[]};
+const redirects = [
+  ...checkedRedirects,
+  ...traceability.units.map((unit) => ({
+    from: [legacyReferenceRoute(unit.documentation)],
+    to: unitRoute(unit),
+  })),
+];
 
 function sidebarKeySegment(label: string): string {
   return label
@@ -42,7 +59,7 @@ function addStableCategoryKeys<T>(
     const path = [...ancestors, sidebarKeySegment(category.label)];
     return {
       ...category,
-      key: category.key ?? `pto-category:${path.join('/')}`,
+      key: `pto-category:${path.join('/')}`,
       items: addStableCategoryKeys(category.items, path),
     } as T;
   });
@@ -52,8 +69,12 @@ const stableSidebarItemsGenerator: NonNullable<
   DocsPluginOptions['sidebarItemsGenerator']
 > = async ({
   defaultSidebarItemsGenerator,
+  item,
   ...args
-}) => addStableCategoryKeys(await defaultSidebarItemsGenerator(args));
+}) => addStableCategoryKeys(
+  await defaultSidebarItemsGenerator({item, ...args}),
+  [sidebarKeySegment(item.dirName)],
+);
 
 const config: Config = {
   title: 'PTO Formal Specification',
@@ -112,7 +133,15 @@ const config: Config = {
         path: '..',
         routeBasePath: 'reference',
         sidebarPath: './sidebars.ts',
-        exclude: ['site/**', 'mkdocs/**', 'status/plans/**'],
+        exclude: [
+          'arch/**',
+          'block/**',
+          'scalar/**',
+          'tile/**',
+          'site/**',
+          'mkdocs/**',
+          'status/plans/**',
+        ],
         beforeDefaultRemarkPlugins: [ptoRepositoryLinksRemarkPlugin],
         sidebarItemsGenerator: stableSidebarItemsGenerator,
         showLastUpdateAuthor: true,
@@ -123,40 +152,32 @@ const config: Config = {
 
   themeConfig: {
     colorMode: {
-      defaultMode: 'light',
-      respectPrefersColorScheme: true,
+      defaultMode: 'dark',
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: 'PTO SPEC',
       hideOnScroll: false,
       items: [
         {
-          to: '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/',
-          label: 'PTO Architecture',
+          to: '/architecture/',
+          label: 'Architecture',
           position: 'left',
         },
         {
-          to: '/search/?kind=asl&surface=scalar',
-          label: 'Scalar',
+          to: '/instructions/',
+          label: 'Instructions',
           position: 'left',
         },
         {
-          to: '/search/?kind=asl&surface=block',
-          label: 'Block',
+          to: '/ndf/',
+          label: 'NDF',
           position: 'left',
         },
-        {to: '/search/?kind=asl&surface=tile', label: 'Tile', position: 'left'},
         {
-          type: 'dropdown',
-          label: 'ADR / NDF',
+          to: '/reference/governance/adr-process/',
+          label: 'Decisions',
           position: 'left',
-          items: [
-            {
-              to: '/reference/governance/adr-process/',
-              label: 'ADR process',
-            },
-            {to: '/explore/ndf/', label: 'NDF Explorer'},
-          ],
         },
         {to: '/search/', label: 'Search', position: 'left'},
         {type: 'localeDropdown', position: 'right'},
@@ -174,15 +195,15 @@ const config: Config = {
           title: 'Specification',
           items: [
             {
-              label: 'PTO Architecture',
-              to: '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/',
+              label: 'Architecture',
+              to: '/architecture/',
             },
             {
               label: 'Scalar surface',
-              to: '/search/?kind=asl&surface=scalar',
+              to: '/instructions/?surface=scalar',
             },
-            {label: 'Block surface', to: '/search/?kind=asl&surface=block'},
-            {label: 'Tile surface', to: '/search/?kind=asl&surface=tile'},
+            {label: 'Block surface', to: '/instructions/?surface=block'},
+            {label: 'Tile surface', to: '/instructions/?surface=tile'},
           ],
         },
         {
