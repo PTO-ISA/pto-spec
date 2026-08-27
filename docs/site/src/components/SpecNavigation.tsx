@@ -15,6 +15,10 @@ function routeActive(pathname: string, path: string): boolean {
   return pathname === path || (path !== '/' && pathname.startsWith(path));
 }
 
+function instructionSurface(search: string): string | null {
+  return new URLSearchParams(search).get('surface');
+}
+
 export default function SpecNavigation({currentPageLabel}: {currentPageLabel: string}): React.JSX.Element {
   const location = useLocation();
   const {i18n} = useDocusaurusContext();
@@ -25,11 +29,12 @@ export default function SpecNavigation({currentPageLabel}: {currentPageLabel: st
   };
   const home = localize('/');
   const architecture = localize('/architecture/');
-  const scalar = localize('/search/?kind=asl&surface=scalar');
-  const block = localize('/search/?kind=asl&surface=block');
-  const tile = localize('/search/?kind=asl&surface=tile');
-  const reference = localize('/reference/arch/overview/architecture/');
-  const ndf = localize('/explore/ndf/');
+  const scalar = localize('/instructions/?surface=scalar');
+  const block = localize('/instructions/?surface=block');
+  const tile = localize('/instructions/?surface=tile');
+  const allInstructions = localize('/instructions/');
+  const ndf = localize('/ndf/');
+  const ndfExplorer = localize('/explore/ndf/');
   const decisions = localize('/reference/governance/adr-process/');
   const search = localize('/search/');
   const query = location.search;
@@ -50,39 +55,45 @@ export default function SpecNavigation({currentPageLabel}: {currentPageLabel: st
   ];
   const instructions: NavigationItem[] = [
     {
+      id: 'all-instructions',
+      label: chinese ? '全部指令' : 'All instructions',
+      path: allInstructions,
+      active: (pathname, currentSearch) => pathname.endsWith('/instructions/') &&
+        !['scalar', 'block', 'tile'].includes(instructionSurface(currentSearch) ?? ''),
+    },
+    {
       id: 'scalar',
       label: 'Scalar',
       path: scalar,
       active: (pathname, currentSearch) => pathname.includes('/instructions/scalar/') ||
-        (pathname.endsWith('/search/') && currentSearch.includes('surface=scalar')),
+        (pathname.endsWith('/instructions/') && instructionSurface(currentSearch) === 'scalar'),
     },
     {
       id: 'block',
       label: 'Block',
       path: block,
       active: (pathname, currentSearch) => pathname.includes('/instructions/block/') ||
-        (pathname.endsWith('/search/') && currentSearch.includes('surface=block')),
+        (pathname.endsWith('/instructions/') && instructionSurface(currentSearch) === 'block'),
     },
     {
       id: 'tile',
       label: 'Tile',
       path: tile,
       active: (pathname, currentSearch) => pathname.includes('/instructions/tile/') ||
-        (pathname.endsWith('/search/') && currentSearch.includes('surface=tile')),
+        (pathname.endsWith('/instructions/') && instructionSurface(currentSearch) === 'tile'),
     },
   ];
   const records: NavigationItem[] = [
     {
-      id: 'reference',
-      label: chinese ? '参考资料' : 'Reference',
-      path: reference,
-      active: (pathname) => pathname.includes('/reference/arch/') || pathname.includes('/reference/scalar/') ||
-        pathname.includes('/reference/block/') || pathname.includes('/reference/tile/'),
-    },
-    {
       id: 'ndf',
       label: 'NDF',
       path: ndf,
+      active: (pathname) => pathname.includes('/ndf/') && !pathname.includes('/explore/ndf/'),
+    },
+    {
+      id: 'ndf-explorer',
+      label: chinese ? 'NDF 关系图' : 'NDF graph',
+      path: ndfExplorer,
       active: (pathname) => pathname.includes('/explore/ndf/'),
     },
     {

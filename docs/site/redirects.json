@@ -1,7 +1,7 @@
 [
   {
     "from": ["/docs/PTO-Virtual-ISA-Manual.html", "/manual/index.html"],
-    "to": "/reference/arch/overview/architecture/"
+    "to": "/architecture/"
   },
   {
     "from": ["/docs/isa/README.html"],
@@ -9,18 +9,18 @@
   },
   {
     "from": ["/docs/coding/ProgrammingModel.html"],
-    "to": "/reference/arch/programming-model/execution-context/"
+    "to": "/units/PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT/"
   },
   {
     "from": ["/docs/machine/abstract-machine.html", "/manual/08-virtual-isa-and-ir.html"],
-    "to": "/reference/arch/overview/architecture/"
+    "to": "/architecture/"
   },
   {
     "from": ["/manual/10-memory-ordering-consistency.html"],
-    "to": "/reference/arch/memory-model/ordering/"
+    "to": "/units/PTO-ARCH-MEMORY-MODEL-ORDERING/"
   },
   {
     "from": ["/manual/11-backend-profiles-conformance.html"],
-    "to": "/reference/arch/profile/reference-profile/"
+    "to": "/units/PTO-ARCH-PROFILE-REFERENCE-PROFILE/"
   }
 ]

@@ -72,7 +72,10 @@ asl/**/*.asl
 - Trust signals: exact release identity, commit SHA, source path, line range,
   content hash, validation state, and direct links to evidence.
 - Visual posture: a restrained specification manual combined with a professional
-  engineering workbench.
+  engineering workbench. The dark-first palette uses obsidian neutrals,
+  oxidized red for primary/current-route emphasis, and brushed gold for focus,
+  source identity, and selected-data highlights. It is Huawei/Ascend-inspired
+  in tone without claiming or reproducing an official brand system.
 - Avoid:
   - cyberpunk neon and decorative particle effects;
   - excessive glass effects, gradients, shadows, or marketing cards;
@@ -164,11 +167,13 @@ asl/**/*.asl
 ### Primary navigation
 
 - Architecture
-- Reference
+- All instructions
 - Scalar
 - Block
 - Tile
-- ADR / NDF
+- NDF
+- NDF graph
+- Decisions / ADR
 - Search
 
 Scalar, Block, and Tile navigation uses an exact released-surface facet. It must
@@ -177,21 +182,26 @@ surface boundaries.
 
 Every primary reading route uses a stable left navigation rail on desktop,
 including the homepage, Architecture landing page, instruction workbenches,
-Reference pages, NDF exploration, and ADR/Decision entry points. The rail is
-ordered as Home, Architecture, Scalar, Block, Tile, Reference, NDF, Decisions,
-and Search. It shows hierarchy and the current route, may collapse individual
-groups, and is never fully hidden by default on desktop. The top navbar remains
-a compact set of direct entries rather than the only navigation surface.
+NDF indexes and exploration, and ADR/Decision entry points. The rail is ordered
+as Home, Architecture, All instructions, Scalar, Block, Tile, NDF, NDF graph,
+Decisions, and Search. On the instruction index, the `surface` URL query
+parameter is the canonical selected facet; rail links, filter buttons, browser
+history, and current-route state must remain synchronized with it. The rail
+shows hierarchy and the current route, may collapse individual groups, and is
+never fully hidden by default on desktop. The top navbar remains a compact set
+of direct entries rather than the only navigation surface.
 
 The native Docusaurus Reference sidebar remains the stable left navigation for
-Reference and Decision documents. It uses the same `Architecture`/`架构`
-terminology, exposes the Architecture, Scalar, Block, Tile, ADR, development,
-and release hierarchy, and marks the exact current document; the global top
-navbar retains Home, NDF, and Search access without duplicating two rails.
-Custom routes use the shared `PortalShell` and `SpecNavigation` components
-instead of duplicating route-specific navigation. At tablet and phone widths
-the persistent rail becomes a clearly labelled navigation button and in-flow
-drawer; it does not overlay or obscure the document.
+governance, status, development, and release documents that are not canonical
+unit workbenches. Architecture, Scalar, Block, and Tile unit documents do not
+remain in that sidebar: their legacy `/reference/...` URLs redirect to the one
+canonical unit page. The Reference sidebar marks the exact current project
+record, while the global top navbar retains Home, Architecture, instructions,
+NDF, and Search access without duplicating two rails. Custom routes use the
+shared `PortalShell` and `SpecNavigation` components instead of duplicating
+route-specific navigation. At tablet and phone widths the persistent rail
+becomes a clearly labelled navigation button and in-flow drawer; it does not
+overlay or obscure the document.
 
 English uses `Architecture`. Simplified Chinese uses the concise label `架构`.
 Navigation must not use `PTO Architecture`, `PTO架构`, `PTO ISA`, or `PTO 手册`
@@ -253,10 +263,13 @@ architectural semantics.
 
 - `/` — latest release landing page and global search.
 - `/search` — implementation-oriented search results and filters.
+- `/instructions/` — complete released instruction index with Scalar, Block,
+  and Tile facets; surface subroutes retain the active facet.
 - `/architecture/` — architecture, state, memory, profile, and instruction
   classification entry points.
 - `/instructions/<surface>/<classification>/<mnemonic>/` — instruction
   workbench.
+- `/ndf/` — complete source-backed NDF index.
 - `/ndf/<clause-id>/` — readable clause, owner, references, evidence index, and
   local relationship graph.
 - `/explore/ndf/` — repository-wide Plotly/WebGL relationship explorer.
@@ -265,6 +278,22 @@ architectural semantics.
 - `/releases/` — latest release identity and immutable historical releases.
 - `/project/` — governance, contribution, repository layout, ADRs, and open
   questions.
+
+### One canonical unit page
+
+Generated Markdown under `docs/{arch,scalar,block,tile}/` remains the checked-in
+ASL projection and reader-guide source, but it is not published as a second
+instruction/reference page. Every released unit has one canonical workbench
+route that renders the Markdown reader blocks, exact embedded ASL, NDF,
+Decision/AVS evidence, and provenance together. Legacy `/reference/...` unit
+URLs redirect to that canonical route. The Docusaurus Reference plugin retains
+only governance, status, development, and release documents that are not unit
+workbenches.
+
+The instruction and NDF indexes are generated from the same release
+traceability graph and route manifest. They never maintain a second handwritten
+catalog. Every NDF detail route resolves the exact canonical clause body and
+links every owning/affected unit back to its canonical workbench.
 
 ### Content hierarchy on an instruction route
 
@@ -339,9 +368,12 @@ and rerunning the normative verification flow.
 
 ## Visual language
 
-- Color: neutral light reading surfaces; dark engineering workbench surfaces;
-  blue and cyan for selection and data focus; restrained green, amber, and red
-  only for explicit validated, pending, and failing states.
+- Color: dark-first obsidian reading and workbench surfaces; vivid signal red
+  for brand, primary actions, and current-route emphasis; high-contrast gold/
+  yellow for focus,
+  source identity, and selected-data highlights. Light mode remains available
+  as a warm neutral fallback. Green, amber, and danger colors retain distinct
+  status meanings; brand red never means failure by itself.
 - Typography: highly readable sans-serif UI text, stable monospace source and
   identifiers, and a restrained heading scale suitable for dense reference
   pages.
@@ -374,6 +406,9 @@ and rerunning the normative verification flow.
 - `GeneratedContract`
 - `EncodingBitfield`
 - `NdfClause`
+- `InstructionIndex`
+- `NdfIndex`
+- `NdfDetail`
 - `InstructionComposition`
 - `SemanticExecution`
 - `SemanticIdPath`
@@ -408,6 +443,14 @@ and rerunning the normative verification flow.
   renders ordered rails, variants, constraints, defaults, examples, command
   detail routes, and exact command-owner links. React contains no TLOAD
   semantic strings beyond presentation labels.
+- Every Tile composition rail and generated Markdown block-composition section
+  consumes the same ASL-owned `contract.block_composition` projection. A second
+  `metadata.block` form may provide additional structural detail only when the
+  build validates it against the same owner; it must not silently omit a legal
+  variant declared by the contract.
+- `InstructionIndex`, `NdfIndex`, and `NdfDetail` consume only build-generated
+  release data. Index entries link to canonical workbench/detail routes and
+  preserve stable identity, source path, and hash.
 - `SemanticExecution` consumes owner-declared stage bindings. Owner DOC regions
   must surround executable ASL. Shared-module fragments are extracted from
   explicit source markers at build time; missing, duplicate, reversed, non-ASL,
@@ -434,6 +477,14 @@ and rerunning the normative verification flow.
   depends on color alone.
 - `AssemblySyntax` reads canonical forms from the ASL-owned instruction metadata
   already present in route data. It never maintains a separate syntax table.
+- Every Tile page begins its Assembly section with one uniform high-level call
+  grammar: `Mnemonic <shape/type/attribute parameters> inputs -> outputs`.
+  Build-time projection derives parameter labels from ASL-owned BSTART/B.DATR/
+  B.DIM composition and derives input/output order from `contract.operands`.
+  The page exposes a binding table from every high-level placeholder back to
+  its exact source field/declaration. LinxISA v0.58 Tile syntax is a structural reading
+  reference; current PTO owning ASL wins on explicit destinations, operand
+  order, and the removal of legacy `.reuse` spellings.
 - `AssemblerSymbols` joins catalog fields with ASL-owned operand roles, defaults,
   assigned values, and reserved-value behavior. It never invents descriptions.
 - `SourceLedger` is the last major section on a workbench route and consolidates
@@ -478,6 +529,10 @@ and rerunning the normative verification flow.
 - Contrast/readability:
   - code, identifiers, metadata, and status text meet contrast requirements;
   - status never depends on color alone.
+  - ordinary text meets at least 4.5:1 contrast and meaningful UI boundaries
+    meet at least 3:1; dark red is not used for small text on dark surfaces;
+  - focus uses the gold focus-ring token and remains visible in forced-colors
+    mode; red/gold categories always retain text, shape, or role labels.
 - Screen-reader semantics:
   - every interactive graph has a concise text summary and a structured list or
     table fallback;

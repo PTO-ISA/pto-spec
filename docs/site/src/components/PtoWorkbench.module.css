@@ -2,7 +2,7 @@
   --pto-panel: var(--ifm-background-surface-color);
   --pto-line: var(--ifm-color-emphasis-300);
   --pto-muted: var(--ifm-color-emphasis-700);
-  --pto-accent: var(--ifm-color-primary);
+  --pto-accent: var(--pto-nav-active);
   --pto-asl-plain: #24292f;
   --pto-asl-comment: #57606a;
   --pto-asl-keyword: #8250df;
@@ -21,16 +21,16 @@
 }
 
 [data-theme='dark'] .page {
-  --pto-asl-plain: #c9d1d9;
-  --pto-asl-comment: #b6bec8;
-  --pto-asl-keyword: #ff9a93;
-  --pto-asl-boolean: #79c0ff;
-  --pto-asl-number: #79c0ff;
-  --pto-asl-string: #a5d6ff;
-  --pto-asl-builtin: #ffa657;
-  --pto-asl-function: #d2a8ff;
-  --pto-asl-operator: #ff9a93;
-  --pto-asl-punctuation: #c9d1d9;
+  --pto-asl-plain: #e7e2da;
+  --pto-asl-comment: #c2bbb2;
+  --pto-asl-keyword: #ff8d96;
+  --pto-asl-boolean: #ffd34f;
+  --pto-asl-number: #ffd34f;
+  --pto-asl-string: #ffe071;
+  --pto-asl-builtin: #8fc3a8;
+  --pto-asl-function: #f2a766;
+  --pto-asl-operator: #ff4d5a;
+  --pto-asl-punctuation: #b9b4ac;
 }
 
 .hero,
@@ -184,6 +184,47 @@
   white-space: pre;
 }
 
+.highLevelAssembly {
+  display: grid;
+  gap: .65rem;
+}
+
+.highLevelAssemblyForm {
+  display: block;
+  padding: .9rem 1rem;
+  color: var(--pto-highlight);
+  background: color-mix(in srgb, var(--pto-highlight) 7%, var(--ifm-pre-background));
+  border: 1px solid color-mix(in srgb, var(--pto-highlight) 42%, var(--pto-line));
+  font-size: clamp(.84rem, 1.35vw, 1rem);
+  font-weight: 750;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.highLevelAssembly details {
+  padding: .55rem .7rem;
+  border-left: 3px solid var(--ifm-color-primary);
+}
+
+.highLevelAssembly summary {
+  cursor: pointer;
+  color: var(--pto-muted);
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.highLevelBindingViewport {
+  margin-top: .65rem;
+  overflow-x: auto;
+}
+
+.highLevelBindingViewport table {
+  width: 100%;
+  min-width: 42rem;
+  margin: 0;
+}
+
 .genericBundleHeading {
   display: flex;
   gap: 1rem;
@@ -215,6 +256,12 @@
 .genericBundleVariant > h4 {
   margin-bottom: .35rem;
   color: var(--pto-accent);
+}
+
+.genericBundleRule {
+  margin: 0 0 .65rem;
+  color: var(--pto-muted);
+  font-size: .82rem;
 }
 
 .genericBundleVariant > h5 {
@@ -1133,8 +1180,8 @@
 }
 
 .requirement_required {
-  color: #0b6e4f;
-  background: color-mix(in srgb, #0b6e4f 12%, transparent);
+  color: var(--pto-status-positive);
+  background: color-mix(in srgb, var(--pto-status-positive) 12%, transparent);
 }
 
 .requirement_optional {
@@ -1144,12 +1191,12 @@
 
 .requirement_conditional {
   color: var(--ifm-font-color-base);
-  background: color-mix(in srgb, #8a6a20 14%, transparent);
+  background: color-mix(in srgb, var(--pto-status-caution) 14%, transparent);
 }
 
 .requirement_forbidden {
-  color: #a33a3a;
-  background: color-mix(in srgb, #a33a3a 10%, transparent);
+  color: var(--pto-status-danger);
+  background: color-mix(in srgb, var(--pto-status-danger) 10%, transparent);
 }
 
 .repeatable {
@@ -1232,19 +1279,19 @@
 
 .semanticFact_checks,
 .semanticFact_faults {
-  border-left: 3px solid #9a741d;
+  border-left: 3px solid var(--pto-status-caution);
 }
 
 .semanticFact_writes,
 .semanticFact_commit {
-  border-left: 3px solid #2d7659;
+  border-left: 3px solid var(--pto-status-positive);
 }
 
 .semanticGap {
   padding: .7rem .85rem;
   margin-top: .65rem;
-  border-left: 3px solid #9a741d;
-  background: color-mix(in srgb, #9a741d 7%, var(--pto-panel));
+  border-left: 3px solid var(--pto-status-caution);
+  background: color-mix(in srgb, var(--pto-status-caution) 7%, var(--pto-panel));
 }
 
 .semanticGap p {

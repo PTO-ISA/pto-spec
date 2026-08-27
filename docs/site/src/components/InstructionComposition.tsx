@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import type {
+  PtoHighLevelAssembly,
   PtoInstructionComposition,
   PtoInstructionCompositionCommand,
   PtoLocalizedText,
   PtoNdfClause,
 } from '@site/src/types/pto';
+import HighLevelAssembly from './HighLevelAssembly';
 import styles from './PtoWorkbench.module.css';
 
 function localize(value: PtoLocalizedText, chinese: boolean): string {
@@ -38,12 +40,14 @@ export default function InstructionComposition({
   ownerSourceUrl,
   ndfClauses,
   apiForms,
+  highLevelAssembly,
 }: {
   composition: PtoInstructionComposition;
   chinese: boolean;
   ownerSourceUrl: string;
   ndfClauses: PtoNdfClause[];
   apiForms: string[];
+  highLevelAssembly: PtoHighLevelAssembly;
 }): React.JSX.Element {
   const [selectedId, setSelectedId] = useState(composition.variants[0]?.id ?? '');
   const selected = composition.variants.find((variant) => variant.id === selectedId)
@@ -52,7 +56,7 @@ export default function InstructionComposition({
 
   const labels = chinese ? {
     title: '汇编格式',
-    apiLayer: '1. 高层 / API 调用形式',
+    apiLayer: '1. 高层汇编',
     bundleLayer: '2. 完整 Bundle Assembly',
     mappingLayer: '3. Bundle 操作数与参数语义',
     dataFlow: '二维数据流',
@@ -76,7 +80,7 @@ export default function InstructionComposition({
     owner: 'TLOAD owning ASL',
   } : {
     title: 'Assembly syntax',
-    apiLayer: '1. High-level / API form',
+    apiLayer: '1. High Level Assembly',
     bundleLayer: '2. Complete Bundle Assembly',
     mappingLayer: '3. Bundle operand and parameter semantics',
     dataFlow: 'Two-dimensional data flow',
@@ -175,9 +179,11 @@ export default function InstructionComposition({
       </header>
       <section className={styles.assemblyLayer} aria-labelledby="api-form-heading">
         <h3 id="api-form-heading">{labels.apiLayer}</h3>
-        <div className={styles.assemblyForms}>
-          {apiForms.map((form) => <code key={form}>{form}</code>)}
-        </div>
+        <HighLevelAssembly assembly={highLevelAssembly} chinese={chinese} />
+        <details className={styles.generatedMetadata}>
+          <summary>{chinese ? '显示 owning ASL 的原始 assembly alias' : 'Show the owning ASL assembly alias'}</summary>
+          <div className={styles.assemblyForms}>{apiForms.map((form) => <code key={form}>{form}</code>)}</div>
+        </details>
       </section>
       <section className={styles.assemblyLayer} aria-labelledby="bundle-assembly-heading">
         <h3 id="bundle-assembly-heading">{labels.bundleLayer}</h3>

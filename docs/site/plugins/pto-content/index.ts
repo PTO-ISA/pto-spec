@@ -15,7 +15,12 @@ import type {
   PtoGraphNodeKind,
   PtoJsonValue,
   PtoInstructionComposition,
+  PtoInstructionIndexData,
+  PtoHighLevelAssembly,
   PtoNdfClause,
+  PtoNdfCatalogData,
+  PtoNdfDetailData,
+  PtoNdfOwnerRoute,
   PtoNdfGraphData,
   PtoNdfIndexPageData,
   PtoReleaseIdentity,
@@ -33,6 +38,7 @@ import type {
   PtoUnitEncoding,
   PtoUnitWorkbenchData,
 } from '../../src/types/pto';
+import {legacyReferenceRoute, unitRoute} from './routes';
 
 const TLOAD_ROUTE =
   '/instructions/tile/memory-and-data-movement/regular/TLOAD/';
@@ -97,6 +103,9 @@ interface LoadedPtoContent {
   search: PtoSearchData;
   ndfIndexPages: PtoNdfIndexPageData[];
   adrDecisions: Record<string, PtoReaderNode[]>;
+  instructionIndex: PtoInstructionIndexData;
+  ndfCatalog: PtoNdfCatalogData;
+  ndfDetails: PtoNdfDetailData[];
 }
 
 interface ArchitectureTopicDefinition {
@@ -439,12 +448,7 @@ export function isCommonMarkFenceClose(line: string, opener: string): boolean {
 }
 
 function referenceRoute(documentationPath: string, locale: string, defaultLocale: string): string {
-  if (!documentationPath.startsWith('docs/') || !documentationPath.endsWith('.md')) {
-    fail(`cannot derive reference route for ${documentationPath}`);
-  }
-  let relative = documentationPath.slice('docs/'.length, -'.md'.length);
-  if (relative.endsWith('/index')) relative = relative.slice(0, -'/index'.length);
-  const route = `/reference/${relative}/`.replace(/\/+/g, '/');
+  const route = legacyReferenceRoute(documentationPath);
   return locale === defaultLocale ? route : `/${locale}${route}`;
 }
 
@@ -1696,20 +1700,6 @@ interface PtoCatalogs {
   tileOperations: Record<string, PtoJsonValue>[];
 }
 
-function unitRoute(unit: TraceabilityUnit): string {
-  if (unit.mnemonic === null) {
-    return `/units/${encodeURIComponent(unit.id)}/`;
-  }
-  const stem = path.posix.basename(unit.source, '.asl');
-  const segments = [
-    'instructions',
-    unit.surface,
-    ...unit.classification,
-    stem,
-  ].map((segment) => encodeURIComponent(segment));
-  return `/${segments.join('/')}/`;
-}
-
 function architectureGuide(
   context: LoadContext,
   release: PtoReleaseIdentity,
@@ -1806,6 +1796,350 @@ function architectureGuide(
       )),
     })),
   };
+}
+
+function highLevelAssembly(
+  unit: TraceabilityUnit,
+  metadata: Record<string, PtoJsonValue>,
+): PtoHighLevelAssembly | null {
+  if (unit.surface !== 'tile' || unit.mnemonic === null) return null;
+  const contractValue = metadata.contract;
+  if (contractValue === null || typeof contractValue !== 'object' || Array.isArray(contractValue)) {
+    fail(`${unit.id} has no contract for high-level Tile assembly`);
+  }
+  const contract = contractValue as Record<string, PtoJsonValue>;
+  const contractBlockLines = (Array.isArray(contract.block_composition) ? contract.block_composition : [])
+    .filter((value): value is string => typeof value === 'string');
+  const metadataBlockLines = (Array.isArray(metadata.block) ? metadata.block : [])
+    .filter((value): value is string => typeof value === 'string');
+  const blockLines = [...new Set([...contractBlockLines, ...metadataBlockLines])];
+  if (blockLines.length === 0) fail(`${unit.id} has no block composition for high-level Tile assembly`);
+  const parameters: PtoHighLevelAssembly['parameters'] = [];
+  const seenParameters = new Set<string>();
+  const addParameter = (display: string, source: string, role: string): void => {
+    if (seenParameters.has(display)) return;
+    seenParameters.add(display);
+    parameters.push({display, source, role});
+  };
+  const dimensionBindings = new Map<string, {semantic: string | null; source: string}>();
+  for (const line of blockLines.filter((value) => value.startsWith('B.DIM'))) {
+    const body = line.slice('B.DIM'.length).trim();
+    const compact = body.match(
+      /^LB([0-2])\/([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\/([A-Za-z][A-Za-z0-9_]*),\s*LB([0-2])\/([A-Za-z][A-Za-z0-9_]*)(?:\s+\([^)]*\))?$/,
+    );
+    const single = body.match(
+      /^LB([0-2])(?:\s*=\s*|\s+)([A-Za-z][A-Za-z0-9_]*)(?:\s+or\s+cooperative\s+group_M)?(?:\s+\([^)]*\))?$/,
+    );
+    const bare = body.match(/^LB([0-2])$/);
+    const candidates: Array<[string, string | null]> = compact !== null
+      ? [[compact[1], compact[2]], [compact[3], compact[4]], [compact[5], compact[6]]]
+      : single !== null
+        ? [[single[1], single[2] === 'group_M' ? 'M' : single[2]]]
+        : bare !== null
+          ? [[bare[1], null]]
+          : [];
+    if (candidates.length === 0) {
+      fail(`${unit.id} has non-structured B.DIM projection: ${line}`);
+    }
+    for (const [slot, semantic] of candidates) {
+      const key = `LB${slot}`;
+      const previous = dimensionBindings.get(key);
+      if (previous !== undefined && previous.semantic !== semantic) {
+        fail(`${unit.id} assigns ${key} to conflicting high-level dimensions`);
+      }
+      dimensionBindings.set(key, {semantic, source: line});
+    }
+  }
+  for (const [slot, binding] of [...dimensionBindings.entries()].sort()) {
+    addParameter(
+      binding.semantic === null ? slot : `${slot}:${binding.semantic}`,
+      binding.source,
+      'dimension',
+    );
+  }
+  const parameterPatterns: Array<[RegExp, string, string]> = [
+    [/\bAType\b/, 'DataTypeA', 'left data type'],
+    [/\bBType\b/, 'DataTypeB', 'right data type'],
+    [/\bDataType\b/, 'DataType', 'data type'],
+    [/\bLayout\b/, 'Layout', 'layout'],
+    [/\bPadValue\b/, 'PadValue', 'padding value'],
+    [/\bByteId\b/, 'ByteId', 'byte selector'],
+    [/\bDstDataType\b/, 'DstDataType', 'destination data type'],
+  ];
+  for (const [pattern, display, role] of parameterPatterns) {
+    const source = blockLines.find((line) => pattern.test(line));
+    if (source !== undefined) addParameter(display, source, role);
+  }
+  const operandValues = Array.isArray(contract.operands) ? contract.operands : [];
+  const operands = operandValues.map((value, index) => {
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+      fail(`${unit.id} contract.operands[${index}] is malformed`);
+    }
+    const operand = value as Record<string, PtoJsonValue>;
+    const field = stringValue(operand, 'field');
+    const role = stringValue(operand, 'role');
+    if (field === null || role === null) fail(`${unit.id} contract.operands[${index}] lacks field or role`);
+    return {field, role, index};
+  });
+  const outputOperands = operands.filter(({field}) => /^destination\d+$/.test(field));
+  const displayField = (field: string, output: boolean): string => {
+    const indexed = field.match(/^(source|destination|scalar|natural|positive|flag)(\d+)$/);
+    if (indexed !== null) {
+      const [, kind, index] = indexed;
+      if (kind === 'source') return `SrcTile${index}`;
+      if (kind === 'destination') return outputOperands.length === 1 ? 'DstTile' : `DstTile${index}`;
+      return `${kind[0].toLocaleUpperCase()}${kind.slice(1)}${index}`;
+    }
+    const named: Record<string, string> = {
+      address: 'Address',
+      comparison: 'Comparison',
+      diagonal: 'Diagonal',
+      numeric_control: 'NumericControl',
+      selected_byte: 'SelectedByte',
+      sort_width: 'SortWidth',
+    };
+    const display = named[field];
+    if (display === undefined || output) fail(`${unit.id} has unsupported high-level operand field ${field}`);
+    return display;
+  };
+  const inputs = operands
+    .filter((operand) => !outputOperands.includes(operand))
+    .map(({field, role, index}) => ({
+      display: displayField(field, false),
+      source: `contract.operands[${index}].${field}`,
+      role,
+    }));
+  const outputs = outputOperands.map(({field, role, index}) => ({
+    display: displayField(field, true),
+    source: `contract.operands[${index}].${field}`,
+    role,
+  }));
+  const parameterText = parameters.length > 0
+    ? ` <${parameters.map(({display}) => display).join(', ')}>`
+    : '';
+  const inputText = inputs.length > 0 ? ` ${inputs.map(({display}) => display).join(', ')}` : '';
+  const outputText = outputs.length > 0 ? ` -> ${outputs.map(({display}) => display).join(', ')}` : '';
+  const attributes = blockLines.map((line, index) => ({
+    display: line.match(/\b(B(?:START)?(?:\.[A-Z0-9]+)+)\b/)?.[1] ?? `BundleRule${index + 1}`,
+    source: line,
+    role: 'ASL-owned block composition',
+  }));
+  return {
+    form: `${unit.mnemonic}${parameterText}${inputText}${outputText}`,
+    parameters,
+    inputs,
+    outputs,
+    attributes,
+    basis: [...new Set([
+      ...blockLines,
+      ...operands.map(({index}) => `contract.operands[${index}]`),
+    ])],
+  };
+}
+
+function instructionIndexData(
+  context: LoadContext,
+  release: PtoReleaseIdentity,
+  units: Array<{data: PtoUnitWorkbenchData; route: string}>,
+): PtoInstructionIndexData {
+  const entries = units
+    .filter(({data}) => typeof data.unit.mnemonic === 'string')
+    .map(({data, route}) => {
+      const surface = String(data.unit.surface ?? data.metadata.surface);
+      if (!['scalar', 'block', 'tile'].includes(surface)) {
+        fail(`instruction index has unsupported surface ${surface}`);
+      }
+      const classification = Array.isArray(data.unit.classification)
+        ? data.unit.classification.filter((value): value is string => typeof value === 'string')
+        : [];
+      return {
+        id: String(data.unit.id ?? data.metadata.id),
+        mnemonic: String(data.unit.mnemonic),
+        surface: surface as 'scalar' | 'block' | 'tile',
+        classification,
+        route: localizedRoute(context, route),
+        summary: stringValue(data.metadata, 'summary') ?? stringValue(data.unit, 'summary') ?? '',
+        sourcePath: data.source.path,
+        sourceSha256: data.source.sha256,
+      };
+    })
+    .sort(
+      (left, right) =>
+        left.surface.localeCompare(right.surface) ||
+        left.mnemonic.localeCompare(right.mnemonic) ||
+        left.id.localeCompare(right.id),
+    );
+  return {release, entries};
+}
+
+function ndfCatalogData(
+  root: string,
+  context: LoadContext,
+  release: PtoReleaseIdentity,
+  traceability: TraceabilityData,
+  adrIndex: AdrIndexData,
+  graph: PtoNdfGraphData,
+  requirementSources: Map<string, RequirementSourceIdentity>,
+  evidence: PtoArtifactEvidence[],
+  units: Array<{data: PtoUnitWorkbenchData; route: string}>,
+): {catalog: PtoNdfCatalogData; details: PtoNdfDetailData[]} {
+  const unitsById = new Map(
+    units.map((unit) => [String(unit.data.unit.id ?? unit.data.metadata.id), unit]),
+  );
+  const clauses = new Map<string, PtoNdfClause>();
+  const occurrenceOwners = new Map<string, Set<string>>();
+  for (const unit of units) {
+    const unitId = String(unit.data.unit.id ?? unit.data.metadata.id);
+    for (const clause of unit.data.ndfClauses) {
+      const previous = clauses.get(clause.id);
+      if (previous !== undefined && (
+        previous.clauseSha256 !== clause.clauseSha256 ||
+        previous.sourceSha256 !== clause.sourceSha256 ||
+        previous.text !== clause.text
+      )) {
+        fail(`NDF catalog has inconsistent duplicate clause ${clause.id}`);
+      }
+      clauses.set(clause.id, clause);
+      occurrenceOwners.set(clause.id, new Set([
+        ...(occurrenceOwners.get(clause.id) ?? []),
+        unitId,
+      ]));
+    }
+  }
+  const instructionContracts = new Map(
+    traceability.units
+      .filter((unit) => typeof unit.instruction_contract?.ndf_clause === 'string')
+      .map((unit) => [unit.instruction_contract?.ndf_clause as string, unit]),
+  );
+  const expectedIds = traceability.requirements
+    .map((requirement) => requirement.id)
+    .sort();
+  const actualIds = [...new Set([...clauses.keys(), ...instructionContracts.keys()])].sort();
+  if (JSON.stringify(actualIds) !== JSON.stringify(expectedIds)) {
+    fail(`NDF catalog does not equal release requirements: ${actualIds.length}/${expectedIds.length}`);
+  }
+  const ownerRoute = (unitId: string): PtoNdfOwnerRoute => {
+    const unit = unitsById.get(unitId);
+    if (unit === undefined) fail(`NDF catalog references missing affected unit ${unitId}`);
+    return {
+      id: unitId,
+      mnemonic: typeof unit.data.unit.mnemonic === 'string' ? unit.data.unit.mnemonic : null,
+      surface: String(unit.data.unit.surface ?? unit.data.metadata.surface),
+      route: localizedRoute(context, unit.route),
+      sourcePath: unit.data.source.path,
+    };
+  };
+  const graphNodes = new Map(graph.nodes.map((node) => [node.id, node]));
+  const relationships = new Map<string, PtoNdfDetailData['relationships']>();
+  const relationshipHref = (node: PtoGraphNode): {href: string; external: boolean} => {
+    if (node.kind === 'asl') {
+      const owner = unitsById.get(node.id);
+      if (owner === undefined) fail(`NDF relationship references missing ASL unit ${node.id}`);
+      return {href: localizedRoute(context, owner.route), external: false};
+    }
+    if (node.kind === 'ndf') {
+      const instructionOwner = instructionContracts.get(node.id);
+      if (instructionOwner !== undefined) {
+        const owner = unitsById.get(instructionOwner.id);
+        if (owner === undefined) fail(`NDF relationship references missing instruction unit ${instructionOwner.id}`);
+        return {href: localizedRoute(context, owner.route), external: false};
+      }
+      return {href: localizedRoute(context, `/ndf/${encodeURIComponent(node.id)}/`), external: false};
+    }
+    if (node.sourceUrl === null) fail(`NDF relationship ${node.id} has no source URL`);
+    return {href: node.sourceUrl, external: true};
+  };
+  for (const edge of graph.edges) {
+    const addRelationship = (
+      center: string,
+      otherId: string,
+      direction: 'incoming' | 'outgoing',
+    ): void => {
+      const node = graphNodes.get(otherId);
+      if (node === undefined) fail(`NDF relationship references missing graph node ${otherId}`);
+      relationships.set(center, [
+        ...(relationships.get(center) ?? []),
+        {kind: edge.kind, direction, node, ...relationshipHref(node)},
+      ]);
+    };
+    addRelationship(edge.source, edge.target, 'outgoing');
+    addRelationship(edge.target, edge.source, 'incoming');
+  }
+  const requirementsById = new Map(
+    traceability.requirements.map((requirement) => [requirement.id, requirement]),
+  );
+  const adrRecordsById = new Map(adrIndex.records.map((record) => [record.id, record]));
+  const details = [...clauses.keys()].sort().map((id) => {
+    const clause = clauses.get(id);
+    if (clause === undefined) fail(`NDF catalog lost ${id}`);
+    const requirement = requirementsById.get(id);
+    if (requirement === undefined) fail(`NDF detail references missing requirement ${id}`);
+    const ownerIds = [...new Set([
+      ...(occurrenceOwners.get(id) ?? []),
+      ...clause.affectedUnits,
+    ])].sort();
+    const adrIds = new Set(requirement.readiness_subjects);
+    for (const record of adrIndex.records) {
+      if (record.affected_ndf.includes(id)) adrIds.add(record.id);
+    }
+    const missingAdrs = [...adrIds].filter((adrId) => !adrRecordsById.has(adrId));
+    if (missingAdrs.length > 0) fail(`NDF detail ${id} references missing ADRs: ${missingAdrs.join(', ')}`);
+    return {
+      release,
+      clause,
+      owners: ownerIds.map(ownerRoute),
+      adrs: [...adrIds].sort().map((adrId) => publicAdr(root, release, adrRecordsById.get(adrId)!)),
+      tests: instructionTests(root, release.commit, traceability, new Set(requirement.tests))
+        .map(({sourceText: _sourceText, ...test}) => test),
+      evidence,
+      relationships: (relationships.get(id) ?? []).sort(
+        (left, right) => left.node.id.localeCompare(right.node.id) || left.kind.localeCompare(right.kind),
+      ),
+      relationshipFallbackRoute: localizedRoute(context, '/explore/ndf/'),
+    };
+  });
+  const detailsById = new Map(details.map((detail) => [detail.clause.id, detail]));
+  const entries = expectedIds.map((id): PtoNdfCatalogData['entries'][number] => {
+    const detail = detailsById.get(id);
+    if (detail !== undefined) {
+      const {clause, owners} = detail;
+      return {
+        id,
+        entryKind: 'clause',
+        kind: clause.kind,
+        level: clause.level,
+        layer: clause.layer,
+        status: clause.status,
+        text: clause.text,
+        route: localizedRoute(context, `/ndf/${encodeURIComponent(id)}/`),
+        sourcePath: clause.sourcePath,
+        sourceSha256: clause.sourceSha256,
+        clauseSha256: clause.clauseSha256,
+        owners,
+      };
+    }
+    const instructionOwner = instructionContracts.get(id);
+    const identity = requirementSources.get(id);
+    if (instructionOwner === undefined || identity === undefined) {
+      fail(`NDF catalog cannot resolve instruction-contract identity ${id}`);
+    }
+    const owner = ownerRoute(instructionOwner.id);
+    return {
+      id,
+      entryKind: 'instruction-contract',
+      kind: 'instruction-contract',
+      level: instructionOwner.surface,
+      layer: 'instruction',
+      status: requirementsById.get(id)?.executable ? 'executable' : 'contract',
+      text: null,
+      route: owner.route,
+      sourcePath: identity.sourcePath,
+      sourceSha256: identity.sourceSha256,
+      clauseSha256: identity.clauseSha256,
+      owners: [owner],
+    };
+  });
+  return {catalog: {release, entries}, details};
 }
 
 function catalogEncoding(
@@ -2081,6 +2415,7 @@ function buildUnitData(
       unit,
       sourceText,
     ),
+    highLevelAssembly: highLevelAssembly(unit, metadata),
   };
 }
 
@@ -2342,6 +2677,11 @@ function searchData(
   requirementSources: Map<string, RequirementSourceIdentity>,
 ): PtoSearchData {
   const entries = new Map<string, PtoSearchEntry>();
+  const instructionContracts = new Map(
+    traceability.units
+      .filter((unit) => typeof unit.instruction_contract?.ndf_clause === 'string')
+      .map((unit) => [unit.instruction_contract?.ndf_clause as string, unit]),
+  );
   const addEntry = (entry: PtoSearchEntry): void => {
     if (entries.has(entry.id)) {
       fail(`search index contains duplicate identity ${entry.id}`);
@@ -2373,12 +2713,18 @@ function searchData(
   for (const requirement of traceability.requirements) {
     const identity = requirementSources.get(requirement.id);
     if (identity === undefined) fail(`missing search source for ${requirement.id}`);
+    const instructionOwner = instructionContracts.get(requirement.id);
     addEntry({
       id: requirement.id,
       label: requirement.id,
       kind: 'ndf',
       path: identity.sourcePath,
-      url: identity.sourceUrl,
+      url: localizedRoute(
+        context,
+        instructionOwner === undefined
+          ? `/ndf/${encodeURIComponent(requirement.id)}/`
+          : unitRoute(instructionOwner),
+      ),
       sha256: identity.clauseSha256,
       startLine: identity.startLine,
       endLine: identity.endLine,
@@ -2533,11 +2879,26 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
       if (tload === undefined || unitRoute(tload) !== TLOAD_ROUTE) {
         fail(`TLOAD route must remain ${TLOAD_ROUTE}`);
       }
+      const instructionIndex = instructionIndexData(context, release, units);
+      const {catalog: ndfCatalog, details: ndfDetails} = ndfCatalogData(
+        root,
+        context,
+        release,
+        traceability,
+        adrIndex,
+        graph,
+        requirementSources,
+        evidence,
+        units,
+      );
 
       return {
         units,
         release,
         graph,
+        instructionIndex,
+        ndfCatalog,
+        ndfDetails,
         adrDecisions: Object.fromEntries(
           adrIndex.records.map((record) => [
             record.id,
@@ -2611,6 +2972,23 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         'architecture-guide.json',
         JSON.stringify(architectureGuide(context, content.release, content.units)),
       );
+      const instructionIndexModule = await actions.createData(
+        'instruction-index.json',
+        JSON.stringify(content.instructionIndex),
+      );
+      const ndfCatalogModule = await actions.createData(
+        'ndf-catalog.json',
+        JSON.stringify(content.ndfCatalog),
+      );
+      const ndfDetailModules = await Promise.all(
+        content.ndfDetails.map(async (detail, index) => ({
+          detail,
+          module: await actions.createData(
+            `ndf-detail-${String(index + 1).padStart(4, '0')}.json`,
+            JSON.stringify(detail),
+          ),
+        })),
+      );
       const graphDataModule = await actions.createData(
         'ndf-graph.json',
         JSON.stringify(content.graph),
@@ -2643,6 +3021,26 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         exact: true,
         modules: {architecture: architectureDataModule},
       });
+      actions.addRoute({
+        path: localizedRoute(context, '/instructions/'),
+        component: '@site/src/routes/InstructionIndex',
+        exact: true,
+        modules: {index: instructionIndexModule},
+      });
+      actions.addRoute({
+        path: localizedRoute(context, '/ndf/'),
+        component: '@site/src/routes/NdfCatalog',
+        exact: true,
+        modules: {catalog: ndfCatalogModule},
+      });
+      for (const entry of ndfDetailModules) {
+        actions.addRoute({
+          path: localizedRoute(context, `/ndf/${encodeURIComponent(entry.detail.clause.id)}/`),
+          component: '@site/src/routes/NdfDetail',
+          exact: true,
+          modules: {detail: entry.module},
+        });
+      }
       actions.addRoute({
         path: localizedRoute(context, '/explore/ndf/'),
         component: '@site/src/routes/NdfExplorer',

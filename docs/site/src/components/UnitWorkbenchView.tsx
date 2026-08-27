@@ -63,6 +63,7 @@ export default function UnitWorkbenchView({unitData}: {unitData: PtoUnitWorkbenc
           metadata={metadata}
           mnemonic={Boolean(presentation.mnemonic)}
           chinese={unitData.readerGuide.locale === 'zh-CN'}
+          highLevelAssembly={unitData.highLevelAssembly}
         />
       )}
       {unitData.composition && (
@@ -74,6 +75,7 @@ export default function UnitWorkbenchView({unitData}: {unitData: PtoUnitWorkbenc
           apiForms={Array.isArray(metadata.assembly)
             ? metadata.assembly.filter((value): value is string => typeof value === 'string')
             : []}
+          highLevelAssembly={unitData.highLevelAssembly!}
         />
       )}
       {presentation.mnemonic && (

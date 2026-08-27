@@ -295,6 +295,21 @@ export interface PtoSemanticExecution {
   stages: PtoSemanticExecutionStage[];
 }
 
+export interface PtoHighLevelAssemblyBinding {
+  display: string;
+  source: string;
+  role: string;
+}
+
+export interface PtoHighLevelAssembly {
+  form: string;
+  parameters: PtoHighLevelAssemblyBinding[];
+  inputs: PtoHighLevelAssemblyBinding[];
+  outputs: PtoHighLevelAssemblyBinding[];
+  attributes: PtoHighLevelAssemblyBinding[];
+  basis: string[];
+}
+
 export interface PtoUnitWorkbenchData {
   release: PtoReleaseIdentity;
   source: PtoSourceIdentity;
@@ -310,6 +325,7 @@ export interface PtoUnitWorkbenchData {
   assemblerSymbols: PtoAssemblerSymbol[];
   composition: PtoInstructionComposition | null;
   semanticExecution: PtoSemanticExecution | null;
+  highLevelAssembly: PtoHighLevelAssembly | null;
 }
 
 /** Compatibility name for the first TLOAD workbench implementation. */
@@ -370,6 +386,67 @@ export interface PtoNdfIndexPageData {
   pageCount: number;
   total: number;
   entries: PtoNdfIndexEntry[];
+}
+
+export interface PtoInstructionIndexEntry {
+  id: string;
+  mnemonic: string;
+  surface: 'scalar' | 'block' | 'tile';
+  classification: string[];
+  route: string;
+  summary: string;
+  sourcePath: string;
+  sourceSha256: string;
+}
+
+export interface PtoInstructionIndexData {
+  release: PtoReleaseIdentity;
+  entries: PtoInstructionIndexEntry[];
+}
+
+export interface PtoNdfOwnerRoute {
+  id: string;
+  mnemonic: string | null;
+  surface: string;
+  route: string;
+  sourcePath: string;
+}
+
+export interface PtoNdfCatalogEntry {
+  id: string;
+  entryKind: 'clause' | 'instruction-contract';
+  kind: string;
+  level: string;
+  layer: string;
+  status: string;
+  text: string | null;
+  route: string;
+  sourcePath: string;
+  sourceSha256: string;
+  clauseSha256: string;
+  owners: PtoNdfOwnerRoute[];
+}
+
+export interface PtoNdfCatalogData {
+  release: PtoReleaseIdentity;
+  entries: PtoNdfCatalogEntry[];
+}
+
+export interface PtoNdfDetailData {
+  release: PtoReleaseIdentity;
+  clause: PtoNdfClause;
+  owners: PtoNdfOwnerRoute[];
+  adrs: PtoAdrRecord[];
+  tests: PtoTestEvidence[];
+  evidence: PtoArtifactEvidence[];
+  relationships: Array<{
+    kind: PtoGraphEdgeKind;
+    direction: 'incoming' | 'outgoing';
+    node: PtoGraphNode;
+    href: string;
+    external: boolean;
+  }>;
+  relationshipFallbackRoute: string;
 }
 
 export type PtoSearchEntryKind = 'adr' | 'ndf' | 'asl' | 'avs';

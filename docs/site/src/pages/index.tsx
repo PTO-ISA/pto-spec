@@ -54,7 +54,7 @@ const surfaceIntroductions: SurfaceIntroduction[] = [
         AGU · ALU · AMO · BRU · FSU · SYS
       </Translate>
     ),
-    to: '/search/?kind=asl&surface=scalar',
+    to: '/instructions/?surface=scalar',
     action: <Translate id="homepage.surface.scalar.action">Browse Scalar units</Translate>,
   },
   {
@@ -71,7 +71,7 @@ const surfaceIntroductions: SurfaceIntroduction[] = [
         Lifecycle · Execution · Attributes · Operands · Encoding
       </Translate>
     ),
-    to: '/search/?kind=asl&surface=block',
+    to: '/instructions/?surface=block',
     action: <Translate id="homepage.surface.block.action">Browse Block units</Translate>,
   },
   {
@@ -88,7 +88,7 @@ const surfaceIntroductions: SurfaceIntroduction[] = [
         Elementwise · Reduce/expand · Layout · Matrix · Memory/data movement
       </Translate>
     ),
-    to: '/search/?kind=asl&surface=tile',
+    to: '/instructions/?surface=tile',
     action: <Translate id="homepage.surface.tile.action">Browse Tile units</Translate>,
   },
 ];
@@ -301,7 +301,7 @@ function Home(): ReactNode {
                   NDF identities are embedded in their owning ASL sources. The explorer connects clauses to owners, tests, and ADR history without inventing new semantics.
                 </Translate>
               </p>
-              <Link to="/explore/ndf/">
+              <Link to="/ndf/">
                 <Translate id="homepage.records.ndf.action">Explore NDF relationships →</Translate>
               </Link>
             </article>

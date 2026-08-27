@@ -1,8 +1,4 @@
 {
-  "sidebar.reference.category.Architecture": {"message": "架构"},
-  "sidebar.reference.category.Scalar instructions": {"message": "Scalar 指令"},
-  "sidebar.reference.category.Block instructions": {"message": "Block 指令"},
-  "sidebar.reference.category.Tile instructions": {"message": "Tile 指令"},
-  "sidebar.reference.category.ADR and architecture records": {"message": "ADR 与架构记录"},
+  "sidebar.reference.category.Decisions and architecture records": {"message": "Decision 与架构记录"},
   "sidebar.reference.category.Development and releases": {"message": "开发与发布"}
 }

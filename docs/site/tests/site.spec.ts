@@ -24,12 +24,9 @@ test('latest release landing page teaches the architecture before implementation
   await expect(page.getByRole('heading', {name: 'Tile', level: 3})).toBeVisible();
   await expect(page.getByRole('heading', {name: /ADR explains why/})).toBeVisible();
   const scalarCard = page.getByRole('heading', {name: 'Scalar', level: 3}).locator('xpath=ancestor::article[1]');
-  const scalarInventory = await scalarCard.getByText(/ASL units/).innerText();
-  const scalarUnitCount = scalarInventory.match(/(\d+)\s+ASL\s+units/i)?.[1];
-  expect(scalarUnitCount).toBeTruthy();
   await scalarCard.getByRole('link', {name: /Browse Scalar units/}).click();
-  await expect(page).toHaveURL(/kind=asl&surface=scalar/);
-  await expect(page.getByRole('status')).toContainText(`${scalarUnitCount} matching identities`);
+  await expect(page).toHaveURL(/\/instructions\/\?surface=scalar/);
+  await expect(page.getByRole('status')).toContainText('466 instructions');
   await page.goto('/');
   await page.getByRole('searchbox').fill('TLOAD');
   await page.getByRole('button', {name: 'Search specification'}).click();
@@ -56,6 +53,60 @@ test('instruction coverage matrix closes the released bilingual inventory', asyn
   }
   expect(matrices[0].entries.every((entry: {route: string}) => !entry.route.startsWith('/zh-CN/'))).toBe(true);
   expect(matrices[1].entries.every((entry: {route: string}) => entry.route.startsWith('/zh-CN/'))).toBe(true);
+});
+
+test('instruction and NDF indexes route every identity to one canonical page', async ({page}) => {
+  await page.goto('/instructions/');
+  await expect(page.getByRole('heading', {name: 'Instruction index', level: 1})).toBeVisible();
+  await expect(page.getByRole('status')).toContainText('636 instructions');
+  await page.getByRole('button', {name: 'Tile', exact: true}).click();
+  await expect(page.getByRole('status')).toContainText('109 instructions');
+  await page.getByRole('searchbox', {name: 'Search instructions'}).fill('TLOAD');
+  await page.getByRole('link', {name: 'TLOAD', exact: true}).click();
+  await expect(page).toHaveURL(tloadRoute);
+
+  await page.goto('/ndf/');
+  await expect(page.getByRole('heading', {name: 'NDF index', level: 1})).toBeVisible();
+  await page.getByRole('searchbox', {name: 'Search NDF'}).fill('PTO-TLOAD-MEMORY-001');
+  const ndfCard = page.locator('#index-pto-tload-memory-001');
+  await expect(ndfCard).toBeVisible();
+  await ndfCard.getByRole('link', {name: 'contract', exact: true}).click();
+  await expect(page).toHaveURL('/ndf/PTO-TLOAD-MEMORY-001/');
+  await expect(page.getByText(/byte row stride/).first()).toBeVisible();
+  await expect(page.getByRole('link', {name: 'TLOAD', exact: true})).toHaveAttribute('href', tloadRoute);
+
+  await page.goto('/zh-CN/instructions/');
+  await expect(page.getByRole('heading', {name: '指令索引', level: 1})).toBeVisible();
+  await page.goto('/zh-CN/ndf/PTO-TLOAD-MEMORY-001/');
+  await expect(page).toHaveURL('/zh-CN/ndf/PTO-TLOAD-MEMORY-001/');
+});
+
+test('instruction rail and facet buttons share the URL-selected surface', async ({page}, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium', 'The persistent navigation rail is a desktop surface.');
+
+  await page.goto('/instructions/?surface=scalar');
+  const rail = page.locator('aside[aria-label="Left specification navigation"]');
+  const filters = page.getByRole('region', {name: 'Instruction filters'});
+  await expect(rail.locator('[data-navigation-id="scalar"]')).toHaveAttribute('data-section-current', 'true');
+  await expect(filters.getByRole('button', {name: 'Scalar', exact: true})).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('status')).toContainText('466 instructions');
+
+  await rail.locator('[data-navigation-id="block"]').click();
+  await expect(page).toHaveURL('/instructions/?surface=block');
+  await expect(rail.locator('[data-navigation-id="block"]')).toHaveAttribute('data-section-current', 'true');
+  await expect(filters.getByRole('button', {name: 'Block', exact: true})).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('status')).toContainText('61 instructions');
+
+  await filters.getByRole('button', {name: 'Tile', exact: true}).click();
+  await expect(page).toHaveURL('/instructions/?surface=tile');
+  await expect(rail.locator('[data-navigation-id="tile"]')).toHaveAttribute('data-section-current', 'true');
+  await expect(filters.getByRole('button', {name: 'Tile', exact: true})).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('status')).toContainText('109 instructions');
+
+  await page.goBack();
+  await expect(page).toHaveURL('/instructions/?surface=block');
+  await expect(rail.locator('[data-navigation-id="block"]')).toHaveAttribute('data-section-current', 'true');
+  await expect(filters.getByRole('button', {name: 'Block', exact: true})).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('representative mnemonic, model, and architecture units use the generic workbench', async ({
@@ -200,7 +251,7 @@ test('custom routes expose the stable desktop rail and accessible mobile navigat
     {path: '/', current: 'home'},
     {path: '/architecture/', current: 'architecture'},
     {path: tloadRoute, current: 'tile'},
-    {path: '/explore/ndf/', current: 'ndf'},
+    {path: '/explore/ndf/', current: 'ndf-explorer'},
   ];
   for (const route of routes) {
     await page.goto(route.path);
@@ -255,24 +306,18 @@ test('Architecture landing is source-backed and exposes every required mental-mo
   await expect(provenance.locator('details')).not.toHaveAttribute('open', '');
 });
 
-test('reference pages expose the default left navigation and top entry point', async ({page}, testInfo) => {
+test('legacy unit references redirect to canonical workbenches while project records remain browsable', async ({page}, testInfo) => {
   await page.goto('/reference/scalar/alu/ADD/');
-  const sidebar = page.getByRole('navigation', {name: 'Docs sidebar'});
+  await expect(page).toHaveURL('/instructions/scalar/alu/ADD/');
+  await expect(page.getByRole('heading', {name: 'ADD', level: 1})).toBeVisible();
   if (testInfo.project.name === 'desktop-chromium') {
+    await page.goto('/reference/governance/adr-process/');
+    const sidebar = page.getByRole('navigation', {name: 'Docs sidebar'});
     await expect(sidebar).toHaveCount(1);
     await expect(sidebar).toBeVisible();
-    await expect(sidebar.getByText('Architecture', {exact: true})).toBeVisible();
-    await expect(sidebar.getByText('Scalar instructions', {exact: true})).toBeVisible();
-    await expect(sidebar.getByText('Block instructions', {exact: true})).toBeVisible();
-    await expect(sidebar.getByText('Tile instructions', {exact: true})).toBeVisible();
-    await expect(page.getByRole('link', {name: 'Reference', exact: true})).toBeVisible();
+    await expect(sidebar.getByText('Decisions and architecture records', {exact: true})).toBeVisible();
     await page.goto('/zh-CN/reference/arch/overview/architecture/');
-    const chineseSidebar = page.getByRole('navigation', {name: '文档侧边栏'});
-    await expect(chineseSidebar).toBeVisible();
-    await expect(chineseSidebar.getByText('架构', {exact: true})).toBeVisible();
-    await expect(chineseSidebar.getByText('PTO 架构', {exact: true})).toHaveCount(0);
-  } else {
-    await expect(page.getByRole('heading', {name: 'ADD', level: 1})).toBeVisible();
+    await expect(page).toHaveURL('/zh-CN/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/');
   }
 });
 
@@ -290,18 +335,33 @@ test('source-declared bundle template covers representative Tile families', asyn
   await expect(page.getByRole('heading', {name: 'Operation source binding'})).toBeVisible();
 
   await page.goto('/instructions/tile/memory-and-data-movement/regular/TSTORE/');
-  for (const variant of ['Local', 'Shared full', 'Shared partial']) {
+  for (const variant of ['Local', 'Shared full', 'Shared partial', 'Local CUBE']) {
     await expect(page.getByRole('heading', {name: variant, exact: true})).toBeVisible();
   }
   const sharedFullVariant = page.getByRole('heading', {name: 'Shared full', exact: true}).locator('..');
-  await expect(sharedFullVariant.getByText(/one source B\.IOS with PE_MASK=1111/).first()).toBeVisible();
-  await expect(page.getByText('Bundle source gap', {exact: true})).toBeVisible();
+  await expect(sharedFullVariant.getByText(/one source B\.IOS/).first()).toBeVisible();
+  await expect(sharedFullVariant.getByText(/PE_MASK=1111/).first()).toBeVisible();
+  const cubeVariant = page.getByRole('heading', {name: 'Local CUBE', exact: true}).locator('..');
+  await expect(cubeVariant.getByText(/B\.DATR \{M162ND, DTYPE_NONE/).first()).toBeVisible();
+  await expect(page.getByText('Bundle source gap', {exact: true})).toHaveCount(0);
 
   await page.goto('/instructions/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL/');
+  await expect(page.getByText(
+    'TMATMUL <LB0:M, LB1:N, LB2:K, DataTypeA, DataTypeB> SrcTile0, SrcTile1 -> DstTile',
+    {exact: true},
+  )).toBeVisible();
+  await page.getByText('Show High Level Assembly operands mapped to the owning ASL', {exact: true}).click();
+  const highLevelBindings = page.getByRole('table', {name: 'Source bindings for High Level Assembly operands'});
+  await expect(highLevelBindings.getByRole('row', {name: /Parameter DataTypeA left data type BSTART\.TMATMUL AType/})).toBeVisible();
+  await expect(highLevelBindings.getByRole('row', {name: /Output DstTile destination contract\.operands\[0\]\.destination0/})).toBeVisible();
   await expect(page.getByText('Repeatable', {exact: true}).first()).toBeVisible();
   await expect(page.getByText('Mutually exclusive', {exact: true}).first()).toBeVisible();
 
   await page.goto('/zh-CN/instructions/tile/elementwise-tile-tile/arithmetic/TADD/');
+  await expect(page.getByText(
+    'TADD <LB0:ValidCol, LB1:ValidRow, LB2:Col, DataType, PadValue> SrcTile0, SrcTile1 -> DstTile',
+    {exact: true},
+  )).toBeVisible();
   await expect(page.getByRole('heading', {name: '2. 完整 Bundle Assembly'})).toBeVisible();
   await expect(page.getByText('可重复', {exact: true}).first()).toBeVisible();
   await expect(page).toHaveURL(/\/zh-CN\/instructions\/tile\/elementwise-tile-tile\/arithmetic\/TADD\//);
@@ -320,7 +380,7 @@ test('TLOAD workbench preserves source identity and evidence interaction', async
   const composition = page.getByRole('region', {name: 'Assembly syntax'}).first();
   await expect(composition).toBeVisible();
   await expect(composition.getByText(/TLOAD is not one standalone encoding/)).toBeVisible();
-  await expect(composition.getByRole('heading', {name: '1. High-level / API form'})).toBeVisible();
+  await expect(composition.getByRole('heading', {name: '1. High Level Assembly'})).toBeVisible();
   await expect(composition.getByRole('heading', {name: '2. Complete Bundle Assembly'})).toBeVisible();
   await expect(composition.getByRole('heading', {name: '3. Bundle operand and parameter semantics'})).toBeVisible();
   await expect(composition.getByRole('heading', {name: 'Minimum legal bundle'})).toBeVisible();
@@ -569,10 +629,14 @@ test.describe('no JavaScript fallback', () => {
 });
 
 test('critical routes have no serious WCAG violations', async ({page}) => {
+  test.setTimeout(60_000);
   for (const route of [
     '/',
     '/architecture/',
     '/zh-CN/architecture/',
+    '/instructions/',
+    '/ndf/',
+    '/ndf/PTO-TLOAD-MEMORY-001/',
     tloadRoute,
     '/explore/ndf/?q=PTO-TLOAD-MEMORY-001',
     '/reference/governance/adr-process/',

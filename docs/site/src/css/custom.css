@@ -1,48 +1,75 @@
 :root {
-  --ifm-color-primary: #126f9b;
-  --ifm-color-primary-dark: #0f648b;
-  --ifm-color-primary-darker: #0e5e83;
-  --ifm-color-primary-darkest: #0c4e6c;
-  --ifm-color-primary-light: #157aaa;
-  --ifm-color-primary-lighter: #1680b2;
-  --ifm-color-primary-lightest: #1990c9;
+  --ifm-color-primary: #9e1429;
+  --ifm-color-primary-dark: #8d1225;
+  --ifm-color-primary-darker: #841122;
+  --ifm-color-primary-darkest: #6d0e1c;
+  --ifm-color-primary-light: #af162d;
+  --ifm-color-primary-lighter: #b8172f;
+  --ifm-color-primary-lightest: #cf1a36;
+  --ifm-background-color: #faf8f5;
+  --ifm-background-surface-color: #ffffff;
   --ifm-font-family-base: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ifm-font-family-monospace: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --ifm-heading-font-weight: 650;
   --ifm-navbar-height: 3.75rem;
   --ifm-global-radius: 4px;
-  --pto-workbench: #071728;
-  --pto-hero-text: #f5fbff;
-  --pto-hero-muted: #adc0d0;
-  --pto-accent-soft: #67d3f2;
-  --pto-action: #0f648b;
-  --pto-action-hover: #0c4e6c;
-  --pto-border: #d9e0e6;
-  --pto-border-strong: #244662;
-  --pto-text-muted: #546474;
-  --pto-surface-subtle: #f4f7f9;
-  --pto-surface-focus: #f2f8fb;
-  --pto-nav-active: #0c4e6c;
+  --pto-workbench: #151114;
+  --pto-hero-text: #f8f4ef;
+  --pto-hero-muted: #c7beb5;
+  --pto-accent-soft: #7a5a00;
+  --pto-action: #c7000b;
+  --pto-action-hover: #a80c1b;
+  --pto-border: #ded8d0;
+  --pto-border-strong: #8d5d61;
+  --pto-text-muted: #5f5a54;
+  --pto-surface-subtle: #f2eee8;
+  --pto-surface-focus: #f9eaeb;
+  --pto-nav-active: #8d1225;
+  --pto-brand-red: #c7000b;
+  --pto-highlight: #7a5a00;
+  --pto-highlight-muted: #654a00;
+  --pto-focus-ring: #9a7200;
+  --pto-status-positive: #0b6e4f;
+  --pto-status-caution: #8a6a20;
+  --pto-status-danger: #9e1429;
 }
 
 [data-theme='dark'] {
-  --ifm-color-primary: #58c5e7;
-  --ifm-color-primary-dark: #3ebce2;
-  --ifm-color-primary-darker: #30b7df;
-  --ifm-color-primary-darkest: #1e96bb;
-  --ifm-color-primary-light: #72cee9;
-  --ifm-color-primary-lighter: #80d2eb;
-  --ifm-color-primary-lightest: #a8e0f0;
-  --ifm-background-color: #0e1822;
-  --ifm-background-surface-color: #13212d;
-  --pto-border: #293c4b;
-  --pto-text-muted: #a5b5c2;
-  --pto-surface-subtle: #101d28;
-  --pto-surface-focus: #172b39;
-  --pto-nav-active: #a8e0f0;
+  --ifm-color-primary: #ff4d5a;
+  --ifm-color-primary-dark: #ff3f4d;
+  --ifm-color-primary-darker: #ff3544;
+  --ifm-color-primary-darkest: #ff2637;
+  --ifm-color-primary-light: #ff6671;
+  --ifm-color-primary-lighter: #ff7c85;
+  --ifm-color-primary-lightest: #ff9ca3;
+  --ifm-background-color: #0b0c0f;
+  --ifm-background-surface-color: #15171c;
+  --ifm-font-color-base: #f4f1ec;
+  --ifm-link-color: #ff9ca3;
+  --ifm-code-color: #ffe071;
+  --pto-workbench: #090a0d;
+  --pto-hero-text: #f4f1ec;
+  --pto-hero-muted: #b9b4ac;
+  --pto-accent-soft: #ffd34f;
+  --pto-action: #c7000b;
+  --pto-action-hover: #a80c1b;
+  --pto-border: #302f33;
+  --pto-border-strong: #5a383a;
+  --pto-text-muted: #b9b4ac;
+  --pto-surface-subtle: #101216;
+  --pto-surface-focus: #241719;
+  --pto-nav-active: #ff8d96;
+  --pto-brand-red: #c7000b;
+  --pto-highlight: #ffd34f;
+  --pto-highlight-muted: #b99118;
+  --pto-focus-ring: #ffd34f;
+  --pto-status-positive: #8fc3a8;
+  --pto-status-caution: #ffd34f;
+  --pto-status-danger: #ff8d96;
 }
 
 .navbar {
+  background: color-mix(in srgb, var(--ifm-background-surface-color) 94%, black);
   border-bottom: 1px solid var(--pto-border);
   box-shadow: none;
 }
@@ -60,15 +87,31 @@
 }
 
 .footer--dark {
-  --ifm-footer-background-color: #07131f;
-  border-top: 1px solid #23384a;
+  --ifm-footer-background-color: #090a0d;
+  border-top: 1px solid var(--pto-border-strong);
 }
 
 code {
   border-radius: 3px;
 }
 
+:not(pre) > code {
+  color: var(--pto-highlight);
+}
+
+.theme-doc-markdown p a,
+.theme-doc-markdown li a {
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
 :focus-visible {
-  outline: 3px solid var(--ifm-color-primary);
+  outline: 3px solid var(--pto-focus-ring);
   outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline-color: Highlight;
+  }
 }

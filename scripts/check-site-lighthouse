@@ -143,6 +143,14 @@ def main() -> int:
             run_lighthouse("/architecture/", "architecture-desktop", desktop=True),
         )
         enforce(
+            "Instruction index desktop",
+            run_lighthouse("/instructions/", "instruction-index-desktop", desktop=True),
+        )
+        enforce(
+            "NDF index desktop",
+            run_lighthouse("/ndf/", "ndf-index-desktop", desktop=True),
+        )
+        enforce(
             "TLOAD desktop",
             run_lighthouse(
                 "/instructions/tile/memory-and-data-movement/regular/TLOAD/",

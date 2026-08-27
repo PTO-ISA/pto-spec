@@ -45,13 +45,15 @@ class SiteContractTests(unittest.TestCase):
             self.assertIn(term, config)
         navigation = [
             config.index("label: 'Architecture'"),
-            config.index("label: 'Scalar'"),
-            config.index("label: 'Block'"),
-            config.index("label: 'Tile'"),
-            config.index("label: 'ADR / NDF'"),
+            config.index("label: 'Instructions'"),
+            config.index("label: 'NDF'"),
+            config.index("label: 'Decisions'"),
             config.index("label: 'Search'"),
         ]
         self.assertEqual(navigation, sorted(navigation))
+        self.assertIn("defaultMode: 'dark'", config)
+        self.assertIn("'arch/**'", config)
+        self.assertIn("legacyReferenceRoute(unit.documentation)", config)
 
     def test_homepage_is_a_human_reading_path(self) -> None:
         homepage = (SITE / "src/pages/index.tsx").read_text(encoding="utf-8")
@@ -77,6 +79,9 @@ class SiteContractTests(unittest.TestCase):
         self.assertIn("component: '@site/src/routes/NdfIndexPage'", plugin)
         self.assertIn("component: '@site/src/routes/Architecture'", plugin)
         self.assertIn("modules: {architecture: architectureDataModule}", plugin)
+        self.assertIn("component: '@site/src/routes/InstructionIndex'", plugin)
+        self.assertIn("component: '@site/src/routes/NdfCatalog'", plugin)
+        self.assertIn("component: '@site/src/routes/NdfDetail'", plugin)
         self.assertIn("pto.site-architecture-guide.v1", plugin)
         self.assertIn("pto.site-unit-routes.v1", plugin)
         self.assertIn("pto-unit-routes.json", plugin)
@@ -245,6 +250,77 @@ class SiteContractTests(unittest.TestCase):
         self.assertIn("[...requirementIds]", plugin)
         self.assertIn("reader guide cannot locate exact NDF owner", plugin)
         self.assertIn("href: identity.sourceUrl", plugin)
+
+    def test_tile_high_level_assembly_dimensions_are_structured_and_fail_closed(self) -> None:
+        plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
+        self.assertIn("has non-structured B.DIM projection", plugin)
+        self.assertIn("dimensionBindings", plugin)
+        self.assertNotIn("line.matchAll(/LB", plugin)
+
+        owners = []
+        ambiguous_owners = []
+        structured_dimension = re.compile(
+            r"^B\.DIM (?:"
+            r"LB[0-2]/[A-Za-z][A-Za-z0-9_]*,\s*"
+            r"LB[0-2]/[A-Za-z][A-Za-z0-9_]*,\s*"
+            r"LB[0-2]/[A-Za-z][A-Za-z0-9_]*(?:\s+\([^)]*\))?"
+            r"|LB[0-2](?:\s*=\s*|\s+)[A-Za-z][A-Za-z0-9_]*"
+            r"(?:\s+or\s+cooperative\s+group_M)?(?:\s+\([^)]*\))?"
+            r"|LB[0-2])$"
+        )
+        for source_path in sorted((ROOT / "asl/tile").rglob("*.asl")):
+            first_line = source_path.read_text(encoding="ascii").splitlines()[0]
+            if not first_line.startswith("// PTO-INSTRUCTION: "):
+                continue
+            metadata = json.loads(first_line.removeprefix("// PTO-INSTRUCTION: "))
+            if metadata.get("mnemonic") is not None:
+                owners.append(metadata["id"])
+                block = metadata.get("contract", {}).get("block_composition", [])
+                invalid = [
+                    line for line in block
+                    if line.startswith("B.DIM") and structured_dimension.fullmatch(line) is None
+                ]
+                if invalid:
+                    ambiguous_owners.append((metadata["mnemonic"], invalid))
+        self.assertEqual(len(owners), 109)
+        known_ambiguous = {
+            "TCONCAT", "TEXTRACT", "TFILLPAD", "TINSERT", "TMOV", "TTRANS"
+        }
+        self.assertLessEqual(
+            {mnemonic for mnemonic, _ in ambiguous_owners},
+            known_ambiguous,
+            f"unexpected ambiguous B.DIM owners: {ambiguous_owners}",
+        )
+        for bad_form in (
+            "B.DIM (LB1/LB2 for 2D)",
+            "B.DIM LB1/LB2 for 2D",
+            "B.DIM dimensions depend on shape",
+            "B.DIM LB0 and maybe LB1",
+            "B.DIM use rows and columns",
+            "B.DIM as required",
+        ):
+            self.assertIsNone(structured_dimension.fullmatch(bad_form), bad_form)
+
+    def test_ndf_catalog_and_detail_cover_release_traceability(self) -> None:
+        plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
+        types = (SITE / "src/types/pto.ts").read_text(encoding="utf-8")
+        catalog = (SITE / "src/routes/NdfCatalog.tsx").read_text(encoding="utf-8")
+        detail = (SITE / "src/routes/NdfDetail.tsx").read_text(encoding="utf-8")
+        traceability = json.loads(
+            (ROOT / "spec/evidence/release-traceability-readiness.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(len(traceability["requirements"]), 1020)
+        self.assertIn("...instructionContracts.keys()", plugin)
+        self.assertNotIn("filter((id) => !instructionContractIds.has(id))", plugin)
+        self.assertIn("entryKind: 'instruction-contract'", plugin)
+        self.assertIn("the link opens its canonical unit workbench directly", catalog)
+        for field in ("adrs", "tests", "evidence", "relationships", "relationshipFallbackRoute"):
+            self.assertIn(f"  {field}:", types)
+        self.assertIn("Local relationship neighborhood", detail)
+        self.assertIn("<EvidenceIndex", detail)
+        self.assertIn("Open the complete NDF relationship explorer", detail)
 
     def test_interactive_routes_keep_static_fallbacks(self) -> None:
         explorer = (SITE / "src/components/NdfGlobalExplorer.tsx").read_text(

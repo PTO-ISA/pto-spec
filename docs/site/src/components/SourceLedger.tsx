@@ -51,8 +51,8 @@ export default function SourceLedger({
           </LedgerItem>
           <LedgerItem label="ASL SHA-256"><code title={source.sha256}>{source.sha256}</code></LedgerItem>
           <LedgerItem label={chinese ? '生成文档' : 'Generated documentation'}>
-            <a href={documentation.referenceRoute}>{documentation.path}</a>{' · '}
-            <a href={documentation.githubUrl}>{chinese ? '仓库文件' : 'Repository file'}</a>
+            <a href={documentation.githubUrl}>{documentation.path}</a>{' · '}
+            <span>{chinese ? '已融合到当前页面' : 'embedded in this page'}</span>
           </LedgerItem>
           <LedgerItem label={chinese ? '文档 SHA-256' : 'Documentation SHA-256'}>
             <code title={documentation.sha256}>{documentation.sha256}</code>

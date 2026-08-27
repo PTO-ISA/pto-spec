@@ -453,8 +453,15 @@ def validate_instruction_coverage() -> int:
             if unit["surface"] == "tile":
                 require_text(
                     page_relative,
-                    ("Complete Bundle Assembly",) if locale == "en" else
-                    ("完整 Bundle Assembly",),
+                    (
+                        "High Level Assembly",
+                        "Complete Bundle Assembly",
+                        "Show High Level Assembly operands mapped to the owning ASL",
+                    ) if locale == "en" else (
+                        "高层汇编",
+                        "完整 Bundle Assembly",
+                        "显示高层汇编 operand 到 owning ASL 的映射",
+                    ),
                 )
     return len(instructions)
 
@@ -486,6 +493,38 @@ def main() -> int:
                 "PTO-TLOAD-CUBE-001",
                 "TLOAD state-transition walkthrough",
             ),
+        )
+        require_text(
+            "instructions/tile/memory-and-data-movement/regular/TSTORE/index.html",
+            ("Local CUBE", "M162ND", "PTO-TSTORE-CUBE-001"),
+        )
+        require_text(
+            "instructions/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL/index.html",
+            (
+                "TMATMUL &lt;LB0:M, LB1:N, LB2:K, DataTypeA, DataTypeB&gt; "
+                "SrcTile0, SrcTile1 -&gt; DstTile",
+                "Show High Level Assembly operands mapped to the owning ASL",
+            ),
+        )
+        require_text(
+            "instructions/index.html",
+            ("Instruction index", "PTO-TILE-TLOAD", "PTO-SCALAR-ADD"),
+        )
+        require_text(
+            "zh-CN/instructions/index.html",
+            ("指令索引", "PTO-TILE-TLOAD", "PTO-SCALAR-ADD"),
+        )
+        require_text(
+            "ndf/index.html",
+            ("NDF index", "PTO-TLOAD-MEMORY-001"),
+        )
+        require_text(
+            "ndf/PTO-TLOAD-MEMORY-001/index.html",
+            ("PTO-TLOAD-MEMORY-001", "byte row stride", "PTO-TILE-TLOAD"),
+        )
+        require_text(
+            "zh-CN/ndf/PTO-TLOAD-MEMORY-001/index.html",
+            ("PTO-TLOAD-MEMORY-001", "PTO-TILE-TLOAD"),
         )
         require_text(
             "search/index.html",
@@ -550,6 +589,14 @@ def main() -> int:
                     raise ValueError(
                         f"legacy redirect {source} does not target {destination}"
                     )
+        require_text(
+            "reference/scalar/alu/ADD/index.html",
+            ("/instructions/scalar/alu/ADD/",),
+        )
+        require_text(
+            "zh-CN/reference/arch/overview/architecture/index.html",
+            ("/zh-CN/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/",),
+        )
         require_file(".nojekyll")
         publication_path = require_file("pto-site-publication.json")
         publication = json.loads(publication_path.read_text(encoding="utf-8"))

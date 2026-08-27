@@ -1,5 +1,6 @@
 import React from 'react';
-import type {PtoJsonValue} from '@site/src/types/pto';
+import type {PtoHighLevelAssembly, PtoJsonValue} from '@site/src/types/pto';
+import HighLevelAssembly from './HighLevelAssembly';
 import styles from './PtoWorkbench.module.css';
 import {list, record, text} from './data';
 
@@ -17,10 +18,12 @@ export default function InstructionOverview({
   metadata,
   mnemonic,
   chinese,
+  highLevelAssembly,
 }: {
   metadata: Record<string, PtoJsonValue>;
   mnemonic: boolean;
   chinese: boolean;
+  highLevelAssembly: PtoHighLevelAssembly | null;
 }): React.JSX.Element | null {
   const assembly = assemblyForms(metadata);
   const rawBlock = stringList(metadata.block).filter((line) => !line.startsWith('#'));
@@ -40,7 +43,7 @@ export default function InstructionOverview({
     return optionalGroup[1].split('/').map((mnemonic) => `optional ${mnemonic}${optionalGroup[2]}`);
   };
   const inlineVariants = rawBlock.some((line) => /^[^;]+:\s*BSTART\b/.test(line) && line.includes(';'));
-  const bundleVariants = inlineVariants
+  const metadataVariants = inlineVariants
     ? rawBlock.map((line, index) => {
         const segments = line.split(';').map((segment) => segment.trim()).filter(Boolean);
         const first = segments.shift() ?? '';
@@ -50,6 +53,20 @@ export default function InstructionOverview({
         return {label, lines: [firstCommand, ...segments].flatMap(expandSegment).filter(Boolean)};
       })
     : [{label: '', lines: rawBlock.flatMap(expandSegment)}];
+  const contractExampleVariants =
+    bundleRules.length > metadataVariants.length &&
+    bundleRules.length === examples.length &&
+    examples.every((example) => /\bBSTART\b/.test(example))
+      ? bundleRules.map((rule, index) => ({
+          label: rule.match(/^The (.+?) form\b/i)?.[1] ?? `Form ${index + 1}`,
+          lines: examples[index].split(';').map((line) => line.trim()).filter(Boolean),
+          rule,
+        }))
+      : null;
+  const bundleVariants = contractExampleVariants ?? metadataVariants.map((variant, index) => ({
+    ...variant,
+    rule: bundleRules[index] ?? '',
+  }));
   const block = bundleVariants.flatMap((variant) => variant.lines);
   const commandKey = (line: string): string =>
     line.trim().replace(/^optional\s+/i, '').split(/\s+/, 1)[0] ?? line;
@@ -57,8 +74,10 @@ export default function InstructionOverview({
   return (
     <section className={styles.section} aria-labelledby="assembly-syntax-heading">
       <h2 id="assembly-syntax-heading">{chinese ? '汇编格式' : 'Assembly syntax'}</h2>
-      {block.length > 0 && <h3>{chinese ? '1. 高层 / API 调用形式' : '1. High-level / API form'}</h3>}
-      {assembly.length > 0 ? (
+      {block.length > 0 && <h3>{chinese ? '1. 高层汇编' : '1. High Level Assembly'}</h3>}
+      {highLevelAssembly !== null ? (
+        <HighLevelAssembly assembly={highLevelAssembly} chinese={chinese} />
+      ) : assembly.length > 0 ? (
         <div className={styles.assemblyForms}>
           {assembly.map((form) => <code key={form}>{form}</code>)}
         </div>
@@ -81,6 +100,7 @@ export default function InstructionOverview({
             return (
               <article className={styles.genericBundleVariant} key={`${variant.label}-${variantIndex}`}>
                 {variant.label && <h4>{variant.label}</h4>}
+                {variant.rule && <p className={styles.genericBundleRule}>{variant.rule}</p>}
                 <ol className={styles.genericBundleSequence}>
                   {variant.lines.map((line, index) => (
                     <li key={`${line}-${index}`}>
@@ -109,14 +129,6 @@ export default function InstructionOverview({
               </article>
             );
           })}
-          {bundleRules.length > rawBlock.length && (
-            <aside className={styles.semanticGap} role="note">
-              <strong>{chinese ? 'Bundle source gap' : 'Bundle source gap'}</strong>
-              <p>{chinese
-                ? 'owner contract 声明了额外合法变体或关系，但 block sequence metadata 没有把它们展开成可直接照读的命令序列；页面保留原规则，不推测缺失汇编。'
-                : 'The owner contract declares additional legal variants or relationships that its block-sequence metadata does not expand into directly readable commands. The page preserves the exact rules and does not invent missing assembly.'}</p>
-            </aside>
-          )}
           {(bundleRules.length > 0 || examples.length > 0) && (
             <details className={styles.genericBundleDetails}>
               <summary>{chinese ? '展开 Bundle 规则、互斥关系与示例' : 'Show bundle rules, relationships, and examples'}</summary>

@@ -9,6 +9,9 @@ import ptoRepositoryLinksRemarkPlugin, {
 const repositoryRoot = path.resolve(import.meta.dirname, '..', '..', '..', '..');
 const markdownPath = path.join(repositoryRoot, 'docs', 'guides', 'example.md');
 const commit = '0123456789abcdef0123456789abcdef01234567';
+const unitRoutes = new Map([
+  ['docs/arch/overview/architecture.md', '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/'],
+]);
 
 test('rewrites repository-relative links that escape docs and preserves fragments', () => {
   assert.equal(
@@ -67,8 +70,9 @@ test('projects existing Markdown links to docs-root absolute file references', (
       repositoryLayout,
       repositoryRoot,
       commit,
+      unitRoutes,
     ),
-    '/arch/overview/architecture.md#state',
+    '/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/#state',
   );
   const localizedRepositoryLayout = path.join(
     repositoryRoot,
@@ -87,8 +91,9 @@ test('projects existing Markdown links to docs-root absolute file references', (
       localizedRepositoryLayout,
       repositoryRoot,
       commit,
+      unitRoutes,
     ),
-    '/arch/overview/architecture.md#state',
+    '/zh-CN/units/PTO-ARCH-OVERVIEW-ARCHITECTURE/#state',
   );
 });
 

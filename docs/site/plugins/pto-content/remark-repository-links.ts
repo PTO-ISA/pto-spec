@@ -1,6 +1,7 @@
 import {execFileSync} from 'node:child_process';
-import {existsSync, statSync} from 'node:fs';
+import {existsSync, readFileSync, statSync} from 'node:fs';
 import path from 'node:path';
+import {unitRoute, type UnitRouteInput} from './routes.ts';
 
 const GITHUB_REPOSITORY = 'https://github.com/PTO-ISA/pto-spec';
 
@@ -140,8 +141,8 @@ export function rewriteRepositoryLink(
   markdownPath: string,
   repositoryRoot: string,
   commit: string,
+  unitRoutesByDocumentation: Map<string, string> = new Map(),
 ): string {
-  if (!isRelativeFileLink(url)) return url;
   const {target, suffix} = splitSuffix(url);
   if (target === '') return url;
 
@@ -152,6 +153,19 @@ export function rewriteRepositoryLink(
     markdownParts[1] === 'i18n' &&
     markdownParts[3] === 'docusaurus-plugin-content-docs-reference' &&
     markdownParts[4] === 'current';
+  const localePrefix = localized ? `/${markdownParts[2]}` : '';
+  const canonicalUnitRoute = (documentation: string): string | null => {
+    const route = unitRoutesByDocumentation.get(documentation);
+    return route === undefined ? null : `${localePrefix}${route}${suffix}`;
+  };
+  if (target.startsWith('/') && /^\/(?:arch|block|scalar|tile)\/.+\.md$/i.test(target)) {
+    const route = canonicalUnitRoute(`docs${target}`);
+    if (route === null) {
+      throw new Error(`[pto-repository-links] no canonical unit route for ${target}`);
+    }
+    return route;
+  }
+  if (!isRelativeFileLink(url)) return url;
   const canonicalMarkdownPath = localized
     ? path.join(docsRoot, ...markdownParts.slice(5))
     : markdownPath;
@@ -165,6 +179,8 @@ export function rewriteRepositoryLink(
       ? path.join(absoluteTarget, 'index.md')
       : absoluteTarget;
     const relative = path.relative(docsRoot, markdownTarget).split(path.sep).join('/');
+    const unitRouteTarget = canonicalUnitRoute(`docs/${relative}`);
+    if (unitRouteTarget !== null) return unitRouteTarget;
     const excluded =
       relative.startsWith('site/') ||
       relative.startsWith('mkdocs/') ||
@@ -199,6 +215,7 @@ function transformTree(
   repositoryRoot: string,
   commit: string,
   readerFacing: boolean,
+  unitRoutesByDocumentation: Map<string, string>,
 ): void {
   if (readerFacing && node.type === 'text' && typeof node.value === 'string') {
     node.value = readerFacingText(node.value);
@@ -212,10 +229,11 @@ function transformTree(
       markdownPath,
       repositoryRoot,
       commit,
+      unitRoutesByDocumentation,
     );
   }
   for (const child of node.children ?? []) {
-    transformTree(child, markdownPath, repositoryRoot, commit, readerFacing);
+    transformTree(child, markdownPath, repositoryRoot, commit, readerFacing, unitRoutesByDocumentation);
   }
 }
 
@@ -226,6 +244,15 @@ export default function ptoRepositoryLinksRemarkPlugin(
     options.repositoryRoot ?? process.cwd(),
   );
   const commit = options.commit ?? currentCommit(repositoryRoot);
+  const traceability = JSON.parse(
+    readFileSync(
+      path.join(repositoryRoot, 'spec/evidence/release-traceability-readiness.json'),
+      'utf8',
+    ),
+  ) as {units: UnitRouteInput[]};
+  const unitRoutesByDocumentation = new Map(
+    traceability.units.map((unit) => [unit.documentation, unitRoute(unit)]),
+  );
 
   return (tree: MarkdownNode, file: MarkdownFile): void => {
     if (file.path === undefined) {
@@ -245,6 +272,7 @@ export default function ptoRepositoryLinksRemarkPlugin(
       repositoryRoot,
       commit,
       generatedReference,
+      unitRoutesByDocumentation,
     );
   };
 }

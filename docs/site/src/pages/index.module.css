@@ -4,7 +4,7 @@
   padding: 4.75rem 0 3.75rem;
   color: var(--pto-hero-text);
   background:
-    linear-gradient(115deg, rgba(10, 28, 52, 0.98), rgba(12, 42, 68, 0.96)),
+    linear-gradient(115deg, rgba(9, 10, 13, 0.99), rgba(34, 17, 20, 0.97)),
     var(--pto-workbench);
   border-bottom: 1px solid var(--pto-border-strong);
 }
@@ -15,8 +15,8 @@
   pointer-events: none;
   content: '';
   background-image:
-    linear-gradient(rgba(93, 201, 235, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(93, 201, 235, 0.045) 1px, transparent 1px);
+    linear-gradient(rgba(241, 91, 97, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217, 184, 92, 0.04) 1px, transparent 1px);
   background-size: 32px 32px;
   mask-image: linear-gradient(to bottom, black, transparent 90%);
 }
@@ -105,13 +105,13 @@
 
 .heroActions :global(.button--outline) {
   color: white;
-  border-color: rgba(194, 234, 248, 0.55);
+  border-color: color-mix(in srgb, var(--pto-highlight) 72%, transparent);
 }
 
 .heroActions :global(.button--outline):hover {
   color: white;
   border-color: var(--pto-accent-soft);
-  background: rgba(61, 181, 220, 0.12);
+  background: color-mix(in srgb, var(--pto-highlight) 12%, transparent);
 }
 
 .sourceBoundary {
@@ -119,8 +119,8 @@
   gap: 0.54rem;
   padding: 1.15rem 1.25rem;
   color: var(--pto-hero-muted);
-  background: rgba(2, 13, 27, 0.42);
-  border: 1px solid rgba(133, 188, 214, 0.25);
+  background: rgba(8, 8, 10, 0.58);
+  border: 1px solid color-mix(in srgb, var(--pto-highlight) 26%, transparent);
   border-radius: 4px;
 }
 
@@ -134,7 +134,7 @@
 }
 
 .sourceBoundary code {
-  color: #c2eaf8;
+  color: var(--pto-accent-soft);
   background: transparent;
   border: 0;
 }
@@ -157,12 +157,12 @@
   background: white;
   border: 1px solid transparent;
   border-radius: 5px;
-  box-shadow: 0 18px 55px rgba(0, 7, 18, 0.28);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.34);
 }
 
 .search:focus-within {
   border-color: var(--pto-accent-soft);
-  box-shadow: 0 0 0 3px rgba(61, 181, 220, 0.22), 0 18px 55px rgba(0, 7, 18, 0.28);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pto-highlight) 34%, transparent), 0 18px 55px rgba(0, 0, 0, 0.34);
 }
 
 .searchPrompt {
@@ -176,7 +176,7 @@
 .search input {
   min-width: 0;
   padding: 1.15rem 0.85rem;
-  color: #132234;
+  color: #20181a;
   background: transparent;
   border: 0;
   font: inherit;

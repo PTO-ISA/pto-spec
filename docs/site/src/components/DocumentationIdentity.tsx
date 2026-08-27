@@ -12,7 +12,7 @@ export default function DocumentationIdentity({documentation}: {documentation: P
       <div>
         <span className={styles.label}>Projection path</span>
         <a href={documentation.githubUrl}>{documentation.path}</a>
-        <a href={documentation.referenceRoute}>Read this generated reference page</a>
+        <span>Embedded in the canonical workbench above</span>
       </div>
       <div>
         <span className={styles.label}>Projection SHA-256</span>

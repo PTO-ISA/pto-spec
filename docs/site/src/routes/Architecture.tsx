@@ -15,7 +15,6 @@ function OwnerActions({owner, chinese}: {
   return (
     <div className={styles.ownerActions}>
       <Link to={owner.route}>{chinese ? '阅读 owner workbench' : 'Read owner workbench'}</Link>
-      <Link to={owner.referenceRoute}>{chinese ? '打开 Reference' : 'Open Reference'}</Link>
       <a href={owner.sourceUrl}>{chinese ? '查看原始 ASL ↗' : 'Open original ASL ↗'}</a>
     </div>
   );
@@ -158,7 +157,6 @@ export default function Architecture({
                       </div>
                       <div className={styles.relatedActions}>
                         <Link to={owner.route}>{chinese ? 'Workbench' : 'Workbench'}</Link>
-                        <Link to={owner.referenceRoute}>Reference</Link>
                         <a href={owner.sourceUrl}>ASL ↗</a>
                       </div>
                     </li>
