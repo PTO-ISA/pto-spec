@@ -310,6 +310,7 @@ test('left navigation exposes the complete source-derived hierarchy', async ({pa
   await page.goto(tloadRoute);
   const rail = page.locator('aside[aria-label="Left specification navigation"]');
   const navigation = rail.getByRole('navigation', {name: 'Specification navigation'});
+  await navigation.getByRole('button', {name: 'Expand hierarchy'}).click();
   await expect(navigation.locator('[data-navigation-unit-id]')).toHaveCount(traceability.units.length);
   await expect(navigation.locator('[data-navigation-ndf-id]')).toHaveCount(traceability.requirements.length);
   await expect(navigation.locator('[data-navigation-adr-id]')).toHaveCount(adrIndex.records.length);
@@ -330,10 +331,9 @@ test('left navigation exposes the complete source-derived hierarchy', async ({pa
   await expect(navigation.locator('[data-navigation-unit-id="PTO-TILE-TLOAD"]')).toBeVisible();
   await expect(navigation.locator('[data-navigation-unit-id="PTO-TILE-TSTORE"]')).toHaveCount(0);
   await filter.fill('');
-  await navigation.getByRole('button', {name: 'Expand hierarchy'}).click();
   await expect(navigation.locator('[data-navigation-branch="ndf"]')).toHaveAttribute('data-open', 'true');
   await navigation.getByRole('button', {name: 'Collapse hierarchy'}).click();
-  await expect(navigation.locator('[data-navigation-branch="ndf"]')).toHaveAttribute('data-open', 'false');
+  await expect(navigation.locator('[data-navigation-branch="records"]')).toHaveAttribute('data-open', 'false');
 });
 
 test('Architecture landing is source-backed and exposes every required mental-model topic', async ({page}) => {
