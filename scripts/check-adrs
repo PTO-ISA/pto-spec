@@ -4,7 +4,9 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -15,7 +17,10 @@ if str(ROOT) not in sys.path:
 
 from scripts.adr_records import AdrRecord, load_adrs, validate_adr_graph
 from scripts.asl_units import load_units
-from scripts.ndf import parse_ndf_regions
+from scripts.ndf import instruction_clause_id, parse_ndf_regions
+
+
+COMMIT = re.compile(r"[0-9a-f]{40}\Z")
 
 
 def _is_git_repository_root(root: Path) -> bool:
@@ -31,7 +36,7 @@ def _is_git_repository_root(root: Path) -> bool:
     )
 
 
-def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
+def _current_impact_inventory(root: Path) -> tuple[set[str], dict[str, str]]:
     asl_root = root / "asl"
     units = load_units(asl_root)
     unit_ids = {unit.unit_id for unit in units}
@@ -42,14 +47,103 @@ def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
         owner = unit_by_source[source]
         for clause in parse_ndf_regions(path.read_text(encoding="utf-8"), source):
             ndf_owners[clause.clause_id] = owner
+    for unit in units:
+        if unit.mnemonic is not None:
+            ndf_owners[instruction_clause_id(unit.surface, unit.mnemonic)] = unit.unit_id
+    return unit_ids, ndf_owners
+
+
+def _git(root: Path, *arguments: str) -> str:
+    result = subprocess.run(
+        ["git", "-C", str(root), *arguments],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        raise ValueError(result.stderr.strip() or f"git {' '.join(arguments)} failed")
+    return result.stdout
+
+
+def _baseline_impact_inventory(
+    root: Path, revision: str
+) -> tuple[set[str], dict[str, str]]:
+    paths = tuple(
+        Path(line)
+        for line in _git(
+            root, "ls-tree", "-r", "--name-only", revision, "--", "asl"
+        ).splitlines()
+        if line.endswith(".asl")
+    )
+    unit_ids: set[str] = set()
+    ndf_owners: dict[str, str] = {}
+    for source in paths:
+        text = _git(root, "show", f"{revision}:{source.as_posix()}")
+        metadata_rows = [
+            line.split(": ", 1)[1]
+            for line in text.splitlines()
+            if line.startswith(("// PTO-UNIT: ", "// PTO-INSTRUCTION: "))
+        ]
+        if len(metadata_rows) != 1:
+            raise ValueError(
+                f"{revision}:{source}: expected exactly one PTO metadata record"
+            )
+        try:
+            metadata = json.loads(metadata_rows[0])
+        except json.JSONDecodeError as error:
+            raise ValueError(f"{revision}:{source}: invalid PTO metadata JSON") from error
+        if not isinstance(metadata, dict):
+            raise ValueError(f"{revision}:{source}: PTO metadata must be an object")
+        unit_id = metadata.get("id")
+        surface = metadata.get("surface")
+        mnemonic = metadata.get("mnemonic")
+        if not isinstance(unit_id, str) or not unit_id:
+            raise ValueError(f"{revision}:{source}: invalid PTO unit id")
+        unit_ids.add(unit_id)
+        for clause in parse_ndf_regions(text, source):
+            ndf_owners[clause.clause_id] = unit_id
+        if mnemonic is not None:
+            if not isinstance(surface, str) or not isinstance(mnemonic, str):
+                raise ValueError(f"{revision}:{source}: invalid instruction metadata")
+            ndf_owners[instruction_clause_id(surface, mnemonic)] = unit_id
+    return unit_ids, ndf_owners
+
+
+def _selected_baseline(root: Path) -> str:
+    path = root / "spec/release-selection.json"
+    try:
+        selection = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"release-boundary impact validation requires {path}") from error
+    baseline = selection.get("baseline_commit") if isinstance(selection, dict) else None
+    if not isinstance(baseline, str) or COMMIT.fullmatch(baseline) is None:
+        raise ValueError(f"{path}: invalid baseline_commit")
+    return baseline
+
+
+def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
+    unit_ids, ndf_owners = _current_impact_inventory(root)
+    baseline_units: set[str] = set()
+    baseline_ndf_owners: dict[str, str] = {}
+    if any(record.release_boundary for record in records):
+        baseline_units, baseline_ndf_owners = _baseline_impact_inventory(
+            root, _selected_baseline(root)
+        )
 
     errors: list[str] = []
     for record in records:
         for ndf_id in record.affected_ndf:
             owner = ndf_owners.get(ndf_id)
+            if owner is None and record.release_boundary:
+                owner = baseline_ndf_owners.get(ndf_id)
             if owner is None:
+                scope = (
+                    "current or selected-baseline"
+                    if record.release_boundary
+                    else "current"
+                )
                 errors.append(
-                    f"{record.adr_id} affected_ndf references unknown current NDF {ndf_id}"
+                    f"{record.adr_id} affected_ndf references unknown {scope} NDF {ndf_id}"
                 )
             elif owner not in record.affected_units:
                 errors.append(
@@ -57,9 +151,17 @@ def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
                     "which is absent from affected_units"
                 )
         for unit_id in record.affected_units:
-            if unit_id not in unit_ids:
+            known = unit_id in unit_ids or (
+                record.release_boundary and unit_id in baseline_units
+            )
+            if not known:
+                scope = (
+                    "current or selected-baseline"
+                    if record.release_boundary
+                    else "current"
+                )
                 errors.append(
-                    f"{record.adr_id} affected_units references unknown current ASL unit {unit_id}"
+                    f"{record.adr_id} affected_units references unknown {scope} ASL unit {unit_id}"
                 )
     return errors
 

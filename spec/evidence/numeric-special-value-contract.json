@@ -6,7 +6,7 @@
   "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
   "acceptance_record": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
-  "current_profile_evidence_id": "pto-hardware-numeric-0.58.4-ieee-v1",
+  "current_profile_evidence_id": "pto-hardware-numeric-0.58.5-ieee-v1",
   "policy": {
     "produced_nan": "canonical-destination-format-nan",
     "comparison_nan": "NE-true-all-other-relations-false",
@@ -587,7 +587,7 @@
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "3496d72b34c79bc0451379a6c648d280f2d55fa44ff3dfbf04223c54942b4968"
+      "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
@@ -599,11 +599,11 @@
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "bdfcb4df19da4329c5ff0184b34daebf258d832992fa06fb3e0c34ca891c5923"
+      "sha256": "44847ad7289923fedd7d337e18ee8d2d4d2009f912d2f12480f15c0ef36d60ed"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "83bfcb509c6a98c2d40dc3b722ff75aa2cd78eabb1805a6ad8a981f7c397a1fc"
+      "sha256": "e679b3188a71a68d6b19b437fe510cac483cd6e5c57a046aeea896155ec07271"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",

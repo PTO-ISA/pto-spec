@@ -18,6 +18,7 @@
   "superseded_by": [],
   "implementation_issue": null,
   "release_impact": "not-required",
+  "release_boundary": false,
   "legacy_ids": []
 }
 ---

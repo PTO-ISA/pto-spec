@@ -3410,7 +3410,7 @@
     },
     {
       "path": "spec/catalog/extension-encoding-reservations.json",
-      "sha256": "8fce84f9671da19865c6b22b2c53bf79f77176ebecfd9952c54662e427069e2e"
+      "sha256": "6ed4b51e3918baa83a03972a13c85ea6a4ae72041a1be37b32a752e690ef8c42"
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
@@ -3434,35 +3434,35 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "fa88cfcc2979b5bf36d1a96ae1eba2356d32fded1c5ddb871a0b170018ee8a49"
+      "sha256": "29ca7f425081b898083cffd04418209f97a3688f231ead4a795f841e91b3bb46"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "dd272cb06bd5c85c51b52f81ee705133a698bd684cdede8ea87b57c04d901ba3"
+      "sha256": "11383c6f1a2f7fa8ced22388fe03fa47768909e767e9fbc7db9f5f768d23ee98"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "a8edf06dd0543884c76cf958543c971627d6f53f49770471c83c50c05adb66c2"
+      "sha256": "5f240049f75fa5c54206ec1660dfdc8f264657c295938c1744e152e9b17c3c15"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "d8e80526d22f847974b486a750b0632754bef9f6b3aa89871dddd53d2665d008"
+      "sha256": "128d5fe877fa2dd13ef3050ccecf4d883f8af29fb7277fa19348049ee3de7732"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "fe9e5e514c11ecdd8029b94852785ac670137f093736d943952523a2c70281a9"
+      "sha256": "d24c1752acbb07318a55c9560c76c62e6c47d0b40adbc29872275e4f3f7d3ade"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "3496d72b34c79bc0451379a6c648d280f2d55fa44ff3dfbf04223c54942b4968"
+      "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
     },
     {
       "path": "spec/release-inputs.json",
-      "sha256": "8d5135573f3aa62461efa8d9dddf184ce119678922337d6da50daae17b46c3dc"
+      "sha256": "13570bcef4fd50ea324d6f6100e6a008973dee5f9495e5bdd4b3ef8ad3119c8e"
     },
     {
       "path": "spec/release-selection.json",
-      "sha256": "6dbf7964257044dab5e0246932f0d24727a89e3015f315b28ac7c4a8a8d3a0c6"
+      "sha256": "ee7e46ec4512feb2872776034c355363a8ab780ccc6062611b225603c3db0631"
     },
     {
       "path": "spec/schemas/pto-release-selection.schema.json",
@@ -3474,7 +3474,7 @@
     },
     {
       "path": "specification.toml",
-      "sha256": "46bc6102fb130afd64c4d59842243a98a5fecfee759294150696fab7d2087746"
+      "sha256": "50725f088f8faa734345c8099360fea892cf0a9d7e90fb5a311fd26157225fa8"
     }
   ],
   "catalog_counts": {
@@ -3496,7 +3496,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "15921af1fe499dd00091f588c72e8df21315457b79e63c94e4e7f19331c00923",
+  "content_sha256": "d8d58418169b0737bf40550188140306fe953eebbe33d1f7dd2e637e25d0585e",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3514,14 +3514,14 @@
     "note_type_value": 1,
     "section": ".note.pto.isa"
   },
-  "encoding_abi": "pto-isa-0.58.4-mode-function-v1",
-  "encoding_projection_sha256": "455c73ade38272331722377870c671818b35c837eab567dfafc4a8141c688724",
+  "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
+  "encoding_projection_sha256": "c4a0188f4c9087388fe6239e4ec2da6550b81c87bb1466e6157d69a9aa45f747",
   "hardware_conformance_profile": {
-    "evidence": "spec/evidence/pto-isa-0584-hardware-numeric-vectors.json",
+    "evidence": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
-    "profile_id": "pto-hardware-numeric-0.58.4-ieee-v1",
+    "profile_id": "pto-hardware-numeric-0.58.5-ieee-v1",
     "repository_implementation_conformance": "b-fpatr-and-tcvt-e8m0-asl-proven-other-numeric-domains-unproven",
-    "sha256": "3496d72b34c79bc0451379a6c648d280f2d55fa44ff3dfbf04223c54942b4968"
+    "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
   },
   "hash_contract": {
     "algorithm": "SHA-256",
@@ -7113,22 +7113,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/layout-and-rearrangement/layout/TPACK.md",
-      "sha256": "d9377b324733d5dabcf4f19c96b40123f7525d61ca076bbd04ac2280a9c4e938"
+      "sha256": "557d346642f39c05a40f47ec60862a2fa831775065511e470968ad9c106f1f87"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/layout-and-rearrangement/layout/TPERMUTE.md",
-      "sha256": "4bc97b9efd443a5e86c201a469c3c55f29ced5c6605edc93664caea287bdc5d6"
+      "sha256": "7a0f646fdbbf4a67b40097e733050d1d0d85e187e93f98ac6d09870204c73a31"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/layout-and-rearrangement/layout/TSHUF.md",
-      "sha256": "1a66f2b0a0bfb27004ce0054385dba06156f64031b275d612e984bf12afd9123"
+      "sha256": "65b8360bcc35b692142dc17a5f5320aed09a1656340efed0f0634970e3fcbf98"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/layout-and-rearrangement/layout/TUNPACK.md",
-      "sha256": "76ba4a68e7046eeaa12ad91caa6f46d0269802cde01347f5c868c8e53ca228d4"
+      "sha256": "5327175d8538a93f08b18189e4d347ec8b8a81e7ba197a8c6cb907c850b0ecd2"
     },
     {
       "kind": "generated-documentation",
@@ -7782,29 +7782,26 @@
     },
     {
       "kind": "generated-evidence",
-      "path": "spec/evidence/pto-isa-0584-abi-vectors.json",
-      "sha256": "f4291d5f5f48140f18fcf1ea6f96d4ed3379a598533c59b075e4277f7d64ab00"
+      "path": "spec/evidence/pto-isa-0585-abi-vectors.json",
+      "sha256": "a38c2d152e7d0d7568ceb410639fdaa9572cb1632def50b9d41eb7b79d123eec"
     },
     {
       "kind": "generated-evidence",
-      "path": "spec/evidence/pto-isa-0584-encoding-totality.json",
-      "sha256": "95fde4405f4a6f107eccaf2385fa4f302b8a6bd4e8bb04bee9fa339478dbd04e"
+      "path": "spec/evidence/pto-isa-0585-encoding-totality.json",
+      "sha256": "efdd108bef94ad6293c473bf457580603d399a3395ddf0521a78efd26e3140e5"
     },
     {
       "kind": "generated-evidence",
-      "path": "spec/evidence/pto-isa-0584-hardware-numeric-vectors.json",
-      "sha256": "d7a387798b01ab0b7c4b54162920f338a69f91b8690dc35cb761cf58f8f54660"
+      "path": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
+      "sha256": "9890ed88a95307c020d1bcbcb7b947f1da79c948ddcbd9c914c1a8b7afbfb0af"
     }
   ],
-  "publication_version": "0.58.4.1",
-  "release": "0.58.4",
+  "publication_version": "0.58.5.0",
+  "release": "0.58.5",
   "release_selection": {
-    "architecture_version": "0.58.4",
-    "baseline_commit": "e599a3d36ebfad43362ff591ea5e128816c684c7",
-    "blockers": [
-      "published selected NDF set changed; a new release identity and accepted compatibility ADR are required",
-      "published NDF PTO-INST-TILE-GMOV changed; a new release identity and accepted compatibility ADR are required"
-    ],
+    "architecture_version": "0.58.5",
+    "baseline_commit": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
+    "blockers": [],
     "excluded_draft_adrs": [
       "ADR-0086",
       "ADR-0087",
@@ -10628,27 +10625,27 @@
       },
       {
         "id": "PTO-INST-TILE-GMOV",
-        "sha256": "ff316e326b9845bfee18aed6a93eccc4175b5386a9cdcd8d399f3a1544808b2a"
+        "sha256": "ae930918b99e0c3bf3906a69143a5cb9643f6465636b332984cb40c9a0b16aaa"
       },
       {
         "id": "PTO-INST-TILE-MGATHER",
-        "sha256": "86b7a66e0fdf372c521c6165fe0b79c26ab8faaec1eb4bcf52979de6fa3b9b0e"
+        "sha256": "1567b422aba0e424e97a768995de01ab6a885be40ee10d3f57f083cf6fec9eed"
       },
       {
         "id": "PTO-INST-TILE-MGATHER-CAS",
-        "sha256": "251dbb96bff2664368d572a1d3c1ade976737787fefadec4a0d3cdc3b37fe6ff"
+        "sha256": "ec03e6db85a42447f28c043221b9dc64d8def3361c5bcd8428cb17eece735ecb"
       },
       {
         "id": "PTO-INST-TILE-MGATHER-MASK",
-        "sha256": "e2477b3ffc38c76ab3510d24ab445c63f050b701e5a7e68e0686dd166fb392ec"
+        "sha256": "6959e12bbc49604f2aad001f3e3fc350f35a6d25349807a85e8892f7da2f2855"
       },
       {
         "id": "PTO-INST-TILE-MSCATTER",
-        "sha256": "41d722e70147bb76836139a3328d580cca67293d07901c16a04ad4e73a734345"
+        "sha256": "eaac45cdc206a8edbe402d4bbc79ecf1db8bedb404c22f28f52095d2dcfeb196"
       },
       {
         "id": "PTO-INST-TILE-MSCATTER-MASK",
-        "sha256": "04e76a4cf632ed7176b1f483a2b70d1478b381c6602027dd5113dbff8e353431"
+        "sha256": "c9403cbbb7a204574a81f483ff7431ad4ee245d4abb118a0c62dfbf4bcd06598"
       },
       {
         "id": "PTO-INST-TILE-TABS",
@@ -10672,7 +10669,7 @@
       },
       {
         "id": "PTO-INST-TILE-TCI",
-        "sha256": "e31f7628452d91e3db70c7f466ce905ac585e95d5fbb68be18bd7abc27535040"
+        "sha256": "e04ea2e78aaf75ad68fdfb9e2c6deed580b41d472bf840b565817137c4a63352"
       },
       {
         "id": "PTO-INST-TILE-TCMP",
@@ -10740,7 +10737,7 @@
       },
       {
         "id": "PTO-INST-TILE-TCONCAT",
-        "sha256": "ea37c77af05818b6f5545cb27430bd5bbf0cc1f36564bf4d232876c967fce982"
+        "sha256": "288e9bdd27eaa27f318d356dead64e41e279538096c9a8b1eaa9aa8a22925533"
       },
       {
         "id": "PTO-INST-TILE-TCVT",
@@ -10748,7 +10745,7 @@
       },
       {
         "id": "PTO-INST-TILE-TDEQUANT",
-        "sha256": "bd9a0cc2d6977008b3e5bbeaae2cf0e95f6e141df40d7e5f6a4a348eb683dd46"
+        "sha256": "cd7adf679f0a14110de4fdfbaf82078681a94e9d6b5ef7430ad3cb48d54d7dbb"
       },
       {
         "id": "PTO-INST-TILE-TDIV",
@@ -10768,11 +10765,7 @@
       },
       {
         "id": "PTO-INST-TILE-TEXTRACT",
-        "sha256": "8491d400fed649c0bbd97c26f208d35d70480e6e87df43bcfc4dc63d50816586"
-      },
-      {
-        "id": "PTO-INST-TILE-TFILLPAD",
-        "sha256": "a61f76d3118b0d2a672d515a43bcdcc01fddd58dc0dd3efda8e50158d08d2152"
+        "sha256": "ec3224df86ac17f9e2c52e4c89d785d0895dc6f28fc65b9f24c44bbf2eb1ebde"
       },
       {
         "id": "PTO-INST-TILE-TFMA",
@@ -10780,35 +10773,35 @@
       },
       {
         "id": "PTO-INST-TILE-TGATHER",
-        "sha256": "dcc94ac516d889675fbb553aa2d3c6fa63c511d21fb0308e8dcb5ef0eb5a5c16"
+        "sha256": "76197a3f305f7c08f632a20236fd0328fa475b81d88afcc6c824ecc1e3cac98f"
       },
       {
         "id": "PTO-INST-TILE-TGEMV",
-        "sha256": "23580a0f4de509ddb77386eeff2288f3f3ae72694a5b7f2c47be45b38218e1d3"
+        "sha256": "f3497e97d1c65a6a5873b9e32d80ae74bc9f5dacbf9bfd9dc2a71f0f7d63bccb"
       },
       {
         "id": "PTO-INST-TILE-TGEMV-ACC",
-        "sha256": "6af5b0173cdba23eb77867943c495519d1318a8b2c0f77a1a7faf53c70c4516e"
+        "sha256": "11f4077370203791d4ae01d6134580fb9d96bed9f391b6cff044d98f48521eff"
       },
       {
         "id": "PTO-INST-TILE-TGEMV-BIAS",
-        "sha256": "36b4a734a02b7a1d50ff06e0860a3938a22d4575001e37dee3d2ba655b10cb55"
+        "sha256": "3da88d4f6b2fc2424fdd0d0da2f72e29c375d968187a59d13e782f42c7f5efd1"
       },
       {
         "id": "PTO-INST-TILE-TGEMV-MX",
-        "sha256": "d0fb5d8baae3c566d12bad623f27cf59f87a94e70b5ee20f48ac988083e46b51"
+        "sha256": "0b4ed320fb637cb7c719e92af93e0ab3afa2843736536e31c8d0ea9b067fc1ce"
       },
       {
         "id": "PTO-INST-TILE-TGEMV-MX-ACC",
-        "sha256": "5bf4202864ef1637fa174dc9e30ab47122c756233d0ecb714f40dbfef2b9fde0"
+        "sha256": "a1d53083f5eea80c296356aaa11a4aa0a483a3111770e40af1e451e10f3ecac0"
       },
       {
         "id": "PTO-INST-TILE-TGEMV-MX-BIAS",
-        "sha256": "1ef4a2641b0ec63584a54c1e02efc8cb68f4e88bbd1585d0b18d400170e6a870"
+        "sha256": "7697b36d32cd915c8a7cf1c98d535fc7cc812ea28b2b6c05080ca906f5f9a5dd"
       },
       {
         "id": "PTO-INST-TILE-THISTOGRAM",
-        "sha256": "27f0496e4122b37733cc24f21c13b161c16d627bd5608cb48df20ee159c7e293"
+        "sha256": "c97c1d8e869f636fb628e9b37e51363b1a0e51e977a249823761006499ea0a9d"
       },
       {
         "id": "PTO-INST-TILE-TIMG2COL",
@@ -10816,11 +10809,11 @@
       },
       {
         "id": "PTO-INST-TILE-TINSERT",
-        "sha256": "fdf6552a91322eb3228373aa4a1d83d6bdf135e0fc62c10dc7ae05c34419a820"
+        "sha256": "dc0f41437ce98fa70edd15df8ee102d0fdf2e4d7feb0c5d07910bf95bc564cdf"
       },
       {
         "id": "PTO-INST-TILE-TLOAD",
-        "sha256": "1c0a9c75af4e1230557b675de1ac3a7e8779596c13b1ce4214777f1a9b209b57"
+        "sha256": "9f1083daa023d3e32b70dd4db7e06745000fb22c41a25e34655c05de06e18816"
       },
       {
         "id": "PTO-INST-TILE-TLOG",
@@ -10828,27 +10821,27 @@
       },
       {
         "id": "PTO-INST-TILE-TMATMUL",
-        "sha256": "e684e67f134197094eb69e7a12e5d95694c5b563aed6145811403d81a2211d71"
+        "sha256": "9c01434d5bf9087ae5d5de0626d9fa518070595cfe27ffacea8e262077263e67"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-ACC",
-        "sha256": "958fe509aa5af1a06a2997f32d94c4b4d43fa88ff1f769816eb8e31ab72a7194"
+        "sha256": "d2aeb94cf3d539bef7adafe020d709f5c1c7a4e1b17e7e0b1781a40862115a2a"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-BIAS",
-        "sha256": "cb7951d5b9830c38e827b5526b1d305ae29129426a8700832040c24f35dc7df3"
+        "sha256": "99d7cacd42bbd9f6882eb330cc8f46a362253d9e4e56556343ed456f17627dbe"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-MX",
-        "sha256": "f3a4111c72a7969b2e32b043fe48dc7717c946d67cc33e06a1fb414f19c768d4"
+        "sha256": "3531cae7cf84dabe4faae97567a96d950796fef98b6b8f0af288202f26516369"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-MX-ACC",
-        "sha256": "64546b53eb34be57b9f2944b9515f1b5409158780704d3a50792bbc63ae3e15b"
+        "sha256": "ecf7c122979250e9c353de8a739c9ee19637024ebd038d4bcdffb83d3e62bfc4"
       },
       {
         "id": "PTO-INST-TILE-TMATMUL-MX-BIAS",
-        "sha256": "89ee5b6b66dc8ee3af5164e9d2560c3b9862d442c933f92ae31cff08251cfca6"
+        "sha256": "e9063deac6bcba69607975f1cd852670f572b12a5328c365761c0e4e13b304f4"
       },
       {
         "id": "PTO-INST-TILE-TMAX",
@@ -10868,11 +10861,11 @@
       },
       {
         "id": "PTO-INST-TILE-TMOV",
-        "sha256": "915e1a7c392dbf28942f0f7e619e74665faacd4809e07be6e942f03a43e18059"
+        "sha256": "53dae7418516f8d739229cbe43c23fbf6d900e10f4a972d3c4749080518be284"
       },
       {
         "id": "PTO-INST-TILE-TMRGSORT",
-        "sha256": "13e870dedd006255e43cf63012d5048b1f8b70305646ad2a01852dbe8c6e815b"
+        "sha256": "773a359293954275dc62f784b9226227f16b703c25ec5523cb6a32500bf8e268"
       },
       {
         "id": "PTO-INST-TILE-TMUL",
@@ -10899,28 +10892,20 @@
         "sha256": "f40d0f719399b63debeac4b333007b87089ae5907e1e1f0f8fd124a4bda2727c"
       },
       {
-        "id": "PTO-INST-TILE-TPARTADD",
-        "sha256": "96606499e70d176e1690387576ed99382f35b84d8604aa073ffa6dd1e049e2ec"
+        "id": "PTO-INST-TILE-TPACK",
+        "sha256": "7751854eadd1ebc37bb366ee1478d34ab9842bf93be696d7d93b242a19efed6a"
       },
       {
-        "id": "PTO-INST-TILE-TPARTMAX",
-        "sha256": "c91d44e8aa718ee83211a6c64be51c0e081b859ce0f5998c6e91f6ae7fbe8b8d"
-      },
-      {
-        "id": "PTO-INST-TILE-TPARTMIN",
-        "sha256": "fad30e63652269c8002ab68122b11de0e8291b04c2043a84fe43b6c592fffca8"
-      },
-      {
-        "id": "PTO-INST-TILE-TPARTMUL",
-        "sha256": "e635a7c9da3aafa709ca13b66ec2d6683803bf9f62b84ebfe1d6bced6a91b0f2"
+        "id": "PTO-INST-TILE-TPERMUTE",
+        "sha256": "d0d8a76bbe1b3d5ae393f363c10d94d5ba72cec92013775bc67e7a86fba0c784"
       },
       {
         "id": "PTO-INST-TILE-TPREFETCH",
-        "sha256": "fdbc59ac33cf7253b5c300abcb271a099ebe2cd9c50382b60a50f71b26a07379"
+        "sha256": "be0d7b91393086e99ce0cf1d560ca5c5b15b0f86212e3951d7722529db0cb8e7"
       },
       {
         "id": "PTO-INST-TILE-TQUANT",
-        "sha256": "21335a80bdd8c2c3e53ab734af20c728207a82aaddfbdaa1108e85c9b69a0894"
+        "sha256": "7f43670b23ed15a749348dfc0d2edd079aa66b02b4bba75f131b53fe10d010f7"
       },
       {
         "id": "PTO-INST-TILE-TRECIP",
@@ -11000,7 +10985,7 @@
       },
       {
         "id": "PTO-INST-TILE-TSCATTER",
-        "sha256": "4ae30bea35c00fbad8ae084755aafb210b198ea2cfa22d544093bc102dd1e41d"
+        "sha256": "12a3219d2b38d26da779bdd9a47a51e5c27cfbdeb7f626f8ea056d508a0eb50d"
       },
       {
         "id": "PTO-INST-TILE-TSEL",
@@ -11027,8 +11012,12 @@
         "sha256": "56db94c294422b3fe8b38453206e822fef9955940d6fef713fb8334bd926494f"
       },
       {
+        "id": "PTO-INST-TILE-TSHUF",
+        "sha256": "0f2079d95103b7ffa7747f9cf1d090397f9ecd361bb637134b73433f92799fd8"
+      },
+      {
         "id": "PTO-INST-TILE-TSORT",
-        "sha256": "0adcf17e8ebe867b226b4b544629c0b7a0234c941c73a0574f1efc81b8cfb3db"
+        "sha256": "64473cb8ddf2c02dd2c253f3cf553a479c71c1730b84ce67cc9ff1ca462da094"
       },
       {
         "id": "PTO-INST-TILE-TSQRT",
@@ -11036,7 +11025,7 @@
       },
       {
         "id": "PTO-INST-TILE-TSTORE",
-        "sha256": "1fb8f6ae8d121d625beb9785a76182aefaf535ede018e333eac735ef565d95be"
+        "sha256": "589c4f713faccfe858d5ab74cf6489ad951ddd4b9d320866dd35fd6c94118f55"
       },
       {
         "id": "PTO-INST-TILE-TSUB",
@@ -11047,12 +11036,12 @@
         "sha256": "ea59d9fa1d64198d3a0f2c81e0f909c9384e188b095c8cd2069662a170be045d"
       },
       {
-        "id": "PTO-INST-TILE-TTRANS",
-        "sha256": "6da63af15636c5a37727db634b79b934b1eba4940db8b51e368999eb95c18f68"
+        "id": "PTO-INST-TILE-TTRI",
+        "sha256": "0f4fe9484827bdec9e1919a13efafaa8098c250a09ee9d10f48ffe78e425ffbb"
       },
       {
-        "id": "PTO-INST-TILE-TTRI",
-        "sha256": "9563b266cd2f79a82a19e8c100e64a8b7411b26f1c2fed5246bc89a5b7cccfc4"
+        "id": "PTO-INST-TILE-TUNPACK",
+        "sha256": "6227f25ec408d3f8ddc267ff48af5323f4d16e61ca59e447feba7c09c8b540d1"
       },
       {
         "id": "PTO-INST-TILE-TXOR",
@@ -11571,10 +11560,6 @@
         "sha256": "44c857b2e86b99aad82e9b0e31a9e6e5603e363dc794260a910c902c91c19030"
       },
       {
-        "id": "PTO-TFILLPAD-CONTRACT-001",
-        "sha256": "756bfc703bb253145b820ff045bfae5f3be638e79af09b364f157cc1af7869c1"
-      },
-      {
         "id": "PTO-TFMA-CONTRACT-001",
         "sha256": "085163ba3612c7b91b6475c0425b6916da4fde300d59108540a01c38aa569196"
       },
@@ -11723,20 +11708,12 @@
         "sha256": "9bb66072a5f0b265be01853fce9581dc0f8c28892216e349bfcb6c12e45a0c14"
       },
       {
-        "id": "PTO-TPARTADD-CONTRACT-001",
-        "sha256": "de6f43372dc5e46856729c7b77bcc4be553ba103aa869ae90b57654bbac33065"
+        "id": "PTO-TPACK-CONTRACT-001",
+        "sha256": "c664e501910d535c9fdeef8859f342ff1f49d7d0fdb8496fce1875d2a2d61bb5"
       },
       {
-        "id": "PTO-TPARTMAX-CONTRACT-001",
-        "sha256": "9d2cb7342713d0349d675f47e15211634ce92442f007199a58f73fcbef256efa"
-      },
-      {
-        "id": "PTO-TPARTMIN-CONTRACT-001",
-        "sha256": "452e1237c93fca2f7f797f8cd1b171b6b28d928b9f59546a7be30549bcaf1e79"
-      },
-      {
-        "id": "PTO-TPARTMUL-CONTRACT-001",
-        "sha256": "72cdb806e267d29af78e7a746a8261c2739e1370b2f1d44da884b082207eb072"
+        "id": "PTO-TPERMUTE-CONTRACT-001",
+        "sha256": "c635e3c1f3b071aecb9a5cec28f3d594572b93a0dc27cb8c4e95e66f1969889c"
       },
       {
         "id": "PTO-TPREFETCH-FOOTPRINT-001",
@@ -11851,6 +11828,10 @@
         "sha256": "c13b5828fb9163bc30ea66f6786858b0ca0f625d8a32d69536c07bda2dfcba57"
       },
       {
+        "id": "PTO-TSHUF-CONTRACT-001",
+        "sha256": "8db69614536d6c93731ca31a0e43621f7b86bd5f15ba7ed8090ef8cacb1d3a68"
+      },
+      {
         "id": "PTO-TSORT-CONTRACT-001",
         "sha256": "76fe20a05486c7d2f5e33f3d64149954d5d5b5b55cbac19f800f70fab2bf05a7"
       },
@@ -11875,12 +11856,12 @@
         "sha256": "eae3d27014fdccc2be3e87dc99ef0dd9506715f20b80512c1b1cb35b7e5b2fd9"
       },
       {
-        "id": "PTO-TTRANS-CONTRACT-001",
-        "sha256": "d81306d8875caeecc198359a91b926b59f2b1530b09fff941b177574aea35842"
-      },
-      {
         "id": "PTO-TTRI-CONTRACT-001",
         "sha256": "37e92d7e4d786585ca375a2d94bdf2030572d76d28d7d2db0fe85c286c47a640"
+      },
+      {
+        "id": "PTO-TUNPACK-CONTRACT-001",
+        "sha256": "51d7f4f0e3dabb368a01d520b9b1d671f573f6751f08b1344ffcaed5cd8a7c96"
       },
       {
         "id": "PTO-TXOR-CONTRACT-001",
@@ -11914,8 +11895,8 @@
     "included_ndf_statuses": [
       "accepted"
     ],
-    "policy_sha256": "18e294cbb9449c17937455be2129ba42d8dc0c2b8c4ec8cd37a117503cf95124",
-    "publication_version": "0.58.4.1",
+    "policy_sha256": "b0769caef54559b49490b7777aff782c211b248d4e97fb04c3c3d27205a194ac",
+    "publication_version": "0.58.5.0",
     "required_readiness_floor": "executable",
     "selected_adr_ids": [
       "ADR-0001",
@@ -12001,9 +11982,11 @@
       "ADR-0100",
       "ADR-0101",
       "ADR-0102",
+      "ADR-0103",
       "ADR-0105",
       "ADR-0106",
-      "ADR-0107"
+      "ADR-0107",
+      "ADR-0108"
     ]
   },
   "schema_version": 1,

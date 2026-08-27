@@ -172,7 +172,8 @@
         "ADR-0020",
         "ADR-0056",
         "ADR-0074",
-        "ADR-0096"
+        "ADR-0096",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-ARCH-GLOBAL-MEMORY-ACCESS-MASK-BOUNDARY-001",
@@ -790,7 +791,8 @@
         "ADR-0096",
         "ADR-0097",
         "ADR-0098",
-        "ADR-0099"
+        "ADR-0099",
+        "ADR-0108"
       ],
       "tests": []
     },
@@ -817,7 +819,8 @@
         "ADR-0096",
         "ADR-0097",
         "ADR-0098",
-        "ADR-0099"
+        "ADR-0099",
+        "ADR-0108"
       ],
       "tests": []
     },
@@ -828,7 +831,8 @@
         "asl/tile/model/state/shared-registers.asl"
       ],
       "readiness_subjects": [
-        "ADR-0105"
+        "ADR-0105",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-BLOCK-SHARED-TLSU-PARTIAL-EXEC-004",
@@ -1164,7 +1168,8 @@
         "asl/block/model/operands/shared-generation.asl"
       ],
       "readiness_subjects": [
-        "ADR-0106"
+        "ADR-0106",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-BLOCK-MODEL-OPERANDS-SHARED-GENERATION-STATIC-001"
@@ -2029,7 +2034,8 @@
         "ADR-0059",
         "ADR-0070",
         "ADR-0074",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "tests": []
     },
@@ -2178,7 +2184,8 @@
         "ADR-0054",
         "ADR-0055",
         "ADR-0059",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "tests": []
     },
@@ -2243,7 +2250,8 @@
         "ADR-0059",
         "ADR-0070",
         "ADR-0074",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "tests": []
     },
@@ -3891,7 +3899,9 @@
       "owners": [
         "asl/block/operands/B.IOS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-B-ASSEMBLE-ENCODING-001",
         "PTO-AVS-BLOCK-B-IOS-CAPACITY-003",
@@ -3919,7 +3929,9 @@
       "owners": [
         "asl/block/operands/B.IOT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-ASSEMBLE-ALIAS-CONSUMER-001",
         "PTO-AVS-BLOCK-ASSEMBLE-LOCAL-FAULTS-001",
@@ -4225,7 +4237,9 @@
       "owners": [
         "asl/block/execution/BSTART.TLOAD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TLOAD-DECODE-001",
         "PTO-AVS-BLOCK-TLOAD-CUBE-002",
@@ -4246,7 +4260,9 @@
       "owners": [
         "asl/block/execution/BSTART.TMATMUL.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMUL-DECODE-001",
         "PTO-AVS-BLOCK-TMATMUL-DEFAULT-001"
@@ -4258,7 +4274,9 @@
       "owners": [
         "asl/block/execution/BSTART.TMATMUL.ACC.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMUL-ACC-DECODE-001",
         "PTO-AVS-BLOCK-TMATMUL-ACC-EXEC-001"
@@ -4270,7 +4288,9 @@
       "owners": [
         "asl/block/execution/BSTART.TMATMUL.BIAS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMUL-BIAS-DECODE-001",
         "PTO-AVS-BLOCK-TMATMUL-BIAS-EXEC-001"
@@ -4282,7 +4302,9 @@
       "owners": [
         "asl/block/execution/BSTART.TMATMULMX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMULMX-DECODE-001",
         "PTO-AVS-BLOCK-TMATMULMX-EXEC-001"
@@ -4294,7 +4316,9 @@
       "owners": [
         "asl/block/execution/BSTART.TMATMULMX.ACC.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMULMX-ACC-DECODE-001",
         "PTO-AVS-BLOCK-TMATMULMX-ACC-EXEC-001"
@@ -4306,7 +4330,9 @@
       "owners": [
         "asl/block/execution/BSTART.TMATMULMX.BIAS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMATMULMX-BIAS-DECODE-001",
         "PTO-AVS-BLOCK-TMATMULMX-BIAS-EXEC-001"
@@ -4318,7 +4344,9 @@
       "owners": [
         "asl/block/execution/BSTART.TMOV.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TMOV-DECODE-001",
         "PTO-AVS-BLOCK-TMOV-EXTRACT-001",
@@ -4345,7 +4373,9 @@
       "owners": [
         "asl/block/execution/BSTART.TSTORE.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-BSTART-TSTORE-DECODE-001",
         "PTO-AVS-BLOCK-TLOAD-TSTORE-ORDINARY-PAD-008",
@@ -11429,7 +11459,9 @@
       "owners": [
         "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-GMOV-COLLECTIVE-001",
         "PTO-AVS-BLOCK-GMOV-READINESS-001",
@@ -11443,7 +11475,9 @@
       "owners": [
         "asl/tile/memory-and-data-movement/irregular/MGATHER.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-MGATHER-FAULT-001",
         "PTO-AVS-BLOCK-MGATHER-GATHER-001",
@@ -11458,7 +11492,9 @@
       "owners": [
         "asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-MGATHER-CAS-EXEC-001",
         "PTO-AVS-BLOCK-MGATHER-CAS-FAULT-001",
@@ -11472,7 +11508,9 @@
       "owners": [
         "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-MGATHER-MASK-FAULT-001",
         "PTO-AVS-BLOCK-MGATHER-MASK-GATHER-001",
@@ -11486,7 +11524,9 @@
       "owners": [
         "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-MSCATTER-FAULT-001",
         "PTO-AVS-BLOCK-MSCATTER-SCATTER-001",
@@ -11501,7 +11541,9 @@
       "owners": [
         "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-MSCATTER-MASK-FAULT-001",
         "PTO-AVS-BLOCK-MSCATTER-MASK-SCATTER-001",
@@ -11591,7 +11633,9 @@
       "owners": [
         "asl/tile/irregular-and-complex/initialization/TCI.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-BLOCK-TCI-SCHEMA-001",
@@ -11812,7 +11856,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TCONCAT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TCONCAT-COLUMNS-001",
         "PTO-AVS-TILE-TCONCAT-STATIC-001"
@@ -11846,7 +11892,9 @@
       "owners": [
         "asl/tile/irregular-and-complex/format-conversion/TDEQUANT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TDEQUANT-AFFINE-001",
         "PTO-AVS-TILE-TDEQUANT-BUNDLE-001",
@@ -11920,7 +11968,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TEXTRACT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TEXTRACT-STATIC-001",
         "PTO-AVS-TILE-TEXTRACT-WINDOW-001"
@@ -11945,7 +11995,9 @@
       "owners": [
         "asl/tile/irregular-and-complex/layout/TGATHER.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TGATHER-ROWS-001",
         "PTO-AVS-TILE-TGATHER-STAGE2-DECODED-001",
@@ -11958,7 +12010,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TGEMV-ROW-001",
         "PTO-AVS-TILE-TGEMV-STATIC-001"
@@ -11970,7 +12024,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TGEMV-ACC-EXEC-001",
         "PTO-AVS-TILE-TGEMV-ACC-STATIC-001"
@@ -11982,7 +12038,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TGEMV-BIAS-EXEC-001",
         "PTO-AVS-TILE-TGEMV-BIAS-STATIC-001"
@@ -11994,7 +12052,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TGEMV-MX-EXEC-001",
         "PTO-AVS-TILE-TGEMV-MX-STATIC-001"
@@ -12006,7 +12066,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TGEMV-MX-ACC-EXEC-001",
         "PTO-AVS-TILE-TGEMV-MX-ACC-STATIC-001"
@@ -12018,7 +12080,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TGEMV-MX-BIAS-EXEC-001",
         "PTO-AVS-TILE-TGEMV-MX-BIAS-STATIC-001"
@@ -12030,7 +12094,9 @@
       "owners": [
         "asl/tile/irregular-and-complex/initialization/THISTOGRAM.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-THISTOGRAM-SCHEMA-001",
         "PTO-AVS-TILE-THISTOGRAM-BUNDLE-001",
@@ -12059,7 +12125,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TINSERT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TINSERT-OLD-001",
         "PTO-AVS-TILE-TINSERT-STATIC-001"
@@ -12071,7 +12139,9 @@
       "owners": [
         "asl/tile/memory-and-data-movement/regular/TLOAD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-B-IOS-CAPACITY-003",
         "PTO-AVS-BLOCK-B-IOS-CONSUMER-001",
@@ -12109,7 +12179,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-EXEC-001",
         "PTO-AVS-TILE-TMATMUL-STATIC-001"
@@ -12121,7 +12193,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-ACC-EXEC-001",
         "PTO-AVS-TILE-TMATMUL-ACC-STATIC-001"
@@ -12133,7 +12207,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-BIAS-EXEC-001",
         "PTO-AVS-TILE-TMATMUL-BIAS-STATIC-001"
@@ -12145,7 +12221,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-TMATMUL-MX-NOSCALE-001",
         "PTO-AVS-TILE-TMATMUL-MX-SCALE-001",
@@ -12159,7 +12237,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_ACC.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-MX-ACC-EXEC-001",
         "PTO-AVS-TILE-TMATMUL-MX-ACC-STATIC-001"
@@ -12171,7 +12251,9 @@
       "owners": [
         "asl/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_MX_BIAS.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-MX-BIAS-EXEC-001",
         "PTO-AVS-TILE-TMATMUL-MX-BIAS-STATIC-001"
@@ -12245,7 +12327,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TMOV.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TMOV-DEFINED-001",
         "PTO-AVS-TILE-TMOV-STATIC-001"
@@ -12257,7 +12341,9 @@
       "owners": [
         "asl/tile/irregular-and-complex/sorting/TMRGSORT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-BLOCK-TMRGSORT-END-TO-END-EXECUTION-001",
@@ -12356,7 +12442,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TPACK.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TPACK-FIELDS-001",
         "PTO-AVS-TILE-TPACK-STATIC-001"
@@ -12368,7 +12456,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-CELL-REARRANGE-DECODED-001",
         "PTO-AVS-TILE-TPERMUTE-BYTE-TABLE-001",
@@ -12381,7 +12471,9 @@
       "owners": [
         "asl/tile/memory-and-data-movement/regular/TPREFETCH.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-TPREFETCH-FAULT-001",
         "PTO-AVS-BLOCK-TPREFETCH-FOOTPRINT-001",
@@ -12395,7 +12487,9 @@
       "owners": [
         "asl/tile/irregular-and-complex/format-conversion/TQUANT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TQUANT-AFFINE-001",
         "PTO-AVS-TILE-TQUANT-BUNDLE-001",
@@ -12652,7 +12746,9 @@
       "owners": [
         "asl/tile/irregular-and-complex/layout/TSCATTER.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TSCATTER-ROWS-001",
         "PTO-AVS-TILE-TSCATTER-STAGE2-DECODED-001",
@@ -12748,7 +12844,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TSHUF.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-CELL-REARRANGE-DECODED-001",
         "PTO-AVS-TILE-TSHUF-BFLY-001",
@@ -12761,7 +12859,9 @@
       "owners": [
         "asl/tile/irregular-and-complex/sorting/TSORT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-TILE-SORT-ORDER-001",
@@ -12796,7 +12896,9 @@
       "owners": [
         "asl/tile/memory-and-data-movement/regular/TSTORE.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007",
         "PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001",
@@ -12841,7 +12943,9 @@
       "owners": [
         "asl/tile/irregular-and-complex/initialization/TTRI.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
         "PTO-AVS-BLOCK-TTRI-SCHEMA-001",
@@ -12859,7 +12963,9 @@
       "owners": [
         "asl/tile/layout-and-rearrangement/layout/TUNPACK.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "tests": [
         "PTO-AVS-TILE-TUNPACK-FIELD-001",
         "PTO-AVS-TILE-TUNPACK-STATIC-001"
@@ -12899,7 +13005,8 @@
         "asl/block/execution/BSTART.TMOV.asl"
       ],
       "readiness_subjects": [
-        "ADR-0107"
+        "ADR-0107",
+        "ADR-0108"
       ],
       "tests": []
     },
@@ -15205,7 +15312,8 @@
         "ADR-0070",
         "ADR-0074",
         "ADR-0078",
-        "ADR-0096"
+        "ADR-0096",
+        "ADR-0108"
       ],
       "tests": []
     },
@@ -15239,7 +15347,8 @@
         "ADR-0071",
         "ADR-0072",
         "ADR-0073",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-ACC-EXEC-001"
@@ -15259,7 +15368,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-BLOCK-TMATMUL-BIAS-EXEC-001",
@@ -15282,7 +15392,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-BLOCK-TGEMV-SHARED-001",
@@ -15318,7 +15429,8 @@
         "ADR-0071",
         "ADR-0072",
         "ADR-0073",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-MX-ACC-EXEC-001"
@@ -15339,7 +15451,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-TILE-TMATMUL-MX-BIAS-EXEC-001"
@@ -15360,7 +15473,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-BLOCK-TMATMUL-MX-ROWMAX-001",
@@ -15613,7 +15727,8 @@
         "asl/tile/layout-and-rearrangement/layout/TPACK.asl"
       ],
       "readiness_subjects": [
-        "ADR-0103"
+        "ADR-0103",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-TILE-TPACK-FIELDS-001"
@@ -15626,7 +15741,8 @@
         "asl/tile/layout-and-rearrangement/layout/TPERMUTE.asl"
       ],
       "readiness_subjects": [
-        "ADR-0103"
+        "ADR-0103",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-TILE-TPERMUTE-BYTE-TABLE-001"
@@ -16116,7 +16232,8 @@
         "asl/tile/layout-and-rearrangement/layout/TSHUF.asl"
       ],
       "readiness_subjects": [
-        "ADR-0103"
+        "ADR-0103",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-TILE-TSHUF-BFLY-001"
@@ -16189,7 +16306,8 @@
         "ADR-0059",
         "ADR-0070",
         "ADR-0074",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "tests": []
     },
@@ -16246,7 +16364,8 @@
         "asl/tile/layout-and-rearrangement/layout/TUNPACK.asl"
       ],
       "readiness_subjects": [
-        "ADR-0103"
+        "ADR-0103",
+        "ADR-0108"
       ],
       "tests": [
         "PTO-AVS-TILE-TUNPACK-FIELD-001"
@@ -17917,10 +18036,10 @@
     "docs/tile/layout-and-rearrangement/layout/TIMG2COL.md": "187a99af407ec90e7a8c28cec5ece255f8808a867fd7119ed1b8905755e3b08e",
     "docs/tile/layout-and-rearrangement/layout/TINSERT.md": "aae06a6a279434441d62e6ade75995e679a4c2b150f349ff00ee72306e9da188",
     "docs/tile/layout-and-rearrangement/layout/TMOV.md": "98ffeae61958fb84278fbe188f70c1ffda84cfbf83da6db025ed081d4d1ec120",
-    "docs/tile/layout-and-rearrangement/layout/TPACK.md": "d9377b324733d5dabcf4f19c96b40123f7525d61ca076bbd04ac2280a9c4e938",
-    "docs/tile/layout-and-rearrangement/layout/TPERMUTE.md": "4bc97b9efd443a5e86c201a469c3c55f29ced5c6605edc93664caea287bdc5d6",
-    "docs/tile/layout-and-rearrangement/layout/TSHUF.md": "1a66f2b0a0bfb27004ce0054385dba06156f64031b275d612e984bf12afd9123",
-    "docs/tile/layout-and-rearrangement/layout/TUNPACK.md": "76ba4a68e7046eeaa12ad91caa6f46d0269802cde01347f5c868c8e53ca228d4",
+    "docs/tile/layout-and-rearrangement/layout/TPACK.md": "557d346642f39c05a40f47ec60862a2fa831775065511e470968ad9c106f1f87",
+    "docs/tile/layout-and-rearrangement/layout/TPERMUTE.md": "7a0f646fdbbf4a67b40097e733050d1d0d85e187e93f98ac6d09870204c73a31",
+    "docs/tile/layout-and-rearrangement/layout/TSHUF.md": "65b8360bcc35b692142dc17a5f5320aed09a1656340efed0f0634970e3fcbf98",
+    "docs/tile/layout-and-rearrangement/layout/TUNPACK.md": "5327175d8538a93f08b18189e4d347ec8b8a81e7ba197a8c6cb907c850b0ecd2",
     "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL.md": "3879c4cdcc731edd75e7f2f71a11e1413fc28879d146db4a746d3d5afa1460d5",
     "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_ACC.md": "43919c052b836cb130341061b3675e991d639823de1014df9d857a60523956fe",
     "docs/tile/matrix-and-matrix-vector/matrix-matrix/TMATMUL_BIAS.md": "544cab4f0ff409d8ee2fa079e497aba1120611134663ba27eb1ad5ce4b41de53",
@@ -18051,8 +18170,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "bbba08f1daee7080b5922f0e47da406542c6b5851ebf42d5350f3c29eb3ac2eb",
-    "spec/evidence/instruction-contract-closure.json": "dd272cb06bd5c85c51b52f81ee705133a698bd684cdede8ea87b57c04d901ba3",
+    "spec/evidence/adr-index.json": "aa11c2c546857d8aab3dae290967678fee7c2ec855dea981f9b3a43e70a71af8",
+    "spec/evidence/instruction-contract-closure.json": "11383c6f1a2f7fa8ced22388fe03fa47768909e767e9fbc7db9f5f768d23ee98",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -59694,7 +59813,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-0096",
-        "ADR-0097"
+        "ADR-0097",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-TESTTILEALLOCATIONSTATE-STATE-TRANSITION-001",
@@ -59777,7 +59897,8 @@
         "ADR-0020",
         "ADR-0056",
         "ADR-0074",
-        "ADR-0096"
+        "ADR-0096",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-GLOBAL-MEMORY-ACCESS-MASK-BOUNDARY-001"
@@ -59880,7 +60001,8 @@
         "ADR-0059",
         "ADR-0067",
         "ADR-0077",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-ENCODING-OWNERSHIP-B-EQ-001",
@@ -61684,7 +61806,8 @@
         "ADR-0059",
         "ADR-0070",
         "ADR-0074",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TLOAD-CUBE-002",
@@ -61742,7 +61865,8 @@
         "ADR-0071",
         "ADR-0072",
         "ADR-0073",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TMATMUL-ACC-EXEC-001"
@@ -61775,7 +61899,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TMATMUL-BIAS-EXEC-001",
@@ -61812,7 +61937,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TMATMUL-DEFAULT-001",
@@ -61863,7 +61989,8 @@
         "ADR-0071",
         "ADR-0072",
         "ADR-0073",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TMATMULMX-ACC-EXEC-001"
@@ -61897,7 +62024,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TMATMULMX-BIAS-EXEC-001"
@@ -61931,7 +62059,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TMATMULMX-EXEC-001",
@@ -61964,7 +62093,8 @@
         "ADR-0055",
         "ADR-0059",
         "ADR-0078",
-        "ADR-0107"
+        "ADR-0107",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TMOV-PUBLISH-001",
@@ -62044,7 +62174,8 @@
         "ADR-0070",
         "ADR-0074",
         "ADR-0078",
-        "ADR-0107"
+        "ADR-0107",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TSTORE-CUBE-002",
@@ -62666,7 +62797,9 @@
       "documentation": "docs/block/model/dispatch/cell-rearrangement-schema.md",
       "id": "PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-CELL-REARRANGE-DECODED-001"
       ],
@@ -62693,7 +62826,8 @@
         "ADR-0096",
         "ADR-0097",
         "ADR-0098",
-        "ADR-0099"
+        "ADR-0099",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-CMD-CTRLSTART-001",
@@ -62772,7 +62906,8 @@
         "ADR-0096",
         "ADR-0097",
         "ADR-0100",
-        "ADR-0101"
+        "ADR-0101",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TMATMUL-ACC-ATOMIC-026",
@@ -62900,7 +63035,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-0032",
-        "ADR-0055"
+        "ADR-0055",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-DTYPE-NONE-RESOLUTION-001"
@@ -62942,7 +63078,8 @@
         "ADR-0032",
         "ADR-0055",
         "ADR-0096",
-        "ADR-0097"
+        "ADR-0097",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-MATRIX-DEST-SHAPE-001",
@@ -63152,7 +63289,8 @@
         "ADR-0100",
         "ADR-0101",
         "ADR-0105",
-        "ADR-0106"
+        "ADR-0106",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-SHARED-CUBE-SCALE-TRANSPOSE-002"
@@ -63179,7 +63317,8 @@
         "ADR-0096",
         "ADR-0105",
         "ADR-0106",
-        "ADR-0107"
+        "ADR-0107",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-SHARED-TLSU-BINDER-EXEC-006",
@@ -63283,7 +63422,8 @@
         "ADR-0032",
         "ADR-0055",
         "ADR-0098",
-        "ADR-0100"
+        "ADR-0100",
+        "ADR-0108"
       ],
       "semantic_tests": [],
       "source": "asl/block/model/dispatch/tile-execution.asl",
@@ -63303,7 +63443,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-0032",
-        "ADR-0055"
+        "ADR-0055",
+        "ADR-0108"
       ],
       "semantic_tests": [],
       "source": "asl/block/model/dispatch/tile-scalar-schema.asl",
@@ -63324,7 +63465,8 @@
       "readiness_subjects": [
         "ADR-0032",
         "ADR-0055",
-        "ADR-0098"
+        "ADR-0098",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TLOAD-TSTORE-ORDINARY-PAD-008"
@@ -63367,7 +63509,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-0032",
-        "ADR-0055"
+        "ADR-0055",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TLOAD-TSTORE-CUBE-ATTRS-007",
@@ -63691,7 +63834,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-0098",
-        "ADR-0100"
+        "ADR-0100",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-ASSEMBLE-DYNAMIC-DOMAIN-002",
@@ -63787,7 +63931,8 @@
       "readiness_subjects": [
         "ADR-0098",
         "ADR-0105",
-        "ADR-0106"
+        "ADR-0106",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-SHARED-RANGE-CONSTRUCTION-001",
@@ -64768,7 +64913,8 @@
         "ADR-0096",
         "ADR-0097",
         "ADR-0098",
-        "ADR-0099"
+        "ADR-0099",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-B-IOS-CAPACITY-003",
@@ -64832,7 +64978,8 @@
         "ADR-0096",
         "ADR-0097",
         "ADR-0098",
-        "ADR-0099"
+        "ADR-0099",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-B-IOT-CAPACITY-003",
@@ -81293,7 +81440,8 @@
         "ADR-0052",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0083"
+        "ADR-0083",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TDEQUANT-AFFINE-001",
@@ -81327,7 +81475,8 @@
         "ADR-0052",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0083"
+        "ADR-0083",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TQUANT-AFFINE-001",
@@ -81372,7 +81521,8 @@
         "ADR-0057",
         "ADR-0058",
         "ADR-0059",
-        "ADR-0082"
+        "ADR-0082",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TCI-BUNDLE-001",
@@ -81409,7 +81559,8 @@
         "ADR-0053",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0082"
+        "ADR-0082",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-THISTOGRAM-BUNDLE-001",
@@ -81448,7 +81599,8 @@
         "ADR-0057",
         "ADR-0058",
         "ADR-0059",
-        "ADR-0082"
+        "ADR-0082",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TTRI-BUNDLE-001",
@@ -81486,7 +81638,8 @@
         "ADR-0052",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0083"
+        "ADR-0083",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TGATHER-NEGATIVE-001",
@@ -81522,7 +81675,8 @@
         "ADR-0052",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0083"
+        "ADR-0083",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TSCATTER-DUP-001",
@@ -81560,7 +81714,8 @@
         "ADR-0057",
         "ADR-0058",
         "ADR-0059",
-        "ADR-0083"
+        "ADR-0083",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TMRGSORT-BUNDLE-001",
@@ -81601,7 +81756,8 @@
         "ADR-0058",
         "ADR-0059",
         "ADR-0083",
-        "ADR-0102"
+        "ADR-0102",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TSORT-BUNDLE-001",
@@ -81639,7 +81795,8 @@
         "ADR-0052",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0082"
+        "ADR-0082",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TCONCAT-COLUMNS-001"
@@ -81669,7 +81826,8 @@
         "ADR-0052",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0080"
+        "ADR-0080",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TEXTRACT-WINDOW-001"
@@ -81731,7 +81889,8 @@
         "ADR-0052",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0080"
+        "ADR-0080",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TINSERT-OLD-001"
@@ -81764,7 +81923,8 @@
         "ADR-0057",
         "ADR-0059",
         "ADR-0080",
-        "ADR-0107"
+        "ADR-0107",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TMOV-DEFINED-001"
@@ -81790,7 +81950,8 @@
       },
       "mnemonic": "TPACK",
       "readiness_subjects": [
-        "ADR-0103"
+        "ADR-0103",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TPACK-FIELDS-001"
@@ -81816,7 +81977,8 @@
       },
       "mnemonic": "TPERMUTE",
       "readiness_subjects": [
-        "ADR-0103"
+        "ADR-0103",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TPERMUTE-BYTE-TABLE-001"
@@ -81842,7 +82004,8 @@
       },
       "mnemonic": "TSHUF",
       "readiness_subjects": [
-        "ADR-0103"
+        "ADR-0103",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TSHUF-BFLY-001"
@@ -81868,7 +82031,8 @@
       },
       "mnemonic": "TUNPACK",
       "readiness_subjects": [
-        "ADR-0103"
+        "ADR-0103",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TUNPACK-FIELD-001"
@@ -81901,7 +82065,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TMATMUL-EXEC-001"
@@ -81935,7 +82100,8 @@
         "ADR-0071",
         "ADR-0072",
         "ADR-0073",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TMATMUL-ACC-EXEC-001",
@@ -81970,7 +82136,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TMATMUL-BIAS-EXEC-001"
@@ -82004,7 +82171,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TMATMUL-MX-SCALE-001",
@@ -82043,7 +82211,8 @@
         "ADR-0071",
         "ADR-0072",
         "ADR-0073",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TMATMUL-MX-ACC-EXEC-001",
@@ -82079,7 +82248,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TMATMUL-MX-BIAS-EXEC-001"
@@ -82112,7 +82282,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TGEMV-ROW-001"
@@ -82146,7 +82317,8 @@
         "ADR-0071",
         "ADR-0072",
         "ADR-0073",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TGEMV-ACC-EXEC-001"
@@ -82179,7 +82351,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TGEMV-BIAS-EXEC-001"
@@ -82213,7 +82386,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TGEMV-MX-EXEC-001"
@@ -82248,7 +82422,8 @@
         "ADR-0071",
         "ADR-0072",
         "ADR-0073",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TGEMV-MX-ACC-EXEC-001"
@@ -82282,7 +82457,8 @@
         "ADR-0065",
         "ADR-0071",
         "ADR-0072",
-        "ADR-0079"
+        "ADR-0079",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TGEMV-MX-BIAS-EXEC-001"
@@ -82316,7 +82492,8 @@
         "ADR-0057",
         "ADR-0059",
         "ADR-0078",
-        "ADR-0102"
+        "ADR-0102",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-MGATHER-BYTES-001"
@@ -82349,7 +82526,8 @@
         "ADR-0056",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-MGATHER-CAS-RMW-001"
@@ -82382,7 +82560,8 @@
         "ADR-0056",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-MGATHER-MASK-LANES-001"
@@ -82415,7 +82594,8 @@
         "ADR-0056",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-MSCATTER-BYTES-001"
@@ -82448,7 +82628,8 @@
         "ADR-0056",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-MSCATTER-MASK-LANES-001"
@@ -82480,7 +82661,8 @@
         "ADR-0056",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-GMOV-COPY-001"
@@ -82515,7 +82697,8 @@
         "ADR-0070",
         "ADR-0074",
         "ADR-0078",
-        "ADR-0096"
+        "ADR-0096",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TLOAD-DIRECT-001",
@@ -82549,7 +82732,8 @@
         "ADR-0056",
         "ADR-0057",
         "ADR-0059",
-        "ADR-0078"
+        "ADR-0078",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TPREFETCH-REQUESTS-001"
@@ -82584,7 +82768,8 @@
         "ADR-0070",
         "ADR-0074",
         "ADR-0078",
-        "ADR-0107"
+        "ADR-0107",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TSTORE-DIRECT-001",
@@ -82716,7 +82901,9 @@
       "documentation": "docs/tile/model/dispatch/irregular-and-complex.md",
       "id": "PTO-TILE-MODEL-DISPATCH-IRREGULAR-AND-COMPLEX",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "semantic_tests": [],
       "source": "asl/tile/model/dispatch/irregular-and-complex.asl",
       "surface": "tile",
@@ -82733,7 +82920,9 @@
       "documentation": "docs/tile/model/dispatch/layout-and-rearrangement.md",
       "id": "PTO-TILE-MODEL-DISPATCH-LAYOUT-AND-REARRANGEMENT",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "semantic_tests": [],
       "source": "asl/tile/model/dispatch/layout-and-rearrangement.asl",
       "surface": "tile",
@@ -82873,7 +83062,8 @@
       "id": "PTO-TILE-MODEL-EXECUTION-COMPLEX",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-0096"
+        "ADR-0096",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TESTTILECOMPLEX-EXECUTION-001"
@@ -82992,7 +83182,8 @@
       "id": "PTO-TILE-MODEL-EXECUTION-GENERATION",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-0096"
+        "ADR-0096",
+        "ADR-0108"
       ],
       "semantic_tests": [],
       "source": "asl/tile/model/execution/generation.asl",
@@ -83117,7 +83308,8 @@
       "id": "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-0096"
+        "ADR-0096",
+        "ADR-0108"
       ],
       "semantic_tests": [],
       "source": "asl/tile/model/execution/rearrangement.asl",
@@ -83202,7 +83394,8 @@
       "id": "PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-0096"
+        "ADR-0096",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-TESTTILECAPACITYLEGALITY-BOUNDARY-001"
@@ -83245,7 +83438,9 @@
       "documentation": "docs/tile/model/legality/dtype-layout.md",
       "id": "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "semantic_tests": [],
       "source": "asl/tile/model/legality/dtype-layout.asl",
       "surface": "tile",
@@ -83284,7 +83479,9 @@
       "documentation": "docs/tile/model/legality/indexed-layout.md",
       "id": "PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "semantic_tests": [],
       "source": "asl/tile/model/legality/indexed-layout.asl",
       "surface": "tile",
@@ -83323,7 +83520,9 @@
       "documentation": "docs/tile/model/legality/layout-rearrangement.md",
       "id": "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "semantic_tests": [],
       "source": "asl/tile/model/legality/layout-rearrangement.asl",
       "surface": "tile",
@@ -83503,7 +83702,9 @@
       "documentation": "docs/tile/model/legality/operand-schema.md",
       "id": "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0108"
+      ],
       "semantic_tests": [
         "PTO-AVS-TILE-TESTDECODEDTILELEGALITYFAULTS-FAULT-001"
       ],
@@ -83700,7 +83901,8 @@
       "readiness_subjects": [
         "ADR-0096",
         "ADR-0097",
-        "ADR-0105"
+        "ADR-0105",
+        "ADR-0108"
       ],
       "semantic_tests": [],
       "source": "asl/tile/model/memory/shared-movement.asl",
@@ -83915,7 +84117,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-0096",
-        "ADR-0097"
+        "ADR-0097",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-SIZECODE-SHAPE-002"
@@ -83985,7 +84188,8 @@
         "ADR-0072",
         "ADR-0096",
         "ADR-0097",
-        "ADR-0105"
+        "ADR-0105",
+        "ADR-0108"
       ],
       "semantic_tests": [
         "PTO-AVS-TILE-CUBE-SHARED-REJECT-001"
@@ -84009,7 +84213,8 @@
       "readiness_subjects": [
         "ADR-0096",
         "ADR-0097",
-        "ADR-0105"
+        "ADR-0105",
+        "ADR-0108"
       ],
       "semantic_tests": [],
       "source": "asl/tile/model/state/types.asl",

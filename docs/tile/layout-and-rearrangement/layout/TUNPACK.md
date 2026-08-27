@@ -16,7 +16,23 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tunpack-purpose role=purpose -->
+**Why use it.** `TUNPACK` extracts a contiguous raw byte field from each Local `U32` CUBE word and places that field in a zero-extended `U32` result.
 
+<!-- PTO-READER-BLOCK: tile-tunpack-mechanism role=mechanism -->
+**How it works.** The low control byte gives the source byte offset, the next control byte gives the count, and the selected bytes are copied down to destination byte zero while all higher result bits remain zero.
+
+<!-- PTO-READER-BLOCK: tile-tunpack-inputs-outputs role=inputs-outputs -->
+**Inputs and result.** `source` is a Local `U32` `CUBE_M16` or `CUBE_M32` Tile, `unpack_control` selects the field, and `destination` is a fresh Local `U32` Tile with matching layout and geometry.
+
+<!-- PTO-READER-BLOCK: tile-tunpack-effects role=effects -->
+**Effects.** Control and source validation precedes publication of the fully defined valid destination region; the source persists, destination padding is `Null`, and the operation has no memory effect.
+
+<!-- PTO-READER-BLOCK: tile-tunpack-constraints role=constraints -->
+**What is rejected.** The offset must be from `0` through `3`, the count from `1` through `4`, their sum must not exceed `4`, control bits `63:32` must be zero, and source and destination must not alias; rejection has no destination effect.
+
+<!-- PTO-READER-BLOCK: tile-tunpack-example role=example -->
+**Concrete example.** Source word `0x44332211` with control `0x00000201` selects two bytes starting at byte offset `1` and produces `0x00003322`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

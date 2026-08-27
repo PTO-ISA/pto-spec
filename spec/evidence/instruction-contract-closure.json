@@ -120366,7 +120366,8 @@
           "BSTART.SFU TCONCAT, DataType",
           "B.DATR (optional)",
           "B.DIM LB0",
-          "B.DIM (LB1/LB2 for 2D)",
+          "B.DIM LB1 (optional)",
+          "B.DIM LB2 (optional)",
           "B.IOT",
           "BSTOP"
         ],
@@ -120380,7 +120381,7 @@
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TCONCAT, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP"
+          "BSTART.SFU TCONCAT, DataType; B.DATR (optional); B.DIM LB0; B.DIM LB1 (optional); B.DIM LB2 (optional); B.IOT; BSTOP"
         ],
         "exceptions": [
           "ExecuteTileInstruction supplies the operation fault contract; illegal bundles and reserved selector combinations reject before architectural effects.",
@@ -122135,7 +122136,8 @@
           "BSTART.SFU TEXTRACT, DataType",
           "B.DATR (optional)",
           "B.DIM LB0",
-          "B.DIM (LB1/LB2 for 2D)",
+          "B.DIM LB1 (optional)",
+          "B.DIM LB2 (optional)",
           "B.IOT",
           "B.IOR",
           "BSTOP"
@@ -122150,7 +122152,7 @@
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TEXTRACT, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; B.IOR; BSTOP"
+          "BSTART.SFU TEXTRACT, DataType; B.DATR (optional); B.DIM LB0; B.DIM LB1 (optional); B.DIM LB2 (optional); B.IOT; B.IOR; BSTOP"
         ],
         "exceptions": [
           "ExecuteTileInstruction supplies the operation fault contract; illegal bundles and reserved selector combinations reject before architectural effects.",
@@ -124330,7 +124332,8 @@
           "BSTART.SFU TINSERT, DataType",
           "B.DATR (optional)",
           "B.DIM LB0",
-          "B.DIM (LB1/LB2 for 2D)",
+          "B.DIM LB1 (optional)",
+          "B.DIM LB2 (optional)",
           "B.IOT",
           "B.IOR",
           "BSTOP"
@@ -124345,7 +124348,7 @@
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.SFU TINSERT, DataType; B.DATR (optional); B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; B.IOR; BSTOP"
+          "BSTART.SFU TINSERT, DataType; B.DATR (optional); B.DIM LB0; B.DIM LB1 (optional); B.DIM LB2 (optional); B.IOT; B.IOR; BSTOP"
         ],
         "exceptions": [
           "ExecuteTileInstruction supplies the operation fault contract; illegal bundles and reserved selector combinations reject before architectural effects.",
@@ -126564,7 +126567,8 @@
         "block_composition": [
           "BSTART.TLSU TMOV, DataType",
           "B.DIM LB0",
-          "B.DIM (LB1/LB2 for 2D)",
+          "B.DIM LB1 (optional)",
+          "B.DIM LB2 (optional)",
           "B.IOT",
           "BSTOP"
         ],
@@ -126578,7 +126582,7 @@
         "encoded_fields": [],
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
-          "BSTART.TLSU TMOV, DataType; B.DIM LB0; B.DIM (LB1/LB2 for 2D); B.IOT; BSTOP"
+          "BSTART.TLSU TMOV, DataType; B.DIM LB0; B.DIM LB1 (optional); B.DIM LB2 (optional); B.IOT; BSTOP"
         ],
         "exceptions": [
           "ExecuteTileInstruction supplies the operation fault contract; illegal bundles and reserved selector combinations reject before architectural effects.",

@@ -92,6 +92,7 @@ interface AdrIndexRecord {
   affected_ndf: string[];
   affected_units: string[];
   target_releases: string[];
+  release_boundary?: boolean;
 }
 
 interface AdrIndexData {
@@ -2768,9 +2769,11 @@ function graphData(
 
   for (const record of adrIndex.records) {
     for (const id of record.affected_ndf) {
+      if (!nodes.has(id) && record.release_boundary === true) continue;
       addEdge('adr-affects-ndf', record.id, id);
     }
     for (const id of record.affected_units) {
+      if (!nodes.has(id) && record.release_boundary === true) continue;
       addEdge('adr-affects-asl', record.id, id);
     }
   }

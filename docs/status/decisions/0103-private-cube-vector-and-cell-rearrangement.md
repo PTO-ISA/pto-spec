@@ -15,7 +15,7 @@
   "superseded": null,
   "baseline": "b2c6ada1c80611d5eb56aee1d40d0bb1cfa82196",
   "target_releases": [
-    "unassigned"
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-TPACK-CONTRACT-001",
@@ -106,11 +106,9 @@ emulator, and RTL adoption remain separate follow-ups to the PTO-ASL contract.
 
 ## Release boundary
 
-The change has required release impact and its target remains `unassigned`.
-This ADR does not select or change an architecture version, publication
-identity, `spec/release-selection.json`, release manifest, compatibility policy
-or compatibility ADR, tag, release, or external NDF submodule pin. It does not
-claim V2 evidence. Those are separate release work and blockers.
+The change has required release impact and is selected for architecture
+release `0.58.5`. ADR-0108 owns the compatibility and publication boundary;
+this ADR continues to own only the accepted architecture decision.
 
 ## Verification
 

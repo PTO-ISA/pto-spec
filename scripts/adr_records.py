@@ -31,6 +31,7 @@ class AdrRecord:
     superseded_by: tuple[str, ...]
     implementation_issue: str | None
     release_impact: str
+    release_boundary: bool
     legacy_ids: tuple[str, ...]
     path: Path
 
@@ -54,8 +55,10 @@ _FIELDS = {
     "superseded_by",
     "implementation_issue",
     "release_impact",
+    "release_boundary",
     "legacy_ids",
 }
+_OPTIONAL_FIELDS = {"release_boundary"}
 _ADR_ID = re.compile(r"ADR-[0-9]{4}\Z")
 _BASELINE = re.compile(r"[0-9a-f]{40}\Z")
 _RELEASE = re.compile(r"(?:[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?|unassigned)\Z")
@@ -189,7 +192,7 @@ def parse_adr(path: Path) -> AdrRecord:
     status = metadata.get("status")
     if status not in ("draft", "accepted", "rejected", "superseded"):
         raise ValueError(f"{path}: invalid status: {status!r}")
-    missing = sorted(_FIELDS - metadata.keys())
+    missing = sorted(_FIELDS - _OPTIONAL_FIELDS - metadata.keys())
     if missing:
         raise _error(path, f"missing required fields: {', '.join(missing)}")
     unknown = sorted(metadata.keys() - _FIELDS)
@@ -227,6 +230,9 @@ def parse_adr(path: Path) -> AdrRecord:
     release_impact = metadata["release_impact"]
     if release_impact not in ("required", "not-required"):
         raise _error(path, f"invalid release_impact: {release_impact!r}")
+    release_boundary = metadata.get("release_boundary", False)
+    if not isinstance(release_boundary, bool):
+        raise _error(path, "release_boundary must be a boolean")
     legacy_ids = _strings(metadata, "legacy_ids", path, pattern=_LEGACY_ID)
 
     if status == "accepted":
@@ -263,6 +269,7 @@ def parse_adr(path: Path) -> AdrRecord:
         superseded_by=superseded_by,
         implementation_issue=implementation_issue,
         release_impact=release_impact,
+        release_boundary=release_boundary,
         legacy_ids=legacy_ids,
         path=path,
     )

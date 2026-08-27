@@ -16,7 +16,23 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tpermute-purpose role=purpose -->
+**使用场景。** `TPERMUTE` 在每个 CUBE CELL 内提供一个双源字节表，使每个有效目标字节都能独立选择，而无需对载荷作数值解释。
 
+<!-- PTO-READER-BLOCK: tile-tpermute-mechanism role=mechanism -->
+**工作方式。** 查找在每个 CUBE CELL 处重新开始：对于 `CUBE_M32`，每个源的表宽为 `4` 字节；对于 `CUBE_M16`，表宽为 `8` 字节。小于该宽度的索引选择 `source0` 中同一 CELL 的字节，随后相同大小的索引范围选择 `source1` 中同一 CELL 的字节。
+
+<!-- PTO-READER-BLOCK: tile-tpermute-inputs-outputs role=inputs-outputs -->
+**输入与结果。** 两个 Local 数据源采用相同的受支持非 64 位 dtype、CUBE 布局和几何形状；匹配的 Local `U8` 索引 Tile 为每个有效目标字节提供一个索引，目标则是新 Tile。
+
+<!-- PTO-READER-BLOCK: tile-tpermute-effects role=effects -->
+**效果。** 所有索引及其选中的源字节均在完整目标有效区域发布前完成校验和读取；源 Tile 与索引 Tile 保持不变，目标填充为 `Null`，且该操作不产生内存效果。
+
+<!-- PTO-READER-BLOCK: tile-tpermute-constraints role=constraints -->
+**拒绝条件。** 每个索引必须小于每个 CELL 的合并边界：`CUBE_M32` 为 `8`，`CUBE_M16` 为 `16`。索引越界、选中的字节未定义、布局、dtype 或几何形状不匹配、索引 Tile 与任一源重叠，或目标与任一输入重叠，都会在目标产生任何效果前被拒绝。
+
+<!-- PTO-READER-BLOCK: tile-tpermute-example role=example -->
+**具体示例。** 对于一个 `CUBE_M32` 行，源字分别为 `0x04030201` 和 `0x08070605` 时，字节索引 `[0, 4, 1, 5]` 生成目标字 `0x06020501`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

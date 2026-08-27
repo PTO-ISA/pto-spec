@@ -26,6 +26,8 @@ def _record_row(record: AdrRecord) -> dict[str, object]:
     row = asdict(record)
     row["id"] = row.pop("adr_id")
     row["path"] = record.path.relative_to(ROOT).as_posix()
+    if not record.release_boundary:
+        row.pop("release_boundary")
     return row
 
 

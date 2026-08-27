@@ -10,7 +10,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
-  "target_releases": ["0.58.4.1"],
+  "target_releases": ["0.58.5"],
   "affected_ndf": ["PTO-ISA-LEGACY-SHARED-MOVEMENT-001"],
   "affected_units": [
     "PTO-BLOCK-BSTART-TMOV",
@@ -34,7 +34,7 @@
 
 The independent Shared movement Functions 9, 10, 11, 12, and 14 are removed
 from the accepted ISA/TLSU operation set. Their encodings are reserved and
-raise `Fault_IllegalInstruction` in the 0.58.4.1 candidate.
+raise `Fault_IllegalInstruction` in the 0.58.5 candidate.
 
 Canonical lowering is:
 

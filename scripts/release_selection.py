@@ -7,6 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import subprocess
 import tomllib
 
 from scripts.asl_units import load_units
@@ -28,7 +29,6 @@ STAGES = (
 )
 COMMIT = re.compile(r"[0-9a-f]{40}\Z")
 ADR_ID = re.compile(r"ADR-[0-9]{4}\Z")
-_LOAD_PREVIOUS = object()
 
 
 @dataclass(frozen=True)
@@ -74,6 +74,29 @@ def _strings(value: object, field: str) -> tuple[str, ...]:
     return items
 
 
+def _digest_rows(
+    rows: tuple[dict[str, object], ...], *, label: str
+) -> dict[str, str]:
+    indexed = _unique_rows(rows, "id", label)
+    digests: dict[str, str] = {}
+    for row_id, row in indexed.items():
+        digest = row.get("sha256")
+        if not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None:
+            raise ValueError(f"{label} {row_id} digest is invalid")
+        digests[row_id] = digest
+    return digests
+
+
+def _drifted_ids(baseline: dict[str, str], current: dict[str, str]) -> tuple[str, ...]:
+    return tuple(
+        sorted(
+            row_id
+            for row_id in set(baseline) | set(current)
+            if baseline.get(row_id) != current.get(row_id)
+        )
+    )
+
+
 def validate_selection(
     selection: dict[str, object],
     *,
@@ -82,7 +105,10 @@ def validate_selection(
     adr_records: tuple[dict[str, object], ...],
     readiness_rows: tuple[dict[str, object], ...],
     ndf_rows: tuple[dict[str, object], ...],
-    previous_manifest: dict[str, object] | None,
+    previous_manifest: dict[str, object] | None = None,
+    unit_rows: tuple[dict[str, object], ...] = (),
+    baseline_manifest: dict[str, object] | None = None,
+    baseline_unit_rows: tuple[dict[str, object], ...] = (),
 ) -> ReleaseSelectionResult:
     expected_fields = {
         "$schema",
@@ -143,11 +169,19 @@ def validate_selection(
     if not current_selected_ndf:
         raise ValueError("release selection contains no accepted NDF clauses")
     current_selected_ndf_set = set(current_selected_ndf)
+    current_unit_ids = {
+        row.get("id")
+        for row in unit_rows
+        if isinstance(row.get("id"), str)
+    }
     current_selected_adrs = tuple(sorted(
         adr_id
         for adr_id, row in adrs.items()
         if row.get("status") == "accepted"
-        and current_selected_ndf_set.intersection(row.get("affected_ndf", ()))
+        and (
+            current_selected_ndf_set.intersection(row.get("affected_ndf", ()))
+            or current_unit_ids.intersection(row.get("affected_units", ()))
+        )
     ))
     current_digests = tuple(
         (ndf_id, str(ndf[ndf_id]["sha256"])) for ndf_id in current_selected_ndf
@@ -161,64 +195,90 @@ def validate_selection(
     selected_adrs = current_selected_adrs
     digests = current_digests
     blockers: list[str] = []
-    # A publication-targeted accepted ADR is the explicit compatibility
-    # boundary for a revision of the current publication identity.  Keep the
-    # same identity only when that boundary is recorded; otherwise preserve
-    # the fail-closed published-NDF drift check below.
-    publication_boundary_ndf = {
-        ndf_id
-        for record in adrs.values()
-        if record.get("status") == "accepted"
-        and publication_version in record.get("target_releases", ())
-        for ndf_id in record.get("affected_ndf", ())
-        if isinstance(ndf_id, str)
-    }
-    previous_identity = None
-    if previous_manifest is not None:
-        previous_identity = previous_manifest.get(
-            "publication_version", previous_manifest.get("release")
+    baseline_manifest = baseline_manifest or previous_manifest
+    if baseline_manifest is not None:
+        baseline_identity = baseline_manifest.get(
+            "publication_version", baseline_manifest.get("release")
         )
-    if previous_manifest is not None and previous_identity == publication_version:
-        previous_selection = previous_manifest.get("release_selection")
-        if isinstance(previous_selection, dict):
-            previous_rows = previous_selection.get("expanded_ndf", ())
-            previous_digests = {
-                row.get("id"): row.get("sha256")
-                for row in previous_rows
-                if isinstance(row, dict)
-                and isinstance(row.get("id"), str)
-                and isinstance(row.get("sha256"), str)
+        if not isinstance(baseline_identity, str) or not baseline_identity:
+            raise ValueError("baseline manifest release identity is invalid")
+        baseline_selection = baseline_manifest.get("release_selection")
+        if not isinstance(baseline_selection, dict):
+            raise ValueError("baseline manifest release selection is missing")
+        expanded_ndf = baseline_selection.get("expanded_ndf")
+        if not isinstance(expanded_ndf, list) or any(
+            not isinstance(row, dict) for row in expanded_ndf
+        ):
+            raise ValueError("baseline manifest expanded NDF rows are invalid")
+        baseline_ndf_digests = _digest_rows(
+            tuple(expanded_ndf), label="baseline NDF"
+        )
+        current_ndf_digests = dict(current_digests)
+        baseline_unit_digests = _digest_rows(
+            baseline_unit_rows, label="baseline ASL unit"
+        )
+        current_unit_digests = _digest_rows(unit_rows, label="ASL unit")
+        drifted_ndf = _drifted_ids(baseline_ndf_digests, current_ndf_digests)
+        drifted_units = _drifted_ids(baseline_unit_digests, current_unit_digests)
+        has_drift = bool(drifted_ndf or drifted_units)
+
+        target_adrs = {
+            adr_id: row
+            for adr_id, row in adrs.items()
+            if row.get("status") == "accepted"
+            and (
+                architecture_version in row.get("target_releases", ())
+                or publication_version in row.get("target_releases", ())
+            )
+        }
+        boundary_adrs = {
+            adr_id: row
+            for adr_id, row in target_adrs.items()
+            if row.get("release_boundary") is True
+        }
+        if publication_version != baseline_identity and not boundary_adrs:
+            blockers.append(
+                "candidate publication differs from baseline; an accepted target ADR "
+                "with release_boundary=true is required"
+            )
+
+        coverage_adrs = target_adrs
+        if publication_version == baseline_identity and has_drift:
+            coverage_adrs = {
+                adr_id: row
+                for adr_id, row in boundary_adrs.items()
+                if publication_version in row.get("target_releases", ())
             }
-            current_digest_map = dict(current_digests)
-            changed = {
-                ndf_id
-                for ndf_id, digest in previous_digests.items()
-                if current_digest_map.get(ndf_id) != digest
-            }
-            selected_set_changed = set(previous_digests) != set(current_digest_map)
-            drift = changed | (set(previous_digests) ^ set(current_digest_map))
-            uncovered_drift = drift - publication_boundary_ndf
-            if uncovered_drift:
-                selected_ndf = tuple(sorted(previous_digests))
-                digests = tuple(
-                    (ndf_id, previous_digests[ndf_id]) for ndf_id in selected_ndf
+            if not coverage_adrs:
+                blockers.append(
+                    "same-publication drift requires an accepted publication-targeted "
+                    "ADR with release_boundary=true"
                 )
-                previous_adrs = previous_selection.get("selected_adr_ids")
-                if isinstance(previous_adrs, list) and all(
-                    isinstance(adr_id, str) for adr_id in previous_adrs
-                ):
-                    selected_adrs = tuple(previous_adrs)
-                if selected_set_changed:
-                    blockers.append(
-                        "published selected NDF set changed; a new release identity "
-                        "and accepted compatibility ADR are required"
-                    )
-                changed_uncovered = sorted(changed - publication_boundary_ndf)
-                if changed_uncovered:
-                    blockers.append(
-                        f"published NDF {changed_uncovered[0]} changed; a new release "
-                        "identity and accepted compatibility ADR are required"
-                    )
+
+        covered_ndf = {
+            ndf_id
+            for row in coverage_adrs.values()
+            for ndf_id in row.get("affected_ndf", ())
+            if isinstance(ndf_id, str)
+        }
+        covered_units = {
+            unit_id
+            for row in coverage_adrs.values()
+            for unit_id in row.get("affected_units", ())
+            if isinstance(unit_id, str)
+        }
+        uncovered_ndf = tuple(sorted(set(drifted_ndf) - covered_ndf))
+        uncovered_units = tuple(sorted(set(drifted_units) - covered_units))
+        if uncovered_ndf:
+            blockers.append(
+                "release NDF drift is not covered by an accepted target ADR: "
+                + ", ".join(uncovered_ndf)
+            )
+        if uncovered_units:
+            blockers.append(
+                "release ASL unit drift is not covered by an accepted target ADR: "
+                + ", ".join(uncovered_units)
+            )
     floor_index = STAGES.index(floor)
     for adr_id, record in adrs.items():
         if record.get("status") != "accepted":
@@ -295,10 +355,98 @@ def _ndf_rows(root: Path) -> tuple[dict[str, object], ...]:
     return tuple(sorted(rows, key=lambda row: str(row["id"])))
 
 
+def _unit_rows(root: Path) -> tuple[dict[str, object], ...]:
+    return tuple(
+        sorted(
+            (
+                {
+                    "id": unit.unit_id,
+                    "sha256": hashlib.sha256(
+                        (root / unit.source_path).read_bytes()
+                    ).hexdigest(),
+                }
+                for unit in load_units(root / "asl")
+            ),
+            key=lambda row: str(row["id"]),
+        )
+    )
+
+
+def _git(
+    root: Path, *args: str, check: bool = True
+) -> subprocess.CompletedProcess[bytes]:
+    return subprocess.run(
+        ("git", *args),
+        cwd=root,
+        check=check,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+
+def _baseline_inputs(
+    root: Path, baseline: str
+) -> tuple[dict[str, object], tuple[dict[str, object], ...]]:
+    try:
+        resolved = _git(root, "rev-parse", "--verify", f"{baseline}^{{commit}}")
+    except subprocess.CalledProcessError as exc:
+        raise ValueError("release selection baseline_commit cannot be resolved") from exc
+    if resolved.stdout.decode("ascii").strip() != baseline:
+        raise ValueError("release selection baseline_commit does not resolve exactly")
+    if (
+        _git(root, "merge-base", "--is-ancestor", baseline, "HEAD", check=False).returncode
+        != 0
+    ):
+        raise ValueError("release selection baseline_commit is not an ancestor of HEAD")
+
+    def load_json(path: str) -> dict[str, object]:
+        try:
+            payload = _git(root, "show", f"{baseline}:{path}").stdout
+            value = json.loads(payload)
+        except (subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+            raise ValueError(f"baseline {path} cannot be loaded") from exc
+        if not isinstance(value, dict):
+            raise ValueError(f"baseline {path} is invalid")
+        return value
+
+    manifest = load_json(MANIFEST_PATH.as_posix())
+    traceability = load_json("spec/evidence/release-traceability-readiness.json")
+    if traceability.get("schema") != "pto.release-traceability.v2":
+        raise ValueError("baseline release traceability schema drift")
+    identity = manifest.get("publication_version", manifest.get("release"))
+    if not isinstance(identity, str) or not identity:
+        raise ValueError("baseline manifest release identity is invalid")
+    try:
+        tagged = _git(root, "rev-parse", "--verify", f"refs/tags/v{identity}^{{commit}}")
+    except subprocess.CalledProcessError as exc:
+        raise ValueError(f"baseline immutable tag v{identity} cannot be resolved") from exc
+    if tagged.stdout.decode("ascii").strip() != baseline:
+        raise ValueError(
+            f"release selection baseline_commit does not equal immutable tag v{identity}"
+        )
+
+    units = traceability.get("units")
+    if not isinstance(units, list) or any(not isinstance(row, dict) for row in units):
+        raise ValueError("baseline release traceability units are invalid")
+    unit_rows: list[dict[str, object]] = []
+    for row in units:
+        unit_id = row.get("id")
+        source = row.get("source")
+        if not isinstance(unit_id, str) or not isinstance(source, str):
+            raise ValueError("baseline release traceability unit is malformed")
+        try:
+            source_bytes = _git(root, "show", f"{baseline}:{source}").stdout
+        except subprocess.CalledProcessError as exc:
+            raise ValueError(f"baseline ASL unit {unit_id} cannot be loaded") from exc
+        unit_rows.append(
+            {"id": unit_id, "sha256": hashlib.sha256(source_bytes).hexdigest()}
+        )
+    _digest_rows(tuple(unit_rows), label="baseline ASL unit")
+    return manifest, tuple(unit_rows)
+
+
 def evaluate_release_selection(
     root: Path,
-    *,
-    previous_manifest: dict[str, object] | None | object = _LOAD_PREVIOUS,
 ) -> ReleaseSelectionResult:
     selection = json.loads((root / SELECTION_PATH).read_text(encoding="utf-8"))
     metadata = tomllib.loads((root / "specification.toml").read_text(encoding="utf-8"))
@@ -310,13 +458,10 @@ def evaluate_release_selection(
         raise ValueError("ADR index schema drift")
     if readiness.get("schema") != "pto.architecture-readiness":
         raise ValueError("architecture readiness schema drift")
-    if previous_manifest is _LOAD_PREVIOUS:
-        manifest_path = root / MANIFEST_PATH
-        previous_manifest = (
-            json.loads(manifest_path.read_text(encoding="utf-8"))
-            if manifest_path.is_file()
-            else None
-        )
+    baseline = selection.get("baseline_commit")
+    if not isinstance(baseline, str) or COMMIT.fullmatch(baseline) is None:
+        raise ValueError("release selection baseline_commit is invalid")
+    baseline_manifest, baseline_unit_rows = _baseline_inputs(root, baseline)
     return validate_selection(
         selection,
         architecture_version=architecture_version,
@@ -324,7 +469,9 @@ def evaluate_release_selection(
         adr_records=tuple(adr_index["records"]),
         readiness_rows=tuple(readiness["rows"]),
         ndf_rows=_ndf_rows(root),
-        previous_manifest=previous_manifest,
+        unit_rows=_unit_rows(root),
+        baseline_manifest=baseline_manifest,
+        baseline_unit_rows=baseline_unit_rows,
     )
 
 

@@ -408,6 +408,7 @@ class SiteContractTests(unittest.TestCase):
         self.assertIn("RELEASE_SITE_RESULT", workflow)
         self.assertIn("PTO_SITE_CROSS_BROWSER=1", workflow)
         self.assertIn("PTO_SITE_REQUIRE_CLEAN=1", workflow)
+        self.assertIn("PTO_SITE_RELEASE_COMMIT: ${{ inputs.commit }}", workflow)
         self.assertIn("python3 scripts/check-site-lighthouse", workflow)
         self.assertIn('test "$RELEASE_SITE_RESULT" = success', workflow)
 
@@ -441,6 +442,7 @@ class SiteContractTests(unittest.TestCase):
         generator = (ROOT / "scripts/generate-site-publication-manifest").read_text(
             encoding="utf-8"
         )
+        checker = (ROOT / "scripts/check-site-artifact").read_text(encoding="utf-8")
         handoff = (SITE / "deployment/README.md").read_text(encoding="utf-8")
         for field in (
             "architecture_version",
@@ -453,6 +455,22 @@ class SiteContractTests(unittest.TestCase):
         ):
             self.assertIn(field, generator)
             self.assertIn(field, handoff)
+        self.assertIn("PTO_SITE_RELEASE_COMMIT must equal HEAD", generator)
+        self.assertIn("PTO_SITE_RELEASE_COMMIT must equal HEAD", checker)
+
+    def test_release_boundary_graph_omits_only_retired_baseline_impacts(self) -> None:
+        plugin = (SITE / "plugins/pto-content/index.ts").read_text(encoding="utf-8")
+        self.assertIn("release_boundary?: boolean", plugin)
+        self.assertEqual(
+            plugin.count(
+                "if (!nodes.has(id) && record.release_boundary === true) continue;"
+            ),
+            2,
+        )
+        self.assertIn(
+            "fail(`graph edge ${kind} references missing node ${source} -> ${target}`)",
+            plugin,
+        )
 
 
 DESIGN_TEXT = (ROOT / "DESIGN.md").read_text(encoding="utf-8")

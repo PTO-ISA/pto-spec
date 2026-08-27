@@ -16,7 +16,23 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tpack-purpose role=purpose -->
+**使用场景。** `TPACK` 将两个对应的 Local `U32` CUBE 字中的低位字节字段拼接起来，适用于按原始存储形式重排字段而不进行数值转换的场景。
 
+<!-- PTO-READER-BLOCK: tile-tpack-mechanism role=mechanism -->
+**工作方式。** 对于每个活动字位置，`source0` 中选定的低位字节占据目标的低位字节，`source1` 中选定的低位字节紧随其后，目标中其余所有位均为零。
+
+<!-- PTO-READER-BLOCK: tile-tpack-inputs-outputs role=inputs-outputs -->
+**输入与结果。** `source0` 和 `source1` 是布局与几何形状匹配的 Local `U32` `CUBE_M16` 或 `CUBE_M32` Tile，`pack_control` 提供两个字段宽度，`destination` 是具有匹配布局与几何形状的新 Tile。
+
+<!-- PTO-READER-BLOCK: tile-tpack-effects role=effects -->
+**效果。** 完整的控制信息与源数据校验先于完整定义的目标有效区域发布；源 Tile 保持不变，目标填充为 `Null`，且该操作不产生内存效果。
+
+<!-- PTO-READER-BLOCK: tile-tpack-constraints role=constraints -->
+**拒绝条件。** 每个字段宽度必须在 `1` 到 `3` 之间，两者之和不得超过 `4`，控制位 `63:32` 必须为零，并且目标不得与任一源重叠；任何拒绝都发生在目标产生效果之前。
+
+<!-- PTO-READER-BLOCK: tile-tpack-example role=example -->
+**具体示例。** 对于对应的源字 `0x00001234` 和 `0x00ABCDEF`，控制值 `0x00000202` 从每个源中选择两个低位字节，得到 `0xCDEF1234`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

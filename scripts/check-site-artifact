@@ -6,6 +6,7 @@ from __future__ import annotations
 import gzip
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -623,6 +624,16 @@ def main() -> int:
         )
         if tag_result.returncode == 0:
             tagged = tag_result.stdout.strip() == COMMIT
+        release_commit = os.environ.get("PTO_SITE_RELEASE_COMMIT")
+        release_authorized = False
+        if release_commit is not None:
+            if re.fullmatch(r"[0-9a-f]{40}", release_commit) is None:
+                raise ValueError(
+                    "PTO_SITE_RELEASE_COMMIT must be a 40-character commit"
+                )
+            if release_commit != COMMIT:
+                raise ValueError("PTO_SITE_RELEASE_COMMIT must equal HEAD")
+            release_authorized = True
         clean = (
             subprocess.run(
                 ["git", "status", "--porcelain=v1", "--untracked-files=all"],
@@ -633,7 +644,7 @@ def main() -> int:
             ).stdout.strip()
             == ""
         )
-        expected_eligible = tagged and clean
+        expected_eligible = clean and (tagged or release_authorized)
         if publication.get("release_eligible") != expected_eligible:
             raise ValueError("site publication manifest release eligibility is inconsistent")
         expected_state = "release" if expected_eligible else "preview"

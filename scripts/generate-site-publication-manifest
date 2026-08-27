@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import subprocess
 import tomllib
@@ -50,7 +51,16 @@ def main() -> int:
         tagged = git("rev-parse", f"{tag}^{{commit}}") == commit
     except subprocess.CalledProcessError:
         pass
+    release_commit = os.environ.get("PTO_SITE_RELEASE_COMMIT")
+    release_authorized = False
+    if release_commit is not None:
+        if re.fullmatch(r"[0-9a-f]{40}", release_commit) is None:
+            raise ValueError("PTO_SITE_RELEASE_COMMIT must be a 40-character commit")
+        if release_commit != commit:
+            raise ValueError("PTO_SITE_RELEASE_COMMIT must equal HEAD")
+        release_authorized = True
     clean = git("status", "--porcelain=v1", "--untracked-files=all") == ""
+    release_eligible = clean and (tagged or release_authorized)
 
     files = sorted(
         path for path in OUTPUT.rglob("*") if path.is_file() and path != MANIFEST
@@ -69,8 +79,8 @@ def main() -> int:
         "publication_version": publication_version,
         "tag": tag,
         "source_commit": commit,
-        "release_eligible": tagged and clean,
-        "publication_state": "release" if tagged and clean else "preview",
+        "release_eligible": release_eligible,
+        "publication_state": "release" if release_eligible else "preview",
         "file_count": len(files),
         "content_bytes": sum(path.stat().st_size for path in files),
         "site_tree_sha256": tree.hexdigest(),
