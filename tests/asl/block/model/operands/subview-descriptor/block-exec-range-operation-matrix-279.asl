@@ -8,29 +8,23 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN} + 1);
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
-    for tile = 1 to 8 looplimit 8 do
-        if tile == 0 then
-            let configured =
-            ConfigureCubeTileForMask(tile, 128, 1,
-                4, TileDataType_FP16, TileLayout_CUBE_M16,
-                TileLocation_Matrix, '1111');
-            assert configured;
-        else
-            ConfigureTileForMask(tile, 128,
-                16, 4, 1,
-                4, TileDataType_FP16,
-                TileLayout_RowMajor, TileLocation_Any, '1111');
-        end;
-        MarkTileValidRegionDefined(tile);
-    end;
-    let started = ExecuteCommandInstruction(Zeros{64} + 0x27519181, 32);
+    let configured_1 = ConfigureCubeTileForMask(
+        1, 128, 1, 1, TileDataType_U32,
+        TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+    assert configured_1;
+    MarkTileValidRegionDefined(1);
+    let configured_2 = ConfigureCubeTileForMask(
+        2, 128, 1, 1, TileDataType_U32,
+        TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+    assert configured_2;
+    MarkTileValidRegionDefined(2);
+    let configured_3 = ConfigureCubeTileForMask(
+        3, 128, 1, 4, TileDataType_U8,
+        TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+    assert configured_3;
+    MarkTileValidRegionDefined(3);
+    let started = ExecuteCommandInstruction(Zeros{64} + 0xcf519181, 32);
     assert started == CommandExecution_Executed;
-    let dim_400043 = ExecuteCommandInstruction(Zeros{64} + 0x00400043, 32);
-    assert dim_400043 == CommandExecution_Executed;
-    let dim_101043 = ExecuteCommandInstruction(Zeros{64} + 0x00101043, 32);
-    assert dim_101043 == CommandExecution_Executed;
-    let dim_402043 = ExecuteCommandInstruction(Zeros{64} + 0x00402043, 32);
-    assert dim_402043 == CommandExecution_Executed;
     let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x08104e13, 32);
     assert bind_0 == CommandExecution_Executed;
     let bind_1 = ExecuteCommandInstruction(Zeros{64} + 0x0038de13, 32);

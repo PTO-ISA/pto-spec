@@ -11,7 +11,7 @@ begin
     ConfigureTile(1, 128, 1, 4, 1, 4, TileDataType_FP16, TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x2a);
     MarkTileValidRegionDefined(1);
-    let started = ExecuteCommandInstruction(Zeros{64} + 0x20911181, 32);
+    let started = ExecuteCommandInstruction(Zeros{64} + 0x20211181, 32);
     assert started == CommandExecution_Executed;
     let shared = ExecuteCommandInstruction(Zeros{64} + 0x01009e13, 32);
     assert shared == CommandExecution_Executed;

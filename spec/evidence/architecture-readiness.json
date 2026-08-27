@@ -19984,6 +19984,9 @@
         "PTO-AVS-BLOCK-SHARED-TLSU-ZERO-IOR-EXEC-002",
         "PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001",
         "PTO-AVS-BLOCK-SUBVIEW-SHARED-001",
+        "PTO-AVS-BLOCK-TMATMUL-INACTIVE-SHARED-029",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-READINESS-012",
+        "PTO-AVS-BLOCK-TMATMUL-SHARED-UNDEF-020",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-WAIT-002",
         "PTO-AVS-BLOCK-TMOV-PUBLISH-001",
         "PTO-AVS-BLOCK-TSTORE-SHAPE-001",
@@ -20942,7 +20945,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "97304fc20c80b40a82e7e432d0b7aa075540335b307c8bd5be30416a969a21de",
+      "sha256": "2610cfc4944ab81840f618cc9412482070a19c445f8e9af6203d279053e9a1c0",
       "test_count": 3707,
       "unit_count": 850
     }

@@ -66,8 +66,9 @@
     "rollback-safe": 217
   },
   "outcome_counts": {
+    "cell-rearrangement-subview-pre-effect-fault": 8,
     "nonrollback-pre-effect-fault": 1,
-    "normal-success": 263,
+    "normal-success": 255,
     "predicate-role-pre-effect-fault": 2,
     "shared-stage3-fault": 17,
     "shared-stage3-success": 4
@@ -16241,7 +16242,7 @@
       "family": "TEPL",
       "semantic_handler": "TPERMUTE",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "source0",
       "role_kind": "source",
       "all_required_roles": [
@@ -16250,7 +16251,7 @@
         "source2",
         "destination0"
       ],
-      "decoded_start": "0x27519181",
+      "decoded_start": "0xcf519181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16279,15 +16280,23 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "cell-rearrangement-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-276",
-      "row_assertion": "case_0276_normal_commit",
+      "row_assertion": "case_0276_exact_fault",
       "gpr_word": null,
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25,
+        "source2": 27
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32",
+        "source2": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source0",
         "source1": "source1",
@@ -16303,7 +16312,7 @@
       "family": "TEPL",
       "semantic_handler": "TPERMUTE",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "source1",
       "role_kind": "source",
       "all_required_roles": [
@@ -16312,7 +16321,7 @@
         "source2",
         "destination0"
       ],
-      "decoded_start": "0x27519181",
+      "decoded_start": "0xcf519181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16341,15 +16350,23 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "cell-rearrangement-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-277",
-      "row_assertion": "case_0277_normal_commit",
+      "row_assertion": "case_0277_exact_fault",
       "gpr_word": null,
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25,
+        "source2": 27
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32",
+        "source2": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source0",
         "source1": "source1",
@@ -16365,7 +16382,7 @@
       "family": "TEPL",
       "semantic_handler": "TPERMUTE",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "source2",
       "role_kind": "source",
       "all_required_roles": [
@@ -16374,7 +16391,7 @@
         "source2",
         "destination0"
       ],
-      "decoded_start": "0x27519181",
+      "decoded_start": "0xcf519181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16403,15 +16420,23 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "cell-rearrangement-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-278",
-      "row_assertion": "case_0278_normal_commit",
+      "row_assertion": "case_0278_exact_fault",
       "gpr_word": null,
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25,
+        "source2": 27
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32",
+        "source2": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source0",
         "source1": "source1",
@@ -16427,7 +16452,7 @@
       "family": "TEPL",
       "semantic_handler": "TPERMUTE",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "destination0",
       "role_kind": "destination",
       "all_required_roles": [
@@ -16436,7 +16461,7 @@
         "source2",
         "destination0"
       ],
-      "decoded_start": "0x27519181",
+      "decoded_start": "0xcf519181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16469,9 +16494,17 @@
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-279",
       "row_assertion": "case_0279_normal_commit",
       "gpr_word": null,
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25,
+        "source2": 27
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32",
+        "source2": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source0",
         "source1": "source1",
@@ -16487,7 +16520,7 @@
       "family": "TEPL",
       "semantic_handler": "TSHUF",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "source0",
       "role_kind": "source",
       "all_required_roles": [
@@ -16495,7 +16528,7 @@
         "source1",
         "destination0"
       ],
-      "decoded_start": "0x27619181",
+      "decoded_start": "0xcf619181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16520,15 +16553,21 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "cell-rearrangement-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-280",
-      "row_assertion": "case_0280_normal_commit",
+      "row_assertion": "case_0280_exact_fault",
       "gpr_word": "0x00010013",
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source",
         "source1": "controls"
@@ -16543,7 +16582,7 @@
       "family": "TEPL",
       "semantic_handler": "TSHUF",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "source1",
       "role_kind": "source",
       "all_required_roles": [
@@ -16551,7 +16590,7 @@
         "source1",
         "destination0"
       ],
-      "decoded_start": "0x27619181",
+      "decoded_start": "0xcf619181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16576,15 +16615,21 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "cell-rearrangement-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-281",
-      "row_assertion": "case_0281_normal_commit",
+      "row_assertion": "case_0281_exact_fault",
       "gpr_word": "0x00010013",
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source",
         "source1": "controls"
@@ -16599,7 +16644,7 @@
       "family": "TEPL",
       "semantic_handler": "TSHUF",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "destination0",
       "role_kind": "destination",
       "all_required_roles": [
@@ -16607,7 +16652,7 @@
         "source1",
         "destination0"
       ],
-      "decoded_start": "0x27619181",
+      "decoded_start": "0xcf619181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16636,9 +16681,15 @@
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-282",
       "row_assertion": "case_0282_normal_commit",
       "gpr_word": "0x00010013",
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source",
         "source1": "controls"
@@ -16653,7 +16704,7 @@
       "family": "TEPL",
       "semantic_handler": "TPACK",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "source0",
       "role_kind": "source",
       "all_required_roles": [
@@ -16661,7 +16712,7 @@
         "source1",
         "destination0"
       ],
-      "decoded_start": "0x27719181",
+      "decoded_start": "0xcf719181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16686,15 +16737,21 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "cell-rearrangement-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-283",
-      "row_assertion": "case_0283_normal_commit",
+      "row_assertion": "case_0283_exact_fault",
       "gpr_word": "0x00010013",
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source0",
         "source1": "source1"
@@ -16709,7 +16766,7 @@
       "family": "TEPL",
       "semantic_handler": "TPACK",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "source1",
       "role_kind": "source",
       "all_required_roles": [
@@ -16717,7 +16774,7 @@
         "source1",
         "destination0"
       ],
-      "decoded_start": "0x27719181",
+      "decoded_start": "0xcf719181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16742,15 +16799,21 @@
         "0x800000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "cell-rearrangement-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-284",
-      "row_assertion": "case_0284_normal_commit",
+      "row_assertion": "case_0284_exact_fault",
       "gpr_word": "0x00010013",
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source0",
         "source1": "source1"
@@ -16765,7 +16828,7 @@
       "family": "TEPL",
       "semantic_handler": "TPACK",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "destination0",
       "role_kind": "destination",
       "all_required_roles": [
@@ -16773,7 +16836,7 @@
         "source1",
         "destination0"
       ],
-      "decoded_start": "0x27719181",
+      "decoded_start": "0xcf719181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16802,9 +16865,15 @@
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-285",
       "row_assertion": "case_0285_normal_commit",
       "gpr_word": "0x00010013",
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25,
+        "source1": 25
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32",
+        "source1": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source0",
         "source1": "source1"
@@ -16819,14 +16888,14 @@
       "family": "TEPL",
       "semantic_handler": "TUNPACK",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "source0",
       "role_kind": "source",
       "all_required_roles": [
         "source0",
         "destination0"
       ],
-      "decoded_start": "0x27819181",
+      "decoded_start": "0xcf819181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16850,15 +16919,19 @@
         "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
-      "expected_fault": null,
-      "outcome": "normal-success",
-      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "cell-rearrangement-subview-pre-effect-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (cell-rearrangement-subview-pre-effect-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-286",
-      "row_assertion": "case_0286_normal_commit",
+      "row_assertion": "case_0286_exact_fault",
       "gpr_word": "0x00010013",
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source"
       },
@@ -16872,14 +16945,14 @@
       "family": "TEPL",
       "semantic_handler": "TUNPACK",
       "handler_effect_class": "rollback-safe",
-      "fixture_recipe": "cube-parent-local-view",
+      "fixture_recipe": "cell-rearrangement-cube-view",
       "role": "destination0",
       "role_kind": "destination",
       "all_required_roles": [
         "source0",
         "destination0"
       ],
-      "decoded_start": "0x27819181",
+      "decoded_start": "0xcf819181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -16907,9 +16980,13 @@
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-287",
       "row_assertion": "case_0287_normal_commit",
       "gpr_word": "0x00010013",
-      "fixture_data_type": 4,
-      "fixture_role_data_types": {},
-      "fixture_role_layouts": {},
+      "fixture_data_type": 25,
+      "fixture_role_data_types": {
+        "source0": 25
+      },
+      "fixture_role_layouts": {
+        "source0": "TileLayout_CUBE_M32"
+      },
       "fixture_role_kinds": {
         "source0": "source"
       },

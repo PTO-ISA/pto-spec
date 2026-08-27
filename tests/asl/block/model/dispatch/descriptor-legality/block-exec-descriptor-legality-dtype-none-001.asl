@@ -82,7 +82,7 @@ begin
     ResetProfileState();
     DTypeNoneConfigureTile(10, TileDataType_E4M3);
     InstallSharedTile((Zeros{6} + 31) as SharedTileID, _Tiles[[10]], '1111');
-    DTypeNoneInstallOperation(BundleOperation_TileMemory, Zeros{10} + 11,
+    DTypeNoneInstallOperation(BundleOperation_TileMemory, Zeros{10} + 2,
         DTYPE_NONE);
     SetBundleDataAttributeState(DTYPE_NONE, Zeros{5}, Zeros{2},
         Zeros{3}, Zeros{3}, FALSE, FALSE);

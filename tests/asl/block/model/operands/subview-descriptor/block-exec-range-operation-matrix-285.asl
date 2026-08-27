@@ -5,32 +5,21 @@ func RunCase_0285() => boolean
 begin
     ResetProfileState();
     WriteGPR(0, Zeros{PTO_XLEN});
-    WriteGPR(2, Zeros{PTO_XLEN} + 1);
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x00000101);
     WriteGPR(3, Zeros{PTO_XLEN});
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
-    for tile = 1 to 8 looplimit 8 do
-        if tile == 0 then
-            let configured =
-            ConfigureCubeTileForMask(tile, 128, 1,
-                4, TileDataType_FP16, TileLayout_CUBE_M16,
-                TileLocation_Matrix, '1111');
-            assert configured;
-        else
-            ConfigureTileForMask(tile, 128,
-                16, 4, 1,
-                4, TileDataType_FP16,
-                TileLayout_RowMajor, TileLocation_Any, '1111');
-        end;
-        MarkTileValidRegionDefined(tile);
-    end;
-    let started = ExecuteCommandInstruction(Zeros{64} + 0x27719181, 32);
+    let configured_1 = ConfigureCubeTileForMask(
+        1, 128, 1, 1, TileDataType_U32,
+        TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+    assert configured_1;
+    MarkTileValidRegionDefined(1);
+    let configured_2 = ConfigureCubeTileForMask(
+        2, 128, 1, 1, TileDataType_U32,
+        TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
+    assert configured_2;
+    MarkTileValidRegionDefined(2);
+    let started = ExecuteCommandInstruction(Zeros{64} + 0xcf719181, 32);
     assert started == CommandExecution_Executed;
-    let dim_400043 = ExecuteCommandInstruction(Zeros{64} + 0x00400043, 32);
-    assert dim_400043 == CommandExecution_Executed;
-    let dim_101043 = ExecuteCommandInstruction(Zeros{64} + 0x00101043, 32);
-    assert dim_101043 == CommandExecution_Executed;
-    let dim_402043 = ExecuteCommandInstruction(Zeros{64} + 0x00402043, 32);
-    assert dim_402043 == CommandExecution_Executed;
     let ior = ExecuteCommandInstruction(Zeros{64} + 0x00010013, 32);
     assert ior == CommandExecution_Executed;
     let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0818ce13, 32);

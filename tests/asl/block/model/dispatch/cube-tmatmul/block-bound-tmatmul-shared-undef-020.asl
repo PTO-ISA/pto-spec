@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-UNDEF-020","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-TMATMUL-CONTRACT-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"fault","summary":"Cooperative TMATMUL rejects an unallocated Shared primary before effects","pass_condition":"the undefined-register fallback remains legal generally but Matrix readiness rejects it without allocation consumption or Shared mutation","related_sources":["asl/tile/model/state/shared-registers.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-UNDEF-020","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-B-SHARED-WHOLE-PARENT-READY-001","PTO-TMATMUL-CONTRACT-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"boundary","summary":"Cooperative TMATMUL waits for an unallocated Shared primary without fault or effects","pass_condition":"the undefined-register fallback remains legal generally while Matrix readiness waits without allocation consumption Shared mutation numeric status or fault","related_sources":["asl/tile/model/state/shared-registers.asl","asl/block/model/dispatch/tile-execution.asl"]}
 pure func MatrixSharedUndefinedStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00031181;
@@ -34,6 +34,7 @@ func main() => integer
 begin
     let shared_tile_id = (Zeros{6} + 13) as SharedTileID;
     ResetProfileState();
+    let status_before = NumericStatusFlags();
     let left_ready = ConfigureCubeTileForMask(0, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_M16,
         TileLocation_Matrix, '1111');
@@ -55,9 +56,10 @@ begin
 
     let completed = ExecuteBundleTileOperation();
     assert !completed;
-    assert _LastFault == Fault_TileLegality;
+    assert _LastFault == Fault_None;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     assert !SharedTileRecord(shared_tile_id).descriptor_valid;
     assert !_BundleSharedBindings[[0]].consumed;
+    assert NumericStatusFlags() == status_before;
     return 0;
 end;

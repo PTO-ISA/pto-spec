@@ -10,8 +10,9 @@ begin
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     ConfigureTile(0, 128, 1, 4, 1, 4, TileDataType_FP16, TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x2a);
+    MarkTileValidRegionDefined(0);
     InstallSharedTile((Zeros{6} + 16) as SharedTileID, _Tiles[[0]], '1111');
-    let started = ExecuteCommandInstruction(Zeros{64} + 0x20c11181, 32);
+    let started = ExecuteCommandInstruction(Zeros{64} + 0x20211181, 32);
     assert started == CommandExecution_Executed;
     let shared = ExecuteCommandInstruction(Zeros{64} + 0x01001e13, 32);
     assert shared == CommandExecution_Executed;
@@ -19,6 +20,10 @@ begin
     assert subview == CommandExecution_Executed;
     let local = ExecuteCommandInstruction(Zeros{64} + 0x0008ee13, 32);
     assert local == CommandExecution_Executed;
+    assert SharedTilePublished((Zeros{6} + 16) as SharedTileID);
+    assert BundleSharedSubviewLegal(0);
+    assert BundleSharedTMOVDestinationSchemaLegal((Zeros{6} + 16) as SharedTileID, 2);
+    assert SelectedBundleTileMasksLegal();
     let completed = ExecuteBundleTileOperation();
     assert completed && _LastFault == Fault_None;
     let destination = _BundleTileBindings[[0]].destination;
