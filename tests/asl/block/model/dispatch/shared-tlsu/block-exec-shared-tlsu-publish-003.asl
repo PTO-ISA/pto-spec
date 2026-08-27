@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-PUBLISH-EXEC-003","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-INST-BLOCK-B-ASSEMBLE","PTO-B-ASSEMBLE-SHARED-STANDALONE-001"],"kind":"execution","summary":"Shared TLSU publish, broadcast, and extract preserve descriptor semantics","pass_condition":"collective INIT_LAST publish, broadcast, and extract assertions hold","related_sources":["asl/block/operands/B.ASSEMBLE.asl","asl/block/model/operands/shared-generation.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-PUBLISH-EXEC-003","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-INST-BLOCK-B-ASSEMBLE","PTO-B-ASSEMBLE-SHARED-STANDALONE-001"],"kind":"execution","summary":"Canonical TMOV publishes an assembled Shared parent and reads it through Function 2.","pass_condition":"INIT_LAST publishes atomically and two canonical Shared-to-Local reads preserve the complete descriptor and payload.","related_sources":["asl/block/operands/B.ASSEMBLE.asl","asl/block/model/operands/shared-generation.asl"]}
 pure func BundleTestTLSUStart(function: bits(5), data_type: bits(5))
         => bits(64)
 begin
@@ -80,11 +80,11 @@ begin
     // Publish creates a fully initialized register; an explicitly encoded
     // all-zero B.IOR is legal and equivalent to omission for this schema.
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
+    ConfigureTile(0, 128, 16, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
     let publish_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let publish_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 19, '0001', '111'), 32);
     let publish_assemble = ExecuteCommandInstruction(
@@ -105,7 +105,7 @@ begin
 
     ResetBundleControlState();
     let broadcast_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01011', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let broadcast_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{6} + 19), 32);
     let broadcast_destination = ExecuteCommandInstruction(
@@ -122,7 +122,7 @@ begin
 
     ResetBundleControlState();
     let extract_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let extract_shared = ExecuteCommandInstruction(
         BundleTestSharedBinding(Zeros{6} + 19), 32);
     let extract_destination = ExecuteCommandInstruction(

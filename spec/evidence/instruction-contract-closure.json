@@ -3884,7 +3884,7 @@
         "state_effects": [
           "The common PE-mode decoder expands PEMode once to the semantic four-PE mask used by every effective Shared binding.",
           "A zero decoded mask is a strict no-op. A source binding is read-only and never changes its Shared descriptor, allocation mask, initialized mask, or payload.",
-          "A successful destination atomically updates selected payload quarters and a compatible persistent descriptor; its first write fixes the allocation mask and later writes cannot expand it."
+          "A successful singleton destination publishes the complete Shared parent; a multi-PE destination uses B.ASSEMBLE with explicit non-overlapping ranges and atomic LAST publication."
         ]
       },
       "documentation": "docs/block/operands/B.IOS.md",
@@ -10560,7 +10560,7 @@
       "contract": {
         "block_composition": [
           "Local destination: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM supplies ValidCol, ValidRow, and physical Col; optional B.IOR supplies per-PE base and byte row stride; exactly one terminating destination B.IOT allocates the Local result; BSTOP commits.",
-          "Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S63, TSize, and PE_MASK. Each selected quarter uses that PE's private GPR base and stride.",
+          "Shared destination: replace destination B.IOT with one destination B.IOS naming S0..S63, SizeCode, and PE_MASK. One participating issuer loads the complete parent; multiple issuers require B.ASSEMBLE with explicit writer ranges.",
           "Local CUBE destination: encode B.DATR Layout ND2M32, ND2M16, or ND2N8 with DataType=DTYPE_NONE; require LB0=valid columns and LB1=valid rows, omit LB2, and use one terminating destination B.IOT."
         ],
         "canonical_assembly": [
@@ -10614,7 +10614,7 @@
         "encoding_class": "standalone-encoded",
         "examples": [
           "BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP",
-          "BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP",
+          "BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0001, ->S7<1>; BSTOP",
           "BSTART.TLOAD FP16; B.DATR {ND2M16, DTYPE_NONE, Null, EQ, Default, 0, 0}; B.DIM LB0=K; B.DIM LB1=M; B.IOT mask=1111, <last>, ->M<1>; BSTOP"
         ],
         "exceptions": [
@@ -10790,8 +10790,8 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Allocates/renames one Local destination or reallocates the named Shared destination with Rows derived from TSize, Col, and DataType, then fills selected valid elements and marks their definedness.",
-          "Unselected PE regions remain unchanged for Shared partial-mask updates; a Local result is published through its architectural destination hand only after successful commit.",
+          "Allocates/renames one Local destination or reallocates the named Shared destination with Rows derived from SizeCode, Col, and DataType, then fills the valid region.",
+          "A singleton Shared issuer loads and publishes the complete logical parent. Multiple Shared issuers require B.ASSEMBLE with explicit ranges and atomic LAST publication.",
           "A successful CUBE form installs a persistent Matrix-location descriptor with CELL geometry derived from Layout, BSTART DataType, LB1 valid rows, and LB0 valid columns; TSize remains capacity only."
         ]
       },
@@ -12744,7 +12744,7 @@
         ],
         "defaults": [
           "Concrete DataType codes explicitly select the transfer type. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.",
-          "Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated Shared EXTRACT source defaults them to 1, 1, and ValidCol.",
+          "Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated, pending, or incomplete Shared source remains waiting and produces no destination effect.",
           "PE_MASK=0000 is a strict no-op before source reads, destination allocation, publication checks, faults, or binding consumption."
         ],
         "encoded_fields": [
@@ -12836,7 +12836,7 @@
         ],
         "ordering": [
           "Complete role, mask, size, descriptor, shape, data-type, layout, readiness, and allocation preflight precedes every payload, publication, or destination effect.",
-          "Each successful Shared destination update commits its selected payload and metadata atomically; INSERT leaves publication false, while PUBLISH may establish it after completeness. A Shared source read is read-only."
+          "A singleton Local-to-Shared writer publishes the complete parent atomically. A multi-PE writer publishes only through complete B.ASSEMBLE.LAST; a Shared source read is read-only."
         ],
         "standalone_opcode": true,
         "state_effects": [
@@ -13251,7 +13251,7 @@
         "defaults": [
           "DataType is explicit. Optional B.DATR omission retains the default NORM layout.",
           "For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For a pending Shared source they default to 1, 1, and ValidCol.",
-          "An unallocated Shared source derives the smallest legal 128 B through 8 KiB per-PE capacity that contains the completed shape; Rows are then derived from capacity, Col, and DataType. Every selected source element is an undefined-register value and the temporary descriptor is never written back.",
+          "An unallocated, pending, or incomplete Shared source remains waiting and produces no GM, binding-consumption, or descriptor effect.",
           "Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An explicitly encoded zero selector reads the zero GPR value and therefore supplies a real zero base or zero stride."
         ],
         "encoded_fields": [
@@ -13301,7 +13301,7 @@
           "BSTART.TSTORE FP16; B.IOS S7, mask=1111; BSTOP"
         ],
         "exceptions": [
-          "Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, illegal PE mask, unpublished or not-whole-parent-ready Shared source, or GM translation, permission, or alignment fault raises the applicable fault before the first GM write.",
+          "Reserved DataType, unsupported Layout, invalid dimensions, source descriptor mismatch, malformed bindings, illegal PE mask, or GM translation, permission, or alignment fault raises the applicable fault before the first GM write.",
           "A Shared source is hardware-waiting/no-effect until whole-parent readiness and publication are true; undefined Shared payload is not a legal source path."
         ],
         "field_domains": [
@@ -124585,7 +124585,7 @@
       "contract": {
         "block_composition": [
           "Local: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM defines ValidCol, ValidRow, and physical Col; optional B.IOR defines the per-PE GM base and byte row stride; one terminating destination B.IOT allocates the result; BSTOP commits.",
-          "Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S63, per-PE TSize, and PE_MASK. Local sources, Shared sources, multiple destinations, and mixed destination domains are illegal."
+          "Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S63, SizeCode, and PE_MASK. One issuer loads the complete parent; multiple issuers require B.ASSEMBLE with explicit writer ranges."
         ],
         "canonical_assembly": [
           "TLOAD <bundle operands>"
@@ -124599,7 +124599,7 @@
         "encoding_class": "selector-encoded-block-operation",
         "examples": [
           "BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP",
-          "BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP",
+          "BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0001, ->S7<1>; BSTOP",
           "BSTART.TLOAD FP16; B.DATR {ND2N8, DTYPE_NONE, Max, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=K; B.IOT mask=1111, <last>, ->N<3>; BSTOP"
         ],
         "exceptions": [
@@ -124635,12 +124635,12 @@
         ],
         "ordering": [
           "Resolve the complete schema, selected PE mask, per-PE GPR inputs, dimensions, destination capacity, and all memory translations before the first architectural load effect.",
-          "On success publish the complete Local destination or the selected Shared quarters atomically at block commit. Unselected Shared quarters remain unchanged; on failure the prior destination and restart-visible block state are preserved."
+          "On success publish the complete Local destination or complete Shared parent atomically at block commit. A multi-PE Shared producer publishes only after complete B.ASSEMBLE.LAST; failure preserves prior state."
         ],
         "standalone_opcode": false,
         "state_effects": [
           "A successful Local form allocates or renames exactly one destination Tile, installs the derived descriptor, loads every selected valid element, and marks the valid region defined.",
-          "A successful Shared form reallocates the named S register when required and updates only the quarters selected by PE_MASK. TLOAD does not modify source GPRs or GM.",
+          "A successful singleton Shared form loads and publishes the complete parent from that issuer PE. A multi-PE Shared form uses B.ASSEMBLE explicit ranges; TLOAD never modifies source GPRs or GM.",
           "A successful CUBE form writes raw valid values through CUBE storage indices and applies Zero, Max, Min, or undefined Null to physical tail positions without counting tails as valid elements."
         ]
       },
@@ -135153,8 +135153,7 @@
       "contract": {
         "block_composition": [
           "The Local form uses TLSU Function 1, exactly one terminating source B.IOT, at most one B.IOR, and no B.IOS.",
-          "The Shared full form uses TLSU Function 1, exactly one source B.IOS, at most one B.IOR, no B.IOT, and PE_MASK=1111 for every nonzero access.",
-          "The Shared partial form uses TLSU reserved legacy Shared movement form (reserved legacy Shared movement form), exactly one source B.IOS, at most one B.IOR, no B.IOT, and any nonzero PE subset.",
+          "The Shared form uses canonical TLSU Function 1, exactly one source B.IOS, at most one B.IOR, no B.IOT, and any nonzero consumer PE_MASK; optional B.SUBVIEW supplies the only partial-source range.",
           "The Local CUBE form uses Function 1, explicit B.DATR M322ND, M162ND, or N82ND with DTYPE_NONE, explicit LB0/LB1, absent LB2, and one persistent source B.IOT."
         ],
         "canonical_assembly": [
@@ -135163,7 +135162,7 @@
         "defaults": [
           "DataType is explicit in BSTART.TSTORE. Omitted B.DATR selects ordinary NORM layout. Ordinary and Shared forms require PadValue zero; Local CUBE codes 24 through 26 require DTYPE_NONE, accept all four PadValue encodings, and ignore physical padding while storing only valid elements.",
           "For an allocated source, omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from its descriptor. For a pending Shared source they default to 1, 1, and ValidCol.",
-          "An unallocated Shared source derives the smallest legal 128 B through 8 KiB per-PE capacity containing the completed shape. The temporary descriptor supplies undefined-register values and is never written back.",
+          "An unallocated, pending, or incomplete Shared source remains waiting and produces no GM, binding-consumption, or descriptor effect.",
           "Omitted B.IOR supplies base zero. Ordinary forms use resolved Col and CUBE forms use LB0 valid columns to derive dense byte row stride as ceil(columns * element_bits / 8). An encoded zero selector is present and supplies the real zero GPR value, so an explicitly encoded zero stride aliases rows."
         ],
         "encoded_fields": [],
@@ -135173,7 +135172,7 @@
           "BSTART.TSTORE FP16; B.IOS S7, mask=0011; B.SUBVIEW 0, a0, 0, 7; BSTOP"
         ],
         "exceptions": [
-          "A malformed binding stream, missing dimensions, unsupported DataType, non-row-major source, undefined Local source element, unpublished Shared source, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects.",
+          "A malformed binding stream, missing dimensions, unsupported DataType, non-row-major source, undefined Local source element, invalid source encoding, or mismatched source geometry raises Fault_TileLegality before effects. An unpublished or not-whole-ready Shared source waits without fault or effect.",
           "A memory translation, permission, or alignment fault is detected before the first GM write."
         ],
         "field_domains": [

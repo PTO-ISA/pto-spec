@@ -34,52 +34,34 @@ end;
 
 func TestBundleTileBindingSchemas()
 begin
-    // TMOV Local-to-Shared uses Function 9/10. Its B.IOT is source-only:
-    // Shared TSize belongs to destination B.IOS, while local TSize/DstTile
-    // must both decode as absent.
+    // Canonical TMOV Function 2 accepts a Local destination form for
+    // Local-to-Local or Shared-to-Local composition.
     ResetProfileState();
-    let insert_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+    let destination_start = ExecuteCommandInstruction(
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let size_one = ExecuteCommandInstruction(
         BundleTestTileBindingSchemas('0001', '00', '101', Zeros{6}, TRUE), 32);
-    assert insert_start == CommandExecution_Executed;
-    assert size_one == CommandExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert !_BundleTileBindings[[0]].valid;
+    assert destination_start == CommandExecution_Executed;
+    assert size_one == CommandExecution_Executed;
+    assert _LastFault == Fault_None;
+    assert _BundleTileBindings[[0]].valid;
+    assert _BundleTileBindings[[0]].destination_valid;
 
-    ResetProfileState();
-    let publish_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
-    let size_seven = ExecuteCommandInstruction(
-        BundleTestTileBindingSchemas('0001', '00', '101', Zeros{6}, TRUE), 32);
-    assert publish_start == CommandExecution_Executed;
-    assert size_seven == CommandExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert !_BundleTileBindings[[0]].valid;
-
+    // The same Function 2 accepts a source-only Local binding for a later
+    // destination B.IOS in canonical Local-to-Shared composition.
     ResetProfileState();
     let zero_size_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let zero_size = ExecuteCommandInstruction(
         BundleTestTileBindingSchemas('0000', '00', '111', Zeros{6}, TRUE), 32);
     assert zero_size_start == CommandExecution_Executed;
     assert zero_size == CommandExecution_Executed;
     assert _LastFault == Fault_None;
-    assert _BundleOperation.selector == Zeros{10} + 9;
+    assert _BundleOperation.selector == Zeros{10} + 2;
     assert _BundleTileBindings[[0]].valid;
     assert !_BundleTileBindings[[0]].destination_valid;
     assert _BundleTileBindings[[0]].destination_size == 0;
     assert _BundleTileBindings[[0]].pe_mask == '1111';
-
-    ResetProfileState();
-    let nonzero_destination_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
-    let nonzero_destination = ExecuteCommandInstruction(
-        BundleTestTileBindingSchemas('0001', '01', '111', Zeros{6}, TRUE), 32);
-    assert nonzero_destination_start == CommandExecution_Executed;
-    assert nonzero_destination == CommandExecution_Rejected;
-    assert _LastFault == Fault_TileLegality;
-    assert !_BundleTileBindings[[0]].valid;
 
     // Every B.IOT in one operation uses the same nonzero participant mask.
     ResetProfileState();

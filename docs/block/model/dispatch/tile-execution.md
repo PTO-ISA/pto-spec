@@ -89,6 +89,11 @@ begin
     var specialized = TRUE;
     var specialized_completed = FALSE;
     if matrix_selected then
+        // Shared readiness is a retry gate, not a TileLegality condition.
+        // Preserve the completed block and its bindings until every Shared
+        // matrix source is whole-ready and published.
+        if !BundleMatrixSharedSourcesReady(
+                BundleSharedBindingCount()) then return FALSE; end;
         specialized_completed = ExecuteBundleTMATMULOperation();
     elsif BundleCubeTransportSelected() then
         if !ReuseBundleLocalGenerationDestination() then

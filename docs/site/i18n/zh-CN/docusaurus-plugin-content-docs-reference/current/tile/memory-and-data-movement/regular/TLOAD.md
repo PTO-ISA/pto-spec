@@ -104,7 +104,7 @@ end;
 
 ```asm
 Local: BSTART.TLOAD DataType; optional B.DATR Layout; B.DIM defines ValidCol, ValidRow, and physical Col; optional B.IOR defines the per-PE GM base and byte row stride; one terminating destination B.IOT allocates the result; BSTOP commits.
-Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S63, per-PE TSize, and PE_MASK. Local sources, Shared sources, multiple destinations, and mixed destination domains are illegal.
+Shared: replace B.IOT with one destination B.IOS carrying absolute S0..S63, SizeCode, and PE_MASK. One issuer loads the complete parent; multiple issuers require B.ASSEMBLE with explicit writer ranges.
 ```
 
 ## Operation
@@ -185,7 +185,7 @@ end;
 ## State effects
 
 - A successful Local form allocates or renames exactly one destination Tile, installs the derived descriptor, loads every selected valid element, and marks the valid region defined.
-- A successful Shared form reallocates the named S register when required and updates only the quarters selected by PE_MASK. TLOAD does not modify source GPRs or GM.
+- A successful singleton Shared form loads and publishes the complete parent from that issuer PE. A multi-PE Shared form uses B.ASSEMBLE explicit ranges; TLOAD never modifies source GPRs or GM.
 - A successful CUBE form writes raw valid values through CUBE storage indices and applies Zero, Max, Min, or undefined Null to physical tail positions without counting tails as valid elements.
 
 ## Memory effects and ordering
@@ -198,7 +198,7 @@ end;
 ### Ordering
 
 - Resolve the complete schema, selected PE mask, per-PE GPR inputs, dimensions, destination capacity, and all memory translations before the first architectural load effect.
-- On success publish the complete Local destination or the selected Shared quarters atomically at block commit. Unselected Shared quarters remain unchanged; on failure the prior destination and restart-visible block state are preserved.
+- On success publish the complete Local destination or complete Shared parent atomically at block commit. A multi-PE Shared producer publishes only after complete B.ASSEMBLE.LAST; failure preserves prior state.
 
 ## Exceptions
 
@@ -208,5 +208,5 @@ end;
 ## Examples
 
 - BSTART.TLOAD U8; B.DIM LB0, 64; B.DIM LB1, 8; B.DIM LB2, 64; B.IOR zero, a0; B.IOT mask=1111, ->T<1>; BSTOP
-- BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0011, ->S7<1>; BSTOP
+- BSTART.TLOAD FP16; B.DIM LB0, 32; B.DIM LB1, 4; B.IOS mask=0001, ->S7<1>; BSTOP
 - BSTART.TLOAD FP16; B.DATR {ND2N8, DTYPE_NONE, Max, EQ, Default, 0, 0}; B.DIM LB0=N; B.DIM LB1=K; B.IOT mask=1111, <last>, ->N<3>; BSTOP

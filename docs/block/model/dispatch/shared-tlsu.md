@@ -227,11 +227,10 @@ begin
             return FALSE;
         end;
         // Shared source readiness is a parent-level hardware gate. Pending or
-        // incomplete generations wait with no payload read or GM effect.
+        // incomplete generations keep the block active for retry with no
+        // payload read, binding consumption, or GM effect.
         if !SharedTilePublished(shared_tile_id) then
-            ConsumeBundleSharedBindings(1);
-            FinalizeBundleTileAttempt(TileExecution_Executed);
-            return TRUE;
+            return FALSE;
         end;
         let store_valid_columns = BundleSharedStoreValidColumns(shared_tile_id);
         let store_valid_rows = BundleSharedStoreValidRows(shared_tile_id);
@@ -311,11 +310,10 @@ begin
             end;
         else
             // The same parent-level readiness gate applies before any Local
-            // destination allocation or Shared payload materialization.
+            // destination allocation or Shared payload materialization. The
+            // block remains active so completion can retry after publication.
             if !SharedTilePublished(shared_tile_id) then
-                ConsumeBundleSharedBindings(1);
-                FinalizeBundleTileAttempt(TileExecution_Executed);
-                return TRUE;
+                return FALSE;
             end;
             if !BundleSharedTMOVDestinationSchemaLegal(shared_tile_id, function) ||
                !SelectedBundleTileMasksLegal() then

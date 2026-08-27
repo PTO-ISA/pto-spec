@@ -120,19 +120,7 @@ end;
 pure func BundleOperationDecodeCode(
     descriptor: BundleOperationDescriptor) => bits(12)
 begin
-    let code = BundleSelectorCode(descriptor);
-    if descriptor.operation_class == BundleOperation_TileMemory &&
-       !descriptor.mode_valid then
-        if descriptor.selector[4:0] == '01001' ||
-           descriptor.selector[4:0] == '01010' ||
-           descriptor.selector[4:0] == '01011' ||
-           descriptor.selector[4:0] == '01100' then
-            return Zeros{12} + 2;
-        elsif descriptor.selector[4:0] == '01110' then
-            return Zeros{12} + 1;
-        end;
-    end;
-    return code;
+    return BundleSelectorCode(descriptor);
 end;
 
 pure func BundleOperationDescriptorLegal(

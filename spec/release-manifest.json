@@ -410,7 +410,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TLOAD.asl",
-      "sha256": "73c63d1f554d3c350dd6053f24cb5c44b37a791e376c55995190ac21de038d6d"
+      "sha256": "010608593e81d20903837f51a8701f2e4555246b66a4adfe97fc3c850d7e2774"
     },
     {
       "path": "asl/block/execution/BSTART.TMATMUL.ACC.asl",
@@ -438,7 +438,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TMOV.asl",
-      "sha256": "6d288eada706e989668f12db3e3112913382a0e22c2f4334af17f81b0e861ff6"
+      "sha256": "733fade4ff6a4e49e5d3d82aa50fd6890278c14069beab48ba9bf3bd093f5acc"
     },
     {
       "path": "asl/block/execution/BSTART.TPREFETCH.asl",
@@ -446,7 +446,7 @@
     },
     {
       "path": "asl/block/execution/BSTART.TSTORE.asl",
-      "sha256": "f1f8c1f6f468b978171a48c7426b250df771112e0e9518bbed857676ba224895"
+      "sha256": "9fc0e2f03e0933d547cc5a9e8bac3762eb6a17f3465d7b2797cb3b7b9a6024bb"
     },
     {
       "path": "asl/block/execution/BSTART.VEC.asl",
@@ -526,7 +526,7 @@
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "808411c544be19d6e4ad18a2d13963788fe46b3fd24d24482f351e0e7444114c"
+      "sha256": "79cdbd2e308a414b0db71d430b6f508757b475273f4d881e0d877beeb7934e1b"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
@@ -546,7 +546,7 @@
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "012ba34e1fcc77854016225597483c76ddeab3e459621d27ab981f32ec04ab76"
+      "sha256": "b493165ab38fa4f0792d30cd67ef6319eab4a19db210627eead4ed92bacd613a"
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
@@ -594,11 +594,11 @@
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
-      "sha256": "da6ad11fb6c09d448458ffb68e10188882f6a7817e10e3b71efe3d1d32885dad"
+      "sha256": "c5ee2d9ad4f3ee8fef2cee6f315ff589a5442fb7eecf0190facfae5db236c2a9"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "94e57139f940dacb40c1efc1a1bcb5c53eea269f820373aee87df3010b4ff0f1"
+      "sha256": "e26cda013f071354913d4d990954588d9983af5bdd6768f806a15503e347ffcf"
     },
     {
       "path": "asl/block/model/dispatch/sorting-schema.asl",
@@ -614,7 +614,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "118dab395aee9e0af79466e070cc966d5d954c7e04b1ddaebb21a237012e7fc1"
+      "sha256": "491cb098e54da5d06b8d06e9846038b0f32b0e8478ad72af76c004be2ab315b7"
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
@@ -762,7 +762,7 @@
     },
     {
       "path": "asl/block/operands/B.IOS.asl",
-      "sha256": "e97d817f4e715c81ea985f9da01985a2c2fb2a2d1be61c649fa6dae513a92fd2"
+      "sha256": "0c7d045bd4c238d157db74af1fe843e0303e15821838534f900181e00dd5becb"
     },
     {
       "path": "asl/block/operands/B.IOT.asl",
@@ -2966,7 +2966,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
-      "sha256": "3ff6f061442dd8eaa0120f70a6af36dc9cc05ff6ef89393d6761375960149119"
+      "sha256": "4f7cb7eff9a658aec0bb3867adf7a07b057a7dbd9ea1cca6bf64421b8d1cfafb"
     },
     {
       "path": "asl/tile/memory-and-data-movement/regular/TPREFETCH.asl",
@@ -2974,7 +2974,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/regular/TSTORE.asl",
-      "sha256": "65283117b772dfe1983111a131231d4e7cd9d039210c51697b431f906ba42e8e"
+      "sha256": "3d393752c569421bf5a9a4b0ba91f11cf5f4ef12d41ff1c1ee0bd1fdecb4a1fb"
     },
     {
       "path": "asl/tile/model/capacity/local.asl",
@@ -3182,7 +3182,7 @@
     },
     {
       "path": "asl/tile/model/memory/shared-movement.asl",
-      "sha256": "0a56f576590adfed7f7bc227e6065188771a02678a8da5a94cb8ca768428443b"
+      "sha256": "8b8508f84f27f9933cd167c272ab5ca8a6bfd74ef42345264a8aadf1022a1620"
     },
     {
       "path": "asl/tile/model/memory/stride.asl",
@@ -3234,7 +3234,7 @@
     },
     {
       "path": "asl/tile/model/state/shared-registers.asl",
-      "sha256": "58da66d62a6e9fb88b283b725fbc11dff724d8d708accd1c70beb9a1e73851b1"
+      "sha256": "7c3b7357033ea1ec576d73174ef73b0833fb2ef2c1fc823f964feb31f7144879"
     },
     {
       "path": "asl/tile/model/state/types.asl",
@@ -3442,23 +3442,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "97c5f263f97ab822befdd4809293bbffcdb05408a3d8b031d8978022a54f884e"
+      "sha256": "9b6baf0fd80f093a2bf6c7648f6926c67ca7b9f2bf6f85756f1d61b885b980b2"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "606416c5fafdcf8cc9a4758845706c6f4f578c19b01bc001b4790b419845efc2"
+      "sha256": "08616dd48cb205a59a67f4ce137d93a73de8fbab1152b7795f0843c33f9af729"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "a9c0c10fff051bc8998f917e3c2c235215ed08000b3f1071a057043e910577bd"
+      "sha256": "98d9730c7a884b4c4eaae931f0fbae0997ab7375d5a281e96e6aed02ed34d61c"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "6ea641721f7f1c35fe6fddca56eaa244f443827e90274042b828c14ccd4859f5"
+      "sha256": "747eee40a939f7e0cbabe7a25246ab9341ab5790f1b315ff800a7547a9cd730a"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "f1d6ef8da001438116ca64854dfc58779a5007eb2d6bd7a112af5520ecc36a51"
+      "sha256": "a6800d373419d40a4b3cc5c54c583997654e7897d1b3afd1cae454c21267599d"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3504,7 +3504,7 @@
     },
     "tile_operations_total": 109
   },
-  "content_sha256": "1be6bcdd5e395ee194462ee59f74faa0bdb1e56158abf23f167139875ab7ced4",
+  "content_sha256": "4d34b608f4d88562f9a5299c300696215a74607d6983c1bc03890b284f310e9b",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4046,7 +4046,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TLOAD.md",
-      "sha256": "1677122a930715ba1633cf84d0746b028c332e94119b2ba21d1b49c825fb752a"
+      "sha256": "663346d5d88755e63d80d3a6b6cf3df41716b8edfc02c952ab1d5ca59fc7a14d"
     },
     {
       "kind": "generated-documentation",
@@ -4081,7 +4081,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TMOV.md",
-      "sha256": "67e80ebc1e1cc01c6be56e1ad68fe65bf8859f79f786f386075ddef8d5886535"
+      "sha256": "9052d6b330853ac2a3658892b3245e0ccf09ea34020f3c6ace4976f6f63797aa"
     },
     {
       "kind": "generated-documentation",
@@ -4091,7 +4091,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.TSTORE.md",
-      "sha256": "1d4424b1e98c805380c859a927c8c416632809cac4ee67f81a3a6790711e4583"
+      "sha256": "1dc9f163db115d896304016db17adb0d6ccea6f080de62ecfac4753467cc08c9"
     },
     {
       "kind": "generated-documentation",
@@ -4191,7 +4191,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/commands.md",
-      "sha256": "0782b04f1e46bd8f9176c18e17251de1235498392d6f1df010b5c14ccdcd35cf"
+      "sha256": "3efd24494bdc9efa34aa64f28aa6740127eaf52da644fc6d0b76cf77dd689a42"
     },
     {
       "kind": "generated-documentation",
@@ -4216,7 +4216,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/descriptor-legality.md",
-      "sha256": "d68217d360dd16d6996865cc2f74fcfa63cacefc74f0e1ed53c84fbdd5dcc426"
+      "sha256": "42f2f2350cd7f14b96e97a3e697b9c62a134a057dac1007d95fb09301403122e"
     },
     {
       "kind": "generated-documentation",
@@ -4276,12 +4276,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/shared-cube-matrix.md",
-      "sha256": "649e9715e9642c311ba6ccfc0051cf8ff5a2c97555ab7d98766cf4a48edcab5c"
+      "sha256": "9186733335b7b4401c99627e7a7645547c244c0fcbb0ba62b228180e9874a94d"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/shared-tlsu.md",
-      "sha256": "948f3bdd824b4cfa0faf85e72ecd6c3bb5d0090ec096ff5023ac58773fd0fc7a"
+      "sha256": "57bf4fe5f7727b449c45b6ba9eb1bcf38036c52eea7011e8786f5d389947366d"
     },
     {
       "kind": "generated-documentation",
@@ -4301,7 +4301,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tile-execution.md",
-      "sha256": "ce8d4408e74d66ee32d1ad46612da40caa3f5dff6e7eaf03b0abbe674ff0f12d"
+      "sha256": "e3b4529e68e297f31c2e8596fd216864284686225522cdbc5c6fc25ad321e5a4"
     },
     {
       "kind": "generated-documentation",
@@ -4486,7 +4486,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/operands/B.IOS.md",
-      "sha256": "92bc02878f9af1641d387ca37bf8b085759c9bf2d3fa7d76b7b701fcfd1e94d6"
+      "sha256": "fc402a95da77bb5af74330546e50ba0cc82b86fca81b3e896d6e34eba13b654f"
     },
     {
       "kind": "generated-documentation",
@@ -7241,7 +7241,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/regular/TLOAD.md",
-      "sha256": "dfdd82a35787b89e653850ac13e96db2c94a9617a70c26f1799a5e41e52bc264"
+      "sha256": "e60cd1a3abe6e901c96667bd0643b2f705092df16c0cba56098c5a567ade8502"
     },
     {
       "kind": "generated-documentation",
@@ -7251,7 +7251,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/regular/TSTORE.md",
-      "sha256": "950383f53049bf99adbcdd2ab2dcb4ac092010b60077c035322a52896db5e983"
+      "sha256": "59e53c4cd709dd4acc04015c59dc9749e93d9ad25f0cbe5da739e8edaa3b1ad4"
     },
     {
       "kind": "generated-documentation",
@@ -7511,7 +7511,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/shared-movement.md",
-      "sha256": "e58a994f8796e2ab89c2da8566965dbec06ab923baccb88e5ec4ad01f2b7af4d"
+      "sha256": "7f1ff84f340a91bbfc9ee9adee1c3d0d39197df965998a388d981b8d370c112c"
     },
     {
       "kind": "generated-documentation",
@@ -7576,7 +7576,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/shared-registers.md",
-      "sha256": "4fdf83fdd6dd2fcbd763c045f97a5cce830a464fa7c79efda7539ffce06b2f20"
+      "sha256": "eeaa25015fd70c3d5228afa1c5f88aadfdb4dbe199ca1a5f2747320bb91017ce"
     },
     {
       "kind": "generated-documentation",
@@ -7943,7 +7943,7 @@
       },
       {
         "id": "PTO-B-IOS-SHARED-STATE-001",
-        "sha256": "ee3c0aaa94342c9f7caf8a8c1a12dced2a7e0d8e16a5731912c071fbcf592aa8"
+        "sha256": "6eef8bb500d6aa931cdd18dd0e022e7bb1845e5bd11c4b340b5d98bf76410df6"
       },
       {
         "id": "PTO-B-IOT-STREAM-001",
@@ -8091,7 +8091,7 @@
       },
       {
         "id": "PTO-BSTART-TLOAD-MEMORY-001",
-        "sha256": "6db012b7fedada7b76d34a4d7d53116460f112cacf68897e7466ce6c0e78fd32"
+        "sha256": "7eddeb2ebc1faf6607e79e34a240a04061347394677e581cb6037325fa9ce2f6"
       },
       {
         "id": "PTO-BSTART-TMATMUL-ACC-CONTRACT-001",
@@ -8119,7 +8119,7 @@
       },
       {
         "id": "PTO-BSTART-TMOV-SHARED-001",
-        "sha256": "ad1a463152bb669f3c83edaeb755b33b9bcd26d150da3ef7e7ef05660c01d353"
+        "sha256": "3e75ef2f6f901ce694ce36d148f1e1756759a775a4b3772c96fbdaf3e61a7617"
       },
       {
         "id": "PTO-BSTART-TPREFETCH-MEMORY-001",
@@ -8131,7 +8131,7 @@
       },
       {
         "id": "PTO-BSTART-TSTORE-MEMORY-001",
-        "sha256": "90feba3a5939989334dd957c4cc42436475c5eaddcffd6838d978867d0c52089"
+        "sha256": "28deef38cc6ab1048aef45507096d4366fd3f9f89d5794f2645e2841e93814c8"
       },
       {
         "id": "PTO-BSTART-VEC-DECISION-BINDING-001",
@@ -8563,7 +8563,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-B-IOS",
-        "sha256": "f6d402a1f19421f8e2c8ed00bd3abed350bc42a2f948003e866f2ad4bb150144"
+        "sha256": "a14be4d3f1421b978e27c0597db16240005dbb9828d703ffd3804a532fde1c23"
       },
       {
         "id": "PTO-INST-BLOCK-B-IOT",
@@ -8655,7 +8655,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TLOAD",
-        "sha256": "dcd28de41bcd0c1833d78ddd2664e335c9ebcf54447b7d1a3f3c452f212c2a4b"
+        "sha256": "a49d773b47923e85ed85630fb6a8dab486af38ae73e8452ead741334426817ea"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMATMUL",
@@ -8683,7 +8683,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TMOV",
-        "sha256": "07050904be0b329092a444aa4ac47c05c5313af56a327f495c17e131c1c6d881"
+        "sha256": "887c4fdf36883dd1a60f453b1c952453db6a61aa948b49f8648cd0ceb582ec60"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TPREFETCH",
@@ -8691,7 +8691,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-TSTORE",
-        "sha256": "e9bc879392d817705adf55ea88392996afa9205774cfc7135fe477758bbacbb7"
+        "sha256": "3d93c33659b5fbf614a4e8e7f90ef51784b0c68c1041f8d64f2d0c3f95d836ac"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-VEC",
@@ -10835,7 +10835,7 @@
       },
       {
         "id": "PTO-INST-TILE-TLOAD",
-        "sha256": "bd480fe68b8f72ab830683c0db33426b9330c6c100144905c611572c92f5f41f"
+        "sha256": "1c0a9c75af4e1230557b675de1ac3a7e8779596c13b1ce4214777f1a9b209b57"
       },
       {
         "id": "PTO-INST-TILE-TLOG",
@@ -11051,7 +11051,7 @@
       },
       {
         "id": "PTO-INST-TILE-TSTORE",
-        "sha256": "d35c15f0e047480b51c419fb6efdffcd8625dd026d64435dbaa2c62f7368d691"
+        "sha256": "1fb8f6ae8d121d625beb9785a76182aefaf535ede018e333eac735ef565d95be"
       },
       {
         "id": "PTO-INST-TILE-TSUB",
@@ -11659,7 +11659,7 @@
       },
       {
         "id": "PTO-TLOAD-MEMORY-001",
-        "sha256": "5686c863d35d594ab6b4f8d2468a7f798caf469a95c154472b7db43a5cdfbe3a"
+        "sha256": "6c9e3ec670420890417566212cec7f98fb7202044c0ddf91acbee0d24bf50cd9"
       },
       {
         "id": "PTO-TLOG-CONTRACT-001",

@@ -42,6 +42,21 @@ begin
         data_type, TileLayout_RowMajor);
 end;
 
+readonly func BundleMatrixSharedSourcesReady(
+    shared_count: integer {0..4}) => boolean
+begin
+    if shared_count == 0 then return TRUE; end;
+    for ordinal = 0 to shared_count - 1 looplimit 4 do
+        let binding = ordinal as integer {0..3};
+        if _BundleSharedBindings[[binding]].valid &&
+           !BundleSharedBindingIsDestination(binding) &&
+           !SharedTilePublished(BundleSharedBindingId(binding)) then
+            return FALSE;
+        end;
+    end;
+    return TRUE;
+end;
+
 readonly func BundleMatrixSharedPrimarySchemaLegal(
     ordinal: integer {0..3},
     logical_rows: integer {1..65535},

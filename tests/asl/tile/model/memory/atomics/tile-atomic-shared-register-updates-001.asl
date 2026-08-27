@@ -22,8 +22,9 @@ begin
     assert !SharedTileRecord(primary).descriptor_valid;
     assert SharedTileRecord(primary).initialized_mask == Zeros{4};
 
-    // A partial first write establishes the descriptor and only its selected
-    // fixed-offset quarters.
+    // A direct multi-PE fragment candidate may establish internal producer
+    // metadata, but it is not whole-parent-ready or consumer-visible without
+    // B.ASSEMBLE.LAST.
     let first_update = AtomicUpdateSharedTile(primary, _Tiles[[0]], '1010');
     assert first_update;
     assert SharedTileRecord(primary).descriptor_valid;
@@ -33,7 +34,8 @@ begin
     assert SharedTileRecord(primary).tile.payload[[32]] ==
         Zeros{PTO_XLEN} + 33;
 
-    // Compatible partial updates preserve unselected quarters.
+    // Compatible internal fragment updates preserve the candidate record but
+    // still cannot publish a partial parent.
     var replacement = _Tiles[[0]];
     replacement.payload[[0]] = Zeros{PTO_XLEN} + 0xaa;
     replacement.payload[[16]] = Zeros{PTO_XLEN} + 0xbb;
@@ -46,9 +48,10 @@ begin
     assert SharedTileRecord(primary).tile.payload[[32]] ==
         Zeros{PTO_XLEN} + 0xcc;
 
-    let materialized = MaterializeSharedTile(primary, '1111');
-    assert materialized.payload[[0]] == Zeros{PTO_XLEN} + 0xaa;
-    assert materialized.payload[[16]] ==
+    assert !SharedTilePublished(primary);
+    assert ReadSharedTileWord(primary, 0) ==
+        UndefinedSharedTileWord(primary, 0);
+    assert ReadSharedTileWord(primary, 16 as PackedTileElementIndex) ==
         UndefinedSharedTileWord(primary, 16 as PackedTileElementIndex);
 
     // Descriptor mismatch rejects before any selected payload is committed.
@@ -108,12 +111,13 @@ begin
     assert first_partial;
     assert SharedTileRecord(partial).allocation_mask == '1010';
     assert SharedTileRecord(partial).initialized_mask == '1010';
-    assert SharedTileFullyInitialized(partial);
+    assert !SharedTileFullyInitialized(partial);
+    assert !SharedTilePublished(partial);
     let second_partial = AtomicUpdateSharedTile(partial, partial_snapshot, '0101');
     assert !second_partial;
     assert SharedTileRecord(partial).allocation_mask == '1010';
     assert SharedTileRecord(partial).initialized_mask == '1010';
-    assert SharedTileFullyInitialized(partial);
+    assert !SharedTileFullyInitialized(partial);
 end;
 func main() => integer
 begin

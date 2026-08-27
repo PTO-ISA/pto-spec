@@ -156,7 +156,7 @@ end;
 ## Defaults and encoded zero
 
 - Concrete DataType codes explicitly select the transfer type. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.
-- Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated Shared EXTRACT source defaults them to 1, 1, and ValidCol.
+- Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated, pending, or incomplete Shared source remains waiting and produces no destination effect.
 - PE_MASK=0000 is a strict no-op before source reads, destination allocation, publication checks, faults, or binding consumption.
 
 ## Legality
@@ -182,7 +182,7 @@ end;
 ### Ordering
 
 - Complete role, mask, size, descriptor, shape, data-type, layout, readiness, and allocation preflight precedes every payload, publication, or destination effect.
-- Each successful Shared destination update commits its selected payload and metadata atomically; INSERT leaves publication false, while PUBLISH may establish it after completeness. A Shared source read is read-only.
+- A singleton Local-to-Shared writer publishes the complete parent atomically. A multi-PE writer publishes only through complete B.ASSEMBLE.LAST; a Shared source read is read-only.
 
 ## Exceptions
 

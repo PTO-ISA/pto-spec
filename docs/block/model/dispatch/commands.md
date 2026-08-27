@@ -254,16 +254,8 @@ begin
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            let local_to_shared =
-                _BundleOperation.valid &&
-                _BundleOperation.operation_class == BundleOperation_TileMemory &&
-                _BundleOperation.selector_valid &&
-                (_BundleOperation.selector[4:0] == '01001' ||
-                 _BundleOperation.selector[4:0] == '01010');
             if !BundleTileMaskCanAppend(pe_mask) ||
-                (local_destination && tile_size == 0) ||
-                (local_to_shared &&
-                 CommandOperandPresent(form, CommandField_DstTile)) then
+                (local_destination && tile_size == 0) then
                 SetFault(Fault_TileLegality, ReadTPC());
                 return CommandExecution_Rejected;
             end;

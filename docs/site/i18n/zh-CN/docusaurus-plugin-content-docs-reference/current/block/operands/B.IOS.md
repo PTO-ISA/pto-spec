@@ -166,7 +166,7 @@ end;
 
 - The common PE-mode decoder expands PEMode once to the semantic four-PE mask used by every effective Shared binding.
 - A zero decoded mask is a strict no-op. A source binding is read-only and never changes its Shared descriptor, allocation mask, initialized mask, or payload.
-- A successful destination atomically updates selected payload quarters and a compatible persistent descriptor; its first write fixes the allocation mask and later writes cannot expand it.
+- A successful singleton destination publishes the complete Shared parent; a multi-PE destination uses B.ASSEMBLE with explicit non-overlapping ranges and atomic LAST publication.
 
 ## Memory effects and ordering
 

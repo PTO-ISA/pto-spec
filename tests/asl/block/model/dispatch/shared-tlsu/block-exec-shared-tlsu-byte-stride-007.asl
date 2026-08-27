@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TSTORE"],"kind":"execution","summary":"Shared full and partial TSTORE use explicit or omitted byte row strides","pass_condition":"Function 1 derives a dense byte pitch and Function 14 honors explicit and omitted byte pitches across two rows","related_sources":["asl/tile/model/memory/shared-movement.asl","asl/block/execution/BSTART.TSTORE.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-BYTE-STRIDE-EXECUTION-007","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TSTORE"],"kind":"execution","summary":"Canonical Shared TSTORE uses per-PE explicit or omitted byte row strides.","pass_condition":"Function 1 derives a dense pitch for all PEs and honors explicit and omitted pitches for one selected consumer across two rows.","related_sources":["asl/tile/model/memory/shared-movement.asl","asl/block/execution/BSTART.TSTORE.asl"]}
 pure func SharedByteStrideStart(function: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -60,12 +60,12 @@ begin
     assert full_completed;
     AssertSharedByteStrideStore(Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 16);
 
-    // Function 14 reads the same per-PE selectors but permits a nonzero subset.
+    // Function 1 reads the same per-PE selectors for a nonzero subset.
     ResetBundleControlState();
     WriteGPR(2, Zeros{PTO_XLEN} + 0x100);
     WriteGPR(3, Zeros{PTO_XLEN} + 24);
     let partial_start = ExecuteCommandInstruction(
-        SharedByteStrideStart('01110'), 32);
+        SharedByteStrideStart('00001'), 32);
     let partial_source = ExecuteCommandInstruction(
         SharedByteStrideSource(Zeros{6} + 7, '001'), 32);
     let partial_ior = ExecuteCommandInstruction(
@@ -78,14 +78,14 @@ begin
     AssertSharedByteStrideStore(
         Zeros{PTO_XLEN} + 0x100, Zeros{PTO_XLEN} + 24);
 
-    // Function 14 omission uses the same descriptor-derived dense byte pitch.
+    // Function 1 omission uses the same descriptor-derived dense byte pitch.
     ResetBundleControlState();
     Store(Zeros{PTO_XLEN}, 8, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 8, 8, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 16, 8, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 24, 8, Zeros{PTO_XLEN});
     let omitted_start = ExecuteCommandInstruction(
-        SharedByteStrideStart('01110'), 32);
+        SharedByteStrideStart('00001'), 32);
     let omitted_source = ExecuteCommandInstruction(
         SharedByteStrideSource(Zeros{6} + 7, '001'), 32);
     assert omitted_start == CommandExecution_Executed;
