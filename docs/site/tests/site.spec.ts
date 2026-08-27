@@ -663,6 +663,12 @@ test('critical routes have no serious WCAG violations', async ({page}) => {
     '/reference/governance/adr-process/',
   ]) {
     await page.goto(route);
+    if (route === '/reference/governance/adr-process/') {
+      const markdownTable = page.getByRole('table').first();
+      await expect(markdownTable).toHaveAttribute('tabindex', '0');
+      await markdownTable.focus();
+      await expect(markdownTable).toBeFocused();
+    }
     const mobileNavigation = page.locator('summary').filter({hasText: /Browse specification|浏览规范/}).first();
     if (await mobileNavigation.isVisible()) {
       await mobileNavigation.focus();
