@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-PARTIAL-EXEC-004","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":[],"kind":"execution","summary":"Shared TLSU partial masks permit undefined lanes and reject descriptor mismatch","pass_condition":"partial-lane and descriptor mismatch assertions hold","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-PARTIAL-EXEC-004","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-B-SHARED-WHOLE-PARENT-READY-001"],"kind":"execution","summary":"Canonical Shared TLSU decouples producer and consumer masks and rejects descriptor mismatch.","pass_condition":"A singleton producer publishes the full parent, different consumer masks read it completely, and an incompatible rewrite rejects before state changes.","related_sources":["asl/tile/model/state/shared-registers.asl"]}
 pure func BundleTestTLSUStart(function: bits(5), data_type: bits(5))
         => bits(64)
 begin
@@ -68,13 +68,14 @@ end;
 
 func TestBundleSharedTLSUPartial()
 begin
-    // Insert creates a one-PE allocation while the Local source persists.
+    // Canonical Function 2 creates a one-PE whole-parent publication while
+    // the Local source persists.
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
+    ConfigureTile(0, 128, 16, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
     let insert_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let insert_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 23, '0001', '001'), 32);
     let insert_local = ExecuteCommandInstruction(
@@ -82,7 +83,7 @@ begin
     assert insert_start == CommandExecution_Executed;
     assert insert_shared == CommandExecution_Executed;
     assert insert_local == CommandExecution_Executed;
-    assert _BundleOperation.selector == Zeros{10} + 9;
+    assert _BundleOperation.selector == Zeros{10} + 2;
     assert BundleSharedTLSUSelected();
     assert BundleSharedBindingCount() == 1;
     assert BundleTileBindingCount() == 1;
@@ -104,11 +105,11 @@ begin
     assert SharedTileFullyInitialized((Zeros{6} + 23) as SharedTileID);
     assert _Tiles[[0]].allocated;
 
-    // A read may select an unallocated Shared PE lane. That lane has
-    // undefined-register value behavior rather than raising a fault.
+    // Producer and consumer masks are independent; every selected consumer
+    // reads the same complete parent.
     ResetBundleControlState();
     let partial_broadcast_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let partial_broadcast_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 23, '0000', '101'), 32);
     let partial_broadcast_destination = ExecuteCommandInstruction(
@@ -119,11 +120,14 @@ begin
     let partial_broadcast_completed = ExecuteBundleTileOperation();
     assert partial_broadcast_completed;
     assert _LastFault == Fault_None;
+    let broadcast_tile = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[broadcast_tile]].contents_defined;
+    assert ReadTileElement(broadcast_tile, 0, 0) == Zeros{PTO_XLEN} + 7;
 
     ResetBundleControlState();
     ClearFault();
     let partial_store_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01110', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
     let partial_store_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 23, '0000', '101'), 32);
     let partial_store_address = ExecuteCommandInstruction(
@@ -139,12 +143,12 @@ begin
     // source lifetime or Shared record changes.
     ResetBundleControlState();
     ClearFault();
-    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U64,
+    ConfigureTile(0, 128, 8, 2, 1, 2, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 9);
     WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 10);
     let mismatch_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let mismatch_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 23, '0001', '010'), 32);
     let mismatch_local = ExecuteCommandInstruction(

@@ -28,6 +28,13 @@ This page is a generated reference view of the normative ASL unit.
 // published generation.
 // NDF-END: PTO-B-ASSEMBLE-SHARED-GENERATION-001
 
+// NDF-BEGIN: PTO-B-SUBVIEW-SHARED-PER-PE-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// A Shared B.SUBVIEW source MUST evaluate GPR[RegSrc]+uimm11 in each
+// participating PE's private GPR context. The encoded size is common, but
+// selected PEs may materialize distinct ranges of one published parent.
+// NDF-END: PTO-B-SUBVIEW-SHARED-PER-PE-001
+
 func AbortBundleSharedGenerationsForBundle()
 begin
     for binding = 0 to 3 do
@@ -239,6 +246,7 @@ begin
         _SharedTiles[[index]].descriptor_valid = TRUE;
         _SharedTiles[[index]].allocation_mask = participant_mask;
         _SharedTiles[[index]].initialized_mask = participant_mask;
+        _SharedTiles[[index]].whole_parent_ready = TRUE;
         _SharedTiles[[index]].published = TRUE;
         _SharedTiles[[index]].tile =
             _SharedGenerations[[index]].working_tile;
@@ -254,6 +262,7 @@ begin
     _SharedTiles[[index]].descriptor_valid = FALSE;
     _SharedTiles[[index]].allocation_mask = Zeros{4};
     _SharedTiles[[index]].initialized_mask = Zeros{4};
+    _SharedTiles[[index]].whole_parent_ready = FALSE;
     _SharedTiles[[index]].published = FALSE;
     return prior;
 end;
@@ -262,6 +271,24 @@ func RestoreBundleSharedGenerationProbe(
     shared_tile_id: SharedTileID, prior: SharedTileInfo)
 begin
     _SharedTiles[[SharedTileArrayIndex(shared_tile_id)]] = prior;
+end;
+
+readonly func BundleSharedSubviewOffsetRawForPE(
+    binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => Word
+begin
+    let modifier = _BundleSharedBindings[[binding]].source0_subview;
+    return ReadPEAbsoluteGPROperand(pe_identity, modifier.reg_src) +
+        ZeroExtend{PTO_XLEN}(modifier.uimm11);
+end;
+
+readonly func BundleSharedSubviewOffsetCellsForPE(
+    binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId)
+    => integer {0..2047}
+begin
+    let raw_offset = UInt(BundleSharedSubviewOffsetRawForPE(
+        binding, pe_identity));
+    assert raw_offset <= 2047;
+    return raw_offset as integer {0..2047};
 end;
 
 readonly func BundleSharedSubviewLegal(
@@ -279,43 +306,52 @@ begin
         return FALSE;
     end;
     let modifier = _BundleSharedBindings[[binding]].source0_subview;
-    let raw_offset = UInt(modifier.offset);
-    if raw_offset > 2047 || modifier.size_code == 0 then return FALSE; end;
-    let offset_cells = raw_offset as integer {0..2047};
+    if modifier.size_code == 0 then return FALSE; end;
     let selected_bytes = TileSizeCodeBytes(
         modifier.size_code as integer {1..12});
-    if offset_cells * PTO_TILE_CELL_BYTES + selected_bytes >
-           parent.capacity_bytes then
-        return FALSE;
-    end;
     let element_bits = TileElementBits(parent.data_type);
     let bounded_columns = parent.columns as integer {1..65535};
-    let offset_elements =
-        ((offset_cells * PTO_TILE_CELL_BYTES * 8) DIVRM element_bits)
-        as integer {0..524287};
-    let selected_elements = ((selected_bytes * 8) DIVRM element_bits)
-        as integer {1..524288};
-    let origin_column = (offset_elements MOD bounded_columns)
-        as integer {0..65535};
-    if selected_elements > bounded_columns - origin_column &&
-       (origin_column != 0 || selected_elements MOD bounded_columns != 0) then
-        return FALSE;
-    end;
-    if selected_elements > bounded_columns - origin_column &&
-       selected_elements DIVRM bounded_columns > 65535 then
-        return FALSE;
+    for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+        let pe_identity = pe as MemoryAgentId;
+        if _BundleSharedBindings[[binding]].pe_mask[
+               PTOPEMaskBitOfPEIdentity(pe_identity)] == '1' then
+            let raw_offset = UInt(BundleSharedSubviewOffsetRawForPE(
+                binding, pe_identity));
+            if raw_offset > 2047 then return FALSE; end;
+            let offset_cells = raw_offset as integer {0..2047};
+            if offset_cells * PTO_TILE_CELL_BYTES + selected_bytes >
+                   parent.capacity_bytes then
+                return FALSE;
+            end;
+            let offset_elements =
+                ((offset_cells * PTO_TILE_CELL_BYTES * 8) DIVRM element_bits)
+                as integer {0..524287};
+            let selected_elements = ((selected_bytes * 8) DIVRM element_bits)
+                as integer {1..524288};
+            let origin_column = (offset_elements MOD bounded_columns)
+                as integer {0..65535};
+            if selected_elements > bounded_columns - origin_column &&
+               (origin_column != 0 || selected_elements MOD bounded_columns != 0) then
+                return FALSE;
+            end;
+            if selected_elements > bounded_columns - origin_column &&
+               selected_elements DIVRM bounded_columns > 65535 then
+                return FALSE;
+            end;
+        end;
     end;
     return TRUE;
 end;
 
-readonly func MaterializeBundleSharedSubview(
-    binding: BundleSharedBindingIndex) => TileInfo
+readonly func MaterializeBundleSharedSubviewForPE(
+    binding: BundleSharedBindingIndex, pe_identity: MemoryAgentId) => TileInfo
 begin
     assert BundleSharedSubviewLegal(binding);
     let shared_tile_id = _BundleSharedBindings[[binding]].shared_tile_id;
     let parent = SharedTileRecord(shared_tile_id).tile;
     let modifier = _BundleSharedBindings[[binding]].source0_subview;
-    let offset_cells = UInt(modifier.offset) as integer {0..2047};
+    let offset_cells = BundleSharedSubviewOffsetCellsForPE(
+        binding, pe_identity);
     let selected_bytes = TileSizeCodeBytes(
         modifier.size_code as integer {1..12});
     let element_bits = TileElementBits(parent.data_type);
@@ -368,6 +404,12 @@ begin
     tile.defined_valid_elements =
         (tile.valid_rows * tile.valid_columns) as integer {0..524288};
     return tile;
+end;
+
+readonly func MaterializeBundleSharedSubview(
+    binding: BundleSharedBindingIndex) => TileInfo
+begin
+    return MaterializeBundleSharedSubviewForPE(binding, _CurrentMemoryAgent);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

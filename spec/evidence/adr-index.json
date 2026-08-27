@@ -8031,12 +8031,123 @@
         "0.58.4.1"
       ],
       "title": "PTO ISA 0.58.4.1 publication-contract correction boundary"
+    },
+    {
+      "accepted": "2026-08-26",
+      "affected_ndf": [
+        "PTO-B-SHARED-WHOLE-PARENT-READY-001",
+        "PTO-B-ASSEMBLE-SHARED-GENERATION-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+        "PTO-TILE-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT"
+      ],
+      "approvers": [
+        "PTO ISA maintainers"
+      ],
+      "authors": [
+        "PTO ISA maintainers"
+      ],
+      "baseline": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
+      "created": "2026-08-26",
+      "id": "ADR-0105",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/159",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0105-shared-whole-parent-readiness.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.4.1"
+      ],
+      "title": "Shared whole-parent readiness and single-issuer publication"
+    },
+    {
+      "accepted": "2026-08-26",
+      "affected_ndf": [
+        "PTO-B-SUBVIEW-RANGE-001",
+        "PTO-B-SUBVIEW-SHARED-PER-PE-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-SUBVIEW",
+        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+        "PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX"
+      ],
+      "approvers": [
+        "PTO ISA maintainers"
+      ],
+      "authors": [
+        "PTO ISA maintainers"
+      ],
+      "baseline": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
+      "created": "2026-08-26",
+      "id": "ADR-0106",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/159",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0106-shared-source-subview-per-pe.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.4.1"
+      ],
+      "title": "Shared source B.SUBVIEW uses per-PE offsets"
+    },
+    {
+      "accepted": "2026-08-26",
+      "affected_ndf": [
+        "PTO-ISA-LEGACY-SHARED-MOVEMENT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-BSTART-TMOV",
+        "PTO-BLOCK-BSTART-TSTORE",
+        "PTO-TILE-TMOV",
+        "PTO-TILE-TSTORE",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU"
+      ],
+      "approvers": [
+        "PTO ISA maintainers"
+      ],
+      "authors": [
+        "PTO ISA maintainers"
+      ],
+      "baseline": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
+      "created": "2026-08-26",
+      "id": "ADR-0107",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/159",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0107-remove-legacy-shared-movement.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.4.1"
+      ],
+      "title": "Remove legacy Shared movement Functions"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 97
+    "record_count": 100
   }
 }

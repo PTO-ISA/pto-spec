@@ -16,6 +16,14 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/state/shared-registers.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-STATE-SHARED-REGISTERS","surface":"tile","classification":["model","state","shared-registers"],"depends_on":["PTO-TILE-MODEL-STATE-LOCAL-REGISTERS","PTO-TILE-MODEL-LEGALITY-PE-MASK","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
+
+// NDF-BEGIN: PTO-B-SHARED-WHOLE-PARENT-READY-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// Shared producer participation, logical coverage, whole_parent_ready, and
+// published visibility MUST remain distinct. Every Shared source consumer MUST
+// wait/no-op before payload access until whole_parent_ready and published are
+// both true; producer and consumer masks are independent.
+// NDF-END: PTO-B-SHARED-WHOLE-PARENT-READY-001
 pure func SharedTileArrayIndex(shared_tile_id: SharedTileID) => SharedTileIndex
 begin
     return UInt(shared_tile_id) as SharedTileIndex;
@@ -24,12 +32,6 @@ end;
 readonly func SharedTileRecord(shared_tile_id: SharedTileID) => SharedTileInfo
 begin
     return _SharedTiles[[SharedTileArrayIndex(shared_tile_id)]];
-end;
-
-readonly func SharedTileAnyQuarterInitialized(shared_tile_id: SharedTileID) => boolean
-begin
-    let shared = SharedTileRecord(shared_tile_id);
-    return shared.descriptor_valid && shared.initialized_mask != Zeros{4};
 end;
 
 readonly func SharedTileFullyInitialized(shared_tile_id: SharedTileID) => boolean
@@ -43,7 +45,8 @@ end;
 readonly func SharedTilePublished(shared_tile_id: SharedTileID) => boolean
 begin
     let shared = SharedTileRecord(shared_tile_id);
-    return SharedTileFullyInitialized(shared_tile_id) && shared.published;
+    return SharedTileFullyInitialized(shared_tile_id) &&
+           shared.whole_parent_ready && shared.published;
 end;
 
 readonly func SharedTileCooperativeMatrixReady(
@@ -51,9 +54,8 @@ readonly func SharedTileCooperativeMatrixReady(
 begin
     let shared = SharedTileRecord(shared_tile_id);
     return SharedTileDescriptorLegal(shared_tile_id) &&
-           shared.allocation_mask == '1111' &&
-           shared.initialized_mask == '1111' &&
-           shared.published && shared.tile.contents_defined;
+           shared.whole_parent_ready && shared.published &&
+           shared.tile.contents_defined;
 end;
 
 readonly func SharedTileDescriptorLegal(shared_tile_id: SharedTileID) => boolean
@@ -129,42 +131,23 @@ readonly func ReadSharedTileWord(shared_tile_id: SharedTileID,
                                  element: PackedTileElementIndex) => Word
 begin
     let shared = SharedTileRecord(shared_tile_id);
-    if !shared.descriptor_valid then
-        return UndefinedSharedTileWord(shared_tile_id, element);
-    end;
-    let region = SharedTileElementRegion(shared.tile, element);
-    if shared.initialized_mask[PTOPEMaskBitOfPEIdentity(region)] == '0' then
+    if !shared.descriptor_valid || !shared.whole_parent_ready ||
+       !TileLogicalElementDefined(shared.tile, element) then
         return UndefinedSharedTileWord(shared_tile_id, element);
     end;
     return TileReadLogicalElement(shared.tile, element);
 end;
 
-// Consumers observe undefined-register values for uninitialized quarters.
-// Materialization is a read-only snapshot and never changes Shared state.
+// PE_MASK selects consumers, not payload quarters. Materialization returns the
+// same complete parent snapshot to every participating consumer and never
+// changes Shared state.
 readonly func MaterializeSharedTile(shared_tile_id: SharedTileID,
                                     pe_mask: bits(4)) => TileInfo
 begin
     let shared = SharedTileRecord(shared_tile_id);
-    assert SharedTileDescriptorLegal(shared_tile_id);
+    assert SharedTilePublished(shared_tile_id);
     var tile = shared.tile;
-    tile.contents_defined =
-        (pe_mask AND shared.initialized_mask) == pe_mask;
-    tile.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
-    tile.defined_valid_elements = 0;
-    tile.packed_defined_elements = ZeroPackedTileDefinedElements();
-    for element = 0 to tile.rows * tile.columns - 1
-        looplimit 524288 do
-        let index = element as PackedTileElementIndex;
-        let region = SharedTileElementRegion(tile, index);
-        if pe_mask[PTOPEMaskBitOfPEIdentity(region)] == '1' then
-            tile = TileInfoWithLogicalElement(tile, index,
-                ReadSharedTileWord(shared_tile_id, index));
-        end;
-    end;
-    if tile.contents_defined then
-        tile.defined_valid_elements =
-            (tile.valid_rows * tile.valid_columns) as integer {0..524288};
-    end;
+    assert tile.contents_defined;
     tile.location = TileLocation_Any;
     return tile;
 end;
@@ -304,9 +287,10 @@ begin
     return (old.initialized_mask OR pe_mask) == old.allocation_mask;
 end;
 
-// One complete record assignment is the architectural commit point. Partial
-// initialized writes validate descriptor compatibility before copying any
-// selected fixed-offset quarter into the snapshot. A zero mask is a true NOP.
+// One complete record assignment is the architectural commit point. A
+// singleton producer publishes the complete parent; multi-PE candidates copy
+// their internal writer fragments only for B.ASSEMBLE generation handling.
+// A zero mask is a true NOP.
 func AtomicUpdateSharedTileWithPublication(
     shared_tile_id: SharedTileID, tile: TileInfo, pe_mask: bits(4),
     publish: boolean) => boolean
@@ -320,15 +304,25 @@ begin
     end;
     var updated = old;
     if !old.descriptor_valid then
+        let direct_complete = PEMaskPopulation(pe_mask) == 1 ||
+            pe_mask == '1111';
         updated.descriptor_valid = TRUE;
         updated.allocation_mask = pe_mask;
         updated.tile = tile;
         updated.initialized_mask = pe_mask;
-        updated.published = publish;
+        updated.whole_parent_ready = publish && direct_complete &&
+            tile.contents_defined;
+        updated.published = updated.whole_parent_ready;
+    elsif publish && PEMaskPopulation(pe_mask) == 1 then
+        updated.allocation_mask = pe_mask;
+        updated.initialized_mask = pe_mask;
+        updated.tile = tile;
         updated.tile.contents_defined = TRUE;
         updated.tile.defined_valid_elements =
             (updated.tile.valid_rows * updated.tile.valid_columns)
                 as integer {0..524288};
+        updated.whole_parent_ready = TRUE;
+        updated.published = TRUE;
     else
         for element = 0 to tile.rows * tile.columns - 1
             looplimit 524288 do
@@ -345,10 +339,9 @@ begin
             end;
         end;
         updated.initialized_mask = old.initialized_mask OR pe_mask;
-        // Every valid element belongs to exactly one fixed-offset quarter.
-        // Once complementary atomic updates have initialized all four
-        // quarters, their aggregate descriptor/payload snapshot is defined
-        // even though each individual partial source was not a full tile.
+        // Internal multi-PE B.ASSEMBLE candidates use disjoint writer regions.
+        // Once their declared participant set has supplied all regions, the
+        // candidate descriptor/payload snapshot is complete for LAST.
         updated.tile.contents_defined =
             updated.initialized_mask == updated.allocation_mask;
         if updated.tile.contents_defined then
@@ -356,8 +349,11 @@ begin
                 (updated.tile.valid_rows * updated.tile.valid_columns)
                     as integer {0..524288};
         end;
+        let direct_complete = pe_mask == '1111';
+        updated.whole_parent_ready = old.whole_parent_ready ||
+            (publish && direct_complete && updated.tile.contents_defined);
         updated.published = old.published ||
-            (publish && updated.tile.contents_defined);
+            (publish && direct_complete && updated.tile.contents_defined);
     end;
     _SharedTiles[[index]] = updated;
     return TRUE;

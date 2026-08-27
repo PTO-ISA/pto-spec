@@ -68,13 +68,14 @@ end;
 
 func TestBundleSharedTLSUMaskAndPartition()
 begin
-    // Insert creates a one-PE allocation while the Local source persists.
+    // Canonical Function 2 creates a one-PE whole-parent publication while
+    // the Local source persists.
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 7);
     let insert_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let insert_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 23, '0001', '001'), 32);
     let insert_local = ExecuteCommandInstruction(
@@ -82,7 +83,7 @@ begin
     assert insert_start == CommandExecution_Executed;
     assert insert_shared == CommandExecution_Executed;
     assert insert_local == CommandExecution_Executed;
-    assert _BundleOperation.selector == Zeros{10} + 9;
+    assert _BundleOperation.selector == Zeros{10} + 2;
     assert BundleSharedTLSUSelected();
     assert BundleSharedBindingCount() == 1;
     assert BundleTileBindingCount() == 1;
@@ -113,7 +114,7 @@ begin
     ResetBundleControlState();
     ClearFault();
     let zero_insert_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01001', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let zero_insert_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 23, '0001', Zeros{3}), 32);
     let zero_insert_local = ExecuteCommandInstruction(
@@ -136,7 +137,7 @@ begin
     ResetBundleControlState();
     ClearFault();
     let zero_extract_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01100', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let zero_extract_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 23, '0000', Zeros{3}), 32);
     let zero_extract_destination = ExecuteCommandInstruction(
@@ -150,13 +151,13 @@ begin
     assert !_BundleSharedBindings[[0]].consumed;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
 
-    // Function 14 is the accepted partition-store encoding variant.
+    // Canonical Function 1 accepts a partial consumer mask.
     ResetBundleControlState();
     ClearFault();
     _SystemRegisters.thread_id = Zeros{PTO_XLEN};
     WriteGPR(2, Zeros{PTO_XLEN} + 16);
     let partition_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01110', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00001', Zeros{5} + 24), 32);
     let partition_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 23, '0000', '001'), 32);
     let partition_address = ExecuteCommandInstruction(

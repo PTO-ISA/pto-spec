@@ -847,9 +847,7 @@
             7,
             8,
             9,
-            10,
-            11,
-            12
+            10
           ]
         },
         {
@@ -1059,9 +1057,7 @@
             7,
             8,
             9,
-            10,
-            11,
-            12
+            10
           ]
         },
         {
@@ -1271,9 +1267,7 @@
             7,
             8,
             9,
-            10,
-            11,
-            12
+            10
           ]
         },
         {
@@ -3230,56 +3224,6 @@
         }
       ],
       "encoding_kind": "L32",
-      "encoding_variants": [
-        {
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x07ffffff",
-              "match": "0x00911181",
-              "width_bits": 32
-            }
-          ],
-          "function": 9,
-          "name": "TMOV.L2S.INSERT"
-        },
-        {
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x07ffffff",
-              "match": "0x00a11181",
-              "width_bits": 32
-            }
-          ],
-          "function": 10,
-          "name": "TMOV.L2S.PUBLISH"
-        },
-        {
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x07ffffff",
-              "match": "0x00b11181",
-              "width_bits": 32
-            }
-          ],
-          "function": 11,
-          "name": "TMOV.S2L.BROADCAST"
-        },
-        {
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x07ffffff",
-              "match": "0x00c11181",
-              "width_bits": 32
-            }
-          ],
-          "function": 12,
-          "name": "TMOV.S2L.EXTRACT"
-        }
-      ],
       "fields": [
         {
           "name": "DataType",
@@ -3481,20 +3425,6 @@
         }
       ],
       "encoding_kind": "L32",
-      "encoding_variants": [
-        {
-          "encoding": [
-            {
-              "index": 0,
-              "mask": "0x07ffffff",
-              "match": "0x00e11181",
-              "width_bits": 32
-            }
-          ],
-          "function": 14,
-          "name": "TSTORE.SPART"
-        }
-      ],
       "fields": [
         {
           "name": "DataType",

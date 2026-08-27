@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TSTORE"],"kind":"fault","summary":"Shared TSTORE Function 1 is full-PE only while Function 14 accepts a nonzero subset.","pass_condition":"A nonzero partial mask rejects Function 1 before memory effects and executes only under Function 14.","related_sources":["asl/tile/model/memory/shared-movement.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TSTORE-MASK-LEGALITY-001","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":["PTO-ARCH-GM-ACCESS-001","PTO-INST-TILE-TSTORE"],"kind":"fault","summary":"Canonical Function 1 accepts partial Shared consumers and retired Function 14 stays reserved.","pass_condition":"A one-PE Function 1 store writes the complete parent through that PE while Function 14 rejects at decode before memory effects.","related_sources":["asl/tile/model/memory/shared-movement.asl"]}
 pure func StoreMaskTestTLSUStart(function: bits(5), data_type: bits(5))
         => bits(64)
 begin
@@ -21,7 +21,7 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 16, 1, 16, TileDataType_U64,
+    ConfigureTile(0, 128, 1, 16, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
     InstallSharedTile((Zeros{6} + 9) as SharedTileID, _Tiles[[0]], '1000');
@@ -33,21 +33,18 @@ begin
     assert full_start == CommandExecution_Executed;
     assert full_shared == CommandExecution_Executed;
     let full_completed = ExecuteBundleTileOperation();
-    assert !full_completed;
-    assert _LastFault == Fault_TileLegality;
-    assert _Memory[[0]] == Zeros{8};
+    assert full_completed;
+    assert _LastFault == Fault_None;
+    assert _Memory[[0]] == Zeros{8} + 0x5a;
 
     ResetBundleControlState();
     ClearFault();
-    let partial_start = ExecuteCommandInstruction(
+    _Memory[[0]] = Zeros{8};
+    let retired_start = ExecuteCommandInstruction(
         StoreMaskTestTLSUStart('01110', Zeros{5} + 24), 32);
-    let partial_shared = ExecuteCommandInstruction(
-        StoreMaskTestSharedBinding(Zeros{6} + 9, '001'), 32);
-    assert partial_start == CommandExecution_Executed;
-    assert partial_shared == CommandExecution_Executed;
-    let partial_completed = ExecuteBundleTileOperation();
-    assert partial_completed;
-    assert _LastFault == Fault_None;
-    assert _Memory[[0]] == Zeros{8} + 0x5a;
+    assert retired_start == CommandExecution_Rejected;
+    assert _LastFault == Fault_IllegalInstruction;
+    assert !_BundleActive;
+    assert _Memory[[0]] == Zeros{8};
     return 0;
 end;

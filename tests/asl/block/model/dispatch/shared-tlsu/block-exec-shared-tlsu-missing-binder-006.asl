@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-BINDER-EXEC-006","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":[],"kind":"execution","summary":"Shared TLSU encoding variants reject without a Shared binder","pass_condition":"missing-binder execution rejects with Tile legality fault","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-SHARED-TLSU-BINDER-EXEC-006","source":"asl/block/model/dispatch/shared-tlsu.asl","requirements":[],"kind":"execution","summary":"Canonical TMOV rejects an incomplete binding schema without effects.","pass_condition":"A source-only Function 2 block without its Local destination or Shared binder raises BundleControl before effects.","related_sources":["asl/block/model/dispatch/tile-execution.asl"]}
 pure func BundleTestTLSUStart(function: bits(5), data_type: bits(5))
         => bits(64)
 begin
@@ -68,20 +68,21 @@ end;
 
 func TestBundleSharedTLSUMissingBinder()
 begin
-    // Shared encoding variants are not executable without their binder.
+    // Canonical Function 2 cannot select a Shared direction without B.IOS and
+    // the remaining Local-only binding is incomplete.
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
     let missing_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let missing_local = ExecuteCommandInstruction(
         BundleTestTileBindingV5('0000', '00', '111', Zeros{6}, TRUE), 32);
     assert missing_start == CommandExecution_Executed;
     assert missing_local == CommandExecution_Executed;
     let missing_completed = ExecuteBundleTileOperation();
     assert !missing_completed;
-    assert _LastFault == Fault_TileLegality;
+    assert _LastFault == Fault_BundleControl;
 end;
 func main() => integer
 begin

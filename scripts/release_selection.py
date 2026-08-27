@@ -161,12 +161,23 @@ def validate_selection(
     selected_adrs = current_selected_adrs
     digests = current_digests
     blockers: list[str] = []
+    # A publication-targeted accepted ADR is the explicit compatibility
+    # boundary for a revision of the current publication identity.  Keep the
+    # same identity only when that boundary is recorded; otherwise preserve
+    # the fail-closed published-NDF drift check below.
+    publication_boundary = any(
+        record.get("status") == "accepted" and
+        publication_version in record.get("target_releases", ())
+        for record in adrs.values()
+    )
     previous_identity = None
     if previous_manifest is not None:
         previous_identity = previous_manifest.get(
             "publication_version", previous_manifest.get("release")
         )
-    if previous_manifest is not None and previous_identity == publication_version:
+    if (previous_manifest is not None and
+            previous_identity == publication_version and
+            not publication_boundary):
         previous_selection = previous_manifest.get("release_selection")
         if isinstance(previous_selection, dict):
             previous_rows = previous_selection.get("expanded_ndf", ())

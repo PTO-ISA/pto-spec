@@ -72,6 +72,11 @@ complete encoded size once in the Core-wide Shared pool; decoded PEMode
 controls participation and payload-quarter updates but does not multiply the
 Shared allocation.
 
+A single Local object or destination is capped at 64 KiB (SizeCode 1..10).
+The independent Local pool remains 256 KiB per PE, so multiple Local objects
+may jointly consume that aggregate pool. A Shared parent remains capped at
+256 KiB per Core.
+
 `B.IOS` renames the identifier field to `SharedTileID`.  The field is six bits
 at instruction bits 25:20 and names the absolute Core-private registers
 `S0..S63`.  Bits 27:26 are reserved zero.  A nonzero reserved bit rejects as
@@ -112,3 +117,10 @@ eight-bit Shared identifier, and cooperative Shared-A broadcast behavior in
 the active model.  The B.IOT/B.IOS SizeCode and PEMode bit positions, PEMode
 decode table, absolute Shared naming, strict zero-mode no-op, immutable first
 allocation mask, and precise preflight/rollback rules remain in force.
+
+
+## Amendment for 0.58.4.1
+
+ADR-0102 owns the Shared whole-parent readiness and single-issuer publication
+closure. ADR-0103 owns per-PE Shared source range derivation. The independent
+Local object cap is 64 KiB while the aggregate Local pool remains 256 KiB per PE.

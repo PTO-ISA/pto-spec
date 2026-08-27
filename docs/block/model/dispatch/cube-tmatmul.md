@@ -307,7 +307,6 @@ begin
         return TRUE;
     end;
     let pe_m = valid_m as integer {1..65535};
-
     // Generic Stage2 Local dependency/subview/generation work occurs only
     // after group-level and Shared preflight has derived a nonzero current-PE
     // fragment. Zero-row PEs returned above without touching Local state.
@@ -440,7 +439,8 @@ begin
         right = MaterializeBundleSharedMatrixPrimary(
             shared_ordinal as integer {0..3},
             k, n, right_type,
-            _BundleFixedPointAttributes.trans_b);
+            _BundleFixedPointAttributes.trans_b,
+            _CurrentMemoryAgent);
         shared_ordinal = (shared_ordinal + 1) as integer {0..4};
         if right_scale_present then
             let scale_groups = TileMXScaleGroupCount(k, right_type);
@@ -448,7 +448,8 @@ begin
                 shared_ordinal as integer {0..3},
                 scale_groups, n,
                 TileMXScaleCarrierType(right_type),
-                _BundleFixedPointAttributes.trans_b);
+                _BundleFixedPointAttributes.trans_b,
+                _CurrentMemoryAgent);
             shared_ordinal = (shared_ordinal + 1) as integer {0..4};
         end;
     end;

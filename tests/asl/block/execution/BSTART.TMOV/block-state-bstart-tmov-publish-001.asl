@@ -1,107 +1,81 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMOV-PUBLISH-001","source":"asl/block/execution/BSTART.TMOV.asl","requirements":["PTO-INST-BLOCK-BSTART-TMOV","PTO-INST-BLOCK-B-ASSEMBLE","PTO-B-ASSEMBLE-SHARED-STANDALONE-001"],"kind":"state-transition","summary":"INSERT and PUBLISH keep publication distinct and gate BROADCAST","pass_condition":"single-PE INSERT remains unpublished, BROADCAST rejects, collective PUBLISH uses INIT_LAST assembly, and BROADCAST then copies the payload","related_sources":["asl/block/operands/B.ASSEMBLE.asl","asl/block/model/operands/shared-generation.asl","asl/tile/model/state/shared-registers.asl","asl/tile/model/memory/shared-movement.asl"]}
-pure func TMOVPublishStart(function: bits(5)) => bits(64)
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMOV-PUBLISH-001","source":"asl/block/execution/BSTART.TMOV.asl","requirements":["PTO-B-SHARED-WHOLE-PARENT-READY-001","PTO-INST-BLOCK-BSTART-TMOV"],"kind":"state-transition","summary":"A Shared-to-Local TMOV waits for whole-parent publication without losing its bindings.","pass_condition":"The pending attempt has no fault or destination effect; publication lets the unchanged canonical Function 2 block retry and copy the complete parent.","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/tile/model/state/shared-registers.asl"]}
+pure func WaitingTMOVSharedSource(shared_tile_id: bits(6)) => bits(64)
 begin
-    var instruction: bits(64) = Zeros{64} + 0x00011181;
-    instruction[24:20] = function;
-    instruction[31:27] = Zeros{5} + 27;
-    return instruction;
-end;
-
-pure func TMOVPublishLocalSource(source: bits(6), pe_mode: bits(3))
-    => bits(64)
-begin
-    var instruction: bits(64) = Zeros{64} + 0x00005013;
-    instruction[25:20] = source;
-    instruction[19] = '1';
-    instruction[18:15] = '0000';
-    instruction[11:9] = pe_mode;
-    return instruction;
-end;
-
-pure func TMOVPublishLocalDestination(hand: bits(2), pe_mode: bits(3))
-    => bits(64)
-begin
-    var instruction: bits(64) = Zeros{64} + 0x00006013;
-    instruction[18:15] = '0001';
-    instruction[8:7] = hand;
-    instruction[19] = '1';
-    instruction[11:9] = pe_mode;
-    return instruction;
-end;
-
-pure func TMOVPublishShared(shared_tile_id: bits(6), size_code: bits(4),
-                            pe_mode: bits(3)) => bits(64)
-begin
-    var instruction: bits(64) = Zeros{64} + 0x00001013;
+    var instruction = Zeros{64} + 0x00001013;
     instruction[25:20] = shared_tile_id;
-    instruction[18:15] = size_code;
-    instruction[11:9] = pe_mode;
+    instruction[11:9] = '001';
     return instruction;
 end;
 
-pure func TMOVPublishAssemble(parent_size_code: bits(4)) => bits(64)
+pure func WaitingTMOVLocalDestination() => bits(64)
 begin
-    var instruction: bits(64) = Zeros{64} + 0x00001053;
-    instruction[31] = '1';
-    instruction[11] = '1';
-    instruction[10:7] = parent_size_code;
+    var instruction = Zeros{64} + 0x00006013;
+    instruction[18:15] = '0001';
+    instruction[11:9] = '001';
+    instruction[19] = '1';
     return instruction;
-end;
-
-func TMOVPublishExecute(instruction: bits(64))
-begin
-    let status = ExecuteCommandInstruction(instruction, 32);
-    assert status == CommandExecution_Executed;
 end;
 
 func main() => integer
 begin
     ResetProfileState();
     let shared_tile_id = (Zeros{6} + 7) as SharedTileID;
-    ConfigureTileForMask(0, 128, 128, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any, '1000');
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
-
-    TMOVPublishExecute(TMOVPublishStart('01001'));
-    TMOVPublishExecute(TMOVPublishLocalSource(Zeros{6}, '001'));
-    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0001', '001'));
-    let insert_completed = ExecuteBundleTileOperation();
-    assert insert_completed;
-    assert SharedTileFullyInitialized(shared_tile_id);
+    ConfigureTile(0, 128, 128, 1, 1, 1, TileDataType_U8,
+        TileLayout_RowMajor, TileLocation_Any);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x33);
+    let pending = AtomicUpdateSharedTileWithPublication(
+        shared_tile_id, _Tiles[[0]], '1000', FALSE);
+    assert pending;
+    assert !SharedTileRecord(shared_tile_id).whole_parent_ready;
     assert !SharedTilePublished(shared_tile_id);
-    assert ReadSharedTileWord(shared_tile_id, 0) == Zeros{PTO_XLEN} + 0x5a;
 
-    ResetBundleControlState();
-    ClearFault();
-    TMOVPublishExecute(TMOVPublishStart('01011'));
-    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0000', '111'));
-    TMOVPublishExecute(TMOVPublishLocalDestination('01', '111'));
-    let rejected_broadcast = ExecuteBundleTileOperation();
-    assert !rejected_broadcast;
-    assert _LastFault == Fault_TileLegality;
-    assert !_Tiles[[16]].allocated;
+    var start = Zeros{64} + 0x00211181;
+    start[31:27] = Zeros{5} + 27;
+    let started = ExecuteCommandInstruction(start, 32);
+    let shared_bound = ExecuteCommandInstruction(
+        WaitingTMOVSharedSource(Zeros{6} + 7), 32);
+    let local_bound = ExecuteCommandInstruction(
+        WaitingTMOVLocalDestination(), 32);
+    assert started == CommandExecution_Executed;
+    assert shared_bound == CommandExecution_Executed;
+    assert local_bound == CommandExecution_Executed;
+    let waiting = ExecuteBundleTileOperation();
+    assert !waiting && _LastFault == Fault_None;
+    assert _BundleActive;
+    assert !_BundleSharedBindings[[0]].consumed;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
 
-    ResetProfileState();
-    ConfigureTileForMask(0, 128, 128, 1, 1, 1, TileDataType_U8,
-        TileLayout_RowMajor, TileLocation_Any, '1111');
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x5a);
-    TMOVPublishExecute(TMOVPublishStart('01010'));
-    TMOVPublishExecute(TMOVPublishLocalSource(Zeros{6}, '111'));
-    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0001', '111'));
-    TMOVPublishExecute(TMOVPublishAssemble('0001'));
-    let publish_completed = ExecuteBundleTileOperation();
-    assert publish_completed;
-    assert SharedTilePublished(shared_tile_id);
-
-    ResetBundleControlState();
-    ClearFault();
-    TMOVPublishExecute(TMOVPublishStart('01011'));
-    TMOVPublishExecute(TMOVPublishShared(shared_tile_id, '0000', '111'));
-    TMOVPublishExecute(TMOVPublishLocalDestination('01', '111'));
-    let broadcast_completed = ExecuteBundleTileOperation();
-    assert broadcast_completed;
-    assert _Tiles[[16]].allocated;
-    assert _Tiles[[16]].payload[[0]] == Zeros{PTO_XLEN} + 0x5a;
-    assert SharedTilePublished(shared_tile_id);
+    let index = SharedTileArrayIndex(shared_tile_id);
+    _SharedTiles[[index]].whole_parent_ready = TRUE;
+    _SharedTiles[[index]].published = TRUE;
+    assert SharedTileDescriptorLegal(shared_tile_id);
+    assert SharedTileReadSchemaLegalAtCapacity(shared_tile_id, 1, 1, 1,
+        TileDataType_U8, TileLayout_RowMajor, 128);
+    assert BundleSharedBindingCount() == 1;
+    assert BundleTileBindingCount() == 1;
+    assert _BundleTileBindings[[0]].valid;
+    assert _BundleTileBindings[[0]].destination_valid;
+    assert !_BundleTileBindings[[0]].source0_valid;
+    assert !_BundleTileBindings[[0]].source1_valid;
+    assert _BundleTileBindings[[0]].last;
+    assert _BundleTileBindings[[0]].destination_size == 1;
+    assert _BundleTileBindings[[0]].pe_mask ==
+        BundleSharedBindingMask(0);
+    assert !BundleSharedBindingIsDestination(0);
+    assert BundleDestinationValidRows(FALSE, 0) == 1;
+    assert BundleDestinationValidColumns(FALSE, 0) == 1;
+    assert BundleDestinationPhysicalColumns(FALSE, 0) == 1;
+    assert TileDataTypeFromEncoding(
+        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding) ==
+        TileDataType_U8;
+    assert CurrentBundleTileLayout() == TileLayout_RowMajor;
+    assert BundleSharedTMOVDestinationSchemaLegal(shared_tile_id, 2);
+    let completed = ExecuteBundleTileOperation();
+    assert _LastFault == Fault_None;
+    assert completed;
+    assert _BundleSharedBindings[[0]].consumed;
+    let destination = _BundleTileBindings[[0]].destination;
+    assert _Tiles[[destination]].contents_defined;
+    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 0x33;
     return 0;
 end;

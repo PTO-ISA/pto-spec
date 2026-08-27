@@ -40,7 +40,7 @@ PTO 在这里被定义为一种 64 位架构：`PTO_XLEN` 为 `64`，当前架�
 <!-- PTO-READER-BLOCK: arch-overview-boundaries role=boundaries -->
 ## 架构边界
 
-Local 与 Shared Tile 分配使用彼此独立的容量池。`B.IOT` 从某个 PE 自己的 `256 KiB` 池中选择该 PE 的一项 Local 分配，而 `B.IOS` 表示来自另一个 `256 KiB` 池、覆盖整个 Core 的一项 Shared 分配。
+Local 与 Shared Tile 分配使用彼此独立的容量池。单个 `B.IOT` Local 对象的 SizeCode 只允许 `128 B..64 KiB`；同一 PE 的多个 Local 对象可以共同消耗该 PE 的 `256 KiB` Local 池。`B.IOS` 表示来自另一个 `256 KiB` 池、覆盖整个 Core 的一项 Shared 分配。
 
 只有当候选版本对应的确切提交通过固定版本的 ASL 模型、全部独立 AVS 结果、覆盖率、投影和发布证据检查时，该候选版本才有效。
 

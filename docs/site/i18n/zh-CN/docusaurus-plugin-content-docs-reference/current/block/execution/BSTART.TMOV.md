@@ -122,9 +122,9 @@ end;
 ## Block composition
 
 ```asm
-Local copy (Function 2): BSTART.TMOV DataType; optional B.DATR Layout; optional B.DIM shape; one terminating B.IOT binds one Local source and one newly allocated Local destination with one common PE_MASK; BSTOP commits.
-TMOV.L2S.INSERT (Function 9) and TMOV.L2S.PUBLISH (Function 10): one source B.IOT and one destination B.IOS use the same mask; B.IOS supplies the Shared destination capacity.
-TMOV.S2L.BROADCAST (Function 11) and TMOV.S2L.EXTRACT (Function 12): one source B.IOS and one destination B.IOT use the same mask; B.IOT supplies the Local destination capacity.
+Local copy: BSTART.TMOV DataType; optional B.DATR Layout; optional B.DIM shape; one terminating B.IOT binds one Local source and one newly allocated Local destination with one common PE_MASK; BSTOP commits.
+Canonical Shared TMOV: Function 2 uses one Local source B.IOT and one Shared destination B.IOS, or one Shared source B.IOS and one Local destination B.IOT; B.SUBVIEW and B.ASSEMBLE provide the explicit source/destination ranges.
+Function 13 GMOV remains the distinct peer-Local operation.
 ```
 
 ## Operation
@@ -156,23 +156,22 @@ end;
 ## Defaults and encoded zero
 
 - Concrete DataType codes explicitly select the transfer type. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.
-- Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated Shared EXTRACT source defaults them to 1, 1, and ValidCol.
+- Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated, pending, or incomplete Shared source remains waiting and produces no destination effect.
 - PE_MASK=0000 is a strict no-op before source reads, destination allocation, publication checks, faults, or binding consumption.
 
 ## Legality
 
 - DataType accepts the 25 concrete TileDataType codes and code 31 DTYPE_NONE for source-descriptor inference; codes 15, 21..23, and 29..30 are reserved.
-- Function 2 is Local-to-Local only. Functions 9 and 10 are Local-to-Shared only. Functions 11 and 12 are Shared-to-Local only. GMOV remains the distinct Function 13 peer-Local operation.
-- INSERT atomically updates selected same-index Shared quarters but never establishes publication. PUBLISH succeeds only when its prospective initialized mask covers the complete immutable allocation mask, then atomically marks the value published.
-- BROADCAST requires PE_MASK=1111, allocation mask 1111, and a fully initialized published Shared value. EXTRACT accepts any nonzero subset and may read unallocated or uninitialized Shared state as undefined-register values.
-- The source and destination descriptors agree on per-PE capacity, DataType, Layout, physical Col, and completed valid shape. Local sources persist; Local destinations are renamed and published only after successful preflight.
+- Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer publishes the whole parent.
+- B.SUBVIEW is the source-range modifier and B.ASSEMBLE is the destination-generation modifier. Shared source legality requires hardware-maintained whole-parent readiness and publication.
+- Function 13 GMOV remains accepted and unchanged. Other Shared movement function encodings are reserved and raise Fault_IllegalInstruction.
+- The source and destination descriptors agree on capacity, DataType, Layout, physical Col, and completed valid shape. Local sources persist; Local destinations are renamed and published only after successful preflight.
 
 ## State effects
 
-- Function 2 copies Local payload and definedness into one renamed Local destination while preserving the Local source.
-- INSERT updates selected Shared quarters without publication; PUBLISH updates selected quarters and establishes publication only after prospective completeness.
-- BROADCAST copies all four same-index Shared quarters to a new Local destination; EXTRACT copies only selected same-index quarters and leaves unselected destination regions unchanged.
-- Shared source operations never modify descriptor, allocation mask, initialized mask, publication state, or payload.
+- Function 2 Local-to-Local copies Local payload and definedness into one renamed Local destination while preserving the Local source.
+- A canonical Shared destination performs one whole-parent publication for a single-PE writer or an atomic B.ASSEMBLE generation at LAST. Shared source operations never modify Shared state.
+- Shared source operations wait/no-op before payload access when whole-parent readiness or publication is absent.
 
 ## Memory effects and ordering
 
@@ -183,15 +182,15 @@ end;
 ### Ordering
 
 - Complete role, mask, size, descriptor, shape, data-type, layout, readiness, and allocation preflight precedes every payload, publication, or destination effect.
-- Each successful Shared destination update commits its selected payload and metadata atomically; INSERT leaves publication false, while PUBLISH may establish it after completeness. A Shared source read is read-only.
+- A singleton Local-to-Shared writer publishes the complete parent atomically. A multi-PE writer publishes only through complete B.ASSEMBLE.LAST; a Shared source read is read-only.
 
 ## Exceptions
 
-- Reserved DataType, unsupported Layout, malformed or unterminated binding schema, role/size/mask mismatch, incompatible descriptor, incomplete PUBLISH, unpublished BROADCAST, allocation failure, or shape mismatch rejects before destination effects.
-- EXTRACT from an unallocated Shared register or from a selected uninitialized quarter is legal and supplies undefined-register values without changing Shared state.
+- Reserved DataType, unsupported Layout, malformed or unterminated binding schema, role/size/mask mismatch, incompatible descriptor, incomplete B.ASSEMBLE.LAST, unpublished Shared source, allocation failure, or shape mismatch rejects before destination effects.
+- A Shared source is hardware-waiting/no-effect until the complete parent is ready and published; no undefined Shared payload is consumed.
 
 ## Examples
 
 - BSTART.TMOV U8; B.IOT T#1, mask=1111, ->U<1>, last; BSTOP
-- BSTART.TMOV U8 [TMOV.L2S.INSERT form]; B.IOT T#1, mask=0011, last; B.IOS mask=0011, ->S7<1>; BSTOP
-- BSTART.TMOV U8 [TMOV.S2L.EXTRACT form]; B.IOS S7, mask=0011; B.IOT mask=0011, ->T<1>, last; BSTOP
+- BSTART.TMOV U8; B.IOT T#1, mask=0001, last; B.IOS mask=0001, ->S7<9>; BSTOP
+- BSTART.TMOV U8; B.IOS S7, mask=0011; B.SUBVIEW 0, a0, 0, 7; B.IOT mask=0011, ->T<7>, last; BSTOP

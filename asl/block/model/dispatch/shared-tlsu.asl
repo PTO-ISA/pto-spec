@@ -5,8 +5,7 @@ begin
        _BundleOperation.operation_class != BundleOperation_TileMemory ||
        !_BundleOperation.selector_valid then return FALSE; end;
     let function = UInt(_BundleOperation.selector[4:0]);
-    return BundleSharedBindingCount() > 0 ||
-           (9 <= function && function <= 12) || function == 14;
+    return BundleSharedBindingCount() > 0;
 end;
 
 readonly func BundleSharedStoreValidColumns(shared_tile_id: SharedTileID)
@@ -109,25 +108,13 @@ begin
            view.layout != layout then
             return FALSE;
         end;
-        if function == 11 then
-            let shared = SharedTileRecord(shared_tile_id);
-            return shared_mask == '1111' &&
-                   shared.allocation_mask == '1111' &&
-                   SharedTilePublished(shared_tile_id);
-        end;
-        return function == 12;
+        return function == 2;
     end;
     if !SharedTileReadSchemaLegalAtCapacity(shared_tile_id, valid_rows,
            valid_columns, columns, data_type, layout, capacity_bytes) then
         return FALSE;
     end;
-    if function == 11 then
-        let shared = SharedTileRecord(shared_tile_id);
-        return shared_mask == '1111' &&
-               shared.allocation_mask == '1111' &&
-               SharedTilePublished(shared_tile_id);
-    end;
-    return function == 12;
+    return function == 2;
 end;
 
 func ExecuteBundleSharedTLSUOperation() => boolean
@@ -150,7 +137,7 @@ begin
     let operation = decoded as integer {0..PTO_TILE_OPERATION_COUNT-1};
     let transfer_data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if (function == 0 || function == 1 || function == 14) &&
+    if (function == 0 || function == 1) &&
        !TileRegularTLSUDataTypeSupported(transfer_data_type) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
@@ -215,11 +202,17 @@ begin
                 SetFault(Fault_TileLegality, ReadTPC());
             end;
         end;
-    elsif function == 1 || function == 14 then
+    elsif function == 1 then
         if !SharedStorePEMaskLegal(function, shared_mask) ||
            BundleSharedBindingIsDestination(0) ||
            BundleTileBindingCount() != 0 then
             SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        // Shared source readiness is a parent-level hardware gate. Pending or
+        // incomplete generations keep the block active for retry with no
+        // payload read, binding consumption, or GM effect.
+        if !SharedTilePublished(shared_tile_id) then
             return FALSE;
         end;
         let store_valid_columns = BundleSharedStoreValidColumns(shared_tile_id);
@@ -242,11 +235,6 @@ begin
             SetFault(Fault_TileLegality, ReadTPC());
             return FALSE;
         end;
-        let store_tile = if has_subview then
-            MaterializeBundleSharedSubview(0)
-        else MaterializeSharedTileForReadSchema(
-            shared_tile_id, store_valid_rows, store_valid_columns,
-            store_columns, store_data_type, store_layout);
         var store_base_addresses: CorePEWords;
         var store_row_stride_bytes: CorePEWords;
         for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
@@ -263,66 +251,102 @@ begin
                 else TileDenseRowStrideBytes(
                     store_columns as integer {0..65535}, store_data_type);
         end;
-        TSTOREShared(store_base_addresses, store_row_stride_bytes, shared_tile_id,
-            store_tile, shared_mask);
-    elsif function == 9 || function == 10 then
-        if !BundleSharedTMOVLocalSchemaLegal() then
-            SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
+        if has_subview then
+            var per_pe_store_tiles: CorePETileInfos;
+            for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+                let agent = pe as MemoryAgentId;
+                per_pe_store_tiles[[agent]] =
+                    MaterializeBundleSharedSubviewForPE(0, agent);
+            end;
+            TSTORESharedPerPE(store_base_addresses, store_row_stride_bytes,
+                per_pe_store_tiles, shared_mask);
+        else
+            let store_tile = MaterializeSharedTileForReadSchema(
+                shared_tile_id, store_valid_rows, store_valid_columns,
+                store_columns, store_data_type, store_layout);
+            TSTOREShared(store_base_addresses, store_row_stride_bytes,
+                shared_tile_id, store_tile, shared_mask);
         end;
-        let binding = _BundleTileBindings[[0]];
-        let assembling =
-            _BundleSharedBindings[[0]].destination_assemble.valid;
-        var prior_shared = SharedTileRecord(shared_tile_id);
-        if assembling then
-            prior_shared = BeginBundleSharedGenerationProbe(shared_tile_id);
-        end;
-        TMOVLocalToShared(shared_tile_id, binding.source0,
-            shared_size as integer {1..12}, shared_mask, function == 10);
-        if assembling then
-            let candidate = SharedTileRecord(shared_tile_id);
-            RestoreBundleSharedGenerationProbe(shared_tile_id, prior_shared);
-            if _LastFault == Fault_None &&
-               !CommitBundleSharedGenerationCandidate(0, candidate) then
+    elsif function == 2 then
+        let shared_is_destination = BundleSharedBindingIsDestination(0);
+        if shared_is_destination then
+            if !BundleSharedTMOVLocalSchemaLegal() then
                 SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
+            end;
+            let binding = _BundleTileBindings[[0]];
+            let assembling =
+                _BundleSharedBindings[[0]].destination_assemble.valid;
+            var prior_shared = SharedTileRecord(shared_tile_id);
+            if assembling then
+                prior_shared = BeginBundleSharedGenerationProbe(shared_tile_id);
+            end;
+            TMOVLocalToShared(shared_tile_id, binding.source0,
+                shared_size as integer {1..12}, shared_mask, !assembling);
+            if assembling then
+                let candidate = SharedTileRecord(shared_tile_id);
+                RestoreBundleSharedGenerationProbe(shared_tile_id, prior_shared);
+                if _LastFault == Fault_None &&
+                   !CommitBundleSharedGenerationCandidate(0, candidate) then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                end;
+            end;
+        else
+            // The same parent-level readiness gate applies before any Local
+            // destination allocation or Shared payload materialization. The
+            // block remains active so completion can retry after publication.
+            if !SharedTilePublished(shared_tile_id) then
+                return FALSE;
+            end;
+            if !BundleSharedTMOVDestinationSchemaLegal(shared_tile_id, function) ||
+               !SelectedBundleTileMasksLegal() then
+                if _LastFault == Fault_None then
+                    SetFault(Fault_TileLegality, ReadTPC());
+                end;
+                return FALSE;
+            end;
+            let binding = _BundleTileBindings[[0]];
+            let capacity_bytes = TileSizeCodeBytes(
+                binding.destination_size as integer {1..12});
+            let valid_rows = BundleDestinationValidRows(FALSE, 0);
+            let valid_columns = BundleDestinationValidColumns(FALSE, 0);
+            let columns = BundleDestinationPhysicalColumns(FALSE, 0);
+            let data_type = TileDataTypeFromEncoding(
+                CurrentBundleTileOperationDataTypeCode()
+                    as TileDataTypeEncoding);
+            let has_subview =
+                _BundleSharedBindings[[0]].source0_subview.valid;
+            let shared_tile = if has_subview then
+                MaterializeBundleSharedSubview(0)
+            else MaterializeSharedTileForReadSchemaAtCapacity(
+                shared_tile_id, valid_rows, valid_columns, columns, data_type,
+                CurrentBundleTileLayout(), capacity_bytes);
+            if !ResolveBundleTileDestinations() then return FALSE; end;
+            let destination = _BundleTileBindings[[0]].destination;
+            if _Tiles[[destination]].rows != shared_tile.rows ||
+               _Tiles[[destination]].columns != shared_tile.columns ||
+               _Tiles[[destination]].valid_rows != shared_tile.valid_rows ||
+               _Tiles[[destination]].valid_columns != shared_tile.valid_columns ||
+               _Tiles[[destination]].data_type != shared_tile.data_type ||
+               _Tiles[[destination]].layout != shared_tile.layout then
+                RollBackBundleTileDestinations();
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
+            end;
+            if has_subview then
+                var per_pe_shared_tiles: CorePETileInfos;
+                for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
+                    let agent = pe as MemoryAgentId;
+                    per_pe_shared_tiles[[agent]] =
+                        MaterializeBundleSharedSubviewForPE(0, agent);
+                end;
+                TMOVSharedToLocalPerPE(destination, per_pe_shared_tiles,
+                    shared_mask);
+            else
+                TMOVSharedToLocal(destination, shared_tile_id, shared_tile,
+                    shared_mask);
             end;
         end;
-    elsif function == 11 || function == 12 then
-        if !BundleSharedTMOVDestinationSchemaLegal(shared_tile_id, function) ||
-           !SelectedBundleTileMasksLegal() then
-            if _LastFault == Fault_None then
-                SetFault(Fault_TileLegality, ReadTPC());
-            end;
-            return FALSE;
-        end;
-        let binding = _BundleTileBindings[[0]];
-        let capacity_bytes = TileSizeCodeBytes(
-            binding.destination_size as integer {1..12});
-        let valid_rows = BundleDestinationValidRows(FALSE, 0);
-        let valid_columns = BundleDestinationValidColumns(FALSE, 0);
-        let columns = BundleDestinationPhysicalColumns(FALSE, 0);
-        let data_type = TileDataTypeFromEncoding(
-            CurrentBundleTileOperationDataTypeCode()
-                as TileDataTypeEncoding);
-        let shared_tile = if
-            _BundleSharedBindings[[0]].source0_subview.valid then
-            MaterializeBundleSharedSubview(0)
-        else MaterializeSharedTileForReadSchemaAtCapacity(
-            shared_tile_id, valid_rows, valid_columns, columns, data_type,
-            CurrentBundleTileLayout(), capacity_bytes);
-        if !ResolveBundleTileDestinations() then return FALSE; end;
-        let destination = _BundleTileBindings[[0]].destination;
-        if _Tiles[[destination]].rows != shared_tile.rows ||
-           _Tiles[[destination]].columns != shared_tile.columns ||
-           _Tiles[[destination]].valid_rows != shared_tile.valid_rows ||
-           _Tiles[[destination]].valid_columns != shared_tile.valid_columns ||
-           _Tiles[[destination]].data_type != shared_tile.data_type ||
-           _Tiles[[destination]].layout != shared_tile.layout then
-            RollBackBundleTileDestinations();
-            SetFault(Fault_TileLegality, ReadTPC());
-            return FALSE;
-        end;
-        TMOVSharedToLocal(destination, shared_tile_id, shared_tile, shared_mask);
     else
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;

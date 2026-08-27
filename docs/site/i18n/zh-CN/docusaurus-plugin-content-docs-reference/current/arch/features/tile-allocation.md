@@ -51,7 +51,8 @@ Local 与 Shared 分配消耗不同的预算。`PTO_TILE_MAX_ALLOCATION_BYTES` �
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/features/tile-allocation.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-FEATURES-TILE-ALLOCATION","surface":"arch","classification":["features","tile-allocation"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY"]}
-// Every PE owns an independent 2048-cell Local pool.  The Core also owns one
+// Every PE owns an independent 2048-cell Local pool; one Local object
+// is capped at 64 KiB. Multiple Local objects may consume the aggregate pool.  The Core also owns one
 // independent 2048-cell Shared pool.  Local and Shared allocations do not
 // compete for one combined capacity budget.
 constant PTO_TILE_CELL_BYTES = 128;

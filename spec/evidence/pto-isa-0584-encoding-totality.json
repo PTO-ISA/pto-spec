@@ -46,7 +46,7 @@
     "unknown_or_reserved_selector": "TileExecution_Rejected"
   },
   "encoding_abi": "pto-isa-0.58.4-mode-function-v1",
-  "encoding_projection_sha256": "6555adeeed2adb75327c53f5280560ec9505d334b46d1626b847440265e79e7d",
+  "encoding_projection_sha256": "338dd22f8485ecd60c492c3e54b283a81b8b1e8072a6f29c9e0ef44462cb0049",
   "family_counts": {
     "CUBE": 12,
     "TEPL": 87,

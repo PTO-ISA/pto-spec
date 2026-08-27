@@ -97,7 +97,7 @@ begin
         TileLayout_RowMajor, TileLocation_Any, '1000');
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
     let invalid_publish_start = ExecuteCommandInstruction(
-        BundleTestTLSUStart('01010', Zeros{5} + 24), 32);
+        BundleTestTLSUStart('00010', Zeros{5} + 24), 32);
     let invalid_publish_shared = ExecuteCommandInstruction(
         BundleTestSharedBindingV6(Zeros{6} + 18, '0001', '001'), 32);
     let invalid_publish_local = ExecuteCommandInstruction(
