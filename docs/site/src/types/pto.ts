@@ -404,6 +404,22 @@ export interface PtoInstructionIndexData {
   entries: PtoInstructionIndexEntry[];
 }
 
+export type PtoNavigationNodeKind = 'branch' | 'page' | 'unit' | 'ndf' | 'adr';
+
+export interface PtoNavigationNode {
+  id: string;
+  label: string;
+  kind: PtoNavigationNodeKind;
+  route: string | null;
+  count: number | null;
+  children: PtoNavigationNode[];
+}
+
+export interface PtoNavigationData {
+  totalLeaves: number;
+  sections: PtoNavigationNode[];
+}
+
 export interface PtoNdfOwnerRoute {
   id: string;
   mnemonic: string | null;

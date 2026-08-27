@@ -9,7 +9,14 @@ const tloadRoute =
 const traceability = JSON.parse(readFileSync(
   resolve(process.cwd(), '../../spec/evidence/release-traceability-readiness.json'),
   'utf8',
-)) as {units: Array<{mnemonic: string | null; surface: 'arch' | 'scalar' | 'block' | 'tile'}>};
+)) as {
+  units: Array<{mnemonic: string | null; surface: 'arch' | 'scalar' | 'block' | 'tile'}>;
+  requirements: Array<{id: string}>;
+};
+const adrIndex = JSON.parse(readFileSync(
+  resolve(process.cwd(), '../../spec/evidence/adr-index.json'),
+  'utf8',
+)) as {records: Array<{id: string}>};
 const instructionUnits = traceability.units.filter((unit) => unit.mnemonic !== null);
 const instructionSurfaceTotals = Object.fromEntries(
   ['scalar', 'block', 'tile'].map((surface) => [
@@ -41,7 +48,7 @@ test('latest release landing page teaches the architecture before implementation
   await expect(page).toHaveURL(/\/instructions\/\?surface=scalar/);
   await expect(page.getByRole('status')).toContainText(`${instructionSurfaceTotals.scalar} instructions`);
   await page.goto('/');
-  await page.getByRole('searchbox').fill('TLOAD');
+  await page.getByRole('searchbox', {name: 'Search the PTO formal specification'}).fill('TLOAD');
   await page.getByRole('button', {name: 'Search specification'}).click();
   await expect(page).toHaveURL(/\/search\/\?q=TLOAD/);
   await expect(page.getByText('PTO-TILE-TLOAD', {exact: true})).toBeVisible();
@@ -284,11 +291,12 @@ test('custom routes expose the stable desktop rail and accessible mobile navigat
       await expect(rail.locator('[data-navigation-id="architecture"]')).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
     } else {
-      const drawer = page.locator('details').filter({has: page.getByText('Browse specification', {exact: true})}).first();
-      await expect(drawer.getByText('Browse specification', {exact: true})).toBeVisible();
-      await drawer.getByText('Browse specification', {exact: true}).focus();
-      await drawer.getByText('Browse specification', {exact: true}).press('Enter');
-      await expect(drawer).toHaveAttribute('open', '');
+      const drawer = page.locator('aside[aria-label="Left specification navigation"]');
+      const toggle = drawer.getByRole('button', {name: 'Browse specification'});
+      await expect(toggle).toBeVisible();
+      await toggle.focus();
+      await toggle.press('Enter');
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true');
       await expect(drawer.getByRole('navigation', {name: 'Specification navigation'})).toBeVisible();
       await expect(drawer.locator(`[data-navigation-id="${route.current}"]`)).toHaveAttribute('data-section-current', 'true');
       await expect(drawer.locator('[data-current-page="true"]')).toHaveAttribute('aria-current', 'page');
@@ -297,8 +305,40 @@ test('custom routes expose the stable desktop rail and accessible mobile navigat
   }
 });
 
+test('left navigation exposes the complete source-derived hierarchy', async ({page}, testInfo) => {
+  test.skip(testInfo.project.name !== 'desktop-chromium');
+  await page.goto(tloadRoute);
+  const rail = page.locator('aside[aria-label="Left specification navigation"]');
+  const navigation = rail.getByRole('navigation', {name: 'Specification navigation'});
+  await expect(navigation.locator('[data-navigation-unit-id]')).toHaveCount(traceability.units.length);
+  await expect(navigation.locator('[data-navigation-ndf-id]')).toHaveCount(traceability.requirements.length);
+  await expect(navigation.locator('[data-navigation-adr-id]')).toHaveCount(adrIndex.records.length);
+  await expect(navigation.locator('[data-navigation-unit-id="PTO-TILE-TLOAD"]')).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  for (const branch of [
+    'instructions',
+    'tile',
+    'instructions:tile:memory-and-data-movement',
+    'instructions:tile:memory-and-data-movement:regular',
+  ]) {
+    await expect(navigation.locator(`[data-navigation-branch="${branch}"]`)).toHaveAttribute('data-open', 'true');
+  }
+  const filter = navigation.getByRole('searchbox', {name: 'Filter full hierarchy'});
+  await filter.fill('PTO-TILE-TLOAD');
+  await expect(navigation.locator('[data-navigation-unit-id="PTO-TILE-TLOAD"]')).toBeVisible();
+  await expect(navigation.locator('[data-navigation-unit-id="PTO-TILE-TSTORE"]')).toHaveCount(0);
+  await filter.fill('');
+  await navigation.getByRole('button', {name: 'Expand hierarchy'}).click();
+  await expect(navigation.locator('[data-navigation-branch="ndf"]')).toHaveAttribute('data-open', 'true');
+  await navigation.getByRole('button', {name: 'Collapse hierarchy'}).click();
+  await expect(navigation.locator('[data-navigation-branch="ndf"]')).toHaveAttribute('data-open', 'false');
+});
+
 test('Architecture landing is source-backed and exposes every required mental-model topic', async ({page}) => {
   await page.goto('/architecture/');
+  const architectureMain = page.getByRole('main');
   await expect(page.getByRole('heading', {name: 'Architecture', level: 1})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Architecture mental model'})).toBeVisible();
   for (const topic of [
@@ -315,8 +355,8 @@ test('Architecture landing is source-backed and exposes every required mental-mo
   await expect(page.locator('[data-source-owner][data-guide-sha256]').first()).toBeVisible();
   await expect(page.getByText('Current owner-declared boundary', {exact: true})).toHaveCount(4);
   await expect(page.locator('[role="note"][data-source-sha256][data-guide-sha256]')).toHaveCount(4);
-  await expect(page.getByText('PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT', {exact: true}).first()).toBeVisible();
-  await expect(page.getByText('PTO-ARCH-MEMORY-MODEL-ORDERING', {exact: true}).first()).toBeVisible();
+  await expect(architectureMain.getByText('PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT', {exact: true}).first()).toBeVisible();
+  await expect(architectureMain.getByText('PTO-ARCH-MEMORY-MODEL-ORDERING', {exact: true}).first()).toBeVisible();
   await expect(page.getByRole('link', {name: 'Open original ASL ↗'}).first()).toHaveAttribute(
     'href',
     /github\.com\/PTO-ISA\/pto-spec\/blob\/[0-9a-f]{40}\/asl\/arch\//,
@@ -561,7 +601,7 @@ test('NDF explorer keeps an indexed fallback and exact-source navigation', async
   ).toBeVisible();
   const indexSearch = page.getByRole('searchbox', {name: /NDF node index/i});
   await expect(indexSearch).toHaveValue('PTO-TLOAD-MEMORY-001');
-  await expect(page.getByText('PTO-TLOAD-MEMORY-001', {exact: true})).toBeVisible();
+  await expect(page.getByRole('button', {name: 'PTO-TLOAD-MEMORY-001 ndf'})).toBeVisible();
   await expect(page.getByRole('link', {name: /source.*for PTO-TLOAD-MEMORY-001/i})).toHaveAttribute(
     'href',
     /github\.com\/PTO-ISA\/pto-spec\/blob\/[0-9a-f]{40}\/.*#L\d+-L\d+/,
@@ -588,9 +628,11 @@ test('Simplified Chinese framework route is generated', async ({page}) => {
   await expect(page.getByRole('heading', {level: 1})).toContainText(
     '架构',
   );
-  const chineseDrawer = page.locator('details').filter({has: page.getByText('浏览规范', {exact: true})}).first();
-  if (await chineseDrawer.isVisible()) {
-    await chineseDrawer.getByText('浏览规范', {exact: true}).click();
+  const chineseDrawer = page.locator('aside[aria-label="左侧规范导航"]');
+  const chineseToggle = chineseDrawer.getByRole('button', {name: '浏览规范'});
+  if (await chineseToggle.isVisible()) {
+    await chineseToggle.click();
+    await expect(chineseToggle).toHaveAttribute('aria-expanded', 'true');
     await expect(chineseDrawer.getByRole('navigation', {name: '规范导航'}).getByText('架构', {exact: true})).toBeVisible();
   } else {
     await expect(page.locator('aside[aria-label="左侧规范导航"]').getByText('架构', {exact: true})).toBeVisible();
@@ -603,7 +645,7 @@ test('Simplified Chinese framework route is generated', async ({page}) => {
   await expect(page.getByRole('heading', {name: '寄存器与 Tile 存储', exact: true})).toBeVisible();
   await expect(page.getByRole('heading', {name: '内存模型', exact: true})).toBeVisible();
   await page.goto('/zh-CN/');
-  await page.getByRole('searchbox').fill('TLOAD');
+  await page.getByRole('searchbox', {name: '搜索 PTO 形式规范'}).fill('TLOAD');
   await page.getByRole('button', {name: '搜索规范'}).click();
   await expect(page).toHaveURL(/\/zh-CN\/search\/\?q=TLOAD/);
   await expect(page.getByText(/页面框架已切换为简体中文/)).toBeVisible();
@@ -669,7 +711,7 @@ test('critical routes have no serious WCAG violations', async ({page}) => {
       await markdownTable.focus();
       await expect(markdownTable).toBeFocused();
     }
-    const mobileNavigation = page.locator('summary').filter({hasText: /Browse specification|浏览规范/}).first();
+    const mobileNavigation = page.getByRole('button', {name: /Browse specification|浏览规范/}).first();
     if (await mobileNavigation.isVisible()) {
       await mobileNavigation.focus();
       await mobileNavigation.press('Enter');

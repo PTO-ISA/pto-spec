@@ -191,6 +191,17 @@ shows hierarchy and the current route, may collapse individual groups, and is
 never fully hidden by default on desktop. The top navbar remains a compact set
 of direct entries rather than the only navigation surface.
 
+The rail exposes the complete generated reading hierarchy, not only its top
+level. It contains every released Architecture/Scalar/Block/Tile ASL unit,
+every current NDF identity, every ADR, and the project-document entry points,
+grouped by their source-owned surface and classification path. AVS points remain
+contextual evidence on their owning unit/NDF pages instead of becoming thousands
+of global navigation siblings. The current route expands its complete ancestor
+path automatically; users can expand or collapse any branch, expand/collapse
+the whole tree, and filter the hierarchy by stable ID, mnemonic, owner name, or
+classification. Counts and nodes are generated from the same release data as
+the canonical indexes, never from a handwritten sidebar catalog.
+
 The native Docusaurus Reference sidebar remains the stable left navigation for
 governance, status, development, and release documents that are not canonical
 unit workbenches. Architecture, Scalar, Block, and Tile unit documents do not
@@ -428,7 +439,12 @@ and rerunning the normative verification flow.
 - `SpecNavigation` owns one locale-aware route tree. It exposes the current
   location through visible styling and `aria-current`, keeps desktop navigation
   visible by default, and provides an explicit mobile open/close control with
-  keyboard and screen-reader semantics.
+  keyboard and screen-reader semantics. Its complete unit/NDF/ADR hierarchy is
+  build-generated from release data; branch counts, filtering, expand/collapse,
+  and current-path expansion must not maintain a second inventory. Static HTML
+  retains the top-level hierarchy and counts while the full leaf tree hydrates
+  client-side so thousands of repeated links do not inflate every generated
+  route.
 - `ArchitectureOverview` consumes only build-generated architecture topic data
   resolved from released ASL units and their reviewed reader-guide projections.
   It renders a mental model, topic relationships, scenarios, exact owner links,

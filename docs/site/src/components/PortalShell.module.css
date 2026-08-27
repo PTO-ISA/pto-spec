@@ -1,10 +1,10 @@
 .shell {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr);
+  grid-template-columns: 20rem minmax(0, 1fr);
   min-height: calc(100vh - var(--ifm-navbar-height));
 }
 
-.desktopRail {
+.navigationRail {
   position: sticky;
   top: var(--ifm-navbar-height);
   align-self: start;
@@ -15,13 +15,21 @@
   border-right: 1px solid var(--pto-border);
 }
 
+.mobileNavigationToggle {
+  display: none;
+}
+
+.navigationPanel {
+  min-width: 0;
+}
+
 .content {
   min-width: 0;
 }
 
 .navigation {
   display: grid;
-  gap: 1.35rem;
+  gap: 0.9rem;
 }
 
 .currentPage {
@@ -32,8 +40,7 @@
   border: 1px solid var(--pto-border);
 }
 
-.currentPage span,
-.navigationGroup summary {
+.currentPage span {
   margin: 0 0.55rem 0.45rem;
   color: var(--pto-text-muted);
   font-size: 0.7rem;
@@ -48,30 +55,155 @@
   overflow-wrap: anywhere;
 }
 
-.navigationGroup summary {
+.hierarchyTools {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.65rem;
+  background: var(--ifm-background-color);
+  border: 1px solid var(--pto-border);
+}
+
+.hierarchyTools label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.hierarchyTools label span,
+.hierarchyTools p {
+  margin: 0;
+  color: var(--pto-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.hierarchyTools input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.45rem 0.55rem;
+  color: var(--ifm-font-color-base);
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--pto-border);
+  border-radius: 3px;
+}
+
+.hierarchyActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.hierarchyActions button {
+  padding: 0.38rem 0.45rem;
+  color: var(--ifm-font-color-base);
   cursor: pointer;
+  background: var(--pto-surface-subtle);
+  border: 1px solid var(--pto-border);
+  border-radius: 3px;
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
-.navigationGroup[open] summary {
-  margin-bottom: 0.45rem;
+.hierarchyActions button:hover {
+  color: var(--pto-nav-active);
+  border-color: var(--ifm-color-primary);
 }
 
-.navigationGroup ul {
+.hierarchyRoot,
+.hierarchyBranch ul,
+.staticHierarchy ul {
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
+.hierarchyBranch ul {
+  margin-left: 0.72rem;
+  border-left: 1px solid var(--pto-border);
+}
+
+.branchSummary,
+.branchSummaryActive {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.45rem;
+  align-items: baseline;
+  width: 100%;
+  padding: 0.42rem 0.35rem;
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 3px;
+  font-size: 0.82rem;
+  font-weight: 750;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.branchSummary:hover,
+.branchSummaryActive {
+  color: var(--pto-nav-active);
+  background: var(--pto-surface-subtle);
+}
+
+.branchLabel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.branchDisclosure {
+  color: var(--pto-text-muted);
+  transition: transform 120ms ease;
+}
+
+.hierarchyBranch[data-open='true'] > .branchSummary .branchDisclosure,
+.hierarchyBranch[data-open='true'] > .branchSummaryActive .branchDisclosure {
+  transform: rotate(90deg);
+}
+
+.branchContent {
+  min-width: 0;
+}
+
+.branchCount {
+  color: var(--pto-text-muted);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.branchOverview,
+.branchOverviewActive {
+  display: block;
+  padding: 0.32rem 0.55rem 0.32rem 1.1rem;
+  color: var(--pto-text-muted);
+  border-left: 3px solid transparent;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.branchOverview:hover,
+.branchOverviewActive {
+  color: var(--pto-nav-active);
+  background: var(--pto-surface-subtle);
+  text-decoration: none;
+}
+
+.branchOverviewActive {
+  border-left-color: var(--ifm-color-primary);
+}
+
 .navLink,
 .navLinkActive {
   display: block;
-  padding: 0.48rem 0.65rem;
+  padding: 0.36rem 0.45rem 0.36rem 0.7rem;
   color: var(--ifm-font-color-base);
   border-left: 3px solid transparent;
   border-radius: 0 3px 3px 0;
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   line-height: 1.35;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 .navLink:hover {
@@ -87,8 +219,22 @@
   font-weight: 750;
 }
 
-.mobileNavigation {
-  display: none;
+.staticHierarchy {
+  padding: 0.65rem;
+  background: var(--ifm-background-color);
+  border: 1px solid var(--pto-border);
+  font-size: 0.78rem;
+}
+
+.staticHierarchy p {
+  color: var(--pto-text-muted);
+}
+
+.staticHierarchy li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
 }
 
 @media (max-width: 996px) {
@@ -96,47 +242,47 @@
     display: block;
   }
 
-  .desktopRail {
-    display: none;
-  }
-
-  .mobileNavigation {
+  .navigationRail {
+    position: static;
     display: block;
+    height: auto;
     padding: 0.65rem 1rem;
     background: var(--ifm-background-surface-color);
+    border-right: 0;
     border-bottom: 1px solid var(--pto-border);
   }
 
-  .mobileNavigation details {
-    max-width: 100%;
-  }
-
-  .mobileNavigation > details > summary {
+  .mobileNavigationToggle {
+    display: block;
     width: fit-content;
     padding: 0.48rem 0.7rem;
     color: var(--pto-nav-active);
     cursor: pointer;
+    background: var(--ifm-background-color);
     border: 1px solid var(--pto-border);
     border-radius: 3px;
     font-size: 0.88rem;
     font-weight: 750;
   }
 
-  .mobileNavigation > details[open] > summary {
-    margin-bottom: 0.85rem;
+  .mobileNavigationToggle[aria-expanded='true'] {
+    margin-bottom: 0.75rem;
   }
 
-  .mobileNavigation .navigation {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.8rem;
+  .navigationPanel {
+    display: none;
+  }
+
+  .navigationPanel[data-mobile-open='true'] {
+    display: block;
+  }
+
+  .navigationPanel .navigation {
+    gap: 0.75rem;
     padding: 0.75rem;
     background: var(--ifm-background-color);
     border: 1px solid var(--pto-border);
-  }
-}
-
-@media (max-width: 620px) {
-  .mobileNavigation .navigation {
-    grid-template-columns: 1fr;
+    max-height: min(72vh, 48rem);
+    overflow-y: auto;
   }
 }
