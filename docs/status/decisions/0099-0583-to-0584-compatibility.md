@@ -11,6 +11,7 @@
   "superseded": null,
   "baseline": "23ca8833fef3f97dbc65beef4924b0b4671cdfdf",
   "target_releases": ["0.58.4"],
+  "release_boundary": true,
   "affected_ndf": [
     "PTO-B-IOT-STREAM-001",
     "PTO-B-IOS-SHARED-STATE-001",

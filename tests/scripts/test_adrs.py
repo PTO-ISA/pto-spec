@@ -109,6 +109,39 @@ class AdrRecordTest(unittest.TestCase):
             ["git", "commit", "-q", "-m", "land ADR"], cwd=root, check=True
         )
 
+    def write_instruction(
+        self,
+        root: Path,
+        *,
+        unit_id: str = "PTO-SCALAR-EXAMPLE",
+        mnemonic: str = "EXAMPLE",
+    ) -> Path:
+        path = root / "asl/scalar/example/EXAMPLE.asl"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        metadata = {
+            "id": unit_id,
+            "surface": "scalar",
+            "classification": ["example"],
+            "depends_on": [],
+            "mnemonic": mnemonic,
+        }
+        path.write_text(
+            f"// PTO-INSTRUCTION: {json.dumps(metadata, separators=(',', ':'))}\n"
+            "// NDF-BEGIN: PTO-EXAMPLE-CONTRACT\n"
+            "// ndf: kind=contract level=L1 layer=scalar status=accepted\n"
+            "// The example contract MUST remain explicit.\n"
+            "// NDF-END: PTO-EXAMPLE-CONTRACT\n",
+            encoding="utf-8",
+        )
+        return path
+
+    def write_release_selection(self, root: Path, baseline: str) -> None:
+        path = root / "spec/release-selection.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps({"baseline_commit": baseline}) + "\n", encoding="utf-8"
+        )
+
     def test_every_repository_adr_uses_frontmatter(self) -> None:
         records = load_adrs(ROOT / "docs/status/decisions")
         index = json.loads(
@@ -194,6 +227,21 @@ class AdrRecordTest(unittest.TestCase):
             self.assertEqual(index["legacy_map"]["PRD-144"], "ADR-0078")
             self.assertEqual(index["legacy_map"]["PRD-145"], "ADR-0078")
             self.assertEqual(index["legacy_map"]["PRD-183"], "ADR-0085")
+            self.assertEqual(
+                {
+                    row["id"]
+                    for row in index["records"]
+                    if row.get("release_boundary") is True
+                },
+                {"ADR-0099", "ADR-0102", "ADR-0108"},
+            )
+            self.assertTrue(
+                all(
+                    "release_boundary" not in row
+                    or row["release_boundary"] is True
+                    for row in index["records"]
+                )
+            )
 
     def test_adr_index_check_rejects_stale_output(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -309,6 +357,89 @@ class AdrRecordTest(unittest.TestCase):
             self.assertIn("unknown current NDF PTO-MISSING-NDF", result.stderr)
             self.assertIn("unknown current ASL unit PTO-MISSING-UNIT", result.stderr)
 
+    def test_current_instruction_contract_is_a_known_synthetic_ndf(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            instruction = self.write_instruction(root)
+            baseline = self.initialize_repository(root, instruction)
+            path = self.write_metadata(
+                root / "docs/status/decisions",
+                baseline=baseline,
+                affected_ndf=["PTO-INST-SCALAR-EXAMPLE"],
+                affected_units=["PTO-SCALAR-EXAMPLE"],
+            )
+            self.land_adr(root, path)
+
+            result = self.run_checker(root)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_release_boundary_allows_retired_selected_baseline_impacts(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            instruction = self.write_instruction(root)
+            baseline = self.initialize_repository(root, instruction)
+            instruction.unlink()
+            self.write_release_selection(root, baseline)
+            path = self.write_metadata(
+                root / "docs/status/decisions",
+                baseline=baseline,
+                release_boundary=True,
+                affected_ndf=["PTO-EXAMPLE-CONTRACT"],
+                affected_units=["PTO-SCALAR-EXAMPLE"],
+            )
+            self.land_adr(root, path)
+
+            result = self.run_checker(root)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_non_boundary_record_rejects_retired_selected_baseline_impacts(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            instruction = self.write_instruction(root)
+            baseline = self.initialize_repository(root, instruction)
+            instruction.unlink()
+            self.write_release_selection(root, baseline)
+            path = self.write_metadata(
+                root / "docs/status/decisions",
+                baseline=baseline,
+                affected_ndf=["PTO-EXAMPLE-CONTRACT"],
+                affected_units=["PTO-SCALAR-EXAMPLE"],
+            )
+            self.land_adr(root, path)
+
+            result = self.run_checker(root)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("unknown current NDF PTO-EXAMPLE-CONTRACT", result.stderr)
+            self.assertIn(
+                "unknown current ASL unit PTO-SCALAR-EXAMPLE", result.stderr
+            )
+
+    def test_release_boundary_rejects_impacts_absent_from_current_and_baseline(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            instruction = self.write_instruction(root)
+            baseline = self.initialize_repository(root, instruction)
+            self.write_release_selection(root, baseline)
+            path = self.write_metadata(
+                root / "docs/status/decisions",
+                baseline=baseline,
+                release_boundary=True,
+                affected_ndf=["PTO-MISSING-NDF"],
+                affected_units=["PTO-MISSING-UNIT"],
+            )
+            self.land_adr(root, path)
+
+            result = self.run_checker(root)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn(
+                "unknown current or selected-baseline NDF PTO-MISSING-NDF",
+                result.stderr,
+            )
+            self.assertIn(
+                "unknown current or selected-baseline ASL unit PTO-MISSING-UNIT",
+                result.stderr,
+            )
+
     def test_ndf_impact_requires_its_current_owning_unit(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -397,7 +528,19 @@ class AdrRecordTest(unittest.TestCase):
             self.assertEqual(record.adr_id, "ADR-0075")
             self.assertEqual(record.authors, ("architect",))
             self.assertEqual(record.target_releases, ("unassigned",))
+            self.assertFalse(record.release_boundary)
             self.assertEqual(record.path, path)
+
+    def test_release_boundary_must_be_boolean(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.assertTrue(
+                parse_adr(
+                    self.write_metadata(root, release_boundary=True)
+                ).release_boundary
+            )
+            with self.assertRaisesRegex(ValueError, "release_boundary must be a boolean"):
+                parse_adr(self.write_metadata(root, release_boundary="true"))
 
     def test_filename_must_match_id(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -534,6 +677,24 @@ class AdrRecordTest(unittest.TestCase):
         for uri in invalid_uris:
             with self.subTest(uri=uri):
                 self.assertIsNone(re.fullmatch(pattern, uri))
+
+    def test_schema_defines_optional_boolean_release_boundary(self) -> None:
+        schema = json.loads(
+            (ROOT / "spec/schemas/pto-adr.schema.json").read_text(encoding="utf-8")
+        )
+        self.assertNotIn("release_boundary", schema["required"])
+        self.assertEqual(
+            schema["properties"]["release_boundary"],
+            {
+                "type": "boolean",
+                "default": False,
+                "description": (
+                    "True only when the ADR records a release boundary and may retain "
+                    "impacts that existed at the selected release baseline but are "
+                    "retired from the current tree."
+                ),
+            },
+        )
 
     def test_duplicate_adr_ids_are_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

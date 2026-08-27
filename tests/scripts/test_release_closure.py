@@ -30,20 +30,20 @@ def pending_release_decisions() -> tuple[str, ...]:
 
 
 class ReleaseClosureTest(unittest.TestCase):
-    def test_release_identity_is_0584_and_owns_0584_evidence(self) -> None:
+    def test_release_identity_is_0585_and_owns_0585_evidence(self) -> None:
         specification = SPECIFICATION.read_text(encoding="utf-8")
         generator = RELEASE_GENERATOR.read_text(encoding="utf-8")
 
-        self.assertIn('architecture_version = "0.58.4"', specification)
-        self.assertIn('publication_version = "0.58.4.1"', specification)
+        self.assertIn('architecture_version = "0.58.5"', specification)
+        self.assertIn('publication_version = "0.58.5.0"', specification)
         self.assertIn(
-            'encoding_abi = "pto-isa-0.58.4-mode-function-v1"', specification
+            'encoding_abi = "pto-isa-0.58.5-mode-function-v1"', specification
         )
-        self.assertIn('RELEASE = "0.58.4"', generator)
+        self.assertIn('RELEASE = "0.58.5"', generator)
         self.assertIn(
-            'ENCODING_ABI = "pto-isa-0.58.4-mode-function-v1"', generator
+            'ENCODING_ABI = "pto-isa-0.58.5-mode-function-v1"', generator
         )
-        self.assertIn("pto-isa-0584-encoding-totality.json", generator)
+        self.assertIn("pto-isa-0585-encoding-totality.json", generator)
 
     def test_release_gate_provenance_covers_workflow_validator_implementation(
         self,
@@ -133,9 +133,9 @@ class ReleaseClosureTest(unittest.TestCase):
         self.assertEqual(
             set(paths),
             {
-                "spec/evidence/pto-isa-0584-abi-vectors.json",
-                "spec/evidence/pto-isa-0584-encoding-totality.json",
-                "spec/evidence/pto-isa-0584-hardware-numeric-vectors.json",
+                "spec/evidence/pto-isa-0585-abi-vectors.json",
+                "spec/evidence/pto-isa-0585-encoding-totality.json",
+                "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
                 "spec/evidence/architecture-readiness.json",
                 "spec/evidence/instruction-contract-closure.json",
                 "spec/evidence/release-gate-readiness.json",

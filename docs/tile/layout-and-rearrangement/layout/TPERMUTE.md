@@ -16,7 +16,23 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tpermute-purpose role=purpose -->
+**Why use it.** `TPERMUTE` provides a two-source byte table within each CUBE CELL so every valid destination byte can be chosen independently without interpreting the payload numerically.
 
+<!-- PTO-READER-BLOCK: tile-tpermute-mechanism role=mechanism -->
+**How it works.** The lookup resets at every CUBE CELL: its per-source table width is `4` bytes for `CUBE_M32` and `8` bytes for `CUBE_M16`; indices below that width select the same CELL in `source0`, and the following equal-sized range selects the same CELL in `source1`.
+
+<!-- PTO-READER-BLOCK: tile-tpermute-inputs-outputs role=inputs-outputs -->
+**Inputs and result.** The two Local data sources have the same supported non-64-bit dtype, CUBE layout, and geometry, while the matching Local `U8` index Tile supplies one index for every valid destination byte and the destination is fresh.
+
+<!-- PTO-READER-BLOCK: tile-tpermute-effects role=effects -->
+**Effects.** All indices and selected source bytes are validated and read before the complete valid destination region is published; the sources and index Tile persist, padding is `Null`, and there is no memory effect.
+
+<!-- PTO-READER-BLOCK: tile-tpermute-constraints role=constraints -->
+**What is rejected.** Each index must be below the combined per-CELL bound—`8` for `CUBE_M32` or `16` for `CUBE_M16`; an out-of-range index, an undefined selected byte, mismatched layout, dtype, or geometry, aliasing between the index Tile and either source, or destination aliasing rejects before any destination effect.
+
+<!-- PTO-READER-BLOCK: tile-tpermute-example role=example -->
+**Concrete example.** For one `CUBE_M32` row with source words `0x04030201` and `0x08070605`, byte indices `[0, 4, 1, 5]` produce destination word `0x06020501`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

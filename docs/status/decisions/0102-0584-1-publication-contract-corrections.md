@@ -17,6 +17,7 @@
   "target_releases": [
     "0.58.4.1"
   ],
+  "release_boundary": true,
   "affected_ndf": [
     "PTO-FCVTA-DECISION-BINDING-001",
     "PTO-MGATHER-BYTE-DISPLACEMENT-001",

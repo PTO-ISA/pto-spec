@@ -10,8 +10,12 @@ produced by the exact `PTO-ISA/pto-spec` release workflow.
   the new controller.
 - Switch `PTO-ISA/pto-isa.github.io` from legacy branch publication to GitHub
   Actions Pages.
-- Accept only a successful `PTO-ISA/pto-spec` release run whose input commit is
-  the commit named by the accepted release tag.
+- Accept only a successful `PTO-ISA/pto-spec` release run whose exact 40-character
+  input commit equals the manifest `source_commit`. The release workflow passes
+  that identity explicitly while generating and checking the artifact; this
+  avoids creating an immutable tag before validation succeeds.
+- After that run succeeds, create the accepted release tag at the same commit.
+  The controller must resolve the tag back to that exact commit before deploy.
 - Download `pto-site-preview-<commit>` and verify its GitHub artifact digest.
 - Read `pto-site-publication.json` and require:
   - `schema` is `pto.site-publication.v1`;

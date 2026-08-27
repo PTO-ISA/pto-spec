@@ -353,7 +353,10 @@ def _release_jobs() -> dict[str, object]:
                 {
                     "name": "Validate the exact static site artifact",
                     "shell": "bash",
-                    "env": {"COMMIT": "${{ inputs.commit }}"},
+                    "env": {
+                        "COMMIT": "${{ inputs.commit }}",
+                        "PTO_SITE_RELEASE_COMMIT": "${{ inputs.commit }}",
+                    },
                     "run-sha256": "d85c41260c3c8b95b7b2c394507edc9763987f4985f18b6cce5ef236860f9905",
                 },
                 {

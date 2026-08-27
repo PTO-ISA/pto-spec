@@ -16,7 +16,23 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tpack-purpose role=purpose -->
+**Why use it.** `TPACK` joins low-order byte fields from two corresponding Local `U32` CUBE words, which is useful when the fields must be rearranged as raw storage rather than numerically converted.
 
+<!-- PTO-READER-BLOCK: tile-tpack-mechanism role=mechanism -->
+**How it works.** For every active word position, the selected low bytes of `source0` occupy the low destination bytes, the selected low bytes of `source1` follow them, and every remaining destination bit is zero.
+
+<!-- PTO-READER-BLOCK: tile-tpack-inputs-outputs role=inputs-outputs -->
+**Inputs and result.** `source0` and `source1` are matching Local `U32` `CUBE_M16` or `CUBE_M32` Tiles, `pack_control` supplies the two field widths, and `destination` is a fresh Tile with matching layout and geometry.
+
+<!-- PTO-READER-BLOCK: tile-tpack-effects role=effects -->
+**Effects.** Complete control and source validation precedes publication of the fully defined valid destination region; the sources persist, padding is `Null`, and the operation has no memory effect.
+
+<!-- PTO-READER-BLOCK: tile-tpack-constraints role=constraints -->
+**What is rejected.** Each field width must be from `1` through `3`, their sum must not exceed `4`, control bits `63:32` must be zero, and the destination must not alias either source; rejection occurs before destination effects.
+
+<!-- PTO-READER-BLOCK: tile-tpack-example role=example -->
+**Concrete example.** With corresponding source words `0x00001234` and `0x00ABCDEF`, control `0x00000202` selects two low bytes from each and produces `0xCDEF1234`.
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

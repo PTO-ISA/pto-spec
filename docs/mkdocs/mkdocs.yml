@@ -1051,5 +1051,6 @@ nav:
           - "ADR 0105: Shared whole-parent readiness and single-issuer publication": status/decisions/0105-shared-whole-parent-readiness.md
           - "ADR 0106: Shared source B.SUBVIEW uses per-PE offsets": status/decisions/0106-shared-source-subview-per-pe.md
           - "ADR 0107: Remove legacy Shared movement Functions": status/decisions/0107-remove-legacy-shared-movement.md
+          - "ADR 0108: PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary": status/decisions/0108-0584-1-to-0585-compatibility.md
       - Open:
           - "Open architecture decisions": status/open/index.md

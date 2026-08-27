@@ -16,7 +16,23 @@ The current instruction contract is owned by the ASL source linked above.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: tile-tunpack-purpose role=purpose -->
+**使用场景。** `TUNPACK` 从每个 Local `U32` CUBE 字中提取一个连续的原始字节字段，并将该字段放入零扩展的 `U32` 结果中。
 
+<!-- PTO-READER-BLOCK: tile-tunpack-mechanism role=mechanism -->
+**工作方式。** 控制值的低字节给出源字节偏移，下一字节给出字节数；选中的字节向下复制到目标的第零字节位置，而结果的所有更高位保持为零。
+
+<!-- PTO-READER-BLOCK: tile-tunpack-inputs-outputs role=inputs-outputs -->
+**输入与结果。** `source` 是 Local `U32` `CUBE_M16` 或 `CUBE_M32` Tile，`unpack_control` 选择字段，`destination` 是具有匹配布局与几何形状的新 Local `U32` Tile。
+
+<!-- PTO-READER-BLOCK: tile-tunpack-effects role=effects -->
+**效果。** 控制信息与源数据校验先于完整定义的目标有效区域发布；源 Tile 保持不变，目标填充为 `Null`，且该操作不产生内存效果。
+
+<!-- PTO-READER-BLOCK: tile-tunpack-constraints role=constraints -->
+**拒绝条件。** 偏移必须在 `0` 到 `3` 之间，字节数必须在 `1` 到 `4` 之间，两者之和不得超过 `4`，控制位 `63:32` 必须为零，并且源与目标不得重叠；拒绝不会产生目标效果。
+
+<!-- PTO-READER-BLOCK: tile-tunpack-example role=example -->
+**具体示例。** 源字 `0x44332211` 与控制值 `0x00000201` 选择从字节偏移 `1` 开始的两个字节，得到 `0x00003322`。
 <!-- SUPPLEMENTARY-END -->
 
 ## Classification and execution engine

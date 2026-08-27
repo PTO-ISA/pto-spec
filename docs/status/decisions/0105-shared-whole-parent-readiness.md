@@ -10,7 +10,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
-  "target_releases": ["0.58.4.1"],
+  "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-B-SHARED-WHOLE-PARENT-READY-001",
     "PTO-B-ASSEMBLE-SHARED-GENERATION-001"

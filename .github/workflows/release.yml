@@ -111,6 +111,7 @@ jobs:
         shell: bash
         env:
           COMMIT: ${{ inputs.commit }}
+          PTO_SITE_RELEASE_COMMIT: ${{ inputs.commit }}
         run: |
           test "$(git rev-parse HEAD)" = "$COMMIT"
           pnpm --dir docs/site typecheck

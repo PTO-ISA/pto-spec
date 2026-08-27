@@ -5,7 +5,11 @@ from pathlib import Path
 
 import unittest
 
-from scripts.release_selection import evaluate_release_selection, validate_selection
+from scripts.release_selection import (
+    _baseline_inputs,
+    evaluate_release_selection,
+    validate_selection,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -32,6 +36,8 @@ class ReleaseSelectionTest(unittest.TestCase):
                 "status": "accepted",
                 "target_releases": ["0.58.2"],
                 "affected_ndf": ["PTO-EXAMPLE-001"],
+                "affected_units": ["PTO-UNIT-001"],
+                "release_boundary": True,
             },
             {
                 "id": "ADR-0002",
@@ -66,16 +72,21 @@ class ReleaseSelectionTest(unittest.TestCase):
         readiness=None,
         ndf=None,
         previous_manifest: dict[str, object] | None = None,
+        units=(),
+        baseline_units=(),
     ):
         default_adrs, default_readiness, default_ndf = self.facts()
+        candidate = selection or self.selection()
         return validate_selection(
-            selection or self.selection(),
+            candidate,
             architecture_version="0.58.2",
-            publication_version="0.58.2.0",
+            publication_version=str(candidate["publication_version"]),
             adr_records=adrs or default_adrs,
             readiness_rows=readiness or default_readiness,
             ndf_rows=ndf or default_ndf,
             previous_manifest=previous_manifest,
+            unit_rows=units,
+            baseline_unit_rows=baseline_units,
         )
 
     def test_valid_selection_expands_exact_active_surface(self) -> None:
@@ -141,7 +152,7 @@ class ReleaseSelectionTest(unittest.TestCase):
         result = self.validate(previous_manifest=previous)
 
         self.assertTrue(
-            any("published NDF PTO-EXAMPLE-001 changed" in row for row in result.blockers)
+            any("PTO-EXAMPLE-001" in row for row in result.blockers)
         )
 
     def test_new_accepted_ndf_becomes_release_blocker(self) -> None:
@@ -163,7 +174,7 @@ class ReleaseSelectionTest(unittest.TestCase):
         result = self.validate(ndf=expanded, previous_manifest=previous)
 
         self.assertTrue(
-            any("selected NDF set changed" in row for row in result.blockers)
+            any("PTO-NEW-001" in row for row in result.blockers)
         )
 
     def test_new_publication_revision_gets_a_fresh_ndf_selection(self) -> None:
@@ -190,16 +201,16 @@ class ReleaseSelectionTest(unittest.TestCase):
         )
         self.assertEqual(result.blockers, ())
 
-    def test_publication_adr_cannot_approve_unrelated_ndf_drift(self) -> None:
-        adrs, readiness, ndf = self.facts()
-        targeted = {
-            "id": "ADR-0003",
-            "status": "accepted",
-            "target_releases": ["0.58.2.0"],
-            "affected_ndf": ["PTO-EXAMPLE-001"],
-        }
-        previous = {
-            "release": "0.58.2",
+    def test_unresolvable_baseline_commit_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "cannot be resolved"):
+            _baseline_inputs(ROOT, "0" * 40)
+
+    def test_publication_bump_requires_release_boundary_adr(self) -> None:
+        selection = self.selection()
+        selection["publication_version"] = "0.58.2.1"
+        adrs, _, _ = self.facts()
+        adrs = tuple({k: v for k, v in row.items() if k != "release_boundary"} for row in adrs)
+        baseline = {
             "publication_version": "0.58.2.0",
             "release_selection": {
                 "expanded_ndf": [
@@ -207,32 +218,91 @@ class ReleaseSelectionTest(unittest.TestCase):
                 ]
             },
         }
-        expanded = (
+
+        result = self.validate(selection, adrs=adrs, previous_manifest=baseline)
+
+        self.assertTrue(any("release_boundary=true" in row for row in result.blockers))
+
+    def test_uncovered_ndf_and_unit_drift_are_blockers(self) -> None:
+        selection = self.selection()
+        selection["publication_version"] = "0.58.2.1"
+        _, _, ndf = self.facts()
+        current_ndf = (
             *ndf,
-            {"id": "PTO-NEW-001", "status": "accepted", "sha256": "3" * 64},
+            {"id": "PTO-UNCOVERED-001", "status": "accepted", "sha256": "4" * 64},
         )
+        baseline = {
+            "publication_version": "0.58.2.0",
+            "release_selection": {
+                "expanded_ndf": [
+                    {"id": "PTO-EXAMPLE-001", "sha256": "1" * 64},
+                    {"id": "PTO-UNCOVERED-001", "sha256": "3" * 64},
+                ]
+            },
+        }
 
         result = self.validate(
-            adrs=(*adrs, targeted),
-            readiness=(*readiness, {"subject_id": "ADR-0003", "stage": "executable"}),
-            ndf=expanded,
-            previous_manifest=previous,
+            selection,
+            ndf=current_ndf,
+            previous_manifest=baseline,
+            units=(
+                {"id": "PTO-UNIT-001", "sha256": "5" * 64},
+                {"id": "PTO-UNIT-UNCOVERED", "sha256": "7" * 64},
+            ),
+            baseline_units=(
+                {"id": "PTO-UNIT-001", "sha256": "5" * 64},
+                {"id": "PTO-UNIT-UNCOVERED", "sha256": "6" * 64},
+            ),
         )
 
-        self.assertTrue(any("selected NDF set changed" in row for row in result.blockers))
+        self.assertTrue(any("PTO-UNCOVERED-001" in row for row in result.blockers))
+        self.assertTrue(any("PTO-UNIT-UNCOVERED" in row for row in result.blockers))
 
-    def test_repository_policy_expands_the_current_candidate_without_drift(self) -> None:
+    def test_covered_publication_bump_accepts_ndf_and_unit_drift(self) -> None:
+        selection = self.selection()
+        selection["publication_version"] = "0.58.2.1"
+        adrs, readiness, ndf = self.facts()
+        adrs = tuple(
+            {
+                **row,
+                "target_releases": ["0.58.2.1"],
+                "affected_ndf": ["PTO-EXAMPLE-001"],
+                "affected_units": ["PTO-UNIT-001"],
+            }
+            if row["id"] == "ADR-0001"
+            else row
+            for row in adrs
+        )
+        baseline = {
+            "publication_version": "0.58.2.0",
+            "release_selection": {
+                "expanded_ndf": [
+                    {"id": "PTO-EXAMPLE-001", "sha256": "0" * 64}
+                ]
+            },
+        }
+
+        result = validate_selection(
+            selection,
+            architecture_version="0.58.2",
+            publication_version="0.58.2.1",
+            adr_records=adrs,
+            readiness_rows=readiness,
+            ndf_rows=ndf,
+            unit_rows=({"id": "PTO-UNIT-001", "sha256": "2" * 64},),
+            baseline_manifest=baseline,
+            baseline_unit_rows=({"id": "PTO-UNIT-001", "sha256": "1" * 64},),
+        )
+
+        self.assertEqual(result.blockers, ())
+
+    def test_repository_policy_selects_the_current_release_without_drift(self) -> None:
         self.assertTrue(SELECTION.is_file())
         self.assertTrue(SCHEMA.is_file())
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
         self.assertEqual(schema["$schema"], "https://json-schema.org/draft/2020-12/schema")
 
-        # This repository is an architecture candidate whose accepted changes
-        # are intentionally not assigned to the published release identity.
-        # Evaluate the candidate without treating the published manifest as its
-        # release baseline; the separate blocker test below preserves the
-        # fail-closed published-release guard.
-        result = evaluate_release_selection(ROOT, previous_manifest=None)
+        result = evaluate_release_selection(ROOT)
         policy = json.loads(SELECTION.read_text(encoding="utf-8"))
         readiness = json.loads(
             (ROOT / "spec/evidence/architecture-readiness.json").read_text(
@@ -257,46 +327,32 @@ class ReleaseSelectionTest(unittest.TestCase):
             },
         )
 
-    def test_repository_manifest_preserves_published_selection_blockers(self) -> None:
+    def test_repository_manifest_records_exact_selection_expansion(self) -> None:
         manifest = json.loads(
             (ROOT / "spec/release-manifest.json").read_text(encoding="utf-8")
         )
         selection = manifest["release_selection"]
         result = evaluate_release_selection(ROOT)
-        candidate = evaluate_release_selection(ROOT, previous_manifest=None)
         policy = json.loads(SELECTION.read_text(encoding="utf-8"))
 
-        self.assertEqual(selection["architecture_version"], "0.58.4")
-        self.assertEqual(selection["publication_version"], "0.58.4.1")
+        self.assertEqual(selection["architecture_version"], "0.58.5")
+        self.assertEqual(selection["publication_version"], "0.58.5.0")
         self.assertEqual(selection["required_readiness_floor"], "executable")
         self.assertEqual(manifest["release"], selection["architecture_version"])
         self.assertEqual(
             manifest["publication_version"], selection["publication_version"]
         )
-        self.assertEqual(selection["blockers"], list(result.blockers))
-        self.assertEqual(
-            selection["blockers"],
-            [
-                "published selected NDF set changed; a new release identity "
-                "and accepted compatibility ADR are required",
-                "published NDF PTO-INST-TILE-GMOV changed; a new release identity "
-                "and accepted compatibility ADR are required",
-            ],
-        )
-        self.assertEqual(policy["architecture_version"], "0.58.4")
-        self.assertEqual(policy["publication_version"], "0.58.4.1")
+        self.assertEqual(selection["blockers"], [])
+        self.assertEqual(policy["architecture_version"], "0.58.5")
+        self.assertEqual(policy["publication_version"], "0.58.5.0")
         self.assertEqual(
             [row["id"] for row in selection["expanded_ndf"]],
             list(result.selected_ndf_ids),
         )
-        self.assertEqual(selection["selected_adr_ids"], list(result.selected_adr_ids))
-        self.assertNotEqual(
-            [row["id"] for row in selection["expanded_ndf"]],
-            list(candidate.selected_ndf_ids),
+        self.assertEqual(
+            selection["selected_adr_ids"], list(result.selected_adr_ids)
         )
-        self.assertNotEqual(selection["selected_adr_ids"], list(candidate.selected_adr_ids))
-        self.assertNotEqual(result.blockers, ())
-        self.assertEqual(candidate.blockers, ())
+        self.assertEqual(result.blockers, ())
 
 
 if __name__ == "__main__":

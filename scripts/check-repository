@@ -67,9 +67,9 @@ required_files=(
     spec/catalog/tile-operations.json
     spec/hardware-conformance-profile.json
     spec/release-manifest.json
-    spec/evidence/pto-isa-0584-abi-vectors.json
-    spec/evidence/pto-isa-0584-encoding-totality.json
-    spec/evidence/pto-isa-0584-hardware-numeric-vectors.json
+    spec/evidence/pto-isa-0585-abi-vectors.json
+    spec/evidence/pto-isa-0585-encoding-totality.json
+    spec/evidence/pto-isa-0585-hardware-numeric-vectors.json
     spec/evidence/release-gate-readiness.json
     spec/evidence/release-traceability-readiness.json
     spec/evidence/mnemonic-descriptions/schema.json
