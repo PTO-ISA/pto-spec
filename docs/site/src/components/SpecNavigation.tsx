@@ -38,11 +38,6 @@ function routeCurrent(node: PtoNavigationNode, pathname: string, search: string)
   return pathname === target.pathname && (!target.search || target.search === search);
 }
 
-function nodeContainsCurrent(node: PtoNavigationNode, pathname: string, search: string): boolean {
-  return routeCurrent(node, pathname, search) ||
-    node.children.some((child) => nodeContainsCurrent(child, pathname, search));
-}
-
 function collectBranchIds(nodes: PtoNavigationNode[]): Set<string> {
   const ids = new Set<string>();
   const visit = (node: PtoNavigationNode): void => {
@@ -120,6 +115,7 @@ function NavigationBranch({
   chinese,
   expanded,
   collapsed,
+  currentBranchIds,
   defaultOpen,
   forceOpen,
   onToggle,
@@ -130,11 +126,12 @@ function NavigationBranch({
   chinese: boolean;
   expanded: Set<string>;
   collapsed: Set<string>;
+  currentBranchIds: Set<string>;
   defaultOpen: boolean;
   forceOpen: boolean;
   onToggle: (id: string, open: boolean, defaultOpen: boolean) => void;
 }): React.JSX.Element {
-  const branchCurrent = nodeContainsCurrent(node, pathname, search);
+  const branchCurrent = currentBranchIds.has(node.id);
   const exactCurrent = routeCurrent(node, pathname, search);
   const open = forceOpen || branchCurrent || expanded.has(node.id) ||
     (defaultOpen && !collapsed.has(node.id));
@@ -164,26 +161,29 @@ function NavigationBranch({
           {chinese ? '概览' : 'Overview'}
         </Link>
       )}
-      <div className={styles.branchContent} hidden={!open}>
-        <ul>
-          {node.children.map((child) => child.kind === 'branch'
-            ? (
-              <NavigationBranch
-                key={child.id}
-                node={child}
-                pathname={pathname}
-                search={search}
-                chinese={chinese}
-                expanded={expanded}
-                collapsed={collapsed}
-                defaultOpen={false}
-                forceOpen={forceOpen}
-                onToggle={onToggle}
-              />
-            )
-            : <NavigationLeaf key={child.id} node={child} pathname={pathname} search={search} />)}
-        </ul>
-      </div>
+      {open && (
+        <div className={styles.branchContent}>
+          <ul>
+            {node.children.map((child) => child.kind === 'branch'
+              ? (
+                <NavigationBranch
+                  key={child.id}
+                  node={child}
+                  pathname={pathname}
+                  search={search}
+                  chinese={chinese}
+                  expanded={expanded}
+                  collapsed={collapsed}
+                  currentBranchIds={currentBranchIds}
+                  defaultOpen={false}
+                  forceOpen={forceOpen}
+                  onToggle={onToggle}
+                />
+              )
+              : <NavigationLeaf key={child.id} node={child} pathname={pathname} search={search} />)}
+          </ul>
+        </div>
+      )}
     </li>
   );
 }
@@ -267,6 +267,7 @@ function InteractiveHierarchy({
               chinese={chinese}
               expanded={expanded}
               collapsed={collapsed}
+              currentBranchIds={currentBranchIds}
               defaultOpen
               forceOpen={Boolean(normalizedQuery)}
               onToggle={setBranch}
