@@ -15,7 +15,7 @@ begin
     ResetProfileState();
     assert TileSizeCodeBytes(12) == 262144;
     assert SharedTileCapacityIsLegal(262144);
-    assert TileCapacityIsLegal(262144);
+    assert !TileCapacityIsLegal(262144);
     let started = ExecuteCommandInstruction(Zeros{64} + 0x00019181, 32);
     let boundary = BundleTestB_IOSSizeCode('1100', '111', Zeros{6} + 7);
     assert started == CommandExecution_Executed;

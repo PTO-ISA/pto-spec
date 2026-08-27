@@ -34,7 +34,7 @@ readonly func TileCapacityIsLegal(capacity_bytes: integer {0..262144}) => boolea
 begin
     return capacity_bytes >= PTO_TILE_CELL_BYTES &&
            capacity_bytes MOD PTO_TILE_CELL_BYTES == 0 &&
-           capacity_bytes <= 65536 &&
+           capacity_bytes <= PTO_TILE_MAX_ALLOCATION_BYTES &&
            capacity_bytes <= TileCapacityLimitBytes();
 end;
 

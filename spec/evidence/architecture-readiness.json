@@ -20937,11 +20937,11 @@
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "11383c6f1a2f7fa8ced22388fe03fa47768909e767e9fbc7db9f5f768d23ee98"
+      "sha256": "3ef2bb62421c79dff8fa77a1c7983923b523244b8090812883ef81286ca8106a"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "d24c1752acbb07318a55c9560c76c62e6c47d0b40adbc29872275e4f3f7d3ade",
+      "sha256": "1384978aa3424f4b1d299120884e177ef48c240fabcab8c435d722bd2ca6e18f",
       "test_count": 3707,
       "unit_count": 850
     }

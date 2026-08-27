@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOT-CAPACITY-003","source":"asl/block/operands/B.IOT.asl","requirements":["PTO-INST-BLOCK-B-IOT","PTO-INST-TILE-TLOAD"],"kind":"boundary","summary":"Decoded B.IOT permits each selected PE to consume its independent Local capacity pool.","pass_condition":"SizeCode 12 with all four PEs commits four independent 256 KiB fragments without a fault.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/state/allocation.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOT-CAPACITY-003","source":"asl/block/operands/B.IOT.asl","requirements":["PTO-INST-BLOCK-B-IOT","PTO-INST-TILE-TLOAD"],"kind":"boundary","summary":"Decoded B.IOT charges each selected PE's independent Local capacity pool.","pass_condition":"The maximum legal Local SizeCode 10 with all four PEs commits one independent 64 KiB charge to every selected PE without a fault.","related_sources":["asl/block/model/dispatch/destination-shape.asl","asl/tile/model/state/allocation.asl"]}
 pure func BIOTCapacityStart(data_type: bits(5)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00011181;
@@ -25,7 +25,7 @@ begin
     SetBundleDimension(1, Zeros{PTO_XLEN} + 1);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 1);
     let destination = ExecuteCommandInstruction(
-        BIOTCapacityDestination('1100', '111'), 32);
+        BIOTCapacityDestination('1010', '111'), 32);
     assert started == CommandExecution_Executed;
     assert destination == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
@@ -33,10 +33,10 @@ begin
     assert _LastFault == Fault_None;
     assert _Tiles[[0]].allocated;
     assert _TileAllocationMasks[[0]] == '1111';
-    assert _Tiles[[0]].capacity_bytes == 262144;
+    assert _Tiles[[0]].capacity_bytes == 65536;
     for pe = 0 to PTO_MODEL_MEMORY_AGENTS - 1 do
-        assert TileCapacityInUseForPE(pe) == 262144;
+        assert TileCapacityInUseForPE(pe) == 65536;
     end;
-    assert TileCapacityInUse() == 1048576;
+    assert TileCapacityInUse() == 262144;
     return 0;
 end;
