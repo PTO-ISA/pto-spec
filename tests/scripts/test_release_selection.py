@@ -190,13 +190,18 @@ class ReleaseSelectionTest(unittest.TestCase):
         )
         self.assertEqual(result.blockers, ())
 
-    def test_repository_policy_selects_the_current_release_without_drift(self) -> None:
+    def test_repository_policy_expands_the_current_candidate_without_drift(self) -> None:
         self.assertTrue(SELECTION.is_file())
         self.assertTrue(SCHEMA.is_file())
         schema = json.loads(SCHEMA.read_text(encoding="utf-8"))
         self.assertEqual(schema["$schema"], "https://json-schema.org/draft/2020-12/schema")
 
-        result = evaluate_release_selection(ROOT)
+        # This repository is an architecture candidate whose accepted changes
+        # are intentionally not assigned to the published release identity.
+        # Evaluate the candidate without treating the published manifest as its
+        # release baseline; the separate blocker test below preserves the
+        # fail-closed published-release guard.
+        result = evaluate_release_selection(ROOT, previous_manifest=None)
         policy = json.loads(SELECTION.read_text(encoding="utf-8"))
         readiness = json.loads(
             (ROOT / "spec/evidence/architecture-readiness.json").read_text(
@@ -221,12 +226,13 @@ class ReleaseSelectionTest(unittest.TestCase):
             },
         )
 
-    def test_repository_manifest_records_exact_selection_expansion(self) -> None:
+    def test_repository_manifest_preserves_published_selection_blockers(self) -> None:
         manifest = json.loads(
             (ROOT / "spec/release-manifest.json").read_text(encoding="utf-8")
         )
         selection = manifest["release_selection"]
         result = evaluate_release_selection(ROOT)
+        candidate = evaluate_release_selection(ROOT, previous_manifest=None)
         policy = json.loads(SELECTION.read_text(encoding="utf-8"))
 
         self.assertEqual(selection["architecture_version"], "0.58.4")
@@ -236,17 +242,30 @@ class ReleaseSelectionTest(unittest.TestCase):
         self.assertEqual(
             manifest["publication_version"], selection["publication_version"]
         )
-        self.assertEqual(selection["blockers"], [])
+        self.assertEqual(selection["blockers"], list(result.blockers))
+        self.assertEqual(
+            selection["blockers"],
+            [
+                "published selected NDF set changed; a new release identity "
+                "and accepted compatibility ADR are required",
+                "published NDF PTO-INST-TILE-GMOV changed; a new release identity "
+                "and accepted compatibility ADR are required",
+            ],
+        )
         self.assertEqual(policy["architecture_version"], "0.58.4")
         self.assertEqual(policy["publication_version"], "0.58.4.1")
         self.assertEqual(
             [row["id"] for row in selection["expanded_ndf"]],
             list(result.selected_ndf_ids),
         )
-        self.assertEqual(
-            selection["selected_adr_ids"], list(result.selected_adr_ids)
+        self.assertEqual(selection["selected_adr_ids"], list(result.selected_adr_ids))
+        self.assertNotEqual(
+            [row["id"] for row in selection["expanded_ndf"]],
+            list(candidate.selected_ndf_ids),
         )
-        self.assertEqual(result.blockers, ())
+        self.assertNotEqual(selection["selected_adr_ids"], list(candidate.selected_adr_ids))
+        self.assertNotEqual(result.blockers, ())
+        self.assertEqual(candidate.blockers, ())
 
 
 if __name__ == "__main__":
