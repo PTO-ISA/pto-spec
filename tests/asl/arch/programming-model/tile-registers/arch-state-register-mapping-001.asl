@@ -13,7 +13,7 @@ begin
     assert !TileCapacityIsLegal(0);
     assert TileCapacityIsLegal(128);
     assert TileCapacityIsLegal(256);
-    assert TileCapacityIsLegal(262144);
+    assert !TileCapacityIsLegal(262144);
     assert SharedTileCapacityIsLegal(262144);
     assert TileCapacityIsLegal(8192);
     assert !TileCapacityIsLegal(192);
@@ -26,7 +26,7 @@ begin
     assert TileSizeCodeIsLegal(12);
     assert !TileSizeCodeIsLegal(13);
     assert LocalTileSizeCodeIsLegal(10);
-    assert LocalTileSizeCodeIsLegal(12);
+    assert !LocalTileSizeCodeIsLegal(12);
     assert !LocalTileSizeCodeIsLegal(13);
 
     assert TileElementBits(TileDataType_FP64) == 64;

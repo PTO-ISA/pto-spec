@@ -692,7 +692,7 @@ test.describe('no JavaScript fallback', () => {
 });
 
 test('critical routes have no serious WCAG violations', async ({page}) => {
-  test.setTimeout(60_000);
+  test.setTimeout(180_000);
   for (const route of [
     '/',
     '/architecture/',

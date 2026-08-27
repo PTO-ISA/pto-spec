@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-SHAPE-001","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-INST-BLOCK-BSTART-TSTORE"],"kind":"fault","summary":"an unallocated Shared source rejects a schema larger than the maximum temporary capacity","pass_condition":"shape rejection precedes GM and Shared state effects","related_sources":["asl/tile/model/shape/valid-region.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TSTORE-SHAPE-001","source":"asl/block/execution/BSTART.TSTORE.asl","requirements":["PTO-B-SHARED-WHOLE-PARENT-READY-001","PTO-INST-BLOCK-BSTART-TSTORE"],"kind":"boundary","summary":"the Shared readiness gate precedes validation of an oversized temporary TSTORE schema","pass_condition":"an unallocated Shared source keeps the block waiting without a fault, GM effect, binding consumption, or descriptor publication before shape validation","related_sources":["asl/block/model/dispatch/shared-tlsu.asl","asl/tile/model/shape/valid-region.asl","asl/tile/model/state/shared-registers.asl"]}
 pure func TStoreShapeStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00011181;
@@ -32,7 +32,10 @@ begin
     assert source == CommandExecution_Executed;
     let completed = ExecuteBundleTileOperation();
     assert !completed;
-    assert _LastFault == Fault_TileLegality;
+    assert _LastFault == Fault_None;
+    assert _BundleActive;
+    assert BundleSharedBindingCount() == 1;
+    assert !_BundleSharedBindings[[0]].consumed;
     assert _Memory[[0]] == Zeros{8} + 0x5a;
     assert !SharedTileRecord(shared_tile_id).descriptor_valid;
     return 0;

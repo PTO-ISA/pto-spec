@@ -27,7 +27,7 @@ This unit fixes the capacities and model parameters used when PTO reasons about 
 <!-- PTO-READER-BLOCK: arch-tile-allocation-rules role=rules-interactions -->
 ## Rules and interactions
 
-Local and Shared allocations consume different budgets. `PTO_TILE_MAX_ALLOCATION_BYTES` and `PTO_SHARED_TILE_MAX_ALLOCATION_BYTES` are each `262144`; neither value authorizes combining the two pools into one larger allocation.
+Local and Shared allocations consume different budgets. `PTO_TILE_MAX_ALLOCATION_BYTES` caps one Local object at `65536` bytes, while `PTO_SHARED_TILE_MAX_ALLOCATION_BYTES` permits one Shared object up to `262144` bytes. The separate `PTO_TILE_CAPACITY_BYTES` value keeps each PE's aggregate Local pool at `262144` bytes.
 
 <!-- PTO-READER-BLOCK: arch-tile-allocation-boundaries role=boundaries -->
 ## Model boundaries
@@ -52,13 +52,14 @@ Use this example block only as a reading aid: apply the rules above, then confir
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-FEATURES-TILE-ALLOCATION","surface":"arch","classification":["features","tile-allocation"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY"]}
 // Every PE owns an independent 2048-cell Local pool; one Local object
-// is capped at 64 KiB. Multiple Local objects may consume the aggregate pool.  The Core also owns one
+// is capped at 64 KiB. Multiple Local objects may consume the aggregate pool.
+// The Core also owns one
 // independent 2048-cell Shared pool.  Local and Shared allocations do not
 // compete for one combined capacity budget.
 constant PTO_TILE_CELL_BYTES = 128;
 constant PTO_TILE_CELL_COUNT = 2048;
 constant PTO_TILE_CAPACITY_BYTES = 262144;
-constant PTO_TILE_MAX_ALLOCATION_BYTES = 262144;
+constant PTO_TILE_MAX_ALLOCATION_BYTES = 65536;
 constant PTO_SHARED_TILE_MAX_ALLOCATION_BYTES = 262144;
 constant PTO_MODEL_MAX_TILE_CAPACITY_BYTES = PTO_TILE_CAPACITY_BYTES;
 constant PTO_RESERVATION_GRANULE_BYTES = 64;

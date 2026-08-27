@@ -27,7 +27,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-tile-allocation-rules role=rules-interactions -->
 ## 规则与交互
 
-Local 与 Shared 分配消耗不同的预算。`PTO_TILE_MAX_ALLOCATION_BYTES` 和 `PTO_SHARED_TILE_MAX_ALLOCATION_BYTES` 均为 `262144`；这两个值并不允许把两个池合并成一次更大的分配。
+Local 与 Shared 分配消耗不同的预算。`PTO_TILE_MAX_ALLOCATION_BYTES` 把单个 Local 对象限制为 `65536` 字节，`PTO_SHARED_TILE_MAX_ALLOCATION_BYTES` 则允许单个 Shared 对象达到 `262144` 字节。独立的 `PTO_TILE_CAPACITY_BYTES` 仍把每个 PE 的 Local 总池容量保持为 `262144` 字节。
 
 <!-- PTO-READER-BLOCK: arch-tile-allocation-boundaries role=boundaries -->
 ## 模型边界
@@ -52,13 +52,14 @@ Local 与 Shared 分配消耗不同的预算。`PTO_TILE_MAX_ALLOCATION_BYTES` �
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-FEATURES-TILE-ALLOCATION","surface":"arch","classification":["features","tile-allocation"],"depends_on":["PTO-ARCH-PROGRAMMING-MODEL-CORE-PE-TOPOLOGY"]}
 // Every PE owns an independent 2048-cell Local pool; one Local object
-// is capped at 64 KiB. Multiple Local objects may consume the aggregate pool.  The Core also owns one
+// is capped at 64 KiB. Multiple Local objects may consume the aggregate pool.
+// The Core also owns one
 // independent 2048-cell Shared pool.  Local and Shared allocations do not
 // compete for one combined capacity budget.
 constant PTO_TILE_CELL_BYTES = 128;
 constant PTO_TILE_CELL_COUNT = 2048;
 constant PTO_TILE_CAPACITY_BYTES = 262144;
-constant PTO_TILE_MAX_ALLOCATION_BYTES = 262144;
+constant PTO_TILE_MAX_ALLOCATION_BYTES = 65536;
 constant PTO_SHARED_TILE_MAX_ALLOCATION_BYTES = 262144;
 constant PTO_MODEL_MAX_TILE_CAPACITY_BYTES = PTO_TILE_CAPACITY_BYTES;
 constant PTO_RESERVATION_GRANULE_BYTES = 64;

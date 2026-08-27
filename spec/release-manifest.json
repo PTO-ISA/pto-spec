@@ -146,7 +146,7 @@
     },
     {
       "path": "asl/arch/features/tile-allocation.asl",
-      "sha256": "6cde19e4a201671ffb45f6d57a48a91e9721512f0d052497980cb33fec81848e"
+      "sha256": "5a314d80f3d85f8ef18c02cc8b9dc2ea7bb33eba00f23649a614e918f87ca631"
     },
     {
       "path": "asl/arch/memory-model/address-space.asl",
@@ -766,7 +766,7 @@
     },
     {
       "path": "asl/block/operands/B.IOT.asl",
-      "sha256": "5224166d3f92e1cf0d249f6b990f9752caae9a9800bc54d902800c64639bc26d"
+      "sha256": "408a302d902ad9f215b7770810cbfbbada81fef9bc7b45c4ce249f918ec03df5"
     },
     {
       "path": "asl/block/operands/B.SUBVIEW.asl",
@@ -3214,7 +3214,7 @@
     },
     {
       "path": "asl/tile/model/state/descriptors.asl",
-      "sha256": "48f1420999d8c356f350ff422a4c55c1065e0959f7b7d56dd8020cf082bccea8"
+      "sha256": "c4f6631fb3663fdfd90a2b097e9599f4a65195a41066e7e8a0757ad55266c0d8"
     },
     {
       "path": "asl/tile/model/state/feature-map-descriptors.asl",
@@ -3434,23 +3434,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "29ca7f425081b898083cffd04418209f97a3688f231ead4a795f841e91b3bb46"
+      "sha256": "bdfe52945405feebc9a8a261176f2af23f0c302729ad3a98b983a79d25fbe37a"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "11383c6f1a2f7fa8ced22388fe03fa47768909e767e9fbc7db9f5f768d23ee98"
+      "sha256": "3ef2bb62421c79dff8fa77a1c7983923b523244b8090812883ef81286ca8106a"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "5f240049f75fa5c54206ec1660dfdc8f264657c295938c1744e152e9b17c3c15"
+      "sha256": "0ad4802374aecdab5b9e51cb751c8d0c9f5bf8790fc90087ceb6f90174594c7d"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "128d5fe877fa2dd13ef3050ccecf4d883f8af29fb7277fa19348049ee3de7732"
+      "sha256": "2e6c1186f1dd599d25a2b30a4be1649741d523348a9d36d7a585f36a9ccb2ea7"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "d24c1752acbb07318a55c9560c76c62e6c47d0b40adbc29872275e4f3f7d3ade"
+      "sha256": "97304fc20c80b40a82e7e432d0b7aa075540335b307c8bd5be30416a969a21de"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3496,7 +3496,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "d8d58418169b0737bf40550188140306fe953eebbe33d1f7dd2e637e25d0585e",
+  "content_sha256": "ad74fca3f1962731866dfe8a8c6dec4774084b91f918fae135cc9608ddecdeca",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3708,7 +3708,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/features/tile-allocation.md",
-      "sha256": "a6260a1a79ff874fdabb936dcff443fb5e4da233989b8c62c7196f5dc8e82e4e"
+      "sha256": "8a92da6b28d2af7331b94cee47da7b1178b3d0606dcc050e54538d82cec1657b"
     },
     {
       "kind": "generated-documentation",
@@ -3743,7 +3743,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/overview/architecture.md",
-      "sha256": "9cd5d1cf8f49b5850bc826664a126a5fbd943f4161899b7bf85783ccc83d6dfd"
+      "sha256": "da241b587e29bb555c828bb81f7605414bf850cc1880259aa1c608fa225b7428"
     },
     {
       "kind": "generated-documentation",
@@ -4483,7 +4483,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/operands/B.IOT.md",
-      "sha256": "80a70b6f49aa58282616c904be40dbd868fb9a59acd3eacbbdf0f9df3c5e2f9b"
+      "sha256": "a5548819e8a3637709340cb619a28ac7899645e196b6ce17a76b10125d8773b1"
     },
     {
       "kind": "generated-documentation",
@@ -7543,7 +7543,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/descriptors.md",
-      "sha256": "b1f38ca85cad74a7ea1616d0db54dbd068293d5286b34db2858052ef89877fe7"
+      "sha256": "0893bccad588c85ca74c86881da3130108a520a543ff83e32ed6c5a5c3203c03"
     },
     {
       "kind": "generated-documentation",
@@ -8549,7 +8549,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-B-IOT",
-        "sha256": "50f2fa3f2109226f71bfde9ae092562e5cf8026486f0c6b845055734c962a17f"
+        "sha256": "c64ac4985cf1e6edffe25ec8d0235b0b669e29db830142eb0150c74884733a0b"
       },
       {
         "id": "PTO-INST-BLOCK-B-SUBVIEW",

@@ -72,23 +72,32 @@ begin
     ReleaseTile(20);
     assert TileCapacityInUseExcept(63) == 256;
 
-    // Each PE owns an independent 256 KiB Local pool. A full-pool allocation
-    // on one PE does not consume another PE's Local budget, and Shared capacity
-    // remains a separate Core-wide pool.
+    // Each PE owns an independent 256 KiB Local pool, composed from legal
+    // Local objects of at most 64 KiB. Shared capacity remains a separate
+    // Core-wide pool and may hold one 256 KiB object.
     ResetProfileState();
     assert TileSizeCodeBytes(12) == 262144;
-    ConfigureTileForMask(0, 262144, 32768, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '1000');
-    assert LocalTileAllocationFits('0100', 262144);
-    ConfigureTileForMask(1, 262144, 32768, 1, 1, 1,
-        TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '0100');
+    assert !TileCapacityIsLegal(262144);
+    assert SharedTileCapacityIsLegal(262144);
+    for index = 0 to 3 do
+        ConfigureTileForMask(index as TileIndex, 65536, 8192, 1, 1, 1,
+            TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '1000');
+    end;
+    assert LocalTileAllocationFits('0100', 65536);
+    for index = 4 to 7 do
+        ConfigureTileForMask(index as TileIndex, 65536, 8192, 1, 1, 1,
+            TileDataType_U64, TileLayout_RowMajor, TileLocation_Any, '0100');
+    end;
     assert !LocalTileAllocationFits('1000', 128);
     assert !LocalTileAllocationFits('0100', 128);
-    assert LocalTileAllocationFits('0010', 262144);
+    assert LocalTileAllocationFits('0010', 65536);
+    let shared_tile = MaterializeSharedTileForReadSchemaAtCapacity(
+        (Zeros{6} + 63) as SharedTileID, 1, 1, 1, TileDataType_U64,
+        TileLayout_RowMajor, 262144);
     InstallSharedTile((Zeros{6} + 63) as SharedTileID,
-        _Tiles[[0]], '1111');
+        shared_tile, '1111');
     assert SharedTileCapacityInUse() == 262144;
-    assert LocalTileAllocationFits('0010', 262144);
+    assert LocalTileAllocationFits('0010', 65536);
     ResetProfileState();
 end;
 func main() => integer

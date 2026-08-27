@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOT-SIZECODES-002","source":"asl/block/operands/B.IOT.asl","requirements":["PTO-INST-BLOCK-B-IOT"],"kind":"execution","summary":"Decoded B.IOT destination paths cover every legal Local SizeCode.","pass_condition":"Codes 1 through 12 reach Local destination binding with the all-PE semantic mask.","related_sources":["asl/block/model/schema/profile-encoding.asl","asl/block/model/operands/tile-bindings.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-B-IOT-SIZECODES-002","source":"asl/block/operands/B.IOT.asl","requirements":["PTO-INST-BLOCK-B-IOT"],"kind":"execution","summary":"Decoded B.IOT destination paths cover every legal Local SizeCode.","pass_condition":"Codes 1 through 10 reach Local destination binding with the all-PE semantic mask; the separate SizeCode-12 boundary AVS covers rejection of codes 11 through 15.","related_sources":["asl/block/model/schema/profile-encoding.asl","asl/block/model/operands/tile-bindings.asl"]}
 pure func BIOTSizeCodeStart(data_type: bits(5)) => bits(64)
 begin
     var instruction = Zeros{64} + 0x00011181;
@@ -18,7 +18,7 @@ end;
 
 func main() => integer
 begin
-    for size = 1 to 12 do
+    for size = 1 to 10 looplimit 10 do
         ResetProfileState();
         let started = ExecuteCommandInstruction(
             BIOTSizeCodeStart(Zeros{5} + 27), 32);
