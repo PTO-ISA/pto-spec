@@ -1,7 +1,7 @@
 // PTO-TEST: {"id":"PTO-AVS-BLOCK-TMOV-ZERO-001","source":"asl/block/execution/BSTART.TMOV.asl","requirements":["PTO-INST-BLOCK-BSTART-TMOV"],"kind":"boundary","summary":"a zero participation mask suppresses TMOV schema and state effects","pass_condition":"zero-mask Local and Shared binders complete without source reads, allocation, publication, or faults","related_sources":["asl/block/model/dispatch/tile-execution.asl"]}
 pure func TMOVZeroStart() => bits(64)
 begin
-    var instruction: bits(64) = Zeros{64} + 0x00911181;
+    var instruction: bits(64) = Zeros{64} + 0x00211181;
     instruction[31:27] = Zeros{5} + 27;
     return instruction;
 end;

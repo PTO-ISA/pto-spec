@@ -25,6 +25,9 @@ TEST_DIR = ROOT / "tests/asl/block/model/operands/subview-descriptor"
 CELL_SIZE_CODE = 1
 PE_MODE = 0b111
 SHARED_FIXTURE_ID = 16
+CELL_REARRANGEMENT_OPERATIONS = {
+    "TPERMUTE", "TSHUF", "TPACK", "TUNPACK",
+}
 
 FIXTURE_RECIPES = {
     "TEPL": "cube-parent-local-view",
@@ -117,6 +120,8 @@ def fixture_data_type(row: dict) -> int:
     handler performs the actual legality check.
     """
     name = row.get("name", row.get("operation"))
+    if name in CELL_REARRANGEMENT_OPERATIONS:
+        return 25  # U32 is accepted by every CELL rearrangement data role.
     if name in {
         "TAND", "TOR", "TXOR", "TSHL", "TSHR", "TNOT",
         "TANDS", "TORS", "TXORS", "TSHLS", "TSHRS",
@@ -201,6 +206,8 @@ def tile_fields(row: dict) -> list[str]:
 
 def fixture_recipe(row: dict) -> str:
     """Select a named recipe from the authoritative operation family."""
+    if row.get("name", row.get("operation")) in CELL_REARRANGEMENT_OPERATIONS:
+        return "cell-rearrangement-cube-view"
     try:
         recipe = FIXTURE_RECIPES[row["family"]]
     except KeyError as error:
@@ -220,8 +227,27 @@ def cube_source_recipe(row: dict) -> dict[int, tuple[int, str]]:
     but their persistent CUBE parent still needs a schema-supported concrete
     type and a harmless parent layout for the descriptor copy.
     """
-    if row["family"] != "CUBE":
+    name = row.get("name", row.get("operation"))
+    if row["family"] != "CUBE" and name not in CELL_REARRANGEMENT_OPERATIONS:
         return {}
+    if name in CELL_REARRANGEMENT_OPERATIONS:
+        if "operands" not in row:
+            return {
+                role_number(field) + 1: (
+                    row["fixture_role_data_types"][field],
+                    row["fixture_role_layouts"][field],
+                )
+                for field in row["fixture_role_data_types"]
+            }
+        return {
+            role_number(operand["field"]) + 1: (
+                27 if name == "TPERMUTE" and
+                operand["field"] == "source2" else 25,
+                "TileLayout_CUBE_M32",
+            )
+            for operand in row["operands"]
+            if operand["field"].startswith("source")
+        }
     primary_dtype = fixture_data_type(row)
     result: dict[int, tuple[int, str]] = {}
     operands = row.get("operands")
@@ -385,6 +411,8 @@ def dimension_words(row: dict) -> list[int]:
     # One FP16 M16 CELL is a 1x4 logical view. Matrix handlers retain their
     # compact one-value defaults; ordinary Local handlers use the view shape.
     name = row.get("name", row.get("operation"))
+    if name in CELL_REARRANGEMENT_OPERATIONS:
+        return []
     if name == "TSORT":
         return [0x43 | (4 << 20)]
     if name == "TMRGSORT":
@@ -445,6 +473,13 @@ def fixture(row: dict, operation_index: int, role: str, starts: dict[str, int],
           row["name"] in {"TSEL", "TSELS"}):
         expected_fault = "Fault_TileLegality"
         outcome = "predicate-role-pre-effect-fault"
+    elif (role_kind == "source" and
+          row["name"] in CELL_REARRANGEMENT_OPERATIONS):
+        # These TEPL handlers require persistent CUBE operands.  B.SUBVIEW is
+        # total and materializes a bounded RowMajor view for a non-CUBE decode
+        # family, so the selected handler rejects that source before effects.
+        expected_fault = "Fault_TileLegality"
+        outcome = "cell-rearrangement-subview-pre-effect-fault"
     result_index = case_index + 1
     test_id = f"PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-{result_index:03d}"
     return {
@@ -508,6 +543,10 @@ def asl_word(value: int) -> str:
 
 def source_valid_columns(row: dict, source: str) -> int:
     name = row.get("name", row.get("operation"))
+    if name == "TPERMUTE":
+        return 4 if source == "source2" else 1
+    if name in {"TSHUF", "TPACK", "TUNPACK"}:
+        return 1
     if name == "TROWEXPAND":
         return 1
     if name in {
@@ -534,6 +573,10 @@ def source_valid_rows(row: dict, source: str) -> int:
 
 def source_fixture_data_type(row: dict, source: str) -> int:
     name = row.get("name", row.get("operation"))
+    if name == "TPERMUTE" and source == "source2":
+        return 27
+    if name == "TSHUF" and source == "source1":
+        return 25
     if name == "THISTOGRAM" and source == "source1":
         return 27
     if name in {"TGATHER", "TSCATTER"} and source == "source1":
@@ -582,6 +625,8 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
                 )
     gpr2 = (
         "0x3f800000" if operation_name in {"TQUANT", "TDEQUANT"}
+        else "0x00000101" if operation_name == "TPACK"
+        else "0x00000100" if operation_name == "TUNPACK"
         else "0" if operation_name in {"TINSERT", "TIMG2COL"}
         else "1"
     )
@@ -594,7 +639,8 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
     ]
     if row["family"] == "TLSU":
         return lines
-    if row["family"] == "CUBE":
+    if (row["family"] == "CUBE" or
+            operation_name in CELL_REARRANGEMENT_OPERATIONS):
         source_recipe = cube_source_recipe(row)
         selected_source = row["role"] if role_kind == "source" else None
         auxiliary_roles = {"bias"}
@@ -613,9 +659,13 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
                     f"    MarkTileValidRegionDefined({tile});",
                 ]
             else:
+                valid_columns = (
+                    source_valid_columns(row, field)
+                    if operation_name in CELL_REARRANGEMENT_OPERATIONS else 1
+                )
                 lines += [
                     f"    let configured_{tile} = ConfigureCubeTileForMask(",
-                    f"        {tile}, 128, 1, 1, {DATA_TYPE_NAMES[role_dtype]},",
+                    f"        {tile}, 128, 1, {valid_columns}, {DATA_TYPE_NAMES[role_dtype]},",
                     f"        {role_layout}, TileLocation_Matrix, '1111');",
                     f"    assert configured_{tile};",
                     f"    MarkTileValidRegionDefined({tile});",
@@ -842,11 +892,6 @@ def render_case(row: dict) -> list[str]:
     return lines
 
 
-def shared_stage3_start(row: dict, function: int) -> int:
-    """Use the accepted collective selector, not the direct TLSU selector."""
-    return (int(row["decoded_start"], 16) & ~(0x1F << 20)) | (function << 20)
-
-
 def render_shared_stage3_case(row: dict) -> list[str]:
     """Render one executable B.IOS collective witness for Stage 3.
 
@@ -916,8 +961,9 @@ def render_shared_stage3_case(row: dict) -> list[str]:
         lines = common + [
             f"    ConfigureTile(0, 128, 1, 4, 1, 4, {dtype}, TileLayout_RowMajor, TileLocation_Any);",
             "    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x2a);",
+            "    MarkTileValidRegionDefined(0);",
             f"    InstallSharedTile({shared_id}, _Tiles[[0]], '1111');",
-            f"    let started = ExecuteCommandInstruction({asl_word(shared_stage3_start(row, 12))}, 32);",
+            f"    let started = ExecuteCommandInstruction({asl_word(int(row['decoded_start'], 16))}, 32);",
             "    assert started == CommandExecution_Executed;",
             f"    let shared = ExecuteCommandInstruction({asl_word(shared_binding('source0', 0))}, 32);",
             "    assert shared == CommandExecution_Executed;",
@@ -925,6 +971,10 @@ def render_shared_stage3_case(row: dict) -> list[str]:
             "    assert subview == CommandExecution_Executed;",
             f"    let local = ExecuteCommandInstruction({asl_word(local_binding(row, ['destination0'], True))}, 32);",
             "    assert local == CommandExecution_Executed;",
+            f"    assert SharedTilePublished({shared_id});",
+            "    assert BundleSharedSubviewLegal(0);",
+            f"    assert BundleSharedTMOVDestinationSchemaLegal({shared_id}, 2);",
+            "    assert SelectedBundleTileMasksLegal();",
             "    let completed = ExecuteBundleTileOperation();",
             "    assert completed && _LastFault == Fault_None;",
             "    let destination = _BundleTileBindings[[0]].destination;",
@@ -936,7 +986,7 @@ def render_shared_stage3_case(row: dict) -> list[str]:
             f"    ConfigureTile(1, 128, 1, 4, 1, 4, {dtype}, TileLayout_RowMajor, TileLocation_Any);",
             "    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x2a);",
             "    MarkTileValidRegionDefined(1);",
-            f"    let started = ExecuteCommandInstruction({asl_word(shared_stage3_start(row, 9))}, 32);",
+            f"    let started = ExecuteCommandInstruction({asl_word(int(row['decoded_start'], 16))}, 32);",
             "    assert started == CommandExecution_Executed;",
             f"    let shared = ExecuteCommandInstruction({asl_word(shared_binding('destination0', 0))}, 32);",
             "    assert shared == CommandExecution_Executed;",
@@ -1029,6 +1079,7 @@ def build() -> tuple[dict, dict[Path, str]]:
     if set(outcome_counts) != {
         "normal-success", "shared-stage3-success", "shared-stage3-fault",
         "nonrollback-pre-effect-fault", "predicate-role-pre-effect-fault",
+        "cell-rearrangement-subview-pre-effect-fault",
     }:
         raise ValueError("matrix outcome classification is incomplete")
     evidence = {

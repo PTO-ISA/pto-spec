@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-READINESS-012","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"fault","summary":"Cooperative Shared Matrix requires all four fixed quarters published and ready","pass_condition":"a partial Shared A allocation rejects before destination allocation binding consumption payload or numeric status","related_sources":["asl/tile/model/state/shared-registers.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TMATMUL-SHARED-READINESS-012","source":"asl/block/model/dispatch/cube-tmatmul.asl","requirements":["PTO-B-SHARED-WHOLE-PARENT-READY-001","PTO-CUBE-SHARED-TRANSPOSE-001"],"kind":"boundary","summary":"Cooperative Shared Matrix waits for whole-parent Shared readiness without fault or effects","pass_condition":"a partial Shared A allocation waits without destination allocation binding consumption payload numeric status or fault","related_sources":["asl/tile/model/state/shared-registers.asl","asl/block/model/dispatch/tile-execution.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -30,7 +30,7 @@ begin
 
     let completed = ExecuteBundleTileOperation();
     assert !completed;
-    assert _LastFault == Fault_TileLegality;
+    assert _LastFault == Fault_None;
     assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     assert !_BundleSharedBindings[[0]].consumed;
     let shared_after = SharedTileRecord((Zeros{6} + 42) as SharedTileID);
