@@ -1047,6 +1047,7 @@ nav:
           - "ADR 0100: Cooperative Group-M Distribution and Inactive PE Semantics": status/decisions/0100-cooperative-group-m-distribution.md
           - "ADR 0101: Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale": status/decisions/0101-matrix-scale-and-cscale.md
           - "ADR 0102: PTO ISA 0.58.4.1 publication-contract correction boundary": status/decisions/0102-0584-1-publication-contract-corrections.md
+          - "ADR 0103: Private CUBE vector execution and CELL rearrangement": status/decisions/0103-private-cube-vector-and-cell-rearrangement.md
           - "ADR 0105: Shared whole-parent readiness and single-issuer publication": status/decisions/0105-shared-whole-parent-readiness.md
           - "ADR 0106: Shared source B.SUBVIEW uses per-PE offsets": status/decisions/0106-shared-source-subview-per-pe.md
           - "ADR 0107: Remove legacy Shared movement Functions": status/decisions/0107-remove-legacy-shared-movement.md

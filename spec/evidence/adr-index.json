@@ -7971,6 +7971,44 @@
       "title": "PTO ISA 0.58.4.1 publication-contract correction boundary"
     },
     {
+      "accepted": "2026-08-25",
+      "affected_ndf": [
+        "PTO-TPACK-CONTRACT-001",
+        "PTO-TPERMUTE-CONTRACT-001",
+        "PTO-TSHUF-CONTRACT-001",
+        "PTO-TUNPACK-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-TILE-TPACK",
+        "PTO-TILE-TPERMUTE",
+        "PTO-TILE-TSHUF",
+        "PTO-TILE-TUNPACK"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "b4f47dd0bf134e11c412250c1664844151cb0d55",
+      "created": "2026-08-25",
+      "id": "ADR-0103",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/151",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "Private CUBE vector execution and CELL rearrangement"
+    },
+    {
       "accepted": "2026-08-26",
       "affected_ndf": [
         "PTO-B-SHARED-WHOLE-PARENT-READY-001",
@@ -8086,6 +8124,6 @@
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 100
+    "record_count": 101
   }
 }

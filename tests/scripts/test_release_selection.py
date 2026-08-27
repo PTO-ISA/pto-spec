@@ -190,6 +190,37 @@ class ReleaseSelectionTest(unittest.TestCase):
         )
         self.assertEqual(result.blockers, ())
 
+    def test_publication_adr_cannot_approve_unrelated_ndf_drift(self) -> None:
+        adrs, readiness, ndf = self.facts()
+        targeted = {
+            "id": "ADR-0003",
+            "status": "accepted",
+            "target_releases": ["0.58.2.0"],
+            "affected_ndf": ["PTO-EXAMPLE-001"],
+        }
+        previous = {
+            "release": "0.58.2",
+            "publication_version": "0.58.2.0",
+            "release_selection": {
+                "expanded_ndf": [
+                    {"id": "PTO-EXAMPLE-001", "sha256": "1" * 64}
+                ]
+            },
+        }
+        expanded = (
+            *ndf,
+            {"id": "PTO-NEW-001", "status": "accepted", "sha256": "3" * 64},
+        )
+
+        result = self.validate(
+            adrs=(*adrs, targeted),
+            readiness=(*readiness, {"subject_id": "ADR-0003", "stage": "executable"}),
+            ndf=expanded,
+            previous_manifest=previous,
+        )
+
+        self.assertTrue(any("selected NDF set changed" in row for row in result.blockers))
+
     def test_repository_policy_expands_the_current_candidate_without_drift(self) -> None:
         self.assertTrue(SELECTION.is_file())
         self.assertTrue(SCHEMA.is_file())

@@ -769,7 +769,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         "model_limits": [
             {
                 "id": "accepted-0.58.0-abi-break",
-                "disposition": "The immutable independent snapshot predates the accepted command-encoding, compact TEPL-selector ABI, and completed TLOAD/TSTORE operand schema. The retained matrix preserves 7 command encoding divergences and 68 direct-tile ABI divergences instead of relabeling them as exact matches.",
+                "disposition": "The immutable independent snapshot predates the accepted command-encoding, compact TEPL-selector ABI, and completed TLOAD/TSTORE operand schema. The retained matrix preserves 8 command encoding divergences and 62 active direct-tile ABI divergences instead of relabeling them as exact matches.",
             },
             {
                 "id": "reg5-flat-model-mismatch",
@@ -824,7 +824,7 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         row for row in rows if row.get("abi_change_acceptance") is not None
     ]
     accepted_abi_break_counts = Counter(row["surface"] for row in accepted_abi_breaks)
-    if accepted_abi_break_counts != Counter({"command": 8, "direct-tile": 68}):
+    if accepted_abi_break_counts != Counter({"command": 8, "direct-tile": 62}):
         raise SystemExit(
             "unexpected accepted ABI divergence counts: "
             f"{dict(sorted(accepted_abi_break_counts.items()))}"

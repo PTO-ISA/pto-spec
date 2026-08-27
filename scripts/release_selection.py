@@ -165,19 +165,20 @@ def validate_selection(
     # boundary for a revision of the current publication identity.  Keep the
     # same identity only when that boundary is recorded; otherwise preserve
     # the fail-closed published-NDF drift check below.
-    publication_boundary = any(
-        record.get("status") == "accepted" and
-        publication_version in record.get("target_releases", ())
+    publication_boundary_ndf = {
+        ndf_id
         for record in adrs.values()
-    )
+        if record.get("status") == "accepted"
+        and publication_version in record.get("target_releases", ())
+        for ndf_id in record.get("affected_ndf", ())
+        if isinstance(ndf_id, str)
+    }
     previous_identity = None
     if previous_manifest is not None:
         previous_identity = previous_manifest.get(
             "publication_version", previous_manifest.get("release")
         )
-    if (previous_manifest is not None and
-            previous_identity == publication_version and
-            not publication_boundary):
+    if previous_manifest is not None and previous_identity == publication_version:
         previous_selection = previous_manifest.get("release_selection")
         if isinstance(previous_selection, dict):
             previous_rows = previous_selection.get("expanded_ndf", ())
@@ -188,29 +189,36 @@ def validate_selection(
                 and isinstance(row.get("id"), str)
                 and isinstance(row.get("sha256"), str)
             }
-            selected_ndf = tuple(sorted(previous_digests))
-            digests = tuple((ndf_id, previous_digests[ndf_id]) for ndf_id in selected_ndf)
-            previous_adrs = previous_selection.get("selected_adr_ids")
-            if isinstance(previous_adrs, list) and all(
-                isinstance(adr_id, str) for adr_id in previous_adrs
-            ):
-                selected_adrs = tuple(previous_adrs)
             current_digest_map = dict(current_digests)
-            if set(previous_digests) != set(current_digest_map):
-                blockers.append(
-                    "published selected NDF set changed; a new release identity "
-                    "and accepted compatibility ADR are required"
-                )
-            changed = sorted(
+            changed = {
                 ndf_id
                 for ndf_id, digest in previous_digests.items()
                 if current_digest_map.get(ndf_id) != digest
-            )
-            if changed:
-                blockers.append(
-                    f"published NDF {changed[0]} changed; a new release identity "
-                    "and accepted compatibility ADR are required"
+            }
+            selected_set_changed = set(previous_digests) != set(current_digest_map)
+            drift = changed | (set(previous_digests) ^ set(current_digest_map))
+            uncovered_drift = drift - publication_boundary_ndf
+            if uncovered_drift:
+                selected_ndf = tuple(sorted(previous_digests))
+                digests = tuple(
+                    (ndf_id, previous_digests[ndf_id]) for ndf_id in selected_ndf
                 )
+                previous_adrs = previous_selection.get("selected_adr_ids")
+                if isinstance(previous_adrs, list) and all(
+                    isinstance(adr_id, str) for adr_id in previous_adrs
+                ):
+                    selected_adrs = tuple(previous_adrs)
+                if selected_set_changed:
+                    blockers.append(
+                        "published selected NDF set changed; a new release identity "
+                        "and accepted compatibility ADR are required"
+                    )
+                changed_uncovered = sorted(changed - publication_boundary_ndf)
+                if changed_uncovered:
+                    blockers.append(
+                        f"published NDF {changed_uncovered[0]} changed; a new release "
+                        "identity and accepted compatibility ADR are required"
+                    )
     floor_index = STAGES.index(floor)
     for adr_id, record in adrs.items():
         if record.get("status") != "accepted":
