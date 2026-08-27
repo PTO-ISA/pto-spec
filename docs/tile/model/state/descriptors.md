@@ -106,8 +106,9 @@ end;
 
 // The executable payload remains bounded by PTO_MODEL_TILE_ELEMENTS. Large
 // descriptors retain their architectural logical-element capacity through
-// width-aware Word carriers, so Local and Shared 256 KiB shapes remain
-// legal without allocating a maximum Word per logical element.
+// width-aware Word carriers, so a 256 KiB Shared shape and the full common
+// SizeCode map remain representable without allocating a maximum Word per
+// logical element. Local object legality is capped separately at 64 KiB.
 readonly func TileLogicalElementCapacity(
     capacity_bytes: integer {0..262144}, data_type: TileDataType)
     => integer {1..524288}

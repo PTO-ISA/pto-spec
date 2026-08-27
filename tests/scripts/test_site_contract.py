@@ -204,6 +204,14 @@ class SiteContractTests(unittest.TestCase):
         projection_text = json.dumps(projection)
         self.assertIn("complete Shared logical parent", projection_text)
         self.assertIn("B.ASSEMBLE", projection_text)
+        self.assertIn(
+            "Capacity code 1..10: 128 B through 64 KiB per participating PE.",
+            projection_text,
+        )
+        self.assertNotIn(
+            "Capacity code 1..12: 128 B through 256 KiB per participating PE.",
+            projection_text,
+        )
         self.assertNotIn("selected Shared quarters", projection_text)
         self.assertNotIn("selected Shared quarter", projection_text)
         self.assertNotIn("PTO-PAGE-COMPOSITION", owner)

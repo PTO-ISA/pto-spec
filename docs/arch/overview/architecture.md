@@ -40,7 +40,7 @@ Every member of the closed state set changes only through an accepted ASL transi
 <!-- PTO-READER-BLOCK: arch-overview-boundaries role=boundaries -->
 ## Architectural boundaries
 
-Local and Shared tile allocations use independent capacity pools. `B.IOT` selects one PE's Local allocation from that PE's `256 KiB` pool, whereas `B.IOS` denotes one Core-wide Shared allocation from a separate `256 KiB` pool.
+Local and Shared tile allocations use independent capacity pools. One `B.IOT` Local object may select only `128 B..64 KiB`; multiple Local objects on the same PE may jointly consume that PE's `256 KiB` Local pool. `B.IOS` denotes one Core-wide Shared allocation from a separate `256 KiB` pool.
 
 A release candidate is valid only for the exact commit that passes the pinned ASL model, all independent AVS results, coverage, projection, and release-evidence checks.
 

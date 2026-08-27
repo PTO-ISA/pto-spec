@@ -205,8 +205,8 @@
               {
                 "name": "SizeCode",
                 "meaning": {
-                  "en": "Capacity code 1..12: 128 B through 256 KiB per participating PE.",
-                  "zh-CN": "容量码 1..12：每个参与 PE 为 128 B 至 256 KiB。"
+                  "en": "Capacity code 1..10: 128 B through 64 KiB per participating PE.",
+                  "zh-CN": "容量码 1..10：每个参与 PE 为 128 B 至 64 KiB。"
                 }
               },
               {

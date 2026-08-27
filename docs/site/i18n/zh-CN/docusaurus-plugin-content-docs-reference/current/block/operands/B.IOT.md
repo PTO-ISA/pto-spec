@@ -209,13 +209,13 @@ begin
 end;
 
 pure func InstructionContractPerPECapacity_B_IOT(
-    size_code: integer {1..12}) => integer
+    size_code: integer {1..10}) => integer
 begin
     return TileSizeCodeBytes(size_code);
 end;
 
 pure func InstructionContractCoreCapacity_B_IOT(
-    size_code: integer {1..12}, pe_mask: bits(4)) => integer
+    size_code: integer {1..10}, pe_mask: bits(4)) => integer
 begin
     return TileCoreAllocationBytes(pe_mask,
         InstructionContractPerPECapacity_B_IOT(size_code));
