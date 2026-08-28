@@ -97,7 +97,10 @@ begin
     end;
     let role = if source_select then 1 else 0;
     if !BundleRangeRoleLegal(role as integer {0..2}) then return FALSE; end;
-    return TRUE;
+    if _BundleRangeGroup.kind == BundleRangeGroup_Local then
+        return LocalTileSizeCodeIsLegal(size_code);
+    end;
+    return TileSizeCodeIsLegal(size_code);
 end;
 
 func RecordBundleRangeSubview(source_select: boolean,
@@ -167,6 +170,10 @@ begin
     if !BundleRangeRoleLegal(2) then return FALSE; end;
     if init && size_code == 0 then return FALSE; end;
     if !init && size_code != 0 then return FALSE; end;
+    if size_code != 0 && _BundleRangeGroup.kind == BundleRangeGroup_Local &&
+       !LocalTileSizeCodeIsLegal(size_code) then return FALSE; end;
+    if size_code != 0 && _BundleRangeGroup.kind == BundleRangeGroup_Shared &&
+       !TileSizeCodeIsLegal(size_code) then return FALSE; end;
     return TRUE;
 end;
 

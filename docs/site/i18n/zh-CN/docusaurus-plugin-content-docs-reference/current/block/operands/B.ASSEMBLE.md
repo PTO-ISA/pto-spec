@@ -153,7 +153,7 @@ end;
 
 - RegSrc accepts only absolute GPR selectors 0..23.
 - ParentSizeCode raw values 0..12 are decoded; INIT/size combinations select INIT, MIDDLE, LAST, or INIT_LAST and contradictory combinations are BundleControl.
-- Local and Shared parent sizes 1..12 are accepted.
+- Local parent sizes 1..10 are accepted; Shared parent sizes 1..12 are accepted.
 - The modifier is legal only in the contiguous immediately preceding binder group and follows source roles.
 
 ## State effects

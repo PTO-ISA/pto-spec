@@ -98,9 +98,8 @@ atomicity and restart rules remain in force.
 
 ## Consequences
 
-- Multiple Local destinations may jointly consume one PE's complete 256 KiB
-  pool, while each individual Local destination remains capped at SizeCode 10
-  (64 KiB); other PEs retain their independent capacity.
+- A Local SizeCode-12 destination may consume one PE's complete 256 KiB pool;
+  other PEs retain their independent capacity.
 - A Shared SizeCode-12 destination consumes the complete 256 KiB Shared pool.
 - Reducing the Shared namespace changes the accepted B.IOS encoding mask and
   requires decoder, assembler, disassembler, compiler, model, and test updates.
@@ -122,6 +121,18 @@ allocation mask, and precise preflight/rollback rules remain in force.
 
 ## Amendment for 0.58.4.1
 
-ADR-0102 owns the Shared whole-parent readiness and single-issuer publication
-closure. ADR-0106 owns per-PE Shared source range derivation. The independent
-Local object cap is 64 KiB while the aggregate Local pool remains 256 KiB per PE.
+ADR-0105 owns the Shared whole-parent readiness and single-issuer publication
+closure. ADR-0106 owns per-PE Shared source range derivation, and ADR-0107 owns
+the removal of legacy Shared movement forms. The independent Local object cap
+is 64 KiB while the aggregate Local pool remains 256 KiB per PE.
+
+## Erratum for 0.58.4.1 (2026-08-27)
+
+The first Consequences bullet above is retained verbatim as historical record,
+but contains a wording defect.  It must not be read as permitting a single
+Local destination with SizeCode-12.  The current clarified semantic is that a
+single Local object or destination may use only SizeCode 1..10.  SizeCode-12
+may describe a Shared parent, or the aggregate capacity of multiple Local
+objects within one PE's 256 KiB Local pool; it does not describe a legal single
+Local destination.  ADR-0109 records this scoped clarification without
+superseding ADR-0097 or changing its Shared decisions.
