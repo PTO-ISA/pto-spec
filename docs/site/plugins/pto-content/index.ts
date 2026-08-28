@@ -40,6 +40,7 @@ import type {
   PtoUnitEncoding,
   PtoUnitWorkbenchData,
 } from '../../src/types/pto';
+import {ndfOverviewSvg} from './ndfOverview';
 import {legacyReferenceRoute, unitRoute} from './routes';
 
 const TLOAD_ROUTE =
@@ -3141,6 +3142,11 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         release: content.release,
         surfaceCounts,
         recordCounts,
+        graphCounts: {
+          ...content.graph.counts,
+          nodes: content.graph.nodes.length,
+          relationships: content.graph.edges.length,
+        },
         navigation: navigationData(context, content),
       });
       const unitModules = await Promise.all(
@@ -3264,6 +3270,11 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
     },
     postBuild({content, outDir}): void {
       const locale = context.i18n.currentLocale;
+      writeFileSync(
+        path.join(outDir, 'pto-ndf-overview.svg'),
+        ndfOverviewSvg(content.graph),
+        'utf8',
+      );
       const entries = content.units.map(({data, route}) => ({
         id: String(data.unit.id ?? data.metadata.id ?? ''),
         mnemonic:

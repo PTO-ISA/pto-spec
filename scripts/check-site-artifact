@@ -22,6 +22,7 @@ OUTPUT = SITE / "build"
 MAX_ARTIFACT_BYTES = 1_000_000_000
 MAX_MAIN_JAVASCRIPT_GZIP = 350 * 1024
 MAX_UNIT_HTML_BYTES = 750_000
+MAX_NDF_OVERVIEW_BYTES = 1_500_000
 COMMIT = (
     subprocess.run(
         ["git", "rev-parse", "HEAD"],
@@ -484,8 +485,38 @@ def main() -> int:
 
         index_html = require_text(
             "index.html",
-            ("PTO Formal Specification", f"v{publication_version}", COMMIT[:12]),
+            (
+                "PTO Formal Specification",
+                f"v{publication_version}",
+                COMMIT[:12],
+                "NDF relationships at a glance",
+                "pto-ndf-overview.svg",
+            ),
         )
+        for relative in (
+            "pto-ndf-overview.svg",
+            "zh-CN/pto-ndf-overview.svg",
+        ):
+            overview = require_text(
+                relative,
+                (
+                    f'data-source-commit="{COMMIT}"',
+                    f'data-node-count="{expected_nodes}"',
+                    f'data-edge-count="{expected_edges}"',
+                ),
+            )
+            if len(overview.encode("utf-8")) > MAX_NDF_OVERVIEW_BYTES:
+                raise ValueError(
+                    f"{relative} exceeds the {MAX_NDF_OVERVIEW_BYTES}-byte budget"
+                )
+            edge_path = re.search(
+                r'<path d="([^"]*)" fill="none" stroke="#a79da1"',
+                overview,
+            )
+            if edge_path is None or edge_path.group(1).count("C") != expected_edges:
+                raise ValueError(f"{relative} does not render every relationship")
+            if overview.count("h.01") != expected_nodes:
+                raise ValueError(f"{relative} does not render every graph node")
         require_text(
             "instructions/tile/memory-and-data-movement/regular/TLOAD/index.html",
             (

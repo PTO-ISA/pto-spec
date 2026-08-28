@@ -43,6 +43,24 @@ test('latest release landing page teaches the architecture before implementation
   await expect(page.getByRole('heading', {name: 'Block', level: 3})).toBeVisible();
   await expect(page.getByRole('heading', {name: 'Tile', level: 3})).toBeVisible();
   await expect(page.getByRole('heading', {name: /ADR explains why/})).toBeVisible();
+  await expect(
+    page.getByRole('heading', {name: 'NDF relationships at a glance', level: 2}),
+  ).toBeVisible();
+  const ndfOverview = page.getByRole('img', {
+    name: /Complete NDF relationship overview/,
+  });
+  await expect(ndfOverview).toBeVisible();
+  await expect(ndfOverview).toHaveAttribute('src', '/pto-ndf-overview.svg');
+  await expect(ndfOverview).toHaveJSProperty('complete', true);
+  await expect.poll(
+    () => ndfOverview.evaluate((image: HTMLImageElement) => image.naturalWidth),
+  ).toBeGreaterThan(0);
+  await expect.poll(
+    () => ndfOverview.evaluate((image: HTMLImageElement) => image.naturalHeight),
+  ).toBeGreaterThan(0);
+  await expect(
+    page.getByRole('link', {name: 'Open the interactive NDF explorer', exact: true}),
+  ).toHaveAttribute('href', '/explore/ndf/');
   const scalarCard = page.getByRole('heading', {name: 'Scalar', level: 3}).locator('xpath=ancestor::article[1]');
   await scalarCard.getByRole('link', {name: /Browse Scalar units/}).click();
   await expect(page).toHaveURL(/\/instructions\/\?surface=scalar/);
@@ -661,6 +679,16 @@ test('Simplified Chinese framework route is generated', async ({page}) => {
 
 test.describe('no JavaScript fallback', () => {
   test.use({javaScriptEnabled: false});
+
+  test('homepage keeps the complete NDF overview and explorer path', async ({page}) => {
+    await page.goto('/');
+    await expect(
+      page.getByRole('img', {name: /Complete NDF relationship overview/}),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', {name: 'Open the interactive NDF explorer', exact: true}),
+    ).toHaveAttribute('href', '/explore/ndf/');
+  });
 
   test('released ASL and NDF remain readable', async ({page}) => {
     await page.goto(tloadRoute);

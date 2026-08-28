@@ -9,7 +9,7 @@
     "serve": "docusaurus serve",
     "clear": "docusaurus clear",
     "typecheck": "tsc --noEmit",
-    "test:unit": "node --experimental-strip-types --test plugins/pto-content/remark-repository-links.test.mjs src/components/encodingModel.test.ts src/theme/aslPrism.test.ts",
+    "test:unit": "node --experimental-strip-types --test plugins/pto-content/ndf-overview.test.ts plugins/pto-content/remark-repository-links.test.mjs src/components/encodingModel.test.ts src/theme/aslPrism.test.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {
