@@ -8363,12 +8363,51 @@
         "0.58.5"
       ],
       "title": "Local single-object cap versus aggregate Local pool"
+    },
+    {
+      "accepted": "2026-08-28",
+      "affected_ndf": [
+        "PTO-INST-TILE-TCVT",
+        "PTO-TCVT-CONTRACT-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-TCVT"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "93a4b9e34c0bd80767077b41dac85b26b3e59934",
+      "created": "2026-08-28",
+      "id": "ADR-0110",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/167",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md",
+      "rejected": null,
+      "release_boundary": true,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "TCVT CUBE_M16 and CUBE_M32 layout closure"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 103
+    "record_count": 104
   }
 }

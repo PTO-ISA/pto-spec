@@ -173,10 +173,15 @@ func TCVT(destination: TileIndex, source: TileIndex,
 begin
     var result = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
-    assert result.rows == source_tile.rows;
-    assert result.columns == source_tile.columns;
     assert result.valid_rows == source_tile.valid_rows;
     assert result.valid_columns == source_tile.valid_columns;
+    if TileLayoutIsCube(source_tile.layout) then
+        assert result.layout == source_tile.layout &&
+               result.location == TileLocation_Matrix;
+    else
+        assert result.rows == source_tile.rows;
+        assert result.columns == source_tile.columns;
+    end;
     var conversion_flags = Zeros{5};
     result.defined_elements = Zeros{PTO_MODEL_TILE_ELEMENTS};
     result.defined_valid_elements = 0;
@@ -199,7 +204,15 @@ begin
     end;
     result = TileWithValidRegionDefined(result);
     result = TileWithPadding(result, CurrentBundlePadValue());
-    result.location = TileLocation_Any;
+    // CUBE_M16/M32 is a persistent Local matrix representation.  Ordinary
+    // TCVT outputs remain public tiles, but a CUBE-to-CUBE conversion must
+    // retain the representation so the destination can be consumed by the
+    // matrix/CELL paths without an implicit layout conversion.
+    if TileLayoutIsCube(result.layout) then
+        result.location = TileLocation_Matrix;
+    else
+        result.location = TileLocation_Any;
+    end;
     TileCommitConversionResult(destination, result, conversion_flags);
 end;
 

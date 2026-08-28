@@ -558,7 +558,7 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "439f6dad32fa19dc00b47d36df0ad85354e28ffec9122199392d606a0ea0f96b"
+      "sha256": "2bf14689631bfca407a59c60700da2aeb6b5e56c4b6d344cba8f6895d5e1804a"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
@@ -609,8 +609,12 @@
       "sha256": "a9cee42a5f6bca111478546b4f3d7b9e8ca2f1abf7729a6902d51431e628c206"
     },
     {
+      "path": "asl/block/model/dispatch/tcvt-destination.asl",
+      "sha256": "f235ce4c705079d980a130437813c66d36c7d327ede0cc80535ad5fdf59783d6"
+    },
+    {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "14dd4189864f1e2611946d7752caed2cbe86515187bc16228d74ecbf5057306e"
+      "sha256": "401db2aa1407ea304e13acf65f9f0a75f5602042cb71d80024b148296118feef"
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
@@ -2738,7 +2742,7 @@
     },
     {
       "path": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl",
-      "sha256": "7837cc114435a8aad9c6d14da2983d9493c51566aac581ccb1787d011290ef30"
+      "sha256": "60787d338c9b3da12a9a2beefe6fa883b2f94c65bd207341e97cb76c745a3afe"
     },
     {
       "path": "asl/tile/elementwise-tile-tile/logical/TABS.asl",
@@ -3138,7 +3142,7 @@
     },
     {
       "path": "asl/tile/model/legality/operand-schema.asl",
-      "sha256": "4a24d709a60466acbf81c8428c7cf234b9be5c01f2a9e0dab1b54059ad3376f8"
+      "sha256": "3e891f719e5c41b1dcfe43acfd901df6a3fc27ecb18fce2024708692d87dca29"
     },
     {
       "path": "asl/tile/model/legality/pe-mask.asl",
@@ -3186,7 +3190,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "6214f747a2552d0d8a8c9f81f6fc4320e585304acaaf716416cfe80a6e93da71"
+      "sha256": "543a19b0749790662f6f7aa80084a7050ef92bab16f458d53c60fe7b98353feb"
     },
     {
       "path": "asl/tile/model/numeric/rounding.asl",
@@ -3434,23 +3438,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "d55c4b9f59427a69d578479340dfea58e93e99a0253dde96beddfcc1d4cc4e7a"
+      "sha256": "f10a93f8889db5b3cdcdeea74d9483910d2c85f457d7ab79ea64e358df02dcf0"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "36d9b51980cbd772d62ffd8113df971f6bbd5af3170f3a6feb4e695895d68210"
+      "sha256": "0bdb33460b56f30b54b898a75136515dc6d26621d5eb17f5859acad5668a156f"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "8af96e8a9b9e64c96be19b25e0e9d69d8e9216ecdd7daf44f22da04ff242d510"
+      "sha256": "6d79ee3b4b622ccf01aeadce90766ad36cf24e554beec5fde2d6b38a721f9b78"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "141ccb0e06c036a034cb0e0c65db7ad948e442f739fa656d14f550c5665bd9fa"
+      "sha256": "c11272e267e16d0715378df75a08fa8f9e8c98d48fdb20943f53a0e732ec2d55"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "c536832df77100406c1642e1cbf0f8ffd8aa306151076b3af033fab37aa2952d"
+      "sha256": "53571e3c033d1334ec54ac0661fba19aba0664cbdb4d7804cd55970dee529aa6"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3496,7 +3500,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "41516167881a5b6dbc18fa5f450199e156246f09e9c3709c62043b042419e4b1",
+  "content_sha256": "5ff0542bac6cec7bbe9ada792d40861e007183b2aef7671b0e32a21fbcdaf8d5",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4223,7 +4227,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/destination-shape.md",
-      "sha256": "5608477d833cf3bae039f12e692dfa80a8d5f0d9c59da0f7fe83a2950a442bf6"
+      "sha256": "cbba71d07dbd9810e811a3bb48ac6771d5463c1912e1e5c76388d4421a54b5d5"
     },
     {
       "kind": "generated-documentation",
@@ -4287,8 +4291,13 @@
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/block/model/dispatch/tcvt-destination.md",
+      "sha256": "2f00d47f6ef245910eb514f451d2153ecc8928fd15a2299104bb45253cf4e88c"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tcvt-schema.md",
-      "sha256": "bf2557811ad985c2240475d88177c4ada41fdd012f00f56a8009fc3f75eeef5f"
+      "sha256": "42ee5a0ec2dd41eb03774e7f68664448b58c914585a0f34b56c0e700ac0bda79"
     },
     {
       "kind": "generated-documentation",
@@ -6948,7 +6957,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/elementwise-tile-tile/format-conversion/TCVT.md",
-      "sha256": "bbb8d2758af7ecee6d5265468008fde3a5f1e66ceb4b386fbfd219139a7af6d5"
+      "sha256": "3b2c57243b8a71ba6c011616477402d1d6108cb6dfd8596c345cf3b3d6d7d298"
     },
     {
       "kind": "generated-documentation",
@@ -7448,7 +7457,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/operand-schema.md",
-      "sha256": "369dfcb7cae287327a6331831c8ee7316a9ac7968069924a806498a14c7b62a8"
+      "sha256": "1548fc175fc55656e2c8d6a9b7a5f29bb475d9b30009428c96e0eb6b5313c843"
     },
     {
       "kind": "generated-documentation",
@@ -7508,7 +7517,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/numeric/formats.md",
-      "sha256": "c0a5e3bc717aa9d19e3c43bad6194c9d4859ef8b44e46dc2f7651a35658a9b2d"
+      "sha256": "43f01b95348425ed18368246db5f367c94e8e9b8a978551d4d6c20a92bd1bd41"
     },
     {
       "kind": "generated-documentation",
@@ -10741,7 +10750,7 @@
       },
       {
         "id": "PTO-INST-TILE-TCVT",
-        "sha256": "298f025aef9fb09aa93e33bd05c1cb942dcb34d9adab93c6826eca8373dabb38"
+        "sha256": "767054a9f9d3cc7e07d49ea25b805be1df31fd96222a588b3523e6a272ac5768"
       },
       {
         "id": "PTO-INST-TILE-TDEQUANT",
@@ -11529,7 +11538,7 @@
       },
       {
         "id": "PTO-TCVT-CONTRACT-001",
-        "sha256": "8ffa1eb7fb6568bfa56f1d605a5479d5e55e2a4eede621484d5a1948cdd2ea9a"
+        "sha256": "184c4aad90d1a06471cacbd937e4aa290fad9a015d0704edd48263bcaa5c87fc"
       },
       {
         "id": "PTO-TCVT-E8M0-PROFILE-001",
@@ -11987,7 +11996,8 @@
       "ADR-0106",
       "ADR-0107",
       "ADR-0108",
-      "ADR-0109"
+      "ADR-0109",
+      "ADR-0110"
     ]
   },
   "schema_version": 1,
