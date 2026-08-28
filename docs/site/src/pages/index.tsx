@@ -27,6 +27,14 @@ type PtoPluginData = {
     ndf: number;
     avs: number;
   };
+  graphCounts: {
+    nodes: number;
+    relationships: number;
+    adr: number;
+    ndf: number;
+    asl: number;
+    avs: number;
+  };
 };
 
 type SurfaceIntroduction = {
@@ -129,12 +137,24 @@ function SearchPanel(): ReactNode {
 }
 
 function Home(): ReactNode {
-  const {release, surfaceCounts, recordCounts} = usePluginData(
+  const {release, surfaceCounts, recordCounts, graphCounts} = usePluginData(
     'pto-content',
   ) as PtoPluginData;
   const releaseUrl = `${REPOSITORY_URL}/releases/tag/${release.tag}`;
   const architectureRoute = useLocalizedPath(
     '/architecture/',
+  );
+  const ndfExplorerRoute = useLocalizedPath('/explore/ndf/');
+  const ndfOverviewAsset = useLocalizedPath('/pto-ndf-overview.svg');
+  const graphAlt = translate(
+    {
+      id: 'homepage.ndf.overview.alt',
+      message: 'Complete NDF relationship overview with {nodeCount} nodes and {relationshipCount} relationships',
+    },
+    {
+      nodeCount: graphCounts.nodes,
+      relationshipCount: graphCounts.relationships,
+    },
   );
 
   return (
@@ -305,6 +325,46 @@ function Home(): ReactNode {
                 <Translate id="homepage.records.ndf.action">Explore NDF relationships →</Translate>
               </Link>
             </article>
+          </div>
+        </section>
+
+        <section className={styles.ndfOverviewSection} aria-labelledby="ndf-overview-title">
+          <div className="container">
+            <div className={styles.ndfOverviewHeader}>
+              <div className={styles.sectionHeading}>
+                <p><Translate id="homepage.ndf.overview.kicker">Trace the current contract</Translate></p>
+                <h2 id="ndf-overview-title">
+                  <Translate id="homepage.ndf.overview.title">NDF relationships at a glance</Translate>
+                </h2>
+                <p>
+                  <Translate id="homepage.ndf.overview.description">
+                    This complete build-generated overview connects ADR history, current NDF clauses, owning ASL units, and executable AVS evidence. Open the explorer to inspect exact identities and sources.
+                  </Translate>
+                </p>
+              </div>
+              <Link className="button button--primary" to={ndfExplorerRoute}>
+                <Translate id="homepage.ndf.overview.action">Open the interactive NDF explorer</Translate>
+              </Link>
+            </div>
+            <Link
+              className={styles.ndfOverviewGraphic}
+              to={ndfExplorerRoute}
+              aria-label={translate({
+                id: 'homepage.ndf.overview.graphAction',
+                message: 'Open the interactive NDF explorer from the relationship overview',
+              })}>
+              <img src={ndfOverviewAsset} alt={graphAlt} />
+            </Link>
+            <dl className={styles.ndfLegend} aria-label={translate({
+              id: 'homepage.ndf.overview.legend',
+              message: 'NDF relationship overview legend',
+            })}>
+              <div data-kind="adr"><dt>ADR</dt><dd>{graphCounts.adr}</dd></div>
+              <div data-kind="ndf"><dt>NDF</dt><dd>{graphCounts.ndf}</dd></div>
+              <div data-kind="asl"><dt>ASL</dt><dd>{graphCounts.asl}</dd></div>
+              <div data-kind="avs"><dt>AVS</dt><dd>{graphCounts.avs}</dd></div>
+              <div data-kind="relationships"><dt><Translate id="homepage.ndf.overview.relationships">Relationships</Translate></dt><dd>{graphCounts.relationships}</dd></div>
+            </dl>
           </div>
         </section>
 

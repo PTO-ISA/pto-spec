@@ -3,7 +3,7 @@
 ## Source of truth
 
 - Status: Active
-- Last refreshed: 2026-08-27
+- Last refreshed: 2026-08-28
 - Primary product surface: PTO Formal Specification Portal at
   `https://pto-isa.github.io/`
 - Product owner: `PTO-ISA/pto-spec`
@@ -238,8 +238,9 @@ Architecture
 2. Introduce the Scalar surface and its released inventory.
 3. Introduce the Block/command surface and its released inventory.
 4. Introduce the direct Tile surface and its released inventory.
-5. Explain the distinct roles of ADR decision history and NDF clauses, then
-   offer search, graph exploration, and exact source workbenches.
+5. Explain the distinct roles of ADR decision history and NDF clauses, show a
+   source-derived static overview of the complete NDF relationship graph, then
+   offer the full interactive explorer, search, and exact source workbenches.
 
 Homepage prose is an orientation layer, not a second semantic manual. It may
 summarize released inventory and repository structure, but every semantic claim
@@ -424,6 +425,7 @@ and rerunning the normative verification flow.
 - `SemanticExecution`
 - `SemanticIdPath`
 - `NdfNeighborhood`
+- `NdfGraphOverview`
 - `NdfGlobalExplorer`
 - `EvidenceIndex`
 - `StateTransitionDemo`
@@ -512,6 +514,12 @@ and rerunning the normative verification flow.
 - `NdfGlobalExplorer` dynamically loads the smallest reviewed Plotly/WebGL
   bundle, uses deterministic build-generated positions, and opens a readable
   clause detail panel on selection.
+- `NdfGraphOverview` is generated at build time from the same complete graph
+  and deterministic positions as `NdfGlobalExplorer`. The homepage embeds the
+  compact SVG projection with exact node and relationship counts and links to
+  the full explorer. It never maintains a sampled or hand-written graph, never
+  adds the graph dataset or Plotly to the homepage's direct JavaScript entry,
+  and remains visible without JavaScript.
 - `StateTransitionDemo` is presented as an interactive walkthrough and cites the
   ASL functions and evidence it demonstrates in the final source ledger.
 - A large WebGL component is mounted only after an explicit user action and is
@@ -711,6 +719,9 @@ build/site-data/             # Disposable per-route site data
 
 - Documentation and search routes must not load Plotly.
 - Plotly/WebGL is dynamically loaded only for explorer or expanded graph views.
+- The homepage uses the build-generated static NDF overview. Its direct
+  JavaScript entry excludes the multi-megabyte graph-data and Plotly chunks;
+  the full explorer remains a separately chunked route.
 - WaveDrom is dynamically loaded only on routes with released encoding JSON;
   encoding pages retain a server-rendered accessible table and inspectable
   WaveJSON fallback.
@@ -791,6 +802,8 @@ following are true for the same immutable release candidate commit:
 - One TLOAD-only interactive state-transition walkthrough whose source citations
   are consolidated with the page provenance.
 - One repository-wide Plotly/WebGL NDF relationship explorer.
+- One homepage NDF relationship overview generated from the same complete
+  graph and deterministic layout as the interactive explorer.
 - Static and non-WebGL fallbacks.
 - Immutable release preview and release-blocking site validation.
 - Root-domain cutover plan and redirect manifest.
