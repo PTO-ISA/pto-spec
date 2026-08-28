@@ -21,6 +21,12 @@ class NumericProfileHookClosureTests(unittest.TestCase):
                 encoding="utf-8"
             )
         )
+        cls.scalar_forms = json.loads(
+            (ROOT / "spec/catalog/scalar-forms.json").read_text(encoding="utf-8")
+        )
+        cls.tile_operations = json.loads(
+            (ROOT / "spec/catalog/tile-operations.json").read_text(encoding="utf-8")
+        )
 
     def test_profile_hook_paths_are_current_files(self) -> None:
         paths = [self.profile_hooks["active_profile"]["conformance_tests"]]
@@ -41,6 +47,28 @@ class NumericProfileHookClosureTests(unittest.TestCase):
         }
         inventoried = {hook["name"] for hook in self.numeric_contracts["hooks"]}
         self.assertEqual(registered, inventoried)
+
+    def test_profile_hook_symbols_exist_in_declared_models(self) -> None:
+        for hook in self.profile_hooks["hooks"]:
+            model = (ROOT / hook["model"]).read_text(encoding="utf-8")
+            declaration = re.compile(rf"\bfunc\s+{re.escape(hook['name'])}\s*\(")
+            with self.subTest(hook=hook["name"], model=hook["model"]):
+                self.assertIsNotNone(declaration.search(model))
+
+    def test_numeric_operations_are_active_catalog_entries(self) -> None:
+        active_keys = {
+            f"scalar:{form['form_id']}"
+            for form in self.scalar_forms["forms"]
+            if form["status"] == "accepted"
+        }
+        active_keys.update(
+            f"tile:{operation['family']}:{operation['name']}"
+            for operation in self.tile_operations["operations"]
+            if operation["disposition"] == "accepted-direct-operation"
+        )
+        for operation in self.numeric_contracts["operations"]:
+            with self.subTest(operation=operation["key"]):
+                self.assertIn(operation["key"], active_keys)
 
     def test_hook_operation_edges_are_bidirectional(self) -> None:
         operations = self.numeric_contracts["operations"]

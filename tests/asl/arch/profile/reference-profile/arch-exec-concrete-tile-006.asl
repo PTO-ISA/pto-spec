@@ -23,12 +23,6 @@ begin
     assert !reduction_selected;
     let tile_expand = TileProfileExpand(TileExpand_ADD, TileDataType_U64,
         Zeros{PTO_XLEN} + 4, Zeros{PTO_XLEN} + 5);
-    let (tile_partial, tile_partial_flags) =
-        TileProfilePartialValueWithFlags(
-            TilePartial_MUL,
-            TileDataType_U64,
-            Zeros{PTO_XLEN} + 4,
-            Zeros{PTO_XLEN} + 5);
     let tile_order_left = TileProfileOrderLeft(Zeros{PTO_XLEN} + 4,
         Zeros{PTO_XLEN} + 5, FALSE, TileDataType_S64);
     let raw_profile_nan = TileProfileValueIsNaN(
@@ -46,8 +40,6 @@ begin
         TileDataType_E4M3, TileDataType_E5M2,
         TileDataType_E8M0, TileDataType_E8M0);
     assert tile_expand == Zeros{PTO_XLEN} + 9;
-    assert tile_partial == Zeros{PTO_XLEN} + 20;
-    assert tile_partial_flags == Zeros{5};
     assert tile_order_left;
     assert !raw_profile_nan;
     assert matrix_accumulate == Zeros{PTO_XLEN} + 7;

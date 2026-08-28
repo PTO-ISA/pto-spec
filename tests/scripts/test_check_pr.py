@@ -37,6 +37,8 @@ class PullRequestCheckTest(unittest.TestCase):
                 "python3 scripts/instruction_docs.py --check",
                 "python3 scripts/generate-mnemonic-avs.py --check",
                 "python3 scripts/generate-bundle-operation-matrix.py --check",
+                "./scripts/generate-bundle-command-totality --check",
+                "./scripts/generate-public-source-reconciliation --check",
                 "python3 scripts/check-publication-hygiene",
                 "git diff --check",
             ],
@@ -67,6 +69,8 @@ class PullRequestCheckTest(unittest.TestCase):
             "./scripts/check-release-event-schema",
             "python3 scripts/project_asl_catalogs.py --root . --check",
             "python3 scripts/instruction_docs.py --check",
+            "./scripts/generate-bundle-command-totality --check",
+            "./scripts/generate-public-source-reconciliation --check",
             "python3 scripts/check-publication-hygiene",
         ):
             self.assertIn(gate, workflow)

@@ -120,11 +120,6 @@ DOMAIN_RULES = {
         "Floating arithmetic and exponential-difference results round once using RNE at each destination element; broadcast, min, and max selection do not round.",
         "not-applicable",
     ),
-    "tile-partial": (
-        "operation-fixed pto-v0 rule",
-        "Each floating partial add or multiply step rounds to its declared accumulator type using RNE; min and max selection do not round.",
-        "not-applicable",
-    ),
     "tile-convert": (
         "TileNumericSelection from direct operands or B.DATR.RMode",
         "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",

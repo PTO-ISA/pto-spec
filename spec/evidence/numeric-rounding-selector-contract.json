@@ -610,7 +610,6 @@
         "tile:TEPL:TROWEXPANDSUB"
       ],
       "hooks": [
-        "TileExpDifference",
         "TileProfileExpand"
       ],
       "candidate_profile_ids": [
@@ -640,29 +639,6 @@
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
       "rounding_rule": "Evaluate the exact fused multiply-add expression and round once, only at the destination-format boundary.",
-      "saturation_order_rule": "not-applicable",
-      "status": "rounding-rule-accepted-other-numeric-dimensions-open"
-    },
-    {
-      "domain": "tile-partial",
-      "lane": "N5",
-      "operation_count": 4,
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ],
-      "hooks": [
-        "TileProfilePartialValue"
-      ],
-      "candidate_profile_ids": [
-        "pto-numeric-v1",
-        "pto-a2a3-numeric-v1",
-        "pto-a5-numeric-v1"
-      ],
-      "selector_owner": "operation-fixed pto-v0 rule",
-      "rounding_rule": "Each floating partial add or multiply step rounds to its declared accumulator type using RNE; min and max selection do not round.",
       "saturation_order_rule": "not-applicable",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
@@ -776,11 +752,11 @@
   "sources": [
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "bdfcb4df19da4329c5ff0184b34daebf258d832992fa06fb3e0c34ca891c5923"
+      "sha256": "44847ad7289923fedd7d337e18ee8d2d4d2009f912d2f12480f15c0ef36d60ed"
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "2112562e675c68bb4589f7a31104e2abaf5e57a4753d7b8c2098929689e4494f"
+      "sha256": "2df86181747660ba95dd1dff1d16c9b98896db686714424f32cfaa72974115e9"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -788,7 +764,7 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ab00288a2c1b616b8226656e15b0664f111a12a10704c409ed237353b99f0719"
+      "sha256": "ee8df39701fbe638b7a76e13f32833efa0e4c01f64d38eb4e2ad485007392f7a"
     },
     {
       "path": "spec/evidence/scalar-fsu-totality.json",
@@ -844,31 +820,39 @@
     },
     {
       "path": "asl/block/model/state/control-state.asl",
-      "sha256": "00de3309824928bf3ca4bddebdfd16ee995ddb4930c480e9dd51f93b86fd34e0"
+      "sha256": "49a31597b44f56dd3131df58f663871be6d828c06cc33729522abd4988a12675"
     },
     {
       "path": "asl/block/model/state/descriptor-state.asl",
-      "sha256": "ce4582d08245d1a5f759bb2769297bbb1f1b7bebee0870de215cded8ad05d54c"
+      "sha256": "978ebc94182cc7862a22d16ef0fb27861144085ebfaee0cbbd0a05fa7cbed0ce"
+    },
+    {
+      "path": "asl/block/model/state/shared-generation-state.asl",
+      "sha256": "4cba683f113ce4e0e4995aa2f150fcbd683c92f825879182febae5a87f5bb6c6"
     },
     {
       "path": "asl/block/model/state/types.asl",
-      "sha256": "ac0673028f09bc169d079a98670fa9c6346cebbc525d91d6b2bd10353d988d23"
+      "sha256": "89c0abf6c22ab487f85af6c65b49e1e245fc90911d6c674384b44ce4692d0156"
+    },
+    {
+      "path": "asl/block/model/dispatch/cell-rearrangement-schema.asl",
+      "sha256": "18f22fd96b5385ce47617c00aafdaa460c2fec6cab1cc867f28b1a772b259bc2"
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "2b910205a3f06897efc9976b9c2c6959ddb009cdca8d340a71ebf6f74208540b"
+      "sha256": "79cdbd2e308a414b0db71d430b6f508757b475273f4d881e0d877beeb7934e1b"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
-      "sha256": "b6a54119a0c145199239f959c8635e69ad05d6b802dae3f5aa14b61335b96f5e"
+      "sha256": "d871c4b700fd4c87298e7c818e9e9c8413e2bd34cf28228a31a27637d606e14b"
     },
     {
       "path": "asl/block/model/dispatch/cube-destination.asl",
-      "sha256": "0900fe5ae96e561e63b92ef36bafe76e37e2da2a117f4cffbfc0d6aea8190cce"
+      "sha256": "ee31e918e78a40a17608cb76c1343186130f841b4cbb5fbd26e50d99dbcc07cd"
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "047c7e0c445592d9a4504ebfbd78bdd2cd42d10f1cb991ee4823dfcef2503545"
+      "sha256": "513fbf21974f558b4d1ca1a6bafbeb8b40d5545ece88c429856acf58d64c234f"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
@@ -876,11 +860,15 @@
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "29a45a8b9201831f4a333c75c95646844294a896af41b563d63f13c2c4af9d67"
+      "sha256": "b493165ab38fa4f0792d30cd67ef6319eab4a19db210627eead4ed92bacd613a"
+    },
+    {
+      "path": "asl/block/model/dispatch/destination-auxiliary.asl",
+      "sha256": "aaf512a844566338141515a0ca03a974b814bb429049bea0c6ee6771389de82c"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "269dc750635e610b76fc266611a02810f3a0052f6744d56b65e3a0c8c13da1ff"
+      "sha256": "439f6dad32fa19dc00b47d36df0ad85354e28ffec9122199392d606a0ea0f96b"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
@@ -895,20 +883,20 @@
       "sha256": "5954e97443dbfee83399475432bb504d7e6f2affb54c1c8b4f0643c719127ee6"
     },
     {
+      "path": "asl/block/model/dispatch/matrix-scale.asl",
+      "sha256": "b6ec56e602786648e5e764aafef07837029b84b9595707d389bd1b998cab4505"
+    },
+    {
       "path": "asl/block/model/dispatch/numeric-control.asl",
       "sha256": "8372aa20c99f953c426e489be3555430cc0fe240d4808fda34180a9a11f5a8f7"
     },
     {
-      "path": "asl/block/model/dispatch/partial-schema.asl",
-      "sha256": "e3ad91c81d1ea280a31a110ca57b99a79923343eea8ab2efb9fa45316697d812"
-    },
-    {
       "path": "asl/block/model/dispatch/quantization-schema.asl",
-      "sha256": "77f3f85823e2b88b03fe339c9c9d0991b017cf92792769cb7d6b685e4daeedd6"
+      "sha256": "4ffadc99a63f4f2946c2e0faaae97329427dba5858e7adb1593e489ab1d06259"
     },
     {
       "path": "asl/block/model/dispatch/reduction-schema.asl",
-      "sha256": "686548d1463a8806841a2d576efe9d318432e34695e4af50ba8744752d20f0dd"
+      "sha256": "d00dd8b782a9af6de6c689957cec0a289f1120daefdec922e771410c6621fb91"
     },
     {
       "path": "asl/block/model/dispatch/scalar-schema.asl",
@@ -916,15 +904,15 @@
     },
     {
       "path": "asl/block/model/dispatch/shared-cube-matrix.asl",
-      "sha256": "f7c1d5c1071c3275321e487f290ec70eb2cc91f70a0f1aed3b2d14cc16f99abb"
+      "sha256": "c5ee2d9ad4f3ee8fef2cee6f315ff589a5442fb7eecf0190facfae5db236c2a9"
     },
     {
       "path": "asl/block/model/dispatch/shared-tlsu.asl",
-      "sha256": "45381bb17fdd3f4e01be9abfe4188a510e7ba3bc8af003b0dbd3423a6afe1562"
+      "sha256": "e26cda013f071354913d4d990954588d9983af5bdd6768f806a15503e347ffcf"
     },
     {
       "path": "asl/block/model/dispatch/sorting-schema.asl",
-      "sha256": "9070d006d8797e399fce16d08146081d55986efd502197090d6ca5cd75624ca1"
+      "sha256": "996a280c5cc4425c9d5783e47dcaaceea30b0cbc5a4d5ce4a5d657c03cfdc4ed"
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
@@ -932,19 +920,19 @@
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "9711d377ffa6aabf9b64eaa1b958bc3d894eb13fe7a89f3374f2c5c2fe3d0269"
+      "sha256": "14dd4189864f1e2611946d7752caed2cbe86515187bc16228d74ecbf5057306e"
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "81b3b5e3a2cc12030b23702941aaaf933ed020969c21286e8f511a9ad322fde0"
+      "sha256": "d6e82b83726802faf2fa66133d18e0f33b40bd4448b3af7d349edc905c091b30"
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
-      "sha256": "9b358fb3b7754dd2e00e21f8ab25d5e2796c78bf2b630073910c99692d71d7b1"
+      "sha256": "7cf701452bd5b31692bad2d2b6099f7b34963a6a1197dd1b98fd9b2512234f2c"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "83523c52898d93edfebfdcf5275719a922c7b342023b599f3d1377c8ffc1506e"
+      "sha256": "982233f0a7347697663ca0a6306dbc4467b935abeabd95e4b0a154d91ccb53d2"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
@@ -952,7 +940,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tlsu-layout-conversion.asl",
-      "sha256": "b9216b6761aac69c31235cd8fe0849c381bf89552999b227e7e73b17a1bbf763"
+      "sha256": "6bc7f9212605217e06b0d30afa5826467e4af4b23d9f0f52c22731a4a144dcff"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
@@ -988,7 +976,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "55eb6eaf63ddfdcd918603a21673b53c198f448c6e8800e3389b28f43410fad8"
+      "sha256": "6214f747a2552d0d8a8c9f81f6fc4320e585304acaaf716416cfe80a6e93da71"
     },
     {
       "path": "asl/tile/model/numeric/rounding.asl",
@@ -996,15 +984,15 @@
     },
     {
       "path": "asl/tile/model/execution/cube.asl",
-      "sha256": "a8750b9d47b2cefd9baefaccfc2687096794f1f33c658f797d940634a4becf61"
+      "sha256": "c3b6207cabb062ee8e16ccb458d99514f856b5e36ecd7c5203797ccf9a6005a9"
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "07c5cf6f6e59916f3cbbecb0b83fe364704e1a79e1a43fa83f2997b6f7242207"
+      "sha256": "73c7f31c34b4adff92eef1152480c18c748c0facadc93077574a554f89485f5f"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
-      "sha256": "7d8f47ad85355b978f303cc3a384951268c03cc130fa6f62eb6d797d3a7cb5ec"
+      "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
     },
     {
       "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
@@ -1024,10 +1012,10 @@
     "scalar_fixed_override_count": 5,
     "bundle_rmode_selector_count": 8,
     "external_selector_class_count": 4,
-    "affected_domain_count": 16,
-    "affected_operation_count": 100,
-    "affected_hook_count": 25,
-    "accepted_domain_rounding_rule_count": 16,
+    "affected_domain_count": 15,
+    "affected_operation_count": 96,
+    "affected_hook_count": 23,
+    "accepted_domain_rounding_rule_count": 15,
     "adr0047_complete": true
   }
 }

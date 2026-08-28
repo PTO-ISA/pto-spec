@@ -254,22 +254,6 @@
       ]
     },
     {
-      "domain": "tile-floating",
-      "model": "asl/tile/model/execution/expansion.asl",
-      "name": "TileExpDifference",
-      "portable_default": "Subtract the raw right payload from the raw left payload.",
-      "profile_obligations": [
-        "Use operation-fixed RNE once at the destination boundary; define the exponential-difference formula, intermediate precision, and exceptional inputs for every accepted floating type."
-      ],
-      "requirement": "PTO-REQ-TEPL-EXPAND-001",
-      "implementation_status": "implemented-by-pto-v0",
-      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-      "maturity_target": "S5-T2",
-      "tests": [
-        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
-      ]
-    },
-    {
       "domain": "tile-conversion",
       "model": "asl/tile/model/numeric/formats.asl",
       "name": "TileProfileConvert",
@@ -459,7 +443,7 @@
     },
     {
       "domain": "tile-elementwise",
-      "model": "asl/tile/model/execution/elementwise.asl",
+      "model": "asl/tile/model/execution/unary.asl",
       "name": "TileProfileUnary",
       "portable_default": "Apply the operation with deterministic raw bitvector behavior.",
       "profile_obligations": [
@@ -475,7 +459,7 @@
     },
     {
       "domain": "tile-comparison",
-      "model": "asl/tile/model/execution/elementwise.asl",
+      "model": "asl/tile/model/execution/comparison.asl",
       "name": "TileProfileCompare",
       "portable_default": "Compare raw payloads with deterministic signed or equality relations.",
       "profile_obligations": [
@@ -530,22 +514,6 @@
         "Use operation-fixed RNE once at each floating arithmetic destination and no rounding for broadcast or selection results; define exceptional values, overflow, and underflow."
       ],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
-      "implementation_status": "implemented-by-pto-v0",
-      "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
-      "maturity_target": "S5-T2",
-      "tests": [
-        "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl"
-      ]
-    },
-    {
-      "domain": "tile-partial",
-      "model": "asl/tile/model/execution/complex.asl",
-      "name": "TileProfilePartialValue",
-      "portable_default": "Apply partial arithmetic with deterministic raw bitvector operations.",
-      "profile_obligations": [
-        "Use operation-fixed RNE after each floating partial add or multiply step and no rounding for min/max selection; define exceptional values and missing-source behavior."
-      ],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
       "implementation_status": "implemented-by-pto-v0",
       "conformance_status": "raw-carrier-reference-closed-target-conformance-open",
       "maturity_target": "S5-T2",

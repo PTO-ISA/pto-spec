@@ -92,6 +92,9 @@
   ],
   "public_tile_symbol_inventory": {
     "count": 111,
+    "active_mapping_count": 94,
+    "excluded_disposition_count": 17,
+    "partition_status": "closed-exact",
     "source_id": "public-intrinsic-api",
     "source_sha256": "d157d4c2b13c0928feb1ce775ba1fbcf49e4b3b207ee8460986ce4c2a2d57800",
     "symbols": [
@@ -234,26 +237,26 @@
     ]
   },
   "predicate_version_boundary": {
-    "active_release": "PTO ISA 0.58.4",
+    "active_release": "PTO ISA 0.58.5",
     "current_public_source_release": "PTO ISA v0.6 micro-instruction surface",
-    "disposition": "outside-active-0.58.4-release-line",
+    "disposition": "outside-active-0.58.5-release-line",
     "accepted_mapping": null,
-    "mapping_rule": "No public v0.6 typed mask is mapped to a PTO ISA 0.58.4 architectural register, selector, encoding, producer, or consumer.",
+    "mapping_rule": "No public v0.6 typed mask is mapped to a PTO ISA 0.58.5 architectural register, selector, encoding, producer, or consumer.",
     "concepts": [
       {
         "id": "pto-isa-0580-warp-predicate-registers",
-        "source_class": "active-0.58.4-architectural-state",
+        "source_class": "active-0.58.5-architectural-state",
         "representation": "P0-P7",
         "width_bits": 32,
         "count": 8,
         "lifecycle": "P0 hardwired all-ones; P1-P7 reset zero; all trap-preserved",
         "accepted_producers": [],
         "accepted_consumers": [],
-        "mapping_status": "closed-no-accepted-0.58.0-instruction-mapping"
+        "mapping_status": "closed-no-accepted-0.58.5-instruction-mapping"
       },
       {
         "id": "pto-isa-0580-machine-execution-mask",
-        "source_class": "active-0.58.4-architectural-state",
+        "source_class": "active-0.58.5-architectural-state",
         "representation": "MPAR/MSEQ execution mask",
         "width_bits": 64,
         "count": 1,
@@ -285,7 +288,7 @@
           "pto.p* algebra",
           "pto.pst*"
         ],
-        "mapping_status": "outside-active-0.58.4-release-line"
+        "mapping_status": "outside-active-0.58.5-release-line"
       },
       {
         "id": "future-encoded-physical-predicate-register-mapping",
@@ -307,19 +310,19 @@
       "open": 0
     },
     "tile_operations": {
-      "count": 109,
-      "closed": 109,
+      "count": 107,
+      "closed": 107,
       "open": 0,
-      "public_exact_name": 99,
+      "public_exact_name": 93,
       "public_spelling_mapping": 1
     },
     "excluded_public_tile_operations": {
-      "count": 11,
-      "closed": 11
+      "count": 17,
+      "closed": 17
     },
     "closure_basis": {
-      "public_source_supported": 95,
-      "catalog_defined_direct_binary": 9,
+      "public_source_supported": 89,
+      "catalog_defined_direct_binary": 13,
       "public_api_aligned": 1,
       "explicit_layer_difference": 4,
       "open": 0
@@ -4311,16 +4314,6 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TFILLPAD",
-      "family": "TEPL",
-      "selector": "0x065",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TFILLPAD",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
       "name": "TCI",
       "family": "TEPL",
       "selector": "0x066",
@@ -4391,16 +4384,6 @@
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
     {
-      "name": "TTRANS",
-      "family": "TEPL",
-      "selector": "0x06E",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TTRANS",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
       "name": "TGATHER",
       "family": "TEPL",
       "selector": "0x06F",
@@ -4417,46 +4400,6 @@
       "closure_status": "closed",
       "closure_basis": "public-source-supported",
       "public_symbol": "TSCATTER",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TPARTADD",
-      "family": "TEPL",
-      "selector": "0x071",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TPARTADD",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TPARTMUL",
-      "family": "TEPL",
-      "selector": "0x072",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TPARTMUL",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TPARTMAX",
-      "family": "TEPL",
-      "selector": "0x073",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TPARTMAX",
-      "public_symbol_relation": "exact-name",
-      "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
-    },
-    {
-      "name": "TPARTMIN",
-      "family": "TEPL",
-      "selector": "0x074",
-      "closure_status": "closed",
-      "closure_basis": "public-source-supported",
-      "public_symbol": "TPARTMIN",
       "public_symbol_relation": "exact-name",
       "resolution": "The canonical PTO operation is present in the audited public intrinsic inventory with the same operation spelling."
     },
@@ -4679,6 +4622,46 @@
       "public_symbol": "TGEMV_MX_ACC",
       "public_symbol_relation": "catalog-defined",
       "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "TPERMUTE",
+      "family": "TEPL",
+      "selector": "0x075",
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "TPERMUTE",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "TSHUF",
+      "family": "TEPL",
+      "selector": "0x076",
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "TSHUF",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "TPACK",
+      "family": "TEPL",
+      "selector": "0x077",
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "TPACK",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "TUNPACK",
+      "family": "TEPL",
+      "selector": "0x078",
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "TUNPACK",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
     }
   ],
   "excluded_public_tile_operations": [
@@ -4686,67 +4669,103 @@
       "name": "TALLOC",
       "public_symbol": "TALLOC",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TAXPY",
       "public_symbol": "TAXPY",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TDEINTERLEAVE",
       "public_symbol": "TDEINTERLEAVE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
+    },
+    {
+      "name": "TFILLPAD",
+      "public_symbol": "TFILLPAD",
+      "disposition": "retired-from-active-release-reserved-illegal",
+      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     },
     {
       "name": "TFREE",
       "public_symbol": "TFREE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TGATHERB",
       "public_symbol": "TGATHERB",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TINTERLEAVE",
       "public_symbol": "TINTERLEAVE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
+    },
+    {
+      "name": "TPARTADD",
+      "public_symbol": "TPARTADD",
+      "disposition": "retired-from-active-release-reserved-illegal",
+      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     },
     {
       "name": "TPARTARGMAX",
       "public_symbol": "TPARTARGMAX",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPARTARGMIN",
       "public_symbol": "TPARTARGMIN",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
+    },
+    {
+      "name": "TPARTMAX",
+      "public_symbol": "TPARTMAX",
+      "disposition": "retired-from-active-release-reserved-illegal",
+      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
+    },
+    {
+      "name": "TPARTMIN",
+      "public_symbol": "TPARTMIN",
+      "disposition": "retired-from-active-release-reserved-illegal",
+      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
+    },
+    {
+      "name": "TPARTMUL",
+      "public_symbol": "TPARTMUL",
+      "disposition": "retired-from-active-release-reserved-illegal",
+      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     },
     {
       "name": "TPOP",
       "public_symbol": "TPOP",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TPUSH",
       "public_symbol": "TPUSH",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
     },
     {
       "name": "TRESHAPE",
       "public_symbol": "TRESHAPE",
       "disposition": "source-api-only-not-a-direct-operation",
-      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 does not accept it as a direct DavinciOO Tile operation."
+      "resolution": "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 does not accept it as a direct DavinciOO Tile operation."
+    },
+    {
+      "name": "TTRANS",
+      "public_symbol": "TTRANS",
+      "disposition": "retired-from-active-release-reserved-illegal",
+      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     }
   ]
 }

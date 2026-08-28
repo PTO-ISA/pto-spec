@@ -244,7 +244,6 @@
         "tile-dequantize",
         "tile-expand",
         "tile-fused",
-        "tile-partial",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -265,7 +264,6 @@
         "tile-dequantize",
         "tile-expand",
         "tile-fused",
-        "tile-partial",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -290,7 +288,6 @@
         "tile-expand",
         "tile-fused",
         "tile-order",
-        "tile-partial",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -315,7 +312,6 @@
         "tile-expand",
         "tile-fused",
         "tile-order",
-        "tile-partial",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -339,7 +335,6 @@
         "tile-expand",
         "tile-fused",
         "tile-order",
-        "tile-partial",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -390,7 +385,6 @@
       "affected_domains": [
         "tile-compare",
         "tile-order",
-        "tile-partial",
         "tile-reduction"
       ],
       "acceptance_record": null
@@ -430,7 +424,6 @@
         "tile-expand",
         "tile-fused",
         "tile-order",
-        "tile-partial",
         "tile-quantize",
         "tile-reduction",
         "tile-unary"
@@ -840,7 +833,6 @@
         "tile:TEPL:TROWEXPANDSUB"
       ],
       "hooks": [
-        "TileExpDifference",
         "TileProfileExpand"
       ],
       "open_numeric_dimensions": [
@@ -952,38 +944,6 @@
       "selected_profile_rule": null
     },
     {
-      "domain": "tile-partial",
-      "lane": "N5",
-      "operation_count": 4,
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ],
-      "hooks": [
-        "TileProfilePartialValue"
-      ],
-      "open_numeric_dimensions": [
-        "data-type interpretation",
-        "rounding",
-        "overflow",
-        "NaN and infinity",
-        "tie behavior"
-      ],
-      "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0092",
-        "ADR-0095"
-      ],
-      "status": "profile-rule-required",
-      "selected_profile_rule": null
-    },
-    {
       "domain": "tile-order",
       "lane": "N5",
       "operation_count": 2,
@@ -1063,8 +1023,8 @@
     "implementation_evidence_source_count": 21,
     "decision_count": 12,
     "draft_decision_count": 10,
-    "numeric_domain_count": 18,
-    "open_numeric_domain_count": 18,
+    "numeric_domain_count": 17,
+    "open_numeric_domain_count": 17,
     "selected_profile_rule_count": 0,
     "profile_identity_count": 4
   }

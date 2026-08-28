@@ -1,39 +1,7 @@
 // Migrated from the pre-four-surface executable test suite.
-// PTO-TEST: {"id":"PTO-AVS-TILE-TESTTILECOMPLEX-EXECUTION-001","source":"asl/tile/model/execution/complex.asl","requirements":[],"kind":"execution","summary":"Covers Tile Complex.","pass_condition":"TestTileComplex completes without assertion failure","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TESTTILECOMPLEX-EXECUTION-001","source":"asl/tile/model/execution/complex.asl","requirements":[],"kind":"execution","summary":"The complex execution unit retains current ordering and histogram behavior.","pass_condition":"Current sorting and histogram helpers complete without retired TPART aliases","related_sources":["asl/tile/irregular-and-complex/sorting/TSORT.asl","asl/tile/irregular-and-complex/sorting/TMRGSORT.asl","asl/tile/irregular-and-complex/initialization/THISTOGRAM.asl"]}
 func TestTileComplex()
 begin
-    ConfigureTile(29, 256, 1, 4, 1, 3, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(30, 256, 1, 4, 1, 2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(31, 256, 1, 4, 1, 3, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 4);
-    WriteTileElement(29, 0, 2, Zeros{PTO_XLEN} + 6);
-    WriteTileElement(30, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(30, 0, 1, Zeros{PTO_XLEN} + 3);
-    ExecuteTilePartial(TilePartial_ADD, 31, 29, 30);
-    assert ReadTileElement(31, 0, 0) == Zeros{PTO_XLEN} + 3;
-    assert ReadTileElement(31, 0, 1) == Zeros{PTO_XLEN} + 7;
-    assert ReadTileElement(31, 0, 2) == Zeros{PTO_XLEN} + 6;
-
-    ConfigureTile(45, 256, 1, 4, 1, 3, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(46, 256, 1, 4, 1, 3, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(47, 256, 1, 4, 1, 3, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(48, 256, 1, 4, 1, 2, TileDataType_U32,
-        TileLayout_RowMajor, TileLocation_Any);
-    TCI(47, Zeros{PTO_XLEN} + 10, FALSE);
-    TCI(48, Zeros{PTO_XLEN} + 20, FALSE);
-    ExecuteTilePartialArg(TRUE, 45, 46, 29, 30, 47, 48);
-    assert ReadTileElement(45, 0, 0) == Zeros{PTO_XLEN} + 2;
-    assert ReadTileElement(46, 0, 0) == Zeros{PTO_XLEN} + 10;
-    assert ReadTileElement(45, 0, 2) == Zeros{PTO_XLEN} + 6;
-    assert ReadTileElement(46, 0, 2) == Zeros{PTO_XLEN} + 12;
-
     ConfigureTile(32, 256, 1, 4, 1, 4, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(33, 256, 1, 4, 1, 4, TileDataType_FP32,

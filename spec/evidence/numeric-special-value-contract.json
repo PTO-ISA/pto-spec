@@ -591,11 +591,11 @@
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "bb6f7d4165d17ef74386d6973dc077bd1004c8ba5e77bc70ac754942f9b0d169"
+      "sha256": "f288a7cdab84e20bb91831f04638d5cfb75f6f56a66b66383dd46002dba27f11"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "7c3005a7885e94537911d717b5ae977ced8ba088cd966934619cc82ba6dda03c"
+      "sha256": "50c0342678ff4cdd8e766f0efc798d81a7b9c3fbadc251d2807e77404d8d5fe5"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -603,7 +603,7 @@
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "e679b3188a71a68d6b19b437fe510cac483cd6e5c57a046aeea896155ec07271"
+      "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",

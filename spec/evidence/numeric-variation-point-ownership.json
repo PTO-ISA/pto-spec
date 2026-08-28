@@ -3505,7 +3505,6 @@
         "tile:TEPL:TROWEXPANDSUB"
       ],
       "hook_ids": [
-        "TileExpDifference",
         "TileProfileExpand"
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
@@ -3586,7 +3585,6 @@
         "tile:TEPL:TROWEXPANDSUB"
       ],
       "hook_ids": [
-        "TileExpDifference",
         "TileProfileExpand"
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
@@ -3674,7 +3672,6 @@
         "tile:TEPL:TROWEXPANDSUB"
       ],
       "hook_ids": [
-        "TileExpDifference",
         "TileProfileExpand"
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
@@ -3743,7 +3740,6 @@
         "tile:TEPL:TROWEXPANDSUB"
       ],
       "hook_ids": [
-        "TileExpDifference",
         "TileProfileExpand"
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
@@ -3812,7 +3808,6 @@
         "tile:TEPL:TROWEXPANDSUB"
       ],
       "hook_ids": [
-        "TileExpDifference",
         "TileProfileExpand"
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
@@ -4417,317 +4412,6 @@
       "hook_ids": [
         "TileProfileOrderLeft",
         "TileProfileValueIsNaN"
-      ],
-      "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
-      "decision_ownership": {
-        "primary_decision_id": "ADR-0092",
-        "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
-        ]
-      },
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "admissible_routes": [
-        {
-          "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
-        }
-      ],
-      "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
-      ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
-      "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
-    },
-    {
-      "id": "numeric-vp/tile-partial/data-type-interpretation",
-      "domain_id": "tile-partial",
-      "lane": "N5",
-      "dimension_id": "data-type-interpretation",
-      "label": "data-type interpretation",
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ],
-      "hook_ids": [
-        "TileProfilePartialValue"
-      ],
-      "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
-      "decision_ownership": {
-        "primary_decision_id": "ADR-0087",
-        "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
-        ]
-      },
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "admissible_routes": [
-        {
-          "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "visible-selector-rule",
-          "selector_source_class": "decoded-operand",
-          "selector_ref": "spec/evidence/numeric-format-namespace-contract.json"
-        },
-        {
-          "kind": "visible-selector-rule",
-          "selector_source_class": "bundle-state",
-          "selector_ref": "spec/evidence/numeric-format-namespace-contract.json"
-        }
-      ],
-      "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-format-namespace-contract.json",
-        "spec/evidence/public-numeric-type-baseline.json"
-      ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
-      "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
-    },
-    {
-      "id": "numeric-vp/tile-partial/rounding",
-      "domain_id": "tile-partial",
-      "lane": "N5",
-      "dimension_id": "rounding",
-      "label": "rounding",
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ],
-      "hook_ids": [
-        "TileProfilePartialValue"
-      ],
-      "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
-      "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
-        "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
-        ]
-      },
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "admissible_routes": [
-        {
-          "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "visible-selector-rule",
-          "selector_source_class": "architectural-state",
-          "selector_ref": "spec/evidence/numeric-rounding-selector-contract.json"
-        },
-        {
-          "kind": "visible-selector-rule",
-          "selector_source_class": "decoded-operand",
-          "selector_ref": "spec/evidence/numeric-rounding-selector-contract.json"
-        },
-        {
-          "kind": "visible-selector-rule",
-          "selector_source_class": "bundle-state",
-          "selector_ref": "spec/evidence/numeric-rounding-selector-contract.json"
-        }
-      ],
-      "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json",
-        "spec/evidence/numeric-rounding-selector-contract.json"
-      ],
-      "selected_route": {
-        "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
-      },
-      "result_rule_id": "adr0047-rounding/tile-partial",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
-      "missing_rule_disposition": "reject-before-effects",
-      "status": "portable-rounding-rule-accepted"
-    },
-    {
-      "id": "numeric-vp/tile-partial/overflow",
-      "domain_id": "tile-partial",
-      "lane": "N5",
-      "dimension_id": "overflow",
-      "label": "overflow",
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ],
-      "hook_ids": [
-        "TileProfilePartialValue"
-      ],
-      "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
-      "decision_ownership": {
-        "primary_decision_id": "ADR-0092",
-        "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
-        ]
-      },
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "admissible_routes": [
-        {
-          "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
-        }
-      ],
-      "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
-      ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
-      "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
-    },
-    {
-      "id": "numeric-vp/tile-partial/nan-and-infinity",
-      "domain_id": "tile-partial",
-      "lane": "N5",
-      "dimension_id": "nan-and-infinity",
-      "label": "NaN and infinity",
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ],
-      "hook_ids": [
-        "TileProfilePartialValue"
-      ],
-      "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
-      "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
-        "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
-        ]
-      },
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "admissible_routes": [
-        {
-          "kind": "portable-rule",
-          "profile_id": "pto-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "named-profile-rule",
-          "profile_id": "pto-a5-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a2a3-numeric-v1"
-        },
-        {
-          "kind": "unsupported-in-profile",
-          "profile_id": "pto-a5-numeric-v1"
-        }
-      ],
-      "selector_dependencies": [
-        "spec/catalog/numeric-profile-identities.json"
-      ],
-      "selected_route": null,
-      "result_rule_id": null,
-      "result_acceptance_record": null,
-      "missing_rule_disposition": "reject-before-effects",
-      "status": "ownership-inventoried-result-rule-required"
-    },
-    {
-      "id": "numeric-vp/tile-partial/tie-behavior",
-      "domain_id": "tile-partial",
-      "lane": "N5",
-      "dimension_id": "tie-behavior",
-      "label": "tie behavior",
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ],
-      "hook_ids": [
-        "TileProfilePartialValue"
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
@@ -6655,8 +6339,7 @@
       "operation_key": "tile:TEPL:TCOLEXPANDEXPDIF",
       "domain": "tile-expand",
       "hooks": [
-        "TileProfileExpand",
-        "TileExpDifference"
+        "TileProfileExpand"
       ],
       "variation_point_ids": [
         "numeric-vp/tile-expand/data-type-interpretation",
@@ -7173,82 +6856,6 @@
       "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
-      "operation_key": "tile:TEPL:TPARTADD",
-      "domain": "tile-partial",
-      "hooks": [
-        "TileProfilePartialValue"
-      ],
-      "variation_point_ids": [
-        "numeric-vp/tile-partial/data-type-interpretation",
-        "numeric-vp/tile-partial/nan-and-infinity",
-        "numeric-vp/tile-partial/overflow",
-        "numeric-vp/tile-partial/rounding",
-        "numeric-vp/tile-partial/tie-behavior"
-      ],
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 1,
-      "status": "rounding-rule-accepted-other-result-rules-open"
-    },
-    {
-      "operation_key": "tile:TEPL:TPARTMAX",
-      "domain": "tile-partial",
-      "hooks": [
-        "TileProfilePartialValue"
-      ],
-      "variation_point_ids": [
-        "numeric-vp/tile-partial/data-type-interpretation",
-        "numeric-vp/tile-partial/nan-and-infinity",
-        "numeric-vp/tile-partial/overflow",
-        "numeric-vp/tile-partial/rounding",
-        "numeric-vp/tile-partial/tie-behavior"
-      ],
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 1,
-      "status": "rounding-rule-accepted-other-result-rules-open"
-    },
-    {
-      "operation_key": "tile:TEPL:TPARTMIN",
-      "domain": "tile-partial",
-      "hooks": [
-        "TileProfilePartialValue"
-      ],
-      "variation_point_ids": [
-        "numeric-vp/tile-partial/data-type-interpretation",
-        "numeric-vp/tile-partial/nan-and-infinity",
-        "numeric-vp/tile-partial/overflow",
-        "numeric-vp/tile-partial/rounding",
-        "numeric-vp/tile-partial/tie-behavior"
-      ],
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 1,
-      "status": "rounding-rule-accepted-other-result-rules-open"
-    },
-    {
-      "operation_key": "tile:TEPL:TPARTMUL",
-      "domain": "tile-partial",
-      "hooks": [
-        "TileProfilePartialValue"
-      ],
-      "variation_point_ids": [
-        "numeric-vp/tile-partial/data-type-interpretation",
-        "numeric-vp/tile-partial/nan-and-infinity",
-        "numeric-vp/tile-partial/overflow",
-        "numeric-vp/tile-partial/rounding",
-        "numeric-vp/tile-partial/tie-behavior"
-      ],
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "accepted_unsupported_profiles": [],
-      "accepted_result_rule_count": 1,
-      "status": "rounding-rule-accepted-other-result-rules-open"
-    },
-    {
       "operation_key": "tile:TEPL:TQUANT",
       "domain": "tile-quantize",
       "hooks": [
@@ -7445,8 +7052,7 @@
       "operation_key": "tile:TEPL:TROWEXPANDEXPDIF",
       "domain": "tile-expand",
       "hooks": [
-        "TileProfileExpand",
-        "TileExpDifference"
+        "TileProfileExpand"
       ],
       "variation_point_ids": [
         "numeric-vp/tile-expand/data-type-interpretation",
@@ -8028,33 +7634,6 @@
       "status": "rounding-rule-accepted-other-result-rules-open"
     },
     {
-      "hook": "TileExpDifference",
-      "role": "pto-v0-reference-helper",
-      "requirement": "PTO-REQ-TEPL-EXPAND-001",
-      "domains": [
-        "tile-expand"
-      ],
-      "operation_keys": [
-        "tile:TEPL:TCOLEXPANDEXPDIF",
-        "tile:TEPL:TROWEXPANDEXPDIF"
-      ],
-      "variation_point_ids": [
-        "numeric-vp/tile-expand/data-type-interpretation",
-        "numeric-vp/tile-expand/divide-by-zero",
-        "numeric-vp/tile-expand/nan-and-infinity",
-        "numeric-vp/tile-expand/rounding",
-        "numeric-vp/tile-expand/saturation"
-      ],
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "selected_route": {
-        "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
-      },
-      "result_rule_id": "adr0047-rounding-hook/TileExpDifference",
-      "status": "rounding-rule-accepted-other-result-rules-open"
-    },
-    {
       "hook": "TileExponential",
       "role": "pto-v0-reference-helper",
       "requirement": "PTO-REQ-TEPL-001",
@@ -8474,35 +8053,6 @@
       "status": "ownership-inventoried-result-rule-required"
     },
     {
-      "hook": "TileProfilePartialValue",
-      "role": "portable-profile-boundary",
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "domains": [
-        "tile-partial"
-      ],
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ],
-      "variation_point_ids": [
-        "numeric-vp/tile-partial/data-type-interpretation",
-        "numeric-vp/tile-partial/nan-and-infinity",
-        "numeric-vp/tile-partial/overflow",
-        "numeric-vp/tile-partial/rounding",
-        "numeric-vp/tile-partial/tie-behavior"
-      ],
-      "decision_owner_kind": "portable-architecture",
-      "decision_owner_id": "pto-numeric-v1",
-      "selected_route": {
-        "kind": "portable-rule",
-        "profile_id": "pto-numeric-v1"
-      },
-      "result_rule_id": "adr0047-rounding-hook/TileProfilePartialValue",
-      "status": "rounding-rule-accepted-other-result-rules-open"
-    },
-    {
       "hook": "TileProfileQuantize",
       "role": "portable-profile-boundary",
       "requirement": "PTO-REQ-TEPL-CONVERT-001",
@@ -8736,11 +8286,11 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "7c3005a7885e94537911d717b5ae977ced8ba088cd966934619cc82ba6dda03c"
+      "sha256": "50c0342678ff4cdd8e766f0efc798d81a7b9c3fbadc251d2807e77404d8d5fe5"
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ab00288a2c1b616b8226656e15b0664f111a12a10704c409ed237353b99f0719"
+      "sha256": "ee8df39701fbe638b7a76e13f32833efa0e4c01f64d38eb4e2ad485007392f7a"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
@@ -8748,27 +8298,27 @@
     },
     {
       "path": "spec/profile-hooks.json",
-      "sha256": "11997acecb1b2a325e82d7930655821a065d294c9a6040028f39516a786aba01"
+      "sha256": "33a503bfdf28d8f5ab7c54ed5efc7fffd5db97b5a793fce560a75340cbecb443"
     },
     {
       "path": "spec/evidence/numeric-rounding-selector-contract.json",
-      "sha256": "e86dd1967ba2d2b7d52d39ed318149336a3f69448789a9a4246a7206fc2fc063"
+      "sha256": "b6ef41d8b5718e6cfbe073dca5b1c5760942707900346646d933735aac66d96a"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "bb6f7d4165d17ef74386d6973dc077bd1004c8ba5e77bc70ac754942f9b0d169"
+      "sha256": "f288a7cdab84e20bb91831f04638d5cfb75f6f56a66b66383dd46002dba27f11"
     },
     {
       "path": "spec/evidence/public-numeric-type-baseline.json",
-      "sha256": "0669e274fc51f5e0ee902d449ea41a83f9f772e88293f8a13143664156b70478"
+      "sha256": "43de5052f27109a972caf9f39bce6f50dbf924cc7ed29d0050677d08c7793d25"
     },
     {
       "path": "spec/evidence/public-integer-conversion-contract.json",
-      "sha256": "76f2d976a549e5b9e6b77a6be4d74ca5714ef1216e0152dc105932820da38356"
+      "sha256": "280f0fcfb279c4c453465708d8081b135d3e3135b2498fc8e0042e4b70b70c10"
     },
     {
       "path": "spec/evidence/numeric-profile-applicability-closure.json",
-      "sha256": "3632d0897c1f28fbe8f870f33fbd1cbcabf75d5ef24bf9ee1131eccd87fff9cc"
+      "sha256": "851aa222c5c9f5cb0e192ab7e753f1501a6819c8de8aebcd99aef574815d07a8"
     },
     {
       "path": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
@@ -8776,16 +8326,16 @@
     }
   ],
   "summary": {
-    "variation_point_count": 89,
-    "unique_dimension_count": 39,
-    "domain_count": 18,
-    "operation_count": 104,
-    "hook_count": 30,
-    "primary_operation_hook_edge_count": 152,
-    "reference_helper_operation_edge_count": 8,
-    "portable_decision_owner_point_count": 89,
-    "selected_route_count": 16,
-    "accepted_result_rule_count": 16,
+    "variation_point_count": 84,
+    "unique_dimension_count": 38,
+    "domain_count": 17,
+    "operation_count": 100,
+    "hook_count": 28,
+    "primary_operation_hook_edge_count": 148,
+    "reference_helper_operation_edge_count": 6,
+    "portable_decision_owner_point_count": 84,
+    "selected_route_count": 15,
+    "accepted_result_rule_count": 15,
     "accepted_bounded_result_subset_rule_count": 3,
     "accepted_bounded_result_subset_tuple_count": 48,
     "accepted_unsupported_tuple_count": 150,

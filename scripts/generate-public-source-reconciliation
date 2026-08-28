@@ -270,9 +270,18 @@ TILE_LAYER_RESOLUTIONS = {
     ),
 }
 
+RETIRED_PUBLIC_TILE_OPERATIONS = {
+    "TFILLPAD",
+    "TTRANS",
+    "TPARTADD",
+    "TPARTMAX",
+    "TPARTMIN",
+    "TPARTMUL",
+}
+
 EXCLUDED_PUBLIC_TILE_OPERATIONS = {
     name: (
-        "The symbol remains in the pinned public source API, but PTO ISA 0.58.4 "
+        "The symbol remains in the pinned public source API, but PTO ISA 0.58.5 "
         "does not accept it as a direct DavinciOO Tile operation."
     )
     for name in {
@@ -289,6 +298,16 @@ EXCLUDED_PUBLIC_TILE_OPERATIONS = {
         "TRESHAPE",
     }
 }
+EXCLUDED_PUBLIC_TILE_OPERATIONS.update(
+    {
+        name: (
+            "ADR-0103 retires this pinned public symbol from the active PTO ISA; "
+            "its former selector is reserved-illegal and has no accepted alias "
+            "or replacement."
+        )
+        for name in RETIRED_PUBLIC_TILE_OPERATIONS
+    }
+)
 
 
 def load(relative: str):
@@ -374,7 +393,11 @@ def excluded_public_tile_rows() -> list[dict]:
         {
             "name": name,
             "public_symbol": name,
-            "disposition": "source-api-only-not-a-direct-operation",
+            "disposition": (
+                "retired-from-active-release-reserved-illegal"
+                if name in RETIRED_PUBLIC_TILE_OPERATIONS
+                else "source-api-only-not-a-direct-operation"
+            ),
             "resolution": resolution,
         }
         for name, resolution in sorted(EXCLUDED_PUBLIC_TILE_OPERATIONS.items())
@@ -383,29 +406,29 @@ def excluded_public_tile_rows() -> list[dict]:
 
 def predicate_version_boundary() -> dict:
     return {
-        "active_release": "PTO ISA 0.58.4",
+        "active_release": "PTO ISA 0.58.5",
         "current_public_source_release": "PTO ISA v0.6 micro-instruction surface",
-        "disposition": "outside-active-0.58.4-release-line",
+        "disposition": "outside-active-0.58.5-release-line",
         "accepted_mapping": None,
         "mapping_rule": (
-            "No public v0.6 typed mask is mapped to a PTO ISA 0.58.4 "
+            "No public v0.6 typed mask is mapped to a PTO ISA 0.58.5 "
             "architectural register, selector, encoding, producer, or consumer."
         ),
         "concepts": [
             {
                 "id": "pto-isa-0580-warp-predicate-registers",
-                "source_class": "active-0.58.4-architectural-state",
+                "source_class": "active-0.58.5-architectural-state",
                 "representation": "P0-P7",
                 "width_bits": 32,
                 "count": 8,
                 "lifecycle": "P0 hardwired all-ones; P1-P7 reset zero; all trap-preserved",
                 "accepted_producers": [],
                 "accepted_consumers": [],
-                "mapping_status": "closed-no-accepted-0.58.0-instruction-mapping",
+                "mapping_status": "closed-no-accepted-0.58.5-instruction-mapping",
             },
             {
                 "id": "pto-isa-0580-machine-execution-mask",
-                "source_class": "active-0.58.4-architectural-state",
+                "source_class": "active-0.58.5-architectural-state",
                 "representation": "MPAR/MSEQ execution mask",
                 "width_bits": 64,
                 "count": 1,
@@ -429,7 +452,7 @@ def predicate_version_boundary() -> dict:
                     "pto.pld*",
                 ],
                 "accepted_consumers": ["pto.v*", "pto.p* algebra", "pto.pst*"],
-                "mapping_status": "outside-active-0.58.4-release-line",
+                "mapping_status": "outside-active-0.58.5-release-line",
             },
             {
                 "id": "future-encoded-physical-predicate-register-mapping",
@@ -452,6 +475,31 @@ def generate() -> dict:
     scalars = scalar_rows(scalar["forms"])
     tiles = tile_rows(tile["operations"])
     excluded_tiles = excluded_public_tile_rows()
+    mapped_public_symbols = [
+        row["public_symbol"]
+        for row in tiles
+        if row["public_symbol"] in PUBLIC_TILE_SYMBOLS
+    ]
+    excluded_public_symbols = [row["public_symbol"] for row in excluded_tiles]
+    accounted_public_symbols = mapped_public_symbols + excluded_public_symbols
+    missing_public_symbols = sorted(
+        PUBLIC_TILE_SYMBOLS - set(accounted_public_symbols)
+    )
+    duplicate_public_symbols = sorted(
+        symbol
+        for symbol in set(accounted_public_symbols)
+        if accounted_public_symbols.count(symbol) != 1
+    )
+    unexpected_public_symbols = sorted(
+        set(accounted_public_symbols) - PUBLIC_TILE_SYMBOLS
+    )
+    if missing_public_symbols or duplicate_public_symbols or unexpected_public_symbols:
+        raise ValueError(
+            "public Tile symbol partition is not exact: "
+            f"missing={missing_public_symbols}, "
+            f"duplicate={duplicate_public_symbols}, "
+            f"unexpected={unexpected_public_symbols}"
+        )
     return {
         "schema_version": 2,
         "public_repository": PUBLIC_REPOSITORY,
@@ -465,6 +513,9 @@ def generate() -> dict:
         "public_sources": source_rows(),
         "public_tile_symbol_inventory": {
             "count": len(PUBLIC_TILE_SYMBOLS),
+            "active_mapping_count": len(mapped_public_symbols),
+            "excluded_disposition_count": len(excluded_public_symbols),
+            "partition_status": "closed-exact",
             "source_id": "public-intrinsic-api",
             "source_sha256": "d157d4c2b13c0928feb1ce775ba1fbcf49e4b3b207ee8460986ce4c2a2d57800",
             "symbols": sorted(PUBLIC_TILE_SYMBOLS),

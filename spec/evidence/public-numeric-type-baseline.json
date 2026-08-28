@@ -526,15 +526,15 @@
   "sources": [
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ab00288a2c1b616b8226656e15b0664f111a12a10704c409ed237353b99f0719"
+      "sha256": "ee8df39701fbe638b7a76e13f32833efa0e4c01f64d38eb4e2ad485007392f7a"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "bb6f7d4165d17ef74386d6973dc077bd1004c8ba5e77bc70ac754942f9b0d169"
+      "sha256": "f288a7cdab84e20bb91831f04638d5cfb75f6f56a66b66383dd46002dba27f11"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "47014fd70da0967716c8470c4cf9aefc01f7e42cac2b9cc065a82200b316e402"
+      "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
     },
     {
       "path": "docs/status/decisions/0043-public-numeric-type-identity-and-availability.md",
