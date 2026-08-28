@@ -38,8 +38,8 @@ begin
     end;
 
     let source = BundleTileSourceIndex(0, FALSE);
-    if !TileSourceContentsDefined(source) ||
-       !TileSourceEncodingsValid(source) then
+    if !TileTCVTSourceContentsDefined(source) ||
+       !TileTCVTSourceEncodingsValid(source) then
         return FALSE;
     end;
     let source_type = TileDataTypeFromEncoding(
@@ -52,6 +52,34 @@ begin
         return FALSE;
     end;
 
+    let source_layout = _Tiles[[source]].layout;
+    let source_cube_m_layout =
+        source_layout == TileLayout_CUBE_M16 ||
+        source_layout == TileLayout_CUBE_M32;
+    if source_cube_m_layout then
+        // CUBE_M16/M32 TCVT keeps the same CUBE layout and valid region.
+        // Destination physical geometry is derived later from the selected
+        // destination type and the requested TSize.
+        let requested_valid_columns = UInt(_BundleDimensions[[0]]);
+        let requested_valid_rows = if _BundleDimensionPresent[[1]] then
+            UInt(_BundleDimensions[[1]]) else 1;
+        return requested_valid_columns == _Tiles[[source]].valid_columns &&
+               requested_valid_rows == _Tiles[[source]].valid_rows &&
+               !_BundleDimensionPresent[[2]] &&
+               !CurrentBundleCanonicalize() &&
+               CurrentBundleDataLayout() == TileDataLayout_NORM &&
+               _Tiles[[source]].location == TileLocation_Matrix &&
+               TileCubeDescriptorShapeLegal(
+                   _Tiles[[source]].capacity_bytes,
+                   _Tiles[[source]].valid_rows,
+                   _Tiles[[source]].valid_columns,
+                   source_type, source_layout) &&
+               TileCubeDataTypeSupported(destination_type);
+    end;
+    if TileLayoutIsCube(source_layout) then
+        return FALSE;
+    end;
+
     let private_cube_source =
         _Tiles[[source]].location == TileLocation_Matrix;
     if private_cube_source != CurrentBundleCanonicalize() then
@@ -59,7 +87,7 @@ begin
     end;
     if private_cube_source then
         return CurrentBundleDataLayout() == TileDataLayout_NORM &&
-               _Tiles[[source]].layout == TileLayout_RowMajor;
+               source_layout == TileLayout_RowMajor;
     end;
-    return _Tiles[[source]].layout == CurrentBundleTileSourceLayout();
+    return source_layout == CurrentBundleTileSourceLayout();
 end;

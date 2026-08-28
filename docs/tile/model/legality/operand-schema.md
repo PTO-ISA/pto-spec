@@ -253,26 +253,83 @@ begin
            tile.columns >= tile.valid_columns;
 end;
 
+readonly func TileTCVTSourceContentsDefined(index: TileIndex) => boolean
+begin
+    let tile = _Tiles[[index]];
+    if TileLayoutIsCube(tile.layout) then
+        return TileCubeDescriptorLegal(tile) && tile.contents_defined;
+    end;
+    return TileSourceContentsDefined(index);
+end;
+
+readonly func TileTCVTSourceEncodingsValid(index: TileIndex) => boolean
+begin
+    let tile = _Tiles[[index]];
+    if !TileTCVTSourceContentsDefined(index) then return FALSE; end;
+    if !TileLayoutIsCube(tile.layout) then
+        return TileSourceEncodingsValid(index);
+    end;
+    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
+        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
+            let element = TileLogicalLinearIndex(
+                tile, row as integer {0..65535},
+                column as integer {0..65535});
+            if !TileNumericEncodingValid(
+                   tile.data_type,
+                   TileReadLogicalElement(tile, element)) then
+                return FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
+end;
+
 readonly func TileOperandsLegal_TCVT(destination: TileIndex,
                                      source: TileIndex,
                                      control: NumericExecutionControl) => boolean
 begin
-    if !TileDescriptorLegal(destination) ||
-       !TileSourceContentsDefined(source) ||
-       !TileSourceEncodingsValid(source) then
+    let destination_tile = _Tiles[[destination]];
+    if (if TileLayoutIsCube(destination_tile.layout) then
+            !TileCubeDescriptorLegal(destination_tile)
+        else !TileDescriptorLegal(destination)) ||
+       !TileTCVTSourceContentsDefined(source) ||
+       !TileTCVTSourceEncodingsValid(source) then
         return FALSE;
     end;
-    let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     if !HardwareTCVTTypePairSupported(
            source_tile.data_type,
            destination_tile.data_type) then
         return FALSE;
     end;
-    if destination_tile.rows != source_tile.rows ||
-       destination_tile.columns != source_tile.columns ||
-       destination_tile.valid_rows != source_tile.valid_rows ||
+    if destination_tile.valid_rows != source_tile.valid_rows ||
        destination_tile.valid_columns != source_tile.valid_columns then
+        return FALSE;
+    end;
+
+    let source_cube_m_layout =
+        source_tile.layout == TileLayout_CUBE_M16 ||
+        source_tile.layout == TileLayout_CUBE_M32;
+    if source_cube_m_layout then
+        // A CUBE M-format conversion preserves the physical matrix format
+        // while allowing the element width, and therefore the CELL count and
+        // minimum legal TSize, to change.
+        return !CurrentBundleCanonicalize() &&
+               CurrentBundleDataLayout() == TileDataLayout_NORM &&
+               source_tile.location == TileLocation_Matrix &&
+               destination_tile.location == TileLocation_Matrix &&
+               destination_tile.layout == source_tile.layout &&
+               TileCubeDescriptorShapeLegal(
+                   source_tile.capacity_bytes, source_tile.valid_rows,
+                   source_tile.valid_columns, source_tile.data_type,
+                   source_tile.layout) &&
+               TileCubeDescriptorShapeLegal(
+                   destination_tile.capacity_bytes, destination_tile.valid_rows,
+                   destination_tile.valid_columns, destination_tile.data_type,
+                   destination_tile.layout);
+    end;
+
+    if TileLayoutIsCube(destination_tile.layout) then
         return FALSE;
     end;
     let private_cube_source =

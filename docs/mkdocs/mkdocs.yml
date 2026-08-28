@@ -187,6 +187,7 @@ nav:
               - Shared TLSU: block/model/dispatch/shared-tlsu.md
               - Sorting Schema: block/model/dispatch/sorting-schema.md
               - Start: block/model/dispatch/start.md
+              - Tcvt Destination: block/model/dispatch/tcvt-destination.md
               - Tcvt Schema: block/model/dispatch/tcvt-schema.md
               - Tile Execution: block/model/dispatch/tile-execution.md
               - Tile Scalar Schema: block/model/dispatch/tile-scalar-schema.md
@@ -1053,5 +1054,6 @@ nav:
           - "ADR 0107: Remove legacy Shared movement Functions": status/decisions/0107-remove-legacy-shared-movement.md
           - "ADR 0108: PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary": status/decisions/0108-0584-1-to-0585-compatibility.md
           - "ADR 0109: Local single-object cap versus aggregate Local pool": status/decisions/0109-local-single-object-cap.md
+          - "ADR 0110: TCVT CUBE_M16 and CUBE_M32 layout closure": status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md
       - Open:
           - "Open architecture decisions": status/open/index.md

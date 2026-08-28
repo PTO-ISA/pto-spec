@@ -1,5 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
-
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 readonly func BundleDestinationValidRows(shape_source_valid: boolean,
                                          shape_source: TileIndex)
                                          => integer {0..65535}
@@ -87,7 +86,6 @@ begin
            TileCapacityInUseForPE(3) + additional3 <=
                TileCapacityLimitBytes();
 end;
-
 func ResolveBundleTileDestinationsWithShapeAndType(
     explicit_shape: boolean,
     explicit_valid_rows: integer {0..65535},
@@ -134,7 +132,6 @@ begin
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
-
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
@@ -163,7 +160,6 @@ begin
             end;
         end;
     end;
-
     // Validate every derived descriptor before allocating any destination.
     // This preserves precise all-or-nothing B.IOT allocation when a size code
     // is too small for its logical shape.
@@ -215,7 +211,6 @@ begin
             destination_ordinal = destination_ordinal + 1;
         end;
     end;
-
     destination_ordinal = 0;
     for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
         if _BundleTileBindings[[binding]].valid &&
@@ -264,7 +259,6 @@ begin
     end;
     return TRUE;
 end;
-
 func ResolveBundleTileDestinationsWithShape(
     explicit_shape: boolean,
     explicit_valid_rows: integer {0..65535},
@@ -279,7 +273,6 @@ begin
         FALSE,
         TileDataType_FP64);
 end;
-
 func ResolveBundleTileDestinations() => boolean
 begin
     return ResolveBundleTileDestinationsWithShape(FALSE, 0, 0, 0);
@@ -387,6 +380,13 @@ begin
         return ResolveBundleTileDestinationsWithShapeAndType(
             TRUE, valid_rows, valid_columns, physical_columns,
             TRUE, data_type);
+    end;
+    if TileOperationUsesClosedTCVTSchema(operation) then
+        let source = BundleTileSourceIndex(0, FALSE);
+        if _Tiles[[source]].layout == TileLayout_CUBE_M16 ||
+           _Tiles[[source]].layout == TileLayout_CUBE_M32 then
+            return ResolveBundleTCVTCubeDestination();
+        end;
     end;
     if TileOperationUsesClosedSortingSchema(operation) then
         let decoded = TileOperationOfIndex(operation);
