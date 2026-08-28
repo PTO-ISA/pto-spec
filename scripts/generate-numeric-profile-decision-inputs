@@ -227,6 +227,8 @@ NUMERIC_ADR_IDS = (
     "ADR-0095",
 )
 
+RETIRED_NUMERIC_DOMAINS = {"tile-partial"}
+
 
 def parse_affected_domains(path: Path, known_domains: set[str]) -> tuple[str, ...]:
     body = path.read_text(encoding="utf-8").split("---", 2)[-1]
@@ -238,6 +240,7 @@ def parse_affected_domains(path: Path, known_domains: set[str]) -> tuple[str, ..
     if len(sections) != 1:
         raise ValueError(f"{path}: expected exactly one Affected domains section")
     domains = []
+    seen = set()
     for line in sections[0].splitlines():
         if not line.strip():
             continue
@@ -245,10 +248,13 @@ def parse_affected_domains(path: Path, known_domains: set[str]) -> tuple[str, ..
         if match is None:
             raise ValueError(f"{path}: malformed affected-domain row: {line!r}")
         domain = match.group(1)
+        if domain in seen:
+            raise ValueError(f"{path}: duplicate affected domain: {domain}")
+        seen.add(domain)
+        if domain in RETIRED_NUMERIC_DOMAINS:
+            continue
         if domain not in known_domains:
             raise ValueError(f"{path}: unknown affected domain: {domain}")
-        if domain in domains:
-            raise ValueError(f"{path}: duplicate affected domain: {domain}")
         domains.append(domain)
     if not domains:
         raise ValueError(f"{path}: affected-domain list is empty")

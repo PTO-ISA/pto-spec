@@ -1,5 +1,5 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPLEX","surface":"tile","classification":["model","execution","complex"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-EXECUTION-REARRANGEMENT","PTO-TILE-MODEL-LEGALITY-INDEXED-LAYOUT"]}
-// PTO-REQ-TEPL-COMPLEX-001: partial, ordering, and histogram operations.
+// PTO-REQ-TEPL-COMPLEX-001: ordering and histogram operations.
 
 impdef func TileProfileOrderLeft(
     left: Word,

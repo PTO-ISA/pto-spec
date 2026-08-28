@@ -40,7 +40,6 @@ ALL_NUMERIC_DOMAINS = {
     "tile-expand",
     "tile-fused",
     "tile-order",
-    "tile-partial",
     "tile-quantize",
     "tile-reduction",
     "tile-unary",
@@ -80,7 +79,7 @@ EXPECTED_DOMAINS_BY_ADR = {
         "tile-expand",
         "tile-unary",
     },
-    "ADR-0092": {"tile-compare", "tile-order", "tile-partial", "tile-reduction"},
+    "ADR-0092": {"tile-compare", "tile-order", "tile-reduction"},
     "ADR-0093": {"tile-dequantize", "tile-quantize"},
     "ADR-0094": {"cube-matrix"},
     "ADR-0095": ALL_NUMERIC_DOMAINS,
@@ -155,6 +154,8 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             )
 
     def test_accepted_adr_counts_match_generated_contracts(self) -> None:
+        retired_tpart_operation_count = 4
+        retired_tpart_subnormal_tuple_count = 44
         rounding = json.loads(
             (ROOT / "spec/evidence/numeric-rounding-selector-contract.json").read_text(
                 encoding="utf-8"
@@ -173,16 +174,18 @@ class NumericDecisionMigrationTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         self.assertIn(
-            f"{rounding['affected_domain_count']} affected rounding domains and "
-            f"{rounding['affected_operation_count']} affected operations",
+            f"{rounding['affected_domain_count'] + 1} affected rounding domains and "
+            f"{rounding['affected_operation_count'] + retired_tpart_operation_count} "
+            "affected operations",
             rounding_body,
         )
         self.assertIn(
-            f"{subnormal['affected_operation_count']} compressed operation rows",
+            f"{subnormal['affected_operation_count'] + retired_tpart_operation_count} "
+            "compressed operation rows",
             subnormal_body,
         )
         self.assertIn(
-            f"{subnormal['conditional_operation_type_tuple_count']:,} "
+            f"{subnormal['conditional_operation_type_tuple_count'] + retired_tpart_subnormal_tuple_count:,} "
             "operation/type obligations",
             subnormal_body,
         )
@@ -298,6 +301,19 @@ class NumericDecisionMigrationTest(unittest.TestCase):
                     path.write_text(body, encoding="utf-8")
                     with self.assertRaises(ValueError):
                         parse(path, known)
+
+    def test_affected_domain_parser_ignores_explicit_retired_domains(self) -> None:
+        namespace = self.script_namespace("generate-numeric-profile-decision-inputs")
+        parse = namespace["parse_affected_domains"]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "retired.md"
+            path.write_text(
+                "## Affected domains\n\n"
+                "- `scalar-binary`\n"
+                "- `tile-partial`\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(parse(path, {"scalar-binary"}), ("scalar-binary",))
 
     def test_generated_domains_match_adr_bullet_lists(self) -> None:
         namespace = self.script_namespace("generate-numeric-profile-decision-inputs")

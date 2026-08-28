@@ -72,6 +72,8 @@ check-projections:
 	python3 scripts/check-mnemonic-explanations
 	python3 scripts/generate-mnemonic-avs.py --check
 	python3 scripts/generate-bundle-operation-matrix.py --check
+	./scripts/generate-bundle-command-totality --check
+	./scripts/generate-public-source-reconciliation --check
 
 check-publication-hygiene:
 	python3 scripts/check-publication-hygiene

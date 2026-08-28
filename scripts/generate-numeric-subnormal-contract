@@ -191,7 +191,7 @@ def generate() -> dict[str, Any]:
         "ADR-0049 domain membership drift",
     )
     domain_rows = [domain_rows_by_name[name] for name in adr0049["affected_domains"]]
-    require(len(domain_rows) == 14, "ADR-0049 domain count drift")
+    require(len(domain_rows) == 13, "ADR-0049 domain count drift")
     operation_rows = [
         {
             "operation_key": operation_key,
@@ -206,7 +206,7 @@ def generate() -> dict[str, Any]:
         for row in domain_rows
         for operation_key in row["operation_keys"]
     ]
-    require(len(operation_rows) == 93, "ADR-0049 operation applicability count drift")
+    require(len(operation_rows) == 89, "ADR-0049 operation applicability count drift")
 
     independent = formats["independent_comparison"]
     require(

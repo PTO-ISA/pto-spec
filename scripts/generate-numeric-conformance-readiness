@@ -134,7 +134,7 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
     {
         "id": "N5",
         "title": "reductions and ordering",
-        "contract_domains": ["tile-reduction", "tile-partial", "tile-order"],
+        "contract_domains": ["tile-reduction", "tile-order"],
         "unbound_hooks": [],
         "required_vector_classes": [
             "normal",
@@ -179,10 +179,10 @@ LANE_SPECS: tuple[dict[str, Any], ...] = (
 )
 
 EXPECTED_COUNTS = {
-    "contract_domain_count": 18,
-    "hook_count": 30,
+    "contract_domain_count": 17,
+    "hook_count": 28,
     "lane_count": 6,
-    "operation_count": 104,
+    "operation_count": 100,
 }
 
 
@@ -226,10 +226,10 @@ def build_evidence() -> dict[str, Any]:
         variation_ownership.get("status")
         == "variation-point-discovery-and-ownership-closed-result-bounds-open"
         and variation_ownership.get("summary", {}).get("variation_point_count")
-        == 89
-        and variation_ownership.get("summary", {}).get("selected_route_count") == 16
+        == 84
+        and variation_ownership.get("summary", {}).get("selected_route_count") == 15
         and variation_ownership.get("summary", {}).get("accepted_result_rule_count")
-        == 16,
+        == 15,
         "numeric variation-point ownership checkpoint drift",
     )
     require(
@@ -266,13 +266,13 @@ def build_evidence() -> dict[str, Any]:
     require(
         subnormal_contract.get("status")
         == "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open"
-        and subnormal_contract.get("summary", {}).get("pd04_complete") is True
-        and subnormal_contract.get("summary", {}).get("affected_domain_count") == 14
-        and subnormal_contract.get("summary", {}).get("affected_operation_count") == 93
+        and subnormal_contract.get("summary", {}).get("adr0049_complete") is True
+        and subnormal_contract.get("summary", {}).get("affected_domain_count") == 13
+        and subnormal_contract.get("summary", {}).get("affected_operation_count") == 89
         and subnormal_contract.get("summary", {}).get(
             "conditional_operation_type_tuple_count"
         )
-        == 1023,
+        == 979,
         "numeric subnormal contract drift",
     )
 
@@ -372,9 +372,9 @@ def build_evidence() -> dict[str, Any]:
             "path": "spec/evidence/numeric-variation-point-ownership.json",
             "status": variation_ownership["status"],
             "acceptance_record": variation_ownership["acceptance_record"],
-            "variation_point_count": 89,
-            "selected_route_count": 16,
-            "accepted_result_rule_count": 16,
+            "variation_point_count": 84,
+            "selected_route_count": 15,
+            "accepted_result_rule_count": 15,
         },
         "public_type_baseline": {
             "path": "spec/evidence/public-numeric-type-baseline.json",

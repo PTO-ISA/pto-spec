@@ -266,23 +266,6 @@
       "target_conformance_status": "open:S5-T2"
     },
     {
-      "id": "tile-partial",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfilePartialValue"
-      ],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "open_numeric_dimensions": [
-        "data-type interpretation",
-        "rounding",
-        "overflow",
-        "NaN and infinity",
-        "tie behavior"
-      ],
-      "target_conformance_status": "open:S5-T2"
-    },
-    {
       "id": "tile-order",
       "profile_owner": "PTO numeric architecture maintainers",
       "primary_hooks": [
@@ -411,20 +394,9 @@
       ]
     },
     {
-      "name": "TileExpDifference",
-      "role": "pto-v0-reference-helper",
-      "model": "asl/tile/model/execution/expansion.asl",
-      "requirement": "PTO-REQ-TEPL-EXPAND-001",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "operation_keys": [
-        "tile:TEPL:TCOLEXPANDEXPDIF",
-        "tile:TEPL:TROWEXPANDEXPDIF"
-      ]
-    },
-    {
       "name": "TileExponential",
       "role": "pto-v0-reference-helper",
-      "model": "asl/tile/model/execution/elementwise.asl",
+      "model": "asl/tile/model/execution/comparison.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -434,7 +406,7 @@
     {
       "name": "TileLogarithm",
       "role": "pto-v0-reference-helper",
-      "model": "asl/tile/model/execution/elementwise.asl",
+      "model": "asl/tile/model/execution/unary.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -477,7 +449,7 @@
     {
       "name": "TileProfileCompare",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/model/execution/elementwise.asl",
+      "model": "asl/tile/model/execution/comparison.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -645,19 +617,6 @@
       ]
     },
     {
-      "name": "TileProfilePartialValue",
-      "role": "portable-profile-boundary",
-      "model": "asl/tile/model/execution/complex.asl",
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ]
-    },
-    {
       "name": "TileProfileQuantize",
       "role": "portable-profile-boundary",
       "model": "asl/tile/model/numeric/formats.asl",
@@ -712,7 +671,7 @@
     {
       "name": "TileProfileUnary",
       "role": "portable-profile-boundary",
-      "model": "asl/tile/model/execution/elementwise.asl",
+      "model": "asl/tile/model/execution/unary.asl",
       "requirement": "PTO-REQ-TEPL-001",
       "profile_owner": "PTO numeric architecture maintainers",
       "operation_keys": [
@@ -1502,9 +1461,7 @@
       "primary_hooks": [
         "TileProfileExpand"
       ],
-      "reference_helpers": [
-        "TileExpDifference"
-      ],
+      "reference_helpers": [],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
       "stage4_target": "S4-T8",
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
@@ -1919,70 +1876,6 @@
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
     },
     {
-      "key": "tile:TEPL:TPARTADD",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TPARTADD",
-      "catalog_identity": "0x071",
-      "numeric_contract": "tile-partial",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfilePartialValue"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
-      "key": "tile:TEPL:TPARTMAX",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TPARTMAX",
-      "catalog_identity": "0x073",
-      "numeric_contract": "tile-partial",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfilePartialValue"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
-      "key": "tile:TEPL:TPARTMIN",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TPARTMIN",
-      "catalog_identity": "0x074",
-      "numeric_contract": "tile-partial",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfilePartialValue"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
-      "key": "tile:TEPL:TPARTMUL",
-      "surface": "direct-tile-operation",
-      "family": "TEPL",
-      "name": "TPARTMUL",
-      "catalog_identity": "0x072",
-      "numeric_contract": "tile-partial",
-      "profile_owner": "PTO numeric architecture maintainers",
-      "primary_hooks": [
-        "TileProfilePartialValue"
-      ],
-      "reference_helpers": [],
-      "requirement": "PTO-REQ-TEPL-COMPLEX-001",
-      "stage4_target": "S4-T8",
-      "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
-    },
-    {
       "key": "tile:TEPL:TQUANT",
       "surface": "direct-tile-operation",
       "family": "TEPL",
@@ -2157,9 +2050,7 @@
       "primary_hooks": [
         "TileProfileExpand"
       ],
-      "reference_helpers": [
-        "TileExpDifference"
-      ],
+      "reference_helpers": [],
       "requirement": "PTO-REQ-TEPL-EXPAND-001",
       "stage4_target": "S4-T8",
       "disposition": "pto-v0-reference-defined-target-numeric-conformance-open:S5-T2"
@@ -2480,12 +2371,12 @@
     }
   ],
   "summary": {
-    "numeric_hook_count": 30,
-    "decoded_operation_count": 104,
+    "numeric_hook_count": 28,
+    "decoded_operation_count": 100,
     "scalar_form_count": 19,
-    "direct_tile_operation_count": 85,
-    "primary_profile_boundary_hook_count": 23,
-    "reference_helper_hook_count": 5,
+    "direct_tile_operation_count": 81,
+    "primary_profile_boundary_hook_count": 22,
+    "reference_helper_hook_count": 4,
     "library_only_hook_count": 2,
     "target_conformance_status": "open:S5-T2"
   }

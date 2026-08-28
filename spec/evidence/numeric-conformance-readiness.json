@@ -10,9 +10,9 @@
     "path": "spec/evidence/numeric-variation-point-ownership.json",
     "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
     "acceptance_record": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
-    "variation_point_count": 89,
-    "selected_route_count": 16,
-    "accepted_result_rule_count": 16
+    "variation_point_count": 84,
+    "selected_route_count": 15,
+    "accepted_result_rule_count": 15
   },
   "public_type_baseline": {
     "path": "spec/evidence/public-numeric-type-baseline.json",
@@ -40,20 +40,20 @@
     "boundary_vector_count": 55,
     "configuration_vector_count": 8,
     "non_applicable_type_count": 14,
-    "affected_domain_count": 14,
-    "affected_operation_count": 93,
-    "operation_applicability_row_count": 93,
-    "conditional_operation_type_tuple_count": 1023,
-    "affected_hook_count": 23,
+    "affected_domain_count": 13,
+    "affected_operation_count": 89,
+    "operation_applicability_row_count": 89,
+    "conditional_operation_type_tuple_count": 979,
+    "affected_hook_count": 21,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
-    "pd04_complete": true,
+    "adr0049_complete": true,
     "s5_t2_a_complete": false,
     "s5_t2_complete": false
   },
   "numeric_special_value_contract": {
     "path": "spec/evidence/numeric-special-value-contract.json",
-    "status": "named-hardware-special-value-checkpoint-accepted-pd05-open",
+    "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
     "acceptance_record": "docs/status/decisions/0050-hardware-special-value-checkpoint.md",
     "format_count": 25,
     "nan_capable_type_count": 10,
@@ -66,7 +66,7 @@
     "accepted_special_result_rule_count": 3,
     "accepted_complete_domain_rule_count": 0,
     "accepted_complete_decision_count": 0,
-    "pd05_complete": false,
+    "adr0088_complete": false,
     "s5_t2_complete": false
   },
   "identity_framework": {
@@ -357,7 +357,6 @@
         "tile:TEPL:TXORS"
       ],
       "hooks": [
-        "TileExpDifference",
         "TileExponential",
         "TileLogarithm",
         "TileProfileBinary",
@@ -370,7 +369,7 @@
       "counts": {
         "contract_domains": 4,
         "operations": 51,
-        "hooks": 9
+        "hooks": 8
       },
       "open_numeric_dimensions": [
         "NaN and infinity",
@@ -471,7 +470,6 @@
       "status": "profile-and-oracle-required",
       "contract_domains": [
         "tile-reduction",
-        "tile-partial",
         "tile-order"
       ],
       "operation_keys": [
@@ -482,10 +480,6 @@
         "tile:TEPL:TCOLPROD",
         "tile:TEPL:TCOLSUM",
         "tile:TEPL:TMRGSORT",
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL",
         "tile:TEPL:TROWARGMAX",
         "tile:TEPL:TROWARGMIN",
         "tile:TEPL:TROWMAX",
@@ -496,15 +490,14 @@
       ],
       "hooks": [
         "TileProfileOrderLeft",
-        "TileProfilePartialValue",
         "TileProfileReductionInitial",
         "TileProfileReductionStep",
         "TileProfileValueIsNaN"
       ],
       "counts": {
-        "contract_domains": 3,
-        "operations": 18,
-        "hooks": 5
+        "contract_domains": 2,
+        "operations": 14,
+        "hooks": 4
       },
       "open_numeric_dimensions": [
         "NaN and infinity",
@@ -512,14 +505,11 @@
         "accumulation width",
         "arg tie-breaking",
         "ascending and descending tie behavior",
-        "data-type interpretation",
         "data-type ordering",
         "equal-value stability",
-        "overflow",
         "reduction order",
         "rounding",
-        "signed zero",
-        "tie behavior"
+        "signed zero"
       ],
       "required_vector_classes": [
         "normal",
@@ -613,10 +603,10 @@
     }
   ],
   "summary": {
-    "contract_domain_count": 18,
-    "hook_count": 30,
+    "contract_domain_count": 17,
+    "hook_count": 28,
     "lane_count": 6,
-    "operation_count": 104,
+    "operation_count": 100,
     "accepted_configuration_identity_count": 4,
     "accepted_selection_framework_rule_count": 5,
     "accepted_public_type_binding_count": 16,

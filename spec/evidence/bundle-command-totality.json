@@ -1568,8 +1568,8 @@
     },
     "counts": {
       "TEPL": {
-        "total": 87,
-        "representable": 87,
+        "total": 85,
+        "representable": 85,
         "commit_rejected": 0
       },
       "TLSU": {
@@ -4118,45 +4118,6 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x065",
-        "operation": "TFILLPAD",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "scalar0"
-        ],
-        "operand_resolutions": [
-          {
-            "field": "destination0",
-            "resolver": "ordered B.IOT destination binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source0",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "scalar0",
-            "resolver": "B.IOR ordered GPR input slot for scalar0",
-            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
-            "raw_value_policy": "XLEN Word",
-            "slot": "RegSrc0"
-          }
-        ],
-        "gpr_input_slots": {
-          "scalar0": "RegSrc0"
-        },
-        "gpr_input_count": 1,
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "complete_bundle_schema": null,
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
         "selector": "0x066",
         "operation": "TCI",
         "operand_fields": [
@@ -4491,35 +4452,6 @@
       },
       {
         "family": "TEPL",
-        "selector": "0x06E",
-        "operation": "TTRANS",
-        "operand_fields": [
-          "destination0",
-          "source0"
-        ],
-        "operand_resolutions": [
-          {
-            "field": "destination0",
-            "resolver": "ordered B.IOT destination binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source0",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          }
-        ],
-        "gpr_input_slots": {},
-        "gpr_input_count": 0,
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "complete_bundle_schema": null,
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
         "selector": "0x06F",
         "operation": "TGATHER",
         "operand_fields": [
@@ -4558,150 +4490,6 @@
         "family": "TEPL",
         "selector": "0x070",
         "operation": "TSCATTER",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "operand_resolutions": [
-          {
-            "field": "destination0",
-            "resolver": "ordered B.IOT destination binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source0",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source1",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          }
-        ],
-        "gpr_input_slots": {},
-        "gpr_input_count": 0,
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "complete_bundle_schema": null,
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x071",
-        "operation": "TPARTADD",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "operand_resolutions": [
-          {
-            "field": "destination0",
-            "resolver": "ordered B.IOT destination binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source0",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source1",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          }
-        ],
-        "gpr_input_slots": {},
-        "gpr_input_count": 0,
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "complete_bundle_schema": null,
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x072",
-        "operation": "TPARTMUL",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "operand_resolutions": [
-          {
-            "field": "destination0",
-            "resolver": "ordered B.IOT destination binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source0",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source1",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          }
-        ],
-        "gpr_input_slots": {},
-        "gpr_input_count": 0,
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "complete_bundle_schema": null,
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x073",
-        "operation": "TPARTMAX",
-        "operand_fields": [
-          "destination0",
-          "source0",
-          "source1"
-        ],
-        "operand_resolutions": [
-          {
-            "field": "destination0",
-            "resolver": "ordered B.IOT destination binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source0",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          },
-          {
-            "field": "source1",
-            "resolver": "ordered B.IOT source binding",
-            "default": "0",
-            "raw_value_policy": "absolute TileIndex"
-          }
-        ],
-        "gpr_input_slots": {},
-        "gpr_input_count": 0,
-        "representable": true,
-        "unsupported_operand_fields": [],
-        "complete_bundle_schema": null,
-        "commit_disposition": "execute-after-complete-binding"
-      },
-      {
-        "family": "TEPL",
-        "selector": "0x074",
-        "operation": "TPARTMIN",
         "operand_fields": [
           "destination0",
           "source0",
@@ -6780,6 +6568,180 @@
             "packing": "compact B.IOT order; one source/destination ordinal per valid binding"
           }
         },
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x075",
+        "operation": "TPERMUTE",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "source2"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source2",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {},
+        "gpr_input_count": 0,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x076",
+        "operation": "TSHUF",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "scalar0"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x077",
+        "operation": "TPACK",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "source1",
+          "scalar0"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TEPL",
+        "selector": "0x078",
+        "operation": "TUNPACK",
+        "operand_fields": [
+          "destination0",
+          "source0",
+          "scalar0"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "scalar0",
+            "resolver": "B.IOR ordered GPR input slot for scalar0",
+            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          }
+        ],
+        "gpr_input_slots": {
+          "scalar0": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
       }
     ]

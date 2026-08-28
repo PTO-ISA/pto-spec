@@ -184,6 +184,8 @@ python3 scripts/instruction_contracts.py --check --require-complete
 # freshness after the pending decisions receive one release identity.
 python3 scripts/generate-mnemonic-avs.py --check
 python3 scripts/generate-bundle-operation-matrix.py --check
+./scripts/generate-bundle-command-totality --check
+./scripts/generate-public-source-reconciliation --check
 python3 scripts/check-publication-hygiene
 
 if [[ $structure_only == true ]]; then

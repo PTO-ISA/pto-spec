@@ -141,7 +141,7 @@ begin
     WriteGPR(2, Zeros{PTO_XLEN});
     WriteGPR(3, Zeros{PTO_XLEN} + 24);
     let lb2_store_shared = ExecuteCommandInstruction(
-        BundleTestSharedBinding(Zeros{6} + 18), 32);
+        BundleTestSharedBindingV6(Zeros{6} + 18, Zeros{4}, '001'), 32);
     let lb2_store_address = ExecuteCommandInstruction(
         BundleTestScalarBinding(
             Zeros{5},

@@ -364,7 +364,6 @@
         "tile:TEPL:TROWEXPANDSUB"
       ],
       "hooks": [
-        "TileExpDifference",
         "TileProfileExpand"
       ],
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
@@ -381,24 +380,6 @@
       ],
       "hooks": [
         "TileProfileMatrixAccumulate"
-      ],
-      "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
-      "source_rule": "preserve-when-source-format-defines-subnormals",
-      "destination_rule": "gradual-underflow-when-destination-format-defines-subnormals",
-      "status": "adr0049-rule-accepted-other-numeric-dimensions-open"
-    },
-    {
-      "domain": "tile-partial",
-      "lane": "N5",
-      "operation_count": 4,
-      "operation_keys": [
-        "tile:TEPL:TPARTADD",
-        "tile:TEPL:TPARTMAX",
-        "tile:TEPL:TPARTMIN",
-        "tile:TEPL:TPARTMUL"
-      ],
-      "hooks": [
-        "TileProfilePartialValue"
       ],
       "support_boundary": "conditional-on-otherwise-supported-operation-type-tuple",
       "source_rule": "preserve-when-source-format-defines-subnormals",
@@ -1951,94 +1932,6 @@
       "support_status": "conditional-not-created-by-adr0049"
     },
     {
-      "operation_key": "tile:TEPL:TPARTADD",
-      "domain": "tile-partial",
-      "lane": "N5",
-      "subnormal_type_names": [
-        "FP64",
-        "FP32",
-        "TF32",
-        "HF32",
-        "FP16",
-        "BF16",
-        "HiF8",
-        "E4M3",
-        "E5M2",
-        "E3M2",
-        "E2M3"
-      ],
-      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
-      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
-      "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-adr0049"
-    },
-    {
-      "operation_key": "tile:TEPL:TPARTMAX",
-      "domain": "tile-partial",
-      "lane": "N5",
-      "subnormal_type_names": [
-        "FP64",
-        "FP32",
-        "TF32",
-        "HF32",
-        "FP16",
-        "BF16",
-        "HiF8",
-        "E4M3",
-        "E5M2",
-        "E3M2",
-        "E2M3"
-      ],
-      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
-      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
-      "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-adr0049"
-    },
-    {
-      "operation_key": "tile:TEPL:TPARTMIN",
-      "domain": "tile-partial",
-      "lane": "N5",
-      "subnormal_type_names": [
-        "FP64",
-        "FP32",
-        "TF32",
-        "HF32",
-        "FP16",
-        "BF16",
-        "HiF8",
-        "E4M3",
-        "E5M2",
-        "E3M2",
-        "E2M3"
-      ],
-      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
-      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
-      "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-adr0049"
-    },
-    {
-      "operation_key": "tile:TEPL:TPARTMUL",
-      "domain": "tile-partial",
-      "lane": "N5",
-      "subnormal_type_names": [
-        "FP64",
-        "FP32",
-        "TF32",
-        "HF32",
-        "FP16",
-        "BF16",
-        "HiF8",
-        "E4M3",
-        "E5M2",
-        "E3M2",
-        "E2M3"
-      ],
-      "source_rule": "preserve-if-an-otherwise-supported-source-uses-this-type",
-      "destination_rule": "gradual-underflow-if-an-otherwise-supported-destination-uses-this-type",
-      "tininess_detection": "after-rounding-for-an-applicable-destination",
-      "support_status": "conditional-not-created-by-adr0049"
-    },
-    {
       "operation_key": "tile:TEPL:TQUANT",
       "domain": "tile-quantize",
       "lane": "N4",
@@ -2549,19 +2442,19 @@
     },
     {
       "path": "spec/evidence/numeric-profile-decision-inputs.json",
-      "sha256": "ab00288a2c1b616b8226656e15b0664f111a12a10704c409ed237353b99f0719"
+      "sha256": "ee8df39701fbe638b7a76e13f32833efa0e4c01f64d38eb4e2ad485007392f7a"
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "7c3005a7885e94537911d717b5ae977ced8ba088cd966934619cc82ba6dda03c"
+      "sha256": "50c0342678ff4cdd8e766f0efc798d81a7b9c3fbadc251d2807e77404d8d5fe5"
     },
     {
       "path": "spec/evidence/numeric-format-namespace-contract.json",
-      "sha256": "bb6f7d4165d17ef74386d6973dc077bd1004c8ba5e77bc70ac754942f9b0d169"
+      "sha256": "f288a7cdab84e20bb91831f04638d5cfb75f6f56a66b66383dd46002dba27f11"
     },
     {
       "path": "spec/evidence/executable-model-comparison.json",
-      "sha256": "e679b3188a71a68d6b19b437fe510cac483cd6e5c57a046aeea896155ec07271"
+      "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
     },
     {
       "path": "asl/arch/data-types/fault.asl",
@@ -2637,11 +2530,11 @@
     "boundary_vector_count": 55,
     "configuration_vector_count": 8,
     "non_applicable_type_count": 14,
-    "affected_domain_count": 14,
-    "affected_operation_count": 93,
-    "operation_applicability_row_count": 93,
-    "conditional_operation_type_tuple_count": 1023,
-    "affected_hook_count": 23,
+    "affected_domain_count": 13,
+    "affected_operation_count": 89,
+    "operation_applicability_row_count": 89,
+    "conditional_operation_type_tuple_count": 979,
+    "affected_hook_count": 21,
     "accepted_decision_count": 1,
     "accepted_complete_domain_rule_count": 0,
     "adr0049_complete": true,

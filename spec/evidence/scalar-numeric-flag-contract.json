@@ -520,7 +520,7 @@
   "sources": [
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "bdfcb4df19da4329c5ff0184b34daebf258d832992fa06fb3e0c34ca891c5923"
+      "sha256": "44847ad7289923fedd7d337e18ee8d2d4d2009f912d2f12480f15c0ef36d60ed"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -528,7 +528,7 @@
     },
     {
       "path": "spec/evidence/numeric-contracts.json",
-      "sha256": "7c3005a7885e94537911d717b5ae977ced8ba088cd966934619cc82ba6dda03c"
+      "sha256": "50c0342678ff4cdd8e766f0efc798d81a7b9c3fbadc251d2807e77404d8d5fe5"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
@@ -584,7 +584,7 @@
     },
     {
       "path": "asl/arch/profile/matrix-postprocess.asl",
-      "sha256": "7a0423616a2f6910bf77e531c3fb3a22abc4d266db80d6ac4b43a46bb2e7d868"
+      "sha256": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c"
     },
     {
       "path": "asl/arch/profile/matrix-quantization.asl",
@@ -592,7 +592,7 @@
     },
     {
       "path": "asl/arch/profile/reference-profile.asl",
-      "sha256": "a866ccdeef08bde34b1818a0ebc0937044db1b886d1cf9403252fdfbce114e51"
+      "sha256": "35985186c37e602be42577c20249bc42984855d210d834347182b222022e2800"
     },
     {
       "path": "asl/arch/profile/reference-quantization.asl",
@@ -600,11 +600,11 @@
     },
     {
       "path": "asl/arch/profile/reset.asl",
-      "sha256": "f720ce6f5e3b2b32a1c63702679fe4b5ebfe13dacf7ed90e2734aa4afbf8ead3"
+      "sha256": "370e7172d986737d0a77f7320d130c329c30d8a2a007502d2ad234b6e57a7f8a"
     },
     {
       "path": "asl/arch/profile/trap-context-recovery.asl",
-      "sha256": "59d5ca02ba1d674a2bfac96efa6f569c809dcb8a1ddfdbd610f13f542be82b57"
+      "sha256": "6c87ee4d53ed316f6ad72768ac84f67bcdf19c3af52dd96f3eb97eddc07c1357"
     },
     {
       "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",

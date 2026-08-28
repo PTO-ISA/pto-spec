@@ -19989,6 +19989,7 @@
         "PTO-AVS-BLOCK-TMATMUL-SHARED-UNDEF-020",
         "PTO-AVS-BLOCK-TMATMUL-SHARED-WAIT-002",
         "PTO-AVS-BLOCK-TMOV-PUBLISH-001",
+        "PTO-AVS-BLOCK-TSTORE-MASK-001",
         "PTO-AVS-BLOCK-TSTORE-SHAPE-001",
         "PTO-AVS-BLOCK-TSTORE-UNDEF-001",
         "PTO-AVS-TILE-CUBE-SHARED-REJECT-001",
@@ -20945,7 +20946,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "2610cfc4944ab81840f618cc9412482070a19c445f8e9af6203d279053e9a1c0",
+      "sha256": "c7327021d39dc67ac5564bc55073b3870a397d79ac8d9648284d56e33bc14a3e",
       "test_count": 3707,
       "unit_count": 850
     }

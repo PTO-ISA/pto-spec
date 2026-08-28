@@ -3022,7 +3022,7 @@
     },
     {
       "path": "asl/tile/model/execution/complex.asl",
-      "sha256": "439eea44602d102b4e1333cd0b1897f0aab4e81a24c2eae1a37aae3e8df3d85d"
+      "sha256": "0b9705e1088b081e958f0c9d8bc1783f88f187f930b3cc4fd1ca6cbe2b3a843d"
     },
     {
       "path": "asl/tile/model/execution/cube.asl",
@@ -3434,7 +3434,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "2a495b570be627b22caaa7acf61140a7d1821416e2b4effb6c8a4b39572da5be"
+      "sha256": "4b0b85199101251bea744e0f3591cc31906909dc80d5ab651c417a936036a004"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3442,15 +3442,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "ffedda45d3df9f7f165a7c41838e035c0babe88cd9125c15bd7fdf6edb2b94eb"
+      "sha256": "b446cafd0c6b34ca55bbc61963139da2cd1d44722c2283f1814e92a22b6e8e38"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "3e498d1f613d1e1498309cc527dfc5f6d1839a9810a481a1782226355a65c294"
+      "sha256": "a0f4d2b6920c08981ea55fd8ef820708a40d4feb5402c5150e8e9ab532d84ce0"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "2610cfc4944ab81840f618cc9412482070a19c445f8e9af6203d279053e9a1c0"
+      "sha256": "c7327021d39dc67ac5564bc55073b3870a397d79ac8d9648284d56e33bc14a3e"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3496,7 +3496,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "a9a430b7c946c050f055594514210363ef302ab84ffca4086c0c5e460ddce0d3",
+  "content_sha256": "3def12183ddd44cce9255a5d0520504de6bf5aa463d78d1a9a0773f150bd4dd6",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -7303,7 +7303,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/execution/complex.md",
-      "sha256": "a4c84beb9f0492e2ad0a8b556dce4c43d8a1a9e1470486756b44400151053efc"
+      "sha256": "7b164e843def2dfa4e74a1cd381486e41922bb095272771b07438a546ce0cc75"
     },
     {
       "kind": "generated-documentation",
