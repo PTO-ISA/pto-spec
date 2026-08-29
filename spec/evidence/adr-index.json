@@ -8486,12 +8486,48 @@
         "0.58.5"
       ],
       "title": "Warning-free ASLRef constraint refinements"
+    },
+    {
+      "accepted": "2026-08-29",
+      "affected_ndf": [
+        "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-INDEXED-MEMORY-LANE-CHOICE",
+        "PTO-ARCH-PROFILE-INDEXED-MEMORY-LANE-CHOICE",
+        "PTO-TILE-MODEL-MEMORY-ATOMICS",
+        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "0c1aa4edcc8821f76a2a7124282cff705e61d95c",
+      "created": "2026-08-29",
+      "id": "ADR-0113",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/184",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0113-indexed-memory-lane-choice-profile.md",
+      "rejected": null,
+      "release_boundary": true,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Named indexed-memory lane-choice profiles"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 106
+    "record_count": 107
   }
 }

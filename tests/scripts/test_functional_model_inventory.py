@@ -148,6 +148,18 @@ class FunctionalModelInventoryTest(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("stale generated artifact", result.stderr)
 
+    def test_full_model_has_no_unprofiled_arbitrary_choice(self) -> None:
+        document = json.loads(
+            (ROOT / "spec/evidence/functional-model-asl-constructs.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        counts = {
+            row["constructor"]: row["count"]
+            for row in document["constructor_inventory"]
+        }
+        self.assertNotIn("E_Arbitrary", counts)
+
 
 if __name__ == "__main__":
     unittest.main()

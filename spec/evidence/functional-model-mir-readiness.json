@@ -4,8 +4,8 @@
     "size_bytes": 16722
   },
   "mir": {
-    "sha256": "00f83f8c245ccb394a9c175e14195bd688c886989d97e948c166116a3ba5b6b9",
-    "size_bytes": 61955407
+    "sha256": "971bbcbc302b2836150130f0e168eb5eeffc8e9e9c5b8cdd3be7a55596347281",
+    "size_bytes": 61963039
   },
   "mir_schema": {
     "id": "https://pto-isa.org/schemas/pto-mir-v1.schema.json",
@@ -14,8 +14,8 @@
   },
   "schema": "pto.functional-model-mir-readiness.v1",
   "statistics": {
-    "call_graph_edge_count": 5790,
-    "call_graph_node_count": 5572,
+    "call_graph_edge_count": 5794,
+    "call_graph_node_count": 5575,
     "constructor_inventory": [
       {
         "constructor": "ADD",
@@ -31,7 +31,7 @@
       },
       {
         "constructor": "BNOT",
-        "count": 2410
+        "count": 2408
       },
       {
         "constructor": "BOR",
@@ -47,7 +47,7 @@
       },
       {
         "constructor": "Constraint_Range",
-        "count": 2876
+        "count": 2879
       },
       {
         "constructor": "DIV",
@@ -59,7 +59,7 @@
       },
       {
         "constructor": "D_Func",
-        "count": 5572
+        "count": 5575
       },
       {
         "constructor": "D_GlobalStorage",
@@ -67,7 +67,7 @@
       },
       {
         "constructor": "D_TypeDecl",
-        "count": 173
+        "count": 174
       },
       {
         "constructor": "Down",
@@ -82,20 +82,16 @@
         "count": 717
       },
       {
-        "constructor": "E_Arbitrary",
-        "count": 2
-      },
-      {
         "constructor": "E_Array",
         "count": 96
       },
       {
         "constructor": "E_Binop",
-        "count": 44875
+        "count": 44873
       },
       {
         "constructor": "E_Call",
-        "count": 15175
+        "count": 15179
       },
       {
         "constructor": "E_Cond",
@@ -111,7 +107,7 @@
       },
       {
         "constructor": "E_Literal",
-        "count": 87774
+        "count": 87770
       },
       {
         "constructor": "E_Pattern",
@@ -131,11 +127,11 @@
       },
       {
         "constructor": "E_Unop",
-        "count": 2512
+        "count": 2510
       },
       {
         "constructor": "E_Var",
-        "count": 56187
+        "count": 56201
       },
       {
         "constructor": "GDK_Config",
@@ -151,19 +147,19 @@
       },
       {
         "constructor": "GE",
-        "count": 112
+        "count": 113
       },
       {
         "constructor": "GT",
-        "count": 169
+        "count": 170
       },
       {
         "constructor": "Impdef",
-        "count": 52
+        "count": 53
       },
       {
         "constructor": "Implementation",
-        "count": 49
+        "count": 50
       },
       {
         "constructor": "LDI_Tuple",
@@ -171,7 +167,7 @@
       },
       {
         "constructor": "LDI_Var",
-        "count": 4634
+        "count": 4636
       },
       {
         "constructor": "LE",
@@ -199,11 +195,11 @@
       },
       {
         "constructor": "LE_Var",
-        "count": 4474
+        "count": 4470
       },
       {
         "constructor": "LT",
-        "count": 240
+        "count": 242
       },
       {
         "constructor": "L_BitVector",
@@ -211,15 +207,15 @@
       },
       {
         "constructor": "L_Bool",
-        "count": 7214
+        "count": 7210
       },
       {
         "constructor": "L_Int",
-        "count": 54424
+        "count": 54422
       },
       {
         "constructor": "L_Label",
-        "count": 22365
+        "count": 22367
       },
       {
         "constructor": "L_Real",
@@ -267,7 +263,7 @@
       },
       {
         "constructor": "Precision_Full",
-        "count": 3282
+        "count": 3285
       },
       {
         "constructor": "RDIV",
@@ -275,7 +271,7 @@
       },
       {
         "constructor": "SB_ASL",
-        "count": 5566
+        "count": 5569
       },
       {
         "constructor": "SB_Primitive",
@@ -283,7 +279,7 @@
       },
       {
         "constructor": "ST_Function",
-        "count": 20373
+        "count": 20380
       },
       {
         "constructor": "ST_Procedure",
@@ -291,15 +287,15 @@
       },
       {
         "constructor": "SUB",
-        "count": 769
+        "count": 763
       },
       {
         "constructor": "S_Assert",
-        "count": 521
+        "count": 524
       },
       {
         "constructor": "S_Assign",
-        "count": 4474
+        "count": 4470
       },
       {
         "constructor": "S_Call",
@@ -307,27 +303,27 @@
       },
       {
         "constructor": "S_Cond",
-        "count": 17423
+        "count": 17421
       },
       {
         "constructor": "S_Decl",
-        "count": 4735
+        "count": 4737
       },
       {
         "constructor": "S_For",
-        "count": 427
+        "count": 425
       },
       {
         "constructor": "S_Pass",
-        "count": 15609
+        "count": 15607
       },
       {
         "constructor": "S_Return",
-        "count": 21491
+        "count": 21494
       },
       {
         "constructor": "S_Seq",
-        "count": 25193
+        "count": 25194
       },
       {
         "constructor": "S_Unreachable",
@@ -351,19 +347,19 @@
       },
       {
         "constructor": "T_Bool",
-        "count": 2667
+        "count": 2664
       },
       {
         "constructor": "T_Enum",
-        "count": 73
+        "count": 74
       },
       {
         "constructor": "T_Int",
-        "count": 3607
+        "count": 3610
       },
       {
         "constructor": "T_Named",
-        "count": 7913
+        "count": 7925
       },
       {
         "constructor": "T_Real",
@@ -383,24 +379,24 @@
       },
       {
         "constructor": "Up",
-        "count": 425
+        "count": 423
       },
       {
         "constructor": "WellConstrained",
-        "count": 3282
+        "count": 3285
       },
       {
         "constructor": "XOR",
         "count": 16
       }
     ],
-    "constructor_kind_count": 94,
-    "constructor_node_count": 536427,
-    "declaration_count": 5945,
+    "constructor_kind_count": 93,
+    "constructor_node_count": 536460,
+    "declaration_count": 5949,
     "declaration_counts": {
-      "D_Func": 5572,
+      "D_Func": 5575,
       "D_GlobalStorage": 200,
-      "D_TypeDecl": 173
+      "D_TypeDecl": 174
     },
     "impdef_bindings": [
       "AtomicAddress",
@@ -422,6 +418,7 @@
       "ScalarFPToIntegerProfile",
       "ScalarFPUnaryProfile",
       "ScalarIntegerToFPProfile",
+      "SelectIndexedMemoryLanePosition",
       "SystemRegisterAccessPermitted",
       "TileExponential",
       "TileLogarithm",
@@ -456,9 +453,9 @@
       "TrapContextRecoverable",
       "WritePhysicalMemoryByte"
     ],
-    "impdef_count": 52,
-    "loop_node_count": 432,
-    "node_count": 1015414,
+    "impdef_count": 53,
+    "loop_node_count": 430,
+    "node_count": 1015532,
     "primitive_bindings": [
       "FloorLog2",
       "RoundDown",
@@ -470,12 +467,12 @@
     "primitive_count": 6,
     "recursive_component_count": 0,
     "recursive_subprogram_count": 0,
-    "side_effect_statement_count": 5688,
+    "side_effect_statement_count": 5684,
     "unsupported": []
   },
   "typed_ast": {
-    "sha256": "cba3937d07beb1a49c10463c1f062ea332119080a548cf47596b41d49498be89",
-    "size_bytes": 16270464
+    "sha256": "eb1749810dbb6c96e88333994a109dde9c84d52a3551cd8bf0d3830f67ebbce7",
+    "size_bytes": 16272430
   },
   "unsupported": []
 }

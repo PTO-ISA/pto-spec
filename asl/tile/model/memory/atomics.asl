@@ -72,19 +72,20 @@ begin
     // Duplicate addresses are serialized in an implementation-defined order.
     // Each selected lane remains one atomic read-modify-write, but neither
     // row-major order nor another fixed order becomes architectural.
-    for position = 0 to lane_count - 1 looplimit PTO_MODEL_TILE_ELEMENTS do
-            var selected_position:
-                integer {0..PTO_MODEL_TILE_ELEMENTS-1} =
-                    position as integer {0..PTO_MODEL_TILE_ELEMENTS-1};
-            var selected = FALSE;
-            for candidate_position = position to lane_count - 1
-                looplimit PTO_MODEL_TILE_ELEMENTS do
-                if !selected && ARBITRARY: boolean then
-                    selected_position = candidate_position as
-                        integer {0..PTO_MODEL_TILE_ELEMENTS-1};
-                    selected = TRUE;
-                end;
-            end;
+    if lane_count > 0 then
+        let active_lane_count = lane_count as
+            integer {1..PTO_MODEL_TILE_ELEMENTS};
+        for position = 0 to lane_count - 1
+            looplimit PTO_MODEL_TILE_ELEMENTS do
+            let current_position = position as ModelTileElementIndex;
+            let selected_position = SelectIndexedMemoryLanePosition(
+                IndexedMemoryLaneChoice_GatherCASAtomic,
+                current_position,
+                active_lane_count);
+            assert IndexedMemoryLanePositionLegal(
+                current_position,
+                active_lane_count,
+                selected_position);
             let selected_element = lane_order[[selected_position]];
             lane_order[[selected_position]] = lane_order[[position]];
             lane_order[[position]] = selected_element;
@@ -112,6 +113,7 @@ begin
             RecordAtomicEvent(write_translated_addresses[[element]],
                 TileMemoryElementBytes(destination_tile.data_type), old_raw,
                 write_value, CurrentBundleMemoryOrder(), succeeds);
+        end;
     end;
     _Tiles[[destination]].payload = result_payload;
     MarkTilePhysicalRegionDefined(destination);

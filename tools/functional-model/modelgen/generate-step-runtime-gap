@@ -44,10 +44,10 @@ def main() -> int:
             scalar_catalog=json.loads(arguments.scalar_catalog.read_bytes()),
             command_catalog=json.loads(arguments.command_catalog.read_bytes()),
         )
-        if len(document["arbitrary_choice_sites"]) != 2:
+        if document["arbitrary_choice_sites"]:
             raise ModelgenError(
-                "full step closure must retain exactly two path-controlled "
-                "E_Arbitrary sites"
+                "full step closure must not retain an unprofiled "
+                "E_Arbitrary site"
             )
         rendered = render_runtime_gap(document)
         if arguments.check:

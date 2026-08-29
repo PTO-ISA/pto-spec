@@ -15,7 +15,20 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/tile/model/memory/gather-scatter.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","surface":"tile","classification":["model","memory","gather-scatter"],"depends_on":["PTO-TILE-MODEL-MEMORY-LOAD-STORE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","surface":"tile","classification":["model","memory","gather-scatter"],"depends_on":["PTO-TILE-MODEL-MEMORY-LOAD-STORE","PTO-ARCH-PROFILE-INDEXED-MEMORY-LANE-CHOICE"]}
+
+// NDF-BEGIN: PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// MSCATTER, MSCATTER_MASK, and MGATHER_CAS MUST process every enabled lane
+// exactly once, but portable PTO does not select one internal enabled-lane
+// permutation or duplicate-address winner. Each executable profile MUST bind
+// SelectIndexedMemoryLanePosition to a named policy that selects one not-yet-
+// committed lane. The pto-v0 reference and generated functional profiles MUST
+// use pto-v0-indexed-memory-logical-ascending-v1, which selects the current
+// logical position. A different profile MAY select another legal permutation
+// only under a distinct profile identity and executable evidence. Selection
+// itself has no architecture-visible state or fault effect.
+// NDF-END: PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001
 func MGATHER(destination: TileIndex, base_address: Word, indices: TileIndex,
              pad_value: TilePadValue)
 begin
@@ -88,22 +101,19 @@ begin
     // internal lane order or a duplicate-address winner.
     var commit_order = lane_order;
     if lane_count > 0 then
+        let active_lane_count = lane_count as
+            integer {1..PTO_MODEL_TILE_ELEMENTS};
         for position = 0 to lane_count - 1
             looplimit PTO_MODEL_TILE_ELEMENTS do
-            var selected_position:
-                integer {0..PTO_MODEL_TILE_ELEMENTS-1} =
-                    position as integer {0..PTO_MODEL_TILE_ELEMENTS-1};
-            var selected = FALSE;
-            for candidate_position = position to lane_count - 1
-                looplimit PTO_MODEL_TILE_ELEMENTS do
-                if !selected then
-                    if ARBITRARY: boolean then
-                        selected_position = candidate_position as
-                            integer {0..PTO_MODEL_TILE_ELEMENTS-1};
-                        selected = TRUE;
-                    end;
-                end;
-            end;
+            let current_position = position as ModelTileElementIndex;
+            let selected_position = SelectIndexedMemoryLanePosition(
+                IndexedMemoryLaneChoice_ScatterCommit,
+                current_position,
+                active_lane_count);
+            assert IndexedMemoryLanePositionLegal(
+                current_position,
+                active_lane_count,
+                selected_position);
             let selected_element = commit_order[[selected_position]];
             commit_order[[selected_position]] = commit_order[[position]];
             commit_order[[position]] = selected_element;

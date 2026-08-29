@@ -4,7 +4,7 @@
     "execution_ready": false,
     "link_closure_verified": true,
     "lowering_complete": true,
-    "required_constructor_count": 94,
+    "required_constructor_count": 93,
     "required_primitive_count": 6,
     "runtime_handler_constructor_count": 0,
     "runtime_handler_primitive_count": 0,
@@ -25,7 +25,6 @@
       "Down",
       "EQ",
       "E_ATC",
-      "E_Arbitrary",
       "E_Array",
       "E_Binop",
       "E_Call",
@@ -119,32 +118,32 @@
     "version": 1
   },
   "input_mir": {
-    "sha256": "00f83f8c245ccb394a9c175e14195bd688c886989d97e948c166116a3ba5b6b9",
-    "size_bytes": 61955407
+    "sha256": "971bbcbc302b2836150130f0e168eb5eeffc8e9e9c5b8cdd3be7a55596347281",
+    "size_bytes": 61963039
   },
   "model_image": {
-    "sha256": "80d79cbe724b2a1d278e7876052426c8237c054f93b3a0027d066cdf2fb58c46",
-    "size_bytes": 23501235
+    "sha256": "0c27448ae7e5f011cbdac4e7c8edaa3b9bf44109f5166d185b4d0c44f2130a37",
+    "size_bytes": 23505350
   },
-  "node_count": 1015414,
+  "node_count": 1015532,
   "schema": "pto.functional-model-executable-mir-readiness.v1",
   "table_counts": {
     "atom_kinds": 5,
-    "bindings": 62,
-    "call_graph": 5572,
-    "call_sites": 16389,
-    "constructors": 94,
+    "bindings": 63,
+    "call_graph": 5575,
+    "call_sites": 16393,
+    "constructors": 93,
     "entrypoints": 6,
-    "externs": 58,
+    "externs": 59,
     "fields": 20,
-    "functions": 5572,
+    "functions": 5575,
     "global_kinds": 3,
     "globals": 200,
     "node_kinds": 6,
     "state_access_sites": 3949,
     "state_fields": 110,
-    "strings": 8693,
-    "types": 173
+    "strings": 8700,
+    "types": 174
   },
   "unhandled_runtime_constructs": [
     "ADD",
@@ -163,7 +162,6 @@
     "Down",
     "EQ",
     "E_ATC",
-    "E_Arbitrary",
     "E_Array",
     "E_Binop",
     "E_Call",

@@ -41,6 +41,7 @@ nav:
           - Format Descriptor: arch/data-types/format-descriptor.md
           - Fp19: arch/data-types/fp19.md
           - Functional Model: arch/data-types/functional-model.md
+          - Indexed Memory Lane Choice: arch/data-types/indexed-memory-lane-choice.md
           - Integer: arch/data-types/integer.md
           - Memory Model: arch/data-types/memory-model.md
           - Memory Operations: arch/data-types/memory-operations.md
@@ -77,6 +78,7 @@ nav:
           - E8m0 Conversion: arch/profile/e8m0-conversion.md
           - Extension First Use: arch/profile/extension-first-use.md
           - Functional Model: arch/profile/functional-model.md
+          - Indexed Memory Lane Choice: arch/profile/indexed-memory-lane-choice.md
           - Matrix Postprocess: arch/profile/matrix-postprocess.md
           - Matrix Quantization: arch/profile/matrix-quantization.md
           - Reference Profile: arch/profile/reference-profile.md
@@ -1062,5 +1064,6 @@ nav:
           - "ADR 0110: TCVT CUBE_M16 and CUBE_M32 layout closure": status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md
           - "ADR 0111: ASL functional-model fetch, step, memory, and host boundary": status/decisions/0111-asl-functional-model-execution-boundary.md
           - "ADR 0112: Warning-free ASLRef constraint refinements": status/decisions/0112-warning-free-aslref-constraint-refinements.md
+          - "ADR 0113: Named indexed-memory lane-choice profiles": status/decisions/0113-indexed-memory-lane-choice-profile.md
       - Open:
           - "Open architecture decisions": status/open/index.md

@@ -57,6 +57,7 @@ SUPPORTED_IMPDEF_BINDINGS = {
     "ScalarFPToIntegerProfile",
     "ScalarFPUnaryProfile",
     "ScalarIntegerToFPProfile",
+    "SelectIndexedMemoryLanePosition",
     "SystemRegisterAccessPermitted",
     "TileExponential",
     "TileLogarithm",
