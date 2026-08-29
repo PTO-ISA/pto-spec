@@ -4,11 +4,11 @@
     "sha256": "fad5634d302c0ef6ccc53cd14371f3f81dba211e41a8885dc8c903762b30d1f5",
     "size_bytes": 16722
   },
-  "constructor_count": 535033,
+  "constructor_count": 536427,
   "constructor_inventory": [
     {
       "constructor": "ADD",
-      "count": 1028
+      "count": 1035
     },
     {
       "constructor": "AND",
@@ -20,11 +20,11 @@
     },
     {
       "constructor": "BNOT",
-      "count": 2404
+      "count": 2410
     },
     {
       "constructor": "BOR",
-      "count": 2829
+      "count": 2835
     },
     {
       "constructor": "BV_CONCAT",
@@ -32,15 +32,15 @@
     },
     {
       "constructor": "Constraint_Exact",
-      "count": 2145
+      "count": 2200
     },
     {
       "constructor": "Constraint_Range",
-      "count": 2871
+      "count": 2876
     },
     {
       "constructor": "DIV",
-      "count": 18
+      "count": 20
     },
     {
       "constructor": "DIVRM",
@@ -48,15 +48,15 @@
     },
     {
       "constructor": "D_Func",
-      "count": 5548
+      "count": 5572
     },
     {
       "constructor": "D_GlobalStorage",
-      "count": 189
+      "count": 200
     },
     {
       "constructor": "D_TypeDecl",
-      "count": 168
+      "count": 173
     },
     {
       "constructor": "Down",
@@ -64,11 +64,11 @@
     },
     {
       "constructor": "EQ",
-      "count": 26304
+      "count": 26313
     },
     {
       "constructor": "E_ATC",
-      "count": 714
+      "count": 717
     },
     {
       "constructor": "E_Arbitrary",
@@ -80,11 +80,11 @@
     },
     {
       "constructor": "E_Binop",
-      "count": 44839
+      "count": 44875
     },
     {
       "constructor": "E_Call",
-      "count": 15135
+      "count": 15175
     },
     {
       "constructor": "E_Cond",
@@ -92,15 +92,15 @@
     },
     {
       "constructor": "E_GetArray",
-      "count": 1753
+      "count": 1752
     },
     {
       "constructor": "E_GetField",
-      "count": 4660
+      "count": 4666
     },
     {
       "constructor": "E_Literal",
-      "count": 87578
+      "count": 87774
     },
     {
       "constructor": "E_Pattern",
@@ -108,11 +108,11 @@
     },
     {
       "constructor": "E_Record",
-      "count": 103
+      "count": 105
     },
     {
       "constructor": "E_Slice",
-      "count": 5508
+      "count": 5515
     },
     {
       "constructor": "E_Tuple",
@@ -120,11 +120,11 @@
     },
     {
       "constructor": "E_Unop",
-      "count": 2506
+      "count": 2512
     },
     {
       "constructor": "E_Var",
-      "count": 56066
+      "count": 56187
     },
     {
       "constructor": "GDK_Config",
@@ -136,23 +136,23 @@
     },
     {
       "constructor": "GDK_Var",
-      "count": 99
+      "count": 110
     },
     {
       "constructor": "GE",
-      "count": 109
+      "count": 112
     },
     {
       "constructor": "GT",
-      "count": 170
+      "count": 169
     },
     {
       "constructor": "Impdef",
-      "count": 47
+      "count": 52
     },
     {
       "constructor": "Implementation",
-      "count": 44
+      "count": 49
     },
     {
       "constructor": "LDI_Tuple",
@@ -160,11 +160,11 @@
     },
     {
       "constructor": "LDI_Var",
-      "count": 4610
+      "count": 4634
     },
     {
       "constructor": "LE",
-      "count": 195
+      "count": 196
     },
     {
       "constructor": "LE_Destructuring",
@@ -180,35 +180,35 @@
     },
     {
       "constructor": "LE_SetField",
-      "count": 1463
+      "count": 1486
     },
     {
       "constructor": "LE_Slice",
-      "count": 2156
+      "count": 2157
     },
     {
       "constructor": "LE_Var",
-      "count": 4422
+      "count": 4474
     },
     {
       "constructor": "LT",
-      "count": 236
+      "count": 240
     },
     {
       "constructor": "L_BitVector",
-      "count": 3663
+      "count": 3683
     },
     {
       "constructor": "L_Bool",
-      "count": 7192
+      "count": 7214
     },
     {
       "constructor": "L_Int",
-      "count": 54287
+      "count": 54424
     },
     {
       "constructor": "L_Label",
-      "count": 22348
+      "count": 22365
     },
     {
       "constructor": "L_Real",
@@ -220,11 +220,11 @@
     },
     {
       "constructor": "MUL",
-      "count": 421
+      "count": 422
     },
     {
       "constructor": "NE",
-      "count": 639
+      "count": 642
     },
     {
       "constructor": "NEG",
@@ -256,7 +256,7 @@
     },
     {
       "constructor": "Precision_Full",
-      "count": 3266
+      "count": 3282
     },
     {
       "constructor": "RDIV",
@@ -264,7 +264,7 @@
     },
     {
       "constructor": "SB_ASL",
-      "count": 5542
+      "count": 5566
     },
     {
       "constructor": "SB_Primitive",
@@ -272,51 +272,51 @@
     },
     {
       "constructor": "ST_Function",
-      "count": 20315
+      "count": 20373
     },
     {
       "constructor": "ST_Procedure",
-      "count": 1571
+      "count": 1588
     },
     {
       "constructor": "SUB",
-      "count": 768
+      "count": 769
     },
     {
       "constructor": "S_Assert",
-      "count": 517
+      "count": 521
     },
     {
       "constructor": "S_Assign",
-      "count": 4422
+      "count": 4474
     },
     {
       "constructor": "S_Call",
-      "count": 1203
+      "count": 1214
     },
     {
       "constructor": "S_Cond",
-      "count": 17403
+      "count": 17423
     },
     {
       "constructor": "S_Decl",
-      "count": 4711
+      "count": 4735
     },
     {
       "constructor": "S_For",
-      "count": 426
+      "count": 427
     },
     {
       "constructor": "S_Pass",
-      "count": 15593
+      "count": 15609
     },
     {
       "constructor": "S_Return",
-      "count": 21457
+      "count": 21491
     },
     {
       "constructor": "S_Seq",
-      "count": 25096
+      "count": 25193
     },
     {
       "constructor": "S_Unreachable",
@@ -328,7 +328,7 @@
     },
     {
       "constructor": "Slice_Length",
-      "count": 7664
+      "count": 7672
     },
     {
       "constructor": "T_Array",
@@ -336,23 +336,23 @@
     },
     {
       "constructor": "T_Bits",
-      "count": 2991
+      "count": 3003
     },
     {
       "constructor": "T_Bool",
-      "count": 2659
+      "count": 2667
     },
     {
       "constructor": "T_Enum",
-      "count": 71
+      "count": 73
     },
     {
       "constructor": "T_Int",
-      "count": 3589
+      "count": 3607
     },
     {
       "constructor": "T_Named",
-      "count": 7838
+      "count": 7913
     },
     {
       "constructor": "T_Real",
@@ -360,7 +360,7 @@
     },
     {
       "constructor": "T_Record",
-      "count": 102
+      "count": 105
     },
     {
       "constructor": "T_Tuple",
@@ -368,30 +368,30 @@
     },
     {
       "constructor": "UnConstrained",
-      "count": 282
+      "count": 284
     },
     {
       "constructor": "Up",
-      "count": 424
+      "count": 425
     },
     {
       "constructor": "WellConstrained",
-      "count": 3266
+      "count": 3282
     },
     {
       "constructor": "XOR",
       "count": 16
     }
   ],
-  "declaration_count": 5905,
+  "declaration_count": 5945,
   "declaration_counts": {
-    "D_Func": 5548,
-    "D_GlobalStorage": 189,
-    "D_TypeDecl": 168
+    "D_Func": 5572,
+    "D_GlobalStorage": 200,
+    "D_TypeDecl": 173
   },
   "input": {
-    "sha256": "1aa6c5249f8e02f8715bb8875bd2252e3ec97b2ee024533d1c9dc043770cd41f",
-    "size_bytes": 16231037
+    "sha256": "cba3937d07beb1a49c10463c1f062ea332119080a548cf47596b41d49498be89",
+    "size_bytes": 16270464
   },
   "schema": "pto.functional-model-asl-constructs.v1",
   "unsupported": []

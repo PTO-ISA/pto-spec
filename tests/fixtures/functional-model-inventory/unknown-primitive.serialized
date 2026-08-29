@@ -1,0 +1,1 @@
+let open AST in let annot = ASTUtils.add_dummy_pos in [D_Func { name="FuturePrimitive"; args=[]; body=SB_Primitive false; return_type=None; parameters=[]; subprogram_type=ST_Procedure; override=None; recurse_limit=None }]

@@ -1,0 +1,481 @@
+{
+  "ast_interface": {
+    "sha256": "fad5634d302c0ef6ccc53cd14371f3f81dba211e41a8885dc8c903762b30d1f5",
+    "size_bytes": 16722
+  },
+  "mir": {
+    "sha256": "00f83f8c245ccb394a9c175e14195bd688c886989d97e948c166116a3ba5b6b9",
+    "size_bytes": 61955407
+  },
+  "mir_schema": {
+    "id": "https://pto-isa.org/schemas/pto-mir-v1.schema.json",
+    "sha256": "1db75e0aa6459648b33d83953a43606006c3c553740a9915e076c3d0b1bda8ef",
+    "version": 1
+  },
+  "schema": "pto.functional-model-mir-readiness.v1",
+  "statistics": {
+    "call_graph_edge_count": 5790,
+    "call_graph_node_count": 5572,
+    "constructor_inventory": [
+      {
+        "constructor": "ADD",
+        "count": 1035
+      },
+      {
+        "constructor": "AND",
+        "count": 579
+      },
+      {
+        "constructor": "BAND",
+        "count": 11206
+      },
+      {
+        "constructor": "BNOT",
+        "count": 2410
+      },
+      {
+        "constructor": "BOR",
+        "count": 2835
+      },
+      {
+        "constructor": "BV_CONCAT",
+        "count": 7
+      },
+      {
+        "constructor": "Constraint_Exact",
+        "count": 2200
+      },
+      {
+        "constructor": "Constraint_Range",
+        "count": 2876
+      },
+      {
+        "constructor": "DIV",
+        "count": 20
+      },
+      {
+        "constructor": "DIVRM",
+        "count": 140
+      },
+      {
+        "constructor": "D_Func",
+        "count": 5572
+      },
+      {
+        "constructor": "D_GlobalStorage",
+        "count": 200
+      },
+      {
+        "constructor": "D_TypeDecl",
+        "count": 173
+      },
+      {
+        "constructor": "Down",
+        "count": 2
+      },
+      {
+        "constructor": "EQ",
+        "count": 26313
+      },
+      {
+        "constructor": "E_ATC",
+        "count": 717
+      },
+      {
+        "constructor": "E_Arbitrary",
+        "count": 2
+      },
+      {
+        "constructor": "E_Array",
+        "count": 96
+      },
+      {
+        "constructor": "E_Binop",
+        "count": 44875
+      },
+      {
+        "constructor": "E_Call",
+        "count": 15175
+      },
+      {
+        "constructor": "E_Cond",
+        "count": 446
+      },
+      {
+        "constructor": "E_GetArray",
+        "count": 1752
+      },
+      {
+        "constructor": "E_GetField",
+        "count": 4666
+      },
+      {
+        "constructor": "E_Literal",
+        "count": 87774
+      },
+      {
+        "constructor": "E_Pattern",
+        "count": 1201
+      },
+      {
+        "constructor": "E_Record",
+        "count": 105
+      },
+      {
+        "constructor": "E_Slice",
+        "count": 5515
+      },
+      {
+        "constructor": "E_Tuple",
+        "count": 716
+      },
+      {
+        "constructor": "E_Unop",
+        "count": 2512
+      },
+      {
+        "constructor": "E_Var",
+        "count": 56187
+      },
+      {
+        "constructor": "GDK_Config",
+        "count": 3
+      },
+      {
+        "constructor": "GDK_Constant",
+        "count": 87
+      },
+      {
+        "constructor": "GDK_Var",
+        "count": 110
+      },
+      {
+        "constructor": "GE",
+        "count": 112
+      },
+      {
+        "constructor": "GT",
+        "count": 169
+      },
+      {
+        "constructor": "Impdef",
+        "count": 52
+      },
+      {
+        "constructor": "Implementation",
+        "count": 49
+      },
+      {
+        "constructor": "LDI_Tuple",
+        "count": 101
+      },
+      {
+        "constructor": "LDI_Var",
+        "count": 4634
+      },
+      {
+        "constructor": "LE",
+        "count": 196
+      },
+      {
+        "constructor": "LE_Destructuring",
+        "count": 5
+      },
+      {
+        "constructor": "LE_Discard",
+        "count": 5
+      },
+      {
+        "constructor": "LE_SetArray",
+        "count": 939
+      },
+      {
+        "constructor": "LE_SetField",
+        "count": 1486
+      },
+      {
+        "constructor": "LE_Slice",
+        "count": 2157
+      },
+      {
+        "constructor": "LE_Var",
+        "count": 4474
+      },
+      {
+        "constructor": "LT",
+        "count": 240
+      },
+      {
+        "constructor": "L_BitVector",
+        "count": 3683
+      },
+      {
+        "constructor": "L_Bool",
+        "count": 7214
+      },
+      {
+        "constructor": "L_Int",
+        "count": 54424
+      },
+      {
+        "constructor": "L_Label",
+        "count": 22365
+      },
+      {
+        "constructor": "L_Real",
+        "count": 88
+      },
+      {
+        "constructor": "MOD",
+        "count": 69
+      },
+      {
+        "constructor": "MUL",
+        "count": 422
+      },
+      {
+        "constructor": "NE",
+        "count": 642
+      },
+      {
+        "constructor": "NEG",
+        "count": 88
+      },
+      {
+        "constructor": "NOT",
+        "count": 14
+      },
+      {
+        "constructor": "OR",
+        "count": 61
+      },
+      {
+        "constructor": "POW",
+        "count": 21
+      },
+      {
+        "constructor": "Parameterized",
+        "count": 41
+      },
+      {
+        "constructor": "Pattern_Single",
+        "count": 1700
+      },
+      {
+        "constructor": "Positive",
+        "count": 1201
+      },
+      {
+        "constructor": "Precision_Full",
+        "count": 3282
+      },
+      {
+        "constructor": "RDIV",
+        "count": 23
+      },
+      {
+        "constructor": "SB_ASL",
+        "count": 5566
+      },
+      {
+        "constructor": "SB_Primitive",
+        "count": 6
+      },
+      {
+        "constructor": "ST_Function",
+        "count": 20373
+      },
+      {
+        "constructor": "ST_Procedure",
+        "count": 1588
+      },
+      {
+        "constructor": "SUB",
+        "count": 769
+      },
+      {
+        "constructor": "S_Assert",
+        "count": 521
+      },
+      {
+        "constructor": "S_Assign",
+        "count": 4474
+      },
+      {
+        "constructor": "S_Call",
+        "count": 1214
+      },
+      {
+        "constructor": "S_Cond",
+        "count": 17423
+      },
+      {
+        "constructor": "S_Decl",
+        "count": 4735
+      },
+      {
+        "constructor": "S_For",
+        "count": 427
+      },
+      {
+        "constructor": "S_Pass",
+        "count": 15609
+      },
+      {
+        "constructor": "S_Return",
+        "count": 21491
+      },
+      {
+        "constructor": "S_Seq",
+        "count": 25193
+      },
+      {
+        "constructor": "S_Unreachable",
+        "count": 138
+      },
+      {
+        "constructor": "S_While",
+        "count": 5
+      },
+      {
+        "constructor": "Slice_Length",
+        "count": 7672
+      },
+      {
+        "constructor": "T_Array",
+        "count": 57
+      },
+      {
+        "constructor": "T_Bits",
+        "count": 3003
+      },
+      {
+        "constructor": "T_Bool",
+        "count": 2667
+      },
+      {
+        "constructor": "T_Enum",
+        "count": 73
+      },
+      {
+        "constructor": "T_Int",
+        "count": 3607
+      },
+      {
+        "constructor": "T_Named",
+        "count": 7913
+      },
+      {
+        "constructor": "T_Real",
+        "count": 105
+      },
+      {
+        "constructor": "T_Record",
+        "count": 105
+      },
+      {
+        "constructor": "T_Tuple",
+        "count": 222
+      },
+      {
+        "constructor": "UnConstrained",
+        "count": 284
+      },
+      {
+        "constructor": "Up",
+        "count": 425
+      },
+      {
+        "constructor": "WellConstrained",
+        "count": 3282
+      },
+      {
+        "constructor": "XOR",
+        "count": 16
+      }
+    ],
+    "constructor_kind_count": 94,
+    "constructor_node_count": 536427,
+    "declaration_count": 5945,
+    "declaration_counts": {
+      "D_Func": 5572,
+      "D_GlobalStorage": 200,
+      "D_TypeDecl": 173
+    },
+    "impdef_bindings": [
+      "AtomicAddress",
+      "DataAccessPermitted",
+      "ExtensionFirstUseEnabled",
+      "FloatingExponential",
+      "FloatingRoundNearest",
+      "InstructionAccessPermitted",
+      "RaiseExtensionFirstUse",
+      "ReadMonotonicTime",
+      "ReadPhysicalMemoryByte",
+      "RecoverTrapContext",
+      "ResetPhysicalMemory",
+      "ResetProfileState",
+      "SaveTrapContext",
+      "ScalarFPBinaryProfile",
+      "ScalarFPConvertProfile",
+      "ScalarFPFusedProfile",
+      "ScalarFPToIntegerProfile",
+      "ScalarFPUnaryProfile",
+      "ScalarIntegerToFPProfile",
+      "SystemRegisterAccessPermitted",
+      "TileExponential",
+      "TileLogarithm",
+      "TileProfileConvert",
+      "TileProfileDequantize",
+      "TileProfileExpand",
+      "TileProfileFloatingCompare",
+      "TileProfileFloatingModulo",
+      "TileProfileFloatingModuloFlags",
+      "TileProfileFusedInvalidResult",
+      "TileProfileFusedMultiplyAdd",
+      "TileProfileMatrixAccumulate",
+      "TileProfileMatrixBias",
+      "TileProfileMatrixCScale",
+      "TileProfileMatrixPostProcess",
+      "TileProfileMatrixPostProcessWithFlags",
+      "TileProfileMatrixReductionStep",
+      "TileProfileMatrixReductionStepWithFlags",
+      "TileProfileMatrixScaledAccumulate",
+      "TileProfileMixedExpdifFP32",
+      "TileProfileOrderLeft",
+      "TileProfileQuantize",
+      "TileProfileReductionInitial",
+      "TileProfileReductionStep",
+      "TileProfileUnary",
+      "TileProfileValueIsNaN",
+      "TileReciprocal",
+      "TileReciprocalSquareRoot",
+      "TileSquareRoot",
+      "TranslateDataAddress",
+      "TranslateInstructionAddress",
+      "TrapContextRecoverable",
+      "WritePhysicalMemoryByte"
+    ],
+    "impdef_count": 52,
+    "loop_node_count": 432,
+    "node_count": 1015414,
+    "primitive_bindings": [
+      "FloorLog2",
+      "RoundDown",
+      "RoundTowardsZero",
+      "RoundUp",
+      "SInt",
+      "UInt"
+    ],
+    "primitive_count": 6,
+    "recursive_component_count": 0,
+    "recursive_subprogram_count": 0,
+    "side_effect_statement_count": 5688,
+    "unsupported": []
+  },
+  "typed_ast": {
+    "sha256": "cba3937d07beb1a49c10463c1f062ea332119080a548cf47596b41d49498be89",
+    "size_bytes": 16270464
+  },
+  "unsupported": []
+}

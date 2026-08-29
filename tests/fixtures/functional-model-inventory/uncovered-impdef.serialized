@@ -1,0 +1,1 @@
+let open AST in let annot = ASTUtils.add_dummy_pos in [D_Func { name="FutureImpdef"; args=[]; body=SB_ASL (annot (SPass)); return_type=None; parameters=[]; subprogram_type=ST_Procedure; override=Some (Impdef); recurse_limit=None }]

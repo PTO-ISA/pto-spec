@@ -1,0 +1,109 @@
+{
+  "$id": "https://pto-isa.org/schemas/pto-mir-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "nodes": {
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/constructor" },
+          { "$ref": "#/$defs/record" },
+          { "$ref": "#/$defs/sequence" },
+          { "$ref": "#/$defs/option" },
+          { "$ref": "#/$defs/atom" }
+        ]
+      },
+      "type": "array"
+    },
+    "root": { "$ref": "#/$defs/reference" },
+    "schema": { "const": "pto-mir-v1" },
+    "schema_version": { "const": 1 },
+    "source": {
+      "additionalProperties": false,
+      "properties": {
+        "ast_interface_sha256": { "$ref": "#/$defs/sha256" },
+        "typed_ast_sha256": { "$ref": "#/$defs/sha256" }
+      },
+      "required": ["ast_interface_sha256", "typed_ast_sha256"],
+      "type": "object"
+    }
+  },
+  "required": ["schema", "schema_version", "source", "root", "nodes"],
+  "title": "PTO normalized functional-model MIR v1",
+  "type": "object",
+  "x-pto-schema-version": 1,
+  "$defs": {
+    "atom": {
+      "additionalProperties": false,
+      "properties": {
+        "atom_kind": {
+          "enum": ["bitmask", "bitvector", "boolean", "integer", "rational", "string"]
+        },
+        "kind": { "const": "atom" },
+        "value": { "type": ["boolean", "string"] }
+      },
+      "required": ["kind", "atom_kind", "value"],
+      "type": "object"
+    },
+    "constructor": {
+      "additionalProperties": false,
+      "properties": {
+        "arguments": {
+          "items": { "$ref": "#/$defs/reference" },
+          "maxItems": 1,
+          "type": "array"
+        },
+        "kind": { "const": "constructor" },
+        "name": { "pattern": "^[A-Z][A-Za-z0-9_]*$", "type": "string" }
+      },
+      "required": ["kind", "name", "arguments"],
+      "type": "object"
+    },
+    "field": {
+      "additionalProperties": false,
+      "properties": {
+        "name": { "pattern": "^[A-Za-z_][A-Za-z0-9_]*$", "type": "string" },
+        "value": { "$ref": "#/$defs/reference" }
+      },
+      "required": ["name", "value"],
+      "type": "object"
+    },
+    "option": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "option" },
+        "value": {
+          "oneOf": [
+            { "$ref": "#/$defs/reference" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "required": ["kind", "value"],
+      "type": "object"
+    },
+    "record": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": { "items": { "$ref": "#/$defs/field" }, "type": "array" },
+        "kind": { "const": "record" }
+      },
+      "required": ["kind", "fields"],
+      "type": "object"
+    },
+    "reference": { "minimum": 0, "type": "integer" },
+    "sequence": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": { "$ref": "#/$defs/reference" },
+          "type": "array"
+        },
+        "kind": { "enum": ["list", "tuple"] }
+      },
+      "required": ["kind", "items"],
+      "type": "object"
+    },
+    "sha256": { "pattern": "^[0-9a-f]{64}$", "type": "string" }
+  }
+}
