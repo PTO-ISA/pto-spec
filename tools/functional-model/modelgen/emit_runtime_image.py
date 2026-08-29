@@ -400,6 +400,33 @@ class Compiler:
                 raise ModelgenError(
                     f"unresolved assignment root {variable!r} at node {identifier}")
             return
+        if name == "LE_Slice":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "LE_Slice"), "tuple")
+            if len(values) != 2:
+                raise ModelgenError(f"malformed LE_Slice at node {identifier}")
+            ranges = self.arena.sequence(values[1], "list")
+            parsed: list[tuple[int, int]] = []
+            for item in ranges:
+                parts = self.arena.sequence(
+                    self.single_argument(item, "Slice_Length"), "tuple")
+                parsed.append((self.literal_integer(parts[0]),
+                               self.literal_integer(parts[1])))
+            total = sum(width for _, width in parsed)
+            self.emit("kCheckBitWidth", local=source, immediate=total)
+            base = self.read_lvalue(values[0])
+            offset = 0
+            for start, width in parsed:
+                part = source
+                if len(parsed) != 1:
+                    part = self.local()
+                    self.emit("kSliceBits", local=part, binding=source,
+                              immediate=offset, address=width)
+                self.emit("kSetSlice", local=base, binding=part,
+                          immediate=start, address=width)
+                offset += width
+            self.assign_lvalue(values[0], base)
+            return
         if name == "LE_SetArray":
             values = self.arena.sequence(
                 self.single_argument(identifier, "LE_SetArray"), "tuple")

@@ -210,6 +210,22 @@ BitVector BitVector::Slice(std::size_t start, std::size_t width) const {
     return result;
 }
 
+void BitVector::SetSlice(std::size_t start,
+                         std::size_t width,
+                         const BitVector &replacement) {
+    if (width == 0 || replacement.width_ != width || start > width_ ||
+        width > width_ - start) {
+        throw std::out_of_range("bitvector slice assignment");
+    }
+    for (std::size_t index = 0; index < width; ++index) {
+        const std::size_t destination = start + index;
+        const std::uint8_t mask =
+            static_cast<std::uint8_t>(1U << (destination % 8));
+        if (replacement.bit(index)) bytes_[destination / 8] |= mask;
+        else bytes_[destination / 8] &= static_cast<std::uint8_t>(~mask);
+    }
+}
+
 bool BitVector::TryToU64(std::uint64_t *value) const {
     if (value == nullptr || width_ > 64) {
         return false;
@@ -236,6 +252,7 @@ Value::Value(RecordValue value)
 Value::Value(std::shared_ptr<PagedLazyArray> value)
     : storage_(std::move(value)) {}
 const Value::Storage &Value::storage() const { return storage_; }
+Value::Storage &Value::mutable_storage() { return storage_; }
 
 Value Value::Clone() const {
     if (const auto *value = std::get_if<bool>(&storage_)) return Value(*value);

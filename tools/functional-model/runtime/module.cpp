@@ -68,6 +68,8 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kSetArray:
                 case OpCode::kGetField:
                 case OpCode::kSetField:
+                case OpCode::kSetSlice:
+                case OpCode::kCheckBitWidth:
                     break;
                 case OpCode::kCallValue:
                 case OpCode::kCallProcedure:

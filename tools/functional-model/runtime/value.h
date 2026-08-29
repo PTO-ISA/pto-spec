@@ -38,6 +38,9 @@ class BitVector {
     std::size_t width() const;
     bool bit(std::size_t index) const;
     BitVector Slice(std::size_t start, std::size_t width) const;
+    void SetSlice(std::size_t start,
+                  std::size_t width,
+                  const BitVector &replacement);
     bool TryToU64(std::uint64_t *value) const;
     bool operator==(const BitVector &other) const;
 
@@ -75,6 +78,7 @@ class Value {
     explicit Value(RecordValue value);
     explicit Value(std::shared_ptr<PagedLazyArray> value);
     const Storage &storage() const;
+    Storage &mutable_storage();
     Value Clone() const;
 
   private:

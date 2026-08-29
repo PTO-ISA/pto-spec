@@ -370,6 +370,36 @@ EvaluationResult Interpreter::EvaluateInternal(
                     instruction.local, std::move(updated));
                 break;
             }
+            case OpCode::kSetSlice: {
+                const auto base = frame.typed_locals.find(instruction.local);
+                const auto value = frame.typed_locals.find(instruction.binding);
+                if (base == frame.typed_locals.end() ||
+                    value == frame.typed_locals.end() ||
+                    !std::holds_alternative<BitVector>(base->second.storage()) ||
+                    !std::holds_alternative<BitVector>(value->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                Value updated = base->second.Clone();
+                try {
+                    std::get<BitVector>(updated.mutable_storage()).SetSlice(
+                        static_cast<std::size_t>(instruction.immediate),
+                        static_cast<std::size_t>(instruction.address),
+                        std::get<BitVector>(value->second.storage()));
+                } catch (const std::out_of_range &) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, std::move(updated));
+                break;
+            }
+            case OpCode::kCheckBitWidth: {
+                const auto value = frame.typed_locals.find(instruction.local);
+                if (value == frame.typed_locals.end() ||
+                    !std::holds_alternative<BitVector>(value->second.storage()) ||
+                    std::get<BitVector>(value->second.storage()).width() !=
+                        instruction.immediate)
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                break;
+            }
             case OpCode::kBranchIfFalse: {
                 const auto condition = frame.typed_locals.find(instruction.local);
                 if (condition == frame.typed_locals.end() ||

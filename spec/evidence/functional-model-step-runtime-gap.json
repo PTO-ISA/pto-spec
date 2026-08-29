@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "d2090ba2dd827bc41440f4e61b320b89f769604a6527d03a69210e0b525a182d"
+      "sha256": "5f0e4db4c48f67cd40b0bfc5c62554ac79971d16bafe869e1747f689c4c1a837"
     }
   },
   "minimal_scalar_elf": {
@@ -29336,6 +29336,7 @@
         "LDI_Var",
         "LE_SetArray",
         "LE_SetField",
+        "LE_Slice",
         "LE_Var"
       ],
       "operators": [
@@ -29369,6 +29370,7 @@
       "kBranchIfFalse",
       "kCallProcedure",
       "kCallValue",
+      "kCheckBitWidth",
       "kCopyValue",
       "kEqual",
       "kGetArray",
@@ -29391,6 +29393,7 @@
       "kReturnValue",
       "kSetArray",
       "kSetField",
+      "kSetSlice",
       "kSliceBits",
       "kStoreGlobal"
     ],
@@ -29405,6 +29408,7 @@
       "kBranchIfFalse",
       "kCallProcedure",
       "kCallValue",
+      "kCheckBitWidth",
       "kCopyValue",
       "kEqual",
       "kGetArray",
@@ -29435,6 +29439,7 @@
       "kSetArray",
       "kSetField",
       "kSetLocalU64",
+      "kSetSlice",
       "kSliceBits",
       "kStoreGlobal",
       "kStoreLocalToGlobal",
@@ -29583,12 +29588,6 @@
         "name": "LE_Discard",
         "sample_function_id": 4785,
         "sample_node_id": 221992
-      },
-      {
-        "count": 2143,
-        "name": "LE_Slice",
-        "sample_function_id": 4809,
-        "sample_node_id": 15626
       },
       {
         "count": 209,
