@@ -16,7 +16,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests" / "functional-model" / "corpus"
 SCHEMA = "pto-functional-model-corpus-v1"
-MODEL_LIMIT = 4096
+MODEL_LIMIT = 65536
 EM_LINX = 233
 PT_LOAD = 1
 PF_X = 1
@@ -28,6 +28,20 @@ CASES = {
         "stop_pc": 0x114,
         "max_steps": 6,
         "lengths": [16, 16, 32, 48, 16, 32],
+        "expected_trace": [
+            {"pre_tpc": 0x100, "post_tpc": 0x102, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x0A96, "length_bits": 16, "sequence": 3},
+            {"pre_tpc": 0x102, "post_tpc": 0x104, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x13D6, "length_bits": 16, "sequence": 4},
+            {"pre_tpc": 0x104, "post_tpc": 0x108, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x00208185, "length_bits": 32, "sequence": 5},
+            {"pre_tpc": 0x108, "post_tpc": 0x10E, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x0000C095800E, "length_bits": 48, "sequence": 6},
+            {"pre_tpc": 0x10E, "post_tpc": 0x110, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x0016, "length_bits": 16, "sequence": 7},
+            {"pre_tpc": 0x110, "post_tpc": 0x114, "pre_bpc": 0, "post_bpc": 0,
+             "raw_instruction_le": 0x03C1A069, "length_bits": 32, "sequence": 8},
+        ],
         "result_address": 0x200,
         "golden": bytes.fromhex("19000000"),
         "requirements": [
@@ -48,6 +62,14 @@ CASES = {
         "stop_pc": 0x280,
         "max_steps": 2,
         "lengths": [32, 64],
+        "expected_trace": [
+            {"pre_tpc": 0x280, "post_tpc": 0x284, "pre_bpc": 0,
+             "post_bpc": 0x280, "raw_instruction_le": 0x00000011,
+             "length_bits": 32, "sequence": 3},
+            {"pre_tpc": 0x284, "post_tpc": 0x280, "pre_bpc": 0x280,
+             "post_bpc": 0, "raw_instruction_le": 0x000000010000000F,
+             "length_bits": 64, "sequence": 4},
+        ],
         "result_address": 0x380,
         "golden": bytes.fromhex("a55a0000"),
         "requirements": [
@@ -120,6 +142,8 @@ def inspect_elf(path: Path) -> dict[str, object]:
             continue
         if filesz > memsz or vaddr + memsz > MODEL_LIMIT:
             raise CorpusError("PT_LOAD exceeds functional-model bound")
+        if not flags & 4:
+            raise CorpusError("PT_LOAD must be readable")
         if flags & PF_W and flags & PF_X:
             raise CorpusError("writable executable PT_LOAD")
         checked_slice(data, offset, filesz, "PT_LOAD file range")
@@ -204,6 +228,12 @@ def build_case(
     input_identity = {
         "source_sha256": sha256_file(source),
         "linker_sha256": sha256_file(linker),
+        "builder_sha256": sha256_file(Path(__file__)),
+        "schema_sha256": sha256_file(
+            ROOT / "spec" / "schemas" / "pto-functional-model-corpus-v1.schema.json"
+        ),
+        "build_recipe": "linx-clang-assemble-lld-static-et-exec-v1",
+        "profile": "pto-functional-reference-v1",
         "clang_sha256": tool_identity["clang_sha256"],
         "lld_sha256": tool_identity["lld_sha256"],
     }
@@ -231,6 +261,13 @@ def build_case(
         raise CorpusError(f"{name} entry mismatch")
     if observed["result_address"] != config["result_address"]:
         raise CorpusError(f"{name} result address mismatch")
+    stack_base = 0xE00
+    stack_top = 0xF00
+    for segment in observed["segments"]:
+        segment_start = int(segment["address"])
+        segment_end = segment_start + int(segment["memsz"])
+        if stack_base < segment_end and segment_start < stack_top:
+            raise CorpusError(f"{name} PT_LOAD overlaps runner stack")
 
     golden = artifact / f"{name}.golden.bin"
     golden.write_bytes(config["golden"])
@@ -249,7 +286,7 @@ def build_case(
                 "segments": observed["segments"],
             },
             "initial_gprs": {},
-            "stack": {"top": 0xF00, "size": 0x100},
+            "stack": {"top": stack_top, "size": stack_top - stack_base},
             "stop_policy": {
                 "kind": "stop_pc",
                 "stop_pc": config["stop_pc"],
@@ -257,6 +294,7 @@ def build_case(
             },
             "allowed_requests": [],
             "expected_length_sequence": config["lengths"],
+            "expected_trace": config["expected_trace"],
             "trace_requirements": config["trace_requirements"],
             "result": {
                 "symbol": "cross_model_result",
@@ -298,13 +336,13 @@ def main() -> int:
         if not tool.is_file():
             raise CorpusError(f"missing tool {tool}")
     tool_identity = {
-        "clang": str(arguments.clang.resolve()),
+        "clang": arguments.clang.name,
         "clang_sha256": sha256_file(arguments.clang),
         "clang_version": command_version(arguments.clang),
-        "lld": str(arguments.lld.resolve()),
+        "lld": arguments.lld.name,
         "lld_sha256": sha256_file(arguments.lld),
         "lld_version": command_version(arguments.lld),
-        "readelf": str(arguments.readelf.resolve()),
+        "readelf": arguments.readelf.name,
         "readelf_sha256": sha256_file(arguments.readelf),
         "readelf_version": command_version(arguments.readelf),
     }

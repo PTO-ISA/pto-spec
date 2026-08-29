@@ -195,7 +195,9 @@ if(BUILD_TESTING)
     add_executable(pto_asl_model_runtime_test tests/runtime_tests.cpp)
     target_include_directories(pto_asl_model_runtime_test PRIVATE
         runtime "${PTO_GENERATED_ROOT}")
-    target_link_libraries(pto_asl_model_runtime_test PRIVATE pto_asl_model)
+    find_package(Threads REQUIRED)
+    target_link_libraries(pto_asl_model_runtime_test PRIVATE
+        pto_asl_model Threads::Threads)
     target_compile_options(pto_asl_model_runtime_test PRIVATE
         -Wall -Wextra -Wpedantic -Werror)
 

@@ -37,9 +37,9 @@
       "additionalProperties": false,
       "required": ["address", "filesz", "memsz", "align", "flags"],
       "properties": {
-        "address": {"type": "integer", "minimum": 0, "maximum": 4095},
-        "filesz": {"type": "integer", "minimum": 0, "maximum": 4096},
-        "memsz": {"type": "integer", "minimum": 1, "maximum": 4096},
+        "address": {"type": "integer", "minimum": 0, "maximum": 65535},
+        "filesz": {"type": "integer", "minimum": 0, "maximum": 65536},
+        "memsz": {"type": "integer", "minimum": 1, "maximum": 65536},
         "align": {"type": "integer", "minimum": 0},
         "flags": {"enum": ["R", "RW", "RX"]}
       }
@@ -50,7 +50,7 @@
       "required": [
         "id", "isa", "requirements", "avs_ids", "inputs", "elf",
         "initial_gprs", "stack", "stop_policy", "allowed_requests",
-        "expected_length_sequence", "trace_requirements", "result", "golden"
+        "expected_length_sequence", "expected_trace", "trace_requirements", "result", "golden"
       ],
       "properties": {
         "id": {"enum": ["scalar_stop_pc", "block_64_stop_pc"]},
@@ -68,10 +68,17 @@
         "inputs": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["source_sha256", "linker_sha256", "clang_sha256", "lld_sha256"],
+          "required": [
+            "source_sha256", "linker_sha256", "builder_sha256", "schema_sha256",
+            "build_recipe", "profile", "clang_sha256", "lld_sha256"
+          ],
           "properties": {
             "source_sha256": {"$ref": "#/$defs/sha256"},
             "linker_sha256": {"$ref": "#/$defs/sha256"},
+            "builder_sha256": {"$ref": "#/$defs/sha256"},
+            "schema_sha256": {"$ref": "#/$defs/sha256"},
+            "build_recipe": {"const": "linx-clang-assemble-lld-static-et-exec-v1"},
+            "profile": {"const": "pto-functional-reference-v1"},
             "clang_sha256": {"$ref": "#/$defs/sha256"},
             "lld_sha256": {"$ref": "#/$defs/sha256"}
           }
@@ -83,7 +90,7 @@
           "properties": {
             "filename": {"type": "string", "pattern": "^[a-z0-9_-]+\\.elf$"},
             "sha256": {"$ref": "#/$defs/sha256"},
-            "entry": {"type": "integer", "minimum": 0, "maximum": 4095},
+            "entry": {"type": "integer", "minimum": 0, "maximum": 65535},
             "segments": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/segment"}}
           }
         },
@@ -93,8 +100,8 @@
           "additionalProperties": false,
           "required": ["top", "size"],
           "properties": {
-            "top": {"type": "integer", "minimum": 1, "maximum": 4095},
-            "size": {"type": "integer", "minimum": 1, "maximum": 4096}
+            "top": {"type": "integer", "minimum": 1, "maximum": 65536},
+            "size": {"type": "integer", "minimum": 1, "maximum": 65536}
           }
         },
         "stop_policy": {
@@ -103,7 +110,7 @@
           "required": ["kind", "stop_pc", "max_steps"],
           "properties": {
             "kind": {"const": "stop_pc"},
-            "stop_pc": {"type": "integer", "minimum": 0, "maximum": 4095},
+            "stop_pc": {"type": "integer", "minimum": 0, "maximum": 65535},
             "max_steps": {"type": "integer", "minimum": 1}
           }
         },
@@ -113,6 +120,27 @@
           "minItems": 1,
           "items": {"enum": [16, 32, 48, 64]}
         },
+        "expected_trace": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pre_tpc", "post_tpc", "pre_bpc", "post_bpc",
+              "raw_instruction_le", "length_bits", "sequence"
+            ],
+            "properties": {
+              "pre_tpc": {"type": "integer", "minimum": 0, "maximum": 65535},
+              "post_tpc": {"type": "integer", "minimum": 0, "maximum": 65535},
+              "pre_bpc": {"type": "integer", "minimum": 0, "maximum": 65535},
+              "post_bpc": {"type": "integer", "minimum": 0, "maximum": 65535},
+              "raw_instruction_le": {"type": "integer", "minimum": 0},
+              "length_bits": {"enum": [16, 32, 48, 64]},
+              "sequence": {"type": "integer", "minimum": 1}
+            }
+          }
+        },
         "trace_requirements": {"type": "object"},
         "result": {
           "type": "object",
@@ -121,7 +149,7 @@
           "properties": {
             "symbol": {"const": "cross_model_result"},
             "size_symbol": {"const": "cross_model_result_size"},
-            "address": {"type": "integer", "minimum": 0, "maximum": 4095},
+            "address": {"type": "integer", "minimum": 0, "maximum": 65535},
             "size": {"const": 4}
           }
         },

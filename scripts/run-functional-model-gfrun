@@ -85,12 +85,34 @@ def validate_run(
         case["expected_length_sequence"],
         "instruction length sequence",
     )
+    expected_trace = case.get("expected_trace")
+    if not isinstance(expected_trace, list):
+        raise ValidationError("case manifest has no expected trace")
+    require_equal(len(trace), len(expected_trace), "expected trace length")
     for index, step in enumerate(trace):
         if not isinstance(step, dict):
             raise ValidationError(f"trace step {index} is not an object")
         require_equal(step.get("status"), 0, f"trace step {index} ABI status")
         require_equal(step.get("step_state"), 1, f"trace step {index} state")
+        require_equal(step.get("instruction_status"), 1,
+                      f"trace step {index} instruction status")
         require_equal(step.get("fault_code"), 0, f"trace step {index} fault")
+        require_equal(step.get("fault_address"), 0, f"trace step {index} fault address")
+        require_equal(step.get("fault_cause"), 0, f"trace step {index} fault cause")
+        require_equal(step.get("origin_pe"), 0, f"trace step {index} origin PE")
+        require_equal(step.get("request_token"), 0, f"trace step {index} request token")
+        require_equal(step.get("request_type"), 0, f"trace step {index} request type")
+        require_equal(step.get("request_argument0"), 0,
+                      f"trace step {index} request argument")
+        expected_step = expected_trace[index]
+        if not isinstance(expected_step, dict):
+            raise ValidationError(f"expected trace step {index} is not an object")
+        for field in (
+            "pre_tpc", "post_tpc", "pre_bpc", "post_bpc",
+            "raw_instruction_le", "length_bits", "sequence",
+        ):
+            require_equal(step.get(field), expected_step.get(field),
+                          f"trace step {index} {field}")
         if index > 0:
             require_equal(
                 step.get("pre_tpc"),
@@ -136,7 +158,6 @@ def run_case(
     run_manifest_path = case_output / "run.json"
     command = [
         str(gfrun),
-        "--engine", "asl",
         "-f", str(elf),
         "--stop_pc", str(stop_policy["stop_pc"]),
         "--asl_max_steps", str(stop_policy["max_steps"]),

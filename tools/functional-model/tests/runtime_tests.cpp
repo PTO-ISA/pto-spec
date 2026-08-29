@@ -7,10 +7,13 @@
 
 #include <array>
 #include <cassert>
+#include <condition_variable>
 #include <cstdint>
 #include <cstdio>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace {
@@ -41,6 +44,11 @@ struct MemoryHarness {
     std::vector<MemoryWrite> committed_writes;
     RuntimeModel *reentrant_model = nullptr;
     pto_status_t reentrant_status = PTO_STATUS_OK;
+    bool block_commit = false;
+    bool commit_entered = false;
+    bool release_commit = false;
+    std::mutex commit_mutex;
+    std::condition_variable commit_condition;
 
     MemoryCallbacks Callbacks() {
         return MemoryCallbacks{
@@ -80,6 +88,12 @@ struct MemoryHarness {
                 return static_cast<pto_status_t>(PTO_STATUS_OK);
             },
             [this](const std::vector<MemoryWrite> &writes) {
+                if (block_commit) {
+                    std::unique_lock<std::mutex> lock(commit_mutex);
+                    commit_entered = true;
+                    commit_condition.notify_all();
+                    commit_condition.wait(lock, [this]() { return release_commit; });
+                }
                 if (reentrant_model != nullptr) {
                     StepResult nested;
                     reentrant_status = reentrant_model->StepPrimaryForTesting(&nested);
@@ -121,6 +135,98 @@ std::shared_ptr<const Module> SyntheticModule(pto_step_state_t terminal) {
     assert(module != nullptr);
     assert(error.empty());
     return module;
+}
+
+void TestConcurrentAndLongIsolation() {
+    constexpr std::uint64_t kStepCount = 1000;
+    const auto module = SyntheticModule(PTO_STEP_EXECUTED);
+
+    MemoryHarness interleaved_left_memory;
+    MemoryHarness interleaved_right_memory;
+    RuntimeModel interleaved_left(module, interleaved_left_memory.Callbacks());
+    RuntimeModel interleaved_right(module, interleaved_right_memory.Callbacks());
+    assert(interleaved_left.InitializeForTesting({0x100}) == PTO_STATUS_OK);
+    assert(interleaved_right.InitializeForTesting({0x200}) == PTO_STATUS_OK);
+    StepResult left_result;
+    StepResult right_result;
+    for (std::uint64_t index = 0; index < kStepCount; ++index) {
+        assert(interleaved_left.StepPrimaryForTesting(&left_result) == PTO_STATUS_OK);
+        assert(interleaved_right.StepPrimaryForTesting(&right_result) == PTO_STATUS_OK);
+    }
+    assert(interleaved_left.GlobalU64(kCounter) == kStepCount);
+    assert(interleaved_right.GlobalU64(kCounter) == kStepCount);
+    assert(interleaved_left_memory.commit_count == kStepCount);
+    assert(interleaved_right_memory.commit_count == kStepCount);
+
+    MemoryHarness serial_left_memory;
+    MemoryHarness serial_right_memory;
+    RuntimeModel serial_left(module, serial_left_memory.Callbacks());
+    RuntimeModel serial_right(module, serial_right_memory.Callbacks());
+    assert(serial_left.InitializeForTesting({0x100}) == PTO_STATUS_OK);
+    assert(serial_right.InitializeForTesting({0x200}) == PTO_STATUS_OK);
+    for (std::uint64_t index = 0; index < kStepCount; ++index) {
+        assert(serial_left.StepPrimaryForTesting(&left_result) == PTO_STATUS_OK);
+    }
+    for (std::uint64_t index = 0; index < kStepCount; ++index) {
+        assert(serial_right.StepPrimaryForTesting(&right_result) == PTO_STATUS_OK);
+    }
+    assert(serial_left.GlobalU64(kCounter) == interleaved_left.GlobalU64(kCounter));
+    assert(serial_right.GlobalU64(kCounter) == interleaved_right.GlobalU64(kCounter));
+    assert(serial_left_memory.bytes == interleaved_left_memory.bytes);
+    assert(serial_right_memory.bytes == interleaved_right_memory.bytes);
+
+    MemoryHarness parallel_left_memory;
+    MemoryHarness parallel_right_memory;
+    RuntimeModel parallel_left(module, parallel_left_memory.Callbacks());
+    RuntimeModel parallel_right(module, parallel_right_memory.Callbacks());
+    assert(parallel_left.InitializeForTesting({0x100}) == PTO_STATUS_OK);
+    assert(parallel_right.InitializeForTesting({0x200}) == PTO_STATUS_OK);
+    pto_status_t parallel_left_status = PTO_STATUS_INTERNAL_ERROR;
+    pto_status_t parallel_right_status = PTO_STATUS_INTERNAL_ERROR;
+    std::thread left_thread([&]() {
+        StepResult result;
+        for (std::uint64_t index = 0; index < kStepCount; ++index) {
+            parallel_left_status = parallel_left.StepPrimaryForTesting(&result);
+            if (parallel_left_status != PTO_STATUS_OK) return;
+        }
+    });
+    std::thread right_thread([&]() {
+        StepResult result;
+        for (std::uint64_t index = 0; index < kStepCount; ++index) {
+            parallel_right_status = parallel_right.StepPrimaryForTesting(&result);
+            if (parallel_right_status != PTO_STATUS_OK) return;
+        }
+    });
+    left_thread.join();
+    right_thread.join();
+    assert(parallel_left_status == PTO_STATUS_OK);
+    assert(parallel_right_status == PTO_STATUS_OK);
+    assert(parallel_left.GlobalU64(kCounter) == kStepCount);
+    assert(parallel_right.GlobalU64(kCounter) == kStepCount);
+
+    MemoryHarness busy_memory;
+    busy_memory.block_commit = true;
+    RuntimeModel busy(module, busy_memory.Callbacks());
+    assert(busy.InitializeForTesting({0}) == PTO_STATUS_OK);
+    pto_status_t first_status = PTO_STATUS_INTERNAL_ERROR;
+    std::thread first([&]() {
+        StepResult result;
+        first_status = busy.StepPrimaryForTesting(&result);
+    });
+    {
+        std::unique_lock<std::mutex> lock(busy_memory.commit_mutex);
+        busy_memory.commit_condition.wait(
+            lock, [&]() { return busy_memory.commit_entered; });
+    }
+    StepResult competing_result;
+    assert(busy.StepPrimaryForTesting(&competing_result) == PTO_STATUS_BUSY);
+    {
+        std::lock_guard<std::mutex> lock(busy_memory.commit_mutex);
+        busy_memory.release_commit = true;
+    }
+    busy_memory.commit_condition.notify_all();
+    first.join();
+    assert(first_status == PTO_STATUS_OK);
 }
 
 void TestValues() {
@@ -766,6 +872,7 @@ void TestGeneratedStoreTransactions() {
 int main() {
     TestValues();
     TestRuntime();
+    TestConcurrentAndLongIsolation();
     TestInvalidModules();
     TestGeneratedDetermineLength();
     TestTypedAssert();

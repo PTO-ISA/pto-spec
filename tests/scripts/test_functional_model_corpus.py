@@ -148,6 +148,26 @@ class FunctionalModelCorpusTest(unittest.TestCase):
             "case": {
                 "stop_policy": {"stop_pc": 0x104, "max_steps": 2},
                 "expected_length_sequence": [16, 16],
+                "expected_trace": [
+                    {
+                        "pre_tpc": 0x100,
+                        "post_tpc": 0x102,
+                        "pre_bpc": 0,
+                        "post_bpc": 0,
+                        "raw_instruction_le": 0x11,
+                        "length_bits": 16,
+                        "sequence": 3,
+                    },
+                    {
+                        "pre_tpc": 0x102,
+                        "post_tpc": 0x104,
+                        "pre_bpc": 0,
+                        "post_bpc": 0,
+                        "raw_instruction_le": 0x22,
+                        "length_bits": 16,
+                        "sequence": 4,
+                    },
+                ],
                 "result": {"address": 0x200, "size": 4},
             }
         }
@@ -166,18 +186,40 @@ class FunctionalModelCorpusTest(unittest.TestCase):
                 {
                     "status": 0,
                     "step_state": 1,
+                    "instruction_status": 1,
                     "fault_code": 0,
+                    "fault_address": 0,
+                    "fault_cause": 0,
+                    "origin_pe": 0,
+                    "request_token": 0,
+                    "request_type": 0,
+                    "request_argument0": 0,
                     "pre_tpc": 0x100,
                     "post_tpc": 0x102,
+                    "pre_bpc": 0,
+                    "post_bpc": 0,
+                    "raw_instruction_le": 0x11,
                     "length_bits": 16,
+                    "sequence": 3,
                 },
                 {
                     "status": 0,
                     "step_state": 1,
+                    "instruction_status": 1,
                     "fault_code": 0,
+                    "fault_address": 0,
+                    "fault_cause": 0,
+                    "origin_pe": 0,
+                    "request_token": 0,
+                    "request_type": 0,
+                    "request_argument0": 0,
                     "pre_tpc": 0x102,
                     "post_tpc": 0x104,
+                    "pre_bpc": 0,
+                    "post_bpc": 0,
+                    "raw_instruction_le": 0x22,
                     "length_bits": 16,
+                    "sequence": 4,
                 },
             ],
         }
@@ -197,7 +239,7 @@ class FunctionalModelCorpusTest(unittest.TestCase):
                 case, run, bytes.fromhex("18000000"), bytes.fromhex("19000000")
             )
         run["trace"][1]["pre_tpc"] = 0x103
-        with self.assertRaisesRegex(self.validator.ValidationError, "TPC continuity"):
+        with self.assertRaisesRegex(self.validator.ValidationError, "pre_tpc"):
             self.validator.validate_run(
                 case, run, bytes.fromhex("19000000"), bytes.fromhex("19000000")
             )
