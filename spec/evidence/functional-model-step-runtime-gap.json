@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "5f0e4db4c48f67cd40b0bfc5c62554ac79971d16bafe869e1747f689c4c1a837"
+      "sha256": "e8900c3b724e50b27bb7a69a754e425f4d1a82f6ba0d4e952e47cc8e568e5055"
     }
   },
   "minimal_scalar_elf": {
@@ -29368,6 +29368,7 @@
     "emitter_bytecode_opcodes": [
       "kAssertTrue",
       "kBranchIfFalse",
+      "kCallExtern",
       "kCallProcedure",
       "kCallValue",
       "kCheckBitWidth",
@@ -29400,12 +29401,16 @@
     "entrypoints": [
       "DeterminePTOInstructionLength"
     ],
-    "extern_bindings": [],
+    "extern_bindings": [
+      "SInt",
+      "UInt"
+    ],
     "impdef_bindings": [],
     "interpreter_bytecode_opcodes": [
       "kAddLocalU64",
       "kAssertTrue",
       "kBranchIfFalse",
+      "kCallExtern",
       "kCallProcedure",
       "kCallValue",
       "kCheckBitWidth",
@@ -29445,7 +29450,10 @@
       "kStoreLocalToGlobal",
       "kWriteMemoryImmediate"
     ],
-    "primitive_bindings": [],
+    "primitive_bindings": [
+      "SInt",
+      "UInt"
+    ],
     "schema": "pto-functional-model-runtime-capabilities-v1"
   },
   "schema": "pto-functional-model-step-runtime-gap-v1",
@@ -29781,20 +29789,6 @@
         "name": "RoundUp"
       },
       {
-        "binding_id": 61,
-        "declaration_function_id": 4844,
-        "extern_id": 57,
-        "implementation_function_id": null,
-        "name": "SInt"
-      },
-      {
-        "binding_id": 62,
-        "declaration_function_id": 5500,
-        "extern_id": 58,
-        "implementation_function_id": null,
-        "name": "UInt"
-      },
-      {
         "binding_id": 28,
         "declaration_function_id": 5416,
         "extern_id": 28,
@@ -29832,20 +29826,6 @@
         "extern_id": 56,
         "implementation_function_id": null,
         "name": "RoundUp"
-      },
-      {
-        "binding_id": 61,
-        "declaration_function_id": 4844,
-        "extern_id": 57,
-        "implementation_function_id": null,
-        "name": "SInt"
-      },
-      {
-        "binding_id": 62,
-        "declaration_function_id": 5500,
-        "extern_id": 58,
-        "implementation_function_id": null,
-        "name": "UInt"
       }
     ]
   }

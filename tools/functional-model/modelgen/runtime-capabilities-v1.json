@@ -2,6 +2,7 @@
   "emitter_bytecode_opcodes": [
     "kAssertTrue",
     "kBranchIfFalse",
+    "kCallExtern",
     "kCallProcedure",
     "kCallValue",
     "kCheckBitWidth",
@@ -35,6 +36,7 @@
     "kAddLocalU64",
     "kAssertTrue",
     "kBranchIfFalse",
+    "kCallExtern",
     "kCallProcedure",
     "kCallValue",
     "kCheckBitWidth",
@@ -84,8 +86,8 @@
     "types": ["T_Bits", "T_Enum"]
   },
   "entrypoints": ["DeterminePTOInstructionLength"],
-  "extern_bindings": [],
+  "extern_bindings": ["SInt", "UInt"],
   "impdef_bindings": [],
-  "primitive_bindings": [],
+  "primitive_bindings": ["SInt", "UInt"],
   "schema": "pto-functional-model-runtime-capabilities-v1"
 }

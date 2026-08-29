@@ -352,6 +352,20 @@ void TestNumericCallFrames() {
     assert(result == 5);
 }
 
+void TestNumericIntegerExterns() {
+    const pto::model::BitVector all_ones =
+        pto::model::BitVector::FromU64(64, UINT64_MAX);
+    std::uint64_t unsigned_value = 0;
+    assert(all_ones.ToUnsignedInteger().TryToU64(&unsigned_value));
+    assert(unsigned_value == UINT64_MAX);
+    assert(all_ones.ToSignedInteger() == pto::model::BigInteger(-1));
+    const pto::model::BitVector wide =
+        pto::model::BitVector::FromU64(65, UINT64_MAX);
+    assert(wide.ToUnsignedInteger() ==
+           pto::model::BigInteger::FromUnsignedWords(
+               {UINT32_MAX, UINT32_MAX}));
+}
+
 }  // namespace
 
 int main() {
@@ -361,5 +375,6 @@ int main() {
     TestGeneratedDetermineLength();
     TestTypedAssert();
     TestNumericCallFrames();
+    TestNumericIntegerExterns();
     return 0;
 }

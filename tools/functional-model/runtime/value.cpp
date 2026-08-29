@@ -187,6 +187,23 @@ BitVector BitVector::FromU64(std::size_t width, std::uint64_t value) {
     return result;
 }
 
+BigInteger BitVector::ToUnsignedInteger() const {
+    std::vector<std::uint32_t> words((width_ + 31) / 32, 0);
+    for (std::size_t index = 0; index < width_; ++index) {
+        if (bit(index)) words[index / 32] |= UINT32_C(1) << (index % 32);
+    }
+    return BigInteger::FromUnsignedWords(std::move(words));
+}
+
+BigInteger BitVector::ToSignedInteger() const {
+    BigInteger value = ToUnsignedInteger();
+    if (!bit(width_ - 1)) return value;
+    std::vector<std::uint32_t> power_words(width_ / 32 + 1, 0);
+    power_words[width_ / 32] = UINT32_C(1) << (width_ % 32);
+    return value.Add(
+        BigInteger::FromUnsignedWords(std::move(power_words)).Negated());
+}
+
 std::size_t BitVector::width() const { return width_; }
 
 bool BitVector::bit(std::size_t index) const {

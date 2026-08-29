@@ -251,6 +251,25 @@ EvaluationResult Interpreter::EvaluateInternal(
                 }
                 break;
             }
+            case OpCode::kCallExtern: {
+                const ExternDefinition *target = module.FindExtern(instruction.binding);
+                if (target == nullptr ||
+                    frame.pending_arguments.size() != target->argument_count ||
+                    target->argument_count != instruction.immediate ||
+                    frame.pending_arguments.size() != 1 ||
+                    !std::holds_alternative<BitVector>(
+                        frame.pending_arguments[0].storage())) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                const BitVector &bits = std::get<BitVector>(
+                    frame.pending_arguments[0].storage());
+                BigInteger result = target->kind == ExternKind::kUInt
+                    ? bits.ToUnsignedInteger() : bits.ToSignedInteger();
+                frame.pending_arguments.clear();
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, Value(std::move(result)));
+                break;
+            }
             case OpCode::kIntegerAdd:
             case OpCode::kIntegerSubtract:
             case OpCode::kIntegerMultiply:

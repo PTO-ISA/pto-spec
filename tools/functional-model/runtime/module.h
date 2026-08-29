@@ -20,6 +20,14 @@ inline constexpr BindingId kWritePhysicalMemoryByte = 0x101;
 inline constexpr BindingId kResetPhysicalMemory = 0x102;
 }  // namespace binding
 
+enum class ExternKind : std::uint8_t { kUInt, kSInt };
+
+struct ExternDefinition {
+    BindingId id;
+    ExternKind kind;
+    std::uint32_t argument_count;
+};
+
 enum class OpCode : std::uint8_t {
     kSetLocalU64,
     kAddLocalU64,
@@ -38,6 +46,7 @@ enum class OpCode : std::uint8_t {
     kPushArgument,
     kCallValue,
     kCallProcedure,
+    kCallExtern,
     kCopyValue,
     kLoadGlobal,
     kLoadBool,
@@ -83,16 +92,21 @@ class Module final {
     static std::shared_ptr<const Module> Create(
         std::vector<Function> functions,
         BindingId step_entrypoint,
-        std::string *error);
+        std::string *error,
+        std::vector<ExternDefinition> externs = {});
 
     const Function *FindFunction(BindingId id) const;
     BindingId step_entrypoint() const;
+    const ExternDefinition *FindExtern(BindingId id) const;
 
   private:
-    Module(std::vector<Function> functions, BindingId step_entrypoint);
+    Module(std::vector<Function> functions,
+           BindingId step_entrypoint,
+           std::vector<ExternDefinition> externs);
     std::vector<Function> functions_;
     std::unordered_map<BindingId, std::size_t> function_indices_;
     BindingId step_entrypoint_;
+    std::vector<ExternDefinition> externs_;
 };
 
 }  // namespace pto::model

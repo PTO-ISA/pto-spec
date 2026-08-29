@@ -12,7 +12,8 @@ namespace pto::model {
 
 std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                                              BindingId step_entrypoint,
-                                             std::string *error) {
+                                             std::string *error,
+                                             std::vector<ExternDefinition> externs) {
     constexpr std::size_t kMaximumFunctions = 4096;
     constexpr std::size_t kMaximumInstructions = 1U << 20;
     if (functions.size() > kMaximumFunctions) {
@@ -73,6 +74,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                     break;
                 case OpCode::kCallValue:
                 case OpCode::kCallProcedure:
+                case OpCode::kCallExtern:
                     if (instruction.binding == 0) {
                         if (error != nullptr) {
                             *error = "module call has a zero numeric target";
@@ -178,6 +180,20 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 }
                 return nullptr;
             }
+            if (instruction.opcode == OpCode::kCallExtern) {
+                const auto target = std::find_if(
+                    externs.begin(), externs.end(),
+                    [&instruction](const ExternDefinition &candidate) {
+                        return candidate.id == instruction.binding;
+                    });
+                if (target == externs.end() ||
+                    target->argument_count != instruction.immediate) {
+                    if (error != nullptr) {
+                        *error = "module extern call is unresolved or has wrong arity";
+                    }
+                    return nullptr;
+                }
+            }
             if (instruction.opcode == OpCode::kCallValue ||
                 instruction.opcode == OpCode::kCallProcedure) {
                 const auto target = std::find_if(
@@ -196,11 +212,15 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
         }
     }
     return std::shared_ptr<const Module>(
-        new Module(std::move(functions), step_entrypoint));
+        new Module(std::move(functions), step_entrypoint, std::move(externs)));
 }
 
-Module::Module(std::vector<Function> functions, BindingId step_entrypoint)
-    : functions_(std::move(functions)), step_entrypoint_(step_entrypoint) {
+Module::Module(std::vector<Function> functions,
+               BindingId step_entrypoint,
+               std::vector<ExternDefinition> externs)
+    : functions_(std::move(functions)),
+      step_entrypoint_(step_entrypoint),
+      externs_(std::move(externs)) {
     for (std::size_t index = 0; index < functions_.size(); ++index) {
         function_indices_.emplace(functions_[index].id, index);
     }
@@ -213,5 +233,12 @@ const Function *Module::FindFunction(BindingId id) const {
 }
 
 BindingId Module::step_entrypoint() const { return step_entrypoint_; }
+
+const ExternDefinition *Module::FindExtern(BindingId id) const {
+    const auto found = std::find_if(
+        externs_.begin(), externs_.end(),
+        [id](const ExternDefinition &candidate) { return candidate.id == id; });
+    return found == externs_.end() ? nullptr : &*found;
+}
 
 }  // namespace pto::model

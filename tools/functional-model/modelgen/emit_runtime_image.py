@@ -144,6 +144,7 @@ class Compiler:
         global_ids: dict[str, int] | None = None,
         field_ids: dict[str, int] | None = None,
         enum_labels: dict[str, tuple[int, int]] | None = None,
+        extern_ids: dict[str, tuple[int, str, int]] | None = None,
     ):
         self.arena = arena
         self.argument_ids = {name: index for index, name in enumerate(argument_names)}
@@ -154,6 +155,7 @@ class Compiler:
         self.local_ids: dict[str, int] = {}
         self.field_ids = field_ids or {}
         self.enum_labels = enum_labels or {}
+        self.extern_ids = extern_ids or {}
 
     def local(self) -> int:
         result = self.next_local
@@ -307,7 +309,7 @@ class Compiler:
         if name == "E_Call":
             fields = self.arena.record(self.single_argument(identifier, "E_Call"))
             target_name = str(self.arena.atom(fields["name"], "string"))
-            if target_name not in self.function_ids:
+            if target_name not in self.function_ids and target_name not in self.extern_ids:
                 raise ModelgenError(
                     f"unresolved runtime call {target_name!r} at node {identifier}"
                 )
@@ -316,12 +318,16 @@ class Compiler:
             for value in values:
                 self.emit("kPushArgument", local=self.expression(value))
             result = self.local()
-            self.emit(
-                "kCallValue",
-                local=result,
-                binding=self.function_ids[target_name],
-                immediate=len(values),
-            )
+            if target_name in self.extern_ids:
+                binding_id, _, arity = self.extern_ids[target_name]
+                if arity != len(values):
+                    raise ModelgenError(f"extern call arity mismatch for {target_name}")
+                self.emit("kCallExtern", local=result, binding=binding_id,
+                          immediate=len(values))
+            else:
+                self.emit("kCallValue", local=result,
+                          binding=self.function_ids[target_name],
+                          immediate=len(values))
             return result
         if name == "E_GetArray":
             values = self.arena.sequence(
@@ -647,7 +653,7 @@ def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
 
 def lower_module(
     image: dict[str, object], entrypoints: tuple[str, ...]
-) -> tuple[int, list[dict[str, object]]]:
+) -> tuple[int, list[dict[str, object]], list[dict[str, object]]]:
     verify_executable_module(image, required_entrypoints=entrypoints)
     tables = image["tables"]
     strings = [row["name"] for row in tables["strings"]]
@@ -662,6 +668,13 @@ def lower_module(
     }
     field_ids = {str(name): identifier for identifier, name in enumerate(strings)}
     enum_labels = _enum_labels(CompactArena(image), tables["types"])
+    extern_ids: dict[str, tuple[int, str, int]] = {}
+    for row in tables["externs"]:
+        name = str(strings[row["name_symbol_id"]])
+        function = functions[int(row["declaration_function_id"])]
+        arity = len(function["arguments"]) + len(function["parameters"])
+        if name in {"UInt", "SInt"}:
+            extern_ids[name] = (int(row["binding_id"]), name, arity)
     roots = [function_ids[name] for name in entrypoints]
     graph = {
         int(row["id"]): [int(value) for value in row["callee_function_ids"]]
@@ -681,16 +694,18 @@ def lower_module(
     for function_id in sorted(reachable):
         function = functions[function_id]
         if function["extern_id"] is not None:
-            raise ModelgenError(
-                f"runtime function {strings[function['name_symbol_id']]} "
-                f"({function_id}) is an unresolved extern"
-            )
+            name = str(strings[function["name_symbol_id"]])
+            if name not in extern_ids:
+                raise ModelgenError(
+                    f"runtime function {name} ({function_id}) is an unresolved extern")
+            continue
         arguments = [
             str(strings[row["name_symbol_id"]])
             for row in [*function["arguments"], *function["parameters"]]
         ]
         compiler = Compiler(
-            arena, arguments, function_ids, global_ids, field_ids, enum_labels)
+            arena, arguments, function_ids, global_ids, field_ids, enum_labels,
+            extern_ids)
         name = str(strings[function["name_symbol_id"]])
         try:
             compiler.statement(int(function["body_node"]))
@@ -705,7 +720,14 @@ def lower_module(
                 "instructions": compiler.instructions,
             }
         )
-    return roots[0], lowered
+    externs = [
+        {"id": binding, "kind": kind, "argument_count": arity}
+        for binding, kind, arity in sorted(extern_ids.values())
+        if any(functions[fid]["extern_id"] is not None and
+               str(strings[functions[fid]["name_symbol_id"]]) == kind
+               for fid in reachable)
+    ]
+    return roots[0], lowered, externs
 
 
 def _render_header() -> str:
@@ -774,6 +796,7 @@ def render_module_source(
     functions: list[dict[str, object]],
     digest: str,
     builder_name: str,
+    externs: list[dict[str, object]] | None = None,
 ) -> str:
     blocks: list[str] = []
     rows: list[str] = []
@@ -802,7 +825,11 @@ def render_module_source(
         + "\n".join(blocks)
         + "\n    std::string error;\n    return Module::Create({\n"
         + "\n".join(rows)
-        + f"\n    }}, {primary_id}u, &error);\n}}\n}}  // namespace pto::model\n"
+        + "\n    }, " + f"{primary_id}u, &error, {{\n"
+        + "\n".join(
+            f"        ExternDefinition{{{row['id']}u, ExternKind::k{row['kind']}, "
+            f"{row['argument_count']}u}}," for row in (externs or []))
+        + "\n    });\n}\n}  // namespace pto::model\n"
     )
 
 

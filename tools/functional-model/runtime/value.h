@@ -35,6 +35,8 @@ class BitVector {
   public:
     explicit BitVector(std::size_t width);
     static BitVector FromU64(std::size_t width, std::uint64_t value);
+    BigInteger ToUnsignedInteger() const;
+    BigInteger ToSignedInteger() const;
     std::size_t width() const;
     bool bit(std::size_t index) const;
     BitVector Slice(std::size_t start, std::size_t width) const;
