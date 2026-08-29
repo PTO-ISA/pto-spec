@@ -291,13 +291,25 @@ def run_case(
             )
     trace, result_hex = parse_output(completed.stdout)
     if result_hex != golden.read_bytes().hex():
-        raise LibraryRunError("standalone result does not match golden")
+        raise LibraryRunError(
+            "standalone result does not match golden: "
+            f"observed={result_hex} expected={golden.read_bytes().hex()}"
+        )
     run_manifest = {
         "schema": "linx-gfrun-asl-run-v1",
         "engine": "library",
         "model_descriptor_sha256": descriptor_digest,
         "model_descriptor": descriptor,
-        "elf": {"filename": elf.name, "entry": case["elf"]["entry"]},
+        "elf": {
+            "filename": elf.name,
+            "entry": case["elf"]["entry"],
+            "isa": {
+                "release": case["isa"]["version"],
+                "encoding_abi": case["isa"]["encoding_abi"],
+                "encoding_projection_sha256":
+                    case["isa"]["encoding_projection_sha256"],
+            },
+        },
         "stop_policy": case["stop_policy"],
         "outcome": {
             "status": "completed", "reason": "stop_pc",

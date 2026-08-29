@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-BLOCK-MODEL-STATE-BARG"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-BLOCK-MODEL-STATE-BARG","PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"]}
 // PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-TSO-001: PTO base SSR access,
 // architectural time, and data/instruction fences.
 
@@ -186,6 +186,12 @@ end;
 
 func ArchitectureCloseRequest(request_type: bits(4))
 begin
+    if InterceptFunctionalModelCloseRequest(request_type) then
+        if _LastFault == Fault_None then
+            _SystemBlockTerminalPending = TRUE;
+        end;
+        return;
+    end;
     if !ServiceRequestPermitted(CurrentACR(), request_type) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return;

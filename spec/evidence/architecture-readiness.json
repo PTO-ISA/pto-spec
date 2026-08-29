@@ -21227,6 +21227,7 @@
         "PTO-AVS-ARCH-CUBE-RESET-001",
         "PTO-AVS-ARCH-DATA-TYPES-FUNCTIONAL-MODEL-STATIC-001",
         "PTO-AVS-ARCH-DISPATCH-FUNCTIONAL-STEP-STATIC-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-RESET-STALE-003",
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-COMMAND-64-004",
@@ -21388,6 +21389,7 @@
       "test_ids": [
         "PTO-AVS-ARCH-DATA-TYPES-FUNCTIONAL-MODEL-STATIC-001",
         "PTO-AVS-ARCH-DISPATCH-FUNCTIONAL-STEP-STATIC-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-RESET-STALE-003",
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-COMMAND-64-004",
@@ -21417,13 +21419,44 @@
         "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0115"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
+        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0115",
+      "test_ids": [
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-RESET-STALE-003",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-DUPLICATE-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-PENDING-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-STALE-001",
+        "PTO-AVS-ARCH-PROFILE-FUNCTIONAL-MODEL-STATIC-001",
+        "PTO-AVS-SCALAR-MODEL-SYS-SEMANTICS-STATIC-001",
+        "PTO-AVS-SCALAR-TESTSCALARSYSTEM-EXECUTION-001",
+        "PTO-AVS-SCALAR-TESTSCALARSYSTEMDISPATCHEFFECTS-EXECUTION-001",
+        "PTO-AVS-SCALAR-TESTSERVICEREQUESTCONTROL-EXECUTION-001"
+      ],
+      "unit_ids": [
+        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-SCALAR-MODEL-SYS-SEMANTICS"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 108,
-      "sha256": "f06b4d5d95ade622309ea453dfc1867ede9280677cfbe9e1d52ffe7173f0c2a0"
+      "count": 109,
+      "sha256": "39bf321db429d87e3eea6b9c664a4dafaa25b7d7382cc49e8a14b42301d346b0"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21431,8 +21464,8 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "60001afdfb73595c9742d15e4a17c90dddc065fa6322a07d01c942fe0a27c3c9",
-      "test_count": 3748,
+      "sha256": "eb4289dd776f665cccf90732c396a7d667238d3eab51950a4f752ac12705853d",
+      "test_count": 3749,
       "unit_count": 858
     }
   },
@@ -21451,13 +21484,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 10,
-      "executable": 94,
+      "executable": 95,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 104,
+    "subject_count": 105,
     "validated_count": 0
   }
 }

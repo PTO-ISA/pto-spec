@@ -34,6 +34,17 @@ This page is a generated reference view of the normative ASL unit.
 // Memory response payloads and hosted ABI request meanings remain unspecified.
 // NDF-END: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
 
+// NDF-BEGIN: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// In an initialized functional-model profile only, ACRC request type 1 with
+// PE-local a7 equal to Linux exit_group request 94 MUST open host request 94
+// before ordinary service-request routing.  The immutable argument MUST be
+// a0, the captured result GPR MUST be a0, and the resume TPC MUST be the next
+// four-byte instruction.  Every other ACRC input MUST retain portable service
+// request semantics.  A matched request that cannot allocate a unique token
+// MUST fail closed with ExecutionStateCheck and no pending request.
+// NDF-END: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
+
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-RESET-001
 // ndf: kind=contract level=L1 layer=state status=accepted
 // InitializeFunctionalModel MUST perform the complete reference reset, select
@@ -125,6 +136,24 @@ begin
     _FunctionalHostRequestResultGPR = result_gpr as GPRIndex;
     _FunctionalHostRequestResumeTPC = resume_tpc;
     _FunctionalProfileSequence = _FunctionalProfileSequence + 1;
+    return TRUE;
+end;
+
+func InterceptFunctionalModelCloseRequest(
+    request_type: bits(4)) => boolean
+begin
+    if !_FunctionalModelInitialized || request_type != '0001' ||
+       ReadGPR(9) != Zeros{PTO_XLEN} + 94 then
+        return FALSE;
+    end;
+    let started = BeginFunctionalModelHostRequest(
+        Zeros{16} + 94,
+        ReadGPR(2),
+        2,
+        ReadTPC() + (Zeros{PTO_XLEN} + 4));
+    if !started then
+        SetFault(Fault_ExecutionStateCheck, ReadTPC());
+    end;
     return TRUE;
 end;
 

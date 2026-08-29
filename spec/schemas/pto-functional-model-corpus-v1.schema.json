@@ -53,7 +53,13 @@
         "expected_length_sequence", "expected_trace", "trace_requirements", "result", "golden"
       ],
       "properties": {
-        "id": {"enum": ["scalar_stop_pc", "block_64_stop_pc"]},
+        "id": {
+          "enum": [
+            "scalar_stop_pc",
+            "block_64_stop_pc",
+            "tile_tadd_stop_pc"
+          ]
+        },
         "isa": {
           "type": "object",
           "additionalProperties": false,

@@ -21,6 +21,7 @@ EM_LINX = 233
 PT_LOAD = 1
 PF_X = 1
 PF_W = 2
+SHT_NOTE = 7
 
 CASES = {
     "scalar_stop_pc": {
@@ -83,6 +84,87 @@ CASES = {
             "final_bundle_active": False,
         },
     },
+    "tile_tadd_stop_pc": {
+        "entry": 0x100,
+        "stop_pc": 0x134,
+        "max_steps": 18,
+        "lengths": [32, 16, 16, 16, 32, 32, 32, 16, 16, 16,
+                    32, 32, 16, 16, 16, 32, 32, 16],
+        "expected_trace": [
+            {"pre_tpc": 0x100, "post_tpc": 0x104, "pre_bpc": 0,
+             "post_bpc": 0x100, "raw_instruction_le": 0xC8011181,
+             "length_bits": 32, "sequence": 3},
+            {"pre_tpc": 0x104, "post_tpc": 0x106, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x007C,
+             "length_bits": 16, "sequence": 4},
+            {"pre_tpc": 0x106, "post_tpc": 0x108, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x407C,
+             "length_bits": 16, "sequence": 5},
+            {"pre_tpc": 0x108, "post_tpc": 0x10A, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x807C,
+             "length_bits": 16, "sequence": 6},
+            {"pre_tpc": 0x10A, "post_tpc": 0x10E, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x00008013,
+             "length_bits": 32, "sequence": 7},
+            {"pre_tpc": 0x10E, "post_tpc": 0x112, "pre_bpc": 0x100,
+             "post_bpc": 0x100, "raw_instruction_le": 0x000AEE13,
+             "length_bits": 32, "sequence": 8},
+            {"pre_tpc": 0x112, "post_tpc": 0x116, "pre_bpc": 0x100,
+             "post_bpc": 0x112, "raw_instruction_le": 0xC8019181,
+             "length_bits": 32, "sequence": 9},
+            {"pre_tpc": 0x116, "post_tpc": 0x118, "pre_bpc": 0x112,
+             "post_bpc": 0x112, "raw_instruction_le": 0x007C,
+             "length_bits": 16, "sequence": 10},
+            {"pre_tpc": 0x118, "post_tpc": 0x11A, "pre_bpc": 0x112,
+             "post_bpc": 0x112, "raw_instruction_le": 0x407C,
+             "length_bits": 16, "sequence": 11},
+            {"pre_tpc": 0x11A, "post_tpc": 0x11C, "pre_bpc": 0x112,
+             "post_bpc": 0x112, "raw_instruction_le": 0x807C,
+             "length_bits": 16, "sequence": 12},
+            {"pre_tpc": 0x11C, "post_tpc": 0x120, "pre_bpc": 0x112,
+             "post_bpc": 0x112, "raw_instruction_le": 0x000ACE13,
+             "length_bits": 32, "sequence": 13},
+            {"pre_tpc": 0x120, "post_tpc": 0x124, "pre_bpc": 0x112,
+             "post_bpc": 0x120, "raw_instruction_le": 0xC8111181,
+             "length_bits": 32, "sequence": 14},
+            {"pre_tpc": 0x124, "post_tpc": 0x126, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x007C,
+             "length_bits": 16, "sequence": 15},
+            {"pre_tpc": 0x126, "post_tpc": 0x128, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x407C,
+             "length_bits": 16, "sequence": 16},
+            {"pre_tpc": 0x128, "post_tpc": 0x12A, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x807C,
+             "length_bits": 16, "sequence": 17},
+            {"pre_tpc": 0x12A, "post_tpc": 0x12E, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x00008013,
+             "length_bits": 32, "sequence": 18},
+            {"pre_tpc": 0x12E, "post_tpc": 0x132, "pre_bpc": 0x120,
+             "post_bpc": 0x120, "raw_instruction_le": 0x00185E13,
+             "length_bits": 32, "sequence": 19},
+            {"pre_tpc": 0x132, "post_tpc": 0x134, "pre_bpc": 0x120,
+             "post_bpc": 0, "raw_instruction_le": 0,
+             "length_bits": 16, "sequence": 20},
+        ],
+        "result_address": 0xF00,
+        "golden": bytes.fromhex("32000000"),
+        "requirements": [
+            "PTO-REQ-FUNCTIONAL-FETCH-001",
+            "PTO-REQ-FUNCTIONAL-STEP-001",
+            "PTO-INST-TILE-TLOAD",
+            "PTO-INST-TILE-TADD",
+            "PTO-INST-TILE-TSTORE",
+        ],
+        "avs_ids": [
+            "PTO-AVS-TILE-TLOAD-DIRECT-001",
+            "PTO-AVS-TILE-TADD-ELEMENTS-001",
+            "PTO-AVS-TILE-TSTORE-DIRECT-001",
+        ],
+        "trace_requirements": {
+            "required_length_bits": 32,
+            "final_bundle_active": False,
+        },
+    },
 }
 
 
@@ -114,6 +196,85 @@ def checked_slice(data: bytes, offset: int, size: int, label: str) -> bytes:
     return data[offset : offset + size]
 
 
+def align4(value: int) -> int:
+    return (value + 3) & ~3
+
+
+def identity_note_source(isa_identity: dict[str, str]) -> str:
+    description = (
+        json.dumps(isa_identity, sort_keys=True, separators=(",", ":")).encode()
+        + b"\0"
+    )
+    values = ",".join(str(value) for value in description)
+    return "\n".join(
+        [
+            '.section .note.pto.corpus,"a",@note',
+            ".p2align 2",
+            ".long 4",
+            f".long {len(description)}",
+            ".long 1",
+            ".byte 80,84,79,0",
+            ".p2align 2",
+            f".byte {values}",
+            ".p2align 2",
+            "",
+        ]
+    )
+
+
+def parse_isa_note(
+    data: bytes, section_headers: list[tuple[int, ...]], shstrndx: int
+) -> dict[str, str]:
+    if shstrndx >= len(section_headers):
+        raise CorpusError("invalid section-name string table")
+    string_section = section_headers[shstrndx]
+    strings = checked_slice(
+        data, string_section[4], string_section[5], "section-name string table"
+    )
+    matches: list[dict[str, str]] = []
+    for section in section_headers:
+        name_offset, section_type, _, _, offset, size, _, _, _, _ = section
+        if name_offset >= len(strings):
+            raise CorpusError("section name lies outside string table")
+        end = strings.find(b"\0", name_offset)
+        if end < 0:
+            raise CorpusError("unterminated section name")
+        name = strings[name_offset:end].decode("utf-8")
+        if name != ".note.pto.isa" or section_type != SHT_NOTE:
+            continue
+        notes = checked_slice(data, offset, size, "PTO ISA note")
+        cursor = 0
+        while cursor < len(notes):
+            if len(notes) - cursor < 12:
+                raise CorpusError("truncated PTO ISA note header")
+            namesz, descsz, note_type = struct.unpack_from("<III", notes, cursor)
+            cursor += 12
+            note_name = checked_slice(notes, cursor, namesz, "PTO ISA note name")
+            cursor = align4(cursor + namesz)
+            description = checked_slice(
+                notes, cursor, descsz, "PTO ISA note description"
+            )
+            cursor = align4(cursor + descsz)
+            if note_name != b"PTO\0" or note_type != 1:
+                continue
+            if not description.endswith(b"\0"):
+                raise CorpusError("PTO ISA note description is not terminated")
+            try:
+                payload = json.loads(description[:-1])
+            except (UnicodeDecodeError, json.JSONDecodeError) as error:
+                raise CorpusError("invalid PTO ISA note JSON") from error
+            if not isinstance(payload, dict) or set(payload) != {
+                "release",
+                "encoding_abi",
+                "encoding_projection_sha256",
+            } or not all(isinstance(value, str) for value in payload.values()):
+                raise CorpusError("invalid PTO ISA note contract")
+            matches.append(payload)
+    if len(matches) != 1:
+        raise CorpusError("ELF must contain exactly one PTO ISA identity note")
+    return matches[0]
+
+
 def inspect_elf(path: Path) -> dict[str, object]:
     data = path.read_bytes()
     if len(data) < 64:
@@ -125,7 +286,7 @@ def inspect_elf(path: Path) -> dict[str, object]:
     elf_type, machine = header[1], header[2]
     entry, phoff, shoff = header[4], header[5], header[6]
     ehsize, phentsize, phnum = header[8], header[9], header[10]
-    shentsize, shnum = header[11], header[12]
+    shentsize, shnum, shstrndx = header[11], header[12], header[13]
     if elf_type != 2 or machine != EM_LINX or ehsize != 64:
         raise CorpusError("unexpected ELF type, machine, or header size")
     if phentsize != 56 or phnum == 0:
@@ -177,6 +338,7 @@ def inspect_elf(path: Path) -> dict[str, object]:
         )
         for index in range(shnum)
     ]
+    isa_note = parse_isa_note(data, section_headers, shstrndx)
     for section in section_headers:
         _, section_type, _, _, offset, size, link, _, _, entry_size = section
         if section_type != 2:
@@ -210,6 +372,7 @@ def inspect_elf(path: Path) -> dict[str, object]:
         "segments": segments,
         "result_address": symbols["cross_model_result"][0],
         "result_size": symbols["cross_model_result_size"][0],
+        "isa": isa_note,
     }
 
 
@@ -247,13 +410,22 @@ def build_case(
     elf = artifact / f"{name}.elf"
     with tempfile.TemporaryDirectory(prefix=f"pto-{name}-") as temporary:
         object_path = Path(temporary) / f"{name}.o"
+        identity_source = Path(temporary) / "identity.S"
+        identity_object = Path(temporary) / "identity.o"
         built_elf = Path(temporary) / f"{name}.elf"
+        identity_source.write_text(identity_note_source(isa_identity), encoding="utf-8")
         subprocess.run(
             [str(clang), "-target", "linx64-unknown-elf", "-c", "-nostdlib", "-o", object_path, source],
             check=True,
         )
         subprocess.run(
-            [str(lld), "-m", "elf64linx", "-T", linker, "-o", built_elf, object_path],
+            [str(clang), "-target", "linx64-unknown-elf", "-c", "-nostdlib",
+             "-o", identity_object, identity_source],
+            check=True,
+        )
+        subprocess.run(
+            [str(lld), "-m", "elf64linx", "-T", linker, "-o", built_elf,
+             object_path, identity_object],
             check=True,
         )
         shutil.copy2(built_elf, elf)
@@ -263,6 +435,8 @@ def build_case(
         raise CorpusError(f"{name} entry mismatch")
     if observed["result_address"] != config["result_address"]:
         raise CorpusError(f"{name} result address mismatch")
+    if observed["isa"] != isa_identity:
+        raise CorpusError(f"{name} PTO ISA identity mismatch")
     stack_base = 0xE00
     stack_top = 0xF00
     for segment in observed["segments"]:

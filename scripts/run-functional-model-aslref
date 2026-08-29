@@ -164,7 +164,16 @@ def oracle_run_manifest(
         "engine": "aslref",
         "model_descriptor_sha256": descriptor_sha256,
         "model_descriptor": descriptor,
-        "elf": {"filename": case["elf"]["filename"], "entry": case["elf"]["entry"]},
+        "elf": {
+            "filename": case["elf"]["filename"],
+            "entry": case["elf"]["entry"],
+            "isa": {
+                "release": case["isa"]["version"],
+                "encoding_abi": case["isa"]["encoding_abi"],
+                "encoding_projection_sha256":
+                    case["isa"]["encoding_projection_sha256"],
+            },
+        },
         "stop_policy": case["stop_policy"],
         "outcome": {
             "status": "completed",

@@ -6,10 +6,10 @@ PHDRS
 }
 SECTIONS
 {
-  . = 0x280;
+  . = 0x100;
   .text : { *(.text*) } :text
   .note.pto.isa : { KEEP(*(.note.pto.corpus)) } :text
-  . = 0x380;
+  . = 0xf00;
   .result : { *(.result*) } :result
   /DISCARD/ : { *(.note.pto.isa) }
 }

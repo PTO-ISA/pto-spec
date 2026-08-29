@@ -8558,12 +8558,47 @@
         "0.58.5"
       ],
       "title": "Functional-model step observation v1"
+    },
+    {
+      "accepted": "2026-08-30",
+      "affected_ndf": [
+        "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
+        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-SCALAR-MODEL-SYS-SEMANTICS"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "3fe5ae12e8c4ef841c93e5ed5ef46caac01b03a4",
+      "created": "2026-08-30",
+      "id": "ADR-0115",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/150",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0115-functional-model-exit-group-profile.md",
+      "rejected": null,
+      "release_boundary": true,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Functional-model exit_group profile binding"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 108
+    "record_count": 109
   }
 }

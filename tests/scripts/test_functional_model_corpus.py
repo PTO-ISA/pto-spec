@@ -75,20 +75,29 @@ class FunctionalModelCorpusTest(unittest.TestCase):
     def test_checked_sources_contain_exact_bringup_encodings(self) -> None:
         scalar = (CORPUS / "scalar_stop_pc.S").read_text(encoding="utf-8")
         block = (CORPUS / "block_64_stop_pc.S").read_text(encoding="utf-8")
+        tile = (CORPUS / "tile_tadd_stop_pc.S").read_text(encoding="utf-8")
         self.assertIn("0x96,0x0a,0xd6,0x13,0x85,0x81,0x20,0x00", scalar)
         self.assertIn("0x0e,0x80,0x95,0xc0,0x00,0x00,0x16,0x00", scalar)
         self.assertIn("0x69,0xa0,0xc1,0x03", scalar)
         self.assertIn("0x11,0x00,0x00,0x00", block)
         self.assertIn("0x0f,0x00,0x00,0x00,0x01,0x00,0x00,0x00", block)
         self.assertIn("0xa5,0x5a,0x00,0x00", block)
+        self.assertIn("0x81,0x11,0x01,0xc8", tile)
+        self.assertIn("0x13,0xce,0x0a,0x00", tile)
+        self.assertIn("0x13,0x5e,0x18,0x00", tile)
 
     def test_case_contract_uses_real_length_bits_and_golden(self) -> None:
         scalar = self.builder.CASES["scalar_stop_pc"]
         block = self.builder.CASES["block_64_stop_pc"]
+        tile = self.builder.CASES["tile_tadd_stop_pc"]
         self.assertEqual(scalar["lengths"], [16, 16, 32, 48, 16, 32])
         self.assertEqual(scalar["golden"], bytes.fromhex("19000000"))
         self.assertEqual(block["lengths"], [32, 64])
         self.assertEqual(block["golden"], bytes.fromhex("a55a0000"))
+        self.assertEqual(tile["lengths"],
+                         [32, 16, 16, 16, 32, 32, 32, 16, 16, 16,
+                          32, 32, 16, 16, 16, 32, 32, 16])
+        self.assertEqual(tile["golden"], bytes.fromhex("32000000"))
         known_ids = "\n".join(
             path.read_text(encoding="utf-8", errors="replace")
             for path in (ROOT / "tests" / "asl").rglob("*.asl")

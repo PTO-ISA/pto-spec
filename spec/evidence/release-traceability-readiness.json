@@ -13525,6 +13525,19 @@
     },
     {
       "executable": false,
+      "id": "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
+      "owners": [
+        "asl/arch/profile/functional-model.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-0115"
+      ],
+      "tests": [
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004"
+      ]
+    },
+    {
+      "executable": false,
       "id": "PTO-REQ-FUNCTIONAL-FETCH-001",
       "owners": [
         "asl/arch/memory-model/instruction-fetch.asl"
@@ -13556,7 +13569,8 @@
       ],
       "readiness_subjects": [
         "ADR-0111",
-        "ADR-0114"
+        "ADR-0114",
+        "ADR-0115"
       ],
       "tests": [
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
@@ -16684,7 +16698,7 @@
     "asl/arch/profile/applicability.asl": "b3734d16ed92c3e7f9d8a99047009c8b0996cbeb88a087296c12696d9965de41",
     "asl/arch/profile/e8m0-conversion.asl": "e46324c90eff21e4270558e315c684089f11b6d6a47f6dc4ee0b30411761fd57",
     "asl/arch/profile/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
-    "asl/arch/profile/functional-model.asl": "7d8d83708e00c0c4c20b38056179ec99d3285e2f9271dbfab2705c2f7e5c754f",
+    "asl/arch/profile/functional-model.asl": "be0cda2b7ba32aa0c1a0a03293742fab9b70b5e0dbd3558b4b71da8ab2da6ff4",
     "asl/arch/profile/indexed-memory-lane-choice.asl": "d4019525ffb08129714a07bd1c871c970dcfe33c5c14741e1582be62fe4dde4c",
     "asl/arch/profile/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
     "asl/arch/profile/matrix-quantization.asl": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440",
@@ -17279,7 +17293,7 @@
     "asl/scalar/model/fsu/arithmetic.asl": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288",
     "asl/scalar/model/fsu/profile.asl": "c429ac19ea648dd0b0180a736af1fcd3990cb949b2397ca2e33003b3da593295",
     "asl/scalar/model/sys/registers.asl": "9ca955860f45c7660bbc1a8dce879ad77c945e8504ec08d607ffb96d2a708cbb",
-    "asl/scalar/model/sys/semantics.asl": "fbea73b3fb29bcb2cee5d7027c0a6a363d156ba514d03bf86a5c8f33438da754",
+    "asl/scalar/model/sys/semantics.asl": "4acba10a450ca511925dec1462b0579cf93aeb6c2b6ed546ef6701ea2f3d395b",
     "asl/scalar/model/types/operands.asl": "f1bfb9a3ea9012c6895705aa0ce14c20eb17976bf0a98b1f31290786bd0c5fcb",
     "asl/scalar/model/types/operations.asl": "ace26d2dd88298716d8dafaacb18b3858639c87dc2caa0326327e703b3adcf88",
     "asl/scalar/sys/ACRC.asl": "1f76f4efc0440797fb02adb3677f8a5372dbf5689cc67071c1fa67c5ced30404",
@@ -17542,7 +17556,7 @@
     "docs/arch/profile/applicability.md": "b9bb5e1a0402d73367969fa54b60bd8f85a8d30a77d3f4b494b8915c28beea3f",
     "docs/arch/profile/e8m0-conversion.md": "5904a9f4af89a6a049a27857559aa5f2b6d71347f04865c66949627f34d35b7e",
     "docs/arch/profile/extension-first-use.md": "fb16e18d1c162fed1f5d1d64bb5c422c21e30a33a1824fa00d9a1b9a04002f52",
-    "docs/arch/profile/functional-model.md": "b679989cd3f968b715bd485c7e2542021c2e09fe9cb1c3fc851be62d247ecc34",
+    "docs/arch/profile/functional-model.md": "b9731ff5c14ac181ab0760d7a52dbec9c8d1a1c7a5bddcc3a4faf96fde0ccbc0",
     "docs/arch/profile/indexed-memory-lane-choice.md": "53c88a2080016309d456bc8548d169061f2154f3cde546c27cd895383dc806f0",
     "docs/arch/profile/matrix-postprocess.md": "6c620e8f326fa991a2a35cf3d9aad4e1e9b9321ea63bc78e8fdabdfb17802378",
     "docs/arch/profile/matrix-quantization.md": "0af8e5da79bf30a369992e5eecdd4d7e36603f8eb6140ed7b5952d3d5962acd8",
@@ -18137,7 +18151,7 @@
     "docs/scalar/model/fsu/arithmetic.md": "b153847a3fac645297eb00f768790d62809cf47b4e8c0c474ee356a9b0eb71b8",
     "docs/scalar/model/fsu/profile.md": "e55fee963910a53f515f95a3e4fdcf9fbf7fa86334a949842a4c3f3ce74c0477",
     "docs/scalar/model/sys/registers.md": "69ceaf6dbaa025f7b36fad552923f09d7f53bbef11c9cdb2b5a875ea6364d908",
-    "docs/scalar/model/sys/semantics.md": "761bd37dcea7d78a626d63b620b10980232946a9e4a4bb3ba458aa8c8d38bb2c",
+    "docs/scalar/model/sys/semantics.md": "c88588ed0748f2c5ba8e5b4d953f69a0ea6211ff8918df997d1f9614e64f43a1",
     "docs/scalar/model/types/operands.md": "dbe5436afc2eecd8c5045770c3b4c9df49a27aae7c1473ab274299e086592fef",
     "docs/scalar/model/types/operations.md": "0532e2848bac05c75f6a8050887d050e2dcd2dacfc9d8c7cb88e6dab17230f45",
     "docs/scalar/sys/ACRC.md": "3794685e3565e0d4b7aafffa194af6d6f5f224399bcd339065f00f9d3432d3c4",
@@ -18348,7 +18362,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "b7cbf992892850b441e40084e40a11e9cfd4bf2bcb977e958aa1af58a56bf586",
+    "spec/evidence/adr-index.json": "5fdd57ab609b359fd75b3b25a6cd2e6b43a87828b2009a88c4328efa5a4cdff0",
     "spec/evidence/instruction-contract-closure.json": "0bdb33460b56f30b54b898a75136515dc6d26621d5eb17f5859acad5668a156f",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -18479,6 +18493,7 @@
     "tests/asl/arch/profile/extension-first-use/arch-exec-extension-first-use-default-001.asl": "0e11de263b9695082f286ea7a8114971b35803a84d31683c442547d36c22e568",
     "tests/asl/arch/profile/extension-first-use/arch-static-extension-first-use-contract-001.asl": "6255e5a5376b484598806d2d6ec01085ebd04110b5f65571c74860c9bca3b489",
     "tests/asl/arch/profile/functional-model/arch-bound-functional-model-token-exhaustion-002.asl": "6a68a771a057398472fd9bea96889ac599b56b1afdd89014d8336bbc3369b088",
+    "tests/asl/arch/profile/functional-model/arch-exec-functional-model-exit-group-004.asl": "5114434522542b0c60b4e3410cb70cae03ac26cea889b3f596649bf44d89d34d",
     "tests/asl/arch/profile/functional-model/arch-fault-functional-model-token-reset-stale-003.asl": "a0be2340ff68dbd59ffade7872dba1fbd9e10b6b395d2828cd17e4058b0907f2",
     "tests/asl/arch/profile/functional-model/arch-static-functional-model-contract-001.asl": "1f990e114c5c8583f9d3028026ad0c1eedd20a5ec54091231abd52c401f44d13",
     "tests/asl/arch/profile/indexed-memory-lane-choice/arch-static-indexed-memory-lane-choice-contract-001.asl": "969a7cebf01bbcbc4d79de70f44af505b9539980ae0cfd925a8d00b2803b06e8",
@@ -22105,9 +22120,9 @@
     "mnemonic_count": 634,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1027,
+    "requirement_count": 1028,
     "status": "closed",
-    "test_count": 3748,
+    "test_count": 3749,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -30118,6 +30133,16 @@
       ],
       "sha256": "3b7db0a37c8f559843133794170f537da60226be7a810781e19068347e590634",
       "source": "asl/arch/data-types/formats/fp64.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/functional-model/arch-exec-functional-model-exit-group-004.asl",
+      "requirements": [
+        "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001"
+      ],
+      "sha256": "5114434522542b0c60b4e3410cb70cae03ac26cea889b3f596649bf44d89d34d",
+      "source": "asl/arch/profile/functional-model.asl"
     },
     {
       "id": "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
@@ -60890,15 +60915,18 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-0111",
-        "ADR-0114"
+        "ADR-0114",
+        "ADR-0115"
       ],
       "semantic_tests": [
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-RESET-STALE-003"
       ],
       "source": "asl/arch/profile/functional-model.asl",
       "surface": "arch",
       "tests": [
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-RESET-STALE-003",
         "PTO-AVS-ARCH-PROFILE-FUNCTIONAL-MODEL-STATIC-001"
@@ -79895,7 +79923,9 @@
       "documentation": "docs/scalar/model/sys/semantics.md",
       "id": "PTO-SCALAR-MODEL-SYS-SEMANTICS",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0115"
+      ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-TESTSCALARSYSTEM-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEMDISPATCHEFFECTS-EXECUTION-001",
