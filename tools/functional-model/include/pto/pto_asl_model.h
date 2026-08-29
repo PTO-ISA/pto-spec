@@ -87,6 +87,7 @@ typedef struct {
     uint32_t abi_version;
     uint32_t struct_size;
     uint64_t flags;
+    uint8_t expected_descriptor_sha256[32];
     pto_memory_callbacks_t memory;
 } pto_model_config_t;
 
@@ -140,6 +141,9 @@ pto_status_t pto_model_complete_host_request(
 pto_status_t pto_model_last_error(pto_model_t *model,
                                   char *buffer,
                                   uint64_t *inout_size);
+pto_status_t pto_model_descriptor_json(char *buffer, uint64_t *inout_size);
+pto_status_t pto_model_descriptor_sha256(uint8_t *buffer,
+                                         uint64_t *inout_size);
 
 #ifdef __cplusplus
 }

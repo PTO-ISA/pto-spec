@@ -1,6 +1,7 @@
 #include "pto/pto_asl_model.h"
 
 #include "runtime_model.h"
+#include "pto_generated_descriptor.h"
 #include "pto_generated_runtime_image.h"
 
 #include <algorithm>
@@ -23,6 +24,32 @@ bool ValidStruct(const T *value) {
     return value != nullptr &&
            value->abi_version == PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION &&
            value->struct_size == sizeof(T);
+}
+
+bool DescriptorMatches(const std::uint8_t expected[32]) {
+    const auto &actual = pto::model::GeneratedDescriptorSha256();
+    return std::equal(actual.begin(), actual.end(), expected);
+}
+
+pto_status_t CopyOut(const std::uint8_t *source,
+                     std::uint64_t source_size,
+                     bool append_nul,
+                     void *buffer,
+                     std::uint64_t *inout_size) {
+    if (inout_size == nullptr) {
+        return PTO_STATUS_INVALID_ARGUMENT;
+    }
+    const std::uint64_t required = source_size + (append_nul ? 1U : 0U);
+    if (buffer == nullptr || *inout_size < required) {
+        *inout_size = required;
+        return PTO_STATUS_BUFFER_TOO_SMALL;
+    }
+    std::memcpy(buffer, source, static_cast<std::size_t>(source_size));
+    if (append_nul) {
+        static_cast<char *>(buffer)[source_size] = '\0';
+    }
+    *inout_size = required;
+    return PTO_STATUS_OK;
 }
 
 pto::model::MemoryCallbacks BindCallbacks(
@@ -76,6 +103,9 @@ extern "C" pto_status_t pto_model_create(const pto_model_config_t *config,
     if (!ValidStruct(config) || !ValidStruct(&config->memory)) {
         return PTO_STATUS_ABI_MISMATCH;
     }
+    if (!DescriptorMatches(config->expected_descriptor_sha256)) {
+        return PTO_STATUS_ABI_MISMATCH;
+    }
     if (config->flags != 0 || config->memory.reset == nullptr ||
         config->memory.probe == nullptr || config->memory.read == nullptr ||
         config->memory.commit == nullptr) {
@@ -93,6 +123,19 @@ extern "C" pto_status_t pto_model_create(const pto_model_config_t *config,
     } catch (...) {
         return PTO_STATUS_INTERNAL_ERROR;
     }
+}
+
+extern "C" pto_status_t pto_model_descriptor_json(
+    char *buffer, std::uint64_t *inout_size) {
+    return CopyOut(pto::model::GeneratedDescriptorData(),
+                   pto::model::GeneratedDescriptorSize(), true, buffer,
+                   inout_size);
+}
+
+extern "C" pto_status_t pto_model_descriptor_sha256(
+    std::uint8_t *buffer, std::uint64_t *inout_size) {
+    const auto &digest = pto::model::GeneratedDescriptorSha256();
+    return CopyOut(digest.data(), digest.size(), false, buffer, inout_size);
 }
 
 extern "C" void pto_model_destroy(pto_model_t *model) { delete model; }

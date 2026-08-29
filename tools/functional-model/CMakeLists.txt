@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 project(PTOFunctionalModelExperimental LANGUAGES C CXX)
 
 include(CTest)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 option(PTO_FUNCTIONAL_MODEL_SANITIZERS
@@ -20,12 +22,21 @@ set(PTO_GENERATED_RESET_SOURCE
     "${PTO_GENERATED_ROOT}/pto_generated_reset_image.cpp")
 set(PTO_GENERATED_CASES_HEADER
     "${PTO_GENERATED_ROOT}/pto_generated_determine_length_cases.h")
+set(PTO_GENERATED_DESCRIPTOR
+    "${PTO_GENERATED_ROOT}/share/pto/model-descriptor.json")
+set(PTO_GENERATED_DESCRIPTOR_READINESS
+    "${PTO_GENERATED_ROOT}/descriptor-readiness.json")
+set(PTO_GENERATED_DESCRIPTOR_HEADER
+    "${PTO_GENERATED_ROOT}/pto_generated_descriptor.h")
+set(PTO_GENERATED_DESCRIPTOR_SOURCE
+    "${PTO_GENERATED_ROOT}/pto_generated_descriptor.cpp")
 
 file(GLOB_RECURSE PTO_ASL_SOURCES CONFIGURE_DEPENDS
     "${PTO_REPOSITORY_ROOT}/asl/*.asl")
 
 add_custom_command(
     OUTPUT "${PTO_GENERATED_MIR}"
+    BYPRODUCTS "${PTO_GENERATED_ROOT}/mir-readiness.json"
     COMMAND "${Python3_EXECUTABLE}"
             "${PTO_REPOSITORY_ROOT}/scripts/generate-functional-model-inventory"
             --output "${PTO_GENERATED_ROOT}/asl-constructs.json"
@@ -41,6 +52,7 @@ add_custom_command(
 
 add_custom_command(
     OUTPUT "${PTO_GENERATED_EXECUTABLE_MIR}"
+    BYPRODUCTS "${PTO_GENERATED_ROOT}/executable-mir-readiness.json"
     COMMAND "${Python3_EXECUTABLE}"
             "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/generate-executable-mir"
             --input "${PTO_GENERATED_MIR}"
@@ -76,7 +88,49 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/determine_length_cases.json"
     COMMENT "Lowering the real DeterminePTOInstructionLength entrypoint")
 
+add_custom_command(
+    OUTPUT
+        "${PTO_GENERATED_DESCRIPTOR}"
+        "${PTO_GENERATED_DESCRIPTOR_READINESS}"
+    COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/generate-descriptor"
+            --pto-mir "${PTO_GENERATED_MIR}"
+            --executable-image "${PTO_GENERATED_EXECUTABLE_MIR}"
+            --mir-readiness "${PTO_GENERATED_ROOT}/mir-readiness.json"
+            --executable-readiness
+            "${PTO_GENERATED_ROOT}/executable-mir-readiness.json"
+            --output "${PTO_GENERATED_DESCRIPTOR}"
+            --readiness-output "${PTO_GENERATED_DESCRIPTOR_READINESS}"
+    DEPENDS
+        "${PTO_GENERATED_MIR}"
+        "${PTO_GENERATED_EXECUTABLE_MIR}"
+        "${PTO_GENERATED_ROOT}/mir-readiness.json"
+        "${PTO_GENERATED_ROOT}/executable-mir-readiness.json"
+        "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/generate-descriptor"
+        "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/descriptor.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/runtime-capabilities-v1.json"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/pto/pto_asl_model.h"
+        "${PTO_REPOSITORY_ROOT}/spec/release-manifest.json"
+        "${PTO_REPOSITORY_ROOT}/spec/schemas/pto-functional-model-descriptor-v1.schema.json"
+    WORKING_DIRECTORY "${PTO_REPOSITORY_ROOT}"
+    COMMENT "Generating clean-tree functional-model descriptor")
+
+add_custom_command(
+    OUTPUT
+        "${PTO_GENERATED_DESCRIPTOR_HEADER}"
+        "${PTO_GENERATED_DESCRIPTOR_SOURCE}"
+    COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/embed_descriptor.py"
+            --input "${PTO_GENERATED_DESCRIPTOR}"
+            --header "${PTO_GENERATED_DESCRIPTOR_HEADER}"
+            --source "${PTO_GENERATED_DESCRIPTOR_SOURCE}"
+    DEPENDS
+        "${PTO_GENERATED_DESCRIPTOR}"
+        "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/embed_descriptor.py"
+    COMMENT "Embedding functional-model descriptor identity")
+
 add_library(pto_asl_model STATIC
+    "${PTO_GENERATED_DESCRIPTOR_SOURCE}"
     "${PTO_GENERATED_RUNTIME_SOURCE}"
     "${PTO_GENERATED_RESET_SOURCE}"
     runtime/c_api.cpp
@@ -87,7 +141,9 @@ add_library(pto_asl_model STATIC
     runtime/value.cpp)
 target_compile_features(pto_asl_model PUBLIC cxx_std_20)
 target_include_directories(pto_asl_model
-    PUBLIC include
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
     PRIVATE runtime "${PTO_GENERATED_ROOT}")
 target_compile_options(pto_asl_model PRIVATE
     -Wall -Wextra -Wpedantic -Werror)
@@ -98,6 +154,30 @@ if(PTO_FUNCTIONAL_MODEL_SANITIZERS AND
         -fsanitize=address,undefined -fno-omit-frame-pointer)
     target_link_options(pto_asl_model PUBLIC -fsanitize=address,undefined)
 endif()
+
+install(TARGETS pto_asl_model
+    EXPORT PTOASLModelTargets
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+install(FILES "${PTO_GENERATED_DESCRIPTOR}"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/pto")
+install(EXPORT PTOASLModelTargets
+    FILE PTOASLModelTargets.cmake
+    NAMESPACE PTOASLModel::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/PTOASLModel")
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/PTOASLModelConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/PTOASLModelConfig.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/PTOASLModel")
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/PTOASLModelConfigVersion.cmake"
+    VERSION 0.3.1
+    COMPATIBILITY ExactVersion)
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/PTOASLModelConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/PTOASLModelConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/PTOASLModel")
 
 if(BUILD_TESTING)
     add_executable(pto_asl_model_abi_c_test tests/abi_c.c)
@@ -140,4 +220,11 @@ if(BUILD_TESTING)
                 --image "${PTO_GENERATED_EXECUTABLE_MIR}"
                 --cases
                 "${CMAKE_CURRENT_SOURCE_DIR}/tests/determine_length_cases.json")
+    add_test(
+        NAME pto_asl_model_install_package
+        COMMAND "${Python3_EXECUTABLE}"
+                "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_install_package.py"
+                --cmake "${CMAKE_COMMAND}"
+                --build-dir "${CMAKE_CURRENT_BINARY_DIR}"
+                --consumer "${CMAKE_CURRENT_SOURCE_DIR}/tests/package_consumer")
 endif()

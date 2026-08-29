@@ -41,6 +41,15 @@ static pto_status_t commit_memory(void *user_data,
 
 int main(void) {
     uint8_t memory[16] = {0};
+    uint64_t descriptor_size = 0;
+    uint64_t digest_size = 0;
+    assert(pto_model_descriptor_json(NULL, &descriptor_size) ==
+           PTO_STATUS_BUFFER_TOO_SMALL);
+    assert(descriptor_size > 1);
+    assert(pto_model_descriptor_sha256(NULL, &digest_size) ==
+           PTO_STATUS_BUFFER_TOO_SMALL);
+    assert(digest_size == 32);
+
     pto_model_config_t config = {0};
     config.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
     config.struct_size = sizeof(config);
@@ -51,6 +60,14 @@ int main(void) {
     config.memory.probe = probe_memory;
     config.memory.read = read_memory;
     config.memory.commit = commit_memory;
+
+    pto_model_t *invalid = NULL;
+    assert(pto_model_create(&config, &invalid) == PTO_STATUS_ABI_MISMATCH);
+    assert(invalid == NULL);
+    digest_size = sizeof(config.expected_descriptor_sha256);
+    assert(pto_model_descriptor_sha256(config.expected_descriptor_sha256,
+                                       &digest_size) == PTO_STATUS_OK);
+    assert(digest_size == 32);
 
     pto_model_t *model = NULL;
     assert(pto_model_create(&config, &model) == PTO_STATUS_OK);
@@ -106,7 +123,6 @@ int main(void) {
     assert(reset_status == PTO_STATUS_OK);
 
     config.abi_version = 0;
-    pto_model_t *invalid = NULL;
     assert(pto_model_create(&config, &invalid) == PTO_STATUS_ABI_MISMATCH);
     assert(invalid == NULL);
     config.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
