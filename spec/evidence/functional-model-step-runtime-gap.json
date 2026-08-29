@@ -24,7 +24,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "ffa7beb2456b875abbffe5ed31e304232ae0141a4510986098a9eac62fab86b4"
+      "sha256": "f929b4158410da800be5fe15c53be9f7763a817e3e17864d21e55ccd362f3538"
     }
   },
   "minimal_scalar_elf": {
@@ -29264,6 +29264,7 @@
     "constructors": {
       "expressions": [
         "E_Binop",
+        "E_Call",
         "E_Literal",
         "E_Slice",
         "E_Var"
@@ -29283,6 +29284,7 @@
       "statements": [
         "SB_ASL",
         "S_Assert",
+        "S_Call",
         "S_Cond",
         "S_Return",
         "S_Seq"
@@ -29294,12 +29296,15 @@
     "emitter_bytecode_opcodes": [
       "kAssertTrue",
       "kBranchIfFalse",
+      "kCallProcedure",
+      "kCallValue",
       "kEqual",
       "kJump",
       "kLoadArgumentBits",
       "kLoadBitsImmediate",
       "kLoadIntegerImmediate",
       "kNotEqual",
+      "kPushArgument",
       "kReturnValue",
       "kSliceBits"
     ],
@@ -29423,12 +29428,6 @@
         "name": "E_Array",
         "sample_function_id": 4826,
         "sample_node_id": 227704
-      },
-      {
-        "count": 13950,
-        "name": "E_Call",
-        "sample_function_id": 5413,
-        "sample_node_id": 188
       },
       {
         "count": 416,
@@ -29657,12 +29656,6 @@
         "name": "S_Assign",
         "sample_function_id": 258,
         "sample_node_id": 433
-      },
-      {
-        "count": 1087,
-        "name": "S_Call",
-        "sample_function_id": 4808,
-        "sample_node_id": 4139
       },
       {
         "count": 4471,

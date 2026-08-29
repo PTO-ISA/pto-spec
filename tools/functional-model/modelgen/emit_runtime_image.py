@@ -114,6 +114,14 @@ class CompactArena:
         value = self.nodes[identifier][1]
         return None if value is None else int(value)
 
+    def record(self, identifier: int) -> dict[str, int]:
+        if self.kind(identifier) != "record":
+            raise ModelgenError(f"runtime node {identifier} must be a record")
+        return {
+            str(self.fields[int(field_id)]): int(value)
+            for field_id, value in self.nodes[identifier][1]
+        }
+
     def atom(self, identifier: int, expected: str) -> object:
         node = self.nodes[identifier]
         if self.kind(identifier) != "atom":
@@ -128,11 +136,17 @@ class CompactArena:
 
 
 class Compiler:
-    def __init__(self, arena: CompactArena, argument_names: list[str]):
+    def __init__(
+        self,
+        arena: CompactArena,
+        argument_names: list[str],
+        function_ids: dict[str, int] | None = None,
+    ):
         self.arena = arena
         self.argument_ids = {name: index for index, name in enumerate(argument_names)}
         self.instructions: list[dict[str, int | str]] = []
         self.next_local = 0
+        self.function_ids = function_ids or {}
 
     def local(self) -> int:
         result = self.next_local
@@ -257,6 +271,25 @@ class Compiler:
                 address=right,
             )
             return target
+        if name == "E_Call":
+            fields = self.arena.record(self.single_argument(identifier, "E_Call"))
+            target_name = str(self.arena.atom(fields["name"], "string"))
+            if target_name not in self.function_ids:
+                raise ModelgenError(
+                    f"unresolved runtime call {target_name!r} at node {identifier}"
+                )
+            values = self.arena.sequence(fields["args"], "list")
+            values.extend(self.arena.sequence(fields["params"], "list"))
+            for value in values:
+                self.emit("kPushArgument", local=self.expression(value))
+            result = self.local()
+            self.emit(
+                "kCallValue",
+                local=result,
+                binding=self.function_ids[target_name],
+                immediate=len(values),
+            )
+            return result
         raise ModelgenError(f"unsupported reachable runtime expression {name}")
 
     def statement(self, identifier: int) -> bool:
@@ -277,6 +310,23 @@ class Compiler:
             self.emit(
                 "kAssertTrue",
                 local=self.expression(self.single_argument(identifier, "S_Assert")),
+            )
+            return False
+        if name == "S_Call":
+            fields = self.arena.record(self.single_argument(identifier, "S_Call"))
+            target_name = str(self.arena.atom(fields["name"], "string"))
+            if target_name not in self.function_ids:
+                raise ModelgenError(
+                    f"unresolved runtime call {target_name!r} at node {identifier}"
+                )
+            values = self.arena.sequence(fields["args"], "list")
+            values.extend(self.arena.sequence(fields["params"], "list"))
+            for value in values:
+                self.emit("kPushArgument", local=self.expression(value))
+            self.emit(
+                "kCallProcedure",
+                binding=self.function_ids[target_name],
+                immediate=len(values),
             )
             return False
         if name == "S_Cond":
@@ -347,7 +397,11 @@ def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
     if _type_bits_width(arena, arguments[0]["type_node"]) != 16:
         raise ModelgenError("runtime entrypoint argument must be bits(16)")
     argument_name = str(strings[arguments[0]["name_symbol_id"]])
-    compiler = Compiler(arena, [argument_name])
+    function_ids = {
+        str(strings[row["name_symbol_id"]]): int(row["id"])
+        for row in tables["functions"]
+    }
+    compiler = Compiler(arena, [argument_name], function_ids)
     compiler.statement(function["body_node"])
     if not compiler.instructions or not any(
         row["opcode"] == "kReturnValue" for row in compiler.instructions
