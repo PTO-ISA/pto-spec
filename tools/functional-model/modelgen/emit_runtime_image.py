@@ -142,6 +142,7 @@ class Compiler:
         argument_names: list[str],
         function_ids: dict[str, int] | None = None,
         global_ids: dict[str, int] | None = None,
+        field_ids: dict[str, int] | None = None,
     ):
         self.arena = arena
         self.argument_ids = {name: index for index, name in enumerate(argument_names)}
@@ -150,6 +151,7 @@ class Compiler:
         self.function_ids = function_ids or {}
         self.global_ids = global_ids or {}
         self.local_ids: dict[str, int] = {}
+        self.field_ids = field_ids or {}
 
     def local(self) -> int:
         result = self.next_local
@@ -319,6 +321,19 @@ class Compiler:
             result = self.local()
             self.emit("kGetArray", local=result, binding=base, address=index)
             return result
+        if name == "E_GetField":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "E_GetField"), "tuple")
+            if len(values) != 2:
+                raise ModelgenError(f"malformed E_GetField at node {identifier}")
+            field = str(self.arena.atom(values[1], "string"))
+            if field not in self.field_ids:
+                raise ModelgenError(f"unknown record field {field!r}")
+            base = self.expression(values[0])
+            result = self.local()
+            self.emit("kGetField", local=result, binding=base,
+                      immediate=self.field_ids[field])
+            return result
         raise ModelgenError(f"unsupported reachable runtime expression {name}")
 
     def read_lvalue(self, identifier: int) -> int:
@@ -345,6 +360,17 @@ class Compiler:
             target = self.local()
             self.emit("kGetArray", local=target, binding=base, address=index)
             return target
+        if name == "LE_SetField":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "LE_SetField"), "tuple")
+            base = self.read_lvalue(values[0])
+            field = str(self.arena.atom(values[1], "string"))
+            if field not in self.field_ids:
+                raise ModelgenError(f"unknown record field {field!r}")
+            target = self.local()
+            self.emit("kGetField", local=target, binding=base,
+                      immediate=self.field_ids[field])
+            return target
         raise ModelgenError(f"unsupported runtime lvalue {name} at node {identifier}")
 
     def assign_lvalue(self, identifier: int, source: int) -> None:
@@ -368,6 +394,17 @@ class Compiler:
             base = self.read_lvalue(values[0])
             index = self.expression(values[1])
             self.emit("kSetArray", local=base, binding=index, address=source)
+            self.assign_lvalue(values[0], base)
+            return
+        if name == "LE_SetField":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "LE_SetField"), "tuple")
+            base = self.read_lvalue(values[0])
+            field = str(self.arena.atom(values[1], "string"))
+            if field not in self.field_ids:
+                raise ModelgenError(f"unknown record field {field!r}")
+            self.emit("kSetField", local=base, binding=source,
+                      immediate=self.field_ids[field])
             self.assign_lvalue(values[0], base)
             return
         raise ModelgenError(f"unsupported runtime lvalue {name} at node {identifier}")
@@ -535,7 +572,9 @@ def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
         str(strings[row["name_symbol_id"]]): int(row["id"])
         for row in tables["globals"]
     }
-    compiler = Compiler(arena, [argument_name], function_ids, global_ids)
+    field_ids = {str(name): identifier for identifier, name in enumerate(strings)}
+    compiler = Compiler(
+        arena, [argument_name], function_ids, global_ids, field_ids)
     compiler.statement(function["body_node"])
     if not compiler.instructions or not any(
         row["opcode"] == "kReturnValue" for row in compiler.instructions
@@ -559,6 +598,7 @@ def lower_module(
         str(strings[row["name_symbol_id"]]): int(row["id"])
         for row in tables["globals"]
     }
+    field_ids = {str(name): identifier for identifier, name in enumerate(strings)}
     roots = [function_ids[name] for name in entrypoints]
     graph = {
         int(row["id"]): [int(value) for value in row["callee_function_ids"]]
@@ -586,7 +626,8 @@ def lower_module(
             str(strings[row["name_symbol_id"]])
             for row in [*function["arguments"], *function["parameters"]]
         ]
-        compiler = Compiler(arena, arguments, function_ids, global_ids)
+        compiler = Compiler(
+            arena, arguments, function_ids, global_ids, field_ids)
         name = str(strings[function["name_symbol_id"]])
         try:
             compiler.statement(int(function["body_node"]))

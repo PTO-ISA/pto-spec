@@ -327,6 +327,42 @@ EvaluationResult Interpreter::EvaluateInternal(
                     instruction.local, std::move(updated));
                 break;
             }
+            case OpCode::kGetField: {
+                const auto base = frame.typed_locals.find(instruction.binding);
+                if (base == frame.typed_locals.end() ||
+                    !std::holds_alternative<std::shared_ptr<RecordValue>>(
+                        base->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                const auto &record = *std::get<std::shared_ptr<RecordValue>>(
+                    base->second.storage());
+                const auto field = record.find(
+                    static_cast<std::uint32_t>(instruction.immediate));
+                if (field == record.end())
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, field->second.Clone());
+                break;
+            }
+            case OpCode::kSetField: {
+                const auto base = frame.typed_locals.find(instruction.local);
+                const auto value = frame.typed_locals.find(instruction.binding);
+                if (base == frame.typed_locals.end() ||
+                    value == frame.typed_locals.end() ||
+                    !std::holds_alternative<std::shared_ptr<RecordValue>>(
+                        base->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                Value updated = base->second.Clone();
+                auto &record = *std::get<std::shared_ptr<RecordValue>>(
+                    updated.storage());
+                const std::uint32_t field_id =
+                    static_cast<std::uint32_t>(instruction.immediate);
+                if (record.find(field_id) == record.end())
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                record.insert_or_assign(field_id, value->second.Clone());
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, std::move(updated));
+                break;
+            }
             case OpCode::kBranchIfFalse: {
                 const auto condition = frame.typed_locals.find(instruction.local);
                 if (condition == frame.typed_locals.end() ||

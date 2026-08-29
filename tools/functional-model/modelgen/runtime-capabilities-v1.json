@@ -7,6 +7,7 @@
     "kCopyValue",
     "kEqual",
     "kGetArray",
+    "kGetField",
     "kIntegerAdd",
     "kIntegerGreaterEqual",
     "kIntegerLessEqual",
@@ -23,6 +24,7 @@
     "kPushArgument",
     "kReturnValue",
     "kSetArray",
+    "kSetField",
     "kSliceBits",
     "kStoreGlobal"
   ],
@@ -35,6 +37,7 @@
     "kCopyValue",
     "kEqual",
     "kGetArray",
+    "kGetField",
     "kIncrementGlobalU64",
     "kIntegerAdd",
     "kIntegerGreaterEqual",
@@ -58,6 +61,7 @@
     "kReturnTrap",
     "kReturnValue",
     "kSetArray",
+    "kSetField",
     "kSetLocalU64",
     "kSliceBits",
     "kStoreGlobal",
@@ -65,9 +69,9 @@
     "kWriteMemoryImmediate"
   ],
   "constructors": {
-    "expressions": ["E_Binop", "E_Call", "E_GetArray", "E_Literal", "E_Slice", "E_Var"],
+    "expressions": ["E_Binop", "E_Call", "E_GetArray", "E_GetField", "E_Literal", "E_Slice", "E_Var"],
     "literals": ["L_BitVector", "L_Bool", "L_Int"],
-    "lvalues": ["LDI_Var", "LE_SetArray", "LE_Var"],
+    "lvalues": ["LDI_Var", "LE_SetArray", "LE_SetField", "LE_Var"],
     "operators": ["ADD", "EQ", "MUL", "NE", "SUB"],
     "slices": ["Slice_Length"],
     "statements": ["SB_ASL", "S_Assert", "S_Assign", "S_Call", "S_Cond", "S_Decl", "S_For", "S_Return", "S_Seq"],
