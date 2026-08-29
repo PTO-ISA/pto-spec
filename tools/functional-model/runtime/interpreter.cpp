@@ -147,6 +147,15 @@ EvaluationResult Interpreter::Evaluate(const Function &function,
                     Value(instruction.opcode == OpCode::kEqual ? equal : !equal));
                 break;
             }
+            case OpCode::kAssertTrue: {
+                const auto condition = frame.typed_locals.find(instruction.local);
+                if (condition == frame.typed_locals.end() ||
+                    !std::holds_alternative<bool>(condition->second.storage()) ||
+                    !std::get<bool>(condition->second.storage())) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                break;
+            }
             case OpCode::kBranchIfFalse: {
                 const auto condition = frame.typed_locals.find(instruction.local);
                 if (condition == frame.typed_locals.end() ||

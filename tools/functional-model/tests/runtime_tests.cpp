@@ -280,6 +280,36 @@ void TestGeneratedDetermineLength() {
     assert(memory.committed_writes.empty());
 }
 
+void TestTypedAssert() {
+    const auto make_module = [](std::uint64_t right) {
+        std::string error;
+        auto module = Module::Create(
+            {Function{600,
+                      {{OpCode::kLoadBitsImmediate, 0, 0, 1, 1},
+                       {OpCode::kLoadBitsImmediate, 0, 1, right, 1},
+                       {OpCode::kEqual, 0, 2, 0, 1},
+                       {OpCode::kAssertTrue, 0, 2, 0, 0},
+                       {OpCode::kLoadIntegerImmediate, 0, 3, 7, 0},
+                       {OpCode::kReturnValue, 0, 3, 0, 0}}}},
+            600,
+            &error);
+        assert(module != nullptr && error.empty());
+        return module;
+    };
+    MemoryHarness memory;
+    auto passing_module = make_module(1);
+    RuntimeModel passing(passing_module, memory.Callbacks());
+    assert(passing.Reset({0}) == PTO_STATUS_OK);
+    std::uint64_t result = 0;
+    assert(passing.InvokeU16(600, 0, &result) == PTO_STATUS_OK);
+    assert(result == 7);
+
+    auto failing_module = make_module(0);
+    RuntimeModel failing(failing_module, memory.Callbacks());
+    assert(failing.Reset({0}) == PTO_STATUS_OK);
+    assert(failing.InvokeU16(600, 0, &result) == PTO_STATUS_MIR_INVALID);
+}
+
 }  // namespace
 
 int main() {
@@ -287,5 +317,6 @@ int main() {
     TestRuntime();
     TestInvalidModules();
     TestGeneratedDetermineLength();
+    TestTypedAssert();
     return 0;
 }

@@ -24,7 +24,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "2566d3d994163561e5c1cb0c2c18657f26986bbcffaa783b732d335300096b2a"
+      "sha256": "9d52f63f4729626f7732574773cea2b6a618240e0dca0d2c5c84514e621531ee"
     }
   },
   "minimal_scalar_elf": {
@@ -29282,6 +29282,7 @@
       ],
       "statements": [
         "SB_ASL",
+        "S_Assert",
         "S_Cond",
         "S_Return",
         "S_Seq"
@@ -29291,6 +29292,7 @@
       ]
     },
     "emitter_bytecode_opcodes": [
+      "kAssertTrue",
       "kBranchIfFalse",
       "kEqual",
       "kJump",
@@ -29308,6 +29310,7 @@
     "impdef_bindings": [],
     "interpreter_bytecode_opcodes": [
       "kAddLocalU64",
+      "kAssertTrue",
       "kBranchIfFalse",
       "kEqual",
       "kIncrementGlobalU64",
@@ -29644,12 +29647,6 @@
         "name": "SUB",
         "sample_function_id": 5497,
         "sample_node_id": 2513
-      },
-      {
-        "count": 360,
-        "name": "S_Assert",
-        "sample_function_id": 4760,
-        "sample_node_id": 21216
       },
       {
         "count": 4285,

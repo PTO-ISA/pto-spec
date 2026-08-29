@@ -34,6 +34,7 @@ enum class OpCode : std::uint8_t {
     kSliceBits,
     kEqual,
     kNotEqual,
+    kAssertTrue,
     kBranchIfFalse,
     kJump,
     kReturnValue,

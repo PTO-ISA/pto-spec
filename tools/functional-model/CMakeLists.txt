@@ -68,6 +68,7 @@ add_custom_command(
     DEPENDS
         "${PTO_GENERATED_EXECUTABLE_MIR}"
         "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/emit_runtime_image.py"
+        "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/runtime-capabilities-v1.json"
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/determine_length_cases.json"
     COMMENT "Lowering the real DeterminePTOInstructionLength entrypoint")
 

@@ -50,6 +50,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kSliceBits:
                 case OpCode::kEqual:
                 case OpCode::kNotEqual:
+                case OpCode::kAssertTrue:
                     break;
                 case OpCode::kStoreLocalToGlobal:
                 case OpCode::kIncrementGlobalU64:

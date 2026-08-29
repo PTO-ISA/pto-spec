@@ -1,5 +1,6 @@
 {
   "emitter_bytecode_opcodes": [
+    "kAssertTrue",
     "kBranchIfFalse",
     "kEqual",
     "kJump",
@@ -12,6 +13,7 @@
   ],
   "interpreter_bytecode_opcodes": [
     "kAddLocalU64",
+    "kAssertTrue",
     "kBranchIfFalse",
     "kEqual",
     "kIncrementGlobalU64",
@@ -37,7 +39,7 @@
     "lvalues": [],
     "operators": ["EQ", "NE"],
     "slices": ["Slice_Length"],
-    "statements": ["SB_ASL", "S_Cond", "S_Return", "S_Seq"],
+    "statements": ["SB_ASL", "S_Assert", "S_Cond", "S_Return", "S_Seq"],
     "types": ["T_Bits"]
   },
   "entrypoints": ["DeterminePTOInstructionLength"],

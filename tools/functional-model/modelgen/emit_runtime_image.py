@@ -167,7 +167,9 @@ class Compiler:
     def expression(self, identifier: int) -> int:
         name = self.arena.constructor_name(identifier)
         if name not in CONSTRUCTOR_CAPABILITIES["expressions"]:
-            raise ModelgenError(f"unsupported reachable runtime expression {name}")
+            raise ModelgenError(
+                f"unsupported reachable runtime expression {name} at node {identifier}"
+            )
         if name == "E_Var":
             atom = self.single_argument(identifier, "E_Var")
             variable = str(self.arena.atom(atom, "string"))
@@ -260,7 +262,9 @@ class Compiler:
     def statement(self, identifier: int) -> bool:
         name = self.arena.constructor_name(identifier)
         if name not in CONSTRUCTOR_CAPABILITIES["statements"]:
-            raise ModelgenError(f"unsupported reachable runtime statement {name}")
+            raise ModelgenError(
+                f"unsupported reachable runtime statement {name} at node {identifier}"
+            )
         if name == "SB_ASL":
             return self.statement(self.single_argument(identifier, "SB_ASL"))
         if name == "S_Return":
@@ -269,6 +273,12 @@ class Compiler:
                 raise ModelgenError("runtime function return must carry a value")
             self.emit("kReturnValue", local=self.expression(value))
             return True
+        if name == "S_Assert":
+            self.emit(
+                "kAssertTrue",
+                local=self.expression(self.single_argument(identifier, "S_Assert")),
+            )
+            return False
         if name == "S_Cond":
             values = self.arena.sequence(
                 self.single_argument(identifier, "S_Cond"), "tuple"
@@ -286,9 +296,14 @@ class Compiler:
             return then_terminal and else_terminal
         if name == "S_Seq":
             terminal = False
-            for child in self.arena.sequence(
-                self.single_argument(identifier, "S_Seq"), "list"
-            ):
+            children = self.arena.sequence(
+                self.single_argument(identifier, "S_Seq"), "tuple"
+            )
+            if len(children) != 2:
+                raise ModelgenError(
+                    f"runtime function sequence at node {identifier} is malformed"
+                )
+            for child in children:
                 if terminal:
                     raise ModelgenError("runtime sequence contains unreachable statement")
                 terminal = self.statement(child)
