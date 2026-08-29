@@ -141,12 +141,15 @@ class Compiler:
         arena: CompactArena,
         argument_names: list[str],
         function_ids: dict[str, int] | None = None,
+        global_ids: dict[str, int] | None = None,
     ):
         self.arena = arena
         self.argument_ids = {name: index for index, name in enumerate(argument_names)}
         self.instructions: list[dict[str, int | str]] = []
         self.next_local = 0
         self.function_ids = function_ids or {}
+        self.global_ids = global_ids or {}
+        self.local_ids: dict[str, int] = {}
 
     def local(self) -> int:
         result = self.next_local
@@ -187,9 +190,15 @@ class Compiler:
         if name == "E_Var":
             atom = self.single_argument(identifier, "E_Var")
             variable = str(self.arena.atom(atom, "string"))
+            target = self.local()
+            if variable in self.local_ids:
+                self.emit("kCopyValue", local=target, binding=self.local_ids[variable])
+                return target
+            if variable in self.global_ids:
+                self.emit("kLoadGlobal", local=target, binding=self.global_ids[variable])
+                return target
             if variable not in self.argument_ids:
                 raise ModelgenError(f"unsupported runtime variable {variable!r}")
-            target = self.local()
             self.emit(
                 "kLoadArgumentBits",
                 local=target,
@@ -329,6 +338,45 @@ class Compiler:
                 immediate=len(values),
             )
             return False
+        if name == "S_Decl":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "S_Decl"), "tuple"
+            )
+            if len(values) != 4:
+                raise ModelgenError(f"malformed S_Decl at node {identifier}")
+            declaration = self.single_argument(values[1], "LDI_Var")
+            variable = str(self.arena.atom(declaration, "string"))
+            initializer = self.arena.option(values[3])
+            if initializer is None:
+                raise ModelgenError(
+                    f"typed default S_Decl not yet materialized at node {identifier}"
+                )
+            self.local_ids[variable] = self.expression(initializer)
+            return False
+        if name == "S_Assign":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "S_Assign"), "tuple"
+            )
+            if len(values) != 2:
+                raise ModelgenError(f"malformed S_Assign at node {identifier}")
+            lvalue_name = self.arena.constructor_name(values[0])
+            if lvalue_name != "LE_Var":
+                raise ModelgenError(
+                    f"unsupported runtime lvalue {lvalue_name} at node {values[0]}"
+                )
+            variable = str(
+                self.arena.atom(self.single_argument(values[0], "LE_Var"), "string")
+            )
+            source = self.expression(values[1])
+            if variable in self.local_ids:
+                self.emit("kCopyValue", local=self.local_ids[variable], binding=source)
+            elif variable in self.global_ids:
+                self.emit("kStoreGlobal", local=source, binding=self.global_ids[variable])
+            else:
+                raise ModelgenError(
+                    f"unresolved assignment target {variable!r} at node {identifier}"
+                )
+            return False
         if name == "S_Cond":
             values = self.arena.sequence(
                 self.single_argument(identifier, "S_Cond"), "tuple"
@@ -401,7 +449,11 @@ def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
         str(strings[row["name_symbol_id"]]): int(row["id"])
         for row in tables["functions"]
     }
-    compiler = Compiler(arena, [argument_name], function_ids)
+    global_ids = {
+        str(strings[row["name_symbol_id"]]): int(row["id"])
+        for row in tables["globals"]
+    }
+    compiler = Compiler(arena, [argument_name], function_ids, global_ids)
     compiler.statement(function["body_node"])
     if not compiler.instructions or not any(
         row["opcode"] == "kReturnValue" for row in compiler.instructions

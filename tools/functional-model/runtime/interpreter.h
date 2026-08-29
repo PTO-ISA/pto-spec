@@ -15,6 +15,7 @@ namespace pto::model {
 
 struct RuntimeState {
     std::unordered_map<BindingId, std::uint64_t> globals;
+    std::unordered_map<BindingId, Value> typed_globals;
     std::uint64_t sequence = 0;
     std::uint64_t tpc = 0;
     std::uint64_t bpc = 0;
