@@ -11,6 +11,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 BUILDER = ROOT / "scripts" / "build-functional-model-corpus"
+GFRUN_VALIDATOR = ROOT / "scripts" / "run-functional-model-gfrun"
 CORPUS = ROOT / "tests" / "functional-model" / "corpus"
 
 
@@ -24,6 +25,16 @@ def load_builder():
     return module
 
 
+def load_gfrun_validator():
+    loader = SourceFileLoader("run_functional_model_gfrun", str(GFRUN_VALIDATOR))
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    if spec is None:
+        raise RuntimeError("cannot import gfrun validator")
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
 def minimal_elf(*, flags: int = 5, filesz: int = 1, memsz: int = 1,
                 entry: int = 0x100, second: tuple[int, int, int] | None = None) -> bytes:
     phnum = 2 if second else 1
@@ -31,7 +42,7 @@ def minimal_elf(*, flags: int = 5, filesz: int = 1, memsz: int = 1,
         "<16sHHIQQQIHHHHHH",
         b"\x7fELF\x02\x01\x01" + bytes(9),
         2,
-        243,
+        233,
         1,
         entry,
         64,
@@ -59,6 +70,7 @@ class FunctionalModelCorpusTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.builder = load_builder()
+        cls.validator = load_gfrun_validator()
 
     def test_checked_sources_contain_exact_bringup_encodings(self) -> None:
         scalar = (CORPUS / "scalar_stop_pc.S").read_text(encoding="utf-8")
@@ -130,6 +142,65 @@ class FunctionalModelCorpusTest(unittest.TestCase):
         self.assertIn('parser.add_argument("--readelf"', text)
         self.assertNotIn("/Users/", text)
         self.assertNotIn("def source(", text)
+
+    def valid_run_contract(self) -> tuple[dict[str, object], dict[str, object]]:
+        case = {
+            "case": {
+                "stop_policy": {"stop_pc": 0x104, "max_steps": 2},
+                "expected_length_sequence": [16, 16],
+                "result": {"address": 0x200, "size": 4},
+            }
+        }
+        run = {
+            "schema": "linx-gfrun-asl-run-v1",
+            "engine": "asl",
+            "model_descriptor_sha256": "12" * 32,
+            "outcome": {
+                "status": "completed",
+                "reason": "stop_pc",
+                "steps": 2,
+                "final_tpc": 0x104,
+            },
+            "result": {"address": 0x200, "size": 4, "bytes_hex": "19000000"},
+            "trace": [
+                {
+                    "status": 0,
+                    "step_state": 1,
+                    "fault_code": 0,
+                    "pre_tpc": 0x100,
+                    "post_tpc": 0x102,
+                    "length_bits": 16,
+                },
+                {
+                    "status": 0,
+                    "step_state": 1,
+                    "fault_code": 0,
+                    "pre_tpc": 0x102,
+                    "post_tpc": 0x104,
+                    "length_bits": 16,
+                },
+            ],
+        }
+        return case, run
+
+    def test_gfrun_validator_accepts_exact_trace_and_golden(self) -> None:
+        case, run = self.valid_run_contract()
+        descriptor = self.validator.validate_run(
+            case, run, bytes.fromhex("19000000"), bytes.fromhex("19000000")
+        )
+        self.assertEqual(descriptor, "12" * 32)
+
+    def test_gfrun_validator_rejects_result_or_trace_mismatch(self) -> None:
+        case, run = self.valid_run_contract()
+        with self.assertRaisesRegex(self.validator.ValidationError, "result bytes"):
+            self.validator.validate_run(
+                case, run, bytes.fromhex("18000000"), bytes.fromhex("19000000")
+            )
+        run["trace"][1]["pre_tpc"] = 0x103
+        with self.assertRaisesRegex(self.validator.ValidationError, "TPC continuity"):
+            self.validator.validate_run(
+                case, run, bytes.fromhex("19000000"), bytes.fromhex("19000000")
+            )
 
 
 if __name__ == "__main__":
