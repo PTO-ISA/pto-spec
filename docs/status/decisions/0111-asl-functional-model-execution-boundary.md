@@ -10,7 +10,7 @@
   "rejected": null,
   "superseded": null,
   "baseline": "e9b621ddce041ff2c770bef67adc41946db87295",
-  "target_releases": ["unassigned"],
+  "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-REQ-FUNCTIONAL-FETCH-001",
     "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",

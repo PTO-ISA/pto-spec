@@ -21185,15 +21185,67 @@
       "adr_ids": [
         "ADR-0111"
       ],
-      "blockers": [
-        "ADR is draft"
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-REQ-FUNCTIONAL-FETCH-001",
+        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+        "PTO-REQ-FUNCTIONAL-MEMORY-001",
+        "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
+        "PTO-REQ-FUNCTIONAL-RESET-001",
+        "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001",
+        "PTO-REQ-FUNCTIONAL-STEP-001"
       ],
-      "ndf_ids": [],
       "released_versions": [],
-      "stage": "draft",
+      "stage": "executable",
       "subject_id": "ADR-0111",
-      "test_ids": [],
-      "unit_ids": [],
+      "test_ids": [
+        "PTO-AVS-ARCH-CONCRETE-ACCESS-EXEC-005",
+        "PTO-AVS-ARCH-CONCRETE-RESET-EXEC-007",
+        "PTO-AVS-ARCH-CONCRETE-ROUNDING-EXEC-004",
+        "PTO-AVS-ARCH-CONCRETE-SPECIAL-VALUES-EXEC-002",
+        "PTO-AVS-ARCH-CONCRETE-SUBNORMAL-EXEC-001",
+        "PTO-AVS-ARCH-CONCRETE-TILE-EXEC-006",
+        "PTO-AVS-ARCH-CONCRETE-VALUE-CLASSES-EXEC-003",
+        "PTO-AVS-ARCH-CUBE-RESET-001",
+        "PTO-AVS-ARCH-DATA-TYPES-FUNCTIONAL-MODEL-STATIC-001",
+        "PTO-AVS-ARCH-DISPATCH-FUNCTIONAL-STEP-STATIC-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-DUPLICATE-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-PENDING-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-STALE-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-16-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-32-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-48-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-64-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-TOTALITY-002",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-ODD-PC-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-PE0-RESET-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-ADD-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-TRUNCATED-FETCH-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-UNINITIALIZED-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-UNMAPPED-FETCH-001",
+        "PTO-AVS-ARCH-MEMORY-MODEL-ADDRESS-SPACE-STATIC-001",
+        "PTO-AVS-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH-STATIC-001",
+        "PTO-AVS-ARCH-PROFILE-FUNCTIONAL-MODEL-STATIC-001",
+        "PTO-AVS-ARCH-PROFILE-REFERENCE-PROFILE-STATIC-001",
+        "PTO-AVS-ARCH-PROFILE-RESET-STATIC-001",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-DIVZERO-009",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-EXPONENTIAL-008",
+        "PTO-AVS-ARCH-STATE-FUNCTIONAL-MODEL-STATIC-001",
+        "PTO-AVS-SCALAR-MODEL-AGU-MEMORY-STATIC-001",
+        "PTO-AVS-SCALAR-TESTSCALARMEMORY-EXECUTION-001",
+        "PTO-AVS-SCALAR-TESTSCALARPAIRMEMORYCOMPLETION-EXECUTION-001"
+      ],
+      "unit_ids": [
+        "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
+        "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
+        "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
+        "PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH",
+        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-ARCH-PROFILE-RESET",
+        "PTO-ARCH-STATE-FUNCTIONAL-MODEL",
+        "PTO-SCALAR-MODEL-AGU-MEMORY"
+      ],
       "validated_commit": null
     },
     {
@@ -21271,7 +21323,7 @@
   "sources": {
     "adr_records": {
       "count": 106,
-      "sha256": "0db5556d708b3bde68b262140b048b4b192b70409c7e662adfaafa5b90beaf36"
+      "sha256": "d0273562d6af155a2376de446178ff4e24b42f230571cc8acdb67bfd30f76b2a"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21279,9 +21331,9 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "529cb7b752fc1e89b4378e8e6da40ea36780f713e7b39ac46d7e4daee1f1582f",
-      "test_count": 3716,
-      "unit_count": 851
+      "sha256": "99ec1b34adc981baae8da6853def3835ead07e970ad78c767243127d797b17eb",
+      "test_count": 3735,
+      "unit_count": 856
     }
   },
   "stage_order": [
@@ -21293,13 +21345,13 @@
     "released"
   ],
   "summary": {
-    "blocker_count": 11,
-    "draft_count": 11,
+    "blocker_count": 10,
+    "draft_count": 10,
     "released_count": 0,
     "stage_counts": {
       "architecture-defined": 0,
-      "draft": 11,
-      "executable": 91,
+      "draft": 10,
+      "executable": 92,
       "modeled": 0,
       "released": 0,
       "validated": 0
