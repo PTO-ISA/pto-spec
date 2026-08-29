@@ -112,6 +112,12 @@ class FunctionalModelCorpusTest(unittest.TestCase):
             ["expected_length_sequence"]["items"]["enum"],
             [16, 32, 48, 64],
         )
+        isa = schema["$defs"]["case"]["properties"]["isa"]["properties"]
+        self.assertEqual(isa["version"]["const"], "0.58.5")
+        self.assertEqual(
+            isa["encoding_abi"]["const"],
+            "pto-isa-0.58.5-mode-function-v1",
+        )
 
     def assert_rejected(self, payload: bytes, pattern: str) -> None:
         with tempfile.TemporaryDirectory() as directory:

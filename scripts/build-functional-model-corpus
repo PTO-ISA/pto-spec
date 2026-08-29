@@ -222,6 +222,7 @@ def build_case(
     readelf: Path,
     output_root: Path,
     tool_identity: dict[str, object],
+    isa_identity: dict[str, str],
 ) -> dict[str, object]:
     source = CORPUS / f"{name}.S"
     linker = CORPUS / f"{name}.ld"
@@ -234,6 +235,7 @@ def build_case(
         ),
         "build_recipe": "linx-clang-assemble-lld-static-et-exec-v1",
         "profile": "pto-functional-reference-v1",
+        "release_manifest_sha256": sha256_file(ROOT / "spec" / "release-manifest.json"),
         "clang_sha256": tool_identity["clang_sha256"],
         "lld_sha256": tool_identity["lld_sha256"],
     }
@@ -275,7 +277,13 @@ def build_case(
         "schema": SCHEMA,
         "case": {
             "id": name,
-            "isa": {"profile": "pto-functional-reference-v1", "version": "0.58.5"},
+            "isa": {
+                "profile": "pto-functional-reference-v1",
+                "version": isa_identity["release"],
+                "encoding_abi": isa_identity["encoding_abi"],
+                "encoding_projection_sha256":
+                    isa_identity["encoding_projection_sha256"],
+            },
             "requirements": config["requirements"],
             "avs_ids": config["avs_ids"],
             "inputs": input_identity,
@@ -346,6 +354,15 @@ def main() -> int:
         "readelf_sha256": sha256_file(arguments.readelf),
         "readelf_version": command_version(arguments.readelf),
     }
+    release_manifest = json.loads(
+        (ROOT / "spec" / "release-manifest.json").read_text(encoding="utf-8")
+    )
+    isa_identity = {
+        "release": release_manifest["release"],
+        "encoding_abi": release_manifest["encoding_abi"],
+        "encoding_projection_sha256":
+            release_manifest["encoding_projection_sha256"],
+    }
     arguments.output.mkdir(parents=True, exist_ok=True)
     rows = [
         build_case(
@@ -356,6 +373,7 @@ def main() -> int:
             readelf=arguments.readelf,
             output_root=arguments.output,
             tool_identity=tool_identity,
+            isa_identity=isa_identity,
         )
         for name, config in CASES.items()
     ]
