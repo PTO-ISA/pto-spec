@@ -373,11 +373,15 @@ class Compiler:
             values = self.arena.sequence(
                 self.single_argument(identifier, "E_Unop"), "tuple")
             operator = self.arena.constructor_name(values[0])
-            if operator not in {"BNOT", "NOT"}:
+            if operator not in {"BNOT", "NEG", "NOT"}:
                 raise ModelgenError(f"unsupported runtime unary operator {operator}")
             source = self.expression(values[1])
             result = self.local()
-            self.emit("kBitNot", local=result, binding=source)
+            self.emit(
+                "kIntegerNegate" if operator == "NEG" else "kBitNot",
+                local=result,
+                binding=source,
+            )
             return result
         if name == "E_ATC":
             values = self.arena.sequence(

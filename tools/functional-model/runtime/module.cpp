@@ -71,6 +71,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kIntegerMultiply:
                 case OpCode::kIntegerDivide:
                 case OpCode::kIntegerModulo:
+                case OpCode::kIntegerNegate:
                 case OpCode::kBitOr:
                 case OpCode::kBitAnd:
                 case OpCode::kBitConcat:

@@ -496,6 +496,16 @@ EvaluationResult Interpreter::EvaluateInternal(
                     Value(std::get<BigInteger>(value->second.storage()).Add(delta)));
                 break;
             }
+            case OpCode::kIntegerNegate: {
+                const auto value = frame.typed_locals.find(instruction.binding);
+                if (value == frame.typed_locals.end() ||
+                    !std::holds_alternative<BigInteger>(value->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local,
+                    Value(std::get<BigInteger>(value->second.storage()).Negated()));
+                break;
+            }
             case OpCode::kBitOr: {
                 const auto left = frame.typed_locals.find(instruction.binding);
                 const auto right = frame.typed_locals.find(

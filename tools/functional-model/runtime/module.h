@@ -73,6 +73,7 @@ enum class OpCode : std::uint8_t {
     kIntegerMultiply,
     kIntegerDivide,
     kIntegerModulo,
+    kIntegerNegate,
     kBitOr,
     kBitAnd,
     kBitConcat,
