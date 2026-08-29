@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+"""Generate the deterministic PTO functional-model ASL construct inventory."""
+
+from __future__ import annotations
+
+import argparse
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.functional_model_inventory import InventoryError, inventory_files  # noqa: E402
+
+
+DEFAULT_OUTPUT = ROOT / "spec/evidence/functional-model-asl-constructs.json"
+
+
+def _aslref_root() -> Path:
+    configured = os.environ.get("PTO_ASLREF_ROOT")
+    return Path(configured) if configured else ROOT / ".cache/herdtools7"
+
+
+def _ast_mli() -> Path:
+    return _aslref_root() / "asllib/AST.mli"
+
+
+def _generate_typed_ast(output: Path) -> None:
+    subprocess.run(["make", "--no-print-directory", "build"], cwd=ROOT, check=True)
+    with output.open("wb") as stream:
+        subprocess.run(
+            [
+                str(ROOT / "scripts/aslref"),
+                "--type-check-strict",
+                "--serialize-typed",
+                "--no-exec",
+                str(ROOT / "build/pto-spec.asl"),
+            ],
+            cwd=ROOT,
+            stdout=stream,
+            check=True,
+        )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--typed-ast", type=Path)
+    parser.add_argument("--ast-mli", type=Path)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--check", action="store_true")
+    arguments = parser.parse_args()
+
+    temporary: tempfile.TemporaryDirectory[str] | None = None
+    try:
+        typed_ast = arguments.typed_ast
+        if typed_ast is None:
+            temporary = tempfile.TemporaryDirectory(prefix="pto-functional-model-")
+            typed_ast = Path(temporary.name) / "pto-spec.typed.ast"
+            _generate_typed_ast(typed_ast)
+        ast_mli = arguments.ast_mli or _ast_mli()
+        rendered = inventory_files(typed_ast, ast_mli)
+        if arguments.check:
+            if not arguments.output.is_file():
+                raise InventoryError(f"missing generated artifact {arguments.output}")
+            if arguments.output.read_text(encoding="utf-8") != rendered:
+                raise InventoryError(f"stale generated artifact {arguments.output}")
+            print(f"functional-model ASL inventory is current: {arguments.output}")
+        else:
+            arguments.output.parent.mkdir(parents=True, exist_ok=True)
+            arguments.output.write_text(rendered, encoding="utf-8")
+            print(f"wrote {arguments.output}")
+    except (InventoryError, OSError, subprocess.CalledProcessError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    finally:
+        if temporary is not None:
+            temporary.cleanup()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
