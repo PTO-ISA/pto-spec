@@ -9,7 +9,7 @@
   "accepted": "2026-08-29",
   "rejected": null,
   "superseded": null,
-  "baseline": "0c1aa4edcc8821f76a2a7124282cff705e61d95c",
+  "baseline": "569ac82a156025f453f133712dbe6360f0280c75",
   "target_releases": ["0.58.5"],
   "release_boundary": true,
   "affected_ndf": [

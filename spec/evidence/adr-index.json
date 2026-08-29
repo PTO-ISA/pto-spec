@@ -8504,7 +8504,7 @@
       "authors": [
         "Codex"
       ],
-      "baseline": "0c1aa4edcc8821f76a2a7124282cff705e61d95c",
+      "baseline": "569ac82a156025f453f133712dbe6360f0280c75",
       "created": "2026-08-29",
       "id": "ADR-0113",
       "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/184",
@@ -8540,7 +8540,7 @@
       "authors": [
         "Codex"
       ],
-      "baseline": "9a64799adc925d680494bad6f0b9084fa21b36af",
+      "baseline": "1fa86d9066dc2772de3929c2d807f944e87a6f28",
       "created": "2026-08-29",
       "id": "ADR-0114",
       "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/179",
