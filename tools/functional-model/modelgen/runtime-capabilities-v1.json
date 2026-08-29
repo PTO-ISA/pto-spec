@@ -18,6 +18,7 @@
     "kEqual",
     "kGetArray",
     "kGetField",
+    "kGetTuple",
     "kInsertField",
     "kIntegerAdd",
     "kIntegerDivide",
@@ -72,6 +73,7 @@
     "kEqual",
     "kGetArray",
     "kGetField",
+    "kGetTuple",
     "kIncrementGlobalU64",
     "kInsertField",
     "kIntegerAdd",
@@ -118,6 +120,7 @@
   "constructors": {
     "expressions": ["E_ATC", "E_Binop", "E_Call", "E_Cond", "E_GetArray", "E_GetField", "E_Literal", "E_Pattern", "E_Record", "E_Slice", "E_Unop", "E_Var"],
     "literals": ["L_BitVector", "L_Bool", "L_Int", "L_Label"],
+    "local_declarations": ["LDI_Tuple", "LDI_Var"],
     "lvalues": ["LDI_Var", "LE_Discard", "LE_SetArray", "LE_SetField", "LE_Slice", "LE_Var"],
     "operators": ["ADD", "AND", "BAND", "BNOT", "BOR", "BV_CONCAT", "DIV", "EQ", "GE", "GT", "LE", "LT", "MOD", "MUL", "NE", "NOT", "OR", "Pattern_Single", "Positive", "SUB", "XOR"],
     "slices": ["Slice_Length"],

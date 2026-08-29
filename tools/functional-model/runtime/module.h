@@ -84,6 +84,7 @@ enum class OpCode : std::uint8_t {
     kIntegerGreater,
     kIntegerStep,
     kGetArray,
+    kGetTuple,
     kSetArray,
     kGetField,
     kSetField,

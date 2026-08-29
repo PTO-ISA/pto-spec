@@ -82,6 +82,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kIntegerGreater:
                 case OpCode::kIntegerStep:
                 case OpCode::kGetArray:
+                case OpCode::kGetTuple:
                 case OpCode::kSetArray:
                 case OpCode::kGetField:
                 case OpCode::kSetField:

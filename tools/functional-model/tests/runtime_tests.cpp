@@ -30,6 +30,7 @@ using pto::model::StepResult;
 
 constexpr BindingId kCounter = 500;
 constexpr BindingId kObserved = 501;
+constexpr BindingId kTuple = 502;
 
 struct MemoryHarness {
     std::array<std::uint8_t, 8192> bytes{};
@@ -461,6 +462,38 @@ void TestNumericCallFrames() {
     assert(result == 5);
 }
 
+void TestTupleExtraction() {
+    std::string error;
+    pto::model::TupleValue tuple;
+    tuple.emplace_back(pto::model::BigInteger(7));
+    tuple.emplace_back(pto::model::BigInteger(9));
+    auto module = Module::Create(
+        {
+            Function{750,
+                     {{OpCode::kLoadGlobal, kTuple, 0, 0, 0},
+                      {OpCode::kGetTuple, 0, 1, 0, 0},
+                      {OpCode::kReturnValue, 0, 1, 0, 0}},
+                     1},
+            Function{751,
+                     {{OpCode::kLoadGlobal, kTuple, 0, 0, 0},
+                      {OpCode::kGetTuple, 0, 1, 2, 0},
+                      {OpCode::kReturnValue, 0, 1, 0, 0}},
+                     1},
+        },
+        750,
+        &error,
+        {},
+        {{kTuple, pto::model::Value(std::move(tuple))}});
+    assert(module != nullptr && error.empty());
+    MemoryHarness memory;
+    RuntimeModel runtime(module, memory.Callbacks());
+    assert(runtime.InitializeForTesting({0}) == PTO_STATUS_OK);
+    std::uint64_t result = 0;
+    assert(runtime.InvokeU16(750, 0, &result) == PTO_STATUS_OK);
+    assert(result == 7);
+    assert(runtime.InvokeU16(751, 0, &result) == PTO_STATUS_MIR_INVALID);
+}
+
 void TestNumericIntegerExterns() {
     const pto::model::BitVector all_ones =
         pto::model::BitVector::FromU64(64, UINT64_MAX);
@@ -877,6 +910,7 @@ int main() {
     TestGeneratedDetermineLength();
     TestTypedAssert();
     TestNumericCallFrames();
+    TestTupleExtraction();
     TestNumericIntegerExterns();
     TestGeneratedResetState();
     TestGeneratedPredecodeSteps();

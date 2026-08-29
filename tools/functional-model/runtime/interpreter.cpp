@@ -620,6 +620,21 @@ EvaluationResult Interpreter::EvaluateInternal(
                         base->second.storage())->Get(array_index).Clone());
                 break;
             }
+            case OpCode::kGetTuple: {
+                const auto base = frame.typed_locals.find(instruction.binding);
+                if (base == frame.typed_locals.end() ||
+                    !std::holds_alternative<std::shared_ptr<TupleValue>>(
+                        base->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                const auto &tuple = *std::get<std::shared_ptr<TupleValue>>(
+                    base->second.storage());
+                if (instruction.immediate >= tuple.size())
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local,
+                    tuple[static_cast<std::size_t>(instruction.immediate)].Clone());
+                break;
+            }
             case OpCode::kSetArray: {
                 const auto base = frame.typed_locals.find(instruction.local);
                 const auto index = frame.typed_locals.find(instruction.binding);

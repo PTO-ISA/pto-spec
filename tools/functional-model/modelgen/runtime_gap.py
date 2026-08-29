@@ -119,6 +119,7 @@ def load_runtime_capabilities(content: bytes) -> dict[str, object]:
     categories = {
         "expressions",
         "literals",
+        "local_declarations",
         "lvalues",
         "operators",
         "slices",

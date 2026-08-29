@@ -42,6 +42,7 @@ def _load_capabilities() -> dict[str, object]:
     if not isinstance(constructors, dict) or set(constructors) != {
         "expressions",
         "literals",
+        "local_declarations",
         "lvalues",
         "operators",
         "slices",
@@ -639,14 +640,40 @@ class Compiler:
             )
             if len(values) != 4:
                 raise ModelgenError(f"malformed S_Decl at node {identifier}")
-            declaration = self.single_argument(values[1], "LDI_Var")
-            variable = str(self.arena.atom(declaration, "string"))
             initializer = self.arena.option(values[3])
             if initializer is None:
                 raise ModelgenError(
                     f"typed default S_Decl not yet materialized at node {identifier}"
                 )
-            self.local_ids[variable] = self.expression(initializer)
+            initializer_local = self.expression(initializer)
+            declaration_name = self.arena.constructor_name(values[1])
+            if declaration_name not in CONSTRUCTOR_CAPABILITIES[
+                "local_declarations"
+            ]:
+                raise ModelgenError(
+                    f"unsupported local declaration {declaration_name} "
+                    f"at node {values[1]}"
+                )
+            if declaration_name == "LDI_Var":
+                declaration = self.single_argument(values[1], "LDI_Var")
+                variable = str(self.arena.atom(declaration, "string"))
+                self.local_ids[variable] = initializer_local
+                return False
+            declarations = self.arena.sequence(
+                self.single_argument(values[1], "LDI_Tuple"), "list"
+            )
+            for index, declaration in enumerate(declarations):
+                variable = str(self.arena.atom(declaration, "string"))
+                if variable.startswith("__ldi_discard-"):
+                    continue
+                target = self.local()
+                self.emit(
+                    "kGetTuple",
+                    local=target,
+                    binding=initializer_local,
+                    immediate=index,
+                )
+                self.local_ids[variable] = target
             return False
         if name == "S_Assign":
             values = self.arena.sequence(
