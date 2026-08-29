@@ -55,6 +55,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kCopyValue:
                 case OpCode::kLoadGlobal:
                 case OpCode::kLoadBool:
+                case OpCode::kLoadEnum:
                     break;
                 case OpCode::kStoreGlobal:
                 case OpCode::kIntegerAdd:

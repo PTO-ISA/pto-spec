@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "709273b7356ca245a259fe379b6a13375fa8927a68ee5866c09f6a363a5e331a"
+      "sha256": "d2090ba2dd827bc41440f4e61b320b89f769604a6527d03a69210e0b525a182d"
     }
   },
   "minimal_scalar_elf": {
@@ -29329,7 +29329,8 @@
       "literals": [
         "L_BitVector",
         "L_Bool",
-        "L_Int"
+        "L_Int",
+        "L_Label"
       ],
       "lvalues": [
         "LDI_Var",
@@ -29359,7 +29360,8 @@
         "S_Seq"
       ],
       "types": [
-        "T_Bits"
+        "T_Bits",
+        "T_Enum"
       ]
     },
     "emitter_bytecode_opcodes": [
@@ -29381,6 +29383,7 @@
       "kLoadArgumentBits",
       "kLoadBitsImmediate",
       "kLoadBool",
+      "kLoadEnum",
       "kLoadGlobal",
       "kLoadIntegerImmediate",
       "kNotEqual",
@@ -29417,6 +29420,7 @@
       "kLoadArgumentBits",
       "kLoadBitsImmediate",
       "kLoadBool",
+      "kLoadEnum",
       "kLoadGlobal",
       "kLoadIntegerImmediate",
       "kNotEqual",
@@ -29591,12 +29595,6 @@
         "name": "LT",
         "sample_function_id": 4940,
         "sample_node_id": 280
-      },
-      {
-        "count": 19555,
-        "name": "L_Label",
-        "sample_function_id": 258,
-        "sample_node_id": 529
       },
       {
         "count": 61,

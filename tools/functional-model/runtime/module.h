@@ -41,6 +41,7 @@ enum class OpCode : std::uint8_t {
     kCopyValue,
     kLoadGlobal,
     kLoadBool,
+    kLoadEnum,
     kStoreGlobal,
     kIntegerAdd,
     kIntegerSubtract,

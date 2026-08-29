@@ -143,6 +143,7 @@ class Compiler:
         function_ids: dict[str, int] | None = None,
         global_ids: dict[str, int] | None = None,
         field_ids: dict[str, int] | None = None,
+        enum_labels: dict[str, tuple[int, int]] | None = None,
     ):
         self.arena = arena
         self.argument_ids = {name: index for index, name in enumerate(argument_names)}
@@ -152,6 +153,7 @@ class Compiler:
         self.global_ids = global_ids or {}
         self.local_ids: dict[str, int] = {}
         self.field_ids = field_ids or {}
+        self.enum_labels = enum_labels or {}
 
     def local(self) -> int:
         result = self.next_local
@@ -240,6 +242,16 @@ class Compiler:
                 atom = self.single_argument(literal, "L_Bool")
                 value = self.arena.atom(atom, "boolean")
                 self.emit("kLoadBool", local=target, immediate=1 if value else 0)
+                return target
+            if literal_name == "L_Label":
+                atom = self.single_argument(literal, "L_Label")
+                label = str(self.arena.atom(atom, "string"))
+                if label not in self.enum_labels:
+                    raise ModelgenError(
+                        f"unknown or ambiguous enum label {label!r} at node {identifier}")
+                type_id, member_id = self.enum_labels[label]
+                self.emit("kLoadEnum", local=target,
+                          immediate=type_id, address=member_id)
                 return target
             raise ModelgenError(f"unsupported runtime literal {literal_name}")
         if name == "E_Slice":
@@ -538,6 +550,28 @@ def _type_bits_width(arena: CompactArena, identifier: int) -> int:
     return compiler.literal_integer(values[0])
 
 
+def _enum_labels(
+    arena: CompactArena, types: list[dict[str, object]]
+) -> dict[str, tuple[int, int]]:
+    labels: dict[str, tuple[int, int]] = {}
+    ambiguous: set[str] = set()
+    for row in types:
+        definition = row["definition_node"]
+        if definition is None or arena.constructor_name(int(definition)) != "T_Enum":
+            continue
+        arguments = arena.constructor(int(definition), "T_Enum")
+        if len(arguments) != 1:
+            raise ModelgenError("enum type definition is malformed")
+        for member_id, atom in enumerate(arena.sequence(arguments[0], "list")):
+            label = str(arena.atom(atom, "string"))
+            if label in labels:
+                ambiguous.add(label)
+            labels[label] = (int(row["id"]), member_id)
+    for label in ambiguous:
+        labels.pop(label, None)
+    return labels
+
+
 def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
     if ENTRYPOINT not in CAPABILITIES["entrypoints"]:
         raise ModelgenError("runtime entrypoint capability is not declared")
@@ -574,7 +608,8 @@ def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
     }
     field_ids = {str(name): identifier for identifier, name in enumerate(strings)}
     compiler = Compiler(
-        arena, [argument_name], function_ids, global_ids, field_ids)
+        arena, [argument_name], function_ids, global_ids, field_ids,
+        _enum_labels(arena, tables["types"]))
     compiler.statement(function["body_node"])
     if not compiler.instructions or not any(
         row["opcode"] == "kReturnValue" for row in compiler.instructions
@@ -599,6 +634,7 @@ def lower_module(
         for row in tables["globals"]
     }
     field_ids = {str(name): identifier for identifier, name in enumerate(strings)}
+    enum_labels = _enum_labels(CompactArena(image), tables["types"])
     roots = [function_ids[name] for name in entrypoints]
     graph = {
         int(row["id"]): [int(value) for value in row["callee_function_ids"]]
@@ -627,7 +663,7 @@ def lower_module(
             for row in [*function["arguments"], *function["parameters"]]
         ]
         compiler = Compiler(
-            arena, arguments, function_ids, global_ids, field_ids)
+            arena, arguments, function_ids, global_ids, field_ids, enum_labels)
         name = str(strings[function["name_symbol_id"]])
         try:
             compiler.statement(int(function["body_node"]))

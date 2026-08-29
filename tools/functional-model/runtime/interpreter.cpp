@@ -205,6 +205,13 @@ EvaluationResult Interpreter::EvaluateInternal(
                 frame.typed_locals.insert_or_assign(
                     instruction.local, Value(instruction.immediate != 0));
                 break;
+            case OpCode::kLoadEnum:
+                frame.typed_locals.insert_or_assign(
+                    instruction.local,
+                    Value(EnumValue{
+                        static_cast<std::uint32_t>(instruction.immediate),
+                        static_cast<std::uint32_t>(instruction.address)}));
+                break;
             case OpCode::kStoreGlobal: {
                 const auto value = frame.typed_locals.find(instruction.local);
                 if (value == frame.typed_locals.end())
