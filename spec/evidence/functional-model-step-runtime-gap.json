@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "66df42c23d6514a163c02c6df6e633ab5530025bd380af591ec429ea62c7b6d7"
+      "sha256": "2be6a082dd62a55eee9141ae0b88cba5c95539a3f748042fd8dfa9d59b223379"
     }
   },
   "minimal_scalar_elf": {
@@ -29298,8 +29298,10 @@
         "LE_Var"
       ],
       "operators": [
+        "ADD",
         "EQ",
-        "NE"
+        "NE",
+        "SUB"
       ],
       "slices": [
         "Slice_Length"
@@ -29311,6 +29313,7 @@
         "S_Call",
         "S_Cond",
         "S_Decl",
+        "S_For",
         "S_Return",
         "S_Seq"
       ],
@@ -29325,6 +29328,11 @@
       "kCallValue",
       "kCopyValue",
       "kEqual",
+      "kIntegerAdd",
+      "kIntegerGreaterEqual",
+      "kIntegerLessEqual",
+      "kIntegerStep",
+      "kIntegerSubtract",
       "kJump",
       "kLoadArgumentBits",
       "kLoadBitsImmediate",
@@ -29351,6 +29359,11 @@
       "kCopyValue",
       "kEqual",
       "kIncrementGlobalU64",
+      "kIntegerAdd",
+      "kIntegerGreaterEqual",
+      "kIntegerLessEqual",
+      "kIntegerStep",
+      "kIntegerSubtract",
       "kJump",
       "kLoadArgumentBits",
       "kLoadBitsImmediate",
@@ -29378,12 +29391,6 @@
   "schema": "pto-functional-model-step-runtime-gap-v1",
   "unhandled": {
     "constructors": [
-      {
-        "count": 874,
-        "name": "ADD",
-        "sample_function_id": 4809,
-        "sample_node_id": 4198
-      },
       {
         "count": 561,
         "name": "AND",
@@ -29653,18 +29660,6 @@
         "name": "ST_Procedure",
         "sample_function_id": 258,
         "sample_node_id": 636
-      },
-      {
-        "count": 692,
-        "name": "SUB",
-        "sample_function_id": 5499,
-        "sample_node_id": 2612
-      },
-      {
-        "count": 386,
-        "name": "S_For",
-        "sample_function_id": 4809,
-        "sample_node_id": 4219
       },
       {
         "count": 15154,

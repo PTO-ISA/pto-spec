@@ -57,6 +57,11 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kLoadBool:
                     break;
                 case OpCode::kStoreGlobal:
+                case OpCode::kIntegerAdd:
+                case OpCode::kIntegerSubtract:
+                case OpCode::kIntegerLessEqual:
+                case OpCode::kIntegerGreaterEqual:
+                case OpCode::kIntegerStep:
                     break;
                 case OpCode::kCallValue:
                 case OpCode::kCallProcedure:

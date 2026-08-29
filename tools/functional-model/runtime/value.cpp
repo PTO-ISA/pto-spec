@@ -81,6 +81,29 @@ BigInteger BigInteger::Add(const BigInteger &other) const {
     return result;
 }
 
+BigInteger BigInteger::Negated() const {
+    BigInteger result = *this;
+    if (!result.words_.empty()) result.negative_ = !result.negative_;
+    return result;
+}
+
+int BigInteger::Compare(const BigInteger &other) const {
+    if (negative_ != other.negative_) return negative_ ? -1 : 1;
+    int magnitude = 0;
+    if (words_.size() != other.words_.size()) {
+        magnitude = words_.size() < other.words_.size() ? -1 : 1;
+    } else {
+        for (std::size_t offset = 0; offset < words_.size(); ++offset) {
+            const std::size_t index = words_.size() - offset - 1;
+            if (words_[index] != other.words_[index]) {
+                magnitude = words_[index] < other.words_[index] ? -1 : 1;
+                break;
+            }
+        }
+    }
+    return negative_ ? -magnitude : magnitude;
+}
+
 bool BigInteger::operator==(const BigInteger &other) const {
     return negative_ == other.negative_ && words_ == other.words_;
 }

@@ -278,8 +278,12 @@ class Compiler:
             left = self.expression(values[1])
             right = self.expression(values[2])
             target = self.local()
+            opcode = {
+                "EQ": "kEqual", "NE": "kNotEqual",
+                "ADD": "kIntegerAdd", "SUB": "kIntegerSubtract",
+            }[operator]
             self.emit(
-                "kEqual" if operator == "EQ" else "kNotEqual",
+                opcode,
                 local=target,
                 binding=left,
                 address=right,
@@ -381,6 +385,32 @@ class Compiler:
                 raise ModelgenError(
                     f"unresolved assignment target {variable!r} at node {identifier}"
                 )
+            return False
+        if name == "S_For":
+            fields = self.arena.record(self.single_argument(identifier, "S_For"))
+            index_name = str(self.arena.atom(fields["index_name"], "string"))
+            start = self.expression(fields["start"])
+            end = self.expression(fields["end_"])
+            direction = self.arena.constructor_name(fields["dir"])
+            if direction not in {"Up", "Down"}:
+                raise ModelgenError(f"unsupported loop direction {direction}")
+            previous = self.local_ids.get(index_name)
+            self.local_ids[index_name] = start
+            loop_head = len(self.instructions)
+            condition = self.local()
+            self.emit(
+                "kIntegerLessEqual" if direction == "Up" else "kIntegerGreaterEqual",
+                local=condition, binding=start, address=end)
+            exit_branch = self.emit("kBranchIfFalse", local=condition)
+            self.statement(fields["body"])
+            self.emit("kIntegerStep", local=start,
+                      immediate=0 if direction == "Up" else 1)
+            self.emit("kJump", address=loop_head)
+            self.instructions[exit_branch]["address"] = len(self.instructions)
+            if previous is None:
+                del self.local_ids[index_name]
+            else:
+                self.local_ids[index_name] = previous
             return False
         if name == "S_Cond":
             values = self.arena.sequence(

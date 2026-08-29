@@ -40,7 +40,8 @@ class Interpreter {
                               const Function &function,
                               RuntimeState *state,
                               MemoryTransaction *memory,
-                              const std::vector<Value> &arguments = {}) const;
+                              const std::vector<Value> &arguments = {},
+                              std::uint64_t instruction_limit = (UINT64_C(1) << 20)) const;
 
   private:
     EvaluationResult EvaluateInternal(const Module &module,
@@ -48,7 +49,8 @@ class Interpreter {
                                       RuntimeState *state,
                                       MemoryTransaction *memory,
                                       const std::vector<Value> &arguments,
-                                      std::uint32_t depth) const;
+                                      std::uint32_t depth,
+                                      std::uint64_t *remaining) const;
     struct CallFrame {
         BindingId function_id;
         std::unordered_map<std::uint32_t, std::uint64_t> locals;

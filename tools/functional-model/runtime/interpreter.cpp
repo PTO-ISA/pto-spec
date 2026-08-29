@@ -35,8 +35,10 @@ EvaluationResult Interpreter::Evaluate(const Module &module,
                                        const Function &function,
                                        RuntimeState *state,
                                        MemoryTransaction *memory,
-                                       const std::vector<Value> &arguments) const {
-    return EvaluateInternal(module, function, state, memory, arguments, 0);
+                                       const std::vector<Value> &arguments,
+                                       std::uint64_t instruction_limit) const {
+    return EvaluateInternal(
+        module, function, state, memory, arguments, 0, &instruction_limit);
 }
 
 EvaluationResult Interpreter::EvaluateInternal(
@@ -45,7 +47,8 @@ EvaluationResult Interpreter::EvaluateInternal(
     RuntimeState *state,
     MemoryTransaction *memory,
     const std::vector<Value> &arguments,
-    std::uint32_t depth) const {
+    std::uint32_t depth,
+    std::uint64_t *remaining) const {
     if (state == nullptr || memory == nullptr) {
         return {PTO_STATUS_INVALID_ARGUMENT, PTO_STEP_UNSUPPORTED};
     }
@@ -55,6 +58,10 @@ EvaluationResult Interpreter::EvaluateInternal(
     CallFrame frame{function.id, {}, {}, {}};
     std::size_t pc = 0;
     while (pc < function.instructions.size()) {
+        if (remaining == nullptr || *remaining == 0) {
+            return {PTO_STATUS_RESOURCE_LIMIT, PTO_STEP_UNSUPPORTED};
+        }
+        --*remaining;
         const Instruction &instruction = function.instructions[pc];
         switch (instruction.opcode) {
             case OpCode::kSetLocalU64:
@@ -216,7 +223,8 @@ EvaluationResult Interpreter::EvaluateInternal(
                     state,
                     memory,
                     frame.pending_arguments,
-                    depth + 1);
+                    depth + 1,
+                    remaining);
                 frame.pending_arguments.clear();
                 if (called.status != PTO_STATUS_OK) {
                     return called;
@@ -230,6 +238,46 @@ EvaluationResult Interpreter::EvaluateInternal(
                 } else if (called.return_value) {
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
                 }
+                break;
+            }
+            case OpCode::kIntegerAdd:
+            case OpCode::kIntegerSubtract:
+            case OpCode::kIntegerLessEqual:
+            case OpCode::kIntegerGreaterEqual: {
+                const auto left = frame.typed_locals.find(instruction.binding);
+                const auto right = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                if (left == frame.typed_locals.end() ||
+                    right == frame.typed_locals.end() ||
+                    !std::holds_alternative<BigInteger>(left->second.storage()) ||
+                    !std::holds_alternative<BigInteger>(right->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                const BigInteger &l = std::get<BigInteger>(left->second.storage());
+                const BigInteger &r = std::get<BigInteger>(right->second.storage());
+                if (instruction.opcode == OpCode::kIntegerAdd ||
+                    instruction.opcode == OpCode::kIntegerSubtract) {
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local,
+                        Value(l.Add(instruction.opcode == OpCode::kIntegerAdd
+                                        ? r : r.Negated())));
+                } else {
+                    const int order = l.Compare(r);
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local,
+                        Value(instruction.opcode == OpCode::kIntegerLessEqual
+                                  ? order <= 0 : order >= 0));
+                }
+                break;
+            }
+            case OpCode::kIntegerStep: {
+                const auto value = frame.typed_locals.find(instruction.local);
+                if (value == frame.typed_locals.end() ||
+                    !std::holds_alternative<BigInteger>(value->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                const BigInteger delta(instruction.immediate == 0 ? 1 : -1);
+                frame.typed_locals.insert_or_assign(
+                    instruction.local,
+                    Value(std::get<BigInteger>(value->second.storage()).Add(delta)));
                 break;
             }
             case OpCode::kBranchIfFalse: {
