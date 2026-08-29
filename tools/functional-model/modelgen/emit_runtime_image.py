@@ -308,7 +308,68 @@ class Compiler:
                 immediate=len(values),
             )
             return result
+        if name == "E_GetArray":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "E_GetArray"), "tuple")
+            if len(values) != 2:
+                raise ModelgenError(f"malformed E_GetArray at node {identifier}")
+            base = self.expression(values[0])
+            index = self.expression(values[1])
+            result = self.local()
+            self.emit("kGetArray", local=result, binding=base, address=index)
+            return result
         raise ModelgenError(f"unsupported reachable runtime expression {name}")
+
+    def read_lvalue(self, identifier: int) -> int:
+        name = self.arena.constructor_name(identifier)
+        if name == "LE_Var":
+            variable = str(self.arena.atom(
+                self.single_argument(identifier, "LE_Var"), "string"))
+            target = self.local()
+            if variable in self.local_ids:
+                self.emit("kCopyValue", local=target,
+                          binding=self.local_ids[variable])
+            elif variable in self.global_ids:
+                self.emit("kLoadGlobal", local=target,
+                          binding=self.global_ids[variable])
+            else:
+                raise ModelgenError(
+                    f"unresolved lvalue root {variable!r} at node {identifier}")
+            return target
+        if name == "LE_SetArray":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "LE_SetArray"), "tuple")
+            base = self.read_lvalue(values[0])
+            index = self.expression(values[1])
+            target = self.local()
+            self.emit("kGetArray", local=target, binding=base, address=index)
+            return target
+        raise ModelgenError(f"unsupported runtime lvalue {name} at node {identifier}")
+
+    def assign_lvalue(self, identifier: int, source: int) -> None:
+        name = self.arena.constructor_name(identifier)
+        if name == "LE_Var":
+            variable = str(self.arena.atom(
+                self.single_argument(identifier, "LE_Var"), "string"))
+            if variable in self.local_ids:
+                self.emit("kCopyValue", local=self.local_ids[variable],
+                          binding=source)
+            elif variable in self.global_ids:
+                self.emit("kStoreGlobal", local=source,
+                          binding=self.global_ids[variable])
+            else:
+                raise ModelgenError(
+                    f"unresolved assignment root {variable!r} at node {identifier}")
+            return
+        if name == "LE_SetArray":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "LE_SetArray"), "tuple")
+            base = self.read_lvalue(values[0])
+            index = self.expression(values[1])
+            self.emit("kSetArray", local=base, binding=index, address=source)
+            self.assign_lvalue(values[0], base)
+            return
+        raise ModelgenError(f"unsupported runtime lvalue {name} at node {identifier}")
 
     def statement(self, identifier: int) -> bool:
         name = self.arena.constructor_name(identifier)
@@ -368,23 +429,8 @@ class Compiler:
             )
             if len(values) != 2:
                 raise ModelgenError(f"malformed S_Assign at node {identifier}")
-            lvalue_name = self.arena.constructor_name(values[0])
-            if lvalue_name != "LE_Var":
-                raise ModelgenError(
-                    f"unsupported runtime lvalue {lvalue_name} at node {values[0]}"
-                )
-            variable = str(
-                self.arena.atom(self.single_argument(values[0], "LE_Var"), "string")
-            )
             source = self.expression(values[1])
-            if variable in self.local_ids:
-                self.emit("kCopyValue", local=self.local_ids[variable], binding=source)
-            elif variable in self.global_ids:
-                self.emit("kStoreGlobal", local=source, binding=self.global_ids[variable])
-            else:
-                raise ModelgenError(
-                    f"unresolved assignment target {variable!r} at node {identifier}"
-                )
+            self.assign_lvalue(values[0], source)
             return False
         if name == "S_For":
             fields = self.arena.record(self.single_argument(identifier, "S_For"))

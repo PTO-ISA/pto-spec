@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "2be6a082dd62a55eee9141ae0b88cba5c95539a3f748042fd8dfa9d59b223379"
+      "sha256": "80ec9c3f3c534345f0eba474511c847e4ef5bf397dd28d4b722d382ab83b2913"
     }
   },
   "minimal_scalar_elf": {
@@ -29320,6 +29320,7 @@
       "expressions": [
         "E_Binop",
         "E_Call",
+        "E_GetArray",
         "E_Literal",
         "E_Slice",
         "E_Var"
@@ -29331,6 +29332,7 @@
       ],
       "lvalues": [
         "LDI_Var",
+        "LE_SetArray",
         "LE_Var"
       ],
       "operators": [
@@ -29364,6 +29366,7 @@
       "kCallValue",
       "kCopyValue",
       "kEqual",
+      "kGetArray",
       "kIntegerAdd",
       "kIntegerGreaterEqual",
       "kIntegerLessEqual",
@@ -29378,6 +29381,7 @@
       "kNotEqual",
       "kPushArgument",
       "kReturnValue",
+      "kSetArray",
       "kSliceBits",
       "kStoreGlobal"
     ],
@@ -29394,6 +29398,7 @@
       "kCallValue",
       "kCopyValue",
       "kEqual",
+      "kGetArray",
       "kIncrementGlobalU64",
       "kIntegerAdd",
       "kIntegerGreaterEqual",
@@ -29415,6 +29420,7 @@
       "kReturnProcedure",
       "kReturnTrap",
       "kReturnValue",
+      "kSetArray",
       "kSetLocalU64",
       "kSliceBits",
       "kStoreGlobal",
@@ -29506,12 +29512,6 @@
         "sample_node_id": 22559
       },
       {
-        "count": 1533,
-        "name": "E_GetArray",
-        "sample_function_id": 257,
-        "sample_node_id": 4141
-      },
-      {
         "count": 4368,
         "name": "E_GetField",
         "sample_function_id": 257,
@@ -29576,12 +29576,6 @@
         "name": "LE_Discard",
         "sample_function_id": 4785,
         "sample_node_id": 221992
-      },
-      {
-        "count": 862,
-        "name": "LE_SetArray",
-        "sample_function_id": 258,
-        "sample_node_id": 553
       },
       {
         "count": 1429,

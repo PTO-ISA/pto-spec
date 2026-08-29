@@ -283,6 +283,45 @@ EvaluationResult Interpreter::EvaluateInternal(
                     Value(std::get<BigInteger>(value->second.storage()).Add(delta)));
                 break;
             }
+            case OpCode::kGetArray: {
+                const auto base = frame.typed_locals.find(instruction.binding);
+                const auto index = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                std::uint64_t array_index = 0;
+                if (base == frame.typed_locals.end() ||
+                    index == frame.typed_locals.end() ||
+                    !std::holds_alternative<std::shared_ptr<PagedLazyArray>>(
+                        base->second.storage()) ||
+                    !std::holds_alternative<BigInteger>(index->second.storage()) ||
+                    !std::get<BigInteger>(index->second.storage()).TryToU64(&array_index))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local,
+                    std::get<std::shared_ptr<PagedLazyArray>>(
+                        base->second.storage())->Get(array_index).Clone());
+                break;
+            }
+            case OpCode::kSetArray: {
+                const auto base = frame.typed_locals.find(instruction.local);
+                const auto index = frame.typed_locals.find(instruction.binding);
+                const auto value = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                std::uint64_t array_index = 0;
+                if (base == frame.typed_locals.end() ||
+                    index == frame.typed_locals.end() ||
+                    value == frame.typed_locals.end() ||
+                    !std::holds_alternative<std::shared_ptr<PagedLazyArray>>(
+                        base->second.storage()) ||
+                    !std::holds_alternative<BigInteger>(index->second.storage()) ||
+                    !std::get<BigInteger>(index->second.storage()).TryToU64(&array_index))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                Value updated = base->second.Clone();
+                std::get<std::shared_ptr<PagedLazyArray>>(updated.storage())->Set(
+                    array_index, value->second.Clone());
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, std::move(updated));
+                break;
+            }
             case OpCode::kBranchIfFalse: {
                 const auto condition = frame.typed_locals.find(instruction.local);
                 if (condition == frame.typed_locals.end() ||

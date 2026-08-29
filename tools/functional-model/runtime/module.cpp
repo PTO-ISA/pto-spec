@@ -62,6 +62,8 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kIntegerLessEqual:
                 case OpCode::kIntegerGreaterEqual:
                 case OpCode::kIntegerStep:
+                case OpCode::kGetArray:
+                case OpCode::kSetArray:
                     break;
                 case OpCode::kCallValue:
                 case OpCode::kCallProcedure:

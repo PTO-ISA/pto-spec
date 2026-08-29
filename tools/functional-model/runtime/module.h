@@ -47,6 +47,8 @@ enum class OpCode : std::uint8_t {
     kIntegerLessEqual,
     kIntegerGreaterEqual,
     kIntegerStep,
+    kGetArray,
+    kSetArray,
     kBranchIfFalse,
     kJump,
     kReturnValue,
