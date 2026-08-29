@@ -209,7 +209,8 @@
     "ADR-0092",
     "ADR-0093",
     "ADR-0094",
-    "ADR-0095"
+    "ADR-0095",
+    "ADR-0111"
   ],
   "records": [
     {
@@ -8403,12 +8404,38 @@
         "0.58.5"
       ],
       "title": "TCVT CUBE_M16 and CUBE_M32 layout closure"
+    },
+    {
+      "accepted": null,
+      "affected_ndf": [],
+      "affected_units": [],
+      "approvers": [],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "e9b621ddce041ff2c770bef67adc41946db87295",
+      "created": "2026-08-29",
+      "id": "ADR-0111",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/179",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0111-asl-functional-model-execution-boundary.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "draft",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "unassigned"
+      ],
+      "title": "ASL functional-model fetch, step, memory, and host boundary"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
-    "draft_count": 10,
+    "draft_count": 11,
     "legacy_id_count": 198,
-    "record_count": 104
+    "record_count": 105
   }
 }

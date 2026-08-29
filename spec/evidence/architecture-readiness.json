@@ -21180,13 +21180,28 @@
         "PTO-TILE-TCVT"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0111"
+      ],
+      "blockers": [
+        "ADR is draft"
+      ],
+      "ndf_ids": [],
+      "released_versions": [],
+      "stage": "draft",
+      "subject_id": "ADR-0111",
+      "test_ids": [],
+      "unit_ids": [],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 104,
-      "sha256": "1988013c80f2b16a650039c89862c753651f2f217d5d4e789242508e80e930de"
+      "count": 105,
+      "sha256": "a49ea9758d83d13f9aa6996c2b1ed2ec47a246acd9b3dbc2ddf0a42ff318c74d"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21194,7 +21209,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "0dce68d6d7c526ed06f8eed5bb2a4ea2fafdb75d891dbb7a0e72e5522e90e429",
+      "sha256": "939eb13dba03e960bf4e38079c231c585bcb84d3b81b877189c146ca6ac7c569",
       "test_count": 3716,
       "unit_count": 851
     }
@@ -21208,19 +21223,19 @@
     "released"
   ],
   "summary": {
-    "blocker_count": 10,
-    "draft_count": 10,
+    "blocker_count": 11,
+    "draft_count": 11,
     "released_count": 0,
     "stage_counts": {
       "architecture-defined": 0,
-      "draft": 10,
+      "draft": 11,
       "executable": 90,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 100,
+    "subject_count": 101,
     "validated_count": 0
   }
 }
