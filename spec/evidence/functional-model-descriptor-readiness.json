@@ -1,0 +1,34 @@
+{
+  "architecture_requirement": {
+    "id": "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
+    "status": "open"
+  },
+  "compatibility": {
+    "descriptor_sha256": "0e1de9698edb8c4ed42c19cb76b2fd65a5c4ba4a41db6a71d98f360a915996db",
+    "mode": "exact-descriptor-sha256"
+  },
+  "descriptor": {
+    "schema": "pto-functional-model-descriptor-v1",
+    "sha256": "0e1de9698edb8c4ed42c19cb76b2fd65a5c4ba4a41db6a71d98f360a915996db",
+    "size_bytes": 2305
+  },
+  "descriptor_schema": {
+    "id": "https://pto-isa.org/schemas/pto-functional-model-descriptor-v1.schema.json",
+    "sha256": "3463380c511e36c83de28068922ea55208e84a92182b76a7b6ed60a06060fe8d",
+    "version": 1
+  },
+  "numeric_maturity": 0,
+  "publication": "not-public",
+  "schema": "pto.functional-model-descriptor-readiness.v1",
+  "snapshot_schema": null,
+  "source_identity_strategy": {
+    "descriptor_source_commit": "ad7353b789de66e8d9782062a3646637021a76c3",
+    "descriptor_source_tree": "6fd9071c72c79ca71c629802ec6ed1fbac45ff47",
+    "dirty_default": "fail-closed",
+    "exact_release_rule": "regenerate from an explicit immutable SOURCE_COMMIT/SOURCE_TREE and compare the exact descriptor SHA-256",
+    "mode": "clean-producer-commit",
+    "readiness_relation": "downstream projection; readiness is not part of the bound source tree"
+  },
+  "status": "experimental",
+  "validated": true
+}
