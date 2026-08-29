@@ -1,0 +1,191 @@
+#include "value.h"
+
+#include <algorithm>
+#include <limits>
+#include <stdexcept>
+
+namespace pto::model {
+
+BigInteger::BigInteger() = default;
+
+BigInteger::BigInteger(std::int64_t value) {
+    negative_ = value < 0;
+    std::uint64_t magnitude = negative_
+        ? static_cast<std::uint64_t>(-(value + 1)) + 1
+        : static_cast<std::uint64_t>(value);
+    while (magnitude != 0) {
+        words_.push_back(static_cast<std::uint32_t>(magnitude));
+        magnitude >>= 32;
+    }
+}
+
+BigInteger BigInteger::FromUnsignedWords(std::vector<std::uint32_t> words) {
+    BigInteger result;
+    result.words_ = std::move(words);
+    result.Normalize();
+    return result;
+}
+
+BigInteger BigInteger::Add(const BigInteger &other) const {
+    BigInteger result;
+    if (negative_ == other.negative_) {
+        result.negative_ = negative_;
+        const std::size_t count = std::max(words_.size(), other.words_.size());
+        result.words_.resize(count);
+        std::uint64_t carry = 0;
+        for (std::size_t index = 0; index < count; ++index) {
+            const std::uint64_t left =
+                index < words_.size() ? words_[index] : 0;
+            const std::uint64_t right =
+                index < other.words_.size() ? other.words_[index] : 0;
+            const std::uint64_t sum = left + right + carry;
+            result.words_[index] = static_cast<std::uint32_t>(sum);
+            carry = sum >> 32;
+        }
+        if (carry != 0) {
+            result.words_.push_back(static_cast<std::uint32_t>(carry));
+        }
+        return result;
+    }
+
+    const auto compare_magnitude = [](const std::vector<std::uint32_t> &left,
+                                      const std::vector<std::uint32_t> &right) {
+        if (left.size() != right.size()) {
+            return left.size() < right.size() ? -1 : 1;
+        }
+        for (std::size_t offset = 0; offset < left.size(); ++offset) {
+            const std::size_t index = left.size() - offset - 1;
+            if (left[index] != right[index]) {
+                return left[index] < right[index] ? -1 : 1;
+            }
+        }
+        return 0;
+    };
+    const int order = compare_magnitude(words_, other.words_);
+    if (order == 0) {
+        return result;
+    }
+    const auto &larger = order > 0 ? words_ : other.words_;
+    const auto &smaller = order > 0 ? other.words_ : words_;
+    result.negative_ = order > 0 ? negative_ : other.negative_;
+    result.words_.resize(larger.size());
+    std::uint64_t borrow = 0;
+    for (std::size_t index = 0; index < larger.size(); ++index) {
+        const std::uint64_t right =
+            (index < smaller.size() ? smaller[index] : 0) + borrow;
+        const std::uint64_t left = larger[index];
+        result.words_[index] = static_cast<std::uint32_t>(left - right);
+        borrow = left < right ? 1 : 0;
+    }
+    result.Normalize();
+    return result;
+}
+
+bool BigInteger::operator==(const BigInteger &other) const {
+    return negative_ == other.negative_ && words_ == other.words_;
+}
+
+std::string BigInteger::ToString() const {
+    if (words_.empty()) {
+        return "0";
+    }
+    if (words_.size() == 1) {
+        const std::string value = std::to_string(words_.front());
+        return negative_ ? "-" + value : value;
+    }
+    std::string result = negative_ ? "-0x" : "0x";
+    static constexpr char digits[] = "0123456789abcdef";
+    for (auto word = words_.rbegin(); word != words_.rend(); ++word) {
+        for (int shift = 28; shift >= 0; shift -= 4) {
+            result.push_back(digits[(*word >> shift) & 0xfU]);
+        }
+    }
+    return result;
+}
+
+void BigInteger::Normalize() {
+    while (!words_.empty() && words_.back() == 0) {
+        words_.pop_back();
+    }
+    if (words_.empty()) {
+        negative_ = false;
+    }
+}
+
+BitVector::BitVector(std::size_t width)
+    : width_(width), bytes_((width + 7) / 8, 0) {
+    if (width == 0) {
+        throw std::invalid_argument("bitvector width must be nonzero");
+    }
+}
+
+BitVector BitVector::FromU64(std::size_t width, std::uint64_t value) {
+    BitVector result(width);
+    const std::size_t count = std::min(result.bytes_.size(), sizeof(value));
+    for (std::size_t index = 0; index < count; ++index) {
+        result.bytes_[index] = static_cast<std::uint8_t>(value >> (index * 8));
+    }
+    if (width % 8 != 0) {
+        result.bytes_.back() &= static_cast<std::uint8_t>((1U << (width % 8)) - 1U);
+    }
+    return result;
+}
+
+std::size_t BitVector::width() const { return width_; }
+
+bool BitVector::bit(std::size_t index) const {
+    if (index >= width_) {
+        throw std::out_of_range("bitvector index");
+    }
+    return ((bytes_[index / 8] >> (index % 8)) & 1U) != 0;
+}
+
+bool BitVector::operator==(const BitVector &other) const {
+    return width_ == other.width_ && bytes_ == other.bytes_;
+}
+
+Value::Value(bool value) : storage_(value) {}
+Value::Value(BigInteger value) : storage_(std::move(value)) {}
+Value::Value(BitVector value) : storage_(std::move(value)) {}
+Value::Value(EnumValue value) : storage_(value) {}
+Value::Value(TupleValue value)
+    : storage_(std::make_shared<TupleValue>(std::move(value))) {}
+Value::Value(RecordValue value)
+    : storage_(std::make_shared<RecordValue>(std::move(value))) {}
+Value::Value(std::shared_ptr<PagedLazyArray> value)
+    : storage_(std::move(value)) {}
+const Value::Storage &Value::storage() const { return storage_; }
+
+PagedLazyArray::PagedLazyArray(DefaultFactory default_factory)
+    : default_factory_(std::move(default_factory)) {
+    if (!default_factory_) {
+        throw std::invalid_argument("array default factory is required");
+    }
+}
+
+Value PagedLazyArray::Get(std::uint64_t index) const {
+    const std::uint64_t page_index = index / kPageSize;
+    const auto page = pages_.find(page_index);
+    if (page == pages_.end()) {
+        return default_factory_(index);
+    }
+    return page->second->at(static_cast<std::size_t>(index % kPageSize));
+}
+
+void PagedLazyArray::Set(std::uint64_t index, Value value) {
+    const std::uint64_t page_index = index / kPageSize;
+    auto &page = pages_[page_index];
+    if (!page) {
+        auto created = std::make_shared<Page>();
+        created->reserve(kPageSize);
+        for (std::uint64_t offset = 0; offset < kPageSize; ++offset) {
+            created->push_back(default_factory_(page_index * kPageSize + offset));
+        }
+        page = std::move(created);
+    } else if (page.use_count() != 1) {
+        page = std::make_shared<Page>(*page);
+    }
+    page->at(static_cast<std::size_t>(index % kPageSize)) = std::move(value);
+}
+
+}  // namespace pto::model

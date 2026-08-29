@@ -1,0 +1,174 @@
+#include "pto/pto_asl_model.h"
+
+#include "runtime_model.h"
+
+#include <algorithm>
+#include <cstring>
+#include <memory>
+#include <new>
+#include <string>
+#include <utility>
+#include <vector>
+
+struct pto_model {
+    std::shared_ptr<const pto::model::Module> module_owner;
+    std::unique_ptr<pto::model::RuntimeModel> runtime;
+};
+
+namespace {
+
+template <typename T>
+bool ValidStruct(const T *value) {
+    return value != nullptr &&
+           value->abi_version == PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION &&
+           value->struct_size == sizeof(T);
+}
+
+pto::model::MemoryCallbacks BindCallbacks(
+    const pto_memory_callbacks_t &callbacks) {
+    pto::model::MemoryCallbacks bound;
+    bound.reset = [callbacks]() { return callbacks.reset(callbacks.user_data); };
+    bound.probe = [callbacks](pto_memory_access_kind_t kind,
+                              std::uint64_t address,
+                              std::uint64_t size,
+                              bool *permitted) {
+        std::uint8_t result = 0;
+        const pto_status_t status = callbacks.probe(
+            callbacks.user_data, kind, address, size, &result);
+        if (status == PTO_STATUS_OK && permitted != nullptr) {
+            *permitted = result != 0;
+        }
+        return status;
+    };
+    bound.read = [callbacks](std::uint64_t address,
+                             std::uint8_t *bytes,
+                             std::uint64_t size) {
+        return callbacks.read(callbacks.user_data, address, bytes, size);
+    };
+    bound.commit = [callbacks](
+                       const std::vector<pto::model::MemoryWrite> &writes) {
+        std::vector<pto_memory_write_t> abi_writes;
+        abi_writes.reserve(writes.size());
+        for (const pto::model::MemoryWrite &write : writes) {
+            pto_memory_write_t converted{};
+            converted.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
+            converted.struct_size = sizeof(converted);
+            converted.address = write.address;
+            converted.value = write.value;
+            abi_writes.push_back(converted);
+        }
+        return callbacks.commit(callbacks.user_data,
+                                abi_writes.data(),
+                                abi_writes.size());
+    };
+    return bound;
+}
+
+}  // namespace
+
+extern "C" pto_status_t pto_model_create(const pto_model_config_t *config,
+                                         pto_model_t **out_model) {
+    if (out_model == nullptr) {
+        return PTO_STATUS_INVALID_ARGUMENT;
+    }
+    *out_model = nullptr;
+    if (!ValidStruct(config) || !ValidStruct(&config->memory)) {
+        return PTO_STATUS_ABI_MISMATCH;
+    }
+    if (config->flags != 0 || config->memory.reset == nullptr ||
+        config->memory.probe == nullptr || config->memory.read == nullptr ||
+        config->memory.commit == nullptr) {
+        return PTO_STATUS_INVALID_ARGUMENT;
+    }
+    try {
+        auto model = std::make_unique<pto_model>();
+        model->module_owner = pto::model::DisconnectedModule();
+        model->runtime = std::make_unique<pto::model::RuntimeModel>(
+            model->module_owner, BindCallbacks(config->memory));
+        *out_model = model.release();
+        return PTO_STATUS_OK;
+    } catch (const std::bad_alloc &) {
+        return PTO_STATUS_RESOURCE_LIMIT;
+    } catch (...) {
+        return PTO_STATUS_INTERNAL_ERROR;
+    }
+}
+
+extern "C" void pto_model_destroy(pto_model_t *model) { delete model; }
+
+extern "C" pto_status_t pto_model_reset(
+    pto_model_t *model,
+    const pto_initial_state_t *initial_state) {
+    if (model == nullptr || model->runtime == nullptr) {
+        return PTO_STATUS_INVALID_ARGUMENT;
+    }
+    if (!ValidStruct(initial_state)) {
+        return PTO_STATUS_ABI_MISMATCH;
+    }
+    if ((initial_state->pe0_gpr_valid_mask & 0xff000000U) != 0 ||
+        initial_state->reserved0 != 0) {
+        return PTO_STATUS_INVALID_ARGUMENT;
+    }
+    if (initial_state->pe0_gpr_valid_mask != 0) {
+        return PTO_STATUS_UNSUPPORTED;
+    }
+    return model->runtime->Reset({initial_state->entry_tpc});
+}
+
+extern "C" pto_status_t pto_model_step(pto_model_t *model,
+                                       pto_step_result_t *out_result) {
+    if (model == nullptr || model->runtime == nullptr) {
+        return PTO_STATUS_INVALID_ARGUMENT;
+    }
+    if (!ValidStruct(out_result)) {
+        return PTO_STATUS_ABI_MISMATCH;
+    }
+    const std::uint32_t abi_version = out_result->abi_version;
+    const std::uint32_t struct_size = out_result->struct_size;
+    std::memset(out_result, 0, sizeof(*out_result));
+    out_result->abi_version = abi_version;
+    out_result->struct_size = struct_size;
+    out_result->step_state = PTO_STEP_UNSUPPORTED;
+
+    pto::model::StepResult result;
+    const pto_status_t status = model->runtime->Step(&result);
+    out_result->step_state = result.state;
+    out_result->sequence = result.sequence;
+    out_result->pre_tpc = result.pre_tpc;
+    out_result->post_tpc = result.post_tpc;
+    out_result->pre_bpc = result.pre_bpc;
+    out_result->post_bpc = result.post_bpc;
+    return status;
+}
+
+extern "C" pto_status_t pto_model_complete_host_request(
+    pto_model_t *model,
+    std::uint64_t request_token,
+    const pto_host_response_t *response) {
+    if (model == nullptr || model->runtime == nullptr) {
+        return PTO_STATUS_INVALID_ARGUMENT;
+    }
+    if (!ValidStruct(response)) {
+        return PTO_STATUS_ABI_MISMATCH;
+    }
+    return model->runtime->CompleteHostRequest(
+        request_token, response->scalar_result);
+}
+
+extern "C" pto_status_t pto_model_last_error(pto_model_t *model,
+                                             char *buffer,
+                                             std::uint64_t *inout_size) {
+    if (model == nullptr || model->runtime == nullptr || inout_size == nullptr) {
+        return PTO_STATUS_INVALID_ARGUMENT;
+    }
+    const std::string error = model->runtime->last_error();
+    const std::uint64_t required = error.size() + 1;
+    if (buffer == nullptr || *inout_size < required) {
+        *inout_size = required;
+        return PTO_STATUS_BUFFER_TOO_SMALL;
+    }
+    std::copy(error.begin(), error.end(), buffer);
+    buffer[error.size()] = '\0';
+    *inout_size = required;
+    return PTO_STATUS_OK;
+}
