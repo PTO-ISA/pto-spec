@@ -89,6 +89,15 @@ def validate_run(
         architecture.get("functional_profile_id"), isa["model_profile"],
         "model/corpus functional profile",
     )
+    expected_elf_isa = {
+        "release": isa["version"],
+        "encoding_abi": isa["encoding_abi"],
+        "encoding_projection_sha256": isa["encoding_projection_sha256"],
+    }
+    require_equal(
+        run_manifest.get("elf", {}).get("isa"), expected_elf_isa,
+        "ELF ISA identity",
+    )
     outcome = run_manifest.get("outcome")
     observed_result = run_manifest.get("result")
     trace = run_manifest.get("trace")
@@ -98,7 +107,7 @@ def validate_run(
         raise ValidationError("run manifest has no nonempty trace")
 
     require_equal(outcome.get("status"), "completed", "run outcome")
-    require_equal(outcome.get("reason"), "stop_pc", "run stop reason")
+    require_equal(outcome.get("reason"), stop_policy["kind"], "run stop reason")
     require_equal(outcome.get("steps"), stop_policy["max_steps"], "executed steps")
     require_equal(outcome.get("final_tpc"), stop_policy["stop_pc"], "final TPC")
     require_equal(len(trace), stop_policy["max_steps"], "trace length")
@@ -115,20 +124,25 @@ def validate_run(
         if not isinstance(step, dict):
             raise ValidationError(f"trace step {index} is not an object")
         require_equal(step.get("status"), 0, f"trace step {index} ABI status")
-        require_equal(step.get("step_state"), 1, f"trace step {index} state")
-        require_equal(step.get("instruction_status"), 1,
+        expected_step = expected_trace[index]
+        if not isinstance(expected_step, dict):
+            raise ValidationError(f"expected trace step {index} is not an object")
+        require_equal(step.get("step_state"), expected_step.get("step_state", 1),
+                      f"trace step {index} state")
+        require_equal(step.get("instruction_status"),
+                      expected_step.get("instruction_status", 1),
                       f"trace step {index} instruction status")
         require_equal(step.get("fault_code"), 0, f"trace step {index} fault")
         require_equal(step.get("fault_address"), 0, f"trace step {index} fault address")
         require_equal(step.get("fault_cause"), 0, f"trace step {index} fault cause")
         require_equal(step.get("origin_pe"), 0, f"trace step {index} origin PE")
-        require_equal(step.get("request_token"), 0, f"trace step {index} request token")
-        require_equal(step.get("request_type"), 0, f"trace step {index} request type")
-        require_equal(step.get("request_argument0"), 0,
+        require_equal(step.get("request_token"), expected_step.get("request_token", 0),
+                      f"trace step {index} request token")
+        require_equal(step.get("request_type"), expected_step.get("request_type", 0),
+                      f"trace step {index} request type")
+        require_equal(step.get("request_argument0"),
+                      expected_step.get("request_argument0", 0),
                       f"trace step {index} request argument")
-        expected_step = expected_trace[index]
-        if not isinstance(expected_step, dict):
-            raise ValidationError(f"expected trace step {index} is not an object")
         for field in (
             "pre_tpc", "post_tpc", "pre_bpc", "post_bpc",
             "raw_instruction_le", "length_bits", "sequence",
@@ -141,6 +155,18 @@ def validate_run(
                 trace[index - 1].get("post_tpc"),
                 f"trace step {index} TPC continuity",
             )
+
+    observed_requests = [
+        step.get("request_type")
+        for step in trace
+        if isinstance(step, dict) and step.get("step_state") == 3
+    ]
+    require_equal(observed_requests, case["allowed_requests"], "host request sequence")
+    if stop_policy["kind"] == "exit_group":
+        require_equal(outcome.get("exit_status"), stop_policy["exit_status"],
+                      "exit status")
+        require_equal(outcome.get("exit_argument"), trace[-1]["request_argument0"],
+                      "exit argument")
 
     require_equal(result_bytes, golden_bytes, "result bytes")
     require_equal(observed_result.get("address"), result_contract["address"], "result address")
@@ -187,9 +213,14 @@ def run_case(
         "--asl_manifest_out", str(run_manifest_path),
     ]
     completed = subprocess.run(command, text=True, capture_output=True)
-    if completed.returncode != 0:
+    expected_return = (
+        int(stop_policy["exit_status"])
+        if stop_policy["kind"] == "exit_group" else 0
+    )
+    if completed.returncode != expected_return:
         raise ValidationError(
-            f"gfrun failed for {case['id']} with {completed.returncode}: "
+            f"gfrun returned {completed.returncode} for {case['id']}; "
+            f"expected {expected_return}: "
             f"{completed.stderr.strip()}"
         )
     if not result.is_file() or not run_manifest_path.is_file():

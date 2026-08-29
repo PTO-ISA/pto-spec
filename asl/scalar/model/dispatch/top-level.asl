@@ -1,4 +1,10 @@
 // PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL","surface":"scalar","classification":["model","dispatch","top-level"],"depends_on":["PTO-SCALAR-MODEL-DISPATCH-ALU","PTO-SCALAR-MODEL-DISPATCH-BRU","PTO-SCALAR-MODEL-DISPATCH-SYS","PTO-SCALAR-MODEL-DISPATCH-AMO","PTO-SCALAR-MODEL-DISPATCH-AGU","PTO-SCALAR-MODEL-DISPATCH-FSU"],"catalog_projection":{"catalog":"scalar-forms","family_constraints":[],"isa":"PTO Instruction Set Architecture","schema_version":2}}
+// NDF-BEGIN: PTO-REQ-SCALAR-BODY-ENTRY-001
+// ndf: kind=contract level=L1 layer=scalar status=accepted
+// After a BSTART header, the first successfully decoded scalar form MUST enter
+// the active block body before operation applicability is evaluated.  A value
+// that does not decode as a scalar form MUST NOT change the header/body phase.
+// NDF-END: PTO-REQ-SCALAR-BODY-ENTRY-001
 func ExecuteScalarInstruction(instruction: bits(48),
                               length_bits: integer {16,32,48})
                               => ScalarExecutionStatus
@@ -11,6 +17,9 @@ begin
     end;
     let form = decoded as integer {0..PTO_SCALAR_FORM_COUNT-1};
     let operation = ScalarOperationOfForm(form);
+    if BundleIsActive() && !BundleBodyIsActive() then
+        EnterBundleBody();
+    end;
     if !ScalarOperationApplicable(operation) then
         SetFault(Fault_BundleControl, ReadTPC());
         return ScalarExecution_Rejected;

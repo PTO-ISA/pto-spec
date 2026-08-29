@@ -2578,7 +2578,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/top-level.asl",
-      "sha256": "aa3ddf8835162b5c3f5692bcfb5e9d3aac64407c5feef8a58edddbb7d309657a"
+      "sha256": "5b7a14cc565588132428f0cb2443fd3e2876814a0e40605611bab9a8d68912e1"
     },
     {
       "path": "asl/scalar/model/fsu/arithmetic.asl",
@@ -3466,7 +3466,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "c2925b38c4c7114f1c9cc583d9dbf2c4d4d04c0e7e55e56e6a7d18841396abe2"
+      "sha256": "30dd4287c5f1a670a2c2ec69faaed40c8a9b59a5ed44817be815a6f170654c3f"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3478,11 +3478,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "149c9fa086aaa686eeb7f257c5a368ac783c88f6372a30472f9e3890f20677fc"
+      "sha256": "88296be87b0a1cb8ee5090e6a8d309bd929feec82d3f306273ba791000d0b4d4"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "eb4289dd776f665cccf90732c396a7d667238d3eab51950a4f752ac12705853d"
+      "sha256": "89b36e44077779189f587529c8f78ea9c49a88f193a34285162a63d3f78ab20c"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3528,7 +3528,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "8bb139d16d3de7254993349a40d0809f359c8cc20452f0d0bdc12fa07a69d7d3",
+  "content_sha256": "6f9bc9efa48cd7d5bee65cfa808d133097c26b5588a9c2eab5a6255fcf2c7d4f",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -6780,7 +6780,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/dispatch/top-level.md",
-      "sha256": "7f9f99d809b02df75189f28bbfd7f0ce2b46da19aab5ead846f3fe65e5bf2a46"
+      "sha256": "135f40eb4e655ad7593ce783f8dbf11552173fefa027db33424c35bc14de4295"
     },
     {
       "kind": "generated-documentation",
@@ -11258,6 +11258,10 @@
       {
         "id": "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001",
         "sha256": "8adda2e2215f2741d97ef0a94b76f920cf88ac24751752063eee245ec3fc281a"
+      },
+      {
+        "id": "PTO-REQ-SCALAR-BODY-ENTRY-001",
+        "sha256": "dc607f5cff47463d28e72fa8cefcb58ed458d0991cc3cecc9a3e8985012ee91d"
       },
       {
         "id": "PTO-REQ-SHARED-TILE-001",

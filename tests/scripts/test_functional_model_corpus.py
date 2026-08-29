@@ -76,6 +76,7 @@ class FunctionalModelCorpusTest(unittest.TestCase):
         scalar = (CORPUS / "scalar_stop_pc.S").read_text(encoding="utf-8")
         block = (CORPUS / "block_64_stop_pc.S").read_text(encoding="utf-8")
         tile = (CORPUS / "tile_tadd_stop_pc.S").read_text(encoding="utf-8")
+        host = (CORPUS / "host_exit_group.S").read_text(encoding="utf-8")
         self.assertIn("0x96,0x0a,0xd6,0x13,0x85,0x81,0x20,0x00", scalar)
         self.assertIn("0x0e,0x80,0x95,0xc0,0x00,0x00,0x16,0x00", scalar)
         self.assertIn("0x69,0xa0,0xc1,0x03", scalar)
@@ -85,11 +86,14 @@ class FunctionalModelCorpusTest(unittest.TestCase):
         self.assertIn("0x81,0x11,0x01,0xc8", tile)
         self.assertIn("0x13,0xce,0x0a,0x00", tile)
         self.assertIn("0x13,0x5e,0x18,0x00", tile)
+        self.assertIn("0x95,0x04,0xe0,0x05", host)
+        self.assertIn("0x2b,0x30,0x10,0x00", host)
 
     def test_case_contract_uses_real_length_bits_and_golden(self) -> None:
         scalar = self.builder.CASES["scalar_stop_pc"]
         block = self.builder.CASES["block_64_stop_pc"]
         tile = self.builder.CASES["tile_tadd_stop_pc"]
+        host = self.builder.CASES["host_exit_group"]
         self.assertEqual(scalar["lengths"], [16, 16, 32, 48, 16, 32])
         self.assertEqual(scalar["golden"], bytes.fromhex("19000000"))
         self.assertEqual(block["lengths"], [32, 64])
@@ -98,6 +102,9 @@ class FunctionalModelCorpusTest(unittest.TestCase):
                          [32, 16, 16, 16, 32, 32, 32, 16, 16, 16,
                           32, 32, 16, 16, 16, 32, 32, 16])
         self.assertEqual(tile["golden"], bytes.fromhex("32000000"))
+        self.assertEqual(host["lengths"], [16, 32, 32, 32])
+        self.assertEqual(host["allowed_requests"], [94])
+        self.assertEqual(host["exit_status"], 7)
         known_ids = "\n".join(
             path.read_text(encoding="utf-8", errors="replace")
             for path in (ROOT / "tests" / "asl").rglob("*.asl")
@@ -162,12 +169,16 @@ class FunctionalModelCorpusTest(unittest.TestCase):
         case = {
             "case": {
                 "isa": {
+                    "version": "0.58.5",
                     "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
                     "encoding_projection_sha256": "34" * 32,
                     "model_profile": "pto-functional-model-experimental-v1",
                 },
-                "stop_policy": {"stop_pc": 0x104, "max_steps": 2},
+                "stop_policy": {
+                    "kind": "stop_pc", "stop_pc": 0x104, "max_steps": 2
+                },
                 "expected_length_sequence": [16, 16],
+                "allowed_requests": [],
                 "expected_trace": [
                     {
                         "pre_tpc": 0x100,
@@ -202,6 +213,15 @@ class FunctionalModelCorpusTest(unittest.TestCase):
                     "functional_profile_id":
                         "pto-functional-model-experimental-v1",
                 }
+            },
+            "elf": {
+                "filename": "fixture.elf",
+                "entry": 0x100,
+                "isa": {
+                    "release": "0.58.5",
+                    "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
+                    "encoding_projection_sha256": "34" * 32,
+                },
             },
             "outcome": {
                 "status": "completed",

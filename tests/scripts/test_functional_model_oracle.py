@@ -101,6 +101,11 @@ class FunctionalModelOracleTest(unittest.TestCase):
     def test_oracle_manifest_uses_external_descriptor_digest(self) -> None:
         case = {
             "elf": {"filename": "case.elf", "entry": 0x100},
+            "isa": {
+                "version": "0.58.5",
+                "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
+                "encoding_projection_sha256": "34" * 32,
+            },
             "stop_policy": {"kind": "stop_pc", "stop_pc": 0x102, "max_steps": 1},
             "expected_trace": [
                 {

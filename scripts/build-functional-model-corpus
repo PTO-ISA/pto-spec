@@ -165,6 +165,46 @@ CASES = {
             "final_bundle_active": False,
         },
     },
+    "host_exit_group": {
+        "entry": 0x100,
+        "stop_pc": 0x10E,
+        "stop_kind": "exit_group",
+        "exit_status": 7,
+        "max_steps": 4,
+        "lengths": [16, 32, 32, 32],
+        "expected_trace": [
+            {"pre_tpc": 0x100, "post_tpc": 0x102, "pre_bpc": 0,
+             "post_bpc": 0, "raw_instruction_le": 0x11D6,
+             "length_bits": 16, "sequence": 3},
+            {"pre_tpc": 0x102, "post_tpc": 0x106, "pre_bpc": 0,
+             "post_bpc": 0, "raw_instruction_le": 0x05E00495,
+             "length_bits": 32, "sequence": 4},
+            {"pre_tpc": 0x106, "post_tpc": 0x10A, "pre_bpc": 0,
+             "post_bpc": 0x106, "raw_instruction_le": 0x00001081,
+             "length_bits": 32, "sequence": 5},
+            {"pre_tpc": 0x10A, "post_tpc": 0x10E, "pre_bpc": 0x106,
+             "post_bpc": 0x106, "raw_instruction_le": 0x0010302B,
+             "length_bits": 32, "sequence": 7,
+             "step_state": 3, "instruction_status": 1,
+             "request_token": 1, "request_type": 94,
+             "request_argument0": 7},
+        ],
+        "result_address": 0x200,
+        "golden": bytes.fromhex("e7010000"),
+        "requirements": [
+            "PTO-REQ-FUNCTIONAL-FETCH-001",
+            "PTO-REQ-FUNCTIONAL-STEP-001",
+            "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
+        ],
+        "avs_ids": [
+            "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
+        ],
+        "allowed_requests": [94],
+        "trace_requirements": {
+            "required_host_request": 94,
+            "final_bundle_active": True,
+        },
+    },
 }
 
 
@@ -471,11 +511,13 @@ def build_case(
             "initial_gprs": {},
             "stack": {"top": stack_top, "size": stack_top - stack_base},
             "stop_policy": {
-                "kind": "stop_pc",
+                "kind": config.get("stop_kind", "stop_pc"),
                 "stop_pc": config["stop_pc"],
                 "max_steps": config["max_steps"],
+                **({"exit_status": config["exit_status"]}
+                   if config.get("stop_kind") == "exit_group" else {}),
             },
-            "allowed_requests": [],
+            "allowed_requests": config.get("allowed_requests", []),
             "expected_length_sequence": config["lengths"],
             "expected_trace": config["expected_trace"],
             "trace_requirements": config["trace_requirements"],

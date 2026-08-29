@@ -209,8 +209,20 @@ def source_for_case(
               step.origin_pe, static_cast<unsigned long long>(step.request_token),
               static_cast<unsigned long long>(step.request_argument0), step.request_type,
               static_cast<unsigned long long>(step.sequence));
-            if (status != PTO_STATUS_OK || step.step_state != PTO_STEP_EXECUTED)
-              return 4;
+            if (status != PTO_STATUS_OK) return 4;
+            if (step.step_state == PTO_STEP_HOST_REQUEST) {{
+              if (step.request_type != 94U) return 4;
+              pto_host_response_t response{{}};
+              response.abi_version = config.abi_version;
+              response.struct_size = sizeof(response);
+              response.scalar_result = step.request_argument0;
+              if (pto_model_complete_host_request(
+                      model, step.request_token, &response) != PTO_STATUS_OK)
+                return 4;
+              stopped = true;
+              break;
+            }}
+            if (step.step_state != PTO_STEP_EXECUTED) return 4;
             if (step.post_tpc == {stop['stop_pc']}ULL) {{ stopped = true; break; }}
           }}
           if (!stopped) return 5;
@@ -295,6 +307,13 @@ def run_case(
             "standalone result does not match golden: "
             f"observed={result_hex} expected={golden.read_bytes().hex()}"
         )
+    outcome = {
+        "status": "completed", "reason": case["stop_policy"]["kind"],
+        "steps": len(trace), "final_tpc": trace[-1]["post_tpc"],
+    }
+    if case["stop_policy"]["kind"] == "exit_group":
+        outcome["exit_status"] = case["stop_policy"]["exit_status"]
+        outcome["exit_argument"] = trace[-1]["request_argument0"]
     run_manifest = {
         "schema": "linx-gfrun-asl-run-v1",
         "engine": "library",
@@ -311,10 +330,7 @@ def run_case(
             },
         },
         "stop_policy": case["stop_policy"],
-        "outcome": {
-            "status": "completed", "reason": "stop_pc",
-            "steps": len(trace), "final_tpc": trace[-1]["post_tpc"],
-        },
+        "outcome": outcome,
         "trace": trace,
         "result": {
             "address": case["result"]["address"],

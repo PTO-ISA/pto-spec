@@ -21427,7 +21427,8 @@
       "blockers": [],
       "ndf_ids": [
         "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001"
+        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
       ],
       "released_versions": [],
       "stage": "executable",
@@ -21440,13 +21441,23 @@
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-PENDING-001",
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-STALE-001",
         "PTO-AVS-ARCH-PROFILE-FUNCTIONAL-MODEL-STATIC-001",
+        "PTO-AVS-SCALAR-AGU-CANON-001",
+        "PTO-AVS-SCALAR-ALU-CANON-001",
+        "PTO-AVS-SCALAR-AMO-CANON-001",
+        "PTO-AVS-SCALAR-BINARY-EFFECTS-001",
+        "PTO-AVS-SCALAR-BRU-CANON-001",
+        "PTO-AVS-SCALAR-FIRST-BODY-ENTRY-001",
+        "PTO-AVS-SCALAR-FSU-CANON-001",
+        "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001",
         "PTO-AVS-SCALAR-MODEL-SYS-SEMANTICS-STATIC-001",
+        "PTO-AVS-SCALAR-SYS-CANON-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEM-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSCALARSYSTEMDISPATCHEFFECTS-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSERVICEREQUESTCONTROL-EXECUTION-001"
       ],
       "unit_ids": [
         "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
         "PTO-SCALAR-MODEL-SYS-SEMANTICS"
       ],
       "validated_commit": null
@@ -21456,7 +21467,7 @@
   "sources": {
     "adr_records": {
       "count": 109,
-      "sha256": "39bf321db429d87e3eea6b9c664a4dafaa25b7d7382cc49e8a14b42301d346b0"
+      "sha256": "b526b6afc0db585687532e02717a12f3c87f48d57476ec5a3e54e3b1b943dea4"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21464,8 +21475,8 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "eb4289dd776f665cccf90732c396a7d667238d3eab51950a4f752ac12705853d",
-      "test_count": 3749,
+      "sha256": "89b36e44077779189f587529c8f78ea9c49a88f193a34285162a63d3f78ab20c",
+      "test_count": 3750,
       "unit_count": 858
     }
   },

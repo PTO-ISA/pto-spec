@@ -14,10 +14,12 @@
   "release_boundary": true,
   "affected_ndf": [
     "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-    "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001"
+    "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+    "PTO-REQ-SCALAR-BODY-ENTRY-001"
   ],
   "affected_units": [
     "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+    "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
     "PTO-SCALAR-MODEL-SYS-SEMANTICS"
   ],
   "resolves": [],
@@ -33,7 +35,7 @@
 
 ## Summary
 
-Bind the existing Linx freestanding `exit_group` convention to the ASL-owned
+Bind the established freestanding `exit_group` convention to the ASL-owned
 functional-model host-request state without changing portable ACRC service
 request behavior.
 
@@ -45,7 +47,7 @@ host-request boundary, but no guest instruction can open it. The first ELF
 bring-up needs one terminal hosted request while the broader Linux ABI,
 startup, TLS, file-descriptor, barrier, and multi-PE runtime remain deferred.
 
-The existing Linx freestanding convention uses ACRC request type 1, absolute
+The established freestanding convention uses ACRC request type 1, absolute
 GPR `a7` for the syscall number, Linux `exit_group` number 94, and absolute GPR
 `a0` for the exit status. Copying that decode into gfrun would recreate a
 second functional semantic owner.
@@ -81,6 +83,11 @@ argument.
 order, request fields, resume TPC, and fail-closed token behavior. No new
 instruction encoding or assembly spelling is introduced.
 
+`PTO-REQ-SCALAR-BODY-ENTRY-001` closes the executable phase transition that
+was previously present only as an uncalled model action: the first decoded
+scalar form after a BSTART header enters the body before applicability. An
+undecodable value leaves the phase unchanged.
+
 ## Defaults and intentionally unspecified behavior
 
 No other syscall number, ACRC request type, host memory response, file
@@ -113,6 +120,7 @@ and issue #150 retains the broader hosted runtime.
 ## Implementation obligations
 
 - Implement the interception only in owning ASL.
+- Route the first decoded scalar form through the ASL-owned body-entry action.
 - Project the request through the generated C ABI without hand-coded guest
   decode in the runtime or gfrun.
 - Add a real low-address ELF corpus case and three-way differential evidence.

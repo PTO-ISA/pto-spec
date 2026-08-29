@@ -8563,10 +8563,12 @@
       "accepted": "2026-08-30",
       "affected_ndf": [
         "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001"
+        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
       ],
       "affected_units": [
         "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
         "PTO-SCALAR-MODEL-SYS-SEMANTICS"
       ],
       "approvers": [

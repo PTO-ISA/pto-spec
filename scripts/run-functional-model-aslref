@@ -100,10 +100,22 @@ def render_case(function_name: str, directory: Path, manifest: dict[str, object]
         if not isinstance(expected, dict):
             raise OracleError("expected trace step is not an object")
         result = f"step_{index}"
+        step_state = int(expected.get("step_state", 1))
+        instruction_status = int(expected.get("instruction_status", 1))
+        status_name = (
+            "PTOFunctionalStep_Executed"
+            if step_state == 1
+            else "PTOFunctionalStep_HostRequest"
+        )
+        instruction_name = {
+            0: "PTOFunctionalInstruction_NotAttempted",
+            1: "PTOFunctionalInstruction_Executed",
+            2: "PTOFunctionalInstruction_Rejected",
+        }[instruction_status]
         lines.extend([
             f"    let {result} = ExecuteOnePTOStep();",
-            f"    assert {result}.status == PTOFunctionalStep_Executed;",
-            f"    assert {result}.instruction_status == PTOFunctionalInstruction_Executed;",
+            f"    assert {result}.status == {status_name};",
+            f"    assert {result}.instruction_status == {instruction_name};",
             f"    assert {result}.pre_tpc == {word(int(expected['pre_tpc']))};",
             f"    assert {result}.post_tpc == {word(int(expected['post_tpc']))};",
             f"    assert {result}.pre_bpc == {word(int(expected['pre_bpc']))};",
@@ -114,11 +126,21 @@ def render_case(function_name: str, directory: Path, manifest: dict[str, object]
             f"    assert {result}.fault_address == Zeros{{PTO_XLEN}};",
             f"    assert {result}.fault_cause == Zeros{{24}};",
             f"    assert {result}.origin_pe == 0;",
-            f"    assert {result}.request_token == Zeros{{PTO_XLEN}};",
-            f"    assert {result}.request_type == Zeros{{16}};",
-            f"    assert {result}.request_argument0 == Zeros{{PTO_XLEN}};",
+            f"    assert {result}.request_token == "
+            f"{word(int(expected.get('request_token', 0)))};",
+            f"    assert {result}.request_type == Zeros{{16}} + "
+            f"{int(expected.get('request_type', 0))};",
+            f"    assert {result}.request_argument0 == "
+            f"{word(int(expected.get('request_argument0', 0)))};",
             f"    assert {result}.sequence == {word(int(expected['sequence']))};",
         ])
+        if step_state == 3:
+            lines.extend([
+                f"    let completion_{index} = CompleteFunctionalModelHostRequest(",
+                f"        {result}.request_token, {result}.request_argument0);",
+                f"    assert completion_{index} == "
+                "PTOFunctionalHostCompletion_Accepted;",
+            ])
 
     result_contract = case["result"]
     if not isinstance(result_contract, dict):
@@ -142,8 +164,8 @@ def oracle_run_manifest(
         trace.append({
             "status": 0,
             "result_valid": True,
-            "step_state": 1,
-            "instruction_status": 1,
+            "step_state": expected.get("step_state", 1),
+            "instruction_status": expected.get("instruction_status", 1),
             "pre_tpc": expected["pre_tpc"],
             "post_tpc": expected["post_tpc"],
             "pre_bpc": expected["pre_bpc"],
@@ -154,11 +176,20 @@ def oracle_run_manifest(
             "fault_address": 0,
             "fault_cause": 0,
             "origin_pe": 0,
-            "request_token": 0,
-            "request_type": 0,
-            "request_argument0": 0,
+            "request_token": expected.get("request_token", 0),
+            "request_type": expected.get("request_type", 0),
+            "request_argument0": expected.get("request_argument0", 0),
             "sequence": expected["sequence"],
         })
+    outcome = {
+        "status": "completed",
+        "reason": case["stop_policy"]["kind"],
+        "steps": len(trace),
+        "final_tpc": trace[-1]["post_tpc"],
+    }
+    if case["stop_policy"]["kind"] == "exit_group":
+        outcome["exit_status"] = case["stop_policy"]["exit_status"]
+        outcome["exit_argument"] = trace[-1]["request_argument0"]
     return {
         "schema": "linx-gfrun-asl-run-v1",
         "engine": "aslref",
@@ -175,12 +206,7 @@ def oracle_run_manifest(
             },
         },
         "stop_policy": case["stop_policy"],
-        "outcome": {
-            "status": "completed",
-            "reason": "stop_pc",
-            "steps": len(trace),
-            "final_tpc": trace[-1]["post_tpc"],
-        },
+        "outcome": outcome,
         "trace": trace,
         "result": {
             "address": case["result"]["address"],
