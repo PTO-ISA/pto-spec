@@ -557,6 +557,25 @@ EvaluationResult Interpreter::EvaluateInternal(
                     instruction.local, std::move(updated));
                 break;
             }
+            case OpCode::kCreateRecord:
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, Value(RecordValue{}));
+                break;
+            case OpCode::kInsertField: {
+                const auto base = frame.typed_locals.find(instruction.local);
+                const auto value = frame.typed_locals.find(instruction.binding);
+                if (base == frame.typed_locals.end() ||
+                    value == frame.typed_locals.end() ||
+                    !std::holds_alternative<std::shared_ptr<RecordValue>>(
+                        base->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                auto &record = *std::get<std::shared_ptr<RecordValue>>(
+                    base->second.mutable_storage());
+                record.insert_or_assign(
+                    static_cast<std::uint32_t>(instruction.immediate),
+                    value->second.Clone());
+                break;
+            }
             case OpCode::kSetSlice: {
                 const auto base = frame.typed_locals.find(instruction.local);
                 const auto value = frame.typed_locals.find(instruction.binding);
@@ -618,7 +637,9 @@ EvaluationResult Interpreter::EvaluateInternal(
             case OpCode::kReturnHostRequest:
                 return {PTO_STATUS_OK, PTO_STEP_HOST_REQUEST};
             case OpCode::kUnsupportedNode:
-                return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED,
+                        std::nullopt, function.id, instruction.local,
+                        static_cast<std::uint32_t>(instruction.immediate)};
         }
         ++pc;
     }

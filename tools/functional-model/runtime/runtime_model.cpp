@@ -121,7 +121,12 @@ pto_status_t RuntimeModel::Step(StepResult *result) {
         !std::holds_alternative<std::shared_ptr<RecordValue>>(
             evaluation.return_value->storage())) {
         result->state = PTO_STEP_UNSUPPORTED;
-        SetError("runtime evaluator or callback failed");
+        if (evaluation.failure_function != 0 || evaluation.failure_node != 0) {
+            SetError("unsupported generated node function=" +
+                     std::to_string(evaluation.failure_function) + " node=" +
+                     std::to_string(evaluation.failure_node) + " constructor=" +
+                     std::to_string(evaluation.failure_constructor));
+        } else SetError("runtime evaluator or callback failed");
         return evaluation.status == PTO_STATUS_OK ? PTO_STATUS_MIR_INVALID
                                                    : evaluation.status;
     }
@@ -280,6 +285,13 @@ std::uint64_t RuntimeModel::GlobalU64(BindingId id) const {
 const Value *RuntimeModel::GlobalValueForTesting(BindingId id) const {
     const auto found = state_.typed_globals.find(id);
     return found == state_.typed_globals.end() ? nullptr : &found->second;
+}
+
+bool RuntimeModel::SetGlobalForTesting(BindingId id, Value value) {
+    const auto found = state_.typed_globals.find(id);
+    if (found == state_.typed_globals.end()) return false;
+    found->second = std::move(value);
+    return true;
 }
 
 void RuntimeModel::SetError(std::string error) {

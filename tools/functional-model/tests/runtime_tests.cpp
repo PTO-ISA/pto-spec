@@ -8,6 +8,7 @@
 #include <array>
 #include <cassert>
 #include <cstdint>
+#include <cstdio>
 #include <memory>
 #include <string>
 #include <vector>
@@ -407,6 +408,44 @@ void TestGeneratedResetState() {
     assert(ValueU64(pe1_gprs.Get(2)) == 0);
 }
 
+void TestGeneratedPredecodeSteps() {
+    auto module = pto::model::GeneratedResetModule();
+    MemoryHarness memory;
+    RuntimeModel runtime(module, memory.Callbacks());
+    StepResult result;
+    pto_status_t uninitialized_status = runtime.Step(&result);
+    if (uninitialized_status != PTO_STATUS_OK)
+        std::fprintf(stderr, "uninitialized step status=%u: %s\n", uninitialized_status,
+                     runtime.last_error().c_str());
+    assert(uninitialized_status == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_UNSUPPORTED);
+    assert(result.instruction_status == PTO_INSTRUCTION_NOT_ATTEMPTED);
+    assert(memory.reset_count == 0 && memory.read_count == 0);
+
+    assert(runtime.Reset({0x100}) == PTO_STATUS_OK);
+    memory.read_count = 0;
+    assert(runtime.SetGlobalForTesting(
+        pto::model::GeneratedPCGlobalBinding(),
+        pto::model::Value(pto::model::BitVector::FromU64(64, 0x101))));
+    pto_status_t odd_status = runtime.Step(&result);
+    if (odd_status != PTO_STATUS_OK)
+        std::fprintf(stderr, "odd step status=%u: %s\n", odd_status,
+                     runtime.last_error().c_str());
+    assert(odd_status == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_TRAP);
+    assert(result.instruction_status == PTO_INSTRUCTION_NOT_ATTEMPTED);
+    assert(result.fault_code == 3 && result.fault_cause == 0);
+    assert(memory.read_count == 0);
+
+    assert(runtime.Reset({4096}) == PTO_STATUS_OK);
+    memory.read_count = 0;
+    assert(runtime.Step(&result) == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_TRAP);
+    assert(result.instruction_status == PTO_INSTRUCTION_NOT_ATTEMPTED);
+    assert(result.fault_code == 4 && result.fault_cause == 0);
+    assert(memory.read_count == 0);
+}
+
 }  // namespace
 
 int main() {
@@ -418,5 +457,6 @@ int main() {
     TestNumericCallFrames();
     TestNumericIntegerExterns();
     TestGeneratedResetState();
+    TestGeneratedPredecodeSteps();
     return 0;
 }

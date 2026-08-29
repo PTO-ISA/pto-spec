@@ -53,6 +53,7 @@ class RuntimeModel {
     std::string last_error() const;
     std::uint64_t GlobalU64(BindingId id) const;
     const Value *GlobalValueForTesting(BindingId id) const;
+    bool SetGlobalForTesting(BindingId id, Value value);
 
   private:
     class BusyGuard {

@@ -79,6 +79,8 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kSetArray:
                 case OpCode::kGetField:
                 case OpCode::kSetField:
+                case OpCode::kCreateRecord:
+                case OpCode::kInsertField:
                 case OpCode::kSetSlice:
                 case OpCode::kCheckBitWidth:
                     break;
@@ -147,14 +149,16 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
 
                 continue;
             }
-            if (instruction.opcode == OpCode::kUnsupportedNode) continue;
             if (instruction.opcode == OpCode::kJump) {
                 pending.push_back(static_cast<std::size_t>(instruction.address));
                 continue;
             }
+            if (instruction.opcode == OpCode::kUnsupportedNode &&
+                instruction.address == 1) continue;
             if (index + 1 >= function.instructions.size()) {
                 if (error != nullptr) {
-                    *error = "module function has a reachable fallthrough exit";
+                    *error = "module function has a reachable fallthrough exit: " +
+                             std::to_string(function.id);
                 }
                 return nullptr;
             }

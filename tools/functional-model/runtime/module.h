@@ -78,6 +78,8 @@ enum class OpCode : std::uint8_t {
     kSetArray,
     kGetField,
     kSetField,
+    kCreateRecord,
+    kInsertField,
     kSetSlice,
     kCheckBitWidth,
     kBranchIfFalse,

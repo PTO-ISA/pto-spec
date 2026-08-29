@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "74c90a51dfb32d1ab6d7c27dbb0b3c87d19385d39be09975a7c543624049e181"
+      "sha256": "97f1d37f0613f3fa4a581e176e3d1c68a343e5a57227ed6adf18b3abc0f1de58"
     }
   },
   "minimal_scalar_elf": {
@@ -29321,9 +29321,12 @@
         "E_ATC",
         "E_Binop",
         "E_Call",
+        "E_Cond",
         "E_GetArray",
         "E_GetField",
         "E_Literal",
+        "E_Pattern",
+        "E_Record",
         "E_Slice",
         "E_Unop",
         "E_Var"
@@ -29352,6 +29355,8 @@
         "LT",
         "MUL",
         "NE",
+        "Pattern_Single",
+        "Positive",
         "SUB"
       ],
       "slices": [
@@ -29367,7 +29372,8 @@
         "S_For",
         "S_Pass",
         "S_Return",
-        "S_Seq"
+        "S_Seq",
+        "S_Unreachable"
       ],
       "types": [
         "T_Bits",
@@ -29384,10 +29390,12 @@
       "kCallValue",
       "kCheckBitWidth",
       "kCopyValue",
+      "kCreateRecord",
       "kDynamicSlice",
       "kEqual",
       "kGetArray",
       "kGetField",
+      "kInsertField",
       "kIntegerAdd",
       "kIntegerGreater",
       "kIntegerGreaterEqual",
@@ -29440,11 +29448,13 @@
       "kCallValue",
       "kCheckBitWidth",
       "kCopyValue",
+      "kCreateRecord",
       "kDynamicSlice",
       "kEqual",
       "kGetArray",
       "kGetField",
       "kIncrementGlobalU64",
+      "kInsertField",
       "kIntegerAdd",
       "kIntegerGreater",
       "kIntegerGreaterEqual",
@@ -29547,24 +29557,6 @@
         "sample_node_id": 227990
       },
       {
-        "count": 417,
-        "name": "E_Cond",
-        "sample_function_id": 4844,
-        "sample_node_id": 22559
-      },
-      {
-        "count": 1073,
-        "name": "E_Pattern",
-        "sample_function_id": 252,
-        "sample_node_id": 25274
-      },
-      {
-        "count": 22,
-        "name": "E_Record",
-        "sample_function_id": 347,
-        "sample_node_id": 36711
-      },
-      {
         "count": 662,
         "name": "E_Tuple",
         "sample_function_id": 4896,
@@ -29631,18 +29623,6 @@
         "sample_node_id": 99
       },
       {
-        "count": 1541,
-        "name": "Pattern_Single",
-        "sample_function_id": 252,
-        "sample_node_id": 25269
-      },
-      {
-        "count": 1073,
-        "name": "Positive",
-        "sample_function_id": 252,
-        "sample_node_id": 25271
-      },
-      {
         "count": 2082,
         "name": "Precision_Full",
         "sample_function_id": 4940,
@@ -29671,12 +29651,6 @@
         "name": "ST_Procedure",
         "sample_function_id": 258,
         "sample_node_id": 636
-      },
-      {
-        "count": 117,
-        "name": "S_Unreachable",
-        "sample_function_id": 252,
-        "sample_node_id": 25453
       },
       {
         "count": 11,

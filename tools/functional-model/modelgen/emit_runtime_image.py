@@ -147,6 +147,8 @@ class Compiler:
         enum_labels: dict[str, tuple[int, int]] | None = None,
         extern_ids: dict[str, tuple[int, str, int]] | None = None,
         argument_types: dict[str, tuple[str, int]] | None = None,
+        allow_unsupported: bool = False,
+        function_id: int = 0,
     ):
         self.arena = arena
         self.argument_ids = {name: index for index, name in enumerate(argument_names)}
@@ -160,6 +162,8 @@ class Compiler:
         self.extern_ids = extern_ids or {}
         self.argument_types = argument_types or {
             name: ("bits", 16) for name in argument_names}
+        self.allow_unsupported = allow_unsupported
+        self.function_id = function_id
 
     def local(self) -> int:
         result = self.next_local
@@ -296,6 +300,12 @@ class Compiler:
                 raise ModelgenError("runtime binary expression is malformed")
             operator = self.arena.constructor_name(values[0])
             if operator not in CONSTRUCTOR_CAPABILITIES["operators"]:
+                if self.allow_unsupported:
+                    target = self.local()
+                    self.emit("kUnsupportedNode", local=identifier,
+                              binding=self.function_id,
+                              immediate=int(self.arena.nodes[values[0]][1]))
+                    return target
                 raise ModelgenError(f"unsupported runtime binary operator {operator}")
             left = self.expression(values[1])
             right = self.expression(values[2])
@@ -324,8 +334,9 @@ class Compiler:
                 )
             values = self.arena.sequence(fields["args"], "list")
             values.extend(self.arena.sequence(fields["params"], "list"))
-            for value in values:
-                self.emit("kPushArgument", local=self.expression(value))
+            argument_locals = [self.expression(value) for value in values]
+            for local in argument_locals:
+                self.emit("kPushArgument", local=local)
             result = self.local()
             if target_name in self.extern_ids:
                 binding_id, _, arity = self.extern_ids[target_name]
@@ -357,6 +368,22 @@ class Compiler:
             result = self.local()
             self.emit("kCopyValue", local=result, binding=source)
             return result
+        if name == "E_Cond":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "E_Cond"), "tuple")
+            if len(values) != 3:
+                raise ModelgenError(f"malformed E_Cond at node {identifier}")
+            condition = self.expression(values[0])
+            result = self.local()
+            branch = self.emit("kBranchIfFalse", local=condition)
+            then_value = self.expression(values[1])
+            self.emit("kCopyValue", local=result, binding=then_value)
+            jump = self.emit("kJump")
+            self.instructions[branch]["address"] = len(self.instructions)
+            else_value = self.expression(values[2])
+            self.emit("kCopyValue", local=result, binding=else_value)
+            self.instructions[jump]["address"] = len(self.instructions)
+            return result
         if name == "E_GetArray":
             values = self.arena.sequence(
                 self.single_argument(identifier, "E_GetArray"), "tuple")
@@ -379,6 +406,48 @@ class Compiler:
             result = self.local()
             self.emit("kGetField", local=result, binding=base,
                       immediate=self.field_ids[field])
+            return result
+        if name == "E_Record":
+            record_values = self.arena.sequence(
+                self.single_argument(identifier, "E_Record"), "tuple")
+            if len(record_values) != 2:
+                raise ModelgenError(f"malformed E_Record at node {identifier}")
+            items = self.arena.sequence(record_values[1], "list")
+            result = self.local()
+            self.emit("kCreateRecord", local=result)
+            for item in items:
+                pair = self.arena.sequence(item, "tuple")
+                field = str(self.arena.atom(pair[0], "string"))
+                if field not in self.field_ids:
+                    raise ModelgenError(f"unknown record field {field!r}")
+                value = self.expression(pair[1])
+                self.emit("kInsertField", local=result, binding=value,
+                          immediate=self.field_ids[field])
+            return result
+        if name == "E_Pattern":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "E_Pattern"), "tuple")
+            pattern = self.arena.sequence(values[1], "tuple")
+            candidates = self.arena.sequence(pattern[0], "list")
+            source = self.expression(values[0])
+            result = None
+            for candidate in candidates:
+                literal = self.single_argument(candidate, "Pattern_Single")
+                expected = self.expression(literal)
+                equal = self.local()
+                self.emit("kEqual", local=equal, binding=source, address=expected)
+                if result is None:
+                    result = equal
+                else:
+                    combined = self.local()
+                    self.emit("kBitOr", local=combined, binding=result, address=equal)
+                    result = combined
+            if result is None:
+                raise ModelgenError(f"empty pattern at node {identifier}")
+            if self.arena.constructor_name(pattern[1]) != "Positive":
+                inverted = self.local()
+                self.emit("kBitNot", local=inverted, binding=result)
+                result = inverted
             return result
         raise ModelgenError(f"unsupported reachable runtime expression {name}")
 
@@ -504,6 +573,11 @@ class Compiler:
             return False
         if name == "S_Pass":
             return False
+        if name == "S_Unreachable":
+            self.emit("kUnsupportedNode", local=identifier,
+                      binding=self.function_id,
+                      immediate=int(self.arena.nodes[identifier][1]), address=1)
+            return True
         if name == "S_Call":
             fields = self.arena.record(self.single_argument(identifier, "S_Call"))
             target_name = str(self.arena.atom(fields["name"], "string"))
@@ -513,8 +587,9 @@ class Compiler:
                 )
             values = self.arena.sequence(fields["args"], "list")
             values.extend(self.arena.sequence(fields["params"], "list"))
-            for value in values:
-                self.emit("kPushArgument", local=self.expression(value))
+            argument_locals = [self.expression(value) for value in values]
+            for local in argument_locals:
+                self.emit("kPushArgument", local=local)
             if target_name in self.extern_ids:
                 binding_id, _, arity = self.extern_ids[target_name]
                 if arity != len(values):
@@ -872,7 +947,7 @@ def lower_module(
                         "instructions": [{
                             "opcode": "kUnsupportedNode", "binding": function_id,
                             "local": int(function["body_node"]), "immediate": 0,
-                            "address": 0}],
+                            "address": 1}],
                     })
                     continue
                 raise ModelgenError(
@@ -898,7 +973,7 @@ def lower_module(
                     "instructions": [{
                         "opcode": "kUnsupportedNode", "binding": function_id,
                         "local": int(function["body_node"]), "immediate": 0,
-                        "address": 0}],
+                        "address": 1}],
                 })
                 continue
             raise ModelgenError(
@@ -906,7 +981,7 @@ def lower_module(
                 f"({function_id}): {error}") from error
         compiler = Compiler(
             arena, arguments, function_ids, global_ids, field_ids, enum_labels,
-            extern_ids, argument_types)
+            extern_ids, argument_types, allow_unsupported, function_id)
         name = function_name
         try:
             terminal = compiler.statement(int(function["body_node"]))
@@ -920,7 +995,7 @@ def lower_module(
                 constructor_id = int(node[1]) if arena.kind(node_id) == "constructor" else 0
                 compiler.instructions = [{
                     "opcode": "kUnsupportedNode", "binding": function_id,
-                    "local": node_id, "immediate": constructor_id, "address": 0}]
+                    "local": node_id, "immediate": constructor_id, "address": 1}]
             else:
                 raise ModelgenError(
                     f"runtime lowering failed in function {name} ({function_id}): {error}"

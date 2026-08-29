@@ -56,6 +56,22 @@ int main(void) {
     assert(pto_model_create(&config, &model) == PTO_STATUS_OK);
     assert(model != NULL);
 
+    pto_step_result_t uninitialized = {0};
+    uninitialized.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
+    uninitialized.struct_size = sizeof(uninitialized);
+    pto_status_t uninitialized_status = pto_model_step(model, &uninitialized);
+    if (uninitialized_status != PTO_STATUS_OK) {
+        uint64_t size = 256;
+        char message[256] = {0};
+        (void)pto_model_last_error(model, message, &size);
+        fprintf(stderr, "uninitialized status=%u: %s\n",
+                uninitialized_status, message);
+    }
+    assert(uninitialized_status == PTO_STATUS_OK);
+    assert(uninitialized.step_state == PTO_STEP_UNSUPPORTED);
+    assert(uninitialized.instruction_status == PTO_INSTRUCTION_NOT_ATTEMPTED);
+    assert(uninitialized.fault_code == 0);
+
     pto_initial_state_t initial = {0};
     initial.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
     initial.struct_size = sizeof(initial);
@@ -74,16 +90,7 @@ int main(void) {
     pto_step_result_t result = {0};
     result.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
     result.struct_size = sizeof(result);
-    assert(pto_model_step(model, &result) == PTO_STATUS_MIR_INVALID);
-    assert(result.step_state == PTO_STEP_UNSUPPORTED);
-    uint64_t error_size = 0;
-    assert(pto_model_last_error(model, NULL, &error_size) ==
-           PTO_STATUS_BUFFER_TOO_SMALL);
-    assert(error_size > 1 && error_size < 128);
-    char error_buffer[128];
-    assert(pto_model_last_error(model, error_buffer, &error_size) ==
-           PTO_STATUS_OK);
-    assert(error_buffer[0] != '\0');
+    assert(pto_model_step(model, &result) == PTO_STATUS_OK);
 
     result.struct_size -= 1;
     assert(pto_model_step(model, &result) == PTO_STATUS_ABI_MISMATCH);
@@ -91,6 +98,7 @@ int main(void) {
     initial.pe0_gpr_valid_mask = 1;
     reset_status = pto_model_reset(model, &initial);
     if (reset_status != PTO_STATUS_OK) {
+        char error_buffer[128] = {0};
         uint64_t size = sizeof(error_buffer);
         (void)pto_model_last_error(model, error_buffer, &size);
         fprintf(stderr, "GPR reset status=%u: %s\n", reset_status, error_buffer);

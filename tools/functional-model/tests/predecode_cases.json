@@ -1,0 +1,8 @@
+{
+  "schema": "pto-functional-model-predecode-cases-v1",
+  "cases": [
+    {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-UNINITIALIZED-001","kind":"uninitialized","step_state":4,"instruction_status":0,"fault_code":0,"fault_cause":0},
+    {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-ODD-PC-001","kind":"odd-pc","tpc":257,"step_state":2,"instruction_status":0,"fault_code":3,"fault_cause":0},
+    {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-UNMAPPED-FETCH-001","kind":"unmapped","tpc":4096,"step_state":2,"instruction_status":0,"fault_code":4,"fault_cause":0}
+  ]
+}

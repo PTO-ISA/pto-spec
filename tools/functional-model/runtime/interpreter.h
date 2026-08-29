@@ -25,13 +25,22 @@ struct EvaluationResult {
     EvaluationResult() = default;
     EvaluationResult(pto_status_t status_value,
                      pto_step_state_t step_state_value,
-                     std::optional<Value> return_value_value = std::nullopt)
+                     std::optional<Value> return_value_value = std::nullopt,
+                     BindingId failure_function_value = 0,
+                     std::uint32_t failure_node_value = 0,
+                     std::uint32_t failure_constructor_value = 0)
         : status(status_value),
           step_state(step_state_value),
-          return_value(std::move(return_value_value)) {}
+          return_value(std::move(return_value_value)),
+          failure_function(failure_function_value),
+          failure_node(failure_node_value),
+          failure_constructor(failure_constructor_value) {}
     pto_status_t status = PTO_STATUS_OK;
     pto_step_state_t step_state = PTO_STEP_UNSUPPORTED;
     std::optional<Value> return_value;
+    BindingId failure_function = 0;
+    std::uint32_t failure_node = 0;
+    std::uint32_t failure_constructor = 0;
 };
 
 class Interpreter {
