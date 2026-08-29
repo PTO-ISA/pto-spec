@@ -243,6 +243,20 @@ void TestInvalidModules() {
     assert(invalid == nullptr && !error.empty());
 
     error.clear();
+    std::vector<Function> arity_functions;
+    arity_functions.push_back(Function{
+        800,
+        {{OpCode::kCallProcedure, 801, 0, 1, 0},
+         {OpCode::kReturnProcedure, 0, 0, 0, 0}},
+        0});
+    arity_functions.push_back(Function{
+        801,
+        {{OpCode::kReturnProcedure, 0, 0, 0, 0}},
+        0});
+    invalid = Module::Create(std::move(arity_functions), 800, &error);
+    assert(invalid == nullptr && !error.empty());
+
+    error.clear();
     invalid = Module::Create(
         {Function{pto::model::binding::kStepEntrypoint,
                   {{static_cast<OpCode>(0xff), 0, 0, 0, 0}}}},
@@ -325,7 +339,7 @@ void TestNumericCallFrames() {
                    {OpCode::kEqual, 0, 2, 0, 1},
                    {OpCode::kAssertTrue, 0, 2, 0, 0},
                    {OpCode::kLoadIntegerImmediate, 0, 3, 5, 0},
-                   {OpCode::kReturnValue, 0, 3, 0, 0}}},
+                   {OpCode::kReturnValue, 0, 3, 0, 0}}, 1},
          Function{702, {{OpCode::kReturnProcedure, 0, 0, 0, 0}}}},
         700,
         &error);

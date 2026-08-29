@@ -217,7 +217,8 @@ EvaluationResult Interpreter::EvaluateInternal(
             case OpCode::kCallProcedure: {
                 const Function *target = module.FindFunction(instruction.binding);
                 if (target == nullptr ||
-                    frame.pending_arguments.size() != instruction.immediate) {
+                    frame.pending_arguments.size() != instruction.immediate ||
+                    target->argument_count != instruction.immediate) {
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
                 }
                 EvaluationResult called = EvaluateInternal(

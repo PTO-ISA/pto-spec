@@ -173,6 +173,21 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 }
                 return nullptr;
             }
+            if (instruction.opcode == OpCode::kCallValue ||
+                instruction.opcode == OpCode::kCallProcedure) {
+                const auto target = std::find_if(
+                    functions.begin(), functions.end(),
+                    [&instruction](const Function &candidate) {
+                        return candidate.id == instruction.binding;
+                    });
+                if (target == functions.end() ||
+                    target->argument_count != instruction.immediate) {
+                    if (error != nullptr) {
+                        *error = "module call arity does not match numeric target";
+                    }
+                    return nullptr;
+                }
+            }
         }
     }
     return std::shared_ptr<const Module>(

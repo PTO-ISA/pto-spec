@@ -70,6 +70,7 @@ struct Instruction {
 struct Function {
     BindingId id;
     std::vector<Instruction> instructions;
+    std::uint32_t argument_count = 0;
 };
 
 class Module final {

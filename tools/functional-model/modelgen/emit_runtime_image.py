@@ -544,6 +544,66 @@ def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
     return int(function["id"]), compiler.instructions
 
 
+def lower_module(
+    image: dict[str, object], entrypoints: tuple[str, ...]
+) -> tuple[int, list[dict[str, object]]]:
+    verify_executable_module(image, required_entrypoints=entrypoints)
+    tables = image["tables"]
+    strings = [row["name"] for row in tables["strings"]]
+    functions = tables["functions"]
+    function_ids = {
+        str(strings[row["name_symbol_id"]]): int(row["id"])
+        for row in functions
+    }
+    global_ids = {
+        str(strings[row["name_symbol_id"]]): int(row["id"])
+        for row in tables["globals"]
+    }
+    roots = [function_ids[name] for name in entrypoints]
+    graph = {
+        int(row["id"]): [int(value) for value in row["callee_function_ids"]]
+        for row in tables["call_graph"]
+    }
+    reachable: set[int] = set()
+    pending = list(roots)
+    while pending:
+        function_id = pending.pop()
+        if function_id in reachable:
+            continue
+        reachable.add(function_id)
+        pending.extend(graph[function_id])
+
+    arena = CompactArena(image)
+    lowered: list[dict[str, object]] = []
+    for function_id in sorted(reachable):
+        function = functions[function_id]
+        if function["extern_id"] is not None:
+            raise ModelgenError(
+                f"runtime function {strings[function['name_symbol_id']]} "
+                f"({function_id}) is an unresolved extern"
+            )
+        arguments = [
+            str(strings[row["name_symbol_id"]])
+            for row in [*function["arguments"], *function["parameters"]]
+        ]
+        compiler = Compiler(arena, arguments, function_ids, global_ids)
+        name = str(strings[function["name_symbol_id"]])
+        try:
+            compiler.statement(int(function["body_node"]))
+        except ModelgenError as error:
+            raise ModelgenError(
+                f"runtime lowering failed in function {name} ({function_id}): {error}"
+            ) from error
+        lowered.append(
+            {
+                "id": function_id,
+                "argument_count": len(arguments),
+                "instructions": compiler.instructions,
+            }
+        )
+    return roots[0], lowered
+
+
 def _render_header() -> str:
     return """#ifndef PTO_GENERATED_RUNTIME_IMAGE_H
 #define PTO_GENERATED_RUNTIME_IMAGE_H
@@ -592,7 +652,7 @@ std::shared_ptr<const Module> GeneratedDetermineLengthModule() {{
     }};
     std::string error;
     auto module = Module::Create(
-        {{Function{{GeneratedDetermineLengthBinding(), std::move(instructions)}}}},
+        {{Function{{GeneratedDetermineLengthBinding(), std::move(instructions), 1u}}}},
         GeneratedDetermineLengthBinding(),
         &error);
     if (module == nullptr) {{
@@ -603,6 +663,43 @@ std::shared_ptr<const Module> GeneratedDetermineLengthModule() {{
 
 }}  // namespace pto::model
 """
+
+
+def render_module_source(
+    primary_id: int,
+    functions: list[dict[str, object]],
+    digest: str,
+    builder_name: str,
+) -> str:
+    blocks: list[str] = []
+    rows: list[str] = []
+    for function in functions:
+        function_id = int(function["id"])
+        instructions = function["instructions"]
+        rendered = "\n".join(
+            "        {OpCode::%s, %su, %su, UINT64_C(%s), UINT64_C(%s)},"
+            % (row["opcode"], row["binding"], row["local"],
+               row["immediate"], row["address"])
+            for row in instructions
+        )
+        blocks.append(
+            f"    std::vector<Instruction> instructions_{function_id}{{\n"
+            f"{rendered}\n    }};"
+        )
+        rows.append(
+            f"        Function{{{function_id}u, std::move(instructions_{function_id}), "
+            f"{int(function['argument_count'])}u}},"
+        )
+    return (
+        f"// Generated module sha256:{digest}; do not edit.\n"
+        "#include \"module.h\"\n#include <cstdint>\n#include <string>\n"
+        "#include <utility>\n#include <vector>\n\nnamespace pto::model {\n"
+        f"std::shared_ptr<const Module> {builder_name}() {{\n"
+        + "\n".join(blocks)
+        + "\n    std::string error;\n    return Module::Create({\n"
+        + "\n".join(rows)
+        + f"\n    }}, {primary_id}u, &error);\n}}\n}}  // namespace pto::model\n"
+    )
 
 
 def _load_cases(path: Path) -> list[dict[str, int]]:
