@@ -21230,6 +21230,7 @@
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-RESET-STALE-003",
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-COMMAND-64-004",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-FAULT-CAUSE-006",
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-DUPLICATE-001",
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-PENDING-001",
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-STALE-001",
@@ -21371,13 +21372,58 @@
         "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0114"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+        "PTO-REQ-FUNCTIONAL-STEP-001"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0114",
+      "test_ids": [
+        "PTO-AVS-ARCH-DATA-TYPES-FUNCTIONAL-MODEL-STATIC-001",
+        "PTO-AVS-ARCH-DISPATCH-FUNCTIONAL-STEP-STATIC-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-RESET-STALE-003",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-COMMAND-64-004",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-FAULT-CAUSE-006",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-DUPLICATE-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-PENDING-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-HOST-STALE-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-ILLEGAL-ENCODING-005",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-16-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-32-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-48-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-64-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-TOTALITY-002",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-ODD-PC-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-PE0-RESET-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-16-002",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-48-003",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-ADD-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-TRUNCATED-FETCH-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-UNINITIALIZED-001",
+        "PTO-AVS-ARCH-FUNCTIONAL-STEP-UNMAPPED-FETCH-001",
+        "PTO-AVS-ARCH-PROFILE-FUNCTIONAL-MODEL-STATIC-001"
+      ],
+      "unit_ids": [
+        "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
+        "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
+        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 107,
-      "sha256": "3659a0b1f0d8c124e34e64a9f43b7079c02518fe65865e5d8338dc45e1c8051d"
+      "count": 108,
+      "sha256": "a2d1a0b48cf7c5d75057a0b7de2b4e5a179db7ed069f6b3f3314a326fcaa3784"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21385,8 +21431,8 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "be50d5f0f8e60739d1e1b5f60426b8d88f53ead2cd2620032145751d3d8b2fb6",
-      "test_count": 3747,
+      "sha256": "3d37810b3ac86815b60dd7fda6d375c3c70c217552fedefa73c017804ae4c0e5",
+      "test_count": 3748,
       "unit_count": 858
     }
   },
@@ -21405,13 +21451,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 10,
-      "executable": 93,
+      "executable": 94,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 103,
+    "subject_count": 104,
     "validated_count": 0
   }
 }

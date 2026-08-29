@@ -86,7 +86,7 @@
     },
     {
       "path": "asl/arch/data-types/functional-model.asl",
-      "sha256": "c9ab44cfc59c0fb30bdf1bdbbff7356a29820e6390630bd367e18a4588773ea1"
+      "sha256": "abb9fdd07398a6e32ddcac20887cb66b1a12c28d3dbe173d3bb9b083d96cea51"
     },
     {
       "path": "asl/arch/data-types/indexed-memory-lane-choice.asl",
@@ -134,7 +134,7 @@
     },
     {
       "path": "asl/arch/dispatch/functional-step.asl",
-      "sha256": "8908b242c9def715db6d2c5343a7b1b2d4b4cc0f988fffd486901737fcb79f12"
+      "sha256": "66f772f6b0a8041ad32b562d646d1b2988089a349bf91bc4722e9869006487ec"
     },
     {
       "path": "asl/arch/dispatch/top-level.asl",
@@ -3466,7 +3466,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "cc0f396a76f1e34a772aef48a1a695953f0ca30b4b7f337025a01ef1aa27b3ac"
+      "sha256": "03866345cb26346b3914cc7d069977785eae2f0813d3a32c28728bf5431e6430"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3478,11 +3478,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "e82dfa8922f2f08e14e2cb1906bd783982a441b904e70a5874fa204e86e9e15f"
+      "sha256": "a82ae14b34ba2565dbc5ff38209d2d06e9017c59cdfb37330adfed20321fe883"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "be50d5f0f8e60739d1e1b5f60426b8d88f53ead2cd2620032145751d3d8b2fb6"
+      "sha256": "3d37810b3ac86815b60dd7fda6d375c3c70c217552fedefa73c017804ae4c0e5"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3528,7 +3528,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "bbb5615d62cf82b64c0205f6e8d5a8eb350a15fab277d41e6792d252a8813000",
+  "content_sha256": "f97e07ec0bf1cfa12e1cf63154d61a2e1fdbd79c2ca8c04050b41d82e5acb99f",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3665,7 +3665,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/functional-model.md",
-      "sha256": "21e3c4e9497d1da9a23badcb5223e9938f02ee5a22a4d7b6934d20301b90c5de"
+      "sha256": "bed413e71eae4d47b9b229164c1c8a4223ee9b03e0b9f1add56b5db9877b3089"
     },
     {
       "kind": "generated-documentation",
@@ -3725,7 +3725,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/dispatch/functional-step.md",
-      "sha256": "2848c0a5f41c8ab165039ca6a6476e8f6d12f9df95b42d465c299e0f8f613dcd"
+      "sha256": "fbaacf13efca3a695df6eae805b4a3e4f66dfb675d0ca366c5bf7867921d7565"
     },
     {
       "kind": "generated-documentation",
@@ -11249,7 +11249,7 @@
       },
       {
         "id": "PTO-REQ-FUNCTIONAL-STEP-001",
-        "sha256": "e8ab5854f67f3a1d46c1ab24c104ddffcd850102c0e679d2deca0391e6d8a9f5"
+        "sha256": "54cad1a33bdd07c3d9e0d641f420dff41bdab6878604f14327cf607ae72a4dc3"
       },
       {
         "id": "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001",
@@ -12087,7 +12087,8 @@
       "ADR-0110",
       "ADR-0111",
       "ADR-0112",
-      "ADR-0113"
+      "ADR-0113",
+      "ADR-0114"
     ]
   },
   "schema_version": 1,
