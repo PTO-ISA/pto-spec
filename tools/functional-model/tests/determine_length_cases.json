@@ -1,0 +1,22 @@
+{
+  "schema": "pto-functional-model-determine-length-cases-v1",
+  "source_test_id": "PTO-AVS-ARCH-FUNCTIONAL-STEP-LENGTH-TOTALITY-002",
+  "cases": [
+    {"first_halfword": 0, "length_bits": 16},
+    {"first_halfword": 1, "length_bits": 32},
+    {"first_halfword": 2, "length_bits": 16},
+    {"first_halfword": 3, "length_bits": 32},
+    {"first_halfword": 4, "length_bits": 16},
+    {"first_halfword": 5, "length_bits": 32},
+    {"first_halfword": 6, "length_bits": 16},
+    {"first_halfword": 7, "length_bits": 32},
+    {"first_halfword": 8, "length_bits": 16},
+    {"first_halfword": 9, "length_bits": 32},
+    {"first_halfword": 10, "length_bits": 16},
+    {"first_halfword": 11, "length_bits": 32},
+    {"first_halfword": 12, "length_bits": 16},
+    {"first_halfword": 13, "length_bits": 32},
+    {"first_halfword": 14, "length_bits": 48},
+    {"first_halfword": 15, "length_bits": 64}
+  ]
+}

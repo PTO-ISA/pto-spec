@@ -65,10 +65,12 @@ pto_status_t RuntimeModel::Step(StepResult *result) {
     MemoryTransaction memory(callbacks_);
     const EvaluationResult evaluation =
         interpreter_.Evaluate(*function, &candidate, &memory);
-    if (evaluation.status != PTO_STATUS_OK) {
+    if (evaluation.status != PTO_STATUS_OK || evaluation.return_value) {
         result->state = PTO_STEP_UNSUPPORTED;
         SetError("runtime evaluator or callback failed");
-        return evaluation.status;
+        return evaluation.status == PTO_STATUS_OK
+            ? PTO_STATUS_MIR_INVALID
+            : evaluation.status;
     }
     const pto_status_t commit_status = memory.Commit();
     if (commit_status != PTO_STATUS_OK) {
@@ -98,6 +100,53 @@ pto_status_t RuntimeModel::CompleteHostRequest(std::uint64_t token,
     }
     SetError("generated host-completion entrypoint is not connected");
     return PTO_STATUS_MIR_INVALID;
+}
+
+pto_status_t RuntimeModel::InvokeU16(BindingId function,
+                                     std::uint16_t argument,
+                                     std::uint64_t *result) {
+    if (result == nullptr) {
+        return PTO_STATUS_INVALID_ARGUMENT;
+    }
+    BusyGuard guard(&busy_);
+    if (!guard.acquired()) {
+        return PTO_STATUS_BUSY;
+    }
+    const std::shared_ptr<const Module> module = module_.lock();
+    if (!module) {
+        SetError("generated executable module is absent or expired");
+        return PTO_STATUS_MIR_INVALID;
+    }
+    const Function *target = module->FindFunction(function);
+    if (target == nullptr) {
+        SetError("generated numeric function binding is unresolved");
+        return PTO_STATUS_MIR_INVALID;
+    }
+    RuntimeState candidate = state_;
+    MemoryTransaction memory(callbacks_);
+    const EvaluationResult evaluation = interpreter_.Evaluate(
+        *target,
+        &candidate,
+        &memory,
+        {Value(BitVector::FromU64(16, argument))});
+    if (evaluation.status != PTO_STATUS_OK || !evaluation.return_value) {
+        SetError("generated numeric function evaluation failed");
+        return evaluation.status == PTO_STATUS_OK
+            ? PTO_STATUS_MIR_INVALID
+            : evaluation.status;
+    }
+    const auto *integer = std::get_if<BigInteger>(
+        &evaluation.return_value->storage());
+    if (evaluation.step_state != PTO_STEP_UNSUPPORTED || integer == nullptr ||
+        !integer->TryToU64(result) || !memory.writes().empty() ||
+        candidate.globals != state_.globals ||
+        candidate.sequence != state_.sequence || candidate.tpc != state_.tpc ||
+        candidate.bpc != state_.bpc) {
+        SetError("generated numeric function violated its pure result contract");
+        return PTO_STATUS_MIR_INVALID;
+    }
+    last_error_.clear();
+    return PTO_STATUS_OK;
 }
 
 std::string RuntimeModel::last_error() const { return last_error_; }

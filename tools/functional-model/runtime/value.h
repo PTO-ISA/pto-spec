@@ -18,6 +18,7 @@ class BigInteger {
     explicit BigInteger(std::int64_t value);
     static BigInteger FromUnsignedWords(std::vector<std::uint32_t> words);
     BigInteger Add(const BigInteger &other) const;
+    bool TryToU64(std::uint64_t *value) const;
     bool operator==(const BigInteger &other) const;
     std::string ToString() const;
 
@@ -33,6 +34,8 @@ class BitVector {
     static BitVector FromU64(std::size_t width, std::uint64_t value);
     std::size_t width() const;
     bool bit(std::size_t index) const;
+    BitVector Slice(std::size_t start, std::size_t width) const;
+    bool TryToU64(std::uint64_t *value) const;
     bool operator==(const BitVector &other) const;
 
   private:

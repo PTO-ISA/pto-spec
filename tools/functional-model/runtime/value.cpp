@@ -85,6 +85,17 @@ bool BigInteger::operator==(const BigInteger &other) const {
     return negative_ == other.negative_ && words_ == other.words_;
 }
 
+bool BigInteger::TryToU64(std::uint64_t *value) const {
+    if (value == nullptr || negative_ || words_.size() > 2) {
+        return false;
+    }
+    *value = words_.empty() ? 0 : words_[0];
+    if (words_.size() == 2) {
+        *value |= static_cast<std::uint64_t>(words_[1]) << 32;
+    }
+    return true;
+}
+
 std::string BigInteger::ToString() const {
     if (words_.empty()) {
         return "0";
@@ -138,6 +149,31 @@ bool BitVector::bit(std::size_t index) const {
         throw std::out_of_range("bitvector index");
     }
     return ((bytes_[index / 8] >> (index % 8)) & 1U) != 0;
+}
+
+BitVector BitVector::Slice(std::size_t start, std::size_t width) const {
+    if (width == 0 || start > width_ || width > width_ - start) {
+        throw std::out_of_range("bitvector slice");
+    }
+    BitVector result(width);
+    for (std::size_t index = 0; index < width; ++index) {
+        if (bit(start + index)) {
+            result.bytes_[index / 8] |=
+                static_cast<std::uint8_t>(1U << (index % 8));
+        }
+    }
+    return result;
+}
+
+bool BitVector::TryToU64(std::uint64_t *value) const {
+    if (value == nullptr || width_ > 64) {
+        return false;
+    }
+    *value = 0;
+    for (std::size_t index = 0; index < bytes_.size(); ++index) {
+        *value |= static_cast<std::uint64_t>(bytes_[index]) << (index * 8);
+    }
+    return true;
 }
 
 bool BitVector::operator==(const BitVector &other) const {

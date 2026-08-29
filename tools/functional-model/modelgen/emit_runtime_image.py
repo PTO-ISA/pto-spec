@@ -1,0 +1,414 @@
+#!/usr/bin/env python3
+"""Emit the deterministic G3a runtime subset from executable PTO MIR."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+
+MODELGEN = Path(__file__).resolve().parent
+if str(MODELGEN) not in sys.path:
+    sys.path.insert(0, str(MODELGEN))
+
+from pto_executable_mir import ModelgenError, verify_executable_module  # noqa: E402
+
+
+ENTRYPOINT = "DeterminePTOInstructionLength"
+CASES_SCHEMA = "pto-functional-model-determine-length-cases-v1"
+
+
+class CompactArena:
+    def __init__(self, image: dict[str, object]):
+        tables = image["tables"]
+        self.nodes: list[list[object]] = image["nodes"]  # type: ignore[assignment]
+        self.kinds = [row["name"] for row in tables["node_kinds"]]
+        self.constructors = [row["name"] for row in tables["constructors"]]
+        self.fields = [row["name"] for row in tables["fields"]]
+        self.atom_kinds = [row["name"] for row in tables["atom_kinds"]]
+        self.strings = [row["name"] for row in tables["strings"]]
+
+    def kind(self, identifier: int) -> str:
+        return str(self.kinds[int(self.nodes[identifier][0])])
+
+    def constructor(self, identifier: int, expected: str | None = None) -> list[int]:
+        node = self.nodes[identifier]
+        if self.kind(identifier) != "constructor":
+            raise ModelgenError(f"runtime node {identifier} must be a constructor")
+        name = str(self.constructors[int(node[1])])
+        if expected is not None and name != expected:
+            raise ModelgenError(
+                f"runtime node {identifier} must be {expected}, got {name}"
+            )
+        return [int(value) for value in node[2]]  # type: ignore[union-attr]
+
+    def constructor_name(self, identifier: int) -> str:
+        node = self.nodes[identifier]
+        if self.kind(identifier) != "constructor":
+            raise ModelgenError(f"runtime node {identifier} must be a constructor")
+        return str(self.constructors[int(node[1])])
+
+    def sequence(self, identifier: int, expected: str | None = None) -> list[int]:
+        kind = self.kind(identifier)
+        if kind not in {"list", "tuple"} or (expected is not None and kind != expected):
+            raise ModelgenError(f"runtime node {identifier} must be {expected or 'sequence'}")
+        return [int(value) for value in self.nodes[identifier][1]]  # type: ignore[union-attr]
+
+    def option(self, identifier: int) -> int | None:
+        if self.kind(identifier) != "option":
+            raise ModelgenError(f"runtime node {identifier} must be an option")
+        value = self.nodes[identifier][1]
+        return None if value is None else int(value)
+
+    def atom(self, identifier: int, expected: str) -> object:
+        node = self.nodes[identifier]
+        if self.kind(identifier) != "atom":
+            raise ModelgenError(f"runtime node {identifier} must be an atom")
+        atom_kind = str(self.atom_kinds[int(node[1])])
+        if atom_kind != expected:
+            raise ModelgenError(
+                f"runtime atom {identifier} must be {expected}, got {atom_kind}"
+            )
+        value = node[2]
+        return self.strings[int(value)] if expected == "string" else value
+
+
+class Compiler:
+    def __init__(self, arena: CompactArena, argument_names: list[str]):
+        self.arena = arena
+        self.argument_ids = {name: index for index, name in enumerate(argument_names)}
+        self.instructions: list[dict[str, int | str]] = []
+        self.next_local = 0
+
+    def local(self) -> int:
+        result = self.next_local
+        self.next_local += 1
+        return result
+
+    def emit(self, opcode: str, **fields: int) -> int:
+        instruction: dict[str, int | str] = {
+            "opcode": opcode,
+            "binding": 0,
+            "local": 0,
+            "immediate": 0,
+            "address": 0,
+        }
+        instruction.update(fields)
+        self.instructions.append(instruction)
+        return len(self.instructions) - 1
+
+    def single_argument(self, identifier: int, expected: str) -> int:
+        values = self.arena.constructor(identifier, expected)
+        if len(values) != 1:
+            raise ModelgenError(f"runtime {expected} node must have one argument")
+        return values[0]
+
+    def literal_integer(self, identifier: int) -> int:
+        literal = self.single_argument(identifier, "E_Literal")
+        integer = self.single_argument(literal, "L_Int")
+        return int(str(self.arena.atom(integer, "integer")), 10)
+
+    def expression(self, identifier: int) -> int:
+        name = self.arena.constructor_name(identifier)
+        if name == "E_Var":
+            atom = self.single_argument(identifier, "E_Var")
+            variable = str(self.arena.atom(atom, "string"))
+            if variable not in self.argument_ids:
+                raise ModelgenError(f"unsupported runtime variable {variable!r}")
+            target = self.local()
+            self.emit(
+                "kLoadArgumentBits",
+                local=target,
+                binding=self.argument_ids[variable],
+                immediate=16,
+            )
+            return target
+        if name == "E_Literal":
+            literal = self.single_argument(identifier, "E_Literal")
+            literal_name = self.arena.constructor_name(literal)
+            target = self.local()
+            if literal_name == "L_Int":
+                atom = self.single_argument(literal, "L_Int")
+                value = int(str(self.arena.atom(atom, "integer")), 10)
+                if value < 0 or value > (1 << 64) - 1:
+                    raise ModelgenError("runtime integer literal exceeds G3a carrier")
+                self.emit("kLoadIntegerImmediate", local=target, immediate=value)
+                return target
+            if literal_name == "L_BitVector":
+                atom = self.single_argument(literal, "L_BitVector")
+                spelling = str(self.arena.atom(atom, "bitvector"))
+                if len(spelling) < 2 or spelling[0] != "'" or spelling[-1] != "'":
+                    raise ModelgenError("runtime bitvector literal is malformed")
+                bits = spelling[1:-1]
+                if not bits or any(bit not in "01" for bit in bits) or len(bits) > 64:
+                    raise ModelgenError("runtime bitvector literal is unsupported")
+                self.emit(
+                    "kLoadBitsImmediate",
+                    local=target,
+                    immediate=int(bits, 2),
+                    address=len(bits),
+                )
+                return target
+            raise ModelgenError(f"unsupported runtime literal {literal_name}")
+        if name == "E_Slice":
+            pair = self.arena.sequence(
+                self.single_argument(identifier, "E_Slice"), "tuple"
+            )
+            if len(pair) != 2:
+                raise ModelgenError("runtime slice must contain value and slices")
+            source = self.expression(pair[0])
+            slices = self.arena.sequence(pair[1], "list")
+            if len(slices) != 1:
+                raise ModelgenError("runtime supports exactly one slice")
+            values = self.arena.sequence(
+                self.single_argument(slices[0], "Slice_Length"), "tuple"
+            )
+            if len(values) != 2:
+                raise ModelgenError("runtime slice length must contain start and width")
+            start = self.literal_integer(values[0])
+            width = self.literal_integer(values[1])
+            target = self.local()
+            self.emit(
+                "kSliceBits",
+                local=target,
+                binding=source,
+                immediate=start,
+                address=width,
+            )
+            return target
+        if name == "E_Binop":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "E_Binop"), "tuple"
+            )
+            if len(values) != 3:
+                raise ModelgenError("runtime binary expression is malformed")
+            operator = self.arena.constructor_name(values[0])
+            if operator not in {"EQ", "NE"}:
+                raise ModelgenError(f"unsupported runtime binary operator {operator}")
+            left = self.expression(values[1])
+            right = self.expression(values[2])
+            target = self.local()
+            self.emit(
+                "kEqual" if operator == "EQ" else "kNotEqual",
+                local=target,
+                binding=left,
+                address=right,
+            )
+            return target
+        raise ModelgenError(f"unsupported reachable runtime expression {name}")
+
+    def statement(self, identifier: int) -> bool:
+        name = self.arena.constructor_name(identifier)
+        if name == "SB_ASL":
+            return self.statement(self.single_argument(identifier, "SB_ASL"))
+        if name == "S_Return":
+            value = self.arena.option(self.single_argument(identifier, "S_Return"))
+            if value is None:
+                raise ModelgenError("runtime function return must carry a value")
+            self.emit("kReturnValue", local=self.expression(value))
+            return True
+        if name == "S_Cond":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "S_Cond"), "tuple"
+            )
+            if len(values) != 3:
+                raise ModelgenError("runtime condition is malformed")
+            condition = self.expression(values[0])
+            branch = self.emit("kBranchIfFalse", local=condition)
+            then_terminal = self.statement(values[1])
+            jump = None if then_terminal else self.emit("kJump")
+            self.instructions[branch]["address"] = len(self.instructions)
+            else_terminal = self.statement(values[2])
+            if jump is not None:
+                self.instructions[jump]["address"] = len(self.instructions)
+            return then_terminal and else_terminal
+        if name == "S_Seq":
+            terminal = False
+            for child in self.arena.sequence(
+                self.single_argument(identifier, "S_Seq"), "list"
+            ):
+                if terminal:
+                    raise ModelgenError("runtime sequence contains unreachable statement")
+                terminal = self.statement(child)
+            return terminal
+        raise ModelgenError(f"unsupported reachable runtime statement {name}")
+
+
+def _type_bits_width(arena: CompactArena, identifier: int) -> int:
+    values = arena.sequence(arena.constructor(identifier, "T_Bits")[0], "tuple")
+    if len(values) != 2:
+        raise ModelgenError("runtime bits type is malformed")
+    compiler = Compiler(arena, [])
+    return compiler.literal_integer(values[0])
+
+
+def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
+    verify_executable_module(image, required_entrypoints=(ENTRYPOINT,))
+    tables = image["tables"]
+    strings = [row["name"] for row in tables["strings"]]
+    entrypoint = next(
+        (
+            row
+            for row in tables["entrypoints"]
+            if strings[row["name_symbol_id"]] == ENTRYPOINT
+        ),
+        None,
+    )
+    if entrypoint is None:
+        raise ModelgenError(f"missing runtime entrypoint {ENTRYPOINT}")
+    function = tables["functions"][entrypoint["function_id"]]
+    if function["extern_id"] is not None or function["parameters"]:
+        raise ModelgenError("runtime entrypoint must be a concrete non-parameterized function")
+    arguments = function["arguments"]
+    if len(arguments) != 1:
+        raise ModelgenError("runtime entrypoint must have one argument")
+    arena = CompactArena(image)
+    if _type_bits_width(arena, arguments[0]["type_node"]) != 16:
+        raise ModelgenError("runtime entrypoint argument must be bits(16)")
+    argument_name = str(strings[arguments[0]["name_symbol_id"]])
+    compiler = Compiler(arena, [argument_name])
+    compiler.statement(function["body_node"])
+    if not compiler.instructions or not any(
+        row["opcode"] == "kReturnValue" for row in compiler.instructions
+    ):
+        raise ModelgenError("runtime entrypoint has no reachable value return")
+    return int(function["id"]), compiler.instructions
+
+
+def _render_header() -> str:
+    return """#ifndef PTO_GENERATED_RUNTIME_IMAGE_H
+#define PTO_GENERATED_RUNTIME_IMAGE_H
+
+#include \"module.h\"
+
+#include <memory>
+
+namespace pto::model {
+std::shared_ptr<const Module> GeneratedDetermineLengthModule();
+BindingId GeneratedDetermineLengthBinding();
+}  // namespace pto::model
+
+#endif
+"""
+
+
+def _render_source(function_id: int, instructions: list[dict[str, int | str]], digest: str) -> str:
+    rows = "\n".join(
+        "        {OpCode::%s, %su, %su, UINT64_C(%s), UINT64_C(%s)},"
+        % (
+            row["opcode"],
+            row["binding"],
+            row["local"],
+            row["immediate"],
+            row["address"],
+        )
+        for row in instructions
+    )
+    return f"""// Generated from executable PTO MIR sha256:{digest}; do not edit.
+#include \"pto_generated_runtime_image.h\"
+
+#include <cassert>
+#include <cstdint>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+namespace pto::model {{
+
+BindingId GeneratedDetermineLengthBinding() {{ return {function_id}u; }}
+
+std::shared_ptr<const Module> GeneratedDetermineLengthModule() {{
+    std::vector<Instruction> instructions{{
+{rows}
+    }};
+    std::string error;
+    auto module = Module::Create(
+        {{Function{{GeneratedDetermineLengthBinding(), std::move(instructions)}}}},
+        GeneratedDetermineLengthBinding(),
+        &error);
+    if (module == nullptr) {{
+        throw std::runtime_error(error);
+    }}
+    return module;
+}}
+
+}}  // namespace pto::model
+"""
+
+
+def _load_cases(path: Path) -> list[dict[str, int]]:
+    document = json.loads(path.read_bytes())
+    if document.get("schema") != CASES_SCHEMA or set(document) != {
+        "schema", "source_test_id", "cases"
+    }:
+        raise ModelgenError("determine-length cases manifest is malformed")
+    cases = document["cases"]
+    if not isinstance(cases, list) or len(cases) != 16:
+        raise ModelgenError("determine-length cases must contain sixteen rows")
+    if [row.get("first_halfword") for row in cases] != list(range(16)):
+        raise ModelgenError("determine-length cases must cover low prefixes 0..15")
+    for row in cases:
+        if set(row) != {"first_halfword", "length_bits"} or row["length_bits"] not in {
+            16, 32, 48, 64
+        }:
+            raise ModelgenError("determine-length case is malformed")
+    return cases
+
+
+def _render_cases_header(cases: list[dict[str, int]]) -> str:
+    rows = "\n".join(
+        f"    DetermineLengthCase{{{row['first_halfword']}u, {row['length_bits']}u}},"
+        for row in cases
+    )
+    return f"""#ifndef PTO_GENERATED_DETERMINE_LENGTH_CASES_H
+#define PTO_GENERATED_DETERMINE_LENGTH_CASES_H
+
+#include <array>
+#include <cstdint>
+
+struct DetermineLengthCase {{
+    std::uint16_t first_halfword;
+    std::uint64_t length_bits;
+}};
+
+inline constexpr std::array<DetermineLengthCase, 16> kDetermineLengthCases{{{{
+{rows}
+}}}};
+
+#endif
+"""
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--header", type=Path, required=True)
+    parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--cases", type=Path, required=True)
+    parser.add_argument("--cases-header", type=Path, required=True)
+    arguments = parser.parse_args()
+    try:
+        image_bytes = arguments.input.read_bytes()
+        image = json.loads(image_bytes)
+        function_id, instructions = lower(image)
+        outputs = {
+            arguments.header: _render_header(),
+            arguments.source: _render_source(
+                function_id, instructions, hashlib.sha256(image_bytes).hexdigest()
+            ),
+            arguments.cases_header: _render_cases_header(_load_cases(arguments.cases)),
+        }
+        for path, content in outputs.items():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+    except (ModelgenError, OSError, ValueError, json.JSONDecodeError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

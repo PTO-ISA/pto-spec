@@ -2,8 +2,11 @@
 
 #include "pto/pto_asl_model.h"
 
+#include <algorithm>
+#include <deque>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 namespace pto::model {
 
@@ -37,11 +40,16 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
         }
         for (std::size_t index = 0; index < function.instructions.size(); ++index) {
             const Instruction &instruction = function.instructions[index];
-            const bool is_last = index + 1 == function.instructions.size();
             switch (instruction.opcode) {
                 case OpCode::kSetLocalU64:
                 case OpCode::kAddLocalU64:
                 case OpCode::kWriteMemoryImmediate:
+                case OpCode::kLoadArgumentBits:
+                case OpCode::kLoadBitsImmediate:
+                case OpCode::kLoadIntegerImmediate:
+                case OpCode::kSliceBits:
+                case OpCode::kEqual:
+                case OpCode::kNotEqual:
                     break;
                 case OpCode::kStoreLocalToGlobal:
                 case OpCode::kIncrementGlobalU64:
@@ -63,15 +71,19 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                         return nullptr;
                     }
                     break;
-                case OpCode::kReturnExecuted:
-                case OpCode::kReturnTrap:
-                case OpCode::kReturnHostRequest:
-                    if (!is_last) {
+                case OpCode::kBranchIfFalse:
+                case OpCode::kJump:
+                    if (instruction.address >= function.instructions.size()) {
                         if (error != nullptr) {
-                            *error = "module function has an early terminal opcode";
+                            *error = "module branch target is out of range";
                         }
                         return nullptr;
                     }
+                    break;
+                case OpCode::kReturnValue:
+                case OpCode::kReturnExecuted:
+                case OpCode::kReturnTrap:
+                case OpCode::kReturnHostRequest:
                     break;
                 default:
                     if (error != nullptr) {
@@ -80,12 +92,41 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                     return nullptr;
             }
         }
-        const OpCode terminal = function.instructions.back().opcode;
-        if (terminal != OpCode::kReturnExecuted &&
-            terminal != OpCode::kReturnTrap &&
-            terminal != OpCode::kReturnHostRequest) {
+        std::vector<bool> reachable(function.instructions.size(), false);
+        std::deque<std::size_t> pending{0};
+        while (!pending.empty()) {
+            const std::size_t index = pending.front();
+            pending.pop_front();
+            if (reachable[index]) {
+                continue;
+            }
+            reachable[index] = true;
+            const Instruction &instruction = function.instructions[index];
+            if (instruction.opcode == OpCode::kReturnValue ||
+                instruction.opcode == OpCode::kReturnExecuted ||
+                instruction.opcode == OpCode::kReturnTrap ||
+                instruction.opcode == OpCode::kReturnHostRequest) {
+                continue;
+            }
+            if (instruction.opcode == OpCode::kJump) {
+                pending.push_back(static_cast<std::size_t>(instruction.address));
+                continue;
+            }
+            if (index + 1 >= function.instructions.size()) {
+                if (error != nullptr) {
+                    *error = "module function has a reachable fallthrough exit";
+                }
+                return nullptr;
+            }
+            pending.push_back(index + 1);
+            if (instruction.opcode == OpCode::kBranchIfFalse) {
+                pending.push_back(static_cast<std::size_t>(instruction.address));
+            }
+        }
+        if (!std::all_of(reachable.begin(), reachable.end(),
+                         [](bool value) { return value; })) {
             if (error != nullptr) {
-                *error = "module function has no terminal opcode";
+                *error = "module function contains unreachable bytecode";
             }
             return nullptr;
         }

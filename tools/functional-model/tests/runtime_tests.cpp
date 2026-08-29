@@ -1,5 +1,7 @@
 #include "interpreter.h"
 #include "module.h"
+#include "pto_generated_determine_length_cases.h"
+#include "pto_generated_runtime_image.h"
 #include "runtime_model.h"
 #include "value.h"
 
@@ -258,11 +260,32 @@ void TestInvalidModules() {
     assert(result.state == PTO_STEP_UNSUPPORTED);
 }
 
+void TestGeneratedDetermineLength() {
+    MemoryHarness memory;
+    const auto module = pto::model::GeneratedDetermineLengthModule();
+    RuntimeModel runtime(module, memory.Callbacks());
+    assert(runtime.Reset({0}) == PTO_STATUS_OK);
+    for (const DetermineLengthCase &test_case : kDetermineLengthCases) {
+        std::uint64_t result = 0;
+        assert(runtime.InvokeU16(
+                   pto::model::GeneratedDetermineLengthBinding(),
+                   test_case.first_halfword,
+                   &result) == PTO_STATUS_OK);
+        assert(result == test_case.length_bits);
+    }
+    StepResult step_result;
+    assert(runtime.Step(&step_result) == PTO_STATUS_MIR_INVALID);
+    assert(step_result.state == PTO_STEP_UNSUPPORTED);
+    assert(memory.read_count == 0);
+    assert(memory.committed_writes.empty());
+}
+
 }  // namespace
 
 int main() {
     TestValues();
     TestRuntime();
     TestInvalidModules();
+    TestGeneratedDetermineLength();
     return 0;
 }

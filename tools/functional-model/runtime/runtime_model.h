@@ -32,6 +32,9 @@ class RuntimeModel {
     pto_status_t Step(StepResult *result);
     pto_status_t CompleteHostRequest(std::uint64_t token,
                                      std::uint64_t scalar_result);
+    pto_status_t InvokeU16(BindingId function,
+                           std::uint16_t argument,
+                           std::uint64_t *result);
     std::string last_error() const;
     std::uint64_t GlobalU64(BindingId id) const;
 
