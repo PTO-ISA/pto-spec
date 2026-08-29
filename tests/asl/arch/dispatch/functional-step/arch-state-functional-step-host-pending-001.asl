@@ -20,8 +20,14 @@ begin
 
     assert first.status == PTOFunctionalStep_HostRequest;
     assert second.status == PTOFunctionalStep_HostRequest;
+    assert first.instruction_status == PTOFunctionalInstruction_NotAttempted;
+    assert second.instruction_status == PTOFunctionalInstruction_NotAttempted;
     assert first.request_token == token;
     assert second.request_token == token;
+    assert first.request_type == Zeros{16} + 94;
+    assert second.request_type == Zeros{16} + 94;
+    assert first.request_argument0 == Zeros{PTO_XLEN} + 7;
+    assert second.request_argument0 == Zeros{PTO_XLEN} + 7;
     assert first.pre_tpc == Zeros{PTO_XLEN} + 0x100;
     assert first.post_tpc == first.pre_tpc;
     assert second.pre_tpc == first.pre_tpc;

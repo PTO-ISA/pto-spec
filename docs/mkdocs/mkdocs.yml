@@ -1065,5 +1065,6 @@ nav:
           - "ADR 0111: ASL functional-model fetch, step, memory, and host boundary": status/decisions/0111-asl-functional-model-execution-boundary.md
           - "ADR 0112: Warning-free ASLRef constraint refinements": status/decisions/0112-warning-free-aslref-constraint-refinements.md
           - "ADR 0113: Named indexed-memory lane-choice profiles": status/decisions/0113-indexed-memory-lane-choice-profile.md
+          - "ADR 0114: Functional-model step observation v1": status/decisions/0114-functional-model-step-observation-v1.md
       - Open:
           - "Open architecture decisions": status/open/index.md

@@ -18,6 +18,7 @@ begin
     let result = ExecuteOnePTOStep();
 
     assert result.status == PTOFunctionalStep_Executed;
+    assert result.instruction_status == PTOFunctionalInstruction_Executed;
     assert result.pre_tpc == Zeros{PTO_XLEN} + 0x100;
     assert result.post_tpc == Zeros{PTO_XLEN} + 0x104;
     assert result.raw_instruction == Zeros{64} + 0x00208185;

@@ -12,6 +12,7 @@ begin
     let result = ExecuteOnePTOStep();
 
     assert result.status == PTOFunctionalStep_Trap;
+    assert result.instruction_status == PTOFunctionalInstruction_NotAttempted;
     assert result.pre_tpc == fetch_pc;
     assert result.post_tpc == ReadTPC();
     assert result.length_bits == 64;

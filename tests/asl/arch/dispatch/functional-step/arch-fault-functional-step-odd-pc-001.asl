@@ -10,6 +10,7 @@ begin
     let result = ExecuteOnePTOStep();
 
     assert result.status == PTOFunctionalStep_Trap;
+    assert result.instruction_status == PTOFunctionalInstruction_NotAttempted;
     assert result.pre_tpc == Zeros{PTO_XLEN} + 0x101;
     assert result.post_tpc == ReadTPC();
     assert result.length_bits == 0;

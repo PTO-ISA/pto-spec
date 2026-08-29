@@ -9,6 +9,7 @@ begin
     let result = ExecuteOnePTOStep();
 
     assert result.status == PTOFunctionalStep_Trap;
+    assert result.instruction_status == PTOFunctionalInstruction_NotAttempted;
     assert result.pre_tpc == Zeros{PTO_XLEN} + PTO_MODEL_MEMORY_BYTES;
     assert result.post_tpc == ReadTPC();
     assert result.length_bits == 0;

@@ -4,7 +4,7 @@
     "sha256": "fad5634d302c0ef6ccc53cd14371f3f81dba211e41a8885dc8c903762b30d1f5",
     "size_bytes": 16722
   },
-  "constructor_count": 536460,
+  "constructor_count": 536582,
   "constructor_inventory": [
     {
       "constructor": "ADD",
@@ -48,7 +48,7 @@
     },
     {
       "constructor": "D_Func",
-      "count": 5575
+      "count": 5576
     },
     {
       "constructor": "D_GlobalStorage",
@@ -56,7 +56,7 @@
     },
     {
       "constructor": "D_TypeDecl",
-      "count": 174
+      "count": 175
     },
     {
       "constructor": "Down",
@@ -64,7 +64,7 @@
     },
     {
       "constructor": "EQ",
-      "count": 26313
+      "count": 26315
     },
     {
       "constructor": "E_ATC",
@@ -76,19 +76,19 @@
     },
     {
       "constructor": "E_Binop",
-      "count": 44873
+      "count": 44875
     },
     {
       "constructor": "E_Call",
-      "count": 15179
+      "count": 15189
     },
     {
       "constructor": "E_Cond",
-      "count": 446
+      "count": 447
     },
     {
       "constructor": "E_GetArray",
-      "count": 1752
+      "count": 1753
     },
     {
       "constructor": "E_GetField",
@@ -96,7 +96,7 @@
     },
     {
       "constructor": "E_Literal",
-      "count": 87770
+      "count": 87787
     },
     {
       "constructor": "E_Pattern",
@@ -120,7 +120,7 @@
     },
     {
       "constructor": "E_Var",
-      "count": 56201
+      "count": 56204
     },
     {
       "constructor": "GDK_Config",
@@ -176,7 +176,7 @@
     },
     {
       "constructor": "LE_SetField",
-      "count": 1486
+      "count": 1496
     },
     {
       "constructor": "LE_Slice",
@@ -184,7 +184,7 @@
     },
     {
       "constructor": "LE_Var",
-      "count": 4470
+      "count": 4480
     },
     {
       "constructor": "LT",
@@ -192,7 +192,7 @@
     },
     {
       "constructor": "L_BitVector",
-      "count": 3683
+      "count": 3686
     },
     {
       "constructor": "L_Bool",
@@ -200,11 +200,11 @@
     },
     {
       "constructor": "L_Int",
-      "count": 54422
+      "count": 54430
     },
     {
       "constructor": "L_Label",
-      "count": 22367
+      "count": 22373
     },
     {
       "constructor": "L_Real",
@@ -260,7 +260,7 @@
     },
     {
       "constructor": "SB_ASL",
-      "count": 5569
+      "count": 5570
     },
     {
       "constructor": "SB_Primitive",
@@ -268,7 +268,7 @@
     },
     {
       "constructor": "ST_Function",
-      "count": 20380
+      "count": 20391
     },
     {
       "constructor": "ST_Procedure",
@@ -284,7 +284,7 @@
     },
     {
       "constructor": "S_Assign",
-      "count": 4470
+      "count": 4480
     },
     {
       "constructor": "S_Call",
@@ -292,7 +292,7 @@
     },
     {
       "constructor": "S_Cond",
-      "count": 17421
+      "count": 17422
     },
     {
       "constructor": "S_Decl",
@@ -304,15 +304,15 @@
     },
     {
       "constructor": "S_Pass",
-      "count": 15607
+      "count": 15608
     },
     {
       "constructor": "S_Return",
-      "count": 21494
+      "count": 21496
     },
     {
       "constructor": "S_Seq",
-      "count": 25194
+      "count": 25205
     },
     {
       "constructor": "S_Unreachable",
@@ -332,7 +332,7 @@
     },
     {
       "constructor": "T_Bits",
-      "count": 3003
+      "count": 3008
     },
     {
       "constructor": "T_Bool",
@@ -340,7 +340,7 @@
     },
     {
       "constructor": "T_Enum",
-      "count": 74
+      "count": 75
     },
     {
       "constructor": "T_Int",
@@ -348,7 +348,7 @@
     },
     {
       "constructor": "T_Named",
-      "count": 7925
+      "count": 7929
     },
     {
       "constructor": "T_Real",
@@ -379,15 +379,15 @@
       "count": 16
     }
   ],
-  "declaration_count": 5949,
+  "declaration_count": 5951,
   "declaration_counts": {
-    "D_Func": 5575,
+    "D_Func": 5576,
     "D_GlobalStorage": 200,
-    "D_TypeDecl": 174
+    "D_TypeDecl": 175
   },
   "input": {
-    "sha256": "eb1749810dbb6c96e88333994a109dde9c84d52a3551cd8bf0d3830f67ebbce7",
-    "size_bytes": 16272430
+    "sha256": "40e10dfc1d57fb2c789eb978ed82e8b63b2bbe07fbd1e3a5a142473d8c76698f",
+    "size_bytes": 16276473
   },
   "schema": "pto.functional-model-asl-constructs.v1",
   "unsupported": []

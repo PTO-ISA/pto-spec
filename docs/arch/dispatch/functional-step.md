@@ -28,7 +28,10 @@ This page is a generated reference view of the normative ASL unit.
 // complete instruction, fetch little-endian bytes, and invoke the unique PTO
 // instruction dispatcher. Pending and predecode fault paths MUST NOT advance
 // architectural time. A decoded path MUST advance time exactly once and MUST
-// report the resulting precise trap rather than interpreting rejection as exit.
+// report whether the instruction was not attempted, executed, or rejected,
+// together with the resulting precise trap cause rather than interpreting
+// rejection as exit. A host-request result MUST snapshot the immutable request
+// token, origin, type, and scalar argument.
 // NDF-END: PTO-REQ-FUNCTIONAL-STEP-001
 
 pure func DeterminePTOInstructionLength(
@@ -45,6 +48,12 @@ begin
     end;
 end;
 
+readonly func CurrentFunctionalStepFaultCause() => bits(24)
+begin
+    if _LastFault == Fault_None then return Zeros{24}; end;
+    return _ACRTrapCause[[CurrentACR()]];
+end;
+
 readonly func EmptyFunctionalStepResult(
     status: PTOFunctionalStepStatus,
     pre_tpc: Word,
@@ -53,6 +62,7 @@ readonly func EmptyFunctionalStepResult(
 begin
     var result: PTOFunctionalStepResult;
     result.status = status;
+    result.instruction_status = PTOFunctionalInstruction_NotAttempted;
     result.pre_tpc = pre_tpc;
     result.post_tpc = ReadTPC();
     result.pre_bpc = pre_bpc;
@@ -61,8 +71,11 @@ begin
     result.length_bits = 0;
     result.fault = _LastFault;
     result.fault_address = _FaultAddress;
+    result.fault_cause = CurrentFunctionalStepFaultCause();
     result.origin_pe = origin_pe;
     result.request_token = Zeros{PTO_XLEN};
+    result.request_type = Zeros{16};
+    result.request_argument0 = Zeros{PTO_XLEN};
     result.sequence = _FunctionalProfileSequence;
     return result;
 end;
@@ -85,6 +98,8 @@ begin
             pre_bpc,
             FunctionalModelHostRequestOriginPE());
         pending.request_token = FunctionalModelHostRequestToken();
+        pending.request_type = FunctionalModelHostRequestType();
+        pending.request_argument0 = FunctionalModelHostRequestArgument0();
         return pending;
     end;
 
@@ -124,9 +139,16 @@ begin
         PTOFunctionalStep_Executed, pre_tpc, pre_bpc, origin_pe);
     result.raw_instruction = instruction;
     result.length_bits = length_bits;
+    result.instruction_status =
+        if execution == PTOInstruction_Executed then
+            PTOFunctionalInstruction_Executed
+        else
+            PTOFunctionalInstruction_Rejected;
     if FunctionalModelHostRequestPending() then
         result.status = PTOFunctionalStep_HostRequest;
         result.request_token = FunctionalModelHostRequestToken();
+        result.request_type = FunctionalModelHostRequestType();
+        result.request_argument0 = FunctionalModelHostRequestArgument0();
     elsif execution == PTOInstruction_Rejected ||
           _LastFault != Fault_None then
         result.status = PTOFunctionalStep_Trap;
@@ -135,6 +157,7 @@ begin
     result.post_bpc = ReadBPC();
     result.fault = _LastFault;
     result.fault_address = _FaultAddress;
+    result.fault_cause = CurrentFunctionalStepFaultCause();
     return result;
 end;
 ```

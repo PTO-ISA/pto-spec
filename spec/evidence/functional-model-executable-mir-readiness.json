@@ -118,32 +118,32 @@
     "version": 1
   },
   "input_mir": {
-    "sha256": "971bbcbc302b2836150130f0e168eb5eeffc8e9e9c5b8cdd3be7a55596347281",
-    "size_bytes": 61963039
+    "sha256": "01c05ef640efaf1e0c7390a5bddeb8b8c3d3e7908d906173be35bb75d52494ff",
+    "size_bytes": 61980546
   },
   "model_image": {
-    "sha256": "0c27448ae7e5f011cbdac4e7c8edaa3b9bf44109f5166d185b4d0c44f2130a37",
-    "size_bytes": 23505350
+    "sha256": "c96ffe24e7b1d1d24f8049b2731f3b703a27d218732683e09be0739468b5db15",
+    "size_bytes": 23512027
   },
-  "node_count": 1015532,
+  "node_count": 1015823,
   "schema": "pto.functional-model-executable-mir-readiness.v1",
   "table_counts": {
     "atom_kinds": 5,
     "bindings": 63,
-    "call_graph": 5575,
-    "call_sites": 16393,
+    "call_graph": 5576,
+    "call_sites": 16403,
     "constructors": 93,
     "entrypoints": 6,
     "externs": 59,
     "fields": 20,
-    "functions": 5575,
+    "functions": 5576,
     "global_kinds": 3,
     "globals": 200,
     "node_kinds": 6,
-    "state_access_sites": 3949,
+    "state_access_sites": 3951,
     "state_fields": 110,
-    "strings": 8700,
-    "types": 174
+    "strings": 8708,
+    "types": 175
   },
   "unhandled_runtime_constructs": [
     "ADD",

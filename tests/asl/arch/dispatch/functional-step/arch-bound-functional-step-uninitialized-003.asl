@@ -8,6 +8,7 @@ begin
     let result = ExecuteOnePTOStep();
 
     assert result.status == PTOFunctionalStep_Unsupported;
+    assert result.instruction_status == PTOFunctionalInstruction_NotAttempted;
     assert result.pre_tpc == Zeros{PTO_XLEN} + 0x100;
     assert result.post_tpc == result.pre_tpc;
     assert result.length_bits == 0;

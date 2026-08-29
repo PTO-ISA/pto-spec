@@ -32,6 +32,12 @@ type PTOFunctionalHostCompletionStatus of enumeration {
     PTOFunctionalHostCompletion_Rejected
 };
 
+type PTOFunctionalInstructionStatus of enumeration {
+    PTOFunctionalInstruction_NotAttempted,
+    PTOFunctionalInstruction_Executed,
+    PTOFunctionalInstruction_Rejected
+};
+
 type PTOFunctionalInstructionLength of integer {0,16,32,48,64};
 
 type PTOInstructionAccessProbe of record {
@@ -41,6 +47,7 @@ type PTOInstructionAccessProbe of record {
 
 type PTOFunctionalStepResult of record {
     status: PTOFunctionalStepStatus,
+    instruction_status: PTOFunctionalInstructionStatus,
     pre_tpc: Word,
     post_tpc: Word,
     pre_bpc: Word,
@@ -49,8 +56,11 @@ type PTOFunctionalStepResult of record {
     length_bits: PTOFunctionalInstructionLength,
     fault: FaultCode,
     fault_address: Word,
+    fault_cause: bits(24),
     origin_pe: MemoryAgentId,
     request_token: Word,
+    request_type: bits(16),
+    request_argument0: Word,
     sequence: Word
 };
 ```

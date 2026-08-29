@@ -10,6 +10,7 @@ begin
     let result = ExecuteOnePTOStep();
 
     assert result.status == PTOFunctionalStep_Executed;
+    assert result.instruction_status == PTOFunctionalInstruction_Executed;
     assert result.pre_tpc == entry;
     assert result.post_tpc == entry + 2;
     assert result.raw_instruction == Zeros{64} + 0x1416;

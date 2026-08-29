@@ -8522,12 +8522,48 @@
         "0.58.5"
       ],
       "title": "Named indexed-memory lane-choice profiles"
+    },
+    {
+      "accepted": "2026-08-29",
+      "affected_ndf": [
+        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+        "PTO-REQ-FUNCTIONAL-STEP-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
+        "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
+        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "9a64799adc925d680494bad6f0b9084fa21b36af",
+      "created": "2026-08-29",
+      "id": "ADR-0114",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/179",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0114-functional-model-step-observation-v1.md",
+      "rejected": null,
+      "release_boundary": true,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Functional-model step observation v1"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 107
+    "record_count": 108
   }
 }
