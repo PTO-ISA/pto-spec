@@ -3438,7 +3438,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "ca60acb5d2b42f2ebbf860eab026adeaa409863e991be93af06f316bbb5995bc"
+      "sha256": "a3f698030f59fa5c2d893348150ff64b2b74c82dcc3954f337c7477423815dfa"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3446,15 +3446,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "e74eb2f3d2eeb2fe5bd6287e4a196edda1e0c51517d8c6508d8beac20e6e80c6"
+      "sha256": "1d6526c1f3587e0006a59cc15d82ce298cbccae8e0f5c0a5ac89a4649e525688"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "6d811ce96ca900a5cb23a851a3d6433a70f17a9dbb3430ddf670c935e97abb40"
+      "sha256": "f73372d145e22ee700beb8bd953c174379394f0e011350195380f66027776932"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "939eb13dba03e960bf4e38079c231c585bcb84d3b81b877189c146ca6ac7c569"
+      "sha256": "0dce68d6d7c526ed06f8eed5bb2a4ea2fafdb75d891dbb7a0e72e5522e90e429"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3466,7 +3466,7 @@
     },
     {
       "path": "spec/release-selection.json",
-      "sha256": "2441d6cd69ac6137dd4db4b528c11d04307c180b5ab7abdd12f505b3308a795b"
+      "sha256": "ee7e46ec4512feb2872776034c355363a8ab780ccc6062611b225603c3db0631"
     },
     {
       "path": "spec/schemas/pto-release-selection.schema.json",
@@ -3500,7 +3500,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "dd02afd37cf31cba5b266bd74f18a1621c558a02ac683f76c9312b51fb9d3884",
+  "content_sha256": "2861961f132c5e91826df6ffe69d30b667f22c23087284504ba8f2774c81b6a2",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -7821,8 +7821,7 @@
       "ADR-0092",
       "ADR-0093",
       "ADR-0094",
-      "ADR-0095",
-      "ADR-0111"
+      "ADR-0095"
     ],
     "expanded_ndf": [
       {
@@ -11905,7 +11904,7 @@
     "included_ndf_statuses": [
       "accepted"
     ],
-    "policy_sha256": "9d5d5fc2c1bd4c87efd361404aec21341d3e9cb70fbe6d1534bf00c8cd30965c",
+    "policy_sha256": "b0769caef54559b49490b7777aff782c211b248d4e97fb04c3c3d27205a194ac",
     "publication_version": "0.58.5.0",
     "required_readiness_floor": "executable",
     "selected_adr_ids": [

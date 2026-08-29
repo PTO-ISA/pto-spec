@@ -1045,6 +1045,5 @@ nav:
           - "ADR 0108: PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary": status/decisions/0108-0584-1-to-0585-compatibility.md
           - "ADR 0109: Local single-object cap versus aggregate Local pool": status/decisions/0109-local-single-object-cap.md
           - "ADR 0110: TCVT CUBE_M16 and CUBE_M32 layout closure": status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md
-          - "ADR 0111: ASL functional-model fetch, step, memory, and host boundary": status/decisions/0111-asl-functional-model-execution-boundary.md
       - Open:
           - "Open architecture decisions": status/open/index.md
