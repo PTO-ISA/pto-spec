@@ -13,7 +13,8 @@
     "ADR-0092",
     "ADR-0093",
     "ADR-0094",
-    "ADR-0095"
+    "ADR-0095",
+    "ADR-0111"
   ],
   "included_ndf_statuses": [
     "accepted"
