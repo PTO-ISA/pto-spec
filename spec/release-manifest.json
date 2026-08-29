@@ -89,6 +89,10 @@
       "sha256": "c9ab44cfc59c0fb30bdf1bdbbff7356a29820e6390630bd367e18a4588773ea1"
     },
     {
+      "path": "asl/arch/data-types/indexed-memory-lane-choice.asl",
+      "sha256": "237a0d2afaeae30c3ca69132b1ed4bf50052077cabb562d89c66dbf363c0ba63"
+    },
+    {
       "path": "asl/arch/data-types/integer.asl",
       "sha256": "90d7132478de54d665d973587b61c3ecfd5e57645e5985aef5918b4b722e816d"
     },
@@ -211,6 +215,10 @@
     {
       "path": "asl/arch/profile/functional-model.asl",
       "sha256": "7d8d83708e00c0c4c20b38056179ec99d3285e2f9271dbfab2705c2f7e5c754f"
+    },
+    {
+      "path": "asl/arch/profile/indexed-memory-lane-choice.asl",
+      "sha256": "d4019525ffb08129714a07bd1c871c970dcfe33c5c14741e1582be62fe4dde4c"
     },
     {
       "path": "asl/arch/profile/matrix-postprocess.asl",
@@ -3182,11 +3190,11 @@
     },
     {
       "path": "asl/tile/model/memory/atomics.asl",
-      "sha256": "3fe85107f4745fdfbd1513f2485e316778e6ac053f01867f8ee9f6654c4fdeab"
+      "sha256": "90bdf5070ed2e95aa804a3db94dc2fc56701765e8bac52a1a059dda5ebbf9d78"
     },
     {
       "path": "asl/tile/model/memory/gather-scatter.asl",
-      "sha256": "380643b5cf30271df799fe19de34681f77735147d6a6e6ed31e8dad1f1de62e0"
+      "sha256": "bfb11d3d32ff23267fe20bc31653899bd8c1c564957a0a259457ec02ab944fb4"
     },
     {
       "path": "asl/tile/model/memory/load-store.asl",
@@ -3458,7 +3466,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "0e4d38af186d5d8d5cc872d76efbee32d5b77e564b0f5846146e655268b77254"
+      "sha256": "cc0f396a76f1e34a772aef48a1a695953f0ca30b4b7f337025a01ef1aa27b3ac"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3466,15 +3474,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "5a2d67d6aa531f51e253a119d7afc012ae13a61401ccce0d64af1dab8a40ff75"
+      "sha256": "65b0c32b01e286a134b4e9c42654f319732cd1ddc5ba63da482914b51f558b6d"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "1207a60b763e4337df39a040f30128e8bfb05f27341b761460e9ec3681189fe6"
+      "sha256": "e82dfa8922f2f08e14e2cb1906bd783982a441b904e70a5874fa204e86e9e15f"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "15e21b6b5d202f71398c2b7dd0b25e87b4dbaa975fa7c65ea2c4ae93fdf7a103"
+      "sha256": "be50d5f0f8e60739d1e1b5f60426b8d88f53ead2cd2620032145751d3d8b2fb6"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3520,7 +3528,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "51475a3f4e4cceeefc22657a6051195beef13aa324ded382f792063aa65b5cee",
+  "content_sha256": "bbb5615d62cf82b64c0205f6e8d5a8eb350a15fab277d41e6792d252a8813000",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3658,6 +3666,11 @@
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/functional-model.md",
       "sha256": "21e3c4e9497d1da9a23badcb5223e9938f02ee5a22a4d7b6934d20301b90c5de"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/data-types/indexed-memory-lane-choice.md",
+      "sha256": "af651ee8fb801b90c42fe802051d5a36bc5b76c05a935b9bd67d65a3dc1d3db3"
     },
     {
       "kind": "generated-documentation",
@@ -3813,6 +3826,11 @@
       "kind": "generated-documentation",
       "path": "docs/arch/profile/functional-model.md",
       "sha256": "b679989cd3f968b715bd485c7e2542021c2e09fe9cb1c3fc851be62d247ecc34"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/profile/indexed-memory-lane-choice.md",
+      "sha256": "53c88a2080016309d456bc8548d169061f2154f3cde546c27cd895383dc806f0"
     },
     {
       "kind": "generated-documentation",
@@ -7527,12 +7545,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/atomics.md",
-      "sha256": "93f80620303b6edf40644769191a1eeedd8f1ea03ef25f4dffa84cc74bce85e0"
+      "sha256": "6432336a2352f5010eeb747d46e07b8e3607d434d90a7f62639e1ec4799f43d6"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/gather-scatter.md",
-      "sha256": "ec44bb4410cd42f1ac7bc1ed91f3e5dd77b7d21ebb4d99b2b50361d70d92b7a4"
+      "sha256": "17fe54d16c8ae474080f34ebab0ee7a5db258cbcd7a8c7dceae0adda5695a17b"
     },
     {
       "kind": "generated-documentation",
@@ -11234,6 +11252,10 @@
         "sha256": "e8ab5854f67f3a1d46c1ab24c104ddffcd850102c0e679d2deca0391e6d8a9f5"
       },
       {
+        "id": "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001",
+        "sha256": "8adda2e2215f2741d97ef0a94b76f920cf88ac24751752063eee245ec3fc281a"
+      },
+      {
         "id": "PTO-REQ-SHARED-TILE-001",
         "sha256": "2fb33810fae173153b72fc44a89235700c632ae9868416610e1040188762af1d"
       },
@@ -12064,7 +12086,8 @@
       "ADR-0109",
       "ADR-0110",
       "ADR-0111",
-      "ADR-0112"
+      "ADR-0112",
+      "ADR-0113"
     ]
   },
   "schema_version": 1,

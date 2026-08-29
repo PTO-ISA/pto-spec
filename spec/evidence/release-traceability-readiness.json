@@ -11514,6 +11514,7 @@
       "tests": [
         "PTO-AVS-BLOCK-MGATHER-CAS-EXEC-001",
         "PTO-AVS-BLOCK-MGATHER-CAS-FAULT-001",
+        "PTO-AVS-TILE-MGATHER-CAS-DUPLICATE-REFERENCE-ORDER-002",
         "PTO-AVS-TILE-MGATHER-CAS-RMW-001",
         "PTO-AVS-TILE-MGATHER-CAS-STATIC-001"
       ]
@@ -11548,6 +11549,7 @@
         "PTO-AVS-BLOCK-MSCATTER-SCATTER-001",
         "PTO-AVS-BLOCK-MSCATTER-STAGE2-WIDTH-001",
         "PTO-AVS-TILE-MSCATTER-BYTES-001",
+        "PTO-AVS-TILE-MSCATTER-DUPLICATE-REFERENCE-ORDER-002",
         "PTO-AVS-TILE-MSCATTER-STATIC-001"
       ]
     },
@@ -13631,6 +13633,22 @@
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-48-003",
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-ADD-001",
         "PTO-AVS-ARCH-FUNCTIONAL-STEP-UNINITIALIZED-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001",
+      "owners": [
+        "asl/tile/model/memory/gather-scatter.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-0113"
+      ],
+      "tests": [
+        "PTO-AVS-TILE-INDEXED-MEMORY-LANE-CHOICE-REFERENCE-001",
+        "PTO-AVS-TILE-MGATHER-CAS-DUPLICATE-REFERENCE-ORDER-002",
+        "PTO-AVS-TILE-MODEL-MEMORY-GATHER-SCATTER-STATIC-001",
+        "PTO-AVS-TILE-MSCATTER-DUPLICATE-REFERENCE-ORDER-002"
       ]
     },
     {
@@ -16632,6 +16650,7 @@
     "asl/arch/data-types/formats/tf32.asl": "1b1a14d0d609cc41a312e59df8621a0f3ac711a8589c5e99844aa80fb0885873",
     "asl/arch/data-types/fp19.asl": "3733d0d930df3f890b4aa5237dfface8f0cc2081f42244f45aae711435865fa6",
     "asl/arch/data-types/functional-model.asl": "c9ab44cfc59c0fb30bdf1bdbbff7356a29820e6390630bd367e18a4588773ea1",
+    "asl/arch/data-types/indexed-memory-lane-choice.asl": "237a0d2afaeae30c3ca69132b1ed4bf50052077cabb562d89c66dbf363c0ba63",
     "asl/arch/data-types/integer.asl": "90d7132478de54d665d973587b61c3ecfd5e57645e5985aef5918b4b722e816d",
     "asl/arch/data-types/memory-model.asl": "dd4adb80d037bc6e6b9b87dd53b8f4ccf6cda4a4fcd648c2874074d8587312d7",
     "asl/arch/data-types/memory-operations.asl": "4c5b08dd7c47caa6b1917185886bd8ea6929a9bf00c2b8578b86ead04e110b71",
@@ -16663,6 +16682,7 @@
     "asl/arch/profile/e8m0-conversion.asl": "e46324c90eff21e4270558e315c684089f11b6d6a47f6dc4ee0b30411761fd57",
     "asl/arch/profile/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
     "asl/arch/profile/functional-model.asl": "7d8d83708e00c0c4c20b38056179ec99d3285e2f9271dbfab2705c2f7e5c754f",
+    "asl/arch/profile/indexed-memory-lane-choice.asl": "d4019525ffb08129714a07bd1c871c970dcfe33c5c14741e1582be62fe4dde4c",
     "asl/arch/profile/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
     "asl/arch/profile/matrix-quantization.asl": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440",
     "asl/arch/profile/reference-profile.asl": "0b34a3e1ac7500d42566ca499f624ba42c5cb698699799657279464bb09f7f4e",
@@ -17405,8 +17425,8 @@
     "asl/tile/model/legality/reduction-and-expansion.asl": "eb1c898ae4219734b9ef14c7588e2ee1f49e30417b862da930ae7e45a8f738cf",
     "asl/tile/model/legality/sorting.asl": "01fc46968d49c487acb39715dc5a8b971e3f19735037f3c3be869f34c47c0742",
     "asl/tile/model/memory/addressing.asl": "d6e975064e98ead3e19cef020acc7c9b50687e1106c8380b172b0acb7004faef",
-    "asl/tile/model/memory/atomics.asl": "3fe85107f4745fdfbd1513f2485e316778e6ac053f01867f8ee9f6654c4fdeab",
-    "asl/tile/model/memory/gather-scatter.asl": "380643b5cf30271df799fe19de34681f77735147d6a6e6ed31e8dad1f1de62e0",
+    "asl/tile/model/memory/atomics.asl": "90bdf5070ed2e95aa804a3db94dc2fc56701765e8bac52a1a059dda5ebbf9d78",
+    "asl/tile/model/memory/gather-scatter.asl": "bfb11d3d32ff23267fe20bc31653899bd8c1c564957a0a259457ec02ab944fb4",
     "asl/tile/model/memory/load-store.asl": "d876cf142b91256771a275c16c61e4272b222a7a83df01870a96fc60d9bdfc5f",
     "asl/tile/model/memory/restart.asl": "952183301020042b382a7c7eb14adfc52b2d3c74b99cf130e8912e89b6205b2e",
     "asl/tile/model/memory/shared-movement.asl": "8b8508f84f27f9933cd167c272ab5ca8a6bfd74ef42345264a8aadf1022a1620",
@@ -17488,6 +17508,7 @@
     "docs/arch/data-types/formats/tf32.md": "3bcef7d67e7430ed6d5b7632b4bfd50910a16eb320d78d95f2b01efe26d4f26e",
     "docs/arch/data-types/fp19.md": "dd496a42435846c1805e45d9f0dfa579a38906c90eb9b6bcced2bc7f46d4297d",
     "docs/arch/data-types/functional-model.md": "21e3c4e9497d1da9a23badcb5223e9938f02ee5a22a4d7b6934d20301b90c5de",
+    "docs/arch/data-types/indexed-memory-lane-choice.md": "af651ee8fb801b90c42fe802051d5a36bc5b76c05a935b9bd67d65a3dc1d3db3",
     "docs/arch/data-types/integer.md": "37338cb3ceb4b0da61e8555e62ba55351306221144111c0e99bd7f93f57ba04e",
     "docs/arch/data-types/memory-model.md": "e67b1be384ae5c8884c8f32ec78d4ee5bf1870c700570cd95722aa883fcf74c2",
     "docs/arch/data-types/memory-operations.md": "c227eb0ee9843190e32358ee3c8231774c07aa84e332b6178b535d6f6af62d33",
@@ -17519,6 +17540,7 @@
     "docs/arch/profile/e8m0-conversion.md": "5904a9f4af89a6a049a27857559aa5f2b6d71347f04865c66949627f34d35b7e",
     "docs/arch/profile/extension-first-use.md": "fb16e18d1c162fed1f5d1d64bb5c422c21e30a33a1824fa00d9a1b9a04002f52",
     "docs/arch/profile/functional-model.md": "b679989cd3f968b715bd485c7e2542021c2e09fe9cb1c3fc851be62d247ecc34",
+    "docs/arch/profile/indexed-memory-lane-choice.md": "53c88a2080016309d456bc8548d169061f2154f3cde546c27cd895383dc806f0",
     "docs/arch/profile/matrix-postprocess.md": "6c620e8f326fa991a2a35cf3d9aad4e1e9b9321ea63bc78e8fdabdfb17802378",
     "docs/arch/profile/matrix-quantization.md": "0af8e5da79bf30a369992e5eecdd4d7e36603f8eb6140ed7b5952d3d5962acd8",
     "docs/arch/profile/reference-profile.md": "c9c81c9c0096179cf301ed58c8915dba605b4e43eabfe4071231310c0846ec56",
@@ -18261,8 +18283,8 @@
     "docs/tile/model/legality/reduction-and-expansion.md": "d4cb73260df4fc71e213475e26e1f8d3b964a27dd0de94298f756a0b0fb2f221",
     "docs/tile/model/legality/sorting.md": "3ba39fcb47508ae5f09aaad04d13dd2135fbbd1b5bc9343d864a3505d296679d",
     "docs/tile/model/memory/addressing.md": "46680d32a95fb3c79a7787aba452e76cc624f836af30281336a255502fcd748c",
-    "docs/tile/model/memory/atomics.md": "93f80620303b6edf40644769191a1eeedd8f1ea03ef25f4dffa84cc74bce85e0",
-    "docs/tile/model/memory/gather-scatter.md": "ec44bb4410cd42f1ac7bc1ed91f3e5dd77b7d21ebb4d99b2b50361d70d92b7a4",
+    "docs/tile/model/memory/atomics.md": "6432336a2352f5010eeb747d46e07b8e3607d434d90a7f62639e1ec4799f43d6",
+    "docs/tile/model/memory/gather-scatter.md": "17fe54d16c8ae474080f34ebab0ee7a5db258cbcd7a8c7dceae0adda5695a17b",
     "docs/tile/model/memory/load-store.md": "9b71cd8cbf4bfeafe49228d33ce7f5817b0512d088ce5efa85cb9cf6bb486739",
     "docs/tile/model/memory/restart.md": "e524b74d055609c523f1137f18fbf1f4ff66cdfd828a9b99465dd674b1da1f21",
     "docs/tile/model/memory/shared-movement.md": "7f1ff84f340a91bbfc9ee9adee1c3d0d39197df965998a388d981b8d370c112c",
@@ -18323,7 +18345,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "a8418bad1ca3f1beeef8b6b8df0d12be4270709ff2a82c7a91569b4cd1a4e2cb",
+    "spec/evidence/adr-index.json": "fcd20e4aa8d9dce976c5e7173c97f0841c4aa8017627eea1241c2533a1afea97",
     "spec/evidence/instruction-contract-closure.json": "0bdb33460b56f30b54b898a75136515dc6d26621d5eb17f5859acad5668a156f",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -18366,6 +18388,7 @@
     "tests/asl/arch/data-types/fp19/arch-bound-fp19-parameter-domain-002.asl": "972bd0e343c30dbb0c240c2175f0c276b9b8aa6cf9c0ca5cdb1ec36c5a33175e",
     "tests/asl/arch/data-types/fp19/arch-static-fp19-contract-001.asl": "50df6e60423b3392350e3af3ee65daebd30fd5d6b262d73f408aaaddb8ab852e",
     "tests/asl/arch/data-types/functional-model/arch-static-functional-model-contract-001.asl": "ca458e0728e1b6267e2fc458d58b3cb189b99749f5f8039e3f84503f03abd2d4",
+    "tests/asl/arch/data-types/indexed-memory-lane-choice/arch-static-indexed-memory-lane-choice-contract-001.asl": "21f1f0c92c6b764d2ae540fd1f3d3f82a81d844e8daef25c06f9bd2c9406f8c9",
     "tests/asl/arch/data-types/integer/arch-static-integer-contract-001.asl": "e1f308efd1e2f8cc8c7ef4b8cf8ed241041da15e44aa225ffac0f9ff6946d77b",
     "tests/asl/arch/data-types/memory-model/arch-static-memory-model-contract-001.asl": "b4828cc364d64df5ae3c3a22ee9dcaa6b6e1daf43106b39f9b4daffd0c697738",
     "tests/asl/arch/data-types/memory-operations/arch-static-memory-operations-contract-001.asl": "8b451f6f410d2e40e83e06f6b9c7509dd4e7a4f9bf9784c4926ef52316f7149c",
@@ -18454,6 +18477,7 @@
     "tests/asl/arch/profile/functional-model/arch-bound-functional-model-token-exhaustion-002.asl": "6a68a771a057398472fd9bea96889ac599b56b1afdd89014d8336bbc3369b088",
     "tests/asl/arch/profile/functional-model/arch-fault-functional-model-token-reset-stale-003.asl": "a0be2340ff68dbd59ffade7872dba1fbd9e10b6b395d2828cd17e4058b0907f2",
     "tests/asl/arch/profile/functional-model/arch-static-functional-model-contract-001.asl": "1f990e114c5c8583f9d3028026ad0c1eedd20a5ec54091231abd52c401f44d13",
+    "tests/asl/arch/profile/indexed-memory-lane-choice/arch-static-indexed-memory-lane-choice-contract-001.asl": "969a7cebf01bbcbc4d79de70f44af505b9539980ae0cfd925a8d00b2803b06e8",
     "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-001.asl": "92669a95060a3b8714455a3f9963aeede37677257743c6098cf45a6af57758de",
     "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-pipeline-002.asl": "29d156198af9caef5156e22bb229ffab7286670561b6228df661121249708a90",
     "tests/asl/arch/profile/matrix-postprocess/arch-static-matrix-postprocess-contract-001.asl": "7f3949620ad409c9911878179425bdf2233a8d259ff2f765ff99f61aeea01392",
@@ -21792,11 +21816,13 @@
     "tests/asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS/tile-static-tgemv-mx-bias-contract-001.asl": "6eb25263d907a3baba5425f55bb6f1b12d788abe4bfc2872f73e0c1929f381bc",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER/tile-exec-mgather-bytes-001.asl": "df326f8c9af0183d0edb4a2e4ff3cd1d36d08902468c4e2b4a7d599f89bdadb7",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER/tile-static-mgather-contract-001.asl": "33e2c4366ffcd3fa6764554132c795d94f137f3786c3e7561121c489ab09e58d",
+    "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_CAS/tile-atomic-mgather-cas-duplicate-reference-order-002.asl": "c4187557e46858214c1c0351e12edf2da61d7c53c6737735a8b8e815376e0a94",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_CAS/tile-atomic-mgather-cas-rmw-001.asl": "0e12656102edba1707734da1cd1d965da8b85a5909009afe275577f012059d19",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_CAS/tile-static-mgather-cas-contract-001.asl": "2b3b9d7923c8f141ec41775d21b3eaaf1d3f9fb8b3dd320473e17868edf45b51",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MASK/tile-exec-mgather-mask-lanes-001.asl": "4a354587623fd01892ad3941e82ebc0816dbfdfd95a7ec90f5bdf53dad8733ff",
     "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_MASK/tile-static-mgather-mask-contract-001.asl": "435f650421d2cf00f6c14fe4590272b911349f441b29f9c80eb53b8cf7b6d88b",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER/tile-exec-mscatter-bytes-001.asl": "95f2960cfcb276632261b95c6e73a2e67057e84c6985e6f7b1e9b871b7d0d6a1",
+    "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER/tile-state-mscatter-duplicate-reference-order-002.asl": "550ff567381d67077332b7aeb5c68a23be9afeea0c84bf5441743e42e673f497",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER/tile-static-mscatter-contract-001.asl": "9e672ecc49c34b76661f8a6751536fa0338fe8160fcde19de7d1eb6e1ac27932",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK/tile-exec-mscatter-mask-lanes-001.asl": "ff8e42544409ad9d4d159bd2f3c11505bdc6ff1939d9e5fbc0c7558909ec3e13",
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK/tile-static-mscatter-mask-contract-001.asl": "a48bc146713e995e0c4a0c241b5a3b31c1ecb3791aade966310cc26f5a0051ce",
@@ -21907,7 +21933,8 @@
     "tests/asl/tile/model/memory/addressing/tile-static-addressing-contract-001.asl": "8dd41674f5756fd34f427085bfc76c810a6f1915d8b709e3a3248a619abad9d8",
     "tests/asl/tile/model/memory/atomics/tile-atomic-shared-register-updates-001.asl": "5094c0d80edb731faea1454135892754544701a2cee65febc2bd3bfd95aa2819",
     "tests/asl/tile/model/memory/atomics/tile-static-atomics-contract-001.asl": "e3f0b897d64c12bf23e613b3ab3e3dc15ea37cc37801a86af953ecb2fe9f0995",
-    "tests/asl/tile/model/memory/gather-scatter/tile-static-gather-scatter-contract-001.asl": "d6cab96d0eebc246fb74ecdff0f75f334333306b431e54d11980faba4d944d02",
+    "tests/asl/tile/model/memory/gather-scatter/tile-bound-indexed-memory-lane-choice-reference-001.asl": "8645240312d2ad533a99ce43969f93eeb670ca1ae20c8f676ba353f8a899ba60",
+    "tests/asl/tile/model/memory/gather-scatter/tile-static-gather-scatter-contract-001.asl": "d357c41324712337e5eb1d8d2edbfd6c14976e0dbbedbf45d320f27b3d028d5c",
     "tests/asl/tile/model/memory/load-store/tile-bound-tload-cube-widths-003.asl": "854bb94f0ce6cf91689d7a00a9933181db05873c76b9ec4c1e29cb315b0a0d66",
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-decode-004.asl": "500f0a8ace423bc6f462c0733cf7cb5b720fde83ecfc73b33c6e0eab37b4fb01",
     "tests/asl/tile/model/memory/load-store/tile-bound-tlsu-faults-003.asl": "44e380708e70394cebd5d55152ed14d958d40b054dde6325ab8fd634b3339466",
@@ -22069,19 +22096,19 @@
     "tests/asl/tile/tile-scalar-and-immediate/logical/TXORS/tile-static-txors-contract-001.asl": "55f54fdd33b573b06e45c7ebc1a013ea26da18689ee5a26fa822ab28e71934d4"
   },
   "summary": {
-    "documentation_page_count": 856,
+    "documentation_page_count": 858,
     "executable_requirement_count": 636,
     "mnemonic_count": 634,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1026,
+    "requirement_count": 1027,
     "status": "closed",
-    "test_count": 3742,
+    "test_count": 3747,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
     "uncovered_units": [],
-    "unit_count": 856
+    "unit_count": 858
   },
   "tests": [
     {
@@ -29655,6 +29682,14 @@
       "source": "asl/arch/data-types/functional-model.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-DATA-TYPES-INDEXED-MEMORY-LANE-CHOICE-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/arch/data-types/indexed-memory-lane-choice/arch-static-indexed-memory-lane-choice-contract-001.asl",
+      "requirements": [],
+      "sha256": "21f1f0c92c6b764d2ae540fd1f3d3f82a81d844e8daef25c06f9bd2c9406f8c9",
+      "source": "asl/arch/data-types/indexed-memory-lane-choice.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-DATA-TYPES-INTEGER-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/arch/data-types/integer/arch-static-integer-contract-001.asl",
@@ -30641,6 +30676,14 @@
       ],
       "sha256": "1f990e114c5c8583f9d3028026ad0c1eedd20a5ec54091231abd52c401f44d13",
       "source": "asl/arch/profile/functional-model.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-PROFILE-INDEXED-MEMORY-LANE-CHOICE-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/arch/profile/indexed-memory-lane-choice/arch-static-indexed-memory-lane-choice-contract-001.asl",
+      "requirements": [],
+      "sha256": "969a7cebf01bbcbc4d79de70f44af505b9539980ae0cfd925a8d00b2803b06e8",
+      "source": "asl/arch/profile/indexed-memory-lane-choice.asl"
     },
     {
       "id": "PTO-AVS-ARCH-PROFILE-MATRIX-POSTPROCESS-STATIC-001",
@@ -54004,6 +54047,16 @@
       "source": "asl/tile/model/execution/indexed-rearrangement.asl"
     },
     {
+      "id": "PTO-AVS-TILE-INDEXED-MEMORY-LANE-CHOICE-REFERENCE-001",
+      "kind": "boundary",
+      "path": "tests/asl/tile/model/memory/gather-scatter/tile-bound-indexed-memory-lane-choice-reference-001.asl",
+      "requirements": [
+        "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001"
+      ],
+      "sha256": "8645240312d2ad533a99ce43969f93eeb670ca1ae20c8f676ba353f8a899ba60",
+      "source": "asl/tile/model/memory/gather-scatter.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-INDEXED-TYPES-001",
       "kind": "boundary",
       "path": "tests/asl/tile/model/legality/indexed-rearrangement/tile-bound-indexed-types-001.asl",
@@ -54099,6 +54152,17 @@
       ],
       "sha256": "df326f8c9af0183d0edb4a2e4ff3cd1d36d08902468c4e2b4a7d599f89bdadb7",
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-MGATHER-CAS-DUPLICATE-REFERENCE-ORDER-002",
+      "kind": "atomicity",
+      "path": "tests/asl/tile/memory-and-data-movement/irregular/MGATHER_CAS/tile-atomic-mgather-cas-duplicate-reference-order-002.asl",
+      "requirements": [
+        "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001",
+        "PTO-INST-TILE-MGATHER-CAS"
+      ],
+      "sha256": "c4187557e46858214c1c0351e12edf2da61d7c53c6737735a8b8e815376e0a94",
+      "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl"
     },
     {
       "id": "PTO-AVS-TILE-MGATHER-CAS-RMW-001",
@@ -54552,8 +54616,10 @@
       "id": "PTO-AVS-TILE-MODEL-MEMORY-GATHER-SCATTER-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/tile/model/memory/gather-scatter/tile-static-gather-scatter-contract-001.asl",
-      "requirements": [],
-      "sha256": "d6cab96d0eebc246fb74ecdff0f75f334333306b431e54d11980faba4d944d02",
+      "requirements": [
+        "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001"
+      ],
+      "sha256": "d357c41324712337e5eb1d8d2edbfd6c14976e0dbbedbf45d320f27b3d028d5c",
       "source": "asl/tile/model/memory/gather-scatter.asl"
     },
     {
@@ -54708,6 +54774,17 @@
         "PTO-INST-TILE-MSCATTER"
       ],
       "sha256": "95f2960cfcb276632261b95c6e73a2e67057e84c6985e6f7b1e9b871b7d0d6a1",
+      "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl"
+    },
+    {
+      "id": "PTO-AVS-TILE-MSCATTER-DUPLICATE-REFERENCE-ORDER-002",
+      "kind": "state-transition",
+      "path": "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER/tile-state-mscatter-duplicate-reference-order-002.asl",
+      "requirements": [
+        "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001",
+        "PTO-INST-TILE-MSCATTER"
+      ],
+      "sha256": "550ff567381d67077332b7aeb5c68a23be9afeea0c84bf5441743e42e673f497",
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl"
     },
     {
@@ -60073,6 +60150,24 @@
     {
       "classification": [
         "data-types",
+        "indexed-memory-lane-choice"
+      ],
+      "documentation": "docs/arch/data-types/indexed-memory-lane-choice.md",
+      "id": "PTO-ARCH-DATA-TYPES-INDEXED-MEMORY-LANE-CHOICE",
+      "mnemonic": null,
+      "readiness_subjects": [
+        "ADR-0113"
+      ],
+      "semantic_tests": [],
+      "source": "asl/arch/data-types/indexed-memory-lane-choice.asl",
+      "surface": "arch",
+      "tests": [
+        "PTO-AVS-ARCH-DATA-TYPES-INDEXED-MEMORY-LANE-CHOICE-STATIC-001"
+      ]
+    },
+    {
+      "classification": [
+        "data-types",
         "integer"
       ],
       "documentation": "docs/arch/data-types/integer.md",
@@ -60788,6 +60883,24 @@
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-RESET-STALE-003",
         "PTO-AVS-ARCH-PROFILE-FUNCTIONAL-MODEL-STATIC-001"
+      ]
+    },
+    {
+      "classification": [
+        "profile",
+        "indexed-memory-lane-choice"
+      ],
+      "documentation": "docs/arch/profile/indexed-memory-lane-choice.md",
+      "id": "PTO-ARCH-PROFILE-INDEXED-MEMORY-LANE-CHOICE",
+      "mnemonic": null,
+      "readiness_subjects": [
+        "ADR-0113"
+      ],
+      "semantic_tests": [],
+      "source": "asl/arch/profile/indexed-memory-lane-choice.asl",
+      "surface": "arch",
+      "tests": [
+        "PTO-AVS-ARCH-PROFILE-INDEXED-MEMORY-LANE-CHOICE-STATIC-001"
       ]
     },
     {
@@ -83271,11 +83384,13 @@
         "ADR-0108"
       ],
       "semantic_tests": [
+        "PTO-AVS-TILE-MGATHER-CAS-DUPLICATE-REFERENCE-ORDER-002",
         "PTO-AVS-TILE-MGATHER-CAS-RMW-001"
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl",
       "surface": "tile",
       "tests": [
+        "PTO-AVS-TILE-MGATHER-CAS-DUPLICATE-REFERENCE-ORDER-002",
         "PTO-AVS-TILE-MGATHER-CAS-RMW-001",
         "PTO-AVS-TILE-MGATHER-CAS-STATIC-001"
       ]
@@ -83339,12 +83454,14 @@
         "ADR-0108"
       ],
       "semantic_tests": [
-        "PTO-AVS-TILE-MSCATTER-BYTES-001"
+        "PTO-AVS-TILE-MSCATTER-BYTES-001",
+        "PTO-AVS-TILE-MSCATTER-DUPLICATE-REFERENCE-ORDER-002"
       ],
       "source": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
       "surface": "tile",
       "tests": [
         "PTO-AVS-TILE-MSCATTER-BYTES-001",
+        "PTO-AVS-TILE-MSCATTER-DUPLICATE-REFERENCE-ORDER-002",
         "PTO-AVS-TILE-MSCATTER-STATIC-001"
       ]
     },
@@ -84543,7 +84660,9 @@
       "documentation": "docs/tile/model/memory/atomics.md",
       "id": "PTO-TILE-MODEL-MEMORY-ATOMICS",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0113"
+      ],
       "semantic_tests": [
         "PTO-AVS-TILE-TESTSHAREDREGISTERATOMICUPDATES-ATOMICITY-001"
       ],
@@ -84563,11 +84682,16 @@
       "documentation": "docs/tile/model/memory/gather-scatter.md",
       "id": "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
       "mnemonic": null,
-      "readiness_subjects": [],
-      "semantic_tests": [],
+      "readiness_subjects": [
+        "ADR-0113"
+      ],
+      "semantic_tests": [
+        "PTO-AVS-TILE-INDEXED-MEMORY-LANE-CHOICE-REFERENCE-001"
+      ],
       "source": "asl/tile/model/memory/gather-scatter.asl",
       "surface": "tile",
       "tests": [
+        "PTO-AVS-TILE-INDEXED-MEMORY-LANE-CHOICE-REFERENCE-001",
         "PTO-AVS-TILE-MODEL-MEMORY-GATHER-SCATTER-STATIC-001"
       ]
     },

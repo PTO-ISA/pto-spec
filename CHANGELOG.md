@@ -16,6 +16,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0110](docs/status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md): TCVT CUBE_M16 and CUBE_M32 layout closure
 - [ADR-0111](docs/status/decisions/0111-asl-functional-model-execution-boundary.md): ASL functional-model fetch, step, memory, and host boundary
 - [ADR-0112](docs/status/decisions/0112-warning-free-aslref-constraint-refinements.md): Warning-free ASLRef constraint refinements
+- [ADR-0113](docs/status/decisions/0113-indexed-memory-lane-choice-profile.md): Named indexed-memory lane-choice profiles
 
 ### Tile
 - [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
