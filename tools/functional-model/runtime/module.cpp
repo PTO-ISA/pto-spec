@@ -15,7 +15,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                                              std::string *error,
                                              std::vector<ExternDefinition> externs,
                                              std::vector<GlobalDefinition> globals) {
-    constexpr std::size_t kMaximumFunctions = 4096;
+    constexpr std::size_t kMaximumFunctions = 8192;
     constexpr std::size_t kMaximumInstructions = 1U << 20;
     if (functions.size() > kMaximumFunctions) {
         if (error != nullptr) {
@@ -26,7 +26,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
     std::unordered_set<BindingId> ids;
     std::size_t instruction_count = 0;
     for (const Function &function : functions) {
-        if (function.id == 0 || !ids.insert(function.id).second) {
+        if (!ids.insert(function.id).second) {
             if (error != nullptr) {
                 *error = "module contains a zero or duplicate function binding";
             }
@@ -48,6 +48,9 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kWriteMemoryImmediate:
                 case OpCode::kLoadArgumentBits:
                 case OpCode::kLoadArgumentInteger:
+                case OpCode::kLoadArgumentValue:
+                case OpCode::kLoadArgumentEnum:
+                case OpCode::kLoadArgumentBool:
                 case OpCode::kLoadBitsImmediate:
                 case OpCode::kLoadIntegerImmediate:
                 case OpCode::kSliceBits:
@@ -82,12 +85,6 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kCallValue:
                 case OpCode::kCallProcedure:
                 case OpCode::kCallExtern:
-                    if (instruction.binding == 0) {
-                        if (error != nullptr) {
-                            *error = "module call has a zero numeric target";
-                        }
-                        return nullptr;
-                    }
                     break;
                 case OpCode::kStoreLocalToGlobal:
                 case OpCode::kIncrementGlobalU64:
@@ -123,6 +120,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kReturnExecuted:
                 case OpCode::kReturnTrap:
                 case OpCode::kReturnHostRequest:
+                case OpCode::kUnsupportedNode:
                     break;
                 default:
                     if (error != nullptr) {
@@ -146,8 +144,10 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 instruction.opcode == OpCode::kReturnExecuted ||
                 instruction.opcode == OpCode::kReturnTrap ||
                 instruction.opcode == OpCode::kReturnHostRequest) {
+
                 continue;
             }
+            if (instruction.opcode == OpCode::kUnsupportedNode) continue;
             if (instruction.opcode == OpCode::kJump) {
                 pending.push_back(static_cast<std::size_t>(instruction.address));
                 continue;

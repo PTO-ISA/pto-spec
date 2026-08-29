@@ -8,6 +8,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import re
 
 
 MODELGEN = Path(__file__).resolve().parent
@@ -209,8 +210,12 @@ class Compiler:
             if variable not in self.argument_ids:
                 raise ModelgenError(f"unsupported runtime variable {variable!r}")
             kind, width = self.argument_types[variable]
-            self.emit("kLoadArgumentBits" if kind == "bits"
-                      else "kLoadArgumentInteger", local=target,
+            opcode = {"bits": "kLoadArgumentBits",
+                      "integer": "kLoadArgumentInteger",
+                      "enum": "kLoadArgumentEnum",
+                      "bool": "kLoadArgumentBool",
+                      "value": "kLoadArgumentValue"}[kind]
+            self.emit(opcode, local=target,
                       binding=self.argument_ids[variable], immediate=width)
             return target
         if name == "E_Literal":
@@ -640,6 +645,7 @@ def _argument_type(
     node: int,
     strings: list[str],
     named_types: dict[str, dict[str, object]],
+    globals_by_name: dict[str, dict[str, object]],
 ) -> tuple[str, int]:
     name = arena.constructor_name(node)
     arguments = arena.constructor(node, name)
@@ -647,12 +653,29 @@ def _argument_type(
         target = str(arena.atom(arguments[0], "string"))
         row = named_types[target]
         return _argument_type(
-            arena, int(row["definition_node"]), strings, named_types)
+            arena, int(row["definition_node"]), strings, named_types,
+            globals_by_name)
     if name == "T_Bits":
         values = arena.sequence(arguments[0], "tuple")
-        return ("bits", Compiler(arena, []).literal_integer(values[0]))
+        width_node = values[0]
+        if arena.constructor_name(width_node) == "E_Var":
+            variable = str(arena.atom(
+                arena.constructor(width_node, "E_Var")[0], "string"))
+            if variable not in globals_by_name:
+                return ("bits", 0)
+            initializer = globals_by_name[variable]["initializer_node"]
+            if initializer is None:
+                raise ModelgenError(f"unresolved argument width {variable!r}")
+            width_node = int(initializer)
+        return ("bits", Compiler(arena, []).literal_integer(width_node))
     if name == "T_Int":
         return ("integer", 0)
+    if name == "T_Bool":
+        return ("bool", 0)
+    if name == "T_Enum":
+        return ("enum", node)
+    if name in {"T_Record", "T_Tuple", "T_Array"}:
+        return ("value", 0)
     raise ModelgenError(f"unsupported runtime argument type {name} at node {node}")
 
 
@@ -664,6 +687,8 @@ def render_global_defaults(image: dict[str, object]) -> list[dict[str, object]]:
         str(strings[row["name_symbol_id"]]): row
         for row in tables["types"]
     }
+    globals_by_name = {
+        str(strings[row["name_symbol_id"]]): row for row in tables["globals"]}
     string_ids = {str(value): index for index, value in enumerate(strings)}
     globals_by_name = {
         str(strings[row["name_symbol_id"]]): row for row in tables["globals"]
@@ -788,7 +813,8 @@ def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
 
 
 def lower_module(
-    image: dict[str, object], entrypoints: tuple[str, ...]
+    image: dict[str, object], entrypoints: tuple[str, ...],
+    allow_unsupported: bool = False,
 ) -> tuple[int, list[dict[str, object]], list[dict[str, object]]]:
     verify_executable_module(image, required_entrypoints=entrypoints)
     tables = image["tables"]
@@ -806,6 +832,8 @@ def lower_module(
     enum_labels = _enum_labels(CompactArena(image), tables["types"])
     named_types = {
         str(strings[row["name_symbol_id"]]): row for row in tables["types"]}
+    globals_by_name = {
+        str(strings[row["name_symbol_id"]]): row for row in tables["globals"]}
     extern_ids: dict[str, tuple[int, str, int]] = {}
     for row in tables["externs"]:
         name = str(strings[row["name_symbol_id"]])
@@ -836,6 +864,17 @@ def lower_module(
             continue
         if function["extern_id"] is not None:
             if function_name not in extern_ids:
+                if allow_unsupported:
+                    lowered.append({
+                        "id": function_id,
+                        "argument_count": len(function["arguments"]) +
+                                          len(function["parameters"]),
+                        "instructions": [{
+                            "opcode": "kUnsupportedNode", "binding": function_id,
+                            "local": int(function["body_node"]), "immediate": 0,
+                            "address": 0}],
+                    })
+                    continue
                 raise ModelgenError(
                     f"runtime function {function_name} ({function_id}) is an unresolved extern")
             continue
@@ -844,11 +883,27 @@ def lower_module(
             for row in [*function["arguments"], *function["parameters"]]
         ]
         argument_rows = [*function["arguments"], *function["parameters"]]
-        argument_types = {
-            str(strings[row["name_symbol_id"]]): _argument_type(
-                arena, int(row["type_node"]), strings, named_types)
-            for row in argument_rows
-        }
+        try:
+            argument_types = {
+                str(strings[row["name_symbol_id"]]): _argument_type(
+                    arena, int(row["type_node"]), strings, named_types,
+                    globals_by_name)
+                for row in argument_rows
+            }
+        except ModelgenError as error:
+            if allow_unsupported:
+                lowered.append({
+                    "id": function_id,
+                    "argument_count": len(arguments),
+                    "instructions": [{
+                        "opcode": "kUnsupportedNode", "binding": function_id,
+                        "local": int(function["body_node"]), "immediate": 0,
+                        "address": 0}],
+                })
+                continue
+            raise ModelgenError(
+                f"runtime argument lowering failed in function {function_name} "
+                f"({function_id}): {error}") from error
         compiler = Compiler(
             arena, arguments, function_ids, global_ids, field_ids, enum_labels,
             extern_ids, argument_types)
@@ -858,9 +913,18 @@ def lower_module(
             if function["return_type_node"] is None and not terminal:
                 compiler.emit("kReturnProcedure")
         except ModelgenError as error:
-            raise ModelgenError(
-                f"runtime lowering failed in function {name} ({function_id}): {error}"
-            ) from error
+            if allow_unsupported:
+                match = re.search(r"node ([0-9]+)", str(error))
+                node_id = int(match.group(1)) if match else int(function["body_node"])
+                node = arena.nodes[node_id]
+                constructor_id = int(node[1]) if arena.kind(node_id) == "constructor" else 0
+                compiler.instructions = [{
+                    "opcode": "kUnsupportedNode", "binding": function_id,
+                    "local": node_id, "immediate": constructor_id, "address": 0}]
+            else:
+                raise ModelgenError(
+                    f"runtime lowering failed in function {name} ({function_id}): {error}"
+                ) from error
         lowered.append(
             {
                 "id": function_id,
@@ -886,14 +950,22 @@ def _render_header() -> str:
 #include <memory>
 
 namespace pto::model {
+struct GeneratedStepFieldBindings {
+    std::uint32_t status, instruction_status, pre_tpc, post_tpc, pre_bpc,
+        post_bpc, raw_instruction, length_bits, fault, fault_address,
+        fault_cause, origin_pe, request_token, request_type,
+        request_argument0, sequence;
+};
 std::shared_ptr<const Module> GeneratedDetermineLengthModule();
 BindingId GeneratedDetermineLengthBinding();
 std::shared_ptr<const Module> GeneratedResetModule();
 BindingId GeneratedResetBinding();
 BindingId GeneratedInitializeGPRBinding();
+BindingId GeneratedStepBinding();
 BindingId GeneratedPCGlobalBinding();
 BindingId GeneratedPEGPRsGlobalBinding();
 BindingId GeneratedNextTokenGlobalBinding();
+GeneratedStepFieldBindings GeneratedStepFields();
 }  // namespace pto::model
 
 #endif
@@ -973,11 +1045,12 @@ def render_module_source(
         )
     return (
         f"// Generated module sha256:{digest}; do not edit.\n"
-        "#include \"module.h\"\n#include <cstdint>\n#include <string>\n"
-        "#include <utility>\n#include <vector>\n\nnamespace pto::model {\n"
+        "#include \"module.h\"\n#include \"pto_generated_runtime_image.h\"\n"
+        "#include <cstdint>\n#include <string>\n"
+        "#include <stdexcept>\n#include <utility>\n#include <vector>\n\nnamespace pto::model {\n"
         f"std::shared_ptr<const Module> {builder_name}() {{\n"
         + "\n".join(blocks)
-        + "\n    std::string error;\n    return Module::Create({\n"
+        + "\n    std::string error;\n    auto module = Module::Create({\n"
         + "\n".join(rows)
         + "\n    }, " + f"{primary_id}u, &error, {{\n"
         + "\n".join(
@@ -987,7 +1060,8 @@ def render_module_source(
         + "\n".join(
             f"        GlobalDefinition{{{row['id']}u, {render_value_cpp(row['value'])}}},"
             for row in (globals_ or []))
-        + "\n    });\n}\n}  // namespace pto::model\n"
+        + "\n    });\n    if (module == nullptr) throw std::runtime_error(error);\n"
+        "    return module;\n}\n}  // namespace pto::model\n"
     )
 
 
@@ -1069,14 +1143,21 @@ def main() -> int:
         image = json.loads(image_bytes)
         function_id, instructions = lower(image)
         reset_id, reset_functions, reset_externs = lower_module(
-            image, ("InitializeFunctionalModel", "InitializeFunctionalModelGPR"))
+            image,
+            ("InitializeFunctionalModel", "InitializeFunctionalModelGPR",
+             "ExecuteOnePTOStep"),
+            allow_unsupported=True)
         strings = [row["name"] for row in image["tables"]["strings"]]
         gpr_id = next(
             int(row["id"]) for row in image["tables"]["functions"]
             if strings[row["name_symbol_id"]] == "InitializeFunctionalModelGPR")
+        step_id = next(
+            int(row["id"]) for row in image["tables"]["functions"]
+            if strings[row["name_symbol_id"]] == "ExecuteOnePTOStep")
         global_ids = {
             strings[row["name_symbol_id"]]: int(row["id"])
             for row in image["tables"]["globals"]}
+        symbol_ids = {name: index for index, name in enumerate(strings)}
         reset_source = render_module_source(
             reset_id, reset_functions, hashlib.sha256(image_bytes).hexdigest(),
             "GeneratedResetModule", reset_externs, render_global_defaults(image))
@@ -1084,9 +1165,17 @@ def main() -> int:
             "\nnamespace pto::model {\n"
             f"BindingId GeneratedResetBinding() {{ return {reset_id}u; }}\n"
             f"BindingId GeneratedInitializeGPRBinding() {{ return {gpr_id}u; }}\n"
+            f"BindingId GeneratedStepBinding() {{ return {step_id}u; }}\n"
             f"BindingId GeneratedPCGlobalBinding() {{ return {global_ids['_PC']}u; }}\n"
             f"BindingId GeneratedPEGPRsGlobalBinding() {{ return {global_ids['_PEGPRs']}u; }}\n"
             f"BindingId GeneratedNextTokenGlobalBinding() {{ return {global_ids['_FunctionalHostRequestNextToken']}u; }}\n"
+            "GeneratedStepFieldBindings GeneratedStepFields() { return {"
+            + ",".join(str(symbol_ids[name]) + "u" for name in (
+                "status", "instruction_status", "pre_tpc", "post_tpc",
+                "pre_bpc", "post_bpc", "raw_instruction", "length_bits",
+                "fault", "fault_address", "fault_cause", "origin_pe",
+                "request_token", "request_type", "request_argument0",
+                "sequence")) + "}; }\n"
             "}  // namespace pto::model\n")
         outputs = {
             arguments.header: _render_header(),

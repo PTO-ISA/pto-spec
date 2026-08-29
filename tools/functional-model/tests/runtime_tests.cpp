@@ -80,7 +80,7 @@ struct MemoryHarness {
             [this](const std::vector<MemoryWrite> &writes) {
                 if (reentrant_model != nullptr) {
                     StepResult nested;
-                    reentrant_status = reentrant_model->Step(&nested);
+                    reentrant_status = reentrant_model->StepPrimaryForTesting(&nested);
                 }
                 if (fail_commit) {
                     return static_cast<pto_status_t>(
@@ -155,7 +155,7 @@ void TestRuntime() {
     assert(left_memory.reset_count == 1 && right_memory.reset_count == 1);
 
     StepResult result;
-    assert(left.Step(&result) == PTO_STATUS_OK);
+    assert(left.StepPrimaryForTesting(&result) == PTO_STATUS_OK);
     assert(result.state == PTO_STEP_EXECUTED);
     assert(left.GlobalU64(kCounter) == 1);
     assert(right.GlobalU64(kCounter) == 0);
@@ -175,7 +175,7 @@ void TestRuntime() {
     RuntimeModel rollback(module, rollback_memory.Callbacks());
     assert(rollback.InitializeForTesting({0}) == PTO_STATUS_OK);
     rollback_memory.fail_commit = true;
-    assert(rollback.Step(&result) == PTO_STATUS_HOST_COMMIT_ERROR);
+    assert(rollback.StepPrimaryForTesting(&result) == PTO_STATUS_HOST_COMMIT_ERROR);
     assert(rollback.GlobalU64(kCounter) == 0);
     assert(rollback_memory.bytes[5] == 0);
 
@@ -183,7 +183,7 @@ void TestRuntime() {
     RuntimeModel probe_failure(module, probe_failure_memory.Callbacks());
     assert(probe_failure.InitializeForTesting({0}) == PTO_STATUS_OK);
     probe_failure_memory.fail_probe = true;
-    assert(probe_failure.Step(&result) == PTO_STATUS_HOST_PROBE_ERROR);
+    assert(probe_failure.StepPrimaryForTesting(&result) == PTO_STATUS_HOST_PROBE_ERROR);
     assert(probe_failure.GlobalU64(kCounter) == 0);
     assert(probe_failure_memory.bytes[5] == 0);
 
@@ -201,7 +201,7 @@ void TestRuntime() {
         read_failure_module, read_failure_memory.Callbacks());
     assert(read_failure.InitializeForTesting({0}) == PTO_STATUS_OK);
     read_failure_memory.fail_read = true;
-    assert(read_failure.Step(&result) == PTO_STATUS_HOST_READ_ERROR);
+    assert(read_failure.StepPrimaryForTesting(&result) == PTO_STATUS_HOST_READ_ERROR);
     assert(read_failure.GlobalU64(kCounter) == 0);
 
     auto evaluator_failure_module = Module::Create(
@@ -216,21 +216,21 @@ void TestRuntime() {
     RuntimeModel evaluator_failure(
         evaluator_failure_module, evaluator_failure_memory.Callbacks());
     assert(evaluator_failure.InitializeForTesting({0}) == PTO_STATUS_OK);
-    assert(evaluator_failure.Step(&result) == PTO_STATUS_MIR_INVALID);
+    assert(evaluator_failure.StepPrimaryForTesting(&result) == PTO_STATUS_MIR_INVALID);
     assert(evaluator_failure.GlobalU64(kCounter) == 0);
 
     MemoryHarness busy_memory;
     RuntimeModel busy(module, busy_memory.Callbacks());
     assert(busy.InitializeForTesting({0}) == PTO_STATUS_OK);
     busy_memory.reentrant_model = &busy;
-    assert(busy.Step(&result) == PTO_STATUS_OK);
+    assert(busy.StepPrimaryForTesting(&result) == PTO_STATUS_OK);
     assert(busy_memory.reentrant_status == PTO_STATUS_BUSY);
 
     const auto trap_module = SyntheticModule(PTO_STEP_TRAP);
     MemoryHarness trap_memory;
     RuntimeModel trap(trap_module, trap_memory.Callbacks());
     assert(trap.InitializeForTesting({0}) == PTO_STATUS_OK);
-    assert(trap.Step(&result) == PTO_STATUS_OK);
+    assert(trap.StepPrimaryForTesting(&result) == PTO_STATUS_OK);
     assert(result.state == PTO_STEP_TRAP);
     assert(trap.GlobalU64(kCounter) == 1);
     assert(trap_memory.bytes[5] == 0x42);
@@ -270,7 +270,7 @@ void TestInvalidModules() {
     assert(dangling.InitializeForTesting({0}) == PTO_STATUS_OK);
     module.reset();
     StepResult result;
-    assert(dangling.Step(&result) == PTO_STATUS_MIR_INVALID);
+    assert(dangling.StepPrimaryForTesting(&result) == PTO_STATUS_MIR_INVALID);
     assert(result.state == PTO_STEP_UNSUPPORTED);
 }
 
@@ -288,7 +288,7 @@ void TestGeneratedDetermineLength() {
         assert(result == test_case.length_bits);
     }
     StepResult step_result;
-    assert(runtime.Step(&step_result) == PTO_STATUS_MIR_INVALID);
+    assert(runtime.StepPrimaryForTesting(&step_result) == PTO_STATUS_MIR_INVALID);
     assert(step_result.state == PTO_STEP_UNSUPPORTED);
     assert(memory.read_count == 0);
     assert(memory.committed_writes.empty());

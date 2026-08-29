@@ -21,11 +21,21 @@ struct InitialState {
 
 struct StepResult {
     pto_step_state_t state = PTO_STEP_UNSUPPORTED;
+    pto_instruction_status_t instruction_status = PTO_INSTRUCTION_NOT_ATTEMPTED;
+    std::uint32_t length_bits = 0;
+    std::uint32_t fault_code = 0;
+    std::uint32_t fault_cause = 0;
+    std::uint32_t origin_pe = 0;
+    std::uint32_t request_type = 0;
     std::uint64_t sequence = 0;
     std::uint64_t pre_tpc = 0;
     std::uint64_t post_tpc = 0;
     std::uint64_t pre_bpc = 0;
     std::uint64_t post_bpc = 0;
+    std::uint64_t raw_instruction = 0;
+    std::uint64_t fault_address = 0;
+    std::uint64_t request_token = 0;
+    std::uint64_t request_argument0 = 0;
 };
 
 class RuntimeModel {
@@ -34,6 +44,7 @@ class RuntimeModel {
     pto_status_t Reset(const InitialState &initial);
     pto_status_t InitializeForTesting(const InitialState &initial);
     pto_status_t Step(StepResult *result);
+    pto_status_t StepPrimaryForTesting(StepResult *result);
     pto_status_t CompleteHostRequest(std::uint64_t token,
                                      std::uint64_t scalar_result);
     pto_status_t InvokeU16(BindingId function,

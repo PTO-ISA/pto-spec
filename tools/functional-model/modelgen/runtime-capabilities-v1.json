@@ -23,7 +23,10 @@
     "kIntegerSubtract",
     "kJump",
     "kLoadArgumentBits",
+    "kLoadArgumentBool",
+    "kLoadArgumentEnum",
     "kLoadArgumentInteger",
+    "kLoadArgumentValue",
     "kLoadBitsImmediate",
     "kLoadBool",
     "kLoadEnum",
@@ -38,6 +41,7 @@
     "kSetSlice",
     "kSliceBits",
     "kStoreGlobal"
+    ,"kUnsupportedNode"
   ],
   "interpreter_bytecode_opcodes": [
     "kAddLocalU64",
@@ -65,7 +69,10 @@
     "kIntegerSubtract",
     "kJump",
     "kLoadArgumentBits",
+    "kLoadArgumentBool",
+    "kLoadArgumentEnum",
     "kLoadArgumentInteger",
+    "kLoadArgumentValue",
     "kLoadBitsImmediate",
     "kLoadBool",
     "kLoadEnum",
@@ -87,6 +94,7 @@
     "kSliceBits",
     "kStoreGlobal",
     "kStoreLocalToGlobal",
+    "kUnsupportedNode",
     "kWriteMemoryImmediate"
   ],
   "constructors": {

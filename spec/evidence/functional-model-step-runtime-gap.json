@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "1ea61442c77934bd5f31c6aecf22eb6d274d473a596fc05444b3e1d18b185516"
+      "sha256": "74c90a51dfb32d1ab6d7c27dbb0b3c87d19385d39be09975a7c543624049e181"
     }
   },
   "minimal_scalar_elf": {
@@ -29398,7 +29398,10 @@
       "kIntegerSubtract",
       "kJump",
       "kLoadArgumentBits",
+      "kLoadArgumentBool",
+      "kLoadArgumentEnum",
       "kLoadArgumentInteger",
+      "kLoadArgumentValue",
       "kLoadBitsImmediate",
       "kLoadBool",
       "kLoadEnum",
@@ -29412,7 +29415,8 @@
       "kSetField",
       "kSetSlice",
       "kSliceBits",
-      "kStoreGlobal"
+      "kStoreGlobal",
+      "kUnsupportedNode"
     ],
     "entrypoints": [
       "DeterminePTOInstructionLength"
@@ -29451,7 +29455,10 @@
       "kIntegerSubtract",
       "kJump",
       "kLoadArgumentBits",
+      "kLoadArgumentBool",
+      "kLoadArgumentEnum",
       "kLoadArgumentInteger",
+      "kLoadArgumentValue",
       "kLoadBitsImmediate",
       "kLoadBool",
       "kLoadEnum",
@@ -29473,6 +29480,7 @@
       "kSliceBits",
       "kStoreGlobal",
       "kStoreLocalToGlobal",
+      "kUnsupportedNode",
       "kWriteMemoryImmediate"
     ],
     "primitive_bindings": [

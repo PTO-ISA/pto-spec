@@ -136,11 +136,21 @@ extern "C" pto_status_t pto_model_step(pto_model_t *model,
     pto::model::StepResult result;
     const pto_status_t status = model->runtime->Step(&result);
     out_result->step_state = result.state;
+    out_result->instruction_status = result.instruction_status;
+    out_result->length_bits = result.length_bits;
+    out_result->fault_code = result.fault_code;
+    out_result->fault_cause = result.fault_cause;
+    out_result->origin_pe = result.origin_pe;
+    out_result->request_type = result.request_type;
     out_result->sequence = result.sequence;
     out_result->pre_tpc = result.pre_tpc;
     out_result->post_tpc = result.post_tpc;
     out_result->pre_bpc = result.pre_bpc;
     out_result->post_bpc = result.post_bpc;
+    out_result->raw_instruction_le = result.raw_instruction;
+    out_result->fault_address = result.fault_address;
+    out_result->request_token = result.request_token;
+    out_result->request_argument0 = result.request_argument0;
     return status;
 }
 

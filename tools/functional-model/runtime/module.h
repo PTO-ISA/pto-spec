@@ -45,6 +45,9 @@ enum class OpCode : std::uint8_t {
     kReadMemoryToGlobal,
     kLoadArgumentBits,
     kLoadArgumentInteger,
+    kLoadArgumentValue,
+    kLoadArgumentEnum,
+    kLoadArgumentBool,
     kLoadBitsImmediate,
     kLoadIntegerImmediate,
     kSliceBits,
@@ -83,7 +86,8 @@ enum class OpCode : std::uint8_t {
     kReturnProcedure,
     kReturnExecuted,
     kReturnTrap,
-    kReturnHostRequest
+    kReturnHostRequest,
+    kUnsupportedNode
 };
 
 struct Instruction {

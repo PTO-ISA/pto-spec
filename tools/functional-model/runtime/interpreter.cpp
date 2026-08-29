@@ -114,8 +114,9 @@ EvaluationResult Interpreter::EvaluateInternal(
                 if (instruction.binding >= arguments.size() ||
                     !std::holds_alternative<BitVector>(
                         arguments[instruction.binding].storage()) ||
-                    std::get<BitVector>(arguments[instruction.binding].storage()).width() !=
-                        instruction.immediate) {
+                    (instruction.immediate != 0 &&
+                     std::get<BitVector>(arguments[instruction.binding].storage()).width() !=
+                         instruction.immediate)) {
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
                 }
                 frame.typed_locals.insert_or_assign(
@@ -125,6 +126,28 @@ EvaluationResult Interpreter::EvaluateInternal(
                 if (instruction.binding >= arguments.size() ||
                     !std::holds_alternative<BigInteger>(
                         arguments[instruction.binding].storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, arguments[instruction.binding].Clone());
+                break;
+            case OpCode::kLoadArgumentEnum:
+                if (instruction.binding >= arguments.size() ||
+                    !std::holds_alternative<EnumValue>(
+                        arguments[instruction.binding].storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, arguments[instruction.binding].Clone());
+                break;
+            case OpCode::kLoadArgumentBool:
+                if (instruction.binding >= arguments.size() ||
+                    !std::holds_alternative<bool>(
+                        arguments[instruction.binding].storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, arguments[instruction.binding].Clone());
+                break;
+            case OpCode::kLoadArgumentValue:
+                if (instruction.binding >= arguments.size())
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
                 frame.typed_locals.insert_or_assign(
                     instruction.local, arguments[instruction.binding].Clone());
@@ -594,6 +617,8 @@ EvaluationResult Interpreter::EvaluateInternal(
                 return {PTO_STATUS_OK, PTO_STEP_TRAP};
             case OpCode::kReturnHostRequest:
                 return {PTO_STATUS_OK, PTO_STEP_HOST_REQUEST};
+            case OpCode::kUnsupportedNode:
+                return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
         }
         ++pc;
     }

@@ -39,6 +39,12 @@ enum {
     PTO_STEP_HOST_REQUEST = 3,
     PTO_STEP_UNSUPPORTED = 4
 };
+typedef uint32_t pto_instruction_status_t;
+enum {
+    PTO_INSTRUCTION_NOT_ATTEMPTED = 0,
+    PTO_INSTRUCTION_EXECUTED = 1,
+    PTO_INSTRUCTION_REJECTED = 2
+};
 
 typedef uint32_t pto_memory_access_kind_t;
 enum {
@@ -97,9 +103,12 @@ typedef struct {
     uint32_t abi_version;
     uint32_t struct_size;
     pto_step_state_t step_state;
+    pto_instruction_status_t instruction_status;
     uint32_t length_bits;
     uint32_t fault_code;
+    uint32_t fault_cause;
     uint32_t origin_pe;
+    uint32_t request_type;
     uint64_t sequence;
     uint64_t pre_tpc;
     uint64_t post_tpc;
@@ -108,6 +117,7 @@ typedef struct {
     uint64_t raw_instruction_le;
     uint64_t fault_address;
     uint64_t request_token;
+    uint64_t request_argument0;
 } pto_step_result_t;
 
 typedef struct {

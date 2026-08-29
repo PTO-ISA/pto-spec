@@ -106,7 +106,7 @@ pto_status_t RuntimeModel::Step(StepResult *result) {
         SetError("generated executable module is absent or expired");
         return PTO_STATUS_MIR_INVALID;
     }
-    const Function *function = module->FindFunction(module->step_entrypoint());
+    const Function *function = module->FindFunction(GeneratedStepBinding());
     if (function == nullptr) {
         result->state = PTO_STEP_UNSUPPORTED;
         SetError("ExecuteOnePTOStep binding is unresolved");
@@ -117,28 +117,96 @@ pto_status_t RuntimeModel::Step(StepResult *result) {
     MemoryTransaction memory(callbacks_);
     const EvaluationResult evaluation =
         interpreter_.Evaluate(*module, *function, &candidate, &memory);
-    if (evaluation.status != PTO_STATUS_OK || evaluation.return_value) {
+    if (evaluation.status != PTO_STATUS_OK || !evaluation.return_value ||
+        !std::holds_alternative<std::shared_ptr<RecordValue>>(
+            evaluation.return_value->storage())) {
         result->state = PTO_STEP_UNSUPPORTED;
         SetError("runtime evaluator or callback failed");
-        return evaluation.status == PTO_STATUS_OK
-            ? PTO_STATUS_MIR_INVALID
-            : evaluation.status;
+        return evaluation.status == PTO_STATUS_OK ? PTO_STATUS_MIR_INVALID
+                                                   : evaluation.status;
     }
+    const auto &record = *std::get<std::shared_ptr<RecordValue>>(
+        evaluation.return_value->storage());
+    const GeneratedStepFieldBindings fields = GeneratedStepFields();
+    const auto field = [&record](std::uint32_t id) -> const Value * {
+        const auto found = record.find(id);
+        return found == record.end() ? nullptr : &found->second;
+    };
+    const auto unsigned_value = [](const Value *value, std::uint64_t *output) {
+        if (value == nullptr) return false;
+        if (const auto *bits = std::get_if<BitVector>(&value->storage()))
+            return bits->TryToU64(output);
+        if (const auto *integer = std::get_if<BigInteger>(&value->storage()))
+            return integer->TryToU64(output);
+        return false;
+    };
+    const auto enum_value = [](const Value *value, std::uint32_t *output) {
+        const auto *enumeration = value == nullptr ? nullptr
+            : std::get_if<EnumValue>(&value->storage());
+        if (enumeration == nullptr) return false;
+        *output = enumeration->member_id;
+        return true;
+    };
+    std::uint32_t status_member = 0;
+    std::uint32_t instruction_member = 0;
+    std::uint64_t length = 0, origin = 0, request_type = 0;
+    if (!enum_value(field(fields.status), &status_member) ||
+        !enum_value(field(fields.instruction_status), &instruction_member) ||
+        !unsigned_value(field(fields.length_bits), &length) ||
+        !enum_value(field(fields.fault), result ? &result->fault_code : nullptr) ||
+        !unsigned_value(field(fields.origin_pe), &origin) ||
+        !unsigned_value(field(fields.request_type), &request_type))
+        return PTO_STATUS_MIR_INVALID;
+    result->state = status_member + 1;
+    result->instruction_status = instruction_member;
+    result->length_bits = static_cast<std::uint32_t>(length);
+    result->origin_pe = static_cast<std::uint32_t>(origin);
+    result->request_type = static_cast<std::uint32_t>(request_type);
+    std::uint64_t cause = 0;
+    if (!unsigned_value(field(fields.sequence), &result->sequence) ||
+        !unsigned_value(field(fields.pre_tpc), &result->pre_tpc) ||
+        !unsigned_value(field(fields.post_tpc), &result->post_tpc) ||
+        !unsigned_value(field(fields.pre_bpc), &result->pre_bpc) ||
+        !unsigned_value(field(fields.post_bpc), &result->post_bpc) ||
+        !unsigned_value(field(fields.raw_instruction), &result->raw_instruction) ||
+        !unsigned_value(field(fields.fault_address), &result->fault_address) ||
+        !unsigned_value(field(fields.fault_cause), &cause) ||
+        !unsigned_value(field(fields.request_token), &result->request_token) ||
+        !unsigned_value(field(fields.request_argument0), &result->request_argument0))
+        return PTO_STATUS_MIR_INVALID;
+    result->fault_cause = static_cast<std::uint32_t>(cause);
     const pto_status_t commit_status = memory.Commit();
     if (commit_status != PTO_STATUS_OK) {
         result->state = PTO_STEP_UNSUPPORTED;
         SetError("atomic physical-memory commit failed");
         return commit_status;
     }
+    state_ = std::move(candidate);
+    last_error_.clear();
+    return PTO_STATUS_OK;
+}
+
+pto_status_t RuntimeModel::StepPrimaryForTesting(StepResult *result) {
+    if (result == nullptr) return PTO_STATUS_INVALID_ARGUMENT;
+    BusyGuard guard(&busy_);
+    if (!guard.acquired()) return PTO_STATUS_BUSY;
+    const auto module = module_.lock();
+    if (!module) return PTO_STATUS_MIR_INVALID;
+    const Function *function = module->FindFunction(module->step_entrypoint());
+    if (function == nullptr) return PTO_STATUS_MIR_INVALID;
+    RuntimeState candidate = state_;
+    MemoryTransaction memory(callbacks_);
+    const EvaluationResult evaluation =
+        interpreter_.Evaluate(*module, *function, &candidate, &memory);
+    if (evaluation.status != PTO_STATUS_OK || evaluation.return_value)
+        return evaluation.status == PTO_STATUS_OK ? PTO_STATUS_MIR_INVALID
+                                                  : evaluation.status;
+    const pto_status_t commit_status = memory.Commit();
+    if (commit_status != PTO_STATUS_OK) return commit_status;
     candidate.sequence += 1;
     result->state = evaluation.step_state;
     result->sequence = candidate.sequence;
-    result->pre_tpc = state_.tpc;
-    result->post_tpc = candidate.tpc;
-    result->pre_bpc = state_.bpc;
-    result->post_bpc = candidate.bpc;
     state_ = std::move(candidate);
-    last_error_.clear();
     return PTO_STATUS_OK;
 }
 
