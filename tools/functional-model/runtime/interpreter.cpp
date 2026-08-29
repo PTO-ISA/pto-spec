@@ -192,6 +192,10 @@ EvaluationResult Interpreter::EvaluateInternal(
                 frame.typed_locals.insert_or_assign(instruction.local, value->second);
                 break;
             }
+            case OpCode::kLoadBool:
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, Value(instruction.immediate != 0));
+                break;
             case OpCode::kStoreGlobal: {
                 const auto value = frame.typed_locals.find(instruction.local);
                 if (value == frame.typed_locals.end())

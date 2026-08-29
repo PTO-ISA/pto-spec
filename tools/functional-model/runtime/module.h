@@ -40,6 +40,7 @@ enum class OpCode : std::uint8_t {
     kCallProcedure,
     kCopyValue,
     kLoadGlobal,
+    kLoadBool,
     kStoreGlobal,
     kBranchIfFalse,
     kJump,

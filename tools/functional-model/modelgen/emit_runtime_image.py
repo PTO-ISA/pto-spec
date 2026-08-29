@@ -234,6 +234,11 @@ class Compiler:
                     address=len(bits),
                 )
                 return target
+            if literal_name == "L_Bool":
+                atom = self.single_argument(literal, "L_Bool")
+                value = self.arena.atom(atom, "boolean")
+                self.emit("kLoadBool", local=target, immediate=1 if value else 0)
+                return target
             raise ModelgenError(f"unsupported runtime literal {literal_name}")
         if name == "E_Slice":
             pair = self.arena.sequence(

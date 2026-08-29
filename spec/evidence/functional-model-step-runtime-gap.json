@@ -24,7 +24,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "f929b4158410da800be5fe15c53be9f7763a817e3e17864d21e55ccd362f3538"
+      "sha256": "66df42c23d6514a163c02c6df6e633ab5530025bd380af591ec429ea62c7b6d7"
     }
   },
   "minimal_scalar_elf": {
@@ -29271,9 +29271,13 @@
       ],
       "literals": [
         "L_BitVector",
+        "L_Bool",
         "L_Int"
       ],
-      "lvalues": [],
+      "lvalues": [
+        "LDI_Var",
+        "LE_Var"
+      ],
       "operators": [
         "EQ",
         "NE"
@@ -29284,8 +29288,10 @@
       "statements": [
         "SB_ASL",
         "S_Assert",
+        "S_Assign",
         "S_Call",
         "S_Cond",
+        "S_Decl",
         "S_Return",
         "S_Seq"
       ],
@@ -29298,15 +29304,19 @@
       "kBranchIfFalse",
       "kCallProcedure",
       "kCallValue",
+      "kCopyValue",
       "kEqual",
       "kJump",
       "kLoadArgumentBits",
       "kLoadBitsImmediate",
+      "kLoadBool",
+      "kLoadGlobal",
       "kLoadIntegerImmediate",
       "kNotEqual",
       "kPushArgument",
       "kReturnValue",
-      "kSliceBits"
+      "kSliceBits",
+      "kStoreGlobal"
     ],
     "entrypoints": [
       "DeterminePTOInstructionLength"
@@ -29319,11 +29329,14 @@
       "kBranchIfFalse",
       "kCallProcedure",
       "kCallValue",
+      "kCopyValue",
       "kEqual",
       "kIncrementGlobalU64",
       "kJump",
       "kLoadArgumentBits",
       "kLoadBitsImmediate",
+      "kLoadBool",
+      "kLoadGlobal",
       "kLoadIntegerImmediate",
       "kNotEqual",
       "kProbeMemory",
@@ -29336,6 +29349,7 @@
       "kReturnValue",
       "kSetLocalU64",
       "kSliceBits",
+      "kStoreGlobal",
       "kStoreLocalToGlobal",
       "kWriteMemoryImmediate"
     ],
@@ -29490,12 +29504,6 @@
         "sample_node_id": 33083
       },
       {
-        "count": 4385,
-        "name": "LDI_Var",
-        "sample_function_id": 258,
-        "sample_node_id": 414
-      },
-      {
         "count": 165,
         "name": "LE",
         "sample_function_id": 593,
@@ -29532,22 +29540,10 @@
         "sample_node_id": 15549
       },
       {
-        "count": 4285,
-        "name": "LE_Var",
-        "sample_function_id": 258,
-        "sample_node_id": 428
-      },
-      {
         "count": 207,
         "name": "LT",
         "sample_function_id": 5032,
         "sample_node_id": 21123
-      },
-      {
-        "count": 5766,
-        "name": "L_Bool",
-        "sample_function_id": 258,
-        "sample_node_id": 456
       },
       {
         "count": 19547,
@@ -29650,18 +29646,6 @@
         "name": "SUB",
         "sample_function_id": 5497,
         "sample_node_id": 2513
-      },
-      {
-        "count": 4285,
-        "name": "S_Assign",
-        "sample_function_id": 258,
-        "sample_node_id": 433
-      },
-      {
-        "count": 4471,
-        "name": "S_Decl",
-        "sample_function_id": 258,
-        "sample_node_id": 426
       },
       {
         "count": 388,
