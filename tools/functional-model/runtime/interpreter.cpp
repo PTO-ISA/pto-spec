@@ -682,6 +682,46 @@ EvaluationResult Interpreter::EvaluateInternal(
                     instruction.local, field->second.Clone());
                 break;
             }
+            case OpCode::kCreateArray: {
+                const auto value = frame.typed_locals.find(instruction.binding);
+                const auto length = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                std::uint64_t length_value = 0;
+                if (value == frame.typed_locals.end() ||
+                    length == frame.typed_locals.end() ||
+                    !std::holds_alternative<BigInteger>(length->second.storage()) ||
+                    !std::get<BigInteger>(length->second.storage())
+                         .TryToU64(&length_value) ||
+                    length_value > (UINT64_C(1) << 20))
+                    return {PTO_STATUS_RESOURCE_LIMIT, PTO_STEP_UNSUPPORTED};
+                const Value default_value = value->second.Clone();
+                frame.typed_locals.insert_or_assign(
+                    instruction.local,
+                    Value(std::make_shared<PagedLazyArray>(
+                        [default_value](std::uint64_t) {
+                            return default_value.Clone();
+                        })));
+                break;
+            }
+            case OpCode::kCreateTuple:
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, Value(TupleValue{}));
+                break;
+            case OpCode::kAppendTuple: {
+                const auto tuple = frame.typed_locals.find(instruction.local);
+                const auto value = frame.typed_locals.find(instruction.binding);
+                if (tuple == frame.typed_locals.end() ||
+                    value == frame.typed_locals.end() ||
+                    !std::holds_alternative<std::shared_ptr<TupleValue>>(
+                        tuple->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                Value updated = tuple->second.Clone();
+                std::get<std::shared_ptr<TupleValue>>(updated.storage())
+                    ->push_back(value->second.Clone());
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, std::move(updated));
+                break;
+            }
             case OpCode::kSetField: {
                 const auto base = frame.typed_locals.find(instruction.local);
                 const auto value = frame.typed_locals.find(instruction.binding);

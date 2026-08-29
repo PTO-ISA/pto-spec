@@ -482,7 +482,24 @@ void TestTupleExtraction() {
             Function{752,
                      {{OpCode::kLoadIntegerNegative, 0, 0, 7, 0},
                       {OpCode::kIntegerNegate, 0, 1, 0, 0},
-                      {OpCode::kReturnValue, 0, 1, 0, 0}},
+                     {OpCode::kReturnValue, 0, 1, 0, 0}},
+                     1},
+            Function{753,
+                     {{OpCode::kLoadIntegerImmediate, 0, 0, 4, 0},
+                      {OpCode::kLoadIntegerImmediate, 0, 1, 7, 0},
+                      {OpCode::kCreateArray, 1, 2, 0, 0},
+                      {OpCode::kLoadIntegerImmediate, 0, 3, 3, 0},
+                      {OpCode::kGetArray, 2, 4, 0, 3},
+                     {OpCode::kReturnValue, 0, 4, 0, 0}},
+                     1},
+            Function{754,
+                     {{OpCode::kLoadIntegerImmediate, 0, 0, 7, 0},
+                      {OpCode::kLoadIntegerImmediate, 0, 1, 9, 0},
+                      {OpCode::kCreateTuple, 0, 2, 0, 0},
+                      {OpCode::kAppendTuple, 0, 2, 0, 0},
+                      {OpCode::kAppendTuple, 1, 2, 0, 0},
+                      {OpCode::kGetTuple, 2, 3, 1, 0},
+                      {OpCode::kReturnValue, 0, 3, 0, 0}},
                      1},
         },
         750,
@@ -499,6 +516,10 @@ void TestTupleExtraction() {
     assert(runtime.InvokeU16(751, 0, &result) == PTO_STATUS_MIR_INVALID);
     assert(runtime.InvokeU16(752, 0, &result) == PTO_STATUS_OK);
     assert(result == 7);
+    assert(runtime.InvokeU16(753, 0, &result) == PTO_STATUS_OK);
+    assert(result == 7);
+    assert(runtime.InvokeU16(754, 0, &result) == PTO_STATUS_OK);
+    assert(result == 9);
 }
 
 void TestNumericIntegerExterns() {

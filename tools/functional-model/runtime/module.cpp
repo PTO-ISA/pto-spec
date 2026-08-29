@@ -87,7 +87,10 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kSetArray:
                 case OpCode::kGetField:
                 case OpCode::kSetField:
+                case OpCode::kAppendTuple:
+                case OpCode::kCreateArray:
                 case OpCode::kCreateRecord:
+                case OpCode::kCreateTuple:
                 case OpCode::kInsertField:
                 case OpCode::kSetSlice:
                 case OpCode::kDynamicSetSlice:

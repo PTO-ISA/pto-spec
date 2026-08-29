@@ -418,6 +418,22 @@ class Compiler:
             result = self.local()
             self.emit("kGetArray", local=result, binding=base, address=index)
             return result
+        if name == "E_Array":
+            fields = self.arena.record(
+                self.single_argument(identifier, "E_Array")
+            )
+            if set(fields) != {"length", "value"}:
+                raise ModelgenError(f"malformed E_Array at node {identifier}")
+            length = self.expression(fields["length"])
+            value = self.expression(fields["value"])
+            result = self.local()
+            self.emit(
+                "kCreateArray",
+                local=result,
+                binding=value,
+                address=length,
+            )
+            return result
         if name == "E_GetField":
             values = self.arena.sequence(
                 self.single_argument(identifier, "E_GetField"), "tuple")
@@ -447,6 +463,16 @@ class Compiler:
                 value = self.expression(pair[1])
                 self.emit("kInsertField", local=result, binding=value,
                           immediate=self.field_ids[field])
+            return result
+        if name == "E_Tuple":
+            items = self.arena.sequence(
+                self.single_argument(identifier, "E_Tuple"), "list"
+            )
+            result = self.local()
+            self.emit("kCreateTuple", local=result)
+            for item in items:
+                value = self.expression(item)
+                self.emit("kAppendTuple", local=result, binding=value)
             return result
         if name == "E_Pattern":
             values = self.arena.sequence(

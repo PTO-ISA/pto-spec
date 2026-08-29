@@ -1,5 +1,6 @@
 {
   "emitter_bytecode_opcodes": [
+    "kAppendTuple",
     "kAssertTrue",
     "kBitAnd",
     "kBitConcat",
@@ -12,7 +13,9 @@
     "kCallValue",
     "kCheckBitWidth",
     "kCopyValue",
+    "kCreateArray",
     "kCreateRecord",
+    "kCreateTuple",
     "kDynamicSetSlice",
     "kDynamicSlice",
     "kEqual",
@@ -56,6 +59,7 @@
   ],
   "interpreter_bytecode_opcodes": [
     "kAddLocalU64",
+    "kAppendTuple",
     "kAssertTrue",
     "kBitAnd",
     "kBitConcat",
@@ -68,7 +72,9 @@
     "kCallValue",
     "kCheckBitWidth",
     "kCopyValue",
+    "kCreateArray",
     "kCreateRecord",
+    "kCreateTuple",
     "kDynamicSetSlice",
     "kDynamicSlice",
     "kEqual",
@@ -120,7 +126,7 @@
     "kWriteMemoryImmediate"
   ],
   "constructors": {
-    "expressions": ["E_ATC", "E_Binop", "E_Call", "E_Cond", "E_GetArray", "E_GetField", "E_Literal", "E_Pattern", "E_Record", "E_Slice", "E_Unop", "E_Var"],
+    "expressions": ["E_ATC", "E_Array", "E_Binop", "E_Call", "E_Cond", "E_GetArray", "E_GetField", "E_Literal", "E_Pattern", "E_Record", "E_Slice", "E_Tuple", "E_Unop", "E_Var"],
     "literals": ["L_BitVector", "L_Bool", "L_Int", "L_Label"],
     "local_declarations": ["LDI_Tuple", "LDI_Var"],
     "lvalues": ["LDI_Var", "LE_Discard", "LE_SetArray", "LE_SetField", "LE_Slice", "LE_Var"],
