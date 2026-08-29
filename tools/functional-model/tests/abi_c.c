@@ -68,6 +68,10 @@ int main(void) {
     assert(pto_model_descriptor_sha256(config.expected_descriptor_sha256,
                                        &digest_size) == PTO_STATUS_OK);
     assert(digest_size == 32);
+    config.expected_descriptor_sha256[0] ^= UINT8_C(1);
+    assert(pto_model_create(&config, &invalid) == PTO_STATUS_ABI_MISMATCH);
+    assert(invalid == NULL);
+    config.expected_descriptor_sha256[0] ^= UINT8_C(1);
 
     pto_model_t *model = NULL;
     assert(pto_model_create(&config, &model) == PTO_STATUS_OK);

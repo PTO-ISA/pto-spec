@@ -87,6 +87,8 @@ typedef struct {
     uint32_t abi_version;
     uint32_t struct_size;
     uint64_t flags;
+    /* Required. Copy the exact 32-byte value returned by
+     * pto_model_descriptor_sha256 before create. */
     uint8_t expected_descriptor_sha256[32];
     pto_memory_callbacks_t memory;
 } pto_model_config_t;
