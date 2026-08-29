@@ -83,10 +83,38 @@ def compare_case(case_id: str, aslref_root: Path, gfrun_root: Path) -> dict[str,
     }
 
 
+def compare_named_pair(
+    case_id: str,
+    left_root: Path,
+    left_engine: str,
+    right_root: Path,
+    right_engine: str,
+) -> tuple[str, str]:
+    left_run_path = left_root / case_id / "run.json"
+    right_run_path = right_root / case_id / "run.json"
+    left_result = left_root / case_id / "result.bin"
+    right_result = right_root / case_id / "result.bin"
+    left_run = load_json(left_run_path)
+    right_run = load_json(right_run_path)
+    if left_run.get("engine") != left_engine or right_run.get("engine") != right_engine:
+        raise ComparisonError(f"unexpected pair identity for {case_id}")
+    difference = first_difference(comparable(left_run), comparable(right_run))
+    if difference is not None:
+        raise ComparisonError(
+            f"{case_id} {left_engine}/{right_engine} mismatch: {difference}"
+        )
+    if left_result.read_bytes() != right_result.read_bytes():
+        raise ComparisonError(
+            f"{case_id} {left_engine}/{right_engine} result.bin mismatch"
+        )
+    return sha256(left_run_path), sha256(right_run_path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--aslref", type=Path, required=True)
     parser.add_argument("--gfrun", type=Path, required=True)
+    parser.add_argument("--library", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     arguments = parser.parse_args()
     aslref_summary = load_json(arguments.aslref / "summary.json")
@@ -101,10 +129,28 @@ def main() -> int:
         compare_case(case_id, arguments.aslref, arguments.gfrun)
         for case_id in sorted(aslref_cases)
     ]
+    models = ["aslref", "gfrun-asl"]
+    if arguments.library is not None:
+        library_summary = load_json(arguments.library / "summary.json")
+        library_cases = {str(row["id"]) for row in library_summary.get("cases", [])}
+        if library_cases != aslref_cases:
+            raise ComparisonError(
+                f"library case set differs: {sorted(library_cases)}"
+            )
+        for result in results:
+            case_id = str(result["id"])
+            _, library_hash = compare_named_pair(
+                case_id, arguments.aslref, "aslref", arguments.library, "library"
+            )
+            compare_named_pair(
+                case_id, arguments.library, "library", arguments.gfrun, "asl"
+            )
+            result["library_run_sha256"] = library_hash
+        models.insert(1, "standalone-library")
     summary = {
         "schema": "pto-functional-model-oracle-differential-v1",
         "status": "pass",
-        "models": ["aslref", "gfrun-asl"],
+        "models": models,
         "cases": results,
     }
     arguments.output.parent.mkdir(parents=True, exist_ok=True)

@@ -33,16 +33,28 @@ def run(command: list[str]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--gfrun", type=Path, required=True)
+    parser.add_argument("--cxx", type=Path, required=True)
+    parser.add_argument("--package", type=Path, required=True)
     parser.add_argument("--corpus", type=Path, required=True)
     parser.add_argument("--descriptor", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     arguments = parser.parse_args()
-    for path in (arguments.gfrun, arguments.corpus / "manifest.json", arguments.descriptor):
+    for path in (
+        arguments.gfrun,
+        arguments.cxx,
+        arguments.package / "lib" / "libpto_asl_model.a",
+        arguments.corpus / "manifest.json",
+        arguments.descriptor,
+    ):
         if not path.exists():
             raise BringupError(f"missing bring-up input: {path}")
+    package_descriptor = arguments.package / "share" / "pto" / "model-descriptor.json"
+    if sha256(package_descriptor) != sha256(arguments.descriptor):
+        raise BringupError("explicit descriptor does not match installed package")
     arguments.output.mkdir(parents=True, exist_ok=True)
     aslref_output = arguments.output / "aslref"
     gfrun_output = arguments.output / "gfrun"
+    library_output = arguments.output / "library"
     comparison = arguments.output / "compare.json"
 
     run([
@@ -58,8 +70,16 @@ def main() -> int:
         "--output", str(gfrun_output),
     ])
     run([
+        str(ROOT / "scripts" / "run-functional-model-library"),
+        "--cxx", str(arguments.cxx),
+        "--package", str(arguments.package),
+        "--corpus", str(arguments.corpus),
+        "--output", str(library_output),
+    ])
+    run([
         str(ROOT / "scripts" / "compare-functional-model-runs"),
         "--aslref", str(aslref_output),
+        "--library", str(library_output),
         "--gfrun", str(gfrun_output),
         "--output", str(comparison),
     ])
@@ -78,6 +98,7 @@ def main() -> int:
         "artifacts": {
             "aslref_summary_sha256": sha256(aslref_output / "summary.json"),
             "gfrun_summary_sha256": sha256(gfrun_output / "summary.json"),
+            "library_summary_sha256": sha256(library_output / "summary.json"),
             "comparison_sha256": sha256(comparison),
         },
         "cases": compare_payload["cases"],

@@ -11,6 +11,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 ORACLE = ROOT / "scripts" / "run-functional-model-aslref"
 COMPARATOR = ROOT / "scripts" / "compare-functional-model-runs"
+LIBRARY = ROOT / "scripts" / "run-functional-model-library"
 
 
 def load_script(name: str, path: Path):
@@ -28,6 +29,7 @@ class FunctionalModelOracleTest(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.oracle = load_script("functional_model_aslref_oracle", ORACLE)
         cls.comparator = load_script("functional_model_run_comparator", COMPARATOR)
+        cls.library = load_script("functional_model_library_runner", LIBRARY)
 
     def run_manifest(self, engine: str) -> dict[str, object]:
         return {
@@ -117,6 +119,18 @@ class FunctionalModelOracleTest(unittest.TestCase):
             case, {"schema": "descriptor"}, "ab" * 32
         )
         self.assertEqual(observed["model_descriptor_sha256"], "ab" * 32)
+
+    def test_standalone_output_parser_preserves_all_step_fields(self) -> None:
+        trace, result = self.library.parse_output(
+            "STEP 0 1 1 256 258 0 0 22 16 0 0 0 0 0 0 0 3\n"
+            "RESULT 19000000\n"
+        )
+        self.assertEqual(result, "19000000")
+        self.assertEqual(trace[0]["pre_tpc"], 256)
+        self.assertEqual(trace[0]["post_tpc"], 258)
+        self.assertEqual(trace[0]["raw_instruction_le"], 22)
+        self.assertEqual(trace[0]["sequence"], 3)
+        self.assertTrue(trace[0]["result_valid"])
 
 
 if __name__ == "__main__":

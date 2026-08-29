@@ -1,0 +1,362 @@
+#!/usr/bin/env python3
+"""Run checked corpus ELFs directly through the installed C ABI library."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import struct
+import subprocess
+import tempfile
+import textwrap
+
+
+PT_LOAD = 1
+
+
+class LibraryRunError(ValueError):
+    pass
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def load_json(path: Path) -> dict[str, object]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise LibraryRunError(f"JSON root is not an object: {path}")
+    return value
+
+
+def elf_segments(path: Path) -> list[dict[str, object]]:
+    data = path.read_bytes()
+    if len(data) < 64 or data[:6] != b"\x7fELF\x02\x01":
+        raise LibraryRunError("requires ELF64 little-endian")
+    phoff = struct.unpack_from("<Q", data, 32)[0]
+    phentsize, phnum = struct.unpack_from("<HH", data, 54)
+    if phentsize != 56 or phnum == 0:
+        raise LibraryRunError("invalid ELF program headers")
+    segments = []
+    for index in range(phnum):
+        header = phoff + index * phentsize
+        if header + phentsize > len(data):
+            raise LibraryRunError("program header outside ELF")
+        p_type, flags, offset, vaddr, paddr, filesz, memsz, _ = struct.unpack_from(
+            "<IIQQQQQQ", data, header
+        )
+        if p_type != PT_LOAD:
+            continue
+        if paddr != vaddr or filesz > memsz or offset + filesz > len(data):
+            raise LibraryRunError("invalid PT_LOAD")
+        segments.append({
+            "base": vaddr,
+            "size": memsz,
+            "flags": flags,
+            "data": data[offset : offset + filesz],
+        })
+    if not segments:
+        raise LibraryRunError("ELF contains no PT_LOAD")
+    return segments
+
+
+def byte_array(values: bytes) -> str:
+    return ",".join(f"0x{value:02x}" for value in values) or "0"
+
+
+def source_for_case(
+    case: dict[str, object],
+    segments: list[dict[str, object]],
+    descriptor_digest: bytes,
+) -> str:
+    arrays = []
+    loaders = []
+    for index, segment in enumerate(segments):
+        data = segment["data"]
+        arrays.append(
+            f"static const std::uint8_t segment_{index}[] = {{{byte_array(data)}}};"
+        )
+        loaders.append(
+            "  memory.Map("
+            f"{segment['base']}ULL, {segment['size']}ULL, {segment['flags']}U, "
+            f"segment_{index}, {len(data)}ULL);"
+        )
+    digest = byte_array(descriptor_digest)
+    stack = case["stack"]
+    stop = case["stop_policy"]
+    result = case["result"]
+    return textwrap.dedent(
+        f"""
+        #include <pto/pto_asl_model.h>
+        #include <algorithm>
+        #include <array>
+        #include <cstdint>
+        #include <cstdio>
+        #include <vector>
+
+        struct Segment {{
+          std::uint64_t base;
+          std::uint64_t size;
+          std::uint32_t flags;
+          std::vector<std::uint8_t> bytes;
+        }};
+
+        struct Memory {{
+          std::vector<Segment> segments;
+          void Map(std::uint64_t base, std::uint64_t size, std::uint32_t flags,
+                   const std::uint8_t *data, std::uint64_t data_size) {{
+            Segment segment{{base, size, flags, std::vector<std::uint8_t>(size, 0)}};
+            if (data_size != 0)
+              std::copy(data, data + data_size, segment.bytes.begin());
+            segments.push_back(std::move(segment));
+          }}
+          Segment *Find(std::uint64_t address, std::uint64_t size) {{
+            if (size > UINT64_MAX - address) return nullptr;
+            for (auto &segment : segments) {{
+              if (address >= segment.base &&
+                  address + size <= segment.base + segment.size) return &segment;
+            }}
+            return nullptr;
+          }}
+        }};
+
+        {chr(10).join(arrays)}
+        static const std::uint8_t expected_descriptor[32] = {{{digest}}};
+
+        static pto_status_t Reset(void *context) {{
+          static_cast<Memory *>(context)->segments.clear();
+          return PTO_STATUS_OK;
+        }}
+
+        static pto_status_t Probe(void *context, pto_memory_access_kind_t kind,
+                                  std::uint64_t address, std::uint64_t size,
+                                  std::uint8_t *permitted) {{
+          auto *segment = static_cast<Memory *>(context)->Find(address, size);
+          std::uint32_t required = kind == PTO_MEMORY_ACCESS_FETCH ? 1U :
+                                   kind == PTO_MEMORY_ACCESS_WRITE ? 2U : 4U;
+          *permitted = segment != nullptr && (segment->flags & required) != 0;
+          return PTO_STATUS_OK;
+        }}
+
+        static pto_status_t Read(void *context, std::uint64_t address,
+                                 std::uint8_t *bytes, std::uint64_t size) {{
+          auto *segment = static_cast<Memory *>(context)->Find(address, size);
+          if (segment == nullptr || (segment->flags & 4U) == 0)
+            return PTO_STATUS_HOST_READ_ERROR;
+          std::copy(segment->bytes.begin() + (address - segment->base),
+                    segment->bytes.begin() + (address - segment->base) + size,
+                    bytes);
+          return PTO_STATUS_OK;
+        }}
+
+        static pto_status_t Commit(void *context,
+                                   const pto_memory_write_t *writes,
+                                   std::uint64_t count) {{
+          auto *memory = static_cast<Memory *>(context);
+          for (std::uint64_t index = 0; index < count; ++index) {{
+            auto *segment = memory->Find(writes[index].address, 1);
+            if (writes[index].abi_version != PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION ||
+                writes[index].struct_size != sizeof(pto_memory_write_t) ||
+                segment == nullptr || (segment->flags & 2U) == 0)
+              return PTO_STATUS_HOST_COMMIT_ERROR;
+          }}
+          for (std::uint64_t index = 0; index < count; ++index) {{
+            auto *segment = memory->Find(writes[index].address, 1);
+            segment->bytes[writes[index].address - segment->base] = writes[index].value;
+          }}
+          return PTO_STATUS_OK;
+        }}
+
+        int main() {{
+          Memory memory;
+          pto_model_config_t config{{}};
+          config.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
+          config.struct_size = sizeof(config);
+          std::copy(std::begin(expected_descriptor), std::end(expected_descriptor),
+                    config.expected_descriptor_sha256);
+          config.memory = {{config.abi_version, sizeof(config.memory), &memory,
+                            Reset, Probe, Read, Commit}};
+          pto_model_t *model = nullptr;
+          if (pto_model_create(&config, &model) != PTO_STATUS_OK) return 2;
+          pto_initial_state_t initial{{}};
+          initial.abi_version = config.abi_version;
+          initial.struct_size = sizeof(initial);
+          initial.entry_tpc = {case['elf']['entry']}ULL;
+          initial.pe0_gpr_valid_mask = 1U << 1;
+          initial.pe0_gpr[1] = {stack['top']}ULL;
+          if (pto_model_reset(model, &initial) != PTO_STATUS_OK) return 3;
+        {chr(10).join(loaders)}
+          memory.Map({int(stack['top']) - int(stack['size'])}ULL,
+                     {stack['size']}ULL, 6U, nullptr, 0);
+          bool stopped = false;
+          for (std::uint64_t index = 0; index < {stop['max_steps']}ULL; ++index) {{
+            pto_step_result_t step{{}};
+            step.abi_version = config.abi_version;
+            step.struct_size = sizeof(step);
+            pto_status_t status = pto_model_step(model, &step);
+            std::printf(
+              "STEP %u %u %u %llu %llu %llu %llu %llu %u %u %llu %u %u %llu %llu %u %llu\\n",
+              status, step.step_state, step.instruction_status,
+              static_cast<unsigned long long>(step.pre_tpc),
+              static_cast<unsigned long long>(step.post_tpc),
+              static_cast<unsigned long long>(step.pre_bpc),
+              static_cast<unsigned long long>(step.post_bpc),
+              static_cast<unsigned long long>(step.raw_instruction_le),
+              step.length_bits, step.fault_code,
+              static_cast<unsigned long long>(step.fault_address), step.fault_cause,
+              step.origin_pe, static_cast<unsigned long long>(step.request_token),
+              static_cast<unsigned long long>(step.request_argument0), step.request_type,
+              static_cast<unsigned long long>(step.sequence));
+            if (status != PTO_STATUS_OK || step.step_state != PTO_STEP_EXECUTED)
+              return 4;
+            if (step.post_tpc == {stop['stop_pc']}ULL) {{ stopped = true; break; }}
+          }}
+          if (!stopped) return 5;
+          auto *result = memory.Find({result['address']}ULL, {result['size']}ULL);
+          if (result == nullptr) return 6;
+          std::printf("RESULT ");
+          for (std::uint64_t index = 0; index < {result['size']}ULL; ++index)
+            std::printf("%02x", result->bytes[{result['address']}ULL - result->base + index]);
+          std::printf("\\n");
+          pto_model_destroy(model);
+          return 0;
+        }}
+        """
+    )
+
+
+def parse_output(text: str) -> tuple[list[dict[str, object]], str]:
+    trace = []
+    result = None
+    fields = (
+        "status", "step_state", "instruction_status", "pre_tpc", "post_tpc",
+        "pre_bpc", "post_bpc", "raw_instruction_le", "length_bits", "fault_code",
+        "fault_address", "fault_cause", "origin_pe", "request_token",
+        "request_argument0", "request_type", "sequence",
+    )
+    for line in text.splitlines():
+        if line.startswith("STEP "):
+            values = [int(value) for value in line.split()[1:]]
+            if len(values) != len(fields):
+                raise LibraryRunError("standalone step field count mismatch")
+            step = dict(zip(fields, values))
+            step["result_valid"] = step["status"] == 0
+            trace.append(step)
+        elif line.startswith("RESULT "):
+            result = line.split()[1]
+    if not trace or result is None:
+        raise LibraryRunError("standalone runner produced incomplete output")
+    return trace, result
+
+
+def run_case(
+    cxx: Path,
+    package: Path,
+    directory: Path,
+    manifest: dict[str, object],
+    descriptor: dict[str, object],
+    descriptor_digest: str,
+    output_root: Path,
+) -> dict[str, object]:
+    case = manifest["case"]
+    elf = directory / str(case["elf"]["filename"])
+    golden = directory / str(case["golden"]["filename"])
+    if sha256(elf) != case["elf"]["sha256"] or sha256(golden) != case["golden"]["sha256"]:
+        raise LibraryRunError("standalone input hash mismatch")
+    with tempfile.TemporaryDirectory(prefix=f"pto-library-{case['id']}-") as temporary:
+        temporary_root = Path(temporary)
+        source = temporary_root / "runner.cpp"
+        executable = temporary_root / "runner"
+        source.write_text(
+            source_for_case(case, elf_segments(elf), bytes.fromhex(descriptor_digest)),
+            encoding="utf-8",
+        )
+        compile_result = subprocess.run(
+            [
+                str(cxx), "-std=c++20", "-Wall", "-Wextra", "-Werror",
+                "-I", str(package / "include"), str(source),
+                str(package / "lib" / "libpto_asl_model.a"), "-o", str(executable),
+            ],
+            text=True,
+            capture_output=True,
+        )
+        if compile_result.returncode != 0:
+            raise LibraryRunError(f"standalone consumer compile failed:\n{compile_result.stderr}")
+        completed = subprocess.run([str(executable)], text=True, capture_output=True)
+        if completed.returncode != 0:
+            raise LibraryRunError(
+                f"standalone consumer failed ({completed.returncode}):\n{completed.stderr}"
+            )
+    trace, result_hex = parse_output(completed.stdout)
+    if result_hex != golden.read_bytes().hex():
+        raise LibraryRunError("standalone result does not match golden")
+    run_manifest = {
+        "schema": "linx-gfrun-asl-run-v1",
+        "engine": "library",
+        "model_descriptor_sha256": descriptor_digest,
+        "model_descriptor": descriptor,
+        "elf": {"filename": elf.name, "entry": case["elf"]["entry"]},
+        "stop_policy": case["stop_policy"],
+        "outcome": {
+            "status": "completed", "reason": "stop_pc",
+            "steps": len(trace), "final_tpc": trace[-1]["post_tpc"],
+        },
+        "trace": trace,
+        "result": {
+            "address": case["result"]["address"],
+            "size": case["result"]["size"],
+            "bytes_hex": result_hex,
+        },
+    }
+    case_output = output_root / str(case["id"])
+    case_output.mkdir(parents=True, exist_ok=True)
+    run_path = case_output / "run.json"
+    run_path.write_text(json.dumps(run_manifest, indent=2, sort_keys=True) + "\n")
+    result_path = case_output / "result.bin"
+    result_path.write_bytes(bytes.fromhex(result_hex))
+    return {
+        "id": case["id"], "status": "pass",
+        "run_manifest_sha256": sha256(run_path),
+        "result_sha256": sha256(result_path),
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--cxx", type=Path, required=True)
+    parser.add_argument("--package", type=Path, required=True)
+    parser.add_argument("--corpus", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    arguments = parser.parse_args()
+    descriptor_path = arguments.package / "share" / "pto" / "model-descriptor.json"
+    descriptor = load_json(descriptor_path)
+    descriptor_digest = sha256(descriptor_path)
+    index = load_json(arguments.corpus / "manifest.json")
+    rows = index.get("cases")
+    if not isinstance(rows, list) or not rows:
+        raise LibraryRunError("corpus has no cases")
+    arguments.output.mkdir(parents=True, exist_ok=True)
+    results = []
+    for row in rows:
+        directory = arguments.corpus / str(row["directory"])
+        results.append(run_case(
+            arguments.cxx, arguments.package, directory,
+            load_json(directory / "manifest.json"), descriptor,
+            descriptor_digest, arguments.output,
+        ))
+    summary = {
+        "schema": "pto-functional-model-library-run-v1",
+        "status": "pass",
+        "model_descriptor_sha256": descriptor_digest,
+        "cases": results,
+    }
+    summary_path = arguments.output / "summary.json"
+    summary_path.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    print(summary_path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
