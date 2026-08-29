@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pto-isa.org/schemas/pto-functional-model-corpus-v1.schema.json",
+  "title": "PTO ASL functional-model checked corpus v1",
+  "type": "object",
+  "required": ["schema", "toolchain", "cases"],
+  "properties": {
+    "schema": {"const": "pto-functional-model-corpus-v1"},
+    "cases": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/case"}},
+    "toolchain": {"type":"object", "required":["clang","clang_sha256","lld","lld_sha256","linker_script_sha256"], "additionalProperties":false, "properties":{"clang":{"type":"string"},"lld":{"type":"string"},"clang_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"lld_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"linker_script_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}}}
+  },
+  "$defs": {
+    "segment": {"type":"object", "required":["name","address","size","flags"], "properties":{"name":{"type":"string"},"address":{"type":"integer","minimum":0,"maximum":4095},"size":{"type":"integer","minimum":1,"maximum":4096},"flags":{"type":"string","pattern":"^[RWE]{1,3}$"}}, "additionalProperties":false},
+    "case": {"type":"object", "required":["id","isa","requirements","avs_ids","initial_gprs","segments","entry","stack","stop_policy","allowed_requests","result","golden","max_steps","expected_length_sequence"], "properties":{"id":{"type":"string"},"isa":{"type":"object"},"requirements":{"type":"array","items":{"type":"string"}},"avs_ids":{"type":"array","items":{"type":"string"}},"initial_gprs":{"type":"object","additionalProperties":{"type":"integer","minimum":0}},"segments":{"type":"array","items":{"$ref":"#/$defs/segment"}},"entry":{"type":"integer","minimum":0,"maximum":4095},"stack":{"type":"object","required":["address","size"],"properties":{"address":{"type":"integer","minimum":0,"maximum":4095},"size":{"type":"integer","minimum":1}},"additionalProperties":false},"stop_policy":{"type":"object","required":["kind","stop_pc","max_steps"],"properties":{"kind":{"const":"stop_pc"},"stop_pc":{"type":"integer","minimum":0,"maximum":4095},"max_steps":{"type":"integer","minimum":1}},"additionalProperties":false},"allowed_requests":{"type":"array","maxItems":0},"result":{"type":"object","required":["symbol","size_symbol","segments"],"properties":{"symbol":{"const":"cross_model_result"},"size_symbol":{"const":"cross_model_result_size"},"segments":{"type":"array","items":{"$ref":"#/$defs/segment"}}},"additionalProperties":false},"golden":{"type":"object","required":["derivation","sha256","size"],"properties":{"derivation":{"type":"string"},"sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"size":{"type":"integer","minimum":1}},"additionalProperties":false},"max_steps":{"type":"integer","minimum":1},"expected_length_sequence":{"type":"array","items":{"type":"integer","minimum":2,"maximum":8}}},"additionalProperties":false}
+  }
+}

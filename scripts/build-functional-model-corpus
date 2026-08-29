@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+import argparse,hashlib,json,subprocess
+from pathlib import Path
+ROOT=Path(__file__).resolve().parent.parent; C=ROOT/'tests/functional-model/corpus'
+CASES={'scalar_stop_pc':(0x100,0x114,[16,16,32,48,16,32],bytes.fromhex('19000000')),'block_64_stop_pc':(0x280,0x280,[32,64],bytes.fromhex('a55a0000'))}
+def h(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+def main():
+ p=argparse.ArgumentParser();p.add_argument('--clang',required=True);p.add_argument('--lld',required=True);p.add_argument('--output',type=Path,default=ROOT/'build/functional-model-corpus');a=p.parse_args();o=a.output;o.mkdir(parents=True,exist_ok=True);rows=[]
+ for n,(entry,stop,lens,gold) in CASES.items():
+  src=C/(n+'.S');ld=C/(n+'.ld');obj=o/(n+'.o');elf=o/(n+'.elf');subprocess.run([a.clang,'-target','linx64-unknown-elf','-c','-nostdlib','-o',obj,src],check=True);subprocess.run([a.lld,'-m','elf64linx','-T',ld,'-o',elf,obj],check=True);t=subprocess.check_output(['/Users/zhoubot/linx-isa/compiler/llvm/build-linxisa-clang/bin/llvm-readelf','-h','-l','-s',elf],text=True);assert 'EXEC (Executable file)' in t and 'cross_model_result' in t and 'cross_model_result_size' in t;(o/(n+'.golden.bin')).write_bytes(gold)
+  rows.append({'id':n,'isa':{'profile':'pto-v0.58','spec_requirement':'PTO functional model G5'},'requirements':['PTO-REQ-FUNCTIONAL-STEP-001'],'avs_ids':['PTO-AVS-ARCH-FUNCTIONAL-STEP-001'],'initial_gprs':{'a0':512,'a1':4},'segments':[{'name':'text','address':entry,'size':64,'flags':'RX'},{'name':'result','address':512,'size':4,'flags':'RW'}],'entry':entry,'stack':{'address':3840,'size':256},'stop_policy':{'kind':'stop_pc','stop_pc':stop,'max_steps':len(lens)},'allowed_requests':[],'result':{'symbol':'cross_model_result','size_symbol':'cross_model_result_size','segments':[{'name':'result','address':512,'size':4,'flags':'RW'}]},'golden':{'derivation':'independent arithmetic/sentinel bytes; no model invocation','sha256':h(o/(n+'.golden.bin')),'size':4},'max_steps':len(lens),'expected_length_sequence':lens,'source_sha256':h(src),'linker_sha256':h(ld)})
+ (o/'manifest.json').write_text(json.dumps({'schema':'pto-functional-model-corpus-v1','toolchain':{'clang':str(a.clang),'clang_sha256':h(a.clang),'lld':str(a.lld),'lld_sha256':h(a.lld)},'cases':rows},indent=2)+'\n');print(o/'manifest.json')
+if __name__=='__main__':main()
