@@ -40,6 +40,7 @@ enum class OpCode : std::uint8_t {
     kLoadBitsImmediate,
     kLoadIntegerImmediate,
     kSliceBits,
+    kDynamicSlice,
     kEqual,
     kNotEqual,
     kAssertTrue,

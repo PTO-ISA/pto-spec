@@ -271,11 +271,11 @@ class Compiler:
             )
             if len(values) != 2:
                 raise ModelgenError("runtime slice length must contain start and width")
-            start = self.literal_integer(values[0])
-            width = self.literal_integer(values[1])
+            start = self.expression(values[0])
+            width = self.expression(values[1])
             target = self.local()
             self.emit(
-                "kSliceBits",
+                "kDynamicSlice",
                 local=target,
                 binding=source,
                 immediate=start,

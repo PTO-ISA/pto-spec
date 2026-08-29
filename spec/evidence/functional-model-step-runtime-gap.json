@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "e8900c3b724e50b27bb7a69a754e425f4d1a82f6ba0d4e952e47cc8e568e5055"
+      "sha256": "ddef6c0e5965939c52012ff02a4ee5db27164454e86dc32dd42fc18f504d9f30"
     }
   },
   "minimal_scalar_elf": {
@@ -29373,6 +29373,7 @@
       "kCallValue",
       "kCheckBitWidth",
       "kCopyValue",
+      "kDynamicSlice",
       "kEqual",
       "kGetArray",
       "kGetField",
@@ -29415,6 +29416,7 @@
       "kCallValue",
       "kCheckBitWidth",
       "kCopyValue",
+      "kDynamicSlice",
       "kEqual",
       "kGetArray",
       "kGetField",

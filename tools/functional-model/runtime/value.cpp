@@ -126,6 +126,8 @@ int BigInteger::Compare(const BigInteger &other) const {
     return negative_ ? -magnitude : magnitude;
 }
 
+bool BigInteger::IsZero() const { return words_.empty(); }
+
 bool BigInteger::operator==(const BigInteger &other) const {
     return negative_ == other.negative_ && words_ == other.words_;
 }
@@ -169,11 +171,7 @@ void BigInteger::Normalize() {
 }
 
 BitVector::BitVector(std::size_t width)
-    : width_(width), bytes_((width + 7) / 8, 0) {
-    if (width == 0) {
-        throw std::invalid_argument("bitvector width must be nonzero");
-    }
-}
+    : width_(width), bytes_((width + 7) / 8, 0) {}
 
 BitVector BitVector::FromU64(std::size_t width, std::uint64_t value) {
     BitVector result(width);

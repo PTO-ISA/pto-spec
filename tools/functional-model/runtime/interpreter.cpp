@@ -152,6 +152,44 @@ EvaluationResult Interpreter::EvaluateInternal(
                 }
                 break;
             }
+            case OpCode::kDynamicSlice: {
+                const auto source = frame.typed_locals.find(instruction.binding);
+                const auto start_value = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.immediate));
+                const auto width_value = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                std::uint64_t start = 0;
+                std::uint64_t width = 0;
+                if (source == frame.typed_locals.end() ||
+                    start_value == frame.typed_locals.end() ||
+                    width_value == frame.typed_locals.end() ||
+                    !std::holds_alternative<BigInteger>(start_value->second.storage()) ||
+                    !std::holds_alternative<BigInteger>(width_value->second.storage()) ||
+                    !std::get<BigInteger>(start_value->second.storage()).TryToU64(&start) ||
+                    !std::get<BigInteger>(width_value->second.storage()).TryToU64(&width) ||
+                    width > (UINT64_C(1) << 20))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                try {
+                    if (const auto *bits = std::get_if<BitVector>(
+                            &source->second.storage())) {
+                        frame.typed_locals.insert_or_assign(
+                            instruction.local,
+                            Value(bits->Slice(static_cast<std::size_t>(start),
+                                              static_cast<std::size_t>(width))));
+                    } else if (const auto *integer = std::get_if<BigInteger>(
+                                   &source->second.storage());
+                               integer != nullptr && integer->IsZero() && start == 0) {
+                        frame.typed_locals.insert_or_assign(
+                            instruction.local,
+                            Value(BitVector(static_cast<std::size_t>(width))));
+                    } else {
+                        return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                    }
+                } catch (const std::out_of_range &) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                break;
+            }
             case OpCode::kEqual:
             case OpCode::kNotEqual: {
                 const auto left = frame.typed_locals.find(instruction.binding);

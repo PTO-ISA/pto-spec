@@ -49,6 +49,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kLoadBitsImmediate:
                 case OpCode::kLoadIntegerImmediate:
                 case OpCode::kSliceBits:
+                case OpCode::kDynamicSlice:
                 case OpCode::kEqual:
                 case OpCode::kNotEqual:
                 case OpCode::kAssertTrue:

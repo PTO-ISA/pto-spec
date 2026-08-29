@@ -21,6 +21,7 @@ class BigInteger {
     BigInteger Multiply(const BigInteger &other) const;
     BigInteger Negated() const;
     int Compare(const BigInteger &other) const;
+    bool IsZero() const;
     bool TryToU64(std::uint64_t *value) const;
     bool operator==(const BigInteger &other) const;
     std::string ToString() const;
