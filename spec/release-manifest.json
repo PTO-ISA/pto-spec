@@ -230,7 +230,7 @@
     },
     {
       "path": "asl/arch/programming-model/general-queue-management.asl",
-      "sha256": "fbe8a1fa4b7b67271b461f5c5072891e1977c4a499653ea7fdd2b87a5a655493"
+      "sha256": "3e675d9def205eb2374a7e7c6dbd90c27800f4e3393942bc8dfed0d0e46badea"
     },
     {
       "path": "asl/arch/programming-model/predicate-registers.asl",
@@ -554,7 +554,7 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
-      "sha256": "aaf512a844566338141515a0ca03a974b814bb429049bea0c6ee6771389de82c"
+      "sha256": "3e69e54a2e9292e98b648d81cad0ae47f485aa103b4754a481ab91ee29782d28"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
@@ -3438,7 +3438,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "ca60acb5d2b42f2ebbf860eab026adeaa409863e991be93af06f316bbb5995bc"
+      "sha256": "3794b51801345a06243d58fcb277f672dfceca066661d4609791f2142694d3ac"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3446,15 +3446,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "e74eb2f3d2eeb2fe5bd6287e4a196edda1e0c51517d8c6508d8beac20e6e80c6"
+      "sha256": "1339615929a94009210ad28850c52a08edfcd676675937559cbfb413ad880b0f"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "6d811ce96ca900a5cb23a851a3d6433a70f17a9dbb3430ddf670c935e97abb40"
+      "sha256": "8871f724e84062f01c9943365284077d054b956c53609d9e4d31db63ac635b62"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "939eb13dba03e960bf4e38079c231c585bcb84d3b81b877189c146ca6ac7c569"
+      "sha256": "529cb7b752fc1e89b4378e8e6da40ea36780f713e7b39ac46d7e4daee1f1582f"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3500,7 +3500,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "dd02afd37cf31cba5b266bd74f18a1621c558a02ac683f76c9312b51fb9d3884",
+  "content_sha256": "7d884abe1780ce2fbb4f045a666e1e2931600e319cd8f3631d9d9e4fe973193a",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3817,7 +3817,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/programming-model/general-queue-management.md",
-      "sha256": "d3589238a70eebbaca07bdad1db5e8f15cdce3041dae2451d054807a227d2ea0"
+      "sha256": "ebf719a2ee406d6b8858a4db03216454f4f59e5b3ccff15e539f5e7acafb83d4"
     },
     {
       "kind": "generated-documentation",
@@ -4222,7 +4222,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/destination-auxiliary.md",
-      "sha256": "76c5613c3bc1e70fe9cf94a6cf5238287a9494e7a62114084584846a53154b3e"
+      "sha256": "7b632497653951ae466ec3cf57630a9326f11ea1bb1e091bc977dd4d5f8175c2"
     },
     {
       "kind": "generated-documentation",
@@ -11998,7 +11998,8 @@
       "ADR-0107",
       "ADR-0108",
       "ADR-0109",
-      "ADR-0110"
+      "ADR-0110",
+      "ADR-0112"
     ]
   },
   "schema_version": 1,

@@ -722,7 +722,8 @@
         "ADR-0072",
         "ADR-0079",
         "ADR-0085",
-        "ADR-0101"
+        "ADR-0101",
+        "ADR-0112"
       ],
       "tests": [
         "PTO-AVS-BLOCK-MATRIX-DEST-SHAPE-001",
@@ -3396,7 +3397,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0112"
       ],
       "tests": []
     },
@@ -3410,7 +3412,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0112"
       ],
       "tests": []
     },
@@ -18198,7 +18201,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "33e513218c9106cb1e153fb5c16425e82837a4531649279a64647708edd5b832",
+    "spec/evidence/adr-index.json": "9110f98ecb280209c788a98ea011b09860821f0c34cc95ebdb6aeab7dcc7e938",
     "spec/evidence/instruction-contract-closure.json": "0bdb33460b56f30b54b898a75136515dc6d26621d5eb17f5859acad5668a156f",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -60469,7 +60472,9 @@
       "documentation": "docs/arch/programming-model/general-queue-management.md",
       "id": "PTO-ARCH-GQM",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0112"
+      ],
       "semantic_tests": [
         "PTO-AVS-ARCH-GQM-RESET-001",
         "PTO-AVS-ARCH-GQM-STATUS-002"
@@ -60976,7 +60981,8 @@
         "ADR-0072",
         "ADR-0079",
         "ADR-0085",
-        "ADR-0101"
+        "ADR-0101",
+        "ADR-0112"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-B-FPATR-ACT-004",
@@ -62728,7 +62734,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0112"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-HL-QPOP-ACQUIRE-001",
@@ -62760,7 +62767,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0112"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-HL-QPUSH-ORDER-001",
@@ -63191,7 +63199,9 @@
       "documentation": "docs/block/model/dispatch/destination-auxiliary.md",
       "id": "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0112"
+      ],
       "semantic_tests": [],
       "source": "asl/block/model/dispatch/destination-auxiliary.asl",
       "surface": "block",

@@ -21195,13 +21195,83 @@
       "test_ids": [],
       "unit_ids": [],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0112"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-HL-QPOP-GQM-001",
+        "PTO-HL-QPUSH-GQM-001"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0112",
+      "test_ids": [
+        "PTO-AVS-ARCH-GQM-RESET-001",
+        "PTO-AVS-ARCH-GQM-STATIC-001",
+        "PTO-AVS-ARCH-GQM-STATUS-002",
+        "PTO-AVS-BLOCK-B-FPATR-ACT-004",
+        "PTO-AVS-BLOCK-B-FPATR-ALL-MODES-007",
+        "PTO-AVS-BLOCK-B-FPATR-COMMIT-006",
+        "PTO-AVS-BLOCK-B-FPATR-CONTROLS-010",
+        "PTO-AVS-BLOCK-B-FPATR-CSCALE-001",
+        "PTO-AVS-BLOCK-B-FPATR-CSCALE-FAULT-002",
+        "PTO-AVS-BLOCK-B-FPATR-DECODE-001",
+        "PTO-AVS-BLOCK-B-FPATR-DUPLICATE-001",
+        "PTO-AVS-BLOCK-B-FPATR-FORMATS-003",
+        "PTO-AVS-BLOCK-B-FPATR-GROUP-RSVD-001",
+        "PTO-AVS-BLOCK-B-FPATR-INPUT-TYPE-002",
+        "PTO-AVS-BLOCK-B-FPATR-MODE-TABLE-BOUNDARY-001",
+        "PTO-AVS-BLOCK-B-FPATR-NONMATRIX-001",
+        "PTO-AVS-BLOCK-B-FPATR-OPERAND-ROUTING-EXECUTION-001",
+        "PTO-AVS-BLOCK-B-FPATR-PLACE-001",
+        "PTO-AVS-BLOCK-B-FPATR-PQ14-15-001",
+        "PTO-AVS-BLOCK-B-FPATR-PQ21-22-001",
+        "PTO-AVS-BLOCK-B-FPATR-PQ29-31-001",
+        "PTO-AVS-BLOCK-B-FPATR-PQ40-47-001",
+        "PTO-AVS-BLOCK-B-FPATR-PQ48-55-001",
+        "PTO-AVS-BLOCK-B-FPATR-PQ56-63-001",
+        "PTO-AVS-BLOCK-B-FPATR-QUANT-002",
+        "PTO-AVS-BLOCK-B-FPATR-RELU-RSVD-001",
+        "PTO-AVS-BLOCK-B-FPATR-RESET-CLEAR-001",
+        "PTO-AVS-BLOCK-B-FPATR-ROUNDING-008",
+        "PTO-AVS-BLOCK-B-FPATR-RSVD-001",
+        "PTO-AVS-BLOCK-B-FPATR-SPECIAL-005",
+        "PTO-AVS-BLOCK-B-FPATR-TRANSPOSE-011",
+        "PTO-AVS-BLOCK-B-FPATR-TRANSPOSE-RSVD-012",
+        "PTO-AVS-BLOCK-B-FPATR-ZERO-AFFINE-009",
+        "PTO-AVS-BLOCK-B-FPATR-ZMASK-001",
+        "PTO-AVS-BLOCK-HL-QPOP-ACQUIRE-001",
+        "PTO-AVS-BLOCK-HL-QPOP-DECODE-001",
+        "PTO-AVS-BLOCK-HL-QPOP-RESERVED-001",
+        "PTO-AVS-BLOCK-HL-QPOP-STATUS-001",
+        "PTO-AVS-BLOCK-HL-QPUSH-DECODE-001",
+        "PTO-AVS-BLOCK-HL-QPUSH-ORDER-001",
+        "PTO-AVS-BLOCK-HL-QPUSH-STATUS-001",
+        "PTO-AVS-BLOCK-MATRIX-DEST-SHAPE-001",
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY-STATIC-001",
+        "PTO-AVS-BLOCK-TMATMUL-SLRELU-BITS-001",
+        "PTO-AVS-BLOCK-TMATMUL-SQUANT-BITS-001",
+        "PTO-AVS-BLOCK-TMATMUL-VQUANT-DESC-001"
+      ],
+      "unit_ids": [
+        "PTO-ARCH-GQM",
+        "PTO-BLOCK-B-FPATR",
+        "PTO-BLOCK-HL-QPOP",
+        "PTO-BLOCK-HL-QPUSH",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 105,
-      "sha256": "a49ea9758d83d13f9aa6996c2b1ed2ec47a246acd9b3dbc2ddf0a42ff318c74d"
+      "count": 106,
+      "sha256": "0db5556d708b3bde68b262140b048b4b192b70409c7e662adfaafa5b90beaf36"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21209,7 +21279,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "939eb13dba03e960bf4e38079c231c585bcb84d3b81b877189c146ca6ac7c569",
+      "sha256": "529cb7b752fc1e89b4378e8e6da40ea36780f713e7b39ac46d7e4daee1f1582f",
       "test_count": 3716,
       "unit_count": 851
     }
@@ -21229,13 +21299,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 11,
-      "executable": 90,
+      "executable": 91,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 101,
+    "subject_count": 102,
     "validated_count": 0
   }
 }

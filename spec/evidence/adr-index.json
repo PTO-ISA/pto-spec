@@ -8430,12 +8430,51 @@
         "unassigned"
       ],
       "title": "ASL functional-model fetch, step, memory, and host boundary"
+    },
+    {
+      "accepted": "2026-08-29",
+      "affected_ndf": [
+        "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
+        "PTO-HL-QPOP-GQM-001",
+        "PTO-HL-QPUSH-GQM-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-GQM",
+        "PTO-BLOCK-B-FPATR",
+        "PTO-BLOCK-HL-QPOP",
+        "PTO-BLOCK-HL-QPUSH",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "e945b41dacaac5fd678639cc76ca82c7836974f0",
+      "created": "2026-08-29",
+      "id": "ADR-0112",
+      "implementation_issue": null,
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0112-warning-free-aslref-constraint-refinements.md",
+      "rejected": null,
+      "release_boundary": true,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Warning-free ASLRef constraint refinements"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 11,
     "legacy_id_count": 198,
-    "record_count": 105
+    "record_count": 106
   }
 }
