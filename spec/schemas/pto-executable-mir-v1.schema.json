@@ -1,0 +1,79 @@
+{
+  "$id": "https://pto-isa.org/schemas/pto-executable-mir-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "capabilities": { "type": "object" },
+    "nodes": {
+      "description": "Compact immutable node records indexed by array position.",
+      "items": { "type": "array" },
+      "type": "array"
+    },
+    "schema": { "const": "pto-executable-mir-v1" },
+    "schema_version": { "const": 1 },
+    "source": {
+      "additionalProperties": false,
+      "properties": {
+        "pto_mir_schema": { "const": "pto-mir-v1" },
+        "pto_mir_sha256": { "$ref": "#/$defs/sha256" }
+      },
+      "required": ["pto_mir_schema", "pto_mir_sha256"],
+      "type": "object"
+    },
+    "tables": {
+      "additionalProperties": false,
+      "properties": {
+        "atom_kinds": { "$ref": "#/$defs/idTable" },
+        "bindings": { "$ref": "#/$defs/idTable" },
+        "call_sites": { "type": "array" },
+        "call_graph": { "$ref": "#/$defs/idTable" },
+        "constructors": { "$ref": "#/$defs/idTable" },
+        "entrypoints": { "$ref": "#/$defs/idTable" },
+        "externs": { "$ref": "#/$defs/idTable" },
+        "fields": { "$ref": "#/$defs/idTable" },
+        "functions": { "$ref": "#/$defs/idTable" },
+        "global_kinds": { "$ref": "#/$defs/idTable" },
+        "globals": { "$ref": "#/$defs/idTable" },
+        "node_kinds": { "$ref": "#/$defs/idTable" },
+        "state_access_sites": { "type": "array" },
+        "state_fields": { "$ref": "#/$defs/idTable" },
+        "strings": { "$ref": "#/$defs/idTable" },
+        "types": { "$ref": "#/$defs/idTable" }
+      },
+      "required": [
+        "node_kinds",
+        "constructors",
+        "fields",
+        "atom_kinds",
+        "strings",
+        "global_kinds",
+        "bindings",
+        "types",
+        "globals",
+        "functions",
+        "externs",
+        "entrypoints",
+        "state_fields",
+        "call_sites",
+        "call_graph",
+        "state_access_sites"
+      ],
+      "type": "object"
+    }
+  },
+  "required": ["schema", "schema_version", "source", "tables", "nodes", "capabilities"],
+  "title": "PTO linked executable model image v1",
+  "type": "object",
+  "x-pto-schema-version": 1,
+  "$defs": {
+    "idTable": {
+      "items": {
+        "properties": { "id": { "minimum": 0, "type": "integer" } },
+        "required": ["id"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "sha256": { "pattern": "^[0-9a-f]{64}$", "type": "string" }
+  }
+}

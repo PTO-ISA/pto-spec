@@ -7,6 +7,11 @@ type literal =
 type expr_desc =
   | E_Literal of literal
   | E_Var of string
+  | E_Binop of binop * expr_desc * expr_desc
+  | E_Call of string
+
+and binop =
+  [ `ADD ]
 
 type type_desc =
   | T_Int of constraint_kind
@@ -25,6 +30,7 @@ type subprogram_body =
 
 type subprogram_type =
   | ST_Procedure
+  | ST_Function
 
 type global_decl_keyword =
   | GDK_Var
