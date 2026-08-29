@@ -199,6 +199,15 @@ if(BUILD_TESTING)
     target_compile_options(pto_asl_model_runtime_test PRIVATE
         -Wall -Wextra -Wpedantic -Werror)
 
+    foreach(test_target IN ITEMS
+            pto_asl_model_abi_c_test
+            pto_asl_model_abi_cpp_test
+            pto_asl_model_runtime_test)
+        target_compile_options(${test_target} PRIVATE
+            "$<$<COMPILE_LANG_AND_ID:C,AppleClang,Clang,GNU>:-UNDEBUG>"
+            "$<$<COMPILE_LANG_AND_ID:CXX,AppleClang,Clang,GNU>:-UNDEBUG>")
+    endforeach()
+
     if(PTO_FUNCTIONAL_MODEL_SANITIZERS AND
        CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         foreach(test_target IN ITEMS
