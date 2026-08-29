@@ -10,6 +10,7 @@ begin
     WriteGPR(4, Zeros{PTO_XLEN} + 1);
     ConfigureTile(0, 128, 1, 4, 1, 4, TileDataType_FP16, TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x2a);
+    MarkTileValidRegionDefined(0);
     InstallSharedTile((Zeros{6} + 16) as SharedTileID, _Tiles[[0]], '1111');
     let started = ExecuteCommandInstruction(Zeros{64} + 0x20111181, 32);
     assert started == CommandExecution_Executed;

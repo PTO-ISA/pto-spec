@@ -6243,11 +6243,23 @@
         "0x061"
       ],
       [
+        "0x065",
+        "0x065"
+      ],
+      [
         "0x069",
         "0x069"
       ],
       [
-        "0x075",
+        "0x06E",
+        "0x06E"
+      ],
+      [
+        "0x071",
+        "0x074"
+      ],
+      [
+        "0x079",
         "0x07F"
       ]
     ],
@@ -6266,14 +6278,19 @@
     "TALLOC",
     "TAXPY",
     "TDEINTERLEAVE",
+    "TFILLPAD",
     "TFMOD",
     "TFMODS",
     "TFREE",
     "TGATHERB",
     "TINTERLEAVE",
     "TLRELU",
+    "TPARTADD",
     "TPARTARGMAX",
     "TPARTARGMIN",
+    "TPARTMAX",
+    "TPARTMIN",
+    "TPARTMUL",
     "TPOP",
     "TPRELU",
     "TPUSH",
@@ -6281,7 +6298,8 @@
     "TSUBC",
     "TSUBSC",
     "TRANDOM",
-    "TSORT32"
+    "TSORT32",
+    "TTRANS"
   ],
   "rejected_names": [
     "TEXRACT",

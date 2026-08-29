@@ -20042,6 +20042,10 @@
       "stage": "executable",
       "subject_id": "ADR-0103",
       "test_ids": [
+        "PTO-AVS-TILE-MODEL-DISPATCH-TOP-LEVEL-STATIC-001",
+        "PTO-AVS-TILE-TESTDECODEDTILEEXECUTION-EXECUTION-001",
+        "PTO-AVS-TILE-TESTTILEHANDLERCLOSURE-BOUNDARY-001",
+        "PTO-AVS-TILE-TESTTILESELECTORCLOSUREEXTENSIONS-BOUNDARY-001",
         "PTO-AVS-TILE-TPACK-FIELDS-001",
         "PTO-AVS-TILE-TPACK-STATIC-001",
         "PTO-AVS-TILE-TPERMUTE-BYTE-TABLE-001",
@@ -20049,9 +20053,15 @@
         "PTO-AVS-TILE-TSHUF-BFLY-001",
         "PTO-AVS-TILE-TSHUF-STATIC-001",
         "PTO-AVS-TILE-TUNPACK-FIELD-001",
-        "PTO-AVS-TILE-TUNPACK-STATIC-001"
+        "PTO-AVS-TILE-TUNPACK-STATIC-001",
+        "PTO-AVS-TILE-VEC-SFU-INDEX-CORNERS-BOUND-004",
+        "PTO-AVS-TILE-VEC-SFU-LAYOUT-ALIAS-BOUND-003",
+        "PTO-AVS-TILE-VEC-SFU-RESERVED-BOUND-002",
+        "PTO-AVS-TILE-VEC-SFU-RESULTS-BOUND-005",
+        "PTO-AVS-TILE-VEC-SFU-SELECTOR-BOUND-001"
       ],
       "unit_ids": [
+        "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL",
         "PTO-TILE-TPACK",
         "PTO-TILE-TPERMUTE",
         "PTO-TILE-TSHUF",
@@ -21176,7 +21186,7 @@
   "sources": {
     "adr_records": {
       "count": 104,
-      "sha256": "04b84976f97874bcf1f388c6fa0d9301e8026c8a084edb36ccc72331ad8d4ecc"
+      "sha256": "1988013c80f2b16a650039c89862c753651f2f217d5d4e789242508e80e930de"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21184,7 +21194,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "53571e3c033d1334ec54ac0661fba19aba0664cbdb4d7804cd55970dee529aa6",
+      "sha256": "0dce68d6d7c526ed06f8eed5bb2a4ea2fafdb75d891dbb7a0e72e5522e90e429",
       "test_count": 3716,
       "unit_count": 851
     }

@@ -314,8 +314,6 @@ begin
             tile.contents_defined;
         updated.published = updated.whole_parent_ready;
     elsif publish && PEMaskPopulation(pe_mask) == 1 then
-        updated.allocation_mask = pe_mask;
-        updated.initialized_mask = pe_mask;
         updated.tile = tile;
         updated.tile.contents_defined = TRUE;
         updated.tile.defined_valid_elements =

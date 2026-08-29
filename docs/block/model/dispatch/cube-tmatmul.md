@@ -278,7 +278,6 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-
     let m_raw = BundleCubeDimensionValue(BundleDimension_LB0);
     let n_raw = BundleCubeDimensionValue(BundleDimension_LB1);
     let k_raw = BundleCubeDimensionValue(BundleDimension_LB2);
@@ -289,13 +288,14 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    // Structurally legal Shared groups wait until whole-ready and published.
+    if !BundleMatrixSharedSourcesReady(shared_count) then return FALSE; end;
     if !BundleMatrixSharedSchemasLegal(
            function, left_type, right_type,
            m, n, k, shared_count) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-
     let cooperative = BundleTMATMULCooperativeSelected(
         function, shared_count);
     let valid_m = if cooperative then
