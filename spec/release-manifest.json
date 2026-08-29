@@ -542,7 +542,7 @@
     },
     {
       "path": "asl/block/model/dispatch/cube-tmatmul.asl",
-      "sha256": "513fbf21974f558b4d1ca1a6bafbeb8b40d5545ece88c429856acf58d64c234f"
+      "sha256": "4a65098b22408fedd8b76b362ac7a45bffecd6ed88c1654b59d29226e06c71e8"
     },
     {
       "path": "asl/block/model/dispatch/decode.asl",
@@ -618,7 +618,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "d6e82b83726802faf2fa66133d18e0f33b40bd4448b3af7d349edc905c091b30"
+      "sha256": "86bdc66d3ab8ca2dbf5f3fc3f37a95293ffbb04ae10f42f1304043d5a1278153"
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
@@ -3018,7 +3018,7 @@
     },
     {
       "path": "asl/tile/model/dispatch/top-level.asl",
-      "sha256": "3c61dab10e33dcc2faabe0b8c7b0bfd9b2fa6cf0cc585cbfaa997828aa62204e"
+      "sha256": "0ccc42d7aa5b7e56eee8ba280b98a027f25fa7dd8b3e0c1339bd66a0a8fe131a"
     },
     {
       "path": "asl/tile/model/execution/comparison.asl",
@@ -3230,7 +3230,7 @@
     },
     {
       "path": "asl/tile/model/state/shared-registers.asl",
-      "sha256": "7c3b7357033ea1ec576d73174ef73b0833fb2ef2c1fc823f964feb31f7144879"
+      "sha256": "9d8b6c8179c4ee684488c44035faa8d04569bba46ab3eea677bec142c48e883b"
     },
     {
       "path": "asl/tile/model/state/types.asl",
@@ -3434,11 +3434,11 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "73c7f31c34b4adff92eef1152480c18c748c0facadc93077574a554f89485f5f"
+      "sha256": "e5893ebf366c3044a98b4cbd03cf684748b3f5f4f9befd0e012bc93fa852f408"
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "f10a93f8889db5b3cdcdeea74d9483910d2c85f457d7ab79ea64e358df02dcf0"
+      "sha256": "a3f698030f59fa5c2d893348150ff64b2b74c82dcc3954f337c7477423815dfa"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3446,15 +3446,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "6d79ee3b4b622ccf01aeadce90766ad36cf24e554beec5fde2d6b38a721f9b78"
+      "sha256": "1d6526c1f3587e0006a59cc15d82ce298cbccae8e0f5c0a5ac89a4649e525688"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "c11272e267e16d0715378df75a08fa8f9e8c98d48fdb20943f53a0e732ec2d55"
+      "sha256": "f73372d145e22ee700beb8bd953c174379394f0e011350195380f66027776932"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "53571e3c033d1334ec54ac0661fba19aba0664cbdb4d7804cd55970dee529aa6"
+      "sha256": "0dce68d6d7c526ed06f8eed5bb2a4ea2fafdb75d891dbb7a0e72e5522e90e429"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3500,7 +3500,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "5ff0542bac6cec7bbe9ada792d40861e007183b2aef7671b0e32a21fbcdaf8d5",
+  "content_sha256": "2861961f132c5e91826df6ffe69d30b667f22c23087284504ba8f2774c81b6a2",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4207,7 +4207,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/cube-tmatmul.md",
-      "sha256": "eaf2dc4000083c13f90a75baeed4674b39af2f90fdec29c1c8d78e024d364faf"
+      "sha256": "a54b5b307dec8f37df25978b3a701cac597955e74623a666849ae3aaecbe3da1"
     },
     {
       "kind": "generated-documentation",
@@ -4302,7 +4302,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tile-execution.md",
-      "sha256": "98816aed86e797a12b1d692e9584395b038208a4afbcd8c228bd3ecd22d5836e"
+      "sha256": "9e0467d2690b49e7f6f79d8d577ae764a39ebd1bda4835633d6799916b16a7f6"
     },
     {
       "kind": "generated-documentation",
@@ -7302,7 +7302,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/dispatch/top-level.md",
-      "sha256": "f75839833a77ed56a75b4fe6e5c439e9bed7e6ff066e8a074c26c5d108a01a7b"
+      "sha256": "0d4d6f2f8b8d9922891e33f2e468c6250310a473c608682c12d1561ca0687317"
     },
     {
       "kind": "generated-documentation",
@@ -7567,7 +7567,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/state/shared-registers.md",
-      "sha256": "eeaa25015fd70c3d5228afa1c5f88aadfdb4dbe199ca1a5f2747320bb91017ce"
+      "sha256": "5294bfbb27546c8ec5c1094ab3f967ff6f022eec032af808b498c7b667db0675"
     },
     {
       "kind": "generated-documentation",

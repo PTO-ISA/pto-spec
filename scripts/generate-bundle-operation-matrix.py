@@ -937,6 +937,7 @@ def render_shared_stage3_case(row: dict) -> list[str]:
         lines = common + [
             f"    ConfigureTile(0, 128, 1, 4, 1, 4, {dtype}, TileLayout_RowMajor, TileLocation_Any);",
             "    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x2a);",
+            "    MarkTileValidRegionDefined(0);",
             f"    InstallSharedTile({shared_id}, _Tiles[[0]], '1111');",
             f"    let started = ExecuteCommandInstruction({asl_word(int(row['decoded_start'], 16))}, 32);",
             "    assert started == CommandExecution_Executed;",

@@ -15,7 +15,7 @@ begin
             assigned = (assigned + 1) as integer {0..128};
         end;
     end;
-    assert assigned == 87;
+    assert assigned == 85;
 end;
 
 func main() => integer
