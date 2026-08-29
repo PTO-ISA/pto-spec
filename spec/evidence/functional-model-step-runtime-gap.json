@@ -2,12 +2,12 @@
   "arbitrary_choice_sites": [],
   "inputs": {
     "executable_mir": {
-      "sha256": "c96ffe24e7b1d1d24f8049b2731f3b703a27d218732683e09be0739468b5db15",
-      "size_bytes": 23512027
+      "sha256": "d51b989b1d5058fda10fb9a1b7a449ee832686730813c74899305fef2323f355",
+      "size_bytes": 23512075
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "ddef6c0e5965939c52012ff02a4ee5db27164454e86dc32dd42fc18f504d9f30"
+      "sha256": "1ea61442c77934bd5f31c6aecf22eb6d274d473a596fc05444b3e1d18b185516"
     }
   },
   "minimal_scalar_elf": {
@@ -29318,12 +29318,14 @@
   "runtime_capability": {
     "constructors": {
       "expressions": [
+        "E_ATC",
         "E_Binop",
         "E_Call",
         "E_GetArray",
         "E_GetField",
         "E_Literal",
         "E_Slice",
+        "E_Unop",
         "E_Var"
       ],
       "literals": [
@@ -29341,7 +29343,13 @@
       ],
       "operators": [
         "ADD",
+        "BNOT",
+        "BOR",
         "EQ",
+        "GE",
+        "GT",
+        "LE",
+        "LT",
         "MUL",
         "NE",
         "SUB"
@@ -29357,6 +29365,7 @@
         "S_Cond",
         "S_Decl",
         "S_For",
+        "S_Pass",
         "S_Return",
         "S_Seq"
       ],
@@ -29367,6 +29376,8 @@
     },
     "emitter_bytecode_opcodes": [
       "kAssertTrue",
+      "kBitNot",
+      "kBitOr",
       "kBranchIfFalse",
       "kCallExtern",
       "kCallProcedure",
@@ -29378,13 +29389,16 @@
       "kGetArray",
       "kGetField",
       "kIntegerAdd",
+      "kIntegerGreater",
       "kIntegerGreaterEqual",
+      "kIntegerLess",
       "kIntegerLessEqual",
       "kIntegerMultiply",
       "kIntegerStep",
       "kIntegerSubtract",
       "kJump",
       "kLoadArgumentBits",
+      "kLoadArgumentInteger",
       "kLoadBitsImmediate",
       "kLoadBool",
       "kLoadEnum",
@@ -29392,6 +29406,7 @@
       "kLoadIntegerImmediate",
       "kNotEqual",
       "kPushArgument",
+      "kReturnProcedure",
       "kReturnValue",
       "kSetArray",
       "kSetField",
@@ -29403,13 +29418,18 @@
       "DeterminePTOInstructionLength"
     ],
     "extern_bindings": [
+      "ResetPhysicalMemory",
       "SInt",
       "UInt"
     ],
-    "impdef_bindings": [],
+    "impdef_bindings": [
+      "ResetPhysicalMemory"
+    ],
     "interpreter_bytecode_opcodes": [
       "kAddLocalU64",
       "kAssertTrue",
+      "kBitNot",
+      "kBitOr",
       "kBranchIfFalse",
       "kCallExtern",
       "kCallProcedure",
@@ -29422,13 +29442,16 @@
       "kGetField",
       "kIncrementGlobalU64",
       "kIntegerAdd",
+      "kIntegerGreater",
       "kIntegerGreaterEqual",
+      "kIntegerLess",
       "kIntegerLessEqual",
       "kIntegerMultiply",
       "kIntegerStep",
       "kIntegerSubtract",
       "kJump",
       "kLoadArgumentBits",
+      "kLoadArgumentInteger",
       "kLoadBitsImmediate",
       "kLoadBool",
       "kLoadEnum",
@@ -29474,18 +29497,6 @@
         "sample_node_id": 22932
       },
       {
-        "count": 2363,
-        "name": "BNOT",
-        "sample_function_id": 352,
-        "sample_node_id": 22107
-      },
-      {
-        "count": 2702,
-        "name": "BOR",
-        "sample_function_id": 5035,
-        "sample_node_id": 21199
-      },
-      {
         "count": 3,
         "name": "BV_CONCAT",
         "sample_function_id": 4579,
@@ -29522,12 +29533,6 @@
         "sample_node_id": 22229
       },
       {
-        "count": 684,
-        "name": "E_ATC",
-        "sample_function_id": 4762,
-        "sample_node_id": 21330
-      },
-      {
         "count": 36,
         "name": "E_Array",
         "sample_function_id": 4828,
@@ -29558,34 +29563,10 @@
         "sample_node_id": 27431
       },
       {
-        "count": 2451,
-        "name": "E_Unop",
-        "sample_function_id": 352,
-        "sample_node_id": 22120
-      },
-      {
-        "count": 87,
-        "name": "GE",
-        "sample_function_id": 595,
-        "sample_node_id": 21528
-      },
-      {
-        "count": 145,
-        "name": "GT",
-        "sample_function_id": 529,
-        "sample_node_id": 21782
-      },
-      {
         "count": 86,
         "name": "LDI_Tuple",
         "sample_function_id": 5195,
         "sample_node_id": 33160
-      },
-      {
-        "count": 165,
-        "name": "LE",
-        "sample_function_id": 595,
-        "sample_node_id": 21545
       },
       {
         "count": 5,
@@ -29598,12 +29579,6 @@
         "name": "LE_Discard",
         "sample_function_id": 4785,
         "sample_node_id": 221992
-      },
-      {
-        "count": 209,
-        "name": "LT",
-        "sample_function_id": 4940,
-        "sample_node_id": 280
       },
       {
         "count": 61,
@@ -29688,12 +29663,6 @@
         "name": "ST_Procedure",
         "sample_function_id": 258,
         "sample_node_id": 636
-      },
-      {
-        "count": 15155,
-        "name": "S_Pass",
-        "sample_function_id": 595,
-        "sample_node_id": 21540
       },
       {
         "count": 117,

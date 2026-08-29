@@ -7,6 +7,10 @@ namespace pto::model {
 MemoryTransaction::MemoryTransaction(const MemoryCallbacks &callbacks)
     : callbacks_(callbacks) {}
 
+pto_status_t MemoryTransaction::Reset() const {
+    return callbacks_.reset ? callbacks_.reset() : PTO_STATUS_INVALID_STATE;
+}
+
 pto_status_t MemoryTransaction::Probe(pto_memory_access_kind_t kind,
                                       std::uint64_t address,
                                       std::uint64_t size,

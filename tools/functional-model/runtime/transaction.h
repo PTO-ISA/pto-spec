@@ -29,6 +29,7 @@ struct MemoryCallbacks {
 class MemoryTransaction {
   public:
     explicit MemoryTransaction(const MemoryCallbacks &callbacks);
+    pto_status_t Reset() const;
     pto_status_t Probe(pto_memory_access_kind_t kind,
                        std::uint64_t address,
                        std::uint64_t size,

@@ -22,6 +22,8 @@ def emit(emitter: Path, image: Path, cases: Path, output: Path) -> subprocess.Co
             str(output / "image.h"),
             "--source",
             str(output / "image.cpp"),
+            "--reset-source",
+            str(output / "reset.cpp"),
             "--cases",
             str(cases),
             "--cases-header",
@@ -49,7 +51,7 @@ def main() -> int:
         second.mkdir()
         assert emit(arguments.emitter, arguments.image, arguments.cases, first).returncode == 0
         assert emit(arguments.emitter, arguments.image, arguments.cases, second).returncode == 0
-        for name in ("image.h", "image.cpp", "cases.h"):
+        for name in ("image.h", "image.cpp", "reset.cpp", "cases.h"):
             assert (first / name).read_bytes() == (second / name).read_bytes()
 
         tampered = dict(document)

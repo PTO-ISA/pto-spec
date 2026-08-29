@@ -150,8 +150,8 @@ void TestRuntime() {
     MemoryHarness right_memory;
     RuntimeModel left(module, left_memory.Callbacks());
     RuntimeModel right(module, right_memory.Callbacks());
-    assert(left.Reset({0x100}) == PTO_STATUS_OK);
-    assert(right.Reset({0x200}) == PTO_STATUS_OK);
+    assert(left.InitializeForTesting({0x100}) == PTO_STATUS_OK);
+    assert(right.InitializeForTesting({0x200}) == PTO_STATUS_OK);
     assert(left_memory.reset_count == 1 && right_memory.reset_count == 1);
 
     StepResult result;
@@ -168,12 +168,12 @@ void TestRuntime() {
     assert(left_memory.committed_writes[1].value == 0x42);
 
     left_memory.fail_reset = true;
-    assert(left.Reset({0x300}) == PTO_STATUS_HOST_RESET_ERROR);
+    assert(left.InitializeForTesting({0x300}) == PTO_STATUS_HOST_RESET_ERROR);
     assert(left.GlobalU64(kCounter) == 1);
 
     MemoryHarness rollback_memory;
     RuntimeModel rollback(module, rollback_memory.Callbacks());
-    assert(rollback.Reset({0}) == PTO_STATUS_OK);
+    assert(rollback.InitializeForTesting({0}) == PTO_STATUS_OK);
     rollback_memory.fail_commit = true;
     assert(rollback.Step(&result) == PTO_STATUS_HOST_COMMIT_ERROR);
     assert(rollback.GlobalU64(kCounter) == 0);
@@ -181,7 +181,7 @@ void TestRuntime() {
 
     MemoryHarness probe_failure_memory;
     RuntimeModel probe_failure(module, probe_failure_memory.Callbacks());
-    assert(probe_failure.Reset({0}) == PTO_STATUS_OK);
+    assert(probe_failure.InitializeForTesting({0}) == PTO_STATUS_OK);
     probe_failure_memory.fail_probe = true;
     assert(probe_failure.Step(&result) == PTO_STATUS_HOST_PROBE_ERROR);
     assert(probe_failure.GlobalU64(kCounter) == 0);
@@ -199,7 +199,7 @@ void TestRuntime() {
     MemoryHarness read_failure_memory;
     RuntimeModel read_failure(
         read_failure_module, read_failure_memory.Callbacks());
-    assert(read_failure.Reset({0}) == PTO_STATUS_OK);
+    assert(read_failure.InitializeForTesting({0}) == PTO_STATUS_OK);
     read_failure_memory.fail_read = true;
     assert(read_failure.Step(&result) == PTO_STATUS_HOST_READ_ERROR);
     assert(read_failure.GlobalU64(kCounter) == 0);
@@ -215,13 +215,13 @@ void TestRuntime() {
     MemoryHarness evaluator_failure_memory;
     RuntimeModel evaluator_failure(
         evaluator_failure_module, evaluator_failure_memory.Callbacks());
-    assert(evaluator_failure.Reset({0}) == PTO_STATUS_OK);
+    assert(evaluator_failure.InitializeForTesting({0}) == PTO_STATUS_OK);
     assert(evaluator_failure.Step(&result) == PTO_STATUS_MIR_INVALID);
     assert(evaluator_failure.GlobalU64(kCounter) == 0);
 
     MemoryHarness busy_memory;
     RuntimeModel busy(module, busy_memory.Callbacks());
-    assert(busy.Reset({0}) == PTO_STATUS_OK);
+    assert(busy.InitializeForTesting({0}) == PTO_STATUS_OK);
     busy_memory.reentrant_model = &busy;
     assert(busy.Step(&result) == PTO_STATUS_OK);
     assert(busy_memory.reentrant_status == PTO_STATUS_BUSY);
@@ -229,7 +229,7 @@ void TestRuntime() {
     const auto trap_module = SyntheticModule(PTO_STEP_TRAP);
     MemoryHarness trap_memory;
     RuntimeModel trap(trap_module, trap_memory.Callbacks());
-    assert(trap.Reset({0}) == PTO_STATUS_OK);
+    assert(trap.InitializeForTesting({0}) == PTO_STATUS_OK);
     assert(trap.Step(&result) == PTO_STATUS_OK);
     assert(result.state == PTO_STEP_TRAP);
     assert(trap.GlobalU64(kCounter) == 1);
@@ -267,7 +267,7 @@ void TestInvalidModules() {
     MemoryHarness memory;
     auto module = SyntheticModule(PTO_STEP_EXECUTED);
     RuntimeModel dangling(module, memory.Callbacks());
-    assert(dangling.Reset({0}) == PTO_STATUS_OK);
+    assert(dangling.InitializeForTesting({0}) == PTO_STATUS_OK);
     module.reset();
     StepResult result;
     assert(dangling.Step(&result) == PTO_STATUS_MIR_INVALID);
@@ -278,7 +278,7 @@ void TestGeneratedDetermineLength() {
     MemoryHarness memory;
     const auto module = pto::model::GeneratedDetermineLengthModule();
     RuntimeModel runtime(module, memory.Callbacks());
-    assert(runtime.Reset({0}) == PTO_STATUS_OK);
+    assert(runtime.InitializeForTesting({0}) == PTO_STATUS_OK);
     for (const DetermineLengthCase &test_case : kDetermineLengthCases) {
         std::uint64_t result = 0;
         assert(runtime.InvokeU16(
@@ -313,14 +313,14 @@ void TestTypedAssert() {
     MemoryHarness memory;
     auto passing_module = make_module(1);
     RuntimeModel passing(passing_module, memory.Callbacks());
-    assert(passing.Reset({0}) == PTO_STATUS_OK);
+    assert(passing.InitializeForTesting({0}) == PTO_STATUS_OK);
     std::uint64_t result = 0;
     assert(passing.InvokeU16(600, 0, &result) == PTO_STATUS_OK);
     assert(result == 7);
 
     auto failing_module = make_module(0);
     RuntimeModel failing(failing_module, memory.Callbacks());
-    assert(failing.Reset({0}) == PTO_STATUS_OK);
+    assert(failing.InitializeForTesting({0}) == PTO_STATUS_OK);
     assert(failing.InvokeU16(600, 0, &result) == PTO_STATUS_MIR_INVALID);
 }
 
@@ -346,7 +346,7 @@ void TestNumericCallFrames() {
     assert(module != nullptr && error.empty());
     MemoryHarness memory;
     RuntimeModel runtime(module, memory.Callbacks());
-    assert(runtime.Reset({0}) == PTO_STATUS_OK);
+    assert(runtime.InitializeForTesting({0}) == PTO_STATUS_OK);
     std::uint64_t result = 0;
     assert(runtime.InvokeU16(700, 0, &result) == PTO_STATUS_OK);
     assert(result == 5);
@@ -366,6 +366,47 @@ void TestNumericIntegerExterns() {
                {UINT32_MAX, UINT32_MAX}));
 }
 
+std::uint64_t ValueU64(const pto::model::Value &value) {
+    std::uint64_t result = 0;
+    if (const auto *bits = std::get_if<pto::model::BitVector>(&value.storage()))
+        assert(bits->TryToU64(&result));
+    else
+        assert(std::get<pto::model::BigInteger>(value.storage()).TryToU64(&result));
+    return result;
+}
+
+void TestGeneratedResetState() {
+    auto module = pto::model::GeneratedResetModule();
+    MemoryHarness left_memory;
+    MemoryHarness right_memory;
+    RuntimeModel left(module, left_memory.Callbacks());
+    RuntimeModel right(module, right_memory.Callbacks());
+    pto::model::InitialState initial;
+    initial.entry_tpc = 0x100;
+    initial.pe0_gpr_valid_mask = (UINT32_C(1) << 0) | (UINT32_C(1) << 2);
+    initial.pe0_gpr[0] = 0xff;
+    initial.pe0_gpr[2] = 0x55;
+    assert(left.Reset(initial) == PTO_STATUS_OK);
+    assert(right.Reset({0x200}) == PTO_STATUS_OK);
+    assert(left_memory.reset_count == 1 && right_memory.reset_count == 1);
+    assert(ValueU64(*left.GlobalValueForTesting(
+               pto::model::GeneratedPCGlobalBinding())) == 0x100);
+    assert(ValueU64(*right.GlobalValueForTesting(
+               pto::model::GeneratedPCGlobalBinding())) == 0x200);
+    const auto &pe_files = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        left.GlobalValueForTesting(
+            pto::model::GeneratedPEGPRsGlobalBinding())->storage());
+    const auto pe0 = pe_files.Get(0);
+    const auto pe1 = pe_files.Get(1);
+    const auto &pe0_gprs = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        pe0.storage());
+    const auto &pe1_gprs = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        pe1.storage());
+    assert(ValueU64(pe0_gprs.Get(0)) == 0);
+    assert(ValueU64(pe0_gprs.Get(2)) == 0x55);
+    assert(ValueU64(pe1_gprs.Get(2)) == 0);
+}
+
 }  // namespace
 
 int main() {
@@ -376,5 +417,6 @@ int main() {
     TestTypedAssert();
     TestNumericCallFrames();
     TestNumericIntegerExterns();
+    TestGeneratedResetState();
     return 0;
 }

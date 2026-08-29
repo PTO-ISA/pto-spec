@@ -252,6 +252,37 @@ bool BitVector::TryToU64(std::uint64_t *value) const {
     return true;
 }
 
+BitVector BitVector::BitOr(const BitVector &other) const {
+    if (width_ != other.width_) throw std::invalid_argument("bitvector OR width");
+    BitVector result(width_);
+    for (std::size_t index = 0; index < bytes_.size(); ++index)
+        result.bytes_[index] = bytes_[index] | other.bytes_[index];
+    return result;
+}
+
+BitVector BitVector::BitAdd(const BitVector &other) const {
+    if (width_ != other.width_) throw std::invalid_argument("bitvector ADD width");
+    BitVector result(width_);
+    std::uint16_t carry = 0;
+    for (std::size_t index = 0; index < bytes_.size(); ++index) {
+        const std::uint16_t sum = static_cast<std::uint16_t>(bytes_[index]) +
+                                  other.bytes_[index] + carry;
+        result.bytes_[index] = static_cast<std::uint8_t>(sum);
+        carry = sum >> 8;
+    }
+    if (width_ % 8 != 0 && !result.bytes_.empty())
+        result.bytes_.back() &= static_cast<std::uint8_t>((1U << (width_ % 8)) - 1U);
+    return result;
+}
+
+BitVector BitVector::BitNot() const {
+    BitVector result = *this;
+    for (std::uint8_t &byte : result.bytes_) byte = static_cast<std::uint8_t>(~byte);
+    if (width_ % 8 != 0 && !result.bytes_.empty())
+        result.bytes_.back() &= static_cast<std::uint8_t>((1U << (width_ % 8)) - 1U);
+    return result;
+}
+
 bool BitVector::operator==(const BitVector &other) const {
     return width_ == other.width_ && bytes_ == other.bytes_;
 }

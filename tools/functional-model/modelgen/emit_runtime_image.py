@@ -145,6 +145,7 @@ class Compiler:
         field_ids: dict[str, int] | None = None,
         enum_labels: dict[str, tuple[int, int]] | None = None,
         extern_ids: dict[str, tuple[int, str, int]] | None = None,
+        argument_types: dict[str, tuple[str, int]] | None = None,
     ):
         self.arena = arena
         self.argument_ids = {name: index for index, name in enumerate(argument_names)}
@@ -156,6 +157,8 @@ class Compiler:
         self.field_ids = field_ids or {}
         self.enum_labels = enum_labels or {}
         self.extern_ids = extern_ids or {}
+        self.argument_types = argument_types or {
+            name: ("bits", 16) for name in argument_names}
 
     def local(self) -> int:
         result = self.next_local
@@ -205,12 +208,10 @@ class Compiler:
                 return target
             if variable not in self.argument_ids:
                 raise ModelgenError(f"unsupported runtime variable {variable!r}")
-            self.emit(
-                "kLoadArgumentBits",
-                local=target,
-                binding=self.argument_ids[variable],
-                immediate=16,
-            )
+            kind, width = self.argument_types[variable]
+            self.emit("kLoadArgumentBits" if kind == "bits"
+                      else "kLoadArgumentInteger", local=target,
+                      binding=self.argument_ids[variable], immediate=width)
             return target
         if name == "E_Literal":
             literal = self.single_argument(identifier, "E_Literal")
@@ -298,6 +299,9 @@ class Compiler:
                 "EQ": "kEqual", "NE": "kNotEqual",
                 "ADD": "kIntegerAdd", "SUB": "kIntegerSubtract",
                 "MUL": "kIntegerMultiply",
+                "BOR": "kBitOr",
+                "LT": "kIntegerLess", "GT": "kIntegerGreater",
+                "LE": "kIntegerLessEqual", "GE": "kIntegerGreaterEqual",
             }[operator]
             self.emit(
                 opcode,
@@ -328,6 +332,25 @@ class Compiler:
                 self.emit("kCallValue", local=result,
                           binding=self.function_ids[target_name],
                           immediate=len(values))
+            return result
+        if name == "E_Unop":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "E_Unop"), "tuple")
+            operator = self.arena.constructor_name(values[0])
+            if operator != "BNOT":
+                raise ModelgenError(f"unsupported runtime unary operator {operator}")
+            source = self.expression(values[1])
+            result = self.local()
+            self.emit("kBitNot", local=result, binding=source)
+            return result
+        if name == "E_ATC":
+            values = self.arena.sequence(
+                self.single_argument(identifier, "E_ATC"), "tuple")
+            if len(values) != 2:
+                raise ModelgenError(f"malformed E_ATC at node {identifier}")
+            source = self.expression(values[0])
+            result = self.local()
+            self.emit("kCopyValue", local=result, binding=source)
             return result
         if name == "E_GetArray":
             values = self.arena.sequence(
@@ -474,10 +497,12 @@ class Compiler:
                 local=self.expression(self.single_argument(identifier, "S_Assert")),
             )
             return False
+        if name == "S_Pass":
+            return False
         if name == "S_Call":
             fields = self.arena.record(self.single_argument(identifier, "S_Call"))
             target_name = str(self.arena.atom(fields["name"], "string"))
-            if target_name not in self.function_ids:
+            if target_name not in self.function_ids and target_name not in self.extern_ids:
                 raise ModelgenError(
                     f"unresolved runtime call {target_name!r} at node {identifier}"
                 )
@@ -485,11 +510,16 @@ class Compiler:
             values.extend(self.arena.sequence(fields["params"], "list"))
             for value in values:
                 self.emit("kPushArgument", local=self.expression(value))
-            self.emit(
-                "kCallProcedure",
-                binding=self.function_ids[target_name],
-                immediate=len(values),
-            )
+            if target_name in self.extern_ids:
+                binding_id, _, arity = self.extern_ids[target_name]
+                if arity != len(values):
+                    raise ModelgenError(f"extern call arity mismatch for {target_name}")
+                self.emit("kCallExtern", binding=binding_id,
+                          immediate=len(values))
+            else:
+                self.emit("kCallProcedure",
+                          binding=self.function_ids[target_name],
+                          immediate=len(values))
             return False
         if name == "S_Decl":
             values = self.arena.sequence(
@@ -603,6 +633,27 @@ def _enum_labels(
     for label in ambiguous:
         labels.pop(label, None)
     return labels
+
+
+def _argument_type(
+    arena: CompactArena,
+    node: int,
+    strings: list[str],
+    named_types: dict[str, dict[str, object]],
+) -> tuple[str, int]:
+    name = arena.constructor_name(node)
+    arguments = arena.constructor(node, name)
+    if name == "T_Named":
+        target = str(arena.atom(arguments[0], "string"))
+        row = named_types[target]
+        return _argument_type(
+            arena, int(row["definition_node"]), strings, named_types)
+    if name == "T_Bits":
+        values = arena.sequence(arguments[0], "tuple")
+        return ("bits", Compiler(arena, []).literal_integer(values[0]))
+    if name == "T_Int":
+        return ("integer", 0)
+    raise ModelgenError(f"unsupported runtime argument type {name} at node {node}")
 
 
 def render_global_defaults(image: dict[str, object]) -> list[dict[str, object]]:
@@ -753,12 +804,14 @@ def lower_module(
     }
     field_ids = {str(name): identifier for identifier, name in enumerate(strings)}
     enum_labels = _enum_labels(CompactArena(image), tables["types"])
+    named_types = {
+        str(strings[row["name_symbol_id"]]): row for row in tables["types"]}
     extern_ids: dict[str, tuple[int, str, int]] = {}
     for row in tables["externs"]:
         name = str(strings[row["name_symbol_id"]])
         function = functions[int(row["declaration_function_id"])]
         arity = len(function["arguments"]) + len(function["parameters"])
-        if name in {"UInt", "SInt"}:
+        if name in {"UInt", "SInt", "ResetPhysicalMemory"}:
             extern_ids[name] = (int(row["binding_id"]), name, arity)
     roots = [function_ids[name] for name in entrypoints]
     graph = {
@@ -778,22 +831,32 @@ def lower_module(
     lowered: list[dict[str, object]] = []
     for function_id in sorted(reachable):
         function = functions[function_id]
+        function_name = str(strings[function["name_symbol_id"]])
+        if function_name in extern_ids:
+            continue
         if function["extern_id"] is not None:
-            name = str(strings[function["name_symbol_id"]])
-            if name not in extern_ids:
+            if function_name not in extern_ids:
                 raise ModelgenError(
-                    f"runtime function {name} ({function_id}) is an unresolved extern")
+                    f"runtime function {function_name} ({function_id}) is an unresolved extern")
             continue
         arguments = [
             str(strings[row["name_symbol_id"]])
             for row in [*function["arguments"], *function["parameters"]]
         ]
+        argument_rows = [*function["arguments"], *function["parameters"]]
+        argument_types = {
+            str(strings[row["name_symbol_id"]]): _argument_type(
+                arena, int(row["type_node"]), strings, named_types)
+            for row in argument_rows
+        }
         compiler = Compiler(
             arena, arguments, function_ids, global_ids, field_ids, enum_labels,
-            extern_ids)
-        name = str(strings[function["name_symbol_id"]])
+            extern_ids, argument_types)
+        name = function_name
         try:
-            compiler.statement(int(function["body_node"]))
+            terminal = compiler.statement(int(function["body_node"]))
+            if function["return_type_node"] is None and not terminal:
+                compiler.emit("kReturnProcedure")
         except ModelgenError as error:
             raise ModelgenError(
                 f"runtime lowering failed in function {name} ({function_id}): {error}"
@@ -808,8 +871,7 @@ def lower_module(
     externs = [
         {"id": binding, "kind": kind, "argument_count": arity}
         for binding, kind, arity in sorted(extern_ids.values())
-        if any(functions[fid]["extern_id"] is not None and
-               str(strings[functions[fid]["name_symbol_id"]]) == kind
+        if any(str(strings[functions[fid]["name_symbol_id"]]) == kind
                for fid in reachable)
     ]
     return roots[0], lowered, externs
@@ -826,6 +888,12 @@ def _render_header() -> str:
 namespace pto::model {
 std::shared_ptr<const Module> GeneratedDetermineLengthModule();
 BindingId GeneratedDetermineLengthBinding();
+std::shared_ptr<const Module> GeneratedResetModule();
+BindingId GeneratedResetBinding();
+BindingId GeneratedInitializeGPRBinding();
+BindingId GeneratedPCGlobalBinding();
+BindingId GeneratedPEGPRsGlobalBinding();
+BindingId GeneratedNextTokenGlobalBinding();
 }  // namespace pto::model
 
 #endif
@@ -882,6 +950,7 @@ def render_module_source(
     digest: str,
     builder_name: str,
     externs: list[dict[str, object]] | None = None,
+    globals_: list[dict[str, object]] | None = None,
 ) -> str:
     blocks: list[str] = []
     rows: list[str] = []
@@ -914,8 +983,33 @@ def render_module_source(
         + "\n".join(
             f"        ExternDefinition{{{row['id']}u, ExternKind::k{row['kind']}, "
             f"{row['argument_count']}u}}," for row in (externs or []))
+        + "\n    }, {\n"
+        + "\n".join(
+            f"        GlobalDefinition{{{row['id']}u, {render_value_cpp(row['value'])}}},"
+            for row in (globals_ or []))
         + "\n    });\n}\n}  // namespace pto::model\n"
     )
+
+
+def render_value_cpp(value: dict[str, object]) -> str:
+    kind = value["kind"]
+    if kind == "bool": return f"Value({'true' if value['value'] else 'false'})"
+    if kind == "integer": return "Value(BigInteger())"
+    if kind == "bits": return f"Value(BitVector({value['width']}u))"
+    if kind == "enum":
+        return f"Value(EnumValue{{{value['type_node']}u, {value['member']}u}})"
+    if kind == "tuple":
+        return "Value(TupleValue{" + ",".join(
+            render_value_cpp(item) for item in value["items"]) + "})"
+    if kind == "record":
+        return "Value(RecordValue{" + ",".join(
+            "{" + str(field) + "u," + render_value_cpp(item) + "}"
+            for field, item in value["fields"]) + "})"
+    if kind == "array":
+        element = render_value_cpp(value["element"])
+        return ("Value(std::make_shared<PagedLazyArray>("
+                f"[](std::uint64_t) {{ return {element}; }}))")
+    raise ModelgenError(f"unsupported rendered default kind {kind}")
 
 
 def _load_cases(path: Path) -> list[dict[str, int]]:
@@ -966,6 +1060,7 @@ def main() -> int:
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--header", type=Path, required=True)
     parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--reset-source", type=Path, required=True)
     parser.add_argument("--cases", type=Path, required=True)
     parser.add_argument("--cases-header", type=Path, required=True)
     arguments = parser.parse_args()
@@ -973,11 +1068,32 @@ def main() -> int:
         image_bytes = arguments.input.read_bytes()
         image = json.loads(image_bytes)
         function_id, instructions = lower(image)
+        reset_id, reset_functions, reset_externs = lower_module(
+            image, ("InitializeFunctionalModel", "InitializeFunctionalModelGPR"))
+        strings = [row["name"] for row in image["tables"]["strings"]]
+        gpr_id = next(
+            int(row["id"]) for row in image["tables"]["functions"]
+            if strings[row["name_symbol_id"]] == "InitializeFunctionalModelGPR")
+        global_ids = {
+            strings[row["name_symbol_id"]]: int(row["id"])
+            for row in image["tables"]["globals"]}
+        reset_source = render_module_source(
+            reset_id, reset_functions, hashlib.sha256(image_bytes).hexdigest(),
+            "GeneratedResetModule", reset_externs, render_global_defaults(image))
+        reset_source += (
+            "\nnamespace pto::model {\n"
+            f"BindingId GeneratedResetBinding() {{ return {reset_id}u; }}\n"
+            f"BindingId GeneratedInitializeGPRBinding() {{ return {gpr_id}u; }}\n"
+            f"BindingId GeneratedPCGlobalBinding() {{ return {global_ids['_PC']}u; }}\n"
+            f"BindingId GeneratedPEGPRsGlobalBinding() {{ return {global_ids['_PEGPRs']}u; }}\n"
+            f"BindingId GeneratedNextTokenGlobalBinding() {{ return {global_ids['_FunctionalHostRequestNextToken']}u; }}\n"
+            "}  // namespace pto::model\n")
         outputs = {
             arguments.header: _render_header(),
             arguments.source: _render_source(
                 function_id, instructions, hashlib.sha256(image_bytes).hexdigest()
             ),
+            arguments.reset_source: reset_source,
             arguments.cases_header: _render_cases_header(_load_cases(arguments.cases)),
         }
         for path, content in outputs.items():

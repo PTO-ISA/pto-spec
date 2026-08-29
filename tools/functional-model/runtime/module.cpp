@@ -13,7 +13,8 @@ namespace pto::model {
 std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                                              BindingId step_entrypoint,
                                              std::string *error,
-                                             std::vector<ExternDefinition> externs) {
+                                             std::vector<ExternDefinition> externs,
+                                             std::vector<GlobalDefinition> globals) {
     constexpr std::size_t kMaximumFunctions = 4096;
     constexpr std::size_t kMaximumInstructions = 1U << 20;
     if (functions.size() > kMaximumFunctions) {
@@ -46,6 +47,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kAddLocalU64:
                 case OpCode::kWriteMemoryImmediate:
                 case OpCode::kLoadArgumentBits:
+                case OpCode::kLoadArgumentInteger:
                 case OpCode::kLoadBitsImmediate:
                 case OpCode::kLoadIntegerImmediate:
                 case OpCode::kSliceBits:
@@ -63,8 +65,12 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kIntegerAdd:
                 case OpCode::kIntegerSubtract:
                 case OpCode::kIntegerMultiply:
+                case OpCode::kBitOr:
+                case OpCode::kBitNot:
                 case OpCode::kIntegerLessEqual:
                 case OpCode::kIntegerGreaterEqual:
+                case OpCode::kIntegerLess:
+                case OpCode::kIntegerGreater:
                 case OpCode::kIntegerStep:
                 case OpCode::kGetArray:
                 case OpCode::kSetArray:
@@ -213,15 +219,18 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
         }
     }
     return std::shared_ptr<const Module>(
-        new Module(std::move(functions), step_entrypoint, std::move(externs)));
+        new Module(std::move(functions), step_entrypoint, std::move(externs),
+                   std::move(globals)));
 }
 
 Module::Module(std::vector<Function> functions,
                BindingId step_entrypoint,
-               std::vector<ExternDefinition> externs)
+               std::vector<ExternDefinition> externs,
+               std::vector<GlobalDefinition> globals)
     : functions_(std::move(functions)),
       step_entrypoint_(step_entrypoint),
-      externs_(std::move(externs)) {
+      externs_(std::move(externs)),
+      globals_(std::move(globals)) {
     for (std::size_t index = 0; index < functions_.size(); ++index) {
         function_indices_.emplace(functions_[index].id, index);
     }
@@ -241,5 +250,7 @@ const ExternDefinition *Module::FindExtern(BindingId id) const {
         [id](const ExternDefinition &candidate) { return candidate.id == id; });
     return found == externs_.end() ? nullptr : &*found;
 }
+
+const std::vector<GlobalDefinition> &Module::globals() const { return globals_; }
 
 }  // namespace pto::model

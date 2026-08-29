@@ -121,6 +121,14 @@ EvaluationResult Interpreter::EvaluateInternal(
                 frame.typed_locals.insert_or_assign(
                     instruction.local, arguments[instruction.binding]);
                 break;
+            case OpCode::kLoadArgumentInteger:
+                if (instruction.binding >= arguments.size() ||
+                    !std::holds_alternative<BigInteger>(
+                        arguments[instruction.binding].storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, arguments[instruction.binding].Clone());
+                break;
             case OpCode::kLoadBitsImmediate:
                 frame.typed_locals.insert_or_assign(
                     instruction.local,
@@ -293,14 +301,34 @@ EvaluationResult Interpreter::EvaluateInternal(
                 const ExternDefinition *target = module.FindExtern(instruction.binding);
                 if (target == nullptr ||
                     frame.pending_arguments.size() != target->argument_count ||
-                    target->argument_count != instruction.immediate ||
-                    frame.pending_arguments.size() != 1 ||
+                    target->argument_count != instruction.immediate) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                if (target->kind == ExternKind::kResetPhysicalMemory) {
+                    if (!frame.pending_arguments.empty())
+                        return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                    const pto_status_t reset_status = memory->Reset();
+                    if (reset_status != PTO_STATUS_OK)
+                        return {reset_status, PTO_STEP_UNSUPPORTED};
+                    break;
+                }
+                if (frame.pending_arguments.empty() ||
                     !std::holds_alternative<BitVector>(
                         frame.pending_arguments[0].storage())) {
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
                 }
                 const BitVector &bits = std::get<BitVector>(
                     frame.pending_arguments[0].storage());
+                if (frame.pending_arguments.size() == 2) {
+                    const auto *width = std::get_if<BigInteger>(
+                        &frame.pending_arguments[1].storage());
+                    std::uint64_t width_value = 0;
+                    if (width == nullptr || !width->TryToU64(&width_value) ||
+                        width_value != bits.width())
+                        return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                } else if (frame.pending_arguments.size() != 1) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
                 BigInteger result = target->kind == ExternKind::kUInt
                     ? bits.ToUnsignedInteger() : bits.ToSignedInteger();
                 frame.pending_arguments.clear();
@@ -312,13 +340,43 @@ EvaluationResult Interpreter::EvaluateInternal(
             case OpCode::kIntegerSubtract:
             case OpCode::kIntegerMultiply:
             case OpCode::kIntegerLessEqual:
-            case OpCode::kIntegerGreaterEqual: {
+            case OpCode::kIntegerGreaterEqual:
+            case OpCode::kIntegerLess:
+            case OpCode::kIntegerGreater: {
                 const auto left = frame.typed_locals.find(instruction.binding);
                 const auto right = frame.typed_locals.find(
                     static_cast<std::uint32_t>(instruction.address));
-                if (left == frame.typed_locals.end() ||
-                    right == frame.typed_locals.end() ||
-                    !std::holds_alternative<BigInteger>(left->second.storage()) ||
+                if (left == frame.typed_locals.end() || right == frame.typed_locals.end())
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                if (instruction.opcode == OpCode::kIntegerAdd &&
+                    std::holds_alternative<BitVector>(left->second.storage()) &&
+                    (std::holds_alternative<BitVector>(right->second.storage()) ||
+                     std::holds_alternative<BigInteger>(right->second.storage()))) {
+                    try {
+                        const BitVector &left_bits =
+                            std::get<BitVector>(left->second.storage());
+                        BitVector right_bits = BitVector(left_bits.width());
+                        if (const auto *bits = std::get_if<BitVector>(
+                                &right->second.storage())) {
+                            right_bits = *bits;
+                        } else {
+                            std::uint64_t carrier = 0;
+                            if (!std::get<BigInteger>(right->second.storage())
+                                     .TryToU64(&carrier))
+                                return {PTO_STATUS_MIR_INVALID,
+                                        PTO_STEP_UNSUPPORTED};
+                            right_bits = BitVector::FromU64(
+                                left_bits.width(), carrier);
+                        }
+                        frame.typed_locals.insert_or_assign(
+                            instruction.local,
+                            Value(left_bits.BitAdd(right_bits)));
+                    } catch (const std::invalid_argument &) {
+                        return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                    }
+                    break;
+                }
+                if (!std::holds_alternative<BigInteger>(left->second.storage()) ||
                     !std::holds_alternative<BigInteger>(right->second.storage()))
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
                 const BigInteger &l = std::get<BigInteger>(left->second.storage());
@@ -334,10 +392,16 @@ EvaluationResult Interpreter::EvaluateInternal(
                                               ? r : r.Negated())));
                 } else {
                     const int order = l.Compare(r);
+                    bool comparison = false;
+                    if (instruction.opcode == OpCode::kIntegerLessEqual)
+                        comparison = order <= 0;
+                    else if (instruction.opcode == OpCode::kIntegerGreaterEqual)
+                        comparison = order >= 0;
+                    else if (instruction.opcode == OpCode::kIntegerLess)
+                        comparison = order < 0;
+                    else comparison = order > 0;
                     frame.typed_locals.insert_or_assign(
-                        instruction.local,
-                        Value(instruction.opcode == OpCode::kIntegerLessEqual
-                                  ? order <= 0 : order >= 0));
+                        instruction.local, Value(comparison));
                 }
                 break;
             }
@@ -350,6 +414,49 @@ EvaluationResult Interpreter::EvaluateInternal(
                 frame.typed_locals.insert_or_assign(
                     instruction.local,
                     Value(std::get<BigInteger>(value->second.storage()).Add(delta)));
+                break;
+            }
+            case OpCode::kBitOr: {
+                const auto left = frame.typed_locals.find(instruction.binding);
+                const auto right = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                if (left == frame.typed_locals.end() || right == frame.typed_locals.end())
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                if (std::holds_alternative<bool>(left->second.storage()) &&
+                    std::holds_alternative<bool>(right->second.storage())) {
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local,
+                        Value(std::get<bool>(left->second.storage()) ||
+                              std::get<bool>(right->second.storage())));
+                    break;
+                }
+                if (!std::holds_alternative<BitVector>(left->second.storage()) ||
+                    !std::holds_alternative<BitVector>(right->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                try {
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local,
+                        Value(std::get<BitVector>(left->second.storage()).BitOr(
+                            std::get<BitVector>(right->second.storage()))));
+                } catch (const std::invalid_argument &) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                break;
+            }
+            case OpCode::kBitNot: {
+                const auto value = frame.typed_locals.find(instruction.binding);
+                if (value == frame.typed_locals.end())
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                if (const auto *boolean = std::get_if<bool>(&value->second.storage())) {
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local, Value(!*boolean));
+                    break;
+                }
+                if (!std::holds_alternative<BitVector>(value->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local,
+                    Value(std::get<BitVector>(value->second.storage()).BitNot()));
                 break;
             }
             case OpCode::kGetArray: {

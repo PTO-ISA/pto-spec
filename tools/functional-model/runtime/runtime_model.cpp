@@ -1,5 +1,7 @@
 #include "runtime_model.h"
 
+#include "pto_generated_runtime_image.h"
+
 #include <utility>
 
 namespace pto::model {
@@ -17,26 +19,76 @@ bool RuntimeModel::BusyGuard::acquired() const { return acquired_; }
 
 RuntimeModel::RuntimeModel(std::weak_ptr<const Module> module,
                            MemoryCallbacks callbacks)
-    : module_(std::move(module)), callbacks_(std::move(callbacks)) {}
+    : module_(std::move(module)), callbacks_(std::move(callbacks)) {
+    if (const auto resolved = module_.lock()) {
+        for (const GlobalDefinition &global : resolved->globals()) {
+            state_.typed_globals.emplace(global.id, global.value.Clone());
+        }
+    }
+}
 
 pto_status_t RuntimeModel::Reset(const InitialState &initial) {
     BusyGuard guard(&busy_);
     if (!guard.acquired()) {
         return PTO_STATUS_BUSY;
     }
-    RuntimeState candidate;
-    candidate.tpc = initial.entry_tpc;
-    if (!callbacks_.reset) {
-        SetError("physical-memory reset callback is missing");
-        return PTO_STATUS_INVALID_STATE;
+    if ((initial.entry_tpc & 1U) != 0 ||
+        (initial.pe0_gpr_valid_mask & UINT32_C(0xff000000)) != 0)
+        return PTO_STATUS_INVALID_ARGUMENT;
+    const auto module = module_.lock();
+    if (!module) {
+        SetError("generated reset module is unavailable");
+        return PTO_STATUS_MIR_INVALID;
     }
-    const pto_status_t status = callbacks_.reset();
-    if (status != PTO_STATUS_OK) {
-        SetError("physical-memory reset callback failed");
-        return status;
+    RuntimeState candidate = state_;
+    MemoryTransaction memory(callbacks_);
+    const Function *reset = module->FindFunction(GeneratedResetBinding());
+    if (reset == nullptr) {
+        SetError("generated reset entrypoint is unavailable");
+        return PTO_STATUS_MIR_INVALID;
+    }
+    EvaluationResult evaluation = interpreter_.Evaluate(
+        *module, *reset, &candidate, &memory,
+        {Value(BitVector::FromU64(64, initial.entry_tpc))});
+    if (evaluation.status != PTO_STATUS_OK || evaluation.return_value) {
+        SetError("generated InitializeFunctionalModel evaluation failed");
+        return evaluation.status == PTO_STATUS_OK ? PTO_STATUS_MIR_INVALID
+                                                  : evaluation.status;
+    }
+    const Function *initialize_gpr = module->FindFunction(
+        GeneratedInitializeGPRBinding());
+    if (initialize_gpr == nullptr) {
+        SetError("generated InitializeFunctionalModelGPR entrypoint is unavailable");
+        return PTO_STATUS_MIR_INVALID;
+    }
+    for (std::uint32_t index = 0; index < 24; ++index) {
+        if ((initial.pe0_gpr_valid_mask & (UINT32_C(1) << index)) == 0) continue;
+        evaluation = interpreter_.Evaluate(
+            *module, *initialize_gpr, &candidate, &memory,
+            {Value(BigInteger(index)),
+             Value(BitVector::FromU64(64, initial.pe0_gpr[index]))});
+        const auto *accepted = evaluation.return_value
+            ? std::get_if<bool>(&evaluation.return_value->storage()) : nullptr;
+        if (evaluation.status != PTO_STATUS_OK || accepted == nullptr || !*accepted) {
+            SetError("generated InitializeFunctionalModelGPR evaluation failed");
+            return evaluation.status == PTO_STATUS_OK ? PTO_STATUS_INVALID_STATE
+                                                      : evaluation.status;
+        }
     }
     state_ = std::move(candidate);
     last_error_.clear();
+    return PTO_STATUS_OK;
+}
+
+pto_status_t RuntimeModel::InitializeForTesting(const InitialState &initial) {
+    BusyGuard guard(&busy_);
+    if (!guard.acquired()) return PTO_STATUS_BUSY;
+    RuntimeState candidate = state_;
+    candidate.tpc = initial.entry_tpc;
+    const pto_status_t status = callbacks_.reset
+        ? callbacks_.reset() : PTO_STATUS_INVALID_STATE;
+    if (status != PTO_STATUS_OK) return status;
+    state_ = std::move(candidate);
     return PTO_STATUS_OK;
 }
 
@@ -155,6 +207,11 @@ std::string RuntimeModel::last_error() const { return last_error_; }
 std::uint64_t RuntimeModel::GlobalU64(BindingId id) const {
     const auto found = state_.globals.find(id);
     return found == state_.globals.end() ? 0 : found->second;
+}
+
+const Value *RuntimeModel::GlobalValueForTesting(BindingId id) const {
+    const auto found = state_.typed_globals.find(id);
+    return found == state_.typed_globals.end() ? nullptr : &found->second;
 }
 
 void RuntimeModel::SetError(std::string error) {

@@ -1,6 +1,7 @@
 #include "pto/pto_asl_model.h"
 
 #include <assert.h>
+#include <stdio.h>
 #include <string.h>
 
 static pto_status_t reset_memory(void *user_data) {
@@ -59,7 +60,16 @@ int main(void) {
     initial.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
     initial.struct_size = sizeof(initial);
     initial.entry_tpc = 0x100;
-    assert(pto_model_reset(model, &initial) == PTO_STATUS_OK);
+    pto_status_t reset_status = pto_model_reset(model, &initial);
+    if (reset_status != PTO_STATUS_OK) {
+        uint64_t diagnostic_size = 0;
+        (void)pto_model_last_error(model, NULL, &diagnostic_size);
+        char diagnostic[256] = {0};
+        if (diagnostic_size <= sizeof(diagnostic))
+            (void)pto_model_last_error(model, diagnostic, &diagnostic_size);
+        fprintf(stderr, "reset status=%u: %s\n", reset_status, diagnostic);
+    }
+    assert(reset_status == PTO_STATUS_OK);
 
     pto_step_result_t result = {0};
     result.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
@@ -73,13 +83,19 @@ int main(void) {
     char error_buffer[128];
     assert(pto_model_last_error(model, error_buffer, &error_size) ==
            PTO_STATUS_OK);
-    assert(strstr(error_buffer, "module") != NULL);
+    assert(error_buffer[0] != '\0');
 
     result.struct_size -= 1;
     assert(pto_model_step(model, &result) == PTO_STATUS_ABI_MISMATCH);
 
     initial.pe0_gpr_valid_mask = 1;
-    assert(pto_model_reset(model, &initial) == PTO_STATUS_UNSUPPORTED);
+    reset_status = pto_model_reset(model, &initial);
+    if (reset_status != PTO_STATUS_OK) {
+        uint64_t size = sizeof(error_buffer);
+        (void)pto_model_last_error(model, error_buffer, &size);
+        fprintf(stderr, "GPR reset status=%u: %s\n", reset_status, error_buffer);
+    }
+    assert(reset_status == PTO_STATUS_OK);
 
     config.abi_version = 0;
     pto_model_t *invalid = NULL;

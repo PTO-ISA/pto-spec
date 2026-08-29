@@ -16,6 +16,8 @@ set(PTO_GENERATED_RUNTIME_HEADER
     "${PTO_GENERATED_ROOT}/pto_generated_runtime_image.h")
 set(PTO_GENERATED_RUNTIME_SOURCE
     "${PTO_GENERATED_ROOT}/pto_generated_runtime_image.cpp")
+set(PTO_GENERATED_RESET_SOURCE
+    "${PTO_GENERATED_ROOT}/pto_generated_reset_image.cpp")
 set(PTO_GENERATED_CASES_HEADER
     "${PTO_GENERATED_ROOT}/pto_generated_determine_length_cases.h")
 
@@ -56,12 +58,14 @@ add_custom_command(
     OUTPUT
         "${PTO_GENERATED_RUNTIME_HEADER}"
         "${PTO_GENERATED_RUNTIME_SOURCE}"
+        "${PTO_GENERATED_RESET_SOURCE}"
         "${PTO_GENERATED_CASES_HEADER}"
     COMMAND "${Python3_EXECUTABLE}"
             "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/emit_runtime_image.py"
             --input "${PTO_GENERATED_EXECUTABLE_MIR}"
             --header "${PTO_GENERATED_RUNTIME_HEADER}"
             --source "${PTO_GENERATED_RUNTIME_SOURCE}"
+            --reset-source "${PTO_GENERATED_RESET_SOURCE}"
             --cases
             "${CMAKE_CURRENT_SOURCE_DIR}/tests/determine_length_cases.json"
             --cases-header "${PTO_GENERATED_CASES_HEADER}"
@@ -74,6 +78,7 @@ add_custom_command(
 
 add_library(pto_asl_model STATIC
     "${PTO_GENERATED_RUNTIME_SOURCE}"
+    "${PTO_GENERATED_RESET_SOURCE}"
     runtime/c_api.cpp
     runtime/interpreter.cpp
     runtime/module.cpp

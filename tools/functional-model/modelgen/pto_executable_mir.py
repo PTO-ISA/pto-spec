@@ -31,6 +31,7 @@ DEFAULT_ENTRYPOINTS = (
     "ExecutePTOInstruction",
     "FetchPTOInstruction",
     "InitializeFunctionalModel",
+    "InitializeFunctionalModelGPR",
 )
 
 EXTERNAL_IMPDEF_BINDINGS = {

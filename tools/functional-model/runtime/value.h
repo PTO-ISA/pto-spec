@@ -45,6 +45,9 @@ class BitVector {
                   std::size_t width,
                   const BitVector &replacement);
     bool TryToU64(std::uint64_t *value) const;
+    BitVector BitOr(const BitVector &other) const;
+    BitVector BitAdd(const BitVector &other) const;
+    BitVector BitNot() const;
     bool operator==(const BitVector &other) const;
 
   private:

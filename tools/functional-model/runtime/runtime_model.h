@@ -6,6 +6,7 @@
 #include "transaction.h"
 
 #include <atomic>
+#include <array>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -14,6 +15,8 @@ namespace pto::model {
 
 struct InitialState {
     std::uint64_t entry_tpc = 0;
+    std::uint32_t pe0_gpr_valid_mask = 0;
+    std::array<std::uint64_t, 24> pe0_gpr{};
 };
 
 struct StepResult {
@@ -29,6 +32,7 @@ class RuntimeModel {
   public:
     RuntimeModel(std::weak_ptr<const Module> module, MemoryCallbacks callbacks);
     pto_status_t Reset(const InitialState &initial);
+    pto_status_t InitializeForTesting(const InitialState &initial);
     pto_status_t Step(StepResult *result);
     pto_status_t CompleteHostRequest(std::uint64_t token,
                                      std::uint64_t scalar_result);
@@ -37,6 +41,7 @@ class RuntimeModel {
                            std::uint64_t *result);
     std::string last_error() const;
     std::uint64_t GlobalU64(BindingId id) const;
+    const Value *GlobalValueForTesting(BindingId id) const;
 
   private:
     class BusyGuard {

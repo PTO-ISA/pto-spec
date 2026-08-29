@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "value.h"
+
 namespace pto::model {
 
 using BindingId = std::uint32_t;
@@ -20,12 +22,17 @@ inline constexpr BindingId kWritePhysicalMemoryByte = 0x101;
 inline constexpr BindingId kResetPhysicalMemory = 0x102;
 }  // namespace binding
 
-enum class ExternKind : std::uint8_t { kUInt, kSInt };
+enum class ExternKind : std::uint8_t { kUInt, kSInt, kResetPhysicalMemory };
 
 struct ExternDefinition {
     BindingId id;
     ExternKind kind;
     std::uint32_t argument_count;
+};
+
+struct GlobalDefinition {
+    BindingId id;
+    Value value;
 };
 
 enum class OpCode : std::uint8_t {
@@ -37,6 +44,7 @@ enum class OpCode : std::uint8_t {
     kWriteMemoryImmediate,
     kReadMemoryToGlobal,
     kLoadArgumentBits,
+    kLoadArgumentInteger,
     kLoadBitsImmediate,
     kLoadIntegerImmediate,
     kSliceBits,
@@ -56,8 +64,12 @@ enum class OpCode : std::uint8_t {
     kIntegerAdd,
     kIntegerSubtract,
     kIntegerMultiply,
+    kBitOr,
+    kBitNot,
     kIntegerLessEqual,
     kIntegerGreaterEqual,
+    kIntegerLess,
+    kIntegerGreater,
     kIntegerStep,
     kGetArray,
     kSetArray,
@@ -94,20 +106,24 @@ class Module final {
         std::vector<Function> functions,
         BindingId step_entrypoint,
         std::string *error,
-        std::vector<ExternDefinition> externs = {});
+        std::vector<ExternDefinition> externs = {},
+        std::vector<GlobalDefinition> globals = {});
 
     const Function *FindFunction(BindingId id) const;
     BindingId step_entrypoint() const;
     const ExternDefinition *FindExtern(BindingId id) const;
+    const std::vector<GlobalDefinition> &globals() const;
 
   private:
     Module(std::vector<Function> functions,
            BindingId step_entrypoint,
-           std::vector<ExternDefinition> externs);
+           std::vector<ExternDefinition> externs,
+           std::vector<GlobalDefinition> globals);
     std::vector<Function> functions_;
     std::unordered_map<BindingId, std::size_t> function_indices_;
     BindingId step_entrypoint_;
     std::vector<ExternDefinition> externs_;
+    std::vector<GlobalDefinition> globals_;
 };
 
 }  // namespace pto::model

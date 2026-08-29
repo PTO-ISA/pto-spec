@@ -1,6 +1,7 @@
 #include "pto/pto_asl_model.h"
 
 #include "runtime_model.h"
+#include "pto_generated_runtime_image.h"
 
 #include <algorithm>
 #include <cstring>
@@ -82,7 +83,7 @@ extern "C" pto_status_t pto_model_create(const pto_model_config_t *config,
     }
     try {
         auto model = std::make_unique<pto_model>();
-        model->module_owner = pto::model::DisconnectedModule();
+        model->module_owner = pto::model::GeneratedResetModule();
         model->runtime = std::make_unique<pto::model::RuntimeModel>(
             model->module_owner, BindCallbacks(config->memory));
         *out_model = model.release();
@@ -109,10 +110,12 @@ extern "C" pto_status_t pto_model_reset(
         initial_state->reserved0 != 0) {
         return PTO_STATUS_INVALID_ARGUMENT;
     }
-    if (initial_state->pe0_gpr_valid_mask != 0) {
-        return PTO_STATUS_UNSUPPORTED;
-    }
-    return model->runtime->Reset({initial_state->entry_tpc});
+    pto::model::InitialState initial;
+    initial.entry_tpc = initial_state->entry_tpc;
+    initial.pe0_gpr_valid_mask = initial_state->pe0_gpr_valid_mask;
+    std::copy(std::begin(initial_state->pe0_gpr),
+              std::end(initial_state->pe0_gpr), initial.pe0_gpr.begin());
+    return model->runtime->Reset(initial);
 }
 
 extern "C" pto_status_t pto_model_step(pto_model_t *model,
