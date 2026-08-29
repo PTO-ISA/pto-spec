@@ -3474,7 +3474,7 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "5a388ad67da9bd1548657f87fecaab29083efcab56d5ea6f7a8413e4c283cc47"
+      "sha256": "4299cf4be93394fcf13fa24aaa63183a04b4c7796e37f2c3a6bff4dcf82c9cd1"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
@@ -3528,7 +3528,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "7c448d3ef3156e77aac0ae006e2579573385d8d69cd33e26351ad672cec0b9b1",
+  "content_sha256": "07bd5e881c9006bf7e7694fc1f0295fa7e5ceef316150886b3c7886b78828bae",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
