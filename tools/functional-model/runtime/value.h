@@ -19,6 +19,7 @@ class BigInteger {
     static BigInteger FromUnsignedWords(std::vector<std::uint32_t> words);
     BigInteger Add(const BigInteger &other) const;
     BigInteger Multiply(const BigInteger &other) const;
+    bool Divide(const BigInteger &other, BigInteger *quotient) const;
     BigInteger Negated() const;
     int Compare(const BigInteger &other) const;
     bool IsZero() const;
@@ -46,6 +47,8 @@ class BitVector {
                   const BitVector &replacement);
     bool TryToU64(std::uint64_t *value) const;
     BitVector BitOr(const BitVector &other) const;
+    BitVector BitAnd(const BitVector &other) const;
+    BitVector Concat(const BitVector &right) const;
     BitVector BitAdd(const BitVector &other) const;
     BitVector BitNot() const;
     bool operator==(const BitVector &other) const;

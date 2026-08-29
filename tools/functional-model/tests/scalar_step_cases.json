@@ -1,0 +1,7 @@
+{
+  "schema":"pto-functional-model-scalar-step-cases-v1",
+  "cases":[
+    {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-16-002","name":"C.MOVI","entry":256,"raw":5142,"length_bits":16,"gpr_before":{},"gpr_after":{"2":18446744073709551600},"post_tpc":258},
+    {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-ADD-001","name":"ADD","entry":256,"raw":2130309,"length_bits":32,"gpr_before":{"1":10,"2":20},"gpr_after":{"3":30},"post_tpc":260}
+  ]
+}

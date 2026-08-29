@@ -50,7 +50,7 @@ class Interpreter {
                               RuntimeState *state,
                               MemoryTransaction *memory,
                               const std::vector<Value> &arguments = {},
-                              std::uint64_t instruction_limit = (UINT64_C(1) << 20)) const;
+                              std::uint64_t instruction_limit = (UINT64_C(1) << 24)) const;
 
   private:
     EvaluationResult EvaluateInternal(const Module &module,

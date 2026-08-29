@@ -109,6 +109,40 @@ BigInteger BigInteger::Multiply(const BigInteger &other) const {
     return result;
 }
 
+bool BigInteger::Divide(const BigInteger &other, BigInteger *quotient) const {
+    if (quotient == nullptr || other.words_.empty()) return false;
+    BigInteger dividend = *this;
+    BigInteger divisor = other;
+    dividend.negative_ = false;
+    divisor.negative_ = false;
+    BigInteger result;
+    if (dividend.words_.empty() || dividend.Compare(divisor) < 0) {
+        *quotient = result;
+        return true;
+    }
+    const std::size_t top_word = dividend.words_.size() - 1;
+    std::size_t bit_count = top_word * 32 + 32;
+    while (bit_count > 0 &&
+           ((dividend.words_[(bit_count - 1) / 32] >> ((bit_count - 1) % 32)) & 1U) == 0)
+        --bit_count;
+    result.words_.assign((bit_count + 31) / 32, 0);
+    BigInteger remainder;
+    for (std::size_t offset = 0; offset < bit_count; ++offset) {
+        const std::size_t bit_index = bit_count - offset - 1;
+        remainder = remainder.Add(remainder);
+        if (((dividend.words_[bit_index / 32] >> (bit_index % 32)) & 1U) != 0)
+            remainder = remainder.Add(BigInteger(1));
+        if (remainder.Compare(divisor) >= 0) {
+            remainder = remainder.Add(divisor.Negated());
+            result.words_[bit_index / 32] |= UINT32_C(1) << (bit_index % 32);
+        }
+    }
+    result.negative_ = negative_ != other.negative_;
+    result.Normalize();
+    *quotient = std::move(result);
+    return true;
+}
+
 int BigInteger::Compare(const BigInteger &other) const {
     if (negative_ != other.negative_) return negative_ ? -1 : 1;
     int magnitude = 0;
@@ -257,6 +291,29 @@ BitVector BitVector::BitOr(const BitVector &other) const {
     BitVector result(width_);
     for (std::size_t index = 0; index < bytes_.size(); ++index)
         result.bytes_[index] = bytes_[index] | other.bytes_[index];
+    return result;
+}
+
+BitVector BitVector::BitAnd(const BitVector &other) const {
+    if (width_ != other.width_) throw std::invalid_argument("bitvector AND width");
+    BitVector result(width_);
+    for (std::size_t index = 0; index < bytes_.size(); ++index)
+        result.bytes_[index] = bytes_[index] & other.bytes_[index];
+    return result;
+}
+
+BitVector BitVector::Concat(const BitVector &right) const {
+    if (width_ > (UINT64_C(1) << 20) - right.width_)
+        throw std::invalid_argument("bitvector concat width");
+    BitVector result(width_ + right.width_);
+    for (std::size_t index = 0; index < right.width_; ++index)
+        if (right.bit(index)) result.bytes_[index / 8] |=
+            static_cast<std::uint8_t>(1U << (index % 8));
+    for (std::size_t index = 0; index < width_; ++index) {
+        const std::size_t destination = right.width_ + index;
+        if (bit(index)) result.bytes_[destination / 8] |=
+            static_cast<std::uint8_t>(1U << (destination % 8));
+    }
     return result;
 }
 

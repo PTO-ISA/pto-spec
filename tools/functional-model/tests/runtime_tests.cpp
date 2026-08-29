@@ -29,7 +29,7 @@ constexpr BindingId kCounter = 500;
 constexpr BindingId kObserved = 501;
 
 struct MemoryHarness {
-    std::array<std::uint8_t, 64> bytes{};
+    std::array<std::uint8_t, 8192> bytes{};
     int reset_count = 0;
     int probe_count = 0;
     int read_count = 0;
@@ -446,6 +446,82 @@ void TestGeneratedPredecodeSteps() {
     assert(memory.read_count == 0);
 }
 
+void TestGeneratedScalarSteps() {
+    auto module = pto::model::GeneratedResetModule();
+    MemoryHarness memory;
+    RuntimeModel runtime(module, memory.Callbacks());
+    assert(runtime.Reset({0x100}) == PTO_STATUS_OK);
+    memory.bytes[0x100] = 0x16;
+    memory.bytes[0x101] = 0x14;
+    memory.read_count = 0;
+    StepResult result;
+    pto_status_t status = runtime.Step(&result);
+    if (status != PTO_STATUS_OK)
+        std::fprintf(stderr, "C.MOVI status=%u: %s\n", status,
+                     runtime.last_error().c_str());
+    assert(status == PTO_STATUS_OK);
+    if (result.state != PTO_STEP_EXECUTED)
+        std::fprintf(stderr,
+                     "C.MOVI result state=%u instruction=%u fault=%u length=%u raw=%llx\n",
+                     result.state, result.instruction_status, result.fault_code,
+                     result.length_bits,
+                     static_cast<unsigned long long>(result.raw_instruction));
+    assert(result.state == PTO_STEP_EXECUTED);
+    assert(result.instruction_status == PTO_INSTRUCTION_EXECUTED);
+    assert(result.length_bits == 16 && result.raw_instruction == 0x1416);
+    assert(result.pre_tpc == 0x100 && result.post_tpc == 0x102);
+    assert(result.fault_code == 0);
+    assert(memory.read_count == 4);
+    const auto &pe_files = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedPEGPRsGlobalBinding())->storage());
+    const auto pe0 = pe_files.Get(0);
+    const auto &gprs = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        pe0.storage());
+    assert(ValueU64(gprs.Get(2)) == UINT64_C(0xfffffffffffffff0));
+    const auto &system = *std::get<std::shared_ptr<pto::model::RecordValue>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedSystemRegistersGlobalBinding())->storage());
+    assert(ValueU64(system.at(
+               pto::model::GeneratedCycleFieldBinding())) == 1);
+
+    pto::model::InitialState add_initial;
+    add_initial.entry_tpc = 0x100;
+    add_initial.pe0_gpr_valid_mask = (UINT32_C(1) << 1) | (UINT32_C(1) << 2);
+    add_initial.pe0_gpr[1] = 10;
+    add_initial.pe0_gpr[2] = 20;
+    assert(runtime.Reset(add_initial) == PTO_STATUS_OK);
+    memory.bytes[0x100] = 0x85;
+    memory.bytes[0x101] = 0x81;
+    memory.bytes[0x102] = 0x20;
+    memory.bytes[0x103] = 0x00;
+    memory.read_count = 0;
+    status = runtime.Step(&result);
+    if (status != PTO_STATUS_OK)
+        std::fprintf(stderr, "ADD status=%u: %s\n", status,
+                     runtime.last_error().c_str());
+    assert(status == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_EXECUTED);
+    assert(result.instruction_status == PTO_INSTRUCTION_EXECUTED);
+    assert(result.length_bits == 32 && result.raw_instruction == 0x00208185);
+    assert(result.pre_tpc == 0x100 && result.post_tpc == 0x104);
+    assert(memory.read_count == 6);
+    const auto &add_pe_files = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedPEGPRsGlobalBinding())->storage());
+    const auto add_pe0 = add_pe_files.Get(0);
+    const auto &add_gprs = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        add_pe0.storage());
+    assert(ValueU64(add_gprs.Get(1)) == 10);
+    assert(ValueU64(add_gprs.Get(2)) == 20);
+    assert(ValueU64(add_gprs.Get(3)) == 30);
+    const auto &add_system = *std::get<std::shared_ptr<pto::model::RecordValue>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedSystemRegistersGlobalBinding())->storage());
+    assert(ValueU64(add_system.at(
+               pto::model::GeneratedCycleFieldBinding())) == 1);
+}
+
 }  // namespace
 
 int main() {
@@ -458,5 +534,6 @@ int main() {
     TestNumericIntegerExterns();
     TestGeneratedResetState();
     TestGeneratedPredecodeSteps();
+    TestGeneratedScalarSteps();
     return 0;
 }

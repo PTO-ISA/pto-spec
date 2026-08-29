@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "97f1d37f0613f3fa4a581e176e3d1c68a343e5a57227ed6adf18b3abc0f1de58"
+      "sha256": "c2be7c3c3090080fc7b3a486d43fb05ed049d29f8d50b16995a824d5cb6ece90"
     }
   },
   "minimal_scalar_elf": {
@@ -29346,8 +29346,12 @@
       ],
       "operators": [
         "ADD",
+        "AND",
+        "BAND",
         "BNOT",
         "BOR",
+        "BV_CONCAT",
+        "DIV",
         "EQ",
         "GE",
         "GT",
@@ -29355,6 +29359,7 @@
         "LT",
         "MUL",
         "NE",
+        "NOT",
         "Pattern_Single",
         "Positive",
         "SUB"
@@ -29382,6 +29387,8 @@
     },
     "emitter_bytecode_opcodes": [
       "kAssertTrue",
+      "kBitAnd",
+      "kBitConcat",
       "kBitNot",
       "kBitOr",
       "kBranchIfFalse",
@@ -29391,12 +29398,14 @@
       "kCheckBitWidth",
       "kCopyValue",
       "kCreateRecord",
+      "kDynamicSetSlice",
       "kDynamicSlice",
       "kEqual",
       "kGetArray",
       "kGetField",
       "kInsertField",
       "kIntegerAdd",
+      "kIntegerDivide",
       "kIntegerGreater",
       "kIntegerGreaterEqual",
       "kIntegerLess",
@@ -29415,6 +29424,7 @@
       "kLoadEnum",
       "kLoadGlobal",
       "kLoadIntegerImmediate",
+      "kLoadIntegerNegative",
       "kNotEqual",
       "kPushArgument",
       "kReturnProcedure",
@@ -29430,16 +29440,20 @@
       "DeterminePTOInstructionLength"
     ],
     "extern_bindings": [
+      "ReadPhysicalMemoryByte",
       "ResetPhysicalMemory",
       "SInt",
       "UInt"
     ],
     "impdef_bindings": [
+      "ReadPhysicalMemoryByte",
       "ResetPhysicalMemory"
     ],
     "interpreter_bytecode_opcodes": [
       "kAddLocalU64",
       "kAssertTrue",
+      "kBitAnd",
+      "kBitConcat",
       "kBitNot",
       "kBitOr",
       "kBranchIfFalse",
@@ -29449,6 +29463,7 @@
       "kCheckBitWidth",
       "kCopyValue",
       "kCreateRecord",
+      "kDynamicSetSlice",
       "kDynamicSlice",
       "kEqual",
       "kGetArray",
@@ -29456,6 +29471,7 @@
       "kIncrementGlobalU64",
       "kInsertField",
       "kIntegerAdd",
+      "kIntegerDivide",
       "kIntegerGreater",
       "kIntegerGreaterEqual",
       "kIntegerLess",
@@ -29474,6 +29490,7 @@
       "kLoadEnum",
       "kLoadGlobal",
       "kLoadIntegerImmediate",
+      "kLoadIntegerNegative",
       "kNotEqual",
       "kProbeMemory",
       "kPushArgument",
@@ -29503,24 +29520,6 @@
   "unhandled": {
     "constructors": [
       {
-        "count": 561,
-        "name": "AND",
-        "sample_function_id": 4913,
-        "sample_node_id": 27840
-      },
-      {
-        "count": 11073,
-        "name": "BAND",
-        "sample_function_id": 238,
-        "sample_node_id": 22932
-      },
-      {
-        "count": 3,
-        "name": "BV_CONCAT",
-        "sample_function_id": 4579,
-        "sample_node_id": 21962
-      },
-      {
         "count": 1070,
         "name": "Constraint_Exact",
         "sample_function_id": 595,
@@ -29531,12 +29530,6 @@
         "name": "Constraint_Range",
         "sample_function_id": 4940,
         "sample_node_id": 272
-      },
-      {
-        "count": 15,
-        "name": "DIV",
-        "sample_function_id": 4806,
-        "sample_node_id": 33284
       },
       {
         "count": 134,
@@ -29597,12 +29590,6 @@
         "name": "NEG",
         "sample_function_id": 4844,
         "sample_node_id": 22541
-      },
-      {
-        "count": 14,
-        "name": "NOT",
-        "sample_function_id": 4703,
-        "sample_node_id": 22487
       },
       {
         "count": 45,

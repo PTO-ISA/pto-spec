@@ -231,9 +231,11 @@ class Compiler:
             if literal_name == "L_Int":
                 atom = self.single_argument(literal, "L_Int")
                 value = int(str(self.arena.atom(atom, "integer")), 10)
-                if value < 0 or value > (1 << 64) - 1:
+                if value < -(1 << 63) + 1 or value > (1 << 64) - 1:
                     raise ModelgenError("runtime integer literal exceeds G3a carrier")
-                self.emit("kLoadIntegerImmediate", local=target, immediate=value)
+                self.emit("kLoadIntegerNegative" if value < 0
+                          else "kLoadIntegerImmediate", local=target,
+                          immediate=abs(value))
                 return target
             if literal_name == "L_BitVector":
                 atom = self.single_argument(literal, "L_BitVector")
@@ -314,7 +316,11 @@ class Compiler:
                 "EQ": "kEqual", "NE": "kNotEqual",
                 "ADD": "kIntegerAdd", "SUB": "kIntegerSubtract",
                 "MUL": "kIntegerMultiply",
+                "DIV": "kIntegerDivide",
                 "BOR": "kBitOr",
+                "BAND": "kBitAnd",
+                "AND": "kBitAnd",
+                "BV_CONCAT": "kBitConcat",
                 "LT": "kIntegerLess", "GT": "kIntegerGreater",
                 "LE": "kIntegerLessEqual", "GE": "kIntegerGreaterEqual",
             }[operator]
@@ -353,7 +359,7 @@ class Compiler:
             values = self.arena.sequence(
                 self.single_argument(identifier, "E_Unop"), "tuple")
             operator = self.arena.constructor_name(values[0])
-            if operator != "BNOT":
+            if operator not in {"BNOT", "NOT"}:
                 raise ModelgenError(f"unsupported runtime unary operator {operator}")
             source = self.expression(values[1])
             result = self.local()
@@ -509,6 +515,16 @@ class Compiler:
             if len(values) != 2:
                 raise ModelgenError(f"malformed LE_Slice at node {identifier}")
             ranges = self.arena.sequence(values[1], "list")
+            if len(ranges) == 1:
+                parts = self.arena.sequence(
+                    self.single_argument(ranges[0], "Slice_Length"), "tuple")
+                start = self.expression(parts[0])
+                width = self.expression(parts[1])
+                base = self.read_lvalue(values[0])
+                self.emit("kDynamicSetSlice", local=base, binding=source,
+                          immediate=start, address=width)
+                self.assign_lvalue(values[0], base)
+                return
             parsed: list[tuple[int, int]] = []
             for item in ranges:
                 parts = self.arena.sequence(
@@ -835,10 +851,22 @@ def render_global_defaults(image: dict[str, object]) -> list[dict[str, object]]:
             ]}
         raise ModelgenError(f"unsupported global default type {name} at node {type_node}")
 
-    return [
-        {"id": int(row["id"]), "value": default(int(row["type_node"]), set())}
-        for row in tables["globals"]
-    ]
+    global_kind_names = [row["name"] for row in tables["global_kinds"]]
+    result = []
+    for row in tables["globals"]:
+        value = default(int(row["type_node"]), set())
+        if (global_kind_names[int(row["global_kind_id"])] != "GDK_Var" and
+                value["kind"] == "integer"):
+            integer = constant_integer(int(row["initializer_node"]), set())
+            if integer < 0:
+                raise ModelgenError("negative generated integer global unsupported")
+            words = []
+            while integer:
+                words.append(integer & 0xffffffff)
+                integer >>= 32
+            value = {"kind": "integer", "words": words}
+        result.append({"id": int(row["id"]), "value": value})
+    return result
 
 
 def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
@@ -914,7 +942,8 @@ def lower_module(
         name = str(strings[row["name_symbol_id"]])
         function = functions[int(row["declaration_function_id"])]
         arity = len(function["arguments"]) + len(function["parameters"])
-        if name in {"UInt", "SInt", "ResetPhysicalMemory"}:
+        if name in {"UInt", "SInt", "ResetPhysicalMemory",
+                    "ReadPhysicalMemoryByte"}:
             extern_ids[name] = (int(row["binding_id"]), name, arity)
     roots = [function_ids[name] for name in entrypoints]
     graph = {
@@ -1040,6 +1069,8 @@ BindingId GeneratedStepBinding();
 BindingId GeneratedPCGlobalBinding();
 BindingId GeneratedPEGPRsGlobalBinding();
 BindingId GeneratedNextTokenGlobalBinding();
+BindingId GeneratedSystemRegistersGlobalBinding();
+std::uint32_t GeneratedCycleFieldBinding();
 GeneratedStepFieldBindings GeneratedStepFields();
 }  // namespace pto::model
 
@@ -1143,7 +1174,9 @@ def render_module_source(
 def render_value_cpp(value: dict[str, object]) -> str:
     kind = value["kind"]
     if kind == "bool": return f"Value({'true' if value['value'] else 'false'})"
-    if kind == "integer": return "Value(BigInteger())"
+    if kind == "integer":
+        words = ",".join(str(word) + "u" for word in value.get("words", []))
+        return f"Value(BigInteger::FromUnsignedWords({{{words}}}))"
     if kind == "bits": return f"Value(BitVector({value['width']}u))"
     if kind == "enum":
         return f"Value(EnumValue{{{value['type_node']}u, {value['member']}u}})"
@@ -1244,6 +1277,8 @@ def main() -> int:
             f"BindingId GeneratedPCGlobalBinding() {{ return {global_ids['_PC']}u; }}\n"
             f"BindingId GeneratedPEGPRsGlobalBinding() {{ return {global_ids['_PEGPRs']}u; }}\n"
             f"BindingId GeneratedNextTokenGlobalBinding() {{ return {global_ids['_FunctionalHostRequestNextToken']}u; }}\n"
+            f"BindingId GeneratedSystemRegistersGlobalBinding() {{ return {global_ids['_SystemRegisters']}u; }}\n"
+            f"std::uint32_t GeneratedCycleFieldBinding() {{ return {symbol_ids['cycle']}u; }}\n"
             "GeneratedStepFieldBindings GeneratedStepFields() { return {"
             + ",".join(str(symbol_ids[name]) + "u" for name in (
                 "status", "instruction_status", "pre_tpc", "post_tpc",

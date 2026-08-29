@@ -22,7 +22,9 @@ inline constexpr BindingId kWritePhysicalMemoryByte = 0x101;
 inline constexpr BindingId kResetPhysicalMemory = 0x102;
 }  // namespace binding
 
-enum class ExternKind : std::uint8_t { kUInt, kSInt, kResetPhysicalMemory };
+enum class ExternKind : std::uint8_t {
+    kUInt, kSInt, kResetPhysicalMemory, kReadPhysicalMemoryByte
+};
 
 struct ExternDefinition {
     BindingId id;
@@ -50,6 +52,7 @@ enum class OpCode : std::uint8_t {
     kLoadArgumentBool,
     kLoadBitsImmediate,
     kLoadIntegerImmediate,
+    kLoadIntegerNegative,
     kSliceBits,
     kDynamicSlice,
     kEqual,
@@ -67,7 +70,10 @@ enum class OpCode : std::uint8_t {
     kIntegerAdd,
     kIntegerSubtract,
     kIntegerMultiply,
+    kIntegerDivide,
     kBitOr,
+    kBitAnd,
+    kBitConcat,
     kBitNot,
     kIntegerLessEqual,
     kIntegerGreaterEqual,
@@ -81,6 +87,7 @@ enum class OpCode : std::uint8_t {
     kCreateRecord,
     kInsertField,
     kSetSlice,
+    kDynamicSetSlice,
     kCheckBitWidth,
     kBranchIfFalse,
     kJump,

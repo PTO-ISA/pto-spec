@@ -166,6 +166,13 @@ EvaluationResult Interpreter::EvaluateInternal(
                         {static_cast<std::uint32_t>(instruction.immediate),
                          static_cast<std::uint32_t>(instruction.immediate >> 32)})));
                 break;
+            case OpCode::kLoadIntegerNegative:
+                if (instruction.immediate > static_cast<std::uint64_t>(INT64_MAX))
+                    return {PTO_STATUS_RESOURCE_LIMIT, PTO_STEP_UNSUPPORTED};
+                frame.typed_locals.insert_or_assign(
+                    instruction.local,
+                    Value(BigInteger(-static_cast<std::int64_t>(instruction.immediate))));
+                break;
             case OpCode::kSliceBits: {
                 const auto source = frame.typed_locals.find(instruction.binding);
                 if (source == frame.typed_locals.end() ||
@@ -335,6 +342,24 @@ EvaluationResult Interpreter::EvaluateInternal(
                         return {reset_status, PTO_STEP_UNSUPPORTED};
                     break;
                 }
+                if (target->kind == ExternKind::kReadPhysicalMemoryByte) {
+                    if (frame.pending_arguments.size() != 1 ||
+                        !std::holds_alternative<BitVector>(
+                            frame.pending_arguments[0].storage()))
+                        return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                    std::uint64_t address = 0;
+                    std::uint8_t byte = 0;
+                    if (!std::get<BitVector>(frame.pending_arguments[0].storage())
+                             .TryToU64(&address))
+                        return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                    const pto_status_t read_status = memory->Read(address, &byte, 1);
+                    if (read_status != PTO_STATUS_OK)
+                        return {read_status, PTO_STEP_UNSUPPORTED};
+                    frame.pending_arguments.clear();
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local, Value(BitVector::FromU64(8, byte)));
+                    break;
+                }
                 if (frame.pending_arguments.empty() ||
                     !std::holds_alternative<BitVector>(
                         frame.pending_arguments[0].storage())) {
@@ -362,6 +387,7 @@ EvaluationResult Interpreter::EvaluateInternal(
             case OpCode::kIntegerAdd:
             case OpCode::kIntegerSubtract:
             case OpCode::kIntegerMultiply:
+            case OpCode::kIntegerDivide:
             case OpCode::kIntegerLessEqual:
             case OpCode::kIntegerGreaterEqual:
             case OpCode::kIntegerLess:
@@ -406,7 +432,16 @@ EvaluationResult Interpreter::EvaluateInternal(
                 const BigInteger &r = std::get<BigInteger>(right->second.storage());
                 if (instruction.opcode == OpCode::kIntegerAdd ||
                     instruction.opcode == OpCode::kIntegerSubtract ||
-                    instruction.opcode == OpCode::kIntegerMultiply) {
+                    instruction.opcode == OpCode::kIntegerMultiply ||
+                    instruction.opcode == OpCode::kIntegerDivide) {
+                    if (instruction.opcode == OpCode::kIntegerDivide) {
+                        BigInteger quotient;
+                        if (!l.Divide(r, &quotient))
+                            return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                        frame.typed_locals.insert_or_assign(
+                            instruction.local, Value(std::move(quotient)));
+                        break;
+                    }
                     frame.typed_locals.insert_or_assign(
                         instruction.local,
                         Value(instruction.opcode == OpCode::kIntegerMultiply
@@ -463,6 +498,51 @@ EvaluationResult Interpreter::EvaluateInternal(
                             std::get<BitVector>(right->second.storage()))));
                 } catch (const std::invalid_argument &) {
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                break;
+            }
+            case OpCode::kBitAnd: {
+                const auto left = frame.typed_locals.find(instruction.binding);
+                const auto right = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                if (left == frame.typed_locals.end() || right == frame.typed_locals.end())
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                if (std::holds_alternative<bool>(left->second.storage()) &&
+                    std::holds_alternative<bool>(right->second.storage())) {
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local,
+                        Value(std::get<bool>(left->second.storage()) &&
+                              std::get<bool>(right->second.storage())));
+                    break;
+                }
+                if (!std::holds_alternative<BitVector>(left->second.storage()) ||
+                    !std::holds_alternative<BitVector>(right->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                try {
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local,
+                        Value(std::get<BitVector>(left->second.storage()).BitAnd(
+                            std::get<BitVector>(right->second.storage()))));
+                } catch (const std::invalid_argument &) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                break;
+            }
+            case OpCode::kBitConcat: {
+                const auto left = frame.typed_locals.find(instruction.binding);
+                const auto right = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                if (left == frame.typed_locals.end() || right == frame.typed_locals.end() ||
+                    !std::holds_alternative<BitVector>(left->second.storage()) ||
+                    !std::holds_alternative<BitVector>(right->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                try {
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local,
+                        Value(std::get<BitVector>(left->second.storage()).Concat(
+                            std::get<BitVector>(right->second.storage()))));
+                } catch (const std::invalid_argument &) {
+                    return {PTO_STATUS_RESOURCE_LIMIT, PTO_STEP_UNSUPPORTED};
                 }
                 break;
             }
@@ -604,6 +684,38 @@ EvaluationResult Interpreter::EvaluateInternal(
                     std::get<BitVector>(value->second.storage()).width() !=
                         instruction.immediate)
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                break;
+            }
+            case OpCode::kDynamicSetSlice: {
+                const auto base = frame.typed_locals.find(instruction.local);
+                const auto value = frame.typed_locals.find(instruction.binding);
+                const auto start_value = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.immediate));
+                const auto width_value = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                std::uint64_t start = 0, width = 0;
+                if (base == frame.typed_locals.end() ||
+                    value == frame.typed_locals.end() ||
+                    start_value == frame.typed_locals.end() ||
+                    width_value == frame.typed_locals.end() ||
+                    !std::holds_alternative<BitVector>(base->second.storage()) ||
+                    !std::holds_alternative<BitVector>(value->second.storage()) ||
+                    !std::holds_alternative<BigInteger>(start_value->second.storage()) ||
+                    !std::holds_alternative<BigInteger>(width_value->second.storage()) ||
+                    !std::get<BigInteger>(start_value->second.storage()).TryToU64(&start) ||
+                    !std::get<BigInteger>(width_value->second.storage()).TryToU64(&width))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                Value updated = base->second.Clone();
+                try {
+                    std::get<BitVector>(updated.mutable_storage()).SetSlice(
+                        static_cast<std::size_t>(start),
+                        static_cast<std::size_t>(width),
+                        std::get<BitVector>(value->second.storage()));
+                } catch (const std::out_of_range &) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, std::move(updated));
                 break;
             }
             case OpCode::kBranchIfFalse: {

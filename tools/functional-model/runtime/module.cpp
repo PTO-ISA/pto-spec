@@ -53,6 +53,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kLoadArgumentBool:
                 case OpCode::kLoadBitsImmediate:
                 case OpCode::kLoadIntegerImmediate:
+                case OpCode::kLoadIntegerNegative:
                 case OpCode::kSliceBits:
                 case OpCode::kDynamicSlice:
                 case OpCode::kEqual:
@@ -68,7 +69,10 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kIntegerAdd:
                 case OpCode::kIntegerSubtract:
                 case OpCode::kIntegerMultiply:
+                case OpCode::kIntegerDivide:
                 case OpCode::kBitOr:
+                case OpCode::kBitAnd:
+                case OpCode::kBitConcat:
                 case OpCode::kBitNot:
                 case OpCode::kIntegerLessEqual:
                 case OpCode::kIntegerGreaterEqual:
@@ -82,6 +86,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kCreateRecord:
                 case OpCode::kInsertField:
                 case OpCode::kSetSlice:
+                case OpCode::kDynamicSetSlice:
                 case OpCode::kCheckBitWidth:
                     break;
                 case OpCode::kCallValue:
