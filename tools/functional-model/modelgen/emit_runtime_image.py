@@ -310,6 +310,18 @@ class Compiler:
                     return target
                 raise ModelgenError(f"unsupported runtime binary operator {operator}")
             left = self.expression(values[1])
+            if operator in {"BAND", "BOR"}:
+                target = self.local()
+                self.emit("kCopyValue", local=target, binding=left)
+                condition = left
+                if operator == "BOR":
+                    condition = self.local()
+                    self.emit("kBitNot", local=condition, binding=left)
+                branch = self.emit("kBranchIfFalse", local=condition)
+                right = self.expression(values[2])
+                self.emit("kCopyValue", local=target, binding=right)
+                self.instructions[branch]["address"] = len(self.instructions)
+                return target
             right = self.expression(values[2])
             target = self.local()
             opcode = {
@@ -317,10 +329,10 @@ class Compiler:
                 "ADD": "kIntegerAdd", "SUB": "kIntegerSubtract",
                 "MUL": "kIntegerMultiply",
                 "DIV": "kIntegerDivide",
-                "BOR": "kBitOr",
-                "BAND": "kBitAnd",
+                "OR": "kBitOr",
                 "AND": "kBitAnd",
                 "BV_CONCAT": "kBitConcat",
+                "XOR": "kBitXor",
                 "LT": "kIntegerLess", "GT": "kIntegerGreater",
                 "LE": "kIntegerLessEqual", "GE": "kIntegerGreaterEqual",
             }[operator]
@@ -578,7 +590,8 @@ class Compiler:
         if name == "S_Return":
             value = self.arena.option(self.single_argument(identifier, "S_Return"))
             if value is None:
-                raise ModelgenError("runtime function return must carry a value")
+                self.emit("kReturnProcedure")
+                return True
             self.emit("kReturnValue", local=self.expression(value))
             return True
         if name == "S_Assert":
@@ -1070,6 +1083,7 @@ BindingId GeneratedPCGlobalBinding();
 BindingId GeneratedPEGPRsGlobalBinding();
 BindingId GeneratedNextTokenGlobalBinding();
 BindingId GeneratedSystemRegistersGlobalBinding();
+BindingId GeneratedBundleActiveGlobalBinding();
 std::uint32_t GeneratedCycleFieldBinding();
 GeneratedStepFieldBindings GeneratedStepFields();
 }  // namespace pto::model
@@ -1278,6 +1292,7 @@ def main() -> int:
             f"BindingId GeneratedPEGPRsGlobalBinding() {{ return {global_ids['_PEGPRs']}u; }}\n"
             f"BindingId GeneratedNextTokenGlobalBinding() {{ return {global_ids['_FunctionalHostRequestNextToken']}u; }}\n"
             f"BindingId GeneratedSystemRegistersGlobalBinding() {{ return {global_ids['_SystemRegisters']}u; }}\n"
+            f"BindingId GeneratedBundleActiveGlobalBinding() {{ return {global_ids['_BundleActive']}u; }}\n"
             f"std::uint32_t GeneratedCycleFieldBinding() {{ return {symbol_ids['cycle']}u; }}\n"
             "GeneratedStepFieldBindings GeneratedStepFields() { return {"
             + ",".join(str(symbol_ids[name]) + "u" for name in (

@@ -73,6 +73,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kBitOr:
                 case OpCode::kBitAnd:
                 case OpCode::kBitConcat:
+                case OpCode::kBitXor:
                 case OpCode::kBitNot:
                 case OpCode::kIntegerLessEqual:
                 case OpCode::kIntegerGreaterEqual:

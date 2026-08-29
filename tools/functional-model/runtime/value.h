@@ -48,6 +48,7 @@ class BitVector {
     bool TryToU64(std::uint64_t *value) const;
     BitVector BitOr(const BitVector &other) const;
     BitVector BitAnd(const BitVector &other) const;
+    BitVector BitXor(const BitVector &other) const;
     BitVector Concat(const BitVector &right) const;
     BitVector BitAdd(const BitVector &other) const;
     BitVector BitNot() const;

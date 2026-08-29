@@ -302,6 +302,14 @@ BitVector BitVector::BitAnd(const BitVector &other) const {
     return result;
 }
 
+BitVector BitVector::BitXor(const BitVector &other) const {
+    if (width_ != other.width_) throw std::invalid_argument("bitvector XOR width");
+    BitVector result(width_);
+    for (std::size_t index = 0; index < bytes_.size(); ++index)
+        result.bytes_[index] = bytes_[index] ^ other.bytes_[index];
+    return result;
+}
+
 BitVector BitVector::Concat(const BitVector &right) const {
     if (width_ > (UINT64_C(1) << 20) - right.width_)
         throw std::invalid_argument("bitvector concat width");

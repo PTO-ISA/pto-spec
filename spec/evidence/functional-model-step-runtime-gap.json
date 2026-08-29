@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "c2be7c3c3090080fc7b3a486d43fb05ed049d29f8d50b16995a824d5cb6ece90"
+      "sha256": "037acd5d77cd12d22f4884c30e10d2ef2047f3531a525b1b1dfea72abc223d26"
     }
   },
   "minimal_scalar_elf": {
@@ -29360,9 +29360,11 @@
         "MUL",
         "NE",
         "NOT",
+        "OR",
         "Pattern_Single",
         "Positive",
-        "SUB"
+        "SUB",
+        "XOR"
       ],
       "slices": [
         "Slice_Length"
@@ -29391,6 +29393,7 @@
       "kBitConcat",
       "kBitNot",
       "kBitOr",
+      "kBitXor",
       "kBranchIfFalse",
       "kCallExtern",
       "kCallProcedure",
@@ -29456,6 +29459,7 @@
       "kBitConcat",
       "kBitNot",
       "kBitOr",
+      "kBitXor",
       "kBranchIfFalse",
       "kCallExtern",
       "kCallProcedure",
@@ -29592,12 +29596,6 @@
         "sample_node_id": 22541
       },
       {
-        "count": 45,
-        "name": "OR",
-        "sample_function_id": 5189,
-        "sample_node_id": 35941
-      },
-      {
         "count": 7,
         "name": "POW",
         "sample_function_id": 5500,
@@ -29698,12 +29696,6 @@
         "name": "WellConstrained",
         "sample_function_id": 4940,
         "sample_node_id": 276
-      },
-      {
-        "count": 14,
-        "name": "XOR",
-        "sample_function_id": 5195,
-        "sample_node_id": 33021
       }
     ],
     "extern_bindings": [

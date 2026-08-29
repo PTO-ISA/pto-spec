@@ -546,6 +546,24 @@ EvaluationResult Interpreter::EvaluateInternal(
                 }
                 break;
             }
+            case OpCode::kBitXor: {
+                const auto left = frame.typed_locals.find(instruction.binding);
+                const auto right = frame.typed_locals.find(
+                    static_cast<std::uint32_t>(instruction.address));
+                if (left == frame.typed_locals.end() || right == frame.typed_locals.end() ||
+                    !std::holds_alternative<BitVector>(left->second.storage()) ||
+                    !std::holds_alternative<BitVector>(right->second.storage()))
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                try {
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local,
+                        Value(std::get<BitVector>(left->second.storage()).BitXor(
+                            std::get<BitVector>(right->second.storage()))));
+                } catch (const std::invalid_argument &) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                break;
+            }
             case OpCode::kBitNot: {
                 const auto value = frame.typed_locals.find(instruction.binding);
                 if (value == frame.typed_locals.end())

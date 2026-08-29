@@ -1,0 +1,7 @@
+{
+  "schema":"pto-functional-model-extended-length-cases-v1",
+  "cases":[
+    {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-48-003","name":"HL.XORI","entry":256,"raw":3231027214,"length_bits":48,"gpr_after":{"1":18446744073701163008},"post_tpc":262,"read_count":8},
+    {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-COMMAND-64-004","name":"L.BSTOP","entry":640,"start_raw":17,"raw":4294967311,"length_bits":64,"post_tpc":640,"read_count":10}
+  ]
+}

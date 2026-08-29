@@ -520,6 +520,76 @@ void TestGeneratedScalarSteps() {
             pto::model::GeneratedSystemRegistersGlobalBinding())->storage());
     assert(ValueU64(add_system.at(
                pto::model::GeneratedCycleFieldBinding())) == 1);
+
+    pto::model::InitialState xori_initial;
+    xori_initial.entry_tpc = 0x100;
+    xori_initial.pe0_gpr_valid_mask = UINT32_C(1) << 1;
+    assert(runtime.Reset(xori_initial) == PTO_STATUS_OK);
+    const std::uint8_t xori_bytes[] = {0x0e, 0x80, 0x95, 0xc0, 0x00, 0x00};
+    std::copy(std::begin(xori_bytes), std::end(xori_bytes),
+              memory.bytes.begin() + 0x100);
+    memory.read_count = 0;
+    status = runtime.Step(&result);
+    if (status != PTO_STATUS_OK)
+        std::fprintf(stderr, "HL.XORI status=%u: %s\n", status,
+                     runtime.last_error().c_str());
+    assert(status == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_EXECUTED);
+    assert(result.instruction_status == PTO_INSTRUCTION_EXECUTED);
+    assert(result.length_bits == 48 && result.raw_instruction == 0xc095800e);
+    assert(result.pre_tpc == 0x100 && result.post_tpc == 0x106);
+    assert(memory.read_count == 8);
+    const auto &xori_files = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedPEGPRsGlobalBinding())->storage());
+    const auto xori_pe0 = xori_files.Get(0);
+    const auto &xori_gprs = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        xori_pe0.storage());
+    assert(ValueU64(xori_gprs.Get(1)) == UINT64_C(0xffffffffff800000));
+
+    assert(runtime.Reset({0x280}) == PTO_STATUS_OK);
+    const auto *prestart_bundle = runtime.GlobalValueForTesting(
+        pto::model::GeneratedBundleActiveGlobalBinding());
+    assert(prestart_bundle != nullptr);
+    assert(!std::get<bool>(prestart_bundle->storage()));
+    memory.bytes[0x280] = 0x11;
+    memory.bytes[0x281] = 0x00;
+    memory.bytes[0x282] = 0x00;
+    memory.bytes[0x283] = 0x00;
+    status = runtime.Step(&result);
+    if (status != PTO_STATUS_OK)
+        std::fprintf(stderr, "BSTART status=%u: %s\n", status,
+                     runtime.last_error().c_str());
+    if (status == PTO_STATUS_OK && result.state != PTO_STEP_EXECUTED)
+        std::fprintf(stderr, "BSTART result state=%u instruction=%u fault=%u\n",
+                     result.state, result.instruction_status, result.fault_code);
+    assert(status == PTO_STATUS_OK && result.state == PTO_STEP_EXECUTED);
+    assert(result.length_bits == 32 && result.post_tpc == 0x284);
+    const std::uint8_t stop_bytes[] =
+        {0x0f, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00};
+    std::copy(std::begin(stop_bytes), std::end(stop_bytes),
+              memory.bytes.begin() + 0x284);
+    memory.read_count = 0;
+    status = runtime.Step(&result);
+    if (status != PTO_STATUS_OK)
+        std::fprintf(stderr, "L.BSTOP status=%u: %s\n", status,
+                     runtime.last_error().c_str());
+    assert(status == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_EXECUTED);
+    assert(result.instruction_status == PTO_INSTRUCTION_EXECUTED);
+    assert(result.length_bits == 64);
+    assert(result.raw_instruction == UINT64_C(0x000000010000000f));
+    assert(result.pre_tpc == 0x284 && result.post_tpc == 0x280);
+    assert(result.fault_code == 0 && memory.read_count == 10);
+    const auto *bundle_active = runtime.GlobalValueForTesting(
+        pto::model::GeneratedBundleActiveGlobalBinding());
+    assert(bundle_active != nullptr);
+    assert(!std::get<bool>(bundle_active->storage()));
+    const auto &block_system = *std::get<std::shared_ptr<pto::model::RecordValue>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedSystemRegistersGlobalBinding())->storage());
+    assert(ValueU64(block_system.at(
+               pto::model::GeneratedCycleFieldBinding())) == 2);
 }
 
 }  // namespace

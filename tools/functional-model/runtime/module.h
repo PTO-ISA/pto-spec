@@ -74,6 +74,7 @@ enum class OpCode : std::uint8_t {
     kBitOr,
     kBitAnd,
     kBitConcat,
+    kBitXor,
     kBitNot,
     kIntegerLessEqual,
     kIntegerGreaterEqual,
