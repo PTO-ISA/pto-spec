@@ -360,6 +360,23 @@ EvaluationResult Interpreter::EvaluateInternal(
                         instruction.local, Value(BitVector::FromU64(8, byte)));
                     break;
                 }
+                if (target->kind == ExternKind::kWritePhysicalMemoryByte) {
+                    if (frame.pending_arguments.size() != 2 ||
+                        !std::holds_alternative<BitVector>(
+                            frame.pending_arguments[0].storage()) ||
+                        !std::holds_alternative<BitVector>(
+                            frame.pending_arguments[1].storage()))
+                        return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                    std::uint64_t address = 0, value = 0;
+                    if (!std::get<BitVector>(frame.pending_arguments[0].storage())
+                             .TryToU64(&address) ||
+                        !std::get<BitVector>(frame.pending_arguments[1].storage())
+                             .TryToU64(&value) || value > 0xff)
+                        return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                    memory->Write(address, static_cast<std::uint8_t>(value));
+                    frame.pending_arguments.clear();
+                    break;
+                }
                 if (frame.pending_arguments.empty() ||
                     !std::holds_alternative<BitVector>(
                         frame.pending_arguments[0].storage())) {
@@ -388,6 +405,7 @@ EvaluationResult Interpreter::EvaluateInternal(
             case OpCode::kIntegerSubtract:
             case OpCode::kIntegerMultiply:
             case OpCode::kIntegerDivide:
+            case OpCode::kIntegerModulo:
             case OpCode::kIntegerLessEqual:
             case OpCode::kIntegerGreaterEqual:
             case OpCode::kIntegerLess:
@@ -433,13 +451,17 @@ EvaluationResult Interpreter::EvaluateInternal(
                 if (instruction.opcode == OpCode::kIntegerAdd ||
                     instruction.opcode == OpCode::kIntegerSubtract ||
                     instruction.opcode == OpCode::kIntegerMultiply ||
-                    instruction.opcode == OpCode::kIntegerDivide) {
-                    if (instruction.opcode == OpCode::kIntegerDivide) {
-                        BigInteger quotient;
-                        if (!l.Divide(r, &quotient))
+                    instruction.opcode == OpCode::kIntegerDivide ||
+                    instruction.opcode == OpCode::kIntegerModulo) {
+                    if (instruction.opcode == OpCode::kIntegerDivide ||
+                        instruction.opcode == OpCode::kIntegerModulo) {
+                        BigInteger result;
+                        const bool valid = instruction.opcode == OpCode::kIntegerDivide
+                            ? l.Divide(r, &result) : l.Modulo(r, &result);
+                        if (!valid)
                             return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
                         frame.typed_locals.insert_or_assign(
-                            instruction.local, Value(std::move(quotient)));
+                            instruction.local, Value(std::move(result)));
                         break;
                     }
                     frame.typed_locals.insert_or_assign(

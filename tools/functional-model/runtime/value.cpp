@@ -143,6 +143,14 @@ bool BigInteger::Divide(const BigInteger &other, BigInteger *quotient) const {
     return true;
 }
 
+bool BigInteger::Modulo(const BigInteger &other, BigInteger *remainder) const {
+    if (remainder == nullptr) return false;
+    BigInteger quotient;
+    if (!Divide(other, &quotient)) return false;
+    *remainder = Add(quotient.Multiply(other).Negated());
+    return true;
+}
+
 int BigInteger::Compare(const BigInteger &other) const {
     if (negative_ != other.negative_) return negative_ ? -1 : 1;
     int magnitude = 0;

@@ -1,0 +1,10 @@
+{
+  "schema":"pto-functional-model-store-step-cases-v1",
+  "source_id":"PTO-AVS-AGU-SW-EXEC-001",
+  "raw":404791369,
+  "entry":256,
+  "gprs":{"1":512,"2":0,"3":287454020},
+  "expected_address":512,
+  "expected_bytes":[68,51,34,17],
+  "post_tpc":260
+}

@@ -20,6 +20,7 @@ class BigInteger {
     BigInteger Add(const BigInteger &other) const;
     BigInteger Multiply(const BigInteger &other) const;
     bool Divide(const BigInteger &other, BigInteger *quotient) const;
+    bool Modulo(const BigInteger &other, BigInteger *remainder) const;
     BigInteger Negated() const;
     int Compare(const BigInteger &other) const;
     bool IsZero() const;

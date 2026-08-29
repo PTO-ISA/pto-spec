@@ -37,6 +37,7 @@ struct MemoryHarness {
     bool fail_probe = false;
     bool fail_read = false;
     bool fail_commit = false;
+    int commit_count = 0;
     std::vector<MemoryWrite> committed_writes;
     RuntimeModel *reentrant_model = nullptr;
     pto_status_t reentrant_status = PTO_STATUS_OK;
@@ -87,6 +88,7 @@ struct MemoryHarness {
                     return static_cast<pto_status_t>(
                         PTO_STATUS_HOST_COMMIT_ERROR);
                 }
+                ++commit_count;
                 committed_writes = writes;
                 for (const MemoryWrite &write : writes) {
                     bytes.at(write.address) = write.value;
@@ -687,6 +689,78 @@ void TestGeneratedHostRequests() {
            PTO_STATUS_INVALID_STATE);
 }
 
+void TestGeneratedStoreTransactions() {
+    auto module = pto::model::GeneratedResetModule();
+    MemoryHarness memory;
+    RuntimeModel runtime(module, memory.Callbacks());
+    const auto prepare = [&](std::uint64_t base) {
+        pto::model::InitialState initial;
+        initial.entry_tpc = 0x100;
+        initial.pe0_gpr_valid_mask =
+            (UINT32_C(1) << 1) | (UINT32_C(1) << 2) | (UINT32_C(1) << 3);
+        initial.pe0_gpr[1] = base;
+        initial.pe0_gpr[2] = 0;
+        initial.pe0_gpr[3] = 0x11223344;
+        assert(runtime.Reset(initial) == PTO_STATUS_OK);
+        memory.bytes[0x100] = 0x49;
+        memory.bytes[0x101] = 0xa0;
+        memory.bytes[0x102] = 0x20;
+        memory.bytes[0x103] = 0x18;
+        memory.commit_count = 0;
+        memory.committed_writes.clear();
+    };
+    StepResult result;
+    prepare(0x200);
+    pto_status_t store_status = runtime.Step(&result);
+    if (store_status != PTO_STATUS_OK)
+        std::fprintf(stderr, "SW status=%u: %s\n", store_status,
+                     runtime.last_error().c_str());
+    assert(store_status == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_EXECUTED && result.fault_code == 0);
+    assert(result.post_tpc == 0x104 && memory.commit_count == 1);
+    assert(memory.committed_writes.size() == 4);
+    const std::uint8_t expected[] = {0x44, 0x33, 0x22, 0x11};
+    for (std::size_t index = 0; index < 4; ++index) {
+        assert(memory.committed_writes[index].address == 0x200 + index);
+        assert(memory.committed_writes[index].value == expected[index]);
+        assert(memory.bytes[0x200 + index] == expected[index]);
+    }
+
+    prepare(0x200);
+    memory.fail_commit = true;
+    assert(runtime.Step(&result) == PTO_STATUS_HOST_COMMIT_ERROR);
+    assert(memory.commit_count == 0);
+    for (std::size_t index = 0; index < 4; ++index)
+        assert(memory.bytes[0x200 + index] == 0);
+    assert(ValueU64(*runtime.GlobalValueForTesting(
+               pto::model::GeneratedPCGlobalBinding())) == 0x100);
+    const auto &failed_system = *std::get<std::shared_ptr<pto::model::RecordValue>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedSystemRegistersGlobalBinding())->storage());
+    assert(ValueU64(failed_system.at(
+               pto::model::GeneratedCycleFieldBinding())) == 0);
+    const auto &failed_files = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedPEGPRsGlobalBinding())->storage());
+    const auto failed_pe0 = failed_files.Get(0);
+    const auto &failed_gprs = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        failed_pe0.storage());
+    assert(ValueU64(failed_gprs.Get(3)) == UINT64_C(0x11223344));
+    memory.fail_commit = false;
+    assert(runtime.Step(&result) == PTO_STATUS_OK);
+    assert(memory.commit_count == 1 && result.post_tpc == 0x104);
+
+    prepare(0x201);
+    assert(runtime.Step(&result) == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_TRAP && result.fault_code == 5);
+    assert(memory.commit_count == 0 && memory.committed_writes.empty());
+
+    prepare(4096);
+    assert(runtime.Step(&result) == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_TRAP && result.fault_code == 6);
+    assert(memory.commit_count == 0 && memory.committed_writes.empty());
+}
+
 }  // namespace
 
 int main() {
@@ -702,5 +776,6 @@ int main() {
     TestGeneratedScalarSteps();
     TestGeneratedFaultSteps();
     TestGeneratedHostRequests();
+    TestGeneratedStoreTransactions();
     return 0;
 }

@@ -329,6 +329,7 @@ class Compiler:
                 "ADD": "kIntegerAdd", "SUB": "kIntegerSubtract",
                 "MUL": "kIntegerMultiply",
                 "DIV": "kIntegerDivide",
+                "MOD": "kIntegerModulo",
                 "OR": "kBitOr",
                 "AND": "kBitAnd",
                 "BV_CONCAT": "kBitConcat",
@@ -508,6 +509,8 @@ class Compiler:
 
     def assign_lvalue(self, identifier: int, source: int) -> None:
         name = self.arena.constructor_name(identifier)
+        if name == "LE_Discard":
+            return
         if name == "LE_Var":
             variable = str(self.arena.atom(
                 self.single_argument(identifier, "LE_Var"), "string"))
@@ -956,7 +959,7 @@ def lower_module(
         function = functions[int(row["declaration_function_id"])]
         arity = len(function["arguments"]) + len(function["parameters"])
         if name in {"UInt", "SInt", "ResetPhysicalMemory",
-                    "ReadPhysicalMemoryByte"}:
+                    "ReadPhysicalMemoryByte", "WritePhysicalMemoryByte"}:
             extern_ids[name] = (int(row["binding_id"]), name, arity)
     roots = [function_ids[name] for name in entrypoints]
     graph = {

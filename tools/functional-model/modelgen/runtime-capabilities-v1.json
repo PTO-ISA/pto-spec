@@ -25,6 +25,7 @@
     "kIntegerGreaterEqual",
     "kIntegerLess",
     "kIntegerLessEqual",
+    "kIntegerModulo",
     "kIntegerMultiply",
     "kIntegerStep",
     "kIntegerSubtract",
@@ -79,6 +80,7 @@
     "kIntegerGreaterEqual",
     "kIntegerLess",
     "kIntegerLessEqual",
+    "kIntegerModulo",
     "kIntegerMultiply",
     "kIntegerStep",
     "kIntegerSubtract",
@@ -116,15 +118,15 @@
   "constructors": {
     "expressions": ["E_ATC", "E_Binop", "E_Call", "E_Cond", "E_GetArray", "E_GetField", "E_Literal", "E_Pattern", "E_Record", "E_Slice", "E_Unop", "E_Var"],
     "literals": ["L_BitVector", "L_Bool", "L_Int", "L_Label"],
-    "lvalues": ["LDI_Var", "LE_SetArray", "LE_SetField", "LE_Slice", "LE_Var"],
-    "operators": ["ADD", "AND", "BAND", "BNOT", "BOR", "BV_CONCAT", "DIV", "EQ", "GE", "GT", "LE", "LT", "MUL", "NE", "NOT", "OR", "Pattern_Single", "Positive", "SUB", "XOR"],
+    "lvalues": ["LDI_Var", "LE_Discard", "LE_SetArray", "LE_SetField", "LE_Slice", "LE_Var"],
+    "operators": ["ADD", "AND", "BAND", "BNOT", "BOR", "BV_CONCAT", "DIV", "EQ", "GE", "GT", "LE", "LT", "MOD", "MUL", "NE", "NOT", "OR", "Pattern_Single", "Positive", "SUB", "XOR"],
     "slices": ["Slice_Length"],
     "statements": ["SB_ASL", "S_Assert", "S_Assign", "S_Call", "S_Cond", "S_Decl", "S_For", "S_Pass", "S_Return", "S_Seq", "S_Unreachable"],
     "types": ["T_Bits", "T_Enum"]
   },
   "entrypoints": ["DeterminePTOInstructionLength"],
-  "extern_bindings": ["ReadPhysicalMemoryByte", "ResetPhysicalMemory", "SInt", "UInt"],
-  "impdef_bindings": ["ReadPhysicalMemoryByte", "ResetPhysicalMemory"],
+  "extern_bindings": ["ReadPhysicalMemoryByte", "ResetPhysicalMemory", "SInt", "UInt", "WritePhysicalMemoryByte"],
+  "impdef_bindings": ["ReadPhysicalMemoryByte", "ResetPhysicalMemory", "WritePhysicalMemoryByte"],
   "primitive_bindings": ["SInt", "UInt"],
   "schema": "pto-functional-model-runtime-capabilities-v1"
 }

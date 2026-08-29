@@ -23,7 +23,8 @@ inline constexpr BindingId kResetPhysicalMemory = 0x102;
 }  // namespace binding
 
 enum class ExternKind : std::uint8_t {
-    kUInt, kSInt, kResetPhysicalMemory, kReadPhysicalMemoryByte
+    kUInt, kSInt, kResetPhysicalMemory, kReadPhysicalMemoryByte,
+    kWritePhysicalMemoryByte
 };
 
 struct ExternDefinition {
@@ -71,6 +72,7 @@ enum class OpCode : std::uint8_t {
     kIntegerSubtract,
     kIntegerMultiply,
     kIntegerDivide,
+    kIntegerModulo,
     kBitOr,
     kBitAnd,
     kBitConcat,

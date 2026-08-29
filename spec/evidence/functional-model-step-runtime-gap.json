@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "037acd5d77cd12d22f4884c30e10d2ef2047f3531a525b1b1dfea72abc223d26"
+      "sha256": "e5c7a6b7ad5356280437cede398bfbec07e5bed0a666c2093afb90ef99b12723"
     }
   },
   "minimal_scalar_elf": {
@@ -29339,6 +29339,7 @@
       ],
       "lvalues": [
         "LDI_Var",
+        "LE_Discard",
         "LE_SetArray",
         "LE_SetField",
         "LE_Slice",
@@ -29357,6 +29358,7 @@
         "GT",
         "LE",
         "LT",
+        "MOD",
         "MUL",
         "NE",
         "NOT",
@@ -29413,6 +29415,7 @@
       "kIntegerGreaterEqual",
       "kIntegerLess",
       "kIntegerLessEqual",
+      "kIntegerModulo",
       "kIntegerMultiply",
       "kIntegerStep",
       "kIntegerSubtract",
@@ -29446,11 +29449,13 @@
       "ReadPhysicalMemoryByte",
       "ResetPhysicalMemory",
       "SInt",
-      "UInt"
+      "UInt",
+      "WritePhysicalMemoryByte"
     ],
     "impdef_bindings": [
       "ReadPhysicalMemoryByte",
-      "ResetPhysicalMemory"
+      "ResetPhysicalMemory",
+      "WritePhysicalMemoryByte"
     ],
     "interpreter_bytecode_opcodes": [
       "kAddLocalU64",
@@ -29480,6 +29485,7 @@
       "kIntegerGreaterEqual",
       "kIntegerLess",
       "kIntegerLessEqual",
+      "kIntegerModulo",
       "kIntegerMultiply",
       "kIntegerStep",
       "kIntegerSubtract",
@@ -29572,22 +29578,10 @@
         "sample_node_id": 784912
       },
       {
-        "count": 5,
-        "name": "LE_Discard",
-        "sample_function_id": 4785,
-        "sample_node_id": 221992
-      },
-      {
         "count": 61,
         "name": "L_Real",
         "sample_function_id": 4776,
         "sample_node_id": 21601
-      },
-      {
-        "count": 57,
-        "name": "MOD",
-        "sample_function_id": 529,
-        "sample_node_id": 21801
       },
       {
         "count": 74,
