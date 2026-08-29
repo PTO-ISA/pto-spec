@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+"""Generate the canonical experimental functional-model descriptor v1."""
+
+from __future__ import annotations
+
+import argparse
+import os
+from pathlib import Path
+import sys
+
+
+ROOT = Path(__file__).resolve().parents[3]
+MODELGEN = Path(__file__).resolve().parent
+if str(MODELGEN) not in sys.path:
+    sys.path.insert(0, str(MODELGEN))
+
+from descriptor import (  # noqa: E402
+    DescriptorError,
+    DescriptorInputs,
+    build_descriptor,
+    build_readiness,
+    render_descriptor,
+    render_readiness,
+    resolve_source_identity,
+)
+
+
+DEFAULT_OUTPUT = ROOT / "build/functional-model/share/pto/model-descriptor-v1.json"
+DEFAULT_READINESS = ROOT / "spec/evidence/functional-model-descriptor-readiness.json"
+
+
+def _path(relative: str) -> Path:
+    return ROOT / relative
+
+
+def _inputs(arguments: argparse.Namespace) -> DescriptorInputs:
+    return DescriptorInputs(
+        pto_mir=arguments.pto_mir.read_bytes(),
+        executable_image=arguments.executable_image.read_bytes(),
+        mir_readiness=arguments.mir_readiness.read_bytes(),
+        executable_readiness=arguments.executable_readiness.read_bytes(),
+        release_manifest=arguments.release_manifest.read_bytes(),
+        runtime_capabilities=arguments.runtime_capabilities.read_bytes(),
+        pto_mir_schema=arguments.pto_mir_schema.read_bytes(),
+        executable_mir_schema=arguments.executable_mir_schema.read_bytes(),
+        descriptor_schema=arguments.descriptor_schema.read_bytes(),
+        aslref_pin=arguments.aslref_pin.read_bytes(),
+        c_abi_header=arguments.c_abi_header.read_bytes(),
+        descriptor_module=Path(__file__).with_name("descriptor.py").read_bytes(),
+        descriptor_generator=Path(__file__).read_bytes(),
+    )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--pto-mir", type=Path, default=_path("build/functional-model/share/pto/pto-mir-v1.json"))
+    parser.add_argument("--executable-image", type=Path, default=_path("build/functional-model/share/pto/pto-executable-mir-v1.json"))
+    parser.add_argument("--mir-readiness", type=Path, default=_path("spec/evidence/functional-model-mir-readiness.json"))
+    parser.add_argument("--executable-readiness", type=Path, default=_path("spec/evidence/functional-model-executable-mir-readiness.json"))
+    parser.add_argument("--release-manifest", type=Path, default=_path("spec/release-manifest.json"))
+    parser.add_argument("--runtime-capabilities", type=Path, default=MODELGEN / "runtime-capabilities-v1.json")
+    parser.add_argument("--pto-mir-schema", type=Path, default=_path("spec/schemas/pto-mir-v1.schema.json"))
+    parser.add_argument("--executable-mir-schema", type=Path, default=_path("spec/schemas/pto-executable-mir-v1.schema.json"))
+    parser.add_argument("--descriptor-schema", type=Path, default=_path("spec/schemas/pto-functional-model-descriptor-v1.schema.json"))
+    parser.add_argument("--aslref-pin", type=Path, default=_path(".aslref-version"))
+    parser.add_argument("--c-abi-header", type=Path, default=_path("tools/functional-model/include/pto/pto_asl_model.h"))
+    parser.add_argument("--source-commit", default=os.environ.get("SOURCE_COMMIT"))
+    parser.add_argument("--source-tree", default=os.environ.get("SOURCE_TREE"))
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--readiness-output", type=Path, default=DEFAULT_READINESS)
+    parser.add_argument("--check", action="store_true")
+    arguments = parser.parse_args()
+    try:
+        source_commit, source_tree = resolve_source_identity(
+            ROOT, arguments.source_commit, arguments.source_tree
+        )
+        inputs = _inputs(arguments)
+        descriptor = build_descriptor(
+            source_commit=source_commit, source_tree=source_tree, inputs=inputs
+        )
+        descriptor_bytes = render_descriptor(descriptor)
+        readiness = render_readiness(
+            build_readiness(
+                descriptor=descriptor,
+                descriptor_bytes=descriptor_bytes,
+                descriptor_schema=inputs.descriptor_schema,
+            )
+        ).encode("utf-8")
+        outputs = ((arguments.output, descriptor_bytes), (arguments.readiness_output, readiness))
+        if arguments.check:
+            for path, content in outputs:
+                if not path.is_file():
+                    raise DescriptorError(f"missing generated artifact {path}")
+                if path.read_bytes() != content:
+                    raise DescriptorError(f"stale generated artifact {path}")
+            print(f"functional-model descriptor artifacts are current: {arguments.output}")
+        else:
+            for path, content in outputs:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
+                print(f"wrote {path}")
+    except (DescriptorError, OSError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

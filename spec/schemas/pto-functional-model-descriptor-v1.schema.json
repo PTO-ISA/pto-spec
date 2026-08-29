@@ -1,0 +1,96 @@
+{
+  "$id": "https://pto-isa.org/schemas/pto-functional-model-descriptor-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "architecture": {
+      "additionalProperties": false,
+      "properties": {
+        "choice_policy": { "const": "pto-v0-indexed-memory-logical-ascending-v1" },
+        "encoding_abi": { "minLength": 1, "type": "string" },
+        "encoding_fingerprint_sha256": { "$ref": "#/$defs/sha256" },
+        "functional_profile_id": { "const": "pto-functional-model-experimental-v1" }
+      },
+      "required": ["encoding_abi", "encoding_fingerprint_sha256", "functional_profile_id", "choice_policy"],
+      "type": "object"
+    },
+    "compatibility": {
+      "additionalProperties": false,
+      "properties": { "mode": { "const": "exact-descriptor-sha256" } },
+      "required": ["mode"],
+      "type": "object"
+    },
+    "interfaces": {
+      "additionalProperties": false,
+      "properties": {
+        "experimental_c_abi_version": { "minimum": 1, "type": "integer" },
+        "snapshot_schema": { "type": "null" }
+      },
+      "required": ["experimental_c_abi_version", "snapshot_schema"],
+      "type": "object"
+    },
+    "model": {
+      "additionalProperties": false,
+      "properties": {
+        "executable_image_schema": { "const": "pto-executable-mir-v1" },
+        "executable_image_sha256": { "$ref": "#/$defs/sha256" },
+        "numeric_impdef_binding_count": { "minimum": 0, "type": "integer" },
+        "numeric_impdef_binding_table_sha256": { "$ref": "#/$defs/sha256" },
+        "numeric_maturity": { "const": 0 },
+        "pto_mir_schema": { "const": "pto-mir-v1" },
+        "pto_mir_sha256": { "$ref": "#/$defs/sha256" }
+      },
+      "required": ["pto_mir_schema", "pto_mir_sha256", "executable_image_schema", "executable_image_sha256", "numeric_impdef_binding_count", "numeric_impdef_binding_table_sha256", "numeric_maturity"],
+      "type": "object"
+    },
+    "normalized_input_hashes": {
+      "additionalProperties": false,
+      "properties": {
+        "aslref_pin": { "$ref": "#/$defs/sha256" },
+        "c_abi_header": { "$ref": "#/$defs/sha256" },
+        "descriptor_generator": { "$ref": "#/$defs/sha256" },
+        "descriptor_module": { "$ref": "#/$defs/sha256" },
+        "descriptor_schema": { "$ref": "#/$defs/sha256" },
+        "executable_image": { "$ref": "#/$defs/sha256" },
+        "executable_mir_schema": { "$ref": "#/$defs/sha256" },
+        "executable_readiness": { "$ref": "#/$defs/sha256" },
+        "mir_readiness": { "$ref": "#/$defs/sha256" },
+        "pto_mir": { "$ref": "#/$defs/sha256" },
+        "pto_mir_schema": { "$ref": "#/$defs/sha256" },
+        "release_manifest": { "$ref": "#/$defs/sha256" },
+        "runtime_capabilities": { "$ref": "#/$defs/sha256" }
+      },
+      "required": ["aslref_pin", "c_abi_header", "descriptor_generator", "descriptor_module", "descriptor_schema", "executable_image", "executable_mir_schema", "executable_readiness", "mir_readiness", "pto_mir", "pto_mir_schema", "release_manifest", "runtime_capabilities"],
+      "type": "object"
+    },
+    "schema": { "const": "pto-functional-model-descriptor-v1" },
+    "schema_version": { "const": 1 },
+    "source": {
+      "additionalProperties": false,
+      "properties": {
+        "pto_commit": { "$ref": "#/$defs/gitId" },
+        "pto_tree": { "$ref": "#/$defs/gitId" }
+      },
+      "required": ["pto_commit", "pto_tree"],
+      "type": "object"
+    },
+    "toolchain": {
+      "additionalProperties": false,
+      "properties": {
+        "aslref_pin": { "$ref": "#/$defs/gitId" },
+        "modelgen_id": { "const": "pto-functional-model-modelgen" },
+        "modelgen_version": { "const": 1 }
+      },
+      "required": ["aslref_pin", "modelgen_id", "modelgen_version"],
+      "type": "object"
+    }
+  },
+  "required": ["schema", "schema_version", "source", "toolchain", "architecture", "model", "interfaces", "normalized_input_hashes", "compatibility"],
+  "title": "Experimental PTO functional-model descriptor v1",
+  "type": "object",
+  "x-pto-schema-version": 1,
+  "$defs": {
+    "gitId": { "pattern": "^[0-9a-f]{40}$", "type": "string" },
+    "sha256": { "pattern": "^[0-9a-f]{64}$", "type": "string" }
+  }
+}
