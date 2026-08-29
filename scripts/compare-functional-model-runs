@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+"""Compare ASLRef and gfrun architecture-visible corpus results."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+
+class ComparisonError(ValueError):
+    pass
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def load_json(path: Path) -> dict[str, object]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ComparisonError(f"JSON root is not an object: {path}")
+    return value
+
+
+def comparable(manifest: dict[str, object]) -> dict[str, object]:
+    selected = dict(manifest)
+    selected.pop("engine", None)
+    return selected
+
+
+def first_difference(left: object, right: object, path: str = "$") -> str | None:
+    if type(left) is not type(right):
+        return f"{path}: type {type(left).__name__} != {type(right).__name__}"
+    if isinstance(left, dict):
+        left_keys = set(left)
+        right_keys = set(right)
+        if left_keys != right_keys:
+            return f"{path}: keys {sorted(left_keys)} != {sorted(right_keys)}"
+        for key in sorted(left_keys):
+            difference = first_difference(left[key], right[key], f"{path}.{key}")
+            if difference is not None:
+                return difference
+        return None
+    if isinstance(left, list):
+        if len(left) != len(right):
+            return f"{path}: length {len(left)} != {len(right)}"
+        for index, (left_item, right_item) in enumerate(zip(left, right)):
+            difference = first_difference(left_item, right_item, f"{path}[{index}]")
+            if difference is not None:
+                return difference
+        return None
+    if left != right:
+        return f"{path}: {left!r} != {right!r}"
+    return None
+
+
+def compare_case(case_id: str, aslref_root: Path, gfrun_root: Path) -> dict[str, object]:
+    aslref_run_path = aslref_root / case_id / "run.json"
+    gfrun_run_path = gfrun_root / case_id / "run.json"
+    aslref_result = aslref_root / case_id / "result.bin"
+    gfrun_result = gfrun_root / case_id / "result.bin"
+    for path in (aslref_run_path, gfrun_run_path, aslref_result, gfrun_result):
+        if not path.is_file():
+            raise ComparisonError(f"missing comparison artifact: {path}")
+    aslref_run = load_json(aslref_run_path)
+    gfrun_run = load_json(gfrun_run_path)
+    if aslref_run.get("engine") != "aslref" or gfrun_run.get("engine") != "asl":
+        raise ComparisonError(f"unexpected producer identity for {case_id}")
+    difference = first_difference(comparable(aslref_run), comparable(gfrun_run))
+    if difference is not None:
+        raise ComparisonError(f"{case_id} run mismatch: {difference}")
+    if aslref_result.read_bytes() != gfrun_result.read_bytes():
+        raise ComparisonError(f"{case_id} result.bin mismatch")
+    return {
+        "id": case_id,
+        "status": "pass",
+        "aslref_run_sha256": sha256(aslref_run_path),
+        "gfrun_run_sha256": sha256(gfrun_run_path),
+        "result_sha256": sha256(aslref_result),
+        "trace_step_count": len(aslref_run["trace"]),
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--aslref", type=Path, required=True)
+    parser.add_argument("--gfrun", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    arguments = parser.parse_args()
+    aslref_summary = load_json(arguments.aslref / "summary.json")
+    gfrun_summary = load_json(arguments.gfrun / "summary.json")
+    aslref_cases = {str(row["id"]) for row in aslref_summary.get("cases", [])}
+    gfrun_cases = {str(row["id"]) for row in gfrun_summary.get("cases", [])}
+    if not aslref_cases or aslref_cases != gfrun_cases:
+        raise ComparisonError(
+            f"case sets differ: aslref={sorted(aslref_cases)} gfrun={sorted(gfrun_cases)}"
+        )
+    results = [
+        compare_case(case_id, arguments.aslref, arguments.gfrun)
+        for case_id in sorted(aslref_cases)
+    ]
+    summary = {
+        "schema": "pto-functional-model-oracle-differential-v1",
+        "status": "pass",
+        "models": ["aslref", "gfrun-asl"],
+        "cases": results,
+    }
+    arguments.output.parent.mkdir(parents=True, exist_ok=True)
+    arguments.output.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    print(arguments.output)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

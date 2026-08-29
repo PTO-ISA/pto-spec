@@ -1,0 +1,263 @@
+#!/usr/bin/env python3
+"""Execute the checked ELF corpus through the pinned ASLRef reference profile."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import struct
+import subprocess
+import tempfile
+
+
+ROOT = Path(__file__).resolve().parents[1]
+PT_LOAD = 1
+
+
+class OracleError(ValueError):
+    pass
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def load_json(path: Path) -> dict[str, object]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise OracleError(f"JSON root is not an object: {path}")
+    return value
+
+
+def load_segments(path: Path) -> list[tuple[int, bytes, int]]:
+    data = path.read_bytes()
+    if len(data) < 64 or data[:4] != b"\x7fELF" or data[4:6] != b"\x02\x01":
+        raise OracleError("oracle input must be ELF64 little-endian")
+    phoff = struct.unpack_from("<Q", data, 32)[0]
+    phentsize, phnum = struct.unpack_from("<HH", data, 54)
+    if phentsize != 56 or phnum == 0:
+        raise OracleError("invalid ELF program header table")
+    segments: list[tuple[int, bytes, int]] = []
+    for index in range(phnum):
+        offset = phoff + index * phentsize
+        if offset + phentsize > len(data):
+            raise OracleError("program header lies outside ELF")
+        p_type, _, file_offset, vaddr, paddr, filesz, memsz, _ = struct.unpack_from(
+            "<IIQQQQQQ", data, offset
+        )
+        if p_type != PT_LOAD:
+            continue
+        if paddr != vaddr or filesz > memsz or file_offset + filesz > len(data):
+            raise OracleError("invalid PT_LOAD for reference oracle")
+        segments.append((vaddr, data[file_offset : file_offset + filesz], memsz))
+    if not segments:
+        raise OracleError("ELF contains no PT_LOAD")
+    return segments
+
+
+def word(value: int) -> str:
+    return f"Zeros{{PTO_XLEN}} + {value}"
+
+
+def render_case(function_name: str, directory: Path, manifest: dict[str, object]) -> str:
+    case = manifest["case"]
+    if not isinstance(case, dict):
+        raise OracleError("case contract is not an object")
+    elf_contract = case["elf"]
+    golden_contract = case["golden"]
+    stack = case["stack"]
+    if not all(isinstance(value, dict) for value in (elf_contract, golden_contract, stack)):
+        raise OracleError("case input contract is not an object")
+    elf = directory / str(elf_contract["filename"])
+    golden = directory / str(golden_contract["filename"])
+    if sha256(elf) != elf_contract["sha256"] or sha256(golden) != golden_contract["sha256"]:
+        raise OracleError("oracle input hash mismatch")
+    expected_trace = case["expected_trace"]
+    if not isinstance(expected_trace, list) or not expected_trace:
+        raise OracleError("case has no expected trace")
+
+    lines = [f"func {function_name}()", "begin"]
+    lines.append(f"    InitializeFunctionalModel({word(int(elf_contract['entry']))});")
+    lines.append(
+        "    let stack_initialized = InitializeFunctionalModelGPR(1, "
+        f"{word(int(stack['top']))});"
+    )
+    lines.append("    assert stack_initialized;")
+    for base, file_bytes, memsz in load_segments(elf):
+        for offset, value in enumerate(file_bytes):
+            lines.append(
+                f"    WritePhysicalMemoryByte({word(base + offset)}, "
+                f"'{value:08b}');"
+            )
+        for offset in range(len(file_bytes), memsz):
+            lines.append(
+                f"    WritePhysicalMemoryByte({word(base + offset)}, Zeros{{8}});"
+            )
+
+    for index, expected in enumerate(expected_trace):
+        if not isinstance(expected, dict):
+            raise OracleError("expected trace step is not an object")
+        result = f"step_{index}"
+        lines.extend([
+            f"    let {result} = ExecuteOnePTOStep();",
+            f"    assert {result}.status == PTOFunctionalStep_Executed;",
+            f"    assert {result}.instruction_status == PTOFunctionalInstruction_Executed;",
+            f"    assert {result}.pre_tpc == {word(int(expected['pre_tpc']))};",
+            f"    assert {result}.post_tpc == {word(int(expected['post_tpc']))};",
+            f"    assert {result}.pre_bpc == {word(int(expected['pre_bpc']))};",
+            f"    assert {result}.post_bpc == {word(int(expected['post_bpc']))};",
+            f"    assert UInt({result}.raw_instruction) == {int(expected['raw_instruction_le'])};",
+            f"    assert {result}.length_bits == {int(expected['length_bits'])};",
+            f"    assert {result}.fault == Fault_None;",
+            f"    assert {result}.fault_address == Zeros{{PTO_XLEN}};",
+            f"    assert {result}.fault_cause == Zeros{{24}};",
+            f"    assert {result}.origin_pe == 0;",
+            f"    assert {result}.request_token == Zeros{{PTO_XLEN}};",
+            f"    assert {result}.request_type == Zeros{{16}};",
+            f"    assert {result}.request_argument0 == Zeros{{PTO_XLEN}};",
+            f"    assert {result}.sequence == {word(int(expected['sequence']))};",
+        ])
+
+    result_contract = case["result"]
+    if not isinstance(result_contract, dict):
+        raise OracleError("result contract is not an object")
+    for offset, value in enumerate(golden.read_bytes()):
+        lines.append(
+            f"    assert ReadPhysicalMemoryByte("
+            f"{word(int(result_contract['address']) + offset)}) == '{value:08b}';"
+        )
+    lines.extend(["end;", ""])
+    return "\n".join(lines)
+
+
+def oracle_run_manifest(
+    case: dict[str, object],
+    descriptor: dict[str, object],
+    descriptor_sha256: str,
+) -> dict[str, object]:
+    trace = []
+    for expected in case["expected_trace"]:
+        trace.append({
+            "status": 0,
+            "result_valid": True,
+            "step_state": 1,
+            "instruction_status": 1,
+            "pre_tpc": expected["pre_tpc"],
+            "post_tpc": expected["post_tpc"],
+            "pre_bpc": expected["pre_bpc"],
+            "post_bpc": expected["post_bpc"],
+            "raw_instruction_le": expected["raw_instruction_le"],
+            "length_bits": expected["length_bits"],
+            "fault_code": 0,
+            "fault_address": 0,
+            "fault_cause": 0,
+            "origin_pe": 0,
+            "request_token": 0,
+            "request_type": 0,
+            "request_argument0": 0,
+            "sequence": expected["sequence"],
+        })
+    return {
+        "schema": "linx-gfrun-asl-run-v1",
+        "engine": "aslref",
+        "model_descriptor_sha256": descriptor_sha256,
+        "model_descriptor": descriptor,
+        "elf": {"filename": case["elf"]["filename"], "entry": case["elf"]["entry"]},
+        "stop_policy": case["stop_policy"],
+        "outcome": {
+            "status": "completed",
+            "reason": "stop_pc",
+            "steps": len(trace),
+            "final_tpc": trace[-1]["post_tpc"],
+        },
+        "trace": trace,
+        "result": {
+            "address": case["result"]["address"],
+            "size": case["result"]["size"],
+            "bytes_hex": "",
+        },
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--corpus", type=Path, required=True)
+    parser.add_argument("--descriptor", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    arguments = parser.parse_args()
+    index = load_json(arguments.corpus / "manifest.json")
+    rows = index.get("cases")
+    if not isinstance(rows, list) or not rows:
+        raise OracleError("corpus has no cases")
+    subprocess.run(["make", "build"], cwd=ROOT, check=True)
+
+    manifests: list[tuple[Path, dict[str, object]]] = []
+    harnesses: list[str] = []
+    for number, row in enumerate(rows):
+        if not isinstance(row, dict):
+            raise OracleError("corpus row is not an object")
+        directory = arguments.corpus / str(row["directory"])
+        manifest = load_json(directory / "manifest.json")
+        manifests.append((directory, manifest))
+        harnesses.append(render_case(f"RunOracleCase_{number}", directory, manifest))
+    harnesses.extend([
+        "func main() => integer",
+        "begin",
+        *[f"    RunOracleCase_{index}();" for index in range(len(manifests))],
+        "    return 0;",
+        "end;",
+        "",
+    ])
+
+    with tempfile.TemporaryDirectory(prefix="pto-aslref-corpus-") as temporary:
+        program = Path(temporary) / "oracle.asl"
+        with program.open("wb") as output:
+            output.write((ROOT / "build" / "pto-spec.asl").read_bytes())
+            output.write("\n".join(harnesses).encode("utf-8"))
+        completed = subprocess.run(
+            [str(ROOT / "scripts" / "aslref"), "--type-check-strict", "--exec", program],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+        )
+        if completed.returncode != 0:
+            raise OracleError(
+                f"ASLRef corpus oracle failed ({completed.returncode}):\n{completed.stderr}"
+            )
+
+    descriptor = load_json(arguments.descriptor)
+    descriptor_digest = sha256(arguments.descriptor)
+    arguments.output.mkdir(parents=True, exist_ok=True)
+    results = []
+    for directory, manifest in manifests:
+        case = manifest["case"]
+        golden = directory / str(case["golden"]["filename"])
+        run_manifest = oracle_run_manifest(case, descriptor, descriptor_digest)
+        run_manifest["result"]["bytes_hex"] = golden.read_bytes().hex()
+        case_output = arguments.output / str(case["id"])
+        case_output.mkdir(parents=True, exist_ok=True)
+        run_path = case_output / "run.json"
+        run_path.write_text(json.dumps(run_manifest, indent=2, sort_keys=True) + "\n")
+        result_path = case_output / "result.bin"
+        result_path.write_bytes(golden.read_bytes())
+        results.append({
+            "id": case["id"],
+            "status": "pass",
+            "run_manifest_sha256": sha256(run_path),
+            "result_sha256": sha256(result_path),
+        })
+    summary = {
+        "schema": "pto-functional-model-aslref-oracle-v1",
+        "status": "pass",
+        "cases": results,
+    }
+    summary_path = arguments.output / "summary.json"
+    summary_path.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    print(summary_path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
