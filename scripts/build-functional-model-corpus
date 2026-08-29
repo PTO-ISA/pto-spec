@@ -279,6 +279,7 @@ def build_case(
             "id": name,
             "isa": {
                 "profile": "pto-functional-reference-v1",
+                "model_profile": "pto-functional-model-experimental-v1",
                 "version": isa_identity["release"],
                 "encoding_abi": isa_identity["encoding_abi"],
                 "encoding_projection_sha256":

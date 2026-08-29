@@ -152,6 +152,11 @@ class FunctionalModelCorpusTest(unittest.TestCase):
     def valid_run_contract(self) -> tuple[dict[str, object], dict[str, object]]:
         case = {
             "case": {
+                "isa": {
+                    "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
+                    "encoding_projection_sha256": "34" * 32,
+                    "model_profile": "pto-functional-model-experimental-v1",
+                },
                 "stop_policy": {"stop_pc": 0x104, "max_steps": 2},
                 "expected_length_sequence": [16, 16],
                 "expected_trace": [
@@ -181,6 +186,14 @@ class FunctionalModelCorpusTest(unittest.TestCase):
             "schema": "linx-gfrun-asl-run-v1",
             "engine": "asl",
             "model_descriptor_sha256": "12" * 32,
+            "model_descriptor": {
+                "architecture": {
+                    "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
+                    "encoding_fingerprint_sha256": "34" * 32,
+                    "functional_profile_id":
+                        "pto-functional-model-experimental-v1",
+                }
+            },
             "outcome": {
                 "status": "completed",
                 "reason": "stop_pc",

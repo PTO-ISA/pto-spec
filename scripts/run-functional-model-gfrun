@@ -62,11 +62,33 @@ def validate_run(
         bytes.fromhex(descriptor)
     except ValueError as error:
         raise ValidationError("model descriptor identity is not hexadecimal") from error
+    model_descriptor = run_manifest.get("model_descriptor")
+    if not isinstance(model_descriptor, dict):
+        raise ValidationError("run manifest has no model descriptor object")
 
     stop_policy = case["stop_policy"]
     result_contract = case["result"]
+    isa = case["isa"]
     if not isinstance(stop_policy, dict) or not isinstance(result_contract, dict):
         raise ValidationError("case stop or result contract is not an object")
+    if not isinstance(isa, dict):
+        raise ValidationError("case ISA identity is not an object")
+    architecture = model_descriptor.get("architecture")
+    if not isinstance(architecture, dict):
+        raise ValidationError("model descriptor architecture is not an object")
+    require_equal(
+        architecture.get("encoding_abi"), isa["encoding_abi"],
+        "model/corpus encoding ABI",
+    )
+    require_equal(
+        architecture.get("encoding_fingerprint_sha256"),
+        isa["encoding_projection_sha256"],
+        "model/corpus encoding projection",
+    )
+    require_equal(
+        architecture.get("functional_profile_id"), isa["model_profile"],
+        "model/corpus functional profile",
+    )
     outcome = run_manifest.get("outcome")
     observed_result = run_manifest.get("result")
     trace = run_manifest.get("trace")

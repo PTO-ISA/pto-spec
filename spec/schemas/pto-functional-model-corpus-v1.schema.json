@@ -58,11 +58,12 @@
           "type": "object",
           "additionalProperties": false,
           "required": [
-            "profile", "version", "encoding_abi",
+            "profile", "model_profile", "version", "encoding_abi",
             "encoding_projection_sha256"
           ],
           "properties": {
             "profile": {"const": "pto-functional-reference-v1"},
+            "model_profile": {"const": "pto-functional-model-experimental-v1"},
             "version": {"const": "0.58.5"},
             "encoding_abi": {"const": "pto-isa-0.58.5-mode-function-v1"},
             "encoding_projection_sha256": {"$ref": "#/$defs/sha256"}
