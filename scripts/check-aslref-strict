@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Run the pinned ASLRef strict type checker and reject advisory warnings.
+set -euo pipefail
+
+aslref=${ASLREF:-./scripts/aslref}
+
+captured=""
+captured_status=0
+set +e
+captured=$("$aslref" --type-check-strict --no-exec "$@" 2>&1)
+captured_status=$?
+set -e
+
+if [[ $captured_status -ne 0 ]]; then
+    [[ -z $captured ]] || printf '%s\n' "$captured" >&2
+    exit "$captured_status"
+fi
+
+if grep -qF 'ASL Warning:' <<<"$captured"; then
+    [[ -z $captured ]] || printf '%s\n' "$captured" >&2
+    echo "error: strict typecheck emitted an ASL warning" >&2
+    exit 1
+fi
+
+[[ -z $captured ]] || printf '%s\n' "$captured"

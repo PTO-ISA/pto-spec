@@ -204,11 +204,13 @@ begin
     if _GQMQueueSuspended[[slot]] || remaining == 0 then
         return GQMResult(remaining, '01');
     end;
+    let capacity = _GQMQueueCapacity[[slot]]
+        as integer {1..PTO_GQM_MAX_CAPACITY};
 
     var entry_index: GQMQueueEntryIndex = 0;
     if at_head then
         if _GQMQueueHead[[slot]] == 0 then
-            entry_index = (_GQMQueueCapacity[[slot]] - 1)
+            entry_index = (capacity - 1)
                 as GQMQueueEntryIndex;
         else
             entry_index = (_GQMQueueHead[[slot]] - 1)
@@ -217,7 +219,7 @@ begin
         _GQMQueueHead[[slot]] = entry_index;
     else
         entry_index = ((_GQMQueueHead[[slot]] + _GQMQueueCount[[slot]])
-            MOD _GQMQueueCapacity[[slot]]) as GQMQueueEntryIndex;
+            MOD capacity) as GQMQueueEntryIndex;
     end;
 
     var release_epoch: integer = 0;
@@ -257,9 +259,11 @@ begin
         return response;
     end;
 
+    let capacity = _GQMQueueCapacity[[slot]]
+        as integer {1..PTO_GQM_MAX_CAPACITY};
     let head = _GQMQueueHead[[slot]];
     let entry = _GQMQueueEntries[[slot]][[head]];
-    let next_head = ((head + 1) MOD _GQMQueueCapacity[[slot]])
+    let next_head = ((head + 1) MOD capacity)
         as GQMQueueEntryIndex;
     _GQMQueueHead[[slot]] = next_head;
     _GQMQueueCount[[slot]] = (_GQMQueueCount[[slot]] - 1)

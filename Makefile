@@ -118,7 +118,7 @@ toolchain-check:
 	ASLREF="$(ASLREF)" ./scripts/check-toolchain
 
 check: $(SPEC)
-	$(ASLREF) --type-check-strict --no-exec $(SPEC)
+	ASLREF="$(ASLREF)" ./scripts/check-aslref-strict $(SPEC)
 
 release-check: pr-check release-evidence-check toolchain-check check
 	@test -n "$(RELEASE_COMMIT)" || \

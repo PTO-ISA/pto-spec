@@ -19,7 +19,9 @@ begin
     if !_BundleFixedPointAttributes.group_max_en || group_n == 0 then
         return columns;
     end;
-    return ((columns + (group_n - 1)) DIVRM group_n)
+    let nonzero_group_n = group_n
+        as integer {8,16,32,48,64,80,96,112,128};
+    return ((columns + (nonzero_group_n - 1)) DIVRM nonzero_group_n)
         as integer {0..65535};
 end;
 
