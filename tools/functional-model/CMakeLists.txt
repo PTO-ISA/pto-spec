@@ -35,8 +35,9 @@ file(GLOB_RECURSE PTO_ASL_SOURCES CONFIGURE_DEPENDS
     "${PTO_REPOSITORY_ROOT}/asl/*.asl")
 
 add_custom_command(
-    OUTPUT "${PTO_GENERATED_MIR}"
-    BYPRODUCTS "${PTO_GENERATED_ROOT}/mir-readiness.json"
+    OUTPUT
+        "${PTO_GENERATED_MIR}"
+        "${PTO_GENERATED_ROOT}/mir-readiness.json"
     COMMAND "${Python3_EXECUTABLE}"
             "${PTO_REPOSITORY_ROOT}/scripts/generate-functional-model-inventory"
             --output "${PTO_GENERATED_ROOT}/asl-constructs.json"
@@ -51,8 +52,9 @@ add_custom_command(
     COMMENT "Generating complete PTO MIR input")
 
 add_custom_command(
-    OUTPUT "${PTO_GENERATED_EXECUTABLE_MIR}"
-    BYPRODUCTS "${PTO_GENERATED_ROOT}/executable-mir-readiness.json"
+    OUTPUT
+        "${PTO_GENERATED_EXECUTABLE_MIR}"
+        "${PTO_GENERATED_ROOT}/executable-mir-readiness.json"
     COMMAND "${Python3_EXECUTABLE}"
             "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/generate-executable-mir"
             --input "${PTO_GENERATED_MIR}"
