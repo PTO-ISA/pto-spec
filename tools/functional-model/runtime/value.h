@@ -18,6 +18,7 @@ class BigInteger {
     explicit BigInteger(std::int64_t value);
     static BigInteger FromUnsignedWords(std::vector<std::uint32_t> words);
     BigInteger Add(const BigInteger &other) const;
+    BigInteger Multiply(const BigInteger &other) const;
     BigInteger Negated() const;
     int Compare(const BigInteger &other) const;
     bool TryToU64(std::uint64_t *value) const;

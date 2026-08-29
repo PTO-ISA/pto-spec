@@ -44,6 +44,7 @@ enum class OpCode : std::uint8_t {
     kStoreGlobal,
     kIntegerAdd,
     kIntegerSubtract,
+    kIntegerMultiply,
     kIntegerLessEqual,
     kIntegerGreaterEqual,
     kIntegerStep,

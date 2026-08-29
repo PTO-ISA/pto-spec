@@ -281,6 +281,7 @@ class Compiler:
             opcode = {
                 "EQ": "kEqual", "NE": "kNotEqual",
                 "ADD": "kIntegerAdd", "SUB": "kIntegerSubtract",
+                "MUL": "kIntegerMultiply",
             }[operator]
             self.emit(
                 opcode,

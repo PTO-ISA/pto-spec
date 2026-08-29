@@ -245,6 +245,7 @@ EvaluationResult Interpreter::EvaluateInternal(
             }
             case OpCode::kIntegerAdd:
             case OpCode::kIntegerSubtract:
+            case OpCode::kIntegerMultiply:
             case OpCode::kIntegerLessEqual:
             case OpCode::kIntegerGreaterEqual: {
                 const auto left = frame.typed_locals.find(instruction.binding);
@@ -258,11 +259,14 @@ EvaluationResult Interpreter::EvaluateInternal(
                 const BigInteger &l = std::get<BigInteger>(left->second.storage());
                 const BigInteger &r = std::get<BigInteger>(right->second.storage());
                 if (instruction.opcode == OpCode::kIntegerAdd ||
-                    instruction.opcode == OpCode::kIntegerSubtract) {
+                    instruction.opcode == OpCode::kIntegerSubtract ||
+                    instruction.opcode == OpCode::kIntegerMultiply) {
                     frame.typed_locals.insert_or_assign(
                         instruction.local,
-                        Value(l.Add(instruction.opcode == OpCode::kIntegerAdd
-                                        ? r : r.Negated())));
+                        Value(instruction.opcode == OpCode::kIntegerMultiply
+                                  ? l.Multiply(r)
+                                  : l.Add(instruction.opcode == OpCode::kIntegerAdd
+                                              ? r : r.Negated())));
                 } else {
                     const int order = l.Compare(r);
                     frame.typed_locals.insert_or_assign(

@@ -7,7 +7,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "80ec9c3f3c534345f0eba474511c847e4ef5bf397dd28d4b722d382ab83b2913"
+      "sha256": "2716ba12874cbc6c665e0309eefb8ae920e26f3c3ca1e5ed2e084cdc303b2ba1"
     }
   },
   "minimal_scalar_elf": {
@@ -29338,6 +29338,7 @@
       "operators": [
         "ADD",
         "EQ",
+        "MUL",
         "NE",
         "SUB"
       ],
@@ -29370,6 +29371,7 @@
       "kIntegerAdd",
       "kIntegerGreaterEqual",
       "kIntegerLessEqual",
+      "kIntegerMultiply",
       "kIntegerStep",
       "kIntegerSubtract",
       "kJump",
@@ -29403,6 +29405,7 @@
       "kIntegerAdd",
       "kIntegerGreaterEqual",
       "kIntegerLessEqual",
+      "kIntegerMultiply",
       "kIntegerStep",
       "kIntegerSubtract",
       "kJump",
@@ -29612,12 +29615,6 @@
         "name": "MOD",
         "sample_function_id": 529,
         "sample_node_id": 21801
-      },
-      {
-        "count": 382,
-        "name": "MUL",
-        "sample_function_id": 4815,
-        "sample_node_id": 19222
       },
       {
         "count": 74,

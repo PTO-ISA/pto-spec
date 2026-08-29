@@ -87,6 +87,28 @@ BigInteger BigInteger::Negated() const {
     return result;
 }
 
+BigInteger BigInteger::Multiply(const BigInteger &other) const {
+    BigInteger result;
+    if (words_.empty() || other.words_.empty()) return result;
+    result.negative_ = negative_ != other.negative_;
+    result.words_.assign(words_.size() + other.words_.size(), 0);
+    for (std::size_t left = 0; left < words_.size(); ++left) {
+        std::uint64_t carry = 0;
+        for (std::size_t right = 0; right < other.words_.size(); ++right) {
+            const std::size_t index = left + right;
+            const std::uint64_t product =
+                static_cast<std::uint64_t>(words_[left]) * other.words_[right] +
+                result.words_[index] + carry;
+            result.words_[index] = static_cast<std::uint32_t>(product);
+            carry = product >> 32;
+        }
+        result.words_[left + other.words_.size()] =
+            static_cast<std::uint32_t>(carry);
+    }
+    result.Normalize();
+    return result;
+}
+
 int BigInteger::Compare(const BigInteger &other) const {
     if (negative_ != other.negative_) return negative_ ? -1 : 1;
     int magnitude = 0;
