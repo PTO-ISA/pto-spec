@@ -405,6 +405,7 @@ EvaluationResult Interpreter::EvaluateInternal(
             case OpCode::kIntegerSubtract:
             case OpCode::kIntegerMultiply:
             case OpCode::kIntegerDivide:
+            case OpCode::kIntegerFloorDivide:
             case OpCode::kIntegerModulo:
             case OpCode::kIntegerLessEqual:
             case OpCode::kIntegerGreaterEqual:
@@ -452,14 +453,25 @@ EvaluationResult Interpreter::EvaluateInternal(
                     instruction.opcode == OpCode::kIntegerSubtract ||
                     instruction.opcode == OpCode::kIntegerMultiply ||
                     instruction.opcode == OpCode::kIntegerDivide ||
+                    instruction.opcode == OpCode::kIntegerFloorDivide ||
                     instruction.opcode == OpCode::kIntegerModulo) {
                     if (instruction.opcode == OpCode::kIntegerDivide ||
+                        instruction.opcode == OpCode::kIntegerFloorDivide ||
                         instruction.opcode == OpCode::kIntegerModulo) {
+                        if (instruction.opcode == OpCode::kIntegerFloorDivide &&
+                            r.Compare(BigInteger(0)) <= 0)
+                            return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
                         BigInteger result;
-                        const bool valid = instruction.opcode == OpCode::kIntegerDivide
-                            ? l.Divide(r, &result) : l.Modulo(r, &result);
+                        const bool valid = instruction.opcode == OpCode::kIntegerModulo
+                            ? l.Modulo(r, &result) : l.Divide(r, &result);
                         if (!valid)
                             return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                        if (instruction.opcode == OpCode::kIntegerFloorDivide) {
+                            const BigInteger remainder =
+                                l.Add(result.Multiply(r).Negated());
+                            if (l.Compare(BigInteger(0)) < 0 && !remainder.IsZero())
+                                result = result.Add(BigInteger(-1));
+                        }
                         frame.typed_locals.insert_or_assign(
                             instruction.local, Value(std::move(result)));
                         break;

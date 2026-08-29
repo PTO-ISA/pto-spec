@@ -499,6 +499,13 @@ void TestTupleExtraction() {
                       {OpCode::kAppendTuple, 0, 2, 0, 0},
                       {OpCode::kAppendTuple, 1, 2, 0, 0},
                       {OpCode::kGetTuple, 2, 3, 1, 0},
+                     {OpCode::kReturnValue, 0, 3, 0, 0}},
+                     1},
+            Function{755,
+                     {{OpCode::kLoadIntegerNegative, 0, 0, 5, 0},
+                      {OpCode::kLoadIntegerImmediate, 0, 1, 3, 0},
+                      {OpCode::kIntegerFloorDivide, 0, 2, 0, 1},
+                      {OpCode::kIntegerNegate, 2, 3, 0, 0},
                       {OpCode::kReturnValue, 0, 3, 0, 0}},
                      1},
         },
@@ -520,6 +527,8 @@ void TestTupleExtraction() {
     assert(result == 7);
     assert(runtime.InvokeU16(754, 0, &result) == PTO_STATUS_OK);
     assert(result == 9);
+    assert(runtime.InvokeU16(755, 0, &result) == PTO_STATUS_OK);
+    assert(result == 2);
 }
 
 void TestNumericIntegerExterns() {

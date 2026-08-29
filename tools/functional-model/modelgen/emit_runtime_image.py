@@ -330,6 +330,7 @@ class Compiler:
                 "ADD": "kIntegerAdd", "SUB": "kIntegerSubtract",
                 "MUL": "kIntegerMultiply",
                 "DIV": "kIntegerDivide",
+                "DIVRM": "kIntegerFloorDivide",
                 "MOD": "kIntegerModulo",
                 "OR": "kBitOr",
                 "AND": "kBitAnd",
