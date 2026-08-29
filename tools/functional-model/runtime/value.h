@@ -74,6 +74,7 @@ class Value {
     explicit Value(RecordValue value);
     explicit Value(std::shared_ptr<PagedLazyArray> value);
     const Storage &storage() const;
+    Value Clone() const;
 
   private:
     Storage storage_;

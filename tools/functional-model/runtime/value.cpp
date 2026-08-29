@@ -215,6 +215,25 @@ Value::Value(std::shared_ptr<PagedLazyArray> value)
     : storage_(std::move(value)) {}
 const Value::Storage &Value::storage() const { return storage_; }
 
+Value Value::Clone() const {
+    if (const auto *value = std::get_if<bool>(&storage_)) return Value(*value);
+    if (const auto *value = std::get_if<BigInteger>(&storage_)) return Value(*value);
+    if (const auto *value = std::get_if<BitVector>(&storage_)) return Value(*value);
+    if (const auto *value = std::get_if<EnumValue>(&storage_)) return Value(*value);
+    if (const auto *value = std::get_if<std::shared_ptr<TupleValue>>(&storage_)) {
+        TupleValue copy;
+        for (const Value &item : **value) copy.push_back(item.Clone());
+        return Value(std::move(copy));
+    }
+    if (const auto *value = std::get_if<std::shared_ptr<RecordValue>>(&storage_)) {
+        RecordValue copy;
+        for (const auto &[field, item] : **value) copy.emplace(field, item.Clone());
+        return Value(std::move(copy));
+    }
+    const auto &array = std::get<std::shared_ptr<PagedLazyArray>>(storage_);
+    return Value(std::make_shared<PagedLazyArray>(*array));
+}
+
 PagedLazyArray::PagedLazyArray(DefaultFactory default_factory)
     : default_factory_(std::move(default_factory)) {
     if (!default_factory_) {

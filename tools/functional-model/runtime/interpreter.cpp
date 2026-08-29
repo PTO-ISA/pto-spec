@@ -189,14 +189,16 @@ EvaluationResult Interpreter::EvaluateInternal(
                 const auto value = frame.typed_locals.find(instruction.binding);
                 if (value == frame.typed_locals.end())
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
-                frame.typed_locals.insert_or_assign(instruction.local, value->second);
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, value->second.Clone());
                 break;
             }
             case OpCode::kLoadGlobal: {
                 const auto value = state->typed_globals.find(instruction.binding);
                 if (value == state->typed_globals.end())
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
-                frame.typed_locals.insert_or_assign(instruction.local, value->second);
+                frame.typed_locals.insert_or_assign(
+                    instruction.local, value->second.Clone());
                 break;
             }
             case OpCode::kLoadBool:
@@ -207,7 +209,8 @@ EvaluationResult Interpreter::EvaluateInternal(
                 const auto value = frame.typed_locals.find(instruction.local);
                 if (value == frame.typed_locals.end())
                     return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
-                state->typed_globals.insert_or_assign(instruction.binding, value->second);
+                state->typed_globals.insert_or_assign(
+                    instruction.binding, value->second.Clone());
                 break;
             }
             case OpCode::kCallValue:
