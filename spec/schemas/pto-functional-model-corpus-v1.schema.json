@@ -1,16 +1,142 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://pto-isa.org/schemas/pto-functional-model-corpus-v1.schema.json",
-  "title": "PTO ASL functional-model checked corpus v1",
+  "title": "PTO functional-model checked corpus case v1",
   "type": "object",
-  "required": ["schema", "toolchain", "cases"],
+  "additionalProperties": false,
+  "required": ["schema", "case", "toolchain"],
   "properties": {
     "schema": {"const": "pto-functional-model-corpus-v1"},
-    "cases": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/case"}},
-    "toolchain": {"type":"object", "required":["clang","clang_sha256","lld","lld_sha256","linker_script_sha256"], "additionalProperties":false, "properties":{"clang":{"type":"string"},"lld":{"type":"string"},"clang_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"lld_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"linker_script_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"}}}
+    "case": {"$ref": "#/$defs/case"},
+    "toolchain": {"$ref": "#/$defs/toolchain"}
   },
   "$defs": {
-    "segment": {"type":"object", "required":["name","address","size","flags"], "properties":{"name":{"type":"string"},"address":{"type":"integer","minimum":0,"maximum":4095},"size":{"type":"integer","minimum":1,"maximum":4096},"flags":{"type":"string","pattern":"^[RWE]{1,3}$"}}, "additionalProperties":false},
-    "case": {"type":"object", "required":["id","isa","requirements","avs_ids","initial_gprs","segments","entry","stack","stop_policy","allowed_requests","result","golden","max_steps","expected_length_sequence"], "properties":{"id":{"type":"string"},"isa":{"type":"object"},"requirements":{"type":"array","items":{"type":"string"}},"avs_ids":{"type":"array","items":{"type":"string"}},"initial_gprs":{"type":"object","additionalProperties":{"type":"integer","minimum":0}},"segments":{"type":"array","items":{"$ref":"#/$defs/segment"}},"entry":{"type":"integer","minimum":0,"maximum":4095},"stack":{"type":"object","required":["address","size"],"properties":{"address":{"type":"integer","minimum":0,"maximum":4095},"size":{"type":"integer","minimum":1}},"additionalProperties":false},"stop_policy":{"type":"object","required":["kind","stop_pc","max_steps"],"properties":{"kind":{"const":"stop_pc"},"stop_pc":{"type":"integer","minimum":0,"maximum":4095},"max_steps":{"type":"integer","minimum":1}},"additionalProperties":false},"allowed_requests":{"type":"array","maxItems":0},"result":{"type":"object","required":["symbol","size_symbol","segments"],"properties":{"symbol":{"const":"cross_model_result"},"size_symbol":{"const":"cross_model_result_size"},"segments":{"type":"array","items":{"$ref":"#/$defs/segment"}}},"additionalProperties":false},"golden":{"type":"object","required":["derivation","sha256","size"],"properties":{"derivation":{"type":"string"},"sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},"size":{"type":"integer","minimum":1}},"additionalProperties":false},"max_steps":{"type":"integer","minimum":1},"expected_length_sequence":{"type":"array","items":{"type":"integer","minimum":2,"maximum":8}}},"additionalProperties":false}
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "toolchain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clang", "clang_sha256", "clang_version",
+        "lld", "lld_sha256", "lld_version",
+        "readelf", "readelf_sha256", "readelf_version"
+      ],
+      "properties": {
+        "clang": {"type": "string"},
+        "clang_sha256": {"$ref": "#/$defs/sha256"},
+        "clang_version": {"type": "string"},
+        "lld": {"type": "string"},
+        "lld_sha256": {"$ref": "#/$defs/sha256"},
+        "lld_version": {"type": "string"},
+        "readelf": {"type": "string"},
+        "readelf_sha256": {"$ref": "#/$defs/sha256"},
+        "readelf_version": {"type": "string"}
+      }
+    },
+    "segment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "filesz", "memsz", "align", "flags"],
+      "properties": {
+        "address": {"type": "integer", "minimum": 0, "maximum": 4095},
+        "filesz": {"type": "integer", "minimum": 0, "maximum": 4096},
+        "memsz": {"type": "integer", "minimum": 1, "maximum": 4096},
+        "align": {"type": "integer", "minimum": 0},
+        "flags": {"enum": ["R", "RW", "RX"]}
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "isa", "requirements", "avs_ids", "inputs", "elf",
+        "initial_gprs", "stack", "stop_policy", "allowed_requests",
+        "expected_length_sequence", "trace_requirements", "result", "golden"
+      ],
+      "properties": {
+        "id": {"enum": ["scalar_stop_pc", "block_64_stop_pc"]},
+        "isa": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["profile", "version"],
+          "properties": {
+            "profile": {"const": "pto-functional-reference-v1"},
+            "version": {"const": "0.58.5"}
+          }
+        },
+        "requirements": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "avs_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "inputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_sha256", "linker_sha256", "clang_sha256", "lld_sha256"],
+          "properties": {
+            "source_sha256": {"$ref": "#/$defs/sha256"},
+            "linker_sha256": {"$ref": "#/$defs/sha256"},
+            "clang_sha256": {"$ref": "#/$defs/sha256"},
+            "lld_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        },
+        "elf": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["filename", "sha256", "entry", "segments"],
+          "properties": {
+            "filename": {"type": "string", "pattern": "^[a-z0-9_-]+\\.elf$"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "entry": {"type": "integer", "minimum": 0, "maximum": 4095},
+            "segments": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/segment"}}
+          }
+        },
+        "initial_gprs": {"type": "object", "maxProperties": 0},
+        "stack": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["top", "size"],
+          "properties": {
+            "top": {"type": "integer", "minimum": 1, "maximum": 4095},
+            "size": {"type": "integer", "minimum": 1, "maximum": 4096}
+          }
+        },
+        "stop_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "stop_pc", "max_steps"],
+          "properties": {
+            "kind": {"const": "stop_pc"},
+            "stop_pc": {"type": "integer", "minimum": 0, "maximum": 4095},
+            "max_steps": {"type": "integer", "minimum": 1}
+          }
+        },
+        "allowed_requests": {"type": "array", "maxItems": 0},
+        "expected_length_sequence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"enum": [16, 32, 48, 64]}
+        },
+        "trace_requirements": {"type": "object"},
+        "result": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["symbol", "size_symbol", "address", "size"],
+          "properties": {
+            "symbol": {"const": "cross_model_result"},
+            "size_symbol": {"const": "cross_model_result_size"},
+            "address": {"type": "integer", "minimum": 0, "maximum": 4095},
+            "size": {"const": 4}
+          }
+        },
+        "golden": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["filename", "sha256", "size", "derivation"],
+          "properties": {
+            "filename": {"type": "string", "pattern": "^[a-z0-9_-]+\\.golden\\.bin$"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "size": {"const": 4},
+            "derivation": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    }
   }
 }

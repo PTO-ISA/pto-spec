@@ -1,13 +1,336 @@
 #!/usr/bin/env python3
-import argparse,hashlib,json,subprocess
+"""Build deterministic, low-address functional-model ELF corpus artifacts."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
 from pathlib import Path
-ROOT=Path(__file__).resolve().parent.parent; C=ROOT/'tests/functional-model/corpus'
-CASES={'scalar_stop_pc':(0x100,0x114,[16,16,32,48,16,32],bytes.fromhex('19000000')),'block_64_stop_pc':(0x280,0x280,[32,64],bytes.fromhex('a55a0000'))}
-def h(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
-def main():
- p=argparse.ArgumentParser();p.add_argument('--clang',required=True);p.add_argument('--lld',required=True);p.add_argument('--output',type=Path,default=ROOT/'build/functional-model-corpus');a=p.parse_args();o=a.output;o.mkdir(parents=True,exist_ok=True);rows=[]
- for n,(entry,stop,lens,gold) in CASES.items():
-  src=C/(n+'.S');ld=C/(n+'.ld');obj=o/(n+'.o');elf=o/(n+'.elf');subprocess.run([a.clang,'-target','linx64-unknown-elf','-c','-nostdlib','-o',obj,src],check=True);subprocess.run([a.lld,'-m','elf64linx','-T',ld,'-o',elf,obj],check=True);t=subprocess.check_output(['/Users/zhoubot/linx-isa/compiler/llvm/build-linxisa-clang/bin/llvm-readelf','-h','-l','-s',elf],text=True);assert 'EXEC (Executable file)' in t and 'cross_model_result' in t and 'cross_model_result_size' in t;(o/(n+'.golden.bin')).write_bytes(gold)
-  rows.append({'id':n,'isa':{'profile':'pto-v0.58','spec_requirement':'PTO functional model G5'},'requirements':['PTO-REQ-FUNCTIONAL-STEP-001'],'avs_ids':['PTO-AVS-ARCH-FUNCTIONAL-STEP-001'],'initial_gprs':{'a0':512,'a1':4},'segments':[{'name':'text','address':entry,'size':64,'flags':'RX'},{'name':'result','address':512,'size':4,'flags':'RW'}],'entry':entry,'stack':{'address':3840,'size':256},'stop_policy':{'kind':'stop_pc','stop_pc':stop,'max_steps':len(lens)},'allowed_requests':[],'result':{'symbol':'cross_model_result','size_symbol':'cross_model_result_size','segments':[{'name':'result','address':512,'size':4,'flags':'RW'}]},'golden':{'derivation':'independent arithmetic/sentinel bytes; no model invocation','sha256':h(o/(n+'.golden.bin')),'size':4},'max_steps':len(lens),'expected_length_sequence':lens,'source_sha256':h(src),'linker_sha256':h(ld)})
- (o/'manifest.json').write_text(json.dumps({'schema':'pto-functional-model-corpus-v1','toolchain':{'clang':str(a.clang),'clang_sha256':h(a.clang),'lld':str(a.lld),'lld_sha256':h(a.lld)},'cases':rows},indent=2)+'\n');print(o/'manifest.json')
-if __name__=='__main__':main()
+import shutil
+import struct
+import subprocess
+import tempfile
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CORPUS = ROOT / "tests" / "functional-model" / "corpus"
+SCHEMA = "pto-functional-model-corpus-v1"
+MODEL_LIMIT = 4096
+EM_LINX = 233
+PT_LOAD = 1
+PF_X = 1
+PF_W = 2
+
+CASES = {
+    "scalar_stop_pc": {
+        "entry": 0x100,
+        "stop_pc": 0x114,
+        "max_steps": 6,
+        "lengths": [16, 16, 32, 48, 16, 32],
+        "result_address": 0x200,
+        "golden": bytes.fromhex("19000000"),
+        "requirements": [
+            "PTO-REQ-FUNCTIONAL-FETCH-001",
+            "PTO-REQ-FUNCTIONAL-STEP-001",
+            "PTO-INST-SCALAR-SW-PCR",
+        ],
+        "avs_ids": [
+            "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-16-002",
+            "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-ADD-001",
+            "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-48-003",
+            "PTO-AVS-AGU-SW-PCR-EXEC-001",
+        ],
+        "trace_requirements": {},
+    },
+    "block_64_stop_pc": {
+        "entry": 0x280,
+        "stop_pc": 0x280,
+        "max_steps": 2,
+        "lengths": [32, 64],
+        "result_address": 0x380,
+        "golden": bytes.fromhex("a55a0000"),
+        "requirements": [
+            "PTO-REQ-FUNCTIONAL-FETCH-001",
+            "PTO-REQ-FUNCTIONAL-STEP-001",
+            "PTO-L-BSTOP-DECISION-BINDING-001",
+        ],
+        "avs_ids": ["PTO-AVS-ARCH-FUNCTIONAL-STEP-COMMAND-64-004"],
+        "trace_requirements": {
+            "required_length_bits": 64,
+            "final_bundle_active": False,
+        },
+    },
+}
+
+
+class CorpusError(ValueError):
+    pass
+
+
+def sha256_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def sha256_file(path: Path) -> str:
+    return sha256_bytes(path.read_bytes())
+
+
+def command_version(path: Path) -> str:
+    result = subprocess.run(
+        [str(path), "--version"], text=True, capture_output=True, check=True
+    )
+    lines = result.stdout.splitlines() or result.stderr.splitlines()
+    if not lines:
+        raise CorpusError(f"{path} produced no version identity")
+    return lines[0]
+
+
+def checked_slice(data: bytes, offset: int, size: int, label: str) -> bytes:
+    if offset < 0 or size < 0 or offset > len(data) or size > len(data) - offset:
+        raise CorpusError(f"{label} lies outside ELF")
+    return data[offset : offset + size]
+
+
+def inspect_elf(path: Path) -> dict[str, object]:
+    data = path.read_bytes()
+    if len(data) < 64:
+        raise CorpusError("truncated ELF header")
+    header = struct.unpack_from("<16sHHIQQQIHHHHHH", data)
+    ident = header[0]
+    if ident[:4] != b"\x7fELF" or ident[4] != 2 or ident[5] != 1:
+        raise CorpusError("requires ELF64 little-endian")
+    elf_type, machine = header[1], header[2]
+    entry, phoff, shoff = header[4], header[5], header[6]
+    ehsize, phentsize, phnum = header[8], header[9], header[10]
+    shentsize, shnum = header[11], header[12]
+    if elf_type != 2 or machine != EM_LINX or ehsize != 64:
+        raise CorpusError("unexpected ELF type, machine, or header size")
+    if phentsize != 56 or phnum == 0:
+        raise CorpusError("invalid program-header table")
+
+    segments: list[dict[str, int | str]] = []
+    executable_entry = False
+    for index in range(phnum):
+        raw = checked_slice(data, phoff + index * phentsize, phentsize, "program header")
+        p_type, flags, offset, vaddr, _, filesz, memsz, align = struct.unpack(
+            "<IIQQQQQQ", raw
+        )
+        if p_type != PT_LOAD:
+            continue
+        if filesz > memsz or vaddr + memsz > MODEL_LIMIT:
+            raise CorpusError("PT_LOAD exceeds functional-model bound")
+        if flags & PF_W and flags & PF_X:
+            raise CorpusError("writable executable PT_LOAD")
+        checked_slice(data, offset, filesz, "PT_LOAD file range")
+        for prior in segments:
+            prior_start = int(prior["address"])
+            prior_end = prior_start + int(prior["memsz"])
+            if vaddr < prior_end and prior_start < vaddr + memsz:
+                raise CorpusError("overlapping PT_LOAD segments")
+        if flags & PF_X and vaddr <= entry < vaddr + memsz:
+            executable_entry = True
+        flag_text = "R" + ("W" if flags & PF_W else "") + ("X" if flags & PF_X else "")
+        segments.append(
+            {
+                "address": vaddr,
+                "filesz": filesz,
+                "memsz": memsz,
+                "align": align,
+                "flags": flag_text,
+            }
+        )
+    if not segments or not executable_entry:
+        raise CorpusError("entry is not in an executable PT_LOAD")
+
+    symbols: dict[str, tuple[int, int]] = {}
+    if shentsize != 64:
+        raise CorpusError("invalid section-header entry size")
+    section_headers = [
+        struct.unpack(
+            "<IIQQQQIIQQ",
+            checked_slice(data, shoff + index * shentsize, shentsize, "section header"),
+        )
+        for index in range(shnum)
+    ]
+    for section in section_headers:
+        _, section_type, _, _, offset, size, link, _, _, entry_size = section
+        if section_type != 2:
+            continue
+        if entry_size != 24 or link >= len(section_headers):
+            raise CorpusError("invalid symbol table")
+        string_section = section_headers[link]
+        strings = checked_slice(data, string_section[4], string_section[5], "string table")
+        symtab = checked_slice(data, offset, size, "symbol table")
+        for symbol_offset in range(0, len(symtab), entry_size):
+            name_offset, info, _, shndx, value, symbol_size = struct.unpack_from(
+                "<IBBHQQ", symtab, symbol_offset
+            )
+            if name_offset >= len(strings):
+                raise CorpusError("symbol name lies outside string table")
+            end = strings.find(b"\0", name_offset)
+            if end < 0:
+                raise CorpusError("unterminated symbol name")
+            name = strings[name_offset:end].decode("utf-8")
+            if name:
+                symbols[name] = (value, shndx)
+    for required in ("_start", "cross_model_result", "cross_model_result_size"):
+        if required not in symbols:
+            raise CorpusError(f"missing ELF symbol {required}")
+    if symbols["_start"][0] != entry:
+        raise CorpusError("ELF entry does not equal _start")
+    if symbols["cross_model_result_size"][0] != 4:
+        raise CorpusError("result-size symbol must be absolute value four")
+    return {
+        "entry": entry,
+        "segments": segments,
+        "result_address": symbols["cross_model_result"][0],
+        "result_size": symbols["cross_model_result_size"][0],
+    }
+
+
+def build_case(
+    name: str,
+    config: dict[str, object],
+    *,
+    clang: Path,
+    lld: Path,
+    readelf: Path,
+    output_root: Path,
+    tool_identity: dict[str, object],
+) -> dict[str, object]:
+    source = CORPUS / f"{name}.S"
+    linker = CORPUS / f"{name}.ld"
+    input_identity = {
+        "source_sha256": sha256_file(source),
+        "linker_sha256": sha256_file(linker),
+        "clang_sha256": tool_identity["clang_sha256"],
+        "lld_sha256": tool_identity["lld_sha256"],
+    }
+    artifact_id = sha256_bytes(
+        json.dumps(input_identity, sort_keys=True, separators=(",", ":")).encode()
+    )
+    artifact = output_root / f"{name}-{artifact_id[:16]}"
+    artifact.mkdir(parents=True, exist_ok=True)
+    elf = artifact / f"{name}.elf"
+    with tempfile.TemporaryDirectory(prefix=f"pto-{name}-") as temporary:
+        object_path = Path(temporary) / f"{name}.o"
+        built_elf = Path(temporary) / f"{name}.elf"
+        subprocess.run(
+            [str(clang), "-target", "linx64-unknown-elf", "-c", "-nostdlib", "-o", object_path, source],
+            check=True,
+        )
+        subprocess.run(
+            [str(lld), "-m", "elf64linx", "-T", linker, "-o", built_elf, object_path],
+            check=True,
+        )
+        shutil.copy2(built_elf, elf)
+    subprocess.run([str(readelf), "-h", "-l", "-s", elf], check=True, capture_output=True)
+    observed = inspect_elf(elf)
+    if observed["entry"] != config["entry"]:
+        raise CorpusError(f"{name} entry mismatch")
+    if observed["result_address"] != config["result_address"]:
+        raise CorpusError(f"{name} result address mismatch")
+
+    golden = artifact / f"{name}.golden.bin"
+    golden.write_bytes(config["golden"])
+    manifest = {
+        "schema": SCHEMA,
+        "case": {
+            "id": name,
+            "isa": {"profile": "pto-functional-reference-v1", "version": "0.58.5"},
+            "requirements": config["requirements"],
+            "avs_ids": config["avs_ids"],
+            "inputs": input_identity,
+            "elf": {
+                "filename": elf.name,
+                "sha256": sha256_file(elf),
+                "entry": observed["entry"],
+                "segments": observed["segments"],
+            },
+            "initial_gprs": {},
+            "stack": {"top": 0xF00, "size": 0x100},
+            "stop_policy": {
+                "kind": "stop_pc",
+                "stop_pc": config["stop_pc"],
+                "max_steps": config["max_steps"],
+            },
+            "allowed_requests": [],
+            "expected_length_sequence": config["lengths"],
+            "trace_requirements": config["trace_requirements"],
+            "result": {
+                "symbol": "cross_model_result",
+                "size_symbol": "cross_model_result_size",
+                "address": observed["result_address"],
+                "size": observed["result_size"],
+            },
+            "golden": {
+                "filename": golden.name,
+                "sha256": sha256_file(golden),
+                "size": len(config["golden"]),
+                "derivation": "independent checked arithmetic/sentinel bytes; no model invocation",
+            },
+        },
+        "toolchain": tool_identity,
+    }
+    manifest_path = artifact / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    return {
+        "id": name,
+        "artifact_id": artifact_id,
+        "directory": artifact.name,
+        "elf_sha256": manifest["case"]["elf"]["sha256"],
+        "golden_sha256": manifest["case"]["golden"]["sha256"],
+        "manifest_sha256": sha256_file(manifest_path),
+    }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--clang", type=Path, required=True)
+    parser.add_argument("--lld", type=Path, required=True)
+    parser.add_argument("--readelf", type=Path, required=True)
+    parser.add_argument(
+        "--output", type=Path, default=ROOT / "build" / "functional-model-corpus"
+    )
+    arguments = parser.parse_args()
+    for tool in (arguments.clang, arguments.lld, arguments.readelf):
+        if not tool.is_file():
+            raise CorpusError(f"missing tool {tool}")
+    tool_identity = {
+        "clang": str(arguments.clang.resolve()),
+        "clang_sha256": sha256_file(arguments.clang),
+        "clang_version": command_version(arguments.clang),
+        "lld": str(arguments.lld.resolve()),
+        "lld_sha256": sha256_file(arguments.lld),
+        "lld_version": command_version(arguments.lld),
+        "readelf": str(arguments.readelf.resolve()),
+        "readelf_sha256": sha256_file(arguments.readelf),
+        "readelf_version": command_version(arguments.readelf),
+    }
+    arguments.output.mkdir(parents=True, exist_ok=True)
+    rows = [
+        build_case(
+            name,
+            config,
+            clang=arguments.clang,
+            lld=arguments.lld,
+            readelf=arguments.readelf,
+            output_root=arguments.output,
+            tool_identity=tool_identity,
+        )
+        for name, config in CASES.items()
+    ]
+    index = {
+        "schema": "pto-functional-model-corpus-index-v1",
+        "cases": rows,
+        "toolchain": tool_identity,
+    }
+    index_path = arguments.output / "manifest.json"
+    index_path.write_text(json.dumps(index, indent=2, sort_keys=True) + "\n")
+    print(index_path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

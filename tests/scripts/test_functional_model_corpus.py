@@ -1,0 +1,136 @@
+from __future__ import annotations
+
+import importlib.util
+from importlib.machinery import SourceFileLoader
+import json
+from pathlib import Path
+import struct
+import tempfile
+import unittest
+
+
+ROOT = Path(__file__).resolve().parents[2]
+BUILDER = ROOT / "scripts" / "build-functional-model-corpus"
+CORPUS = ROOT / "tests" / "functional-model" / "corpus"
+
+
+def load_builder():
+    loader = SourceFileLoader("build_functional_model_corpus", str(BUILDER))
+    spec = importlib.util.spec_from_loader(loader.name, loader)
+    if spec is None:
+        raise RuntimeError("cannot import corpus builder")
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+def minimal_elf(*, flags: int = 5, filesz: int = 1, memsz: int = 1,
+                entry: int = 0x100, second: tuple[int, int, int] | None = None) -> bytes:
+    phnum = 2 if second else 1
+    header = struct.pack(
+        "<16sHHIQQQIHHHHHH",
+        b"\x7fELF\x02\x01\x01" + bytes(9),
+        2,
+        243,
+        1,
+        entry,
+        64,
+        0,
+        0,
+        64,
+        56,
+        phnum,
+        64,
+        0,
+        0,
+    )
+    headers = [struct.pack("<IIQQQQQQ", 1, flags, 64 + 56 * phnum,
+                           0x100, 0, filesz, memsz, 1)]
+    if second:
+        address, second_filesz, second_memsz = second
+        headers.append(struct.pack("<IIQQQQQQ", 1, 6,
+                                   64 + 56 * phnum + filesz,
+                                   address, 0, second_filesz,
+                                   second_memsz, 1))
+    return header + b"".join(headers) + bytes(filesz + (second[1] if second else 0))
+
+
+class FunctionalModelCorpusTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.builder = load_builder()
+
+    def test_checked_sources_contain_exact_bringup_encodings(self) -> None:
+        scalar = (CORPUS / "scalar_stop_pc.S").read_text(encoding="utf-8")
+        block = (CORPUS / "block_64_stop_pc.S").read_text(encoding="utf-8")
+        self.assertIn("0x96,0x0a,0xd6,0x13,0x85,0x81,0x20,0x00", scalar)
+        self.assertIn("0x0e,0x80,0x95,0xc0,0x00,0x00,0x16,0x00", scalar)
+        self.assertIn("0x69,0xa0,0xc1,0x03", scalar)
+        self.assertIn("0x11,0x00,0x00,0x00", block)
+        self.assertIn("0x0f,0x00,0x00,0x00,0x01,0x00,0x00,0x00", block)
+        self.assertIn("0xa5,0x5a,0x00,0x00", block)
+
+    def test_case_contract_uses_real_length_bits_and_golden(self) -> None:
+        scalar = self.builder.CASES["scalar_stop_pc"]
+        block = self.builder.CASES["block_64_stop_pc"]
+        self.assertEqual(scalar["lengths"], [16, 16, 32, 48, 16, 32])
+        self.assertEqual(scalar["golden"], bytes.fromhex("19000000"))
+        self.assertEqual(block["lengths"], [32, 64])
+        self.assertEqual(block["golden"], bytes.fromhex("a55a0000"))
+        known_ids = "\n".join(
+            path.read_text(encoding="utf-8", errors="replace")
+            for path in (ROOT / "tests" / "asl").rglob("*.asl")
+        )
+        for row in self.builder.CASES.values():
+            for test_id in row["avs_ids"]:
+                self.assertIn(f'"id":"{test_id}"', known_ids)
+
+    def test_schema_is_closed_and_versioned(self) -> None:
+        schema = json.loads(
+            (ROOT / "spec" / "schemas" /
+             "pto-functional-model-corpus-v1.schema.json").read_text()
+        )
+        self.assertEqual(schema["$schema"],
+                         "https://json-schema.org/draft/2020-12/schema")
+        self.assertEqual(schema["properties"]["schema"]["const"],
+                         "pto-functional-model-corpus-v1")
+        self.assertFalse(schema["additionalProperties"])
+        self.assertEqual(
+            schema["$defs"]["case"]["properties"]
+            ["expected_length_sequence"]["items"]["enum"],
+            [16, 32, 48, 64],
+        )
+
+    def assert_rejected(self, payload: bytes, pattern: str) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "fixture.elf"
+            path.write_bytes(payload)
+            with self.assertRaisesRegex(self.builder.CorpusError, pattern):
+                self.builder.inspect_elf(path)
+
+    def test_malformed_elf_is_rejected(self) -> None:
+        self.assert_rejected(b"not-elf", "truncated")
+        self.assert_rejected(bytes(64), "requires ELF64")
+
+    def test_writable_executable_segment_is_rejected(self) -> None:
+        self.assert_rejected(minimal_elf(flags=7), "writable executable")
+
+    def test_invalid_load_bounds_are_rejected(self) -> None:
+        self.assert_rejected(minimal_elf(filesz=2, memsz=1), "exceeds")
+        self.assert_rejected(minimal_elf(entry=0x200), "entry")
+
+    def test_overlapping_segments_are_rejected(self) -> None:
+        self.assert_rejected(
+            minimal_elf(filesz=4, memsz=8, second=(0x104, 1, 4)),
+            "overlapping",
+        )
+
+    def test_builder_requires_explicit_readelf(self) -> None:
+        text = BUILDER.read_text(encoding="utf-8")
+        self.assertIn('parser.add_argument("--readelf"', text)
+        self.assertNotIn("/Users/", text)
+        self.assertNotIn("def source(", text)
+
+
+if __name__ == "__main__":
+    unittest.main()
