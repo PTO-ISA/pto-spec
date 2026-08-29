@@ -64,8 +64,7 @@ begin
         };
     end;
     let translated_address = TranslateDataAddress(address, size_bytes, write);
-    if !DataAccessPermitted(translated_address, size_bytes, write) ||
-       UInt(translated_address) + size_bytes > PTO_MODEL_MEMORY_BYTES then
+    if !DataAccessPermitted(translated_address, size_bytes, write) then
         return DataAccessProbe {
             fault = Fault_DataPage,
             translated_address = translated_address

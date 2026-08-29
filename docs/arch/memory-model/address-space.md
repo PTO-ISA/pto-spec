@@ -51,23 +51,34 @@ Use this example block only as a reading aid: apply the rules above, then confir
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/memory-model/address-space.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE","surface":"arch","classification":["memory-model","address-space"],"depends_on":["PTO-ARCH-STATE-DEFINEDNESS"]}
-readonly func IsModelAddress(address: Word) => boolean
+
+// NDF-BEGIN: PTO-REQ-FUNCTIONAL-MEMORY-001
+// ndf: kind=contract level=L1 layer=memory status=accepted
+// PTO memory operations MUST reach physical byte storage only through
+// ReadPhysicalMemoryByte and WritePhysicalMemoryByte. A functional-model
+// binding MAY replace the reference array with host storage, but MUST preserve
+// the ASL-owned translation, permission, preflight, ordering, and precise-fault
+// behavior. The reference array bound MUST NOT constrain a host address space.
+// NDF-END: PTO-REQ-FUNCTIONAL-MEMORY-001
+
+readonly impdef func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
-    return UInt(address) < PTO_MODEL_MEMORY_BYTES;
+    return Zeros{8};
+end;
+
+impdef func WritePhysicalMemoryByte(address: Word, value: Byte)
+begin
+    assert FALSE;
 end;
 
 readonly func ReadMemoryByte(address: Word) => Byte
 begin
-    assert IsModelAddress(address);
-    let index = UInt(address) as ModelAddress;
-    return _Memory[[index]];
+    return ReadPhysicalMemoryByte(address);
 end;
 
 func WriteMemoryByte(address: Word, value: Byte)
 begin
-    assert IsModelAddress(address);
-    let index = UInt(address) as ModelAddress;
-    _Memory[[index]] = value;
+    WritePhysicalMemoryByte(address, value);
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

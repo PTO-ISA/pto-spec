@@ -30,6 +30,7 @@ nav:
           - Floating Point: arch/data-types/floating-point.md
           - Format Descriptor: arch/data-types/format-descriptor.md
           - Fp19: arch/data-types/fp19.md
+          - Functional Model: arch/data-types/functional-model.md
           - Integer: arch/data-types/integer.md
           - Memory Model: arch/data-types/memory-model.md
           - Memory Operations: arch/data-types/memory-operations.md
@@ -41,6 +42,7 @@ nav:
           - Tile Data Types: arch/data-types/tile-data-types.md
           - Trap Context: arch/data-types/trap-context.md
       - Dispatch:
+          - Functional Step: arch/dispatch/functional-step.md
           - Top Level: arch/dispatch/top-level.md
       - Features:
           - Minmax Profile: arch/features/minmax-profile.md
@@ -53,6 +55,7 @@ nav:
           - Atomicity: arch/memory-model/atomicity.md
           - Fault Precision: arch/memory-model/fault-precision.md
           - Global Memory Access: arch/memory-model/global-memory-access.md
+          - Instruction Fetch: arch/memory-model/instruction-fetch.md
           - Memory Events: arch/memory-model/memory-events.md
           - Ordering: arch/memory-model/ordering.md
       - Overview:
@@ -63,6 +66,7 @@ nav:
           - Applicability: arch/profile/applicability.md
           - E8m0 Conversion: arch/profile/e8m0-conversion.md
           - Extension First Use: arch/profile/extension-first-use.md
+          - Functional Model: arch/profile/functional-model.md
           - Matrix Postprocess: arch/profile/matrix-postprocess.md
           - Matrix Quantization: arch/profile/matrix-quantization.md
           - Reference Profile: arch/profile/reference-profile.md
@@ -79,6 +83,7 @@ nav:
           - Tile Registers: arch/programming-model/tile-registers.md
       - State:
           - Definedness: arch/state/definedness.md
+          - Functional Model: arch/state/functional-model.md
           - Numeric Status: arch/state/numeric-status.md
           - Program Counter: arch/state/program-counter.md
           - Tile Descriptor: arch/state/tile-descriptor.md
