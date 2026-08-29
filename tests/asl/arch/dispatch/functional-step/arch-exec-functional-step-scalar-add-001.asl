@@ -13,6 +13,7 @@ begin
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x101, Zeros{8} + 0x81);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x102, Zeros{8} + 0x20);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x103, Zeros{8});
+    let pre_cycle = _SystemRegisters.cycle;
 
     let result = ExecuteOnePTOStep();
 
@@ -25,6 +26,7 @@ begin
     assert result.origin_pe == 0;
     assert result.sequence == _FunctionalProfileSequence;
     assert _LastFault == Fault_None;
+    assert _SystemRegisters.cycle == pre_cycle + 1;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 30;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;
     return 0;

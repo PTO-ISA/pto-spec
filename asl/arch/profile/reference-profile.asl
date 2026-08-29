@@ -13,9 +13,15 @@ begin
     _Memory[[index]] = value;
 end;
 
+implementation func ResetPhysicalMemory()
+begin
+    for index = 0 to PTO_MODEL_MEMORY_BYTES - 1 do
+        _Memory[[index]] = Zeros{8};
+    end;
+end;
+
 readonly implementation func TranslateInstructionAddress(
-    address: Word,
-    size_bytes: integer {2,4,6,8}) => Word
+    address: Word) => Word
 begin
     return address;
 end;

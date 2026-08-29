@@ -80,7 +80,10 @@ begin
 
     if FunctionalModelHostRequestPending() then
         var pending = EmptyFunctionalStepResult(
-            PTOFunctionalStep_HostRequest, pre_tpc, pre_bpc, origin_pe);
+            PTOFunctionalStep_HostRequest,
+            pre_tpc,
+            pre_bpc,
+            FunctionalModelHostRequestOriginPE());
         pending.request_token = FunctionalModelHostRequestToken();
         return pending;
     end;
@@ -91,17 +94,20 @@ begin
             PTOFunctionalStep_Trap, pre_tpc, pre_bpc, origin_pe);
     end;
 
-    if !ProbeInstructionAccess(pre_tpc, 2) then
+    let prefix_probe = ProbeInstructionAccess(pre_tpc, 2);
+    if !prefix_probe.permitted then
         SetFault(Fault_InstructionPage, pre_tpc);
         return EmptyFunctionalStepResult(
             PTOFunctionalStep_Trap, pre_tpc, pre_bpc, origin_pe);
     end;
 
-    let prefix_instruction = FetchPTOInstruction(pre_tpc, 16);
+    let prefix_instruction = FetchPTOInstruction(prefix_probe, 16);
     let first_halfword = prefix_instruction[15:0];
     let length_bits = DeterminePTOInstructionLength(first_halfword);
     let size_bytes = (length_bits DIV 8) as integer {2,4,6,8};
-    if !ProbeInstructionAccess(pre_tpc, size_bytes) then
+    let full_probe = ProbeInstructionAccess(pre_tpc, size_bytes);
+    if !full_probe.permitted ||
+       full_probe.translated_address != prefix_probe.translated_address then
         SetFault(Fault_InstructionPage, pre_tpc);
         var fault_result = EmptyFunctionalStepResult(
             PTOFunctionalStep_Trap, pre_tpc, pre_bpc, origin_pe);
@@ -109,7 +115,7 @@ begin
         return fault_result;
     end;
 
-    let instruction = FetchPTOInstruction(pre_tpc, length_bits);
+    let instruction = FetchPTOInstruction(full_probe, length_bits);
     _FunctionalModelStarted = TRUE;
     _FunctionalProfileSequence = _FunctionalProfileSequence + 1;
     let execution = ExecutePTOInstruction(instruction, length_bits);

@@ -13,6 +13,11 @@ type PTOFunctionalHostCompletionStatus of enumeration {
 
 type PTOFunctionalInstructionLength of integer {0,16,32,48,64};
 
+type PTOInstructionAccessProbe of record {
+    permitted: boolean,
+    translated_address: Word
+};
+
 type PTOFunctionalStepResult of record {
     status: PTOFunctionalStepStatus,
     pre_tpc: Word,

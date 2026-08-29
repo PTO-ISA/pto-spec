@@ -72,9 +72,7 @@ begin
     for index = 0 to PTO_PREDICATE_REGISTER_COUNT - 1 do
         _PredicateRegisters[[index]] = Zeros{PTO_PREDICATE_WIDTH};
     end;
-    for index = 0 to PTO_MODEL_MEMORY_BYTES - 1 do
-        _Memory[[index]] = Zeros{8};
-    end;
+    ResetPhysicalMemory();
     // Context-family registers occupy low indices 0xf00..0xfb7 in every ACR
     // bank. The larger array is verification backing for the complete 16-bit
     // banked address domain.

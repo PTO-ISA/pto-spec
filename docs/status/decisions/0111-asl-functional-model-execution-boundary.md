@@ -15,9 +15,7 @@
     "PTO-REQ-FUNCTIONAL-FETCH-001",
     "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
     "PTO-REQ-FUNCTIONAL-MEMORY-001",
-    "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
     "PTO-REQ-FUNCTIONAL-RESET-001",
-    "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001",
     "PTO-REQ-FUNCTIONAL-STEP-001"
   ],
   "affected_units": [
@@ -81,11 +79,11 @@ ASL result.
 
 ### Memory
 
-The reference ASL profile retains the bounded byte array. A generated model may
-bind the same memory primitives to host callbacks only when probe, read, and
-atomic write-batch behavior preserves existing translation, permission,
-ordering, precise-fault, and commit rules. Fixed verification bounds do not
-become implementation address-space limits.
+The reference ASL profile retains the bounded byte array. All physical-byte
+reads, writes, and reset use named profile primitives. A generated model may
+bind those same primitives to host storage only when it preserves existing
+translation, permission, ordering, precise-fault, commit, and reset rules.
+Fixed verification bounds do not become implementation address-space limits.
 
 ### Reset and topology
 
@@ -96,10 +94,12 @@ reinterpreted as PTO PEs.
 
 ### Snapshot and identity
 
-Versioned deterministic snapshots cover every member of `PTO-REQ-STATE-001`
-without creating alternate architecture state. A model descriptor binds the
-PTO commit/tree, ASLRef pin, encoding ABI, profile, generator, MIR schema, and
-input hashes.
+G1 does not accept a snapshot encoding or generated-model descriptor contract.
+`PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001` and
+`PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001` remain open requirements for G2/G3.
+Their eventual design must keep functional profile state separate from
+portable state and must bind exact normalized generator inputs, but no runtime
+or compatibility behavior is inferred by this decision.
 
 ## Boundaries retained
 
@@ -115,7 +115,8 @@ input hashes.
 1. **Host request profile state/action (selected).** Add a named
    functional-model profile request with a pending token and exactly-once
    completion. It is distinct from architecture service-request traps and is
-   the only way a host adapter can return GPR/memory results.
+   the only accepted G1 path for a host adapter to return one scalar GPR result
+   and resume at a captured TPC.
 2. **Runner observation only.** Expose existing service-request/trap state and
    do not provide resumable host requests in the model library.
 
@@ -136,20 +137,30 @@ from private gfrun syscall semantics into the ASL library.
 
 ## Verification obligations
 
-- Positive 16/32/48/64 fetch and execution points.
-- Odd-PC, unmapped, truncated, cross-boundary, illegal-length, and illegal-
-  encoding points with precise no-partial-effect evidence.
-- Reference-array and callback-memory equivalence, including atomic write-batch
-  failure.
+The accepted G1 clauses require:
+
+- Positive 16/32/48/64 fetch and execution points, plus exhaustive prefix
+  length totality.
+- Odd-PC, unmapped, truncated/cross-boundary, and illegal-encoding points with
+  precise no-partial-effect evidence. The accepted prefix rule has no illegal
+  length encoding.
+- Reference-array physical read/write/reset boundary evidence.
 - Four-PE reset/current-agent/initial-state isolation.
-- Deterministic full-state snapshot round trip and schema rejection.
 - Existing service-request tests proving unchanged trap behavior.
-- If the host-request state/action is accepted: pending-step idempotence,
-  stale/duplicate/mismatched completion, unsupported request, fault-vs-exit,
-  and no direct host mutation of GPR/PC/trap state.
+- Pending-step idempotence, frozen origin PE, stale/duplicate/mismatched
+  completion, cross-reset token uniqueness, token-exhaustion rejection, and no
+  direct host mutation of GPR/PC/trap state.
+
+G2/G3 retain separate, not-yet-accepted obligations for callback transaction
+equivalence, deterministic snapshot round trip and schema rejection, model
+identity compatibility, hosted request meanings, memory responses, and
+fault-versus-process-exit policy.
 
 ## Decision state
 
-The architecture owner accepted these choices on 2026-08-29. The owning ASL
-clauses and focused AVS implement this decision; generated model/runtime work
-must consume those owners without introducing a second semantic definition.
+The architecture owner accepted the G1 fetch, step, physical-memory primitive,
+reset, topology, and generic scalar host-completion choices on 2026-08-29.
+Their owning ASL clauses and focused AVS implement those accepted clauses.
+Snapshot, model identity, callback transaction, hosted ABI, and memory-response
+contracts remain open for G2/G3. Generated model/runtime work must consume the
+accepted owners without introducing a second semantic definition.

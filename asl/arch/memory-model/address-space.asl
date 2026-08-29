@@ -2,11 +2,12 @@
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-MEMORY-001
 // ndf: kind=contract level=L1 layer=memory status=accepted
-// PTO memory operations MUST reach physical byte storage only through
-// ReadPhysicalMemoryByte and WritePhysicalMemoryByte. A functional-model
-// binding MAY replace the reference array with host storage, but MUST preserve
-// the ASL-owned translation, permission, preflight, ordering, and precise-fault
-// behavior. The reference array bound MUST NOT constrain a host address space.
+// PTO memory operations and reset MUST reach physical byte storage only through
+// ReadPhysicalMemoryByte, WritePhysicalMemoryByte, and ResetPhysicalMemory. A
+// functional-model binding MAY replace the reference array with host storage,
+// but MUST preserve the ASL-owned translation, permission, preflight, ordering,
+// precise-fault, and reset behavior. The reference array bound MUST NOT
+// constrain a host address space.
 // NDF-END: PTO-REQ-FUNCTIONAL-MEMORY-001
 
 readonly impdef func ReadPhysicalMemoryByte(address: Word) => Byte
@@ -15,6 +16,11 @@ begin
 end;
 
 impdef func WritePhysicalMemoryByte(address: Word, value: Byte)
+begin
+    assert FALSE;
+end;
+
+impdef func ResetPhysicalMemory()
 begin
     assert FALSE;
 end;

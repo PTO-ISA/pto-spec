@@ -11,8 +11,7 @@
 // NDF-END: PTO-REQ-FUNCTIONAL-FETCH-001
 
 readonly impdef func TranslateInstructionAddress(
-    address: Word,
-    size_bytes: integer {2,4,6,8}) => Word
+    address: Word) => Word
 begin
     return address;
 end;
@@ -26,22 +25,27 @@ end;
 
 readonly func ProbeInstructionAccess(
     address: Word,
-    size_bytes: integer {2,4,6,8}) => boolean
+    size_bytes: integer {2,4,6,8}) => PTOInstructionAccessProbe
 begin
-    let translated_address = TranslateInstructionAddress(address, size_bytes);
-    return InstructionAccessPermitted(translated_address, size_bytes);
+    let translated_address = TranslateInstructionAddress(address);
+    return PTOInstructionAccessProbe {
+        permitted = InstructionAccessPermitted(
+            translated_address, size_bytes),
+        translated_address = translated_address
+    };
 end;
 
 readonly func FetchPTOInstruction(
-    address: Word,
+    probe: PTOInstructionAccessProbe,
     length_bits: integer {16,32,48,64}) => bits(64)
 begin
+    assert probe.permitted;
     let size_bytes = (length_bits DIV 8) as integer {2,4,6,8};
-    let physical_address = TranslateInstructionAddress(address, size_bytes);
     var instruction: bits(64) = Zeros{64};
     for byte_index = 0 to 7 do
         if byte_index < size_bytes then
-            let byte_address = physical_address + NaturalToWord(byte_index);
+            let byte_address = probe.translated_address +
+                NaturalToWord(byte_index);
             instruction[(byte_index * 8) +: 8] =
                 ReadPhysicalMemoryByte(byte_address);
         end;

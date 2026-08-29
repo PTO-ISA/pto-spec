@@ -13,6 +13,7 @@ begin
         Zeros{PTO_XLEN} + 0x104);
     assert request_started;
     let token = FunctionalModelHostRequestToken();
+    SelectMemoryEventAgent(1);
 
     let first = ExecuteOnePTOStep();
     let second = ExecuteOnePTOStep();
@@ -29,6 +30,15 @@ begin
     assert FunctionalModelHostRequestPending();
     assert FunctionalModelHostRequestToken() == token;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x100;
-    assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x33;
+    assert ReadPEGPR(0, 3) == Zeros{PTO_XLEN} + 0x33;
+    assert ReadPEGPR(1, 3) == Zeros{PTO_XLEN};
+
+    let completion = CompleteFunctionalModelHostRequest(
+        token,
+        Zeros{PTO_XLEN} + 0x77);
+    assert completion == PTOFunctionalHostCompletion_Accepted;
+    assert ReadPEGPR(0, 3) == Zeros{PTO_XLEN} + 0x77;
+    assert ReadPEGPR(1, 3) == Zeros{PTO_XLEN};
+    assert ReadTPC() == Zeros{PTO_XLEN} + 0x104;
     return 0;
 end;

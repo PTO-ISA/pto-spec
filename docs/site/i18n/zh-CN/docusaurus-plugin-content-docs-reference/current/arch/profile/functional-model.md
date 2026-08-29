@@ -24,11 +24,14 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
 // A functional-model instance MUST expose at most one pending host request.
-// Repeated step while pending MUST return the same immutable token and request
-// without fetch, time advance, or architectural effect. Only a matching token
-// MAY complete a request; completion MUST write the captured origin PE result
-// GPR and shared resume TPC exactly once. A stale or duplicate completion MUST
-// be rejected without any state effect.
+// Repeated step while pending MUST return the same immutable token, origin PE,
+// request type, and scalar argument without fetch, time advance, or state
+// effect. Only a matching token MAY complete the current generic scalar
+// request; completion MUST write the captured origin-PE result GPR and shared
+// resume TPC exactly once. Stale and duplicate completion MUST have no effect.
+// Tokens MUST NOT be reused during a model-instance lifetime; architecture
+// reset MUST preserve the next-token counter and exhaustion MUST fail closed.
+// Memory response payloads and hosted ABI request meanings remain unspecified.
 // NDF-END: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-RESET-001
@@ -40,11 +43,12 @@ This page is a generated reference view of the normative ASL unit.
 // NDF-END: PTO-REQ-FUNCTIONAL-RESET-001
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001
-// ndf: kind=contract level=L1 layer=architecture status=accepted
-// A generated functional model MUST identify the exact PTO source commit and
-// tree, ASLRef pin, encoding ABI, functional profile, generator version, MIR
-// schema, and normalized input hashes. A consumer MUST fail closed when its
-// required identity does not match that descriptor.
+// ndf: kind=contract level=L1 layer=architecture status=open
+// G2 and G3 are expected to define a generated-model identity that covers the
+// PTO source commit and tree, ASLRef pin, encoding ABI, functional profile,
+// generator version, MIR schema, and normalized input hashes. No executable
+// descriptor or consumer compatibility requirement is accepted in G1; this
+// clause remains a draft obligation until those stages close it.
 // NDF-END: PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001
 
 readonly func FunctionalModelHostRequestPending() => boolean
@@ -106,14 +110,15 @@ begin
         return FALSE;
     end;
     if resume_tpc[0] == '1' then return FALSE; end;
+    var next_token = _FunctionalHostRequestNextToken;
+    if next_token == Zeros{PTO_XLEN} then
+        next_token = Zeros{PTO_XLEN} + 1;
+    end;
+    if next_token == Ones{PTO_XLEN} then return FALSE; end;
 
     _FunctionalHostRequestPending = TRUE;
-    _FunctionalHostRequestToken = _FunctionalHostRequestNextToken;
-    if _FunctionalHostRequestNextToken == Ones{PTO_XLEN} then
-        _FunctionalHostRequestNextToken = Zeros{PTO_XLEN} + 1;
-    else
-        _FunctionalHostRequestNextToken = _FunctionalHostRequestNextToken + 1;
-    end;
+    _FunctionalHostRequestToken = next_token;
+    _FunctionalHostRequestNextToken = next_token + 1;
     _FunctionalHostRequestOriginPE = _CurrentMemoryAgent;
     _FunctionalHostRequestType = request_type;
     _FunctionalHostRequestArgument0 = argument0;
