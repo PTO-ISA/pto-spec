@@ -2,17 +2,35 @@
 {
   "id": "ADR-0111",
   "title": "ASL functional-model fetch, step, memory, and host boundary",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["Codex"],
-  "approvers": [],
+  "approvers": ["zhoubot"],
   "created": "2026-08-29",
-  "accepted": null,
+  "accepted": "2026-08-29",
   "rejected": null,
   "superseded": null,
   "baseline": "e9b621ddce041ff2c770bef67adc41946db87295",
   "target_releases": ["unassigned"],
-  "affected_ndf": [],
-  "affected_units": [],
+  "affected_ndf": [
+    "PTO-REQ-FUNCTIONAL-FETCH-001",
+    "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+    "PTO-REQ-FUNCTIONAL-MEMORY-001",
+    "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
+    "PTO-REQ-FUNCTIONAL-RESET-001",
+    "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001",
+    "PTO-REQ-FUNCTIONAL-STEP-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
+    "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
+    "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
+    "PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH",
+    "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+    "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+    "PTO-ARCH-PROFILE-RESET",
+    "PTO-ARCH-STATE-FUNCTIONAL-MODEL",
+    "PTO-SCALAR-MODEL-AGU-MEMORY"
+  ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
@@ -38,7 +56,7 @@ ELF loading, physical-byte storage, CLI, tracing, stop policy, and host service
 execution, but it may not retain a private instruction decoder, legality model,
 architectural state transition, or PC/fault implementation.
 
-## Proposed decision
+## Decision
 
 ### Fetch and length
 
@@ -92,28 +110,29 @@ input hashes.
   execution, and timing remain outside this decision.
 - Hosted multi-PE startup and completion remain owned by issue #150.
 
-## Alternatives under review
+## Alternatives considered
 
-1. **Host request profile state/action (proposed).** Add a named
+1. **Host request profile state/action (selected).** Add a named
    functional-model profile request with a pending token and exactly-once
    completion. It is distinct from architecture service-request traps and is
    the only way a host adapter can return GPR/memory results.
 2. **Runner observation only.** Expose existing service-request/trap state and
    do not provide resumable host requests in the model library.
 
-The first bring-up can run freestanding ELF with a runner stop PC while this
-choice is reviewed; it must not implement private gfrun syscall semantics in
-the ASL library.
+The first bring-up runs freestanding ELF with a runner stop PC. Hosted
+`exit_group`/ACRC behavior remains outside this decision and must not be copied
+from private gfrun syscall semantics into the ASL library.
 
-## Open questions
+## Accepted choices
 
-1. Accept the four-way low-prefix length rule as portable PTO fetch semantics?
-2. Accept the separate functional-model host-request state/action, or retain a
-   non-resumable runner observation boundary?
-3. Accept PE0-only initial scalar execution with PE1–PE3 remaining reset until
-   an ASL-owned PE-mask or collective action updates them?
-4. Use stop-PC-only ELF completion for initial bring-up while issue #150
-   remains open, then add hosted `exit_group`/ACRC behavior later?
+1. The four-way low-prefix length rule is portable PTO fetch semantics.
+2. Functional-model host requests use separate resumable profile state with a
+   pending token and exactly-once completion; they do not reuse
+   `Fault_ServiceRequest`.
+3. Initial scalar execution uses PE0. PE1–PE3 remain reset until an ASL-owned
+   PE-mask or collective action updates them.
+4. Initial ELF bring-up uses stop-PC completion. Hosted `exit_group`/ACRC
+   behavior remains owned by issue #150.
 
 ## Verification obligations
 
@@ -131,6 +150,6 @@ the ASL library.
 
 ## Decision state
 
-This ADR remains draft. No new fetch, host-request, or initialization semantics
-are authorized until the open questions are accepted by the architecture
-owner.
+The architecture owner accepted these choices on 2026-08-29. The owning ASL
+clauses and focused AVS implement this decision; generated model/runtime work
+must consume those owners without introducing a second semantic definition.

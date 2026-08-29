@@ -1,4 +1,34 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-PROFILE-APPLICABILITY"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-PROFILE-APPLICABILITY","PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH"]}
+readonly implementation func ReadPhysicalMemoryByte(address: Word) => Byte
+begin
+    assert UInt(address) < PTO_MODEL_MEMORY_BYTES;
+    let index = UInt(address) as ModelAddress;
+    return _Memory[[index]];
+end;
+
+implementation func WritePhysicalMemoryByte(address: Word, value: Byte)
+begin
+    assert UInt(address) < PTO_MODEL_MEMORY_BYTES;
+    let index = UInt(address) as ModelAddress;
+    _Memory[[index]] = value;
+end;
+
+readonly implementation func TranslateInstructionAddress(
+    address: Word,
+    size_bytes: integer {2,4,6,8}) => Word
+begin
+    return address;
+end;
+
+readonly implementation func InstructionAccessPermitted(
+    address: Word,
+    size_bytes: integer {2,4,6,8}) => boolean
+begin
+    let start_address = UInt(address);
+    if start_address >= PTO_MODEL_MEMORY_BYTES then return FALSE; end;
+    return size_bytes <= PTO_MODEL_MEMORY_BYTES - start_address;
+end;
+
 implementation func ReadMonotonicTime() => Word
 begin
     return _SystemRegisters.cycle;
