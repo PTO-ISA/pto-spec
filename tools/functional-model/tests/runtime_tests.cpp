@@ -592,6 +592,101 @@ void TestGeneratedScalarSteps() {
                pto::model::GeneratedCycleFieldBinding())) == 2);
 }
 
+void TestGeneratedFaultSteps() {
+    auto module = pto::model::GeneratedResetModule();
+    MemoryHarness memory;
+    RuntimeModel runtime(module, memory.Callbacks());
+    assert(runtime.Reset({0x100}) == PTO_STATUS_OK);
+    memory.bytes[0x100] = 0x0f;
+    memory.bytes[0x101] = 0x00;
+    for (std::size_t index = 2; index < 8; ++index)
+        memory.bytes[0x100 + index] = 0;
+    memory.read_count = 0;
+    StepResult result;
+    assert(runtime.Step(&result) == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_TRAP);
+    assert(result.instruction_status == PTO_INSTRUCTION_REJECTED);
+    assert(result.fault_code == 2 && result.length_bits == 64);
+    assert(result.raw_instruction == 0x0f && memory.read_count == 10);
+
+    assert(runtime.Reset({4092}) == PTO_STATUS_OK);
+    memory.bytes[4092] = 0x0f;
+    memory.bytes[4093] = 0x00;
+    memory.read_count = 0;
+    assert(runtime.Step(&result) == PTO_STATUS_OK);
+    assert(result.state == PTO_STEP_TRAP);
+    assert(result.instruction_status == PTO_INSTRUCTION_NOT_ATTEMPTED);
+    assert(result.fault_code == 4 && result.length_bits == 64);
+    assert(memory.read_count == 2);
+    const auto &system = *std::get<std::shared_ptr<pto::model::RecordValue>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedSystemRegistersGlobalBinding())->storage());
+    assert(ValueU64(system.at(
+               pto::model::GeneratedCycleFieldBinding())) == 0);
+}
+
+void TestGeneratedHostRequests() {
+    auto module = pto::model::GeneratedResetModule();
+    MemoryHarness memory;
+    RuntimeModel runtime(module, memory.Callbacks());
+    pto::model::InitialState initial;
+    initial.entry_tpc = 0x200;
+    initial.pe0_gpr_valid_mask = UINT32_C(1) << 4;
+    initial.pe0_gpr[4] = 0x44;
+    assert(runtime.Reset(initial) == PTO_STATUS_OK);
+    assert(runtime.BeginHostRequestForTesting(94, 8, 4, 0x204) == PTO_STATUS_OK);
+    memory.read_count = 0;
+    StepResult first, second;
+    assert(runtime.Step(&first) == PTO_STATUS_OK);
+    assert(runtime.Step(&second) == PTO_STATUS_OK);
+    assert(first.state == PTO_STEP_HOST_REQUEST &&
+           second.state == PTO_STEP_HOST_REQUEST);
+    assert(first.request_token == second.request_token);
+    assert(first.origin_pe == 0 && first.request_type == 94);
+    assert(first.request_argument0 == 8 && memory.read_count == 0);
+    const std::uint64_t token = first.request_token;
+    MemoryHarness other_memory;
+    RuntimeModel other(module, other_memory.Callbacks());
+    assert(other.Reset(initial) == PTO_STATUS_OK);
+    assert(other.BeginHostRequestForTesting(94, 8, 4, 0x204) == PTO_STATUS_OK);
+    StepResult other_step;
+    assert(other.Step(&other_step) == PTO_STATUS_OK);
+    assert(other_step.request_token == token);
+    assert(other.CompleteHostRequest(other_step.request_token, 0x55) ==
+           PTO_STATUS_OK);
+    assert(runtime.Step(&second) == PTO_STATUS_OK);
+    assert(second.request_token == token);
+    assert(runtime.CompleteHostRequest(token + 1, 0x99) ==
+           PTO_STATUS_INVALID_STATE);
+    assert(runtime.CompleteHostRequest(token, 0xaa) == PTO_STATUS_OK);
+    assert(runtime.CompleteHostRequest(token, 0xbb) == PTO_STATUS_INVALID_STATE);
+    assert(ValueU64(*runtime.GlobalValueForTesting(
+               pto::model::GeneratedPCGlobalBinding())) == 0x204);
+    const auto &files = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        runtime.GlobalValueForTesting(
+            pto::model::GeneratedPEGPRsGlobalBinding())->storage());
+    const auto pe0 = files.Get(0);
+    const auto &gprs = *std::get<std::shared_ptr<pto::model::PagedLazyArray>>(
+        pe0.storage());
+    assert(ValueU64(gprs.Get(4)) == 0xaa);
+
+    assert(runtime.Reset(initial) == PTO_STATUS_OK);
+    assert(runtime.BeginHostRequestForTesting(94, 9, 4, 0x204) == PTO_STATUS_OK);
+    assert(runtime.Step(&first) == PTO_STATUS_OK);
+    const std::uint64_t old_token = first.request_token;
+    assert(runtime.Reset(initial) == PTO_STATUS_OK);
+    assert(runtime.BeginHostRequestForTesting(94, 10, 4, 0x204) == PTO_STATUS_OK);
+    assert(runtime.Step(&second) == PTO_STATUS_OK);
+    assert(second.request_token > old_token);
+    assert(runtime.CompleteHostRequest(old_token, 1) == PTO_STATUS_INVALID_STATE);
+    assert(runtime.SetGlobalForTesting(
+        pto::model::GeneratedNextTokenGlobalBinding(),
+        pto::model::Value(pto::model::BitVector::FromU64(64, UINT64_MAX))));
+    assert(runtime.Reset(initial) == PTO_STATUS_OK);
+    assert(runtime.BeginHostRequestForTesting(94, 0, 4, 0x204) ==
+           PTO_STATUS_INVALID_STATE);
+}
+
 }  // namespace
 
 int main() {
@@ -605,5 +700,7 @@ int main() {
     TestGeneratedResetState();
     TestGeneratedPredecodeSteps();
     TestGeneratedScalarSteps();
+    TestGeneratedFaultSteps();
+    TestGeneratedHostRequests();
     return 0;
 }

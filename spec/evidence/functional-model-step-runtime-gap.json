@@ -2,8 +2,8 @@
   "arbitrary_choice_sites": [],
   "inputs": {
     "executable_mir": {
-      "sha256": "d51b989b1d5058fda10fb9a1b7a449ee832686730813c74899305fef2323f355",
-      "size_bytes": 23512075
+      "sha256": "f11e9d1a28a4e69809165f95af6e22aa4019fd6737817fc9bb5ebc43031cef2f",
+      "size_bytes": 23512121
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
@@ -29300,17 +29300,17 @@
   },
   "roots": [
     {
-      "entrypoint_id": 5,
+      "entrypoint_id": 6,
       "function_id": 589,
       "name": "InitializeFunctionalModel"
     },
     {
-      "entrypoint_id": 2,
+      "entrypoint_id": 3,
       "function_id": 459,
       "name": "ExecuteOnePTOStep"
     },
     {
-      "entrypoint_id": 0,
+      "entrypoint_id": 1,
       "function_id": 302,
       "name": "CompleteFunctionalModelHostRequest"
     }

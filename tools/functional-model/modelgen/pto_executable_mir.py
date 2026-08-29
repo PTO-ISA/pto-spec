@@ -32,6 +32,8 @@ DEFAULT_ENTRYPOINTS = (
     "FetchPTOInstruction",
     "InitializeFunctionalModel",
     "InitializeFunctionalModelGPR",
+    "BeginFunctionalModelHostRequest",
+    "CompleteFunctionalModelHostRequest",
 )
 
 EXTERNAL_IMPDEF_BINDINGS = {

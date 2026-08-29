@@ -47,6 +47,10 @@ class RuntimeModel {
     pto_status_t StepPrimaryForTesting(StepResult *result);
     pto_status_t CompleteHostRequest(std::uint64_t token,
                                      std::uint64_t scalar_result);
+    pto_status_t BeginHostRequestForTesting(std::uint16_t request_type,
+                                            std::uint64_t argument0,
+                                            std::uint32_t result_gpr,
+                                            std::uint64_t resume_tpc);
     pto_status_t InvokeU16(BindingId function,
                            std::uint16_t argument,
                            std::uint64_t *result);

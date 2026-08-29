@@ -122,8 +122,8 @@
     "size_bytes": 61980546
   },
   "model_image": {
-    "sha256": "d51b989b1d5058fda10fb9a1b7a449ee832686730813c74899305fef2323f355",
-    "size_bytes": 23512075
+    "sha256": "f11e9d1a28a4e69809165f95af6e22aa4019fd6737817fc9bb5ebc43031cef2f",
+    "size_bytes": 23512121
   },
   "node_count": 1015823,
   "schema": "pto.functional-model-executable-mir-readiness.v1",
@@ -133,7 +133,7 @@
     "call_graph": 5576,
     "call_sites": 16403,
     "constructors": 93,
-    "entrypoints": 7,
+    "entrypoints": 8,
     "externs": 59,
     "fields": 20,
     "functions": 5576,

@@ -1,0 +1,7 @@
+{
+  "schema":"pto-functional-model-fault-host-cases-v1",
+  "cases":[
+    {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-ILLEGAL-ENCODING-005","kind":"illegal64","raw":15,"length_bits":64,"step_state":2,"instruction_status":2,"fault_code":2,"cycle":1},
+    {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-TRUNCATED-FETCH-001","kind":"truncated64","entry":4092,"length_bits":64,"step_state":2,"instruction_status":0,"fault_code":4,"reads":2,"cycle":0}
+  ]
+}

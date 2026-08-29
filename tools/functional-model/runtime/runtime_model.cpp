@@ -217,14 +217,57 @@ pto_status_t RuntimeModel::StepPrimaryForTesting(StepResult *result) {
 
 pto_status_t RuntimeModel::CompleteHostRequest(std::uint64_t token,
                                                std::uint64_t scalar_result) {
-    (void)token;
-    (void)scalar_result;
     BusyGuard guard(&busy_);
-    if (!guard.acquired()) {
-        return PTO_STATUS_BUSY;
-    }
-    SetError("generated host-completion entrypoint is not connected");
-    return PTO_STATUS_MIR_INVALID;
+    if (!guard.acquired()) return PTO_STATUS_BUSY;
+    const auto module = module_.lock();
+    if (!module) return PTO_STATUS_MIR_INVALID;
+    const Function *function = module->FindFunction(
+        GeneratedCompleteHostRequestBinding());
+    if (!function) return PTO_STATUS_MIR_INVALID;
+    RuntimeState candidate = state_;
+    MemoryTransaction memory(callbacks_);
+    const EvaluationResult evaluation = interpreter_.Evaluate(
+        *module, *function, &candidate, &memory,
+        {Value(BitVector::FromU64(64, token)),
+         Value(BitVector::FromU64(64, scalar_result))});
+    const auto *status = evaluation.return_value
+        ? std::get_if<EnumValue>(&evaluation.return_value->storage()) : nullptr;
+    if (evaluation.status != PTO_STATUS_OK || status == nullptr)
+        return evaluation.status == PTO_STATUS_OK ? PTO_STATUS_MIR_INVALID
+                                                  : evaluation.status;
+    if (status->member_id != 0) return PTO_STATUS_INVALID_STATE;
+    state_ = std::move(candidate);
+    return PTO_STATUS_OK;
+}
+
+pto_status_t RuntimeModel::BeginHostRequestForTesting(
+    std::uint16_t request_type,
+    std::uint64_t argument0,
+    std::uint32_t result_gpr,
+    std::uint64_t resume_tpc) {
+    BusyGuard guard(&busy_);
+    if (!guard.acquired()) return PTO_STATUS_BUSY;
+    const auto module = module_.lock();
+    if (!module) return PTO_STATUS_MIR_INVALID;
+    const Function *function = module->FindFunction(
+        GeneratedBeginHostRequestBinding());
+    if (!function) return PTO_STATUS_MIR_INVALID;
+    RuntimeState candidate = state_;
+    MemoryTransaction memory(callbacks_);
+    const EvaluationResult evaluation = interpreter_.Evaluate(
+        *module, *function, &candidate, &memory,
+        {Value(BitVector::FromU64(16, request_type)),
+         Value(BitVector::FromU64(64, argument0)),
+         Value(BigInteger(result_gpr)),
+         Value(BitVector::FromU64(64, resume_tpc))});
+    const auto *accepted = evaluation.return_value
+        ? std::get_if<bool>(&evaluation.return_value->storage()) : nullptr;
+    if (evaluation.status != PTO_STATUS_OK || accepted == nullptr)
+        return evaluation.status == PTO_STATUS_OK ? PTO_STATUS_MIR_INVALID
+                                                  : evaluation.status;
+    if (!*accepted) return PTO_STATUS_INVALID_STATE;
+    state_ = std::move(candidate);
+    return PTO_STATUS_OK;
 }
 
 pto_status_t RuntimeModel::InvokeU16(BindingId function,

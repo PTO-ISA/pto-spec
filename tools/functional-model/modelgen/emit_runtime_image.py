@@ -1079,6 +1079,8 @@ std::shared_ptr<const Module> GeneratedResetModule();
 BindingId GeneratedResetBinding();
 BindingId GeneratedInitializeGPRBinding();
 BindingId GeneratedStepBinding();
+BindingId GeneratedBeginHostRequestBinding();
+BindingId GeneratedCompleteHostRequestBinding();
 BindingId GeneratedPCGlobalBinding();
 BindingId GeneratedPEGPRsGlobalBinding();
 BindingId GeneratedNextTokenGlobalBinding();
@@ -1267,7 +1269,8 @@ def main() -> int:
         reset_id, reset_functions, reset_externs = lower_module(
             image,
             ("InitializeFunctionalModel", "InitializeFunctionalModelGPR",
-             "ExecuteOnePTOStep"),
+             "ExecuteOnePTOStep", "BeginFunctionalModelHostRequest",
+             "CompleteFunctionalModelHostRequest"),
             allow_unsupported=True)
         strings = [row["name"] for row in image["tables"]["strings"]]
         gpr_id = next(
@@ -1276,6 +1279,12 @@ def main() -> int:
         step_id = next(
             int(row["id"]) for row in image["tables"]["functions"]
             if strings[row["name_symbol_id"]] == "ExecuteOnePTOStep")
+        begin_host_id = next(
+            int(row["id"]) for row in image["tables"]["functions"]
+            if strings[row["name_symbol_id"]] == "BeginFunctionalModelHostRequest")
+        complete_host_id = next(
+            int(row["id"]) for row in image["tables"]["functions"]
+            if strings[row["name_symbol_id"]] == "CompleteFunctionalModelHostRequest")
         global_ids = {
             strings[row["name_symbol_id"]]: int(row["id"])
             for row in image["tables"]["globals"]}
@@ -1288,6 +1297,8 @@ def main() -> int:
             f"BindingId GeneratedResetBinding() {{ return {reset_id}u; }}\n"
             f"BindingId GeneratedInitializeGPRBinding() {{ return {gpr_id}u; }}\n"
             f"BindingId GeneratedStepBinding() {{ return {step_id}u; }}\n"
+            f"BindingId GeneratedBeginHostRequestBinding() {{ return {begin_host_id}u; }}\n"
+            f"BindingId GeneratedCompleteHostRequestBinding() {{ return {complete_host_id}u; }}\n"
             f"BindingId GeneratedPCGlobalBinding() {{ return {global_ids['_PC']}u; }}\n"
             f"BindingId GeneratedPEGPRsGlobalBinding() {{ return {global_ids['_PEGPRs']}u; }}\n"
             f"BindingId GeneratedNextTokenGlobalBinding() {{ return {global_ids['_FunctionalHostRequestNextToken']}u; }}\n"
