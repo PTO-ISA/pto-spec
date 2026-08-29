@@ -64,7 +64,7 @@ pto_status_t RuntimeModel::Step(StepResult *result) {
     RuntimeState candidate = state_;
     MemoryTransaction memory(callbacks_);
     const EvaluationResult evaluation =
-        interpreter_.Evaluate(*function, &candidate, &memory);
+        interpreter_.Evaluate(*module, *function, &candidate, &memory);
     if (evaluation.status != PTO_STATUS_OK || evaluation.return_value) {
         result->state = PTO_STEP_UNSUPPORTED;
         SetError("runtime evaluator or callback failed");
@@ -125,6 +125,7 @@ pto_status_t RuntimeModel::InvokeU16(BindingId function,
     RuntimeState candidate = state_;
     MemoryTransaction memory(callbacks_);
     const EvaluationResult evaluation = interpreter_.Evaluate(
+        *module,
         *target,
         &candidate,
         &memory,

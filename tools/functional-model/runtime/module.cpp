@@ -51,6 +51,16 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                 case OpCode::kEqual:
                 case OpCode::kNotEqual:
                 case OpCode::kAssertTrue:
+                case OpCode::kPushArgument:
+                    break;
+                case OpCode::kCallValue:
+                case OpCode::kCallProcedure:
+                    if (instruction.binding == 0) {
+                        if (error != nullptr) {
+                            *error = "module call has a zero numeric target";
+                        }
+                        return nullptr;
+                    }
                     break;
                 case OpCode::kStoreLocalToGlobal:
                 case OpCode::kIncrementGlobalU64:
@@ -82,6 +92,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
                     }
                     break;
                 case OpCode::kReturnValue:
+                case OpCode::kReturnProcedure:
                 case OpCode::kReturnExecuted:
                 case OpCode::kReturnTrap:
                 case OpCode::kReturnHostRequest:
@@ -104,6 +115,7 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
             reachable[index] = true;
             const Instruction &instruction = function.instructions[index];
             if (instruction.opcode == OpCode::kReturnValue ||
+                instruction.opcode == OpCode::kReturnProcedure ||
                 instruction.opcode == OpCode::kReturnExecuted ||
                 instruction.opcode == OpCode::kReturnTrap ||
                 instruction.opcode == OpCode::kReturnHostRequest) {
@@ -137,6 +149,18 @@ std::shared_ptr<const Module> Module::Create(std::vector<Function> functions,
             *error = "module step entrypoint is unresolved";
         }
         return nullptr;
+    }
+    for (const Function &function : functions) {
+        for (const Instruction &instruction : function.instructions) {
+            if ((instruction.opcode == OpCode::kCallValue ||
+                 instruction.opcode == OpCode::kCallProcedure) &&
+                ids.find(instruction.binding) == ids.end()) {
+                if (error != nullptr) {
+                    *error = "module call has an unresolved numeric target";
+                }
+                return nullptr;
+            }
+        }
     }
     return std::shared_ptr<const Module>(
         new Module(std::move(functions), step_entrypoint));

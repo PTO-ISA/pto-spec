@@ -35,16 +35,24 @@ struct EvaluationResult {
 
 class Interpreter {
   public:
-    EvaluationResult Evaluate(const Function &function,
+    EvaluationResult Evaluate(const Module &module,
+                              const Function &function,
                               RuntimeState *state,
                               MemoryTransaction *memory,
                               const std::vector<Value> &arguments = {}) const;
 
   private:
+    EvaluationResult EvaluateInternal(const Module &module,
+                                      const Function &function,
+                                      RuntimeState *state,
+                                      MemoryTransaction *memory,
+                                      const std::vector<Value> &arguments,
+                                      std::uint32_t depth) const;
     struct CallFrame {
         BindingId function_id;
         std::unordered_map<std::uint32_t, std::uint64_t> locals;
         std::unordered_map<std::uint32_t, Value> typed_locals;
+        std::vector<Value> pending_arguments;
     };
 };
 

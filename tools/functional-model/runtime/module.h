@@ -35,9 +35,13 @@ enum class OpCode : std::uint8_t {
     kEqual,
     kNotEqual,
     kAssertTrue,
+    kPushArgument,
+    kCallValue,
+    kCallProcedure,
     kBranchIfFalse,
     kJump,
     kReturnValue,
+    kReturnProcedure,
     kReturnExecuted,
     kReturnTrap,
     kReturnHostRequest

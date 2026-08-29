@@ -24,7 +24,7 @@
     },
     "runtime_capabilities": {
       "schema": "pto-functional-model-runtime-capabilities-v1",
-      "sha256": "9d52f63f4729626f7732574773cea2b6a618240e0dca0d2c5c84514e621531ee"
+      "sha256": "ffa7beb2456b875abbffe5ed31e304232ae0141a4510986098a9eac62fab86b4"
     }
   },
   "minimal_scalar_elf": {
@@ -29312,6 +29312,8 @@
       "kAddLocalU64",
       "kAssertTrue",
       "kBranchIfFalse",
+      "kCallProcedure",
+      "kCallValue",
       "kEqual",
       "kIncrementGlobalU64",
       "kJump",
@@ -29320,9 +29322,11 @@
       "kLoadIntegerImmediate",
       "kNotEqual",
       "kProbeMemory",
+      "kPushArgument",
       "kReadMemoryToGlobal",
       "kReturnExecuted",
       "kReturnHostRequest",
+      "kReturnProcedure",
       "kReturnTrap",
       "kReturnValue",
       "kSetLocalU64",

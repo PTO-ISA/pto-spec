@@ -310,6 +310,34 @@ void TestTypedAssert() {
     assert(failing.InvokeU16(600, 0, &result) == PTO_STATUS_MIR_INVALID);
 }
 
+void TestNumericCallFrames() {
+    std::string error;
+    auto module = Module::Create(
+        {Function{700,
+                  {{OpCode::kLoadBitsImmediate, 0, 0, 5, 16},
+                   {OpCode::kPushArgument, 0, 0, 0, 0},
+                   {OpCode::kCallValue, 701, 1, 1, 0},
+                   {OpCode::kCallProcedure, 702, 0, 0, 0},
+                   {OpCode::kReturnValue, 0, 1, 0, 0}}},
+         Function{701,
+                  {{OpCode::kLoadArgumentBits, 0, 0, 16, 0},
+                   {OpCode::kLoadBitsImmediate, 0, 1, 5, 16},
+                   {OpCode::kEqual, 0, 2, 0, 1},
+                   {OpCode::kAssertTrue, 0, 2, 0, 0},
+                   {OpCode::kLoadIntegerImmediate, 0, 3, 5, 0},
+                   {OpCode::kReturnValue, 0, 3, 0, 0}}},
+         Function{702, {{OpCode::kReturnProcedure, 0, 0, 0, 0}}}},
+        700,
+        &error);
+    assert(module != nullptr && error.empty());
+    MemoryHarness memory;
+    RuntimeModel runtime(module, memory.Callbacks());
+    assert(runtime.Reset({0}) == PTO_STATUS_OK);
+    std::uint64_t result = 0;
+    assert(runtime.InvokeU16(700, 0, &result) == PTO_STATUS_OK);
+    assert(result == 5);
+}
+
 }  // namespace
 
 int main() {
@@ -318,5 +346,6 @@ int main() {
     TestInvalidModules();
     TestGeneratedDetermineLength();
     TestTypedAssert();
+    TestNumericCallFrames();
     return 0;
 }

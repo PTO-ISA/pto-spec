@@ -31,14 +31,28 @@ bool EqualValues(const Value &left, const Value &right, bool *equal) {
 
 }  // namespace
 
-EvaluationResult Interpreter::Evaluate(const Function &function,
+EvaluationResult Interpreter::Evaluate(const Module &module,
+                                       const Function &function,
                                        RuntimeState *state,
                                        MemoryTransaction *memory,
                                        const std::vector<Value> &arguments) const {
+    return EvaluateInternal(module, function, state, memory, arguments, 0);
+}
+
+EvaluationResult Interpreter::EvaluateInternal(
+    const Module &module,
+    const Function &function,
+    RuntimeState *state,
+    MemoryTransaction *memory,
+    const std::vector<Value> &arguments,
+    std::uint32_t depth) const {
     if (state == nullptr || memory == nullptr) {
         return {PTO_STATUS_INVALID_ARGUMENT, PTO_STEP_UNSUPPORTED};
     }
-    CallFrame frame{function.id, {}, {}};
+    if (depth >= 256) {
+        return {PTO_STATUS_RESOURCE_LIMIT, PTO_STEP_UNSUPPORTED};
+    }
+    CallFrame frame{function.id, {}, {}, {}};
     std::size_t pc = 0;
     while (pc < function.instructions.size()) {
         const Instruction &instruction = function.instructions[pc];
@@ -156,6 +170,43 @@ EvaluationResult Interpreter::Evaluate(const Function &function,
                 }
                 break;
             }
+            case OpCode::kPushArgument: {
+                const auto value = frame.typed_locals.find(instruction.local);
+                if (value == frame.typed_locals.end()) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                frame.pending_arguments.push_back(value->second);
+                break;
+            }
+            case OpCode::kCallValue:
+            case OpCode::kCallProcedure: {
+                const Function *target = module.FindFunction(instruction.binding);
+                if (target == nullptr ||
+                    frame.pending_arguments.size() != instruction.immediate) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                EvaluationResult called = EvaluateInternal(
+                    module,
+                    *target,
+                    state,
+                    memory,
+                    frame.pending_arguments,
+                    depth + 1);
+                frame.pending_arguments.clear();
+                if (called.status != PTO_STATUS_OK) {
+                    return called;
+                }
+                if (instruction.opcode == OpCode::kCallValue) {
+                    if (!called.return_value) {
+                        return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                    }
+                    frame.typed_locals.insert_or_assign(
+                        instruction.local, *called.return_value);
+                } else if (called.return_value) {
+                    return {PTO_STATUS_MIR_INVALID, PTO_STEP_UNSUPPORTED};
+                }
+                break;
+            }
             case OpCode::kBranchIfFalse: {
                 const auto condition = frame.typed_locals.find(instruction.local);
                 if (condition == frame.typed_locals.end() ||
@@ -178,6 +229,8 @@ EvaluationResult Interpreter::Evaluate(const Function &function,
                 }
                 return {PTO_STATUS_OK, PTO_STEP_UNSUPPORTED, value->second};
             }
+            case OpCode::kReturnProcedure:
+                return {PTO_STATUS_OK, PTO_STEP_UNSUPPORTED};
             case OpCode::kReturnExecuted:
                 return {PTO_STATUS_OK, PTO_STEP_EXECUTED};
             case OpCode::kReturnTrap:
