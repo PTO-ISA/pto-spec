@@ -767,6 +767,11 @@ class Compiler:
                 )
             for child in children:
                 if terminal:
+                    marker = child
+                    while self.arena.constructor_name(marker) == "SB_ASL":
+                        marker = self.single_argument(marker, "SB_ASL")
+                    if self.arena.constructor_name(marker) == "S_Unreachable":
+                        continue
                     raise ModelgenError("runtime sequence contains unreachable statement")
                 terminal = self.statement(child)
             return terminal
