@@ -605,6 +605,91 @@ def _enum_labels(
     return labels
 
 
+def render_global_defaults(image: dict[str, object]) -> list[dict[str, object]]:
+    tables = image["tables"]
+    strings = [row["name"] for row in tables["strings"]]
+    arena = CompactArena(image)
+    named_types = {
+        str(strings[row["name_symbol_id"]]): row
+        for row in tables["types"]
+    }
+    string_ids = {str(value): index for index, value in enumerate(strings)}
+    globals_by_name = {
+        str(strings[row["name_symbol_id"]]): row for row in tables["globals"]
+    }
+
+    def constant_integer(node: int, active: set[int]) -> int:
+        if node in active:
+            raise ModelgenError(f"recursive integer constant at node {node}")
+        name = arena.constructor_name(node)
+        if name == "E_Literal":
+            return Compiler(arena, []).literal_integer(node)
+        if name == "E_Var":
+            variable = str(arena.atom(arena.constructor(node, "E_Var")[0], "string"))
+            row = globals_by_name.get(variable)
+            if row is None or row["initializer_node"] is None:
+                raise ModelgenError(f"unresolved width constant {variable!r}")
+            return constant_integer(int(row["initializer_node"]), {*active, node})
+        if name == "E_Binop":
+            values = arena.sequence(arena.constructor(node, "E_Binop")[0], "tuple")
+            left = constant_integer(values[1], {*active, node})
+            right = constant_integer(values[2], {*active, node})
+            operator = arena.constructor_name(values[0])
+            if operator == "ADD": return left + right
+            if operator == "SUB": return left - right
+            if operator == "MUL": return left * right
+        raise ModelgenError(f"unsupported width expression {name} at node {node}")
+
+    def default(type_node: int, active: set[int]) -> dict[str, object]:
+        if type_node in active:
+            raise ModelgenError(f"recursive value type at node {type_node}")
+        active = {*active, type_node}
+        name = arena.constructor_name(type_node)
+        arguments = arena.constructor(type_node, name)
+        if name == "T_Named":
+            target = str(arena.atom(arguments[0], "string"))
+            row = named_types.get(target)
+            if row is None or row["definition_node"] is None:
+                raise ModelgenError(f"unresolved named type {target!r}")
+            return default(int(row["definition_node"]), active)
+        if name == "T_Bool":
+            return {"kind": "bool", "value": False}
+        if name == "T_Int":
+            return {"kind": "integer", "words": []}
+        if name == "T_Bits":
+            values = arena.sequence(arguments[0], "tuple")
+            width = constant_integer(values[0], set())
+            if width < 0 or width > (1 << 20):
+                raise ModelgenError("global bit width exceeds resource bound")
+            return {"kind": "bits", "width": width}
+        if name == "T_Enum":
+            members = arena.sequence(arguments[0], "list")
+            if not members:
+                raise ModelgenError("empty enum type")
+            return {"kind": "enum", "type_node": type_node, "member": 0}
+        if name == "T_Array":
+            values = arena.sequence(arguments[0], "tuple")
+            return {"kind": "array", "element": default(values[1], active)}
+        if name == "T_Record":
+            fields = []
+            for item in arena.sequence(arguments[0], "list"):
+                pair = arena.sequence(item, "tuple")
+                field = str(arena.atom(pair[0], "string"))
+                fields.append([string_ids[field], default(pair[1], active)])
+            return {"kind": "record", "fields": fields}
+        if name == "T_Tuple":
+            return {"kind": "tuple", "items": [
+                default(item, active)
+                for item in arena.sequence(arguments[0], "list")
+            ]}
+        raise ModelgenError(f"unsupported global default type {name} at node {type_node}")
+
+    return [
+        {"id": int(row["id"]), "value": default(int(row["type_node"]), set())}
+        for row in tables["globals"]
+    ]
+
+
 def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
     if ENTRYPOINT not in CAPABILITIES["entrypoints"]:
         raise ModelgenError("runtime entrypoint capability is not declared")
