@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+"""Run the checked corpus through ASLRef and gfrun, then compare results."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class BringupError(ValueError):
+    pass
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def run(command: list[str]) -> None:
+    completed = subprocess.run(command, text=True, capture_output=True)
+    if completed.returncode != 0:
+        raise BringupError(
+            f"command failed ({completed.returncode}): {' '.join(command)}\n"
+            f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}"
+        )
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--gfrun", type=Path, required=True)
+    parser.add_argument("--corpus", type=Path, required=True)
+    parser.add_argument("--descriptor", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    arguments = parser.parse_args()
+    for path in (arguments.gfrun, arguments.corpus / "manifest.json", arguments.descriptor):
+        if not path.exists():
+            raise BringupError(f"missing bring-up input: {path}")
+    arguments.output.mkdir(parents=True, exist_ok=True)
+    aslref_output = arguments.output / "aslref"
+    gfrun_output = arguments.output / "gfrun"
+    comparison = arguments.output / "compare.json"
+
+    run([
+        str(ROOT / "scripts" / "run-functional-model-aslref"),
+        "--corpus", str(arguments.corpus),
+        "--descriptor", str(arguments.descriptor),
+        "--output", str(aslref_output),
+    ])
+    run([
+        str(ROOT / "scripts" / "run-functional-model-gfrun"),
+        "--gfrun", str(arguments.gfrun),
+        "--corpus", str(arguments.corpus),
+        "--output", str(gfrun_output),
+    ])
+    run([
+        str(ROOT / "scripts" / "compare-functional-model-runs"),
+        "--aslref", str(aslref_output),
+        "--gfrun", str(gfrun_output),
+        "--output", str(comparison),
+    ])
+
+    compare_payload = json.loads(comparison.read_text(encoding="utf-8"))
+    if compare_payload.get("status") != "pass":
+        raise BringupError("functional-model comparison did not pass")
+    summary = {
+        "schema": "pto-functional-model-bringup-run-v1",
+        "status": "pass",
+        "inputs": {
+            "corpus_manifest_sha256": sha256(arguments.corpus / "manifest.json"),
+            "model_descriptor_sha256": sha256(arguments.descriptor),
+            "gfrun_sha256": sha256(arguments.gfrun),
+        },
+        "artifacts": {
+            "aslref_summary_sha256": sha256(aslref_output / "summary.json"),
+            "gfrun_summary_sha256": sha256(gfrun_output / "summary.json"),
+            "comparison_sha256": sha256(comparison),
+        },
+        "cases": compare_payload["cases"],
+    }
+    summary_path = arguments.output / "summary.json"
+    summary_path.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    print(summary_path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
