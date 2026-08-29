@@ -25,6 +25,7 @@ EXECUTABLE_SCHEMA_ID = (
 )
 
 DEFAULT_ENTRYPOINTS = (
+    "CompleteFunctionalModelHostRequest",
     "DeterminePTOInstructionLength",
     "ExecuteOnePTOStep",
     "ExecutePTOInstruction",

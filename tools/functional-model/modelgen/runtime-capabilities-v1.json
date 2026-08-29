@@ -1,0 +1,48 @@
+{
+  "emitter_bytecode_opcodes": [
+    "kBranchIfFalse",
+    "kEqual",
+    "kJump",
+    "kLoadArgumentBits",
+    "kLoadBitsImmediate",
+    "kLoadIntegerImmediate",
+    "kNotEqual",
+    "kReturnValue",
+    "kSliceBits"
+  ],
+  "interpreter_bytecode_opcodes": [
+    "kAddLocalU64",
+    "kBranchIfFalse",
+    "kEqual",
+    "kIncrementGlobalU64",
+    "kJump",
+    "kLoadArgumentBits",
+    "kLoadBitsImmediate",
+    "kLoadIntegerImmediate",
+    "kNotEqual",
+    "kProbeMemory",
+    "kReadMemoryToGlobal",
+    "kReturnExecuted",
+    "kReturnHostRequest",
+    "kReturnTrap",
+    "kReturnValue",
+    "kSetLocalU64",
+    "kSliceBits",
+    "kStoreLocalToGlobal",
+    "kWriteMemoryImmediate"
+  ],
+  "constructors": {
+    "expressions": ["E_Binop", "E_Literal", "E_Slice", "E_Var"],
+    "literals": ["L_BitVector", "L_Int"],
+    "lvalues": [],
+    "operators": ["EQ", "NE"],
+    "slices": ["Slice_Length"],
+    "statements": ["SB_ASL", "S_Cond", "S_Return", "S_Seq"],
+    "types": ["T_Bits"]
+  },
+  "entrypoints": ["DeterminePTOInstructionLength"],
+  "extern_bindings": [],
+  "impdef_bindings": [],
+  "primitive_bindings": [],
+  "schema": "pto-functional-model-runtime-capabilities-v1"
+}

@@ -19,6 +19,57 @@ from pto_executable_mir import ModelgenError, verify_executable_module  # noqa: 
 
 ENTRYPOINT = "DeterminePTOInstructionLength"
 CASES_SCHEMA = "pto-functional-model-determine-length-cases-v1"
+CAPABILITIES_SCHEMA = "pto-functional-model-runtime-capabilities-v1"
+CAPABILITIES_PATH = MODELGEN / "runtime-capabilities-v1.json"
+
+
+def _load_capabilities() -> dict[str, object]:
+    document = json.loads(CAPABILITIES_PATH.read_bytes())
+    required = {
+        "schema",
+        "entrypoints",
+        "constructors",
+        "primitive_bindings",
+        "extern_bindings",
+        "impdef_bindings",
+        "emitter_bytecode_opcodes",
+        "interpreter_bytecode_opcodes",
+    }
+    if document.get("schema") != CAPABILITIES_SCHEMA or set(document) != required:
+        raise ModelgenError("runtime capability manifest is malformed")
+    constructors = document["constructors"]
+    if not isinstance(constructors, dict) or set(constructors) != {
+        "expressions",
+        "literals",
+        "lvalues",
+        "operators",
+        "slices",
+        "statements",
+        "types",
+    }:
+        raise ModelgenError("runtime constructor capabilities are malformed")
+    for values in [
+        document["entrypoints"],
+        document["primitive_bindings"],
+        document["extern_bindings"],
+        document["impdef_bindings"],
+        document["emitter_bytecode_opcodes"],
+        document["interpreter_bytecode_opcodes"],
+        *constructors.values(),
+    ]:
+        if not isinstance(values, list) or values != sorted(set(values)):
+            raise ModelgenError("runtime capabilities must be sorted and unique")
+    if not set(document["emitter_bytecode_opcodes"]).issubset(
+        document["interpreter_bytecode_opcodes"]
+    ):
+        raise ModelgenError("runtime emitter opcode lacks an interpreter handler")
+    return document
+
+
+CAPABILITIES = _load_capabilities()
+CONSTRUCTOR_CAPABILITIES: dict[str, list[str]] = CAPABILITIES[  # type: ignore[assignment]
+    "constructors"
+]
 
 
 class CompactArena:
@@ -89,6 +140,8 @@ class Compiler:
         return result
 
     def emit(self, opcode: str, **fields: int) -> int:
+        if opcode not in CAPABILITIES["emitter_bytecode_opcodes"]:
+            raise ModelgenError(f"bytecode opcode {opcode!r} is not declared")
         instruction: dict[str, int | str] = {
             "opcode": opcode,
             "binding": 0,
@@ -113,6 +166,8 @@ class Compiler:
 
     def expression(self, identifier: int) -> int:
         name = self.arena.constructor_name(identifier)
+        if name not in CONSTRUCTOR_CAPABILITIES["expressions"]:
+            raise ModelgenError(f"unsupported reachable runtime expression {name}")
         if name == "E_Var":
             atom = self.single_argument(identifier, "E_Var")
             variable = str(self.arena.atom(atom, "string"))
@@ -129,6 +184,8 @@ class Compiler:
         if name == "E_Literal":
             literal = self.single_argument(identifier, "E_Literal")
             literal_name = self.arena.constructor_name(literal)
+            if literal_name not in CONSTRUCTOR_CAPABILITIES["literals"]:
+                raise ModelgenError(f"unsupported runtime literal {literal_name}")
             target = self.local()
             if literal_name == "L_Int":
                 atom = self.single_argument(literal, "L_Int")
@@ -186,7 +243,7 @@ class Compiler:
             if len(values) != 3:
                 raise ModelgenError("runtime binary expression is malformed")
             operator = self.arena.constructor_name(values[0])
-            if operator not in {"EQ", "NE"}:
+            if operator not in CONSTRUCTOR_CAPABILITIES["operators"]:
                 raise ModelgenError(f"unsupported runtime binary operator {operator}")
             left = self.expression(values[1])
             right = self.expression(values[2])
@@ -202,6 +259,8 @@ class Compiler:
 
     def statement(self, identifier: int) -> bool:
         name = self.arena.constructor_name(identifier)
+        if name not in CONSTRUCTOR_CAPABILITIES["statements"]:
+            raise ModelgenError(f"unsupported reachable runtime statement {name}")
         if name == "SB_ASL":
             return self.statement(self.single_argument(identifier, "SB_ASL"))
         if name == "S_Return":
@@ -238,6 +297,8 @@ class Compiler:
 
 
 def _type_bits_width(arena: CompactArena, identifier: int) -> int:
+    if "T_Bits" not in CONSTRUCTOR_CAPABILITIES["types"]:
+        raise ModelgenError("runtime T_Bits handler is not declared")
     values = arena.sequence(arena.constructor(identifier, "T_Bits")[0], "tuple")
     if len(values) != 2:
         raise ModelgenError("runtime bits type is malformed")
@@ -246,6 +307,8 @@ def _type_bits_width(arena: CompactArena, identifier: int) -> int:
 
 
 def lower(image: dict[str, object]) -> tuple[int, list[dict[str, int | str]]]:
+    if ENTRYPOINT not in CAPABILITIES["entrypoints"]:
+        raise ModelgenError("runtime entrypoint capability is not declared")
     verify_executable_module(image, required_entrypoints=(ENTRYPOINT,))
     tables = image["tables"]
     strings = [row["name"] for row in tables["strings"]]
