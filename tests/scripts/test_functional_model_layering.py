@@ -87,6 +87,16 @@ class FunctionalModelLayeringTest(unittest.TestCase):
             "implementation func InterceptArchitectureCloseRequest", profile
         )
         self.assertIn("InterceptArchitectureCloseRequest(request_type)", semantics)
+        capabilities = json.loads(
+            (
+                ROOT
+                / "tools/functional-model/modelgen/runtime-capabilities-v1.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertIn(
+            "InterceptArchitectureCloseRequest",
+            capabilities["impdef_bindings"],
+        )
 
     def test_accepted_adr_records_the_layering_decision(self) -> None:
         text = ADR.read_text(encoding="utf-8")

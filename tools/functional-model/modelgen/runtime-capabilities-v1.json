@@ -139,7 +139,7 @@
   },
   "entrypoints": ["DeterminePTOInstructionLength"],
   "extern_bindings": ["ReadPhysicalMemoryByte", "ResetPhysicalMemory", "SInt", "UInt", "WritePhysicalMemoryByte"],
-  "impdef_bindings": ["ReadPhysicalMemoryByte", "ResetPhysicalMemory", "WritePhysicalMemoryByte"],
+  "impdef_bindings": ["InterceptArchitectureCloseRequest", "ReadPhysicalMemoryByte", "ResetPhysicalMemory", "WritePhysicalMemoryByte"],
   "primitive_bindings": ["SInt", "UInt"],
   "schema": "pto-functional-model-runtime-capabilities-v1"
 }

@@ -44,6 +44,7 @@ SUPPORTED_IMPDEF_BINDINGS = {
     "FloatingExponential",
     "FloatingRoundNearest",
     "InstructionAccessPermitted",
+    "InterceptArchitectureCloseRequest",
     "RaiseExtensionFirstUse",
     "ReadMonotonicTime",
     "ReadPhysicalMemoryByte",
