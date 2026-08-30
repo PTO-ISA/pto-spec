@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 typedef struct {
@@ -80,6 +81,14 @@ int main(void) {
     assert(result.length_bits == 16);
     assert(result.pre_tpc == UINT64_C(0x100));
     assert(result.post_tpc == UINT64_C(0x102));
+    uint64_t snapshot_size = 0;
+    assert(pto_model_snapshot(model, NULL, &snapshot_size) ==
+           PTO_STATUS_BUFFER_TOO_SMALL);
+    uint8_t *snapshot = (uint8_t *)malloc((size_t)snapshot_size);
+    assert(snapshot != NULL);
+    assert(pto_model_snapshot(model, snapshot, &snapshot_size) == PTO_STATUS_OK);
+    assert(pto_model_restore(model, snapshot, snapshot_size) == PTO_STATUS_OK);
+    free(snapshot);
     pto_model_destroy(model);
     return 0;
 }

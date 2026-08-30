@@ -168,6 +168,17 @@ def validate_run(
                       f"trace step {index} memory-write count")
         require_equal(step.get("memory_write_sha256"), memory_write_sha256(writes),
                       f"trace step {index} memory-write digest")
+        summary_digest = step.get("bundle_tile_state_sha256")
+        if not isinstance(summary_digest, str) or len(summary_digest) != 64:
+            raise ValidationError(
+                f"trace step {index} has no Bundle/Tile model digest"
+            )
+        try:
+            bytes.fromhex(summary_digest)
+        except ValueError as error:
+            raise ValidationError(
+                f"trace step {index} Bundle/Tile digest is not hexadecimal"
+            ) from error
         if index > 0:
             require_equal(
                 step.get("pre_tpc"),

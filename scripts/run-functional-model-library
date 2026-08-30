@@ -232,6 +232,9 @@ def source_for_case(
               static_cast<unsigned long long>(step.memory_write_count));
             for (std::uint8_t byte : step.memory_write_sha256)
               std::printf("%02x", byte);
+            std::printf(" ");
+            for (std::uint8_t byte : step.bundle_tile_state_sha256)
+              std::printf("%02x", byte);
             std::printf("\\n");
             for (const pto_memory_write_t &write : writes)
               std::printf("WRITE %llu %u\\n",
@@ -279,14 +282,18 @@ def parse_output(text: str) -> tuple[list[dict[str, object]], str]:
     for line in text.splitlines():
         if line.startswith("STEP "):
             tokens = line.split()
-            values = [int(value) for value in tokens[1:-1]]
+            values = [int(value) for value in tokens[1:-2]]
             if len(values) != len(fields):
                 raise LibraryRunError("standalone step field count mismatch")
             step = dict(zip(fields, values))
-            digest = tokens[-1]
-            if len(digest) != 64:
+            memory_digest = tokens[-2]
+            summary_digest = tokens[-1]
+            if len(memory_digest) != 64:
                 raise LibraryRunError("standalone memory-write digest is malformed")
-            step["memory_write_sha256"] = digest
+            if len(summary_digest) != 64:
+                raise LibraryRunError("standalone Bundle/Tile digest is malformed")
+            step["memory_write_sha256"] = memory_digest
+            step["bundle_tile_state_sha256"] = summary_digest
             step["memory_writes"] = []
             step["result_valid"] = step["status"] == 0
             trace.append(step)

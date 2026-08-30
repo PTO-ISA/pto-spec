@@ -1,6 +1,7 @@
 #include "runtime_model.h"
 
 #include "pto_generated_runtime_image.h"
+#include "snapshot.h"
 #include "trace_digest.h"
 
 #include <utility>
@@ -185,6 +186,15 @@ pto_status_t RuntimeModel::Step(StepResult *result) {
         !unsigned_value(field(fields.request_argument0), &result->request_argument0))
         return PTO_STATUS_MIR_INVALID;
     result->fault_cause = static_cast<std::uint32_t>(cause);
+    std::array<std::uint8_t, 32> bundle_tile_digest{};
+    std::string digest_error;
+    const pto_status_t digest_status =
+        DigestStateBindings(candidate, GeneratedBundleTileGlobalBindings(),
+                            &bundle_tile_digest, &digest_error);
+    if (digest_status != PTO_STATUS_OK) {
+      SetError(std::move(digest_error));
+      return digest_status;
+    }
     const pto_status_t commit_status = memory.Commit();
     if (commit_status != PTO_STATUS_OK) {
         result->state = PTO_STEP_UNSUPPORTED;
@@ -194,6 +204,7 @@ pto_status_t RuntimeModel::Step(StepResult *result) {
     last_memory_writes_ = memory.writes();
     result->memory_write_count = last_memory_writes_.size();
     result->memory_write_sha256 = DigestMemoryWrites(last_memory_writes_);
+    result->bundle_tile_state_sha256 = bundle_tile_digest;
     state_ = std::move(candidate);
     last_error_.clear();
     return PTO_STATUS_OK;
@@ -216,6 +227,11 @@ pto_status_t RuntimeModel::StepPrimaryForTesting(StepResult *result) {
     if (evaluation.status != PTO_STATUS_OK || evaluation.return_value)
         return evaluation.status == PTO_STATUS_OK ? PTO_STATUS_MIR_INVALID
                                                   : evaluation.status;
+    std::string digest_error;
+    const pto_status_t digest_status = DigestStateBindings(
+        candidate, {}, &result->bundle_tile_state_sha256, &digest_error);
+    if (digest_status != PTO_STATUS_OK)
+      return digest_status;
     const pto_status_t commit_status = memory.Commit();
     if (commit_status != PTO_STATUS_OK) return commit_status;
     last_memory_writes_ = memory.writes();
@@ -341,6 +357,40 @@ RuntimeModel::CopyLastMemoryWrites(std::vector<MemoryWrite> *writes) {
   if (!guard.acquired())
     return PTO_STATUS_BUSY;
   *writes = last_memory_writes_;
+  return PTO_STATUS_OK;
+}
+
+pto_status_t RuntimeModel::Snapshot(std::vector<std::uint8_t> *snapshot) {
+  if (snapshot == nullptr)
+    return PTO_STATUS_INVALID_ARGUMENT;
+  BusyGuard guard(&busy_);
+  if (!guard.acquired())
+    return PTO_STATUS_BUSY;
+  std::string error;
+  const pto_status_t status = EncodeSnapshot(state_, snapshot, &error);
+  if (status != PTO_STATUS_OK)
+    SetError(std::move(error));
+  else
+    last_error_.clear();
+  return status;
+}
+
+pto_status_t RuntimeModel::Restore(const std::uint8_t *snapshot,
+                                   std::size_t snapshot_size) {
+  BusyGuard guard(&busy_);
+  if (!guard.acquired())
+    return PTO_STATUS_BUSY;
+  RuntimeState candidate;
+  std::string error;
+  const pto_status_t status =
+      DecodeSnapshot(snapshot, snapshot_size, state_, &candidate, &error);
+  if (status != PTO_STATUS_OK) {
+    SetError(std::move(error));
+    return status;
+  }
+  state_ = std::move(candidate);
+  last_memory_writes_.clear();
+  last_error_.clear();
   return PTO_STATUS_OK;
 }
 

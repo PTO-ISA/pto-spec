@@ -3,6 +3,7 @@
 #include "pto_generated_determine_length_cases.h"
 #include "pto_generated_runtime_image.h"
 #include "runtime_model.h"
+#include "snapshot.h"
 #include "value.h"
 
 #include <array>
@@ -950,6 +951,101 @@ void TestGeneratedStoreTransactions() {
     assert(memory.commit_count == 0 && memory.committed_writes.empty());
 }
 
+void TestGeneratedSnapshotRoundTrip() {
+  auto module = pto::model::GeneratedResetModule();
+  MemoryHarness memory;
+  RuntimeModel runtime(module, memory.Callbacks());
+  assert(runtime.Reset({0x100}) == PTO_STATUS_OK);
+  memory.bytes[0x100] = 0x16;
+  memory.bytes[0x101] = 0x14;
+  memory.bytes[0x102] = 0x16;
+  memory.bytes[0x103] = 0x14;
+
+  StepResult first;
+  assert(runtime.Step(&first) == PTO_STATUS_OK);
+  assert(first.post_tpc == 0x102);
+  assert((first.bundle_tile_state_sha256 != std::array<std::uint8_t, 32>{}));
+
+  std::vector<std::uint8_t> snapshot;
+  std::vector<std::uint8_t> repeated;
+  const pto_status_t snapshot_status = runtime.Snapshot(&snapshot);
+  if (snapshot_status != PTO_STATUS_OK)
+    std::fprintf(stderr, "snapshot status=%u: %s\n", snapshot_status,
+                 runtime.last_error().c_str());
+  assert(snapshot_status == PTO_STATUS_OK);
+  assert(runtime.Snapshot(&repeated) == PTO_STATUS_OK);
+  assert(snapshot == repeated);
+  assert(snapshot.size() > pto::model::kSnapshotHeaderSize);
+  assert((std::equal(
+      snapshot.begin(), snapshot.begin() + 8,
+      std::array<std::uint8_t, 8>{'P', 'T', 'O', 'F', 'M', 'S', 'N', '1'}
+          .begin())));
+
+  const int reset_count = memory.reset_count;
+  memory.bytes[0x700] = 0xaa;
+  StepResult advanced;
+  assert(runtime.Step(&advanced) == PTO_STATUS_OK);
+  assert(advanced.post_tpc == 0x104);
+  assert(runtime.Restore(snapshot.data(), snapshot.size()) == PTO_STATUS_OK);
+  assert(memory.reset_count == reset_count);
+  assert(memory.bytes[0x700] == 0xaa);
+  std::vector<std::uint8_t> restored;
+  assert(runtime.Snapshot(&restored) == PTO_STATUS_OK);
+  assert(restored == snapshot);
+
+  StepResult replayed;
+  assert(runtime.Step(&replayed) == PTO_STATUS_OK);
+  assert(replayed.pre_tpc == advanced.pre_tpc);
+  assert(replayed.post_tpc == advanced.post_tpc);
+  assert(replayed.sequence == advanced.sequence);
+  assert(replayed.bundle_tile_state_sha256 ==
+         advanced.bundle_tile_state_sha256);
+
+  std::vector<std::uint8_t> before_invalid;
+  assert(runtime.Snapshot(&before_invalid) == PTO_STATUS_OK);
+  std::vector<std::uint8_t> corrupted = snapshot;
+  corrupted.back() ^= 1;
+  assert(runtime.Restore(corrupted.data(), corrupted.size()) ==
+         PTO_STATUS_SNAPSHOT_INVALID);
+  std::vector<std::uint8_t> after_invalid;
+  assert(runtime.Snapshot(&after_invalid) == PTO_STATUS_OK);
+  assert(after_invalid == before_invalid);
+
+  corrupted = snapshot;
+  corrupted[32] ^= 1;
+  assert(runtime.Restore(corrupted.data(), corrupted.size()) ==
+         PTO_STATUS_SNAPSHOT_INCOMPATIBLE);
+  assert(runtime.Restore(snapshot.data(), snapshot.size() - 1) ==
+         PTO_STATUS_SNAPSHOT_INVALID);
+
+  MemoryHarness other_memory;
+  RuntimeModel other(module, other_memory.Callbacks());
+  assert(other.Reset({0x400}) == PTO_STATUS_OK);
+  assert(other.Restore(snapshot.data(), snapshot.size()) == PTO_STATUS_OK);
+  std::vector<std::uint8_t> other_snapshot;
+  assert(other.Snapshot(&other_snapshot) == PTO_STATUS_OK);
+  assert(other_snapshot == snapshot);
+
+  pto::model::InitialState request_initial;
+  request_initial.entry_tpc = 0x200;
+  request_initial.pe0_gpr_valid_mask = UINT32_C(1) << 4;
+  request_initial.pe0_gpr[4] = 7;
+  assert(runtime.Reset(request_initial) == PTO_STATUS_OK);
+  assert(runtime.BeginHostRequestForTesting(94, 7, 4, 0x204) == PTO_STATUS_OK);
+  StepResult pending;
+  assert(runtime.Step(&pending) == PTO_STATUS_OK);
+  assert(pending.state == PTO_STEP_HOST_REQUEST);
+  assert(runtime.Snapshot(&snapshot) == PTO_STATUS_OK);
+  assert(runtime.CompleteHostRequest(pending.request_token, 9) ==
+         PTO_STATUS_OK);
+  assert(runtime.Restore(snapshot.data(), snapshot.size()) == PTO_STATUS_OK);
+  StepResult restored_pending;
+  assert(runtime.Step(&restored_pending) == PTO_STATUS_OK);
+  assert(restored_pending.state == PTO_STEP_HOST_REQUEST);
+  assert(restored_pending.request_token == pending.request_token);
+  assert(restored_pending.request_argument0 == pending.request_argument0);
+}
+
 }  // namespace
 
 int main() {
@@ -968,5 +1064,6 @@ int main() {
     TestGeneratedFaultSteps();
     TestGeneratedHostRequests();
     TestGeneratedStoreTransactions();
+    TestGeneratedSnapshotRoundTrip();
     return 0;
 }

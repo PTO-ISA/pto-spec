@@ -120,6 +120,8 @@ add_custom_command(
             --mir-readiness "${PTO_GENERATED_ROOT}/mir-readiness.json"
             --executable-readiness
             "${PTO_GENERATED_ROOT}/executable-mir-readiness.json"
+            --snapshot-contract
+            "${CMAKE_CURRENT_SOURCE_DIR}/spec/snapshot-v1.json"
             --output "${PTO_GENERATED_DESCRIPTOR}"
             --readiness-output "${PTO_GENERATED_DESCRIPTOR_READINESS}"
     DEPENDS
@@ -130,6 +132,7 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/generate-descriptor"
         "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/descriptor.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/runtime-capabilities-v1.json"
+        "${CMAKE_CURRENT_SOURCE_DIR}/spec/snapshot-v1.json"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/pto/pto_asl_model.h"
         "${PTO_GENERATED_SOURCE_IDENTITY}"
         "${PTO_REPOSITORY_ROOT}/spec/release-manifest.json"
@@ -159,6 +162,7 @@ add_library(pto_asl_model STATIC
     runtime/interpreter.cpp
     runtime/module.cpp
     runtime/runtime_model.cpp
+    runtime/snapshot.cpp
     runtime/trace_digest.cpp
     runtime/transaction.cpp
     runtime/value.cpp)
@@ -195,7 +199,7 @@ configure_package_config_file(
     INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/PTOASLModel")
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/PTOASLModelConfigVersion.cmake"
-    VERSION 0.3.2
+    VERSION 0.4.0
     COMPATIBILITY ExactVersion)
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/PTOASLModelConfig.cmake"

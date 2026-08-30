@@ -24,9 +24,11 @@
       "additionalProperties": false,
       "properties": {
         "experimental_c_abi_version": { "minimum": 1, "type": "integer" },
-        "snapshot_schema": { "type": "null" }
+        "snapshot_schema": { "const": "pto-functional-model-snapshot-v1" },
+        "snapshot_schema_version": { "const": 1 },
+        "bundle_tile_summary_schema": { "const": "pto-bundle-tile-state-sha256-v1" }
       },
-      "required": ["experimental_c_abi_version", "snapshot_schema"],
+      "required": ["experimental_c_abi_version", "snapshot_schema", "snapshot_schema_version", "bundle_tile_summary_schema"],
       "type": "object"
     },
     "model": {
@@ -59,8 +61,9 @@
         "pto_mir_schema": { "$ref": "#/$defs/sha256" },
         "release_manifest": { "$ref": "#/$defs/sha256" },
         "runtime_capabilities": { "$ref": "#/$defs/sha256" }
+        ,"snapshot_contract": { "$ref": "#/$defs/sha256" }
       },
-      "required": ["aslref_pin", "c_abi_header", "descriptor_generator", "descriptor_module", "descriptor_schema", "executable_image", "executable_mir_schema", "executable_readiness", "mir_readiness", "pto_mir", "pto_mir_schema", "release_manifest", "runtime_capabilities"],
+      "required": ["aslref_pin", "c_abi_header", "descriptor_generator", "descriptor_module", "descriptor_schema", "executable_image", "executable_mir_schema", "executable_readiness", "mir_readiness", "pto_mir", "pto_mir_schema", "release_manifest", "runtime_capabilities", "snapshot_contract"],
       "type": "object"
     },
     "schema": { "const": "pto-functional-model-descriptor-v1" },

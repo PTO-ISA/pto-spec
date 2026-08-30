@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static pto_status_t reset_memory(void *user_data) {
@@ -176,6 +177,43 @@ int main(void) {
         assert(writes[index].address == 8 + index);
         assert(writes[index].value == expected_values[index]);
     }
+
+    uint64_t snapshot_size = 0;
+    pto_status_t snapshot_status =
+        pto_model_snapshot(model, NULL, &snapshot_size);
+    if (snapshot_status != PTO_STATUS_BUFFER_TOO_SMALL) {
+        char snapshot_error[256] = {0};
+        uint64_t snapshot_error_size = sizeof(snapshot_error);
+        (void)pto_model_last_error(
+            model, snapshot_error, &snapshot_error_size);
+        fprintf(stderr, "snapshot status=%u: %s\n",
+                snapshot_status, snapshot_error);
+    }
+    assert(snapshot_status == PTO_STATUS_BUFFER_TOO_SMALL);
+    assert(snapshot_size > 96);
+    uint8_t *snapshot = (uint8_t *)malloc((size_t)snapshot_size);
+    assert(snapshot != NULL);
+    uint64_t copied_snapshot_size = snapshot_size;
+    assert(pto_model_snapshot(model, snapshot, &copied_snapshot_size) ==
+           PTO_STATUS_OK);
+    assert(copied_snapshot_size == snapshot_size);
+    assert(memcmp(snapshot, "PTOFMSN1", 8) == 0);
+    assert(snapshot[8] == PTO_ASL_MODEL_SNAPSHOT_SCHEMA_VERSION);
+    memory[15] = UINT8_C(0x5a);
+    assert(pto_model_restore(model, snapshot, snapshot_size) == PTO_STATUS_OK);
+    assert(memory[15] == UINT8_C(0x5a));
+
+    snapshot[32] ^= UINT8_C(1);
+    assert(pto_model_restore(model, snapshot, snapshot_size) ==
+           PTO_STATUS_SNAPSHOT_INCOMPATIBLE);
+    snapshot[32] ^= UINT8_C(1);
+    snapshot[snapshot_size - 1] ^= UINT8_C(1);
+    assert(pto_model_restore(model, snapshot, snapshot_size) ==
+           PTO_STATUS_SNAPSHOT_INVALID);
+    snapshot[snapshot_size - 1] ^= UINT8_C(1);
+    assert(pto_model_restore(model, snapshot, snapshot_size - 1) ==
+           PTO_STATUS_SNAPSHOT_INVALID);
+    free(snapshot);
     pto_model_destroy(model);
     return 0;
 }

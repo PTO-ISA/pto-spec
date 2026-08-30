@@ -881,9 +881,12 @@ def render_global_defaults(image: dict[str, object]) -> list[dict[str, object]]:
             left = constant_integer(values[1], {*active, node})
             right = constant_integer(values[2], {*active, node})
             operator = arena.constructor_name(values[0])
-            if operator == "ADD": return left + right
-            if operator == "SUB": return left - right
-            if operator == "MUL": return left * right
+            if operator == "ADD":
+                return left + right
+            if operator == "SUB":
+                return left - right
+            if operator == "MUL":
+                return left * right
         raise ModelgenError(f"unsupported width expression {name} at node {node}")
 
     def default(type_node: int, active: set[int]) -> dict[str, object]:
@@ -915,7 +918,14 @@ def render_global_defaults(image: dict[str, object]) -> list[dict[str, object]]:
             return {"kind": "enum", "type_node": type_node, "member": 0}
         if name == "T_Array":
             values = arena.sequence(arguments[0], "tuple")
-            return {"kind": "array", "element": default(values[1], active)}
+            length = constant_integer(values[0], set())
+            if length <= 0 or length > (1 << 20):
+                raise ModelgenError("global array length exceeds resource bound")
+            return {
+                "kind": "array",
+                "length": length,
+                "element": default(values[1], active),
+            }
         if name == "T_Record":
             fields = []
             for item in arena.sequence(arguments[0], "list"):
@@ -1131,6 +1141,7 @@ def _render_header() -> str:
 #include \"module.h\"
 
 #include <memory>
+#include <vector>
 
 namespace pto::model {
 struct GeneratedStepFieldBindings {
@@ -1152,6 +1163,7 @@ BindingId GeneratedPEGPRsGlobalBinding();
 BindingId GeneratedNextTokenGlobalBinding();
 BindingId GeneratedSystemRegistersGlobalBinding();
 BindingId GeneratedBundleActiveGlobalBinding();
+std::vector<BindingId> GeneratedBundleTileGlobalBindings();
 std::uint32_t GeneratedCycleFieldBinding();
 GeneratedStepFieldBindings GeneratedStepFields();
 }  // namespace pto::model
@@ -1212,54 +1224,69 @@ def render_module_source(
     externs: list[dict[str, object]] | None = None,
     globals_: list[dict[str, object]] | None = None,
 ) -> str:
-    blocks: list[str] = []
-    rows: list[str] = []
+    instruction_arrays: list[str] = []
+    function_builders: list[str] = []
     for function in functions:
         function_id = int(function["id"])
         instructions = function["instructions"]
         rendered = "\n".join(
-            "        {OpCode::%s, %su, %su, UINT64_C(%s), UINT64_C(%s)},"
+            "    {OpCode::%s, %su, %su, UINT64_C(%s), UINT64_C(%s)},"
             % (row["opcode"], row["binding"], row["local"],
                row["immediate"], row["address"])
             for row in instructions
         )
-        blocks.append(
-            f"    std::vector<Instruction> instructions_{function_id}{{\n"
-            f"{rendered}\n    }};"
+        instruction_arrays.append(
+            f"constexpr Instruction kInstructions{function_id}[] = {{\n"
+            f"{rendered}\n}};"
         )
-        rows.append(
-            f"        Function{{{function_id}u, std::move(instructions_{function_id}), "
-            f"{int(function['argument_count'])}u}},"
+        function_builders.append(
+            f"    functions.push_back(Function{{{function_id}u, "
+            f"std::vector<Instruction>(std::begin(kInstructions{function_id}), "
+            f"std::end(kInstructions{function_id})), "
+            f"{int(function['argument_count'])}u}});"
         )
+    extern_builders = [
+        f"    externs.push_back(ExternDefinition{{{row['id']}u, "
+        f"ExternKind::k{row['kind']}, {row['argument_count']}u}});"
+        for row in (externs or [])
+    ]
+    global_builders = [
+        f"    globals.push_back(GlobalDefinition{{{row['id']}u, "
+        f"{render_value_cpp(row['value'])}}});"
+        for row in (globals_ or [])
+    ]
     return (
         f"// Generated module sha256:{digest}; do not edit.\n"
         "#include \"module.h\"\n#include \"pto_generated_runtime_image.h\"\n"
-        "#include <cstdint>\n#include <string>\n"
+        "#include <cstdint>\n#include <iterator>\n#include <string>\n"
         "#include <stdexcept>\n#include <utility>\n#include <vector>\n\nnamespace pto::model {\n"
+        "namespace {\n"
+        + "\n\n".join(instruction_arrays)
+        + "\n} // namespace\n\n"
         f"std::shared_ptr<const Module> {builder_name}() {{\n"
-        + "\n".join(blocks)
-        + "\n    std::string error;\n    auto module = Module::Create({\n"
-        + "\n".join(rows)
-        + "\n    }, " + f"{primary_id}u, &error, {{\n"
-        + "\n".join(
-            f"        ExternDefinition{{{row['id']}u, ExternKind::k{row['kind']}, "
-            f"{row['argument_count']}u}}," for row in (externs or []))
-        + "\n    }, {\n"
-        + "\n".join(
-            f"        GlobalDefinition{{{row['id']}u, {render_value_cpp(row['value'])}}},"
-            for row in (globals_ or []))
-        + "\n    });\n    if (module == nullptr) throw std::runtime_error(error);\n"
+        f"    std::vector<Function> functions;\n    functions.reserve({len(functions)}u);\n"
+        + "\n".join(function_builders)
+        + f"\n    std::vector<ExternDefinition> externs;\n    externs.reserve({len(externs or [])}u);\n"
+        + "\n".join(extern_builders)
+        + f"\n    std::vector<GlobalDefinition> globals;\n    globals.reserve({len(globals_ or [])}u);\n"
+        + "\n".join(global_builders)
+        + f"\n    std::string error;\n    auto module = Module::Create(\n"
+        f"        std::move(functions), {primary_id}u, &error,\n"
+        "        std::move(externs), std::move(globals));\n"
+        "    if (module == nullptr) throw std::runtime_error(error);\n"
         "    return module;\n}\n}  // namespace pto::model\n"
     )
 
 
 def render_value_cpp(value: dict[str, object]) -> str:
     kind = value["kind"]
-    if kind == "bool": return f"Value({'true' if value['value'] else 'false'})"
+    if kind == "bool":
+        return f"Value({'true' if value['value'] else 'false'})"
     if kind == "integer":
         words = ",".join(str(word) + "u" for word in value.get("words", []))
         return f"Value(BigInteger::FromUnsignedWords({{{words}}}))"
-    if kind == "bits": return f"Value(BitVector({value['width']}u))"
+    if kind == "bits":
+        return f"Value(BitVector({value['width']}u))"
     if kind == "enum":
         return f"Value(EnumValue{{{value['type_node']}u, {value['member']}u}})"
     if kind == "tuple":
@@ -1272,6 +1299,7 @@ def render_value_cpp(value: dict[str, object]) -> str:
     if kind == "array":
         element = render_value_cpp(value["element"])
         return ("Value(std::make_shared<PagedLazyArray>("
+                f"{value['length']}u, "
                 f"[](std::uint64_t) {{ return {element}; }}))")
     raise ModelgenError(f"unsupported rendered default kind {kind}")
 
@@ -1354,6 +1382,21 @@ def main() -> int:
         global_ids = {
             strings[row["name_symbol_id"]]: int(row["id"])
             for row in image["tables"]["globals"]}
+        summary_prefixes = (
+            "_Bundle", "_GQMQueue", "_LastQueue", "_TQueue", "_Tile",
+            "_UQueue",
+        )
+        summary_names = {
+            name for name in global_ids
+            if name.startswith(summary_prefixes)
+            or name in {
+                "_LastBundleHintPayload",
+                "_NextBundleExecutionDomainToken",
+                "_SharedTiles",
+                "_Tiles",
+            }
+        }
+        summary_ids = [global_ids[name] for name in sorted(summary_names)]
         symbol_ids = {name: index for index, name in enumerate(strings)}
         reset_source = render_module_source(
             reset_id, reset_functions, hashlib.sha256(image_bytes).hexdigest(),
@@ -1370,6 +1413,9 @@ def main() -> int:
             f"BindingId GeneratedNextTokenGlobalBinding() {{ return {global_ids['_FunctionalHostRequestNextToken']}u; }}\n"
             f"BindingId GeneratedSystemRegistersGlobalBinding() {{ return {global_ids['_SystemRegisters']}u; }}\n"
             f"BindingId GeneratedBundleActiveGlobalBinding() {{ return {global_ids['_BundleActive']}u; }}\n"
+            "std::vector<BindingId> GeneratedBundleTileGlobalBindings() { return {"
+            + ",".join(str(binding) + "u" for binding in summary_ids)
+            + "}; }\n"
             f"std::uint32_t GeneratedCycleFieldBinding() {{ return {symbol_ids['cycle']}u; }}\n"
             "GeneratedStepFieldBindings GeneratedStepFields() { return {"
             + ",".join(str(symbol_ids[name]) + "u" for name in (

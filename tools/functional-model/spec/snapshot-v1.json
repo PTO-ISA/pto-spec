@@ -1,0 +1,70 @@
+{
+  "schema": "pto-functional-model-snapshot-contract-v1",
+  "classification": "non-architectural-model-abi",
+  "snapshot_schema": "pto-functional-model-snapshot-v1",
+  "snapshot_schema_version": 1,
+  "compatibility": "exact-descriptor-sha256",
+  "maximum_size_bytes": 268435456,
+  "header": {
+    "byte_order": "little-endian",
+    "header_size": 96,
+    "magic_ascii": "PTOFMSN1",
+    "fields": [
+      ["magic", "bytes[8]"],
+      ["schema_version", "u32"],
+      ["header_size", "u32"],
+      ["total_size", "u64"],
+      ["payload_size", "u64"],
+      ["model_descriptor_sha256", "bytes[32]"],
+      ["payload_sha256", "bytes[32]"]
+    ]
+  },
+  "payload": {
+    "purpose": "deterministic serialization of model-owned state projected from PTO ASL",
+    "includes": [
+      "all generated ASL global bindings",
+      "functional-profile state",
+      "runtime sequence/PC/BPC fields used by synthetic model tests"
+    ],
+    "excludes": [
+      "host physical-memory bytes",
+      "ELF loader state",
+      "runner stop policy",
+      "C or C++ object layout",
+      "implementation pointers and container capacity"
+    ],
+    "value_tags": {
+      "1": "boolean",
+      "2": "arbitrary-precision-integer",
+      "3": "fixed-width-bits",
+      "4": "enumeration",
+      "5": "tuple",
+      "6": "record",
+      "7": "bounded-lazy-array"
+    }
+  },
+  "restore": {
+    "atomic": true,
+    "callbacks": "none",
+    "descriptor_mismatch": "fail-closed",
+    "invalid_input_effect": "model state unchanged"
+  },
+  "bundle_tile_summary": {
+    "schema": "pto-bundle-tile-state-sha256-v1",
+    "domain_ascii_nul": "pto-bundle-tile-state-v1",
+    "algorithm": "SHA-256",
+    "classification": "non-architectural-model-observation",
+    "binding_selection": [
+      "_Bundle*",
+      "_GQMQueue*",
+      "_LastBundleHintPayload",
+      "_LastQueue*",
+      "_NextBundleExecutionDomainToken",
+      "_SharedTiles",
+      "_TQueue*",
+      "_Tile*",
+      "_Tiles",
+      "_UQueue*"
+    ]
+  }
+}

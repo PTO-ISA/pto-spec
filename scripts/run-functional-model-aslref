@@ -196,6 +196,7 @@ def oracle_run_manifest(
                 "memory_write_sha256", memory_write_sha256(writes)
             ),
             "memory_writes": writes,
+            "bundle_tile_state_sha256": None,
         })
     outcome = {
         "status": "completed",

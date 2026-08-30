@@ -17,6 +17,8 @@ class BigInteger {
     BigInteger();
     explicit BigInteger(std::int64_t value);
     static BigInteger FromUnsignedWords(std::vector<std::uint32_t> words);
+    static BigInteger FromSignedWords(bool negative,
+                                      std::vector<std::uint32_t> words);
     BigInteger Add(const BigInteger &other) const;
     BigInteger Multiply(const BigInteger &other) const;
     bool Divide(const BigInteger &other, BigInteger *quotient) const;
@@ -27,6 +29,8 @@ class BigInteger {
     bool TryToU64(std::uint64_t *value) const;
     bool operator==(const BigInteger &other) const;
     std::string ToString() const;
+    bool negative() const;
+    const std::vector<std::uint32_t> &words() const;
 
   private:
     bool negative_ = false;
@@ -38,6 +42,8 @@ class BitVector {
   public:
     explicit BitVector(std::size_t width);
     static BitVector FromU64(std::size_t width, std::uint64_t value);
+    static BitVector FromBytes(std::size_t width,
+                               std::vector<std::uint8_t> bytes);
     BigInteger ToUnsignedInteger() const;
     BigInteger ToSignedInteger() const;
     std::size_t width() const;
@@ -54,6 +60,7 @@ class BitVector {
     BitVector BitAdd(const BitVector &other) const;
     BitVector BitNot() const;
     bool operator==(const BitVector &other) const;
+    const std::vector<std::uint8_t> &bytes() const;
 
   private:
     std::size_t width_;
@@ -102,14 +109,23 @@ class PagedLazyArray {
     static constexpr std::uint64_t kPageSize = 64;
 
     explicit PagedLazyArray(DefaultFactory default_factory);
+    PagedLazyArray(std::uint64_t length, DefaultFactory default_factory);
     Value Get(std::uint64_t index) const;
     void Set(std::uint64_t index, Value value);
+    std::uint64_t length() const;
+    std::vector<std::pair<std::uint64_t, Value>> MaterializedValues() const;
+    std::vector<std::pair<std::uint64_t, Value>> CanonicalValues() const;
+    std::shared_ptr<PagedLazyArray> EmptyClone() const;
+    bool SemanticallyEqual(const PagedLazyArray &other) const;
 
   private:
     using Page = std::vector<Value>;
+    std::uint64_t length_;
     DefaultFactory default_factory_;
     std::map<std::uint64_t, std::shared_ptr<Page>> pages_;
 };
+
+bool SemanticallyEqual(const Value &left, const Value &right);
 
 }  // namespace pto::model
 

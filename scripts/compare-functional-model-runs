@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -25,9 +26,27 @@ def load_json(path: Path) -> dict[str, object]:
 
 
 def comparable(manifest: dict[str, object]) -> dict[str, object]:
-    selected = dict(manifest)
+    selected = copy.deepcopy(manifest)
     selected.pop("engine", None)
+    for step in selected.get("trace", []):
+        if isinstance(step, dict):
+            step.pop("bundle_tile_state_sha256", None)
     return selected
+
+
+def compare_model_summaries(
+    case_id: str,
+    left_run: dict[str, object],
+    right_run: dict[str, object],
+) -> None:
+    left_trace = left_run.get("trace")
+    right_trace = right_run.get("trace")
+    if not isinstance(left_trace, list) or not isinstance(right_trace, list):
+        raise ComparisonError(f"missing model trace for {case_id}")
+    left = [step.get("bundle_tile_state_sha256") for step in left_trace]
+    right = [step.get("bundle_tile_state_sha256") for step in right_trace]
+    if left != right or any(not isinstance(value, str) or len(value) != 64 for value in left):
+        raise ComparisonError(f"{case_id} Bundle/Tile model summaries differ")
 
 
 def first_difference(left: object, right: object, path: str = "$") -> str | None:
@@ -107,6 +126,8 @@ def compare_named_pair(
         raise ComparisonError(
             f"{case_id} {left_engine}/{right_engine} result.bin mismatch"
         )
+    if {left_engine, right_engine} == {"library", "asl"}:
+        compare_model_summaries(case_id, left_run, right_run)
     return sha256(left_run_path), sha256(right_run_path)
 
 

@@ -710,8 +710,8 @@ EvaluationResult Interpreter::EvaluateInternal(
                 frame.typed_locals.insert_or_assign(
                     instruction.local,
                     Value(std::make_shared<PagedLazyArray>(
-                        [default_value](std::uint64_t) {
-                            return default_value.Clone();
+                        length_value, [default_value](std::uint64_t) {
+                          return default_value.Clone();
                         })));
                 break;
             }

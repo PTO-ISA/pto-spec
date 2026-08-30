@@ -38,6 +38,7 @@ struct StepResult {
     std::uint64_t request_argument0 = 0;
     std::uint64_t memory_write_count = 0;
     std::array<std::uint8_t, 32> memory_write_sha256{};
+    std::array<std::uint8_t, 32> bundle_tile_state_sha256{};
 };
 
 class RuntimeModel {
@@ -58,6 +59,9 @@ class RuntimeModel {
                            std::uint64_t *result);
     std::string last_error() const;
     pto_status_t CopyLastMemoryWrites(std::vector<MemoryWrite> *writes);
+    pto_status_t Snapshot(std::vector<std::uint8_t> *snapshot);
+    pto_status_t Restore(const std::uint8_t *snapshot,
+                         std::size_t snapshot_size);
     std::uint64_t GlobalU64(BindingId id) const;
     const Value *GlobalValueForTesting(BindingId id) const;
     bool SetGlobalForTesting(BindingId id, Value value);

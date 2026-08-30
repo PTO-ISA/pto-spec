@@ -41,6 +41,7 @@ def _inputs(arguments: argparse.Namespace) -> DescriptorInputs:
         executable_readiness=arguments.executable_readiness.read_bytes(),
         release_manifest=arguments.release_manifest.read_bytes(),
         runtime_capabilities=arguments.runtime_capabilities.read_bytes(),
+        snapshot_contract=arguments.snapshot_contract.read_bytes(),
         pto_mir_schema=arguments.pto_mir_schema.read_bytes(),
         executable_mir_schema=arguments.executable_mir_schema.read_bytes(),
         descriptor_schema=arguments.descriptor_schema.read_bytes(),
@@ -59,6 +60,7 @@ def main() -> int:
     parser.add_argument("--executable-readiness", type=Path, default=_path("spec/evidence/functional-model-executable-mir-readiness.json"))
     parser.add_argument("--release-manifest", type=Path, default=_path("spec/release-manifest.json"))
     parser.add_argument("--runtime-capabilities", type=Path, default=MODELGEN / "runtime-capabilities-v1.json")
+    parser.add_argument("--snapshot-contract", type=Path, default=_path("tools/functional-model/spec/snapshot-v1.json"))
     parser.add_argument("--pto-mir-schema", type=Path, default=_path("spec/schemas/pto-mir-v1.schema.json"))
     parser.add_argument("--executable-mir-schema", type=Path, default=_path("spec/schemas/pto-executable-mir-v1.schema.json"))
     parser.add_argument("--descriptor-schema", type=Path, default=_path("spec/schemas/pto-functional-model-descriptor-v1.schema.json"))

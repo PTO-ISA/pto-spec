@@ -8,7 +8,8 @@
 extern "C" {
 #endif
 
-#define PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION UINT32_C(0x00030002)
+#define PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION UINT32_C(0x00040000)
+#define PTO_ASL_MODEL_SNAPSHOT_SCHEMA_VERSION UINT32_C(1)
 
 /* G3a experimental surface: source and binary compatibility are not stable. */
 
@@ -29,7 +30,9 @@ enum {
     PTO_STATUS_MIR_INVALID = 10,
     PTO_STATUS_RESOURCE_LIMIT = 11,
     PTO_STATUS_INTERNAL_ERROR = 12,
-    PTO_STATUS_BUFFER_TOO_SMALL = 13
+    PTO_STATUS_BUFFER_TOO_SMALL = 13,
+    PTO_STATUS_SNAPSHOT_INVALID = 14,
+    PTO_STATUS_SNAPSHOT_INCOMPATIBLE = 15
 };
 
 typedef uint32_t pto_step_state_t;
@@ -126,6 +129,9 @@ typedef struct {
      * as little-endian u64 and each committed (address as little-endian u64,
      * value as one byte) pair in architectural order. */
     uint8_t memory_write_sha256[32];
+    /* Non-architectural model observation. This digest does not affect PTO
+     * execution and is not an architectural state member. */
+    uint8_t bundle_tile_state_sha256[32];
 } pto_step_result_t;
 
 typedef struct {
@@ -154,6 +160,15 @@ pto_status_t pto_model_last_memory_writes(
     pto_model_t *model,
     pto_memory_write_t *buffer,
     uint64_t *inout_count);
+/* Snapshot/restore are non-architectural model ABI operations. The snapshot
+ * excludes host physical-memory bytes and is compatible only with the exact
+ * model descriptor embedded in the envelope. */
+pto_status_t pto_model_snapshot(pto_model_t *model,
+                                void *buffer,
+                                uint64_t *inout_size);
+pto_status_t pto_model_restore(pto_model_t *model,
+                               const void *buffer,
+                               uint64_t size);
 pto_status_t pto_model_descriptor_json(char *buffer, uint64_t *inout_size);
 pto_status_t pto_model_descriptor_sha256(uint8_t *buffer,
                                          uint64_t *inout_size);

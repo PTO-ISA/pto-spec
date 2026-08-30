@@ -53,6 +53,12 @@ def main() -> int:
         assert emit(arguments.emitter, arguments.image, arguments.cases, second).returncode == 0
         for name in ("image.h", "image.cpp", "reset.cpp", "cases.h"):
             assert (first / name).read_bytes() == (second / name).read_bytes()
+        header = (first / "image.h").read_text(encoding="utf-8")
+        reset = (first / "reset.cpp").read_text(encoding="utf-8")
+        assert "GeneratedBundleTileGlobalBindings" in header
+        assert "GeneratedBundleTileGlobalBindings" in reset
+        assert "constexpr Instruction kInstructions" in reset
+        assert "std::vector<Instruction> instructions_" not in reset
 
         tampered = dict(document)
         tampered["schema_version"] = 99

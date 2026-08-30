@@ -69,6 +69,7 @@ class FunctionalModelOracleTest(unittest.TestCase):
                     "memory_write_sha256":
                         "c129c88090d63d98e2082e24d5f1b68e9e05b33e6580c6d7f62382208436fd25",
                     "memory_writes": [],
+                    "bundle_tile_state_sha256": None,
                 }
             ],
             "result": {"address": 0x200, "size": 4, "bytes_hex": "19000000"},
@@ -132,7 +133,8 @@ class FunctionalModelOracleTest(unittest.TestCase):
     def test_standalone_output_parser_preserves_all_step_fields(self) -> None:
         trace, result = self.library.parse_output(
             "STEP 0 1 1 256 258 0 0 22 16 0 0 0 0 0 0 0 3 0 "
-            "c129c88090d63d98e2082e24d5f1b68e9e05b33e6580c6d7f62382208436fd25\n"
+            "c129c88090d63d98e2082e24d5f1b68e9e05b33e6580c6d7f62382208436fd25 "
+            "1212121212121212121212121212121212121212121212121212121212121212\n"
             "RESULT 19000000\n"
         )
         self.assertEqual(result, "19000000")
@@ -142,6 +144,7 @@ class FunctionalModelOracleTest(unittest.TestCase):
         self.assertEqual(trace[0]["sequence"], 3)
         self.assertEqual(trace[0]["memory_write_count"], 0)
         self.assertEqual(trace[0]["memory_writes"], [])
+        self.assertEqual(trace[0]["bundle_tile_state_sha256"], "12" * 32)
         self.assertTrue(trace[0]["result_valid"])
 
 

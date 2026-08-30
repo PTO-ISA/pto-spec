@@ -36,7 +36,7 @@ constexpr std::uint32_t RotateRight(std::uint32_t value, unsigned amount) {
   return (value >> amount) | (value << (32U - amount));
 }
 
-class Sha256 final {
+class Sha256State final {
 public:
   void Update(const std::uint8_t *data, std::size_t size) {
     total_size_ += size;
@@ -144,7 +144,7 @@ private:
   std::uint64_t total_size_ = 0;
 };
 
-void UpdateU64LE(Sha256 *digest, std::uint64_t value) {
+void UpdateU64LE(Sha256State *digest, std::uint64_t value) {
   std::array<std::uint8_t, 8> bytes{};
   for (unsigned index = 0; index < bytes.size(); ++index) {
     bytes[index] = static_cast<std::uint8_t>(value >> (index * 8U));
@@ -154,12 +154,19 @@ void UpdateU64LE(Sha256 *digest, std::uint64_t value) {
 
 } // namespace
 
+std::array<std::uint8_t, 32> Sha256Bytes(const std::uint8_t *data,
+                                         std::size_t size) {
+  Sha256State digest;
+  digest.Update(data, size);
+  return digest.Final();
+}
+
 std::array<std::uint8_t, 32>
 DigestMemoryWrites(const std::vector<MemoryWrite> &writes) {
   static constexpr std::array<std::uint8_t, 24> kDomain = {
       'p', 't', 'o', '-', 'm', 'e', 'm', 'o', 'r', 'y', '-', 'w',
       'r', 'i', 't', 'e', '-', 'l', 'o', 'g', '-', 'v', '1', '\0'};
-  Sha256 digest;
+  Sha256State digest;
   digest.Update(kDomain.data(), kDomain.size());
   UpdateU64LE(&digest, writes.size());
   for (const MemoryWrite &write : writes) {

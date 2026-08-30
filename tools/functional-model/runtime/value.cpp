@@ -26,6 +26,13 @@ BigInteger BigInteger::FromUnsignedWords(std::vector<std::uint32_t> words) {
     return result;
 }
 
+BigInteger BigInteger::FromSignedWords(bool negative,
+                                       std::vector<std::uint32_t> words) {
+  BigInteger result = FromUnsignedWords(std::move(words));
+  result.negative_ = negative && !result.IsZero();
+  return result;
+}
+
 BigInteger BigInteger::Add(const BigInteger &other) const {
     BigInteger result;
     if (negative_ == other.negative_) {
@@ -203,6 +210,10 @@ std::string BigInteger::ToString() const {
     return result;
 }
 
+bool BigInteger::negative() const { return negative_; }
+
+const std::vector<std::uint32_t> &BigInteger::words() const { return words_; }
+
 void BigInteger::Normalize() {
     while (!words_.empty() && words_.back() == 0) {
         words_.pop_back();
@@ -225,6 +236,19 @@ BitVector BitVector::FromU64(std::size_t width, std::uint64_t value) {
         result.bytes_.back() &= static_cast<std::uint8_t>((1U << (width % 8)) - 1U);
     }
     return result;
+}
+
+BitVector BitVector::FromBytes(std::size_t width,
+                               std::vector<std::uint8_t> bytes) {
+  if (width == 0 || bytes.size() != (width + 7) / 8) {
+    throw std::invalid_argument("bitvector byte width");
+  }
+  if (width % 8 != 0 && (bytes.back() >> (width % 8)) != 0) {
+    throw std::invalid_argument("bitvector high padding bits");
+  }
+  BitVector result(width);
+  result.bytes_ = std::move(bytes);
+  return result;
 }
 
 BigInteger BitVector::ToUnsignedInteger() const {
@@ -360,6 +384,8 @@ bool BitVector::operator==(const BitVector &other) const {
     return width_ == other.width_ && bytes_ == other.bytes_;
 }
 
+const std::vector<std::uint8_t> &BitVector::bytes() const { return bytes_; }
+
 Value::Value(bool value) : storage_(value) {}
 Value::Value(BigInteger value) : storage_(std::move(value)) {}
 Value::Value(BitVector value) : storage_(std::move(value)) {}
@@ -393,13 +419,23 @@ Value Value::Clone() const {
 }
 
 PagedLazyArray::PagedLazyArray(DefaultFactory default_factory)
-    : default_factory_(std::move(default_factory)) {
-    if (!default_factory_) {
-        throw std::invalid_argument("array default factory is required");
-    }
+    : PagedLazyArray(UINT64_MAX, std::move(default_factory)) {}
+
+PagedLazyArray::PagedLazyArray(std::uint64_t length,
+                               DefaultFactory default_factory)
+    : length_(length), default_factory_(std::move(default_factory)) {
+  if (length_ == 0) {
+    throw std::invalid_argument("array length must be nonzero");
+  }
+  if (!default_factory_) {
+    throw std::invalid_argument("array default factory is required");
+  }
 }
 
 Value PagedLazyArray::Get(std::uint64_t index) const {
+  if (index >= length_) {
+    throw std::out_of_range("array index");
+  }
     const std::uint64_t page_index = index / kPageSize;
     const auto page = pages_.find(page_index);
     if (page == pages_.end()) {
@@ -409,6 +445,9 @@ Value PagedLazyArray::Get(std::uint64_t index) const {
 }
 
 void PagedLazyArray::Set(std::uint64_t index, Value value) {
+  if (index >= length_) {
+    throw std::out_of_range("array index");
+  }
     const std::uint64_t page_index = index / kPageSize;
     auto &page = pages_[page_index];
     if (!page) {
@@ -422,6 +461,93 @@ void PagedLazyArray::Set(std::uint64_t index, Value value) {
         page = std::make_shared<Page>(*page);
     }
     page->at(static_cast<std::size_t>(index % kPageSize)) = std::move(value);
+}
+
+std::uint64_t PagedLazyArray::length() const { return length_; }
+
+std::vector<std::pair<std::uint64_t, Value>>
+PagedLazyArray::MaterializedValues() const {
+  std::vector<std::pair<std::uint64_t, Value>> values;
+  for (const auto &[page_index, page] : pages_) {
+    for (std::size_t offset = 0; offset < page->size(); ++offset) {
+      const std::uint64_t index = page_index * kPageSize + offset;
+      if (index >= length_)
+        break;
+      values.emplace_back(index, page->at(offset).Clone());
+    }
+  }
+  return values;
+}
+
+std::vector<std::pair<std::uint64_t, Value>>
+PagedLazyArray::CanonicalValues() const {
+  std::vector<std::pair<std::uint64_t, Value>> values;
+  for (const auto &[index, value] : MaterializedValues()) {
+    if (!pto::model::SemanticallyEqual(value, default_factory_(index)))
+      values.emplace_back(index, value.Clone());
+  }
+  return values;
+}
+
+std::shared_ptr<PagedLazyArray> PagedLazyArray::EmptyClone() const {
+  return std::make_shared<PagedLazyArray>(length_, default_factory_);
+}
+
+bool PagedLazyArray::SemanticallyEqual(const PagedLazyArray &other) const {
+  if (length_ != other.length_)
+    return false;
+  std::map<std::uint64_t, bool> indices;
+  for (const auto &[index, _value] : MaterializedValues())
+    indices.emplace(index, true);
+  for (const auto &[index, _value] : other.MaterializedValues())
+    indices.emplace(index, true);
+  for (const auto &[index, _present] : indices)
+    if (!pto::model::SemanticallyEqual(Get(index), other.Get(index)))
+      return false;
+  return true;
+}
+
+bool SemanticallyEqual(const Value &left, const Value &right) {
+  if (left.storage().index() != right.storage().index())
+    return false;
+  if (const auto *value = std::get_if<bool>(&left.storage()))
+    return *value == std::get<bool>(right.storage());
+  if (const auto *value = std::get_if<BigInteger>(&left.storage()))
+    return *value == std::get<BigInteger>(right.storage());
+  if (const auto *value = std::get_if<BitVector>(&left.storage()))
+    return *value == std::get<BitVector>(right.storage());
+  if (const auto *value = std::get_if<EnumValue>(&left.storage()))
+    return *value == std::get<EnumValue>(right.storage());
+  if (const auto *value =
+          std::get_if<std::shared_ptr<TupleValue>>(&left.storage())) {
+    const auto &other = *std::get<std::shared_ptr<TupleValue>>(right.storage());
+    if ((*value)->size() != other.size())
+      return false;
+    for (std::size_t index = 0; index < other.size(); ++index)
+      if (!SemanticallyEqual((*value)->at(index), other.at(index)))
+        return false;
+    return true;
+  }
+  if (const auto *value =
+          std::get_if<std::shared_ptr<RecordValue>>(&left.storage())) {
+    const auto &other =
+        *std::get<std::shared_ptr<RecordValue>>(right.storage());
+    if ((*value)->size() != other.size())
+      return false;
+    auto other_item = other.begin();
+    for (const auto &[field, item] : **value) {
+      if (other_item == other.end() || other_item->first != field ||
+          !SemanticallyEqual(item, other_item->second))
+        return false;
+      ++other_item;
+    }
+    return true;
+  }
+  const auto &array =
+      *std::get<std::shared_ptr<PagedLazyArray>>(left.storage());
+  const auto &other =
+      *std::get<std::shared_ptr<PagedLazyArray>>(right.storage());
+  return array.SemanticallyEqual(other);
 }
 
 }  // namespace pto::model

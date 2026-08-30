@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <limits>
 #include <memory>
 #include <new>
 #include <string>
@@ -198,6 +199,9 @@ extern "C" pto_status_t pto_model_step(pto_model_t *model,
     std::copy(result.memory_write_sha256.begin(),
               result.memory_write_sha256.end(),
               out_result->memory_write_sha256);
+    std::copy(result.bundle_tile_state_sha256.begin(),
+              result.bundle_tile_state_sha256.end(),
+              out_result->bundle_tile_state_sha256);
     return status;
 }
 
@@ -261,4 +265,43 @@ pto_model_last_memory_writes(pto_model_t *model, pto_memory_write_t *buffer,
   }
   *inout_count = writes.size();
   return PTO_STATUS_OK;
+}
+
+extern "C" pto_status_t pto_model_snapshot(pto_model_t *model, void *buffer,
+                                           std::uint64_t *inout_size) {
+  if (model == nullptr || model->runtime == nullptr || inout_size == nullptr)
+    return PTO_STATUS_INVALID_ARGUMENT;
+  try {
+    std::vector<std::uint8_t> snapshot;
+    const pto_status_t status = model->runtime->Snapshot(&snapshot);
+    if (status != PTO_STATUS_OK)
+      return status;
+    if (buffer == nullptr || *inout_size < snapshot.size()) {
+      *inout_size = snapshot.size();
+      return PTO_STATUS_BUFFER_TOO_SMALL;
+    }
+    std::copy(snapshot.begin(), snapshot.end(),
+              static_cast<std::uint8_t *>(buffer));
+    *inout_size = snapshot.size();
+    return PTO_STATUS_OK;
+  } catch (const std::bad_alloc &) {
+    return PTO_STATUS_RESOURCE_LIMIT;
+  } catch (...) {
+    return PTO_STATUS_INTERNAL_ERROR;
+  }
+}
+
+extern "C" pto_status_t
+pto_model_restore(pto_model_t *model, const void *buffer, std::uint64_t size) {
+  if (model == nullptr || model->runtime == nullptr || buffer == nullptr ||
+      size > std::numeric_limits<std::size_t>::max())
+    return PTO_STATUS_INVALID_ARGUMENT;
+  try {
+    return model->runtime->Restore(static_cast<const std::uint8_t *>(buffer),
+                                   static_cast<std::size_t>(size));
+  } catch (const std::bad_alloc &) {
+    return PTO_STATUS_RESOURCE_LIMIT;
+  } catch (...) {
+    return PTO_STATUS_INTERNAL_ERROR;
+  }
 }

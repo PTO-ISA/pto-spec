@@ -282,6 +282,7 @@ class FunctionalModelCorpusTest(unittest.TestCase):
             }
             expected.update(memory_contract)
             observed.update(memory_contract)
+            observed["bundle_tile_state_sha256"] = "56" * 32
         return case, run
 
     def test_gfrun_validator_accepts_exact_trace_and_golden(self) -> None:

@@ -4,6 +4,7 @@ import copy
 import hashlib
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,8 +12,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 MODELGEN = ROOT / "tools/functional-model/modelgen"
-
-import sys
 
 if str(MODELGEN) not in sys.path:
     sys.path.insert(0, str(MODELGEN))
@@ -74,6 +73,9 @@ def fixture_inputs() -> DescriptorInputs:
         runtime_capabilities=canonical(
             {"schema": "pto-functional-model-runtime-capabilities-v1"}
         ),
+        snapshot_contract=(
+            ROOT / "tools/functional-model/spec/snapshot-v1.json"
+        ).read_bytes(),
         pto_mir_schema=b"pto-mir-schema\n",
         executable_mir_schema=b"executable-mir-schema\n",
         descriptor_schema=(
@@ -109,7 +111,16 @@ class FunctionalModelDescriptorTest(unittest.TestCase):
         self.assertEqual(descriptor["source"], {"pto_commit": COMMIT, "pto_tree": TREE})
         self.assertEqual(descriptor["architecture"]["choice_policy"], CHOICE_POLICY)
         self.assertEqual(descriptor["model"]["numeric_maturity"], 0)
-        self.assertIsNone(descriptor["interfaces"]["snapshot_schema"])
+        self.assertEqual(
+            descriptor["interfaces"],
+            {
+                "bundle_tile_summary_schema":
+                    "pto-bundle-tile-state-sha256-v1",
+                "experimental_c_abi_version": 0x00030001,
+                "snapshot_schema": "pto-functional-model-snapshot-v1",
+                "snapshot_schema_version": 1,
+            },
+        )
 
     def test_readiness_uses_exact_descriptor_hash(self) -> None:
         descriptor, inputs = self.descriptor()
@@ -126,7 +137,14 @@ class FunctionalModelDescriptorTest(unittest.TestCase):
         })
         self.assertEqual(readiness["status"], "experimental")
         self.assertEqual(readiness["publication"], "not-public")
-        self.assertEqual(readiness["architecture_requirement"]["status"], "open")
+        self.assertEqual(
+            readiness["architecture_requirement"],
+            {
+                "id": "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
+                "status": "accepted",
+                "disposition": "model descriptor remains non-architectural",
+            },
+        )
 
     def test_schema_mismatch_is_rejected(self) -> None:
         descriptor, inputs = self.descriptor()

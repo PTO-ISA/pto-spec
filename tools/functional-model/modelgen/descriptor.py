@@ -22,6 +22,9 @@ MODELGEN_ID = "pto-functional-model-modelgen"
 MODELGEN_VERSION = 1
 NUMERIC_MATURITY = 0
 COMPATIBILITY_MODE = "exact-descriptor-sha256"
+SNAPSHOT_SCHEMA = "pto-functional-model-snapshot-v1"
+SNAPSHOT_SCHEMA_VERSION = 1
+BUNDLE_TILE_SUMMARY_SCHEMA = "pto-bundle-tile-state-sha256-v1"
 SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 GIT_ID = re.compile(r"[0-9a-f]{40}\Z")
 FORBIDDEN_FIELD_NAMES = {"elf", "stack", "tls", "fd", "syscall", "exit", "runner"}
@@ -39,6 +42,7 @@ class DescriptorInputs:
     executable_readiness: bytes
     release_manifest: bytes
     runtime_capabilities: bytes
+    snapshot_contract: bytes
     pto_mir_schema: bytes
     executable_mir_schema: bytes
     descriptor_schema: bytes
@@ -158,6 +162,7 @@ def _normalized_inputs(inputs: DescriptorInputs) -> dict[str, str]:
         "pto_mir_schema": _sha256(inputs.pto_mir_schema),
         "release_manifest": _sha256(inputs.release_manifest),
         "runtime_capabilities": _sha256(inputs.runtime_capabilities),
+        "snapshot_contract": _sha256(inputs.snapshot_contract),
     }
 
 
@@ -191,6 +196,7 @@ def build_descriptor(
     runtime_capabilities = _json(
         inputs.runtime_capabilities, "runtime capabilities"
     )
+    snapshot_contract = _json(inputs.snapshot_contract, "snapshot contract")
 
     if mir.get("schema") != "pto-mir-v1":
         raise DescriptorError("PTO MIR schema mismatch")
@@ -216,6 +222,18 @@ def build_descriptor(
         "pto-functional-model-runtime-capabilities-v1"
     ):
         raise DescriptorError("runtime capability schema mismatch")
+    if (
+        snapshot_contract.get("schema")
+        != "pto-functional-model-snapshot-contract-v1"
+        or snapshot_contract.get("snapshot_schema") != SNAPSHOT_SCHEMA
+        or snapshot_contract.get("snapshot_schema_version")
+        != SNAPSHOT_SCHEMA_VERSION
+        or snapshot_contract.get("classification")
+        != "non-architectural-model-abi"
+        or (snapshot_contract.get("bundle_tile_summary") or {}).get("schema")
+        != BUNDLE_TILE_SUMMARY_SCHEMA
+    ):
+        raise DescriptorError("snapshot contract identity mismatch")
     impdef_count, impdef_hash = _binding_table(executable)
 
     descriptor: dict[str, object] = {
@@ -244,7 +262,9 @@ def build_descriptor(
         },
         "interfaces": {
             "experimental_c_abi_version": c_abi_version,
-            "snapshot_schema": None,
+            "snapshot_schema": SNAPSHOT_SCHEMA,
+            "snapshot_schema_version": SNAPSHOT_SCHEMA_VERSION,
+            "bundle_tile_summary_schema": BUNDLE_TILE_SUMMARY_SCHEMA,
         },
         "normalized_input_hashes": _normalized_inputs(inputs),
         "compatibility": {"mode": COMPATIBILITY_MODE},
@@ -297,7 +317,12 @@ def verify_descriptor(
             "numeric_impdef_binding_table_sha256",
             "numeric_maturity",
         },
-        "interfaces": {"experimental_c_abi_version", "snapshot_schema"},
+        "interfaces": {
+            "experimental_c_abi_version",
+            "snapshot_schema",
+            "snapshot_schema_version",
+            "bundle_tile_summary_schema",
+        },
         "compatibility": {"mode"},
     }
     for category, fields in expected_fields.items():
@@ -350,8 +375,13 @@ def verify_descriptor(
         inputs.c_abi_header
     ):
         raise DescriptorError("descriptor C ABI version mismatch")
-    if interfaces["snapshot_schema"] is not None:  # type: ignore[index]
-        raise DescriptorError("snapshot schema must remain null while its NDF is open")
+    if (  # type: ignore[index]
+        interfaces["snapshot_schema"] != SNAPSHOT_SCHEMA
+        or interfaces["snapshot_schema_version"] != SNAPSHOT_SCHEMA_VERSION
+        or interfaces["bundle_tile_summary_schema"]
+        != BUNDLE_TILE_SUMMARY_SCHEMA
+    ):
+        raise DescriptorError("descriptor model interface identity mismatch")
     if descriptor["normalized_input_hashes"] != _normalized_inputs(inputs):
         raise DescriptorError("descriptor normalized input hash mismatch")
     if descriptor["compatibility"] != {"mode": COMPATIBILITY_MODE}:
@@ -379,7 +409,8 @@ def build_readiness(
         "publication": "not-public",
         "architecture_requirement": {
             "id": "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
-            "status": "open",
+            "status": "accepted",
+            "disposition": "model descriptor remains non-architectural",
         },
         "source_identity_strategy": {
             "mode": "clean-producer-commit",
@@ -409,7 +440,7 @@ def build_readiness(
             "descriptor_sha256": descriptor_sha256(descriptor_bytes),
         },
         "numeric_maturity": NUMERIC_MATURITY,
-        "snapshot_schema": None,
+        "snapshot_schema": SNAPSHOT_SCHEMA,
         "validated": True,
     }
 
