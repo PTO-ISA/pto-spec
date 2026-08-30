@@ -21264,6 +21264,7 @@
         "PTO-AVS-TILE-MODEL-EXECUTION-REARRANGEMENT-STATIC-001",
         "PTO-AVS-TILE-MODEL-EXECUTION-UNARY-STATIC-001",
         "PTO-AVS-TILE-MODEL-LEGALITY-DTYPE-LAYOUT-STATIC-001",
+        "PTO-AVS-TILE-MODEL-LEGALITY-IMAGE-TO-COLUMN-STATIC-001",
         "PTO-AVS-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT-STATIC-001",
         "PTO-AVS-TILE-MODEL-LEGALITY-MEMORY-SCHEMA-STATIC-001",
         "PTO-AVS-TILE-MODEL-LEGALITY-OPERAND-SCHEMA-STATIC-001",
@@ -21504,6 +21505,7 @@
         "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
         "PTO-TILE-MODEL-EXECUTION-UNARY",
         "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-IMAGE-TO-COLUMN",
         "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
         "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
         "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
@@ -21554,7 +21556,7 @@
   "sources": {
     "adr_records": {
       "count": 106,
-      "sha256": "7b615fab57c733ce0801bf9fc9ff02f6385f62670033b0932a4d301019261426"
+      "sha256": "b6dc890bd7ceb26d2a6dbe3a3200ec03a82b79354095eecce0fd0b4db23a8d7c"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21562,7 +21564,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "20484eb6ddd559844f31334fa059fcd5f1bbe97f61a9cad98a20d3deb9b18030",
+      "sha256": "5e149888a5c1f475ca5d44835e8fbcba59b033f6b4f00371abbce7c8b2cbcc04",
       "test_count": 3717,
       "unit_count": 851
     }
