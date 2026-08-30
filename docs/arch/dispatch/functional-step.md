@@ -1,9 +1,9 @@
 <!-- GENERATED FROM: asl/arch/dispatch/functional-step.asl -->
 # Functional Step
 
-**Normative ASL source:** `asl/arch/dispatch/functional-step.asl`
+**Generated-model harness ASL source:** `asl/arch/dispatch/functional-step.asl`
 
-This page is a generated reference view of the normative ASL unit.
+This page is a generated reference view of non-architectural model harness ASL. Its model NDF is owned by the downstream model repository; PTO architecture remains owned by the architectural ASL/NDF it invokes.
 
 ## ASL unit identity {#PTO-ARCH-DISPATCH-FUNCTIONAL-STEP}
 
@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-functional-step-purpose role=purpose-scope -->
 ## Purpose and scope
 
-`ExecuteOnePTOStep` is the architecture-owned functional execution boundary. It owns pending-request observation, instruction alignment, fetch preflight, length selection, decode/execute dispatch, and the immutable result returned to a model consumer.
+`ExecuteOnePTOStep` is a non-architectural model harness. It observes pending model state and returns an immutable result while invoking PTO-owned alignment, fetch, length, decode, legality, execution, PC, and fault owners without redefining them.
 
 <!-- PTO-READER-BLOCK: arch-functional-step-concepts role=concepts-state -->
 ## Ordered step pipeline
@@ -25,12 +25,12 @@ The step first snapshots TPC, BPC, and origin PE. It then handles uninitialized 
 <!-- PTO-READER-BLOCK: arch-functional-step-rules role=rules-interactions -->
 ## Observation and sequencing rules
 
-Predecode exits do not advance `_FunctionalProfileSequence` and report `NotAttempted`. A fetched path advances the sequence once before dispatch. The result then distinguishes an executed form, rejected form, ASL-produced trap, or host request and snapshots the post-instruction control/fault/request fields.
+Predecode exits do not advance `_FunctionalProfileSequence` and report `NotAttempted`. A fetched path advances this model-only sequence once before dispatch. The result distinguishes an executed form, rejected form, ASL-produced trap, or host request and snapshots post-transition fields for model consumers.
 
 <!-- PTO-READER-BLOCK: arch-functional-step-boundaries role=boundaries -->
 ## Fault and runner boundaries
 
-Odd TPC and inaccessible fetch ranges are predecode traps. An accepted instruction may still finish as a trap or host request. Rejection is never interpreted as process exit. ELF policy, stop-PC, step limits, process status, and result-file publication remain runner concerns outside this ASL result.
+Odd TPC and inaccessible fetch ranges are PTO architectural predecode traps. Rejection is never interpreted as process exit. The step envelope, host request, ELF policy, stop-PC, step limits, process status, and result-file publication are the downstream model repository model/ABI concerns.
 
 <!-- PTO-READER-BLOCK: arch-functional-step-example role=example-usage -->
 ## Non-normative trace example
@@ -45,24 +45,14 @@ For a 16-bit instruction at `0x100`, the result records `pre_tpc=0x100`, the fet
 - [Functional-model profile](../profile/functional-model.md) owns reset and host-request state.
 <!-- SUPPLEMENTARY-END -->
 
-## Normative ASL
+## Model-harness ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/dispatch/functional-step.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-DISPATCH-FUNCTIONAL-STEP","surface":"arch","classification":["dispatch","functional-step"],"depends_on":["PTO-ARCH-DISPATCH-TOP-LEVEL","PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"]}
 
-// NDF-BEGIN: PTO-REQ-FUNCTIONAL-STEP-001
-// ndf: kind=contract level=L1 layer=architecture status=accepted
-// ExecuteOnePTOStep MUST process pending host state before alignment or fetch,
-// then validate TPC alignment, probe two bytes, determine length, probe the
-// complete instruction, fetch little-endian bytes, and invoke the unique PTO
-// instruction dispatcher. Pending and predecode fault paths MUST NOT advance
-// architectural time. A decoded path MUST advance time exactly once and MUST
-// report whether the instruction was not attempted, executed, or rejected,
-// together with the resulting precise trap cause rather than interpreting
-// rejection as exit. A host-request result MUST snapshot the immutable request
-// token, origin, type, and scalar argument.
-// NDF-END: PTO-REQ-FUNCTIONAL-STEP-001
+// Non-architectural generated-model harness.  Its model NDF is owned by
+// the downstream model repository docs/pto-asl-functional-model-ndf-v1.json.
 
 pure func DeterminePTOInstructionLength(
     first_halfword: bits(16)) => integer {16,32,48,64}

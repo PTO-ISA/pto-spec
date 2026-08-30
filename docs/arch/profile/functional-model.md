@@ -1,9 +1,9 @@
 <!-- GENERATED FROM: asl/arch/profile/functional-model.asl -->
 # Functional Model
 
-**Normative ASL source:** `asl/arch/profile/functional-model.asl`
+**Generated-model harness ASL source:** `asl/arch/profile/functional-model.asl`
 
-This page is a generated reference view of the normative ASL unit.
+This page is a generated reference view of non-architectural model harness ASL. Its model NDF is owned by the downstream model repository; PTO architecture remains owned by the architectural ASL/NDF it invokes.
 
 ## ASL unit identity {#PTO-ARCH-PROFILE-FUNCTIONAL-MODEL}
 
@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-functional-profile-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This named profile turns the portable PTO state into a resettable, single-step functional-model instance. It owns PE0 initialization and the one-pending-request handshake used by generated-library consumers; it does not define a general hosted operating-system ABI.
+This file implements the generated-model lifecycle overlay consumed by the downstream model repository. PE0 initialization, pending tokens, completion, and hosted request meanings are model/ABI behavior owned by the the downstream model repository model NDF, not PTO architecture.
 
 <!-- PTO-READER-BLOCK: arch-functional-profile-concepts role=concepts-state -->
 ## Initialization and request state
@@ -27,12 +27,12 @@ This named profile turns the portable PTO state into a resettable, single-step f
 
 `BeginFunctionalModelHostRequest` validates model state, result GPR, even resume TPC, and monotonic token availability before publishing one request. Matching completion writes the captured origin-PE result GPR and resume TPC exactly once. Stale or duplicate tokens are rejected without effects, and reset does not reuse the next-token counter.
 
-The functional exit binding intercepts only initialized-profile ACRC request type 1 with `a7=94`. It captures `a0` as request argument/result GPR and the next four-byte TPC as the resume point; every non-matching ACRC retains portable service-request behavior.
+The overlay implements the architecture-owned close-request hook. Its bring-up binding recognizes ACRC request type 1 with `a7=94`, while the portable hook default is false and every nonmatching ACRC retains PTO service-request behavior. The request-94 meaning is hosted ABI, not PTO architecture.
 
 <!-- PTO-READER-BLOCK: arch-functional-profile-boundaries role=boundaries -->
 ## Boundaries
 
-Only request type 94 has a hosted meaning in this bring-up. Memory response payloads, other syscalls, startup, TLS, file descriptors, barriers, multi-Core execution, and general process recovery remain unspecified. Model descriptor and snapshot requirements have separate owners and are not inferred from the request API.
+Only request type 94 has a hosted meaning in this bring-up. Memory response payloads, other syscalls, startup, TLS, file descriptors, barriers, multi-Core execution, and general process recovery remain unspecified by the model NDF. PTO assigns none of these meanings.
 
 <!-- PTO-READER-BLOCK: arch-functional-profile-example role=example-usage -->
 ## Non-normative host sequence
@@ -47,43 +47,15 @@ A runner resets the model with entry/SP, calls `ExecuteOnePTOStep` until it rece
 - [Reset](reset.md) supplies the complete reference reset used at initialization.
 <!-- SUPPLEMENTARY-END -->
 
-## Normative ASL
+## Model-harness ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/functional-model.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-FUNCTIONAL-MODEL","surface":"arch","classification":["profile","functional-model"],"depends_on":["PTO-ARCH-PROFILE-RESET","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-FUNCTIONAL-MODEL","surface":"arch","classification":["profile","functional-model"],"depends_on":["PTO-ARCH-PROFILE-RESET","PTO-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"]}
 
-// NDF-BEGIN: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
-// ndf: kind=contract level=L1 layer=architecture status=accepted
-// A functional-model instance MUST expose at most one pending host request.
-// Repeated step while pending MUST return the same immutable token, origin PE,
-// request type, and scalar argument without fetch, time advance, or state
-// effect. Only a matching token MAY complete the current generic scalar
-// request; completion MUST write the captured origin-PE result GPR and shared
-// resume TPC exactly once. Stale and duplicate completion MUST have no effect.
-// Tokens MUST NOT be reused during a model-instance lifetime; architecture
-// reset MUST preserve the next-token counter and exhaustion MUST fail closed.
-// Memory response payloads and hosted ABI request meanings remain unspecified.
-// NDF-END: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
-
-// NDF-BEGIN: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
-// ndf: kind=contract level=L1 layer=architecture status=accepted
-// In an initialized functional-model profile only, ACRC request type 1 with
-// PE-local a7 equal to Linux exit_group request 94 MUST open host request 94
-// before ordinary service-request routing.  The immutable argument MUST be
-// a0, the captured result GPR MUST be a0, and the resume TPC MUST be the next
-// four-byte instruction.  Every other ACRC input MUST retain portable service
-// request semantics.  A matched request that cannot allocate a unique token
-// MUST fail closed with ExecutionStateCheck and no pending request.
-// NDF-END: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
-
-// NDF-BEGIN: PTO-REQ-FUNCTIONAL-RESET-001
-// ndf: kind=contract level=L1 layer=state status=accepted
-// InitializeFunctionalModel MUST perform the complete reference reset, select
-// PE0, install the supplied even entry TPC, and leave PE1 through PE3 reset.
-// Before the first step, InitializeFunctionalModelGPR MAY initialize only PE0
-// absolute GPRs; GPR0 MUST retain its architectural zero behavior.
-// NDF-END: PTO-REQ-FUNCTIONAL-RESET-001
+// Non-architectural generated-model lifecycle and hosted-ABI overlay.  Their
+// model NDF is owned by the downstream model repository
+// docs/pto-asl-functional-model-ndf-v1.json.
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
@@ -125,6 +97,7 @@ func InitializeFunctionalModel(entry: Word)
 begin
     assert entry[0] == '0';
     ResetProfileState();
+    ResetFunctionalModelState();
     _CurrentMemoryAgent = 0;
     WriteTPC(entry);
     _FunctionalModelInitialized = TRUE;
@@ -173,7 +146,7 @@ begin
     return TRUE;
 end;
 
-func InterceptFunctionalModelCloseRequest(
+implementation func InterceptArchitectureCloseRequest(
     request_type: bits(4)) => boolean
 begin
     if !_FunctionalModelInitialized || request_type != '0001' ||

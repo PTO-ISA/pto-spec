@@ -61,7 +61,14 @@ A random 64-bit carrier that matches no command form does not fall through to sc
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/dispatch/top-level.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-DISPATCH-TOP-LEVEL","surface":"arch","classification":["dispatch","top-level"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-TOP-LEVEL","PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL"]}
-// PTO-REQ-INSTRUCTION-DISPATCH-001: total PTO encoded-instruction entry point.
+
+// NDF-BEGIN: PTO-REQ-INSTRUCTION-DISPATCH-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// ExecutePTOInstruction is the unique encoded-instruction entry point.  It
+// MUST prefer an accepted 64-bit command form, dispatch non-64-bit input to
+// scalar decoding, and reject an otherwise unmatched 64-bit value with
+// IllegalInstruction after beginning exactly one architectural attempt.
+// NDF-END: PTO-REQ-INSTRUCTION-DISPATCH-001
 
 type PTOInstructionExecutionStatus of enumeration {
     PTOInstruction_Executed,

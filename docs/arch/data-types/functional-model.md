@@ -1,9 +1,9 @@
 <!-- GENERATED FROM: asl/arch/data-types/functional-model.asl -->
 # Functional Model
 
-**Normative ASL source:** `asl/arch/data-types/functional-model.asl`
+**Generated-model harness ASL source:** `asl/arch/data-types/functional-model.asl`
 
-This page is a generated reference view of the normative ASL unit.
+This page is a generated reference view of non-architectural model harness ASL. Its model NDF is owned by the downstream model repository; PTO architecture remains owned by the architectural ASL/NDF it invokes.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL}
 
@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-functional-types-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This unit defines the typed observation boundary shared by ASLRef, the generated model library, and a host runner. It names step outcomes, instruction-attempt outcomes, instruction lengths, access probes, and the fields in one immutable step result; it does not execute an instruction itself.
+This unit defines non-architectural harness types shared by ASLRef, the generated model library, and a host runner. The model NDF is owned by the downstream model repository; this source only carries typed values used to observe PTO-owned transitions.
 
 <!-- PTO-READER-BLOCK: arch-functional-types-concepts role=concepts-state -->
 ## Result concepts
@@ -28,12 +28,12 @@ This unit defines the typed observation boundary shared by ASLRef, the generated
 <!-- PTO-READER-BLOCK: arch-functional-types-rules role=rules-interactions -->
 ## Step-result fields
 
-`PTOFunctionalStepResult` records pre/post TPC and BPC, the zero-extended raw instruction, selected length, precise fault identity/address/cause, origin PE, host-request token/type/argument, and deterministic profile sequence. Consumers read these fields directly instead of reconstructing them from private decoder or runner state.
+`PTOFunctionalStepResult` records observations of pre/post TPC and BPC, the zero-extended raw instruction, selected length, precise fault identity/address/cause, origin PE, host-request token/type/argument, and deterministic model sequence. These fields are model interface data, not PTO architectural state.
 
 <!-- PTO-READER-BLOCK: arch-functional-types-boundaries role=boundaries -->
 ## Boundaries
 
-The record does not define ELF loading, stop-PC, step budgets, process exit, model-descriptor compatibility, or snapshot serialization. A zero request token/type/argument means that the result does not carry a host request; the host-request state owner defines when nonzero values are present.
+The record does not define PTO semantics. ELF loading, stop-PC, step budgets, process exit, model-descriptor compatibility, snapshot serialization, and host-request lifecycle are owned by the the downstream model repository model NDF and generated ABI.
 
 <!-- PTO-READER-BLOCK: arch-functional-types-example role=example-usage -->
 ## Non-normative reading example
@@ -48,7 +48,7 @@ For a successfully fetched scalar instruction, read `instruction_status=Executed
 - [Fault](fault.md) defines the fault identities carried here.
 <!-- SUPPLEMENTARY-END -->
 
-## Normative ASL
+## Model-harness ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/functional-model.asl -->
 ```asl

@@ -74,6 +74,7 @@ nav:
           - Reference Profile: arch/profile/reference-profile.md
           - Reference Quantization: arch/profile/reference-quantization.md
           - Reset: arch/profile/reset.md
+          - Service Request Intercept: arch/profile/service-request-intercept.md
           - Trap Context Recovery: arch/profile/trap-context-recovery.md
       - Programming Model:
           - Core PE Topology: arch/programming-model/core-pe-topology.md
@@ -1056,7 +1057,7 @@ nav:
           - "ADR 0112: Warning-free ASLRef constraint refinements": status/decisions/0112-warning-free-aslref-constraint-refinements.md
           - "ADR 0113: Named indexed-memory lane-choice profiles": status/decisions/0113-indexed-memory-lane-choice-profile.md
           - "ADR 0114: Functional-model step observation v1": status/decisions/0114-functional-model-step-observation-v1.md
-          - "ADR-0115: Functional-model exit_group profile binding": status/decisions/0115-functional-model-exit-group-profile.md
+          - "ADR-0115: Scalar body entry and close-request interception boundary": status/decisions/0115-functional-model-exit-group-profile.md
           - "ADR-0116: PTO architecture and functional-model implementation boundary": status/decisions/0116-pto-architecture-and-functional-model-boundary.md
       - Open:
           - "Open architecture decisions": status/open/index.md

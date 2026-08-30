@@ -1,9 +1,9 @@
 <!-- GENERATED FROM: asl/arch/data-types/functional-model.asl -->
 # Functional Model
 
-**Normative ASL source:** `asl/arch/data-types/functional-model.asl`
+**Generated-model harness ASL source:** `asl/arch/data-types/functional-model.asl`
 
-This page is a generated reference view of the normative ASL unit.
+This page is a generated reference view of non-architectural model harness ASL. Its model NDF is owned by the downstream model repository; PTO architecture remains owned by the architectural ASL/NDF it invokes.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL}
 
@@ -48,7 +48,7 @@ This page is a generated reference view of the normative ASL unit.
 - [故障](fault.md)定义此处携带的故障标识。
 <!-- SUPPLEMENTARY-END -->
 
-## Normative ASL
+## Model-harness ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/functional-model.asl -->
 ```asl

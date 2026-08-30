@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/sys/semantics.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-BLOCK-MODEL-STATE-BARG","PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"]}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-SYS-SEMANTICS","surface":"scalar","classification":["model","sys","semantics"],"depends_on":["PTO-SCALAR-MODEL-AMO-SEMANTICS","PTO-BLOCK-MODEL-STATE-BARG","PTO-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT"]}
 // PTO-REQ-SCALAR-SYS-001, PTO-REQ-MEMORY-TSO-001: PTO base SSR access,
 // architectural time, and data/instruction fences.
 
@@ -203,7 +203,7 @@ end;
 
 func ArchitectureCloseRequest(request_type: bits(4))
 begin
-    if InterceptFunctionalModelCloseRequest(request_type) then
+    if InterceptArchitectureCloseRequest(request_type) then
         if _LastFault == Fault_None then
             _SystemBlockTerminalPending = TRUE;
         end;

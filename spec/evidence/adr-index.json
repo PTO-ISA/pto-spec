@@ -8408,19 +8408,20 @@
       "accepted": "2026-08-29",
       "affected_ndf": [
         "PTO-REQ-FUNCTIONAL-FETCH-001",
-        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
         "PTO-REQ-FUNCTIONAL-MEMORY-001",
-        "PTO-REQ-FUNCTIONAL-RESET-001",
-        "PTO-REQ-FUNCTIONAL-STEP-001"
+        "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "PTO-REQ-SERVICE-REQUEST-INTERCEPT-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
         "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
         "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
         "PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH",
         "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
         "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
         "PTO-ARCH-PROFILE-RESET",
+        "PTO-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT",
         "PTO-ARCH-STATE-FUNCTIONAL-MODEL",
         "PTO-SCALAR-MODEL-AGU-MEMORY"
       ],
@@ -8526,13 +8527,14 @@
     {
       "accepted": "2026-08-29",
       "affected_ndf": [
-        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
-        "PTO-REQ-FUNCTIONAL-STEP-001"
+        "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
+        "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
         "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
-        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"
+        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-ARCH-STATE-FUNCTIONAL-MODEL"
       ],
       "approvers": [
         "zhoubot"
@@ -8550,24 +8552,25 @@
       "release_boundary": true,
       "release_impact": "required",
       "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
+      "status": "superseded",
+      "superseded": "2026-08-30",
+      "superseded_by": [
+        "ADR-0116"
+      ],
       "supersedes": [],
       "target_releases": [
         "0.58.5"
       ],
-      "title": "Functional-model step observation v1"
+      "title": "Functional-model step observation v1 (superseded by model NDF)"
     },
     {
       "accepted": "2026-08-30",
       "affected_ndf": [
-        "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+        "PTO-REQ-SERVICE-REQUEST-INTERCEPT-001",
         "PTO-REQ-SCALAR-BODY-ENTRY-001"
       ],
       "affected_units": [
-        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT",
         "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
         "PTO-SCALAR-MODEL-SYS-SEMANTICS"
       ],
@@ -8594,7 +8597,7 @@
       "target_releases": [
         "0.58.5"
       ],
-      "title": "Functional-model exit_group profile binding"
+      "title": "Scalar body entry and close-request interception boundary"
     },
     {
       "accepted": "2026-08-30",
@@ -8604,6 +8607,7 @@
       ],
       "affected_units": [
         "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT",
         "PTO-ARCH-STATE-FUNCTIONAL-MODEL"
       ],
       "approvers": [
@@ -8625,7 +8629,9 @@
       "status": "accepted",
       "superseded": null,
       "superseded_by": [],
-      "supersedes": [],
+      "supersedes": [
+        "ADR-0114"
+      ],
       "target_releases": [
         "0.58.5"
       ],

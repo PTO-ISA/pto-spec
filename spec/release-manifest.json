@@ -134,11 +134,11 @@
     },
     {
       "path": "asl/arch/dispatch/functional-step.asl",
-      "sha256": "66f772f6b0a8041ad32b562d646d1b2988089a349bf91bc4722e9869006487ec"
+      "sha256": "3ea2a556419b9f9f2fa565e3e7193868e10f3b148495b625b06e234b0d053ac7"
     },
     {
       "path": "asl/arch/dispatch/top-level.asl",
-      "sha256": "302dfff367909f25401d9a994c9e59d48ee6555c70428e638e37f6f35a589e9d"
+      "sha256": "b316aa0eddbf493701ba8c49ace4199c6739831748a168ca6b2a8dc4b5f91f86"
     },
     {
       "path": "asl/arch/features/minmax-profile.asl",
@@ -214,7 +214,7 @@
     },
     {
       "path": "asl/arch/profile/functional-model.asl",
-      "sha256": "53b45eb74b0c65fc105ab12d57efb44dcd0fe6967cbd2ed176fb386d5ff8dde6"
+      "sha256": "7af029d28044e7c5be0a53e7a34a6de1de77a4d2971acf076dd1ce43e6889012"
     },
     {
       "path": "asl/arch/profile/indexed-memory-lane-choice.asl",
@@ -238,7 +238,11 @@
     },
     {
       "path": "asl/arch/profile/reset.asl",
-      "sha256": "e3155de06358b6c6eea7310e83c549f82cb1372e81e16ab49b720d980fea2c86"
+      "sha256": "0dcddc63cea410a9437832d84a5af6ac0f984c077597dd85ac8df3f4802aa4a1"
+    },
+    {
+      "path": "asl/arch/profile/service-request-intercept.asl",
+      "sha256": "5e6dc308d37092573fd3affbbefd401d8f47f47c939b0b8cae3ba45ab81e6760"
     },
     {
       "path": "asl/arch/profile/trap-context-recovery.asl",
@@ -278,7 +282,7 @@
     },
     {
       "path": "asl/arch/state/functional-model.asl",
-      "sha256": "fa79cdf63b63c13b61dbb5aaeaa690911bf162530b7563925728799717066b5d"
+      "sha256": "fbad26175abd3c43d66fe88d6f87af5405a1161b601ac6703861010226e5d031"
     },
     {
       "path": "asl/arch/state/numeric-status.asl",
@@ -2594,7 +2598,7 @@
     },
     {
       "path": "asl/scalar/model/sys/semantics.asl",
-      "sha256": "4acba10a450ca511925dec1462b0579cf93aeb6c2b6ed546ef6701ea2f3d395b"
+      "sha256": "552ba0dddf749eb8db63a0fb7c70d9d54285bb201edb35ea605593d8e67fbf5b"
     },
     {
       "path": "asl/scalar/model/types/operands.asl",
@@ -3466,7 +3470,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "f06c063496b576f095682ff4b58eadc1b14a91a132a6d3a4463f0ce100931a6d"
+      "sha256": "b1fd53677f0728d562670fb632b63bcd9b58c4a6cd3ec052d00b2b3a94477dd1"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3474,15 +3478,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "4aa46ca058584ed55d211514326a19c185d1c721edbe324c7bcd8aa64657879c"
+      "sha256": "7ae243fbce14702dbbab533649f2ad5e8301dacff9a2e12f517da188bd084089"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "d7a2856255f6f0b0845b39cfaee5e4671fe812a1ce64ef693a523eabd14fa0d4"
+      "sha256": "1e44face736e23ba87516b18e55ed10518b86897257829d7d77d6fb99bfc3f93"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "a6f71d9aa85b1303c235ebedf65630fbeb6d0173a071b010c266a3c0bd864ad7"
+      "sha256": "86d8e9b5a0a4ed8ee34d8d8a8cb61d2ef6d1f6fdb9d6d3e7032be1bdd52e7fa9"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3528,7 +3532,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "6276beb1602841200aeeeb4d5dc42c7abcadeaf1c2c4e2e28d784bab987afc7a",
+  "content_sha256": "0e60e2de71f5ff315b52b29ee81867dc84c862b06d4e4153aa061f530d963723",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3665,7 +3669,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/functional-model.md",
-      "sha256": "454fc55a4768c6027ed1ebb6cb95ead3609d4dfa670f6392946a6b0332994063"
+      "sha256": "304810e88982ce9fc51dd38d7563fdbde1122d3ef57e797def7b4779000fbd09"
     },
     {
       "kind": "generated-documentation",
@@ -3725,12 +3729,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/dispatch/functional-step.md",
-      "sha256": "13ef6c217118861e75bec8cd10878b32f4bee3e07db3a48d6d4366219b9548b6"
+      "sha256": "65383c96e2032a8f09439b86b7a6f3d27dec0c1f7fea212e42ad058a932d9146"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/dispatch/top-level.md",
-      "sha256": "5f2a8dcb6306f8429fbb0ae330c19532c5ffc8eb2385d37ac72ac4a2d1d25589"
+      "sha256": "e81e2b790fb3603d62289d07527d855c7722c0c56380f7f2d2e69efc897c2304"
     },
     {
       "kind": "generated-documentation",
@@ -3825,7 +3829,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/functional-model.md",
-      "sha256": "b7d77ca832e2126079c1313f0cead95c22ef0c00228d956a6ae1eff516913de8"
+      "sha256": "e8406e9388d92a5ac28ab2c323636593e23479a8c68369075ffcc9cce611f2f3"
     },
     {
       "kind": "generated-documentation",
@@ -3855,7 +3859,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reset.md",
-      "sha256": "9afb756781829d980c33b51e7bce75cd4f0249b5e9d5f55aea0d1c085100022f"
+      "sha256": "8d30b02fafa1a7d6282b068ee486ef5bc3970eb27f7547e19a676be107e8bccb"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/profile/service-request-intercept.md",
+      "sha256": "a31b2c7dc124831f3a6ade7e0935b098acddecf94b35d6e7ff7f39e0daa2847d"
     },
     {
       "kind": "generated-documentation",
@@ -3905,7 +3914,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/state/functional-model.md",
-      "sha256": "8da1c881b2ba5dcaa75ffcbaa18c13e23323e270cc344cf07cc53e6f5c4784e4"
+      "sha256": "33d93c3f821cfbfbbfcc69e36418e7e0f5fa082e50d87a8e9c3c9c9bac654cfa"
     },
     {
       "kind": "generated-documentation",
@@ -6800,7 +6809,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/sys/semantics.md",
-      "sha256": "c88588ed0748f2c5ba8e5b4d953f69a0ea6211ff8918df997d1f9614e64f43a1"
+      "sha256": "43a07c9dcf09b9cd0107b2bcae33d39e13492e67932f13f68f91526b6412be06"
     },
     {
       "kind": "generated-documentation",
@@ -11232,16 +11241,8 @@
         "sha256": "9d4f21b730fba975c1499b2ac8e1a6c4ff02479e58aee16a20e0f2d08b5382f8"
       },
       {
-        "id": "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-        "sha256": "8f4a8a8d8d2fe6a9af6044be1b2af2d442151a5152bb4939897e3a582104bff5"
-      },
-      {
         "id": "PTO-REQ-FUNCTIONAL-FETCH-001",
         "sha256": "0a566e0ab4dd172b727e9b36f68c88a3ba5099e9fa8135040408011035effac4"
-      },
-      {
-        "id": "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
-        "sha256": "77f4864616d9b72a8aa093b6e76d9158548836c719c09fb562fe135fd92e4e1b"
       },
       {
         "id": "PTO-REQ-FUNCTIONAL-MEMORY-001",
@@ -11252,24 +11253,24 @@
         "sha256": "087a7512a663c10e20c658e3ccfe13e07857bdb1f6511648db16cd33ceb70bbd"
       },
       {
-        "id": "PTO-REQ-FUNCTIONAL-RESET-001",
-        "sha256": "25b16814742d17ab066eff3268796e3020c0ed7e97cce24da0296f1661afaff2"
-      },
-      {
         "id": "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001",
         "sha256": "b9b28ea25261d6dcd0493d6185126354f894bcf6dd71dac3a2106fdffd76f6e0"
-      },
-      {
-        "id": "PTO-REQ-FUNCTIONAL-STEP-001",
-        "sha256": "54cad1a33bdd07c3d9e0d641f420dff41bdab6878604f14327cf607ae72a4dc3"
       },
       {
         "id": "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001",
         "sha256": "8adda2e2215f2741d97ef0a94b76f920cf88ac24751752063eee245ec3fc281a"
       },
       {
+        "id": "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "sha256": "debb33f41218adb04c20430cf02a41626e8f4ab21e761fdfde2466e6b3db0156"
+      },
+      {
         "id": "PTO-REQ-SCALAR-BODY-ENTRY-001",
         "sha256": "dc607f5cff47463d28e72fa8cefcb58ed458d0991cc3cecc9a3e8985012ee91d"
+      },
+      {
+        "id": "PTO-REQ-SERVICE-REQUEST-INTERCEPT-001",
+        "sha256": "f3c594ec84fc19034879607c4e9e1da4215c5bbf0c97327885237dbaa5683f42"
       },
       {
         "id": "PTO-REQ-SHARED-TILE-001",
@@ -12104,7 +12105,6 @@
       "ADR-0111",
       "ADR-0112",
       "ADR-0113",
-      "ADR-0114",
       "ADR-0115",
       "ADR-0116"
     ]
