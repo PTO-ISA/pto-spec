@@ -12,7 +12,39 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-functional-state-purpose role=purpose-scope -->
+## 用途与范围
 
+本单元声明功能初始化、确定性步骤观测和可恢复宿主请求握手使用的配置档专属状态。这些字段独立于可移植 PTO 架构状态要求。
+
+<!-- PTO-READER-BLOCK: arch-functional-state-concepts role=concepts-state -->
+## 状态分组
+
+- 初始化与 started 标志约束入口/GPR 注入何时合法。
+- pending、token、next-token、来源 PE、请求类型/参数、结果 GPR 和恢复 TPC 构成一个请求快照。
+- `_FunctionalProfileSequence` 为重置、初始化、步骤、请求创建和完成提供确定性观测顺序。
+
+<!-- PTO-READER-BLOCK: arch-functional-state-rules role=rules-interactions -->
+## 重置行为
+
+`ResetFunctionalModelState` 清除初始化、started、待处理请求载荷和序号。它有意保留 `_FunctionalHostRequestNextToken`，使重置前的陈旧完成不能取得同一模型实例中后续请求的权限。
+
+<!-- PTO-READER-BLOCK: arch-functional-state-boundaries role=boundaries -->
+## 快照边界
+
+开放的快照要求记录仍需定义版本化确定性封装。本页不授权复制 C struct、公开实现指针，也不把配置档状态并入可移植架构状态。
+
+<!-- PTO-READER-BLOCK: arch-functional-state-example role=example-usage -->
+## 非规范生命周期示例
+
+重置后，初始化设置入口和序号，步骤把模型标记为 started，宿主请求冻结其来源/类型/参数/结果/恢复字段，直到匹配完成。同一时刻不能共存第二个请求。
+
+<!-- PTO-READER-BLOCK: arch-functional-state-related role=related-owners-navigation -->
+## 相关所有者
+
+- [功能模型配置档](../profile/functional-model.md)更新这些字段。
+- [功能模型结果类型](../data-types/functional-model.md)公开不可变观测记录。
+- [执行上下文](../programming-model/execution-context.md)拥有配置档引用的可移植 PC/BPC 与 GPR 状态。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,39 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-functional-profile-purpose role=purpose-scope -->
+## Purpose and scope
 
+This named profile turns the portable PTO state into a resettable, single-step functional-model instance. It owns PE0 initialization and the one-pending-request handshake used by generated-library consumers; it does not define a general hosted operating-system ABI.
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-concepts role=concepts-state -->
+## Initialization and request state
+
+`InitializeFunctionalModel` performs the complete profile reset, selects PE0, installs an even entry TPC, and starts the profile sequence. Before the first step, `InitializeFunctionalModelGPR` may initialize PE0 absolute GPRs. Request observers expose the frozen pending token, origin PE, type, and scalar argument.
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-rules role=rules-interactions -->
+## Request lifecycle
+
+`BeginFunctionalModelHostRequest` validates model state, result GPR, even resume TPC, and monotonic token availability before publishing one request. Matching completion writes the captured origin-PE result GPR and resume TPC exactly once. Stale or duplicate tokens are rejected without effects, and reset does not reuse the next-token counter.
+
+The functional exit binding intercepts only initialized-profile ACRC request type 1 with `a7=94`. It captures `a0` as request argument/result GPR and the next four-byte TPC as the resume point; every non-matching ACRC retains portable service-request behavior.
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-boundaries role=boundaries -->
+## Boundaries
+
+Only request type 94 has a hosted meaning in this bring-up. Memory response payloads, other syscalls, startup, TLS, file descriptors, barriers, multi-Core execution, and general process recovery remain unspecified. Model descriptor and snapshot requirements have separate owners and are not inferred from the request API.
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-example role=example-usage -->
+## Non-normative host sequence
+
+A runner resets the model with entry/SP, calls `ExecuteOnePTOStep` until it receives `HostRequest`, performs the supported host action, and calls the matching completion entrypoint. While pending, repeated steps return the same immutable request without fetch or time advance.
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-related role=related-owners-navigation -->
+## Related owners
+
+- [Functional-model state](../state/functional-model.md) declares the backing fields.
+- [Functional step](../dispatch/functional-step.md) observes pending state and executes instructions.
+- [Reset](reset.md) supplies the complete reference reset used at initialization.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

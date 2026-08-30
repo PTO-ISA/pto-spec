@@ -12,7 +12,37 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-instruction-fetch-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit isolates functional instruction access from instruction execution. It defines translation and permission hooks, a probe snapshot, and little-endian assembly of one already-approved 16/32/48/64-bit instruction.
+
+<!-- PTO-READER-BLOCK: arch-instruction-fetch-concepts role=concepts-state -->
+## Probe model
+
+`TranslateInstructionAddress` maps the architectural byte address to the physical profile address. `InstructionAccessPermitted` decides whether the complete requested size is readable. `ProbeInstructionAccess` captures both results so later fetch uses the approved translated base.
+
+<!-- PTO-READER-BLOCK: arch-instruction-fetch-rules role=rules-interactions -->
+## Fetch ordering
+
+The functional-step owner probes two bytes first to obtain the low halfword and length, then probes the complete selected range before reading remaining bytes. `FetchPTOInstruction` places byte zero in bits `[7:0]` and zero-fills all bits above the selected instruction length.
+
+<!-- PTO-READER-BLOCK: arch-instruction-fetch-boundaries role=boundaries -->
+## Access boundaries
+
+Denied, unmapped, overflowing, or truncated ranges become `Fault_InstructionPage` at the original TPC before decode. The fetch helper requires a permitted probe and does not itself define caches, MMU structures, devices, or executable-file permissions.
+
+<!-- PTO-READER-BLOCK: arch-instruction-fetch-example role=example-usage -->
+## Non-normative byte example
+
+If approved bytes at the translated address are `95 04 e0 05`, a 32-bit fetch produces raw value `0x05e00495`. This illustrates byte placement only; the scalar decoder owns the meaning of that value.
+
+<!-- PTO-READER-BLOCK: arch-instruction-fetch-related role=related-owners-navigation -->
+## Related owners
+
+- [Functional step](../dispatch/functional-step.md) orders prefix and complete probes.
+- [Address space](address-space.md) owns physical byte storage in the reference profile.
+- [Fault precision](fault-precision.md) owns precise fault publication.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

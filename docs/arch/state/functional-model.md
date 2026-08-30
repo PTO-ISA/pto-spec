@@ -12,7 +12,39 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-functional-state-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit declares profile-only state used by functional initialization, deterministic step observation, and the resumable host-request handshake. These fields are separate from the portable PTO architectural-state requirement.
+
+<!-- PTO-READER-BLOCK: arch-functional-state-concepts role=concepts-state -->
+## State groups
+
+- Initialization and started flags constrain when entry/GPR injection is legal.
+- Pending, token, next-token, origin PE, request type/argument, result GPR, and resume TPC form one request snapshot.
+- `_FunctionalProfileSequence` provides deterministic observation order for reset, initialization, steps, request creation, and completion.
+
+<!-- PTO-READER-BLOCK: arch-functional-state-rules role=rules-interactions -->
+## Reset behavior
+
+`ResetFunctionalModelState` clears initialization, started, pending request payload, and sequence. It deliberately preserves `_FunctionalHostRequestNextToken`, so a stale completion from before reset cannot gain authority over a later request in the same model instance.
+
+<!-- PTO-READER-BLOCK: arch-functional-state-boundaries role=boundaries -->
+## Snapshot boundary
+
+The open snapshot requirement records that a versioned deterministic envelope is still needed. This page does not authorize copying C structs, exposing implementation pointers, or merging profile state into portable architectural state.
+
+<!-- PTO-READER-BLOCK: arch-functional-state-example role=example-usage -->
+## Non-normative lifecycle example
+
+After reset, initialization sets the entry and sequence, a step marks the model started, and a host request freezes its origin/type/argument/result/resume fields until matching completion. A second request cannot coexist with the first.
+
+<!-- PTO-READER-BLOCK: arch-functional-state-related role=related-owners-navigation -->
+## Related owners
+
+- [Functional-model profile](../profile/functional-model.md) updates these fields.
+- [Functional-model result types](../data-types/functional-model.md) expose the immutable observation record.
+- [Execution context](../programming-model/execution-context.md) owns portable PC/BPC and GPR state referenced by the profile.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

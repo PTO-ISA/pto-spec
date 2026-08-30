@@ -12,7 +12,40 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-functional-types-purpose role=purpose-scope -->
+## Purpose and scope
 
+This unit defines the typed observation boundary shared by ASLRef, the generated model library, and a host runner. It names step outcomes, instruction-attempt outcomes, instruction lengths, access probes, and the fields in one immutable step result; it does not execute an instruction itself.
+
+<!-- PTO-READER-BLOCK: arch-functional-types-concepts role=concepts-state -->
+## Result concepts
+
+- `PTOFunctionalStepStatus` separates ordinary execution, synchronous trap, suspended host request, and an unsupported profile state.
+- `PTOFunctionalInstructionStatus` says whether decode was not attempted, executed, or rejected.
+- `PTOFunctionalInstructionLength` includes zero for a result with no fetched instruction and the four architectural lengths 16, 32, 48, and 64.
+- `PTOInstructionAccessProbe` carries permission and the translated byte address as one snapshot.
+
+<!-- PTO-READER-BLOCK: arch-functional-types-rules role=rules-interactions -->
+## Step-result fields
+
+`PTOFunctionalStepResult` records pre/post TPC and BPC, the zero-extended raw instruction, selected length, precise fault identity/address/cause, origin PE, host-request token/type/argument, and deterministic profile sequence. Consumers read these fields directly instead of reconstructing them from private decoder or runner state.
+
+<!-- PTO-READER-BLOCK: arch-functional-types-boundaries role=boundaries -->
+## Boundaries
+
+The record does not define ELF loading, stop-PC, step budgets, process exit, model-descriptor compatibility, or snapshot serialization. A zero request token/type/argument means that the result does not carry a host request; the host-request state owner defines when nonzero values are present.
+
+<!-- PTO-READER-BLOCK: arch-functional-types-example role=example-usage -->
+## Non-normative reading example
+
+For a successfully fetched scalar instruction, read `instruction_status=Executed` together with the pre/post control fields. If the same accepted instruction opens a host request, the step status is `HostRequest` while the instruction-attempt status remains `Executed`.
+
+<!-- PTO-READER-BLOCK: arch-functional-types-related role=related-owners-navigation -->
+## Related owners
+
+- [Functional step](../dispatch/functional-step.md) populates this record.
+- [Functional-model profile](../profile/functional-model.md) owns request lifecycle and completion.
+- [Fault](fault.md) defines the fault identities carried here.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

@@ -12,7 +12,39 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-functional-profile-purpose role=purpose-scope -->
+## 用途与范围
 
+此命名配置档把可移植 PTO 状态变为可重置、可单步执行的功能模型实例。它拥有 PE0 初始化和生成式模型库使用的单待处理请求握手；它不定义通用的宿主操作系统 ABI。
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-concepts role=concepts-state -->
+## 初始化与请求状态
+
+`InitializeFunctionalModel` 执行完整配置档重置、选择 PE0、安装偶数入口 TPC，并启动配置档序号。首次步骤前，`InitializeFunctionalModelGPR` 可初始化 PE0 绝对 GPR。请求观测函数公开被冻结的待处理 token、来源 PE、类型和标量参数。
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-rules role=rules-interactions -->
+## 请求生命周期
+
+`BeginFunctionalModelHostRequest` 在发布一个请求前验证模型状态、结果 GPR、偶数恢复 TPC 和单调 token 可用性。匹配完成只写一次已捕获来源 PE 的结果 GPR 和恢复 TPC。陈旧或重复 token 被无效果拒绝，重置不会复用 next-token 计数器。
+
+功能退出绑定只拦截已初始化配置档中 `a7=94` 的 ACRC 请求类型 1。它捕获 `a0` 作为请求参数/结果 GPR，并把下一条四字节 TPC 作为恢复点；所有不匹配的 ACRC 保留可移植 service-request 行为。
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-boundaries role=boundaries -->
+## 边界
+
+本次 bring-up 仅为请求类型 94 赋予宿主含义。内存响应载荷、其他 syscall、启动、TLS、文件描述符、屏障、多 Core 执行和通用进程恢复仍未指定。模型描述符与快照要求各有独立所有者，不从请求 API 推断。
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-example role=example-usage -->
+## 非规范宿主序列
+
+运行器以入口/SP 重置模型，反复调用 `ExecuteOnePTOStep` 直到得到 `HostRequest`，执行受支持宿主动作，再调用匹配完成入口。请求待处理期间，重复步骤返回同一不可变请求，不取指也不推进时间。
+
+<!-- PTO-READER-BLOCK: arch-functional-profile-related role=related-owners-navigation -->
+## 相关所有者
+
+- [功能模型状态](../state/functional-model.md)声明后备字段。
+- [功能步骤](../dispatch/functional-step.md)观测待处理状态并执行指令。
+- [重置](reset.md)提供初始化使用的完整参考重置。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

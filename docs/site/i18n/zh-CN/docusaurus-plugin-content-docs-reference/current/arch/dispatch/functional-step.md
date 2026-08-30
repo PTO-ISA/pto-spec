@@ -12,7 +12,37 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-functional-step-purpose role=purpose-scope -->
+## 用途与范围
 
+`ExecuteOnePTOStep` 是架构拥有的功能执行边界。它负责待处理请求观测、指令对齐、取指预检、长度选择、解码/执行分派以及返回给模型使用者的不可变结果。
+
+<!-- PTO-READER-BLOCK: arch-functional-step-concepts role=concepts-state -->
+## 有序步骤流水
+
+步骤首先快照 TPC、BPC 和来源 PE。随后处理未初始化或已有待处理请求的配置档状态，检查 TPC 偶数对齐，探测前两个字节，确定 16/32/48/64 位长度，探测完整范围，按小端取回字节，最后调用 `ExecutePTOInstruction`。
+
+<!-- PTO-READER-BLOCK: arch-functional-step-rules role=rules-interactions -->
+## 观测与序号规则
+
+解码前退出不会推进 `_FunctionalProfileSequence`，并报告 `NotAttempted`。已取指路径在分派前将序号推进一次。结果随后区分已执行形式、被拒绝形式、ASL 产生的陷阱或宿主请求，并快照指令后的控制/故障/请求字段。
+
+<!-- PTO-READER-BLOCK: arch-functional-step-boundaries role=boundaries -->
+## 故障与运行器边界
+
+奇数 TPC 和不可访问取指范围属于解码前陷阱。已接受指令仍可能以陷阱或宿主请求结束。拒绝绝不被解释为进程退出。ELF 策略、停止 PC、步骤上限、进程状态和结果文件发布仍是此 ASL 结果之外的运行器职责。
+
+<!-- PTO-READER-BLOCK: arch-functional-step-example role=example-usage -->
+## 非规范 trace 示例
+
+对于位于 `0x100` 的 16 位指令，结果记录 `pre_tpc=0x100`、`raw_instruction` 中的低半字、`length_bits=16` 以及分派后的 TPC。下一次调用若已有待处理请求，则返回同一请求快照而不再取指或推进时间。
+
+<!-- PTO-READER-BLOCK: arch-functional-step-related role=related-owners-navigation -->
+## 相关所有者
+
+- [指令取回](../memory-model/instruction-fetch.md)拥有探测和字节组装。
+- [功能模型结果类型](../data-types/functional-model.md)定义返回记录。
+- [功能模型配置档](../profile/functional-model.md)拥有重置和宿主请求状态。
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL

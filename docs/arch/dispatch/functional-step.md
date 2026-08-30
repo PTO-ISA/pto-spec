@@ -12,7 +12,37 @@ This page is a generated reference view of the normative ASL unit.
 > **Non-normative explanation.** Exact behavior remains owned by the ASL source and generated contract on this page.
 
 <!-- SUPPLEMENTARY-BEGIN -->
+<!-- PTO-READER-BLOCK: arch-functional-step-purpose role=purpose-scope -->
+## Purpose and scope
 
+`ExecuteOnePTOStep` is the architecture-owned functional execution boundary. It owns pending-request observation, instruction alignment, fetch preflight, length selection, decode/execute dispatch, and the immutable result returned to a model consumer.
+
+<!-- PTO-READER-BLOCK: arch-functional-step-concepts role=concepts-state -->
+## Ordered step pipeline
+
+The step first snapshots TPC, BPC, and origin PE. It then handles uninitialized or already-pending profile state, checks even TPC alignment, probes the first two bytes, determines 16/32/48/64-bit length, probes the complete range, fetches little-endian bytes, and finally invokes `ExecutePTOInstruction`.
+
+<!-- PTO-READER-BLOCK: arch-functional-step-rules role=rules-interactions -->
+## Observation and sequencing rules
+
+Predecode exits do not advance `_FunctionalProfileSequence` and report `NotAttempted`. A fetched path advances the sequence once before dispatch. The result then distinguishes an executed form, rejected form, ASL-produced trap, or host request and snapshots the post-instruction control/fault/request fields.
+
+<!-- PTO-READER-BLOCK: arch-functional-step-boundaries role=boundaries -->
+## Fault and runner boundaries
+
+Odd TPC and inaccessible fetch ranges are predecode traps. An accepted instruction may still finish as a trap or host request. Rejection is never interpreted as process exit. ELF policy, stop-PC, step limits, process status, and result-file publication remain runner concerns outside this ASL result.
+
+<!-- PTO-READER-BLOCK: arch-functional-step-example role=example-usage -->
+## Non-normative trace example
+
+For a 16-bit instruction at `0x100`, the result records `pre_tpc=0x100`, the fetched low halfword in `raw_instruction`, `length_bits=16`, and the post-dispatch TPC. A pending request on the next call returns the same request snapshot without fetching another instruction.
+
+<!-- PTO-READER-BLOCK: arch-functional-step-related role=related-owners-navigation -->
+## Related owners
+
+- [Instruction fetch](../memory-model/instruction-fetch.md) owns probe and byte assembly.
+- [Functional-model result types](../data-types/functional-model.md) define the returned record.
+- [Functional-model profile](../profile/functional-model.md) owns reset and host-request state.
 <!-- SUPPLEMENTARY-END -->
 
 ## Normative ASL
