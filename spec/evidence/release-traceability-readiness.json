@@ -13533,7 +13533,8 @@
         "ADR-0115"
       ],
       "tests": [
-        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004"
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
+        "PTO-AVS-ARCH-PROFILE-FUNCTIONAL-MODEL-STATIC-001"
       ]
     },
     {
@@ -13678,7 +13679,8 @@
         "ADR-0115"
       ],
       "tests": [
-        "PTO-AVS-SCALAR-FIRST-BODY-ENTRY-001"
+        "PTO-AVS-SCALAR-FIRST-BODY-ENTRY-001",
+        "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001"
       ]
     },
     {
@@ -18508,7 +18510,7 @@
     "tests/asl/arch/profile/functional-model/arch-bound-functional-model-token-exhaustion-002.asl": "6a68a771a057398472fd9bea96889ac599b56b1afdd89014d8336bbc3369b088",
     "tests/asl/arch/profile/functional-model/arch-exec-functional-model-exit-group-004.asl": "5114434522542b0c60b4e3410cb70cae03ac26cea889b3f596649bf44d89d34d",
     "tests/asl/arch/profile/functional-model/arch-fault-functional-model-token-reset-stale-003.asl": "a0be2340ff68dbd59ffade7872dba1fbd9e10b6b395d2828cd17e4058b0907f2",
-    "tests/asl/arch/profile/functional-model/arch-static-functional-model-contract-001.asl": "1f990e114c5c8583f9d3028026ad0c1eedd20a5ec54091231abd52c401f44d13",
+    "tests/asl/arch/profile/functional-model/arch-static-functional-model-contract-001.asl": "7afaa64cc029960ccc4813b740f43dc3518b2b6fb05a65c083885eb768da1d08",
     "tests/asl/arch/profile/indexed-memory-lane-choice/arch-static-indexed-memory-lane-choice-contract-001.asl": "969a7cebf01bbcbc4d79de70f44af505b9539980ae0cfd925a8d00b2803b06e8",
     "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-001.asl": "92669a95060a3b8714455a3f9963aeede37677257743c6098cf45a6af57758de",
     "tests/asl/arch/profile/matrix-postprocess/arch-exec-matrix-postprocess-pipeline-002.asl": "29d156198af9caef5156e22bb229ffab7286670561b6228df661121249708a90",
@@ -21308,7 +21310,7 @@
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-fsu-canonical-001.asl": "3d9eee57ffb8770aa4c8de097029ae0e515802bd0b7e86291687270541af3937",
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-sys-canonical-001.asl": "0f25235aa9ea79cb274d472d8bfe66b928ed4a26c666f5bd9b47e70c612003ca",
     "tests/asl/scalar/model/dispatch/top-level/scalar-state-first-body-entry-001.asl": "9ee66ee75615d780dd55a90dd138bd85bec8c91c57e04c81ec748bd0f7f30643",
-    "tests/asl/scalar/model/dispatch/top-level/scalar-static-top-level-contract-001.asl": "4a1d3eeac365fc028d6f166f641440442b183dbde23b2fe91e60969c1a05cec5",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-static-top-level-contract-001.asl": "72d1e0117a2eca3e226d9150eab314387f9bc4a2230e5f3a749fc320dd55b487",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl": "f69215340e4386705e0c6015f439b8095a354a3dff748f4b79b48f81ce3ed64d",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-fp-dispatch-effects-001.asl": "c524593e05c0f0f763f183dfd80c1e1561563c4d1f9af1d04b19b1c3b99598b5",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-state-fp-flag-lifecycle-001.asl": "e659fa5c811e52d03ca94dcd4bd6c67c7dade677b0bd8829cc11b3b04b013c35",
@@ -30724,10 +30726,11 @@
       "path": "tests/asl/arch/profile/functional-model/arch-static-functional-model-contract-001.asl",
       "requirements": [
         "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+        "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
         "PTO-REQ-FUNCTIONAL-RESET-001",
         "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001"
       ],
-      "sha256": "1f990e114c5c8583f9d3028026ad0c1eedd20a5ec54091231abd52c401f44d13",
+      "sha256": "7afaa64cc029960ccc4813b740f43dc3518b2b6fb05a65c083885eb768da1d08",
       "source": "asl/arch/profile/functional-model.asl"
     },
     {
@@ -49485,8 +49488,10 @@
       "id": "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/scalar/model/dispatch/top-level/scalar-static-top-level-contract-001.asl",
-      "requirements": [],
-      "sha256": "4a1d3eeac365fc028d6f166f641440442b183dbde23b2fe91e60969c1a05cec5",
+      "requirements": [
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
+      ],
+      "sha256": "72d1e0117a2eca3e226d9150eab314387f9bc4a2230e5f3a749fc320dd55b487",
       "source": "asl/scalar/model/dispatch/top-level.asl"
     },
     {

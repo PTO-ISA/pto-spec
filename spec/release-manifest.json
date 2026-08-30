@@ -3466,7 +3466,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "30dd4287c5f1a670a2c2ec69faaed40c8a9b59a5ed44817be815a6f170654c3f"
+      "sha256": "c1a76b599a8c56884f333c51abecbe5452f5f4a324745bfa1d4c399d2822e417"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3474,15 +3474,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "4299cf4be93394fcf13fa24aaa63183a04b4c7796e37f2c3a6bff4dcf82c9cd1"
+      "sha256": "47ee4ad83056b734ba611a8a0e7bc498bfcbe05a4bbf18db56363a548c434ad4"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "88296be87b0a1cb8ee5090e6a8d309bd929feec82d3f306273ba791000d0b4d4"
+      "sha256": "407957330d934359ed0cdd1ff6614602aa54ea25b91a43a8fea9a044e5449176"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "89b36e44077779189f587529c8f78ea9c49a88f193a34285162a63d3f78ab20c"
+      "sha256": "ba79316987aa0a06716b507c4a1bed6497dc3c67effc4d39008ba62ee0b7e286"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3528,7 +3528,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "6f9bc9efa48cd7d5bee65cfa808d133097c26b5588a9c2eab5a6255fcf2c7d4f",
+  "content_sha256": "0aa305908f80ca974a0597e9d9c0b69b0ece9880db08205848e8282f9d8e79a2",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
