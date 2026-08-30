@@ -25,6 +25,10 @@ from scripts.asl_units import (
     load_units,
 )
 from scripts.ndf import NdfValidationError, instruction_clause_id, parse_ndf_regions
+from scripts.model_contracts import (
+    ModelContractValidationError,
+    parse_model_contracts,
+)
 from scripts.asl_validation_shards import EMPTY_VALIDATION_SHARD, VALIDATION_CALL
 
 
@@ -674,7 +678,7 @@ def _read_focused_test_ids(
 
 
 def requirement_index(root: Path, units: Sequence[AslUnit]) -> dict[str, bool]:
-    """Build the repository's NDF identity-to-executable index."""
+    """Build the repository's architecture/model requirement index."""
 
     requirements: dict[str, bool] = {}
     for unit in units:
@@ -689,6 +693,18 @@ def requirement_index(root: Path, units: Sequence[AslUnit]) -> dict[str, bool]:
             if clause.clause_id in requirements:
                 raise ValueError(f"duplicate NDF requirement {clause.clause_id}")
             requirements[clause.clause_id] = clause.kind == "executable"
+        try:
+            model_contracts = parse_model_contracts(
+                path.read_text(encoding="utf-8"), unit.source_path
+            )
+        except ModelContractValidationError as error:
+            raise ValueError("\n".join(error.errors)) from error
+        for contract in model_contracts:
+            if contract.contract_id in requirements:
+                raise ValueError(
+                    f"duplicate architecture/model requirement {contract.contract_id}"
+                )
+            requirements[contract.contract_id] = True
         if unit.mnemonic is not None:
             identity = instruction_clause_id(unit.surface, unit.mnemonic)
             if identity in requirements:

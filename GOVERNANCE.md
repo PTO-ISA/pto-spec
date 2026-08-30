@@ -14,6 +14,13 @@ All architecture changes use stable `PTO-*` clauses and the
 The [ADR process](docs/governance/adr-process.md) owns decision states, NDF
 responsibilities, and supersession rules.
 
+Executable functional-model lifecycle and hosted-ABI contracts are not NDF
+architecture. They use `PTO-MODEL-CONTRACT` regions with an explicit `model`
+or `abi` layer and are validated by `scripts/check-model-contracts`. Such a
+contract may invoke an owning PTO ASL/NDF transition, but it cannot satisfy an
+architectural NDF obligation, add PTO state, or change instruction semantics.
+ADRs list these separately in `affected_model_contracts`.
+
 ## Validation policy
 
 The repository has three distinct lanes: lightweight pull-request feedback,
@@ -32,6 +39,10 @@ workflows and validation scripts remain the executable contracts.
   decision state, owning ASL/NDF change, and focused executable evidence.
 - **Toolchain** updates the audited ASLRef pin or build environment and stays
   isolated from architecture behavior.
+- **Functional-model or hosted ABI** changes model lifecycle, observation,
+  checkpoint, consumer, or process conventions without changing PTO
+  architecture. It uses a model-contract owner and independent ABI/runtime
+  evidence; any required PTO semantic change remains a separate NDF change.
 - **Governance or projection** changes policy, workflow, generation, or
   non-normative explanation without changing ASL meaning.
 - **Refactor** preserves accepted semantics and carries regression evidence.

@@ -1,7 +1,7 @@
 ---
 {
   "id": "ADR-0115",
-  "title": "Functional-model exit_group profile binding",
+  "title": "Functional-model exit_group hosted-ABI binding",
   "status": "accepted",
   "authors": ["Codex"],
   "approvers": ["zhoubot"],
@@ -13,9 +13,11 @@
   "target_releases": ["0.58.5"],
   "release_boundary": true,
   "affected_ndf": [
-    "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-    "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
     "PTO-REQ-SCALAR-BODY-ENTRY-001"
+  ],
+  "affected_model_contracts": [
+    "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
+    "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001"
   ],
   "affected_units": [
     "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
@@ -31,7 +33,7 @@
 }
 ---
 
-# ADR-0115: Functional-model exit_group profile binding
+# ADR-0115: Functional-model exit_group hosted-ABI binding
 
 ## Summary
 
@@ -77,11 +79,13 @@ process status is the low eight bits of the captured `a0`, matching normal
 host process exit-code transport, while the manifest retains the full XLEN
 argument.
 
-## Normative delta
+## Contract delta
 
-`PTO-REQ-FUNCTIONAL-EXIT-GROUP-001` owns the exact ACRC/GPR tuple, interception
-order, request fields, resume TPC, and fail-closed token behavior. No new
-instruction encoding or assembly spelling is introduced.
+The non-architectural hosted-ABI contract
+`PTO-REQ-FUNCTIONAL-EXIT-GROUP-001` owns the exact ACRC/GPR tuple,
+interception order, request fields, resume TPC, and fail-closed token behavior.
+It does not define a PTO instruction encoding, assembly spelling, or
+architectural state.
 
 `PTO-REQ-SCALAR-BODY-ENTRY-001` closes the executable phase transition that
 was previously present only as an uncalled model action: the first decoded
@@ -137,6 +141,6 @@ and issue #150 retains the broader hosted runtime.
 
 ## Release consequences
 
-This is a 0.58.5 functional-profile release boundary. Generated ASL mirrors,
-ADR index, traceability, model descriptor inputs, corpus identity, and release
-evidence must be regenerated at the final commit.
+This is a 0.58.5 functional-model/hosted-ABI release boundary. Generated ASL
+mirrors, ADR index, traceability, model descriptor inputs, corpus identity, and
+release evidence must be regenerated at the final commit.

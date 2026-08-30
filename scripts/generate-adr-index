@@ -101,6 +101,8 @@ def _render_open_index() -> str:
                 f"- Target release: {', '.join(record.target_releases)}",
                 f"- Implementation issue: {record.implementation_issue or 'not assigned'}",
                 f"- Affected NDF clauses: {', '.join(record.affected_ndf) or 'not assigned'}",
+                "- Affected model contracts: "
+                + (", ".join(record.affected_model_contracts) or "not assigned"),
                 "- Blockers:",
             ]
         )

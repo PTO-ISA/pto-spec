@@ -18,7 +18,7 @@ DECODER_GENERATION_INPUTS := $(ASL_UNIT_SOURCES) scripts/generate-asl-decoders \
 
 .PHONY: all setup build clean release-manifest release-evidence-check release-check release-prepare \
 	release-verify repo-check pr-check toolchain-check check test test-parallel ci \
-	check-asl-layout check-ndf check-adrs check-asl-tests check-projections \
+	check-asl-layout check-ndf check-model-contracts check-adrs check-asl-tests check-projections \
 	check-decoder-partition check-publication-hygiene check-release-event-schema \
 	check-mnemonic-explanations \
 	print-asl-sources print-asl-tests site-install site-check site-e2e site-quality \
@@ -51,6 +51,9 @@ check-asl-layout:
 
 check-ndf:
 	./scripts/check-ndf
+
+check-model-contracts:
+	./scripts/check-model-contracts
 
 check-adrs:
 	./scripts/check-adrs
@@ -85,7 +88,7 @@ check-mnemonic-explanations:
 	python3 scripts/generate-mnemonic-description-inventory --check
 	./scripts/generate-mnemonic-description-coverage --check
 
-pr-check: check-asl-layout check-ndf check-adrs check-asl-tests check-decoder-partition check-projections check-publication-hygiene check-release-event-schema
+pr-check: check-asl-layout check-ndf check-model-contracts check-adrs check-asl-tests check-decoder-partition check-projections check-publication-hygiene check-release-event-schema
 	./scripts/check-release-workflow
 	python3 -m unittest discover -s tests/scripts -p 'test_*.py'
 	git diff --check

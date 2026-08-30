@@ -13,8 +13,10 @@
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-REQ-FUNCTIONAL-FETCH-001",
+    "PTO-REQ-FUNCTIONAL-MEMORY-001"
+  ],
+  "affected_model_contracts": [
     "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
-    "PTO-REQ-FUNCTIONAL-MEMORY-001",
     "PTO-REQ-FUNCTIONAL-RESET-001",
     "PTO-REQ-FUNCTIONAL-STEP-001"
   ],
@@ -127,8 +129,8 @@ from private gfrun syscall semantics into the ASL library.
 ## Accepted choices
 
 1. The four-way low-prefix length rule is portable PTO fetch semantics.
-2. Functional-model host requests use separate resumable profile state with a
-   pending token and exactly-once completion; they do not reuse
+2. Functional-model host requests use separate non-architectural model-control
+   state with a pending token and exactly-once completion; they do not reuse
    `Fault_ServiceRequest`.
 3. Initial scalar execution uses PE0. PE1–PE3 remain reset until an ASL-owned
    PE-mask or collective action updates them.
@@ -158,9 +160,11 @@ fault-versus-process-exit policy.
 
 ## Decision state
 
-The architecture owner accepted the G1 fetch, step, physical-memory primitive,
-reset, topology, and generic scalar host-completion choices on 2026-08-29.
-Their owning ASL clauses and focused AVS implement those accepted clauses.
+The architecture owner accepted the G1 PTO fetch and physical-memory choices
+on 2026-08-29. The same review accepted separate model contracts for step
+observation, reset/topology setup, and generic scalar host completion; those
+contracts do not add PTO architectural state or behavior. Their owning ASL and
+focused AVS implement the corresponding architecture and model contracts.
 Snapshot, model identity, callback transaction, hosted ABI, and memory-response
 contracts remain open for G2/G3. Generated model/runtime work must consume the
 accepted owners without introducing a second semantic definition.
