@@ -7,6 +7,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Architecture
 - [ADR-0114](docs/status/decisions/0114-functional-model-step-observation-v1.md): Functional-model step observation v1
+- [ADR-0116](docs/status/decisions/0116-pto-architecture-and-functional-model-boundary.md): PTO architecture and functional-model implementation boundary
 
 ### Block
 - [ADR-0106](docs/status/decisions/0106-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets
@@ -20,8 +21,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0111](docs/status/decisions/0111-asl-functional-model-execution-boundary.md): ASL functional-model fetch, step, memory, and host boundary
 - [ADR-0112](docs/status/decisions/0112-warning-free-aslref-constraint-refinements.md): Warning-free ASLRef constraint refinements
 - [ADR-0113](docs/status/decisions/0113-indexed-memory-lane-choice-profile.md): Named indexed-memory lane-choice profiles
-- [ADR-0115](docs/status/decisions/0115-functional-model-exit-group-profile.md): Functional-model exit_group hosted-ABI binding
-- [ADR-0116](docs/status/decisions/0116-pto-architecture-and-functional-model-boundary.md): PTO architecture and functional-model implementation boundary
+- [ADR-0115](docs/status/decisions/0115-functional-model-exit-group-profile.md): Functional-model exit_group profile binding
 
 ### Tile
 - [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement

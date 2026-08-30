@@ -1,9 +1,9 @@
 <!-- GENERATED FROM: asl/arch/profile/functional-model.asl -->
 # Functional Model
 
-**Executable model-contract ASL source:** `asl/arch/profile/functional-model.asl`
+**Normative ASL source:** `asl/arch/profile/functional-model.asl`
 
-This page is a generated reference view of a non-architectural functional-model contract. PTO architecture remains owned by the architectural ASL/NDF that this model contract invokes.
+This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-PROFILE-FUNCTIONAL-MODEL}
 
@@ -47,27 +47,27 @@ This page is a generated reference view of a non-architectural functional-model 
 - [重置](reset.md)提供初始化使用的完整参考重置。
 <!-- SUPPLEMENTARY-END -->
 
-## Model-contract ASL
+## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/functional-model.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-PROFILE-FUNCTIONAL-MODEL","surface":"arch","classification":["profile","functional-model"],"depends_on":["PTO-ARCH-PROFILE-RESET","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"]}
 
-// PTO-MODEL-CONTRACT-BEGIN: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
-// contract: layer=model status=accepted
+// NDF-BEGIN: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
 // A functional-model instance MUST expose at most one pending host request.
 // Repeated step while pending MUST return the same immutable token, origin PE,
 // request type, and scalar argument without fetch, time advance, or state
 // effect. Only a matching token MAY complete the current generic scalar
 // request; completion MUST write the captured origin-PE result GPR and shared
 // resume TPC exactly once. Stale and duplicate completion MUST have no effect.
-// Tokens MUST NOT be reused during a model-instance lifetime; model reset MUST
-// preserve the next-token counter and exhaustion MUST fail closed.
+// Tokens MUST NOT be reused during a model-instance lifetime; architecture
+// reset MUST preserve the next-token counter and exhaustion MUST fail closed.
 // Memory response payloads and hosted ABI request meanings remain unspecified.
-// PTO-MODEL-CONTRACT-END: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
+// NDF-END: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
 
-// PTO-MODEL-CONTRACT-BEGIN: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
-// contract: layer=abi status=accepted
+// NDF-BEGIN: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
 // In an initialized functional-model profile only, ACRC request type 1 with
 // PE-local a7 equal to Linux exit_group request 94 MUST open host request 94
 // before ordinary service-request routing.  The immutable argument MUST be
@@ -75,16 +75,15 @@ This page is a generated reference view of a non-architectural functional-model 
 // four-byte instruction.  Every other ACRC input MUST retain portable service
 // request semantics.  A matched request that cannot allocate a unique token
 // MUST fail closed with ExecutionStateCheck and no pending request.
-// This binding is a freestanding hosted ABI convention, not PTO architecture.
-// PTO-MODEL-CONTRACT-END: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
+// NDF-END: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
 
-// PTO-MODEL-CONTRACT-BEGIN: PTO-REQ-FUNCTIONAL-RESET-001
-// contract: layer=model status=accepted
+// NDF-BEGIN: PTO-REQ-FUNCTIONAL-RESET-001
+// ndf: kind=contract level=L1 layer=state status=accepted
 // InitializeFunctionalModel MUST perform the complete reference reset, select
 // PE0, install the supplied even entry TPC, and leave PE1 through PE3 reset.
 // Before the first step, InitializeFunctionalModelGPR MAY initialize only PE0
 // absolute GPRs; GPR0 MUST retain its architectural zero behavior.
-// PTO-MODEL-CONTRACT-END: PTO-REQ-FUNCTIONAL-RESET-001
+// NDF-END: PTO-REQ-FUNCTIONAL-RESET-001
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
@@ -126,7 +125,6 @@ func InitializeFunctionalModel(entry: Word)
 begin
     assert entry[0] == '0';
     ResetProfileState();
-    ResetFunctionalModelState();
     _CurrentMemoryAgent = 0;
     WriteTPC(entry);
     _FunctionalModelInitialized = TRUE;

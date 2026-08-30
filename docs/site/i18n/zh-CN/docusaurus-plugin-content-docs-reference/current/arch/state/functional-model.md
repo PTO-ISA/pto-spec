@@ -1,9 +1,9 @@
 <!-- GENERATED FROM: asl/arch/state/functional-model.asl -->
 # Functional Model
 
-**Executable model-contract ASL source:** `asl/arch/state/functional-model.asl`
+**Normative ASL source:** `asl/arch/state/functional-model.asl`
 
-This page is a generated reference view of a non-architectural functional-model contract. PTO architecture remains owned by the architectural ASL/NDF that this model contract invokes.
+This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-STATE-FUNCTIONAL-MODEL}
 
@@ -47,12 +47,12 @@ This page is a generated reference view of a non-architectural functional-model 
 - [执行上下文](../programming-model/execution-context.md)拥有配置档引用的可移植 PC/BPC 与 GPR 状态。
 <!-- SUPPLEMENTARY-END -->
 
-## Model-contract ASL
+## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/state/functional-model.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-STATE-FUNCTIONAL-MODEL","surface":"arch","classification":["state","functional-model"],"depends_on":["PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL","PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT"]}
-// PTO-STATE: {"id":"PTO-STATE-MODEL-FUNCTIONAL-CONTROL","classification":["model","functional-control"],"scope":"system","owner":"PTO-ARCH-STATE-FUNCTIONAL-MODEL","members":["_FunctionalModelInitialized","_FunctionalModelStarted","_FunctionalHostRequestPending","_FunctionalHostRequestToken","_FunctionalHostRequestNextToken","_FunctionalHostRequestOriginPE","_FunctionalHostRequestType","_FunctionalHostRequestArgument0","_FunctionalHostRequestResultGPR","_FunctionalHostRequestResumeTPC","_FunctionalProfileSequence"],"depends_on":["PTO-STATE-ARCH-GPR","PTO-STATE-ARCH-PROGRAM-CONTROL"]}
+// PTO-STATE: {"id":"PTO-STATE-ARCH-FUNCTIONAL-MODEL-PROFILE","classification":["profile","functional-model"],"scope":"system","owner":"PTO-ARCH-STATE-FUNCTIONAL-MODEL","members":["_FunctionalModelInitialized","_FunctionalModelStarted","_FunctionalHostRequestPending","_FunctionalHostRequestToken","_FunctionalHostRequestNextToken","_FunctionalHostRequestOriginPE","_FunctionalHostRequestType","_FunctionalHostRequestArgument0","_FunctionalHostRequestResultGPR","_FunctionalHostRequestResumeTPC","_FunctionalProfileSequence"],"depends_on":["PTO-STATE-ARCH-GPR","PTO-STATE-ARCH-PROGRAM-CONTROL"]}
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
@@ -84,8 +84,8 @@ begin
     _FunctionalModelStarted = FALSE;
     _FunctionalHostRequestPending = FALSE;
     _FunctionalHostRequestToken = Zeros{PTO_XLEN};
-    // The next-token counter is model-instance identity state. Model reset
-    // deliberately preserves it so a stale completion can never acquire
+    // The next-token counter is model-instance identity state. Architecture
+    // reset deliberately preserves it so a stale completion can never acquire
     // authority over a later request in the same instance.
     _FunctionalHostRequestOriginPE = 0;
     _FunctionalHostRequestType = Zeros{16};

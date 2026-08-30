@@ -1,9 +1,9 @@
 <!-- GENERATED FROM: asl/arch/data-types/functional-model.asl -->
 # Functional Model
 
-**Executable model-contract ASL source:** `asl/arch/data-types/functional-model.asl`
+**Normative ASL source:** `asl/arch/data-types/functional-model.asl`
 
-This page is a generated reference view of a non-architectural functional-model contract. PTO architecture remains owned by the architectural ASL/NDF that this model contract invokes.
+This page is a generated reference view of the normative ASL unit.
 
 ## ASL unit identity {#PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL}
 
@@ -48,7 +48,7 @@ This page is a generated reference view of a non-architectural functional-model 
 - [故障](fault.md)定义此处携带的故障标识。
 <!-- SUPPLEMENTARY-END -->
 
-## Model-contract ASL
+## Normative ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/data-types/functional-model.asl -->
 ```asl
