@@ -277,7 +277,6 @@ func ResolveBundleTileDestinations() => boolean
 begin
     return ResolveBundleTileDestinationsWithShape(FALSE, 0, 0, 0);
 end;
-
 func ResolveBundlePredicateDestination() => boolean
 begin
     var destination_binding: BundleTileBindingIndex = 0;
@@ -294,7 +293,6 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-
     let binding = _BundleTileBindings[[destination_binding]];
     let source = binding.source0;
     let source_tile = _Tiles[[source]];
@@ -364,7 +362,9 @@ begin
         return ResolveBundleCellRearrangementDestination();
     end;
     if TileOperationOfIndex(operation) == TileOperation_TIMG2COL then
-        let resolved = ResolveBundleTileDestinations();
+        let source = BundleTileSourceIndex(0, FALSE);
+        let resolved = ResolveBundleTileDestinationsWithShapeAndType(
+            FALSE, 0, 0, 0, TRUE, _Tiles[[source]].data_type);
         if resolved then
             MarkBundleTIMG2COLDestinationsMatrix();
         end;

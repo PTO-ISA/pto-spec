@@ -38,17 +38,16 @@ begin
     end;
 
     let source = BundleTileSourceIndex(0, FALSE);
-    if !TileTCVTSourceContentsDefined(source) ||
-       !TileTCVTSourceEncodingsValid(source) then
+    let source_operation_type = TileDataTypeFromEncoding(
+        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    if !TileTCVTSourceEncodingsValidAs(source, source_operation_type) then
         return FALSE;
     end;
-    let source_type = TileDataTypeFromEncoding(
-        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if _Tiles[[source]].data_type != source_type then return FALSE; end;
     let (destination_type_valid, destination_type) =
         ResolveBundleEffectiveDataType();
     if !destination_type_valid ||
-       !HardwareTCVTTypePairSupported(source_type, destination_type) then
+       !HardwareTCVTTypePairSupported(
+           source_operation_type, destination_type) then
         return FALSE;
     end;
 
@@ -73,7 +72,7 @@ begin
                    _Tiles[[source]].capacity_bytes,
                    _Tiles[[source]].valid_rows,
                    _Tiles[[source]].valid_columns,
-                   source_type, source_layout) &&
+                   source_operation_type, source_layout) &&
                TileCubeDataTypeSupported(destination_type);
     end;
     if TileLayoutIsCube(source_layout) then

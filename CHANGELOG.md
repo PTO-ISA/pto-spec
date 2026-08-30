@@ -146,6 +146,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0056](docs/status/decisions/0056-pto-encoding-ownership-and-gm-access.md): PTO Encoding Ownership and Per-PE GM Access
 - [ADR-0057](docs/status/decisions/0057-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-0058](docs/status/decisions/0058-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
+- [ADR-0112](docs/status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md): Tile operation type roles and source reinterpretation
 
 ### Scalar
 - [ADR-0012](docs/status/decisions/0012-acrc-service-request.md): Define PTO v0 ACRC service requests

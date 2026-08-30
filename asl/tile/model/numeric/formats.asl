@@ -156,6 +156,10 @@ func TCVT(destination: TileIndex, source: TileIndex,
 begin
     var result = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
+    let source_operation_type = if BundleTileOperationSelected() &&
+        _BundleOperation.data_type_valid then TileDataTypeFromEncoding(
+            _BundleOperation.data_type as TileDataTypeEncoding)
+        else source_tile.data_type;
     assert result.valid_rows == source_tile.valid_rows;
     assert result.valid_columns == source_tile.valid_columns;
     if TileLayoutIsCube(source_tile.layout) then
@@ -178,7 +182,7 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let (converted, flags) = TileConvertValue(
                 TileReadLogicalElement(source_tile, source_element),
-                source_tile.data_type,
+                source_operation_type,
                 result.data_type, control);
             result = TileInfoWithLogicalElement(result, destination_element,
                 converted);

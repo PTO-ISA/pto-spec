@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-BUNDLE-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-INST-TILE-TCVT"],"kind":"execution","summary":"TCVT bundle conversion allocates the destination with its own type and transformed layout","pass_condition":"U8 ND source values become a U16 DN destination with equal logical and physical shape while the source persists","related_sources":["asl/block/model/dispatch/tcvt-schema.asl","asl/block/model/dispatch/destination-shape.asl","asl/tile/model/numeric/formats.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCVT-BUNDLE-001","source":"asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl","requirements":["PTO-INST-TILE-TCVT"],"kind":"execution","summary":"TCVT bundle conversion reinterprets a same-width source carrier and allocates its own destination type","pass_condition":"E8M0-backed values interpreted as U8 become a U16 DN destination with equal logical and physical shape while the source persists","related_sources":["asl/block/model/dispatch/tcvt-schema.asl","asl/block/model/dispatch/destination-shape.asl","asl/tile/model/numeric/formats.asl"]}
 func main() => integer
 begin
     ResetProfileState();
@@ -9,7 +9,7 @@ begin
         8,
         1,
         2,
-        TileDataType_U8,
+        TileDataType_E8M0,
         TileLayout_RowMajor,
         TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 7);
@@ -19,6 +19,9 @@ begin
         Zeros{PTO_XLEN} + 0xd9b19181,
         32);
     assert started == CommandExecution_Executed;
+    assert TileDataTypeFromEncoding(
+        _BundleOperation.data_type as TileDataTypeEncoding) ==
+        TileDataType_U8;
     SetBundleDataAttributeState(
         Zeros{5} + 26,
         Zeros{5} + 1,

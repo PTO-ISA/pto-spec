@@ -19,6 +19,25 @@ begin
     end;
 end;
 
+// Operation types describe the interpretation and execution carrier for the
+// selected operation.  A stored Tile descriptor may use a different dtype only
+// when the physical element width is unchanged.
+pure func TileCarrierWidthCompatible(
+    stored_type: TileDataType, operation_type: TileDataType) => boolean
+begin
+    return TileElementBits(stored_type) == TileElementBits(operation_type);
+end;
+
+pure func TileOperationUsesSourceBackingDestination(
+    operation: TileOperation) => boolean
+begin
+    return operation == TileOperation_TMOV ||
+           operation == TileOperation_TCONCAT ||
+           operation == TileOperation_TEXTRACT ||
+           operation == TileOperation_TINSERT ||
+           operation == TileOperation_TIMG2COL;
+end;
+
 // Stage 4 carrier-only operations use the concrete dtype's physical byte
 // width.  Packed X2 formats have a one-byte storage class but retain their
 // baseline nibble semantics and are deliberately excluded here.

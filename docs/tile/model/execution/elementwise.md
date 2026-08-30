@@ -363,11 +363,15 @@ func ExecuteTileBinary(op: TileBinaryOperation, destination: TileIndex,
 begin
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
+    let operation_type = _Tiles[[destination]].data_type;
     assert left_tile.allocated && right_tile.allocated;
-    assert TileShapesMatch(left_tile, right_tile);
-    assert TileShapesMatch(_Tiles[[destination]], left_tile);
-    assert left_tile.data_type == right_tile.data_type;
-    assert _Tiles[[destination]].data_type == left_tile.data_type;
+    assert TileElementwiseShapeMatch(source_left, source_right);
+    assert TileElementwiseShapeMatch(destination, source_left);
+    assert TileCarrierWidthCompatible(left_tile.data_type, operation_type);
+    assert TileCarrierWidthCompatible(right_tile.data_type, operation_type);
+    assert _Tiles[[destination]].data_type == operation_type;
+    assert (op != TileBinary_SHL && op != TileBinary_SHR) ||
+           TileDataTypeIsInteger(right_tile.data_type);
 
     // Snapshot both sources before the first destination write. This defines
     // source/destination aliasing as read-before-write.
@@ -377,7 +381,7 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             _Tiles[[destination]] = TileInfoWithLogicalElement(
                 _Tiles[[destination]], element,
-                TileProfileBinary(op, left_tile.data_type,
+                TileProfileBinary(op, operation_type,
                     TileReadLogicalElement(left_tile, element),
                     TileReadLogicalElement(right_tile, element)));
         end;
@@ -413,6 +417,7 @@ end;
 func ExecuteTileScalar(op: TileBinaryOperation, destination: TileIndex,
                        source: TileIndex, scalar: Word)
 begin
+    let operation_type = _Tiles[[destination]].data_type;
     assert TileOperandsLegal_ExecuteTileScalar(
         op,
         destination,
@@ -420,9 +425,7 @@ begin
         scalar);
     let source_tile = _Tiles[[source]];
     var result = _Tiles[[destination]];
-    let normalized_scalar = TileRawElementValue(
-        scalar,
-        source_tile.data_type);
+    let normalized_scalar = TileRawElementValue(scalar, operation_type);
     var flags = Zeros{5};
     for row = 0 to source_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
@@ -430,7 +433,7 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let (value, element_flags) = TileProfileBinaryWithFlags(
                 op,
-                source_tile.data_type,
+                operation_type,
                 TileReadLogicalElement(source_tile, element),
                 normalized_scalar);
             result = TileInfoWithLogicalElement(result, element, value);

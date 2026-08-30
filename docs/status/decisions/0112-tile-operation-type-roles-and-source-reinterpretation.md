@@ -141,7 +141,7 @@ contracts.
 
 ## Decision
 
-### 1. Type roles
+### Type roles
 
 For an operation with one effective operation type, the operation type is the
 current execution interpretation and the result backing type:
@@ -166,7 +166,7 @@ reinterpretation of the produced Tile view. That reinterpretation is not an
 ISA instruction, has no ASL-visible provenance, and performs no data movement.
 ASL validates only the operation and the physical Tile state it can observe.
 
-### 2. Source readability
+### Source readability
 
 A source Tile is readable under an operation type when all of the following
 hold:
@@ -192,7 +192,7 @@ For raw logical and carrier operations, payload bits are consumed and
 produced as raw carrier data. They do not reject a source because its bits are
 not a valid numeric encoding for the source descriptor's backing dtype.
 
-### 3. Covered ordinary operation families
+### Covered ordinary operation families
 
 This rule applies to the ordinary non-specialized Tile numeric, logical, and
 shift consumers in this first landing:
@@ -217,7 +217,7 @@ specialized matrix/cube operations, reductions, quantization/dequantization,
 and other operation families not listed above retain their existing contracts
 and are not silently broadened by this ADR.
 
-### 4. TCVT
+### TCVT
 
 `TCVT` has two independent operation type roles:
 
@@ -235,7 +235,7 @@ The newly allocated destination backing dtype must equal
 encoding rules continue to follow the existing TCVT contract for the selected
 source/destination type pair.
 
-### 5. Layout and carrier operations
+### Layout and carrier operations
 
 For pure layout/carrier operations, the operation DataType identifies the
 carrier/execution width and does not replace the source semantic/backing type.
@@ -267,7 +267,7 @@ first landing. E8M0 is allowed as an 8-bit raw carrier; raw operations may
 modify its bits, and later consumers observe those bits without an implicit
 repair of scale semantics.
 
-### 6. Destination and alias boundary
+### Destination and alias boundary
 
 This ADR does not add alias or reuse semantics. For issue #162's first
 landing, every operation destination is a newly allocated Tile selected by the

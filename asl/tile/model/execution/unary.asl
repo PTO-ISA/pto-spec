@@ -416,9 +416,11 @@ func ExecuteTileUnary(
     source: TileIndex)
 begin
     let source_tile = _Tiles[[source]];
+    let operation_type = _Tiles[[destination]].data_type;
     assert source_tile.allocated;
-    assert TileShapesMatch(_Tiles[[destination]], source_tile);
-    assert _Tiles[[destination]].data_type == source_tile.data_type;
+    assert TileElementwiseShapeMatch(destination, source);
+    assert TileCarrierWidthCompatible(source_tile.data_type, operation_type);
+    assert _Tiles[[destination]].data_type == operation_type;
 
     var result_tile = _Tiles[[destination]];
     var flags = Zeros{5};
@@ -431,7 +433,7 @@ begin
             if TileUnaryUsesClosedElementwiseContract(operation) then
                 let (result, element_invalid) = TileFixedUnaryValue(
                     operation,
-                    source_tile.data_type,
+                    operation_type,
                     TileReadLogicalElement(source_tile, element));
                 result_tile = TileInfoWithLogicalElement(
                     result_tile, element, result);
@@ -442,14 +444,14 @@ begin
                 let (handled, special_result, special_flags) =
                     TileSFUUnarySpecialValue(
                         operation,
-                        source_tile.data_type,
+                        operation_type,
                         TileReadLogicalElement(source_tile, element));
                 var result = special_result;
                 var element_flags = special_flags;
                 if !handled then
                     let (profile_result, profile_flags) = TileProfileUnary(
                         operation,
-                        source_tile.data_type,
+                        operation_type,
                         TileReadLogicalElement(source_tile, element));
                     result = profile_result;
                     element_flags = profile_flags;

@@ -131,7 +131,10 @@ begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     let descriptor = ReadTileFeatureMapDescriptor(source);
-    if !TileCarrierOnlyDataTypeSupported(source_tile.data_type) ||
+    let (operation_type_valid, operation_type) =
+        ResolveBundleEffectiveDataType();
+    if !operation_type_valid ||
+       !TileCarrierWidthCompatible(source_tile.data_type, operation_type) ||
        destination_tile.data_type != source_tile.data_type ||
        destination_tile.layout != TileLayout_RowMajor ||
        source_tile.layout != TileLayout_RowMajor ||

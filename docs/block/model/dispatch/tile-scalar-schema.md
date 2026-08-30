@@ -111,10 +111,9 @@ readonly func SelectedBundleTileScalarElementwiseSourceLegal(
 begin
     return TileDescriptorLegal(source) &&
            _Tiles[[source]].storage_kind == TileStorage_Numeric &&
-           _Tiles[[source]].data_type == data_type &&
+           TileCarrierWidthCompatible(_Tiles[[source]].data_type, data_type) &&
            TileElementwiseLayoutSupported(_Tiles[[source]].layout) &&
            TileSourceContentsDefined(source) &&
-           TileSourceEncodingsValid(source) &&
            SelectedBundleComparisonShapeMatches(source);
 end;
 
@@ -144,6 +143,11 @@ begin
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode()
             as TileDataTypeEncoding);
+    let raw_carrier = binary == TileBinary_AND ||
+                      binary == TileBinary_OR ||
+                      binary == TileBinary_XOR ||
+                      binary == TileBinary_SHL ||
+                      binary == TileBinary_SHR;
     if !TileBinaryDataTypeSupported(binary, data_type) ||
        !TileElementwiseLayoutSupported(CurrentBundleTileLayout()) ||
        !SelectedBundleTileScalarElementwiseSourceLegal(
@@ -151,11 +155,15 @@ begin
            data_type) then
         return FALSE;
     end;
+    if !raw_carrier &&
+       !TileElementwiseSourceEncodingsValidAs(binding.source0, data_type) then
+        return FALSE;
+    end;
 
     let scalar = TileRawElementValue(
         SelectedBundleTileScalarRawValue(),
         data_type);
-    if !TileNumericEncodingValid(data_type, scalar) then
+    if !raw_carrier && !TileNumericEncodingValid(data_type, scalar) then
         return FALSE;
     end;
     if (binary == TileBinary_DIV || binary == TileBinary_REM) &&
