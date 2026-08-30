@@ -245,10 +245,7 @@ class NdfTest(unittest.TestCase):
                 "_ACRTrapArgument0",
                 "_TrapContexts",
             ),
-            "PTO-STATE-TILE-LOCAL": ("_Tiles", "_TileAllocationMasks"),
-            "PTO-STATE-TILE-FEATURE-MAP": ("_TileFeatureMapDescriptors",),
-            "PTO-STATE-TILE-SHARED": ("_SharedTiles",),
-            "PTO-STATE-ARCH-FUNCTIONAL-MODEL-PROFILE": (
+            "PTO-STATE-MODEL-FUNCTIONAL-CONTROL": (
                 "_FunctionalModelInitialized",
                 "_FunctionalModelStarted",
                 "_FunctionalHostRequestPending",
@@ -261,6 +258,9 @@ class NdfTest(unittest.TestCase):
                 "_FunctionalHostRequestResumeTPC",
                 "_FunctionalProfileSequence",
             ),
+            "PTO-STATE-TILE-LOCAL": ("_Tiles", "_TileAllocationMasks"),
+            "PTO-STATE-TILE-FEATURE-MAP": ("_TileFeatureMapDescriptors",),
+            "PTO-STATE-TILE-SHARED": ("_SharedTiles",),
             "PTO-STATE-BLOCK-CONTROL": (
                 "_BARG",
                 "_BundleCommitTargetSet",

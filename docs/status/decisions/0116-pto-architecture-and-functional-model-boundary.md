@@ -18,10 +18,11 @@
   ],
   "affected_units": [
     "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+    "PTO-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT",
     "PTO-ARCH-STATE-FUNCTIONAL-MODEL"
   ],
   "resolves": [],
-  "supersedes": [],
+  "supersedes": ["ADR-0114"],
   "superseded_by": [],
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/179",
   "release_impact": "required",
@@ -55,6 +56,13 @@ The specification distinguishes four layers:
    checkpoint compatibility, and consumer failure behavior.
 4. The implementation selects MIR/runtime data structures, binary envelopes,
    hashing, storage, and optimization.
+
+The positive model-architecture and ABI NDF is owned by
+`the downstream model repository` in
+`docs/pto-asl-functional-model-ndf-v1.json`. PTO-SPEC may contain the ASL
+harness needed to generate and validate the library, but that harness carries
+no model-lifecycle, process, or ABI NDF and is excluded from PTO architectural
+state ownership.
 
 PTO architecture defines no snapshot operation, snapshot format, model
 descriptor, C ABI, or summary hash. A functional-model checkpoint may cover

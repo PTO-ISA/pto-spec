@@ -48,7 +48,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "id", "isa", "requirements", "avs_ids", "inputs", "elf",
+        "id", "isa", "requirements", "model_requirements", "avs_ids", "inputs", "elf",
         "initial_gprs", "stack", "stop_policy", "allowed_requests",
         "expected_length_sequence", "expected_trace", "trace_requirements", "result", "golden"
       ],
@@ -77,6 +77,12 @@
           }
         },
         "requirements": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "model_requirements": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^SSM-(MODEL|ABI|IMPL)-[A-Z0-9-]+$"}
+        },
         "avs_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
         "inputs": {
           "type": "object",

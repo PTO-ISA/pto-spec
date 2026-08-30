@@ -1936,13 +1936,27 @@ def render_concept_avs(root: Path, unit: AslUnit) -> tuple[Path, str]:
     clauses = parse_ndf_regions(
         (root / unit.source_path).read_text(encoding="utf-8"), unit.source_path
     )
+    model_harness = unit.unit_id in {
+        "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
+        "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
+        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-ARCH-STATE-FUNCTIONAL-MODEL",
+    }
     metadata = {
         "id": test_id,
         "source": unit.source_path.as_posix(),
         "requirements": [clause.clause_id for clause in clauses],
         "kind": "static-invariant",
-        "summary": f"{unit.unit_id} compiles as an independent normative unit",
-        "pass_condition": "the complete model and this unit's static invariant compile",
+        "summary": (
+            f"{unit.unit_id} compiles as a non-architectural model harness unit"
+            if model_harness
+            else f"{unit.unit_id} compiles as an independent normative unit"
+        ),
+        "pass_condition": (
+            "the complete PTO model and this model-harness static invariant compile"
+            if model_harness
+            else "the complete model and this unit's static invariant compile"
+        ),
         "related_sources": [],
     }
     concept_slug = sanitize(unit.source_path.stem).lower()

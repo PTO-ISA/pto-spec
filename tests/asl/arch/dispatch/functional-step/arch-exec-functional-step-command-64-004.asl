@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-COMMAND-64-004","source":"asl/arch/dispatch/functional-step.asl","requirements":["PTO-REQ-FUNCTIONAL-FETCH-001","PTO-REQ-FUNCTIONAL-STEP-001"],"kind":"execution","summary":"One fetched 64-bit L.BSTOP executes through the functional step boundary.","pass_condition":"ExecuteOnePTOStep fetches eight little-endian bytes, commits the prepared active bundle, and reports a successful 64-bit step.","related_sources":["asl/block/lifecycle/L.BSTOP.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-COMMAND-64-004","source":"asl/arch/dispatch/functional-step.asl","requirements":["PTO-REQ-FUNCTIONAL-FETCH-001","PTO-INST-BLOCK-L-BSTOP"],"kind":"execution","summary":"One fetched 64-bit L.BSTOP executes through the functional step boundary.","pass_condition":"ExecuteOnePTOStep fetches eight little-endian bytes, commits the prepared active bundle, and reports a successful 64-bit step.","related_sources":["asl/block/lifecycle/L.BSTOP.asl"]}
 func main() => integer
 begin
     let entry = Zeros{PTO_XLEN} + 0x280;

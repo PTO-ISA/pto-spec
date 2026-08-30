@@ -1,36 +1,8 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-FUNCTIONAL-MODEL","surface":"arch","classification":["profile","functional-model"],"depends_on":["PTO-ARCH-PROFILE-RESET","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-FUNCTIONAL-MODEL","surface":"arch","classification":["profile","functional-model"],"depends_on":["PTO-ARCH-PROFILE-RESET","PTO-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT","PTO-ARCH-PROGRAMMING-MODEL-SCALAR-REGISTERS"]}
 
-// NDF-BEGIN: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
-// ndf: kind=contract level=L1 layer=architecture status=accepted
-// A functional-model instance MUST expose at most one pending host request.
-// Repeated step while pending MUST return the same immutable token, origin PE,
-// request type, and scalar argument without fetch, time advance, or state
-// effect. Only a matching token MAY complete the current generic scalar
-// request; completion MUST write the captured origin-PE result GPR and shared
-// resume TPC exactly once. Stale and duplicate completion MUST have no effect.
-// Tokens MUST NOT be reused during a model-instance lifetime; architecture
-// reset MUST preserve the next-token counter and exhaustion MUST fail closed.
-// Memory response payloads and hosted ABI request meanings remain unspecified.
-// NDF-END: PTO-REQ-FUNCTIONAL-HOST-REQUEST-001
-
-// NDF-BEGIN: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
-// ndf: kind=contract level=L1 layer=architecture status=accepted
-// In an initialized functional-model profile only, ACRC request type 1 with
-// PE-local a7 equal to Linux exit_group request 94 MUST open host request 94
-// before ordinary service-request routing.  The immutable argument MUST be
-// a0, the captured result GPR MUST be a0, and the resume TPC MUST be the next
-// four-byte instruction.  Every other ACRC input MUST retain portable service
-// request semantics.  A matched request that cannot allocate a unique token
-// MUST fail closed with ExecutionStateCheck and no pending request.
-// NDF-END: PTO-REQ-FUNCTIONAL-EXIT-GROUP-001
-
-// NDF-BEGIN: PTO-REQ-FUNCTIONAL-RESET-001
-// ndf: kind=contract level=L1 layer=state status=accepted
-// InitializeFunctionalModel MUST perform the complete reference reset, select
-// PE0, install the supplied even entry TPC, and leave PE1 through PE3 reset.
-// Before the first step, InitializeFunctionalModelGPR MAY initialize only PE0
-// absolute GPRs; GPR0 MUST retain its architectural zero behavior.
-// NDF-END: PTO-REQ-FUNCTIONAL-RESET-001
+// Non-architectural generated-model lifecycle and hosted-ABI overlay.  Their
+// model NDF is owned by the downstream model repository
+// docs/pto-asl-functional-model-ndf-v1.json.
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
@@ -72,6 +44,7 @@ func InitializeFunctionalModel(entry: Word)
 begin
     assert entry[0] == '0';
     ResetProfileState();
+    ResetFunctionalModelState();
     _CurrentMemoryAgent = 0;
     WriteTPC(entry);
     _FunctionalModelInitialized = TRUE;
@@ -120,7 +93,7 @@ begin
     return TRUE;
 end;
 
-func InterceptFunctionalModelCloseRequest(
+implementation func InterceptArchitectureCloseRequest(
     request_type: bits(4)) => boolean
 begin
     if !_FunctionalModelInitialized || request_type != '0001' ||

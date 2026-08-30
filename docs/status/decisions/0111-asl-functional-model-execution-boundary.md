@@ -13,19 +13,20 @@
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-REQ-FUNCTIONAL-FETCH-001",
-    "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
     "PTO-REQ-FUNCTIONAL-MEMORY-001",
-    "PTO-REQ-FUNCTIONAL-RESET-001",
-    "PTO-REQ-FUNCTIONAL-STEP-001"
+    "PTO-REQ-INSTRUCTION-DISPATCH-001",
+    "PTO-REQ-SERVICE-REQUEST-INTERCEPT-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
     "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
+    "PTO-ARCH-DISPATCH-TOP-LEVEL",
     "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
     "PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH",
     "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
     "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
     "PTO-ARCH-PROFILE-RESET",
+    "PTO-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT",
     "PTO-ARCH-STATE-FUNCTIONAL-MODEL",
     "PTO-SCALAR-MODEL-AGU-MEMORY"
   ],
@@ -54,6 +55,11 @@ ELF loading, physical-byte storage, CLI, tracing, stop policy, and host service
 execution, but it may not retain a private instruction decoder, legality model,
 architectural state transition, or PC/fault implementation.
 
+PTO-SPEC owns only the architecture portions of this split. Functional-model
+lifecycle, step-result, pending-request, snapshot, and hosted-ABI NDF are
+owned in `the downstream model repository` under
+`docs/pto-asl-functional-model-ndf-v1.json`.
+
 ## Decision
 
 ### Fetch and length
@@ -69,13 +75,11 @@ original TPC. Fetch and length faults publish no partial GPR, queue, bundle,
 Tile, memory, PC, or functional request effect beyond the precise trap/fault
 transition.
 
-### Step
+### Model step boundary
 
-`ExecuteOnePTOStep` assembles the fetched bytes into a zero-extended `bits(64)`
-container and calls the existing `ExecutePTOInstruction` owner. Its result
-exposes pre/post PC/BPC, raw bytes, length, execution status, precise fault, and
-current PE identity. Runner stop-PC and step-budget policy remain outside the
-ASL result.
+The non-architectural `ExecuteOnePTOStep` harness assembles fetched bytes and
+calls the existing `ExecutePTOInstruction` owner. Its observation envelope and
+runner policy are defined by the the downstream model repository model NDF, not PTO NDF.
 
 ### Memory
 
@@ -85,12 +89,16 @@ bind those same primitives to host storage only when it preserves existing
 translation, permission, ordering, precise-fault, commit, and reset rules.
 Fixed verification bounds do not become implementation address-space limits.
 
-### Reset and topology
+### Model reset and topology
 
 The functional profile is one PTO Core with four architectural PEs, one shared
 PC/BPC, and PE0 selected as the reset current memory agent. Initial entry, SP,
 and GPR injection use named initialization actions. Legacy gfrun threads are not
 reinterpreted as PTO PEs.
+
+The entry/GPR injection and PE0 startup policy belongs to the the downstream model repository
+model NDF. The four PE register files and shared PC/BPC they initialize remain
+PTO architectural state.
 
 ### Snapshot and identity
 
@@ -112,11 +120,9 @@ or compatibility behavior is inferred by this decision.
 
 ## Alternatives considered
 
-1. **Host request profile state/action (selected).** Add a named
-   functional-model profile request with a pending token and exactly-once
-   completion. It is distinct from architecture service-request traps and is
-   the only accepted G1 path for a host adapter to return one scalar GPR result
-   and resume at a captured TPC.
+1. **External model request state/action (selected).** The generated harness
+   exposes a pending token and exactly-once completion under the
+   the downstream model repository model NDF. It is distinct from PTO service-request traps.
 2. **Runner observation only.** Expose existing service-request/trap state and
    do not provide resumable host requests in the model library.
 
@@ -127,9 +133,8 @@ from private gfrun syscall semantics into the ASL library.
 ## Accepted choices
 
 1. The four-way low-prefix length rule is portable PTO fetch semantics.
-2. Functional-model host requests use separate resumable profile state with a
-   pending token and exactly-once completion; they do not reuse
-   `Fault_ServiceRequest`.
+2. Functional-model host requests use separate resumable model state under the
+   the downstream model repository model NDF; they do not become PTO architectural state.
 3. Initial scalar execution uses PE0. PE1–PE3 remain reset until an ASL-owned
    PE-mask or collective action updates them.
 4. Initial ELF bring-up uses stop-PC completion. Hosted `exit_group`/ACRC
@@ -158,9 +163,9 @@ fault-versus-process-exit policy.
 
 ## Decision state
 
-The architecture owner accepted the G1 fetch, step, physical-memory primitive,
-reset, topology, and generic scalar host-completion choices on 2026-08-29.
-Their owning ASL clauses and focused AVS implement those accepted clauses.
-Snapshot, model identity, callback transaction, hosted ABI, and memory-response
-contracts remain open for G2/G3. Generated model/runtime work must consume the
-accepted owners without introducing a second semantic definition.
+The architecture owner accepted the G1 fetch, physical-memory primitive, and
+service-request interception boundary on 2026-08-29. Model lifecycle, reset,
+step observation, host completion, snapshot, identity, callback transaction,
+and hosted ABI are maintained in the the downstream model repository model NDF. Generated
+model/runtime work must consume PTO owners without introducing a second ISA
+semantic definition.

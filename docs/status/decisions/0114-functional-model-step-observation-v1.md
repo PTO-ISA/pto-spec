@@ -1,29 +1,30 @@
 ---
 {
   "id": "ADR-0114",
-  "title": "Functional-model step observation v1",
-  "status": "accepted",
+  "title": "Functional-model step observation v1 (superseded by model NDF)",
+  "status": "superseded",
   "authors": ["Codex"],
   "approvers": ["zhoubot"],
   "created": "2026-08-29",
   "accepted": "2026-08-29",
   "rejected": null,
-  "superseded": null,
+  "superseded": "2026-08-30",
   "baseline": "1fa86d9066dc2772de3929c2d807f944e87a6f28",
   "target_releases": ["0.58.5"],
   "release_boundary": true,
   "affected_ndf": [
-    "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
-    "PTO-REQ-FUNCTIONAL-STEP-001"
+    "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
+    "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001"
   ],
   "affected_units": [
     "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
     "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
-    "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"
+    "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+    "PTO-ARCH-STATE-FUNCTIONAL-MODEL"
   ],
   "resolves": [],
   "supersedes": [],
-  "superseded_by": [],
+  "superseded_by": ["ADR-0116"],
   "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/179",
   "release_impact": "required",
   "legacy_ids": []
@@ -31,6 +32,10 @@
 ---
 
 # ADR 0114: Functional-model step observation v1
+
+> Superseded: the observation envelope is model architecture, not PTO
+> architecture. Its current owner is
+> `the downstream model repository:docs/pto-asl-functional-model-ndf-v1.json`.
 
 ## Context
 

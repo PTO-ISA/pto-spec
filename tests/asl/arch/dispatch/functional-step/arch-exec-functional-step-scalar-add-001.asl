@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-ADD-001","source":"asl/arch/dispatch/functional-step.asl","requirements":["PTO-REQ-FUNCTIONAL-STEP-001"],"kind":"execution","summary":"One fetched scalar ADD updates the selected PE GPR and advances TPC by four bytes.","pass_condition":"ExecuteOnePTOStep executes the little-endian ADD, writes GPR3=30, and changes TPC from 0x100 to 0x104.","related_sources":["asl/arch/dispatch/top-level.asl","asl/scalar/alu/ADD.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-ADD-001","source":"asl/arch/dispatch/functional-step.asl","requirements":["PTO-REQ-FUNCTIONAL-FETCH-001","PTO-INST-SCALAR-ADD"],"kind":"execution","summary":"One fetched scalar ADD updates the selected PE GPR and advances TPC by four bytes.","pass_condition":"ExecuteOnePTOStep executes the little-endian ADD, writes GPR3=30, and changes TPC from 0x100 to 0x104.","related_sources":["asl/arch/dispatch/top-level.asl","asl/scalar/alu/ADD.asl"]}
 func main() => integer
 begin
     InitializeFunctionalModel(Zeros{PTO_XLEN} + 0x100);

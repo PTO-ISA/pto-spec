@@ -829,18 +829,37 @@ def render_unit_page(
     source_text: str,
     supplementary: str = "",
 ) -> str:
-    """Render one active page from its sole normative ASL owner."""
+    """Render one active page from its sole ASL owner."""
 
     if record.instruction is not None:
         return render_page(record.instruction, supplementary)
     source = record.source_path.as_posix()
+    model_harness = record.unit_id in {
+        "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
+        "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
+        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-ARCH-STATE-FUNCTIONAL-MODEL",
+    }
+    source_label = (
+        "Generated-model harness ASL source"
+        if model_harness
+        else "Normative ASL source"
+    )
+    page_description = (
+        "This page is a generated reference view of non-architectural model "
+        "harness ASL. Its model NDF is owned by the downstream model repository; PTO "
+        "architecture remains owned by the architectural ASL/NDF it invokes."
+        if model_harness
+        else "This page is a generated reference view of the normative ASL unit."
+    )
+    asl_heading = "Model-harness ASL" if model_harness else "Normative ASL"
     lines = [
         f"<!-- GENERATED FROM: {source} -->",
         f"# {_unit_title(record)}",
         "",
-        f"**Normative ASL source:** `{source}`",
+        f"**{source_label}:** `{source}`",
         "",
-        "This page is a generated reference view of the normative ASL unit.",
+        page_description,
         "",
         f"## ASL unit identity {{#{record.unit_id}}}",
         "",
@@ -853,7 +872,7 @@ def render_unit_page(
     )
     lines.extend(
         [
-            "## Normative ASL",
+            f"## {asl_heading}",
             "",
             f"<!-- GENERATED-ASL-BEGIN: unit source={source} -->",
             "```asl",

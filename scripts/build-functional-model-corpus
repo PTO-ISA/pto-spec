@@ -53,8 +53,12 @@ CASES = {
         "golden": bytes.fromhex("19000000"),
         "requirements": [
             "PTO-REQ-FUNCTIONAL-FETCH-001",
-            "PTO-REQ-FUNCTIONAL-STEP-001",
             "PTO-INST-SCALAR-SW-PCR",
+        ],
+        "model_requirements": [
+            "SSM-MODEL-PTO-STEP-001",
+            "SSM-MODEL-PTO-MEMORY-ADAPTER-001",
+            "SSM-MODEL-PTO-IDENTITY-001",
         ],
         "avs_ids": [
             "PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-16-002",
@@ -81,8 +85,11 @@ CASES = {
         "golden": bytes.fromhex("a55a0000"),
         "requirements": [
             "PTO-REQ-FUNCTIONAL-FETCH-001",
-            "PTO-REQ-FUNCTIONAL-STEP-001",
             "PTO-L-BSTOP-DECISION-BINDING-001",
+        ],
+        "model_requirements": [
+            "SSM-MODEL-PTO-STEP-001",
+            "SSM-MODEL-PTO-IDENTITY-001",
         ],
         "avs_ids": ["PTO-AVS-ARCH-FUNCTIONAL-STEP-COMMAND-64-004"],
         "trace_requirements": {
@@ -162,10 +169,14 @@ CASES = {
         "golden": bytes.fromhex("32000000"),
         "requirements": [
             "PTO-REQ-FUNCTIONAL-FETCH-001",
-            "PTO-REQ-FUNCTIONAL-STEP-001",
             "PTO-INST-TILE-TLOAD",
             "PTO-INST-TILE-TADD",
             "PTO-INST-TILE-TSTORE",
+        ],
+        "model_requirements": [
+            "SSM-MODEL-PTO-STEP-001",
+            "SSM-MODEL-PTO-MEMORY-ADAPTER-001",
+            "SSM-MODEL-PTO-IDENTITY-001",
         ],
         "avs_ids": [
             "PTO-AVS-TILE-TLOAD-DIRECT-001",
@@ -205,11 +216,19 @@ CASES = {
         "golden": bytes.fromhex("e7010000"),
         "requirements": [
             "PTO-REQ-FUNCTIONAL-FETCH-001",
-            "PTO-REQ-FUNCTIONAL-STEP-001",
-            "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
+            "PTO-REQ-SERVICE-REQUEST-INTERCEPT-001",
+            "PTO-REQ-SCALAR-BODY-ENTRY-001",
+            "PTO-INST-SCALAR-ACRC",
+        ],
+        "model_requirements": [
+            "SSM-MODEL-PTO-STEP-001",
+            "SSM-MODEL-PTO-HOST-REQUEST-001",
+            "SSM-ABI-PTO-EXIT-GROUP-001",
         ],
         "avs_ids": [
-            "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
+            "PTO-AVS-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT-STATIC-001",
+            "PTO-AVS-SYS-ACRC-EXEC-001",
+            "PTO-AVS-SYS-ACRC-TERMINAL-001",
         ],
         "allowed_requests": [94],
         "trace_requirements": {
@@ -532,6 +551,7 @@ def build_case(
                     isa_identity["encoding_projection_sha256"],
             },
             "requirements": config["requirements"],
+            "model_requirements": config["model_requirements"],
             "avs_ids": config["avs_ids"],
             "inputs": input_identity,
             "elf": {

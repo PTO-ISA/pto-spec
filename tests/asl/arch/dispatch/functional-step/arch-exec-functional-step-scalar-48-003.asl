@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-48-003","source":"asl/arch/dispatch/functional-step.asl","requirements":["PTO-REQ-FUNCTIONAL-FETCH-001","PTO-REQ-FUNCTIONAL-STEP-001"],"kind":"execution","summary":"One fetched 48-bit HL.XORI executes through the functional step boundary.","pass_condition":"ExecuteOnePTOStep fetches six little-endian bytes, executes the signed immediate XOR, and advances TPC by six bytes.","related_sources":["asl/scalar/alu/HL.XORI.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-FUNCTIONAL-STEP-SCALAR-48-003","source":"asl/arch/dispatch/functional-step.asl","requirements":["PTO-REQ-FUNCTIONAL-FETCH-001","PTO-INST-SCALAR-HL-XORI"],"kind":"execution","summary":"One fetched 48-bit HL.XORI executes through the functional step boundary.","pass_condition":"ExecuteOnePTOStep fetches six little-endian bytes, executes the signed immediate XOR, and advances TPC by six bytes.","related_sources":["asl/scalar/alu/HL.XORI.asl"]}
 func main() => integer
 begin
     let entry = Zeros{PTO_XLEN} + 0x100;

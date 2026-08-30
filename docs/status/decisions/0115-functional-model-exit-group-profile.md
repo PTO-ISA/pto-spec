@@ -1,7 +1,7 @@
 ---
 {
   "id": "ADR-0115",
-  "title": "Functional-model exit_group profile binding",
+  "title": "Scalar body entry and close-request interception boundary",
   "status": "accepted",
   "authors": ["Codex"],
   "approvers": ["zhoubot"],
@@ -13,12 +13,11 @@
   "target_releases": ["0.58.5"],
   "release_boundary": true,
   "affected_ndf": [
-    "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-    "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+    "PTO-REQ-SERVICE-REQUEST-INTERCEPT-001",
     "PTO-REQ-SCALAR-BODY-ENTRY-001"
   ],
   "affected_units": [
-    "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+    "PTO-ARCH-PROFILE-SERVICE-REQUEST-INTERCEPT",
     "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
     "PTO-SCALAR-MODEL-SYS-SEMANTICS"
   ],
@@ -31,36 +30,39 @@
 }
 ---
 
-# ADR-0115: Functional-model exit_group profile binding
+# ADR-0115: Scalar body entry and close-request interception boundary
 
 ## Summary
 
-Bind the established freestanding `exit_group` convention to the ASL-owned
-functional-model host-request state without changing portable ACRC service
-request behavior.
+Keep portable ACRC behavior architecture-owned while exposing a default-false
+profile hook, and close scalar body entry before applicability.
 
 ## Context
 
 ADR-0111 deliberately used stop-PC completion and left hosted ACRC meanings to
-issue #150. The generated library and gfrun now have an ASL-owned resumable
-host-request boundary, but no guest instruction can open it. The first ELF
-bring-up needs one terminal hosted request while the broader Linux ABI,
-startup, TLS, file-descriptor, barrier, and multi-PE runtime remain deferred.
+the model. The generated library and gfrun need one terminal hosted request,
+but PTO-SPEC must not define Linux process ABI. That mapping is owned by the
+the downstream model repository model NDF.
 
 The established freestanding convention uses ACRC request type 1, absolute
 GPR `a7` for the syscall number, Linux `exit_group` number 94, and absolute GPR
 `a0` for the exit status. Copying that decode into gfrun would recreate a
 second functional semantic owner.
 
-## Decision
+## Architecture decision
 
-Only an initialized functional-model profile intercepts the exact tuple:
+`ArchitectureCloseRequest` calls an impdef hook whose portable default is
+false. A separately owned model implementation may intercept a request under
+its own model/ABI NDF. A false result preserves exact PTO permission, routing,
+service-request trap, terminal, and recovery behavior.
+
+The the downstream model repository bring-up overlay currently recognizes the tuple:
 
 - decoded ACRC request type is 1;
 - current PE `a7` is 94;
 - current PE `a0` is the process exit status.
 
-The ASL owner opens generic host request type 94 before portable service-ring
+The model overlay opens generic host request type 94 before portable service-ring
 routing, captures `a0` as the immutable argument and response GPR, captures
 the next four-byte TPC as the resume address, and marks the active SYS block
 terminal. Failure to allocate a unique request token raises
@@ -70,7 +72,8 @@ For every other ACRC tuple, and whenever the functional profile is not
 initialized, the existing portable service-request permission, routing, trap,
 terminal, and recovery semantics are unchanged.
 
-The gfrun host shell recognizes only request type 94 in this bring-up. It
+That tuple and request number are not PTO architecture. The gfrun host shell
+recognizes only request type 94 in this bring-up. It
 completes the ASL request with the same bounded scalar status and then records
 terminal runner outcome `exit_group`; unknown request types fail closed. The
 process status is the low eight bits of the captured `a0`, matching normal
@@ -79,9 +82,9 @@ argument.
 
 ## Normative delta
 
-`PTO-REQ-FUNCTIONAL-EXIT-GROUP-001` owns the exact ACRC/GPR tuple, interception
-order, request fields, resume TPC, and fail-closed token behavior. No new
-instruction encoding or assembly spelling is introduced.
+`PTO-REQ-SERVICE-REQUEST-INTERCEPT-001` owns only the portable default-false
+hook and preservation rule. The exact ACRC/GPR tuple, request fields, resume
+TPC, token behavior, and process outcome are the downstream model repository model/ABI NDF.
 
 `PTO-REQ-SCALAR-BODY-ENTRY-001` closes the executable phase transition that
 was previously present only as an uncalled model action: the first decoded
@@ -119,7 +122,8 @@ and issue #150 retains the broader hosted runtime.
 
 ## Implementation obligations
 
-- Implement the interception only in owning ASL.
+- Implement the portable hook in PTO ASL and the hosted mapping in the
+  generated-model overlay under the the downstream model repository model NDF.
 - Route the first decoded scalar form through the ASL-owned body-entry action.
 - Project the request through the generated C ABI without hand-coded guest
   decode in the runtime or gfrun.
@@ -128,8 +132,8 @@ and issue #150 retains the broader hosted runtime.
 
 ## Verification obligations
 
-- Focused ASL proves the exact tuple, immutable argument, origin PE, token,
-  response GPR, resume TPC, and absence of portable service-request fault.
+- Focused PTO ASL proves the default/preservation boundary; model-library and
+  gfrun evidence proves tuple, token, argument, response, and resume behavior.
 - Existing ACRC tests prove all non-matching tuples remain unchanged.
 - ASLRef, standalone library, and gfrun agree on every step and final exit
   status for the host-request ELF.
@@ -137,6 +141,6 @@ and issue #150 retains the broader hosted runtime.
 
 ## Release consequences
 
-This is a 0.58.5 functional-profile release boundary. Generated ASL mirrors,
-ADR index, traceability, model descriptor inputs, corpus identity, and release
-evidence must be regenerated at the final commit.
+This is a 0.58.5 PTO hook plus the downstream model repository model/ABI boundary. Generated
+ASL mirrors, ADR index, traceability, model descriptor inputs, corpus identity,
+and release evidence must be regenerated at the final commit.

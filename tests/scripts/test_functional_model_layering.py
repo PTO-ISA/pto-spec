@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.ndf import parse_ndf_regions  # noqa: E402
+from scripts.ndf import parse_ndf_regions, state_index  # noqa: E402
 
 
 STATE_OWNER = ROOT / "asl/arch/state/functional-model.asl"
@@ -53,6 +53,40 @@ class FunctionalModelLayeringTest(unittest.TestCase):
             "snapshot_schema",
         ):
             self.assertNotIn(implementation_name, asl)
+
+    def test_model_ndf_is_not_owned_by_pto_spec(self) -> None:
+        clauses = {
+            clause.clause_id
+            for path in sorted((ROOT / "asl").rglob("*.asl"))
+            for clause in parse_ndf_regions(
+                path.read_text(encoding="utf-8"), path.relative_to(ROOT)
+            )
+        }
+        for model_requirement in (
+            "PTO-REQ-FUNCTIONAL-STEP-001",
+            "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+            "PTO-REQ-FUNCTIONAL-RESET-001",
+            "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
+        ):
+            self.assertNotIn(model_requirement, clauses)
+
+        states = set(state_index(ROOT))
+        self.assertNotIn("PTO-STATE-ARCH-FUNCTIONAL-MODEL-PROFILE", states)
+        self.assertIn("PTO-STATE-MODEL-FUNCTIONAL-CONTROL", states)
+
+    def test_model_overlay_implements_an_architecture_owned_hook(self) -> None:
+        hook = ROOT / "asl/arch/profile/service-request-intercept.asl"
+        profile = PROFILE_OWNER.read_text(encoding="utf-8")
+        semantics = (
+            ROOT / "asl/scalar/model/sys/semantics.asl"
+        ).read_text(encoding="utf-8")
+        clause = self.clause(hook, "PTO-REQ-SERVICE-REQUEST-INTERCEPT-001")
+        self.assertEqual(clause.layer, "architecture")
+        self.assertIn("impdef func InterceptArchitectureCloseRequest", hook.read_text())
+        self.assertIn(
+            "implementation func InterceptArchitectureCloseRequest", profile
+        )
+        self.assertIn("InterceptArchitectureCloseRequest(request_type)", semantics)
 
     def test_accepted_adr_records_the_layering_decision(self) -> None:
         text = ADR.read_text(encoding="utf-8")

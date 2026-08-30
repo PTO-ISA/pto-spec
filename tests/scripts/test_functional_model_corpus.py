@@ -112,6 +112,14 @@ class FunctionalModelCorpusTest(unittest.TestCase):
         for row in self.builder.CASES.values():
             for test_id in row["avs_ids"]:
                 self.assertIn(f'"id":"{test_id}"', known_ids)
+            self.assertTrue(row["model_requirements"])
+            self.assertTrue(all(
+                requirement.startswith(("SSM-MODEL-", "SSM-ABI-", "SSM-IMPL-"))
+                for requirement in row["model_requirements"]
+            ))
+        self.assertIn(
+            "SSM-ABI-PTO-EXIT-GROUP-001", host["model_requirements"]
+        )
 
     def test_schema_is_closed_and_versioned(self) -> None:
         schema = json.loads(
