@@ -10,7 +10,8 @@
   "rejected": null,
   "superseded": null,
   "baseline": "0d3365264eee82827214e7240c8aeaf270a6f94a",
-  "target_releases": ["unassigned"],
+  "target_releases": ["0.58.5"],
+  "release_boundary": true,
   "affected_ndf": [
     "PTO-TADD-CONTRACT-001",
     "PTO-TSUB-CONTRACT-001",

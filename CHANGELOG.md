@@ -14,6 +14,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0108](docs/status/decisions/0108-0584-1-to-0585-compatibility.md): PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary
 - [ADR-0109](docs/status/decisions/0109-local-single-object-cap.md): Local single-object cap versus aggregate Local pool
 - [ADR-0110](docs/status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md): TCVT CUBE_M16 and CUBE_M32 layout closure
+- [ADR-0112](docs/status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md): Tile operation type roles and source reinterpretation
 
 ### Tile
 - [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
@@ -146,7 +147,6 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0056](docs/status/decisions/0056-pto-encoding-ownership-and-gm-access.md): PTO Encoding Ownership and Per-PE GM Access
 - [ADR-0057](docs/status/decisions/0057-tile-classification-and-engine-aliases.md): Tile Classification and Execution-Engine Aliases
 - [ADR-0058](docs/status/decisions/0058-complete-bundle-gpr-operand-resolution.md): Complete-Bundle GPR Operand Resolution
-- [ADR-0112](docs/status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md): Tile operation type roles and source reinterpretation
 
 ### Scalar
 - [ADR-0012](docs/status/decisions/0012-acrc-service-request.md): Define PTO v0 ACRC service requests

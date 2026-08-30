@@ -558,7 +558,7 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "2bf14689631bfca407a59c60700da2aeb6b5e56c4b6d344cba8f6895d5e1804a"
+      "sha256": "2c24591e22b64c1213201a6481e43e4f1b2f8dffb40013cd6c53c129a3e540a1"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
@@ -614,7 +614,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tcvt-schema.asl",
-      "sha256": "401db2aa1407ea304e13acf65f9f0a75f5602042cb71d80024b148296118feef"
+      "sha256": "0e9e34d514e1a02ff74fa065e78d2835c45c6082e999163bb98db90276810b42"
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
@@ -622,7 +622,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
-      "sha256": "7cf701452bd5b31692bad2d2b6099f7b34963a6a1197dd1b98fd9b2512234f2c"
+      "sha256": "559e9eb75dd1f0880897a5375334cefc70a02ff5158f27b3837c7df0d6c9ef47"
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
@@ -3034,7 +3034,7 @@
     },
     {
       "path": "asl/tile/model/execution/elementwise.asl",
-      "sha256": "d199ea603541edb77b7a2902615c311633c562366212b074cdd529bf8700dfc1"
+      "sha256": "38c27266015b5c38568ba5545f327d477e642cc73800df2d16d3e98484f69651"
     },
     {
       "path": "asl/tile/model/execution/expansion.asl",
@@ -3082,7 +3082,7 @@
     },
     {
       "path": "asl/tile/model/execution/unary.asl",
-      "sha256": "0fd814f9b7c4b49414d10e4523ee28258fa76a01c3f05a2ac550af9f71760429"
+      "sha256": "57e684a84cb50062f229f9e306138b07c6af2907a5910b35c58d61ec44faa6b0"
     },
     {
       "path": "asl/tile/model/legality/allocation-capacity.asl",
@@ -3094,11 +3094,11 @@
     },
     {
       "path": "asl/tile/model/legality/dtype-layout.asl",
-      "sha256": "7bb12dde68c511d184644466a17b193cb1099001e434cf17c8e9163eb36cc5de"
+      "sha256": "83416a1a05a8105b083306fe419a74d244ca83772f8e1789796ada5f3d757a8d"
     },
     {
       "path": "asl/tile/model/legality/image-to-column.asl",
-      "sha256": "9cda20ef7963642319f78545326e70a2d812c385f3a78ac43b8cce657b330169"
+      "sha256": "4438e3b404477457457ad467bd534a024dbd55f7d253467da63d6df25eeaf720"
     },
     {
       "path": "asl/tile/model/legality/indexed-layout.asl",
@@ -3110,7 +3110,7 @@
     },
     {
       "path": "asl/tile/model/legality/layout-rearrangement.asl",
-      "sha256": "3e4c52eb7c5cd6c2832820a6fb2366bb71513a4eb3d34118e76ce557a30c6da8"
+      "sha256": "02f86b1050150fe03f2b5df4559f5115e20b2d48b198ca50b3ba90f5e95a2873"
     },
     {
       "path": "asl/tile/model/legality/matrix-cube-primary.asl",
@@ -3138,11 +3138,11 @@
     },
     {
       "path": "asl/tile/model/legality/memory-schema.asl",
-      "sha256": "8dff005ad094478e60cbbdeb3cd231da91d472de93f7fc995721c51434161449"
+      "sha256": "5aaf983c1a00d025af3b63ab6983bedae37c91cc7f8ce7472a8584bafca65aee"
     },
     {
       "path": "asl/tile/model/legality/operand-schema.asl",
-      "sha256": "3e891f719e5c41b1dcfe43acfd901df6a3fc27ecb18fce2024708692d87dca29"
+      "sha256": "234c3e64ad10480a6451583fbe69dfd3e1c085622f40ff4b9b05230149c5757f"
     },
     {
       "path": "asl/tile/model/legality/pe-mask.asl",
@@ -3190,7 +3190,7 @@
     },
     {
       "path": "asl/tile/model/numeric/formats.asl",
-      "sha256": "543a19b0749790662f6f7aa80084a7050ef92bab16f458d53c60fe7b98353feb"
+      "sha256": "00a45b9984d4a3f7a87c30a67a6fa587e346945c981939e7dab93af9f8139bc1"
     },
     {
       "path": "asl/tile/model/numeric/rounding.asl",
@@ -3438,7 +3438,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "ca60acb5d2b42f2ebbf860eab026adeaa409863e991be93af06f316bbb5995bc"
+      "sha256": "1c9938f2ae5e23f33a8a0aa7305f06ae2ab3d99ea74d5fd1ca62d00e39f7a493"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3446,15 +3446,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "e74eb2f3d2eeb2fe5bd6287e4a196edda1e0c51517d8c6508d8beac20e6e80c6"
+      "sha256": "4c1112592ec818059f26039327b5c86352b71674e49e4ed0eaf98419dd9b92ba"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "6d811ce96ca900a5cb23a851a3d6433a70f17a9dbb3430ddf670c935e97abb40"
+      "sha256": "756335c8f1e1d7b3cdecced3c701b583b7549de53ec821bcf4e6d01d550685df"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "939eb13dba03e960bf4e38079c231c585bcb84d3b81b877189c146ca6ac7c569"
+      "sha256": "20484eb6ddd559844f31334fa059fcd5f1bbe97f61a9cad98a20d3deb9b18030"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3500,7 +3500,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "dd02afd37cf31cba5b266bd74f18a1621c558a02ac683f76c9312b51fb9d3884",
+  "content_sha256": "76b381ba2f113e2117145b9b5acd1d48f8b4732a63028e8dc988c8ea0c6ca678",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4227,7 +4227,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/destination-shape.md",
-      "sha256": "cbba71d07dbd9810e811a3bb48ac6771d5463c1912e1e5c76388d4421a54b5d5"
+      "sha256": "c70571b49d8dadba9ec0078d6f21bb82c6b64be32bb8969d6e8664dfdfa2814a"
     },
     {
       "kind": "generated-documentation",
@@ -4297,7 +4297,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tcvt-schema.md",
-      "sha256": "42ee5a0ec2dd41eb03774e7f68664448b58c914585a0f34b56c0e700ac0bda79"
+      "sha256": "c87a9a4b0a9372a61bcddd8d38d3a7945359cdeb66cfea4894a03d7b8eefb608"
     },
     {
       "kind": "generated-documentation",
@@ -4307,7 +4307,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tile-scalar-schema.md",
-      "sha256": "ebc81d44e0cf1b9615396d7cd0030cd1ee1d2bc57b09fe2037b8f95c0098b1da"
+      "sha256": "6719b366f7553d8f869322d5cdcf23ce2ee81a62bc6b69044b11f784c1e1678c"
     },
     {
       "kind": "generated-documentation",
@@ -7322,7 +7322,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/execution/elementwise.md",
-      "sha256": "fe5f6a06349ab702fb75dd34f4ddb49c4963489f2a94ed748d27bb1a4aa0114c"
+      "sha256": "625f35c1267b5c0b347d58d2eef22fa097e274e110151b613eb0793a12fb7a50"
     },
     {
       "kind": "generated-documentation",
@@ -7382,7 +7382,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/execution/unary.md",
-      "sha256": "fcb49b0037f24dbadacd9fec796f06026c991ea5e500860b8d24af0ea0da66c9"
+      "sha256": "9eaaca2b87508aa1fd73bffc5cbf4ce11547d5b2a0bdf5fe6cf02e5b00e2af40"
     },
     {
       "kind": "generated-documentation",
@@ -7397,12 +7397,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/dtype-layout.md",
-      "sha256": "49fd294d08f9f64254d4cb4e5ed5fff91fb9cab328d01d3c5e3535109780848e"
+      "sha256": "66f796139da720d44b004c84d6e8ee840177a7149f62a53b160aa63682a3f1d8"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/image-to-column.md",
-      "sha256": "e6fbf64d6cbfc8ec209176fa65294ee0a342a96cb1506f80a3a31da163cf2fd4"
+      "sha256": "460671c51af561381161f55cdacbc68bb98541c3440f48212433ee99b81e966f"
     },
     {
       "kind": "generated-documentation",
@@ -7417,7 +7417,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/layout-rearrangement.md",
-      "sha256": "09f17afd0361e50f359303d39db5a34ed549a165a14f2d909ff17b45fa547dd3"
+      "sha256": "34ffecafb4ef6ea64d4af2ae79f88c94554376c702e1e17a25f802a1719a9c96"
     },
     {
       "kind": "generated-documentation",
@@ -7452,12 +7452,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/memory-schema.md",
-      "sha256": "0cc539ba90fe440ba5427c188a51337e1b81bd4e97e9f89c19a2e4c9244bca2e"
+      "sha256": "de54f8f96c22e999dcc081c9fd453cb027d95fb2e322dd9db7c58509d3316d06"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/operand-schema.md",
-      "sha256": "1548fc175fc55656e2c8d6a9b7a5f29bb475d9b30009428c96e0eb6b5313c843"
+      "sha256": "552d461febdd67eabb57a8b37b6794c1d8ad67c7e5c71a1fea3194e63adb7a1d"
     },
     {
       "kind": "generated-documentation",
@@ -7517,7 +7517,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/numeric/formats.md",
-      "sha256": "43f01b95348425ed18368246db5f367c94e8e9b8a978551d4d6c20a92bd1bd41"
+      "sha256": "663b6f4c5d90e32f13078d864df70e9d893ed7c72a5c03fd116fb18c8a6c3dc9"
     },
     {
       "kind": "generated-documentation",
@@ -7810,7 +7810,9 @@
   "release_selection": {
     "architecture_version": "0.58.5",
     "baseline_commit": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
-    "blockers": [],
+    "blockers": [
+      "release ASL unit drift is not covered by an accepted target ADR: PTO-TILE-MODEL-LEGALITY-IMAGE-TO-COLUMN"
+    ],
     "excluded_draft_adrs": [
       "ADR-0086",
       "ADR-0087",
@@ -11998,7 +12000,8 @@
       "ADR-0107",
       "ADR-0108",
       "ADR-0109",
-      "ADR-0110"
+      "ADR-0110",
+      "ADR-0112"
     ]
   },
   "schema_version": 1,

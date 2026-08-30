@@ -8537,6 +8537,7 @@
       "legacy_ids": [],
       "path": "docs/status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md",
       "rejected": null,
+      "release_boundary": true,
       "release_impact": "required",
       "resolves": [],
       "status": "accepted",
@@ -8544,7 +8545,7 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "0.58.5"
       ],
       "title": "Tile operation type roles and source reinterpretation"
     }
