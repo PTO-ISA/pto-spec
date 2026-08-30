@@ -194,6 +194,10 @@ extern "C" pto_status_t pto_model_step(pto_model_t *model,
     out_result->fault_address = result.fault_address;
     out_result->request_token = result.request_token;
     out_result->request_argument0 = result.request_argument0;
+    out_result->memory_write_count = result.memory_write_count;
+    std::copy(result.memory_write_sha256.begin(),
+              result.memory_write_sha256.end(),
+              out_result->memory_write_sha256);
     return status;
 }
 
@@ -227,4 +231,34 @@ extern "C" pto_status_t pto_model_last_error(pto_model_t *model,
     buffer[error.size()] = '\0';
     *inout_size = required;
     return PTO_STATUS_OK;
+}
+
+extern "C" pto_status_t
+pto_model_last_memory_writes(pto_model_t *model, pto_memory_write_t *buffer,
+                             std::uint64_t *inout_count) {
+  if (model == nullptr || model->runtime == nullptr || inout_count == nullptr) {
+    return PTO_STATUS_INVALID_ARGUMENT;
+  }
+  std::vector<pto::model::MemoryWrite> writes;
+  const pto_status_t status = model->runtime->CopyLastMemoryWrites(&writes);
+  if (status != PTO_STATUS_OK)
+    return status;
+  if (writes.empty()) {
+    *inout_count = 0;
+    return PTO_STATUS_OK;
+  }
+  if (buffer == nullptr || *inout_count < writes.size()) {
+    *inout_count = writes.size();
+    return PTO_STATUS_BUFFER_TOO_SMALL;
+  }
+  for (std::size_t index = 0; index < writes.size(); ++index) {
+    pto_memory_write_t converted{};
+    converted.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
+    converted.struct_size = sizeof(converted);
+    converted.address = writes[index].address;
+    converted.value = writes[index].value;
+    buffer[index] = converted;
+  }
+  *inout_count = writes.size();
+  return PTO_STATUS_OK;
 }

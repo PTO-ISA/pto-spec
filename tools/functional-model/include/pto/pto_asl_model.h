@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-#define PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION UINT32_C(0x00030001)
+#define PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION UINT32_C(0x00030002)
 
 /* G3a experimental surface: source and binary compatibility are not stable. */
 
@@ -121,6 +121,11 @@ typedef struct {
     uint64_t fault_address;
     uint64_t request_token;
     uint64_t request_argument0;
+    uint64_t memory_write_count;
+    /* SHA-256 over "pto-memory-write-log-v1\0", followed by the write count
+     * as little-endian u64 and each committed (address as little-endian u64,
+     * value as one byte) pair in architectural order. */
+    uint8_t memory_write_sha256[32];
 } pto_step_result_t;
 
 typedef struct {
@@ -143,6 +148,12 @@ pto_status_t pto_model_complete_host_request(
 pto_status_t pto_model_last_error(pto_model_t *model,
                                   char *buffer,
                                   uint64_t *inout_size);
+/* Copies the ordered writes from the last successfully committed step. An
+ * empty log succeeds with *inout_count == 0 and permits buffer == NULL. */
+pto_status_t pto_model_last_memory_writes(
+    pto_model_t *model,
+    pto_memory_write_t *buffer,
+    uint64_t *inout_count);
 pto_status_t pto_model_descriptor_json(char *buffer, uint64_t *inout_size);
 pto_status_t pto_model_descriptor_sha256(uint8_t *buffer,
                                          uint64_t *inout_size);

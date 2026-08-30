@@ -24,6 +24,14 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def memory_write_sha256(writes: list[dict[str, int]]) -> str:
+    canonical = bytearray(b"pto-memory-write-log-v1\0")
+    canonical += struct.pack("<Q", len(writes))
+    for write in writes:
+        canonical += struct.pack("<QB", write["address"], write["value"])
+    return hashlib.sha256(canonical).hexdigest()
+
+
 def load_json(path: Path) -> dict[str, object]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -196,8 +204,20 @@ def source_for_case(
             step.abi_version = config.abi_version;
             step.struct_size = sizeof(step);
             pto_status_t status = pto_model_step(model, &step);
+            std::uint64_t write_count = 0;
+            pto_status_t write_status =
+              pto_model_last_memory_writes(model, nullptr, &write_count);
+            std::vector<pto_memory_write_t> writes;
+            if (write_status == PTO_STATUS_BUFFER_TOO_SMALL) {{
+              writes.resize(write_count);
+              write_status = pto_model_last_memory_writes(
+                model, writes.data(), &write_count);
+            }}
+            if (write_status != PTO_STATUS_OK ||
+                write_count != step.memory_write_count ||
+                write_count != writes.size()) return 4;
             std::printf(
-              "STEP %u %u %u %llu %llu %llu %llu %llu %u %u %llu %u %u %llu %llu %u %llu\\n",
+              "STEP %u %u %u %llu %llu %llu %llu %llu %u %u %llu %u %u %llu %llu %u %llu %llu ",
               status, step.step_state, step.instruction_status,
               static_cast<unsigned long long>(step.pre_tpc),
               static_cast<unsigned long long>(step.post_tpc),
@@ -208,7 +228,15 @@ def source_for_case(
               static_cast<unsigned long long>(step.fault_address), step.fault_cause,
               step.origin_pe, static_cast<unsigned long long>(step.request_token),
               static_cast<unsigned long long>(step.request_argument0), step.request_type,
-              static_cast<unsigned long long>(step.sequence));
+              static_cast<unsigned long long>(step.sequence),
+              static_cast<unsigned long long>(step.memory_write_count));
+            for (std::uint8_t byte : step.memory_write_sha256)
+              std::printf("%02x", byte);
+            std::printf("\\n");
+            for (const pto_memory_write_t &write : writes)
+              std::printf("WRITE %llu %u\\n",
+                          static_cast<unsigned long long>(write.address),
+                          static_cast<unsigned>(write.value));
             if (status != PTO_STATUS_OK) return 4;
             if (step.step_state == PTO_STEP_HOST_REQUEST) {{
               if (step.request_type != 94U) return 4;
@@ -246,20 +274,41 @@ def parse_output(text: str) -> tuple[list[dict[str, object]], str]:
         "status", "step_state", "instruction_status", "pre_tpc", "post_tpc",
         "pre_bpc", "post_bpc", "raw_instruction_le", "length_bits", "fault_code",
         "fault_address", "fault_cause", "origin_pe", "request_token",
-        "request_argument0", "request_type", "sequence",
+        "request_argument0", "request_type", "sequence", "memory_write_count",
     )
     for line in text.splitlines():
         if line.startswith("STEP "):
-            values = [int(value) for value in line.split()[1:]]
+            tokens = line.split()
+            values = [int(value) for value in tokens[1:-1]]
             if len(values) != len(fields):
                 raise LibraryRunError("standalone step field count mismatch")
             step = dict(zip(fields, values))
+            digest = tokens[-1]
+            if len(digest) != 64:
+                raise LibraryRunError("standalone memory-write digest is malformed")
+            step["memory_write_sha256"] = digest
+            step["memory_writes"] = []
             step["result_valid"] = step["status"] == 0
             trace.append(step)
+        elif line.startswith("WRITE "):
+            if not trace:
+                raise LibraryRunError("standalone write precedes its step")
+            _, address, value = line.split()
+            trace[-1]["memory_writes"].append({
+                "address": int(address),
+                "value": int(value),
+            })
         elif line.startswith("RESULT "):
             result = line.split()[1]
     if not trace or result is None:
         raise LibraryRunError("standalone runner produced incomplete output")
+    for step in trace:
+        if step["memory_write_count"] != len(step["memory_writes"]):
+            raise LibraryRunError("standalone memory-write count mismatch")
+        if step["memory_write_sha256"] != memory_write_sha256(
+            step["memory_writes"]
+        ):
+            raise LibraryRunError("standalone memory-write digest mismatch")
     return trace, result
 
 

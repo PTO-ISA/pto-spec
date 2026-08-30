@@ -116,6 +116,11 @@ int main(void) {
     result.struct_size -= 1;
     assert(pto_model_step(model, &result) == PTO_STATUS_ABI_MISMATCH);
 
+    uint64_t write_count = 1;
+    assert(pto_model_last_memory_writes(model, NULL, &write_count) ==
+           PTO_STATUS_OK);
+    assert(write_count == 0);
+
     initial.pe0_gpr_valid_mask = 1;
     reset_status = pto_model_reset(model, &initial);
     if (reset_status != PTO_STATUS_OK) {
@@ -132,6 +137,45 @@ int main(void) {
     config.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
     config.struct_size -= 1;
     assert(pto_model_create(&config, &invalid) == PTO_STATUS_ABI_MISMATCH);
+
+    initial.entry_tpc = 0;
+    initial.pe0_gpr_valid_mask =
+        (UINT32_C(1) << 1) | (UINT32_C(1) << 2) | (UINT32_C(1) << 3);
+    initial.pe0_gpr[1] = 8;
+    initial.pe0_gpr[2] = 0;
+    initial.pe0_gpr[3] = UINT64_C(0x11223344);
+    assert(pto_model_reset(model, &initial) == PTO_STATUS_OK);
+    memory[0] = UINT8_C(0x49);
+    memory[1] = UINT8_C(0xa0);
+    memory[2] = UINT8_C(0x20);
+    memory[3] = UINT8_C(0x18);
+    result.abi_version = PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION;
+    result.struct_size = sizeof(result);
+    assert(pto_model_step(model, &result) == PTO_STATUS_OK);
+    assert(result.memory_write_count == 4);
+    const uint8_t expected_digest[32] = {
+        0x76, 0x3a, 0xe4, 0xe6, 0x32, 0xeb, 0x06, 0x21,
+        0xfb, 0x69, 0xaa, 0x12, 0x48, 0x56, 0xf8, 0x20,
+        0x22, 0xb5, 0xcd, 0x25, 0x4b, 0xaf, 0xa1, 0x99,
+        0x77, 0xf7, 0xae, 0xf6, 0x16, 0xab, 0x20, 0x5e};
+    assert(memcmp(result.memory_write_sha256, expected_digest,
+                  sizeof(expected_digest)) == 0);
+    write_count = 0;
+    assert(pto_model_last_memory_writes(model, NULL, &write_count) ==
+           PTO_STATUS_BUFFER_TOO_SMALL);
+    assert(write_count == 4);
+    pto_memory_write_t writes[4] = {{0}};
+    assert(pto_model_last_memory_writes(model, writes, &write_count) ==
+           PTO_STATUS_OK);
+    assert(write_count == 4);
+    const uint8_t expected_values[4] = {0x44, 0x33, 0x22, 0x11};
+    for (uint64_t index = 0; index < write_count; ++index) {
+        assert(writes[index].abi_version ==
+               PTO_ASL_MODEL_EXPERIMENTAL_ABI_VERSION);
+        assert(writes[index].struct_size == sizeof(pto_memory_write_t));
+        assert(writes[index].address == 8 + index);
+        assert(writes[index].value == expected_values[index]);
+    }
     pto_model_destroy(model);
     return 0;
 }

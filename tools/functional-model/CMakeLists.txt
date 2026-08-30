@@ -159,6 +159,7 @@ add_library(pto_asl_model STATIC
     runtime/interpreter.cpp
     runtime/module.cpp
     runtime/runtime_model.cpp
+    runtime/trace_digest.cpp
     runtime/transaction.cpp
     runtime/value.cpp)
 target_compile_features(pto_asl_model PUBLIC cxx_std_20)
@@ -194,7 +195,7 @@ configure_package_config_file(
     INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/PTOASLModel")
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/PTOASLModelConfigVersion.cmake"
-    VERSION 0.3.1
+    VERSION 0.3.2
     COMPATIBILITY ExactVersion)
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/PTOASLModelConfig.cmake"

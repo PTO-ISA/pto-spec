@@ -153,7 +153,8 @@
             "additionalProperties": false,
             "required": [
               "pre_tpc", "post_tpc", "pre_bpc", "post_bpc",
-              "raw_instruction_le", "length_bits", "sequence"
+              "raw_instruction_le", "length_bits", "sequence",
+              "memory_write_count", "memory_write_sha256", "memory_writes"
             ],
             "properties": {
               "pre_tpc": {"type": "integer", "minimum": 0, "maximum": 65535},
@@ -168,6 +169,20 @@
               ,"request_token": {"type": "integer", "minimum": 0}
               ,"request_type": {"type": "integer", "minimum": 0, "maximum": 65535}
               ,"request_argument0": {"type": "integer", "minimum": 0}
+              ,"memory_write_count": {"type": "integer", "minimum": 0}
+              ,"memory_write_sha256": {"$ref": "#/$defs/sha256"}
+              ,"memory_writes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["address", "value"],
+                  "properties": {
+                    "address": {"type": "integer", "minimum": 0, "maximum": 65535},
+                    "value": {"type": "integer", "minimum": 0, "maximum": 255}
+                  }
+                }
+              }
             }
           }
         },

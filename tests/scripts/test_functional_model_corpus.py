@@ -271,6 +271,17 @@ class FunctionalModelCorpusTest(unittest.TestCase):
                 },
             ],
         }
+        empty_digest = self.validator.memory_write_sha256([])
+        for expected, observed in zip(
+            case["case"]["expected_trace"], run["trace"], strict=True
+        ):
+            memory_contract = {
+                "memory_write_count": 0,
+                "memory_write_sha256": empty_digest,
+                "memory_writes": [],
+            }
+            expected.update(memory_contract)
+            observed.update(memory_contract)
         return case, run
 
     def test_gfrun_validator_accepts_exact_trace_and_golden(self) -> None:
@@ -288,6 +299,12 @@ class FunctionalModelCorpusTest(unittest.TestCase):
             )
         run["trace"][1]["pre_tpc"] = 0x103
         with self.assertRaisesRegex(self.validator.ValidationError, "pre_tpc"):
+            self.validator.validate_run(
+                case, run, bytes.fromhex("19000000"), bytes.fromhex("19000000")
+            )
+        case, run = self.valid_run_contract()
+        run["trace"][0]["memory_write_sha256"] = "00" * 32
+        with self.assertRaisesRegex(self.validator.ValidationError, "memory_write_sha256"):
             self.validator.validate_run(
                 case, run, bytes.fromhex("19000000"), bytes.fromhex("19000000")
             )

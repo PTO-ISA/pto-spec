@@ -24,6 +24,16 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def memory_write_sha256(writes: list[object]) -> str:
+    canonical = bytearray(b"pto-memory-write-log-v1\0")
+    canonical += struct.pack("<Q", len(writes))
+    for item in writes:
+        if not isinstance(item, dict):
+            raise OracleError("memory-write trace entry is not an object")
+        canonical += struct.pack("<QB", int(item["address"]), int(item["value"]))
+    return hashlib.sha256(canonical).hexdigest()
+
+
 def load_json(path: Path) -> dict[str, object]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -161,6 +171,7 @@ def oracle_run_manifest(
 ) -> dict[str, object]:
     trace = []
     for expected in case["expected_trace"]:
+        writes = expected.get("memory_writes", [])
         trace.append({
             "status": 0,
             "result_valid": True,
@@ -180,6 +191,11 @@ def oracle_run_manifest(
             "request_type": expected.get("request_type", 0),
             "request_argument0": expected.get("request_argument0", 0),
             "sequence": expected["sequence"],
+            "memory_write_count": len(writes),
+            "memory_write_sha256": expected.get(
+                "memory_write_sha256", memory_write_sha256(writes)
+            ),
+            "memory_writes": writes,
         })
     outcome = {
         "status": "completed",

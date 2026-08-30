@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import struct
 import subprocess
 
 
@@ -20,6 +21,16 @@ class ValidationError(ValueError):
 
 def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def memory_write_sha256(writes: list[object]) -> str:
+    canonical = bytearray(b"pto-memory-write-log-v1\0")
+    canonical += struct.pack("<Q", len(writes))
+    for item in writes:
+        if not isinstance(item, dict):
+            raise ValidationError("memory-write trace entry is not an object")
+        canonical += struct.pack("<QB", int(item["address"]), int(item["value"]))
+    return hashlib.sha256(canonical).hexdigest()
 
 
 def load_json(path: Path) -> dict[str, object]:
@@ -146,9 +157,17 @@ def validate_run(
         for field in (
             "pre_tpc", "post_tpc", "pre_bpc", "post_bpc",
             "raw_instruction_le", "length_bits", "sequence",
+            "memory_write_count", "memory_write_sha256", "memory_writes",
         ):
             require_equal(step.get(field), expected_step.get(field),
                           f"trace step {index} {field}")
+        writes = step.get("memory_writes")
+        if not isinstance(writes, list):
+            raise ValidationError(f"trace step {index} has no memory-write log")
+        require_equal(step.get("memory_write_count"), len(writes),
+                      f"trace step {index} memory-write count")
+        require_equal(step.get("memory_write_sha256"), memory_write_sha256(writes),
+                      f"trace step {index} memory-write digest")
         if index > 0:
             require_equal(
                 step.get("pre_tpc"),

@@ -41,7 +41,13 @@ CASES = {
             {"pre_tpc": 0x10E, "post_tpc": 0x110, "pre_bpc": 0, "post_bpc": 0,
              "raw_instruction_le": 0x0016, "length_bits": 16, "sequence": 7},
             {"pre_tpc": 0x110, "post_tpc": 0x114, "pre_bpc": 0, "post_bpc": 0,
-             "raw_instruction_le": 0x03C1A069, "length_bits": 32, "sequence": 8},
+             "raw_instruction_le": 0x03C1A069, "length_bits": 32, "sequence": 8,
+             "memory_writes": [
+                 {"address": 0x200, "value": 0x19},
+                 {"address": 0x201, "value": 0},
+                 {"address": 0x202, "value": 0},
+                 {"address": 0x203, "value": 0},
+             ]},
         ],
         "result_address": 0x200,
         "golden": bytes.fromhex("19000000"),
@@ -144,7 +150,13 @@ CASES = {
              "length_bits": 32, "sequence": 19},
             {"pre_tpc": 0x132, "post_tpc": 0x134, "pre_bpc": 0x120,
              "post_bpc": 0, "raw_instruction_le": 0,
-             "length_bits": 16, "sequence": 20},
+             "length_bits": 16, "sequence": 20,
+             "memory_writes": [
+                 {"address": 0xF00, "value": 0x32},
+                 {"address": 0xF01, "value": 0},
+                 {"address": 0xF02, "value": 0},
+                 {"address": 0xF03, "value": 0},
+             ]},
         ],
         "result_address": 0xF00,
         "golden": bytes.fromhex("32000000"),
@@ -218,6 +230,26 @@ def sha256_bytes(data: bytes) -> str:
 
 def sha256_file(path: Path) -> str:
     return sha256_bytes(path.read_bytes())
+
+
+def memory_write_sha256(writes: list[dict[str, int]]) -> str:
+    canonical = bytearray(b"pto-memory-write-log-v1\0")
+    canonical += struct.pack("<Q", len(writes))
+    for write in writes:
+        canonical += struct.pack("<QB", write["address"], write["value"])
+    return sha256_bytes(canonical)
+
+
+def expected_trace(config: dict[str, object]) -> list[dict[str, object]]:
+    result = []
+    for source in config["expected_trace"]:
+        row = dict(source)
+        writes = [dict(write) for write in row.get("memory_writes", [])]
+        row["memory_writes"] = writes
+        row["memory_write_count"] = len(writes)
+        row["memory_write_sha256"] = memory_write_sha256(writes)
+        result.append(row)
+    return result
 
 
 def command_version(path: Path) -> str:
@@ -519,7 +551,7 @@ def build_case(
             },
             "allowed_requests": config.get("allowed_requests", []),
             "expected_length_sequence": config["lengths"],
-            "expected_trace": config["expected_trace"],
+            "expected_trace": expected_trace(config),
             "trace_requirements": config["trace_requirements"],
             "result": {
                 "symbol": "cross_model_result",

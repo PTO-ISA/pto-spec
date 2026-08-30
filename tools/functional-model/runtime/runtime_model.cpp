@@ -1,6 +1,7 @@
 #include "runtime_model.h"
 
 #include "pto_generated_runtime_image.h"
+#include "trace_digest.h"
 
 #include <utility>
 
@@ -76,6 +77,7 @@ pto_status_t RuntimeModel::Reset(const InitialState &initial) {
         }
     }
     state_ = std::move(candidate);
+    last_memory_writes_.clear();
     last_error_.clear();
     return PTO_STATUS_OK;
 }
@@ -89,6 +91,7 @@ pto_status_t RuntimeModel::InitializeForTesting(const InitialState &initial) {
         ? callbacks_.reset() : PTO_STATUS_INVALID_STATE;
     if (status != PTO_STATUS_OK) return status;
     state_ = std::move(candidate);
+    last_memory_writes_.clear();
     return PTO_STATUS_OK;
 }
 
@@ -100,6 +103,8 @@ pto_status_t RuntimeModel::Step(StepResult *result) {
     if (!guard.acquired()) {
         return PTO_STATUS_BUSY;
     }
+    last_memory_writes_.clear();
+    *result = StepResult{};
     const std::shared_ptr<const Module> module = module_.lock();
     if (!module) {
         result->state = PTO_STEP_UNSUPPORTED;
@@ -186,6 +191,9 @@ pto_status_t RuntimeModel::Step(StepResult *result) {
         SetError("atomic physical-memory commit failed");
         return commit_status;
     }
+    last_memory_writes_ = memory.writes();
+    result->memory_write_count = last_memory_writes_.size();
+    result->memory_write_sha256 = DigestMemoryWrites(last_memory_writes_);
     state_ = std::move(candidate);
     last_error_.clear();
     return PTO_STATUS_OK;
@@ -195,6 +203,8 @@ pto_status_t RuntimeModel::StepPrimaryForTesting(StepResult *result) {
     if (result == nullptr) return PTO_STATUS_INVALID_ARGUMENT;
     BusyGuard guard(&busy_);
     if (!guard.acquired()) return PTO_STATUS_BUSY;
+    last_memory_writes_.clear();
+    *result = StepResult{};
     const auto module = module_.lock();
     if (!module) return PTO_STATUS_MIR_INVALID;
     const Function *function = module->FindFunction(module->step_entrypoint());
@@ -208,6 +218,9 @@ pto_status_t RuntimeModel::StepPrimaryForTesting(StepResult *result) {
                                                   : evaluation.status;
     const pto_status_t commit_status = memory.Commit();
     if (commit_status != PTO_STATUS_OK) return commit_status;
+    last_memory_writes_ = memory.writes();
+    result->memory_write_count = last_memory_writes_.size();
+    result->memory_write_sha256 = DigestMemoryWrites(last_memory_writes_);
     candidate.sequence += 1;
     result->state = evaluation.step_state;
     result->sequence = candidate.sequence;
@@ -319,6 +332,17 @@ pto_status_t RuntimeModel::InvokeU16(BindingId function,
 }
 
 std::string RuntimeModel::last_error() const { return last_error_; }
+
+pto_status_t
+RuntimeModel::CopyLastMemoryWrites(std::vector<MemoryWrite> *writes) {
+  if (writes == nullptr)
+    return PTO_STATUS_INVALID_ARGUMENT;
+  BusyGuard guard(&busy_);
+  if (!guard.acquired())
+    return PTO_STATUS_BUSY;
+  *writes = last_memory_writes_;
+  return PTO_STATUS_OK;
+}
 
 std::uint64_t RuntimeModel::GlobalU64(BindingId id) const {
     const auto found = state_.globals.find(id);

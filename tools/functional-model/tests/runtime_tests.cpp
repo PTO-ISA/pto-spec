@@ -894,7 +894,16 @@ void TestGeneratedStoreTransactions() {
     assert(store_status == PTO_STATUS_OK);
     assert(result.state == PTO_STEP_EXECUTED && result.fault_code == 0);
     assert(result.post_tpc == 0x104 && memory.commit_count == 1);
+    assert(result.memory_write_count == 4);
+    constexpr std::array<std::uint8_t, 32> kExpectedDigest = {
+        0xbd, 0x1a, 0x13, 0x66, 0x23, 0x46, 0x87, 0xab, 0x06, 0xe6, 0xe4,
+        0xd5, 0xc8, 0xd9, 0xf2, 0xe0, 0x00, 0x27, 0xb8, 0x5d, 0xe8, 0x2e,
+        0x2c, 0x97, 0xa0, 0x32, 0xd3, 0xdd, 0xfc, 0xa3, 0xad, 0x78};
+    assert(result.memory_write_sha256 == kExpectedDigest);
     assert(memory.committed_writes.size() == 4);
+    std::vector<MemoryWrite> copied_writes;
+    assert(runtime.CopyLastMemoryWrites(&copied_writes) == PTO_STATUS_OK);
+    assert(copied_writes.size() == 4);
     const std::uint8_t expected[] = {0x44, 0x33, 0x22, 0x11};
     for (std::size_t index = 0; index < 4; ++index) {
         assert(memory.committed_writes[index].address == 0x200 + index);
@@ -905,6 +914,10 @@ void TestGeneratedStoreTransactions() {
     prepare(0x200);
     memory.fail_commit = true;
     assert(runtime.Step(&result) == PTO_STATUS_HOST_COMMIT_ERROR);
+    assert(result.memory_write_count == 0);
+    assert((result.memory_write_sha256 == std::array<std::uint8_t, 32>{}));
+    assert(runtime.CopyLastMemoryWrites(&copied_writes) == PTO_STATUS_OK);
+    assert(copied_writes.empty());
     assert(memory.commit_count == 0);
     for (std::size_t index = 0; index < 4; ++index)
         assert(memory.bytes[0x200 + index] == 0);
