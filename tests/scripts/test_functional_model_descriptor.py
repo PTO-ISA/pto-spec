@@ -195,6 +195,16 @@ class FunctionalModelDescriptorTest(unittest.TestCase):
             with self.assertRaisesRegex(DescriptorError, "dirty or uncommitted"):
                 resolve_source_identity(root, None, None)
 
+    def test_cmake_reconfigures_descriptor_on_commit_or_tree_change(self) -> None:
+        cmake = (ROOT / "tools/functional-model/CMakeLists.txt").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("rev-parse HEAD", cmake)
+        self.assertIn('rev-parse "HEAD^{tree}"', cmake)
+        self.assertIn("PTO_GENERATED_SOURCE_IDENTITY", cmake)
+        self.assertIn('file(GENERATE OUTPUT "${PTO_GENERATED_SOURCE_IDENTITY}"', cmake)
+        self.assertGreaterEqual(cmake.count('"${PTO_GENERATED_SOURCE_IDENTITY}"'), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -30,6 +30,25 @@ set(PTO_GENERATED_DESCRIPTOR_HEADER
     "${PTO_GENERATED_ROOT}/pto_generated_descriptor.h")
 set(PTO_GENERATED_DESCRIPTOR_SOURCE
     "${PTO_GENERATED_ROOT}/pto_generated_descriptor.cpp")
+set(PTO_GENERATED_SOURCE_IDENTITY
+    "${PTO_GENERATED_ROOT}/source-identity.txt")
+
+execute_process(
+    COMMAND git -C "${PTO_REPOSITORY_ROOT}" rev-parse HEAD
+    RESULT_VARIABLE PTO_SOURCE_COMMIT_STATUS
+    OUTPUT_VARIABLE PTO_SOURCE_COMMIT
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(
+    COMMAND git -C "${PTO_REPOSITORY_ROOT}" rev-parse "HEAD^{tree}"
+    RESULT_VARIABLE PTO_SOURCE_TREE_STATUS
+    OUTPUT_VARIABLE PTO_SOURCE_TREE
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+if(NOT PTO_SOURCE_COMMIT_STATUS EQUAL 0 OR NOT PTO_SOURCE_TREE_STATUS EQUAL 0)
+    message(FATAL_ERROR "Cannot resolve PTO producer commit/tree identity")
+endif()
+file(MAKE_DIRECTORY "${PTO_GENERATED_ROOT}")
+file(GENERATE OUTPUT "${PTO_GENERATED_SOURCE_IDENTITY}"
+    CONTENT "commit=${PTO_SOURCE_COMMIT}\ntree=${PTO_SOURCE_TREE}\n")
 
 file(GLOB_RECURSE PTO_ASL_SOURCES CONFIGURE_DEPENDS
     "${PTO_REPOSITORY_ROOT}/asl/*.asl")
@@ -112,6 +131,7 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/descriptor.py"
         "${CMAKE_CURRENT_SOURCE_DIR}/modelgen/runtime-capabilities-v1.json"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/pto/pto_asl_model.h"
+        "${PTO_GENERATED_SOURCE_IDENTITY}"
         "${PTO_REPOSITORY_ROOT}/spec/release-manifest.json"
         "${PTO_REPOSITORY_ROOT}/spec/schemas/pto-functional-model-descriptor-v1.schema.json"
     WORKING_DIRECTORY "${PTO_REPOSITORY_ROOT}"
