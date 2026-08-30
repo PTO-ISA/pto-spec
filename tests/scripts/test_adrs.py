@@ -847,13 +847,13 @@ class AdrRecordTest(unittest.TestCase):
                 "accepted ADR requires an acceptance date",
             ),
             (
-                "accepted affected owner",
+                "accepted affected_ndf",
                 {
                     "status": "accepted",
                     "approvers": ["reviewer"],
                     "accepted": "2026-08-21",
                 },
-                "accepted ADR requires affected_ndf or affected_model_contracts",
+                "accepted ADR requires affected_ndf",
             ),
             (
                 "rejected date",

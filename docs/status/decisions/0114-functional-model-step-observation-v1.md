@@ -12,8 +12,7 @@
   "baseline": "1fa86d9066dc2772de3929c2d807f944e87a6f28",
   "target_releases": ["0.58.5"],
   "release_boundary": true,
-  "affected_ndf": [],
-  "affected_model_contracts": [
+  "affected_ndf": [
     "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
     "PTO-REQ-FUNCTIONAL-STEP-001"
   ],

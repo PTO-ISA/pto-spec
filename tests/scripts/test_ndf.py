@@ -248,7 +248,7 @@ class NdfTest(unittest.TestCase):
             "PTO-STATE-TILE-LOCAL": ("_Tiles", "_TileAllocationMasks"),
             "PTO-STATE-TILE-FEATURE-MAP": ("_TileFeatureMapDescriptors",),
             "PTO-STATE-TILE-SHARED": ("_SharedTiles",),
-            "PTO-STATE-MODEL-FUNCTIONAL-CONTROL": (
+            "PTO-STATE-ARCH-FUNCTIONAL-MODEL-PROFILE": (
                 "_FunctionalModelInitialized",
                 "_FunctionalModelStarted",
                 "_FunctionalHostRequestPending",

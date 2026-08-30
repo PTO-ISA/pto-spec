@@ -25,7 +25,6 @@ class AdrRecord:
     baseline: str
     target_releases: tuple[str, ...]
     affected_ndf: tuple[str, ...]
-    affected_model_contracts: tuple[str, ...]
     affected_units: tuple[str, ...]
     resolves: tuple[str, ...]
     supersedes: tuple[str, ...]
@@ -50,7 +49,6 @@ _FIELDS = {
     "baseline",
     "target_releases",
     "affected_ndf",
-    "affected_model_contracts",
     "affected_units",
     "resolves",
     "supersedes",
@@ -60,7 +58,7 @@ _FIELDS = {
     "release_boundary",
     "legacy_ids",
 }
-_OPTIONAL_FIELDS = {"release_boundary", "affected_model_contracts"}
+_OPTIONAL_FIELDS = {"release_boundary"}
 _ADR_ID = re.compile(r"ADR-[0-9]{4}\Z")
 _BASELINE = re.compile(r"[0-9a-f]{40}\Z")
 _RELEASE = re.compile(r"(?:[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?|unassigned)\Z")
@@ -218,11 +216,6 @@ def parse_adr(path: Path) -> AdrRecord:
         metadata, "target_releases", path, min_items=1, pattern=_RELEASE
     )
     affected_ndf = _strings(metadata, "affected_ndf", path, pattern=_NDF_ID)
-    affected_model_contracts = (
-        _strings(metadata, "affected_model_contracts", path, pattern=_NDF_ID)
-        if "affected_model_contracts" in metadata
-        else ()
-    )
     affected_units = _strings(metadata, "affected_units", path, pattern=_NDF_ID)
     resolves = _strings(metadata, "resolves", path, pattern=_ADR_ID)
     supersedes = _strings(metadata, "supersedes", path, pattern=_ADR_ID)
@@ -247,11 +240,8 @@ def parse_adr(path: Path) -> AdrRecord:
             raise _error(path, "accepted ADR requires approvers")
         if accepted is None:
             raise _error(path, "accepted ADR requires an acceptance date")
-        if not affected_ndf and not affected_model_contracts:
-            raise _error(
-                path,
-                "accepted ADR requires affected_ndf or affected_model_contracts",
-            )
+        if not affected_ndf:
+            raise _error(path, "accepted ADR requires affected_ndf")
     elif status == "rejected" and rejected is None:
         raise _error(path, "rejected ADR requires a rejection date")
     elif status == "superseded":
@@ -273,7 +263,6 @@ def parse_adr(path: Path) -> AdrRecord:
         baseline=baseline,
         target_releases=target_releases,
         affected_ndf=affected_ndf,
-        affected_model_contracts=affected_model_contracts,
         affected_units=affected_units,
         resolves=resolves,
         supersedes=supersedes,

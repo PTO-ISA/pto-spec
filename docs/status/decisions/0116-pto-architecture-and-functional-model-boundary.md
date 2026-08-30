@@ -16,18 +16,9 @@
     "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
     "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001"
   ],
-  "affected_model_contracts": [
-    "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-    "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
-    "PTO-REQ-FUNCTIONAL-RESET-001",
-    "PTO-REQ-FUNCTIONAL-STEP-001"
-  ],
   "affected_units": [
-    "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
-    "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
     "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
-    "PTO-ARCH-STATE-FUNCTIONAL-MODEL",
-    "PTO-SCALAR-MODEL-SYS-SEMANTICS"
+    "PTO-ARCH-STATE-FUNCTIONAL-MODEL"
   ],
   "resolves": [],
   "supersedes": [],
@@ -65,28 +56,6 @@ The specification distinguishes four layers:
 4. The implementation selects MIR/runtime data structures, binary envelopes,
    hashing, storage, and optimization.
 
-The contract registry is part of this distinction. Portable and named PTO
-behavior remains in NDF with the existing architecture/scalar/block/tile/state
-and memory layers. Functional step envelopes, initialization lifecycle,
-deterministic sequence, pending tokens, and completion handshakes use separate
-`PTO-MODEL-CONTRACT` records with `layer=model`. The freestanding ACRC/a7/a0
-`exit_group(94)` convention uses the same non-NDF registry with `layer=abi`.
-Neither registry layer is PTO architecture or may satisfy an architectural
-NDF obligation.
-
-The executable model-contract ASL may call PTO architecture owners so ASLRef
-and the generated library exercise the same semantics. Its model-control
-globals use a model state identity, are excluded from PTO architectural-state
-claims, and are reset by model initialization rather than by the architecture
-reset owner. This executable harness placement does not turn model lifecycle
-or hosted ABI behavior into PTO architecture.
-
-The existing `PTO-ARCH-*` unit IDs and `asl/arch/` paths identify the shared
-ASL source-order surface used by the generator; they are not sufficient to
-classify a clause or state as architectural. NDF versus
-`PTO-MODEL-CONTRACT`, the contract layer, and the state identity provide that
-classification.
-
 PTO architecture defines no snapshot operation, snapshot format, model
 descriptor, C ABI, or summary hash. A functional-model checkpoint may cover
 the model's representation of all ASL-owned portable and named profile state,
@@ -118,20 +87,14 @@ visible until PTO makes the owning decision.
 
 - No instruction encoding, architectural state, legality, fault, or ordering
   rule changes.
-- Existing functional-model control state and ASL step behavior are unchanged;
-  their classification is corrected from PTO architecture to model or ABI.
+- Existing functional-model profile state and ASL step behavior are unchanged.
 - Snapshot/restore and summary-digest ABI changes may evolve under the exact
   generated-model descriptor without claiming PTO architectural compatibility.
 
 ## Verification
 
-- Functional-model and hosted-ABI contracts are validated in a separate
-  non-NDF registry, while fetch/length, instruction execution, architectural
-  state, faults, and memory effects retain their PTO architecture owners.
-- Generated functional-model pages identify model-contract ASL as
-  non-architectural and do not label it a normative PTO architecture source.
-- The functional control state registry uses a model identity and the PTO
-  architecture reset owner has no dependency on model-control reset.
+- The two owning NDF clauses explicitly exclude model ABI and implementation
+  identity from PTO architecture.
 - ASLRef continues to execute the same functional-model state transitions.
 - Model ABI tests independently cover checkpoint, descriptor, copy-out, hash,
   and consumer behavior.

@@ -1,7 +1,7 @@
 // PTO-UNIT: {"id":"PTO-ARCH-DISPATCH-FUNCTIONAL-STEP","surface":"arch","classification":["dispatch","functional-step"],"depends_on":["PTO-ARCH-DISPATCH-TOP-LEVEL","PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"]}
 
-// PTO-MODEL-CONTRACT-BEGIN: PTO-REQ-FUNCTIONAL-STEP-001
-// contract: layer=model status=accepted
+// NDF-BEGIN: PTO-REQ-FUNCTIONAL-STEP-001
+// ndf: kind=contract level=L1 layer=architecture status=accepted
 // ExecuteOnePTOStep MUST process pending host state before alignment or fetch,
 // then validate TPC alignment, probe two bytes, determine length, probe the
 // complete instruction, fetch little-endian bytes, and invoke the unique PTO
@@ -10,9 +10,8 @@
 // report whether the instruction was not attempted, executed, or rejected,
 // together with the resulting precise trap cause rather than interpreting
 // rejection as exit. A host-request result MUST snapshot the immutable request
-// token, origin, type, and scalar argument. This step envelope is functional-
-// model control; it does not add an instruction or architectural state.
-// PTO-MODEL-CONTRACT-END: PTO-REQ-FUNCTIONAL-STEP-001
+// token, origin, type, and scalar argument.
+// NDF-END: PTO-REQ-FUNCTIONAL-STEP-001
 
 pure func DeterminePTOInstructionLength(
     first_halfword: bits(16)) => integer {16,32,48,64}

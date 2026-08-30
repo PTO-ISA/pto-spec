@@ -35,11 +35,6 @@
       "type": "array", "uniqueItems": true,
       "items": {"type": "string", "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$"}
     },
-    "affected_model_contracts": {
-      "type": "array", "uniqueItems": true,
-      "description": "Non-architectural functional-model or hosted-ABI contracts affected by this decision.",
-      "items": {"type": "string", "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$"}
-    },
     "affected_units": {
       "type": "array", "uniqueItems": true,
       "items": {"type": "string", "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$"}
@@ -82,12 +77,9 @@
       "then": {
         "properties": {
           "accepted": {"type": "string", "format": "date"},
-          "approvers": {"minItems": 1}
-        },
-        "anyOf": [
-          {"properties": {"affected_ndf": {"minItems": 1}}},
-          {"required": ["affected_model_contracts"], "properties": {"affected_model_contracts": {"minItems": 1}}}
-        ]
+          "approvers": {"minItems": 1},
+          "affected_ndf": {"minItems": 1}
+        }
       }
     },
     {

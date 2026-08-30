@@ -27,16 +27,6 @@ updated through `scripts/instruction_docs.py`; catalogs and AVS fixtures use
 their owning generators. Do not hand-edit generated text or copy ASL semantics
 into governance prose.
 
-### Functional-model or hosted-ABI contract
-
-Use a `PTO-MODEL-CONTRACT` region with `layer=model` for lifecycle and
-observation behavior or `layer=abi` for a hosted convention. Keep PTO
-instruction/state/fault semantics in their owning ASL/NDF and call those
-owners from the model contract rather than restating them. Add the contract ID
-to ADR `affected_model_contracts`, provide executable evidence, and run
-`scripts/check-model-contracts`. Never place model tokens, snapshot formats,
-ELF/process rules, or C ABI layouts in an architectural NDF clause.
-
 ### Validation or toolchain
 
 Keep workflow/toolchain changes separate from architecture semantics. A pinned

@@ -18,7 +18,6 @@ if str(ROOT) not in sys.path:
 from scripts.adr_records import AdrRecord, load_adrs, validate_adr_graph
 from scripts.asl_units import load_units
 from scripts.ndf import instruction_clause_id, parse_ndf_regions
-from scripts.model_contracts import parse_model_contracts
 
 
 COMMIT = re.compile(r"[0-9a-f]{40}\Z")
@@ -37,28 +36,21 @@ def _is_git_repository_root(root: Path) -> bool:
     )
 
 
-def _current_impact_inventory(
-    root: Path,
-) -> tuple[set[str], dict[str, str], dict[str, str]]:
+def _current_impact_inventory(root: Path) -> tuple[set[str], dict[str, str]]:
     asl_root = root / "asl"
     units = load_units(asl_root)
     unit_ids = {unit.unit_id for unit in units}
     unit_by_source = {unit.source_path: unit.unit_id for unit in units}
     ndf_owners: dict[str, str] = {}
-    model_contract_owners: dict[str, str] = {}
     for path in sorted(asl_root.rglob("*.asl")) if asl_root.is_dir() else []:
         source = path.relative_to(root)
         owner = unit_by_source[source]
         for clause in parse_ndf_regions(path.read_text(encoding="utf-8"), source):
             ndf_owners[clause.clause_id] = owner
-        for contract in parse_model_contracts(
-            path.read_text(encoding="utf-8"), source
-        ):
-            model_contract_owners[contract.contract_id] = owner
     for unit in units:
         if unit.mnemonic is not None:
             ndf_owners[instruction_clause_id(unit.surface, unit.mnemonic)] = unit.unit_id
-    return unit_ids, ndf_owners, model_contract_owners
+    return unit_ids, ndf_owners
 
 
 def _git(root: Path, *arguments: str) -> str:
@@ -75,7 +67,7 @@ def _git(root: Path, *arguments: str) -> str:
 
 def _baseline_impact_inventory(
     root: Path, revision: str
-) -> tuple[set[str], dict[str, str], dict[str, str]]:
+) -> tuple[set[str], dict[str, str]]:
     paths = tuple(
         Path(line)
         for line in _git(
@@ -85,7 +77,6 @@ def _baseline_impact_inventory(
     )
     unit_ids: set[str] = set()
     ndf_owners: dict[str, str] = {}
-    model_contract_owners: dict[str, str] = {}
     for source in paths:
         text = _git(root, "show", f"{revision}:{source.as_posix()}")
         metadata_rows = [
@@ -111,13 +102,11 @@ def _baseline_impact_inventory(
         unit_ids.add(unit_id)
         for clause in parse_ndf_regions(text, source):
             ndf_owners[clause.clause_id] = unit_id
-        for contract in parse_model_contracts(text, source):
-            model_contract_owners[contract.contract_id] = unit_id
         if mnemonic is not None:
             if not isinstance(surface, str) or not isinstance(mnemonic, str):
                 raise ValueError(f"{revision}:{source}: invalid instruction metadata")
             ndf_owners[instruction_clause_id(surface, mnemonic)] = unit_id
-    return unit_ids, ndf_owners, model_contract_owners
+    return unit_ids, ndf_owners
 
 
 def _selected_baseline(root: Path) -> str:
@@ -133,16 +122,13 @@ def _selected_baseline(root: Path) -> str:
 
 
 def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
-    unit_ids, ndf_owners, model_contract_owners = _current_impact_inventory(root)
+    unit_ids, ndf_owners = _current_impact_inventory(root)
     baseline_units: set[str] = set()
     baseline_ndf_owners: dict[str, str] = {}
-    baseline_model_contract_owners: dict[str, str] = {}
     if any(record.release_boundary for record in records):
-        (
-            baseline_units,
-            baseline_ndf_owners,
-            baseline_model_contract_owners,
-        ) = _baseline_impact_inventory(root, _selected_baseline(root))
+        baseline_units, baseline_ndf_owners = _baseline_impact_inventory(
+            root, _selected_baseline(root)
+        )
 
     errors: list[str] = []
     for record in records:
@@ -163,25 +149,6 @@ def _validate_impacts(records: tuple[AdrRecord, ...], root: Path) -> list[str]:
                 errors.append(
                     f"{record.adr_id} affected_ndf {ndf_id} is owned by {owner}, "
                     "which is absent from affected_units"
-                )
-        for contract_id in record.affected_model_contracts:
-            owner = model_contract_owners.get(contract_id)
-            if owner is None and record.release_boundary:
-                owner = baseline_model_contract_owners.get(contract_id)
-            if owner is None:
-                scope = (
-                    "current or selected-baseline"
-                    if record.release_boundary
-                    else "current"
-                )
-                errors.append(
-                    f"{record.adr_id} affected_model_contracts references "
-                    f"unknown {scope} model contract {contract_id}"
-                )
-            elif owner not in record.affected_units:
-                errors.append(
-                    f"{record.adr_id} affected_model_contracts {contract_id} is "
-                    f"owned by {owner}, which is absent from affected_units"
                 )
         for unit_id in record.affected_units:
             known = unit_id in unit_ids or (
