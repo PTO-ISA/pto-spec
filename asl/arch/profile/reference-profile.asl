@@ -167,12 +167,31 @@ readonly implementation func DataAccessPermitted(address: Word,
                                                  write: boolean) => boolean
 begin
     let end_address = UInt(address) + size_bytes;
-    if end_address > PTO_MODEL_MEMORY_BYTES then return FALSE; end;
+    // Hosted profiles delegate address-space bounds and permissions to the
+    // runtime bridge.  Keep the bounded byte-array check for the portable
+    // profile, but do not reject guest virtual addresses before the host
+    // primitive is reached.
+    if !PTO_MODEL_HOST_MEMORY && end_address > PTO_MODEL_MEMORY_BYTES then
+        return FALSE;
+    end;
     // PTO v0 assigns ACR0 and ACR1 full bounded-memory access. ACR2 through
     // ACR15 use the bounded 3072-byte application region.
     if CurrentACR() >= 2 then return end_address <= 3072;
     else return TRUE;
     end;
+end;
+
+readonly implementation func InstructionAccessPermitted(
+    address: Word, size_bytes: integer {2,4,6,8}) => boolean
+begin
+    let end_address = UInt(address) + size_bytes;
+    // Instruction fetch has its own profile hook.  The reference profile
+    // keeps the bounded byte-array limit, while a hosted profile delegates
+    // the concrete mapping and permission decision to its host bridge.
+    if !PTO_MODEL_HOST_MEMORY && end_address > PTO_MODEL_MEMORY_BYTES then
+        return FALSE;
+    end;
+    return TRUE;
 end;
 
 implementation func SaveTrapContext(target: AccessControlRing,
