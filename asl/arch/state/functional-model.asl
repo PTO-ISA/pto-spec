@@ -2,12 +2,15 @@
 // PTO-STATE: {"id":"PTO-STATE-ARCH-FUNCTIONAL-MODEL-PROFILE","classification":["profile","functional-model"],"scope":"system","owner":"PTO-ARCH-STATE-FUNCTIONAL-MODEL","members":["_FunctionalModelInitialized","_FunctionalModelStarted","_FunctionalHostRequestPending","_FunctionalHostRequestToken","_FunctionalHostRequestNextToken","_FunctionalHostRequestOriginPE","_FunctionalHostRequestType","_FunctionalHostRequestArgument0","_FunctionalHostRequestResultGPR","_FunctionalHostRequestResumeTPC","_FunctionalProfileSequence"],"depends_on":["PTO-STATE-ARCH-GPR","PTO-STATE-ARCH-PROGRAM-CONTROL"]}
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001
-// ndf: kind=contract level=L1 layer=state status=open
-// G2 and G3 are expected to define a versioned deterministic snapshot of
-// [[PTO-REQ-STATE-001]] and the functional profile-state record. Functional
-// profile state remains separate from portable PTO state and is not added to
-// [[PTO-REQ-STATE-001]]; no snapshot encoding is accepted in G1 and this
-// clause remains a draft obligation until G2/G3 define the envelope.
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// PTO architecture MUST NOT define a snapshot instruction, architectural
+// action, state member, serialized envelope, compatibility rule, or digest.
+// Architectural meaning remains owned by [[PTO-REQ-STATE-001]] and named PTO
+// profile state. A generated functional model MAY expose a non-architectural
+// checkpoint interface over its representation of those owners, but that
+// interface MUST NOT add state or change any PTO transition. Physical-memory
+// bytes remain governed by PTO memory semantics; checkpoint ownership of host
+// byte storage is a model-and-caller contract outside PTO architecture.
 // NDF-END: PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001
 
 var _FunctionalModelInitialized : boolean;

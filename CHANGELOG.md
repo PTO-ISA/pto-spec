@@ -7,6 +7,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Architecture
 - [ADR-0114](docs/status/decisions/0114-functional-model-step-observation-v1.md): Functional-model step observation v1
+- [ADR-0116](docs/status/decisions/0116-pto-architecture-and-functional-model-boundary.md): PTO architecture and functional-model implementation boundary
 
 ### Block
 - [ADR-0106](docs/status/decisions/0106-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets

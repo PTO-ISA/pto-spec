@@ -13602,7 +13602,9 @@
       "owners": [
         "asl/arch/profile/functional-model.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0116"
+      ],
       "tests": [
         "PTO-AVS-ARCH-PROFILE-FUNCTIONAL-MODEL-STATIC-001"
       ]
@@ -13627,7 +13629,9 @@
       "owners": [
         "asl/arch/state/functional-model.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0116"
+      ],
       "tests": [
         "PTO-AVS-ARCH-STATE-FUNCTIONAL-MODEL-STATIC-001"
       ]
@@ -16713,7 +16717,7 @@
     "asl/arch/profile/applicability.asl": "b3734d16ed92c3e7f9d8a99047009c8b0996cbeb88a087296c12696d9965de41",
     "asl/arch/profile/e8m0-conversion.asl": "e46324c90eff21e4270558e315c684089f11b6d6a47f6dc4ee0b30411761fd57",
     "asl/arch/profile/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
-    "asl/arch/profile/functional-model.asl": "be0cda2b7ba32aa0c1a0a03293742fab9b70b5e0dbd3558b4b71da8ab2da6ff4",
+    "asl/arch/profile/functional-model.asl": "53b45eb74b0c65fc105ab12d57efb44dcd0fe6967cbd2ed176fb386d5ff8dde6",
     "asl/arch/profile/indexed-memory-lane-choice.asl": "d4019525ffb08129714a07bd1c871c970dcfe33c5c14741e1582be62fe4dde4c",
     "asl/arch/profile/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
     "asl/arch/profile/matrix-quantization.asl": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440",
@@ -16729,7 +16733,7 @@
     "asl/arch/programming-model/shared-tile-registers.asl": "b2802d0449740f79b0bf311ad5c70b1daed25eb232db303a0701d49704aa0e32",
     "asl/arch/programming-model/tile-registers.asl": "59452d3b3b708dc43f6ec4f930b1c7153d6d5247a93119669527bd29b26ec99e",
     "asl/arch/state/definedness.asl": "f68778534d67e736f701f8e24e03f27a018f3eabcec1421a6b33856030874ad1",
-    "asl/arch/state/functional-model.asl": "5f4b8899620eca8d710d47339eeccd13c5609c4b22db800b6f22cf062622046c",
+    "asl/arch/state/functional-model.asl": "fa79cdf63b63c13b61dbb5aaeaa690911bf162530b7563925728799717066b5d",
     "asl/arch/state/numeric-status.asl": "3d3fe1709c7e2903bca96d50e9671a6a484c442ff08ce4a8340168cdb38ac6d9",
     "asl/arch/state/program-counter.asl": "3b5f7bad14ca62af5d776ae551ddf32b4b9f43fe25d96ce0fd31a59b44e1e845",
     "asl/arch/state/tile-descriptor.asl": "52604c09f7171f5f530755929970b499296d3ce84a5ee337d7bc8c63eb8d7913",
@@ -17571,7 +17575,7 @@
     "docs/arch/profile/applicability.md": "b9bb5e1a0402d73367969fa54b60bd8f85a8d30a77d3f4b494b8915c28beea3f",
     "docs/arch/profile/e8m0-conversion.md": "5904a9f4af89a6a049a27857559aa5f2b6d71347f04865c66949627f34d35b7e",
     "docs/arch/profile/extension-first-use.md": "fb16e18d1c162fed1f5d1d64bb5c422c21e30a33a1824fa00d9a1b9a04002f52",
-    "docs/arch/profile/functional-model.md": "73770f2415ebf653f73277f572d575c319130fe6c78b5a54f18bd94035d896bf",
+    "docs/arch/profile/functional-model.md": "b7d77ca832e2126079c1313f0cead95c22ef0c00228d956a6ae1eff516913de8",
     "docs/arch/profile/indexed-memory-lane-choice.md": "0b2465f9bbe0f16cea30a2286b1368510dea5ba4304a1c1fce7ba5f31ece6e1f",
     "docs/arch/profile/matrix-postprocess.md": "6c620e8f326fa991a2a35cf3d9aad4e1e9b9321ea63bc78e8fdabdfb17802378",
     "docs/arch/profile/matrix-quantization.md": "0af8e5da79bf30a369992e5eecdd4d7e36603f8eb6140ed7b5952d3d5962acd8",
@@ -17587,7 +17591,7 @@
     "docs/arch/programming-model/shared-tile-registers.md": "2058143f468f3ca0753e203f38cfa302e82e5e59f96b3f284da841cb8a52251a",
     "docs/arch/programming-model/tile-registers.md": "bbd97306c0ba16a8a194086c3f575635bda9e125cb803c1ea2e93f33596f9309",
     "docs/arch/state/definedness.md": "c907a540dc99da46f0343d36d44559912862e5ed66fe64780a6a5714a6e82953",
-    "docs/arch/state/functional-model.md": "f0a42adb8ca36431c197bd6147a191493f9be19efa7ada5c2ea2c4cccbcd640a",
+    "docs/arch/state/functional-model.md": "8da1c881b2ba5dcaa75ffcbaa18c13e23323e270cc344cf07cc53e6f5c4784e4",
     "docs/arch/state/numeric-status.md": "b7b88e800b8fb42ff16164137d45c59c6ecc5cc83143ea0370199d6a06514b49",
     "docs/arch/state/program-counter.md": "8aedcb21ce2bc653515041f92cf1de114cc48a840d3b3afa80a669aae3adf970",
     "docs/arch/state/tile-descriptor.md": "e19351e89cbdafae3b7309dd07b287688868a04007b5e0914a756eefbcdb1685",
@@ -18377,7 +18381,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "6f8d5b8eeba3eb5638b3ddd50ecbba6aa09c7989484d9e2a1b5a40649820b626",
+    "spec/evidence/adr-index.json": "7cd4e31d5002243a318232ec2afee7bdea03b168dba4272f75682be6f6ed2b80",
     "spec/evidence/instruction-contract-closure.json": "0bdb33460b56f30b54b898a75136515dc6d26621d5eb17f5859acad5668a156f",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -60945,7 +60949,8 @@
       "readiness_subjects": [
         "ADR-0111",
         "ADR-0114",
-        "ADR-0115"
+        "ADR-0115",
+        "ADR-0116"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
@@ -61324,7 +61329,8 @@
       "id": "PTO-ARCH-STATE-FUNCTIONAL-MODEL",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-0111"
+        "ADR-0111",
+        "ADR-0116"
       ],
       "semantic_tests": [],
       "source": "asl/arch/state/functional-model.asl",

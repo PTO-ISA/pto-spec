@@ -214,7 +214,7 @@
     },
     {
       "path": "asl/arch/profile/functional-model.asl",
-      "sha256": "be0cda2b7ba32aa0c1a0a03293742fab9b70b5e0dbd3558b4b71da8ab2da6ff4"
+      "sha256": "53b45eb74b0c65fc105ab12d57efb44dcd0fe6967cbd2ed176fb386d5ff8dde6"
     },
     {
       "path": "asl/arch/profile/indexed-memory-lane-choice.asl",
@@ -278,7 +278,7 @@
     },
     {
       "path": "asl/arch/state/functional-model.asl",
-      "sha256": "5f4b8899620eca8d710d47339eeccd13c5609c4b22db800b6f22cf062622046c"
+      "sha256": "fa79cdf63b63c13b61dbb5aaeaa690911bf162530b7563925728799717066b5d"
     },
     {
       "path": "asl/arch/state/numeric-status.asl",
@@ -3466,7 +3466,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "7803598114d6458da299fec896399e278d56b0770982223446e156c0b09901c3"
+      "sha256": "170c93a827a164b006f6fda45743a615eb523fee9428ba9ec331f89961f47eb7"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3478,11 +3478,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "77f0f442bba1d3c5bcf45d0491806c3f571ba97f175b4830c060dfad03f23552"
+      "sha256": "d441d8ef9cbbfaf86a8b135504106413870427367c55f8675d07ad1536463b7e"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "be7cc64f15ae85735e5d3081ecb039073208cad7bdaea3afafeeee2345d5dd8e"
+      "sha256": "a6f71d9aa85b1303c235ebedf65630fbeb6d0173a071b010c266a3c0bd864ad7"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3528,7 +3528,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "b2c42361cd18312399349806a99bd74868fd22d5f7bd84aae8623bf31a416e19",
+  "content_sha256": "dfc1ce1f85939e065b18562c6d487915bd5ed682f32914af6e06a5f8a9a5f01c",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3825,7 +3825,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/functional-model.md",
-      "sha256": "73770f2415ebf653f73277f572d575c319130fe6c78b5a54f18bd94035d896bf"
+      "sha256": "b7d77ca832e2126079c1313f0cead95c22ef0c00228d956a6ae1eff516913de8"
     },
     {
       "kind": "generated-documentation",
@@ -3905,7 +3905,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/state/functional-model.md",
-      "sha256": "f0a42adb8ca36431c197bd6147a191493f9be19efa7ada5c2ea2c4cccbcd640a"
+      "sha256": "8da1c881b2ba5dcaa75ffcbaa18c13e23323e270cc344cf07cc53e6f5c4784e4"
     },
     {
       "kind": "generated-documentation",
@@ -11248,8 +11248,16 @@
         "sha256": "f80185d05b2b92eced211e2724260d9495c521b2ff12d737681019f8326dbf23"
       },
       {
+        "id": "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
+        "sha256": "087a7512a663c10e20c658e3ccfe13e07857bdb1f6511648db16cd33ceb70bbd"
+      },
+      {
         "id": "PTO-REQ-FUNCTIONAL-RESET-001",
         "sha256": "25b16814742d17ab066eff3268796e3020c0ed7e97cce24da0296f1661afaff2"
+      },
+      {
+        "id": "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001",
+        "sha256": "b9b28ea25261d6dcd0493d6185126354f894bcf6dd71dac3a2106fdffd76f6e0"
       },
       {
         "id": "PTO-REQ-FUNCTIONAL-STEP-001",
@@ -12097,7 +12105,8 @@
       "ADR-0112",
       "ADR-0113",
       "ADR-0114",
-      "ADR-0115"
+      "ADR-0115",
+      "ADR-0116"
     ]
   },
   "schema_version": 1,

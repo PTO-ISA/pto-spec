@@ -33,12 +33,14 @@
 // NDF-END: PTO-REQ-FUNCTIONAL-RESET-001
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001
-// ndf: kind=contract level=L1 layer=architecture status=open
-// G2 and G3 are expected to define a generated-model identity that covers the
-// PTO source commit and tree, ASLRef pin, encoding ABI, functional profile,
-// generator version, MIR schema, and normalized input hashes. No executable
-// descriptor or consumer compatibility requirement is accepted in G1; this
-// clause remains a draft obligation until those stages close it.
+// ndf: kind=contract level=L1 layer=architecture status=accepted
+// PTO architecture owns its release, encoding, state, and profile semantics;
+// ASL execution MUST NOT depend on a generated-model descriptor, source-tree
+// identity, generator version, MIR schema, C ABI version, or implementation
+// hash. A functional model MAY bind those values in a non-architectural model
+// descriptor to fail closed against the wrong generated artifact. Such a
+// descriptor is an implementation/interface identity and MUST NOT create or
+// refine PTO architectural behavior.
 // NDF-END: PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001
 
 readonly func FunctionalModelHostRequestPending() => boolean

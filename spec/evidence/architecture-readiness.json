@@ -21461,13 +21461,38 @@
         "PTO-SCALAR-MODEL-SYS-SEMANTICS"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0116"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
+        "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0116",
+      "test_ids": [
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-EXIT-GROUP-004",
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-EXHAUSTION-002",
+        "PTO-AVS-ARCH-FUNCTIONAL-MODEL-TOKEN-RESET-STALE-003",
+        "PTO-AVS-ARCH-PROFILE-FUNCTIONAL-MODEL-STATIC-001",
+        "PTO-AVS-ARCH-STATE-FUNCTIONAL-MODEL-STATIC-001"
+      ],
+      "unit_ids": [
+        "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
+        "PTO-ARCH-STATE-FUNCTIONAL-MODEL"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 109,
-      "sha256": "712379e3255acf62f4f970281527181fa5b4d81e8516bbf009141829cc20fee4"
+      "count": 110,
+      "sha256": "5a850377b05406074461792bc54db439cedf6b2c268ec7a520d04a6c6cde7ec4"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21475,7 +21500,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "be7cc64f15ae85735e5d3081ecb039073208cad7bdaea3afafeeee2345d5dd8e",
+      "sha256": "a6f71d9aa85b1303c235ebedf65630fbeb6d0173a071b010c266a3c0bd864ad7",
       "test_count": 3750,
       "unit_count": 858
     }
@@ -21495,13 +21520,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 10,
-      "executable": 95,
+      "executable": 96,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 105,
+    "subject_count": 106,
     "validated_count": 0
   }
 }
