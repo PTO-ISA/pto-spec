@@ -2,11 +2,11 @@
 {
   "id": "ADR-0112",
   "title": "Tile operation type roles and source reinterpretation",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["Codex"],
-  "approvers": [],
+  "approvers": ["PTO ISA maintainers"],
   "created": "2026-08-30",
-  "accepted": null,
+  "accepted": "2026-08-30",
   "rejected": null,
   "superseded": null,
   "baseline": "0d3365264eee82827214e7240c8aeaf270a6f94a",
@@ -344,9 +344,9 @@ The implementation must provide focused executable evidence for:
    encoding, insufficient capacity, and other pre-existing fault classes; and
 9. explicit proof that #162 does not add alias/reuse or packed-format behavior.
 
-## Blockers
+## Implementation readiness
 
-- ADR acceptance and approver assignment are required before implementation
-  is dispatched.
-- The implementation must keep all affected generated projections aligned
-  with the authoritative ASL/NDF owners.
+ADR-0112 is accepted based on the explicit architecture confirmation for this
+design. The implementation must keep all affected generated projections aligned
+with the authoritative ASL/NDF owners. Executor dispatch remains a separate
+workflow action and is intentionally not started by this decision record.
