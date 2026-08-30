@@ -35,9 +35,9 @@
 
 PTO-SPEC is the architecture source. Its owning ASL defines instruction
 semantics, architectural state, legality, faults, ordering, and profile
-behavior. LinxISA v0.58.5 imports the common PTO contract and may provide a
-clearer reviewed projection, but a compiler, emulator, functional model, or
-Linx implementation cannot replace the PTO owner.
+behavior. A downstream ISA projection may provide comparison evidence, but a
+compiler, emulator, functional model, or downstream implementation cannot
+replace the PTO owner.
 
 The functional-model bring-up also needs checkpointing, C ABI negotiation,
 descriptor identity, trace digests, and gfrun integration. Treating those
@@ -77,9 +77,9 @@ independent architecture definition. Differential failures are classified as:
 - an ambiguous or missing PTO architecture definition, resolved in PTO before
   downstream work continues;
 - a model generator/runtime/ABI defect, fixed without changing architecture;
-- a LinxISA projection mismatch, reconciled back to the PTO owner.
+- a downstream projection mismatch, reconciled back to the PTO owner.
 
-LinxISA may be consulted when its current 0.58.5 projection states the common
+A current downstream projection may be consulted when it states the common
 contract more clearly. Agreement is evidence; conflicting definitions remain
 visible until PTO makes the owning decision.
 
@@ -98,5 +98,5 @@ visible until PTO makes the owning decision.
 - ASLRef continues to execute the same functional-model state transitions.
 - Model ABI tests independently cover checkpoint, descriptor, copy-out, hash,
   and consumer behavior.
-- PTO/LinxISA lock gates continue to prove common architectural projections
+- PTO/downstream lock gates continue to prove common architectural projections
   against an exact PTO commit and tree.

@@ -3466,7 +3466,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "fe4292726362ce673ef9c7b494530cab875ac9f0cafb0b0245dad78a8b87e299"
+      "sha256": "f06c063496b576f095682ff4b58eadc1b14a91a132a6d3a4463f0ce100931a6d"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3474,11 +3474,11 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "c96cd3160b02d518472ec1a1addeeaf9fa0ef74ed917c01563639c67bae978e4"
+      "sha256": "4aa46ca058584ed55d211514326a19c185d1c721edbe324c7bcd8aa64657879c"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "f6ad19c5cee5c068b14cc2b498c9de4aacbe4fc6bd06d5f48b40baaebf463b3c"
+      "sha256": "d7a2856255f6f0b0845b39cfaee5e4671fe812a1ce64ef693a523eabd14fa0d4"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3528,7 +3528,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "69d754e075a466a343d0ac119c29154a7e98c1001ba6da95d2b215755dc0ecc9",
+  "content_sha256": "6276beb1602841200aeeeb4d5dc42c7abcadeaf1c2c4e2e28d784bab987afc7a",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
