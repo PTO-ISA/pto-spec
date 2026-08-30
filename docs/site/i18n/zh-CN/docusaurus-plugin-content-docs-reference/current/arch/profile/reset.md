@@ -206,7 +206,6 @@ begin
     _SystemRegisters.cycle = Zeros{PTO_XLEN};
     _CurrentACR = 0;
     ClearFault();
-    ResetFunctionalModelState();
 end;
 ```
 <!-- GENERATED-ASL-END: unit -->

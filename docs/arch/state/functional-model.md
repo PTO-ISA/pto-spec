@@ -1,9 +1,9 @@
 <!-- GENERATED FROM: asl/arch/state/functional-model.asl -->
 # Functional Model
 
-**Normative ASL source:** `asl/arch/state/functional-model.asl`
+**Executable model-contract ASL source:** `asl/arch/state/functional-model.asl`
 
-This page is a generated reference view of the normative ASL unit.
+This page is a generated reference view of a non-architectural functional-model contract. PTO architecture remains owned by the architectural ASL/NDF that this model contract invokes.
 
 ## ASL unit identity {#PTO-ARCH-STATE-FUNCTIONAL-MODEL}
 
@@ -15,7 +15,7 @@ This page is a generated reference view of the normative ASL unit.
 <!-- PTO-READER-BLOCK: arch-functional-state-purpose role=purpose-scope -->
 ## Purpose and scope
 
-This unit declares profile-only state used by functional initialization, deterministic step observation, and the resumable host-request handshake. These fields are separate from the portable PTO architectural-state requirement.
+This unit declares non-architectural model-control state used by functional initialization, deterministic step observation, and the resumable host-request handshake. These fields are outside the portable and named-profile PTO architectural-state requirements.
 
 <!-- PTO-READER-BLOCK: arch-functional-state-concepts role=concepts-state -->
 ## State groups
@@ -32,7 +32,7 @@ This unit declares profile-only state used by functional initialization, determi
 <!-- PTO-READER-BLOCK: arch-functional-state-boundaries role=boundaries -->
 ## Snapshot boundary
 
-The open snapshot requirement records that a versioned deterministic envelope is still needed. This page does not authorize copying C structs, exposing implementation pointers, or merging profile state into portable architectural state.
+The model ABI provides a versioned deterministic checkpoint envelope over model-owned representations. This page does not authorize copying C structs, exposing implementation pointers, checkpointing caller-owned host memory, or merging model-control state into PTO architectural state.
 
 <!-- PTO-READER-BLOCK: arch-functional-state-example role=example-usage -->
 ## Non-normative lifecycle example
@@ -44,15 +44,15 @@ After reset, initialization sets the entry and sequence, a step marks the model 
 
 - [Functional-model profile](../profile/functional-model.md) updates these fields.
 - [Functional-model result types](../data-types/functional-model.md) expose the immutable observation record.
-- [Execution context](../programming-model/execution-context.md) owns portable PC/BPC and GPR state referenced by the profile.
+- [Execution context](../programming-model/execution-context.md) owns PTO PC/BPC and GPR state observed by the model contract.
 <!-- SUPPLEMENTARY-END -->
 
-## Normative ASL
+## Model-contract ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/state/functional-model.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-STATE-FUNCTIONAL-MODEL","surface":"arch","classification":["state","functional-model"],"depends_on":["PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL","PTO-ARCH-PROGRAMMING-MODEL-EXECUTION-CONTEXT"]}
-// PTO-STATE: {"id":"PTO-STATE-ARCH-FUNCTIONAL-MODEL-PROFILE","classification":["profile","functional-model"],"scope":"system","owner":"PTO-ARCH-STATE-FUNCTIONAL-MODEL","members":["_FunctionalModelInitialized","_FunctionalModelStarted","_FunctionalHostRequestPending","_FunctionalHostRequestToken","_FunctionalHostRequestNextToken","_FunctionalHostRequestOriginPE","_FunctionalHostRequestType","_FunctionalHostRequestArgument0","_FunctionalHostRequestResultGPR","_FunctionalHostRequestResumeTPC","_FunctionalProfileSequence"],"depends_on":["PTO-STATE-ARCH-GPR","PTO-STATE-ARCH-PROGRAM-CONTROL"]}
+// PTO-STATE: {"id":"PTO-STATE-MODEL-FUNCTIONAL-CONTROL","classification":["model","functional-control"],"scope":"system","owner":"PTO-ARCH-STATE-FUNCTIONAL-MODEL","members":["_FunctionalModelInitialized","_FunctionalModelStarted","_FunctionalHostRequestPending","_FunctionalHostRequestToken","_FunctionalHostRequestNextToken","_FunctionalHostRequestOriginPE","_FunctionalHostRequestType","_FunctionalHostRequestArgument0","_FunctionalHostRequestResultGPR","_FunctionalHostRequestResumeTPC","_FunctionalProfileSequence"],"depends_on":["PTO-STATE-ARCH-GPR","PTO-STATE-ARCH-PROGRAM-CONTROL"]}
 
 // NDF-BEGIN: PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001
 // ndf: kind=contract level=L1 layer=architecture status=accepted
@@ -84,8 +84,8 @@ begin
     _FunctionalModelStarted = FALSE;
     _FunctionalHostRequestPending = FALSE;
     _FunctionalHostRequestToken = Zeros{PTO_XLEN};
-    // The next-token counter is model-instance identity state. Architecture
-    // reset deliberately preserves it so a stale completion can never acquire
+    // The next-token counter is model-instance identity state. Model reset
+    // deliberately preserves it so a stale completion can never acquire
     // authority over a later request in the same instance.
     _FunctionalHostRequestOriginPE = 0;
     _FunctionalHostRequestType = Zeros{16};

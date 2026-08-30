@@ -1,9 +1,9 @@
 <!-- GENERATED FROM: asl/arch/dispatch/functional-step.asl -->
 # Functional Step
 
-**Normative ASL source:** `asl/arch/dispatch/functional-step.asl`
+**Executable model-contract ASL source:** `asl/arch/dispatch/functional-step.asl`
 
-This page is a generated reference view of the normative ASL unit.
+This page is a generated reference view of a non-architectural functional-model contract. PTO architecture remains owned by the architectural ASL/NDF that this model contract invokes.
 
 ## ASL unit identity {#PTO-ARCH-DISPATCH-FUNCTIONAL-STEP}
 
@@ -45,14 +45,14 @@ This page is a generated reference view of the normative ASL unit.
 - [功能模型配置档](../profile/functional-model.md)拥有重置和宿主请求状态。
 <!-- SUPPLEMENTARY-END -->
 
-## Normative ASL
+## Model-contract ASL
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/dispatch/functional-step.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-DISPATCH-FUNCTIONAL-STEP","surface":"arch","classification":["dispatch","functional-step"],"depends_on":["PTO-ARCH-DISPATCH-TOP-LEVEL","PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-FUNCTIONAL-MODEL"]}
 
-// NDF-BEGIN: PTO-REQ-FUNCTIONAL-STEP-001
-// ndf: kind=contract level=L1 layer=architecture status=accepted
+// PTO-MODEL-CONTRACT-BEGIN: PTO-REQ-FUNCTIONAL-STEP-001
+// contract: layer=model status=accepted
 // ExecuteOnePTOStep MUST process pending host state before alignment or fetch,
 // then validate TPC alignment, probe two bytes, determine length, probe the
 // complete instruction, fetch little-endian bytes, and invoke the unique PTO
@@ -61,8 +61,9 @@ This page is a generated reference view of the normative ASL unit.
 // report whether the instruction was not attempted, executed, or rejected,
 // together with the resulting precise trap cause rather than interpreting
 // rejection as exit. A host-request result MUST snapshot the immutable request
-// token, origin, type, and scalar argument.
-// NDF-END: PTO-REQ-FUNCTIONAL-STEP-001
+// token, origin, type, and scalar argument. This step envelope is functional-
+// model control; it does not add an instruction or architectural state.
+// PTO-MODEL-CONTRACT-END: PTO-REQ-FUNCTIONAL-STEP-001
 
 pure func DeterminePTOInstructionLength(
     first_halfword: bits(16)) => integer {16,32,48,64}

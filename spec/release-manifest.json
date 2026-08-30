@@ -134,7 +134,7 @@
     },
     {
       "path": "asl/arch/dispatch/functional-step.asl",
-      "sha256": "66f772f6b0a8041ad32b562d646d1b2988089a349bf91bc4722e9869006487ec"
+      "sha256": "909aa085a49133b979f9fb800f28f3465f8dd07848432ed87dff82ac8bc30c7b"
     },
     {
       "path": "asl/arch/dispatch/top-level.asl",
@@ -214,7 +214,7 @@
     },
     {
       "path": "asl/arch/profile/functional-model.asl",
-      "sha256": "53b45eb74b0c65fc105ab12d57efb44dcd0fe6967cbd2ed176fb386d5ff8dde6"
+      "sha256": "b9831031f582df60229804fbb46d1ed7b914f28cc430cc63cceb3d24a8dbc4cb"
     },
     {
       "path": "asl/arch/profile/indexed-memory-lane-choice.asl",
@@ -238,7 +238,7 @@
     },
     {
       "path": "asl/arch/profile/reset.asl",
-      "sha256": "e3155de06358b6c6eea7310e83c549f82cb1372e81e16ab49b720d980fea2c86"
+      "sha256": "0dcddc63cea410a9437832d84a5af6ac0f984c077597dd85ac8df3f4802aa4a1"
     },
     {
       "path": "asl/arch/profile/trap-context-recovery.asl",
@@ -278,7 +278,7 @@
     },
     {
       "path": "asl/arch/state/functional-model.asl",
-      "sha256": "fa79cdf63b63c13b61dbb5aaeaa690911bf162530b7563925728799717066b5d"
+      "sha256": "804fe709a24691fbfd799e472b3b111cc0e6b81341d3c68464a5cb15a7c16513"
     },
     {
       "path": "asl/arch/state/numeric-status.asl",
@@ -3466,7 +3466,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "f06c063496b576f095682ff4b58eadc1b14a91a132a6d3a4463f0ce100931a6d"
+      "sha256": "3f998138122e1307e4f7c389b7b0c2f3fc063891ea33927ebd1e155a2b31c318"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3474,15 +3474,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "4aa46ca058584ed55d211514326a19c185d1c721edbe324c7bcd8aa64657879c"
+      "sha256": "3ca7a507c68f5dafdfc819225a18ce6860ec4250b59730091c68d1342132a2c2"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "d7a2856255f6f0b0845b39cfaee5e4671fe812a1ce64ef693a523eabd14fa0d4"
+      "sha256": "f285dace86accfae69d40edc724236c19acf908353a66459ba609acd7f884cc0"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "a6f71d9aa85b1303c235ebedf65630fbeb6d0173a071b010c266a3c0bd864ad7"
+      "sha256": "ef7af5aa1808ebac289a2d4db189abe07b1690efe60bd4d9486ba621be2a0e7f"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3528,7 +3528,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "6276beb1602841200aeeeb4d5dc42c7abcadeaf1c2c4e2e28d784bab987afc7a",
+  "content_sha256": "2d2a530f241528a93303d7b336f950239532b1b8da200cca39f6d1d41e77471b",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3665,7 +3665,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/data-types/functional-model.md",
-      "sha256": "454fc55a4768c6027ed1ebb6cb95ead3609d4dfa670f6392946a6b0332994063"
+      "sha256": "60f3fd6730111aab08c0afed93d3d021538b574e852a6c4cf524dfb1f1971280"
     },
     {
       "kind": "generated-documentation",
@@ -3725,7 +3725,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/dispatch/functional-step.md",
-      "sha256": "13ef6c217118861e75bec8cd10878b32f4bee3e07db3a48d6d4366219b9548b6"
+      "sha256": "058dcc66701fed2a1207b4e66b3735047cc0e213df9fdabca9e1fd1e7959a602"
     },
     {
       "kind": "generated-documentation",
@@ -3825,7 +3825,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/functional-model.md",
-      "sha256": "b7d77ca832e2126079c1313f0cead95c22ef0c00228d956a6ae1eff516913de8"
+      "sha256": "eed7f6a69b3122dba3cca8109b37e99f23f7394c0267d443df928b3e6487fe25"
     },
     {
       "kind": "generated-documentation",
@@ -3855,7 +3855,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reset.md",
-      "sha256": "9afb756781829d980c33b51e7bce75cd4f0249b5e9d5f55aea0d1c085100022f"
+      "sha256": "8d30b02fafa1a7d6282b068ee486ef5bc3970eb27f7547e19a676be107e8bccb"
     },
     {
       "kind": "generated-documentation",
@@ -3905,7 +3905,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/state/functional-model.md",
-      "sha256": "8da1c881b2ba5dcaa75ffcbaa18c13e23323e270cc344cf07cc53e6f5c4784e4"
+      "sha256": "59d8b1d960a2c042e4c6e214c5282fa2e961171dd3e257b3404a67e14a669e7d"
     },
     {
       "kind": "generated-documentation",
@@ -11232,16 +11232,8 @@
         "sha256": "9d4f21b730fba975c1499b2ac8e1a6c4ff02479e58aee16a20e0f2d08b5382f8"
       },
       {
-        "id": "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-        "sha256": "8f4a8a8d8d2fe6a9af6044be1b2af2d442151a5152bb4939897e3a582104bff5"
-      },
-      {
         "id": "PTO-REQ-FUNCTIONAL-FETCH-001",
         "sha256": "0a566e0ab4dd172b727e9b36f68c88a3ba5099e9fa8135040408011035effac4"
-      },
-      {
-        "id": "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
-        "sha256": "77f4864616d9b72a8aa093b6e76d9158548836c719c09fb562fe135fd92e4e1b"
       },
       {
         "id": "PTO-REQ-FUNCTIONAL-MEMORY-001",
@@ -11252,16 +11244,8 @@
         "sha256": "087a7512a663c10e20c658e3ccfe13e07857bdb1f6511648db16cd33ceb70bbd"
       },
       {
-        "id": "PTO-REQ-FUNCTIONAL-RESET-001",
-        "sha256": "25b16814742d17ab066eff3268796e3020c0ed7e97cce24da0296f1661afaff2"
-      },
-      {
         "id": "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001",
         "sha256": "b9b28ea25261d6dcd0493d6185126354f894bcf6dd71dac3a2106fdffd76f6e0"
-      },
-      {
-        "id": "PTO-REQ-FUNCTIONAL-STEP-001",
-        "sha256": "54cad1a33bdd07c3d9e0d641f420dff41bdab6878604f14327cf607ae72a4dc3"
       },
       {
         "id": "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001",

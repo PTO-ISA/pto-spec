@@ -214,6 +214,7 @@
   "records": [
     {
       "accepted": "2026-07-28",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
         "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001",
@@ -257,6 +258,7 @@
     },
     {
       "accepted": "2026-07-28",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-C-SSRGET-DIRECT-IDS-001",
         "PTO-HL-SSRGET-DECISION-BINDING-001",
@@ -305,6 +307,7 @@
     },
     {
       "accepted": "2026-07-28",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001",
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
@@ -348,6 +351,7 @@
     },
     {
       "accepted": "2026-07-28",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001"
       ],
@@ -385,6 +389,7 @@
     },
     {
       "accepted": "2026-07-28",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-STATE-CLOSURE-001",
         "PTO-REQ-BUNDLE-STATE-001",
@@ -442,6 +447,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-BARG-CONTINUATION-001",
         "PTO-BSTART-DECISION-BINDING-001",
@@ -487,6 +493,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-REQ-STATE-001"
       ],
@@ -526,6 +533,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-REQ-STATE-001"
       ],
@@ -560,6 +568,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ACRC-DECISION-BINDING-001"
       ],
@@ -592,6 +601,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-REQ-SHARED-TILE-001",
         "PTO-REQ-TILE-001",
@@ -628,6 +638,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-REQ-SHARED-TILE-001",
         "PTO-REQ-TILE-001"
@@ -662,6 +673,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-IOS-SHARED-STATE-001",
         "PTO-B-IOT-STREAM-001",
@@ -700,6 +712,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
         "PTO-ARCH-STATE-CLOSURE-001",
@@ -738,6 +751,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
         "PTO-ARCH-STATE-CLOSURE-001",
@@ -780,6 +794,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ACRC-DECISION-BINDING-001",
         "PTO-ACRE-IMPLICIT-STOP-001",
@@ -870,6 +885,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001"
       ],
@@ -903,6 +919,7 @@
     },
     {
       "accepted": "2026-07-29",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-GM-ACCESS-001",
         "PTO-BSTART-GMOV-COLLECTIVE-001",
@@ -1054,6 +1071,7 @@
     },
     {
       "accepted": "2026-07-29",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ADDTPC-PAGE-001",
         "PTO-BARG-CONTINUATION-001",
@@ -1097,6 +1115,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-CATR-CONTROL-001",
         "PTO-B-DATR-FIELDS-001",
@@ -1156,6 +1175,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
         "PTO-ARCH-STATE-CLOSURE-001",
@@ -1195,6 +1215,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-HL-SD-UPO-DECISION-BINDING-001",
         "PTO-HL-SD-UPR-DECISION-BINDING-001",
@@ -1261,6 +1282,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-BCNT-DECISION-BINDING-001",
         "PTO-BIC-DECISION-BINDING-001",
@@ -1307,6 +1329,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ADD-DECISION-BINDING-001",
         "PTO-AND-DECISION-BINDING-001",
@@ -1501,6 +1524,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ADDTPC-PAGE-001",
         "PTO-C-CMP-EQI-DECISION-BINDING-001",
@@ -1623,6 +1647,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-FABS-DECISION-BINDING-001",
         "PTO-FCVTA-DECISION-BINDING-001",
@@ -1695,6 +1720,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-HL-PRF-A-CACHE-MODEL-001",
         "PTO-HL-PRF-CACHE-MODEL-001",
@@ -1933,6 +1959,7 @@
     },
     {
       "accepted": "2026-07-30",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-SD-XOR-ADR-CONTRACT-001",
         "PTO-SW-ADD-ADR-CONTRACT-001",
@@ -2029,6 +2056,7 @@
     },
     {
       "accepted": "2026-07-30",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ACRC-DECISION-BINDING-001",
         "PTO-ACRE-IMPLICIT-STOP-001",
@@ -2122,6 +2150,7 @@
     },
     {
       "accepted": "2026-07-30",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-CATR-CONTROL-001",
         "PTO-B-DATR-FIELDS-001",
@@ -2323,6 +2352,7 @@
     },
     {
       "accepted": "2026-07-30",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-BSTART-GMOV-COLLECTIVE-001",
         "PTO-BSTART-MGATHER-CAS-SCHEMA-001",
@@ -2403,6 +2433,7 @@
     },
     {
       "accepted": "2026-07-30",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
         "PTO-BSTART-TGEMV-BIAS-CONTRACT-001",
@@ -2483,6 +2514,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-BSTART-SFU-DECISION-BINDING-001",
         "PTO-BSTART-VEC-DECISION-BINDING-001",
@@ -2679,6 +2711,7 @@
     },
     {
       "accepted": "2026-08-15",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-SOURCE-HIERARCHY"
       ],
@@ -2711,6 +2744,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
         "PTO-MATRIX-QUANT-BITEXACT-001",
@@ -2750,6 +2784,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-FABS-DECISION-BINDING-001",
         "PTO-FCVTA-DECISION-BINDING-001",
@@ -2825,6 +2860,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-FCVTA-DECISION-BINDING-001",
@@ -2869,6 +2905,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-CUBE-CELL-TRANSPORT-001",
@@ -2909,6 +2946,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-BSTART-TGEMVMX-ACC-CONTRACT-001",
         "PTO-BSTART-TGEMVMX-BIAS-CONTRACT-001",
@@ -2963,6 +3001,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
         "PTO-MATRIX-QUANT-BITEXACT-001",
@@ -3002,6 +3041,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
         "PTO-NUMERIC-FORMAT-DESCRIPTOR-001",
@@ -3041,6 +3081,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-TCVT-CONTRACT-001"
       ],
@@ -3073,6 +3114,7 @@
     },
     {
       "accepted": "2026-07-31",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001"
       ],
@@ -3107,6 +3149,7 @@
     },
     {
       "accepted": "2026-08-01",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-FCVTA-DECISION-BINDING-001",
@@ -3155,6 +3198,7 @@
     },
     {
       "accepted": "2026-08-01",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-FMAX-DECISION-BINDING-001",
         "PTO-FMIN-DECISION-BINDING-001",
@@ -3221,6 +3265,7 @@
     },
     {
       "accepted": "2026-08-01",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
         "PTO-NUMERIC-FORMAT-DESCRIPTOR-001"
@@ -3258,6 +3303,7 @@
     },
     {
       "accepted": "2026-08-01",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-FMAX-DECISION-BINDING-001",
         "PTO-FMIN-DECISION-BINDING-001",
@@ -3304,6 +3350,7 @@
     },
     {
       "accepted": "2026-08-01",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001"
       ],
@@ -3337,6 +3384,7 @@
     },
     {
       "accepted": "2026-08-15",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-ENCODING-OWNERSHIP-001",
         "PTO-ARCH-TEPL-ALIAS-001",
@@ -3707,6 +3755,7 @@
     },
     {
       "accepted": "2026-08-05",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001",
         "PTO-ARCH-ENCODING-OWNERSHIP-001",
@@ -3762,6 +3811,7 @@
     },
     {
       "accepted": "2026-08-06",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-COMMIT-EVENT-CONFORMANCE-001",
         "PTO-ARCH-STATE-CLOSURE-001",
@@ -3812,6 +3862,7 @@
     },
     {
       "accepted": "2026-08-07",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-IOR-BINDING-001",
         "PTO-BARG-CONTINUATION-001",
@@ -3957,6 +4008,7 @@
     },
     {
       "accepted": "2026-08-08",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-ENCODING-OWNERSHIP-001",
         "PTO-ARCH-GM-ACCESS-001",
@@ -4039,6 +4091,7 @@
     },
     {
       "accepted": "2026-08-09",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-TEPL-ALIAS-001",
         "PTO-ARCH-TILE-EXECUTION-ENGINE-001",
@@ -4287,6 +4340,7 @@
     },
     {
       "accepted": "2026-08-10",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-IOR-BINDING-001",
         "PTO-TCI-CONTRACT-001",
@@ -4327,6 +4381,7 @@
     },
     {
       "accepted": "2026-08-11",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ACRC-DECISION-BINDING-001",
         "PTO-ACRE-IMPLICIT-STOP-001",
@@ -5335,6 +5390,7 @@
     },
     {
       "accepted": "2026-08-11",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-L-BSTOP-DECISION-BINDING-001"
       ],
@@ -5367,6 +5423,7 @@
     },
     {
       "accepted": "2026-08-11",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-BARG-CONTINUATION-001",
         "PTO-BSTART-DECISION-BINDING-001",
@@ -5411,6 +5468,7 @@
     },
     {
       "accepted": "2026-08-11",
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [
@@ -5452,6 +5510,7 @@
     },
     {
       "accepted": "2026-08-11",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
         "PTO-MATRIX-POSTPROCESS-BITEXACT-001",
@@ -5489,6 +5548,7 @@
     },
     {
       "accepted": "2026-08-14",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
         "PTO-BSTART-TGEMV-BIAS-CONTRACT-001",
@@ -5569,6 +5629,7 @@
     },
     {
       "accepted": "2026-08-18",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ADDTPC-PAGE-001",
         "PTO-HL-ADDTPC-PAGE-001"
@@ -5603,6 +5664,7 @@
     },
     {
       "accepted": "2026-08-18",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001"
       ],
@@ -5637,6 +5699,7 @@
     },
     {
       "accepted": "2026-08-19",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-EXTENSION-FIRST-USE-PROFILE-001"
       ],
@@ -5669,6 +5732,7 @@
     },
     {
       "accepted": "2026-08-20",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-CUBE-CELL-STATE-001"
       ],
@@ -5701,6 +5765,7 @@
     },
     {
       "accepted": "2026-08-20",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-BSTART-TLOAD-CUBE-001",
@@ -5748,6 +5813,7 @@
     },
     {
       "accepted": "2026-08-20",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
         "PTO-BSTART-TGEMV-BIAS-CONTRACT-001",
@@ -5830,6 +5896,7 @@
     },
     {
       "accepted": "2026-08-20",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
         "PTO-CUBE-SHARED-TRANSPOSE-001",
@@ -5923,6 +5990,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-CUBE-ACCUMULATOR-OUTPUT-001",
         "PTO-BSTART-TGEMV-ACC-CONTRACT-001",
@@ -5973,6 +6041,7 @@
     },
     {
       "accepted": "2026-08-20",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-GM-ACCESS-001",
         "PTO-B-IOR-BINDING-001",
@@ -6019,6 +6088,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-CATR-CONTROL-001",
         "PTO-B-DATR-FIELDS-001",
@@ -6089,6 +6159,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-IOR-BINDING-001",
         "PTO-B-IOS-SHARED-STATE-001",
@@ -6142,6 +6213,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-CONDITIONAL-BRANCH-RESERVATION-001",
         "PTO-BSTART-CALL-DECISION-BINDING-001",
@@ -6216,6 +6288,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-B-IOR-BINDING-001",
@@ -6318,6 +6391,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
@@ -6418,6 +6492,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-B-IOR-BINDING-001",
@@ -6554,6 +6629,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-B-IOR-BINDING-001",
@@ -6642,6 +6718,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-B-IOR-BINDING-001",
@@ -6782,6 +6859,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-DATR-FIELDS-001",
         "PTO-B-IOR-BINDING-001",
@@ -6848,6 +6926,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ACRC-DECISION-BINDING-001",
         "PTO-ACRE-IMPLICIT-STOP-001",
@@ -7262,6 +7341,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
         "PTO-FP19-PARAMETER-CARRIER-001",
@@ -7312,6 +7392,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7340,6 +7421,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7368,6 +7450,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7396,6 +7479,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7424,6 +7508,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7452,6 +7537,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7480,6 +7566,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7508,6 +7595,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7536,6 +7624,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7564,6 +7653,7 @@
     },
     {
       "accepted": null,
+      "affected_model_contracts": [],
       "affected_ndf": [],
       "affected_units": [],
       "approvers": [],
@@ -7592,6 +7682,7 @@
     },
     {
       "accepted": "2026-08-20",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-GM-ACCESS-001",
         "PTO-B-IOS-SHARED-STATE-001",
@@ -7677,6 +7768,7 @@
     },
     {
       "accepted": "2026-08-23",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-IOS-SHARED-STATE-001",
         "PTO-B-IOT-STREAM-001",
@@ -7731,6 +7823,7 @@
     },
     {
       "accepted": "2026-08-21",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-IOT-STREAM-001",
         "PTO-B-IOS-SHARED-STATE-001",
@@ -7799,6 +7892,7 @@
     },
     {
       "accepted": "2026-08-22",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-IOT-STREAM-001",
         "PTO-B-IOS-SHARED-STATE-001",
@@ -7841,6 +7935,7 @@
     },
     {
       "accepted": "2026-08-24",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-CUBE-GROUP-M-DISTRIBUTION-001",
         "PTO-B-ASSEMBLE-CONSUMER-READINESS-001"
@@ -7882,6 +7977,7 @@
     },
     {
       "accepted": "2026-08-24",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
         "PTO-CUBE-CSCALE-001",
@@ -7933,6 +8029,7 @@
     },
     {
       "accepted": "2026-08-26",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-FCVTA-DECISION-BINDING-001",
         "PTO-MGATHER-BYTE-DISPLACEMENT-001",
@@ -7974,6 +8071,7 @@
     },
     {
       "accepted": "2026-08-25",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-TPACK-CONTRACT-001",
         "PTO-TPERMUTE-CONTRACT-001",
@@ -8013,6 +8111,7 @@
     },
     {
       "accepted": "2026-08-26",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-SHARED-WHOLE-PARENT-READY-001",
         "PTO-B-ASSEMBLE-SHARED-GENERATION-001"
@@ -8051,6 +8150,7 @@
     },
     {
       "accepted": "2026-08-26",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-SUBVIEW-RANGE-001",
         "PTO-B-SUBVIEW-SHARED-PER-PE-001"
@@ -8088,6 +8188,7 @@
     },
     {
       "accepted": "2026-08-26",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ISA-LEGACY-SHARED-MOVEMENT-001"
       ],
@@ -8124,6 +8225,7 @@
     },
     {
       "accepted": "2026-08-27",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-ARCH-GM-ACCESS-001",
         "PTO-B-IOS-SHARED-STATE-001",
@@ -8323,6 +8425,7 @@
     },
     {
       "accepted": "2026-08-27",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-IOT-STREAM-001",
         "PTO-TILE-CAPACITY-PER-PE",
@@ -8367,6 +8470,7 @@
     },
     {
       "accepted": "2026-08-28",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-INST-TILE-TCVT",
         "PTO-TCVT-CONTRACT-001"
@@ -8406,12 +8510,14 @@
     },
     {
       "accepted": "2026-08-29",
-      "affected_ndf": [
-        "PTO-REQ-FUNCTIONAL-FETCH-001",
+      "affected_model_contracts": [
         "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
-        "PTO-REQ-FUNCTIONAL-MEMORY-001",
         "PTO-REQ-FUNCTIONAL-RESET-001",
         "PTO-REQ-FUNCTIONAL-STEP-001"
+      ],
+      "affected_ndf": [
+        "PTO-REQ-FUNCTIONAL-FETCH-001",
+        "PTO-REQ-FUNCTIONAL-MEMORY-001"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
@@ -8450,6 +8556,7 @@
     },
     {
       "accepted": "2026-08-29",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-B-FPATR-MATRIX-POSTPROCESS-001",
         "PTO-HL-QPOP-GQM-001",
@@ -8489,6 +8596,7 @@
     },
     {
       "accepted": "2026-08-29",
+      "affected_model_contracts": [],
       "affected_ndf": [
         "PTO-REQ-INDEXED-MEMORY-LANE-CHOICE-001"
       ],
@@ -8525,10 +8633,11 @@
     },
     {
       "accepted": "2026-08-29",
-      "affected_ndf": [
+      "affected_model_contracts": [
         "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
         "PTO-REQ-FUNCTIONAL-STEP-001"
       ],
+      "affected_ndf": [],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
         "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
@@ -8561,9 +8670,11 @@
     },
     {
       "accepted": "2026-08-30",
-      "affected_ndf": [
+      "affected_model_contracts": [
         "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
-        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001"
+      ],
+      "affected_ndf": [
         "PTO-REQ-SCALAR-BODY-ENTRY-001"
       ],
       "affected_units": [
@@ -8594,17 +8705,26 @@
       "target_releases": [
         "0.58.5"
       ],
-      "title": "Functional-model exit_group profile binding"
+      "title": "Functional-model exit_group hosted-ABI binding"
     },
     {
       "accepted": "2026-08-30",
+      "affected_model_contracts": [
+        "PTO-REQ-FUNCTIONAL-EXIT-GROUP-001",
+        "PTO-REQ-FUNCTIONAL-HOST-REQUEST-001",
+        "PTO-REQ-FUNCTIONAL-RESET-001",
+        "PTO-REQ-FUNCTIONAL-STEP-001"
+      ],
       "affected_ndf": [
         "PTO-REQ-FUNCTIONAL-PROFILE-IDENTITY-001",
         "PTO-REQ-FUNCTIONAL-STATE-SNAPSHOT-001"
       ],
       "affected_units": [
+        "PTO-ARCH-DATA-TYPES-FUNCTIONAL-MODEL",
+        "PTO-ARCH-DISPATCH-FUNCTIONAL-STEP",
         "PTO-ARCH-PROFILE-FUNCTIONAL-MODEL",
-        "PTO-ARCH-STATE-FUNCTIONAL-MODEL"
+        "PTO-ARCH-STATE-FUNCTIONAL-MODEL",
+        "PTO-SCALAR-MODEL-SYS-SEMANTICS"
       ],
       "approvers": [
         "zhoubot"
