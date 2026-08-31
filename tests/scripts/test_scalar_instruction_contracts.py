@@ -108,7 +108,7 @@ class ScalarInstructionContractsTest(unittest.TestCase):
         for required in (
             "codes 24..27 select T#1..T#4",
             "codes 28..31 select U#1..U#4",
-            "SrcRType=0 leaves SrcR unchanged",
+            "SrcRType=0 sign-extends SrcR[31:0]",
             "shamt values 0..31",
             "modulo 2^PTO_XLEN",
             "aligned little-endian 8-byte value",
