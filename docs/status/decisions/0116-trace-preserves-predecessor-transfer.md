@@ -2,11 +2,11 @@
 {
   "id": "ADR-0116",
   "title": "B.HINT TRACE preserves the predecessor-selected transfer",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["Codex"],
-  "approvers": [],
+  "approvers": ["zhoubot"],
   "created": "2026-09-01",
-  "accepted": null,
+  "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
   "baseline": "4208f3fd690aaf7e0b8da4a49ea5f3d63946d8ed",
@@ -74,5 +74,5 @@ before.
 ## Decision state
 
 The architecture owner authorized autonomous detailed analysis and the
-recommended architecture rule on 2026-09-01. This draft binds the exact
-baseline before implementation and focused evidence promote it to accepted.
+recommended architecture rule on 2026-09-01. Focused taken, sequential, and
+compiler-shaped loop evidence binds the rule to the owning ASL.

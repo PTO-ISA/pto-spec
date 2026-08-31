@@ -350,8 +350,13 @@ begin
         when CommandHandler_SetBundleHint =>
             if hint_trace then
                 let instruction_pc = ReadTPC();
-                if _BundleActive && !CompleteBundleAt(instruction_pc) then
-                    return CommandExecution_Rejected;
+                if _BundleActive then
+                    if !CompleteBundleAt(instruction_pc) then
+                        return CommandExecution_Rejected;
+                    end;
+                    if ReadTPC() != instruction_pc then
+                        return CommandExecution_Executed;
+                    end;
                 end;
                 ClearBundleHeaderState();
                 let sequential = instruction_pc +

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-SCALAR-LOOP-ELF-SEQUENCE-003","source":"asl/arch/dispatch/top-level.asl","requirements":["PTO-REQ-INSTRUCTION-DISPATCH-001"],"kind":"execution","summary":"An ELF-shaped conditional scalar loop replays its decoded body and updates GPR and memory operands across iterations.","pass_condition":"Two executions of the compiler-emitted C.SEXT.W, SETC.LTUI, BIC, ADDI, LW, ADDW sequence select the loop target and accumulate the first two words.","related_sources":["asl/block/model/dispatch/start.asl","asl/scalar/model/dispatch/agu.asl","asl/scalar/model/dispatch/alu.asl","asl/scalar/model/dispatch/bru.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-SCALAR-LOOP-ELF-SEQUENCE-003","source":"asl/arch/dispatch/top-level.asl","requirements":["PTO-REQ-INSTRUCTION-DISPATCH-001"],"kind":"execution","summary":"An ELF-shaped conditional scalar loop replays its decoded body across a TRACE.end boundary.","pass_condition":"Two executions of the compiler-emitted scalar body and TRACE.end select the loop target and accumulate the first two words.","related_sources":["asl/block/lifecycle/B.HINT.asl","asl/block/model/dispatch/start.asl","asl/scalar/model/dispatch/agu.asl","asl/scalar/model/dispatch/alu.asl","asl/scalar/model/dispatch/bru.asl"]}
 func ExecuteScalarLoopBodyForDispatchTest()
 begin
     let c_sext = ExecutePTOInstruction(Zeros{64} + 0x50dc, 16);
@@ -38,8 +38,8 @@ begin
     assert ReadGPR(2) == Zeros{PTO_XLEN} + 3;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 1;
 
-    let next_boundary = ExecutePTOInstruction(Zeros{64} + 0x3800, 16);
-    assert next_boundary == PTOInstruction_Executed;
+    let trace_end = ExecutePTOInstruction(Zeros{64} + 0x00009033, 32);
+    assert trace_end == PTOInstruction_Executed;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x100;
     let next_loop = ExecutePTOInstruction(Zeros{64} + 0x0004, 16);
     assert next_loop == PTOInstruction_Executed;
