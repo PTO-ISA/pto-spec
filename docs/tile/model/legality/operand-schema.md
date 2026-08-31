@@ -347,6 +347,10 @@ begin
         _BundleOperation.data_type_valid then TileDataTypeFromEncoding(
             _BundleOperation.data_type as TileDataTypeEncoding)
         else source_tile.data_type;
+    if source_tile.location == TileLocation_Matrix &&
+       source_tile.data_type != source_operation_type then
+        return FALSE;
+    end;
     if (if TileLayoutIsCube(destination_tile.layout) then
             !TileCubeDescriptorLegal(destination_tile)
         else !TileDescriptorLegal(destination)) ||
@@ -386,6 +390,8 @@ begin
                    destination_tile.valid_columns, destination_tile.data_type,
                    destination_tile.layout);
     end;
+    if destination_tile.rows != source_tile.rows ||
+       destination_tile.columns != source_tile.columns then return FALSE; end;
     if TileLayoutIsCube(destination_tile.layout) then
         return FALSE;
     end;

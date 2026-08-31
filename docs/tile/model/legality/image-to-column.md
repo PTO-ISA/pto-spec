@@ -149,7 +149,7 @@ begin
     let source_tile = _Tiles[[source]];
     let descriptor = ReadTileFeatureMapDescriptor(source);
     let (operation_type_valid, operation_type) =
-        ResolveBundleEffectiveDataType();
+        ResolveTileCarrierOperationType(source_tile.data_type);
     if !operation_type_valid ||
        !TileCarrierWidthCompatible(source_tile.data_type, operation_type) ||
        destination_tile.data_type != source_tile.data_type ||

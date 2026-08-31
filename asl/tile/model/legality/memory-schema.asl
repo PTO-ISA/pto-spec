@@ -3,7 +3,7 @@ readonly func TileOperandsLegal_TMOV(destination: TileIndex,
                                      source: TileIndex) => boolean
 begin
     let (operation_type_valid, operation_type) =
-        ResolveBundleEffectiveDataType();
+        ResolveTileCarrierOperationType(_Tiles[[source]].data_type);
     return operation_type_valid &&
            TileLogicalShapeMatch(destination, source) &&
            _Tiles[[destination]].storage_kind ==

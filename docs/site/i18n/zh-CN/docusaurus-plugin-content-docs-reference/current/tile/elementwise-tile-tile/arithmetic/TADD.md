@@ -170,8 +170,8 @@ end;
 - TADD is selected only by BSTART.VEC Mode 0 Function 0 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination. B.IOR and B.IOS are not accepted; all participating Tiles use one PE_MASK and zero mask is a strict no-op.
 - The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
-- Both source valid regions are completely defined and source/destination physical shape, valid shape, row-major layout, and DataType match.
 - B.DATR applicability allows only PadValueOrByteId as PadValue.
+- The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
 
 ## State effects
 
@@ -190,7 +190,7 @@ end;
 
 ## Exceptions
 
-- A missing LB0, malformed Local B.IOT, B.IOR or B.IOS presence, source shape or type mismatch, undefined source element, unsupported DataType, or invalid destination capacity raises Fault_TileLegality before destination effects.
+- A missing LB0, malformed Local B.IOT, B.IOR or B.IOS presence, source shape or carrier-width mismatch, undefined source element, unsupported DataType, or invalid destination capacity raises Fault_TileLegality before destination effects.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation.
 
 ## Examples

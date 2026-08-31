@@ -13,7 +13,7 @@ begin
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
     let (operation_type_valid, operation_type) =
-        ResolveBundleEffectiveDataType();
+        ResolveTileCarrierOperationType(source_tile.data_type);
     return operation_type_valid &&
            TileCarrierWidthCompatible(source_tile.data_type, operation_type) &&
            destination_tile.storage_kind == TileStorage_Numeric &&
@@ -45,7 +45,7 @@ begin
     let old_tile = _Tiles[[old_destination]];
     let source_tile = _Tiles[[source]];
     let (operation_type_valid, operation_type) =
-        ResolveBundleEffectiveDataType();
+        ResolveTileCarrierOperationType(old_tile.data_type);
     return operation_type_valid &&
            TileCarrierWidthCompatible(old_tile.data_type, operation_type) &&
            TileCarrierWidthCompatible(source_tile.data_type, operation_type) &&
@@ -81,7 +81,7 @@ begin
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
     let (operation_type_valid, operation_type) =
-        ResolveBundleEffectiveDataType();
+        ResolveTileCarrierOperationType(left_tile.data_type);
     return operation_type_valid &&
            TileCarrierWidthCompatible(left_tile.data_type, operation_type) &&
            TileCarrierWidthCompatible(right_tile.data_type, operation_type) &&

@@ -13,6 +13,46 @@
   "target_releases": ["0.58.5"],
   "release_boundary": true,
   "affected_ndf": [
+    "PTO-TILE-CARRIER-REINTERPRETATION-001",
+    "PTO-INST-BLOCK-BSTART-TMOV",
+    "PTO-INST-TILE-TADD",
+    "PTO-INST-TILE-TSUB",
+    "PTO-INST-TILE-TMUL",
+    "PTO-INST-TILE-TDIV",
+    "PTO-INST-TILE-TREM",
+    "PTO-INST-TILE-TMAX",
+    "PTO-INST-TILE-TMIN",
+    "PTO-INST-TILE-TABS",
+    "PTO-INST-TILE-TNEG",
+    "PTO-INST-TILE-TRELU",
+    "PTO-INST-TILE-TRECIP",
+    "PTO-INST-TILE-TRSQRT",
+    "PTO-INST-TILE-TSQRT",
+    "PTO-INST-TILE-TEXP",
+    "PTO-INST-TILE-TLOG",
+    "PTO-INST-TILE-TADDS",
+    "PTO-INST-TILE-TSUBS",
+    "PTO-INST-TILE-TMULS",
+    "PTO-INST-TILE-TDIVS",
+    "PTO-INST-TILE-TREMS",
+    "PTO-INST-TILE-TMAXS",
+    "PTO-INST-TILE-TMINS",
+    "PTO-INST-TILE-TAND",
+    "PTO-INST-TILE-TANDS",
+    "PTO-INST-TILE-TOR",
+    "PTO-INST-TILE-TORS",
+    "PTO-INST-TILE-TXOR",
+    "PTO-INST-TILE-TXORS",
+    "PTO-INST-TILE-TSHL",
+    "PTO-INST-TILE-TSHLS",
+    "PTO-INST-TILE-TSHR",
+    "PTO-INST-TILE-TSHRS",
+    "PTO-INST-TILE-TCVT",
+    "PTO-INST-TILE-TMOV",
+    "PTO-INST-TILE-TCONCAT",
+    "PTO-INST-TILE-TEXTRACT",
+    "PTO-INST-TILE-TINSERT",
+    "PTO-INST-TILE-TIMG2COL",
     "PTO-TADD-CONTRACT-001",
     "PTO-TSUB-CONTRACT-001",
     "PTO-TMUL-CONTRACT-001",
@@ -53,6 +93,7 @@
     "PTO-TIMG2COL-CONTRACT-001"
   ],
   "affected_units": [
+    "PTO-BLOCK-BSTART-TMOV",
     "PTO-TILE-TADD",
     "PTO-TILE-TSUB",
     "PTO-TILE-TMUL",
@@ -349,6 +390,6 @@ The implementation must provide focused executable evidence for:
 ## Implementation readiness
 
 ADR-0112 is accepted based on the explicit architecture confirmation for this
-design. The implementation must keep all affected generated projections aligned
-with the authoritative ASL/NDF owners. Executor dispatch remains a separate
-workflow action and is intentionally not started by this decision record.
+design. The implementation keeps all affected generated projections aligned
+with the authoritative ASL/NDF owners and carries focused executable evidence
+for the operation-type, backing-carrier, destination, and exclusion boundaries.
