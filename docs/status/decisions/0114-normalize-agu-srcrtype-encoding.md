@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "a99ded8ea5365ffedd85c7f376651c3378456391",
+  "baseline": "f6d5823c6924562bd418febba960166499eb5579",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-INST-SCALAR-HL-LB-PO",
