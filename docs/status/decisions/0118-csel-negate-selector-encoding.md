@@ -2,11 +2,11 @@
 {
   "id": "ADR-0118",
   "title": "Assign CSEL raw selector 10 to false-source negation",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["Codex"],
-  "approvers": [],
+  "approvers": ["zhoubot"],
   "created": "2026-09-01",
-  "accepted": null,
+  "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
   "baseline": "622f99f9743ecaf62ef1c1b4f5e5a70f44427428",
@@ -70,5 +70,5 @@ publication, including the source not selected by the predicate.
 ## Decision state
 
 The architecture owner authorized autonomous detailed analysis and the
-recommended architecture rule on 2026-09-01. This draft binds the exact
-baseline before implementation and focused evidence promote it to accepted.
+recommended architecture rule on 2026-09-01. Four-selector, exact compiler,
+queue-alias, readiness, and real ELF evidence bind the selected encoding.

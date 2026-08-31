@@ -1124,7 +1124,7 @@ def scalar_alu_boundary_expected(
         return (scalar_materialize_expected(mnemonic, left, raw_immediate),)
     if class_id == "scalar-select-value":
         modifier = field_values.get("SrcRType", 0)
-        selected_false = (-right) & MASK64 if modifier == 3 else right
+        selected_false = (-right) & MASK64 if modifier == 2 else right
         return (left if predicate != 0 else selected_false,)
     if class_id == "scalar-control-value":
         if mnemonic == "C.SETC.TGT":
