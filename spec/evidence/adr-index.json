@@ -8440,12 +8440,47 @@
         "0.58.5"
       ],
       "title": "ASL instruction fetch and functional-model boundary"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
+        "PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "6fc3141ac790b6b6fed192bedc99a9264f2b25ac",
+      "created": "2026-09-01",
+      "id": "ADR-0112",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/191",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0112-scalar-stream-enters-bundle-body.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Decoded scalar stream enters the active bundle body"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 105
+    "record_count": 106
   }
 }

@@ -2,11 +2,11 @@
 {
   "id": "ADR-0112",
   "title": "Decoded scalar stream enters the active bundle body",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["Codex"],
-  "approvers": [],
+  "approvers": ["zhoubot"],
   "created": "2026-09-01",
-  "accepted": null,
+  "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
   "baseline": "6fc3141ac790b6b6fed192bedc99a9264f2b25ac",
@@ -90,8 +90,6 @@ decoded scalar instruction that faults after entering the body.
 
 ## Decision state
 
-The architecture owner authorized implementation of automatic scalar body
-entry on 2026-09-01. This record lands first as proposed so its immutable first
-parent proves the declared baseline; the implementation change promotes it to
-accepted with executable evidence. Downstream models must not infer or
-duplicate the rule.
+The architecture owner accepted automatic scalar body entry on 2026-09-01.
+Implementation is owned by scalar dispatch and the existing bundle lifecycle
+state; downstream models must not infer or duplicate the rule.

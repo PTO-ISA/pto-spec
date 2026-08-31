@@ -15,7 +15,16 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/scalar/model/dispatch/top-level.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL","surface":"scalar","classification":["model","dispatch","top-level"],"depends_on":["PTO-SCALAR-MODEL-DISPATCH-ALU","PTO-SCALAR-MODEL-DISPATCH-BRU","PTO-SCALAR-MODEL-DISPATCH-SYS","PTO-SCALAR-MODEL-DISPATCH-AMO","PTO-SCALAR-MODEL-DISPATCH-AGU","PTO-SCALAR-MODEL-DISPATCH-FSU"],"catalog_projection":{"catalog":"scalar-forms","family_constraints":[],"isa":"PTO Instruction Set Architecture","schema_version":2}}
+// PTO-UNIT: {"id":"PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL","surface":"scalar","classification":["model","dispatch","top-level"],"depends_on":["PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP","PTO-SCALAR-MODEL-DISPATCH-ALU","PTO-SCALAR-MODEL-DISPATCH-BRU","PTO-SCALAR-MODEL-DISPATCH-SYS","PTO-SCALAR-MODEL-DISPATCH-AMO","PTO-SCALAR-MODEL-DISPATCH-AGU","PTO-SCALAR-MODEL-DISPATCH-FSU"],"catalog_projection":{"catalog":"scalar-forms","family_constraints":[],"isa":"PTO Instruction Set Architecture","schema_version":2}}
+
+// NDF-BEGIN: PTO-REQ-SCALAR-BODY-ENTRY-001
+// ndf: kind=contract level=L1 layer=scalar status=accepted
+// After a scalar form decodes successfully, scalar dispatch MUST enter an
+// active body-inactive bundle before operation applicability or operand
+// legality. An unmatched carrier MUST reject without entering the body. Once
+// decoded, a later scalar fault preserves the body-active transition.
+// NDF-END: PTO-REQ-SCALAR-BODY-ENTRY-001
+
 func ExecuteScalarInstruction(instruction: bits(48),
                               length_bits: integer {16,32,48})
                               => ScalarExecutionStatus
@@ -28,6 +37,9 @@ begin
     end;
     let form = decoded as integer {0..PTO_SCALAR_FORM_COUNT-1};
     let operation = ScalarOperationOfForm(form);
+    if BundleIsActive() && !BundleBodyIsActive() then
+        EnterBundleBody();
+    end;
     if !ScalarOperationApplicable(operation) then
         SetFault(Fault_BundleControl, ReadTPC());
         return ScalarExecution_Rejected;

@@ -1057,5 +1057,6 @@ nav:
           - "ADR 0109: Local single-object cap versus aggregate Local pool": status/decisions/0109-local-single-object-cap.md
           - "ADR 0110: TCVT CUBE_M16 and CUBE_M32 layout closure": status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md
           - "ADR 0111: ASL instruction fetch and functional-model boundary": status/decisions/0111-asl-functional-model-execution-boundary.md
+          - "ADR 0112: Decoded scalar stream enters the active bundle body": status/decisions/0112-scalar-stream-enters-bundle-body.md
       - Open:
           - "Open architecture decisions": status/open/index.md

@@ -4692,6 +4692,7 @@
       "readiness_subjects": [],
       "tests": [
         "PTO-AVS-SCALAR-ACRC-DECODE-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SYS-001",
         "PTO-AVS-SYS-ACRC-EXEC-001",
         "PTO-AVS-SYS-ACRC-PLACE-001",
         "PTO-AVS-SYS-ACRC-REQUEST-001",
@@ -10662,6 +10663,7 @@
       "tests": [
         "PTO-AVS-BRU-SETC-LTUI-BOUND-001",
         "PTO-AVS-BRU-SETC-LTUI-EXEC-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SETC-LTUI-001",
         "PTO-AVS-SCALAR-SETC-LTUI-DECODE-001"
       ]
     },
@@ -13529,7 +13531,8 @@
         "asl/arch/dispatch/top-level.asl"
       ],
       "readiness_subjects": [
-        "ADR-0111"
+        "ADR-0111",
+        "ADR-0112"
       ],
       "tests": [
         "PTO-AVS-ARCH-DISPATCH-TOP-LEVEL-STATIC-001",
@@ -13581,6 +13584,23 @@
       "tests": [
         "PTO-AVS-ARCH-ADDRESS-SPACE-PHYSICAL-RESET-002",
         "PTO-AVS-ARCH-MEMORY-MODEL-ADDRESS-SPACE-STATIC-001"
+      ]
+    },
+    {
+      "executable": false,
+      "id": "PTO-REQ-SCALAR-BODY-ENTRY-001",
+      "owners": [
+        "asl/scalar/model/dispatch/top-level.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-0112"
+      ],
+      "tests": [
+        "PTO-AVS-BLOCK-BODY-ENTRY-EMPTY-COMMIT-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-DECODED-FAULT-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SETC-LTUI-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SYS-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-UNDECODED-001"
       ]
     },
     {
@@ -17198,7 +17218,7 @@
     "asl/scalar/model/dispatch/decode.asl": "212dce7a845a9477d78302be500e95a97cb3ceb037a1ac983a87145d334e520d",
     "asl/scalar/model/dispatch/fsu.asl": "07ea4132a13f28b549578473df9ba986a9e6d107c3514ac300b5ea44bc0a54a3",
     "asl/scalar/model/dispatch/sys.asl": "3962b4109ea93dfb583d5f27b5eff22367ddd1e33b55f364a5ce0b7dfa43e8e5",
-    "asl/scalar/model/dispatch/top-level.asl": "aa3ddf8835162b5c3f5692bcfb5e9d3aac64407c5feef8a58edddbb7d309657a",
+    "asl/scalar/model/dispatch/top-level.asl": "1968a9513ab3113288fc958070209511676440e0db93eb7ae67b1b7f0d029d4f",
     "asl/scalar/model/fsu/arithmetic.asl": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288",
     "asl/scalar/model/fsu/profile.asl": "c429ac19ea648dd0b0180a736af1fcd3990cb949b2397ca2e33003b3da593295",
     "asl/scalar/model/sys/registers.asl": "9ca955860f45c7660bbc1a8dce879ad77c945e8504ec08d607ffb96d2a708cbb",
@@ -18050,7 +18070,7 @@
     "docs/scalar/model/dispatch/decode.md": "93ab3bb3b33b835ba28a928917fecfa9b650f582b0e9fcdbcf0cc64cb6227167",
     "docs/scalar/model/dispatch/fsu.md": "0028b652ed811f2c550f6b2fec339e7b3f5415afb5de6587f2c5c851ff5f7488",
     "docs/scalar/model/dispatch/sys.md": "b76b031973de5b74eb269dd4029f8e629c981157bcc50a2a33677314e7638855",
-    "docs/scalar/model/dispatch/top-level.md": "7f9f99d809b02df75189f28bbfd7f0ce2b46da19aab5ead846f3fe65e5bf2a46",
+    "docs/scalar/model/dispatch/top-level.md": "690c02fd8c112c52c34759ad4616c3fad323b8e9b8f1a7be883dabb0c3277df7",
     "docs/scalar/model/fsu/arithmetic.md": "b153847a3fac645297eb00f768790d62809cf47b4e8c0c474ee356a9b0eb71b8",
     "docs/scalar/model/fsu/profile.md": "e55fee963910a53f515f95a3e4fdcf9fbf7fa86334a949842a4c3f3ce74c0477",
     "docs/scalar/model/sys/registers.md": "69ceaf6dbaa025f7b36fad552923f09d7f53bbef11c9cdb2b5a875ea6364d908",
@@ -18265,7 +18285,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "7c376aea3a1854c7cc68b352e083fe79c2cd004654d655da61a083a8b5c8554e",
+    "spec/evidence/adr-index.json": "cda016b55bb3dfd094f753f6292a89d705732549c6733d1cf157989b7b433197",
     "spec/evidence/instruction-contract-closure.json": "0bdb33460b56f30b54b898a75136515dc6d26621d5eb17f5859acad5668a156f",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -18838,6 +18858,7 @@
     "tests/asl/block/model/faults/rollback/block-static-rollback-contract-001.asl": "4edaeaada75418212faf68f03d7ee2fdb2f24f4eb96b500449dfbd1a43bd4d7b",
     "tests/asl/block/model/lifecycle/begin/block-state-lifecycle-001.asl": "81b9df8be49b21d91fd3c4435c8740e1950580f68324e9e7c66a06f535235c9e",
     "tests/asl/block/model/lifecycle/begin/block-static-begin-contract-001.asl": "b649a68bd437c76fa671811adb0cb397a43b4085bcd9a77447868bfa5894a2b7",
+    "tests/asl/block/model/lifecycle/enter-stop/block-exec-empty-body-commit-001.asl": "c12c913ecc8a1fc7958e7a15f2e0d4864eb1f71ae29a71c57a5fae69ee192783",
     "tests/asl/block/model/lifecycle/enter-stop/block-static-enter-stop-contract-001.asl": "367fe799b3f4003acb0bccaf5c4708458415d196b184f16309db7f67f05878e6",
     "tests/asl/block/model/lifecycle/lifetime/block-exec-tile-allocation-and-001.asl": "5f5e5da056b2a660fbc8d016f52d1adea94c11edb81d563360a3ab7887bbe3eb",
     "tests/asl/block/model/lifecycle/lifetime/block-exec-tile-undersized-allocation-001.asl": "24d6c16d00dfed69ac2041fd79399f5ffa85e92971a5fbab3ecbc8b32638a4a2",
@@ -21178,10 +21199,14 @@
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-agu-canonical-001.asl": "7d419f0ae17caa87b43927975bfce549eda038bae636b1aa78597a5024e0bc8d",
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-amo-canonical-001.asl": "80b9e99f9b05ca0cc7dd7593dfeff47faa8a1cb308043d9f9f4a0088ad59de40",
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-binary-effects-001.asl": "06576904a52188b212ca122013f2e87ab775b9590c17b831efb462e41d31d766",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-exec-body-entry-setc-ltui-001.asl": "bea51719b0641a6012259131c616bf1e37845f892542abd760b4e9c4b5c78a34",
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-bru-canonical-001.asl": "c9deec4b72252db0191b75cd7bc61ac931f43cdeb8c22e62029e6e8247702ff5",
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-dispatch-001.asl": "b545be5d57972aa08af48ab807e1ea2fd29e0089f83e2996c01e217e5c611caa",
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-fsu-canonical-001.asl": "3d9eee57ffb8770aa4c8de097029ae0e515802bd0b7e86291687270541af3937",
     "tests/asl/scalar/model/dispatch/top-level/scalar-exec-sys-canonical-001.asl": "0f25235aa9ea79cb274d472d8bfe66b928ed4a26c666f5bd9b47e70c612003ca",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-fault-body-entry-decoded-001.asl": "ea19cfbc23d2739a6f9e9922c094d27a2df9b232fa201305e253a73f4076e631",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-fault-body-entry-undecoded-001.asl": "f47bcf31b9f3629f449775b9b6b77758588e67f647cffe92c77cc54b17e9be2e",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-state-body-entry-sys-001.asl": "209fa62d0bca217b390888d3c73aca62125fbf0f3c59f8ca219f20839d86ca0a",
     "tests/asl/scalar/model/dispatch/top-level/scalar-static-top-level-contract-001.asl": "4a1d3eeac365fc028d6f166f641440442b183dbde23b2fe91e60969c1a05cec5",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl": "f69215340e4386705e0c6015f439b8095a354a3dff748f4b79b48f81ce3ed64d",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-fp-dispatch-effects-001.asl": "c524593e05c0f0f763f183dfd80c1e1561563c4d1f9af1d04b19b1c3b99598b5",
@@ -22005,9 +22030,9 @@
     "mnemonic_count": 634,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1022,
+    "requirement_count": 1023,
     "status": "closed",
-    "test_count": 3731,
+    "test_count": 3736,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -31974,6 +31999,16 @@
       ],
       "sha256": "90889cc63f768be8705abf7b5ab24416e843deca1f74e15c81f0cba7c66ebac7",
       "source": "asl/block/operands/B.SUBVIEW.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-BODY-ENTRY-EMPTY-COMMIT-001",
+      "kind": "execution",
+      "path": "tests/asl/block/model/lifecycle/enter-stop/block-exec-empty-body-commit-001.asl",
+      "requirements": [
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
+      ],
+      "sha256": "c12c913ecc8a1fc7958e7a15f2e0d4864eb1f71ae29a71c57a5fae69ee192783",
+      "source": "asl/block/model/lifecycle/enter-stop.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-BSTART-BARG-001",
@@ -43475,6 +43510,48 @@
       ],
       "sha256": "caa22fa8dac1e04bb0a1e967046697dcde558800955c037bd18198b8ad7ff831",
       "source": "asl/scalar/alu/BIS.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-BODY-ENTRY-DECODED-FAULT-001",
+      "kind": "fault",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-fault-body-entry-decoded-001.asl",
+      "requirements": [
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
+      ],
+      "sha256": "ea19cfbc23d2739a6f9e9922c094d27a2df9b232fa201305e253a73f4076e631",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-BODY-ENTRY-SETC-LTUI-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-exec-body-entry-setc-ltui-001.asl",
+      "requirements": [
+        "PTO-REQ-SCALAR-BODY-ENTRY-001",
+        "PTO-INST-SCALAR-SETC-LTUI"
+      ],
+      "sha256": "bea51719b0641a6012259131c616bf1e37845f892542abd760b4e9c4b5c78a34",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-BODY-ENTRY-SYS-001",
+      "kind": "state-transition",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-state-body-entry-sys-001.asl",
+      "requirements": [
+        "PTO-REQ-SCALAR-BODY-ENTRY-001",
+        "PTO-INST-SCALAR-ACRC"
+      ],
+      "sha256": "209fa62d0bca217b390888d3c73aca62125fbf0f3c59f8ca219f20839d86ca0a",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-BODY-ENTRY-UNDECODED-001",
+      "kind": "fault",
+      "path": "tests/asl/scalar/model/dispatch/top-level/scalar-fault-body-entry-undecoded-001.asl",
+      "requirements": [
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
+      ],
+      "sha256": "f47bcf31b9f3629f449775b9b6b77758588e67f647cffe92c77cc54b17e9be2e",
+      "source": "asl/scalar/model/dispatch/top-level.asl"
     },
     {
       "id": "PTO-AVS-SCALAR-BRU-CANON-001",
@@ -60087,7 +60164,8 @@
       "id": "PTO-ARCH-DISPATCH-TOP-LEVEL",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-0111"
+        "ADR-0111",
+        "ADR-0112"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-DECODER-COVERAGE-001",
@@ -64191,12 +64269,16 @@
       "readiness_subjects": [
         "ADR-0022",
         "ADR-0032",
-        "ADR-0055"
+        "ADR-0055",
+        "ADR-0112"
       ],
-      "semantic_tests": [],
+      "semantic_tests": [
+        "PTO-AVS-BLOCK-BODY-ENTRY-EMPTY-COMMIT-001"
+      ],
       "source": "asl/block/model/lifecycle/enter-stop.asl",
       "surface": "block",
       "tests": [
+        "PTO-AVS-BLOCK-BODY-ENTRY-EMPTY-COMMIT-001",
         "PTO-AVS-BLOCK-MODEL-LIFECYCLE-ENTER-STOP-STATIC-001"
       ]
     },
@@ -79407,12 +79489,18 @@
       "documentation": "docs/scalar/model/dispatch/top-level.md",
       "id": "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0112"
+      ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-AGU-CANON-001",
         "PTO-AVS-SCALAR-ALU-CANON-001",
         "PTO-AVS-SCALAR-AMO-CANON-001",
         "PTO-AVS-SCALAR-BINARY-EFFECTS-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-DECODED-FAULT-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SETC-LTUI-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SYS-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-UNDECODED-001",
         "PTO-AVS-SCALAR-BRU-CANON-001",
         "PTO-AVS-SCALAR-FSU-CANON-001",
         "PTO-AVS-SCALAR-SYS-CANON-001"
@@ -79424,6 +79512,10 @@
         "PTO-AVS-SCALAR-ALU-CANON-001",
         "PTO-AVS-SCALAR-AMO-CANON-001",
         "PTO-AVS-SCALAR-BINARY-EFFECTS-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-DECODED-FAULT-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SETC-LTUI-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SYS-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-UNDECODED-001",
         "PTO-AVS-SCALAR-BRU-CANON-001",
         "PTO-AVS-SCALAR-FSU-CANON-001",
         "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001",
