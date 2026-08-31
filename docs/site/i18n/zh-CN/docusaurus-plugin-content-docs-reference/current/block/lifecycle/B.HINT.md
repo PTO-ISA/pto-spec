@@ -126,7 +126,7 @@ end;
 
 ```asm
 Ordinary form: optional once after BSTART and before the block body.
-TRACE form: acts as a block start and must later be terminated by BSTOP or the next BSTART.
+TRACE form: acts as a block start only when predecessor commit selects the fetched TRACE PC, and an installed trace block must later be terminated by BSTOP or the next block start.
 ```
 
 ## Operation
@@ -162,12 +162,12 @@ end;
 
 - An ordinary B.HINT is legal only after BSTART and before the block body, and at most one B.HINT may belong to that block header.
 - A second ordinary B.HINT raises Illegal Block Exception before replacing the first hint.
-- B.HINT TRACE is a special block-start operation. It first retires any active predecessor block under the normal next-BSTART rule, then opens a new empty fallthrough block.
+- B.HINT TRACE is a special block-start operation. It first retires any active predecessor block and opens a new empty fallthrough block only when the committed TPC equals the fetched TRACE PC.
 
 ## State effects
 
 - Decode and retain the selected hint fields as pending state of the active block and increment the non-functional hint epoch.
-- TRACE.begin or TRACE.end opens an empty block and records its boundary kind; it does not complete that block.
+- TRACE.begin or TRACE.end opens an empty block and records its boundary kind only at a predecessor-selected boundary; skipped TRACE changes no hint state. An installed TRACE does not complete its new block.
 
 ## Memory effects and ordering
 
@@ -177,12 +177,12 @@ end;
 
 ### Ordering
 
-- none
+- Ordinary hints update the active header in place. TRACE first commits any active predecessor, verifies that its selected TPC is the fetched TRACE PC, and only then installs and records the empty trace block.
 
 ## Exceptions
 
 - An ordinary B.HINT outside an active block header or a duplicate ordinary B.HINT raises Illegal Block Exception before hint state changes.
-- If TRACE cannot retire an active predecessor block, the predecessor fault is preserved and the trace block is not opened.
+- If TRACE cannot retire an active predecessor block, the predecessor fault is preserved and the trace block is not opened. If predecessor commit selects another PC, TRACE changes no hint or trace state.
 
 ## Examples
 

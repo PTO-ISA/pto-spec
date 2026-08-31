@@ -4948,6 +4948,8 @@
         "PTO-AVS-BLOCK-B-HINT-FIELDS-001",
         "PTO-AVS-BLOCK-B-HINT-PLACEMENT-001",
         "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002",
         "PTO-AVS-BLOCK-B-IOR-DECODE-001",
         "PTO-AVS-BLOCK-B-IOR-DEFAULTS-EXEC-001",
         "PTO-AVS-BLOCK-B-IOR-EXECUTION-001",
@@ -7902,6 +7904,8 @@
         "PTO-AVS-BLOCK-B-HINT-FIELDS-001",
         "PTO-AVS-BLOCK-B-HINT-PLACEMENT-001",
         "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002",
         "PTO-AVS-BLOCK-B-IOR-DECODE-001",
         "PTO-AVS-BLOCK-B-IOR-DEFAULTS-EXEC-001",
         "PTO-AVS-BLOCK-B-IOR-EXECUTION-001",
@@ -11574,6 +11578,8 @@
         "PTO-AVS-BLOCK-B-HINT-FIELDS-001",
         "PTO-AVS-BLOCK-B-HINT-PLACEMENT-001",
         "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002",
         "PTO-AVS-BLOCK-B-IOR-DECODE-001",
         "PTO-AVS-BLOCK-B-IOR-DEFAULTS-EXEC-001",
         "PTO-AVS-BLOCK-B-IOR-EXECUTION-001",
@@ -15484,6 +15490,8 @@
         "PTO-AVS-BLOCK-B-HINT-FIELDS-001",
         "PTO-AVS-BLOCK-B-HINT-PLACEMENT-001",
         "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002",
         "PTO-AVS-BLOCK-BSTART-BARG-001",
         "PTO-AVS-BLOCK-BSTART-BPCN-ALIGN-001",
         "PTO-AVS-BLOCK-BSTART-COND-SETC-001",
@@ -21803,22 +21811,55 @@
         "PTO-SCALAR-MODEL-DISPATCH-ALU"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0116"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-B-HINT-LIFECYCLE-001",
+        "PTO-INST-BLOCK-B-HINT"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0116",
+      "test_ids": [
+        "PTO-AVS-BLOCK-B-HINT-DECODE-001",
+        "PTO-AVS-BLOCK-B-HINT-DUPLICATE-001",
+        "PTO-AVS-BLOCK-B-HINT-FIELDS-001",
+        "PTO-AVS-BLOCK-B-HINT-PLACEMENT-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002",
+        "PTO-AVS-BLOCK-CMD-CTRLSTART-001",
+        "PTO-AVS-BLOCK-CMD-HEADER-001",
+        "PTO-AVS-BLOCK-CMD-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-CMD-TILESTART-001",
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-COMMANDS-STATIC-001",
+        "PTO-AVS-BLOCK-TESTBUNDLECOMMANDTOTALITYBOUNDARIES-BOUNDARY-001"
+      ],
+      "unit_ids": [
+        "PTO-BLOCK-B-HINT",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 109,
-      "sha256": "e7fce1054c60e2c46844880f3286e704fa354a5246abef78c6f596dcd3bb1a86"
+      "count": 110,
+      "sha256": "c89debbc8027970c9594b3a662337c80b014e5f31eaa9e137f04d5412f9bbb31"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "1a2cdd0b9fbeda3f3b1032e0ab1534cde9dd8b0c99573e451f0ddb6fc3eeb83a"
+      "sha256": "d6fd9bba761408087a6d1783be271da9bc2bd205cb7145a7a1a385df3a5157ee"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "4aaf50f427eb162a4e13a17fdc0f56d7a8d2bfc6d7599cb43494f4f444966524",
-      "test_count": 3745,
+      "sha256": "7b49895ccef81afd7f892f727e3aa7fc963e33965884ea0dde9d127aec57e4c2",
+      "test_count": 3747,
       "unit_count": 853
     }
   },
@@ -21837,13 +21878,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 10,
-      "executable": 95,
+      "executable": 96,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 105,
+    "subject_count": 106,
     "validated_count": 0
   }
 }

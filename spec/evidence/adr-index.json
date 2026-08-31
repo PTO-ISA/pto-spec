@@ -8694,12 +8694,46 @@
         "0.58.5"
       ],
       "title": "Define HL.BFI as byte-granular insertion"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-B-HINT-LIFECYCLE-001",
+        "PTO-INST-BLOCK-B-HINT"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-HINT",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "4208f3fd690aaf7e0b8da4a49ea5f3d63946d8ed",
+      "created": "2026-09-01",
+      "id": "ADR-0116",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/195",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0116-trace-preserves-predecessor-transfer.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "B.HINT TRACE preserves the predecessor-selected transfer"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 109
+    "record_count": 110
   }
 }

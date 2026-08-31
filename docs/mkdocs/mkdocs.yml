@@ -1062,5 +1062,6 @@ nav:
           - "ADR 0113: Following BSTART preserves the predecessor-selected transfer": status/decisions/0113-bstart-preserves-predecessor-transfer.md
           - "ADR 0114: Normalize the AGU SrcRType arithmetic modifier encoding": status/decisions/0114-normalize-agu-srcrtype-encoding.md
           - "ADR 0115: Define HL.BFI as byte-granular insertion": status/decisions/0115-byte-granular-hl-bfi.md
+          - "ADR 0116: B.HINT TRACE preserves the predecessor-selected transfer": status/decisions/0116-trace-preserves-predecessor-transfer.md
       - Open:
           - "Open architecture decisions": status/open/index.md

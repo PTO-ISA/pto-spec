@@ -741,9 +741,13 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0075"
+        "ADR-0075",
+        "ADR-0116"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002"
+      ]
     },
     {
       "executable": false,
@@ -3879,7 +3883,9 @@
       "owners": [
         "asl/block/lifecycle/B.HINT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0116"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-B-HINT-DECODE-001",
         "PTO-AVS-BLOCK-B-HINT-DUPLICATE-001",
@@ -16851,7 +16857,7 @@
     "asl/block/execution/BSTART.TPREFETCH.asl": "c8c57ca48a101a23ed51a8c22d9b126690814b0f95096c4aa5519bb1439f74a9",
     "asl/block/execution/BSTART.TSTORE.asl": "9fc0e2f03e0933d547cc5a9e8bac3762eb6a17f3465d7b2797cb3b7b9a6024bb",
     "asl/block/execution/BSTART.VEC.asl": "f3783620f9b5f536dbdd4636d74b522e112c060690a122c4af1097ee261ede77",
-    "asl/block/lifecycle/B.HINT.asl": "c00cbb09d4d82839019d9ccb613a33ab95928afca9ffc5da50957895ecd98b63",
+    "asl/block/lifecycle/B.HINT.asl": "356eab03acbc0e7c1681d1760c0811a1d53c01a555fc97cc9f5010a2e4ef16da",
     "asl/block/lifecycle/BSTART.asl": "b4dcde54511161526282bc0a06ee434dbe6fb3beff5ce5f8426669a91125e451",
     "asl/block/lifecycle/BSTOP.asl": "9fb2365561a806d75d7538f7a5557070d9a278afca69d86478ef19e732c0060b",
     "asl/block/lifecycle/C.BSTOP.asl": "7c81ac9ab3f2afa9e86e19245f6ce7251f3d75f2b9d1eb7eb65962a2d3804046",
@@ -16870,7 +16876,7 @@
     "asl/block/model/commit/effects.asl": "5385a24c6b55b3eb680fb1b1f6cd8e8478f817dc54feee8b6d31b2a0ad2613f0",
     "asl/block/model/commit/validation.asl": "f22cac246c59a10aebedb4ab19805f0314130ef0fade576559816eb3608b12f5",
     "asl/block/model/dispatch/cell-rearrangement-schema.asl": "18f22fd96b5385ce47617c00aafdaa460c2fec6cab1cc867f28b1a772b259bc2",
-    "asl/block/model/dispatch/commands.asl": "c7120172dc11dbc4ef621bf4b81fbc3e7776de30dd5aa567151fd4a4160a432a",
+    "asl/block/model/dispatch/commands.asl": "5d264458b50dfc5d78a9be561acfe422d753682e3ea3e92896f41f371e76817e",
     "asl/block/model/dispatch/comparison-schema.asl": "d871c4b700fd4c87298e7c818e9e9c8413e2bd34cf28228a31a27637d606e14b",
     "asl/block/model/dispatch/cube-destination.asl": "ee31e918e78a40a17608cb76c1343186130f841b4cbb5fbd26e50d99dbcc07cd",
     "asl/block/model/dispatch/cube-tmatmul.asl": "4a65098b22408fedd8b76b362ac7a45bffecd6ed88c1654b59d29226e06c71e8",
@@ -17704,7 +17710,7 @@
     "docs/block/execution/BSTART.TPREFETCH.md": "7a97f4b6682d401153c3a24f14a0c5c7e56c96703fed2d346172fd616a67ad54",
     "docs/block/execution/BSTART.TSTORE.md": "1dc9f163db115d896304016db17adb0d6ccea6f080de62ecfac4753467cc08c9",
     "docs/block/execution/BSTART.VEC.md": "6532771a0a21edfadab955ebfd15f03eabf3624023d5e7c79fed74caf53a1581",
-    "docs/block/lifecycle/B.HINT.md": "bd17e91a40e28411d0091190b267cd5bc0ea73e9b951f1e1e5a8f7654fa18b85",
+    "docs/block/lifecycle/B.HINT.md": "3c9caf759bde2711727711a926d1ef87537e2240bf240b7671f900c47a651ff8",
     "docs/block/lifecycle/BSTART.md": "d1defe9b1df0dc5ab93813f88b80f287ed5b99f1230fb0978430a14448f558be",
     "docs/block/lifecycle/BSTOP.md": "c8aad0f8e574fbcc6c9beceb2a8e3db99f11b8a06e28a7846dfeb64581494fd2",
     "docs/block/lifecycle/C.BSTOP.md": "ecbeea3020ab97c01e864f12b78b955ea61879c2bd458b6692e2ded0656eeb65",
@@ -17723,7 +17729,7 @@
     "docs/block/model/commit/effects.md": "613fa6cdb152cc1a9c0bf3314d99bb6de5926680ef63e52308774b73bd12994b",
     "docs/block/model/commit/validation.md": "36b6696303e975621e2688bd7f0850519f8b1a75f87c91512b2db972d0e2c808",
     "docs/block/model/dispatch/cell-rearrangement-schema.md": "910f3a6b49bf2097ab4e14a2d7a581b4834c19f4d88d6e1326fed1c4c3915991",
-    "docs/block/model/dispatch/commands.md": "4dc826aa68c56730fdeaa0305399268783129622549e59eb55b84401996e7563",
+    "docs/block/model/dispatch/commands.md": "4432d730222f8d5b50174d6fb6a43d7a3f9f175af9efee5cc5a1a9f6d68547ab",
     "docs/block/model/dispatch/comparison-schema.md": "c7268b5a2db38bf13159a1655aa68274997cc63e3b46bb9ce00b4f00e6ec5e9e",
     "docs/block/model/dispatch/cube-destination.md": "bec93765a939bf244b1ac629cf56bb8080482a2b55e062a06cc90dc46fb4a611",
     "docs/block/model/dispatch/cube-tmatmul.md": "a54b5b307dec8f37df25978b3a701cac597955e74623a666849ae3aaecbe3da1",
@@ -18444,8 +18450,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "caa2f3f408047a358f37f386fab720f1ce93f4dee372769915f04fe1ef6f9b7a",
-    "spec/evidence/instruction-contract-closure.json": "1a2cdd0b9fbeda3f3b1032e0ab1534cde9dd8b0c99573e451f0ddb6fc3eeb83a",
+    "spec/evidence/adr-index.json": "e410e05f274ab4c061dabcd0356b40e63a30a2a20a897ea4c0be04a39d64d619",
+    "spec/evidence/instruction-contract-closure.json": "d6fd9bba761408087a6d1783be271da9bc2bd205cb7145a7a1a385df3a5157ee",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -18506,7 +18512,7 @@
     "tests/asl/arch/dispatch/top-level/arch-exec-next-instruction-scalar-16-002.asl": "9244ba9a608e2162e6e8485bb7aef748a877e6eb2faa688b9a5d5e59aee8f659",
     "tests/asl/arch/dispatch/top-level/arch-exec-next-instruction-scalar-32-001.asl": "55f10c7ac312838639145aba084c10df7b3a8f418f6a1eacc22d65a0697f9bc5",
     "tests/asl/arch/dispatch/top-level/arch-exec-next-instruction-scalar-48-003.asl": "620e8d660b18d0b8504a18ac6d4009721479d930690cfb269e2c4dccdb023ff6",
-    "tests/asl/arch/dispatch/top-level/arch-exec-scalar-loop-elf-sequence-003.asl": "881175f49469399dbaca0d95ffc6aac396ae32015c1c5a43f522d3f5534945b3",
+    "tests/asl/arch/dispatch/top-level/arch-exec-scalar-loop-elf-sequence-003.asl": "5c992b19c48382174273df77a88056c850c7319c05a1913aec0f5db10896a89f",
     "tests/asl/arch/dispatch/top-level/arch-exec-unified-instruction-dispatch-001.asl": "24b8cbc802a9ca45ec70b97947810c0edb0eb0c87efff1cad5b776958a2010f2",
     "tests/asl/arch/dispatch/top-level/arch-fault-next-instruction-illegal-encoding-005.asl": "945aa5d1e8292ecf91069daecdcce648b93a93f5844b6c3a4a2e49c37826d810",
     "tests/asl/arch/dispatch/top-level/arch-fault-next-instruction-odd-pc-001.asl": "2b3211b4f33bbf11869d7b99cd1e0f5df7cd86a8d093ff3368db79c6bb2a8b7f",
@@ -18845,6 +18851,8 @@
     "tests/asl/block/lifecycle/B.HINT/block-fault-b-hint-duplicate-001.asl": "5dcc30eaef7f8656a65e8c6e25c541bbacf8f1525a9435c9319797999c5d22d5",
     "tests/asl/block/lifecycle/B.HINT/block-fault-b-hint-placement-001.asl": "331bbecaaef65b82c89def309c9b13fa46a514a4f81386b23b0ce7b2d8be0898",
     "tests/asl/block/lifecycle/B.HINT/block-state-b-hint-trace-lifecycle-001.asl": "c76cc98a6f125991195cd1ad70351aec73578147d6f458d95e90ef94343320c1",
+    "tests/asl/block/lifecycle/B.HINT/block-state-b-hint-trace-predecessor-sequential-003.asl": "71d214cb8b1beccbd96a8892d6581e529ad4f1442a10ee086d2155f2fddd25c9",
+    "tests/asl/block/lifecycle/B.HINT/block-state-b-hint-trace-predecessor-taken-002.asl": "51fd16bb1340456c2e566a243c8430afaaaa680f4e1e111ebb1e5cd3d0295b4f",
     "tests/asl/block/lifecycle/BSTART/block-decode-bstart-canonical-001.asl": "98a497ae85eae27f06573c8d9135332b88174f327821ac89980b864d2624d667",
     "tests/asl/block/lifecycle/BSTART/block-fault-bstart-bpcn-align-001.asl": "fbc990755a2513f82dfeff03b33bfe93a7499c65c3cbf694d1a2bd3bc38f34c8",
     "tests/asl/block/lifecycle/BSTART/block-state-bstart-barg-001.asl": "1d790863335297e78031666d9ce5521459179059cee8585ff2e6523f4d546376",
@@ -22200,7 +22208,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1025,
     "status": "closed",
-    "test_count": 3745,
+    "test_count": 3747,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -30837,7 +30845,7 @@
       "requirements": [
         "PTO-REQ-INSTRUCTION-DISPATCH-001"
       ],
-      "sha256": "881175f49469399dbaca0d95ffc6aac396ae32015c1c5a43f522d3f5534945b3",
+      "sha256": "5c992b19c48382174273df77a88056c850c7319c05a1913aec0f5db10896a89f",
       "source": "asl/arch/dispatch/top-level.asl"
     },
     {
@@ -31814,6 +31822,26 @@
         "PTO-INST-BLOCK-B-HINT"
       ],
       "sha256": "c76cc98a6f125991195cd1ad70351aec73578147d6f458d95e90ef94343320c1",
+      "source": "asl/block/lifecycle/B.HINT.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+      "kind": "state-transition",
+      "path": "tests/asl/block/lifecycle/B.HINT/block-state-b-hint-trace-predecessor-sequential-003.asl",
+      "requirements": [
+        "PTO-B-HINT-LIFECYCLE-001"
+      ],
+      "sha256": "71d214cb8b1beccbd96a8892d6581e529ad4f1442a10ee086d2155f2fddd25c9",
+      "source": "asl/block/lifecycle/B.HINT.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002",
+      "kind": "state-transition",
+      "path": "tests/asl/block/lifecycle/B.HINT/block-state-b-hint-trace-predecessor-taken-002.asl",
+      "requirements": [
+        "PTO-B-HINT-LIFECYCLE-001"
+      ],
+      "sha256": "51fd16bb1340456c2e566a243c8430afaaaa680f4e1e111ebb1e5cd3d0295b4f",
       "source": "asl/block/lifecycle/B.HINT.asl"
     },
     {
@@ -63023,13 +63051,16 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0075"
+        "ADR-0075",
+        "ADR-0116"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-B-HINT-DUPLICATE-001",
         "PTO-AVS-BLOCK-B-HINT-FIELDS-001",
         "PTO-AVS-BLOCK-B-HINT-PLACEMENT-001",
-        "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001"
+        "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002"
       ],
       "source": "asl/block/lifecycle/B.HINT.asl",
       "surface": "block",
@@ -63038,7 +63069,9 @@
         "PTO-AVS-BLOCK-B-HINT-DUPLICATE-001",
         "PTO-AVS-BLOCK-B-HINT-FIELDS-001",
         "PTO-AVS-BLOCK-B-HINT-PLACEMENT-001",
-        "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001"
+        "PTO-AVS-BLOCK-B-HINT-TRACE-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-SEQUENTIAL-003",
+        "PTO-AVS-BLOCK-B-HINT-TRACE-PREDECESSOR-TAKEN-002"
       ]
     },
     {
@@ -63603,7 +63636,8 @@
         "ADR-0098",
         "ADR-0099",
         "ADR-0108",
-        "ADR-0109"
+        "ADR-0109",
+        "ADR-0116"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-CMD-CTRLSTART-001",

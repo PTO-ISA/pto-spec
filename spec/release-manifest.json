@@ -458,7 +458,7 @@
     },
     {
       "path": "asl/block/lifecycle/B.HINT.asl",
-      "sha256": "c00cbb09d4d82839019d9ccb613a33ab95928afca9ffc5da50957895ecd98b63"
+      "sha256": "356eab03acbc0e7c1681d1760c0811a1d53c01a555fc97cc9f5010a2e4ef16da"
     },
     {
       "path": "asl/block/lifecycle/BSTART.asl",
@@ -534,7 +534,7 @@
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "c7120172dc11dbc4ef621bf4b81fbc3e7776de30dd5aa567151fd4a4160a432a"
+      "sha256": "5d264458b50dfc5d78a9be561acfe422d753682e3ea3e92896f41f371e76817e"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
@@ -3446,15 +3446,15 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "14a3646d2dd89070a15a43747efb0c8a163af8d2e823eac492e188f008f9e036"
+      "sha256": "73daf87fea9217f72e414f0788bd1951f16476749adc70cd16537afbde68a12d"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "1a2cdd0b9fbeda3f3b1032e0ab1534cde9dd8b0c99573e451f0ddb6fc3eeb83a"
+      "sha256": "d6fd9bba761408087a6d1783be271da9bc2bd205cb7145a7a1a385df3a5157ee"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "a72916c9ebbda4364aed14a26353ac4120aca7d6329663caf27422940b5b1454"
+      "sha256": "77fe6e21916183bf554bdeadaeba9128ab859395dc59868a1edae4d0ef10f3f6"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
@@ -3462,7 +3462,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "4aaf50f427eb162a4e13a17fdc0f56d7a8d2bfc6d7599cb43494f4f444966524"
+      "sha256": "7b49895ccef81afd7f892f727e3aa7fc963e33965884ea0dde9d127aec57e4c2"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3508,7 +3508,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "4f5fd324e4e17ab1d1416793a3c8551158ae1206fd9cee6ba9c7efedfd6719b3",
+  "content_sha256": "53f67cc9fc91a76c2194b5d32b92c583d9d7f6f1e746fb84acd2fcddf2a3ed7a",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4110,7 +4110,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/lifecycle/B.HINT.md",
-      "sha256": "bd17e91a40e28411d0091190b267cd5bc0ea73e9b951f1e1e5a8f7654fa18b85"
+      "sha256": "3c9caf759bde2711727711a926d1ef87537e2240bf240b7671f900c47a651ff8"
     },
     {
       "kind": "generated-documentation",
@@ -4205,7 +4205,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/commands.md",
-      "sha256": "4dc826aa68c56730fdeaa0305399268783129622549e59eb55b84401996e7563"
+      "sha256": "4432d730222f8d5b50174d6fb6a43d7a3f9f175af9efee5cc5a1a9f6d68547ab"
     },
     {
       "kind": "generated-documentation",
@@ -7944,7 +7944,7 @@
       },
       {
         "id": "PTO-B-HINT-LIFECYCLE-001",
-        "sha256": "790fe8170c4f800833477da3e200de1ab4f42a76d02bac0924fd11e9bcfde454"
+        "sha256": "279283b1396a761ad1471a614a7003dffe159787df55b0e8d84116626f556799"
       },
       {
         "id": "PTO-B-IOR-BINDING-001",
@@ -8564,7 +8564,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-B-HINT",
-        "sha256": "44073a6627e1730bd0a430c0afa529398b3a39434dfd0aa8f53e48efd03d26ac"
+        "sha256": "a48095fb739e48da398a90dcb8ce8fbec07b583196c4ec22a2754cc8300ec879"
       },
       {
         "id": "PTO-INST-BLOCK-B-IOR",
@@ -12044,7 +12044,8 @@
       "ADR-0112",
       "ADR-0113",
       "ADR-0114",
-      "ADR-0115"
+      "ADR-0115",
+      "ADR-0116"
     ]
   },
   "schema_version": 1,
