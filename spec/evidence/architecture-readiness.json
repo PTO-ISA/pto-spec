@@ -1602,6 +1602,7 @@
         "PTO-AVS-BLOCK-B-IOT-SIZECODES-002",
         "PTO-AVS-BLOCK-B-IOT-SOURCE-PERSIST-001",
         "PTO-AVS-BLOCK-B-IOT-ZERO-MASK-001",
+        "PTO-AVS-BLOCK-BODY-ENTRY-EMPTY-COMMIT-001",
         "PTO-AVS-BLOCK-MATRIX-DEST-SHAPE-001",
         "PTO-AVS-BLOCK-MODEL-COMMIT-EFFECTS-STATIC-001",
         "PTO-AVS-BLOCK-MODEL-COMMIT-VALIDATION-STATIC-001",
@@ -4976,6 +4977,7 @@
         "PTO-AVS-BLOCK-B-IOT-SIZECODES-002",
         "PTO-AVS-BLOCK-B-IOT-SOURCE-PERSIST-001",
         "PTO-AVS-BLOCK-B-IOT-ZERO-MASK-001",
+        "PTO-AVS-BLOCK-BODY-ENTRY-EMPTY-COMMIT-001",
         "PTO-AVS-BLOCK-BSTART-BARG-001",
         "PTO-AVS-BLOCK-BSTART-BPCN-ALIGN-001",
         "PTO-AVS-BLOCK-BSTART-CALL-ATOMIC-001",
@@ -9051,6 +9053,7 @@
         "PTO-AVS-BLOCK-B-IOR-ORDERED-GPR-EXECUTION-001",
         "PTO-AVS-BLOCK-B-IOR-PLACEMENT-001",
         "PTO-AVS-BLOCK-B-IOR-TILE-CONSUMERS-EXEC-003",
+        "PTO-AVS-BLOCK-BODY-ENTRY-EMPTY-COMMIT-001",
         "PTO-AVS-BLOCK-BSTART-CALL-ATOMIC-001",
         "PTO-AVS-BLOCK-BSTART-CALL-DECODE-001",
         "PTO-AVS-BLOCK-BSTART-CALL-FUSED-FORMS-001",
@@ -21235,13 +21238,60 @@
         "PTO-ARCH-PROFILE-REFERENCE-PROFILE"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0112"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0112",
+      "test_ids": [
+        "PTO-AVS-ARCH-DECODER-COVERAGE-001",
+        "PTO-AVS-ARCH-DISPATCH-TOP-LEVEL-STATIC-001",
+        "PTO-AVS-ARCH-NEXT-INSTRUCTION-COMMAND-64-004",
+        "PTO-AVS-ARCH-NEXT-INSTRUCTION-ILLEGAL-ENCODING-005",
+        "PTO-AVS-ARCH-NEXT-INSTRUCTION-ODD-PC-001",
+        "PTO-AVS-ARCH-NEXT-INSTRUCTION-SCALAR-16-002",
+        "PTO-AVS-ARCH-NEXT-INSTRUCTION-SCALAR-32-001",
+        "PTO-AVS-ARCH-NEXT-INSTRUCTION-SCALAR-48-003",
+        "PTO-AVS-ARCH-NEXT-INSTRUCTION-TRUNCATED-FETCH-001",
+        "PTO-AVS-ARCH-NEXT-INSTRUCTION-UNMAPPED-FETCH-001",
+        "PTO-AVS-ARCH-TESTCROSSDISPATCHEXECUTIONCONTRACT-EXECUTION-001",
+        "PTO-AVS-ARCH-TESTUNIFIEDINSTRUCTIONDISPATCH-EXECUTION-001",
+        "PTO-AVS-BLOCK-BODY-ENTRY-EMPTY-COMMIT-001",
+        "PTO-AVS-BLOCK-MODEL-LIFECYCLE-ENTER-STOP-STATIC-001",
+        "PTO-AVS-SCALAR-AGU-CANON-001",
+        "PTO-AVS-SCALAR-ALU-CANON-001",
+        "PTO-AVS-SCALAR-AMO-CANON-001",
+        "PTO-AVS-SCALAR-BINARY-EFFECTS-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-DECODED-FAULT-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SETC-LTUI-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-SYS-001",
+        "PTO-AVS-SCALAR-BODY-ENTRY-UNDECODED-001",
+        "PTO-AVS-SCALAR-BRU-CANON-001",
+        "PTO-AVS-SCALAR-FSU-CANON-001",
+        "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001",
+        "PTO-AVS-SCALAR-SYS-CANON-001"
+      ],
+      "unit_ids": [
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
+        "PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 105,
-      "sha256": "afbe8bf5b92d7832abb91aa4cc48df171630e3be05d6b516809e767b90f5d77e"
+      "count": 106,
+      "sha256": "85764624362c994b84f554a3908b30bc6259ec22688f95475e1c88540780c71b"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21249,8 +21299,8 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "d3c2c6e5b7f845070b55039dca33d2b7321ba459e43c97a27b4133461692d6f0",
-      "test_count": 3731,
+      "sha256": "a5843b3903b283eeb1e1b848588f30af9d611f043cdc82cf6a7e4584b91d27ec",
+      "test_count": 3736,
       "unit_count": 852
     }
   },
@@ -21269,13 +21319,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 10,
-      "executable": 91,
+      "executable": 92,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 101,
+    "subject_count": 102,
     "validated_count": 0
   }
 }
