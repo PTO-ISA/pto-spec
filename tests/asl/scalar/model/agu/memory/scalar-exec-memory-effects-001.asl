@@ -38,6 +38,14 @@ begin
     assert _FaultAddress == Zeros{PTO_XLEN} + 3072;
     SetCurrentACR(0);
 
+    // The reference profile keeps the configured array boundary.  External
+    // profiles may replace DataAccessPermitted without inheriting a second
+    // ProbeDataAccess bound.
+    assert DataAccessPermitted(
+        Zeros{PTO_XLEN} + (PTO_MODEL_MEMORY_BYTES - 1), 1, FALSE);
+    assert !DataAccessPermitted(
+        Zeros{PTO_XLEN} + PTO_MODEL_MEMORY_BYTES, 1, FALSE);
+
     ClearFault();
     - = LoadUnsigned(Zeros{PTO_XLEN} + 17, 4);
     assert _LastFault == Fault_DataAlignment;

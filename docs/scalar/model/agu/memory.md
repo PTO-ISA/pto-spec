@@ -64,8 +64,11 @@ begin
         };
     end;
     let translated_address = TranslateDataAddress(address, size_bytes, write);
-    if !DataAccessPermitted(translated_address, size_bytes, write) ||
-       UInt(translated_address) + size_bytes > PTO_MODEL_MEMORY_BYTES then
+    // The active profile owns the physical address-space limit.  The
+    // reference profile still applies PTO_MODEL_MEMORY_BYTES in its
+    // DataAccessPermitted implementation, while an external-memory profile
+    // may authorize addresses outside the reference array.
+    if !DataAccessPermitted(translated_address, size_bytes, write) then
         return DataAccessProbe {
             fault = Fault_DataPage,
             translated_address = translated_address
