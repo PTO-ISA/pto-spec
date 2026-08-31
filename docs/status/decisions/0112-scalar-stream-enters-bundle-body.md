@@ -40,8 +40,8 @@ the existing `EnterBundleBody` transition. Consequently a fetched compiler
 sequence could decode an accepted conditional SETC form and still reject it
 because the body-active state remained false.
 
-The LinxISA v0.58 Sail model separates BSTART/BSTOP command boundaries from
-scalar SETC execution. The v0.58 assembly documentation also places SETC in
+Independent public v0.58 executable and assembly references separate
+BSTART/BSTOP command boundaries from scalar SETC execution and place SETC in
 the body microinstruction stream. PTO therefore needs one architecture-owned
 transition that is independent of any functional-model worker or ELF ABI.
 
