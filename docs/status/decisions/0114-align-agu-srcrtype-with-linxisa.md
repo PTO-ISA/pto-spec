@@ -2,11 +2,11 @@
 {
   "id": "ADR-0114",
   "title": "Align AGU SrcRType with the LinxISA arithmetic modifier encoding",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["Codex"],
-  "approvers": [],
+  "approvers": ["zhoubot"],
   "created": "2026-09-01",
-  "accepted": null,
+  "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
   "baseline": "a99ded8ea5365ffedd85c7f376651c3378456391",
@@ -81,5 +81,5 @@ uniform across loads, stores, pairs, prefetches, and update forms that carry
 ## Decision state
 
 The architecture owner authorized autonomous detailed analysis and the
-recommended architecture rule on 2026-09-01. This draft binds the exact
-baseline before implementation and focused evidence promote it to accepted.
+recommended architecture rule on 2026-09-01. Focused mapping and ELF-shaped
+loop tests bind the decision to the owning ASL.

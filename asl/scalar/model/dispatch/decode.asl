@@ -5,6 +5,13 @@
 // Every accepted scalar family has a form-to-effect binding. Unknown or
 // operand-illegal encodings are rejected; there is no silent unsupported path.
 
+// NDF-BEGIN: PTO-REQ-AGU-SRCRTYPE-001
+// ndf: kind=contract level=L1 layer=scalar status=accepted
+// Every register-offset AGU form MUST decode SrcRType as 00=.sw, 01=.uw,
+// 10=.neg, and 11=unchanged, and MUST apply that transformation before the
+// encoded or fixed left shift used to form the offset.
+// NDF-END: PTO-REQ-AGU-SRCRTYPE-001
+
 type ScalarExecutionStatus of enumeration {
     ScalarExecution_Executed,
     ScalarExecution_Rejected
@@ -173,10 +180,10 @@ pure func DecodeScalarAddressRightModifier(raw: bits(2))
                                            => ScalarRightModifier
 begin
     case raw of
-        when '00' => return ScalarRight_None;
-        when '01' => return ScalarRight_SignedWord;
-        when '10' => return ScalarRight_UnsignedWord;
-        when '11' => return ScalarRight_NegateOrNot;
+        when '00' => return ScalarRight_SignedWord;
+        when '01' => return ScalarRight_UnsignedWord;
+        when '10' => return ScalarRight_NegateOrNot;
+        when '11' => return ScalarRight_None;
     end;
 end;
 
