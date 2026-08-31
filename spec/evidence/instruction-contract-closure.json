@@ -29654,7 +29654,7 @@
         ],
         "defaults": [
           "SrcP, SrcL, SrcR, SrcRType, and RegDst are required encoded fields; no field can be omitted.",
-          "Assembly without .neg uses the canonical unmodified alias selected by the assembler. Raw SrcRType codes 00, 01, and 10 are assigned unmodified aliases; raw code 11 is .neg."
+          "Assembly without .neg uses the canonical unmodified alias selected by the assembler. Raw SrcRType codes 00, 01, and 11 are assigned unmodified aliases; raw code 10 is .neg."
         ],
         "encoded_fields": [
           {
@@ -29756,7 +29756,7 @@
         "field_domains": [],
         "legality": [
           "SrcP, SrcL, and SrcR codes 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4 without consumption.",
-          "All four SrcRType values are assigned. Codes 00, 01, and 10 leave SrcR unchanged; code 11 negates the complete XLEN value modulo 2^PTO_XLEN.",
+          "All four SrcRType values are assigned. Codes 00, 01, and 11 leave SrcR unchanged; code 10 negates the complete XLEN value modulo 2^PTO_XLEN.",
           "RegDst codes 0 and 24..29 discard, codes 1..23 write GPRs, code 30 pushes U, and code 31 pushes T."
         ],
         "memory_effects": [

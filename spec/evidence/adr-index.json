@@ -8805,12 +8805,45 @@
         "0.58.5"
       ],
       "title": "Bind finite scalar FP32 and FP64 pto-v0 reference semantics"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-INST-SCALAR-CSEL"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-CSEL",
+        "PTO-SCALAR-MODEL-DISPATCH-DECODE"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "622f99f9743ecaf62ef1c1b4f5e5a70f44427428",
+      "created": "2026-09-01",
+      "id": "ADR-0118",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/197",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0118-csel-negate-selector-encoding.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Assign CSEL raw selector 10 to false-source negation"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 111
+    "record_count": 112
   }
 }

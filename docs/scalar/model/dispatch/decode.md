@@ -186,7 +186,7 @@ end;
 pure func DecodeScalarSelectRightModifier(raw: bits(2))
                                           => ScalarRightModifier
 begin
-    if raw == '11' then
+    if raw == '10' then
         return ScalarRight_NegateOrNot;
     else
         return ScalarRight_None;

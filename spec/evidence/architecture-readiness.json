@@ -2118,6 +2118,7 @@
         "PTO-AVS-SCALAR-CLZ-SELECTORS-001",
         "PTO-AVS-SCALAR-CLZ-WRAP-001",
         "PTO-AVS-SCALAR-CSEL-ALIASES-001",
+        "PTO-AVS-SCALAR-CSEL-COMPILER-FALSE-002",
         "PTO-AVS-SCALAR-CSEL-DECODE-001",
         "PTO-AVS-SCALAR-CSEL-MODIFIER-001",
         "PTO-AVS-SCALAR-CSEL-READINESS-001",
@@ -12396,6 +12397,7 @@
         "PTO-AVS-SCALAR-CMP-OR-DECODE-001",
         "PTO-AVS-SCALAR-CMP-ORI-DECODE-001",
         "PTO-AVS-SCALAR-CSEL-ALIASES-001",
+        "PTO-AVS-SCALAR-CSEL-COMPILER-FALSE-002",
         "PTO-AVS-SCALAR-CSEL-DECODE-001",
         "PTO-AVS-SCALAR-CSEL-MODIFIER-001",
         "PTO-AVS-SCALAR-CSEL-READINESS-001",
@@ -22127,22 +22129,49 @@
         "PTO-SCALAR-UCVTF"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0118"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-INST-SCALAR-CSEL"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0118",
+      "test_ids": [
+        "PTO-AVS-SCALAR-AGU-SRCRTYPE-MAP-002",
+        "PTO-AVS-SCALAR-CSEL-ALIASES-001",
+        "PTO-AVS-SCALAR-CSEL-COMPILER-FALSE-002",
+        "PTO-AVS-SCALAR-CSEL-DECODE-001",
+        "PTO-AVS-SCALAR-CSEL-MODIFIER-001",
+        "PTO-AVS-SCALAR-CSEL-READINESS-001",
+        "PTO-AVS-SCALAR-CSEL-SELECT-001",
+        "PTO-AVS-SCALAR-MODEL-DISPATCH-DECODE-STATIC-001"
+      ],
+      "unit_ids": [
+        "PTO-SCALAR-CSEL",
+        "PTO-SCALAR-MODEL-DISPATCH-DECODE"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 111,
-      "sha256": "4781e26619720efc4f8ea1d2860dcb724a5422dba910c8bff6bdb54b8802884c"
+      "count": 112,
+      "sha256": "d690c9b5731b0a8ce2fa73ef2bb85b813e6e9b4c30037cf03c47daaeaee3e436"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "44eea11bfaf2e965940f2b0321634eb7a28bba56e3b21e210847a89a395800a8"
+      "sha256": "fffacddec4ad524faa5f9543ec1e0ad80339ef180b5482b87482a4dda3b81f33"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "51cda511955efaf16a10314ab256cf53df8a0317cf95c29e0b6964662b7af7fb",
-      "test_count": 3750,
+      "sha256": "d2c71b28a8c2370ddc1c52a4901827dfc58fb353fdba9bf577be3a0882e93dd2",
+      "test_count": 3751,
       "unit_count": 853
     }
   },
@@ -22161,13 +22190,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 10,
-      "executable": 97,
+      "executable": 98,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 107,
+    "subject_count": 108,
     "validated_count": 0
   }
 }

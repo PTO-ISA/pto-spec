@@ -5677,9 +5677,12 @@
       "owners": [
         "asl/scalar/alu/CSEL.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0118"
+      ],
       "tests": [
         "PTO-AVS-SCALAR-CSEL-ALIASES-001",
+        "PTO-AVS-SCALAR-CSEL-COMPILER-FALSE-002",
         "PTO-AVS-SCALAR-CSEL-DECODE-001",
         "PTO-AVS-SCALAR-CSEL-MODIFIER-001",
         "PTO-AVS-SCALAR-CSEL-READINESS-001",
@@ -17197,7 +17200,7 @@
     "asl/scalar/alu/C.ZEXT.H.asl": "81916613e0b871787ba5b0976602122c2456943173cc9d23f8750b7013f2214a",
     "asl/scalar/alu/C.ZEXT.W.asl": "e130e56618f8b13d2c95f6925619b97516e3265499037b28bb1c430b84d409e0",
     "asl/scalar/alu/CLZ.asl": "481669bd1d3ad728dce71b9f7b6dcfd706d17fc65131805b08582fac5f86d4f1",
-    "asl/scalar/alu/CSEL.asl": "79b14f86ccca58efb097e635b619db93e7d18188cf36ff488f5f8328c8c7a444",
+    "asl/scalar/alu/CSEL.asl": "e1df83fea66ec27a59bcecb76d56d54922e7fc0741e3d55a22b8b6f10b34dc85",
     "asl/scalar/alu/CTZ.asl": "4fa0e52cbd14896e4c0ead640441035fdef95f7f850f2f6b81def1529cb5a5e1",
     "asl/scalar/alu/DIV.asl": "b10dd7316c1257a9ad531802dfc71c882b460fdad991d8bb233fbe83ff771c48",
     "asl/scalar/alu/DIVU.asl": "b93dcd0a7b282e257d84290acfd00a8b7a12ed4242060ed578f87ba7ecd82ca2",
@@ -17424,7 +17427,7 @@
     "asl/scalar/model/dispatch/alu.asl": "fe0181028b2795ef4b764c402ac7ad7588fe889c6c4c14c17f3dde8c22fc9e43",
     "asl/scalar/model/dispatch/amo.asl": "6c1cbff9ffb76d530083ce68fc0b2b288475080ba5713b28d363f3fb23ea2666",
     "asl/scalar/model/dispatch/bru.asl": "ff1616fb96e8fa5f6add13f2ce39c54f985d38b558510370dee134cb09d845ee",
-    "asl/scalar/model/dispatch/decode.asl": "097f310a4df730d28fa1fe5264d016008e7dabdd55a64c190be7d95a2b022f66",
+    "asl/scalar/model/dispatch/decode.asl": "045d0d7faa48a02adf549e08b670e6d7573b7354dfeaf5ce0c422a0c1634180c",
     "asl/scalar/model/dispatch/fsu.asl": "07ea4132a13f28b549578473df9ba986a9e6d107c3514ac300b5ea44bc0a54a3",
     "asl/scalar/model/dispatch/sys.asl": "3962b4109ea93dfb583d5f27b5eff22367ddd1e33b55f364a5ce0b7dfa43e8e5",
     "asl/scalar/model/dispatch/top-level.asl": "1968a9513ab3113288fc958070209511676440e0db93eb7ae67b1b7f0d029d4f",
@@ -18050,7 +18053,7 @@
     "docs/scalar/alu/C.ZEXT.H.md": "e08e5ee4d5f74a50fdbc8a436b51d8b6df01833903e25c4358375df4524fe4f4",
     "docs/scalar/alu/C.ZEXT.W.md": "221bac26136694b9013699a835a579eb487b51e393ecbe0e5b51a19896a075ef",
     "docs/scalar/alu/CLZ.md": "9d273e226490d98246c444e24960a50e96aadbfa3b07a93e7c2933445107d63c",
-    "docs/scalar/alu/CSEL.md": "0beb9ac79efc1efd0af89907073dcd9e80fe45dab0d4a750a7140be14cd9eea2",
+    "docs/scalar/alu/CSEL.md": "2579b25cd78d592ea65e48ff27ad3914caadaf578513b5d011d3ceb338bfacbb",
     "docs/scalar/alu/CTZ.md": "515b63472a38f23a59e5cb73d55162700c4b29f23e199f66496af53aadc54bc1",
     "docs/scalar/alu/DIV.md": "c31861eea6a3f8f8b8af456632c44e60fac0cdbd9b398e2623b5ab5322fffef1",
     "docs/scalar/alu/DIVU.md": "327618b6d55ab80c3f03d62b7812f6720fca1a24b812e2df7eb7c36a9356fe76",
@@ -18277,7 +18280,7 @@
     "docs/scalar/model/dispatch/alu.md": "cb23a3cfd1bb08ba002e0d4b67309004ad330effeb00e3fa568a59452bd64bb7",
     "docs/scalar/model/dispatch/amo.md": "2b4894acc4e69dd07784b99634d76d68ffe7da2542f9d92dd56511038726ac71",
     "docs/scalar/model/dispatch/bru.md": "88ba74d99c48603f9fb46f428a06563ffe300375d0e954a2bed9a3e05014f5ac",
-    "docs/scalar/model/dispatch/decode.md": "8445d56c2b4a4dda7314fa4a2510310c452bf515f6748c70efb7cff29c22a17a",
+    "docs/scalar/model/dispatch/decode.md": "c6c464c3c1fc0472a64c4001b0752f63f7ecd93a0f5de11e56dab879530a9ed1",
     "docs/scalar/model/dispatch/fsu.md": "0028b652ed811f2c550f6b2fec339e7b3f5415afb5de6587f2c5c851ff5f7488",
     "docs/scalar/model/dispatch/sys.md": "b76b031973de5b74eb269dd4029f8e629c981157bcc50a2a33677314e7638855",
     "docs/scalar/model/dispatch/top-level.md": "690c02fd8c112c52c34759ad4616c3fad323b8e9b8f1a7be883dabb0c3277df7",
@@ -18495,8 +18498,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "9cd8e51fb795db92f242a22ab1270176b861baed0d662fdba01544d46963024e",
-    "spec/evidence/instruction-contract-closure.json": "44eea11bfaf2e965940f2b0321634eb7a28bba56e3b21e210847a89a395800a8",
+    "spec/evidence/adr-index.json": "ce7425e2e0e535e25b76b27b070647c99ecc0641cb691d2e2bac43219ca9c9ad",
+    "spec/evidence/instruction-contract-closure.json": "fffacddec4ad524faa5f9543ec1e0ad80339ef180b5482b87482a4dda3b81f33",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -20456,9 +20459,10 @@
     "tests/asl/scalar/alu/CLZ/scalar-exec-clz-wrap-001.asl": "f960b8a584a35a9ff4f28c997b11efc8d67c82dfca492f180db88759c40b9ac4",
     "tests/asl/scalar/alu/CLZ/scalar-fault-clz-readiness-001.asl": "8e28cc232b9d457557a93a2c4dd5130fcf70d7a071b64132a9dbca06db17cf3f",
     "tests/asl/scalar/alu/CSEL/scalar-bound-csel-aliases-001.asl": "8189404df01d4047752cc85b48f3afb4f45b4d2f8283d0e71947746019405c7e",
-    "tests/asl/scalar/alu/CSEL/scalar-bound-csel-modifier-001.asl": "ee8bbc2c9f01e69fdf27b1e237503e9c92c7e33c8ce79bec2c6492f871f3fab1",
+    "tests/asl/scalar/alu/CSEL/scalar-bound-csel-modifier-001.asl": "df1a0bcea245129d5050d8ff1c1931db3855069c9270186ed6fe8ede666b76d4",
     "tests/asl/scalar/alu/CSEL/scalar-decode-csel-canonical-001.asl": "d737c823173a6e5b655f0ee1e8848febf1ded43f1c578e06c1b41cd1400df00e",
-    "tests/asl/scalar/alu/CSEL/scalar-exec-csel-select-001.asl": "fa403f1fd88912b725154984d9154320c6fac4c596c6db17358014cebafab991",
+    "tests/asl/scalar/alu/CSEL/scalar-exec-csel-compiler-false-002.asl": "9387376c4764d34529dd42c92be41a9691f3683fe7de0db08cf6ae200fe8cc71",
+    "tests/asl/scalar/alu/CSEL/scalar-exec-csel-select-001.asl": "e66d1dc53c4665f97ccd85521678646aa715ebfef8b5ef6fdfa117cf3edf03eb",
     "tests/asl/scalar/alu/CSEL/scalar-fault-csel-readiness-001.asl": "7735a3865de594610fcc151ab00b03e8630be4d6da113d36b51730ec08493343",
     "tests/asl/scalar/alu/CTZ/scalar-bound-ctz-selectors-001.asl": "ecf1fc78a91e2745d5fe0ded4697b9da99a8add36c7dc7c34015b662027fd4c1",
     "tests/asl/scalar/alu/CTZ/scalar-decode-ctz-canonical-001.asl": "ab46313f6cd9f83676ab421184aabfe4b4a6f0a89d68a1748106b18c507837f2",
@@ -22256,7 +22260,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1025,
     "status": "closed",
-    "test_count": 3750,
+    "test_count": 3751,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -44962,6 +44966,16 @@
       "source": "asl/scalar/alu/CSEL.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-CSEL-COMPILER-FALSE-002",
+      "kind": "execution",
+      "path": "tests/asl/scalar/alu/CSEL/scalar-exec-csel-compiler-false-002.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-CSEL"
+      ],
+      "sha256": "9387376c4764d34529dd42c92be41a9691f3683fe7de0db08cf6ae200fe8cc71",
+      "source": "asl/scalar/alu/CSEL.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-CSEL-DECODE-001",
       "kind": "decode-positive",
       "path": "tests/asl/scalar/alu/CSEL/scalar-decode-csel-canonical-001.asl",
@@ -44978,7 +44992,7 @@
       "requirements": [
         "PTO-INST-SCALAR-CSEL"
       ],
-      "sha256": "ee8bbc2c9f01e69fdf27b1e237503e9c92c7e33c8ce79bec2c6492f871f3fab1",
+      "sha256": "df1a0bcea245129d5050d8ff1c1931db3855069c9270186ed6fe8ede666b76d4",
       "source": "asl/scalar/alu/CSEL.asl"
     },
     {
@@ -44998,7 +45012,7 @@
       "requirements": [
         "PTO-INST-SCALAR-CSEL"
       ],
-      "sha256": "fa403f1fd88912b725154984d9154320c6fac4c596c6db17358014cebafab991",
+      "sha256": "e66d1dc53c4665f97ccd85521678646aa715ebfef8b5ef6fdfa117cf3edf03eb",
       "source": "asl/scalar/alu/CSEL.asl"
     },
     {
@@ -72842,10 +72856,12 @@
       "mnemonic": "CSEL",
       "readiness_subjects": [
         "ADR-0026",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0118"
       ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-CSEL-ALIASES-001",
+        "PTO-AVS-SCALAR-CSEL-COMPILER-FALSE-002",
         "PTO-AVS-SCALAR-CSEL-MODIFIER-001",
         "PTO-AVS-SCALAR-CSEL-READINESS-001",
         "PTO-AVS-SCALAR-CSEL-SELECT-001"
@@ -72854,6 +72870,7 @@
       "surface": "scalar",
       "tests": [
         "PTO-AVS-SCALAR-CSEL-ALIASES-001",
+        "PTO-AVS-SCALAR-CSEL-COMPILER-FALSE-002",
         "PTO-AVS-SCALAR-CSEL-DECODE-001",
         "PTO-AVS-SCALAR-CSEL-MODIFIER-001",
         "PTO-AVS-SCALAR-CSEL-READINESS-001",
@@ -79892,7 +79909,8 @@
       "id": "PTO-SCALAR-MODEL-DISPATCH-DECODE",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-0114"
+        "ADR-0114",
+        "ADR-0118"
       ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-AGU-SRCRTYPE-MAP-002"

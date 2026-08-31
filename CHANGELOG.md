@@ -27,6 +27,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 ### Scalar
 - [ADR-0114](docs/status/decisions/0114-normalize-agu-srcrtype-encoding.md): Normalize the AGU SrcRType arithmetic modifier encoding
 - [ADR-0115](docs/status/decisions/0115-byte-granular-hl-bfi.md): Define HL.BFI as byte-granular insertion
+- [ADR-0118](docs/status/decisions/0118-csel-negate-selector-encoding.md): Assign CSEL raw selector 10 to false-source negation
 
 ### Tile
 - [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
