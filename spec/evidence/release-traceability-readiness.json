@@ -2853,7 +2853,8 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0102"
+        "ADR-0102",
+        "ADR-0117"
       ],
       "tests": []
     },
@@ -2869,7 +2870,8 @@
         "ADR-0039",
         "ADR-0047",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "tests": []
     },
@@ -2885,7 +2887,8 @@
         "ADR-0039",
         "ADR-0047",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "tests": []
     },
@@ -2901,7 +2904,8 @@
         "ADR-0039",
         "ADR-0047",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "tests": []
     },
@@ -2917,7 +2921,8 @@
         "ADR-0039",
         "ADR-0047",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "tests": []
     },
@@ -5914,7 +5919,9 @@
       "owners": [
         "asl/scalar/fsu/FADD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FADD-BOUND-001",
         "PTO-AVS-FSU-FADD-DST-001",
@@ -5934,7 +5941,9 @@
       "owners": [
         "asl/scalar/fsu/FCVT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FCVT-BOUND-001",
         "PTO-AVS-FSU-FCVT-DST-001",
@@ -5954,7 +5963,9 @@
       "owners": [
         "asl/scalar/fsu/FCVTA.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FCVTA-BOUND-001",
         "PTO-AVS-FSU-FCVTA-DST-001",
@@ -5974,7 +5985,9 @@
       "owners": [
         "asl/scalar/fsu/FCVTM.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FCVTM-BOUND-001",
         "PTO-AVS-FSU-FCVTM-DST-001",
@@ -5994,7 +6007,9 @@
       "owners": [
         "asl/scalar/fsu/FCVTN.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FCVTN-BOUND-001",
         "PTO-AVS-FSU-FCVTN-DST-001",
@@ -6014,7 +6029,9 @@
       "owners": [
         "asl/scalar/fsu/FCVTP.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FCVTP-BOUND-001",
         "PTO-AVS-FSU-FCVTP-DST-001",
@@ -6034,7 +6051,9 @@
       "owners": [
         "asl/scalar/fsu/FCVTZ.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FCVTZ-BOUND-001",
         "PTO-AVS-FSU-FCVTZ-DST-001",
@@ -6054,7 +6073,9 @@
       "owners": [
         "asl/scalar/fsu/FDIV.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FDIV-BOUND-001",
         "PTO-AVS-FSU-FDIV-DST-001",
@@ -6140,7 +6161,9 @@
       "owners": [
         "asl/scalar/fsu/FEXP.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FEXP-BOUND-001",
         "PTO-AVS-FSU-FEXP-DST-001",
@@ -6236,7 +6259,9 @@
       "owners": [
         "asl/scalar/fsu/FMADD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FMADD-BOUND-001",
         "PTO-AVS-FSU-FMADD-DST-001",
@@ -6294,7 +6319,9 @@
       "owners": [
         "asl/scalar/fsu/FMSUB.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FMSUB-BOUND-001",
         "PTO-AVS-FSU-FMSUB-DST-001",
@@ -6314,7 +6341,9 @@
       "owners": [
         "asl/scalar/fsu/FMUL.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FMUL-BOUND-001",
         "PTO-AVS-FSU-FMUL-DST-001",
@@ -6372,7 +6401,9 @@
       "owners": [
         "asl/scalar/fsu/FNMADD.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FNMADD-BOUND-001",
         "PTO-AVS-FSU-FNMADD-DST-001",
@@ -6392,7 +6423,9 @@
       "owners": [
         "asl/scalar/fsu/FNMSUB.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FNMSUB-BOUND-001",
         "PTO-AVS-FSU-FNMSUB-DST-001",
@@ -6412,7 +6445,9 @@
       "owners": [
         "asl/scalar/fsu/FRECIP.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FRECIP-BOUND-001",
         "PTO-AVS-FSU-FRECIP-DST-001",
@@ -6432,7 +6467,9 @@
       "owners": [
         "asl/scalar/fsu/FSQRT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FSQRT-BOUND-001",
         "PTO-AVS-FSU-FSQRT-DST-001",
@@ -6452,7 +6489,9 @@
       "owners": [
         "asl/scalar/fsu/FSUB.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-FSUB-BOUND-001",
         "PTO-AVS-FSU-FSUB-DST-001",
@@ -10428,7 +10467,9 @@
       "owners": [
         "asl/scalar/fsu/SCVTF.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-SCVTF-BOUND-001",
         "PTO-AVS-FSU-SCVTF-DST-001",
@@ -11538,7 +11579,9 @@
       "owners": [
         "asl/scalar/fsu/UCVTF.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0117"
+      ],
       "tests": [
         "PTO-AVS-FSU-UCVTF-BOUND-001",
         "PTO-AVS-FSU-UCVTF-DST-001",
@@ -13841,7 +13884,8 @@
         "ADR-0028",
         "ADR-0038",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "tests": []
     },
@@ -16685,7 +16729,8 @@
         "ADR-0028",
         "ADR-0038",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "tests": []
     },
@@ -16795,8 +16840,8 @@
     "asl/arch/profile/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
     "asl/arch/profile/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
     "asl/arch/profile/matrix-quantization.asl": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440",
-    "asl/arch/profile/reference-profile.asl": "73647e211203bc0772f377f4f21093cf35e550bf04b04efb59f629adcfe5ebce",
-    "asl/arch/profile/reference-quantization.asl": "e82820dc13f89142aa0448c4435f6cbd53d4eb0b85c05e63a887452c186d9aef",
+    "asl/arch/profile/reference-profile.asl": "e94cccda13ab05e1ea9f84c1c661636aef907bc8af1a04b925c3c9d2a34e80d3",
+    "asl/arch/profile/reference-quantization.asl": "348136c21018a5541b5b0c70d45c656e07ea3ef1eca4d71192a1931845ef21e2",
     "asl/arch/profile/reset.asl": "370e7172d986737d0a77f7320d130c329c30d8a2a007502d2ad234b6e57a7f8a",
     "asl/arch/profile/trap-context-recovery.asl": "6c87ee4d53ed316f6ad72768ac84f67bcdf19c3af52dd96f3eb97eddc07c1357",
     "asl/arch/programming-model/core-pe-topology.asl": "2c987f6f6573d5da50a569f821dbddcd93ea428f408f59d148ebc5fd3b866447",
@@ -17340,35 +17385,35 @@
     "asl/scalar/bru/SETC.ORI.asl": "4971644778b1c987da4eba7e1c6ca51011a1966cb709a0ebdd906acfb3991432",
     "asl/scalar/bru/SETRET.asl": "e39eda3a205857566964d392d9c98624cba6cb85193c66762834aa7edb65fd39",
     "asl/scalar/fsu/FABS.asl": "99bb0856c09d8400b419dad06937b1fc79979afc3f2aac3b46c44541eebb581a",
-    "asl/scalar/fsu/FADD.asl": "103570e2b2782e5340029461e2590b4b1fd2a58288d7d4a2f574ded0d07ce2f4",
-    "asl/scalar/fsu/FCVT.asl": "de7a62e236c128a9981669b2bc7168fcfa32a9b50edf5408e864247f144ce468",
-    "asl/scalar/fsu/FCVTA.asl": "aeaa7258c5d568b0549b3234b5c18e7b8b5a849a09de6d66ef0061d6f2df9996",
-    "asl/scalar/fsu/FCVTM.asl": "b3e04b5dd7c0a4f4f88a0720c62860b84f44e7cb6cf6aa8702878ccb77d9d401",
-    "asl/scalar/fsu/FCVTN.asl": "4cdc24dcae33fa0215525ac7746136baa6475e514321d27fadf0888b61758ba7",
-    "asl/scalar/fsu/FCVTP.asl": "9652caa291b4d352be4806795831907099a25c3f8080f84b5a9e45a468aa9f4d",
-    "asl/scalar/fsu/FCVTZ.asl": "cfc3c3b38ddce44404b5eaf9e3ee696e88b5d7760622f95d8106c7a276b277cd",
-    "asl/scalar/fsu/FDIV.asl": "d1898bfb51433e377e73235bb7851647653e2a5bccdf240219440de5ad860717",
+    "asl/scalar/fsu/FADD.asl": "c5e17fe86f753a0b76c64aea421d7188e0161aa41f6178162d31cc21a9b884d6",
+    "asl/scalar/fsu/FCVT.asl": "b145040aa460270fb4faa1f5cff3863fddeda697a2ff0c3cad46e894a183eb6e",
+    "asl/scalar/fsu/FCVTA.asl": "69810f553ec9be69dafbd50a3ee6001513fe02099e689922ed98568f8026f926",
+    "asl/scalar/fsu/FCVTM.asl": "c59e3d99454d811ac89a72489e8163dd8509175fd20a56ecb265609deaff40b0",
+    "asl/scalar/fsu/FCVTN.asl": "fffe1e78ecab6f33be10fbe1620a8f4a6f080564880ca1cbd466cf49eadf7e41",
+    "asl/scalar/fsu/FCVTP.asl": "d308d99a5651e60235e051cfc39ba3733382da455ee0215fb814079fdaf6fcc9",
+    "asl/scalar/fsu/FCVTZ.asl": "31880220c35e05787a2f5177a8cc089f4a5149523495d8768aef65f2f7d1aafe",
+    "asl/scalar/fsu/FDIV.asl": "0abce64a1bd7de320827acd79bc1de531d2e89c31689e01605f79747a4ee87e3",
     "asl/scalar/fsu/FEQ.asl": "ee79d71688250f722430c5b49e2b05e54c5610321079ff7a5c4d1fe602ef1d30",
     "asl/scalar/fsu/FEQS.asl": "67b443e4461a26f4db7c5c231e492dcdbb3018e9fb9ae2fe9187a1a834cc2e29",
-    "asl/scalar/fsu/FEXP.asl": "9426384d06c2d6968dc89c5a7effa6c3a77f1a94bc797b2f6727d92499e9823b",
+    "asl/scalar/fsu/FEXP.asl": "06d91f9f97913ec45f608232380d819ce5f486791f14417253ded2f482351997",
     "asl/scalar/fsu/FGE.asl": "4e988633b27e2c318bad6cac96adef97fd82ce231414ba08c4af663b63cdc0a1",
     "asl/scalar/fsu/FGES.asl": "8c60b252260aa6b5f494afd02c3f423d7d8361a4880e6425c49cec5f2f4d20f5",
     "asl/scalar/fsu/FLT.asl": "090c4032fd5762ee49323b171d617c7a7528ae9f90ea963ecc6c01f8c3b832fd",
     "asl/scalar/fsu/FLTS.asl": "ca120d0b4c6d9613a5451f9ba29c651da38487afec78a8856d98d6bbe04c966a",
-    "asl/scalar/fsu/FMADD.asl": "289564cf690217ff0b6c05995e48ae9025277a160beda7937b39e96e1759be92",
+    "asl/scalar/fsu/FMADD.asl": "71f6966e7d5ca25c563b2dea871323ce35c59c53205482b201e408c903cbab32",
     "asl/scalar/fsu/FMAX.asl": "e0a10c3ca3d6540ddb3e5ac42d30b0ef8ac4e65d1ad306ce28a3a965230d1a77",
     "asl/scalar/fsu/FMIN.asl": "2a92ddaf208c5e4d7d948f0c90292a9501a378879eca53600db800b7f55b1785",
-    "asl/scalar/fsu/FMSUB.asl": "0ef6d38f857ec6e8a23794f7a57d0c893d44c9fbe4a26eb1155dd85d98f9f73a",
-    "asl/scalar/fsu/FMUL.asl": "b891f5a12c2d06d46e1f77e461a8ff097c67ad5abb28689d4e8265c98d91d52e",
+    "asl/scalar/fsu/FMSUB.asl": "3883dac3676c49a50b6065e6688e1105022348b786472226ce6b6828c5459cc5",
+    "asl/scalar/fsu/FMUL.asl": "bbef7757b5568f94f19705112296155acc29dad59e0354e72153e712be54d411",
     "asl/scalar/fsu/FNE.asl": "ba254ca27464e769c6f3ec5cf0e48a4acc4613ac2b6babc583ee5b0b1d909e66",
     "asl/scalar/fsu/FNES.asl": "49e009802c8b452934154963b009736634b3f95186abf1822e7987fc3dc052e1",
-    "asl/scalar/fsu/FNMADD.asl": "e59f7780ffacc5c37bbaa05932b778620de685ae6bcf6ef18e94d9bd5f7580f4",
-    "asl/scalar/fsu/FNMSUB.asl": "199b6113819b32d29275e4f47eb09ef60443467577f6f4c0f9ef0b622cd4df3a",
-    "asl/scalar/fsu/FRECIP.asl": "a3a66b8b15c4e6b3febd9e8db843a1af74ab551a2b8344700c62f5895d8674ac",
-    "asl/scalar/fsu/FSQRT.asl": "52f90591f3b60bf2f046657ef9e38710e37f592fcf97439d456a4e295e0519d7",
-    "asl/scalar/fsu/FSUB.asl": "3341a7a0c736d78001c0044e842124a9a62e1ca5f1894f13daa3beffdab56617",
-    "asl/scalar/fsu/SCVTF.asl": "488a71a9aea2df6f85689b913ccf715f01d18607e3081b6e02c07cb85b5dec28",
-    "asl/scalar/fsu/UCVTF.asl": "cdf211505af4682cfe88e1a2574ccf7648c1e5f7caf575d22d2dd6659b3ab6d6",
+    "asl/scalar/fsu/FNMADD.asl": "bd4aaf2845a3ca924e6c5fccf5eae04b644a9ba75de20ae961820222f6071e2e",
+    "asl/scalar/fsu/FNMSUB.asl": "309e74bcace65bcad38825d687cd7a8598fe2cc1e4f614ac01077b86ce2f55f3",
+    "asl/scalar/fsu/FRECIP.asl": "db36fe0571ab9835d4e202c2d36aec127f6c3778b89cbb7b8d0552497b2e8d15",
+    "asl/scalar/fsu/FSQRT.asl": "829272a2d3a4992ef9b20a8bc9fd113a063a2a6d289a72787d8dddd7c23e22cb",
+    "asl/scalar/fsu/FSUB.asl": "90c76abf193f46b5efe4eca7931cb927d89a99aa38c9ddb1a3f8636b8e5eded0",
+    "asl/scalar/fsu/SCVTF.asl": "2a25406768f59669f98978e499ffc54bbf0c03a8c9aedf3b4318da70f0fab7a5",
+    "asl/scalar/fsu/UCVTF.asl": "fc41ba9ad3c4b04f2684437e92c9a5ef04857f0a48e24f941e659bf020ece0c2",
     "asl/scalar/model/agu/addressing.asl": "2b99385665915f8f3ef589e60f4654296b8ba1f0fc64db9896909c8cea6884ed",
     "asl/scalar/model/agu/memory.asl": "3e11650bdd6950bf78085be8b1de9735f65310d69b1edfb54d92e59baffee643",
     "asl/scalar/model/alu/bitfield.asl": "65583faea051e6c15cc35c30e65bd3a969993a37cd606d374f68827811096dd4",
@@ -17648,8 +17693,8 @@
     "docs/arch/profile/extension-first-use.md": "fb16e18d1c162fed1f5d1d64bb5c422c21e30a33a1824fa00d9a1b9a04002f52",
     "docs/arch/profile/matrix-postprocess.md": "6c620e8f326fa991a2a35cf3d9aad4e1e9b9321ea63bc78e8fdabdfb17802378",
     "docs/arch/profile/matrix-quantization.md": "0af8e5da79bf30a369992e5eecdd4d7e36603f8eb6140ed7b5952d3d5962acd8",
-    "docs/arch/profile/reference-profile.md": "9f0f8f169b44ef0947125f5fc98135b8c3bab3e0a8d2a0277eed2e84dbbdbe93",
-    "docs/arch/profile/reference-quantization.md": "4f53abb7b8d600f9defac146883eab1ea29c72a369f2f879c4451646bb4c15b6",
+    "docs/arch/profile/reference-profile.md": "af1fc8fd7a19e316a79821aec377f6732c5d86913879c7fe6ccd475b716e7271",
+    "docs/arch/profile/reference-quantization.md": "f16c3a87f741a3ac1da9559e9643dd22fa9209e28523d48d1c05ff35d2491668",
     "docs/arch/profile/reset.md": "cecb23cf3c756c6175b9e540effac3e19fcb738429c93144dd332a7d502ffc49",
     "docs/arch/profile/trap-context-recovery.md": "8ba8fe4b76085c3c6ca002c57bab6f964c524e936f0b73e755fa3bf0acc33af7",
     "docs/arch/programming-model/core-pe-topology.md": "c48aedb26c403990acdeec4972d9a779bbda6bcc33d1e91b3fec453de4808fe1",
@@ -18193,35 +18238,35 @@
     "docs/scalar/bru/SETC.ORI.md": "02936f853a3a831bc1449ebb9adba333a6e814feda7206cee947feb59600d3b6",
     "docs/scalar/bru/SETRET.md": "3890d000d8cb20c6b33d3db9d12a1e248edd90c00e0bb99f27cb16f50c927ad7",
     "docs/scalar/fsu/FABS.md": "a4a65bbf8f9bb1b1f454e79ff0c21c3ceade1f50e6abd39b5a63bae3f6012f06",
-    "docs/scalar/fsu/FADD.md": "045713ac621c727c667ddc5f7694b3cb745286ccf3f65f1069a611ca19fe7c6a",
-    "docs/scalar/fsu/FCVT.md": "78bf5f0ff60eee6655fed301f2f01507b53cbc29bc259bd2187ef16ea3ec3bf7",
-    "docs/scalar/fsu/FCVTA.md": "bafd46afd319d246286124a70ea333f93689e88de4968cedb57a3f64103e9d7b",
-    "docs/scalar/fsu/FCVTM.md": "64d62a642744735bf6c8c5ec75634e33d31918316689aab651223ca5dbe9884d",
-    "docs/scalar/fsu/FCVTN.md": "8bd803109c355d270cfea85757370d9830065f6fa2a822a67020e7a244037942",
-    "docs/scalar/fsu/FCVTP.md": "d33fc8afe6f9f71635102ee411c17cea0bf610d046c93a5a6a5a30981be5ebef",
-    "docs/scalar/fsu/FCVTZ.md": "57ed25de85038f40c3b892f9d1dcb27b71969ae5b5a2a5fae00ea3dba4ed1d70",
-    "docs/scalar/fsu/FDIV.md": "a33fee55c3f137a55bde0f30cd6d17174abfe058894c4523d0b76f253ecf7c06",
+    "docs/scalar/fsu/FADD.md": "323233ec28d3a804b7cb86975c88ffc1d72349f06b20e13bddeacbbcc18c0f04",
+    "docs/scalar/fsu/FCVT.md": "04c9065ace8613f8830f61e4ec596214e3916c8a68f7e4aa8ebf1a7a6a83d90a",
+    "docs/scalar/fsu/FCVTA.md": "ba891b50d45ce40608b135db223d1605fcba78c0c44701dc351ed3377be87269",
+    "docs/scalar/fsu/FCVTM.md": "2475dfd102bdf464e1cb050e65d4f0601ab5792d03534f317bfc511f524bce7e",
+    "docs/scalar/fsu/FCVTN.md": "13a3229e6b17e1ddfcb239a5be6cb7ef02659a85ec0d2917190453b118ae6db4",
+    "docs/scalar/fsu/FCVTP.md": "47eb9107d5cca4f1553dc7ceb80631605fa9d20b02a3de47694b0cb16642d6d0",
+    "docs/scalar/fsu/FCVTZ.md": "fb16768d36918f8ee9bc565c639ff6e1eca26fbf140e3b34a09de1024bef5645",
+    "docs/scalar/fsu/FDIV.md": "b8baf8f4034c72aa86162df4cdafb737654afe6f1ddff1297e0c64d684af55cf",
     "docs/scalar/fsu/FEQ.md": "dc81b6326a8f1142aa4ed59ae16184740f408184138aca460b522d9275d98225",
     "docs/scalar/fsu/FEQS.md": "3e463dd643d47ad53add901a2a5cbcbfa49645f0e8f31cedd5317c4e4b150919",
-    "docs/scalar/fsu/FEXP.md": "f92fa26ecef2c471c69bb2dd85c833f35ee090cd9f702891ab1e505c998bd0ac",
+    "docs/scalar/fsu/FEXP.md": "5cdc80473bc10bd0d367a3a592f463208bf4e45072b1cfd0fd6173b9e8d8ed49",
     "docs/scalar/fsu/FGE.md": "966f165b164d66d04b27f961758fcd9d6a2ab958915d804873f1faf13002a2a6",
     "docs/scalar/fsu/FGES.md": "622047900c4e2c6a7f0f5d28c9543457e5af3619428765f3dbe26fcbc2f75ce3",
     "docs/scalar/fsu/FLT.md": "e35ad90b1fefd43d195a06efb6eb88392d6b587cd16010a44f534f389af6d427",
     "docs/scalar/fsu/FLTS.md": "c5ff86699c690bb3ae6b6ceb6a041be1974fbac6a33b2e48285cecd61643bca1",
-    "docs/scalar/fsu/FMADD.md": "45c0c3a10ed1843fb49c0a61cd8a243109b87cd60e47aec169b1df0ef138ce12",
+    "docs/scalar/fsu/FMADD.md": "093b0901caa956bcdb9a4eb7c7c6967bf531c88558a91a52a7b000fcdf44efcf",
     "docs/scalar/fsu/FMAX.md": "1682aed8ce39750a6fe2fc1f8ffb5610bba3f140a52a94a3235511958287bdcb",
     "docs/scalar/fsu/FMIN.md": "02fb815d6469f391899113e590de3cbf15f0f3e828bcc0d3a2707e4100ac706b",
-    "docs/scalar/fsu/FMSUB.md": "8afb27aa35963a01915f6cd14daafcf2b6692cb03979e4cef2c81365008f53d6",
-    "docs/scalar/fsu/FMUL.md": "ed26161a088188083305f5353c1db818f6e2f4ec92a648622ee4efa15eb3a3f0",
+    "docs/scalar/fsu/FMSUB.md": "b856cb9135454da286861d994f403274281e2612a2ca735988a0934b8a0ee915",
+    "docs/scalar/fsu/FMUL.md": "f6d64947046f5330aba9119993ff005b4390dbcfafdc881b1dd393d4eb28f8ba",
     "docs/scalar/fsu/FNE.md": "a7641621fa3cbe7abb4bb96d971b372f0b1dcb68c597c7bc7af80bec7f6d9340",
     "docs/scalar/fsu/FNES.md": "3245ede1e0acfcf227825a4a34d7020262cfa21a4beaaced8cfed6ad18d4b53c",
-    "docs/scalar/fsu/FNMADD.md": "6cb59735a11cf101613fdb1fb86740a604e43da18387cdb201815618f42e11b6",
-    "docs/scalar/fsu/FNMSUB.md": "efeda837d685aaacb8821e60e2a2725fd622c8a74256b5717f0a63bbe9a88818",
-    "docs/scalar/fsu/FRECIP.md": "708a5b186f70af3784274b727194a8021cdf40ec251c3f5d27bdcc053b687f35",
-    "docs/scalar/fsu/FSQRT.md": "08828e1f05728b14c3898a35b37e76b57b5300e51b1e269e5404fcbb251adef7",
-    "docs/scalar/fsu/FSUB.md": "b50c6ca2b5ab1dfe285fe8b8f1a44ed140f39f4e084f26a5632c47633c5c59f2",
-    "docs/scalar/fsu/SCVTF.md": "bcd7b8efb7d97386d15b092bbbf3e05ff50b55d0146cbf9e3f8cc93a4815ddef",
-    "docs/scalar/fsu/UCVTF.md": "801b8fe2b415a13403285cb3c458b93e99d7496336de66cd9bd356fced1a4fb1",
+    "docs/scalar/fsu/FNMADD.md": "631c013cbc9bb3c240e0b28c52feb24906b6864bc23af1f4c0a2a5b34357d6c8",
+    "docs/scalar/fsu/FNMSUB.md": "6a6274e137c509c479ebb60caac65efaae0b33af4ef55f66c29e6712846a86e8",
+    "docs/scalar/fsu/FRECIP.md": "d5145483a8cab0304afc3205c89d0506e81035f47a35c060129b2feb33030298",
+    "docs/scalar/fsu/FSQRT.md": "226728a8ca59c12ee9a65d21d7f6bcedf0a6041af85976e9d34501dd377d20c1",
+    "docs/scalar/fsu/FSUB.md": "c35d70f2dd55963f91a1813d556e1b670fa4b6e5d819ba28455b280c2aab547f",
+    "docs/scalar/fsu/SCVTF.md": "8cbb383bae6a7c43e140b466a65e26711da943d8334fd2b3954883881197c097",
+    "docs/scalar/fsu/UCVTF.md": "61b427a3233b0e6fdb9578fb510adef289f1bde8bbf5cbc1c0957da6a1ae33b1",
     "docs/scalar/model/agu/addressing.md": "915e21e8abe9381fc7950bb8b0e521f86bf1e5837665e03507aa1f0f665f25cb",
     "docs/scalar/model/agu/memory.md": "49ba74af963b146d5edc0fae4778e78db738c54f85c65409635fb14b04ae803f",
     "docs/scalar/model/alu/bitfield.md": "63d97c6b2874372d48dbbecd9f9aec6ff60a7b5d27c65d20e8e04cc3c76a7fca",
@@ -18450,8 +18495,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "e410e05f274ab4c061dabcd0356b40e63a30a2a20a897ea4c0be04a39d64d619",
-    "spec/evidence/instruction-contract-closure.json": "d6fd9bba761408087a6d1783be271da9bc2bd205cb7145a7a1a385df3a5157ee",
+    "spec/evidence/adr-index.json": "9cd8e51fb795db92f242a22ab1270176b861baed0d662fdba01544d46963024e",
+    "spec/evidence/instruction-contract-closure.json": "44eea11bfaf2e965940f2b0321634eb7a28bba56e3b21e210847a89a395800a8",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -18581,12 +18626,15 @@
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl": "38814e41be41d630c7839bdd6988e4df6e4ca8eb0667764d6a6e8b6eedd6ace5",
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-access-005.asl": "eb604d8c6f7b0bb4aabce0500ea989b246177cf88fd1f4742c6b11ab64eade12",
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-reset-007.asl": "fa24ce2bbb3f85a16e9a83bb2eda73c28371e202ae82f2cc19afdecd49833c9c",
-    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-rounding-004.asl": "4b5a7c0f3234f7a17c75929202cfee9fb1f29935625d7aac83d2e1a1d8a1f2e1",
+    "tests/asl/arch/profile/reference-profile/arch-exec-concrete-rounding-004.asl": "b33cbdbc0d3cf90f1ab402c1e20fd4e086d7cd63d43e6c96e68714a83ba7bf5e",
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-special-values-002.asl": "00aae83648a1597cca55809fb2a2aa50a4956fbeff60780fbfb9b9dd4bf81440",
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-tile-006.asl": "9717313724a760b57189ec7c23429171937dcfd53c27aaaddaae46c0278ffccb",
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-value-classes-003.asl": "91670f4a73dc9c2d0d433afc66ff18354a43035c8ede7c98a35612464fb220af",
+    "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-convert-012.asl": "4f2678623f51594bb5c6a4f9fbc8bae61a3ed0521c0248e6bc331778abe34455",
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-divzero-009.asl": "6dfdb745ac38fe937ee919e00fbd1abef8516be7d147281d0c8c10bdfaa582d2",
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-exponential-008.asl": "344da1461904ae2a456be8e94ee94344cf452dec526cfa3252232e26a721006a",
+    "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp32-010.asl": "c348ec2c549d2dc5e28dae70136ee8f1b9d5eef74a40331c7356c05392dc3a32",
+    "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp64-011.asl": "9a5794370015a98c9b00acea4ba7f5f5770a7eefb9711a8fc9004a1d317d9e72",
     "tests/asl/arch/profile/reference-profile/arch-static-reference-profile-contract-001.asl": "58ea19f523b6a5a5d43b22a58c28b5c4e1ed0bce3d05344713c5e24b652cba29",
     "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-001.asl": "77a1aeec8c6b63e08c22aca602ea197a22a51320e033721fa531bdfbb1046fea",
     "tests/asl/arch/profile/reference-quantization/arch-static-reference-quantization-contract-001.asl": "e5859faec80b723cccc8cd21c068ad1cd6ce6ba79c1ba1d9bf22e6365113487d",
@@ -22208,7 +22256,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1025,
     "status": "closed",
-    "test_count": 3747,
+    "test_count": 3750,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -29577,7 +29625,7 @@
       "kind": "execution",
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-concrete-rounding-004.asl",
       "requirements": [],
-      "sha256": "4b5a7c0f3234f7a17c75929202cfee9fb1f29935625d7aac83d2e1a1d8a1f2e1",
+      "sha256": "b33cbdbc0d3cf90f1ab402c1e20fd4e086d7cd63d43e6c96e68714a83ba7bf5e",
       "source": "asl/arch/profile/reference-profile.asl"
     },
     {
@@ -30815,6 +30863,14 @@
       "source": "asl/arch/state/trap-context.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-REFERENCE-PROFILE-CONVERT-012",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-convert-012.asl",
+      "requirements": [],
+      "sha256": "4f2678623f51594bb5c6a4f9fbc8bae61a3ed0521c0248e6bc331778abe34455",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-REFERENCE-PROFILE-DIVZERO-009",
       "kind": "execution",
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-divzero-009.asl",
@@ -30828,6 +30884,22 @@
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-exponential-008.asl",
       "requirements": [],
       "sha256": "344da1461904ae2a456be8e94ee94344cf452dec526cfa3252232e26a721006a",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-010",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp32-010.asl",
+      "requirements": [],
+      "sha256": "c348ec2c549d2dc5e28dae70136ee8f1b9d5eef74a40331c7356c05392dc3a32",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp64-011.asl",
+      "requirements": [],
+      "sha256": "9a5794370015a98c9b00acea4ba7f5f5770a7eefb9711a8fc9004a1d317d9e72",
       "source": "asl/arch/profile/reference-profile.asl"
     },
     {
@@ -60991,7 +61063,8 @@
         "ADR-0037",
         "ADR-0042",
         "ADR-0098",
-        "ADR-0111"
+        "ADR-0111",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-CONCRETE-ACCESS-EXEC-005",
@@ -61001,8 +61074,11 @@
         "PTO-AVS-ARCH-CONCRETE-SUBNORMAL-EXEC-001",
         "PTO-AVS-ARCH-CONCRETE-TILE-EXEC-006",
         "PTO-AVS-ARCH-CONCRETE-VALUE-CLASSES-EXEC-003",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-CONVERT-012",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-DIVZERO-009",
-        "PTO-AVS-ARCH-REFERENCE-PROFILE-EXPONENTIAL-008"
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-EXPONENTIAL-008",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-010",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011"
       ],
       "source": "asl/arch/profile/reference-profile.asl",
       "surface": "arch",
@@ -61015,8 +61091,11 @@
         "PTO-AVS-ARCH-CONCRETE-TILE-EXEC-006",
         "PTO-AVS-ARCH-CONCRETE-VALUE-CLASSES-EXEC-003",
         "PTO-AVS-ARCH-PROFILE-REFERENCE-PROFILE-STATIC-001",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-CONVERT-012",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-DIVZERO-009",
-        "PTO-AVS-ARCH-REFERENCE-PROFILE-EXPONENTIAL-008"
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-EXPONENTIAL-008",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-010",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011"
       ]
     },
     {
@@ -61030,7 +61109,8 @@
       "readiness_subjects": [
         "ADR-0005",
         "ADR-0037",
-        "ADR-0042"
+        "ADR-0042",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-001"
@@ -78318,7 +78398,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FADD-BOUND-001",
@@ -78363,7 +78444,8 @@
         "ADR-0038",
         "ADR-0039",
         "ADR-0047",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVT-BOUND-001",
@@ -78410,7 +78492,8 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0102"
+        "ADR-0102",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTA-BOUND-001",
@@ -78456,7 +78539,8 @@
         "ADR-0039",
         "ADR-0047",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTM-BOUND-001",
@@ -78502,7 +78586,8 @@
         "ADR-0039",
         "ADR-0047",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTN-BOUND-001",
@@ -78548,7 +78633,8 @@
         "ADR-0039",
         "ADR-0047",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTP-BOUND-001",
@@ -78594,7 +78680,8 @@
         "ADR-0039",
         "ADR-0047",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTZ-BOUND-001",
@@ -78637,7 +78724,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FDIV-BOUND-001",
@@ -78762,7 +78850,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FEXP-BOUND-001",
@@ -78969,7 +79058,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FMADD-BOUND-001",
@@ -79100,7 +79190,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FMSUB-BOUND-001",
@@ -79143,7 +79234,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FMUL-BOUND-001",
@@ -79270,7 +79362,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FNMADD-BOUND-001",
@@ -79313,7 +79406,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FNMSUB-BOUND-001",
@@ -79356,7 +79450,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FRECIP-BOUND-001",
@@ -79399,7 +79494,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FSQRT-BOUND-001",
@@ -79442,7 +79538,8 @@
       "readiness_subjects": [
         "ADR-0028",
         "ADR-0038",
-        "ADR-0059"
+        "ADR-0059",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FSUB-BOUND-001",
@@ -79486,7 +79583,8 @@
         "ADR-0028",
         "ADR-0038",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-SCVTF-BOUND-001",
@@ -79530,7 +79628,8 @@
         "ADR-0028",
         "ADR-0038",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0117"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-UCVTF-BOUND-001",

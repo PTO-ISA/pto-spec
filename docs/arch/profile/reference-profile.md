@@ -133,28 +133,31 @@ implementation func ScalarFPBinaryProfile(operation: FloatingBinaryOperation,
                                            => (Word, bits(5))
 begin
     assert ScalarFPTypeCodeSupported(source_type);
+    if operation == FloatingBinary_DIV &&
+       ScalarFPCarrierIsZero(right, source_type) then
+        return (Ones{PTO_XLEN}, Zeros{5} + 2);
+    end;
+    let left_value = ReferenceScalarFPFiniteValue(left, source_type);
+    let right_value = ReferenceScalarFPFiniteValue(right, source_type);
     case operation of
-        when FloatingBinary_ADD => return (left + right, Zeros{5});
-        when FloatingBinary_SUB => return (left - right, Zeros{5});
-        when FloatingBinary_MUL => return (MultiplyWord(left, right), Zeros{5});
-        when FloatingBinary_DIV =>
-            if ScalarFPCarrierIsZero(right, source_type) then
-                return (Ones{PTO_XLEN}, Zeros{5} + 2);
-            else return (DivideWordUnsigned(left, right), Zeros{5});
-            end;
+        when FloatingBinary_ADD, FloatingBinary_SUB,
+             FloatingBinary_MUL, FloatingBinary_DIV =>
+            return ReferenceScalarFPFiniteEncoding(
+                FloatingBinary(operation, left_value, right_value),
+                source_type,
+                rounding_mode);
         // Scalar dispatch owns MIN/MAX NaN and signed-zero behavior. These
         // totality arms are not reached by decoded FMIN/FMAX.
         when FloatingBinary_MIN =>
-            if SInt(left) <= SInt(right) then return (left, Zeros{5});
+            if left_value <= right_value then return (left, Zeros{5});
             else return (right, Zeros{5});
             end;
         when FloatingBinary_MAX =>
-            if SInt(left) >= SInt(right) then return (left, Zeros{5});
+            if left_value >= right_value then return (left, Zeros{5});
             else return (right, Zeros{5});
             end;
     end;
 end;
-
 implementation func ScalarFPUnaryProfile(operation: FloatingUnaryOperation,
                                           rounding_mode: NumericRoundingMode,
                                           source_type: bits(5), value: Word)
@@ -167,16 +170,25 @@ begin
                 return (ZeroExtend{PTO_XLEN}(value[30:0]), Zeros{5});
             else return (value AND (Zeros{PTO_XLEN} + 0x7fffffffffffffff), Zeros{5});
             end;
-        when FloatingUnary_SQRT => return (value, Zeros{5});
-        when FloatingUnary_EXP => return (value + 1, Zeros{5});
+        when FloatingUnary_SQRT, FloatingUnary_EXP =>
+            return ReferenceScalarFPFiniteEncoding(
+                FloatingUnary(
+                    operation,
+                    ReferenceScalarFPFiniteValue(value, source_type)),
+                source_type,
+                rounding_mode);
         when FloatingUnary_RECIP =>
             if ScalarFPCarrierIsZero(value, source_type) then
                 return (Ones{PTO_XLEN}, Zeros{5} + 2);
-            else return (DivideWordUnsigned(Ones{PTO_XLEN}, value), Zeros{5});
             end;
+            return ReferenceScalarFPFiniteEncoding(
+                FloatingUnary(
+                    operation,
+                    ReferenceScalarFPFiniteValue(value, source_type)),
+                source_type,
+                rounding_mode);
     end;
 end;
-
 implementation func ScalarFPFusedProfile(operation: FloatingFusedOperation,
                                           rounding_mode: NumericRoundingMode,
                                           source_type: bits(5), addend: Word,
@@ -184,24 +196,17 @@ implementation func ScalarFPFusedProfile(operation: FloatingFusedOperation,
                                           => (Word, bits(5))
 begin
     assert ScalarFPTypeCodeSupported(source_type);
-    let product = MultiplyWord(left, right);
-    case operation of
-        when FloatingFused_MADD => return (product + addend, Zeros{5});
-        when FloatingFused_MSUB => return (product - addend, Zeros{5});
-        when FloatingFused_NMADD =>
-            return (Zeros{PTO_XLEN} - (product + addend), Zeros{5});
-        when FloatingFused_NMSUB =>
-            return (Zeros{PTO_XLEN} - (product - addend), Zeros{5});
-    end;
+    return ReferenceScalarFPFusedFinite(
+        operation, rounding_mode, source_type, addend, left, right);
 end;
-
 implementation func ScalarFPToIntegerProfile(
     rounding_mode: NumericRoundingMode, destination_type: bits(5),
     source_type: bits(5), value: Word) => (Word, bits(5))
 begin
     assert ScalarIntegerTypeCodeSupported(destination_type);
     assert ScalarFPTypeCodeSupported(source_type);
-    return (value, Zeros{5});
+    return ReferenceScalarFPToIntegerFinite(
+        rounding_mode, source_type, value);
 end;
 
 implementation func ScalarFPConvertProfile(
@@ -210,7 +215,11 @@ implementation func ScalarFPConvertProfile(
 begin
     assert ScalarFPTypeCodeSupported(destination_type);
     assert ScalarFPTypeCodeSupported(source_type);
-    return (value, Zeros{5});
+    if destination_type != '00000' && destination_type != '00001' then
+        return (value, Zeros{5});
+    end;
+    return ReferenceScalarFPConvertFinite(
+        rounding_mode, destination_type, source_type, value);
 end;
 
 implementation func ScalarIntegerToFPProfile(
@@ -219,7 +228,11 @@ implementation func ScalarIntegerToFPProfile(
 begin
     assert ScalarIntegerTypeCodeSupported(source_type);
     assert ScalarFPTypeCodeSupported(destination_type);
-    return (value, Zeros{5});
+    if destination_type != '00000' && destination_type != '00001' then
+        return (value, Zeros{5});
+    end;
+    return ReferenceScalarIntegerToFPFinite(
+        rounding_mode, source_type, destination_type, value);
 end;
 
 implementation func TileSquareRoot(value: Word) => Word

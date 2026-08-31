@@ -54,17 +54,17 @@ Use this example block only as a reading aid: apply the rules above, then confir
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reference-quantization.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","surface":"arch","classification":["profile","reference-quantization"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-PROFILE","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
-pure func ReferencePowerOfTwo(exponent: integer {-149..127}) => real
+pure func ReferencePowerOfTwo(exponent: integer {-1074..1023}) => real
 begin
     var result: real = 1.0;
-    if exponent > 0 then
-        for step = 1 to exponent looplimit 127 do
-            result = result * 2.0;
-        end;
-    elsif exponent < 0 then
-        for step = 1 to -exponent looplimit 149 do
-            result = result / 2.0;
-        end;
+    var step: integer {-1074..1023} = 0;
+    while step < exponent looplimit 1023 do
+        result = result * 2.0;
+        step = (step + 1) as integer {-1074..1023};
+    end;
+    while step > exponent looplimit 1074 do
+        result = result / 2.0;
+        step = (step - 1) as integer {-1074..1023};
     end;
     return result;
 end;
@@ -86,6 +86,25 @@ begin
     return magnitude;
 end;
 
+pure func ReferenceFP64FiniteValue(value: bits(64)) => real
+begin
+    let exponent = UInt(value[62:52]);
+    let fraction = UInt(value[51:0]);
+    assert exponent != 2047;
+    var magnitude: real = 0.0;
+    if exponent == 0 then
+        magnitude = Real(fraction) * ReferencePowerOfTwo(-1074);
+    else
+        let significand =
+            Real(0x10000000000000 + fraction) /
+            Real(0x10000000000000);
+        magnitude = significand * ReferencePowerOfTwo(
+            (exponent - 1023) as integer {-1022..1023});
+    end;
+    if value[63] == '1' then return -magnitude; end;
+    return magnitude;
+end;
+
 pure func ReferenceIntegerValue(value: Word,
                                 data_type: TileDataType) => integer
 begin
@@ -102,17 +121,13 @@ begin
     let negative = value < 0.0;
     var normalized = if negative then -value else value;
     var exponent: integer {-149..128} = 0;
-    for step = 1 to 128 looplimit 128 do
-        if normalized >= 2.0 && exponent < 128 then
-            normalized = normalized / 2.0;
-            exponent = (exponent + 1) as integer {-149..128};
-        end;
+    while normalized >= 2.0 && exponent < 128 looplimit 128 do
+        normalized = normalized / 2.0;
+        exponent = (exponent + 1) as integer {-149..128};
     end;
-    for step = 1 to 149 looplimit 149 do
-        if normalized < 1.0 && exponent > -149 then
-            normalized = normalized * 2.0;
-            exponent = (exponent - 1) as integer {-149..128};
-        end;
+    while normalized < 1.0 && exponent > -149 looplimit 149 do
+        normalized = normalized * 2.0;
+        exponent = (exponent - 1) as integer {-149..128};
     end;
 
     let sign = if negative then 0x80000000 else 0;
@@ -155,6 +170,145 @@ begin
     return (
         Zeros{PTO_XLEN} + sign + encoded_exponent * 0x800000 + fraction,
         if Real(rounded) == scaled then Zeros{5} else Zeros{5} + 0x10);
+end;
+
+func ReferenceFP64FiniteEncoding(
+    value: real,
+    rounding_mode: NumericRoundingMode) => (Word, bits(5))
+begin
+    if value == 0.0 then return (Zeros{PTO_XLEN}, Zeros{5}); end;
+    let negative = value < 0.0;
+    var normalized = if negative then -value else value;
+    var exponent: integer {-1074..1024} = 0;
+    while normalized >= 2.0 && exponent < 1024 looplimit 1024 do
+        normalized = normalized / 2.0;
+        exponent = (exponent + 1) as integer {-1074..1024};
+    end;
+    while normalized < 1.0 && exponent > -1074 looplimit 1074 do
+        normalized = normalized * 2.0;
+        exponent = (exponent - 1) as integer {-1074..1024};
+    end;
+
+    let sign = if negative then 0x8000000000000000 else 0;
+    if exponent > 1023 then
+        return (
+            Zeros{PTO_XLEN} + sign + 0x7ff0000000000000,
+            Zeros{5} + 0x14);
+    end;
+
+    if exponent < -1022 then
+        let scaled = value / ReferencePowerOfTwo(-1074);
+        let rounded = FloatingToInteger(scaled, rounding_mode);
+        let magnitude = if rounded < 0 then -rounded else rounded;
+        if magnitude == 0 then
+            return (Zeros{PTO_XLEN} + sign, Zeros{5} + 0x18);
+        end;
+        return (
+            Zeros{PTO_XLEN} + sign + magnitude,
+            if Real(rounded) == scaled then Zeros{5}
+            else Zeros{5} + 0x18);
+    end;
+
+    let scaled = if negative then
+        -(normalized * Real(0x10000000000000))
+        else normalized * Real(0x10000000000000);
+    let rounded = FloatingToInteger(scaled, rounding_mode);
+    var magnitude = if rounded < 0 then -rounded else rounded;
+    var encoded_exponent = exponent + 1023;
+    if magnitude == 0x20000000000000 then
+        magnitude = 0x10000000000000;
+        encoded_exponent =
+            (encoded_exponent + 1) as integer {-51..2047};
+    end;
+    if encoded_exponent >= 2047 then
+        return (
+            Zeros{PTO_XLEN} + sign + 0x7ff0000000000000,
+            Zeros{5} + 0x14);
+    end;
+    let fraction = magnitude - 0x10000000000000;
+    return (
+        Zeros{PTO_XLEN} + sign +
+            encoded_exponent * 0x10000000000000 + fraction,
+        if Real(rounded) == scaled then Zeros{5} else Zeros{5} + 0x10);
+end;
+
+pure func ReferenceScalarFPFiniteValue(value: Word,
+                                       data_type: bits(5)) => real
+begin
+    if data_type == '00001' then
+        return ReferenceFP32FiniteValue(value[31:0]);
+    end;
+    assert data_type == '00000';
+    return ReferenceFP64FiniteValue(value);
+end;
+
+func ReferenceScalarFPFiniteEncoding(
+    value: real,
+    data_type: bits(5),
+    rounding_mode: NumericRoundingMode) => (Word, bits(5))
+begin
+    if data_type == '00001' then
+        return ReferenceFP32FiniteEncoding(value, rounding_mode);
+    end;
+    assert data_type == '00000';
+    return ReferenceFP64FiniteEncoding(value, rounding_mode);
+end;
+
+func ReferenceScalarFPFusedFinite(
+    operation: FloatingFusedOperation,
+    rounding_mode: NumericRoundingMode,
+    source_type: bits(5),
+    addend: Word,
+    left: Word,
+    right: Word) => (Word, bits(5))
+begin
+    return ReferenceScalarFPFiniteEncoding(
+        FloatingFused(
+            operation,
+            ReferenceScalarFPFiniteValue(addend, source_type),
+            ReferenceScalarFPFiniteValue(left, source_type),
+            ReferenceScalarFPFiniteValue(right, source_type)),
+        source_type,
+        rounding_mode);
+end;
+
+func ReferenceScalarFPToIntegerFinite(
+    rounding_mode: NumericRoundingMode,
+    source_type: bits(5),
+    value: Word) => (Word, bits(5))
+begin
+    let finite_value = ReferenceScalarFPFiniteValue(value, source_type);
+    let rounded = FloatingToInteger(finite_value, rounding_mode);
+    return (
+        Zeros{PTO_XLEN} + rounded,
+        if Real(rounded) == finite_value then Zeros{5}
+        else Zeros{5} + 0x10);
+end;
+
+func ReferenceScalarFPConvertFinite(
+    rounding_mode: NumericRoundingMode,
+    destination_type: bits(5),
+    source_type: bits(5),
+    value: Word) => (Word, bits(5))
+begin
+    return ReferenceScalarFPFiniteEncoding(
+        ReferenceScalarFPFiniteValue(value, source_type),
+        destination_type,
+        rounding_mode);
+end;
+
+func ReferenceScalarIntegerToFPFinite(
+    rounding_mode: NumericRoundingMode,
+    source_type: bits(5),
+    destination_type: bits(5),
+    value: Word) => (Word, bits(5))
+begin
+    let integer_value = if UInt(source_type) >= 8 then SInt(value)
+                        else UInt(value);
+    return ReferenceScalarFPFiniteEncoding(
+        Real(integer_value),
+        destination_type,
+        rounding_mode);
 end;
 
 implementation func TileProfileQuantize(value: Word, scale: Word,

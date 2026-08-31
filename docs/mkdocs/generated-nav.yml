@@ -1053,5 +1053,6 @@ nav:
           - "ADR 0114: Normalize the AGU SrcRType arithmetic modifier encoding": status/decisions/0114-normalize-agu-srcrtype-encoding.md
           - "ADR 0115: Define HL.BFI as byte-granular insertion": status/decisions/0115-byte-granular-hl-bfi.md
           - "ADR 0116: B.HINT TRACE preserves the predecessor-selected transfer": status/decisions/0116-trace-preserves-predecessor-transfer.md
+          - "ADR 0117: Bind finite scalar FP32 and FP64 pto-v0 reference semantics": status/decisions/0117-finite-scalar-floating-reference-profile.md
       - Open:
           - "Open architecture decisions": status/open/index.md

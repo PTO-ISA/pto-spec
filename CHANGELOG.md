@@ -22,6 +22,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0112](docs/status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md): Tile operation type roles and source reinterpretation
 - [ADR-0113](docs/status/decisions/0113-cube-predicate-carriers-and-tgpr2t-superseding-contract.md): CUBE predicate carriers and TGPR2T superseding contract
 - [ADR-0112](docs/status/decisions/0112-scalar-stream-enters-bundle-body.md): Decoded scalar stream enters the active bundle body
+- [ADR-0117](docs/status/decisions/0117-finite-scalar-floating-reference-profile.md): Bind finite scalar FP32 and FP64 pto-v0 reference semantics
 
 ### Scalar
 - [ADR-0114](docs/status/decisions/0114-normalize-agu-srcrtype-encoding.md): Normalize the AGU SrcRType arithmetic modifier encoding

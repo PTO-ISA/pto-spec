@@ -32293,7 +32293,7 @@
         "state_effects": [
           "FADD adds two selected FP64 or FP32 carriers through the active numeric profile and publishes its sticky flags.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, add the normalized carriers modulo the selected width and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -32553,7 +32553,7 @@
         "state_effects": [
           "FCVT converts a selected FP64 or FP32 source carrier to destination carrier code 0 through 14 through the active numeric profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, preserve the normalized source bits, retain the selected destination carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -32813,7 +32813,7 @@
         "state_effects": [
           "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-to-nearest, ties-away mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, preserve the normalized source bits, retain the selected integer carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -33073,7 +33073,7 @@
         "state_effects": [
           "FCVTM converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-down mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, preserve the normalized source bits, retain the selected integer carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -33333,7 +33333,7 @@
         "state_effects": [
           "FCVTN converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-nearest mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, preserve the normalized source bits, retain the selected integer carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -33593,7 +33593,7 @@
         "state_effects": [
           "FCVTP converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-up mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, preserve the normalized source bits, retain the selected integer carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -33853,7 +33853,7 @@
         "state_effects": [
           "FCVTZ converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-toward-zero mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, preserve the normalized source bits, retain the selected integer carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -34085,7 +34085,7 @@
         "state_effects": [
           "FDIV divides the left selected carrier by the right through the active numeric profile and publishes its sticky flags.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, a zero divisor returns all ones in the selected width with DZ; otherwise divide the unsigned carriers and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -34963,7 +34963,7 @@
         "state_effects": [
           "FEXP applies the active numeric profile exponential operation to the selected FP64 or FP32 carrier.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, increment the normalized carrier modulo the selected width and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -36152,7 +36152,7 @@
         "state_effects": [
           "FMADD computes one fused SrcL multiplied by SrcR plus SrcA operation through the active numeric profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, compute MultiplyWord(SrcL, SrcR) plus SrcA modulo the selected width and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -36879,7 +36879,7 @@
         "state_effects": [
           "FMSUB computes one fused SrcL multiplied by SrcR minus SrcA operation through the active numeric profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, compute MultiplyWord(SrcL, SrcR) minus SrcA modulo the selected width and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -37111,7 +37111,7 @@
         "state_effects": [
           "FMUL multiplies two selected FP64 or FP32 carriers through the active numeric profile and publishes its sticky flags.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, multiply the normalized carriers modulo the selected width and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -37838,7 +37838,7 @@
         "state_effects": [
           "FNMADD computes the negation of one fused SrcL multiplied by SrcR plus SrcA operation through the active numeric profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, negate MultiplyWord(SrcL, SrcR) plus SrcA modulo the selected width and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -38103,7 +38103,7 @@
         "state_effects": [
           "FNMSUB computes the negation of one fused SrcL multiplied by SrcR minus SrcA operation through the active numeric profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, negate MultiplyWord(SrcL, SrcR) minus SrcA modulo the selected width and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -38302,7 +38302,7 @@
         "state_effects": [
           "FRECIP applies the active numeric profile reciprocal operation to the selected FP64 or FP32 carrier.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, a zero operand returns all ones in the selected width with DZ; otherwise divide an all-ones carrier by the operand. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -38501,7 +38501,7 @@
         "state_effects": [
           "FSQRT applies the active numeric profile square-root operation to the selected FP64 or FP32 carrier.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, preserve the normalized carrier unchanged and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -38733,7 +38733,7 @@
         "state_effects": [
           "FSUB subtracts the right selected carrier from the left through the active numeric profile and publishes its sticky flags.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, subtract the normalized right carrier from the left modulo the selected width and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -99446,7 +99446,7 @@
         "state_effects": [
           "SCVTF converts a signed 64-bit or sign-extended signed 32-bit source to floating carrier code 0 through 14 through the active numeric profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, sign-normalize the source, retain the selected floating carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -114499,7 +114499,7 @@
         "state_effects": [
           "UCVTF converts an unsigned 64-bit or zero-extended unsigned 32-bit source to floating carrier code 0 through 14 through the active numeric profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0, zero-normalize the source, retain the selected floating carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.",
+          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]

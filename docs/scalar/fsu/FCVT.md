@@ -198,7 +198,7 @@ end;
 
 - FCVT converts a selected FP64 or FP32 source carrier to destination carrier code 0 through 14 through the active numeric profile.
 - The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.
-- For pto-v0, preserve the normalized source bits, retain the selected destination carrier width, and return zero flags. This executable reference behavior is not target floating-point conformance.
+- For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.
 - Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.
 - Successful execution advances TPC by four bytes.
 
