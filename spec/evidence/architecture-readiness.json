@@ -2062,6 +2062,7 @@
         "PTO-AVS-SCALAR-BXU-READINESS-001",
         "PTO-AVS-SCALAR-BXU-SELECTORS-001",
         "PTO-AVS-SCALAR-BXU-WRAP-001",
+        "PTO-AVS-SCALAR-BYTE-FIELD-CONTRACT-001",
         "PTO-AVS-SCALAR-C-ADD-DECODE-001",
         "PTO-AVS-SCALAR-C-ADD-QUEUE-001",
         "PTO-AVS-SCALAR-C-ADD-READINESS-001",
@@ -2148,7 +2149,9 @@
         "PTO-AVS-SCALAR-HL-ANDIW-SELECTORS-001",
         "PTO-AVS-SCALAR-HL-BFI-ALIAS-001",
         "PTO-AVS-SCALAR-HL-BFI-DECODE-001",
+        "PTO-AVS-SCALAR-HL-BFI-PACKED-WORD-002",
         "PTO-AVS-SCALAR-HL-BFI-READINESS-001",
+        "PTO-AVS-SCALAR-HL-BFI-RESERVED-002",
         "PTO-AVS-SCALAR-HL-BFI-WRAP-001",
         "PTO-AVS-SCALAR-HL-CCAT-DECODE-001",
         "PTO-AVS-SCALAR-HL-CCAT-OVERLAP-001",
@@ -12282,6 +12285,7 @@
         "PTO-AVS-SCALAR-BXU-READINESS-001",
         "PTO-AVS-SCALAR-BXU-SELECTORS-001",
         "PTO-AVS-SCALAR-BXU-WRAP-001",
+        "PTO-AVS-SCALAR-BYTE-FIELD-CONTRACT-001",
         "PTO-AVS-SCALAR-C-ADD-DECODE-001",
         "PTO-AVS-SCALAR-C-ADD-QUEUE-001",
         "PTO-AVS-SCALAR-C-ADD-READINESS-001",
@@ -12457,7 +12461,9 @@
         "PTO-AVS-SCALAR-HL-ANDIW-SELECTORS-001",
         "PTO-AVS-SCALAR-HL-BFI-ALIAS-001",
         "PTO-AVS-SCALAR-HL-BFI-DECODE-001",
+        "PTO-AVS-SCALAR-HL-BFI-PACKED-WORD-002",
         "PTO-AVS-SCALAR-HL-BFI-READINESS-001",
+        "PTO-AVS-SCALAR-HL-BFI-RESERVED-002",
         "PTO-AVS-SCALAR-HL-BFI-WRAP-001",
         "PTO-AVS-SCALAR-HL-CASB-DECODE-001",
         "PTO-AVS-SCALAR-HL-CASB-MATCH-001",
@@ -17678,6 +17684,7 @@
         "PTO-AVS-SCALAR-BXU-READINESS-001",
         "PTO-AVS-SCALAR-BXU-SELECTORS-001",
         "PTO-AVS-SCALAR-BXU-WRAP-001",
+        "PTO-AVS-SCALAR-BYTE-FIELD-CONTRACT-001",
         "PTO-AVS-SCALAR-C-CMP-EQI-DECODE-001",
         "PTO-AVS-SCALAR-C-CMP-NEI-DECODE-001",
         "PTO-AVS-SCALAR-C-EBREAK-DECODE-001",
@@ -17736,7 +17743,9 @@
         "PTO-AVS-SCALAR-HL-ANDIW-SELECTORS-001",
         "PTO-AVS-SCALAR-HL-BFI-ALIAS-001",
         "PTO-AVS-SCALAR-HL-BFI-DECODE-001",
+        "PTO-AVS-SCALAR-HL-BFI-PACKED-WORD-002",
         "PTO-AVS-SCALAR-HL-BFI-READINESS-001",
+        "PTO-AVS-SCALAR-HL-BFI-RESERVED-002",
         "PTO-AVS-SCALAR-HL-BFI-WRAP-001",
         "PTO-AVS-SCALAR-HL-CCAT-DECODE-001",
         "PTO-AVS-SCALAR-HL-CCAT-OVERLAP-001",
@@ -21751,23 +21760,66 @@
         "PTO-SCALAR-SW-U"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0115"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-HL-BFI-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-HL-BFI"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0115",
+      "test_ids": [
+        "PTO-AVS-SCALAR-ALU-CONTROL-ALIAS-EXEC-004",
+        "PTO-AVS-SCALAR-ALU-EFFECTS-001",
+        "PTO-AVS-SCALAR-ALU-GPR-ALIAS-EXEC-001",
+        "PTO-AVS-SCALAR-ALU-MULTI-ALIAS-EXEC-003",
+        "PTO-AVS-SCALAR-ALU-PAIR-ALIAS-EXEC-005",
+        "PTO-AVS-SCALAR-ALU-QUEUE-ALIAS-EXEC-002",
+        "PTO-AVS-SCALAR-ALU-TOTALITY-001",
+        "PTO-AVS-SCALAR-BYTE-FIELD-CONTRACT-001",
+        "PTO-AVS-SCALAR-HL-BFI-ALIAS-001",
+        "PTO-AVS-SCALAR-HL-BFI-DECODE-001",
+        "PTO-AVS-SCALAR-HL-BFI-PACKED-WORD-002",
+        "PTO-AVS-SCALAR-HL-BFI-READINESS-001",
+        "PTO-AVS-SCALAR-HL-BFI-RESERVED-002",
+        "PTO-AVS-SCALAR-HL-BFI-WRAP-001",
+        "PTO-AVS-SCALAR-MODEL-ALU-BITFIELD-STATIC-001",
+        "PTO-AVS-SCALAR-MODEL-ALU-SEMANTICS-STATIC-001",
+        "PTO-AVS-SCALAR-MODEL-DISPATCH-ALU-STATIC-001",
+        "PTO-AVS-SCALAR-TESTSCALARALIASINGORDER-EXECUTION-001",
+        "PTO-AVS-SCALAR-TESTSCALARALUBOUNDARYMATRIX-BOUNDARY-001",
+        "PTO-AVS-SCALAR-TESTSCALARBITFIELDBOUNDARYCONTRACT-BOUNDARY-001",
+        "PTO-AVS-SCALAR-TESTSCALARDISPATCHEFFECTS-EXECUTION-001"
+      ],
+      "unit_ids": [
+        "PTO-SCALAR-HL-BFI",
+        "PTO-SCALAR-MODEL-ALU-BITFIELD",
+        "PTO-SCALAR-MODEL-ALU-SEMANTICS",
+        "PTO-SCALAR-MODEL-DISPATCH-ALU"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 108,
-      "sha256": "2111bb8eb85704b2831fd1a51555b219a7cf8f00dc5b98c8673106cf6e471ced"
+      "count": 109,
+      "sha256": "e7fce1054c60e2c46844880f3286e704fa354a5246abef78c6f596dcd3bb1a86"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "8ea5c066807ab241cd1fe80b296da3c116fec3026e92c1682b14a2a44e566875"
+      "sha256": "1a2cdd0b9fbeda3f3b1032e0ab1534cde9dd8b0c99573e451f0ddb6fc3eeb83a"
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "231fb1b1cc965539dd2324272c1e556a12afcfe6698931ca552ee0403b6b0139",
-      "test_count": 3741,
-      "unit_count": 852
+      "sha256": "4aaf50f427eb162a4e13a17fdc0f56d7a8d2bfc6d7599cb43494f4f444966524",
+      "test_count": 3745,
+      "unit_count": 853
     }
   },
   "stage_order": [
@@ -21785,13 +21837,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 10,
-      "executable": 94,
+      "executable": 95,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 104,
+    "subject_count": 105,
     "validated_count": 0
   }
 }

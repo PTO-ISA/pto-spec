@@ -2,7 +2,7 @@
   "family_constraint_application_count": 0,
   "family_constraint_count": 0,
   "family_constraints": [],
-  "form_constraint_count": 47,
+  "form_constraint_count": 49,
   "form_count": 466,
   "forms": [
     {
@@ -7426,7 +7426,36 @@
     },
     {
       "asm": "hl.bfi SrcL, SrcR, M, N, ->{t, u, Rd}",
-      "constraints": [],
+      "constraints": [
+        {
+          "field": "immr",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        {
+          "field": "imms",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ],
       "encoding": [
         {
           "index": 0,
@@ -7504,7 +7533,7 @@
       "semantic_family": "ALU",
       "semantic_group": "ALU",
       "semantic_handler": "InsertBitfield",
-      "semantic_summary": "HL.BFI inserts ascending low source bits into an inclusive wrapping destination interval of a snapshotted base value and publishes the XLEN result.",
+      "semantic_summary": "HL.BFI copies a low source byte field into a wrapping byte interval of a snapshotted base value and publishes the XLEN result.",
       "status": "accepted"
     },
     {

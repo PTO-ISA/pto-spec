@@ -1678,7 +1678,7 @@
     },
     {
       "path": "asl/scalar/alu/HL.BFI.asl",
-      "sha256": "5ef936119d4b1988d9a1acdfc5cb8fcd4263e4d18f1aab26cbe49c0335f3f4f7"
+      "sha256": "b4f16035325688b8bf7e5786f1d430927d8a47c969fb79a090516ec4421939c2"
     },
     {
       "path": "asl/scalar/alu/HL.CCAT.asl",
@@ -2513,8 +2513,12 @@
       "sha256": "3e11650bdd6950bf78085be8b1de9735f65310d69b1edfb54d92e59baffee643"
     },
     {
+      "path": "asl/scalar/model/alu/bitfield.asl",
+      "sha256": "65583faea051e6c15cc35c30e65bd3a969993a37cd606d374f68827811096dd4"
+    },
+    {
       "path": "asl/scalar/model/alu/semantics.asl",
-      "sha256": "3ea286b50965fd9a218d6a5ef9a1f8f230638d0163a734d536b3b6158039ca47"
+      "sha256": "a4906d72081773c46f0369e9102a7bb42827717d0398e2e757b17ef72b4b4527"
     },
     {
       "path": "asl/scalar/model/amo/semantics.asl",
@@ -2530,7 +2534,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/alu.asl",
-      "sha256": "aae66b82e868949861a1a93427ac9a35091d4ad339ed4535b500b0a1fc408c45"
+      "sha256": "fe0181028b2795ef4b764c402ac7ad7588fe889c6c4c14c17f3dde8c22fc9e43"
     },
     {
       "path": "asl/scalar/model/dispatch/amo.asl",
@@ -3430,7 +3434,7 @@
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "44847ad7289923fedd7d337e18ee8d2d4d2009f912d2f12480f15c0ef36d60ed"
+      "sha256": "0144de80b9997e9a936e6b0ec9b1a613c5bc61c72cf0aa28789e85b84756b1ab"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -3442,15 +3446,15 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "4381f6f24813e38c1f1c5343d12c2b47cbfc9e0458b69a2266e355917c191575"
+      "sha256": "14a3646d2dd89070a15a43747efb0c8a163af8d2e823eac492e188f008f9e036"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "8ea5c066807ab241cd1fe80b296da3c116fec3026e92c1682b14a2a44e566875"
+      "sha256": "1a2cdd0b9fbeda3f3b1032e0ab1534cde9dd8b0c99573e451f0ddb6fc3eeb83a"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "0c1d707beecda268a92536eb524e1ab5158b5cc0519d334b7261343efe7b5fe9"
+      "sha256": "a72916c9ebbda4364aed14a26353ac4120aca7d6329663caf27422940b5b1454"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
@@ -3458,7 +3462,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "231fb1b1cc965539dd2324272c1e556a12afcfe6698931ca552ee0403b6b0139"
+      "sha256": "4aaf50f427eb162a4e13a17fdc0f56d7a8d2bfc6d7599cb43494f4f444966524"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3504,7 +3508,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "2e5523b7ef26a56889a36523c7bad1059ab5a20a521fd48c7bea7e5de4a04f0e",
+  "content_sha256": "4f5fd324e4e17ab1d1416793a3c8551158ae1206fd9cee6ba9c7efedfd6719b3",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3523,7 +3527,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "c4a0188f4c9087388fe6239e4ec2da6550b81c87bb1466e6157d69a9aa45f747",
+  "encoding_projection_sha256": "f372271dc0edb773681030373a56be4c645491624ddfe65f904d7509b5f456c3",
   "hardware_conformance_profile": {
     "evidence": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
@@ -5631,7 +5635,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/alu/HL.BFI.md",
-      "sha256": "da6b9097c2636ddeeb433c3d216412ccb9c0f8ab2c4d66f80df4febac2a4e8a2"
+      "sha256": "69d02ab978ebb548e9e2dce004850bdb1f3eb7ea14e5a95f183e545aab76473a"
     },
     {
       "kind": "generated-documentation",
@@ -6675,8 +6679,13 @@
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/scalar/model/alu/bitfield.md",
+      "sha256": "63d97c6b2874372d48dbbecd9f9aec6ff60a7b5d27c65d20e8e04cc3c76a7fca"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/scalar/model/alu/semantics.md",
-      "sha256": "8cb1eabc757c3ff2d1572a665fcafb85e06dd08136f2156f04959cb9140c8a2f"
+      "sha256": "e0147155552210c654445597554ae81d42e8868c71da0e3f27df7859411bfbf8"
     },
     {
       "kind": "generated-documentation",
@@ -6696,7 +6705,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/dispatch/alu.md",
-      "sha256": "657ec080cd7b1af7c86989e8280f0cef5abd9b121493286fd83e9b71b7904f19"
+      "sha256": "cb23a3cfd1bb08ba002e0d4b67309004ad330effeb00e3fa568a59452bd64bb7"
     },
     {
       "kind": "generated-documentation",
@@ -7801,12 +7810,12 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-abi-vectors.json",
-      "sha256": "a38c2d152e7d0d7568ceb410639fdaa9572cb1632def50b9d41eb7b79d123eec"
+      "sha256": "ce1bf33a327564fd606bdd012bd51b8b927d80e7b14bba736f141c7d2f93956c"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-encoding-totality.json",
-      "sha256": "efdd108bef94ad6293c473bf457580603d399a3395ddf0521a78efd26e3140e5"
+      "sha256": "6334fcf5528fbf3d401027c360cf801f5f938f521d9114a31847b626f92d858a"
     },
     {
       "kind": "generated-evidence",
@@ -8359,7 +8368,7 @@
       },
       {
         "id": "PTO-HL-BFI-DECISION-BINDING-001",
-        "sha256": "a604395c5fe366555872bca873a1f42205bfea356becba5d650d04f8e93a9885"
+        "sha256": "de319004379530a953317669c0b12c2916516c581fc0a02406ee158bfc821780"
       },
       {
         "id": "PTO-HL-CCAT-CONTRACT-001",
@@ -9267,7 +9276,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-BFI",
-        "sha256": "12ed71a2d299de1a104579be20b810f9befdb98e69d3005737148dc385ef65a8"
+        "sha256": "4af3e2684f46d6c9c01e0a78fdc378c7aede44aad04d37601c455b88aaf44817"
       },
       {
         "id": "PTO-INST-SCALAR-HL-CASB",
@@ -12034,7 +12043,8 @@
       "ADR-0111",
       "ADR-0112",
       "ADR-0113",
-      "ADR-0114"
+      "ADR-0114",
+      "ADR-0115"
     ]
   },
   "schema_version": 1,

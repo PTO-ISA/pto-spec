@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/alu/HL.BFI.asl`
 
-HL.BFI inserts ascending low source bits into an inclusive wrapping destination interval of a snapshotted base value and publishes the XLEN result.
+HL.BFI copies a low source byte field into a wrapping byte interval of a snapshotted base value and publishes the XLEN result.
 
 ## Normative identity {#PTO-INST-SCALAR-HL-BFI}
 
@@ -74,7 +74,7 @@ hl.bfi SrcL, SrcR, M, N, ->{t, u, Rd}
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| hl_bfi_48_8adfd476aacc | HL48 | 48 | 0x0000204d000e / 0xfe00707f000f | [] |
+| hl_bfi_48_8adfd476aacc | HL48 | 48 | 0x0000204d000e / 0xfe00707f000f | [{"field":"immr","operator":"one-of","values":[0,1,2,3,4,5,6,7]},{"field":"imms","operator":"one-of","values":[0,1,2,3,4,5,6,7]}] |
 
 ### Fields
 
@@ -100,8 +100,11 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | hl_bfi_48_8adfd476aacc | RegDst | 5 | 0–31 | none | none | Reg5 destination or discard | Encoded zero discards the result. |
 | hl_bfi_48_8adfd476aacc | SrcL | 5 | 0–31 | none | none | Reg5 base source | Encoded zero reads the architectural zero GPR base. |
 | hl_bfi_48_8adfd476aacc | SrcR | 5 | 0–31 | none | none | Reg5 insertion source | Encoded zero reads the architectural zero GPR insertion source. |
-| hl_bfi_48_8adfd476aacc | immr | 6 | 0–63 | none | none | first destination bit | Encoded zero begins the destination interval at bit zero. |
-| hl_bfi_48_8adfd476aacc | imms | 6 | 0–63 | none | none | last destination bit | Encoded zero ends the destination interval at bit zero. |
+| hl_bfi_48_8adfd476aacc | immr | 6 | 0–7 | none | 8–63 | inserted byte count N minus one | Encoded zero selects a one-byte field (N=1). |
+| hl_bfi_48_8adfd476aacc | imms | 6 | 0–7 | none | 8–63 | destination byte offset M | Encoded zero begins insertion at destination byte zero (M=0). |
+
+- `hl_bfi_48_8adfd476aacc.immr` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
+- `hl_bfi_48_8adfd476aacc.imms` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
 ## Operands and results
 
@@ -110,8 +113,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | RegDst | Reg5 destination or discard |
 | SrcL | Reg5 base source |
 | SrcR | Reg5 insertion source |
-| immr | first destination bit |
-| imms | last destination bit |
+| immr | inserted byte count N minus one |
+| imms | destination byte offset M |
 
 ## Decode
 
@@ -123,13 +126,13 @@ begin
     return ScalarOperation_HL_BFI;
 end;
 
-pure func InstructionContractFirstBit_HL_BFI(encoded_immr: bits(6))
-    => integer {0..63}
+pure func InstructionContractByteCount_HL_BFI(encoded_immr: bits(6))
+    => integer {1..64}
 begin
-    return UInt(encoded_immr);
+    return UInt(encoded_immr) + 1;
 end;
 
-pure func InstructionContractLastBit_HL_BFI(encoded_imms: bits(6))
+pure func InstructionContractByteOffset_HL_BFI(encoded_imms: bits(6))
     => integer {0..63}
 begin
     return UInt(encoded_imms);
@@ -150,15 +153,15 @@ end;
 pure func InstructionContractResult_HL_BFI(
     base: Word,
     source: Word,
-    first: integer {0..63},
-    last: integer {0..63})
+    byte_offset: integer {0..7},
+    byte_count: integer {1..8})
     => Word
 begin
-    return InsertBitfield(
+    return InsertByteField(
         base,
         source,
-        first,
-        last);
+        byte_offset,
+        byte_count);
 end;
 ```
 <!-- GENERATED-ASL-END: operation -->
@@ -166,18 +169,18 @@ end;
 ## Defaults and encoded zero
 
 - SrcL, SrcR, immr, imms, and RegDst are required encoded fields; no field can be omitted.
-- immr directly encodes the first destination bit from 0 through 63. imms directly encodes the last destination bit from 0 through 63.
-- When imms precedes immr, the inclusive destination interval wraps through bit 63 to bit 0. Equal endpoints select one destination bit.
+- immr encodes byte count N minus one in the assigned range 0 through 7. imms encodes destination byte offset M in the assigned range 0 through 7.
+- When M plus N exceeds eight, destination byte selection wraps through byte seven to byte zero. Source bytes are consumed in ascending order from byte zero.
 
 ## Legality
 
 - SrcL and SrcR codes 0..23 select absolute GPRs, 24..27 select T#1..T#4, and 28..31 select U#1..U#4 without consumption.
 - RegDst codes 0 and 24..29 discard, codes 1..23 write GPRs, code 30 pushes U, and code 31 pushes T.
-- Every immr and imms value is assigned. The inclusive wrapping interval has a width from 1 through 64.
+- immr values 0 through 7 encode N=1 through 8 bytes and imms values 0 through 7 encode M=0 through 7; all larger six-bit values are reserved.
 
 ## State effects
 
-- Snapshot the base and insertion sources. Starting with source bit zero, replace ascending bits of the inclusive destination interval from immr through imms, wrapping through bit 63 when required; preserve every base bit outside that interval.
+- Snapshot the base and insertion sources. Copy the low N source bytes into N destination bytes beginning at byte M, wrapping modulo eight destination bytes; preserve every unselected base byte.
 - Publish the complete XLEN result through the common Reg5 destination map. Relative sources are non-consuming; only a T or U destination push changes a temporary queue.
 - No memory, reservation, descriptor, numeric-status, block, privilege, branch-target, or other control state changes. Successful execution advances TPC by six bytes.
 
@@ -194,11 +197,11 @@ end;
 
 ## Exceptions
 
-- An unavailable selected T/U source raises Fault_IllegalInstruction before the destination effect and before TPC advances. Both sources are preflighted even when their encoded values are equal.
+- An imms or immr encoding above 7, or an unavailable selected T/U source, raises Fault_IllegalInstruction before source reads, destination effect, or TPC advance. Both sources are preflighted even when their encoded values are equal.
 - HL.BFI raises no arithmetic, memory, alignment, permission, or control-flow exception.
 
 ## Examples
 
-- hl.bfi a0, a1, 8, 15, ->a2
-- hl.bfi t#1, u#1, 63, 0, ->t
-- hl.bfi a0, zero, 0, 63, ->a0
+- hl.bfi a0, a1, 4, 4, ->a2
+- hl.bfi t#1, u#1, 7, 2, ->t
+- hl.bfi a0, zero, 0, 8, ->a0

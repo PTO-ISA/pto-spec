@@ -3173,9 +3173,12 @@
       "readiness_subjects": [
         "ADR-0026",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0115"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-SCALAR-BYTE-FIELD-CONTRACT-001"
+      ]
     },
     {
       "executable": false,
@@ -6534,11 +6537,15 @@
       "owners": [
         "asl/scalar/alu/HL.BFI.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0115"
+      ],
       "tests": [
         "PTO-AVS-SCALAR-HL-BFI-ALIAS-001",
         "PTO-AVS-SCALAR-HL-BFI-DECODE-001",
+        "PTO-AVS-SCALAR-HL-BFI-PACKED-WORD-002",
         "PTO-AVS-SCALAR-HL-BFI-READINESS-001",
+        "PTO-AVS-SCALAR-HL-BFI-RESERVED-002",
         "PTO-AVS-SCALAR-HL-BFI-WRAP-001"
       ]
     },
@@ -17149,7 +17156,7 @@
     "asl/scalar/alu/HL.ADDIW.asl": "213d909f8133993020b310b2f520e5c2b7bcaa21ad4096596f8f1b4d6ed75f92",
     "asl/scalar/alu/HL.ANDI.asl": "76b322aee81b3e003542e79369d3db81d4d86c10ec59458393d1937ef6fcfd03",
     "asl/scalar/alu/HL.ANDIW.asl": "10e8e8b367a338cd1ee6d21c8678bd740123912af1202f4e6f3c1ef5b21cddd0",
-    "asl/scalar/alu/HL.BFI.asl": "5ef936119d4b1988d9a1acdfc5cb8fcd4263e4d18f1aab26cbe49c0335f3f4f7",
+    "asl/scalar/alu/HL.BFI.asl": "b4f16035325688b8bf7e5786f1d430927d8a47c969fb79a090516ec4421939c2",
     "asl/scalar/alu/HL.CCAT.asl": "5e6214b0d513a452b83d98926f1b832006b4eadaad3fbb16e58e16d0542db0bc",
     "asl/scalar/alu/HL.CCATW.asl": "1b7768e6a8e4bcdd3c3ed753437689294a614bfae71d7f3669d2e0243f8ddd08",
     "asl/scalar/alu/HL.DIV.asl": "37f9fc28499138cb58f62002ac97a2c29c7d1ed270379f588ad14c1d4865e39a",
@@ -17358,11 +17365,12 @@
     "asl/scalar/fsu/UCVTF.asl": "cdf211505af4682cfe88e1a2574ccf7648c1e5f7caf575d22d2dd6659b3ab6d6",
     "asl/scalar/model/agu/addressing.asl": "2b99385665915f8f3ef589e60f4654296b8ba1f0fc64db9896909c8cea6884ed",
     "asl/scalar/model/agu/memory.asl": "3e11650bdd6950bf78085be8b1de9735f65310d69b1edfb54d92e59baffee643",
-    "asl/scalar/model/alu/semantics.asl": "3ea286b50965fd9a218d6a5ef9a1f8f230638d0163a734d536b3b6158039ca47",
+    "asl/scalar/model/alu/bitfield.asl": "65583faea051e6c15cc35c30e65bd3a969993a37cd606d374f68827811096dd4",
+    "asl/scalar/model/alu/semantics.asl": "a4906d72081773c46f0369e9102a7bb42827717d0398e2e757b17ef72b4b4527",
     "asl/scalar/model/amo/semantics.asl": "feac3f10edbf29d34595f827eb66a39925be56eb3345e38574a5bab2424a871a",
     "asl/scalar/model/bru/semantics.asl": "3b5af1348da6e2027354beb3557a0631f9217af450482432faa77cec67d699a8",
     "asl/scalar/model/dispatch/agu.asl": "1e22037018ca860fef794052cda29bf99103c543ae2b6391fce292a5cba9f682",
-    "asl/scalar/model/dispatch/alu.asl": "aae66b82e868949861a1a93427ac9a35091d4ad339ed4535b500b0a1fc408c45",
+    "asl/scalar/model/dispatch/alu.asl": "fe0181028b2795ef4b764c402ac7ad7588fe889c6c4c14c17f3dde8c22fc9e43",
     "asl/scalar/model/dispatch/amo.asl": "6c1cbff9ffb76d530083ce68fc0b2b288475080ba5713b28d363f3fb23ea2666",
     "asl/scalar/model/dispatch/bru.asl": "ff1616fb96e8fa5f6add13f2ce39c54f985d38b558510370dee134cb09d845ee",
     "asl/scalar/model/dispatch/decode.asl": "097f310a4df730d28fa1fe5264d016008e7dabdd55a64c190be7d95a2b022f66",
@@ -18001,7 +18009,7 @@
     "docs/scalar/alu/HL.ADDIW.md": "4e65bb5f932c85685ce53e1b54c767fba37b6c2e6d682d8c6d9d4d3f9513ef8f",
     "docs/scalar/alu/HL.ANDI.md": "9d2afa3ad51f11fb5f45b3e81ca85cd9b169547e42e23ca4901b7a33c5ca801b",
     "docs/scalar/alu/HL.ANDIW.md": "ef0f79f1d172c624e5416f86b8b4fc9eaa568eaf7b3c33e55e15cc8b7cf18e41",
-    "docs/scalar/alu/HL.BFI.md": "da6b9097c2636ddeeb433c3d216412ccb9c0f8ab2c4d66f80df4febac2a4e8a2",
+    "docs/scalar/alu/HL.BFI.md": "69d02ab978ebb548e9e2dce004850bdb1f3eb7ea14e5a95f183e545aab76473a",
     "docs/scalar/alu/HL.CCAT.md": "2bc740395393731ee2f0be6567e066092b872fa8018d5400a67f6b8201ad7101",
     "docs/scalar/alu/HL.CCATW.md": "f0b71174ada7367540232c786ec8e52b2853295366f26985fbfff5714f6a85e4",
     "docs/scalar/alu/HL.DIV.md": "3b2e2986edf44517941016c1c91f34d451c5b7c4cfb2ce41e37459f0116e2d1c",
@@ -18210,11 +18218,12 @@
     "docs/scalar/fsu/UCVTF.md": "801b8fe2b415a13403285cb3c458b93e99d7496336de66cd9bd356fced1a4fb1",
     "docs/scalar/model/agu/addressing.md": "915e21e8abe9381fc7950bb8b0e521f86bf1e5837665e03507aa1f0f665f25cb",
     "docs/scalar/model/agu/memory.md": "49ba74af963b146d5edc0fae4778e78db738c54f85c65409635fb14b04ae803f",
-    "docs/scalar/model/alu/semantics.md": "8cb1eabc757c3ff2d1572a665fcafb85e06dd08136f2156f04959cb9140c8a2f",
+    "docs/scalar/model/alu/bitfield.md": "63d97c6b2874372d48dbbecd9f9aec6ff60a7b5d27c65d20e8e04cc3c76a7fca",
+    "docs/scalar/model/alu/semantics.md": "e0147155552210c654445597554ae81d42e8868c71da0e3f27df7859411bfbf8",
     "docs/scalar/model/amo/semantics.md": "10b8d163b0ce595751b228841c17a1d799e02979408b6c8853576d54acd62d54",
     "docs/scalar/model/bru/semantics.md": "b914238beabfd0e0b9090ca7027dc73993ce1c8246504dfb66ea2e8d525a1deb",
     "docs/scalar/model/dispatch/agu.md": "ca098346e92b02ccb6e0feb5e51bdc9983f38cb6ebf23771326247e7b7f17a5d",
-    "docs/scalar/model/dispatch/alu.md": "657ec080cd7b1af7c86989e8280f0cef5abd9b121493286fd83e9b71b7904f19",
+    "docs/scalar/model/dispatch/alu.md": "cb23a3cfd1bb08ba002e0d4b67309004ad330effeb00e3fa568a59452bd64bb7",
     "docs/scalar/model/dispatch/amo.md": "2b4894acc4e69dd07784b99634d76d68ffe7da2542f9d92dd56511038726ac71",
     "docs/scalar/model/dispatch/bru.md": "88ba74d99c48603f9fb46f428a06563ffe300375d0e954a2bed9a3e05014f5ac",
     "docs/scalar/model/dispatch/decode.md": "8445d56c2b4a4dda7314fa4a2510310c452bf515f6748c70efb7cff29c22a17a",
@@ -18435,8 +18444,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "e36a9b7fbb0442eba6c2481a661e02418f6c24f2d0950c8b1904c73634d92576",
-    "spec/evidence/instruction-contract-closure.json": "8ea5c066807ab241cd1fe80b296da3c116fec3026e92c1682b14a2a44e566875",
+    "spec/evidence/adr-index.json": "caa2f3f408047a358f37f386fab720f1ce93f4dee372769915f04fe1ef6f9b7a",
+    "spec/evidence/instruction-contract-closure.json": "1a2cdd0b9fbeda3f3b1032e0ab1534cde9dd8b0c99573e451f0ddb6fc3eeb83a",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -20423,10 +20432,12 @@
     "tests/asl/scalar/alu/HL.ANDIW/scalar-decode-hl-andiw-canonical-001.asl": "dce10d932940bc1310de076674a9812c62a851a660006e27a8709949e32aaa41",
     "tests/asl/scalar/alu/HL.ANDIW/scalar-exec-hl-andiw-result-001.asl": "1ec5e0d3e7cdd88ca53f45f40eec96d528e5a2d75c8b305d66f267aae0cfc486",
     "tests/asl/scalar/alu/HL.ANDIW/scalar-fault-hl-andiw-readiness-001.asl": "d8f90b7eff30951b524a2fa64999134ddd76f14b5da845a765a57e332a657b6d",
-    "tests/asl/scalar/alu/HL.BFI/scalar-bound-hl-bfi-alias-001.asl": "05b8c4cddabdbe70f3ea26c6708723614d649f3d9f1eed3421e2b3ed89cdca85",
+    "tests/asl/scalar/alu/HL.BFI/scalar-bound-hl-bfi-alias-001.asl": "79e2e854a462c61cd9d80ce7f367fdd6a26a913558e55f7ae13d61ab583dae8c",
     "tests/asl/scalar/alu/HL.BFI/scalar-decode-hl-bfi-canonical-001.asl": "fbba9f1e8d38613b6e05b84a34e3dc0f44b7a60ef8fa423266ae1b0561119fa0",
-    "tests/asl/scalar/alu/HL.BFI/scalar-exec-hl-bfi-wrap-001.asl": "c7d8487a53434a07c39824b49a21505e7d310b41699b0737d21840e8ff5f2169",
+    "tests/asl/scalar/alu/HL.BFI/scalar-exec-hl-bfi-packed-word-002.asl": "6374a60caea921c1ecc0a128c216529d1f765ba9c5e2eba9728f5925373faa83",
+    "tests/asl/scalar/alu/HL.BFI/scalar-exec-hl-bfi-wrap-001.asl": "dc2eb7aa2cf6f6935340dcc648fe535679ec6927c25f0bfd3ecae899b0e5f410",
     "tests/asl/scalar/alu/HL.BFI/scalar-fault-hl-bfi-readiness-001.asl": "1f064e3a3f79b82cba0a13effdf79e286c78213ffe42a69c5c7f406198cb9fa5",
+    "tests/asl/scalar/alu/HL.BFI/scalar-fault-hl-bfi-reserved-002.asl": "36f0a1bf54b015579ae7e5231bd0724a62e09e10b491f6b9ef072aa95a91dacf",
     "tests/asl/scalar/alu/HL.CCAT/scalar-bound-hl-ccat-overlap-001.asl": "33e920b4a961be37cb5639e29284e38f5ee0fc28c8b174b2d626a2571e4b50b4",
     "tests/asl/scalar/alu/HL.CCAT/scalar-decode-hl-ccat-canonical-001.asl": "f589ea11b73ec7d1e78c53197c51f39f6fa18f24fb56e15fa16b4c463175b65f",
     "tests/asl/scalar/alu/HL.CCAT/scalar-exec-hl-ccat-shift-001.asl": "016ac2530672ec2dbed6636a58396f49d1a154e2a25598ae76f7de70a4c57961",
@@ -21303,6 +21314,8 @@
     "tests/asl/scalar/model/agu/memory/scalar-exec-memory-effects-001.asl": "e8092a4fcc7267269aa95bbf908894050070343813c2a5260ce52fde46aeaf09",
     "tests/asl/scalar/model/agu/memory/scalar-exec-pair-completion-001.asl": "e998f84da89580079f56d07ee9bda7620c1bfc9bcf3d00317a6974f5fc066196",
     "tests/asl/scalar/model/agu/memory/scalar-static-memory-contract-001.asl": "a344a3eee4c2e9e8b7d94d799def75411bd223f3ed741cf2c90ee1e53d421d26",
+    "tests/asl/scalar/model/alu/bitfield/scalar-exec-byte-field-contract-001.asl": "757fd0a97174c035886360c46a530f1022cf6705fbd6538852dc50fc42cd2515",
+    "tests/asl/scalar/model/alu/bitfield/scalar-static-bitfield-contract-001.asl": "17875cbe1d1c97735329166861da550e7316fc8922ab9c0c59f99c15f70e3eb7",
     "tests/asl/scalar/model/alu/semantics/scalar-bound-alu-matrix-001.asl": "d3fe194b51027d06f800382c4324b7248aa84f5fa336683ca2974c3b9a5baf96",
     "tests/asl/scalar/model/alu/semantics/scalar-bound-bitfield-contract-001.asl": "ac3d7fcae6ee548bb5f952c4d96a00319fd72305ff6bb29703f0124af2d0b71d",
     "tests/asl/scalar/model/alu/semantics/scalar-exec-aliasing-order-001.asl": "9726119c4fc203d1e27fd2b16203fd1e7cd6c267f8dab064ac5966986242d0a6",
@@ -22180,19 +22193,19 @@
     "tests/asl/tile/tile-scalar-and-immediate/logical/TXORS/tile-static-txors-contract-001.asl": "55f54fdd33b573b06e45c7ebc1a013ea26da18689ee5a26fa822ab28e71934d4"
   },
   "summary": {
-    "documentation_page_count": 852,
+    "documentation_page_count": 853,
     "executable_requirement_count": 636,
     "mnemonic_count": 634,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1025,
     "status": "closed",
-    "test_count": 3741,
+    "test_count": 3745,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
     "uncovered_units": [],
-    "unit_count": 852
+    "unit_count": 853
   },
   "tests": [
     {
@@ -43889,6 +43902,16 @@
       "source": "asl/scalar/alu/BXU.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-BYTE-FIELD-CONTRACT-001",
+      "kind": "execution",
+      "path": "tests/asl/scalar/model/alu/bitfield/scalar-exec-byte-field-contract-001.asl",
+      "requirements": [
+        "PTO-HL-BFI-DECISION-BINDING-001"
+      ],
+      "sha256": "757fd0a97174c035886360c46a530f1022cf6705fbd6538852dc50fc42cd2515",
+      "source": "asl/scalar/model/alu/bitfield.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-C-ADD-DECODE-001",
       "kind": "decode-positive",
       "path": "tests/asl/scalar/alu/C.ADD/scalar-decode-c-add-canonical-001.asl",
@@ -45651,7 +45674,7 @@
       "requirements": [
         "PTO-INST-SCALAR-HL-BFI"
       ],
-      "sha256": "05b8c4cddabdbe70f3ea26c6708723614d649f3d9f1eed3421e2b3ed89cdca85",
+      "sha256": "79e2e854a462c61cd9d80ce7f367fdd6a26a913558e55f7ae13d61ab583dae8c",
       "source": "asl/scalar/alu/HL.BFI.asl"
     },
     {
@@ -45665,6 +45688,16 @@
       "source": "asl/scalar/alu/HL.BFI.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-HL-BFI-PACKED-WORD-002",
+      "kind": "execution",
+      "path": "tests/asl/scalar/alu/HL.BFI/scalar-exec-hl-bfi-packed-word-002.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-HL-BFI"
+      ],
+      "sha256": "6374a60caea921c1ecc0a128c216529d1f765ba9c5e2eba9728f5925373faa83",
+      "source": "asl/scalar/alu/HL.BFI.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-HL-BFI-READINESS-001",
       "kind": "fault",
       "path": "tests/asl/scalar/alu/HL.BFI/scalar-fault-hl-bfi-readiness-001.asl",
@@ -45675,13 +45708,23 @@
       "source": "asl/scalar/alu/HL.BFI.asl"
     },
     {
+      "id": "PTO-AVS-SCALAR-HL-BFI-RESERVED-002",
+      "kind": "fault",
+      "path": "tests/asl/scalar/alu/HL.BFI/scalar-fault-hl-bfi-reserved-002.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-HL-BFI"
+      ],
+      "sha256": "36f0a1bf54b015579ae7e5231bd0724a62e09e10b491f6b9ef072aa95a91dacf",
+      "source": "asl/scalar/alu/HL.BFI.asl"
+    },
+    {
       "id": "PTO-AVS-SCALAR-HL-BFI-WRAP-001",
       "kind": "execution",
       "path": "tests/asl/scalar/alu/HL.BFI/scalar-exec-hl-bfi-wrap-001.asl",
       "requirements": [
         "PTO-INST-SCALAR-HL-BFI"
       ],
-      "sha256": "c7d8487a53434a07c39824b49a21505e7d310b41699b0737d21840e8ff5f2169",
+      "sha256": "dc2eb7aa2cf6f6935340dcc648fe535679ec6927c25f0bfd3ecae899b0e5f410",
       "source": "asl/scalar/alu/HL.BFI.asl"
     },
     {
@@ -49409,6 +49452,14 @@
       "requirements": [],
       "sha256": "a344a3eee4c2e9e8b7d94d799def75411bd223f3ed741cf2c90ee1e53d421d26",
       "source": "asl/scalar/model/agu/memory.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-MODEL-ALU-BITFIELD-STATIC-001",
+      "kind": "static-invariant",
+      "path": "tests/asl/scalar/model/alu/bitfield/scalar-static-bitfield-contract-001.asl",
+      "requirements": [],
+      "sha256": "17875cbe1d1c97735329166861da550e7316fc8922ab9c0c59f99c15f70e3eb7",
+      "source": "asl/scalar/model/alu/bitfield.asl"
     },
     {
       "id": "PTO-AVS-SCALAR-MODEL-ALU-SEMANTICS-STATIC-001",
@@ -72970,11 +73021,14 @@
       "readiness_subjects": [
         "ADR-0026",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0115"
       ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-HL-BFI-ALIAS-001",
+        "PTO-AVS-SCALAR-HL-BFI-PACKED-WORD-002",
         "PTO-AVS-SCALAR-HL-BFI-READINESS-001",
+        "PTO-AVS-SCALAR-HL-BFI-RESERVED-002",
         "PTO-AVS-SCALAR-HL-BFI-WRAP-001"
       ],
       "source": "asl/scalar/alu/HL.BFI.asl",
@@ -72982,7 +73036,9 @@
       "tests": [
         "PTO-AVS-SCALAR-HL-BFI-ALIAS-001",
         "PTO-AVS-SCALAR-HL-BFI-DECODE-001",
+        "PTO-AVS-SCALAR-HL-BFI-PACKED-WORD-002",
         "PTO-AVS-SCALAR-HL-BFI-READINESS-001",
+        "PTO-AVS-SCALAR-HL-BFI-RESERVED-002",
         "PTO-AVS-SCALAR-HL-BFI-WRAP-001"
       ]
     },
@@ -79514,12 +79570,36 @@
       "classification": [
         "model",
         "alu",
+        "bitfield"
+      ],
+      "documentation": "docs/scalar/model/alu/bitfield.md",
+      "id": "PTO-SCALAR-MODEL-ALU-BITFIELD",
+      "mnemonic": null,
+      "readiness_subjects": [
+        "ADR-0115"
+      ],
+      "semantic_tests": [
+        "PTO-AVS-SCALAR-BYTE-FIELD-CONTRACT-001"
+      ],
+      "source": "asl/scalar/model/alu/bitfield.asl",
+      "surface": "scalar",
+      "tests": [
+        "PTO-AVS-SCALAR-BYTE-FIELD-CONTRACT-001",
+        "PTO-AVS-SCALAR-MODEL-ALU-BITFIELD-STATIC-001"
+      ]
+    },
+    {
+      "classification": [
+        "model",
+        "alu",
         "semantics"
       ],
       "documentation": "docs/scalar/model/alu/semantics.md",
       "id": "PTO-SCALAR-MODEL-ALU-SEMANTICS",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0115"
+      ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-ALU-CONTROL-ALIAS-EXEC-004",
         "PTO-AVS-SCALAR-ALU-GPR-ALIAS-EXEC-001",
@@ -79613,7 +79693,9 @@
       "documentation": "docs/scalar/model/dispatch/alu.md",
       "id": "PTO-SCALAR-MODEL-DISPATCH-ALU",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0115"
+      ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-ALU-EFFECTS-001",
         "PTO-AVS-SCALAR-ALU-TOTALITY-001"

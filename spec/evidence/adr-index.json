@@ -8658,12 +8658,48 @@
         "0.58.5"
       ],
       "title": "Normalize the AGU SrcRType arithmetic modifier encoding"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-HL-BFI-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-HL-BFI"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-HL-BFI",
+        "PTO-SCALAR-MODEL-ALU-BITFIELD",
+        "PTO-SCALAR-MODEL-ALU-SEMANTICS",
+        "PTO-SCALAR-MODEL-DISPATCH-ALU"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "c0c85094e15ac1507eb36ffe7fe13e60aa7bac32",
+      "created": "2026-09-01",
+      "id": "ADR-0115",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/194",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0115-byte-granular-hl-bfi.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Define HL.BFI as byte-granular insertion"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 108
+    "record_count": 109
   }
 }
