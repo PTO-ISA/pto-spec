@@ -5,6 +5,9 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ## Release 0.58.5
 
+### Architecture
+- [ADR-0111](docs/status/decisions/0111-asl-functional-model-execution-boundary.md): ASL instruction fetch and functional-model boundary
+
 ### Block
 - [ADR-0106](docs/status/decisions/0106-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets
 

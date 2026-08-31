@@ -53,6 +53,7 @@ nav:
           - Atomicity: arch/memory-model/atomicity.md
           - Fault Precision: arch/memory-model/fault-precision.md
           - Global Memory Access: arch/memory-model/global-memory-access.md
+          - Instruction Fetch: arch/memory-model/instruction-fetch.md
           - Memory Events: arch/memory-model/memory-events.md
           - Ordering: arch/memory-model/ordering.md
       - Overview:
@@ -170,7 +171,6 @@ nav:
               - Histogram Schema: block/model/dispatch/histogram-schema.md
               - Matrix Scale: block/model/dispatch/matrix-scale.md
               - Numeric Control: block/model/dispatch/numeric-control.md
-              - Predicate Destination: block/model/dispatch/predicate-destination.md
               - Quantization Schema: block/model/dispatch/quantization-schema.md
               - Reduction Schema: block/model/dispatch/reduction-schema.md
               - Scalar Schema: block/model/dispatch/scalar-schema.md
@@ -180,7 +180,6 @@ nav:
               - Start: block/model/dispatch/start.md
               - Tcvt Destination: block/model/dispatch/tcvt-destination.md
               - Tcvt Schema: block/model/dispatch/tcvt-schema.md
-              - Tgpr2t Schema: block/model/dispatch/tgpr2t-schema.md
               - Tile Execution: block/model/dispatch/tile-execution.md
               - Tile Scalar Schema: block/model/dispatch/tile-scalar-schema.md
               - Tile Schema: block/model/dispatch/tile-schema.md
@@ -777,7 +776,6 @@ nav:
           - Layout:
               - TCONCAT: tile/layout-and-rearrangement/layout/TCONCAT.md
               - TEXTRACT: tile/layout-and-rearrangement/layout/TEXTRACT.md
-              - TGPR2T: tile/layout-and-rearrangement/layout/TGPR2T.md
               - TIMG2COL: tile/layout-and-rearrangement/layout/TIMG2COL.md
               - TINSERT: tile/layout-and-rearrangement/layout/TINSERT.md
               - TMOV: tile/layout-and-rearrangement/layout/TMOV.md
@@ -842,7 +840,6 @@ nav:
               - Matrix Scale: tile/model/execution/matrix-scale.md
               - Minmax: tile/model/execution/minmax.md
               - Postprocess: tile/model/execution/postprocess.md
-              - Predicate Carriers: tile/model/execution/predicate-carriers.md
               - Rearrangement: tile/model/execution/rearrangement.md
               - Reduction: tile/model/execution/reduction.md
               - Sorting: tile/model/execution/sorting.md
@@ -864,7 +861,6 @@ nav:
               - Memory Schema: tile/model/legality/memory-schema.md
               - Operand Schema: tile/model/legality/operand-schema.md
               - PE Mask: tile/model/legality/pe-mask.md
-              - Predicate Carriers: tile/model/legality/predicate-carriers.md
               - Reduction And Expansion: tile/model/legality/reduction-and-expansion.md
               - Sorting: tile/model/legality/sorting.md
           - Memory:
@@ -1050,8 +1046,6 @@ nav:
           - "ADR 0108: PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary": status/decisions/0108-0584-1-to-0585-compatibility.md
           - "ADR 0109: Local single-object cap versus aggregate Local pool": status/decisions/0109-local-single-object-cap.md
           - "ADR 0110: TCVT CUBE_M16 and CUBE_M32 layout closure": status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md
-          - "ADR 0111: ASL functional-model fetch, step, memory, and host boundary": status/decisions/0111-asl-functional-model-execution-boundary.md
-          - "ADR 0112: Tile operation type roles and source reinterpretation": status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md
-          - "ADR 0113: CUBE predicate carriers and TGPR2T superseding contract": status/decisions/0113-cube-predicate-carriers-and-tgpr2t-superseding-contract.md
+          - "ADR 0111: ASL instruction fetch and functional-model boundary": status/decisions/0111-asl-functional-model-execution-boundary.md
       - Open:
           - "Open architecture decisions": status/open/index.md
