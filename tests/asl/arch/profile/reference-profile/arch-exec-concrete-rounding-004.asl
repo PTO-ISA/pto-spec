@@ -106,29 +106,34 @@ begin
 
     let (fp_binary, fp_binary_flags) = ScalarFPBinaryProfile(
         FloatingBinary_ADD, NumericRound_RNE, Zeros{5},
-        Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3);
-    assert fp_binary == Zeros{PTO_XLEN} + 5;
+        Zeros{PTO_XLEN} + 0x4000000000000000,
+        Zeros{PTO_XLEN} + 0x4008000000000000);
+    assert fp_binary == Zeros{PTO_XLEN} + 0x4014000000000000;
     assert fp_binary_flags == Zeros{5};
     let (fp_unary, fp_unary_flags) = ScalarFPUnaryProfile(
-        FloatingUnary_EXP, NumericRound_RNE, Zeros{5}, Zeros{PTO_XLEN} + 4);
-    assert fp_unary == Zeros{PTO_XLEN} + 5;
+        FloatingUnary_EXP, NumericRound_RNE, Zeros{5}, Zeros{PTO_XLEN});
+    assert fp_unary == Zeros{PTO_XLEN} + 0x3ff0000000000000;
     assert fp_unary_flags == Zeros{5};
     let (fp_fused, fp_fused_flags) = ScalarFPFusedProfile(
-        FloatingFused_MADD, NumericRound_RNE, Zeros{5}, Zeros{PTO_XLEN} + 1,
-        Zeros{PTO_XLEN} + 2, Zeros{PTO_XLEN} + 3);
-    assert fp_fused == Zeros{PTO_XLEN} + 7;
+        FloatingFused_MADD, NumericRound_RNE, Zeros{5},
+        Zeros{PTO_XLEN} + 0x3ff0000000000000,
+        Zeros{PTO_XLEN} + 0x4000000000000000,
+        Zeros{PTO_XLEN} + 0x4008000000000000);
+    assert fp_fused == Zeros{PTO_XLEN} + 0x401c000000000000;
     assert fp_fused_flags == Zeros{5};
     let (fp_integer, fp_integer_flags) = ScalarFPToIntegerProfile(
-        NumericRound_RNE, Zeros{5}, Zeros{5}, Zeros{PTO_XLEN} + 9);
+        NumericRound_RNE, Zeros{5}, Zeros{5},
+        Zeros{PTO_XLEN} + 0x4022000000000000);
     assert fp_integer == Zeros{PTO_XLEN} + 9;
     assert fp_integer_flags == Zeros{5};
     let (fp_convert, fp_convert_flags) = ScalarFPConvertProfile(
-        NumericRound_RNE, Zeros{5} + 1, Zeros{5}, Zeros{PTO_XLEN} + 10);
-    assert fp_convert == Zeros{PTO_XLEN} + 10;
+        NumericRound_RNE, Zeros{5} + 1, Zeros{5},
+        Zeros{PTO_XLEN} + 0x4024000000000000);
+    assert fp_convert == Zeros{PTO_XLEN} + 0x41200000;
     assert fp_convert_flags == Zeros{5};
     let (integer_fp, integer_fp_flags) = ScalarIntegerToFPProfile(
         NumericRound_RNE, Zeros{5}, Zeros{5} + 1, Zeros{PTO_XLEN} + 11);
-    assert integer_fp == Zeros{PTO_XLEN} + 11;
+    assert integer_fp == Zeros{PTO_XLEN} + 0x41300000;
     assert integer_fp_flags == Zeros{5};
 
     let tile_square_root = TileSquareRoot(Zeros{PTO_XLEN} + 9);
