@@ -8475,12 +8475,44 @@
         "0.58.5"
       ],
       "title": "Decoded scalar stream enters the active bundle body"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-START"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "92dfece46f768e46260e0da0a8a917024738c300",
+      "created": "2026-09-01",
+      "id": "ADR-0113",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/192",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0113-bstart-preserves-predecessor-transfer.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Following BSTART preserves the predecessor-selected transfer"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 106
+    "record_count": 107
   }
 }

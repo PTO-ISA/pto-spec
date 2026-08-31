@@ -10,6 +10,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Block
 - [ADR-0106](docs/status/decisions/0106-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets
+- [ADR-0113](docs/status/decisions/0113-bstart-preserves-predecessor-transfer.md): Following BSTART preserves the predecessor-selected transfer
 
 ### Cross-cutting
 - [ADR-0105](docs/status/decisions/0105-shared-whole-parent-readiness.md): Shared whole-parent readiness and single-issuer publication

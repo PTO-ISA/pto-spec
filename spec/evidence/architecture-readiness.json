@@ -5329,6 +5329,8 @@
         "PTO-AVS-BLOCK-TTRI-SCHEMA-001",
         "PTO-AVS-BLOCK-XB-DECODE-001",
         "PTO-AVS-BLOCK-XB-RSVD-001",
+        "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
+        "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001",
         "PTO-AVS-TILE-TLOAD-CUBE-001",
         "PTO-AVS-TILE-TLOAD-CUBE-M16-B4-005",
         "PTO-AVS-TILE-TLOAD-CUBE-PAD-004",
@@ -9332,7 +9334,9 @@
         "PTO-AVS-BLOCK-TSTORE-SHAPE-001",
         "PTO-AVS-BLOCK-TSTORE-STRIDE-001",
         "PTO-AVS-BLOCK-TSTORE-UNDEF-001",
-        "PTO-AVS-BLOCK-TTRI-SCHEMA-001"
+        "PTO-AVS-BLOCK-TTRI-SCHEMA-001",
+        "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
+        "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001"
       ],
       "unit_ids": [
         "PTO-BLOCK-B-IOR",
@@ -21285,13 +21289,34 @@
         "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL"
       ],
       "validated_commit": null
+    },
+    {
+      "adr_ids": [
+        "ADR-0113"
+      ],
+      "blockers": [],
+      "ndf_ids": [
+        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001"
+      ],
+      "released_versions": [],
+      "stage": "executable",
+      "subject_id": "ADR-0113",
+      "test_ids": [
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-START-STATIC-001",
+        "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
+        "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001"
+      ],
+      "unit_ids": [
+        "PTO-BLOCK-MODEL-DISPATCH-START"
+      ],
+      "validated_commit": null
     }
   ],
   "schema": "pto.architecture-readiness",
   "sources": {
     "adr_records": {
-      "count": 106,
-      "sha256": "85764624362c994b84f554a3908b30bc6259ec22688f95475e1c88540780c71b"
+      "count": 107,
+      "sha256": "c7ba06eb567728247a4205c22e7438757ed604689cf01cc13927eccb09db9c18"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -21299,8 +21324,8 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "a5843b3903b283eeb1e1b848588f30af9d611f043cdc82cf6a7e4584b91d27ec",
-      "test_count": 3736,
+      "sha256": "a2a3646c6b6352baa16be6e771e7794e63233a504b31c981302444e3e106dffd",
+      "test_count": 3738,
       "unit_count": 852
     }
   },
@@ -21319,13 +21344,13 @@
     "stage_counts": {
       "architecture-defined": 0,
       "draft": 10,
-      "executable": 92,
+      "executable": 93,
       "modeled": 0,
       "released": 0,
       "validated": 0
     },
     "status": "open",
-    "subject_count": 102,
+    "subject_count": 103,
     "validated_count": 0
   }
 }

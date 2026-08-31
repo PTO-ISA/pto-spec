@@ -13509,6 +13509,21 @@
     },
     {
       "executable": false,
+      "id": "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001",
+      "owners": [
+        "asl/block/model/dispatch/start.asl"
+      ],
+      "readiness_subjects": [
+        "ADR-0113"
+      ],
+      "tests": [
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-START-STATIC-001",
+        "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
+        "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001"
+      ]
+    },
+    {
+      "executable": false,
       "id": "PTO-REQ-BUNDLE-STATE-001",
       "owners": [
         "asl/block/model/state/control-state.asl"
@@ -13600,7 +13615,8 @@
         "PTO-AVS-SCALAR-BODY-ENTRY-DECODED-FAULT-001",
         "PTO-AVS-SCALAR-BODY-ENTRY-SETC-LTUI-001",
         "PTO-AVS-SCALAR-BODY-ENTRY-SYS-001",
-        "PTO-AVS-SCALAR-BODY-ENTRY-UNDECODED-001"
+        "PTO-AVS-SCALAR-BODY-ENTRY-UNDECODED-001",
+        "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001"
       ]
     },
     {
@@ -16732,7 +16748,7 @@
     "asl/block/model/dispatch/shared-cube-matrix.asl": "c5ee2d9ad4f3ee8fef2cee6f315ff589a5442fb7eecf0190facfae5db236c2a9",
     "asl/block/model/dispatch/shared-tlsu.asl": "e26cda013f071354913d4d990954588d9983af5bdd6768f806a15503e347ffcf",
     "asl/block/model/dispatch/sorting-schema.asl": "996a280c5cc4425c9d5783e47dcaaceea30b0cbc5a4d5ce4a5d657c03cfdc4ed",
-    "asl/block/model/dispatch/start.asl": "a9cee42a5f6bca111478546b4f3d7b9e8ca2f1abf7729a6902d51431e628c206",
+    "asl/block/model/dispatch/start.asl": "9e962389e579c0383e1cb2f63b904ac86e0ab0288cf31cb0444ad154375b9af9",
     "asl/block/model/dispatch/tcvt-destination.asl": "f235ce4c705079d980a130437813c66d36c7d327ede0cc80535ad5fdf59783d6",
     "asl/block/model/dispatch/tcvt-schema.asl": "401db2aa1407ea304e13acf65f9f0a75f5602042cb71d80024b148296118feef",
     "asl/block/model/dispatch/tile-execution.asl": "86bdc66d3ab8ca2dbf5f3fc3f37a95293ffbb04ae10f42f1304043d5a1278153",
@@ -17584,7 +17600,7 @@
     "docs/block/model/dispatch/shared-cube-matrix.md": "9186733335b7b4401c99627e7a7645547c244c0fcbb0ba62b228180e9874a94d",
     "docs/block/model/dispatch/shared-tlsu.md": "57bf4fe5f7727b449c45b6ba9eb1bcf38036c52eea7011e8786f5d389947366d",
     "docs/block/model/dispatch/sorting-schema.md": "3ecb39ccc7ce566b780cf6d8475d853d4acfb958a40737475990b3fd4f26a46a",
-    "docs/block/model/dispatch/start.md": "bc5468fed7edcae9544f32915ee4e403158d8859dc70c2c36f1a941ead0dc607",
+    "docs/block/model/dispatch/start.md": "1e117eaf3e954b6937d7426979e8072d22b2cd0160c6a8ad34fa558e98ad8504",
     "docs/block/model/dispatch/tcvt-destination.md": "2f00d47f6ef245910eb514f451d2153ecc8928fd15a2299104bb45253cf4e88c",
     "docs/block/model/dispatch/tcvt-schema.md": "42ee5a0ec2dd41eb03774e7f68664448b58c914585a0f34b56c0e700ac0bda79",
     "docs/block/model/dispatch/tile-execution.md": "9e0467d2690b49e7f6f79d8d577ae764a39ebd1bda4835633d6799916b16a7f6",
@@ -18285,7 +18301,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "cda016b55bb3dfd094f753f6292a89d705732549c6733d1cf157989b7b433197",
+    "spec/evidence/adr-index.json": "25325f676c0cc802a1e735beb57b2acfe30aae04bcbb6819b51cf41daae74eab",
     "spec/evidence/instruction-contract-closure.json": "0bdb33460b56f30b54b898a75136515dc6d26621d5eb17f5859acad5668a156f",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -18831,7 +18847,9 @@
     "tests/asl/block/model/dispatch/shared-tlsu/block-static-shared-tlsu-contract-001.asl": "c3a2dd790c901b04c97861fff2f41a07cf5816b66ce5994fc16c1f053bec868c",
     "tests/asl/block/model/dispatch/sorting-schema/block-bound-sorting-schema-001.asl": "74effe307ff4ddaebef4742d268cbe892b66bbbef63e4f2fa200ea01679a21d4",
     "tests/asl/block/model/dispatch/sorting-schema/block-static-sorting-schema-contract-001.asl": "49c43f2076c02d25c950cc81adf3a970dac6c658e86286f50295b34ace7d401a",
-    "tests/asl/block/model/dispatch/start/block-static-start-contract-001.asl": "2f939832047807f449339c5e041f57ef961f66ebb216215475161dc5cf758d32",
+    "tests/asl/block/model/dispatch/start/block-state-bstart-predecessor-sequential-002.asl": "ff0bbc6cd82a50557d1db5bff260e72743892d361063c20140ba7caa3ee0ab28",
+    "tests/asl/block/model/dispatch/start/block-state-bstart-predecessor-taken-001.asl": "d33d93e453bfd8e19a8973b35c9b2e14fc4046ddd6d1a31e740bd0a5ebd10343",
+    "tests/asl/block/model/dispatch/start/block-static-start-contract-001.asl": "0fba69020c3bdaecf853edb2a88a5683ef000bb21319a9f06accb636ed4852a1",
     "tests/asl/block/model/dispatch/tcvt-destination/block-static-tcvt-destination-contract-001.asl": "8f92edffbc780c38d03c3ba4d21574618c010311e31121c977c933d61cd1d08d",
     "tests/asl/block/model/dispatch/tcvt-schema/block-static-tcvt-schema-contract-001.asl": "341a023035dc9c634bcc1a5b51e91d8202aa1f71d777d885442a77b34ad5c35c",
     "tests/asl/block/model/dispatch/tile-execution/block-static-tile-execution-contract-001.asl": "572d72c1f07568e22cd8d745e762bb506244664a59c5139540c2a03488abe99e",
@@ -21207,7 +21225,7 @@
     "tests/asl/scalar/model/dispatch/top-level/scalar-fault-body-entry-decoded-001.asl": "ea19cfbc23d2739a6f9e9922c094d27a2df9b232fa201305e253a73f4076e631",
     "tests/asl/scalar/model/dispatch/top-level/scalar-fault-body-entry-undecoded-001.asl": "f47bcf31b9f3629f449775b9b6b77758588e67f647cffe92c77cc54b17e9be2e",
     "tests/asl/scalar/model/dispatch/top-level/scalar-state-body-entry-sys-001.asl": "209fa62d0bca217b390888d3c73aca62125fbf0f3c59f8ca219f20839d86ca0a",
-    "tests/asl/scalar/model/dispatch/top-level/scalar-static-top-level-contract-001.asl": "4a1d3eeac365fc028d6f166f641440442b183dbde23b2fe91e60969c1a05cec5",
+    "tests/asl/scalar/model/dispatch/top-level/scalar-static-top-level-contract-001.asl": "72d1e0117a2eca3e226d9150eab314387f9bc4a2230e5f3a749fc320dd55b487",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-floating-001.asl": "f69215340e4386705e0c6015f439b8095a354a3dff748f4b79b48f81ce3ed64d",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-exec-fp-dispatch-effects-001.asl": "c524593e05c0f0f763f183dfd80c1e1561563c4d1f9af1d04b19b1c3b99598b5",
     "tests/asl/scalar/model/fsu/arithmetic/scalar-state-fp-flag-lifecycle-001.asl": "e659fa5c811e52d03ca94dcd4bd6c67c7dade677b0bd8829cc11b3b04b013c35",
@@ -22030,9 +22048,9 @@
     "mnemonic_count": 634,
     "mnemonic_semantic_gap_count": 0,
     "mnemonics_without_semantic_tests": [],
-    "requirement_count": 1023,
+    "requirement_count": 1024,
     "status": "closed",
-    "test_count": 3736,
+    "test_count": 3738,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -33648,8 +33666,10 @@
       "id": "PTO-AVS-BLOCK-MODEL-DISPATCH-START-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/block/model/dispatch/start/block-static-start-contract-001.asl",
-      "requirements": [],
-      "sha256": "2f939832047807f449339c5e041f57ef961f66ebb216215475161dc5cf758d32",
+      "requirements": [
+        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001"
+      ],
+      "sha256": "0fba69020c3bdaecf853edb2a88a5683ef000bb21319a9f06accb636ed4852a1",
       "source": "asl/block/model/dispatch/start.asl"
     },
     {
@@ -40356,6 +40376,26 @@
       ],
       "sha256": "261064b3d1d390cc566c8c0fd0fdb185af1de4e2ad69cc4900128d11ee694b9e",
       "source": "asl/scalar/bru/SETRET.asl"
+    },
+    {
+      "id": "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
+      "kind": "state-transition",
+      "path": "tests/asl/block/model/dispatch/start/block-state-bstart-predecessor-sequential-002.asl",
+      "requirements": [
+        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001"
+      ],
+      "sha256": "ff0bbc6cd82a50557d1db5bff260e72743892d361063c20140ba7caa3ee0ab28",
+      "source": "asl/block/model/dispatch/start.asl"
+    },
+    {
+      "id": "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001",
+      "kind": "state-transition",
+      "path": "tests/asl/block/model/dispatch/start/block-state-bstart-predecessor-taken-001.asl",
+      "requirements": [
+        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001"
+      ],
+      "sha256": "d33d93e453bfd8e19a8973b35c9b2e14fc4046ddd6d1a31e740bd0a5ebd10343",
+      "source": "asl/block/model/dispatch/start.asl"
     },
     {
       "id": "PTO-AVS-FSU-FABS-BOUND-001",
@@ -49287,8 +49327,10 @@
       "id": "PTO-AVS-SCALAR-MODEL-DISPATCH-TOP-LEVEL-STATIC-001",
       "kind": "static-invariant",
       "path": "tests/asl/scalar/model/dispatch/top-level/scalar-static-top-level-contract-001.asl",
-      "requirements": [],
-      "sha256": "4a1d3eeac365fc028d6f166f641440442b183dbde23b2fe91e60969c1a05cec5",
+      "requirements": [
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
+      ],
+      "sha256": "72d1e0117a2eca3e226d9150eab314387f9bc4a2230e5f3a749fc320dd55b487",
       "source": "asl/scalar/model/dispatch/top-level.asl"
     },
     {
@@ -63893,13 +63935,19 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-0032",
-        "ADR-0055"
+        "ADR-0055",
+        "ADR-0113"
       ],
-      "semantic_tests": [],
+      "semantic_tests": [
+        "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
+        "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001"
+      ],
       "source": "asl/block/model/dispatch/start.asl",
       "surface": "block",
       "tests": [
-        "PTO-AVS-BLOCK-MODEL-DISPATCH-START-STATIC-001"
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-START-STATIC-001",
+        "PTO-AVS-BSTART-PREDECESSOR-SEQUENTIAL-002",
+        "PTO-AVS-BSTART-PREDECESSOR-TAKEN-001"
       ]
     },
     {

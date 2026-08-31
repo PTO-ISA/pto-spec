@@ -610,7 +610,7 @@
     },
     {
       "path": "asl/block/model/dispatch/start.asl",
-      "sha256": "a9cee42a5f6bca111478546b4f3d7b9e8ca2f1abf7729a6902d51431e628c206"
+      "sha256": "9e962389e579c0383e1cb2f63b904ac86e0ab0288cf31cb0444ad154375b9af9"
     },
     {
       "path": "asl/block/model/dispatch/tcvt-destination.asl",
@@ -3442,7 +3442,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "bbabbad42e8a9eacd4b3dedd1df03d4addf8cf17bb7cc47ad39c3edb2fb8ba69"
+      "sha256": "4761e6a9b21a88a7af3759eb49d05a73a96fd5bb8d681347d75b3b9d0bed816c"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3450,7 +3450,7 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "f0024c8e9a067ee25f66f35cefdc7e9fa11f4d1c275df804a3789f96464769e0"
+      "sha256": "07df6b80de1712c5e1215205e219c047142f353ed37f7f2ea0a918fc9c83c393"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
@@ -3458,7 +3458,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "a5843b3903b283eeb1e1b848588f30af9d611f043cdc82cf6a7e4584b91d27ec"
+      "sha256": "a2a3646c6b6352baa16be6e771e7794e63233a504b31c981302444e3e106dffd"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3504,7 +3504,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "12fbe251bffe700a6d4e487f714f635dcd6a27a7b3aeede55e9c33d63b86b0ab",
+  "content_sha256": "ab463a926452cefb971c796357826273ad7395a09946eb9a8fff18c3630c0531",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4296,7 +4296,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/start.md",
-      "sha256": "bc5468fed7edcae9544f32915ee4e403158d8859dc70c2c36f1a941ead0dc607"
+      "sha256": "1e117eaf3e954b6937d7426979e8072d22b2cd0160c6a8ad34fa558e98ad8504"
     },
     {
       "kind": "generated-documentation",
@@ -11174,6 +11174,10 @@
         "sha256": "1a5e42bf855067af82f91c752e1d4e6db50c24784882fa3ff4a53a9a4538fabd"
       },
       {
+        "id": "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001",
+        "sha256": "78536c020e9867a6d902b6c643bbf628a8d0e0d0cf0560b34a244cdd9c298000"
+      },
+      {
         "id": "PTO-REQ-BUNDLE-STATE-001",
         "sha256": "9d4f21b730fba975c1499b2ac8e1a6c4ff02479e58aee16a20e0f2d08b5382f8"
       },
@@ -12024,7 +12028,8 @@
       "ADR-0109",
       "ADR-0110",
       "ADR-0111",
-      "ADR-0112"
+      "ADR-0112",
+      "ADR-0113"
     ]
   },
   "schema_version": 1,
