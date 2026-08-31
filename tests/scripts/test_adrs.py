@@ -233,7 +233,7 @@ class AdrRecordTest(unittest.TestCase):
                     for row in index["records"]
                     if row.get("release_boundary") is True
                 },
-                {"ADR-0099", "ADR-0102", "ADR-0108", "ADR-0110", "ADR-0112"},
+                {"ADR-0099", "ADR-0102", "ADR-0108", "ADR-0110", "ADR-0112", "ADR-0113"},
             )
             self.assertTrue(
                 all(

@@ -56,6 +56,16 @@ begin
     WriteGPR(5, Zeros{64} + 0x0000000100000001);
 end;
 
+func SeedTGPR2TM16GPRs()
+begin
+    // Put one observable bit in each distinct M16 quarter position: source
+    // GPRs carry bits 0, 16, 32, and 48 respectively.
+    WriteGPR(2, Zeros{64} + 0x0000000000000001);
+    WriteGPR(3, Zeros{64} + 0x0000000000010000);
+    WriteGPR(4, Zeros{64} + 0x0000000100000000);
+    WriteGPR(5, Zeros{64} + 0x0001000000000000);
+end;
+
 func StartTGPR2T(layout: bits(5), pad: bits(2), rmode: bits(3),
                  rows: integer, columns: integer)
 begin
@@ -118,6 +128,7 @@ func TestTGPR2TM16()
 begin
     ResetProfileState();
     StartTGPR2T(Zeros{5}, '01', '001', 16, 8);
+    SeedTGPR2TM16GPRs();
     BindTGPR2T3Plus1();
     let operation = DecodeTileOperation(TileDecode_TEPL,
         Zeros{12} + 0x07e) as integer {0..PTO_TILE_OPERATION_COUNT-1};
@@ -129,8 +140,11 @@ begin
     let tile = _Tiles[[destination]];
     assert tile.layout == TileLayout_CUBE_M16;
     assert tile.valid_rows == 16 && tile.valid_columns == 8;
-    assert ReadTileElement(destination, 0, 2) == Zeros{PTO_XLEN} + 0xff;
-    assert ReadTileElement(destination, 0, 3) == Zeros{PTO_XLEN} + 0xff;
+    // ByteOffset=1 places the two packed M16 halves at columns 2 and 3.
+    // The four distinct quarter bits produce 0x21 in the low half and
+    // 0x84 in the high half; a 32-bit-half mapping cannot produce this.
+    assert ReadTileElement(destination, 0, 2) == Zeros{PTO_XLEN} + 0x21;
+    assert ReadTileElement(destination, 0, 3) == Zeros{PTO_XLEN} + 0x84;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 0xff;
     assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN} + 0xff;
     assert ReadTileElement(destination, 0, 4) == Zeros{PTO_XLEN} + 0xff;

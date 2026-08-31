@@ -558,7 +558,7 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
-      "sha256": "9332d9e0fd152f62ff3457e37bac5da92b9bab17cebc898f729d88fd7ea8be10"
+      "sha256": "da8184012c5581f536320c0cf5b0fd5d61481c950aa5e9414031ca27bf2bc3c3"
     },
     {
       "path": "asl/block/model/dispatch/expansion-schema.asl",
@@ -3074,7 +3074,7 @@
     },
     {
       "path": "asl/tile/model/execution/predicate-carriers.asl",
-      "sha256": "1a20ba2d460434dd1ad34abf079e01e17536f98c1661b6014eb8ca65ee23471f"
+      "sha256": "7d7e480e9fa5299666ed2f6c86f068b58b433ec7eefbbead606ac03d237ba1eb"
     },
     {
       "path": "asl/tile/model/execution/rearrangement.asl",
@@ -3150,7 +3150,7 @@
     },
     {
       "path": "asl/tile/model/legality/operand-schema.asl",
-      "sha256": "a8c20d69c12b690f4657981c1ec8fcf7d5f2dea8a7e60944b29027a455f2bfb7"
+      "sha256": "1a8103f0e55e95894360ffd906d5963ba1c53a53df17340d97281f9f4624fcbd"
     },
     {
       "path": "asl/tile/model/legality/pe-mask.asl",
@@ -3446,7 +3446,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "def593ad28ea51539205d7c7522b1cbe34832ba27a9a1d157ec10aa4fd914887"
+      "sha256": "648b34a030650b192a7ab71dc7a643de68b99ba74d3fa59d3f28cd7a7737c0aa"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3458,11 +3458,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "0e06010b753bf29de041a515f438eae96c69f00d2068fb2478155d4bff2c9c9b"
+      "sha256": "f5d3c7a76de5574c4857e599adb2babfd53572223a050cd3270fb28a88b17200"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "919e357701ec72aa162922cf6e31705d3db3d168e1a2db535d9d140c35767805"
+      "sha256": "47aaa2d8ce7044f08b3eb2cf7ad8a42d0d24ab1a501a603b1806f9eeefe125de"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3508,7 +3508,7 @@
     },
     "tile_operations_total": 108
   },
-  "content_sha256": "1dfd795bb6f5b7559865a67650ae87622b54913fb38f82fe1fdb241729ce6ba1",
+  "content_sha256": "feedb830af90c964752c347002dd82fb85bb1e8ddeec2f941d30bc10eb373c69",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4235,7 +4235,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/destination-shape.md",
-      "sha256": "d54917f55c0b2b799fef9fa413e45c19b64c3b7c4e6ff80d45e376c98b7a8fa9"
+      "sha256": "19f016843e9044f8e8e4f251842b70eb4bfab7732887c8377441817ca3d0b099"
     },
     {
       "kind": "generated-documentation",
@@ -7380,7 +7380,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/execution/predicate-carriers.md",
-      "sha256": "c0a6b812d61586deb2b240566b3f1c2b19f7a3d4721153aa52a73e8638c6c5a0"
+      "sha256": "ce61b4b9dc9c71c08fc70508f49de122acecb769e2dc898e7e3b4b2f2f5f1fa7"
     },
     {
       "kind": "generated-documentation",
@@ -7475,7 +7475,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/operand-schema.md",
-      "sha256": "37331285df01e1e2611503eb17c80176522af5142f08fc145fb1c7041aa6299b"
+      "sha256": "2b709a4a62a7db76bec33a002ba758b69448d5d75e636a5a7ccf5f4a5d3c7690"
     },
     {
       "kind": "generated-documentation",

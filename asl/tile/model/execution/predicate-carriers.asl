@@ -128,10 +128,25 @@ pure func TileTGPR2TPredicateBit(
     gpr0: Word, gpr1: Word, gpr2: Word, gpr3: Word,
     plane: integer {0..15}, row: integer {0..31}) => bit
 begin
+    // M32 packs two 32-bit predicate planes per complete 64-bit GPR.
     assert row < 32;
     let word = plane DIVRM 2;
     let half = plane MOD 2;
     let within = half * 32 + row;
+    if word == 0 then return gpr0[within]; end;
+    if word == 1 then return gpr1[within]; end;
+    if word == 2 then return gpr2[within]; end;
+    return gpr3[within];
+end;
+
+pure func TileTGPR2TPredicateBitM16(
+    gpr0: Word, gpr1: Word, gpr2: Word, gpr3: Word,
+    plane: integer {0..15}, row: integer {0..15}) => bit
+begin
+    // M16 packs four 16-bit predicate planes per complete 64-bit GPR.
+    let word = plane DIVRM 4;
+    let quarter = plane MOD 4;
+    let within = quarter * 16 + row;
     if word == 0 then return gpr0[within]; end;
     if word == 1 then return gpr1[within]; end;
     if word == 2 then return gpr2[within]; end;
@@ -158,7 +173,7 @@ begin
     let plane_base = if high then 8 else 0;
     for bit_index = 0 to 7 looplimit 8 do
         let plane = (plane_base + bit_index) as integer {0..15};
-        result[bit_index] = TileTGPR2TPredicateBit(
+        result[bit_index] = TileTGPR2TPredicateBitM16(
             gpr0, gpr1, gpr2, gpr3, plane, row);
     end;
     return result;
