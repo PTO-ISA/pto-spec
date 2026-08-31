@@ -2,11 +2,11 @@
 {
   "id": "ADR-0115",
   "title": "Define HL.BFI as byte-granular insertion",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["Codex"],
-  "approvers": [],
+  "approvers": ["zhoubot"],
   "created": "2026-09-01",
-  "accepted": null,
+  "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
   "baseline": "c0c85094e15ac1507eb36ffe7fe13e60aa7bac32",
@@ -17,6 +17,7 @@
   ],
   "affected_units": [
     "PTO-SCALAR-HL-BFI",
+    "PTO-SCALAR-MODEL-ALU-BITFIELD",
     "PTO-SCALAR-MODEL-ALU-SEMANTICS",
     "PTO-SCALAR-MODEL-DISPATCH-ALU"
   ],
@@ -77,5 +78,5 @@ program's measured loop began.
 ## Decision state
 
 The architecture owner authorized autonomous detailed analysis and the
-recommended architecture rule on 2026-09-01. This draft binds the exact
-baseline before implementation and focused evidence promote it to accepted.
+recommended architecture rule on 2026-09-01. Focused byte-copy, wrap, full
+replacement, reserved-encoding, and compiler-shaped tests bind the decision.
