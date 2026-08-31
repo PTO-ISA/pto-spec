@@ -7,7 +7,9 @@ import argparse
 import contextlib
 import io
 import json
+import math
 import re
+import struct
 import sys
 from collections import Counter
 from pathlib import Path
@@ -3612,6 +3614,31 @@ def scalar_fp_width(src_type: int) -> int:
     raise ValueError(f"unsupported decoded FSU source type: {src_type}")
 
 
+def scalar_fp_decode_finite_py(value: int, src_type: int) -> float:
+    if src_type == 1:
+        return struct.unpack(">f", struct.pack(">I", value & MASK32))[0]
+    if src_type == 0:
+        return struct.unpack(">d", struct.pack(">Q", value & MASK64))[0]
+    raise ValueError(f"unsupported decoded FSU source type: {src_type}")
+
+
+def scalar_fp_encode_finite_py(value: float, src_type: int) -> int:
+    if src_type == 1:
+        return struct.unpack(">I", struct.pack(">f", value))[0]
+    if src_type == 0:
+        return struct.unpack(">Q", struct.pack(">d", value))[0]
+    raise ValueError(f"unsupported decoded FSU source type: {src_type}")
+
+
+def scalar_fp_reference_exp_py(value: float) -> float:
+    result = 1.0
+    term = 1.0
+    for index in range(1, 19):
+        term = (term * value) / index
+        result += term
+    return result
+
+
 def scalar_fp_is_nan(value: int, src_type: int) -> bool:
     width = scalar_fp_width(src_type)
     fraction_width = 52 if width == 64 else 23
@@ -3728,16 +3755,20 @@ def scalar_fsu_success_inputs(row: dict) -> tuple[int, int, int, int, int]:
     class_id = scalar_fsu_effect_class(row)
     src_type = 1
     dst_type = 1
-    left = 0x1234567880000001
-    right = 0x11111111
-    addend = 0x76543210
+    left = 0x3FC00000
+    right = 0x40100000
+    addend = 0x3F000000
     if class_id == "scalar-fp-absolute":
         left = 0x12345678BF800001
-    elif class_id == "scalar-fp-unary-profile" and row["mnemonic"] == "FRECIP":
-        left = 3
+    elif class_id == "scalar-fp-unary-profile":
+        left = {
+            "FEXP": 0x00000000,
+            "FRECIP": 0x40000000,
+            "FSQRT": 0x40800000,
+        }[row["mnemonic"]]
     elif class_id == "scalar-fp-binary-profile" and row["mnemonic"] == "FDIV":
-        left = 17
-        right = 3
+        left = 0x40C00000
+        right = 0x40000000
     elif class_id == "scalar-fp-minmax":
         left = 0x80000000
         right = 0
@@ -3774,32 +3805,36 @@ def scalar_fsu_expected(
         result = left_fp & ((1 << (scalar_fp_width(src_type) - 1)) - 1)
         return normalize_scalar_fp_result_py(result, source_type), flags
     if class_id == "scalar-fp-unary-profile":
+        finite = scalar_fp_decode_finite_py(left_fp, src_type)
         if mnemonic == "FEXP":
-            result = left_fp + 1
+            result = scalar_fp_reference_exp_py(finite)
+            flags = 0 if finite == 0.0 else 0x10
         elif mnemonic == "FRECIP":
             if scalar_fp_is_zero(left_fp, src_type):
                 return normalize_scalar_fp_result_py(MASK64, source_type), 2
-            result = MASK64 // left_fp
+            result = 1.0 / finite
         elif mnemonic == "FSQRT":
-            result = left_fp
+            result = math.sqrt(finite)
         else:
             raise ValueError(f"unclassified FSU unary operation: {mnemonic}")
-        return normalize_scalar_fp_result_py(result, source_type), flags
+        return scalar_fp_encode_finite_py(result, src_type), flags
     if class_id == "scalar-fp-binary-profile":
         operation = scalar_fsu_operation(row)
+        left_value = scalar_fp_decode_finite_py(left_fp, src_type)
+        right_value = scalar_fp_decode_finite_py(right_fp, src_type)
         if operation == "ADD":
-            result = left_fp + right_fp
+            result = left_value + right_value
         elif operation == "SUB":
-            result = left_fp - right_fp
+            result = left_value - right_value
         elif operation == "MUL":
-            result = left_fp * right_fp
+            result = left_value * right_value
         elif operation == "DIV":
             if scalar_fp_is_zero(right_fp, src_type):
                 return normalize_scalar_fp_result_py(MASK64, source_type), 2
-            result = left_fp // right_fp
+            result = left_value / right_value
         else:
             raise ValueError(f"unclassified FSU binary operation: {mnemonic}")
-        return normalize_scalar_fp_result_py(result, source_type), flags
+        return scalar_fp_encode_finite_py(result, src_type), flags
     if class_id == "scalar-fp-minmax":
         result = scalar_fp_minmax_py(
             scalar_fsu_operation(row), left_fp, right_fp, src_type
@@ -3827,19 +3862,22 @@ def scalar_fsu_expected(
         )
         return result, flags
     if class_id == "scalar-fp-fused-profile":
-        product = (left_fp * right_fp) & MASK64
+        left_value = scalar_fp_decode_finite_py(left_fp, src_type)
+        right_value = scalar_fp_decode_finite_py(right_fp, src_type)
+        addend_value = scalar_fp_decode_finite_py(addend_fp, src_type)
+        product = left_value * right_value
         operation = mnemonic.removeprefix("F")
         if operation == "MADD":
-            result = product + addend_fp
+            result = product + addend_value
         elif operation == "MSUB":
-            result = product - addend_fp
+            result = product - addend_value
         elif operation == "NMADD":
-            result = -((product + addend_fp) & MASK64)
+            result = -(product + addend_value)
         elif operation == "NMSUB":
-            result = -((product - addend_fp) & MASK64)
+            result = -(product - addend_value)
         else:
             raise ValueError(f"unclassified FSU fused operation: {mnemonic}")
-        return normalize_scalar_fp_result_py(result, source_type), flags
+        return scalar_fp_encode_finite_py(result, src_type), flags
     if class_id == "scalar-fp-format-convert":
         return normalize_scalar_fp_result_py(left_fp, dst_type), flags
     if class_id == "scalar-fp-to-integer":
@@ -3859,8 +3897,13 @@ def scalar_fsu_sensitivity_inputs(row: dict) -> tuple[int, int, int, int, int]:
     left, right, addend, src_type, dst_type = scalar_fsu_success_inputs(row)
     if class_id == "scalar-fp-absolute":
         left = 0x3F000003
+    elif class_id == "scalar-fp-unary-profile":
+        left = {
+            "FEXP": 0x3F800000,
+            "FRECIP": 0x40800000,
+            "FSQRT": 0x41100000,
+        }[row["mnemonic"]]
     elif class_id in {
-        "scalar-fp-unary-profile",
         "scalar-fp-format-convert",
         "scalar-fp-to-integer",
         "scalar-integer-to-fp",
@@ -3878,9 +3921,9 @@ def scalar_fsu_sensitivity_inputs(row: dict) -> tuple[int, int, int, int, int]:
         left = 0xBF800000
         right = 0x3F800000
     elif class_id == "scalar-fp-fused-profile":
-        addend = 0x13572468
+        addend = 0x3F800000
     else:
-        right = 5
+        right = 0x3F800000
     return left, right, addend, src_type, dst_type
 
 
