@@ -55,21 +55,27 @@ begin
     end;
 
     let source = BundleTileSourceIndex(0, FALSE);
-    if !TileTCVTSourceContentsDefined(source) ||
-       !TileTCVTSourceEncodingsValid(source) then
+    let source_operation_type = TileDataTypeFromEncoding(
+        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    if _Tiles[[source]].location == TileLocation_Matrix &&
+       _Tiles[[source]].data_type != source_operation_type then
         return FALSE;
     end;
-    let source_type = TileDataTypeFromEncoding(
-        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
-    if _Tiles[[source]].data_type != source_type then return FALSE; end;
+    if !TileTCVTSourceEncodingsValidAs(source, source_operation_type) then
+        return FALSE;
+    end;
     let (destination_type_valid, destination_type) =
         ResolveBundleEffectiveDataType();
     if !destination_type_valid ||
-       !HardwareTCVTTypePairSupported(source_type, destination_type) then
+       !HardwareTCVTTypePairSupported(
+           source_operation_type, destination_type) then
         return FALSE;
     end;
 
     let source_layout = _Tiles[[source]].layout;
+    let requested_valid_columns = UInt(_BundleDimensions[[0]]);
+    let requested_valid_rows = if _BundleDimensionPresent[[1]] then
+        UInt(_BundleDimensions[[1]]) else 1;
     let source_cube_m_layout =
         source_layout == TileLayout_CUBE_M16 ||
         source_layout == TileLayout_CUBE_M32;
@@ -77,9 +83,6 @@ begin
         // CUBE_M16/M32 TCVT keeps the same CUBE layout and valid region.
         // Destination physical geometry is derived later from the selected
         // destination type and the requested TSize.
-        let requested_valid_columns = UInt(_BundleDimensions[[0]]);
-        let requested_valid_rows = if _BundleDimensionPresent[[1]] then
-            UInt(_BundleDimensions[[1]]) else 1;
         return requested_valid_columns == _Tiles[[source]].valid_columns &&
                requested_valid_rows == _Tiles[[source]].valid_rows &&
                !_BundleDimensionPresent[[2]] &&
@@ -90,10 +93,24 @@ begin
                    _Tiles[[source]].capacity_bytes,
                    _Tiles[[source]].valid_rows,
                    _Tiles[[source]].valid_columns,
-                   source_type, source_layout) &&
+                   source_operation_type, source_layout) &&
                TileCubeDataTypeSupported(destination_type);
     end;
     if TileLayoutIsCube(source_layout) then
+        return FALSE;
+    end;
+
+    let requested_columns = if _BundleDimensionPresent[[2]] then
+        UInt(_BundleDimensions[[2]]) else requested_valid_columns;
+    let destination_capacity = BundleLocalDestinationAllocationBytes(0);
+    let destination_rows = DerivedTileRows(
+        destination_capacity,
+        requested_columns as integer {1..65535},
+        destination_type);
+    if requested_valid_columns != _Tiles[[source]].valid_columns ||
+       requested_valid_rows != _Tiles[[source]].valid_rows ||
+       requested_columns != _Tiles[[source]].columns ||
+       destination_rows != _Tiles[[source]].rows then
         return FALSE;
     end;
 

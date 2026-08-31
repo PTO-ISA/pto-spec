@@ -163,8 +163,8 @@ end;
 - TMUL is BSTART.VEC Mode 0 Function 2 and has no standalone opcode.
 - Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.
 - DataType is one of S32, U32, FP32, S16, U16, FP16, or BF16.
-- Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.
 - Only B.DATR PadValueOrByteId is applicable.
+- The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
 
 ## State effects
 

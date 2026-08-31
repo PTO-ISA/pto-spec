@@ -94,7 +94,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| bstart_tmov_32_211446509efb | DataType | 5 | 0–14, 16–20, 24–28, 31 | none | 15, 21–23, 29–30 | concrete source/destination Tile type or DTYPE_NONE source-descriptor inference | Encoded zero selects FP64. |
+| bstart_tmov_32_211446509efb | DataType | 5 | 0–14, 16–20, 24–28, 31 | none | 15, 21–23, 29–30 | concrete transfer carrier interpretation or DTYPE_NONE source-descriptor inference | Encoded zero selects FP64. |
 
 - `bstart_tmov_32_211446509efb.DataType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Field | Architectural role |
 | --- | --- |
-| DataType | concrete source/destination Tile type or DTYPE_NONE source-descriptor inference |
+| DataType | concrete transfer carrier interpretation or DTYPE_NONE source-descriptor inference |
 | B.DATR.Layout | Local or Shared Tile layout selection |
 | B.DIM.LB0/LB1/LB2 | ValidCol, ValidRow, and physical Col |
 | B.IOT | Local source and/or renamed Local destination |
@@ -155,7 +155,7 @@ end;
 
 ## Defaults and encoded zero
 
-- Concrete DataType codes explicitly select the transfer type. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.
+- Concrete DataType codes explicitly select the transfer carrier interpretation. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.
 - Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated, pending, or incomplete Shared source remains waiting and produces no destination effect.
 - PE_MASK=0000 is a strict no-op before source reads, destination allocation, publication checks, faults, or binding consumption.
 
@@ -165,7 +165,7 @@ end;
 - Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer publishes the whole parent.
 - B.SUBVIEW is the source-range modifier and B.ASSEMBLE is the destination-generation modifier. Shared source legality requires hardware-maintained whole-parent readiness and publication.
 - Function 13 GMOV remains accepted and unchanged. Other Shared movement function encodings are reserved and raise Fault_IllegalInstruction.
-- The source and destination descriptors agree on capacity, DataType, Layout, physical Col, and completed valid shape. Local sources persist; Local destinations are renamed and published only after successful preflight.
+- For Local-to-Local TMOV, source and destination descriptors agree on capacity, Layout, physical Col, and completed valid shape. A concrete non-packed DataType may differ from the source backing type only at the same element width, and the destination preserves the source backing DataType.
 
 ## State effects
 

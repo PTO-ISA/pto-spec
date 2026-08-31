@@ -19,6 +19,49 @@ begin
     end;
 end;
 
+// Operation types describe the interpretation and execution carrier for the
+// selected operation.  A stored Tile descriptor may use a different dtype only
+// when the physical element width is unchanged.
+// NDF-BEGIN: PTO-TILE-CARRIER-REINTERPRETATION-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// Cross-type source interpretation MUST require equal element width and MUST
+// exclude packed types. Exact backing/operation type identity MUST remain legal.
+// An active bundle with no resolvable operation type MUST reject rather than
+// substituting the source backing type. A direct semantic call with no active
+// bundle MAY use the source backing type as its explicit interpretation.
+// NDF-END: PTO-TILE-CARRIER-REINTERPRETATION-001
+pure func TileCarrierWidthCompatible(
+    stored_type: TileDataType, operation_type: TileDataType) => boolean
+begin
+    if stored_type == operation_type then return TRUE; end;
+    return !TileDataTypeIsFourBit(stored_type) &&
+           !TileDataTypeIsFourBit(operation_type) &&
+           TileElementBits(stored_type) == TileElementBits(operation_type);
+end;
+
+readonly func ResolveTileCarrierOperationType(
+    source_backing_type: TileDataType) => (boolean, TileDataType)
+begin
+    let (operation_type_valid, operation_type) =
+        ResolveBundleEffectiveDataType();
+    if operation_type_valid then return (TRUE, operation_type); end;
+    if !_BundleOperation.valid &&
+       !_BundleDataAttributes.data_type_present then
+        return (TRUE, source_backing_type);
+    end;
+    return (FALSE, source_backing_type);
+end;
+
+pure func TileOperationUsesSourceBackingDestination(
+    operation: TileOperation) => boolean
+begin
+    return operation == TileOperation_TMOV ||
+           operation == TileOperation_TCONCAT ||
+           operation == TileOperation_TEXTRACT ||
+           operation == TileOperation_TINSERT ||
+           operation == TileOperation_TIMG2COL;
+end;
+
 // Stage 4 carrier-only operations use the concrete dtype's physical byte
 // width.  Packed X2 formats have a one-byte storage class but retain their
 // baseline nibble semantics and are deliberately excluded here.

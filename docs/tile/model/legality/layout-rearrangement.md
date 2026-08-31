@@ -29,11 +29,11 @@ begin
     end;
     let destination_tile = _Tiles[[destination]];
     let source_tile = _Tiles[[source]];
-    if !TileCarrierOnlyDataTypeSupported(source_tile.data_type) &&
-       !TileSourceEncodingsValid(source) then
-        return FALSE;
-    end;
-    return destination_tile.storage_kind == TileStorage_Numeric &&
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(source_tile.data_type);
+    return operation_type_valid &&
+           TileCarrierWidthCompatible(source_tile.data_type, operation_type) &&
+           destination_tile.storage_kind == TileStorage_Numeric &&
            source_tile.storage_kind == TileStorage_Numeric &&
            TileCarrierOrMove24BaselineDataTypeSupported(
                destination_tile.data_type) &&
@@ -61,13 +61,12 @@ begin
     let destination_tile = _Tiles[[destination]];
     let old_tile = _Tiles[[old_destination]];
     let source_tile = _Tiles[[source]];
-    if (!TileCarrierOnlyDataTypeSupported(old_tile.data_type) &&
-        !TileSourceEncodingsValid(old_destination)) ||
-       (!TileCarrierOnlyDataTypeSupported(source_tile.data_type) &&
-        !TileSourceEncodingsValid(source)) then
-        return FALSE;
-    end;
-    return destination_tile.storage_kind == TileStorage_Numeric &&
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(old_tile.data_type);
+    return operation_type_valid &&
+           TileCarrierWidthCompatible(old_tile.data_type, operation_type) &&
+           TileCarrierWidthCompatible(source_tile.data_type, operation_type) &&
+           destination_tile.storage_kind == TileStorage_Numeric &&
            old_tile.storage_kind == TileStorage_Numeric &&
            source_tile.storage_kind == TileStorage_Numeric &&
            TileCarrierOrMove24BaselineDataTypeSupported(
@@ -98,12 +97,12 @@ begin
     let destination_tile = _Tiles[[destination]];
     let left_tile = _Tiles[[source_left]];
     let right_tile = _Tiles[[source_right]];
-    if !TileCarrierOnlyDataTypeSupported(left_tile.data_type) &&
-       (!TileSourceEncodingsValid(source_left) ||
-        !TileSourceEncodingsValid(source_right)) then
-        return FALSE;
-    end;
-    return destination_tile.storage_kind == TileStorage_Numeric &&
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(left_tile.data_type);
+    return operation_type_valid &&
+           TileCarrierWidthCompatible(left_tile.data_type, operation_type) &&
+           TileCarrierWidthCompatible(right_tile.data_type, operation_type) &&
+           destination_tile.storage_kind == TileStorage_Numeric &&
            left_tile.storage_kind == TileStorage_Numeric &&
            right_tile.storage_kind == TileStorage_Numeric &&
            TileCarrierOrMove24BaselineDataTypeSupported(

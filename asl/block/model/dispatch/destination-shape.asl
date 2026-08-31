@@ -277,7 +277,6 @@ func ResolveBundleTileDestinations() => boolean
 begin
     return ResolveBundleTileDestinationsWithShape(FALSE, 0, 0, 0);
 end;
-
 func ResolveBundlePredicateDestination() => boolean
 begin
     var destination_binding: BundleTileBindingIndex = 0;
@@ -294,7 +293,6 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-
     let binding = _BundleTileBindings[[destination_binding]];
     let source = binding.source0;
     let source_tile = _Tiles[[source]];
@@ -314,7 +312,6 @@ begin
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
-
     let hand = UInt(binding.destination_hand);
     var resolved: TileIndex = 0;
     var found = FALSE;
@@ -329,7 +326,6 @@ begin
         SetFault(Fault_TileAllocation, ReadTPC());
         return FALSE;
     end;
-
     ConfigurePredicateTileForMask(
         resolved,
         capacity_bytes,
@@ -339,17 +335,14 @@ begin
         source_tile.valid_columns,
         binding.pe_mask);
     _BundleTileBindings[[destination_binding]].destination = resolved;
-    _BundleTileBindings[[destination_binding]].destination_allocated_by_bundle =
-        TRUE;
+    _BundleTileBindings[[destination_binding]].destination_allocated_by_bundle = TRUE;
     return TRUE;
 end;
-
 func ResolveBundleTileDestinationsForOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
-    // CUBE matrix handlers own the primary CUBE destination shape and
-    // atomic allocation group.  Leave the binding unresolved here so the
-    // selected handler can apply its authoritative M/N/layout/type rules;
+    // CUBE matrix handlers own the primary CUBE destination and allocation.
+    // Leave it unresolved for the authoritative M/N/layout/type handler;
     // the generic RowMajor resolver would mark the destination as already
     // allocated and prevent that conversion.
     if _BundleOperation.valid &&
@@ -364,7 +357,9 @@ begin
         return ResolveBundleCellRearrangementDestination();
     end;
     if TileOperationOfIndex(operation) == TileOperation_TIMG2COL then
-        let resolved = ResolveBundleTileDestinations();
+        let source = BundleTileSourceIndex(0, FALSE);
+        let resolved = ResolveBundleTileDestinationsWithShapeAndType(
+            FALSE, 0, 0, 0, TRUE, _Tiles[[source]].data_type);
         if resolved then
             MarkBundleTIMG2COLDestinationsMatrix();
         end;
@@ -374,12 +369,17 @@ begin
         let (legal, valid_rows, valid_columns, physical_columns,
              data_type) = BundleTCONCATDestinationShape();
         if !legal then
-            SetFault(Fault_TileAllocation, ReadTPC());
-            return FALSE;
+        SetFault(Fault_TileAllocation, ReadTPC());
+        return FALSE;
         end;
         return ResolveBundleTileDestinationsWithShapeAndType(
             TRUE, valid_rows, valid_columns, physical_columns,
             TRUE, data_type);
+    end;
+    if TileOperationUsesSourceBackingDestination(decoded_operation) then
+        let source = BundleTileSourceIndex(0, FALSE);
+        return ResolveBundleTileDestinationsWithShapeAndType(FALSE, 0, 0, 0,
+            TRUE, _Tiles[[source]].data_type);
     end;
     if TileOperationUsesClosedTCVTSchema(operation) then
         let source = BundleTileSourceIndex(0, FALSE);

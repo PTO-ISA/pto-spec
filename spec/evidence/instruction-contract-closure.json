@@ -12749,7 +12749,7 @@
           "BSTART.TMOV DataType"
         ],
         "defaults": [
-          "Concrete DataType codes explicitly select the transfer type. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.",
+          "Concrete DataType codes explicitly select the transfer carrier interpretation. DTYPE_NONE infers the type from the bound source descriptor; failure to resolve a concrete source type rejects before destination effects. Optional B.DATR omission retains NORM layout.",
           "Omitted LB0, LB1, and LB2 inherit ValidCol, ValidRow, and physical Col from an allocated source descriptor. An unallocated, pending, or incomplete Shared source remains waiting and produces no destination effect.",
           "PE_MASK=0000 is a strict no-op before source reads, destination allocation, publication checks, faults, or binding consumption."
         ],
@@ -12791,7 +12791,7 @@
                 30
               ]
             ],
-            "role": "concrete source/destination Tile type or DTYPE_NONE source-descriptor inference",
+            "role": "concrete transfer carrier interpretation or DTYPE_NONE source-descriptor inference",
             "signedness": "encoding-defined",
             "width": 5,
             "zero_meaning": "Encoded zero selects FP64."
@@ -12813,7 +12813,7 @@
           "Function 2 accepts Local-to-Local and canonical Local/Shared or Shared/Local TMOV schemas. A Shared destination with multiple participating PEs requires B.ASSEMBLE; a single-PE no-assemble writer publishes the whole parent.",
           "B.SUBVIEW is the source-range modifier and B.ASSEMBLE is the destination-generation modifier. Shared source legality requires hardware-maintained whole-parent readiness and publication.",
           "Function 13 GMOV remains accepted and unchanged. Other Shared movement function encodings are reserved and raise Fault_IllegalInstruction.",
-          "The source and destination descriptors agree on capacity, DataType, Layout, physical Col, and completed valid shape. Local sources persist; Local destinations are renamed and published only after successful preflight."
+          "For Local-to-Local TMOV, source and destination descriptors agree on capacity, Layout, physical Col, and completed valid shape. A concrete non-packed DataType may differ from the source backing type only at the same element width, and the destination preserves the source backing DataType."
         ],
         "memory_effects": [
           "none"
@@ -12821,7 +12821,7 @@
         "operands": [
           {
             "field": "DataType",
-            "role": "concrete source/destination Tile type or DTYPE_NONE source-descriptor inference"
+            "role": "concrete transfer carrier interpretation or DTYPE_NONE source-descriptor inference"
           },
           {
             "field": "B.DATR.Layout",
@@ -116314,7 +116314,8 @@
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
           "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op."
+          "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -116436,7 +116437,7 @@
           "BSTART.VEC TADD, U64; B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "A missing LB0, malformed Local B.IOT, B.IOR or B.IOS presence, source shape or type mismatch, undefined source element, unsupported DataType, or invalid destination capacity raises Fault_TileLegality before destination effects.",
+          "A missing LB0, malformed Local B.IOT, B.IOR or B.IOS presence, source shape or carrier-width mismatch, undefined source element, unsupported DataType, or invalid destination capacity raises Fault_TileLegality before destination effects.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation."
         ],
         "field_domains": [],
@@ -116444,8 +116445,8 @@
           "TADD is selected only by BSTART.VEC Mode 0 Function 0 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination. B.IOR and B.IOS are not accepted; all participating Tiles use one PE_MASK and zero mask is a strict no-op.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "Both source valid regions are completely defined and source/destination physical shape, valid shape, row-major layout, and DataType match.",
-          "B.DATR applicability allows only PadValueOrByteId as PadValue."
+          "B.DATR applicability allows only PadValueOrByteId as PadValue.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -116727,9 +116728,9 @@
           "TADDS is selected only by the TEPL raw carrier Mode 1 Function 0; canonical execution-engine assembly is BSTART.VEC TADDS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -116863,8 +116864,8 @@
           "TAND is selected by TEPL carrier Mode 0 Function 6 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults."
+          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -116992,7 +116993,7 @@
           "BSTART.VEC TANDS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
-          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
+          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
           "Only the low element width participates; signedness does not change the raw operation and no numeric-status flag is produced.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
         ],
@@ -117147,9 +117148,9 @@
           "TANDS is selected only by the TEPL raw carrier Mode 1 Function 6; canonical execution-engine assembly is BSTART.VEC TANDS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -120391,7 +120392,8 @@
         "legality": [
           "TCONCAT is selected only by its BSTART carrier and selector/function assignment; it has no standalone opcode.",
           "Before effects, TileOperandsLegal_TCONCAT validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.",
-          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}]."
+          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}].",
+          "The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType."
         ],
         "memory_effects": [
           "none"
@@ -120771,13 +120773,13 @@
         "legality": [
           "TCVT is selected only by VEC Mode 0 Function 27 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies one source and one newly allocated destination. B.IOR, B.IOS, a second source, and a second binding are illegal.",
-          "The source type equals the BSTART DataType. The destination type is the concrete B.DATR DataType or the inherited source type.",
           "For ordinary layouts, source and destination have equal Row, Col, ValidRow, and ValidCol. For a CUBE_M16 or CUBE_M32 source, the destination preserves the same CUBE layout and ValidRow/ValidCol, while Row, Col, CELL count, capacity, and packing independently match the destination DataType.",
           "Every assigned Tile DataType is legal. Reserved five-bit DataType codes reject before effects; HiF4X2 is TCVT-only.",
           "Every assigned Layout code has executable indexing. The source descriptor matches the transform source layout and the destination descriptor matches its target layout; CUBE_M16 and CUBE_M32 conversions retain the source layout.",
           "A private CUBE source requires Canonicalize=1 and Layout=NORM. A CUBE_M16 or CUBE_M32 matrix source requires Canonicalize=0 and Layout=NORM; its destination remains a Matrix CUBE representation. An ordinary source requires Canonicalize=0.",
           "The source valid region is fully defined and contains valid encodings. PE_MASK=0000 is a strict no-op before schema, descriptor, allocation, or payload checks.",
-          "Under the named hardware profile, an E8M0 destination accepts exactly FP16, BF16, or FP32 sources. Every other source-to-E8M0 pair rejects before destination allocation."
+          "Under the named hardware profile, an E8M0 destination accepts exactly FP16, BF16, or FP32 sources. Every other source-to-E8M0 pair rejects before destination allocation.",
+          "The BSTART DataType is the source operation interpretation, not necessarily the ordinary source backing DataType. An ordinary non-packed source may differ only by same-width backing type; Matrix/CUBE sources retain exact backing/source-operation type equality. The destination backing type is the resolved B.DATR destination type."
         ],
         "memory_effects": [
           "none"
@@ -121316,8 +121318,8 @@
           "TDIV retains TEPL carrier Mode 0 Function 3 but is canonically classified as SFU.",
           "Exactly one terminating Local B.IOT supplies ordered numerator and denominator sources plus one new Local destination; B.IOR and B.IOS are illegal and PE_MASK zero is a strict no-op.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "Both source valid rectangles are defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and the selected mask.",
-          "Only B.DATR PadValueOrByteId is applicable."
+          "Only B.DATR PadValueOrByteId is applicable.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -121599,9 +121601,9 @@
           "TDIVS is selected only by the TEPL raw carrier Mode 1 Function 3; canonical execution-engine assembly is BSTART.SFU TDIVS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -121758,9 +121760,9 @@
           "TEXP retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, or E5M2.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -122162,7 +122164,8 @@
         "legality": [
           "TEXTRACT is selected only by its BSTART carrier and selector/function assignment; it has no standalone opcode.",
           "Before effects, TileOperandsLegal_TEXTRACT validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.",
-          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}]."
+          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}].",
+          "The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType."
         ],
         "memory_effects": [
           "none"
@@ -123962,7 +123965,7 @@
           "BSTART.SFU TIMG2COL, FP16; B.DIM LB0=KWindow; B.DIM LB1=MWindow; B.IOT Src, mask=PE_MASK, <last>, ->Dst<TSize>; B.IOR PosM, PosK, zero, ->zero; BSTOP"
         ],
         "exceptions": [
-          "An absent or invalid feature-map descriptor, transposed request, unsupported DataType, malformed binding, invalid B.DATR contribution, out-of-range matrix window, undefined referenced source element, invalid numeric encoding, or insufficient destination capacity raises the applicable Tile fault before effects.",
+          "An absent or invalid feature-map descriptor, transposed request, unsupported DataType, malformed binding, invalid B.DATR contribution, out-of-range matrix window, undefined referenced source element or insufficient destination capacity raises the applicable Tile fault before effects.",
           "PE_MASK=0000 is a strict no-op before descriptor or GPR reads, allocation, faults, or payload effects."
         ],
         "field_domains": [
@@ -124205,9 +124208,9 @@
           "TIMG2COL retains TEPL raw Mode 3 Function 4 and canonicalizes to the SFU engine without changing the carrier encoding.",
           "Exactly one terminating Local B.IOT supplies one persistent Matrix-location source and one newly allocated Matrix-location destination; B.IOS is illegal.",
           "The source descriptor layout is NC1HWC0 or NDC1HWC0; every dimension, filter, stride, and dilation is nonzero, padding is nonnegative, logical channels do not exceed C1*C0, and transposed mode is illegal.",
-          "Source and destination use the same one of FP32, FP16, BF16, S32, S16, S8, U32, U16, or U8, row-major layout, and PE_MASK.",
           "B.DATR contributes no field. B.IOR is optional and only RegSrc0 and RegSrc1 may be nonzero.",
-          "The complete destination window at posM,posK fits N*D*outH*outW by C1*filterH*filterW*C0, and every actually referenced in-range source element is defined and validly encoded."
+          "The complete destination window at posM,posK fits N*D*outH*outW by C1*filterH*filterW*C0, and every actually referenced in-range source element is defined.",
+          "The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType."
         ],
         "memory_effects": [
           "none"
@@ -124358,7 +124361,8 @@
         "legality": [
           "TINSERT is selected only by its BSTART carrier and selector/function assignment; it has no standalone opcode.",
           "Before effects, TileOperandsLegal_TINSERT validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.",
-          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}]."
+          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}].",
+          "The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType."
         ],
         "memory_effects": [
           "none"
@@ -124654,9 +124658,9 @@
           "TLOG retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -125764,9 +125768,9 @@
           "TMAX is BSTART.VEC Mode 0 Function 11 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
           "DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
-          "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op."
+          "Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -126050,9 +126054,9 @@
           "TMAXS is selected only by the TEPL raw carrier Mode 1 Function 11; canonical execution-engine assembly is BSTART.VEC TMAXS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -126186,9 +126190,9 @@
           "TMIN is BSTART.VEC Mode 0 Function 12 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
           "DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
-          "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op."
+          "Floating source encodings invalid for the selected operation reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -126472,9 +126476,9 @@
           "TMINS is selected only by the TEPL raw carrier Mode 1 Function 12; canonical execution-engine assembly is BSTART.VEC TMINS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -126592,7 +126596,8 @@
         "legality": [
           "TMOV is selected only by its BSTART carrier and selector/function assignment; it has no standalone opcode.",
           "Before effects, TileOperandsLegal_TMOV validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.",
-          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}]."
+          "B.DATR applicability is exactly [{\"allowed_nonzero_fields\":[\"Layout\"],\"pad_union\":\"must-zero\"}].",
+          "The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType."
         ],
         "memory_effects": [
           "Perform only the global, Local, or Shared data movement named by the mnemonic after complete access, shape, stride, and descriptor validation; a fault produces no partial destination or memory effect."
@@ -127331,8 +127336,8 @@
           "TMUL is BSTART.VEC Mode 0 Function 2 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
           "DataType is one of S32, U32, FP32, S16, U16, FP16, or BF16.",
-          "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
-          "Only B.DATR PadValueOrByteId is applicable."
+          "Only B.DATR PadValueOrByteId is applicable.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -127614,9 +127619,9 @@
           "TMULS is selected only by the TEPL raw carrier Mode 1 Function 2; canonical execution-engine assembly is BSTART.VEC TMULS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -127744,7 +127749,8 @@
           "DataType is one of S32, S16, S8, FP32, FP16, or BF16.",
           "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op."
+          "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -127998,8 +128004,8 @@
           "TOR is selected by TEPL carrier Mode 0 Function 7 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults."
+          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -128127,7 +128133,7 @@
           "BSTART.VEC TORS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
-          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
+          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
           "Only the low element width participates; signedness does not change the raw operation and no numeric-status flag is produced.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
         ],
@@ -128282,9 +128288,9 @@
           "TORS is selected only by the TEPL raw carrier Mode 1 Function 7; canonical execution-engine assembly is BSTART.VEC TORS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -129275,9 +129281,9 @@
           "TRECIP retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -129401,7 +129407,8 @@
           "DataType is one of FP16, BF16, FP32, or S32.",
           "Source and destination match physical shape, valid shape, row-major layout, DataType, and PE_MASK; the source valid region is fully defined.",
           "Only B.DATR PadValueOrByteId is applicable; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op."
+          "Floating source encodings invalid for the selected DataType reject before allocation or destination effects; PE_MASK zero is a strict no-op.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -129531,8 +129538,8 @@
           "TREM retains TEPL carrier Mode 0 Function 4 but is canonically classified as SFU.",
           "Exactly one terminating Local B.IOT supplies ordered dividend and divisor sources plus one new Local destination; B.IOR and B.IOS are illegal and PE_MASK zero is a strict no-op.",
           "DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16.",
-          "Both source valid rectangles are defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and the selected mask.",
-          "Only B.DATR PadValueOrByteId is applicable."
+          "Only B.DATR PadValueOrByteId is applicable.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -129814,9 +129821,9 @@
           "TREMS is selected only by the TEPL raw carrier Mode 1 Function 4; canonical execution-engine assembly is BSTART.SFU TREMS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -132468,9 +132475,9 @@
           "TRSQRT retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -133180,8 +133187,8 @@
           "TSHL is selected by TEPL carrier Mode 0 Function 9 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies ordered value and shift-count sources plus one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults."
+          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -133309,7 +133316,7 @@
           "BSTART.VEC TSHLS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
-          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
+          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
           "For element width W, the count is the scalar low log2(W) bits and the stored result is truncated to W bits.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
         ],
@@ -133464,9 +133471,9 @@
           "TSHLS is selected only by the TEPL raw carrier Mode 1 Function 9; canonical execution-engine assembly is BSTART.VEC TSHLS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -133600,8 +133607,8 @@
           "TSHR is selected by TEPL carrier Mode 0 Function 10 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies ordered value and shift-count sources plus one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults."
+          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -133729,7 +133736,7 @@
           "BSTART.VEC TSHRS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
-          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
+          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
           "For element width W, the count is the scalar low log2(W) bits; signed types use arithmetic shift and unsigned types use logical shift.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
         ],
@@ -133884,9 +133891,9 @@
           "TSHRS is selected only by the TEPL raw carrier Mode 1 Function 10; canonical execution-engine assembly is BSTART.VEC TSHRS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -134805,9 +134812,9 @@
           "TSQRT retains its TEPL raw Mode 0 carrier and executes canonically on the SFU engine.",
           "Exactly one terminating Local B.IOT supplies one persistent source and one newly allocated destination. B.IOR and B.IOS are illegal.",
           "The selected DataType is exactly FP16, FP32, or BF16; every integer, exponent-only, other compact, packed, assigned-but-inapplicable, or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and has a valid encoding.",
           "PadValueOrByteId is the only applicable B.DATR field; nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -135186,8 +135193,8 @@
           "TSUB is BSTART.VEC Mode 0 Function 1 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one new Local destination; B.IOR and B.IOS are illegal.",
           "DataType is one of S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8.",
-          "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
-          "Only B.DATR PadValueOrByteId is applicable."
+          "Only B.DATR PadValueOrByteId is applicable.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -135469,9 +135476,9 @@
           "TSUBS is selected only by the TEPL raw carrier Mode 1 Function 1; canonical execution-engine assembly is BSTART.VEC TSUBS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, BF16, S8, or U8; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -136333,8 +136340,8 @@
           "TXOR is selected by TEPL carrier Mode 0 Function 8 and has no standalone opcode.",
           "Exactly one terminating Local B.IOT supplies two ordered Local sources and one newly allocated Local destination; B.IOR and B.IOS are not accepted.",
           "DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; packed and floating formats reject before effects.",
-          "Sources are fully defined and all three Tiles match physical shape, valid shape, row-major layout, DataType, and PE_MASK.",
-          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults."
+          "PadValueOrByteId is the only applicable B.DATR field; PE_MASK=0000 is a strict no-op before reads, allocation, or faults.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"
@@ -136462,7 +136469,7 @@
           "BSTART.VEC TXORS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
-          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor or encoding failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
+          "A malformed Local binding stream, B.IOS presence, surplus B.IOR field, missing or zero dimension, unsupported DataType, source descriptor, definedness, or carrier-width failure, invalid destination capacity, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
           "Only the low element width participates; signedness does not change the raw operation and no numeric-status flag is produced.",
           "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
         ],
@@ -136617,9 +136624,9 @@
           "TXORS is selected only by the TEPL raw carrier Mode 1 Function 8; canonical execution-engine assembly is BSTART.VEC TXORS, DataType.",
           "Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.",
           "The selected DataType is exactly S64, S32, S16, S8, U64, U32, U16, or U8; every other assigned or reserved DataType rejects before effects.",
-          "Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.",
           "B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects."
+          "Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.",
+          "The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits."
         ],
         "memory_effects": [
           "none"

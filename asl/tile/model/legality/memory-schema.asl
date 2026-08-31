@@ -2,7 +2,15 @@
 readonly func TileOperandsLegal_TMOV(destination: TileIndex,
                                      source: TileIndex) => boolean
 begin
-    return TileShapeAndTypeMatch(destination, source);
+    let (operation_type_valid, operation_type) =
+        ResolveTileCarrierOperationType(_Tiles[[source]].data_type);
+    return operation_type_valid &&
+           TileLogicalShapeMatch(destination, source) &&
+           _Tiles[[destination]].storage_kind ==
+               _Tiles[[source]].storage_kind &&
+           TileCarrierWidthCompatible(
+               _Tiles[[source]].data_type, operation_type) &&
+           _Tiles[[destination]].data_type == _Tiles[[source]].data_type;
 end;
 
 readonly func TileOperandsLegal_TLOAD(destination: TileIndex,

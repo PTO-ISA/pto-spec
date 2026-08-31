@@ -146,6 +146,7 @@ end;
 - TMOV is selected only by its BSTART carrier and selector/function assignment; it has no standalone opcode.
 - Before effects, TileOperandsLegal_TMOV validates the complete assembled bundle, operand roles, dimensions, data attributes, and applicability.
 - B.DATR applicability is exactly [{"allowed_nonzero_fields":["Layout"],"pad_union":"must-zero"}].
+- The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType.
 
 ## State effects
 

@@ -245,9 +245,9 @@ end;
 - TREMS is selected only by the TEPL raw carrier Mode 1 Function 4; canonical execution-engine assembly is BSTART.SFU TREMS, DataType.
 - Exactly one terminating Local B.IOT supplies one persistent Local numeric source and one newly allocated Local destination. B.IOS and additional Tile bindings are illegal.
 - The selected DataType is exactly S32, U32, FP32, S16, U16, FP16, or BF16; every other assigned or reserved DataType rejects before effects.
-- Source and destination match physical shape, valid shape, row-major layout, and DataType. Every valid source element is defined and every constrained floating encoding is valid.
 - B.IOR is optional and, when present, only RegSrc0 may be nonzero. PadValueOrByteId is the only applicable B.DATR field; explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
 - Source and destination use one PE_MASK. PE_MASK=0000 is a strict no-op before GPR reads, descriptor reads, allocation, faults, numeric status, or payload effects.
+- The selected DataType is the operation interpretation and the newly allocated destination backing DataType. Each ordinary source backing DataType may differ only when it is a non-packed type with the same element width; numeric source encodings are validated under the selected DataType, while raw logical and shift operations consume carrier bits.
 
 ## State effects
 

@@ -260,9 +260,9 @@ end;
 - TIMG2COL retains TEPL raw Mode 3 Function 4 and canonicalizes to the SFU engine without changing the carrier encoding.
 - Exactly one terminating Local B.IOT supplies one persistent Matrix-location source and one newly allocated Matrix-location destination; B.IOS is illegal.
 - The source descriptor layout is NC1HWC0 or NDC1HWC0; every dimension, filter, stride, and dilation is nonzero, padding is nonnegative, logical channels do not exceed C1*C0, and transposed mode is illegal.
-- Source and destination use the same one of FP32, FP16, BF16, S32, S16, S8, U32, U16, or U8, row-major layout, and PE_MASK.
 - B.DATR contributes no field. B.IOR is optional and only RegSrc0 and RegSrc1 may be nonzero.
-- The complete destination window at posM,posK fits N*D*outH*outW by C1*filterH*filterW*C0, and every actually referenced in-range source element is defined and validly encoded.
+- The complete destination window at posM,posK fits N*D*outH*outW by C1*filterH*filterW*C0, and every actually referenced in-range source element is defined.
+- The selected DataType is a carrier interpretation. Each non-packed source backing DataType may differ only at the same element width, and the newly allocated destination preserves the source backing DataType; multi-source operations require one common backing DataType.
 
 ## State effects
 
@@ -283,7 +283,7 @@ end;
 
 ## Exceptions
 
-- An absent or invalid feature-map descriptor, transposed request, unsupported DataType, malformed binding, invalid B.DATR contribution, out-of-range matrix window, undefined referenced source element, invalid numeric encoding, or insufficient destination capacity raises the applicable Tile fault before effects.
+- An absent or invalid feature-map descriptor, transposed request, unsupported DataType, malformed binding, invalid B.DATR contribution, out-of-range matrix window, undefined referenced source element or insufficient destination capacity raises the applicable Tile fault before effects.
 - PE_MASK=0000 is a strict no-op before descriptor or GPR reads, allocation, faults, or payload effects.
 
 ## Examples
