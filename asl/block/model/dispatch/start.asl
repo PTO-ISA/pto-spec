@@ -1,4 +1,13 @@
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-START","surface":"block","classification":["model","dispatch","start"],"depends_on":["PTO-BLOCK-MODEL-COMMIT-VALIDATION"]}
+
+// NDF-BEGIN: PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// A following BSTART MUST first commit an active predecessor.  It MUST install
+// the fetched BSTART only when the predecessor-selected TPC equals the fetched
+// instruction PC; otherwise it MUST preserve that selected TPC and MUST NOT
+// install the BSTART from the unselected path.
+// NDF-END: PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001
+
 readonly func CommandDecodedBundleTarget(
     instruction: bits(64),
     form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => Word
@@ -60,9 +69,18 @@ begin
         SetFault(Fault_InstructionPC, target);
         return;
     end;
-    if _BundleActive && !CompleteBundleAtWithAcceptedApplicabilityRules(
-        rules, instruction_pc) then
-        return;
+    // A following BSTART first commits the active predecessor.  The fetched
+    // BSTART is installed only when that commit selects this instruction PC;
+    // otherwise it belongs to an unselected path and must not replace the
+    // predecessor-selected continuation.
+    if _BundleActive then
+        if !CompleteBundleAtWithAcceptedApplicabilityRules(
+            rules, instruction_pc) then
+            return;
+        end;
+        if ReadTPC() != instruction_pc then
+            return;
+        end;
     end;
     ClearBundleHeaderState();
     BeginBundleAt(instruction_pc, kind, transfer, target, fallthrough,

@@ -2,11 +2,11 @@
 {
   "id": "ADR-0113",
   "title": "Following BSTART preserves the predecessor-selected transfer",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["Codex"],
-  "approvers": [],
+  "approvers": ["zhoubot"],
   "created": "2026-09-01",
-  "accepted": null,
+  "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
   "baseline": "92dfece46f768e46260e0da0a8a917024738c300",
@@ -75,6 +75,5 @@ old BARG and prevents installation exactly as before.
 
 ## Decision state
 
-The architecture owner authorized the selected rule on 2026-09-01. This draft
-lands first to bind its baseline; implementation promotes it to accepted with
-focused evidence.
+The architecture owner authorized the selected rule on 2026-09-01. Focused
+tests bind taken and sequential predecessor behavior to the owning ASL rule.
