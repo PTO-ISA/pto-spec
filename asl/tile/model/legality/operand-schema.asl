@@ -203,6 +203,18 @@ readonly func TileOperandsLegal_ExecuteTileCompare(
     destination: TileIndex, source_left: TileIndex, source_right: TileIndex,
     comparison: TileComparison) => boolean
 begin
+    if _Tiles[[source_left]].layout == TileLayout_CUBE_M16 ||
+       _Tiles[[source_left]].layout == TileLayout_CUBE_M32 then
+        return TileShapeAndTypeMatch(source_left, source_right) &&
+               _Tiles[[source_left]].storage_kind == TileStorage_Numeric &&
+               TileCompareDataTypeSupported(_Tiles[[source_left]].data_type) &&
+               TileSourceContentsDefined(source_left) &&
+               TileSourceContentsDefined(source_right) &&
+               TileLogicalShapeMatch(destination, source_left) &&
+               _Tiles[[destination]].storage_kind == TileStorage_PredicateCell &&
+               _Tiles[[destination]].data_type == TileDataType_U8 &&
+               _Tiles[[destination]].layout == _Tiles[[source_left]].layout;
+    end;
     return TileShapeAndTypeMatch(source_left, source_right) &&
            _Tiles[[source_left]].storage_kind == TileStorage_Numeric &&
            _Tiles[[source_left]].layout == TileLayout_RowMajor &&
@@ -221,6 +233,18 @@ begin
     let normalized_scalar = TileRawElementValue(
         scalar,
         _Tiles[[source]].data_type);
+    if _Tiles[[source]].layout == TileLayout_CUBE_M16 ||
+       _Tiles[[source]].layout == TileLayout_CUBE_M32 then
+        return _Tiles[[source]].storage_kind == TileStorage_Numeric &&
+               TileCompareDataTypeSupported(_Tiles[[source]].data_type) &&
+               TileSourceContentsDefined(source) &&
+               TileNumericEncodingValid(
+                   _Tiles[[source]].data_type, normalized_scalar) &&
+               TileLogicalShapeMatch(destination, source) &&
+               _Tiles[[destination]].storage_kind == TileStorage_PredicateCell &&
+               _Tiles[[destination]].data_type == TileDataType_U8 &&
+               _Tiles[[destination]].layout == _Tiles[[source]].layout;
+    end;
     return _Tiles[[source]].storage_kind == TileStorage_Numeric &&
            _Tiles[[source]].layout == TileLayout_RowMajor &&
            TileCompareDataTypeSupported(_Tiles[[source]].data_type) &&
@@ -236,6 +260,19 @@ readonly func TileOperandsLegal_ExecuteTileSelect(
     destination: TileIndex, mask: TileIndex,
     source_true: TileIndex, source_false: TileIndex) => boolean
 begin
+    if _Tiles[[source_true]].layout == TileLayout_CUBE_M16 ||
+       _Tiles[[source_true]].layout == TileLayout_CUBE_M32 then
+        return TileShapeAndTypeMatch(source_true, source_false) &&
+               _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
+               TileSelectDataTypeSupported(_Tiles[[source_true]].data_type) &&
+               TileSourceContentsDefined(source_true) &&
+               TileSourceContentsDefined(source_false) &&
+               TilePredicateCellValuesLegal(mask) &&
+               TileLogicalShapeMatch(mask, source_true) &&
+               TileShapeAndTypeMatch(destination, source_true) &&
+               _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
+               _Tiles[[mask]].layout == _Tiles[[source_true]].layout;
+    end;
     return TileShapeAndTypeMatch(source_true, source_false) &&
            _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
            _Tiles[[source_true]].layout == TileLayout_RowMajor &&
@@ -251,6 +288,17 @@ readonly func TileOperandsLegal_ExecuteTileSelectScalar(
     destination: TileIndex, mask: TileIndex,
     source_true: TileIndex, scalar_false: Word) => boolean
 begin
+    if _Tiles[[source_true]].layout == TileLayout_CUBE_M16 ||
+       _Tiles[[source_true]].layout == TileLayout_CUBE_M32 then
+        return _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
+               TileSelectDataTypeSupported(_Tiles[[source_true]].data_type) &&
+               TileSourceContentsDefined(source_true) &&
+               TilePredicateCellValuesLegal(mask) &&
+               TileLogicalShapeMatch(mask, source_true) &&
+               TileShapeAndTypeMatch(destination, source_true) &&
+               _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
+               _Tiles[[mask]].layout == _Tiles[[source_true]].layout;
+    end;
     return _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
            _Tiles[[source_true]].layout == TileLayout_RowMajor &&
            TileSelectDataTypeSupported(_Tiles[[source_true]].data_type) &&

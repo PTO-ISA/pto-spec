@@ -192,16 +192,28 @@ begin
                     shared_size != 0);
             end;
         when CommandHandler_BindBundleScalarIO =>
+            let decoded_scalar_operation = DecodeTileOperation(BundleTileDecodeFamily(_BundleOperation.operation_class), BundleOperationDecodeCode(_BundleOperation));
+            let selected_tgpr2t = _BundleOperation.valid &&
+                decoded_scalar_operation != PTO_TILE_OPERATION_COUNT &&
+                TileOperationOfIndex(decoded_scalar_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
+                    TileOperation_TGPR2T;
+            var binding_index: integer {0..1} = 0;
+            if selected_tgpr2t && _BundleScalarBindings[[0]].valid then
+                binding_index = 1;
+            end;
             if !_BundleActive || _BundleBodyActive ||
-               _BundleScalarBindings[[0]].valid then
+               _BundleScalarBindings[[binding_index]].valid ||
+               (!selected_tgpr2t && _BundleScalarBindings[[0]].valid) ||
+               (selected_tgpr2t && CommandDecodedReg5(instruction, form, CommandField_RegDst) != 0) then
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            SetBundleScalarBinding(0,
+            SetBundleScalarBinding(binding_index,
                 CommandDecodedReg5(instruction, form, CommandField_RegDst),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc0),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc1),
-                CommandDecodedReg5(instruction, form, CommandField_RegSrc2), 3);
+                CommandDecodedReg5(instruction, form, CommandField_RegSrc2),
+                if selected_tgpr2t && binding_index == 1 then 1 else 3);
         when CommandHandler_BindBundleTileIO =>
             let pe_mode = DecodeCommandOperandRaw(
                 instruction, form, CommandField_PEMode)[2:0];

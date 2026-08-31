@@ -1,9 +1,9 @@
 {
   "schema_version": 3,
   "status": "closed",
-  "accepted_operation_count": 107,
-  "operation_role_case_count": 287,
-  "independent_result_file_count": 287,
+  "accepted_operation_count": 108,
+  "operation_role_case_count": 292,
+  "independent_result_file_count": 292,
   "normal_dispatch": "ExecuteBundleTileOperation",
   "fixture_rule": "Every accepted operation-role record has an independent decoded authoritative-family fixture recipe, exactly its selected Local source B.SUBVIEW or Local destination B.ASSEMBLE INIT_LAST or Shared B.IOS role case, all required roles/attributes, and an exact normal or fault assertion.",
   "effect_class_owner": "asl/block/model/operands/portable-carriers.asl::BundleProducerEffectClassOfHandler",
@@ -37,6 +37,7 @@
     "TGEMV_MX": "atomic-auxiliary",
     "TGEMV_MX_ACC": "atomic-auxiliary",
     "TGEMV_MX_BIAS": "atomic-auxiliary",
+    "TGPR2T": "rollback-safe",
     "THISTOGRAM": "rollback-safe",
     "TIMG2COL": "rollback-safe",
     "TINSERT": "rollback-safe",
@@ -63,12 +64,12 @@
   "effect_class_counts": {
     "atomic-auxiliary": 56,
     "nonrollback-auxiliary": 14,
-    "rollback-safe": 217
+    "rollback-safe": 222
   },
   "outcome_counts": {
     "cell-rearrangement-subview-pre-effect-fault": 8,
     "nonrollback-pre-effect-fault": 1,
-    "normal-success": 255,
+    "normal-success": 260,
     "predicate-role-pre-effect-fault": 2,
     "shared-stage3-fault": 17,
     "shared-stage3-success": 4
@@ -16989,6 +16990,329 @@
       },
       "fixture_role_kinds": {
         "source0": "source"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0288",
+      "operation_index": 107,
+      "operation": "TGPR2T",
+      "family": "TEPL",
+      "semantic_handler": "TGPR2T",
+      "handler_effect_class": "rollback-safe",
+      "fixture_recipe": "cube-parent-local-view",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "source2",
+        "source3",
+        "destination0"
+      ],
+      "decoded_start": "0x27e19181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0",
+          "source1"
+        ],
+        [
+          "source2",
+          "source3",
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x08104e13",
+        "0x1038ce13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": null,
+      "outcome": "normal-success",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; the handler commits and the destination/generation observable is defined",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-288",
+      "row_assertion": "case_0288_normal_commit",
+      "gpr_word": null,
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "source0",
+        "source1": "source1",
+        "source2": "source2",
+        "source3": "source3"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0289",
+      "operation_index": 107,
+      "operation": "TGPR2T",
+      "family": "TEPL",
+      "semantic_handler": "TGPR2T",
+      "handler_effect_class": "rollback-safe",
+      "fixture_recipe": "cube-parent-local-view",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "source2",
+        "source3",
+        "destination0"
+      ],
+      "decoded_start": "0x27e19181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0",
+          "source1"
+        ],
+        [
+          "source2",
+          "source3",
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x08104e13",
+        "0x1038ce13"
+      ],
+      "modifier_word": "0x800000d3",
+      "modifier_words": [
+        "0x800000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": null,
+      "outcome": "normal-success",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; the handler commits and the destination/generation observable is defined",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-289",
+      "row_assertion": "case_0289_normal_commit",
+      "gpr_word": null,
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "source0",
+        "source1": "source1",
+        "source2": "source2",
+        "source3": "source3"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0290",
+      "operation_index": 107,
+      "operation": "TGPR2T",
+      "family": "TEPL",
+      "semantic_handler": "TGPR2T",
+      "handler_effect_class": "rollback-safe",
+      "fixture_recipe": "cube-parent-local-view",
+      "role": "source2",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "source2",
+        "source3",
+        "destination0"
+      ],
+      "decoded_start": "0x27e19181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0",
+          "source1"
+        ],
+        [
+          "source2",
+          "source3",
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x08104e13",
+        "0x1038ce13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": null,
+      "outcome": "normal-success",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; the handler commits and the destination/generation observable is defined",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-290",
+      "row_assertion": "case_0290_normal_commit",
+      "gpr_word": null,
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "source0",
+        "source1": "source1",
+        "source2": "source2",
+        "source3": "source3"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0291",
+      "operation_index": 107,
+      "operation": "TGPR2T",
+      "family": "TEPL",
+      "semantic_handler": "TGPR2T",
+      "handler_effect_class": "rollback-safe",
+      "fixture_recipe": "cube-parent-local-view",
+      "role": "source3",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "source2",
+        "source3",
+        "destination0"
+      ],
+      "decoded_start": "0x27e19181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0",
+          "source1"
+        ],
+        [
+          "source2",
+          "source3",
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x08104e13",
+        "0x1038ce13"
+      ],
+      "modifier_word": "0x800000d3",
+      "modifier_words": [
+        "0x800000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": null,
+      "outcome": "normal-success",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source3; the handler commits and the destination/generation observable is defined",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-291",
+      "row_assertion": "case_0291_normal_commit",
+      "gpr_word": null,
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "source0",
+        "source1": "source1",
+        "source2": "source2",
+        "source3": "source3"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0292",
+      "operation_index": 107,
+      "operation": "TGPR2T",
+      "family": "TEPL",
+      "semantic_handler": "TGPR2T",
+      "handler_effect_class": "rollback-safe",
+      "fixture_recipe": "cube-parent-local-view",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "source2",
+        "source3",
+        "destination0"
+      ],
+      "decoded_start": "0x27e19181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "source0",
+          "source1"
+        ],
+        [
+          "source2",
+          "source3",
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x08104e13",
+        "0x1038ce13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": null,
+      "outcome": "normal-success",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; the handler commits and the destination/generation observable is defined",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-292",
+      "row_assertion": "case_0292_normal_commit",
+      "gpr_word": null,
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "source0",
+        "source1": "source1",
+        "source2": "source2",
+        "source3": "source3"
       },
       "datr_word": null,
       "destination_size_code": 1

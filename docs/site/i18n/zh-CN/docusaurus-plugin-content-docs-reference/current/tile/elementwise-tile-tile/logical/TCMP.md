@@ -118,11 +118,12 @@ end;
 
 ```asm
 BSTART.VEC TCMP, DataType
-B.DATR CMode, PadValue (optional)
+B.DATR CMode, PadValue, SatMode (U8 GPR form only)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
-B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->Predicate<TSize>
+B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->PredicateCell<TSize> OR no destination
+B.IOR predicate-GPR destination (GPR form only)
 BSTOP
 ```
 
@@ -189,6 +190,9 @@ end;
 - The destination uses predicate-kind storage with the same Row, Col, ValidRow, and ValidCol. Logical index i occupies bit i mod 8 of byte floor(i/8), and TSize holds at least ceil(Row*Col/8) bytes.
 - CMode and PadValueOrByteId are the only applicable B.DATR fields. Explicit nondefault Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
 - All participating Tiles use one PE_MASK. PE_MASK=0000 is a strict no-op before schema, descriptor, source, allocation, status, or payload checks.
+- CUBE_M16 and CUBE_M32 sources select exactly one carrier: a descriptor-tagged U8 PredicateCell destination or one B.IOR destination GPR; mixed or implicit conversion is illegal.
+- GPR form uses one 64-bit destination GPR in the existing absolute GPR0..GPR23 namespace and the operation-specific Sat bit selects U8 Low/High; Canonicalize remains zero.
+- CellReg form requires a descriptor-tagged PredicateCell destination with valid bytes exactly 0x00 or 0x01 and uses ordinary CUBE U8 storage.
 
 ## State effects
 
@@ -212,6 +216,9 @@ end;
 - Malformed bindings, B.IOR or B.IOS presence, missing or zero dimensions, reserved CMode, unsupported DataType, mismatched shape, type or layout, undefined source data, invalid floating source encoding, or insufficient packed destination capacity raises Fault_TileLegality or Fault_TileAllocation before architectural effects.
 - A signaling floating NaN produces the relation result defined for NaN and records the selected profile invalid status only with the atomically published destination.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion behavior after an accepted operation.
+- CUBE_M16 and CUBE_M32 sources select exactly one carrier: a descriptor-tagged U8 PredicateCell destination or one B.IOR destination GPR; mixed or implicit conversion is illegal.
+- GPR form uses one 64-bit destination GPR in the existing absolute GPR0..GPR23 namespace and the operation-specific Sat bit selects U8 Low/High; Canonicalize remains zero.
+- CellReg form requires a descriptor-tagged PredicateCell destination with valid bytes exactly 0x00 or 0x01 and uses ordinary CUBE U8 storage.
 
 ## Examples
 

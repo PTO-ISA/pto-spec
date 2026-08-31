@@ -32,7 +32,7 @@ NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0585-hardware-numeric-vectors
 NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.5-ieee-v1"
 NUMERIC_PROFILE_RELEASE = "0.58.5"
 
-FAMILY_COUNTS = {'TEPL': 85, 'TLSU': 10, 'CUBE': 12}
+FAMILY_COUNTS = {'TEPL': 86, 'TLSU': 10, 'CUBE': 12}
 FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 76}
 COMMAND_FAMILY_COUNTS = {'CMD': 71, 'BBD': 5}
 VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
@@ -79,7 +79,7 @@ EXPECTED_TEPL_MAP_TEXT = """
 052:TCOLMIN 053:TCOLPROD 054:TCOLEXPAND 055:TCOLEXPANDADD 056:TCOLEXPANDSUB 057:TCOLEXPANDMUL 058:TCOLEXPANDDIV 059:TCOLEXPANDMAX
 05A:TCOLEXPANDMIN 05B:TCOLEXPANDEXPDIF 05C:TCOLARGMAX 05D:TCOLARGMIN 060:TCONCAT 062:TEXTRACT 063:TINSERT 064:TIMG2COL
 066:TCI 067:TTRI 068:THISTOGRAM 06A:TQUANT 06B:TDEQUANT 06C:TSORT 06D:TMRGSORT
-06F:TGATHER 070:TSCATTER 075:TPERMUTE 076:TSHUF 077:TPACK 078:TUNPACK
+06F:TGATHER 070:TSCATTER 075:TPERMUTE 076:TSHUF 077:TPACK 078:TUNPACK 07E:TGPR2T
 """
 EXPECTED_TEPL_MAP = {
     int(token.split(":", 1)[0], 16): token.split(":", 1)[1]
@@ -294,7 +294,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
             f"tile operation closure must be exactly {FAMILY_COUNTS}, got {actual_counts}"
         )
     if catalog.get("operation_count") != sum(FAMILY_COUNTS.values()):
-        raise SystemExit("tile operation_count must be exactly 107")
+        raise SystemExit("tile operation_count must be exactly 108")
     names = [row.get("name") for row in operations]
     if None in names or len(names) != len(set(names)):
         raise SystemExit("tile operation names must be present and globally unique")

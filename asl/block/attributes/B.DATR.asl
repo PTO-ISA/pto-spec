@@ -5,6 +5,8 @@
 // B.DATR MUST distinguish omission from every encoded zero value, MUST accept
 // exactly the assigned DataType, Layout, CMode, and RMode values, and MUST
 // defer nonzero field applicability to the selected Tile operation schema.
+// TGPR2T owns PadValueOrByteId as numeric U8 Zero/Max whole-tile padding and
+// RMode[16:15] as ByteOffset 0..3; RMode[17] is reserved-zero.
 // NDF-END: PTO-B-DATR-FIELDS-001
 // NDF-BEGIN: PTO-CUBE-CELL-TRANSPORT-001
 // ndf: kind=contract level=L1 layer=block status=accepted
@@ -20,6 +22,10 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+// B.DATR fields retain their operation-selected meanings. For TGPR2T,
+// PadValueOrByteId is numeric U8 Zero/Max whole-tile padding, RMode[16:15]
+// selects ByteOffset 0..3, and RMode[17] is reserved-zero. Null padding is
+// rejected by TGPR2T before allocation or publication.
 // DataType code 31 has the canonical spelling DTYPE_NONE. It is an encoded
 // field sentinel, not a TileDataType. A concrete B.DATR type overrides the
 // BSTART type; DTYPE_NONE preserves a concrete BSTART type and still latches

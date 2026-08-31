@@ -105,14 +105,14 @@ def check_release_linkage() -> str:
         raise SystemExit(
             "release manifest command families must remain exactly CMD=71/BBD=5"
         )
-    if counts.get("tile_operations") != {"TEPL": 85, "TLSU": 10, "CUBE": 12}:
-        raise SystemExit("release manifest tile closure must be exactly 85/10/12")
-    if counts.get("tile_operations_total") != 107:
-        raise SystemExit("release manifest tile operation total must be exactly 107")
+    if counts.get("tile_operations") != {"TEPL": 86, "TLSU": 10, "CUBE": 12}:
+        raise SystemExit("release manifest tile closure must be exactly 86/10/12")
+    if counts.get("tile_operations_total") != 108:
+        raise SystemExit("release manifest tile operation total must be exactly 108")
     if counts.get("pending_base_operations") != 0:
         raise SystemExit("release manifest must have zero pending base operations")
-    if counts.get("contract_status_counts") != {"reviewed-complete": 107}:
-        raise SystemExit("release manifest must close all 107 operation contracts")
+    if counts.get("contract_status_counts") != {"reviewed-complete": 108}:
+        raise SystemExit("release manifest must close all 108 operation contracts")
     return computed_encoding_hash
 
 

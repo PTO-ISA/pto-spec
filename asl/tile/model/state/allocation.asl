@@ -209,3 +209,19 @@ begin
     _Tiles[[index]].cube_cell_count = 0;
     _Tiles[[index]].cube_storage_bytes = 0;
 end;
+
+func ConfigurePredicateCell(
+    index: TileIndex, capacity_bytes: integer {0..262144},
+    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
+    layout: TileLayout) => boolean
+begin
+    if layout != TileLayout_CUBE_M16 && layout != TileLayout_CUBE_M32 then
+        return FALSE;
+    end;
+    if !ConfigureCubeTile(index, capacity_bytes, valid_rows, valid_columns,
+                          TileDataType_U8, layout, TileLocation_Matrix) then
+        return FALSE;
+    end;
+    _Tiles[[index]].storage_kind = TileStorage_PredicateCell;
+    return TRUE;
+end;

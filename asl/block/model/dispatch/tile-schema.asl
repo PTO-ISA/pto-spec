@@ -1,3 +1,7 @@
+// NDF-BEGIN: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// TGPR2T consumes exactly two contiguous source-only B.IOR records (3+1) and one terminating destination B.IOT; missing, non-contiguous, wrong-split, surplus, or destination-bearing forms reject before effects.
+// NDF-END: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","surface":"block","classification":["model","dispatch","tile-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-EXECUTION-UNARY"]}
 func BundleTileInstructionOperands(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1})
@@ -73,6 +77,12 @@ begin
                 source_count = source_count + 1;
             end;
         end;
+    end;
+    if TileOperationOfIndex(operation) == TileOperation_TGPR2T then
+        operands.source0 = _BundleScalarBindings[[0]].source0 as TileIndex;
+        operands.source1 = _BundleScalarBindings[[0]].source1 as TileIndex;
+        operands.source2 = _BundleScalarBindings[[0]].source2 as TileIndex;
+        operands.source3 = _BundleScalarBindings[[1]].source0 as TileIndex;
     end;
     // B.IOR inputs are resolved in one architectural order so that optional
     // fields pack densely into RegSrc0..RegSrc2.  TLOAD/TSTORE retain their
@@ -204,7 +214,6 @@ begin
     operands.numeric_control.saturating = _BundleDataAttributes.saturating;
     return operands;
 end;
-
 func SelectedBundleTileDataAttributesLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -255,6 +264,11 @@ begin
         return FALSE;
     end;
     let decoded_operation = TileOperationOfIndex(operation);
+    if decoded_operation == TileOperation_TGPR2T &&
+       !TileTGPR2TRModeLegal(_BundleDataAttributes.rounding_mode) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if (decoded_operation == TileOperation_TLOAD ||
         decoded_operation == TileOperation_TSTORE) &&
        !TileDataLayoutIsCubeConversion(explicit_layout) &&
@@ -273,7 +287,6 @@ begin
     end;
     return TRUE;
 end;
-
 readonly func SelectedBundleTileMasksLegal() => boolean
 begin
     var first_mask = Zeros{4};
@@ -288,7 +301,6 @@ begin
     end;
     return TRUE;
 end;
-
 readonly func SelectedBundleTileMaskIsZero() => boolean
 begin
     var seen = FALSE;
@@ -303,7 +315,6 @@ begin
     return seen || (_BundleZeroParticipationSeen &&
         BundleTileBindingCount() == 0 && BundleSharedBindingCount() == 0);
 end;
-
 readonly func BundleTileBindingCount() => integer {0..16}
 begin
     var count: integer {0..16} = 0;
@@ -314,7 +325,6 @@ begin
     end;
     return count;
 end;
-
 pure func TileOperationUsesClosedBinarySchema(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -327,7 +337,6 @@ begin
            decoded == TileOperation_TMAX ||
            decoded == TileOperation_TMIN;
 end;
-
 readonly func SelectedBundleClosedBinarySchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -356,7 +365,6 @@ begin
     return TileVecArithmeticDataTypeSupported(data_type) &&
            TileElementwiseLayoutSupported(CurrentBundleTileLayout());
 end;
-
 pure func TileOperationUsesClosedUnarySchema(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -366,7 +374,6 @@ begin
            decoded == TileOperation_TNEG ||
            decoded == TileOperation_TRELU;
 end;
-
 readonly func SelectedBundleClosedUnarySchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -402,13 +409,11 @@ begin
     return TileUnaryDataTypeSupported(unary, data_type) &&
            TileElementwiseLayoutSupported(CurrentBundleTileLayout());
 end;
-
 pure func TileOperationUsesClosedTFMASchema(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     return TileOperationOfIndex(operation) == TileOperation_TFMA;
 end;
-
 readonly func SelectedBundleClosedTFMASchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -418,7 +423,6 @@ begin
        _BundleScalarBindings[[0]].valid then
         return FALSE;
     end;
-
     let multiplicands = _BundleTileBindings[[0]];
     let result = _BundleTileBindings[[1]];
     if multiplicands.destination_valid ||
@@ -447,14 +451,11 @@ begin
             return FALSE;
         end;
     end;
-
     let data_type = TileDataTypeFromEncoding(
         CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
     return TileFusedMultiplyAddDataTypeSupported(data_type) &&
            TileElementwiseLayoutSupported(CurrentBundleTileLayout());
 end;
-
-
 readonly func BundleLocalTileSourceCount() => integer {0..32}
 begin
     var count: integer {0..32} = 0;
@@ -470,7 +471,6 @@ begin
     end;
     return count;
 end;
-
 readonly func BundleLocalTileDestinationCount() => integer {0..16}
 begin
     var count: integer {0..16} = 0;
@@ -482,7 +482,6 @@ begin
     end;
     return count;
 end;
-
 readonly func BundleTileBindingStreamTerminated() => boolean
 begin
     var binding_count: integer {0..16} = 0;

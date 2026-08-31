@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCMP-DATR-001","source":"asl/tile/elementwise-tile-tile/logical/TCMP.asl","requirements":["PTO-TCMP-CONTRACT-001"],"kind":"boundary","summary":"TCMP admits only comparison mode and predicate padding data attributes","pass_condition":"CMode and PadValue pass while saturation, canonicalization, secondary type, rounding, or layout reject","related_sources":["asl/block/attributes/B.DATR.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCMP-DATR-001","source":"asl/tile/elementwise-tile-tile/logical/TCMP.asl","requirements":["PTO-TCMP-CONTRACT-001"],"kind":"boundary","summary":"TCMP admits only comparison mode and predicate padding data attributes","pass_condition":"CMode, PadValue, and the operation-level Sat field pass while canonicalization, secondary type, rounding, or layout reject","related_sources":["asl/block/attributes/B.DATR.asl"]}
 func main() => integer
 begin
     assert TileOperationDATRFieldsLegal(
@@ -11,7 +11,10 @@ begin
         Zeros{3},
         Zeros{5});
     assert TileOperationDATRPadUnion(12) == TileDATRPadUnion_PadValue;
-    assert !TileOperationDATRFieldsLegal(
+    // Sat is an operation-level field for the CUBE U8 GPR carrier; the
+    // complete legacy/CellReg schemas reject it where their carrier does not
+    // define that selector.
+    assert TileOperationDATRFieldsLegal(
         12,
         Zeros{3},
         Zeros{2},

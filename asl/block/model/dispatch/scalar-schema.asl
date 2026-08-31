@@ -96,10 +96,35 @@ end;
 readonly func BundleOperationGPRBindingValuesLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
+    let decoded = TileOperationOfIndex(operation);
+    if decoded == TileOperation_TCMP ||
+       decoded == TileOperation_TCMPS ||
+       decoded == TileOperation_TSEL ||
+       decoded == TileOperation_TSELS then
+        // These operations have operation-specific carrier arity and roles.
+        return TRUE;
+    end;
+    if decoded == TileOperation_TGPR2T then
+        if !_BundleScalarBindings[[0]].valid ||
+           !_BundleScalarBindings[[1]].valid ||
+           _BundleScalarBindings[[0]].destination != 0 ||
+           _BundleScalarBindings[[1]].destination != 0 ||
+           _BundleScalarBindings[[0]].source_count != 3 ||
+           _BundleScalarBindings[[1]].source_count != 1 ||
+           _BundleScalarBindings[[1]].source1 != 0 ||
+           _BundleScalarBindings[[1]].source2 != 0 ||
+           _BundleScalarBindings[[0]].source0 >= PTO_ABSOLUTE_GPR_COUNT ||
+           _BundleScalarBindings[[0]].source1 >= PTO_ABSOLUTE_GPR_COUNT ||
+           _BundleScalarBindings[[0]].source2 >= PTO_ABSOLUTE_GPR_COUNT ||
+           _BundleScalarBindings[[1]].source0 >= PTO_ABSOLUTE_GPR_COUNT then
+            return FALSE;
+        end;
+        return TRUE;
+    end;
+    if _BundleScalarBindings[[1]].valid then return FALSE; end;
     if !_BundleScalarBindings[[0]].valid then return TRUE; end;
     let input_count = BundleOperationGPRInputCount(operation);
     if input_count > 3 then return FALSE; end;
-    let decoded = TileOperationOfIndex(operation);
     if decoded == TileOperation_TQUANT ||
        decoded == TileOperation_TDEQUANT then
         let scale = ReadScalarRegisterOperand(

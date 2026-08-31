@@ -775,6 +775,7 @@ nav:
           - Layout:
               - TCONCAT: tile/layout-and-rearrangement/layout/TCONCAT.md
               - TEXTRACT: tile/layout-and-rearrangement/layout/TEXTRACT.md
+              - TGPR2T: tile/layout-and-rearrangement/layout/TGPR2T.md
               - TIMG2COL: tile/layout-and-rearrangement/layout/TIMG2COL.md
               - TINSERT: tile/layout-and-rearrangement/layout/TINSERT.md
               - TMOV: tile/layout-and-rearrangement/layout/TMOV.md
@@ -839,6 +840,7 @@ nav:
               - Matrix Scale: tile/model/execution/matrix-scale.md
               - Minmax: tile/model/execution/minmax.md
               - Postprocess: tile/model/execution/postprocess.md
+              - Predicate Carriers: tile/model/execution/predicate-carriers.md
               - Rearrangement: tile/model/execution/rearrangement.md
               - Reduction: tile/model/execution/reduction.md
               - Sorting: tile/model/execution/sorting.md
@@ -1047,5 +1049,6 @@ nav:
           - "ADR 0110: TCVT CUBE_M16 and CUBE_M32 layout closure": status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md
           - "ADR 0111: ASL functional-model fetch, step, memory, and host boundary": status/decisions/0111-asl-functional-model-execution-boundary.md
           - "ADR 0112: Tile operation type roles and source reinterpretation": status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md
+          - "ADR 0113: CUBE predicate carriers and TGPR2T superseding contract": status/decisions/0113-cube-predicate-carriers-and-tgpr2t-superseding-contract.md
       - Open:
           - "Open architecture decisions": status/open/index.md

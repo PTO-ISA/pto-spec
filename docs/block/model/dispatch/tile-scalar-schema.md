@@ -100,7 +100,7 @@ begin
            _Tiles[[source]].storage_kind == TileStorage_Numeric &&
            _Tiles[[source]].data_type == data_type &&
            _Tiles[[source]].layout == TileLayout_RowMajor &&
-           TileSourceContentsDefined(source) &&
+           SelectedBundleComparisonSourceContentsDefined(source) &&
            TileSourceEncodingsValid(source) &&
            SelectedBundleComparisonShapeMatches(source);
 end;
@@ -113,7 +113,8 @@ begin
            _Tiles[[source]].storage_kind == TileStorage_Numeric &&
            TileCarrierWidthCompatible(_Tiles[[source]].data_type, data_type) &&
            TileElementwiseLayoutSupported(_Tiles[[source]].layout) &&
-           TileSourceContentsDefined(source) &&
+           SelectedBundleComparisonSourceContentsDefined(source) &&
+           TileSourceEncodingsValid(source) &&
            SelectedBundleComparisonShapeMatches(source);
 end;
 
@@ -177,68 +178,107 @@ readonly func SelectedBundleClosedTCMPSSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     if !TileOperationUsesClosedTCMPSSchema(operation) then return TRUE; end;
-    if BundleTileBindingCount() != 1 ||
-       BundleSharedBindingCount() != 0 ||
-       !SelectedBundleComparisonDimensionsLegal() then
-        return FALSE;
-    end;
-
+    if BundleTileBindingCount() != 1 || BundleSharedBindingCount() != 0 ||
+       !SelectedBundleComparisonDimensionsLegal() then return FALSE; end;
     let binding = _BundleTileBindings[[0]];
-    if !binding.destination_valid ||
-       binding.destination_allocated_by_bundle ||
-       !BundleTileDestinationSizeLegal(0) ||
-       !binding.source0_valid ||
-       binding.source1_valid ||
-       !binding.last ||
-       UInt(_BundleDataAttributes.comparison_mode) > 5 then
-        return FALSE;
-    end;
-
+    if !binding.source0_valid || binding.source1_valid || !binding.last ||
+       UInt(_BundleDataAttributes.comparison_mode) > 5 then return FALSE; end;
+    let source = BundleTileSourceIndex(0, FALSE);
     let data_type = TileDataTypeFromEncoding(
-        CurrentBundleTileOperationDataTypeCode()
-            as TileDataTypeEncoding);
+        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    let scalar_present = _BundleScalarBindings[[0]].valid;
+    let cube = SelectedBundleComparisonCUBE(source);
     if !TileCompareDataTypeSupported(data_type) ||
-       !SelectedBundleTileScalarSourceLegal(
-           binding.source0,
-           data_type) then
-        return FALSE;
+       _Tiles[[source]].storage_kind != TileStorage_Numeric ||
+       _Tiles[[source]].data_type != data_type ||
+       !SelectedBundleComparisonSourceContentsDefined(source) ||
+       (!cube && !TileSourceEncodingsValid(source)) ||
+       !SelectedBundleComparisonShapeMatches(source) then return FALSE; end;
+    if !cube then
+        return binding.destination_valid &&
+               !binding.destination_allocated_by_bundle &&
+               BundleTileDestinationSizeLegal(0) && scalar_present == TRUE;
     end;
-    return TileNumericEncodingValid(
-        data_type,
-        TileRawElementValue(
-            SelectedBundleTileScalarRawValue(),
-            data_type));
+    if binding.destination_valid then
+        return !binding.destination_allocated_by_bundle &&
+               BundleTileDestinationSizeLegal(0) &&
+               _Tiles[[binding.destination]].storage_kind ==
+                   TileStorage_PredicateCell &&
+               _Tiles[[binding.destination]].data_type == TileDataType_U8 &&
+               _Tiles[[binding.destination]].layout == _Tiles[[source]].layout &&
+               !_BundleDataAttributes.saturating &&
+               !_BundleDataAttributes.canonicalize &&
+               scalar_present &&
+               _BundleScalarBindings[[0]].source_count == 1 &&
+               BundleComparisonGPRSelectorLegal(
+                   _BundleScalarBindings[[0]].source0) &&
+               _BundleScalarBindings[[0]].destination == 0 &&
+               !_BundleScalarBindings[[1]].valid;
+    end;
+    // GPR form consumes the scalar compare source and writes one B.IOR dst.
+    return scalar_present &&
+           _BundleScalarBindings[[0]].source_count == 1 &&
+           BundleComparisonGPRSelectorLegal(
+               _BundleScalarBindings[[0]].destination) &&
+           !_BundleDataAttributes.canonicalize &&
+           (data_type == TileDataType_U8 || !_BundleDataAttributes.saturating) &&
+           BundleComparisonGPRSelectorLegal(
+               _BundleScalarBindings[[0]].source0) &&
+           TileOperandsLegal_ExecuteTileCompareCUBEScalarGPR(
+               source, SelectedBundleTileScalarRawValue()) &&
+           !_BundleScalarBindings[[1]].valid;
 end;
 
 readonly func SelectedBundleClosedTSELSSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
     if !TileOperationUsesClosedTSELSSchema(operation) then return TRUE; end;
-    if BundleTileBindingCount() != 1 ||
-       BundleSharedBindingCount() != 0 ||
-       !SelectedBundleComparisonDimensionsLegal() then
+    if BundleSharedBindingCount() != 0 || !SelectedBundleComparisonDimensionsLegal() then
         return FALSE;
     end;
-
-    let binding = _BundleTileBindings[[0]];
-    if !binding.destination_valid ||
-       binding.destination_allocated_by_bundle ||
-       !BundleTileDestinationSizeLegal(0) ||
-       !binding.source0_valid ||
-       !binding.source1_valid ||
-       !binding.last then
-        return FALSE;
-    end;
-
-    let mask = BundleTileSourceIndex(0, FALSE);
-    let source_true = BundleTileSourceIndex(0, TRUE);
     let data_type = TileDataTypeFromEncoding(
-        CurrentBundleTileOperationDataTypeCode()
-            as TileDataTypeEncoding);
-    return TileSelectDataTypeSupported(data_type) &&
-           TilePredicateValuesLegal(mask) &&
-           SelectedBundleTileScalarSourceLegal(source_true, data_type) &&
-           TileLogicalShapeMatch(mask, source_true);
+        CurrentBundleTileOperationDataTypeCode() as TileDataTypeEncoding);
+    if !TileSelectDataTypeSupported(data_type) then return FALSE; end;
+    if BundleTileBindingCount() != 1 then return FALSE; end;
+    let binding = _BundleTileBindings[[0]];
+    if !binding.destination_valid || binding.destination_allocated_by_bundle ||
+       !BundleTileDestinationSizeLegal(0) || !binding.source0_valid ||
+       !binding.last then return FALSE; end;
+    let first = BundleTileSourceIndex(0, FALSE);
+    let cube = SelectedBundleComparisonCUBE(
+        if binding.source1_valid then BundleTileSourceIndex(0, TRUE) else first);
+    if binding.source1_valid then
+        // CellReg mask is the first B.IOT source; B.IOR is only scalar-false.
+        let source_true = BundleTileSourceIndex(0, TRUE);
+        return cube && _BundleScalarBindings[[0]].valid &&
+               _BundleScalarBindings[[0]].destination == 0 &&
+               _BundleScalarBindings[[0]].source_count == 1 &&
+               BundleComparisonGPRSelectorLegal(
+                   _BundleScalarBindings[[0]].source0) &&
+               !_BundleScalarBindings[[1]].valid &&
+               TilePredicateCellValuesLegal(first) &&
+               _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
+               _Tiles[[source_true]].data_type == data_type &&
+               SelectedBundleComparisonSourceContentsDefined(source_true) &&
+               SelectedBundleComparisonShapeAndTypeMatch(binding.destination, source_true);
+    end;
+    // GPR mask is in the predicate-specific B.IOR role; the same B.IOR may
+    // carry the independent scalar-false source in slot one.
+    return cube && _BundleScalarBindings[[0]].valid &&
+           _BundleScalarBindings[[0]].destination == 0 &&
+           (_BundleScalarBindings[[0]].source_count == 1 ||
+            _BundleScalarBindings[[0]].source_count == 2) &&
+           BundleComparisonGPRSelectorLegal(
+               _BundleScalarBindings[[0]].source0) &&
+           (_BundleScalarBindings[[0]].source_count == 1 ||
+            BundleComparisonGPRSelectorLegal(
+                _BundleScalarBindings[[0]].source1)) &&
+           _Tiles[[first]].storage_kind == TileStorage_Numeric &&
+           _Tiles[[first]].data_type == data_type &&
+           SelectedBundleComparisonSourceContentsDefined(first) &&
+           TileSourceEncodingsValid(first) &&
+           SelectedBundleComparisonShapeAndTypeMatch(binding.destination, first) &&
+           !_BundleScalarBindings[[1]].valid;
 end;
 
 readonly func SelectedBundleClosedTEXPANDSSchemaLegal(

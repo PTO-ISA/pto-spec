@@ -762,9 +762,9 @@ def build(snapshot_root: Path) -> dict[str, Any]:
         "scope": {
             "scalar_forms": 466,
             "command_forms": len(load_json(ROOT / "spec/catalog/command-forms.json")["forms"]),
-            "direct_tile_operations": 107,
+            "direct_tile_operations": 108,
             "total_rows": len(rows),
-            "direct_tile_breakdown": {"TEPL": 85, "TLSU": 10, "CUBE": 12},
+            "direct_tile_breakdown": {"TEPL": 86, "TLSU": 10, "CUBE": 12},
         },
         "model_limits": [
             {
@@ -781,11 +781,11 @@ def build(snapshot_root: Path) -> dict[str, Any]:
             },
             {
                 "id": "bundle-bridge-operand-boundary",
-                "disposition": "PTO-v0 bundle commit resolves the complete direct-operation schema from ordered B.IOT/B.IOR bindings, bundle headers, and operation defaults. All 107 direct tile operations are schema-representable; malformed or surplus bindings still reject before tile effects.",
+                "disposition": "PTO-v0 bundle commit resolves the complete direct-operation schema from ordered B.IOT/B.IOR bindings, bundle headers, and operation defaults. All 108 direct tile operations are schema-representable; malformed or surplus bindings still reject before tile effects.",
             },
             {
                 "id": "tepl-selector-boundary",
-                "disposition": "PTO defines 85 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
+                "disposition": "PTO defines 86 TEPL operations. The retained independent selector evidence is classified row by row; TFMA is an explicit PTO-owned extension.",
             },
             {
                 "id": "tlsu-and-cube-manifest-boundary",

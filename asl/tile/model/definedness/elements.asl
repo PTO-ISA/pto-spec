@@ -1,3 +1,7 @@
+// NDF-BEGIN: PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// PredicateCell is distinct U8 CUBE predicate storage: valid values are 0x00/0x01, Null is per-element undefined, and compare flags/status publish atomically. TGPR2T is whole-tile numeric U8 and rejects Null.
+// NDF-END: PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS","surface":"tile","classification":["model","definedness","elements"],"depends_on":["PTO-ARCH-DATA-TYPES-TILE-DATA-TYPES","PTO-TILE-MODEL-STATE-ALLOCATION","PTO-TILE-MODEL-DEFINEDNESS-PACKED-BOUNDARY"]}
 pure func TileFractalInnerElements(
     data_type: TileDataType) => integer {4,8,16,32,64}
@@ -86,7 +90,6 @@ begin
         tile.valid_rows, tile.valid_columns, tile.data_type);
     return TileCubePayloadIndex(tile, row, column);
 end;
-
 readonly func TileLogicalLinearIndex(tile: TileInfo,
                                      row: integer {0..65535},
                                      column: integer {0..65535})
@@ -228,7 +231,6 @@ begin
         otherwise => return Zeros{PTO_XLEN} + 0x8000000000000000;
     end;
 end;
-
 readonly func ReadTileElement(index: TileIndex, row: integer {0..65535},
                      column: integer {0..65535}) => Word
 begin
@@ -237,7 +239,6 @@ begin
     assert TileLogicalElementDefined(tile, element);
     return TileReadLogicalElement(tile, element);
 end;
-
 readonly func TileElementDefined(index: TileIndex,
                                  row: integer {0..65535},
                                  column: integer {0..65535}) => boolean
@@ -246,13 +247,11 @@ begin
     let element = TileLogicalLinearIndex(tile, row, column);
     return TileLogicalElementDefined(tile, element);
 end;
-
 readonly func TilePredicateValuesLegal(index: TileIndex) => boolean
 begin
     return TileSourceContentsDefined(index) &&
            _Tiles[[index]].storage_kind == TileStorage_Predicate;
 end;
-
 readonly func TilePredicateLogicalIndex(
     tile: TileInfo,
     row: integer {0..65535},
@@ -262,19 +261,16 @@ begin
     assert row < tile.rows && column < tile.columns;
     return (row * tile.columns + column) as integer {0..16383};
 end;
-
 pure func TilePredicateByteIndex(
     logical_index: integer {0..16383}) => integer {0..2047}
 begin
     return (logical_index DIVRM 8) as integer {0..2047};
 end;
-
 pure func TilePredicateBitIndex(
     logical_index: integer {0..16383}) => integer {0..7}
 begin
     return (logical_index MOD 8) as integer {0..7};
 end;
-
 readonly func TilePredicateBitFromInfo(
     tile: TileInfo,
     row: integer {0..65535},
@@ -285,7 +281,6 @@ begin
     let bit_index = TilePredicateBitIndex(logical);
     return tile.payload[[byte_index]][bit_index] == '1';
 end;
-
 func TileInfoWithPredicateBit(
     tile: TileInfo,
     row: integer {0..65535},
@@ -306,7 +301,6 @@ begin
         result.valid_rows * result.valid_columns;
     return result;
 end;
-
 func WriteTilePredicateBit(
     index: TileIndex,
     row: integer {0..65535},
@@ -318,7 +312,6 @@ begin
     _Tiles[[index]] = TileInfoWithPredicateBit(
         _Tiles[[index]], row, column, value);
 end;
-
 readonly func TilePredicateBitDefined(
     index: TileIndex,
     row: integer {0..65535},
@@ -327,7 +320,6 @@ begin
     let logical = TilePredicateLogicalIndex(_Tiles[[index]], row, column);
     return _Tiles[[index]].defined_elements[logical] == '1';
 end;
-
 readonly func ReadTilePredicateBit(
     index: TileIndex,
     row: integer {0..65535},
@@ -336,7 +328,6 @@ begin
     assert TilePredicateBitDefined(index, row, column);
     return TilePredicateBitFromInfo(_Tiles[[index]], row, column);
 end;
-
 readonly func ReadTilePredicateByte(
     index: TileIndex,
     byte_index: integer {0..2047}) => bits(8)
@@ -344,7 +335,6 @@ begin
     assert _Tiles[[index]].storage_kind == TileStorage_Predicate;
     return _Tiles[[index]].payload[[byte_index]][7:0];
 end;
-
 func PredicateTileWithPadding(
     tile: TileInfo,
     pad_value: TilePadValue) => TileInfo
@@ -371,20 +361,17 @@ begin
     end;
     return result;
 end;
-
 func ApplyPredicateTilePadding(index: TileIndex, pad_value: TilePadValue)
 begin
     _Tiles[[index]] = PredicateTileWithPadding(
         _Tiles[[index]], pad_value);
 end;
-
 readonly func TileSourceEncodingsValid(index: TileIndex) => boolean
 begin
     if !TileSourceContentsDefined(index) ||
        !TileGenericIndexingPermitted(_Tiles[[index]]) then
         return FALSE;
     end;
-
     let tile = _Tiles[[index]];
     let payload = tile.payload;
     for row = 0 to tile.valid_rows - 1 looplimit 65536 do
@@ -401,7 +388,6 @@ begin
     end;
     return TRUE;
 end;
-
 func WriteTileElement(index: TileIndex, row: integer {0..65535},
                       column: integer {0..65535}, value: Word)
 begin
@@ -422,7 +408,6 @@ begin
         _Tiles[[index]].defined_valid_elements ==
             _Tiles[[index]].valid_rows * _Tiles[[index]].valid_columns;
 end;
-
 func TileWithValidRegionDefined(tile: TileInfo) => TileInfo
 begin
     var result = tile;
@@ -441,12 +426,10 @@ begin
     result.contents_defined = TRUE;
     return result;
 end;
-
 func MarkTileValidRegionDefined(index: TileIndex)
 begin
     _Tiles[[index]] = TileWithValidRegionDefined(_Tiles[[index]]);
 end;
-
 func TileWithPadding(tile: TileInfo, pad_value: TilePadValue) => TileInfo
 begin
     var result = tile;
@@ -465,12 +448,10 @@ begin
     end;
     return result;
 end;
-
 func ApplyTilePadding(index: TileIndex, pad_value: TilePadValue)
 begin
     _Tiles[[index]] = TileWithPadding(_Tiles[[index]], pad_value);
 end;
-
 func MarkTilePhysicalRegionDefined(index: TileIndex)
 begin
     let tile = _Tiles[[index]];

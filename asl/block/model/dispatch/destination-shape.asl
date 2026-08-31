@@ -134,6 +134,7 @@ begin
     end;
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
+    let decoded_operation = DecodeTileOperation(BundleTileDecodeFamily(_BundleOperation.operation_class), BundleOperationDecodeCode(_BundleOperation));
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
     let matrix_output_type = if matrix &&
         UInt(_BundleFixedPointAttributes.pre_quant_mode) == 0 then
@@ -221,6 +222,7 @@ begin
             let valid_columns = if explicit_shape then
                 explicit_valid_columns else BundleDestinationValidColumns(
                     shape_source_valid, shape_source);
+            let destination_layout = if decoded_operation != PTO_TILE_OPERATION_COUNT && TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T then if valid_rows == 32 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16 else CurrentBundleTileLayout();
             let columns = if explicit_shape then explicit_columns else
                 BundleDestinationPhysicalColumns(
                     shape_source_valid, shape_source);
@@ -246,14 +248,17 @@ begin
                 else valid_columns;
             let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
-            ConfigureTileForMask(resolved[[binding]],
-                capacity_bytes, valid_rows, auxiliary_columns, valid_rows,
-                auxiliary_valid_columns, destination_type,
-                CurrentBundleTileLayout(), TileLocation_Any,
-                _BundleTileBindings[[binding]].pe_mask);
+            let tgpr2t = decoded_operation != PTO_TILE_OPERATION_COUNT && TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T;
+            if !ConfigureBundleTileDestination(resolved[[binding]],
+                    capacity_bytes, valid_rows, auxiliary_columns,
+                    auxiliary_valid_columns, destination_type,
+                    destination_layout, _BundleTileBindings[[binding]].pe_mask,
+                    tgpr2t) then
+                SetFault(Fault_TileAllocation, ReadTPC());
+                return FALSE;
+            end;
             _BundleTileBindings[[binding]].destination = resolved[[binding]];
-            _BundleTileBindings[[binding]].destination_allocated_by_bundle =
-                TRUE;
+            _BundleTileBindings[[binding]].destination_allocated_by_bundle = TRUE;
             destination_ordinal = destination_ordinal + 1;
         end;
     end;

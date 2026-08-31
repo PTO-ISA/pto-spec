@@ -25,7 +25,7 @@ class TileInstructionContractsTest(unittest.TestCase):
             unit for unit in units if unit.surface == "tile" and unit.mnemonic is not None
         ]
 
-        self.assertEqual(len(tile_units), 107)
+        self.assertEqual(len(tile_units), 108)
         self.assertEqual(
             Counter(unit.classification[0] for unit in tile_units),
             Counter(
@@ -36,7 +36,7 @@ class TileInstructionContractsTest(unittest.TestCase):
                     "irregular-and-complex": 9,
                     "matrix-and-matrix-vector": 12,
                     "memory-and-data-movement": 9,
-                    "layout-and-rearrangement": 9,
+                    "layout-and-rearrangement": 10,
                 }
             ),
         )

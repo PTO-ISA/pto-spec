@@ -95,6 +95,7 @@ TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS = {
     "TPACK",
     "TUNPACK",
     "TGATHER",
+    "TGPR2T",
     "THISTOGRAM",
     "TIMG2COL",
     "TGEMV",
@@ -11840,7 +11841,11 @@ def _emit_monolithic() -> None:
         ("pad_value_or_byte_id != Zeros{2}", "PadValueOrByteId"),
         ("saturating", "Sat"),
         ("canonicalize", "Canonicalize"),
-        ("data_type != Zeros{5}", "DataType"),
+        # DTYPE_NONE (11111) is the explicit inheritance sentinel.  It is
+        # latched by B.DATR but is not a concrete operation-specific DataType
+        # override, so applicability must treat it like the omitted/zero
+        # value here.
+        ("data_type != Zeros{5} && data_type != '11111'", "DataType"),
         ("rounding_mode != Zeros{3}", "RMode"),
         ("data_layout != Zeros{5}", "Layout"),
     )

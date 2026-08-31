@@ -84,7 +84,8 @@ type TileExecutionStatus of enumeration {
 
 type TileStorageKind of enumeration {
     TileStorage_Numeric,
-    TileStorage_Predicate
+    TileStorage_Predicate,
+    TileStorage_PredicateCell
 };
 
 // Uniform decoded operand carrier for direct tile instructions. Catalog

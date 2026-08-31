@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: tile-scalar-and-immediate/logical
-    // block: BSTART.VEC TCMPS, DataType | B.DATR CMode, PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, mask=PE_MASK, <last>, ->Predicate<TSize> | B.IOR ScalarGPR, zero, zero, ->zero (optional) | BSTOP
+    // block: BSTART.VEC TCMPS, DataType | B.DATR CMode, PadValue, SatMode (U8 GPR form only) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcTile, mask=PE_MASK, <last>, ->PredicateCell<TSize> OR no destination | B.IOR scalar-compare source and optional predicate-GPR destination | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000000101101') == 37;
     assert TileOperationOfIndex(37) == TileOperation_TCMPS;
     assert TileHandlerOfIndex(37) == TileHandler_ExecuteTileCompareScalar;

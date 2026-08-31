@@ -123,8 +123,9 @@ B.DATR PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
-B.IOT Predicate, SrcTrue, mask=PE_MASK
-B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>
+B.IOT PredicateCell, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize> OR GPR predicate form without PredicateCell
+B.IOT SrcFalse, <last>, ->DstTile<TSize> (CellReg form only)
+B.IOR predicate-GPR source (GPR form only)
 BSTOP
 ```
 
@@ -191,6 +192,7 @@ end;
 - Predicate uses predicate-kind storage, has the same Row, Col, ValidRow, and ValidCol as the data Tiles, and defines every valid predicate bit. An ordinary numeric Tile is not a legal mask.
 - PadValueOrByteId is the only applicable B.DATR field. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
 - Both B.IOT bindings use one PE_MASK. PE_MASK=0000 is a strict no-op before schema, source, allocation, or payload checks.
+- CUBE_M16 and CUBE_M32 accept exactly one explicit predicate carrier: GPR mask through the predicate-specific B.IOR role or first B.IOT source as PredicateCell. Mixed, ordinary numeric U8, and implicit-conversion forms reject.
 
 ## State effects
 
@@ -214,6 +216,7 @@ end;
 - Malformed binding order, B.IOR or B.IOS presence, missing or zero dimensions, ordinary numeric mask storage, undefined predicate or data elements, unsupported DataType, shape, type or layout mismatch, unequal masks, or insufficient destination capacity raises Fault_TileLegality or Fault_TileAllocation before architectural effects.
 - TSEL performs no conversion and therefore raises no floating invalid condition solely because a selected source encoding represents NaN.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion behavior after an accepted operation.
+- CUBE_M16 and CUBE_M32 accept exactly one explicit predicate carrier: GPR mask through the predicate-specific B.IOR role or first B.IOT source as PredicateCell. Mixed, ordinary numeric U8, and implicit-conversion forms reject.
 
 ## Examples
 

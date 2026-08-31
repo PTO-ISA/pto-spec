@@ -572,7 +572,7 @@ class MnemonicExplanationTests(unittest.TestCase):
             baseline = GENERATE.current_units(path)
             self.assertEqual(len(baseline), traceability["summary"]["mnemonic_count"])
             targets = GENERATE.target_units(path)
-            self.assertEqual(len(targets), 706)
+            self.assertEqual(len(targets), 707)
             self.assertEqual(sum(unit["surface"] == "arch" for unit in targets), 72)
             retired = baseline[0]["id"]
             traceability["units"] = [unit for unit in traceability["units"] if unit["id"] != retired]

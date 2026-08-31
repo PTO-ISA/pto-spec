@@ -1,6 +1,6 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 107,
+  "operation_count": 108,
   "rejected_review_only_codes": {
     "CUBE": [],
     "TEPL": [],
@@ -699,7 +699,8 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "CMode",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Sat"
         ],
         "pad_union": "pad-value"
       },
@@ -2070,7 +2071,8 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "CMode",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Sat"
         ],
         "pad_union": "pad-value"
       },
@@ -6181,6 +6183,76 @@
         "operand:destination0:destination",
         "operand:source0:source",
         "operand:scalar0:unpack-control"
+      ],
+      "classification": "layout-and-rearrangement",
+      "engine": "SFU"
+    },
+    {
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        }
+      ],
+      "command_mnemonic": "BSTART.TEPL",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "RMode"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "TGPR2T",
+      "family": "TEPL",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 30,
+      "legality_handler": "TileOperandsLegal_TGPR2T",
+      "mode": 3,
+      "name": "TGPR2T",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source0"
+        },
+        {
+          "field": "source1",
+          "role": "source1"
+        },
+        {
+          "field": "source2",
+          "role": "source2"
+        },
+        {
+          "field": "source3",
+          "role": "source3"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "selector": "0x07E",
+      "semantic_handler": "TGPR2T",
+      "state_effects": [
+        "operand:destination0:CUBE U8 destination",
+        "operand:source0:ordered source-only GPR0",
+        "operand:source1:ordered source-only GPR1",
+        "operand:source2:ordered source-only GPR2",
+        "operand:source3:ordered source-only GPR3"
       ],
       "classification": "layout-and-rearrangement",
       "engine": "SFU"

@@ -197,12 +197,12 @@ end;
 
 ```asm
 BSTART.VEC TCMPS, DataType
-B.DATR CMode, PadValue (optional)
+B.DATR CMode, PadValue, SatMode (U8 GPR form only)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
-B.IOT SrcTile, mask=PE_MASK, <last>, ->Predicate<TSize>
-B.IOR ScalarGPR, zero, zero, ->zero (optional)
+B.IOT SrcTile, mask=PE_MASK, <last>, ->PredicateCell<TSize> OR no destination
+B.IOR scalar-compare source and optional predicate-GPR destination
 BSTOP
 ```
 
@@ -268,6 +268,8 @@ end;
 - The source is row-major and completely defined. The predicate destination has matching logical geometry and capacity of at least ceil(Row*Col/8) bytes.
 - Only CMode and PadValueOrByteId are applicable in B.DATR. When B.IOR is present, only RegSrc0 may be nonzero.
 - PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks.
+- CUBE forms use exactly one carrier. CellReg form retains the scalar compare B.IOR source and writes a descriptor-tagged U8 PredicateCell; GPR form uses the same scalar source plus at most one B.IOR destination GPR.
+- GPR U8 Low/High selection is operation-specific SatMode; Canonicalize remains zero.
 
 ## State effects
 
@@ -291,6 +293,8 @@ end;
 - Malformed bindings, B.IOS presence, surplus B.IOR fields, reserved CMode, unsupported DataType, undefined or invalid source encoding, predicate capacity failure, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.
 - Signaling floating NaN records invalid only with the atomically published predicate destination.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation.
+- CUBE forms use exactly one carrier. CellReg form retains the scalar compare B.IOR source and writes a descriptor-tagged U8 PredicateCell; GPR form uses the same scalar source plus at most one B.IOR destination GPR.
+- GPR U8 Low/High selection is operation-specific SatMode; Canonicalize remains zero.
 
 ## Examples
 

@@ -304,6 +304,11 @@ Optional once after BSTART and before the block body for every schema that decla
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/operands/B.IOR.asl -->
 ```asl
+// B.IOR's complete selected schema is authoritative for record count, source
+// and destination role, omitted fields, and surplus rejection. TGPR2T is the
+// explicit multi-record form: exactly two contiguous source-only records with
+// source arity 3+1; a third record, a destination, or another split is illegal.
+// All four selectors name complete 64-bit architectural GPRs in GPR0..GPR23.
 // Canonical <gpr> spellings are zero, sp, a0..a7, ra, s0..s8, and x0..x3.
 // Relative T/U queue selectors are not legal in any B.IOR field.
 // B.IOR binds at most three dense input slots, RegSrc0..RegSrc2, in the

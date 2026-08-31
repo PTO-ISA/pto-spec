@@ -15,6 +15,14 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/tile-execution.asl -->
 ```asl
+// NDF-BEGIN: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001
+// ndf: kind=contract level=L1 layer=block status=accepted
+// TGPR2T dispatch MUST preserve the downstream boundary: its result is an
+// ordinary numeric U8 CUBE Tile, not a PredicateCell and not an implicit
+// TSEL/TSELS mask. All destination descriptor, whole-tile definedness, and
+// numeric padding checks belong to the TGPR2T complete schema before handler
+// execution and atomic result publication.
+// NDF-END: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION","surface":"block","classification":["model","dispatch","tile-execution"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-CUBE-TMATMUL","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-GENERATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TLSU-GMOV","PTO-BLOCK-MODEL-DISPATCH-TLSU-LAYOUT-CONVERSION","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS","PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER","PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK","PTO-BLOCK-MODEL-DISPATCH-TLSU-PREFETCH","PTO-BLOCK-MODEL-DISPATCH-SHARED-TLSU","PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION","PTO-BLOCK-MODEL-OPERANDS-SHARED-GENERATION","PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"]}
 readonly func BundleTileTypesMatch(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1},
@@ -54,6 +62,49 @@ begin
            SelectedBundleClosedTSELSSchemaLegal(operation) &&
            SelectedBundleClosedTEXPANDSSchemaLegal(operation);
 end;
+
+func ExecuteBundleComparisonGPRCarrier(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    if !SelectedBundleComparisonUsesGPRCarrier(operation) then return FALSE; end;
+    let binding = _BundleTileBindings[[0]];
+    let low_selector = _BundleScalarBindings[[0]].source0;
+    let low = ReadScalarRegisterOperand(low_selector);
+    let high = if _BundleScalarBindings[[0]].source_count > 1 then
+        ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
+        else Zeros{PTO_XLEN};
+    let selected_high = _BundleDataAttributes.saturating;
+    case TileOperationOfIndex(operation) of
+        when TileOperation_TCMP =>
+            let left = BundleTileSourceIndex(0, FALSE);
+            let right = BundleTileSourceIndex(0, TRUE);
+            let value = TileCompareCUBEToGPR(
+                left, right,
+                BundleComparisonCodeAsTileComparison(), selected_high);
+            WriteGPR(_BundleScalarBindings[[0]].destination as GPRIndex, value);
+        when TileOperation_TCMPS =>
+            let source = BundleTileSourceIndex(0, FALSE);
+            let value = TileCompareCUBEScalarToGPR(
+                source, low,
+                BundleComparisonCodeAsTileComparison(), selected_high);
+            WriteGPR(_BundleScalarBindings[[0]].destination as GPRIndex, value);
+        when TileOperation_TSEL =>
+            ExecuteTileSelectCUBEGPR(
+                binding.destination, low, high,
+                BundleTileSourceIndex(0, FALSE),
+                BundleTileSourceIndex(0, TRUE));
+        when TileOperation_TSELS =>
+            let source_true = BundleTileSourceIndex(0, FALSE);
+            let scalar_false = if _BundleScalarBindings[[0]].source_count > 1 then
+                ReadScalarRegisterOperand(_BundleScalarBindings[[0]].source1)
+                else Zeros{PTO_XLEN};
+            ExecuteTileSelectScalarCUBEGPR(
+                binding.destination, low, high, source_true, scalar_false);
+        otherwise => return FALSE;
+    end;
+    return TRUE;
+end;
+
 
 func ExecuteBundleTileOperationLocallyWithAcceptedApplicabilityRules(
     rules: NumericApplicabilityRuleSet) => boolean
@@ -178,6 +229,16 @@ begin
     if !SelectedBundleClosedSchemasLegal(operation) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
+    end;
+    if SelectedBundleComparisonUsesGPRCarrier(operation) then
+        if !ExecuteBundleComparisonGPRCarrier(operation) then
+            SetFault(Fault_TileLegality, ReadTPC());
+            return FALSE;
+        end;
+        CommitBundleLocalGeneration();
+        RetireBundleConsumerDependencies();
+        FinalizeBundleTileAttempt(TileExecution_Executed);
+        return TRUE;
     end;
     if !SelectedBundleTileMasksLegal() then
         SetFault(Fault_TileLegality, ReadTPC());

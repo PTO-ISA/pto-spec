@@ -183,8 +183,8 @@ B.DATR PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
-B.IOT Predicate, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR ScalarFalseGPR, zero, zero, ->zero (optional)
+B.IOT PredicateCell, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize> OR GPR predicate form without PredicateCell
+B.IOR predicate-GPR source and optional scalar-false source
 BSTOP
 ```
 
@@ -250,6 +250,7 @@ end;
 - Predicate uses packed predicate-kind storage with matching logical geometry and every valid bit defined. SrcTrue and destination match physical shape, valid shape, row-major layout, and DataType; numeric encoding validity is not required for selected source or scalar carrier payloads.
 - Only RegSrc0 may be nonzero in B.IOR and only PadValueOrByteId is applicable in B.DATR.
 - PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
+- CUBE forms accept exactly one explicit predicate carrier. CellReg mask is the first B.IOT PredicateCell source and may still use scalar-false B.IOR; GPR mask uses predicate-specific B.IOR and may use the independent scalar-false source. Presence of B.IOR alone never selects the carrier.
 
 ## State effects
 
@@ -273,6 +274,7 @@ end;
 - Malformed binding order, B.IOS presence, surplus B.IOR fields, unsupported type, ordinary numeric mask storage, undefined predicate or true-source data, shape mismatch, capacity failure, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.
 - Selection copies exact encodings and does not itself raise floating invalid for a selected NaN.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation.
+- CUBE forms accept exactly one explicit predicate carrier. CellReg mask is the first B.IOT PredicateCell source and may still use scalar-false B.IOR; GPR mask uses predicate-specific B.IOR and may use the independent scalar-false source. Presence of B.IOR alone never selects the carrier.
 
 ## Examples
 

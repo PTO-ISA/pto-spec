@@ -3,7 +3,7 @@
 func main() => integer
 begin
     // classification: elementwise-tile-tile/logical
-    // block: BSTART.VEC TCMP, DataType | B.DATR CMode, PadValue (optional) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->Predicate<TSize> | BSTOP
+    // block: BSTART.VEC TCMP, DataType | B.DATR CMode, PadValue, SatMode (U8 GPR form only) | B.DIM LB0=ValidCol | B.DIM LB1=ValidRow (optional) | B.DIM LB2=Col (optional) | B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->PredicateCell<TSize> OR no destination | B.IOR predicate-GPR destination (GPR form only) | BSTOP
     assert DecodeTileOperation(TileDecode_TEPL, '000000001101') == 12;
     assert TileOperationOfIndex(12) == TileOperation_TCMP;
     assert TileHandlerOfIndex(12) == TileHandler_ExecuteTileCompare;

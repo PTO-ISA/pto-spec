@@ -4,7 +4,11 @@
 // ndf: kind=contract level=L1 layer=block status=accepted
 // B.IOR MUST bind only absolute GPR selectors 0..23, MUST distinguish an
 // omitted instruction from an encoded zero selector, and MUST derive consumed
-// fields and omission defaults from the complete selected block schema.
+// fields and omission defaults from the complete selected block schema. For
+// TGPR2T, the complete schema is the sole exception to the historical
+// one-record assumption: it consumes exactly two contiguous source-only
+// records with source arity 3+1, rejects a destination or surplus record, and
+// preserves selector order as four complete 64-bit GPR sources.
 // NDF-END: PTO-B-IOR-BINDING-001
 // DOC-BEGIN: decode
 readonly func InstructionContractMatches_B_IOR(operation: CommandOperation) => boolean
@@ -13,6 +17,11 @@ begin
 end;
 // DOC-END: decode
 // DOC-BEGIN: operation
+// B.IOR's complete selected schema is authoritative for record count, source
+// and destination role, omitted fields, and surplus rejection. TGPR2T is the
+// explicit multi-record form: exactly two contiguous source-only records with
+// source arity 3+1; a third record, a destination, or another split is illegal.
+// All four selectors name complete 64-bit architectural GPRs in GPR0..GPR23.
 // Canonical <gpr> spellings are zero, sp, a0..a7, ra, s0..s8, and x0..x3.
 // Relative T/U queue selectors are not legal in any B.IOR field.
 // B.IOR binds at most three dense input slots, RegSrc0..RegSrc2, in the
