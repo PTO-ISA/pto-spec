@@ -97,7 +97,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | prf_32_30e6dfe4e3ce | RegDst | 5 | 0–31 | none | none | ignored encoded alias field | Encoded zero is the canonical ignored alias value and names no destination. |
 | prf_32_30e6dfe4e3ce | SrcL | 5 | 0–31 | none | none | Reg5 address-base source | Encoded zero reads the architectural zero GPR. |
 | prf_32_30e6dfe4e3ce | SrcR | 5 | 0–31 | none | none | Reg5 register-offset source | Encoded zero reads the architectural zero GPR. |
-| prf_32_30e6dfe4e3ce | SrcRType | 2 | 0–3 | none | none | register-offset transformation selector | Encoded zero leaves the complete PTO_XLEN register-offset value unchanged. |
+| prf_32_30e6dfe4e3ce | SrcRType | 2 | 0–3 | none | none | register-offset transformation selector | Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier. |
 | prf_32_30e6dfe4e3ce | shamt | 5 | 0–31 | none | none | post-transformation logical-left-shift amount | Encoded zero performs no shift. |
 
 ## Operands and results
@@ -178,7 +178,7 @@ end;
 ## Defaults and encoded zero
 
 - Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
-- SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift.
+- SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift.
 
 ## Legality
 

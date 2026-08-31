@@ -44313,7 +44313,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -44399,7 +44399,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -44607,7 +44607,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -44693,7 +44693,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -45794,7 +45794,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -45880,7 +45880,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -46251,7 +46251,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -46337,7 +46337,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -46545,7 +46545,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -46631,7 +46631,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -47732,7 +47732,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -47818,7 +47818,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -48189,7 +48189,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -48275,7 +48275,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -48483,7 +48483,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -48569,7 +48569,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -50563,7 +50563,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -50649,7 +50649,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -51020,7 +51020,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -51106,7 +51106,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -51314,7 +51314,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -51400,7 +51400,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -53394,7 +53394,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -53480,7 +53480,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -53851,7 +53851,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -53937,7 +53937,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -54145,7 +54145,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -54231,7 +54231,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -56225,7 +56225,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -56311,7 +56311,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -57138,7 +57138,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -57224,7 +57224,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -57432,7 +57432,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -57518,7 +57518,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -59512,7 +59512,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -59598,7 +59598,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -59969,7 +59969,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -60055,7 +60055,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -60263,7 +60263,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -60349,7 +60349,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -62343,7 +62343,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -62429,7 +62429,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -64372,7 +64372,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift.",
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift.",
           "model=0 selects L1, model=1 selects L2, and model=2 selects L3; the cache target is a non-binding performance hint."
         ],
         "encoded_fields": [
@@ -64425,7 +64425,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -64656,7 +64656,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift.",
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift.",
           "model=0 selects L1, model=1 selects L2, and model=2 selects L3; the cache target is a non-binding performance hint."
         ],
         "encoded_fields": [
@@ -64726,7 +64726,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -66427,7 +66427,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. The register offset uses a fixed scale factor of 1; no shamt field is encoded."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. The register offset uses a fixed scale factor of 1; no shamt field is encoded."
         ],
         "encoded_fields": [
           {
@@ -66513,7 +66513,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -66688,7 +66688,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. The register offset uses a fixed scale factor of 1; no shamt field is encoded."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. The register offset uses a fixed scale factor of 1; no shamt field is encoded."
         ],
         "encoded_fields": [
           {
@@ -66774,7 +66774,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -67861,7 +67861,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. The register offset uses a fixed scale factor of 1; no shamt field is encoded."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. The register offset uses a fixed scale factor of 1; no shamt field is encoded."
         ],
         "encoded_fields": [
           {
@@ -67947,7 +67947,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -68290,7 +68290,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -68376,7 +68376,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -68551,7 +68551,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -68637,7 +68637,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -68812,7 +68812,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -68898,7 +68898,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -69073,7 +69073,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -69159,7 +69159,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -71158,7 +71158,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -71244,7 +71244,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -71418,7 +71418,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -71504,7 +71504,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -73425,7 +73425,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -73511,7 +73511,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -73686,7 +73686,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -73772,7 +73772,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -73947,7 +73947,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -74033,7 +74033,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -74208,7 +74208,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -74294,7 +74294,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -76293,7 +76293,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -76379,7 +76379,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -76553,7 +76553,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -76639,7 +76639,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -77658,7 +77658,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -77744,7 +77744,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -77919,7 +77919,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -78005,7 +78005,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -78180,7 +78180,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -78266,7 +78266,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -78441,7 +78441,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -78527,7 +78527,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -80526,7 +80526,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -80612,7 +80612,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -80786,7 +80786,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -80872,7 +80872,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -81904,7 +81904,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -81973,7 +81973,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -82516,7 +82516,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -82585,7 +82585,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -83128,7 +83128,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -83197,7 +83197,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -86293,7 +86293,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -86362,7 +86362,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -87098,7 +87098,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -87167,7 +87167,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -89380,7 +89380,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -89449,7 +89449,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -92545,7 +92545,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -92614,7 +92614,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -96104,7 +96104,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -96173,7 +96173,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           },
           {
             "assigned_ranges": [
@@ -97486,7 +97486,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -97555,7 +97555,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -99517,7 +99517,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -99586,7 +99586,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -101022,7 +101022,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -101091,7 +101091,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -105377,7 +105377,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -105446,7 +105446,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -105767,7 +105767,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -105836,7 +105836,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -109921,7 +109921,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -109990,7 +109990,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",
@@ -111426,7 +111426,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift."
+          "SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift."
         ],
         "encoded_fields": [
           {
@@ -111495,7 +111495,7 @@
             "role": "register-offset transformation selector",
             "signedness": "encoding-defined",
             "width": 2,
-            "zero_meaning": "Encoded zero leaves the complete PTO_XLEN register-offset value unchanged."
+            "zero_meaning": "Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier."
           }
         ],
         "encoding_class": "standalone-encoded",

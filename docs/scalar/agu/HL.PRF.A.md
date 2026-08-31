@@ -102,7 +102,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | hl_prf_a_48_267dc57d14f4 | RegDst | 5 | 0–31 | none | none | Reg5 effective-address destination or discard | Encoded zero discards this result without suppressing the instruction's other effects. |
 | hl_prf_a_48_267dc57d14f4 | SrcL | 5 | 0–31 | none | none | Reg5 address-base source | Encoded zero reads the architectural zero GPR. |
 | hl_prf_a_48_267dc57d14f4 | SrcR | 5 | 0–31 | none | none | Reg5 register-offset source | Encoded zero reads the architectural zero GPR. |
-| hl_prf_a_48_267dc57d14f4 | SrcRType | 2 | 0–3 | none | none | register-offset transformation selector | Encoded zero leaves the complete PTO_XLEN register-offset value unchanged. |
+| hl_prf_a_48_267dc57d14f4 | SrcRType | 2 | 0–3 | none | none | register-offset transformation selector | Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier. |
 | hl_prf_a_48_267dc57d14f4 | model | 5 | 0–2 | none | 3–31 | cache-level hint selector | Encoded zero selects the non-binding L1 cache hint. |
 | hl_prf_a_48_267dc57d14f4 | shamt | 5 | 0–31 | none | none | post-transformation logical-left-shift amount | Encoded zero performs no shift. |
 
@@ -187,7 +187,7 @@ end;
 ## Defaults and encoded zero
 
 - Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
-- SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. Encoded shamt zero performs no shift.
+- SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift.
 - model=0 selects L1, model=1 selects L2, and model=2 selects L3; the cache target is a non-binding performance hint.
 
 ## Legality

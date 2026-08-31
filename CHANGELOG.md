@@ -22,6 +22,9 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0113](docs/status/decisions/0113-cube-predicate-carriers-and-tgpr2t-superseding-contract.md): CUBE predicate carriers and TGPR2T superseding contract
 - [ADR-0112](docs/status/decisions/0112-scalar-stream-enters-bundle-body.md): Decoded scalar stream enters the active bundle body
 
+### Scalar
+- [ADR-0114](docs/status/decisions/0114-normalize-agu-srcrtype-encoding.md): Normalize the AGU SrcRType arithmetic modifier encoding
+
 ### Tile
 - [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
 

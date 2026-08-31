@@ -103,7 +103,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | hl_sb_pr_48_40eae4513905 | SrcD | 5 | 0–31 | none | none | Reg5 first store-data source | Encoded zero reads the architectural zero GPR. |
 | hl_sb_pr_48_40eae4513905 | SrcL | 5 | 0–31 | none | none | Reg5 address-base source | Encoded zero reads the architectural zero GPR. |
 | hl_sb_pr_48_40eae4513905 | SrcR | 5 | 0–31 | none | none | Reg5 register-offset source | Encoded zero reads the architectural zero GPR. |
-| hl_sb_pr_48_40eae4513905 | SrcRType | 2 | 0–3 | none | none | register-offset transformation selector | Encoded zero leaves the complete PTO_XLEN register-offset value unchanged. |
+| hl_sb_pr_48_40eae4513905 | SrcRType | 2 | 0–3 | none | none | register-offset transformation selector | Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier. |
 
 ## Operands and results
 
@@ -183,7 +183,7 @@ end;
 ## Defaults and encoded zero
 
 - Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
-- SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 negates the full PTO_XLEN value. The register offset uses a fixed scale factor of 1; no shamt field is encoded.
+- SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. The register offset uses a fixed scale factor of 1; no shamt field is encoded.
 
 ## Legality
 

@@ -1049,5 +1049,6 @@ nav:
           - "ADR 0111: ASL instruction fetch and functional-model boundary": status/decisions/0111-asl-functional-model-execution-boundary.md
           - "ADR 0112: Decoded scalar stream enters the active bundle body": status/decisions/0112-scalar-stream-enters-bundle-body.md
           - "ADR 0113: Following BSTART preserves the predecessor-selected transfer": status/decisions/0113-bstart-preserves-predecessor-transfer.md
+          - "ADR 0114: Normalize the AGU SrcRType arithmetic modifier encoding": status/decisions/0114-normalize-agu-srcrtype-encoding.md
       - Open:
           - "Open architecture decisions": status/open/index.md
