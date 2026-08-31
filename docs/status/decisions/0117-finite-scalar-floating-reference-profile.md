@@ -2,11 +2,11 @@
 {
   "id": "ADR-0117",
   "title": "Bind finite scalar FP32 and FP64 pto-v0 reference semantics",
-  "status": "draft",
+  "status": "accepted",
   "authors": ["Codex"],
-  "approvers": [],
+  "approvers": ["zhoubot"],
   "created": "2026-09-01",
-  "accepted": null,
+  "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
   "baseline": "03e57c9a7d1da65ed492a962c2ac25bb26432b4c",
@@ -135,5 +135,5 @@ and are not silently treated as FP32 or FP64.
 ## Decision state
 
 The architecture owner authorized autonomous detailed analysis and the
-recommended architecture rule on 2026-09-01. This draft binds the exact
-baseline before mnemonic contracts and release evidence are updated.
+recommended architecture rule on 2026-09-01. Focused FP32, FP64, conversion,
+rounding, mnemonic-direct, and real ELF evidence bind the selected profile.
