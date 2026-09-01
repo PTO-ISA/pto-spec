@@ -21,6 +21,7 @@ begin
                 4, TileDataType_FP16,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
+        InstallRelativeTileFixture(tile, tile);
         MarkTileValidRegionDefined(tile);
     end;
     let started = ExecuteCommandInstruction(Zeros{64} + 0x20119181, 32);

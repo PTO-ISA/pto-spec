@@ -74,6 +74,8 @@ begin
     let right = ConfigureCubeTileForMask(2, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert left && right;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
 end;
@@ -142,7 +144,7 @@ begin
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
     let consumer_binding = ExecuteCommandInstruction(
-        MatrixBinding(destination, 2, 1, 1), 32);
+        MatrixBinding(destination, 3, 1, 1), 32);
     let consumer_view = ExecuteCommandInstruction(Subview(), 32);
     assert consumer_start == CommandExecution_Executed &&
            consumer_data == CommandExecution_Executed &&
@@ -160,7 +162,7 @@ begin
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
     let whole_binding = ExecuteCommandInstruction(
-        MatrixBinding(destination, 2, 3, 1), 32);
+        MatrixBinding(destination, 3, 3, 1), 32);
     assert whole_start == CommandExecution_Executed &&
            whole_data == CommandExecution_Executed &&
            whole_binding == CommandExecution_Executed;
@@ -213,6 +215,7 @@ begin
     ResetProfileState();
     ConfigureTileForMask(1, 128, 1, 1, 1, 1,
         TileDataType_U8, TileLayout_RowMajor, TileLocation_Any, '1111');
+    InstallRelativeTileFixture(1, 1);
     assert _Tiles[[1]].allocated;
     let store_start = ExecuteCommandInstruction(StoreStart(), 32);
     let store_binding = ExecuteCommandInstruction(StoreBinding(1), 32);

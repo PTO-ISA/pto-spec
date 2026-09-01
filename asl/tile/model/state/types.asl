@@ -151,6 +151,9 @@ end;
 
 type TilePayload of array [[PTO_MODEL_TILE_ELEMENTS]] of Word;
 type PackedTileDefinedElements of bits(524288);
+type RelativeTileHandSnapshot of array [[16]] of TileIndex;
+type RelativeTileSnapshot of array [[4]] of RelativeTileHandSnapshot;
+type RelativeTileValiditySnapshot of array [[4]] of bits(16);
 
 type TileInfo of record {
     allocated: boolean,

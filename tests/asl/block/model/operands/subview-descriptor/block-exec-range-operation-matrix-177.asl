@@ -21,6 +21,7 @@ begin
                 4, TileDataType_FP16,
                 TileLayout_RowMajor, (if tile == 1 then TileLocation_Matrix else TileLocation_Any), '1111');
         end;
+        InstallRelativeTileFixture(tile, tile);
         MarkTileValidRegionDefined(tile);
     end;
     ConfigureTileFeatureMapDescriptor(1,

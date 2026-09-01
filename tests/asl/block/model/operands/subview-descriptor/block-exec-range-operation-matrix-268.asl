@@ -12,26 +12,31 @@ begin
         1, 128, 1, 1, TileDataType_E4M3,
         TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
     assert configured_1;
+    InstallRelativeTileFixture(1, 1);
     MarkTileValidRegionDefined(1);
     let configured_2 = ConfigureCubeTileForMask(
         2, 128, 1, 1, TileDataType_E8M0,
         TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
     assert configured_2;
+    InstallRelativeTileFixture(2, 2);
     MarkTileValidRegionDefined(2);
     let configured_3 = ConfigureCubeTileForMask(
         3, 128, 1, 1, TileDataType_E4M3,
         TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert configured_3;
+    InstallRelativeTileFixture(3, 3);
     MarkTileValidRegionDefined(3);
     let configured_4 = ConfigureCubeTileForMask(
         4, 128, 1, 1, TileDataType_E8M0,
         TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
     assert configured_4;
+    InstallRelativeTileFixture(4, 4);
     MarkTileValidRegionDefined(4);
     let configured_5 = ConfigureCubeTileForMask(
         5, 128, 1, 1, TileDataType_FP32,
         TileLayout_CUBE_M16, TileLocation_Matrix, '1111');
     assert configured_5;
+    InstallRelativeTileFixture(5, 5);
     MarkTileValidRegionDefined(5);
     let started = ExecuteCommandInstruction(Zeros{64} + 0x39531181, 32);
     assert started == CommandExecution_Executed;

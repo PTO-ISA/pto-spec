@@ -328,6 +328,8 @@ begin
         _LocalGenerations[[slot]].committed_destination =
             _LocalGenerations[[slot]].working_destination;
         _LocalGenerations[[slot]].committed_valid = TRUE;
+        PublishRelativeTileDestination(
+            _LocalGenerations[[slot]].working_destination);
     end;
     return TRUE;
 end;

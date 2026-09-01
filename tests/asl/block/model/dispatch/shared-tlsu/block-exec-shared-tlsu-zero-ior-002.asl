@@ -95,6 +95,7 @@ begin
     ResetProfileState();
     ConfigureTileForMask(0, 128, 1, 1, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any, '1000');
+    InstallRelativeTileFixture(0, 0);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
     let invalid_publish_start = ExecuteCommandInstruction(
         BundleTestTLSUStart('00010', Zeros{5} + 24), 32);

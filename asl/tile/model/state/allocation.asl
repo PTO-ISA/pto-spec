@@ -108,6 +108,7 @@ begin
         valid_rows,
         valid_columns,
         '0001');
+    InstallRelativeTileFixture(index, index);
 end;
 
 func ConfigureTile(index: TileIndex, capacity_bytes: integer {0..262144},
@@ -119,6 +120,7 @@ begin
     // fragment and therefore charge one PE of capacity.
     ConfigureTileForMask(index, capacity_bytes, rows, columns,
         valid_rows, valid_columns, data_type, layout, location, '0001');
+    InstallRelativeTileFixture(index, index);
 end;
 
 func ConfigureCubeTileForMask(
@@ -184,12 +186,15 @@ func ConfigureCubeTile(
     layout: TileLayout,
     location: TileLocation) => boolean
 begin
-    return ConfigureCubeTileForMask(index, capacity_bytes, valid_rows,
+    let configured = ConfigureCubeTileForMask(index, capacity_bytes, valid_rows,
         valid_columns, data_type, layout, location, '0001');
+    if configured then InstallRelativeTileFixture(index, index); end;
+    return configured;
 end;
 
 func ReleaseTile(index: TileIndex)
 begin
+    RemoveRelativeTileMapping(index);
     InvalidateTileFeatureMapDescriptor(index);
     _TileAllocationMasks[[index]] = Zeros{4};
     _Tiles[[index]].allocated = FALSE;

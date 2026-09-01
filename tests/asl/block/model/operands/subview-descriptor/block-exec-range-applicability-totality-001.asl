@@ -36,6 +36,8 @@ begin
     let b_ready = ConfigureCubeTileForMask(2, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert a_ready && b_ready;
+    InstallRelativeTileFixture(1, 1);
+    InstallRelativeTileFixture(2, 2);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
     for operation = 0 to PTO_TILE_OPERATION_COUNT - 1 looplimit 109 do
@@ -63,6 +65,7 @@ begin
     ResetProfileState();
     ConfigureTileForMask(1, 128, 1, 1, 1, 1,
         TileDataType_FP16, TileLayout_RowMajor, TileLocation_Any, '1111');
+    InstallRelativeTileFixture(1, 1);
     assert _Tiles[[1]].allocated;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     let bad_start = ExecuteCommandInstruction(Start(), 32);

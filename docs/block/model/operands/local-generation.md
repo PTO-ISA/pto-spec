@@ -466,6 +466,8 @@ begin
                     _LocalGenerations[[slot]].committed_destination =
                         _BundleTileBindings[[binding]].destination;
                     _LocalGenerations[[slot]].committed_valid = TRUE;
+                    PublishRelativeTileDestination(
+                        _BundleTileBindings[[binding]].destination);
                 else
                     // LAST closes the writer set, but an incomplete ready set
                     // remains pending. No mapping or payload is exposed until

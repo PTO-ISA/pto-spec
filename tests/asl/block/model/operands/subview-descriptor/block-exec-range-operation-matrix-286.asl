@@ -12,6 +12,7 @@ begin
         1, 128, 1, 1, TileDataType_U32,
         TileLayout_CUBE_M32, TileLocation_Matrix, '1111');
     assert configured_1;
+    InstallRelativeTileFixture(1, 1);
     MarkTileValidRegionDefined(1);
     let started = ExecuteCommandInstruction(Zeros{64} + 0xcf819181, 32);
     assert started == CommandExecution_Executed;

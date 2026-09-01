@@ -21,6 +21,7 @@ begin
                 4, (if tile == 2 then TileDataType_S32 else TileDataType_FP16),
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
+        InstallRelativeTileFixture(tile, tile);
         MarkTileValidRegionDefined(tile);
     end;
     let started = ExecuteCommandInstruction(Zeros{64} + 0x27019181, 32);

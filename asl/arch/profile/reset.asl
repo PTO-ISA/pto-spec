@@ -58,6 +58,12 @@ begin
         _Tiles[[index]].cube_cell_count = 0;
         _Tiles[[index]].cube_storage_bytes = 0;
     end;
+    for hand = 0 to 3 do
+        _TileRelativeValid[[hand]] = Zeros{16};
+        for distance = 0 to 15 do
+            _TileRelativeOrder[[hand]][[distance]] = 0;
+        end;
+    end;
     for index = 0 to PTO_SHARED_TILE_COUNT - 1 do
         _SharedTiles[[index]].descriptor_valid = FALSE;
         _SharedTiles[[index]].allocation_mask = Zeros{4};

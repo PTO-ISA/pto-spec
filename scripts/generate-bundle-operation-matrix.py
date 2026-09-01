@@ -656,6 +656,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
                     f"    ConfigureTileForMask({tile}, 128, {rows}, 1, 1, 1,",
                     f"        {DATA_TYPE_NAMES[role_dtype]}, TileLayout_RowMajor,",
                     "        TileLocation_Matrix, '1111');",
+                    f"    InstallRelativeTileFixture({tile}, {tile});",
                     f"    MarkTileValidRegionDefined({tile});",
                 ]
             else:
@@ -668,6 +669,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
                     f"        {tile}, 128, 1, {valid_columns}, {DATA_TYPE_NAMES[role_dtype]},",
                     f"        {role_layout}, TileLocation_Matrix, '1111');",
                     f"    assert configured_{tile};",
+                    f"    InstallRelativeTileFixture({tile}, {tile});",
                     f"    MarkTileValidRegionDefined({tile});",
                 ]
     else:
@@ -729,6 +731,7 @@ def setup_lines(row: dict, role_kind: str) -> list[str]:
             f"                source_valid_columns_placeholder, {local_dtype},",
             f"                TileLayout_RowMajor, {ordinary_location}, '1111');",
             "        end;",
+            "        InstallRelativeTileFixture(tile, tile);",
             "        MarkTileValidRegionDefined(tile);",
             "    end;",
         ]

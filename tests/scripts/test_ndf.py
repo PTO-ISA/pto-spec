@@ -245,7 +245,12 @@ class NdfTest(unittest.TestCase):
                 "_ACRTrapArgument0",
                 "_TrapContexts",
             ),
-            "PTO-STATE-TILE-LOCAL": ("_Tiles", "_TileAllocationMasks"),
+            "PTO-STATE-TILE-LOCAL": (
+                "_Tiles",
+                "_TileAllocationMasks",
+                "_TileRelativeOrder",
+                "_TileRelativeValid",
+            ),
             "PTO-STATE-TILE-FEATURE-MAP": ("_TileFeatureMapDescriptors",),
             "PTO-STATE-TILE-SHARED": ("_SharedTiles",),
             "PTO-STATE-BLOCK-CONTROL": (

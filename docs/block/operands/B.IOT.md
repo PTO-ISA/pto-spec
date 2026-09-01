@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/operands/B.IOT.asl`
 
-Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.
+Bind ordered relative Local Tile sources and renamed destinations; each T/U/M/N #1 source names the newest published generation of that hand.
 
 ## Normative identity {#PTO-INST-BLOCK-B-IOT}
 
@@ -118,28 +118,28 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| b_iot_32_10db6db84f5d | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
+| b_iot_32_10db6db84f5d | SrcTile0 | 6 | 0–63 | none | none | first relative Local source, newest-first within its encoded hand | Code zero names T#1, the newest published T-hand generation. |
 | b_iot_32_10db6db84f5d | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
 | b_iot_32_10db6db84f5d | SizeCode | 4 | 1–10 | none | 0, 11–15 | source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE | Encoded zero selects the source-only form and never allocates; it is reserved in destination forms. |
 | b_iot_32_10db6db84f5d | PEMode | 3 | 0–7 | none | none | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask | Encoded zero decodes to mask 0000 and makes B.IOT a strict no-op. |
-| b_iot_32_10db6db84f5d | DstTile | 2 | 0–3 | none | none | destination hand selector: 0 T, 1 U, 2 M, or 3 N | destination hand selector: 0 T, 1 U, 2 M, or 3 N |
-| b_iot_32_2c07e7177fad | SrcTile1 | 6 | 0–63 | none | none | second ordered relative Local source in the same 64-entry queue namespace | second ordered relative Local source in the same 64-entry queue namespace |
-| b_iot_32_2c07e7177fad | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
+| b_iot_32_10db6db84f5d | DstTile | 2 | 0–3 | none | none | destination hand selector whose publication pushes a new #1 generation | Code zero selects the T destination hand; successful publication pushes the new generation to T#1. |
+| b_iot_32_2c07e7177fad | SrcTile1 | 6 | 0–63 | none | none | second relative Local source, newest-first within its encoded hand | Code zero names T#1, the newest published T-hand generation. |
+| b_iot_32_2c07e7177fad | SrcTile0 | 6 | 0–63 | none | none | first relative Local source, newest-first within its encoded hand | Code zero names T#1, the newest published T-hand generation. |
 | b_iot_32_2c07e7177fad | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
 | b_iot_32_2c07e7177fad | PEMode | 3 | 0–7 | none | none | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask | Encoded zero decodes to mask 0000 and makes B.IOT a strict no-op. |
-| b_iot_32_8b8bce6bffe8 | SrcTile1 | 6 | 0–63 | none | none | second ordered relative Local source in the same 64-entry queue namespace | second ordered relative Local source in the same 64-entry queue namespace |
-| b_iot_32_8b8bce6bffe8 | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
+| b_iot_32_8b8bce6bffe8 | SrcTile1 | 6 | 0–63 | none | none | second relative Local source, newest-first within its encoded hand | Code zero names T#1, the newest published T-hand generation. |
+| b_iot_32_8b8bce6bffe8 | SrcTile0 | 6 | 0–63 | none | none | first relative Local source, newest-first within its encoded hand | Code zero names T#1, the newest published T-hand generation. |
 | b_iot_32_8b8bce6bffe8 | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
 | b_iot_32_8b8bce6bffe8 | SizeCode | 4 | 1–10 | none | 0, 11–15 | source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE | Encoded zero selects the source-only form and never allocates; it is reserved in destination forms. |
 | b_iot_32_8b8bce6bffe8 | PEMode | 3 | 0–7 | none | none | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask | Encoded zero decodes to mask 0000 and makes B.IOT a strict no-op. |
-| b_iot_32_8b8bce6bffe8 | DstTile | 2 | 0–3 | none | none | destination hand selector: 0 T, 1 U, 2 M, or 3 N | destination hand selector: 0 T, 1 U, 2 M, or 3 N |
-| b_iot_32_c11eb189dd83 | SrcTile0 | 6 | 0–63 | none | none | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
+| b_iot_32_8b8bce6bffe8 | DstTile | 2 | 0–3 | none | none | destination hand selector whose publication pushes a new #1 generation | Code zero selects the T destination hand; successful publication pushes the new generation to T#1. |
+| b_iot_32_c11eb189dd83 | SrcTile0 | 6 | 0–63 | none | none | first relative Local source, newest-first within its encoded hand | Code zero names T#1, the newest published T-hand generation. |
 | b_iot_32_c11eb189dd83 | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
 | b_iot_32_c11eb189dd83 | PEMode | 3 | 0–7 | none | none | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask | Encoded zero decodes to mask 0000 and makes B.IOT a strict no-op. |
 | b_iot_32_efa0fe3fe49a | L | 1 | 0–1 | none | none | effective-binding sequence terminator; not a source-lifetime marker | Encoded zero leaves the B.IOT sequence open; encoded one closes the sequence after this effective binding and does not end any source lifetime. |
 | b_iot_32_efa0fe3fe49a | SizeCode | 4 | 1–10 | none | 0, 11–15 | source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE | Encoded zero selects the source-only form and never allocates; it is reserved in destination forms. |
 | b_iot_32_efa0fe3fe49a | PEMode | 3 | 0–7 | none | none | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask | Encoded zero decodes to mask 0000 and makes B.IOT a strict no-op. |
-| b_iot_32_efa0fe3fe49a | DstTile | 2 | 0–3 | none | none | destination hand selector: 0 T, 1 U, 2 M, or 3 N | destination hand selector: 0 T, 1 U, 2 M, or 3 N |
+| b_iot_32_efa0fe3fe49a | DstTile | 2 | 0–3 | none | none | destination hand selector whose publication pushes a new #1 generation | Code zero selects the T destination hand; successful publication pushes the new generation to T#1. |
 
 - `b_iot_32_10db6db84f5d.SizeCode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 - `b_iot_32_8b8bce6bffe8.SizeCode` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
@@ -149,12 +149,12 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Field | Architectural role |
 | --- | --- |
-| SrcTile0 | first ordered relative Local source: T#1..T#16, U#1..U#16, M#1..M#16, or N#1..N#16 |
-| SrcTile1 | second ordered relative Local source in the same 64-entry queue namespace |
+| SrcTile0 | first relative Local source, newest-first within its encoded hand |
+| SrcTile1 | second relative Local source, newest-first within its encoded hand |
 | L | effective-binding sequence terminator; not a source-lifetime marker |
 | SizeCode | source-only zero or destination capacity code 1..10: 128 B..64 KiB per participating PE |
 | PEMode | three-bit encoded participation mode expanded by the common decoder to a four-PE semantic mask |
-| DstTile | destination hand selector: 0 T, 1 U, 2 M, or 3 N |
+| DstTile | destination hand selector whose publication pushes a new #1 generation |
 
 ## Decode
 
@@ -233,6 +233,7 @@ end;
 - PEMode is a three-bit encoding expanded by the common profile decoder to the fixed four-PE semantic mask: 000 none, 001 PE0, 010 PE1, 011 PE2, 100 PE3, 101 PE0+PE1, 110 PE0+PE1+PE2, and 111 all four PEs.
 - SizeCode=0 is the source-only encoding and never allocates; destination forms require SizeCode=1..10 for 128 B, 256 B, 512 B, 1 KiB, 2 KiB, 4 KiB, 8 KiB, 16 KiB, 32 KiB, and 64 KiB per participating PE.
 - PEMode=000 decodes to no participating PE and is a strict no-op before placement, duplicate, schema, allocation, descriptor, memory, and downstream fault checks.
+- T#1, U#1, M#1, and N#1 name the newest published generation in their hand; increasing indices select progressively older live generations. Direct model TileIndex values are resolved physical identities and are not encoded relative selectors.
 
 ## Legality
 
@@ -241,12 +242,14 @@ end;
 - PEMode=000 is accepted as the strict no-effect source-bearing encoding; a nonzero decoded mask is a four-PE predicate shared by every effective binding in the block.
 - A participating B.IOT is legal only after BSTART and before the block body. At most four effective Local bindings are accepted in encoded order.
 - The selected operation schema determines ordered Local source and destination roles and must agree with the form fields and SizeCode role.
+- Every encoded Local source is resolved against the published pre-operation relative map. An unavailable relative generation raises Fault_TileLegality before source reads, allocation, or operation effects.
 
 ## State effects
 
 - The common PE-mode decoder expands PEMode once to the semantic four-PE mask used by every effective Local binding.
 - A zero decoded mask is a strict no-op. A successful source binding is read-only; a successful destination atomically updates selected payload quarters and a compatible persistent descriptor.
 - The selected operation defines publication and ordering. Its first write fixes the allocation mask; later writes may update only a subset with a compatible descriptor and cannot expand the mask.
+- Successful destination publication pushes a new generation at #1 of the selected T/U/M/N hand and shifts older live generations toward #16 without modifying their descriptor or payload.
 
 ## Memory effects and ordering
 
@@ -256,6 +259,7 @@ end;
 
 ### Ordering
 
+- Resolve all relative sources against the published pre-operation hand order before allocating or publishing any destination. Successful destinations publish in B.IOT order; each later same-hand destination becomes the newer #1 generation.
 - B.IOT bindings are consumed in encoded order. L=1 closes the sequence after the current effective binding; a later effective B.IOT raises Illegal Block Exception before effects.
 
 ## Exceptions

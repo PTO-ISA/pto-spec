@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","surface":"block","classification":["model","operands","tile-bindings"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS","surface":"block","classification":["model","operands","tile-bindings"],"depends_on":["PTO-BLOCK-MODEL-OPERANDS-SCALAR-BINDINGS","PTO-TILE-MODEL-STATE-DESCRIPTORS"]}
 func SetBundleTileBinding(index: BundleTileBindingIndex,
                          destination_valid: boolean,
                          destination: TileIndex,
@@ -26,9 +26,103 @@ begin
     _BundleTileBindings[[index]].pe_mask = pe_mask;
     _BundleTileBindings[[index]].source0_valid = source0_valid;
     _BundleTileBindings[[index]].source1_valid = source1_valid;
+    _BundleTileBindings[[index]].source0_relative = FALSE;
+    _BundleTileBindings[[index]].source1_relative = FALSE;
     _BundleTileBindings[[index]].source0 = source0;
     _BundleTileBindings[[index]].source1 = source1;
     _BundleTileBindings[[index]].last = last;
+end;
+
+func MarkBundleTileBindingSourcesRelative(index: BundleTileBindingIndex)
+begin
+    _BundleTileBindings[[index]].source0_relative =
+        _BundleTileBindings[[index]].source0_valid;
+    _BundleTileBindings[[index]].source1_relative =
+        _BundleTileBindings[[index]].source1_valid;
+end;
+
+readonly func BundlePendingRelativeGeneration(
+    binding: BundleTileBindingIndex, selector: TileIndex) => boolean
+begin
+    let hand = RelativeTileHandIndex(selector);
+    let mask = _BundleTileBindings[[binding]].pe_mask;
+    let slot = (hand + UInt(mask) * 4) as integer {0..63};
+    return _LocalGenerations[[slot]].closed &&
+           !_LocalGenerations[[slot]].published &&
+           _Tiles[[_LocalGenerations[[slot]].working_destination]].allocated;
+end;
+
+readonly func BundleRelativeTileSourceAvailable(
+    binding: BundleTileBindingIndex, selector: TileIndex) => boolean
+begin
+    let distance = RelativeTileDistance(selector);
+    if BundlePendingRelativeGeneration(binding, selector) then
+        if distance == 0 then return TRUE; end;
+        let shifted = ((RelativeTileHandIndex(selector) * 16 + distance) - 1)
+            as TileIndex;
+        return RelativeTileSourceAvailable(shifted);
+    end;
+    return RelativeTileSourceAvailable(selector);
+end;
+
+readonly func ResolveBundleRelativeTileSource(
+    binding: BundleTileBindingIndex, selector: TileIndex) => TileIndex
+begin
+    assert BundleRelativeTileSourceAvailable(binding, selector);
+    let distance = RelativeTileDistance(selector);
+    if BundlePendingRelativeGeneration(binding, selector) then
+        if distance == 0 then
+            let hand = RelativeTileHandIndex(selector);
+            let mask = _BundleTileBindings[[binding]].pe_mask;
+            let slot = (hand + UInt(mask) * 4) as integer {0..63};
+            return _LocalGenerations[[slot]].working_destination;
+        end;
+        let shifted = ((RelativeTileHandIndex(selector) * 16 + distance) - 1)
+            as TileIndex;
+        return ResolveRelativeTileSource(shifted);
+    end;
+    return ResolveRelativeTileSource(selector);
+end;
+
+func ResolveBundleRelativeTileSources() => boolean
+begin
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_relative &&
+               !BundleRelativeTileSourceAvailable(
+                   binding as BundleTileBindingIndex,
+                   _BundleTileBindings[[binding]].source0) then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
+            end;
+            if _BundleTileBindings[[binding]].source1_relative &&
+               !BundleRelativeTileSourceAvailable(
+                   binding as BundleTileBindingIndex,
+                   _BundleTileBindings[[binding]].source1) then
+                SetFault(Fault_TileLegality, ReadTPC());
+                return FALSE;
+            end;
+        end;
+    end;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid then
+            if _BundleTileBindings[[binding]].source0_relative then
+                _BundleTileBindings[[binding]].source0 =
+                    ResolveBundleRelativeTileSource(
+                        binding as BundleTileBindingIndex,
+                        _BundleTileBindings[[binding]].source0);
+                _BundleTileBindings[[binding]].source0_relative = FALSE;
+            end;
+            if _BundleTileBindings[[binding]].source1_relative then
+                _BundleTileBindings[[binding]].source1 =
+                    ResolveBundleRelativeTileSource(
+                        binding as BundleTileBindingIndex,
+                        _BundleTileBindings[[binding]].source1);
+                _BundleTileBindings[[binding]].source1_relative = FALSE;
+            end;
+        end;
+    end;
+    return TRUE;
 end;
 
 func AddBundleTileBinding(destination_valid: boolean,
@@ -128,7 +222,14 @@ end;
 
 func FinalizeBundleTileAttempt(status: TileExecutionStatus)
 begin
-    // B.IOT.L terminates only the binding sequence. Local sources remain
-    // allocated after both successful and rejected block attempts.
-    return;
+    if status != TileExecution_Executed then return; end;
+    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
+        if _BundleTileBindings[[binding]].valid &&
+           _BundleTileBindings[[binding]].destination_valid &&
+           _BundleTileBindings[[binding]].destination_allocated_by_bundle &&
+           !_BundleTileBindings[[binding]].destination_assemble.valid then
+            PublishRelativeTileDestination(
+                _BundleTileBindings[[binding]].destination);
+        end;
+    end;
 end;

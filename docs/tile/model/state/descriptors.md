@@ -30,6 +30,94 @@ begin
     return ((index MOD 16) + 1) as integer {1..16};
 end;
 
+pure func RelativeTileHandIndex(selector: TileIndex) => integer {0..3}
+begin
+    return (selector DIVRM 16) as integer {0..3};
+end;
+
+pure func RelativeTileDistance(selector: TileIndex) => integer {0..15}
+begin
+    return (selector MOD 16) as integer {0..15};
+end;
+
+readonly func RelativeTileSourceAvailable(selector: TileIndex) => boolean
+begin
+    let hand = RelativeTileHandIndex(selector);
+    let distance = RelativeTileDistance(selector);
+    if _TileRelativeValid[[hand]][distance] == '0' then return FALSE; end;
+    return _Tiles[[_TileRelativeOrder[[hand]][[distance]]]].allocated;
+end;
+
+readonly func ResolveRelativeTileSource(selector: TileIndex) => TileIndex
+begin
+    assert RelativeTileSourceAvailable(selector);
+    return _TileRelativeOrder[[RelativeTileHandIndex(selector)]]
+        [[RelativeTileDistance(selector)]];
+end;
+
+func RemoveRelativeTileMapping(index: TileIndex)
+begin
+    for hand = 0 to 3 do
+        var compact: RelativeTileHandSnapshot;
+        var valid = Zeros{16};
+        var next: integer {0..16} = 0;
+        for distance = 0 to 15 do
+            if _TileRelativeValid[[hand]][distance] == '1' &&
+               _TileRelativeOrder[[hand]][[distance]] != index then
+                compact[[next as integer {0..15}]] =
+                    _TileRelativeOrder[[hand]][[distance]];
+                valid[next as integer {0..15}] = '1';
+                next = (next + 1) as integer {0..16};
+            end;
+        end;
+        _TileRelativeOrder[[hand]] = compact;
+        _TileRelativeValid[[hand]] = valid;
+    end;
+end;
+
+readonly func RelativeTileDestinationPublished(index: TileIndex) => boolean
+begin
+    let hand = RelativeTileHandIndex(index);
+    for distance = 0 to 15 do
+        if _TileRelativeValid[[hand]][distance] == '1' &&
+           _TileRelativeOrder[[hand]][[distance]] == index then
+            return TRUE;
+        end;
+    end;
+    return FALSE;
+end;
+
+func PublishRelativeTileDestination(index: TileIndex)
+begin
+    if RelativeTileDestinationPublished(index) then return; end;
+    let hand = RelativeTileHandIndex(index);
+    for offset = 0 to 14 do
+        let distance = 15 - offset;
+        _TileRelativeOrder[[hand]][[distance]] =
+            _TileRelativeOrder[[hand]][[distance - 1]];
+        _TileRelativeValid[[hand]][distance] =
+            _TileRelativeValid[[hand]][distance - 1];
+    end;
+    _TileRelativeOrder[[hand]][[0]] = index;
+    _TileRelativeValid[[hand]][0] = '1';
+end;
+
+func InstallRelativeTileFixture(selector: TileIndex, index: TileIndex)
+begin
+    for hand_index = 0 to 3 do
+        for relative_index = 0 to 15 do
+            if _TileRelativeValid[[hand_index]][relative_index] == '1' &&
+               _TileRelativeOrder[[hand_index]][[relative_index]] == index then
+                _TileRelativeValid[[hand_index]][relative_index] = '0';
+            end;
+        end;
+    end;
+    let hand = RelativeTileHandIndex(selector);
+    let distance = RelativeTileDistance(selector);
+    _TileRelativeOrder[[hand]][[distance]] = index;
+    _TileRelativeValid[[hand]][distance] = '1';
+end;
+
 readonly func TileCapacityIsLegal(capacity_bytes: integer {0..262144}) => boolean
 begin
     return capacity_bytes >= PTO_TILE_CELL_BYTES &&

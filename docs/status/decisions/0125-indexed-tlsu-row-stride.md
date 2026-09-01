@@ -18,6 +18,7 @@
     "PTO-BSTART-MSCATTER-MASK-SCHEMA-001",
     "PTO-BSTART-MSCATTER-SCHEMA-001",
     "PTO-B-DATR-FIELDS-001",
+    "PTO-B-IOT-STREAM-001",
     "PTO-INDEXED-TLSU-STRIDE-001",
     "PTO-INST-BLOCK-B-IOR",
     "PTO-INST-BLOCK-BSTART-MGATHER",
@@ -35,7 +36,8 @@
     "PTO-MSCATTER-DUPLICATE-ORDER-001",
     "PTO-MSCATTER-MASK-DUPLICATE-001",
     "PTO-MSCATTER-MASK-PREDICATE-001",
-    "PTO-MSCATTER-MASK-TYPE-002"
+    "PTO-MSCATTER-MASK-TYPE-002",
+    "PTO-REQ-TILE-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
@@ -52,9 +54,24 @@
     "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
     "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
     "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+    "PTO-BLOCK-B-IOT",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+    "PTO-BLOCK-MODEL-DISPATCH-DECODE",
+    "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+    "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+    "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+    "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+    "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+    "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+    "PTO-BLOCK-MODEL-STATE-TYPES",
+    "PTO-ARCH-PROFILE-RESET",
     "PTO-TILE-MGATHER",
     "PTO-TILE-MGATHER-CAS",
     "PTO-TILE-MGATHER-MASK",
+    "PTO-TILE-MODEL-STATE-ALLOCATION",
+    "PTO-TILE-MODEL-STATE-DESCRIPTORS",
+    "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+    "PTO-TILE-MODEL-STATE-TYPES",
     "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
     "PTO-TILE-MODEL-MEMORY-ADDRESSING",
     "PTO-TILE-MODEL-MEMORY-ATOMICS",
@@ -96,6 +113,11 @@ address rule:
 - stride must be at least ValidCol and rejects before address probes, memory
   events, allocation, destination publication, or stores.
 
+B.IOT source codes remain relative T/U/M/N selectors. Each source is resolved
+against the newest-first published hand order before the indexed operation;
+each successfully published destination becomes #1 of its selected hand and
+older persistent generations shift toward #16.
+
 Signed negative indices use the same floor-division rule and may address rows
 before the base. Disabled mask lanes do not evaluate their index or address.
 
@@ -106,6 +128,8 @@ before the base. Disabled mask lanes do not evaluate their index or address.
 - B.IOR RegSrc1 changes from required zero to required row stride.
 - IndexTile elements change from byte displacements to logical element
   indices. A contiguous row-major tensor uses stride equal to ValidCol.
+- Relative Tile naming is restored in the executable ASL model without
+  changing source persistence, L semantics, or encoded B.IOT fields.
 
 ## Verification obligations
 
@@ -115,6 +139,8 @@ before the base. Disabled mask lanes do not evaluate their index or address.
 - CAS and scatter preserve complete preflight and atomic publication rules.
 - The six compiler-generated MGATHER/MSCATTER ELF cases match independent
   result goldens.
+- A TLOAD-index, MGATHER-destination, TSTORE chain proves that the new T
+  generation becomes T#1 while the prior IndexTile remains available as T#2.
 
 ## Decision state
 

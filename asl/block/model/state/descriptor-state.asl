@@ -40,6 +40,8 @@ begin
         _BundleTileBindings[[index]].destination_reused_by_generation = FALSE;
         _BundleTileBindings[[index]].source0_valid = FALSE;
         _BundleTileBindings[[index]].source1_valid = FALSE;
+        _BundleTileBindings[[index]].source0_relative = FALSE;
+        _BundleTileBindings[[index]].source1_relative = FALSE;
         _BundleTileBindings[[index]].last = FALSE;
         _BundleTileBindings[[index]].source0_subview.valid = FALSE;
         _BundleTileBindings[[index]].source0_subview.derived.valid = FALSE;

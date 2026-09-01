@@ -24,6 +24,7 @@ begin
                 4, TileDataType_FP16,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
+        InstallRelativeTileFixture(tile, tile);
         MarkTileValidRegionDefined(tile);
     end;
     for column = 0 to 3 looplimit 4 do

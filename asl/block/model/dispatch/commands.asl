@@ -268,6 +268,7 @@ begin
                 CommandOperandPresent(form, CommandField_L) &&
                     CommandDecodedBool(instruction, form, CommandField_L));
             if _LastFault == Fault_None then
+                MarkBundleTileBindingSourcesRelative(BundleTileBindingLastIndex() as BundleTileBindingIndex);
                 OpenBundleRangeTileGroup(FALSE,
                     CommandOperandPresent(form, CommandField_SrcTile0),
                     CommandOperandPresent(form, CommandField_SrcTile1),

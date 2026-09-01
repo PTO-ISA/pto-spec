@@ -952,8 +952,9 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
-      "status": "accepted"
+      "semantic_summary": "Bind ordered relative Local Tile sources and renamed destinations; each T/U/M/N #1 source names the newest published generation of that hand.",
+      "status": "accepted",
+      "state_effects": []
     },
     {
       "asm": "B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>",
@@ -1038,8 +1039,9 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
-      "status": "accepted"
+      "semantic_summary": "Bind ordered relative Local Tile sources and renamed destinations; each T/U/M/N #1 source names the newest published generation of that hand.",
+      "status": "accepted",
+      "state_effects": []
     },
     {
       "asm": "B.IOT SrcTile0, SrcTile1, mask=PE_MASK, <last>, ->DstTile<SizeCode>",
@@ -1174,8 +1176,9 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
-      "status": "accepted"
+      "semantic_summary": "Bind ordered relative Local Tile sources and renamed destinations; each T/U/M/N #1 source names the newest published generation of that hand.",
+      "status": "accepted",
+      "state_effects": []
     },
     {
       "asm": "B.IOT SrcTile0, mask=PE_MASK, <last>",
@@ -1248,8 +1251,9 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
-      "status": "accepted"
+      "semantic_summary": "Bind ordered relative Local Tile sources and renamed destinations; each T/U/M/N #1 source names the newest published generation of that hand.",
+      "status": "accepted",
+      "state_effects": []
     },
     {
       "asm": "B.IOT mask=PE_MASK, <last>, ->DstTile<SizeCode>",
@@ -1360,8 +1364,9 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleTileIO",
-      "semantic_summary": "Binds an ordered Local Tile source/destination sequence with one common four-PE participation mode decoded to a fixed mask; L terminates only that sequence and never releases a source.",
-      "status": "accepted"
+      "semantic_summary": "Bind ordered relative Local Tile sources and renamed destinations; each T/U/M/N #1 source names the newest published generation of that hand.",
+      "status": "accepted",
+      "state_effects": []
     },
     {
       "asm": "BSTART DIRECT, <label>",
