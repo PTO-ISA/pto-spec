@@ -148,6 +148,20 @@ Tile-specific profile decisions.
   ELF goldens.
 - FP16 TLOAD 16x16 and 32x32 cases match independent binary16 goldens.
 
+## Binary envelope consequence
+
+The encoded-form envelope remains exactly 542 forms. No form identity,
+instruction length, opcode mask or match, or operand bit position changes.
+Only the accepted `SrcType` and `DstType` constraint sets of the eight existing
+scalar conversion forms change.
+
+The reviewed encoded-form fingerprint is rebound from
+`12f4d52a22df0f8a7e6c90144d57495db7cb58e7cdda3ad32978529db53bc7c1` to
+`a862ea5c56df7cbc6c4f2659f9dd4eb3399ab5f4750d53fdd19f8e4a4b67df55`.
+The release encoding projection is correspondingly rebound from
+`b2615654e077fbb55d08f56dac293da21a8604a330dc4fd9e70ccce55df68b5f` to
+`8757aa8561cade0a93fb531280b6884131ef545d06e53877066e922cc45ab43a`.
+
 ## Decision state
 
 The architecture owner confirmed the complete scalar conversion matrices,

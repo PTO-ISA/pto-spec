@@ -3450,7 +3450,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "d66cf5ef73f6ce25620b624a604847d639364898156c452e7ae84646a0d14d4a"
+      "sha256": "f9847601d145c293a23ba0fe51de45a4f8538527acfa3e11cab815cf48fbaa8e"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3462,7 +3462,7 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "93a05c4eb09fb646761982721aa5dca42033438c7f4a086afbf53abc888c1c83"
+      "sha256": "1694e57ad6bba78a32ea9527f38b208e679622e296f04ce3b1892286837b0e3e"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3512,7 +3512,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "6bd7a7ee8b05fcad2846f12152dff00da869c897385055df3f3075070b56480f",
+  "content_sha256": "a0448ac16705fcba87130b418d4d0818949c457356e3db37a6db4c08bc9cb2cd",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
