@@ -558,7 +558,7 @@
     },
     {
       "path": "asl/block/model/dispatch/descriptor-legality.asl",
-      "sha256": "b493165ab38fa4f0792d30cd67ef6319eab4a19db210627eead4ed92bacd613a"
+      "sha256": "ee074174ebd9f42e0c8e0083dd7d771c89c7dcb29e00810bee4b94499816d595"
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
@@ -634,7 +634,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
-      "sha256": "982233f0a7347697663ca0a6306dbc4467b935abeabd95e4b0a154d91ccb53d2"
+      "sha256": "be61b7fcc6f5b0470568894639f0feb991f2d5922d704b95b60a8d0e5db184a5"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
@@ -3450,7 +3450,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "e45fe723ae284bb6557003835ca57be766dbd8596ae78de4ceb69b0942e47829"
+      "sha256": "46217154c9d2989c032aeb7388f57b9307f95a0746e44d2307f5181b7470911b"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3458,7 +3458,7 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "74424f7dd926b44d93d503104b6430115663cb51765c98b4f8954c0b2bfbdf34"
+      "sha256": "e038eef54ec948514aaff8d241c96f026afe863f9fb18dc61da91f67209cf976"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
@@ -3466,7 +3466,7 @@
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "268624982bb11b329badbb334a6d35511a29e3328480f9473ddaee119df3a8d3"
+      "sha256": "df07f3ae65a0f85c29270c05384853f3991b2ffa19a3296152976111e147970c"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3512,7 +3512,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "f7dd067992edb9bc620ed2b668840d6ea4e862172be18a08abe4358d81049f9f",
+  "content_sha256": "160953caffeb5961894c260464d8c412752788f83d597104327e2e0d2a3c20d2",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4239,7 +4239,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/descriptor-legality.md",
-      "sha256": "42f2f2350cd7f14b96e97a3e697b9c62a134a057dac1007d95fb09301403122e"
+      "sha256": "91a03513e425b602a088de317fc261f8decaf3dd4fba751939281dd68b87cb81"
     },
     {
       "kind": "generated-documentation",
@@ -4334,7 +4334,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tile-schema.md",
-      "sha256": "ce18dbcbfbf3c860dd18455637557c4ed6081d6a95f319af96d5500fcddec4e1"
+      "sha256": "9097a4f2735ce4f36042ed6889cd244fe87739ea34ff6aa4b8ad515dc27362c8"
     },
     {
       "kind": "generated-documentation",

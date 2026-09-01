@@ -50,6 +50,15 @@ begin
     return BundleDataTypeConcrete(data_type) || data_type == DTYPE_NONE;
 end;
 
+readonly func BundleDATRDataTypeApplicabilityCode() => bits(5)
+begin
+    if !_BundleDataAttributesPresent ||
+       _BundleDataAttributes.data_type == DTYPE_NONE then
+        return Zeros{5};
+    end;
+    return _BundleDataAttributes.data_type;
+end;
+
 pure func BundleTileDataType(data_type: bits(5)) => TileDataType
 begin
     return TileDataTypeFromEncoding(data_type as TileDataTypeEncoding);

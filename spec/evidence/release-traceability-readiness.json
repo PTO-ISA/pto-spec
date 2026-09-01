@@ -688,9 +688,12 @@
         "ADR-0080",
         "ADR-0081",
         "ADR-0082",
-        "ADR-0083"
+        "ADR-0083",
+        "ADR-0123"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-BLOCK-MGATHER-GATHER-001"
+      ]
     },
     {
       "executable": false,
@@ -17075,7 +17078,7 @@
     "asl/block/model/dispatch/cube-destination.asl": "ee31e918e78a40a17608cb76c1343186130f841b4cbb5fbd26e50d99dbcc07cd",
     "asl/block/model/dispatch/cube-tmatmul.asl": "4a65098b22408fedd8b76b362ac7a45bffecd6ed88c1654b59d29226e06c71e8",
     "asl/block/model/dispatch/decode.asl": "dd1dff7f347f2ec090bf34984a2541be7568bb1f24ae5e4716c8b715ca8852a9",
-    "asl/block/model/dispatch/descriptor-legality.asl": "b493165ab38fa4f0792d30cd67ef6319eab4a19db210627eead4ed92bacd613a",
+    "asl/block/model/dispatch/descriptor-legality.asl": "ee074174ebd9f42e0c8e0083dd7d771c89c7dcb29e00810bee4b94499816d595",
     "asl/block/model/dispatch/destination-auxiliary.asl": "aaf512a844566338141515a0ca03a974b814bb429049bea0c6ee6771389de82c",
     "asl/block/model/dispatch/destination-shape.asl": "2bf14689631bfca407a59c60700da2aeb6b5e56c4b6d344cba8f6895d5e1804a",
     "asl/block/model/dispatch/expansion-schema.asl": "5cc5f4dd6683bc84d262b63081b800191f4275709e5f027807a658b5ce69e4f1",
@@ -17094,7 +17097,7 @@
     "asl/block/model/dispatch/tcvt-schema.asl": "401db2aa1407ea304e13acf65f9f0a75f5602042cb71d80024b148296118feef",
     "asl/block/model/dispatch/tile-execution.asl": "86bdc66d3ab8ca2dbf5f3fc3f37a95293ffbb04ae10f42f1304043d5a1278153",
     "asl/block/model/dispatch/tile-scalar-schema.asl": "7cf701452bd5b31692bad2d2b6099f7b34963a6a1197dd1b98fd9b2512234f2c",
-    "asl/block/model/dispatch/tile-schema.asl": "982233f0a7347697663ca0a6306dbc4467b935abeabd95e4b0a154d91ccb53d2",
+    "asl/block/model/dispatch/tile-schema.asl": "be61b7fcc6f5b0470568894639f0feb991f2d5922d704b95b60a8d0e5db184a5",
     "asl/block/model/dispatch/tlsu-gmov.asl": "500ea0d7053ca2126ac344052ec98b6a97f2cf78660a13bac6da0a7830be6159",
     "asl/block/model/dispatch/tlsu-layout-conversion.asl": "6bc7f9212605217e06b0d30afa5826467e4af4b23d9f0f52c22731a4a144dcff",
     "asl/block/model/dispatch/tlsu-mgather-cas.asl": "0231bd8ab7d9c60fc9d93cca6af278e871a36103481f763fdc676c4aa25f372c",
@@ -17929,7 +17932,7 @@
     "docs/block/model/dispatch/cube-destination.md": "bec93765a939bf244b1ac629cf56bb8080482a2b55e062a06cc90dc46fb4a611",
     "docs/block/model/dispatch/cube-tmatmul.md": "a54b5b307dec8f37df25978b3a701cac597955e74623a666849ae3aaecbe3da1",
     "docs/block/model/dispatch/decode.md": "bd34ab72e5dd6eec73399291013e4d8bad99252d4aa13d2575940cae4796aaf3",
-    "docs/block/model/dispatch/descriptor-legality.md": "42f2f2350cd7f14b96e97a3e697b9c62a134a057dac1007d95fb09301403122e",
+    "docs/block/model/dispatch/descriptor-legality.md": "91a03513e425b602a088de317fc261f8decaf3dd4fba751939281dd68b87cb81",
     "docs/block/model/dispatch/destination-auxiliary.md": "76c5613c3bc1e70fe9cf94a6cf5238287a9494e7a62114084584846a53154b3e",
     "docs/block/model/dispatch/destination-shape.md": "cbba71d07dbd9810e811a3bb48ac6771d5463c1912e1e5c76388d4421a54b5d5",
     "docs/block/model/dispatch/expansion-schema.md": "8c938904ab8f166b7dda32483cea8362be2e96775f62dfa5e30e7de505979416",
@@ -17948,7 +17951,7 @@
     "docs/block/model/dispatch/tcvt-schema.md": "42ee5a0ec2dd41eb03774e7f68664448b58c914585a0f34b56c0e700ac0bda79",
     "docs/block/model/dispatch/tile-execution.md": "9e0467d2690b49e7f6f79d8d577ae764a39ebd1bda4835633d6799916b16a7f6",
     "docs/block/model/dispatch/tile-scalar-schema.md": "ebc81d44e0cf1b9615396d7cd0030cd1ee1d2bc57b09fe2037b8f95c0098b1da",
-    "docs/block/model/dispatch/tile-schema.md": "ce18dbcbfbf3c860dd18455637557c4ed6081d6a95f319af96d5500fcddec4e1",
+    "docs/block/model/dispatch/tile-schema.md": "9097a4f2735ce4f36042ed6889cd244fe87739ea34ff6aa4b8ad515dc27362c8",
     "docs/block/model/dispatch/tlsu-gmov.md": "2c47295a7de1583d03cfecf28f6f75e05a1718d7ad82d8dd1cdb143303159af2",
     "docs/block/model/dispatch/tlsu-layout-conversion.md": "b5997a052e22e6235790e3397e0e561a5af51699dab721fb38d3410d1c203b69",
     "docs/block/model/dispatch/tlsu-mgather-cas.md": "a071372b56e05a87cbfd76ed126dbb37223c107fd3181f3b7a0d940975f2a0db",
@@ -18645,7 +18648,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "0c86539c32c94f4961c3a15a64733cf2b6b8869f6348a467d9a0f41d1bc78cc5",
+    "spec/evidence/adr-index.json": "823285bfd3b5a165ac40c62125a5ed6ce833f16a168a610d272383b4a549d464",
     "spec/evidence/instruction-contract-closure.json": "5dc7eb1dd0a8d78fe43099c2f67dd0c744514a484546bd8192b54a7f6d425b12",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -18942,7 +18945,7 @@
     "tests/asl/block/execution/BSTART.MGATHER/block-bound-bstart-mgather-stride-002.asl": "ecd713cd251ce8b937bef617efa75f23133106173f376f52bd54195c2cd6ab0e",
     "tests/asl/block/execution/BSTART.MGATHER/block-bound-bstart-mgather-zero-001.asl": "fc1d4a7175d8e006f240dd8f26e78ddeb0a526defea3f8d2c12f257b5fbdd025",
     "tests/asl/block/execution/BSTART.MGATHER/block-decode-bstart-mgather-canonical-001.asl": "61adb34157f1a83d4e768d4e38c59a8fc2cf9c88b7b4fab2e049d9a9d4d9d704",
-    "tests/asl/block/execution/BSTART.MGATHER/block-exec-bstart-mgather-gather-001.asl": "5acbd985d4f02fd1c9b6afd71a9ec446b2c4be47efcb2a4f66ba777d3ca1cefc",
+    "tests/asl/block/execution/BSTART.MGATHER/block-exec-bstart-mgather-gather-001.asl": "4195cefb05eca65f0e415c010e782e82efd1700ea3b7773dd546d214ef01c912",
     "tests/asl/block/execution/BSTART.MGATHER/block-exec-bstart-mgather-s4-index-002.asl": "bb0c980023615adbcd9c2ab12d0f68e92464761ffd1012ff0761817f71d6e8d2",
     "tests/asl/block/execution/BSTART.MGATHER/block-exec-bstart-mgather-stage2-width-001.asl": "64e63d5f413f644008a9e3804cdce9650961e086a469ac5587e2fa2168bdfec2",
     "tests/asl/block/execution/BSTART.MGATHER/block-exec-bstart-mgather-u4-index-003.asl": "99d8a0616a5bff71baee79dd9429944f79e4e5e272daf42921303667bb7f57e3",
@@ -33844,13 +33847,14 @@
       "kind": "execution",
       "path": "tests/asl/block/execution/BSTART.MGATHER/block-exec-bstart-mgather-gather-001.asl",
       "requirements": [
+        "PTO-B-DATR-FIELDS-001",
         "PTO-INDEXED-TLSU-STRIDE-001",
         "PTO-BSTART-MGATHER-SCHEMA-001",
         "PTO-MGATHER-BYTE-DISPLACEMENT-001",
         "PTO-INST-TILE-MGATHER",
         "PTO-INST-BLOCK-BSTART-MGATHER"
       ],
-      "sha256": "5acbd985d4f02fd1c9b6afd71a9ec446b2c4be47efcb2a4f66ba777d3ca1cefc",
+      "sha256": "4195cefb05eca65f0e415c010e782e82efd1700ea3b7773dd546d214ef01c912",
       "source": "asl/block/execution/BSTART.MGATHER.asl"
     },
     {
@@ -62060,7 +62064,8 @@
         "ADR-0080",
         "ADR-0081",
         "ADR-0082",
-        "ADR-0083"
+        "ADR-0083",
+        "ADR-0123"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-B-DATR-CUBE-RESERVED-003",
@@ -64365,7 +64370,8 @@
       "readiness_subjects": [
         "ADR-0032",
         "ADR-0055",
-        "ADR-0108"
+        "ADR-0108",
+        "ADR-0123"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-DTYPE-NONE-RESOLUTION-001"
@@ -64822,7 +64828,8 @@
         "ADR-0032",
         "ADR-0055",
         "ADR-0098",
-        "ADR-0108"
+        "ADR-0108",
+        "ADR-0123"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TLOAD-TSTORE-ORDINARY-PAD-008"

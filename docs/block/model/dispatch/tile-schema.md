@@ -241,8 +241,7 @@ begin
         _BundleDataAttributes.saturating;
     let explicit_canonicalize = _BundleDataAttributesPresent &&
         _BundleDataAttributes.canonicalize;
-    let explicit_data_type = if _BundleDataAttributesPresent then
-        _BundleDataAttributes.data_type else Zeros{5};
+    let explicit_data_type = BundleDATRDataTypeApplicabilityCode();
     let explicit_rounding = if _BundleDataAttributesPresent then
         _BundleDataAttributes.rounding_mode else Zeros{3};
     let explicit_layout = if _BundleDataAttributesPresent then
