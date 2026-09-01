@@ -8838,12 +8838,45 @@
         "0.58.5"
       ],
       "title": "Assign CSEL raw selector 10 to false-source negation"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-BLOCK-MSET-FILL-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MSET",
+        "PTO-BLOCK-MODEL-COMMIT-EFFECTS"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "f2bb7bb3182f1ceec477c69409877e5e72d853f1",
+      "created": "2026-09-01",
+      "id": "ADR-0119",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/198",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0119-mset-complete-xlen-length.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Restore MSET complete-XLEN arbitrary length semantics"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 112
+    "record_count": 113
   }
 }

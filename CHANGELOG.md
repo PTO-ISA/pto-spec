@@ -12,6 +12,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0106](docs/status/decisions/0106-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets
 - [ADR-0113](docs/status/decisions/0113-bstart-preserves-predecessor-transfer.md): Following BSTART preserves the predecessor-selected transfer
 - [ADR-0116](docs/status/decisions/0116-trace-preserves-predecessor-transfer.md): B.HINT TRACE preserves the predecessor-selected transfer
+- [ADR-0119](docs/status/decisions/0119-mset-complete-xlen-length.md): Restore MSET complete-XLEN arbitrary length semantics
 
 ### Cross-cutting
 - [ADR-0105](docs/status/decisions/0105-shared-whole-parent-readiness.md): Shared whole-parent readiness and single-issuer publication
