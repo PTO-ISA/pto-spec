@@ -2,7 +2,7 @@
 pure func SchemaCasStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00811181;
-    instruction[31:27] = Zeros{5} + 27;
+    instruction[31:27] = Zeros{5} + 26;
     return instruction;
 end;
 
@@ -30,14 +30,14 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U8,
+    ConfigureTile(1, 128, 1, 1, 1, 1, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U8,
+    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 2);
-    Store(Zeros{PTO_XLEN} + 0x200, 1, Zeros{PTO_XLEN} + 1);
+    Store(Zeros{PTO_XLEN} + 0x200, 2, Zeros{PTO_XLEN} + 1);
     let started = ExecuteCommandInstruction(SchemaCasStart(), 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
@@ -52,7 +52,7 @@ begin
     assert _MemoryEventCount == 0;
     assert !_BundleTileBindings[[1]].destination_allocated_by_bundle;
     StopMemoryEventCapture();
-    let memory = LoadUnsigned(Zeros{PTO_XLEN} + 0x200, 1);
+    let memory = LoadUnsigned(Zeros{PTO_XLEN} + 0x200, 2);
     assert memory == Zeros{PTO_XLEN} + 1;
     return 0;
 end;

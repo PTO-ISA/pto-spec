@@ -432,7 +432,9 @@ begin
              TileHandler_TUNPACK,
              TileHandler_TTRI =>
             return BundleProducerEffect_RollbackSafe;
-        when TileHandler_MGATHER_CAS,
+        when TileHandler_GM_ATOM_CAS,
+             TileHandler_GM_ATOM_VALUE, TileHandler_GM_RED_VALUE,
+             TileHandler_GM_RED_POPC,
              TileHandler_MSCATTER,
              TileHandler_MSCATTER_MASK,
              TileHandler_TPREFETCH,

@@ -213,7 +213,7 @@ def _block_assertions(
         )
     alias_engine = unit.metadata.get("alias_engine")
     if alias_target is not None:
-        if alias_engine not in {"VEC", "SFU"}:
+        if alias_engine not in {"VEC", "SFU", "TLSU"}:
             raise ValueError(f"{unit.source_path}: invalid Block alias engine")
         lines.append(
             f"    assert InstructionContractAliasEngine_{mnemonic}() == "
@@ -429,7 +429,7 @@ def render_block_alias_avs(
     if unit.surface != "block" or unit.mnemonic is None:
         raise ValueError(f"{unit.source_path}: engine alias must be a Block mnemonic")
     alias_engine = unit.metadata.get("alias_engine")
-    if alias_engine not in {"VEC", "SFU"}:
+    if alias_engine not in {"VEC", "SFU", "TLSU"}:
         return []
 
     operation_partition: list[tuple[int, str]] = []

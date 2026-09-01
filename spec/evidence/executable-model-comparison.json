@@ -9946,30 +9946,6 @@
       ],
       "independent_status": "decode-only",
       "index": 23,
-      "mnemonic": "BSTART.MGATHER.CAS",
-      "pto_command_disposition": "executed",
-      "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
-      "requirements": [
-        "PTO-REQ-BUNDLE-DISPATCH-001",
-        "PTO-REQ-BUNDLE-OPERATION-001",
-        "PTO-REQ-BUNDLE-STATE-001"
-      ],
-      "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_mgather_cas_32_fd8c8a3b720a",
-      "surface": "command"
-    },
-    {
-      "abi_change_acceptance": null,
-      "classification": "non-comparable",
-      "encoding_match": true,
-      "evidence": [
-        "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
-        "spec/catalog/command-forms.json",
-        "spec/evidence/bundle-command-totality.json",
-        "spec/evidence/release-traceability-readiness.json"
-      ],
-      "independent_status": "decode-only",
-      "index": 24,
       "mnemonic": "BSTART.MGATHER.MASK",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -9993,7 +9969,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 25,
+      "index": 24,
       "mnemonic": "BSTART.MSCATTER.MASK",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10017,7 +9993,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 26,
+      "index": 25,
       "mnemonic": "BSTART.MSCATTER",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10041,7 +10017,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 27,
+      "index": 26,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10065,7 +10041,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 28,
+      "index": 27,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10089,7 +10065,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 29,
+      "index": 28,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10113,7 +10089,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 30,
+      "index": 29,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10137,7 +10113,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 31,
+      "index": 30,
       "mnemonic": "BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10161,7 +10137,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 32,
+      "index": 31,
       "mnemonic": "BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10189,7 +10165,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 33,
+      "index": 32,
       "mnemonic": "BSTART.TEPL",
       "pto_command_disposition": "executed",
       "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence.",
@@ -10213,7 +10189,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 34,
+      "index": 33,
       "mnemonic": "BSTART.TGEMV",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10237,7 +10213,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 35,
+      "index": 34,
       "mnemonic": "BSTART.TGEMV.ACC",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10261,7 +10237,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 36,
+      "index": 35,
       "mnemonic": "BSTART.TGEMV.BIAS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10285,7 +10261,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 37,
+      "index": 36,
       "mnemonic": "BSTART.TGEMVMX",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10309,7 +10285,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 38,
+      "index": 37,
       "mnemonic": "BSTART.TGEMVMX.ACC",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10333,7 +10309,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 39,
+      "index": 38,
       "mnemonic": "BSTART.TGEMVMX.BIAS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10357,7 +10333,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 40,
+      "index": 39,
       "mnemonic": "BSTART.TLOAD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10381,7 +10357,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 41,
+      "index": 40,
       "mnemonic": "BSTART.TMATMUL",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10405,7 +10381,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 42,
+      "index": 41,
       "mnemonic": "BSTART.TMATMUL.ACC",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10429,7 +10405,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 43,
+      "index": 42,
       "mnemonic": "BSTART.TMATMUL.BIAS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10453,7 +10429,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 44,
+      "index": 43,
       "mnemonic": "BSTART.TMATMULMX",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10477,7 +10453,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 45,
+      "index": 44,
       "mnemonic": "BSTART.TMATMULMX.ACC",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10501,7 +10477,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 46,
+      "index": 45,
       "mnemonic": "BSTART.TMATMULMX.BIAS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10525,7 +10501,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 47,
+      "index": 46,
       "mnemonic": "BSTART.TMOV",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10549,7 +10525,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
-      "index": 48,
+      "index": 47,
       "mnemonic": "BSTART.GMOV",
       "pto_command_disposition": "executed",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
@@ -10573,7 +10549,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "decode-only",
-      "index": 49,
+      "index": 48,
       "mnemonic": "BSTART.TPREFETCH",
       "pto_command_disposition": "executed",
       "pto_disposition": "Independent model reaches decode for this header but does not provide payload execution evidence.",
@@ -10597,7 +10573,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 50,
+      "index": 49,
       "mnemonic": "BSTART.TSTORE",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10621,7 +10597,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 51,
+      "index": 50,
       "mnemonic": "BSTOP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10645,7 +10621,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
-      "index": 52,
+      "index": 51,
       "mnemonic": "B.IOS",
       "pto_command_disposition": "executed",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
@@ -10669,7 +10645,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 53,
+      "index": 52,
       "mnemonic": "C.B.DIMI",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10693,7 +10669,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 54,
+      "index": 53,
       "mnemonic": "C.BSTART",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10717,7 +10693,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 55,
+      "index": 54,
       "mnemonic": "C.BSTART",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10741,7 +10717,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 56,
+      "index": 55,
       "mnemonic": "C.BSTART.FP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10765,7 +10741,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 57,
+      "index": 56,
       "mnemonic": "C.BSTART.STD",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10789,7 +10765,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 58,
+      "index": 57,
       "mnemonic": "C.BSTART.SYS",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10813,7 +10789,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 59,
+      "index": 58,
       "mnemonic": "C.BSTOP",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -10837,7 +10813,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 60,
+      "index": 59,
       "mnemonic": "ERCOV",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -10861,7 +10837,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 61,
+      "index": 60,
       "mnemonic": "ESAVE",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -10885,7 +10861,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 62,
+      "index": 61,
       "mnemonic": "FENTRY",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -10909,7 +10885,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 63,
+      "index": 62,
       "mnemonic": "FEXIT",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -10933,7 +10909,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 64,
+      "index": 63,
       "mnemonic": "FRET.RA",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -10957,7 +10933,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 65,
+      "index": 64,
       "mnemonic": "FRET.STK",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -10981,7 +10957,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 66,
+      "index": 65,
       "mnemonic": "HL.QMT",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11009,7 +10985,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 67,
+      "index": 66,
       "mnemonic": "HL.QPOP",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "The independent snapshot retains the superseded command encoding. PTO ISA 0.58.0 intentionally changes this mask/match under ADR 0056 and issue #54; PTO remains authoritative and the comparison remains an honest encoding divergence.",
@@ -11033,7 +11009,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 68,
+      "index": 67,
       "mnemonic": "HL.QPUSH",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11057,7 +11033,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 69,
+      "index": 68,
       "mnemonic": "MCOPY",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11081,7 +11057,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 70,
+      "index": 69,
       "mnemonic": "MSET",
       "pto_command_disposition": "executed",
       "pto_disposition": "Stable form ID, mask/match, and executable-subset status agree with PTO command evidence.",
@@ -11105,7 +11081,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "executable-subset",
-      "index": 71,
+      "index": 70,
       "mnemonic": "XB",
       "pto_command_disposition": "pto-v0-rejected",
       "pto_disposition": "PTO-v0 deliberately rejects this non-portable command family before effects.",
@@ -11129,7 +11105,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
-      "index": 72,
+      "index": 71,
       "mnemonic": "L.BSTOP",
       "pto_command_disposition": "executed",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
@@ -11153,7 +11129,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
-      "index": 73,
+      "index": 72,
       "mnemonic": "B.FPATR",
       "pto_command_disposition": "executed",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
@@ -11177,7 +11153,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
-      "index": 74,
+      "index": 73,
       "mnemonic": "B.SUBVIEW",
       "pto_command_disposition": "executed",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
@@ -11201,7 +11177,7 @@
         "spec/evidence/release-traceability-readiness.json"
       ],
       "independent_status": "missing",
-      "index": 75,
+      "index": 74,
       "mnemonic": "B.ASSEMBLE",
       "pto_command_disposition": "executed",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
@@ -14029,11 +14005,410 @@
       "selector_match": false,
       "stable_id": "tepl:0x078:TUNPACK",
       "surface": "direct-tile"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 75,
+      "mnemonic": "BSTART.ATOM.ADD",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_add_32_gm12",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 76,
+      "mnemonic": "BSTART.ATOM.AND",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_and_32_gm16",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 77,
+      "mnemonic": "BSTART.ATOM.CAS",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_cas_32_gm08",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 78,
+      "mnemonic": "BSTART.ATOM.DEC",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_dec_32_gm15",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 79,
+      "mnemonic": "BSTART.ATOM.EXCH",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_exch_32_gm09",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 80,
+      "mnemonic": "BSTART.ATOM.INC",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_inc_32_gm14",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 81,
+      "mnemonic": "BSTART.ATOM.MAX",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_max_32_gm10",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 82,
+      "mnemonic": "BSTART.ATOM.MIN",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_min_32_gm11",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 83,
+      "mnemonic": "BSTART.ATOM.OR",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_or_32_gm17",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 84,
+      "mnemonic": "BSTART.ATOM.XOR",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_atom_xor_32_gm18",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 85,
+      "mnemonic": "BSTART.RED.ADD",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_red_add_32_gm21",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 86,
+      "mnemonic": "BSTART.RED.AND",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_red_and_32_gm24",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 87,
+      "mnemonic": "BSTART.RED.DEC",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_red_dec_32_gm23",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 88,
+      "mnemonic": "BSTART.RED.INC",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_red_inc_32_gm22",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 89,
+      "mnemonic": "BSTART.RED.MAX",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_red_max_32_gm19",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 90,
+      "mnemonic": "BSTART.RED.MIN",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_red_min_32_gm20",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 91,
+      "mnemonic": "BSTART.RED.OR",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_red_or_32_gm25",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 92,
+      "mnemonic": "BSTART.RED.POPC",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_red_popc_32_gm27",
+      "surface": "command"
+    },
+    {
+      "abi_change_acceptance": null,
+      "classification": "divergence",
+      "encoding_match": false,
+      "evidence": [
+        "spec/catalog/command-forms.json"
+      ],
+      "independent_status": "missing",
+      "index": 93,
+      "mnemonic": "BSTART.RED.XOR",
+      "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
+      "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
+      "requirements": [
+        "PTO-REQ-BUNDLE-DISPATCH-001",
+        "PTO-REQ-BUNDLE-OPERATION-001",
+        "PTO-REQ-BUNDLE-STATE-001"
+      ],
+      "semantic_handler": "ExecuteBundleStart",
+      "stable_id": "bstart_red_xor_32_gm26",
+      "surface": "command"
     }
   ],
   "schema": "pto.executable-model-comparison.v1",
   "scope": {
-    "command_forms": 76,
+    "command_forms": 94,
     "direct_tile_breakdown": {
       "CUBE": 12,
       "TEPL": 85,
@@ -14041,7 +14416,7 @@
     },
     "direct_tile_operations": 107,
     "scalar_forms": 466,
-    "total_rows": 649
+    "total_rows": 667
   },
   "snapshot": {
     "content_hashes": {
@@ -14161,19 +14536,19 @@
   "summary": {
     "classification_counts": {
       "comparable-match": 517,
-      "divergence": 94,
-      "non-comparable": 38
+      "divergence": 113,
+      "non-comparable": 37
     },
     "independent_status_counts": {
-      "decode-only": 17,
+      "decode-only": 16,
       "executable-subset": 518,
       "header-manifest": 21,
-      "missing": 13,
+      "missing": 32,
       "selector-manifest": 80
     },
-    "row_count": 649,
+    "row_count": 667,
     "surface_counts": {
-      "command": 76,
+      "command": 94,
       "direct-tile": 107,
       "scalar": 466
     },
