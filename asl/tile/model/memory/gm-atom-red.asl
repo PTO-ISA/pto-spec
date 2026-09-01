@@ -1,4 +1,20 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","surface":"tile","classification":["model","memory","gm-atom-red"],"depends_on":["PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE"]}
+// NDF-BEGIN: PTO-MGATHER-CAS-ATOMIC-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// The legacy MGATHER_CAS spelling aliases atom.cas and MUST accept only
+// U16, U32, and U64 transfer DataTypes. Each valid request MUST perform one
+// atomic compare-and-swap at its signed or unsigned byte displacement and
+// place the value observed by that request in the corresponding destination
+// element. Duplicate-address requests MUST serialize in an implementation-
+// defined order and MUST NOT expose a fixed row-major ordering requirement.
+// NDF-END: PTO-MGATHER-CAS-ATOMIC-001
+// NDF-BEGIN: PTO-MGATHER-CAS-PUBLICATION-001
+// ndf: kind=contract level=L1 layer=tile status=accepted
+// The legacy MGATHER_CAS spelling MUST preflight every valid-region read and
+// write address before its first atomic effect. On success it MUST publish
+// one fully defined destination whose non-valid physical elements contain the
+// selected pad value.
+// NDF-END: PTO-MGATHER-CAS-PUBLICATION-001
 // NDF-BEGIN: PTO-ATOM-RED-ENCODING-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // TLSU Functions 8 through 27 select the GM atom/red family with the fixed

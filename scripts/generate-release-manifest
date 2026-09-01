@@ -32,9 +32,9 @@ NUMERIC_VECTORS_PATH = Path("spec/evidence/pto-isa-0585-hardware-numeric-vectors
 NUMERIC_PROFILE_ID = "pto-hardware-numeric-0.58.5-ieee-v1"
 NUMERIC_PROFILE_RELEASE = "0.58.5"
 
-FAMILY_COUNTS = {'TEPL': 86, 'TLSU': 10, 'CUBE': 12}
-FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 76}
-COMMAND_FAMILY_COUNTS = {'CMD': 71, 'BBD': 5}
+FAMILY_COUNTS = {'TEPL': 86, 'TLSU': 28, 'CUBE': 12}
+FORM_COUNTS = {'scalar_forms': 466, 'command_forms': 94}
+COMMAND_FAMILY_COUNTS = {'CMD': 89, 'BBD': 5}
 VALID_DATATYPES = tuple(range(0, 15)) + tuple(range(16, 21)) + tuple(range(24, 29))
 RESERVED_DATATYPES = (15, 21, 22, 23, 29, 30)
 ILLEGAL_DATATYPES = (31,)
@@ -94,8 +94,26 @@ EXPECTED_TLSU_MAP = {
     5: 'MSCATTER',
     6: 'MGATHER_MASK',
     7: 'MSCATTER_MASK',
-    8: 'MGATHER_CAS',
+    8: 'ATOM_CAS',
+    9: 'ATOM_EXCH',
+    10: 'ATOM_MAX',
+    11: 'ATOM_MIN',
+    12: 'ATOM_ADD',
     13: 'GMOV',
+    14: 'ATOM_INC',
+    15: 'ATOM_DEC',
+    16: 'ATOM_AND',
+    17: 'ATOM_OR',
+    18: 'ATOM_XOR',
+    19: 'RED_MAX',
+    20: 'RED_MIN',
+    21: 'RED_ADD',
+    22: 'RED_INC',
+    23: 'RED_DEC',
+    24: 'RED_AND',
+    25: 'RED_OR',
+    26: 'RED_XOR',
+    27: 'RED_POPC',
 }
 EXPECTED_CUBE_MAP = {
     0: 'TMATMUL',
@@ -120,7 +138,25 @@ EXPECTED_NON_TEPL_COMMANDS = {
     'MSCATTER': 'BSTART.MSCATTER',
     'MGATHER_MASK': 'BSTART.MGATHER.MASK',
     'MSCATTER_MASK': 'BSTART.MSCATTER.MASK',
-    'MGATHER_CAS': 'BSTART.MGATHER.CAS',
+    'ATOM_CAS': 'BSTART.ATOM.CAS',
+    'ATOM_EXCH': 'BSTART.ATOM.EXCH',
+    'ATOM_MAX': 'BSTART.ATOM.MAX',
+    'ATOM_MIN': 'BSTART.ATOM.MIN',
+    'ATOM_ADD': 'BSTART.ATOM.ADD',
+    'ATOM_INC': 'BSTART.ATOM.INC',
+    'ATOM_DEC': 'BSTART.ATOM.DEC',
+    'ATOM_AND': 'BSTART.ATOM.AND',
+    'ATOM_OR': 'BSTART.ATOM.OR',
+    'ATOM_XOR': 'BSTART.ATOM.XOR',
+    'RED_MAX': 'BSTART.RED.MAX',
+    'RED_MIN': 'BSTART.RED.MIN',
+    'RED_ADD': 'BSTART.RED.ADD',
+    'RED_INC': 'BSTART.RED.INC',
+    'RED_DEC': 'BSTART.RED.DEC',
+    'RED_AND': 'BSTART.RED.AND',
+    'RED_OR': 'BSTART.RED.OR',
+    'RED_XOR': 'BSTART.RED.XOR',
+    'RED_POPC': 'BSTART.RED.POPC',
     'GMOV': 'BSTART.GMOV',
     'TMATMUL': 'BSTART.TMATMUL',
     'TMATMUL_BIAS': 'BSTART.TMATMUL.BIAS',
@@ -294,7 +330,7 @@ def validate_tile_catalog() -> tuple[dict, dict[str, list[dict]]]:
             f"tile operation closure must be exactly {FAMILY_COUNTS}, got {actual_counts}"
         )
     if catalog.get("operation_count") != sum(FAMILY_COUNTS.values()):
-        raise SystemExit("tile operation_count must be exactly 108")
+        raise SystemExit("tile operation_count must be exactly 126")
     names = [row.get("name") for row in operations]
     if None in names or len(names) != len(set(names)):
         raise SystemExit("tile operation names must be present and globally unique")

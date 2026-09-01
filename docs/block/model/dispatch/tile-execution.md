@@ -172,10 +172,10 @@ begin
             return FALSE;
         end;
         specialized_completed = ExecuteBundleGMOVOperation();
-    elsif BundleGMAtomRedSelected() then
-        specialized_completed = ExecuteBundleGMAtomRedOperation();
     elsif BundleMGATHERCASSelected() then
         specialized_completed = ExecuteBundleMGATHERCASOperation();
+    elsif BundleGMAtomRedSelected() then
+        specialized_completed = ExecuteBundleGMAtomRedOperation();
     elsif BundleMGATHERMASKSelected() then
         specialized_completed = ExecuteBundleMGATHERMASKOperation();
     elsif BundleMGATHERSelected() then

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-MGATHER-CAS-RMW-001","source":"asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl","requirements":["PTO-INST-TILE-ATOM-CAS"],"kind":"atomicity","summary":"MGATHER_CAS performs one atomic compare-and-swap per indexed lane and returns each old value.","pass_condition":"The matching lane stores its replacement, the mismatching lane preserves memory, both old values reach the destination, and two atomic events are recorded.","related_sources":["asl/tile/model/memory/atomics.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-MGATHER-CAS-RMW-001","source":"asl/tile/memory-and-data-movement/irregular/mgather-cas.asl","requirements":["PTO-INST-TILE-ATOM-CAS"],"kind":"atomicity","summary":"MGATHER_CAS performs one atomic compare-and-swap per indexed lane and returns each old value.","pass_condition":"The matching lane stores its replacement, the mismatching lane preserves memory, both old values reach the destination, and two atomic events are recorded.","related_sources":["asl/tile/model/memory/atomics.asl"]}
 func main() => integer
 begin
     ResetProfileState();
