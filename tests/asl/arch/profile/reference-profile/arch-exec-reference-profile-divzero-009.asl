@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-PROFILE-DIVZERO-009","source":"asl/arch/profile/reference-profile.asl","requirements":[],"kind":"execution","summary":"the reference scalar FP division branch returns the assigned zero-divisor result and five-bit status field","pass_condition":"a zero right carrier returns all-one result bits and status Zeros{5}+2","related_sources":[]}
+// PTO-TEST: {"id":"PTO-AVS-ARCH-REFERENCE-PROFILE-DIVZERO-009","source":"asl/arch/profile/reference-profile.asl","requirements":[],"kind":"execution","summary":"the reference scalar FP division branch returns signed infinity and divide-by-zero status","pass_condition":"a finite nonzero FP64 dividend divided by positive zero returns positive infinity with DZ","related_sources":["asl/scalar/fsu/FDIV.asl"]}
 func main() => integer
 begin
     let (result, status) = ScalarFPBinaryProfile(
@@ -8,7 +8,7 @@ begin
         Zeros{PTO_XLEN} + 7,
         Zeros{PTO_XLEN});
 
-    assert result == Ones{PTO_XLEN};
+    assert result == Zeros{PTO_XLEN} + 0x7ff0000000000000;
     assert status == Zeros{5} + 2;
     return 0;
 end;

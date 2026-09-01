@@ -65,10 +65,11 @@ implementation func ScalarFPBinaryProfile(operation: FloatingBinaryOperation,
                                            => (Word, bits(5))
 begin
     assert ScalarFPTypeCodeSupported(source_type);
-    if operation == FloatingBinary_DIV &&
-       ScalarFPCarrierIsZero(right, source_type) then
-        return (Ones{PTO_XLEN}, Zeros{5} + 2);
-    end;
+    let (special, special_result, special_flags) =
+        ReferenceScalarFPBinarySpecial(
+            operation, source_type, left, right);
+    if special then return (special_result, special_flags); end;
+
     let left_value = ReferenceScalarFPFiniteValue(left, source_type);
     let right_value = ReferenceScalarFPFiniteValue(right, source_type);
     case operation of

@@ -276,6 +276,135 @@ begin
         rounding_mode);
 end;
 
+// Linx scalar FP operations follow IEEE 754-2008. Keep non-finite and
+// signed-zero handling outside the rational finite kernel so an overflowed
+// infinity remains a legal input to the next instruction.
+pure func ReferenceScalarFPDataType(source_type: bits(5)) => TileDataType
+begin
+    if source_type == '00001' then return TileDataType_FP32; end;
+    assert source_type == '00000';
+    return TileDataType_FP64;
+end;
+
+pure func ReferenceScalarFPClass(value: Word, source_type: bits(5))
+    => NumericValueClass
+begin
+    return TileNumericValueClass(ReferenceScalarFPDataType(source_type),
+        NormalizeScalarFPSource(value, source_type));
+end;
+
+pure func ReferenceScalarFPClassIsNegative(value_class: NumericValueClass)
+    => boolean
+begin
+    return value_class == NumericValue_NegativeZero ||
+           value_class == NumericValue_NegativeSubnormal ||
+           value_class == NumericValue_NegativeNormal ||
+           value_class == NumericValue_NegativeInfinity;
+end;
+
+pure func ReferenceScalarFPSpecialEncoding(
+    source_type: bits(5), value_class: NumericValueClass) => Word
+begin
+    if NumericValueClassIsNaN(value_class) then
+        let (available, quiet_nan) = TileNumericCanonicalNaN(
+            ReferenceScalarFPDataType(source_type));
+        assert available;
+        return quiet_nan;
+    end;
+    let negative = ReferenceScalarFPClassIsNegative(value_class);
+    if NumericValueClassIsInfinity(value_class) then
+        if source_type == '00001' then return Zeros{PTO_XLEN} +
+            (if negative then 0xff800000 else 0x7f800000); end;
+        return Zeros{PTO_XLEN} + (if negative then 0xfff0000000000000
+            else 0x7ff0000000000000);
+    end;
+    assert NumericValueClassIsZero(value_class);
+    if source_type == '00001' then return Zeros{PTO_XLEN} +
+        (if negative then 0x80000000 else 0); end;
+    return Zeros{PTO_XLEN} +
+        (if negative then 0x8000000000000000 else 0);
+end;
+
+pure func ReferenceScalarFPSignedInfinity(source_type: bits(5),
+                                           negative: boolean) => Word
+begin
+    return ReferenceScalarFPSpecialEncoding(source_type, if negative then
+        NumericValue_NegativeInfinity else NumericValue_PositiveInfinity);
+end;
+
+pure func ReferenceScalarFPSignedZero(source_type: bits(5),
+                                       negative: boolean) => Word
+begin
+    return ReferenceScalarFPSpecialEncoding(source_type, if negative then
+        NumericValue_NegativeZero else NumericValue_PositiveZero);
+end;
+
+pure func ReferenceScalarFPBinarySpecial(
+    operation: FloatingBinaryOperation, source_type: bits(5),
+    left: Word, right: Word) => (boolean, Word, bits(5))
+begin
+    let left_class = ReferenceScalarFPClass(left, source_type);
+    let right_class = ReferenceScalarFPClass(right, source_type);
+    let signaling_nan = left_class == NumericValue_SignalingNaN ||
+        right_class == NumericValue_SignalingNaN;
+    if NumericValueClassIsNaN(left_class) ||
+       NumericValueClassIsNaN(right_class) then
+        return (TRUE, ReferenceScalarFPSpecialEncoding(
+            source_type, NumericValue_QuietNaN),
+            if signaling_nan then Zeros{5} + 1 else Zeros{5});
+    end;
+    let left_infinity = NumericValueClassIsInfinity(left_class);
+    let right_infinity = NumericValueClassIsInfinity(right_class);
+    let left_zero = NumericValueClassIsZero(left_class);
+    let right_zero = NumericValueClassIsZero(right_class);
+    let left_negative = ReferenceScalarFPClassIsNegative(left_class);
+    let right_negative = ReferenceScalarFPClassIsNegative(right_class);
+    let result_negative = left_negative != right_negative;
+    if operation == FloatingBinary_ADD || operation == FloatingBinary_SUB then
+        let effective_right_negative = if operation == FloatingBinary_SUB then
+            !right_negative else right_negative;
+        if left_infinity && right_infinity &&
+           left_negative != effective_right_negative then return (TRUE,
+            ReferenceScalarFPSpecialEncoding(source_type,
+                NumericValue_QuietNaN), Zeros{5} + 1);
+        elsif left_infinity then return (TRUE,
+            ReferenceScalarFPSignedInfinity(source_type, left_negative),
+            Zeros{5});
+        elsif right_infinity then return (TRUE,
+            ReferenceScalarFPSignedInfinity(source_type,
+                effective_right_negative), Zeros{5}); end;
+    elsif operation == FloatingBinary_MUL then
+        if (left_zero && right_infinity) ||
+           (left_infinity && right_zero) then return (TRUE,
+            ReferenceScalarFPSpecialEncoding(source_type,
+                NumericValue_QuietNaN), Zeros{5} + 1);
+        elsif left_infinity || right_infinity then return (TRUE,
+            ReferenceScalarFPSignedInfinity(source_type, result_negative),
+            Zeros{5});
+        elsif left_zero || right_zero then return (TRUE,
+            ReferenceScalarFPSignedZero(source_type, result_negative),
+            Zeros{5}); end;
+    elsif operation == FloatingBinary_DIV then
+        if (left_zero && right_zero) ||
+           (left_infinity && right_infinity) then return (TRUE,
+            ReferenceScalarFPSpecialEncoding(source_type,
+                NumericValue_QuietNaN), Zeros{5} + 1);
+        elsif left_infinity then return (TRUE,
+            ReferenceScalarFPSignedInfinity(source_type, result_negative),
+            Zeros{5});
+        elsif right_infinity then return (TRUE,
+            ReferenceScalarFPSignedZero(source_type, result_negative),
+            Zeros{5});
+        elsif right_zero then return (TRUE,
+            ReferenceScalarFPSignedInfinity(source_type, result_negative),
+            Zeros{5} + 2);
+        elsif left_zero then return (TRUE,
+            ReferenceScalarFPSignedZero(source_type, result_negative),
+            Zeros{5}); end;
+    end;
+    return (FALSE, Zeros{PTO_XLEN}, Zeros{5});
+end;
+
 implementation func TileProfileQuantize(value: Word, scale: Word,
                                          zero_point: Word,
                                          source_type: TileDataType,

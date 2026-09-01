@@ -17266,8 +17266,8 @@
     "asl/arch/profile/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
     "asl/arch/profile/matrix-quantization.asl": "981f3fed75f88449740b4d42e342f4ce28b67647603c444a438ad59e3dc83373",
     "asl/arch/profile/reference-conversion.asl": "86a0c3a2909be5a866fe29e9b12b78fc50a1fefdf4643901c0786730b1bea587",
-    "asl/arch/profile/reference-profile.asl": "453cc2c000b55fc76203d79bed0263fce7297e49b60b1aaa70a94696c5fae8a3",
-    "asl/arch/profile/reference-quantization.asl": "c7f13ab0d16cdf709e40fd426559dca9f48348e04f667404809f99345e18b2f3",
+    "asl/arch/profile/reference-profile.asl": "546dcc38861f4f78282bf27a91fecb98fb1b1e7aebf2781de03d3613b5df22a9",
+    "asl/arch/profile/reference-quantization.asl": "4139eb36f1b7b13e7958e330cca649765db9782a64adb7e50e29ae599a927f42",
     "asl/arch/profile/reset.asl": "0138e72f6fdcac4a2f7c19c71b16c61dcf8bfb4fc5bb4b63c09e4a9f7ddff94d",
     "asl/arch/profile/trap-context-recovery.asl": "6c87ee4d53ed316f6ad72768ac84f67bcdf19c3af52dd96f3eb97eddc07c1357",
     "asl/arch/programming-model/core-pe-topology.asl": "2c987f6f6573d5da50a569f821dbddcd93ea428f408f59d148ebc5fd3b866447",
@@ -18125,8 +18125,8 @@
     "docs/arch/profile/matrix-postprocess.md": "6c620e8f326fa991a2a35cf3d9aad4e1e9b9321ea63bc78e8fdabdfb17802378",
     "docs/arch/profile/matrix-quantization.md": "345a80455b11084670964309b2ad6e3b1e176a91dae84eb542c6291fb1b52d10",
     "docs/arch/profile/reference-conversion.md": "bace39a4314b71d71a5ba2800d163cb731087d0c9262f06f74a6b564662e7b2f",
-    "docs/arch/profile/reference-profile.md": "a98e54dc26d3249fa9d39faa3cf10e2a79e753ecdf0bceeca9280386c53ea21f",
-    "docs/arch/profile/reference-quantization.md": "28476ac6018bcc187a094f61181c36f28e68bf084eeb295eead526bfff670c54",
+    "docs/arch/profile/reference-profile.md": "bf8a6897742d348292489bfb7646d13a9f86625274864e14c68ea44a65e89b34",
+    "docs/arch/profile/reference-quantization.md": "34864cd0e404e44858bf69799bd038ee8c50d0bcdc120bc484ba8fe4b66fe4da",
     "docs/arch/profile/reset.md": "0f706bd47b14d3a2e526dbf20617bf704507a2829ed45ebb93e4f80a72f915f2",
     "docs/arch/profile/trap-context-recovery.md": "8ba8fe4b76085c3c6ca002c57bab6f964c524e936f0b73e755fa3bf0acc33af7",
     "docs/arch/programming-model/core-pe-topology.md": "c48aedb26c403990acdeec4972d9a779bbda6bcc33d1e91b3fec453de4808fe1",
@@ -19075,12 +19075,13 @@
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-value-classes-003.asl": "91670f4a73dc9c2d0d433afc66ff18354a43035c8ede7c98a35612464fb220af",
     "tests/asl/arch/profile/reference-profile/arch-exec-predicate-null-gpr-padding-002.asl": "914147237a0be7174ddd59596be9f04e040d44c2ab34d42226922d139bd26356",
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-convert-012.asl": "4f2678623f51594bb5c6a4f9fbc8bae61a3ed0521c0248e6bc331778abe34455",
-    "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-divzero-009.asl": "6dfdb745ac38fe937ee919e00fbd1abef8516be7d147281d0c8c10bdfaa582d2",
+    "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-divzero-009.asl": "9f97ac70210ff6ec51e49c5422428494cddf407e36e2831c10080d0d90704f2f",
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-exponential-008.asl": "344da1461904ae2a456be8e94ee94344cf452dec526cfa3252232e26a721006a",
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp32-010.asl": "c348ec2c549d2dc5e28dae70136ee8f1b9d5eef74a40331c7356c05392dc3a32",
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp64-011.asl": "9a5794370015a98c9b00acea4ba7f5f5770a7eefb9711a8fc9004a1d317d9e72",
     "tests/asl/arch/profile/reference-profile/arch-static-reference-profile-contract-001.asl": "58ea19f523b6a5a5d43b22a58c28b5c4e1ed0bce3d05344713c5e24b652cba29",
     "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-001.asl": "77a1aeec8c6b63e08c22aca602ea197a22a51320e033721fa531bdfbb1046fea",
+    "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-special-binary-002.asl": "bc73bcea299851e8a9474d0fd2d69e7accb04dd6a23b3b7f3af630c8f205713c",
     "tests/asl/arch/profile/reference-quantization/arch-static-reference-quantization-contract-001.asl": "e5859faec80b723cccc8cd21c068ad1cd6ce6ba79c1ba1d9bf22e6365113487d",
     "tests/asl/arch/profile/reset/arch-state-cube-reset-001.asl": "d95eb48711555ae060a0aca82c05bd8d295cb168402938142e51bbfbe4e26602",
     "tests/asl/arch/profile/reset/arch-static-reset-contract-001.asl": "80be1a1b8b653a5441c4a8876e89f608fec404004fd94089b1aa2094a0b1fa19",
@@ -22757,7 +22758,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1033,
     "status": "closed",
-    "test_count": 3814,
+    "test_count": 3815,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -31428,7 +31429,7 @@
       "kind": "execution",
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-divzero-009.asl",
       "requirements": [],
-      "sha256": "6dfdb745ac38fe937ee919e00fbd1abef8516be7d147281d0c8c10bdfaa582d2",
+      "sha256": "9f97ac70210ff6ec51e49c5422428494cddf407e36e2831c10080d0d90704f2f",
       "source": "asl/arch/profile/reference-profile.asl"
     },
     {
@@ -31477,6 +31478,14 @@
       "path": "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-001.asl",
       "requirements": [],
       "sha256": "77a1aeec8c6b63e08c22aca602ea197a22a51320e033721fa531bdfbb1046fea",
+      "source": "asl/arch/profile/reference-quantization.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-SPECIAL-BINARY-002",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-special-binary-002.asl",
+      "requirements": [],
+      "sha256": "bc73bcea299851e8a9474d0fd2d69e7accb04dd6a23b3b7f3af630c8f205713c",
       "source": "asl/arch/profile/reference-quantization.asl"
     },
     {
@@ -62338,13 +62347,15 @@
         "ADR-0124"
       ],
       "semantic_tests": [
-        "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-001"
+        "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-001",
+        "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-SPECIAL-BINARY-002"
       ],
       "source": "asl/arch/profile/reference-quantization.asl",
       "surface": "arch",
       "tests": [
         "PTO-AVS-ARCH-PROFILE-REFERENCE-QUANTIZATION-STATIC-001",
-        "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-001"
+        "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-001",
+        "PTO-AVS-ARCH-REFERENCE-QUANTIZATION-SPECIAL-BINARY-002"
       ]
     },
     {
