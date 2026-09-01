@@ -175,6 +175,102 @@ begin
         Zeros{5});
 end;
 
+func ReferenceTileFloatingModulo(
+    data_type: TileDataType, left: Word, right: Word) => (Word, bits(5))
+begin
+    assert data_type == TileDataType_FP32 ||
+           data_type == TileDataType_FP16;
+    let left_class = TileNumericValueClass(data_type, left);
+    let right_class = TileNumericValueClass(data_type, right);
+    let signaling_nan = left_class == NumericValue_SignalingNaN ||
+        right_class == NumericValue_SignalingNaN;
+    let invalid = NumericValueClassIsInfinity(left_class) ||
+        NumericValueClassIsZero(right_class);
+    if NumericValueClassIsNaN(left_class) ||
+       NumericValueClassIsNaN(right_class) || invalid then
+        let (available, quiet_nan) = TileNumericCanonicalNaN(data_type);
+        assert available;
+        return (
+            quiet_nan,
+            if signaling_nan || invalid then Zeros{5} + 1 else Zeros{5});
+    elsif NumericValueClassIsInfinity(right_class) ||
+          NumericValueClassIsZero(left_class) then
+        return (left, Zeros{5});
+    end;
+    let left_value = ReferenceCommonFloatingFiniteValue(left, data_type);
+    let right_value = ReferenceCommonFloatingFiniteValue(right, data_type);
+    let quotient = FloatingToInteger(
+        left_value / right_value, NumericRound_RTZ);
+    return ReferenceMatrixFloatingEncoding(
+        left_value - Real(quotient) * right_value,
+        data_type,
+        DefaultNumericExecutionControl());
+end;
+
+pure func ReferenceTileExponentialFinite(value: real) => real
+begin
+    var reduced = value;
+    for reduction = 0 to 5 do
+        reduced = reduced / 2.0;
+    end;
+    var result: real = 1.0;
+    var term: real = 1.0;
+    for index = 1 to 24 do
+        term = (term * reduced) / Real(index);
+        result = result + term;
+    end;
+    for expansion = 0 to 5 do
+        result = result * result;
+    end;
+    return result;
+end;
+
+pure func ReferenceTileLogarithmFinite(value: real) => real
+begin
+    assert value > 0.0;
+    var normalized = value;
+    var exponent: integer {-149..127} = 0;
+    while normalized >= 2.0 && exponent < 127 looplimit 127 do
+        normalized = normalized / 2.0;
+        exponent = (exponent + 1) as integer {-149..127};
+    end;
+    while normalized < 1.0 && exponent > -149 looplimit 149 do
+        normalized = normalized * 2.0;
+        exponent = (exponent - 1) as integer {-149..127};
+    end;
+    let ratio = (normalized - 1.0) / (normalized + 1.0);
+    let ratio_squared = ratio * ratio;
+    var power = ratio;
+    var series: real = 0.0;
+    for index = 0 to 31 do
+        series = series + power / Real(2 * index + 1);
+        power = power * ratio_squared;
+    end;
+    return 2.0 * series + Real(exponent) *
+        0.693147180559945309417232121458176568;
+end;
+
+func ReferenceTileUnaryFinite(
+    operation: TileUnaryOperation,
+    data_type: TileDataType,
+    value: Word) => (Word, bits(5))
+begin
+    assert data_type == TileDataType_FP32 ||
+           data_type == TileDataType_FP16;
+    let input = ReferenceCommonFloatingFiniteValue(value, data_type);
+    var result: real = input;
+    case operation of
+        when TileUnary_EXP => result = ReferenceTileExponentialFinite(input);
+        when TileUnary_LOG => result = ReferenceTileLogarithmFinite(input);
+        when TileUnary_RECIP => result = 1.0 / input;
+        when TileUnary_SQRT => result = SqrtRounded(input, 100);
+        when TileUnary_RSQRT => result = 1.0 / SqrtRounded(input, 100);
+        otherwise => unreachable;
+    end;
+    return ReferenceMatrixFloatingEncoding(
+        result, data_type, DefaultNumericExecutionControl());
+end;
+
 implementation func ScalarFPToIntegerProfile(
     rounding_mode: NumericRoundingMode, destination_type: bits(5),
     source_type: bits(5), value: Word) => (Word, bits(5))

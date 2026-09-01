@@ -12,6 +12,27 @@ begin
     assert fp32_infinite_product == Zeros{PTO_XLEN} + 0x7f800000;
     assert fp32_infinite_product_flags == Zeros{5};
 
+    let (fp16_sum, fp16_sum_flags) = ScalarFPBinaryProfile(
+        FloatingBinary_ADD, NumericRound_RNE, Zeros{5} + 4,
+        Zeros{PTO_XLEN} + 0x3e00, Zeros{PTO_XLEN} + 0x4080);
+    assert fp16_sum == Zeros{PTO_XLEN} + 0x4380;
+    assert fp16_sum_flags == Zeros{5};
+
+    let (fp16_infinite_product, fp16_infinite_product_flags) =
+        ScalarFPBinaryProfile(
+            FloatingBinary_MUL, NumericRound_RNE, Zeros{5} + 4,
+            Zeros{PTO_XLEN} + 0x7c00,
+            Zeros{PTO_XLEN} + 0x4000);
+    assert fp16_infinite_product == Zeros{PTO_XLEN} + 0x7c00;
+    assert fp16_infinite_product_flags == Zeros{5};
+
+    let (fp16_zero_over_zero, fp16_zero_over_zero_flags) =
+        ScalarFPBinaryProfile(
+            FloatingBinary_DIV, NumericRound_RNE, Zeros{5} + 4,
+            Zeros{PTO_XLEN}, Zeros{PTO_XLEN});
+    assert fp16_zero_over_zero == Zeros{PTO_XLEN} + 0x7e00;
+    assert fp16_zero_over_zero_flags == Zeros{5} + 1;
+
     let (fp64_infinite_product, fp64_infinite_product_flags) =
         ScalarFPBinaryProfile(
             FloatingBinary_MUL, NumericRound_RNE, fp64,

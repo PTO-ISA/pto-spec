@@ -210,15 +210,15 @@
     },
     {
       "path": "asl/arch/profile/reference-conversion.asl",
-      "sha256": "86a0c3a2909be5a866fe29e9b12b78fc50a1fefdf4643901c0786730b1bea587"
+      "sha256": "8df9232cff4af782a416e9fde0eb4c246c00276cf5e20c89bd9db35deb2a3c01"
     },
     {
       "path": "asl/arch/profile/reference-profile.asl",
-      "sha256": "546dcc38861f4f78282bf27a91fecb98fb1b1e7aebf2781de03d3613b5df22a9"
+      "sha256": "7ebc32aa26bf656a4a84492b410047eb5718d0db4a1aa33e4c1d64a4fbee0fe4"
     },
     {
       "path": "asl/arch/profile/reference-quantization.asl",
-      "sha256": "4139eb36f1b7b13e7958e330cca649765db9782a64adb7e50e29ae599a927f42"
+      "sha256": "d4757aa97a073dcb9e8f5531190213319f358e007a365c6bc029d23cf062e463"
     },
     {
       "path": "asl/arch/profile/reset.asl",
@@ -3470,7 +3470,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "35d4cf5e1489b32303384a5bed17a2bf6133419aef82719bfc7a3c77e4bb46da"
+      "sha256": "4ede278894737c50ba13b487bd78f0b1e10d6a6f0b6cec6081f2e412a4055517"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3478,15 +3478,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "9ab761a4346e097437425918829e450f260efcb5e4ee9cb9b75440a6e1e5cc59"
+      "sha256": "54e752dd9030fcf04a33d8ab040a4c8cc11bf78e1470e96b7f92c2bd2299fbb3"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "9142c2ad08df2d4f6abbd77bdc649c5181c7e73aba82637eda8a805dfe559828"
+      "sha256": "6d372963af615ff6657bbb319b8a7172ed6ea49f5450500599073e6c9941f91b"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "44bccfda9f650bd494bd9ccc8a01e2dd56f1b04bf4f356ff41ff7f2cd05b21c0"
+      "sha256": "57a7404c86c8310b6c20293b914913f11979dbcaf411241ae1d3ee33d4c0233f"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3532,7 +3532,7 @@
     },
     "tile_operations_total": 108
   },
-  "content_sha256": "edaf1ad63c3fbb4ee4f62d5d7b1db325aaef8dffc2c19893f8f89408d141f8f1",
+  "content_sha256": "8fd44cabc8b4b7ec56fc226cec1ba10d176982481c115062ad5c8c25c1a94a6d",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3824,17 +3824,17 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-conversion.md",
-      "sha256": "bace39a4314b71d71a5ba2800d163cb731087d0c9262f06f74a6b564662e7b2f"
+      "sha256": "f2c73eeec780204d25ad8e7f89f01b58bea1fae207228d126a4c5e602009d288"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-profile.md",
-      "sha256": "bf8a6897742d348292489bfb7646d13a9f86625274864e14c68ea44a65e89b34"
+      "sha256": "5fd6286ae459f9e8301d61cc8eac1ba9546c4c457e8b2ae0caa0a0dcbc281749"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-quantization.md",
-      "sha256": "34864cd0e404e44858bf69799bd038ee8c50d0bcdc120bc484ba8fe4b66fe4da"
+      "sha256": "064c01f2330cd8c3f95fc9e4b591877fb8a240b181bc1ab43d79dff18765de0f"
     },
     {
       "kind": "generated-documentation",

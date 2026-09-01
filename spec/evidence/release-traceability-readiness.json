@@ -17265,9 +17265,9 @@
     "asl/arch/profile/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
     "asl/arch/profile/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
     "asl/arch/profile/matrix-quantization.asl": "981f3fed75f88449740b4d42e342f4ce28b67647603c444a438ad59e3dc83373",
-    "asl/arch/profile/reference-conversion.asl": "86a0c3a2909be5a866fe29e9b12b78fc50a1fefdf4643901c0786730b1bea587",
-    "asl/arch/profile/reference-profile.asl": "546dcc38861f4f78282bf27a91fecb98fb1b1e7aebf2781de03d3613b5df22a9",
-    "asl/arch/profile/reference-quantization.asl": "4139eb36f1b7b13e7958e330cca649765db9782a64adb7e50e29ae599a927f42",
+    "asl/arch/profile/reference-conversion.asl": "8df9232cff4af782a416e9fde0eb4c246c00276cf5e20c89bd9db35deb2a3c01",
+    "asl/arch/profile/reference-profile.asl": "7ebc32aa26bf656a4a84492b410047eb5718d0db4a1aa33e4c1d64a4fbee0fe4",
+    "asl/arch/profile/reference-quantization.asl": "d4757aa97a073dcb9e8f5531190213319f358e007a365c6bc029d23cf062e463",
     "asl/arch/profile/reset.asl": "0138e72f6fdcac4a2f7c19c71b16c61dcf8bfb4fc5bb4b63c09e4a9f7ddff94d",
     "asl/arch/profile/trap-context-recovery.asl": "6c87ee4d53ed316f6ad72768ac84f67bcdf19c3af52dd96f3eb97eddc07c1357",
     "asl/arch/programming-model/core-pe-topology.asl": "2c987f6f6573d5da50a569f821dbddcd93ea428f408f59d148ebc5fd3b866447",
@@ -18124,9 +18124,9 @@
     "docs/arch/profile/extension-first-use.md": "fb16e18d1c162fed1f5d1d64bb5c422c21e30a33a1824fa00d9a1b9a04002f52",
     "docs/arch/profile/matrix-postprocess.md": "6c620e8f326fa991a2a35cf3d9aad4e1e9b9321ea63bc78e8fdabdfb17802378",
     "docs/arch/profile/matrix-quantization.md": "345a80455b11084670964309b2ad6e3b1e176a91dae84eb542c6291fb1b52d10",
-    "docs/arch/profile/reference-conversion.md": "bace39a4314b71d71a5ba2800d163cb731087d0c9262f06f74a6b564662e7b2f",
-    "docs/arch/profile/reference-profile.md": "bf8a6897742d348292489bfb7646d13a9f86625274864e14c68ea44a65e89b34",
-    "docs/arch/profile/reference-quantization.md": "34864cd0e404e44858bf69799bd038ee8c50d0bcdc120bc484ba8fe4b66fe4da",
+    "docs/arch/profile/reference-conversion.md": "f2c73eeec780204d25ad8e7f89f01b58bea1fae207228d126a4c5e602009d288",
+    "docs/arch/profile/reference-profile.md": "5fd6286ae459f9e8301d61cc8eac1ba9546c4c457e8b2ae0caa0a0dcbc281749",
+    "docs/arch/profile/reference-quantization.md": "064c01f2330cd8c3f95fc9e4b591877fb8a240b181bc1ab43d79dff18765de0f",
     "docs/arch/profile/reset.md": "0f706bd47b14d3a2e526dbf20617bf704507a2829ed45ebb93e4f80a72f915f2",
     "docs/arch/profile/trap-context-recovery.md": "8ba8fe4b76085c3c6ca002c57bab6f964c524e936f0b73e755fa3bf0acc33af7",
     "docs/arch/programming-model/core-pe-topology.md": "c48aedb26c403990acdeec4972d9a779bbda6bcc33d1e91b3fec453de4808fe1",
@@ -19063,6 +19063,8 @@
     "tests/asl/arch/profile/reference-conversion/arch-bound-reference-conversion-fp16-001.asl": "6d7c29d2bd4aa3f77c94280940d670c70d302ace345c4789e34702e54c1941d9",
     "tests/asl/arch/profile/reference-conversion/arch-bound-reference-conversion-special-002.asl": "ccc6b9837c1d7e6de3895c4e657301f4da3fd3b0b469506e66c555e602102b8d",
     "tests/asl/arch/profile/reference-conversion/arch-exec-reference-conversion-parity-003.asl": "ac3099638ea2285a596615fd979225b16828aaabc5fafc57b46db7516cd279d3",
+    "tests/asl/arch/profile/reference-conversion/arch-exec-reference-floating-modulo-004.asl": "5317631493e3a1101b1239b565701f8158698014d3b485da6c9b0f87595f96e7",
+    "tests/asl/arch/profile/reference-conversion/arch-exec-reference-tile-unary-005.asl": "e276e11ab46203ed40e39c9e004281a1e9831d161af7d5a7c2deaa64c3746e25",
     "tests/asl/arch/profile/reference-conversion/arch-static-reference-conversion-contract-001.asl": "cfa2e2493ae02e2e34bfe50329e6b6e068c773a348eebea1623dfbc2c3b14478",
     "tests/asl/arch/profile/reference-profile/arch-bound-reference-profile-fp32-power-013.asl": "70cf943a4fd1a6feff9d3d27ffb5b5d7c14d26262bc6f1a94f59750da275eb7d",
     "tests/asl/arch/profile/reference-profile/arch-bound-reference-profile-fp32-stream-014.asl": "bdd86c47974d848b37835e51d9bbc9000e4cc031f3f562eb2fdb8bfa089d3969",
@@ -19081,7 +19083,7 @@
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp64-011.asl": "9a5794370015a98c9b00acea4ba7f5f5770a7eefb9711a8fc9004a1d317d9e72",
     "tests/asl/arch/profile/reference-profile/arch-static-reference-profile-contract-001.asl": "58ea19f523b6a5a5d43b22a58c28b5c4e1ed0bce3d05344713c5e24b652cba29",
     "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-001.asl": "77a1aeec8c6b63e08c22aca602ea197a22a51320e033721fa531bdfbb1046fea",
-    "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-special-binary-002.asl": "bc73bcea299851e8a9474d0fd2d69e7accb04dd6a23b3b7f3af630c8f205713c",
+    "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-special-binary-002.asl": "31ccf41fd250516e3b0a7b05973b92bfd72fab03c4c1b1bbf8e9bbc1a459e95e",
     "tests/asl/arch/profile/reference-quantization/arch-static-reference-quantization-contract-001.asl": "e5859faec80b723cccc8cd21c068ad1cd6ce6ba79c1ba1d9bf22e6365113487d",
     "tests/asl/arch/profile/reset/arch-state-cube-reset-001.asl": "d95eb48711555ae060a0aca82c05bd8d295cb168402938142e51bbfbe4e26602",
     "tests/asl/arch/profile/reset/arch-static-reset-contract-001.asl": "80be1a1b8b653a5441c4a8876e89f608fec404004fd94089b1aa2094a0b1fa19",
@@ -22758,7 +22760,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1033,
     "status": "closed",
-    "test_count": 3815,
+    "test_count": 3817,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -31417,6 +31419,14 @@
       "source": "asl/arch/profile/reference-conversion.asl"
     },
     {
+      "id": "PTO-AVS-ARCH-REFERENCE-FLOATING-MODULO-004",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-conversion/arch-exec-reference-floating-modulo-004.asl",
+      "requirements": [],
+      "sha256": "5317631493e3a1101b1239b565701f8158698014d3b485da6c9b0f87595f96e7",
+      "source": "asl/arch/profile/reference-conversion.asl"
+    },
+    {
       "id": "PTO-AVS-ARCH-REFERENCE-PROFILE-CONVERT-012",
       "kind": "execution",
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-convert-012.asl",
@@ -31485,8 +31495,16 @@
       "kind": "execution",
       "path": "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-special-binary-002.asl",
       "requirements": [],
-      "sha256": "bc73bcea299851e8a9474d0fd2d69e7accb04dd6a23b3b7f3af630c8f205713c",
+      "sha256": "31ccf41fd250516e3b0a7b05973b92bfd72fab03c4c1b1bbf8e9bbc1a459e95e",
       "source": "asl/arch/profile/reference-quantization.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-REFERENCE-TILE-UNARY-005",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-conversion/arch-exec-reference-tile-unary-005.asl",
+      "requirements": [],
+      "sha256": "e276e11ab46203ed40e39c9e004281a1e9831d161af7d5a7c2deaa64c3746e25",
+      "source": "asl/arch/profile/reference-conversion.asl"
     },
     {
       "id": "PTO-AVS-ARCH-SCALAR-LOOP-ELF-SEQUENCE-003",
@@ -62264,7 +62282,9 @@
       "semantic_tests": [
         "PTO-AVS-ARCH-REFERENCE-CONVERSION-FP16-001",
         "PTO-AVS-ARCH-REFERENCE-CONVERSION-PARITY-003",
-        "PTO-AVS-ARCH-REFERENCE-CONVERSION-SPECIAL-002"
+        "PTO-AVS-ARCH-REFERENCE-CONVERSION-SPECIAL-002",
+        "PTO-AVS-ARCH-REFERENCE-FLOATING-MODULO-004",
+        "PTO-AVS-ARCH-REFERENCE-TILE-UNARY-005"
       ],
       "source": "asl/arch/profile/reference-conversion.asl",
       "surface": "arch",
@@ -62272,7 +62292,9 @@
         "PTO-AVS-ARCH-PROFILE-REFERENCE-CONVERSION-STATIC-001",
         "PTO-AVS-ARCH-REFERENCE-CONVERSION-FP16-001",
         "PTO-AVS-ARCH-REFERENCE-CONVERSION-PARITY-003",
-        "PTO-AVS-ARCH-REFERENCE-CONVERSION-SPECIAL-002"
+        "PTO-AVS-ARCH-REFERENCE-CONVERSION-SPECIAL-002",
+        "PTO-AVS-ARCH-REFERENCE-FLOATING-MODULO-004",
+        "PTO-AVS-ARCH-REFERENCE-TILE-UNARY-005"
       ]
     },
     {

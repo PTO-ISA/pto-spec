@@ -66,7 +66,7 @@ For an access beginning at `3000` with size `72`, the exclusive end address is `
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reference-profile.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-APPLICABILITY","PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-APPLICABILITY","PTO-ARCH-PROFILE-REFERENCE-CONVERSION","PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION"]}
 
 readonly implementation func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
@@ -132,7 +132,7 @@ implementation func ScalarFPBinaryProfile(operation: FloatingBinaryOperation,
                                            left: Word, right: Word)
                                            => (Word, bits(5))
 begin
-    assert ScalarFPTypeCodeSupported(source_type);
+    assert ScalarFPTypeCodeSupported(source_type) || source_type == '00100';
     let (special, special_result, special_flags) =
         ReferenceScalarFPBinarySpecial(
             operation, source_type, left, right);
@@ -334,12 +334,15 @@ end;
 implementation func TileProfileFloatingModulo(data_type: TileDataType,
                                                left: Word, right: Word) => Word
 begin
-    let encoding = TileDataTypeToEncoding(data_type);
-    if ScalarFPCarrierIsZero(right, encoding) then
-        return Ones{PTO_XLEN};
-    end;
-    let quotient = DivideWordUnsigned(left, right);
-    return left - MultiplyWord(quotient, right);
+    let (result, -) = ReferenceTileFloatingModulo(data_type, left, right);
+    return result;
+end;
+
+implementation func TileProfileFloatingModuloFlags(
+    data_type: TileDataType, left: Word, right: Word) => bits(5)
+begin
+    let (-, flags) = ReferenceTileFloatingModulo(data_type, left, right);
+    return flags;
 end;
 
 implementation func TileProfileUnary(op: TileUnaryOperation,
@@ -355,9 +358,7 @@ begin
             result,
             if invalid then Zeros{5} + 1 else Zeros{5});
     end;
-    return (
-        TileUnaryValue(op, value),
-        Zeros{5});
+    return ReferenceTileUnaryFinite(op, data_type, value);
 end;
 
 implementation func TileProfileFloatingCompare(
