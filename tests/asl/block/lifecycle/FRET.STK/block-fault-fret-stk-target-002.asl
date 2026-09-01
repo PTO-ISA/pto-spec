@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x680);
-    WriteGPR(2, Zeros{PTO_XLEN} + 0x2f8);
+    WriteGPR(1, Zeros{PTO_XLEN} + 0x2f8);
     WriteGPR(10, Zeros{PTO_XLEN} + 0x777);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x2f8, Zeros{8} + 1);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x2f9, Zeros{8} + 9);
@@ -14,7 +14,7 @@ begin
 
     assert _LastFault == Fault_InstructionPC;
     assert _FaultAddress == Zeros{PTO_XLEN} + 0x901;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 0x300;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x300;
     assert ReadGPR(10) == Zeros{PTO_XLEN} + 0x777;
     assert _ReturnAddress == Zeros{PTO_XLEN} + 0x777;
     assert _TrapContexts[[0]].valid;

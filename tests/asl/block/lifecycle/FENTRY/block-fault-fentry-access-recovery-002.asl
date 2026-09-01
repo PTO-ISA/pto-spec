@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     let instruction_pc = Zeros{PTO_XLEN} + 0x700;
-    WriteGPR(2, Zeros{PTO_XLEN} + 3080);
+    WriteGPR(1, Zeros{PTO_XLEN} + 3080);
     WriteGPR(3, Zeros{PTO_XLEN} + 0x55aa);
     SetCurrentACR(2);
     PTOv0WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
@@ -13,7 +13,7 @@ begin
     EnterFrame(3, 3, Zeros{PTO_XLEN} + 8);
 
     assert _LastFault == Fault_DataPage;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 3072;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 3072;
     assert _TrapContexts[[1]].frame_template.active;
     assert _TrapContexts[[1]].frame_template.stack_adjusted;
     assert _TrapContexts[[1]].frame_template.progress == 0;
@@ -26,7 +26,7 @@ begin
     EnterFrame(3, 3, Zeros{PTO_XLEN} + 8);
 
     assert _LastFault == Fault_None;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 3072;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 3072;
     assert ReadMemoryByte(Zeros{PTO_XLEN} + 3072) == Zeros{8} + 0xaa;
     assert ReadMemoryByte(Zeros{PTO_XLEN} + 3073) == Zeros{8} + 0x55;
     assert _FrameDepth == 1;

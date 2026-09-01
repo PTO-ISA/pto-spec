@@ -16,7 +16,7 @@ begin
     ResetProfileState();
     let instruction_pc = Zeros{PTO_XLEN} + 0x5c0;
     WriteMemoryByte(Zeros{PTO_XLEN} + 3072, Zeros{8} + 0x77);
-    WriteGPR(2, Zeros{PTO_XLEN} + 3072);
+    WriteGPR(1, Zeros{PTO_XLEN} + 3072);
     SetCurrentACR(2);
     PTOv0WriteContextRegister(1, 0x0f01, Zeros{PTO_XLEN} + 0x900);
     WriteTPC(instruction_pc);
@@ -27,7 +27,7 @@ begin
 
     assert first_status == CommandExecution_Rejected;
     assert _LastFault == Fault_DataPage;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 3080;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 3080;
     assert _TrapContexts[[1]].frame_template.active;
     assert _TrapContexts[[1]].frame_template.stack_adjusted;
     assert _TrapContexts[[1]].frame_template.progress == 0;
@@ -40,7 +40,7 @@ begin
 
     assert second_status == CommandExecution_Executed;
     assert _LastFault == Fault_None;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 3080;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 3080;
     assert ReadGPR(3)[7:0] == Zeros{8} + 0x77;
     assert !_FrameTemplate.active;
     assert ReadTPC() == instruction_pc + (Zeros{PTO_XLEN} + 4);

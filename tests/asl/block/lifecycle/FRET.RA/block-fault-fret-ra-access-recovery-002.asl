@@ -3,7 +3,7 @@ func main() => integer
 begin
     ResetProfileState();
     WriteMemoryByte(Zeros{PTO_XLEN} + 3072, Zeros{8} + 0x44);
-    WriteGPR(2, Zeros{PTO_XLEN} + 3072);
+    WriteGPR(1, Zeros{PTO_XLEN} + 3072);
     WriteGPR(3, Zeros{PTO_XLEN} + 0x7777);
     WriteGPR(10, Zeros{PTO_XLEN} + 0x900);
     _ReturnAddress = Zeros{PTO_XLEN} + 0x900;
@@ -15,7 +15,7 @@ begin
 
     ReturnFromFrame(3, 3, Zeros{PTO_XLEN} + 8, TRUE);
     assert _LastFault == Fault_DataPage;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 3080;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 3080;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x7777;
     assert _TrapContexts[[1]].frame_template.progress == 0;
 
@@ -25,7 +25,7 @@ begin
     ClearFault();
     ReturnFromFrame(3, 3, Zeros{PTO_XLEN} + 8, TRUE);
     assert _LastFault == Fault_None;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 3080;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 3080;
     assert ReadGPR(3)[7:0] == Zeros{8} + 0x44;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x900;
     assert _FrameDepth == 0;

@@ -3088,7 +3088,9 @@
         "ADR-0059",
         "ADR-0084"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004"
+      ]
     },
     {
       "executable": false,
@@ -4598,6 +4600,7 @@
       "readiness_subjects": [],
       "tests": [
         "PTO-AVS-BLOCK-FRET-STK-DECODE-001",
+        "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004",
         "PTO-AVS-BLOCK-FRET-STK-ODD-TARGET-002",
         "PTO-AVS-BLOCK-FRET-STK-RANGE-001",
         "PTO-AVS-BLOCK-FRET-STK-RESTART-003",
@@ -16967,7 +16970,7 @@
     "asl/block/model/faults/rollback.asl": "fde8e43f184cf5aac3c0b8d8ad0559d54e7f1f113dda93485a8b341eb3b9b1d3",
     "asl/block/model/lifecycle/begin.asl": "34d7923f48b2635f5ba6373e0dd03b972d28b1f9c588c41baf5da875064c86e1",
     "asl/block/model/lifecycle/enter-stop.asl": "d5f977bb2248fb33078f42aae3e086375a562ed1e83c64dc49d53b82af2ac9f4",
-    "asl/block/model/lifecycle/lifetime.asl": "be273ac380f0ef0161691be76a81211d7f13981fe342937b58fddd42e98d0f1f",
+    "asl/block/model/lifecycle/lifetime.asl": "a541c00ce63f50ba8256395f1ba02e19c6c81ac9c44d1aa66c9db87ad57cff44",
     "asl/block/model/lifecycle/reset.asl": "d051933c0bf755136ba592f959c066fd3b891e1812351997fec95ec90f457853",
     "asl/block/model/operands/local-generation.asl": "33ba780de82c3cf87a0a249cd330c2be518d396cd2673c04ddf2bb938346c7c3",
     "asl/block/model/operands/portable-carriers.asl": "efb0b656d956606e6f3110edd53328449b9b764c67363dac61aa5a1a9f41964c",
@@ -17820,7 +17823,7 @@
     "docs/block/model/faults/rollback.md": "64dd8710e0e9241a370c7622a2287cfed99f332aa970909dfce0596a79043a04",
     "docs/block/model/lifecycle/begin.md": "7d3d6222ef6ac42aacbb2ae824c0e6767e328124bca07219a9dd7b29a87061f1",
     "docs/block/model/lifecycle/enter-stop.md": "33b75df3c9d9c409d2dbe06f165521431b0bba67607a82479d3be156766714c7",
-    "docs/block/model/lifecycle/lifetime.md": "d281a770e019f76fd204a85bd40d11a69c2919f67819211d96a9ef04c2728b5b",
+    "docs/block/model/lifecycle/lifetime.md": "952c4cd99da6bd39dc91e7a25c0d45edbac28091e8d0af907858edaadb1163ea",
     "docs/block/model/lifecycle/reset.md": "c1ece8800b20e4f6f0719feb883e30be6e1ba172604570059adbef78bd2682de",
     "docs/block/model/operands/local-generation.md": "fc208bb6e71f9a581475f25520bff0d9f5f6be9ef85ac55bee0bd0d732f94d44",
     "docs/block/model/operands/portable-carriers.md": "3885a7f1f90272ca35f3104968c00f43c0ad10264ab3ff12012bfa2c9deafa97",
@@ -18924,20 +18927,21 @@
     "tests/asl/block/lifecycle/ESAVE/block-decode-esave-canonical-001.asl": "7472a0a8fc3135872edc6009af6c192f57c96e633521d84a2378a53941e1642f",
     "tests/asl/block/lifecycle/ESAVE/block-fault-esave-reserved-001.asl": "8c5ecf06810e4a36c1e71285f02444bcbc9fe568b008a4d96c1c39324ede4a0b",
     "tests/asl/block/lifecycle/FENTRY/block-decode-fentry-canonical-001.asl": "e8cc4d837c2f1cb88a4a679fc431299e0d43a7fcbcae33eddaac5f15b1351a07",
-    "tests/asl/block/lifecycle/FENTRY/block-exec-fentry-frame-001.asl": "33e58e4758716b144386ff555c3f131c0c2aca304bb7101cd8c4bf0b2457bbf8",
-    "tests/asl/block/lifecycle/FENTRY/block-fault-fentry-access-recovery-002.asl": "dc2b4dd29e58ad3c7774cc078149a18fe52e022685ac3188e1b0bde7ecb6702e",
-    "tests/asl/block/lifecycle/FENTRY/block-fault-fentry-range-001.asl": "71a46e5533f0e1a5c812bc09c408b6d1fb6ed8cabcbe56c6fe173ae53cb699f0",
+    "tests/asl/block/lifecycle/FENTRY/block-exec-fentry-frame-001.asl": "d1931554d0651260d4098df4e4c5a191db518e0b07f2bfd599171f3786c6e86b",
+    "tests/asl/block/lifecycle/FENTRY/block-fault-fentry-access-recovery-002.asl": "031d49de7b6bab61753e51eb2b498591a8504809a8fba8b77c6d7f02659d6ea1",
+    "tests/asl/block/lifecycle/FENTRY/block-fault-fentry-range-001.asl": "d67c5b45fe638b77b76b8a9e12a694ed9ce83a1b1023fe79259a270192367c63",
     "tests/asl/block/lifecycle/FEXIT/block-decode-fexit-canonical-001.asl": "0ce813be3dd75ed45d86484662258ef18356fe69219723225c90826f177788c4",
-    "tests/asl/block/lifecycle/FEXIT/block-exec-fexit-frame-001.asl": "ab944b35048b4b517ccd1aae31dcc2b0c6ab7530bc99f875b8da87331f63c97a",
-    "tests/asl/block/lifecycle/FEXIT/block-fault-fexit-restart-001.asl": "1b20c848da92b96e45c1a2bac7d2d966e1234dbde40670d892d9df503a12a101",
+    "tests/asl/block/lifecycle/FEXIT/block-exec-fexit-frame-001.asl": "a1f5aab0d31656fba172847d8f5ef2ba790e7c988f10903f1f9864901ee70721",
+    "tests/asl/block/lifecycle/FEXIT/block-fault-fexit-restart-001.asl": "a993d6be7129248bea613f0919b4aa803b3cc8376d1e9b951c504c960f2781eb",
     "tests/asl/block/lifecycle/FRET.RA/block-decode-fret-ra-canonical-001.asl": "9436eba56c9221a552def664f351ae748f17e4c730b68487d584ab182ada8160",
-    "tests/asl/block/lifecycle/FRET.RA/block-exec-fret-ra-target-001.asl": "e622381560c4ac301c5ed7756e3138632a216239d8f5c3f95ec9c34de251603b",
-    "tests/asl/block/lifecycle/FRET.RA/block-fault-fret-ra-access-recovery-002.asl": "b70f1704ba321855902cfc6b0281eab4c15c86b9b5ed5ff7d3769d63d22bf2a0",
+    "tests/asl/block/lifecycle/FRET.RA/block-exec-fret-ra-target-001.asl": "73cefd650b89d8ccc16ef1786918b2bdc552fd346f735b3200fe5ec45a571c43",
+    "tests/asl/block/lifecycle/FRET.RA/block-fault-fret-ra-access-recovery-002.asl": "63a3d2b709d88e16ae1f9f69724d0b7d11a9faf0c0bb2057d424e63f0a7fbc77",
     "tests/asl/block/lifecycle/FRET.STK/block-decode-fret-stk-canonical-001.asl": "26222ccb8cbc0e32a2d58f3f2d40adac2cedc2d472aa80bedd03f509e4a38712",
-    "tests/asl/block/lifecycle/FRET.STK/block-exec-fret-stk-target-001.asl": "09a7fd7743f0a0cb673f4774b42dc88dd12bb77462786858da529d3b9a2f4bb4",
-    "tests/asl/block/lifecycle/FRET.STK/block-fault-fret-stk-range-001.asl": "f2a934afdc9da212385fefe80022ded5c32d1399ed65e21e2cf1c616932f8819",
-    "tests/asl/block/lifecycle/FRET.STK/block-fault-fret-stk-restart-003.asl": "8ccbe27752220a0d8ff686277e13bfa25ca69c2972020a443363242867f6f0fb",
-    "tests/asl/block/lifecycle/FRET.STK/block-fault-fret-stk-target-002.asl": "1bacaca9402b0c6eced627d19e370a1db623ea36cc284406b692c8a8ed348669",
+    "tests/asl/block/lifecycle/FRET.STK/block-exec-fret-stk-frame-preservation-004.asl": "fe638740736ccd512b98d880850ff568505058f1aef4ecd6dda4061c82d8c2ec",
+    "tests/asl/block/lifecycle/FRET.STK/block-exec-fret-stk-target-001.asl": "cd6f6a4112f996bdf6e1bc15c84e80f421780eb22514585a2e58ca6e0a12ed9b",
+    "tests/asl/block/lifecycle/FRET.STK/block-fault-fret-stk-range-001.asl": "1b167adef468d874c767d01f77deecf4f60159b4907166f8b9be04011167d349",
+    "tests/asl/block/lifecycle/FRET.STK/block-fault-fret-stk-restart-003.asl": "adefe35adb840d16269898a57f1fb76f9b34ade3a922eb7464d4baa8022ec3de",
+    "tests/asl/block/lifecycle/FRET.STK/block-fault-fret-stk-target-002.asl": "b43c5648f1cb0569ce7124b38382a794543d6907a80151ce1b1a5329af146b86",
     "tests/asl/block/lifecycle/HL.QMT/block-decode-hl-qmt-canonical-001.asl": "87f39a0c42007664e8923f6b21048d7a5e38d98331be0d8ccb7f819d693ada18",
     "tests/asl/block/lifecycle/HL.QMT/block-exec-hl-qmt-init-001.asl": "b395bcab270eca8d19949c8452886b5119264b7ab1692f4bfbde2afe965c8ff9",
     "tests/asl/block/lifecycle/HL.QMT/block-fault-hl-qmt-flags-001.asl": "6a3036f13716dd06c163b5c8dae18f86029513acebe070ddc15e31dcfe99cf38",
@@ -22268,7 +22272,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1025,
     "status": "closed",
-    "test_count": 3753,
+    "test_count": 3754,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -33150,7 +33154,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FENTRY"
       ],
-      "sha256": "dc2b4dd29e58ad3c7774cc078149a18fe52e022685ac3188e1b0bde7ecb6702e",
+      "sha256": "031d49de7b6bab61753e51eb2b498591a8504809a8fba8b77c6d7f02659d6ea1",
       "source": "asl/block/lifecycle/FENTRY.asl"
     },
     {
@@ -33170,7 +33174,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FENTRY"
       ],
-      "sha256": "33e58e4758716b144386ff555c3f131c0c2aca304bb7101cd8c4bf0b2457bbf8",
+      "sha256": "d1931554d0651260d4098df4e4c5a191db518e0b07f2bfd599171f3786c6e86b",
       "source": "asl/block/lifecycle/FENTRY.asl"
     },
     {
@@ -33180,7 +33184,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FENTRY"
       ],
-      "sha256": "71a46e5533f0e1a5c812bc09c408b6d1fb6ed8cabcbe56c6fe173ae53cb699f0",
+      "sha256": "d67c5b45fe638b77b76b8a9e12a694ed9ce83a1b1023fe79259a270192367c63",
       "source": "asl/block/lifecycle/FENTRY.asl"
     },
     {
@@ -33200,7 +33204,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FEXIT"
       ],
-      "sha256": "ab944b35048b4b517ccd1aae31dcc2b0c6ab7530bc99f875b8da87331f63c97a",
+      "sha256": "a1f5aab0d31656fba172847d8f5ef2ba790e7c988f10903f1f9864901ee70721",
       "source": "asl/block/lifecycle/FEXIT.asl"
     },
     {
@@ -33210,7 +33214,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FEXIT"
       ],
-      "sha256": "1b20c848da92b96e45c1a2bac7d2d966e1234dbde40670d892d9df503a12a101",
+      "sha256": "a993d6be7129248bea613f0919b4aa803b3cc8376d1e9b951c504c960f2781eb",
       "source": "asl/block/lifecycle/FEXIT.asl"
     },
     {
@@ -33220,7 +33224,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FRET-RA"
       ],
-      "sha256": "b70f1704ba321855902cfc6b0281eab4c15c86b9b5ed5ff7d3769d63d22bf2a0",
+      "sha256": "63a3d2b709d88e16ae1f9f69724d0b7d11a9faf0c0bb2057d424e63f0a7fbc77",
       "source": "asl/block/lifecycle/FRET.RA.asl"
     },
     {
@@ -33240,7 +33244,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FRET-RA"
       ],
-      "sha256": "e622381560c4ac301c5ed7756e3138632a216239d8f5c3f95ec9c34de251603b",
+      "sha256": "73cefd650b89d8ccc16ef1786918b2bdc552fd346f735b3200fe5ec45a571c43",
       "source": "asl/block/lifecycle/FRET.RA.asl"
     },
     {
@@ -33254,13 +33258,24 @@
       "source": "asl/block/lifecycle/FRET.STK.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004",
+      "kind": "execution",
+      "path": "tests/asl/block/lifecycle/FRET.STK/block-exec-fret-stk-frame-preservation-004.asl",
+      "requirements": [
+        "PTO-INST-BLOCK-FRET-STK",
+        "PTO-FRET-STK-RESTARTABLE-FRAME-001"
+      ],
+      "sha256": "fe638740736ccd512b98d880850ff568505058f1aef4ecd6dda4061c82d8c2ec",
+      "source": "asl/block/lifecycle/FRET.STK.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-FRET-STK-ODD-TARGET-002",
       "kind": "fault",
       "path": "tests/asl/block/lifecycle/FRET.STK/block-fault-fret-stk-target-002.asl",
       "requirements": [
         "PTO-INST-BLOCK-FRET-STK"
       ],
-      "sha256": "1bacaca9402b0c6eced627d19e370a1db623ea36cc284406b692c8a8ed348669",
+      "sha256": "b43c5648f1cb0569ce7124b38382a794543d6907a80151ce1b1a5329af146b86",
       "source": "asl/block/lifecycle/FRET.STK.asl"
     },
     {
@@ -33270,7 +33285,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FRET-STK"
       ],
-      "sha256": "f2a934afdc9da212385fefe80022ded5c32d1399ed65e21e2cf1c616932f8819",
+      "sha256": "1b167adef468d874c767d01f77deecf4f60159b4907166f8b9be04011167d349",
       "source": "asl/block/lifecycle/FRET.STK.asl"
     },
     {
@@ -33280,7 +33295,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FRET-STK"
       ],
-      "sha256": "8ccbe27752220a0d8ff686277e13bfa25ca69c2972020a443363242867f6f0fb",
+      "sha256": "adefe35adb840d16269898a57f1fb76f9b34ade3a922eb7464d4baa8022ec3de",
       "source": "asl/block/lifecycle/FRET.STK.asl"
     },
     {
@@ -33290,7 +33305,7 @@
       "requirements": [
         "PTO-INST-BLOCK-FRET-STK"
       ],
-      "sha256": "09a7fd7743f0a0cb673f4774b42dc88dd12bb77462786858da529d3b9a2f4bb4",
+      "sha256": "cd6f6a4112f996bdf6e1bc15c84e80f421780eb22514585a2e58ca6e0a12ed9b",
       "source": "asl/block/lifecycle/FRET.STK.asl"
     },
     {
@@ -63464,6 +63479,7 @@
         "ADR-0084"
       ],
       "semantic_tests": [
+        "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004",
         "PTO-AVS-BLOCK-FRET-STK-ODD-TARGET-002",
         "PTO-AVS-BLOCK-FRET-STK-RANGE-001",
         "PTO-AVS-BLOCK-FRET-STK-RESTART-003",
@@ -63473,6 +63489,7 @@
       "surface": "block",
       "tests": [
         "PTO-AVS-BLOCK-FRET-STK-DECODE-001",
+        "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004",
         "PTO-AVS-BLOCK-FRET-STK-ODD-TARGET-002",
         "PTO-AVS-BLOCK-FRET-STK-RANGE-001",
         "PTO-AVS-BLOCK-FRET-STK-RESTART-003",

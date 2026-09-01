@@ -682,7 +682,7 @@
     },
     {
       "path": "asl/block/model/lifecycle/lifetime.asl",
-      "sha256": "be273ac380f0ef0161691be76a81211d7f13981fe342937b58fddd42e98d0f1f"
+      "sha256": "a541c00ce63f50ba8256395f1ba02e19c6c81ac9c44d1aa66c9db87ad57cff44"
     },
     {
       "path": "asl/block/model/lifecycle/reset.asl",
@@ -3446,7 +3446,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "75be0ca34c30db5514bd0d5cda49f18dae21490c343323cb441e64bde92c6eb6"
+      "sha256": "885b8a46310d67bd5b3481ff0f4c8b28432a341f64f66abd55c9831cef6cf9eb"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3458,11 +3458,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "80004a94234f599c37efc3e1f8f2ee4de3222cd3ac5ccc14930719ede9357bbe"
+      "sha256": "92ebdb9d5407315bd053d4102cd582b3f1c46ddbb5f7d0754f5850929ddb17bb"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "2f7e5b241200aa5b409f5821e9faa73c93e99c0335191b51a4dd3662845418af"
+      "sha256": "8d20949fef0d60032d6c08f971c213229770ef3e504537d6bee0b88e9096a4b9"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3508,7 +3508,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "633efa9f53c895a732e8af68435c61b50d68c5699163690a2e9c1d4b899da35c",
+  "content_sha256": "ee26b79e94eff09451d2700bacf6df2b6f1011e48a2beef0f67016a2d1d1d088",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4390,7 +4390,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/lifecycle/lifetime.md",
-      "sha256": "d281a770e019f76fd204a85bd40d11a69c2919f67819211d96a9ef04c2728b5b"
+      "sha256": "952c4cd99da6bd39dc91e7a25c0d45edbac28091e8d0af907858edaadb1163ea"
     },
     {
       "kind": "generated-documentation",
@@ -7830,7 +7830,7 @@
     "baseline_commit": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
     "blockers": [
       "release NDF drift is not covered by an accepted target ADR: PTO-INST-BLOCK-MSET",
-      "release ASL unit drift is not covered by an accepted target ADR: PTO-SCALAR-MODEL-AGU-MEMORY"
+      "release ASL unit drift is not covered by an accepted target ADR: PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME, PTO-SCALAR-MODEL-AGU-MEMORY"
     ],
     "excluded_draft_adrs": [
       "ADR-0086",

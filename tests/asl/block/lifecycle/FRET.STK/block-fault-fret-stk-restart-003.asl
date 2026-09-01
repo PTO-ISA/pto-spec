@@ -5,7 +5,7 @@ begin
     let instruction_pc = Zeros{PTO_XLEN} + 0x6c0;
     WriteMemoryByte(Zeros{PTO_XLEN} + 3072, Zeros{8});
     WriteMemoryByte(Zeros{PTO_XLEN} + 3073, Zeros{8} + 9);
-    WriteGPR(2, Zeros{PTO_XLEN} + 3072);
+    WriteGPR(1, Zeros{PTO_XLEN} + 3072);
     WriteGPR(10, Zeros{PTO_XLEN} + 0x777);
     _ReturnAddress = Zeros{PTO_XLEN} + 0x777;
     _FrameDepth = 1;
@@ -17,7 +17,7 @@ begin
     ReturnFromFrame(10, 10, Zeros{PTO_XLEN} + 8, FALSE);
 
     assert _LastFault == Fault_DataPage;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 3080;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 3080;
     assert ReadGPR(10) == Zeros{PTO_XLEN} + 0x777;
     assert _TrapContexts[[1]].frame_template.active;
     assert _TrapContexts[[1]].frame_template.stack_adjusted;
@@ -30,7 +30,7 @@ begin
     ReturnFromFrame(10, 10, Zeros{PTO_XLEN} + 8, FALSE);
 
     assert _LastFault == Fault_None;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 3080;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 3080;
     assert ReadGPR(10) == Zeros{PTO_XLEN} + 0x900;
     assert _ReturnAddress == Zeros{PTO_XLEN} + 0x900;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x900;

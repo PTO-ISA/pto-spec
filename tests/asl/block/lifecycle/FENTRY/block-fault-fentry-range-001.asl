@@ -5,13 +5,13 @@ func AssertFENTRYRejected(begin_reg: Reg5Selector,
 begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x540);
-    WriteGPR(2, Zeros{PTO_XLEN} + 0x300);
+    WriteGPR(1, Zeros{PTO_XLEN} + 0x300);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x2f8, Zeros{8} + 0xaa);
 
     EnterFrame(begin_reg, end_reg, size);
 
     assert _LastFault == Fault_IllegalInstruction;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 0x300;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x300;
     assert ReadMemoryByte(Zeros{PTO_XLEN} + 0x2f8) == Zeros{8} + 0xaa;
     assert _FrameDepth == 0;
     assert !_FrameTemplate.active;

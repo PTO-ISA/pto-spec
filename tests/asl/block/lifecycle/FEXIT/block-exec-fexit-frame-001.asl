@@ -15,7 +15,7 @@ func main() => integer
 begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x580);
-    WriteGPR(2, Zeros{PTO_XLEN} + 0x2f0);
+    WriteGPR(1, Zeros{PTO_XLEN} + 0x2f0);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x2f8, Zeros{8} + 0x11);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x2f9, Zeros{8} + 0x11);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x2f0, Zeros{8} + 0x22);
@@ -29,7 +29,7 @@ begin
 
     assert status == CommandExecution_Executed;
     assert _LastFault == Fault_None;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 0x300;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x300;
     assert ReadGPR(3) == Zeros{PTO_XLEN} + 0x1111;
     assert ReadGPR(4) == Zeros{PTO_XLEN} + 0x2222;
     assert _MemoryEventCount == 2;

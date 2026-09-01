@@ -15,7 +15,7 @@ func main() => integer
 begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x640);
-    WriteGPR(2, Zeros{PTO_XLEN} + 0x2f0);
+    WriteGPR(1, Zeros{PTO_XLEN} + 0x2f0);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x2f8, Zeros{8});
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x2f9, Zeros{8} + 9);
     WriteMemoryByte(Zeros{PTO_XLEN} + 0x2f0, Zeros{8} + 0xcd);

@@ -3,13 +3,13 @@ func main() => integer
 begin
     ResetProfileState();
     WriteTPC(Zeros{PTO_XLEN} + 0x680);
-    WriteGPR(2, Zeros{PTO_XLEN} + 0x2f8);
+    WriteGPR(1, Zeros{PTO_XLEN} + 0x2f8);
     _FrameDepth = 1;
 
     ReturnFromFrame(9, 10, Zeros{PTO_XLEN} + 16, FALSE);
 
     assert _LastFault == Fault_IllegalInstruction;
-    assert ReadGPR(2) == Zeros{PTO_XLEN} + 0x2f8;
+    assert ReadGPR(1) == Zeros{PTO_XLEN} + 0x2f8;
     assert ReadTPC() == Zeros{PTO_XLEN} + 0x680;
     assert _FrameDepth == 1;
     assert !_FrameTemplate.active;

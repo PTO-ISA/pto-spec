@@ -39,7 +39,7 @@ begin
     end;
 end;
 
-constant PTO_FRAME_SP_INDEX = 2;
+constant PTO_FRAME_SP_INDEX = 1;
 constant PTO_FRAME_RA_INDEX = 10;
 
 pure func FrameRegisterEndpointLegal(selector: Reg5Selector) => boolean
