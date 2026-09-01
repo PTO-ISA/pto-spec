@@ -23,7 +23,7 @@
     "prism-react-renderer": "2.4.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "wavedrom": "3.6.1"
+    "wavedrom": "3.6.2"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.10.2",
