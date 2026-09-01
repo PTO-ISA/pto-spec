@@ -8964,12 +8964,76 @@
         "0.58.5"
       ],
       "title": "Restore FP-to-integer raw DstType encoding"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-COMMON-CONVERSION-PROFILE-001",
+        "PTO-FCVTA-DECISION-BINDING-001",
+        "PTO-FCVTM-DECISION-BINDING-001",
+        "PTO-FCVTN-DECISION-BINDING-001",
+        "PTO-FCVTP-DECISION-BINDING-001",
+        "PTO-FCVTZ-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-FCVT",
+        "PTO-INST-SCALAR-FCVTA",
+        "PTO-INST-SCALAR-FCVTM",
+        "PTO-INST-SCALAR-FCVTN",
+        "PTO-INST-SCALAR-FCVTP",
+        "PTO-INST-SCALAR-FCVTZ",
+        "PTO-INST-SCALAR-SCVTF",
+        "PTO-INST-SCALAR-UCVTF",
+        "PTO-SCVTF-DECISION-BINDING-001",
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-UCVTF-DECISION-BINDING-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+        "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+        "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+        "PTO-SCALAR-FCVT",
+        "PTO-SCALAR-FCVTA",
+        "PTO-SCALAR-FCVTM",
+        "PTO-SCALAR-FCVTN",
+        "PTO-SCALAR-FCVTP",
+        "PTO-SCALAR-FCVTZ",
+        "PTO-SCALAR-MODEL-DISPATCH-FSU",
+        "PTO-SCALAR-MODEL-FSU-PROFILE",
+        "PTO-SCALAR-SCVTF",
+        "PTO-SCALAR-UCVTF",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-TCVT"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "54429a8f1c40d9260352a903d2a9726b59842486",
+      "created": "2026-09-01",
+      "id": "ADR-0122",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/206",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0122-finite-scalar-fp16-destination.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Complete scalar conversion and shared Tile conversion semantics"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 115
+    "record_count": 116
   }
 }
