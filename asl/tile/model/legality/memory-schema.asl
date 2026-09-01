@@ -79,8 +79,9 @@ begin
            TilePredicateValuesLegal(mask) &&
            UInt(row_stride_elements) >= _Tiles[[destination]].valid_columns &&
            IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
-           IndexedTLSUTransferDataTypeLegal(
-               _Tiles[[destination]].data_type) &&
+           (_Tiles[[destination]].data_type == TileDataType_U16 ||
+            _Tiles[[destination]].data_type == TileDataType_U32 ||
+            _Tiles[[destination]].data_type == TileDataType_U64) &&
            _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
            _Tiles[[destination]].valid_columns ==
                _Tiles[[indices]].valid_columns &&

@@ -310,8 +310,8 @@
       "open": 0
     },
     "tile_operations": {
-      "count": 108,
-      "closed": 108,
+      "count": 126,
+      "closed": 126,
       "open": 0,
       "public_exact_name": 93,
       "public_spelling_mapping": 1
@@ -322,7 +322,7 @@
     },
     "closure_basis": {
       "public_source_supported": 89,
-      "catalog_defined_direct_binary": 14,
+      "catalog_defined_direct_binary": 32,
       "public_api_aligned": 1,
       "explicit_layer_difference": 4,
       "open": 0
@@ -4484,12 +4484,12 @@
       "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
     },
     {
-      "name": "MGATHER_CAS",
+      "name": "ATOM_CAS",
       "family": "TLSU",
       "selector": null,
       "closure_status": "closed",
       "closure_basis": "catalog-defined-direct-binary",
-      "public_symbol": "MGATHER_CAS",
+      "public_symbol": "ATOM_CAS",
       "public_symbol_relation": "catalog-defined",
       "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
     },
@@ -4670,6 +4670,186 @@
       "closure_status": "closed",
       "closure_basis": "catalog-defined-direct-binary",
       "public_symbol": "TGPR2T",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "ATOM_EXCH",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "ATOM_EXCH",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "ATOM_MAX",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "ATOM_MAX",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "ATOM_MIN",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "ATOM_MIN",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "ATOM_ADD",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "ATOM_ADD",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "ATOM_INC",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "ATOM_INC",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "ATOM_DEC",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "ATOM_DEC",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "ATOM_AND",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "ATOM_AND",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "ATOM_OR",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "ATOM_OR",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "ATOM_XOR",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "ATOM_XOR",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "RED_MAX",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "RED_MAX",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "RED_MIN",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "RED_MIN",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "RED_ADD",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "RED_ADD",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "RED_INC",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "RED_INC",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "RED_DEC",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "RED_DEC",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "RED_AND",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "RED_AND",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "RED_OR",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "RED_OR",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "RED_XOR",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "RED_XOR",
+      "public_symbol_relation": "catalog-defined",
+      "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
+    },
+    {
+      "name": "RED_POPC",
+      "family": "TLSU",
+      "selector": null,
+      "closure_status": "closed",
+      "closure_basis": "catalog-defined-direct-binary",
+      "public_symbol": "RED_POPC",
       "public_symbol_relation": "catalog-defined",
       "resolution": "The canonical PTO catalog defines this direct binary operation; no typed public intrinsic symbol is required for the binary architecture."
     }

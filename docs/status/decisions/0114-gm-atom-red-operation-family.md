@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0113",
+  "id": "ADR-0114",
   "title": "GM atom/red operation family",
   "status": "accepted",
   "authors": ["PTO ISA maintainers"],
@@ -53,7 +53,7 @@
 }
 ---
 
-# ADR 0113: GM atom/red operation family
+# ADR 0114: GM atom/red operation family
 
 ## Decision
 

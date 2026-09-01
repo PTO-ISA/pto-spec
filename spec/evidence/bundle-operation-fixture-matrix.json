@@ -1,9 +1,9 @@
 {
   "schema_version": 3,
   "status": "closed",
-  "accepted_operation_count": 108,
-  "operation_role_case_count": 292,
-  "independent_result_file_count": 292,
+  "accepted_operation_count": 126,
+  "operation_role_case_count": 336,
+  "independent_result_file_count": 336,
   "normal_dispatch": "ExecuteBundleTileOperation",
   "fixture_rule": "Every accepted operation-role record has an independent decoded authoritative-family fixture recipe, exactly its selected Local source B.SUBVIEW or Local destination B.ASSEMBLE INIT_LAST or Shared B.IOS role case, all required roles/attributes, and an exact normal or fault assertion.",
   "effect_class_owner": "asl/block/model/operands/portable-carriers.asl::BundleProducerEffectClassOfHandler",
@@ -19,8 +19,11 @@
     "ExecuteTileSelectScalar": "rollback-safe",
     "ExecuteTileUnary": "rollback-safe",
     "GMOV": "rollback-safe",
+    "GM_ATOM_CAS": "nonrollback-auxiliary",
+    "GM_ATOM_VALUE": "nonrollback-auxiliary",
+    "GM_RED_POPC": "nonrollback-auxiliary",
+    "GM_RED_VALUE": "nonrollback-auxiliary",
     "MGATHER": "rollback-safe",
-    "MGATHER_CAS": "nonrollback-auxiliary",
     "MGATHER_MASK": "rollback-safe",
     "MSCATTER": "nonrollback-auxiliary",
     "MSCATTER_MASK": "nonrollback-auxiliary",
@@ -63,7 +66,7 @@
   },
   "effect_class_counts": {
     "atomic-auxiliary": 56,
-    "nonrollback-auxiliary": 14,
+    "nonrollback-auxiliary": 58,
     "rollback-safe": 222
   },
   "outcome_counts": {
@@ -71,7 +74,7 @@
     "nonrollback-pre-effect-fault": 1,
     "normal-success": 260,
     "predicate-role-pre-effect-fault": 2,
-    "shared-stage3-fault": 17,
+    "shared-stage3-fault": 61,
     "shared-stage3-success": 4
   },
   "closure": {
@@ -11593,9 +11596,9 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0214",
       "operation_index": 89,
-      "operation": "MGATHER_CAS",
+      "operation": "ATOM_CAS",
       "family": "TLSU",
-      "semantic_handler": "MGATHER_CAS",
+      "semantic_handler": "GM_ATOM_CAS",
       "handler_effect_class": "nonrollback-auxiliary",
       "fixture_recipe": "shared-pe-nonzero",
       "role": "source0",
@@ -11649,9 +11652,9 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0215",
       "operation_index": 89,
-      "operation": "MGATHER_CAS",
+      "operation": "ATOM_CAS",
       "family": "TLSU",
-      "semantic_handler": "MGATHER_CAS",
+      "semantic_handler": "GM_ATOM_CAS",
       "handler_effect_class": "nonrollback-auxiliary",
       "fixture_recipe": "shared-pe-nonzero",
       "role": "source1",
@@ -11705,9 +11708,9 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0216",
       "operation_index": 89,
-      "operation": "MGATHER_CAS",
+      "operation": "ATOM_CAS",
       "family": "TLSU",
-      "semantic_handler": "MGATHER_CAS",
+      "semantic_handler": "GM_ATOM_CAS",
       "handler_effect_class": "nonrollback-auxiliary",
       "fixture_recipe": "shared-pe-nonzero",
       "role": "source2",
@@ -11761,9 +11764,9 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0217",
       "operation_index": 89,
-      "operation": "MGATHER_CAS",
+      "operation": "ATOM_CAS",
       "family": "TLSU",
-      "semantic_handler": "MGATHER_CAS",
+      "semantic_handler": "GM_ATOM_CAS",
       "handler_effect_class": "nonrollback-auxiliary",
       "fixture_recipe": "shared-pe-nonzero",
       "role": "destination0",
@@ -17313,6 +17316,2345 @@
         "source1": "source1",
         "source2": "source2",
         "source3": "source3"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0293",
+      "operation_index": 108,
+      "operation": "ATOM_EXCH",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20911181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-293",
+      "row_assertion": "case_0293_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "replacement"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0294",
+      "operation_index": 108,
+      "operation": "ATOM_EXCH",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20911181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-294",
+      "row_assertion": "case_0294_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "replacement"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0295",
+      "operation_index": 108,
+      "operation": "ATOM_EXCH",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20911181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x01009e13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-295",
+      "row_assertion": "case_0295_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "replacement"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0296",
+      "operation_index": 109,
+      "operation": "ATOM_MAX",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20a11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-296",
+      "row_assertion": "case_0296_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0297",
+      "operation_index": 109,
+      "operation": "ATOM_MAX",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20a11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-297",
+      "row_assertion": "case_0297_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0298",
+      "operation_index": 109,
+      "operation": "ATOM_MAX",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20a11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x01009e13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-298",
+      "row_assertion": "case_0298_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0299",
+      "operation_index": 110,
+      "operation": "ATOM_MIN",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20b11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-299",
+      "row_assertion": "case_0299_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0300",
+      "operation_index": 110,
+      "operation": "ATOM_MIN",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20b11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-300",
+      "row_assertion": "case_0300_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0301",
+      "operation_index": 110,
+      "operation": "ATOM_MIN",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20b11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x01009e13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-301",
+      "row_assertion": "case_0301_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0302",
+      "operation_index": 111,
+      "operation": "ATOM_ADD",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20c11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-302",
+      "row_assertion": "case_0302_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0303",
+      "operation_index": 111,
+      "operation": "ATOM_ADD",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20c11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-303",
+      "row_assertion": "case_0303_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0304",
+      "operation_index": 111,
+      "operation": "ATOM_ADD",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20c11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x01009e13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-304",
+      "row_assertion": "case_0304_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0305",
+      "operation_index": 112,
+      "operation": "ATOM_INC",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20e11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-305",
+      "row_assertion": "case_0305_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0306",
+      "operation_index": 112,
+      "operation": "ATOM_INC",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20e11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-306",
+      "row_assertion": "case_0306_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0307",
+      "operation_index": 112,
+      "operation": "ATOM_INC",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20e11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x01009e13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-307",
+      "row_assertion": "case_0307_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0308",
+      "operation_index": 113,
+      "operation": "ATOM_DEC",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20f11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-308",
+      "row_assertion": "case_0308_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0309",
+      "operation_index": 113,
+      "operation": "ATOM_DEC",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20f11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-309",
+      "row_assertion": "case_0309_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0310",
+      "operation_index": 113,
+      "operation": "ATOM_DEC",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x20f11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x01009e13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-310",
+      "row_assertion": "case_0310_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0311",
+      "operation_index": 114,
+      "operation": "ATOM_AND",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x21011181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-311",
+      "row_assertion": "case_0311_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0312",
+      "operation_index": 114,
+      "operation": "ATOM_AND",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x21011181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-312",
+      "row_assertion": "case_0312_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0313",
+      "operation_index": 114,
+      "operation": "ATOM_AND",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x21011181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x01009e13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-313",
+      "row_assertion": "case_0313_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0314",
+      "operation_index": 115,
+      "operation": "ATOM_OR",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x21111181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-314",
+      "row_assertion": "case_0314_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0315",
+      "operation_index": 115,
+      "operation": "ATOM_OR",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x21111181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-315",
+      "row_assertion": "case_0315_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0316",
+      "operation_index": 115,
+      "operation": "ATOM_OR",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x21111181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x01009e13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-316",
+      "row_assertion": "case_0316_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0317",
+      "operation_index": 116,
+      "operation": "ATOM_XOR",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x21211181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-317",
+      "row_assertion": "case_0317_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0318",
+      "operation_index": 116,
+      "operation": "ATOM_XOR",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x21211181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-318",
+      "row_assertion": "case_0318_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0319",
+      "operation_index": 116,
+      "operation": "ATOM_XOR",
+      "family": "TLSU",
+      "semantic_handler": "GM_ATOM_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "destination0",
+      "role_kind": "destination",
+      "all_required_roles": [
+        "source0",
+        "source1",
+        "destination0"
+      ],
+      "decoded_start": "0x21211181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.ASSEMBLE INIT_LAST",
+      "binding_groups": [
+        [
+          "destination0"
+        ]
+      ],
+      "binding_words": [
+        "0x01009e13"
+      ],
+      "modifier_word": "0x800018d3",
+      "modifier_words": [],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-319",
+      "row_assertion": "case_0319_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0320",
+      "operation_index": 117,
+      "operation": "RED_MAX",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21311181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-320",
+      "row_assertion": "case_0320_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0321",
+      "operation_index": 117,
+      "operation": "RED_MAX",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21311181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-321",
+      "row_assertion": "case_0321_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0322",
+      "operation_index": 118,
+      "operation": "RED_MIN",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21411181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-322",
+      "row_assertion": "case_0322_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0323",
+      "operation_index": 118,
+      "operation": "RED_MIN",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21411181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-323",
+      "row_assertion": "case_0323_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0324",
+      "operation_index": 119,
+      "operation": "RED_ADD",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21511181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-324",
+      "row_assertion": "case_0324_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0325",
+      "operation_index": 119,
+      "operation": "RED_ADD",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21511181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-325",
+      "row_assertion": "case_0325_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0326",
+      "operation_index": 120,
+      "operation": "RED_INC",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21611181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-326",
+      "row_assertion": "case_0326_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0327",
+      "operation_index": 120,
+      "operation": "RED_INC",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21611181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-327",
+      "row_assertion": "case_0327_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0328",
+      "operation_index": 121,
+      "operation": "RED_DEC",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21711181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-328",
+      "row_assertion": "case_0328_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0329",
+      "operation_index": 121,
+      "operation": "RED_DEC",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21711181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-329",
+      "row_assertion": "case_0329_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "limit"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0330",
+      "operation_index": 122,
+      "operation": "RED_AND",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21811181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-330",
+      "row_assertion": "case_0330_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0331",
+      "operation_index": 122,
+      "operation": "RED_AND",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21811181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-331",
+      "row_assertion": "case_0331_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0332",
+      "operation_index": 123,
+      "operation": "RED_OR",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21911181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-332",
+      "row_assertion": "case_0332_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0333",
+      "operation_index": 123,
+      "operation": "RED_OR",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21911181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-333",
+      "row_assertion": "case_0333_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0334",
+      "operation_index": 124,
+      "operation": "RED_XOR",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21a11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-334",
+      "row_assertion": "case_0334_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0335",
+      "operation_index": 124,
+      "operation": "RED_XOR",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_VALUE",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source1",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0",
+        "source1"
+      ],
+      "decoded_start": "0x21a11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source1"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-335",
+      "row_assertion": "case_0335_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices",
+        "source1": "value"
+      },
+      "datr_word": null,
+      "destination_size_code": 1
+    },
+    {
+      "case_id": "RANGE-MATRIX-CASE-0336",
+      "operation_index": 125,
+      "operation": "RED_POPC",
+      "family": "TLSU",
+      "semantic_handler": "GM_RED_POPC",
+      "handler_effect_class": "nonrollback-auxiliary",
+      "fixture_recipe": "shared-pe-nonzero",
+      "role": "source0",
+      "role_kind": "source",
+      "all_required_roles": [
+        "source0"
+      ],
+      "decoded_start": "0x21b11181",
+      "decoded_attributes": [
+        "B.DIM"
+      ],
+      "decoded_operand_commands": [
+        "B.IOR",
+        "B.IOT",
+        "B.IOS"
+      ],
+      "modifier": "B.SUBVIEW",
+      "binding_groups": [
+        [
+          "source0"
+        ]
+      ],
+      "binding_words": [
+        "0x01001e13"
+      ],
+      "modifier_word": "0x000000d3",
+      "modifier_words": [
+        "0x000000d3"
+      ],
+      "normal_dispatch": "ExecuteBundleTileOperation",
+      "expected_fault": "Fault_TileLegality",
+      "outcome": "shared-stage3-fault",
+      "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
+      "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-336",
+      "row_assertion": "case_0336_exact_fault",
+      "gpr_word": "0x00010013",
+      "fixture_data_type": 4,
+      "fixture_role_data_types": {},
+      "fixture_role_layouts": {},
+      "fixture_role_kinds": {
+        "source0": "indices"
       },
       "datr_word": null,
       "destination_size_code": 1

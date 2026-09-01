@@ -62,9 +62,10 @@ begin
     if !SelectedBundleTileDataAttributesLegal(operation) then return FALSE; end;
     let binding = _BundleTileBindings[[0]];
     let atom = function <= 18;
+    let cas = function == 8;
     let popc = function == 27;
     var expected_binding_count: integer {1..2} = 1;
-    if function == 8 then expected_binding_count = 2; end;
+    if cas then expected_binding_count = 2; end;
     if atom && BundleTileBindingCount() != expected_binding_count then
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
@@ -73,10 +74,15 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-    if !binding.valid || binding.destination_valid != atom ||
-       !binding.source0_valid || binding.last == FALSE ||
-       (!popc && !binding.source1_valid) ||
-       (function == 8 && BundleTileBindingCount() != 2) then
+    // atom.cas and the legacy MGATHER.CAS alias use the two-command schema:
+    // the first B.IOT carries indices and expected values, while the second
+    // carries replacement and the destination.  Other atom forms carry all
+    // operands in one destination-bearing B.IOT.
+    if !binding.valid || !binding.source0_valid ||
+       ((!cas && binding.last == FALSE) || (cas && binding.last)) ||
+       (cas && (binding.destination_valid || !binding.source1_valid)) ||
+       (!cas && binding.destination_valid != atom) ||
+       (!popc && !cas && !binding.source1_valid) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
@@ -104,18 +110,26 @@ begin
     let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
         _BundleScalarBindings[[0]].source0);
     if atom then
-        if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
-               valid_columns, valid_columns, TRUE, data_type) then return FALSE; end;
-        let destination = binding.destination;
-        if function == 8 then
+        var destination: TileIndex = binding.destination;
+        if cas then
             let second = _BundleTileBindings[[1]];
             if !second.destination_valid || !second.source0_valid ||
                second.source1_valid || !second.last ||
                !TileSourceContentsDefined(second.source0) then
-                RollBackBundleTileDestinations();
                 SetFault(Fault_TileLegality, ReadTPC());
                 return FALSE;
             end;
+            destination = second.destination;
+        end;
+        if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
+               valid_columns, valid_columns, TRUE, data_type) then return FALSE; end;
+        if cas then
+            destination = _BundleTileBindings[[1]].destination;
+        else
+            destination = _BundleTileBindings[[0]].destination;
+        end;
+        if cas then
+            let second = _BundleTileBindings[[1]];
             if !TileOperandsLegal_GM_ATOM_CAS(GMAtomic_CAS, destination, base_address,
                    binding.source0, binding.source1, second.source0,
                    CurrentBundlePadValue()) then

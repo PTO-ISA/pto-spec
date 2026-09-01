@@ -107,6 +107,11 @@ begin
         if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
                valid_columns, valid_columns, TRUE, data_type) then return FALSE; end;
         if cas then
+            destination = _BundleTileBindings[[1]].destination;
+        else
+            destination = _BundleTileBindings[[0]].destination;
+        end;
+        if cas then
             let second = _BundleTileBindings[[1]];
             if !TileOperandsLegal_GM_ATOM_CAS(GMAtomic_CAS, destination, base_address,
                    binding.source0, binding.source1, second.source0,

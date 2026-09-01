@@ -109,7 +109,7 @@ begin
     assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(104) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(105) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(106) == FALSE;
-    assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(107) == TRUE;
+    assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(107) == FALSE;
     assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(108) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(109) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(110) == TRUE;
@@ -127,5 +127,6 @@ begin
     assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(122) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(123) == TRUE;
     assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(124) == TRUE;
+    assert InstructionContractAcceptsTileOperation_BSTART_MGATHER_CAS(125) == TRUE;
     return 0;
 end;

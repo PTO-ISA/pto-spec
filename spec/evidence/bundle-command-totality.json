@@ -2,10 +2,10 @@
   "schema_version": 1,
   "target": "S4-T7",
   "status": "closed",
-  "accepted_form_count": 76,
+  "accepted_form_count": 94,
   "encoding_variant_count": 0,
   "disposition_counts": {
-    "executed": 66,
+    "executed": 84,
     "pto-v0-rejected": 10
   },
   "handler_counts": {
@@ -14,7 +14,7 @@
     "BindBundleScalarIO": 1,
     "BindBundleSharedIO": 1,
     "BindBundleTileIO": 5,
-    "ExecuteBundleStart": 43,
+    "ExecuteBundleStart": 61,
     "ExecuteBundleStop": 3,
     "ExecuteCrossBlockTransfer": 1,
     "ExecuteFrameEntry": 1,
@@ -499,8 +499,8 @@
     },
     {
       "form_index": 23,
-      "form_id": "bstart_mgather_cas_32_fd8c8a3b720a",
-      "mnemonic": "BSTART.MGATHER.CAS",
+      "form_id": "bstart_atom_cas_32_gm08",
+      "mnemonic": "BSTART.ATOM.CAS",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1390,6 +1390,294 @@
       "effect_class": "bundle-range-assemble-modifier",
       "rejection_precedes_effects": false,
       "sequential_tpc_advance": true
+    },
+    {
+      "form_index": 76,
+      "form_id": "bstart_atom_exch_32_gm09",
+      "mnemonic": "BSTART.ATOM.EXCH",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 77,
+      "form_id": "bstart_atom_max_32_gm10",
+      "mnemonic": "BSTART.ATOM.MAX",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 78,
+      "form_id": "bstart_atom_min_32_gm11",
+      "mnemonic": "BSTART.ATOM.MIN",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 79,
+      "form_id": "bstart_atom_add_32_gm12",
+      "mnemonic": "BSTART.ATOM.ADD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 80,
+      "form_id": "bstart_atom_inc_32_gm14",
+      "mnemonic": "BSTART.ATOM.INC",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 81,
+      "form_id": "bstart_atom_dec_32_gm15",
+      "mnemonic": "BSTART.ATOM.DEC",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 82,
+      "form_id": "bstart_atom_and_32_gm16",
+      "mnemonic": "BSTART.ATOM.AND",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 83,
+      "form_id": "bstart_atom_or_32_gm17",
+      "mnemonic": "BSTART.ATOM.OR",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 84,
+      "form_id": "bstart_atom_xor_32_gm18",
+      "mnemonic": "BSTART.ATOM.XOR",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 85,
+      "form_id": "bstart_red_max_32_gm19",
+      "mnemonic": "BSTART.RED.MAX",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 86,
+      "form_id": "bstart_red_min_32_gm20",
+      "mnemonic": "BSTART.RED.MIN",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 87,
+      "form_id": "bstart_red_add_32_gm21",
+      "mnemonic": "BSTART.RED.ADD",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 88,
+      "form_id": "bstart_red_inc_32_gm22",
+      "mnemonic": "BSTART.RED.INC",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 89,
+      "form_id": "bstart_red_dec_32_gm23",
+      "mnemonic": "BSTART.RED.DEC",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 90,
+      "form_id": "bstart_red_and_32_gm24",
+      "mnemonic": "BSTART.RED.AND",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 91,
+      "form_id": "bstart_red_or_32_gm25",
+      "mnemonic": "BSTART.RED.OR",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 92,
+      "form_id": "bstart_red_xor_32_gm26",
+      "mnemonic": "BSTART.RED.XOR",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
+    },
+    {
+      "form_index": 93,
+      "form_id": "bstart_red_popc_32_gm27",
+      "mnemonic": "BSTART.RED.POPC",
+      "semantic_handler": "ExecuteBundleStart",
+      "decoded_fields": [
+        "DataType"
+      ],
+      "consumed_fields": [
+        "DataType"
+      ],
+      "disposition": "executed",
+      "effect_class": "bundle-start-descriptor",
+      "rejection_precedes_effects": false,
+      "sequential_tpc_advance": false
     }
   ],
   "encoding_variant_matrix": [],
@@ -1573,8 +1861,8 @@
         "commit_rejected": 0
       },
       "TLSU": {
-        "total": 10,
-        "representable": 10,
+        "total": 28,
+        "representable": 28,
         "commit_rejected": 0
       },
       "CUBE": {
@@ -4897,7 +5185,7 @@
       {
         "family": "TLSU",
         "selector": "0x008",
-        "operation": "MGATHER_CAS",
+        "operation": "ATOM_CAS",
         "operand_fields": [
           "destination0",
           "address",
@@ -6838,6 +7126,764 @@
         "unsupported_operand_fields": [],
         "complete_bundle_schema": null,
         "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x009",
+        "operation": "ATOM_EXCH",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x00a",
+        "operation": "ATOM_MAX",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x00b",
+        "operation": "ATOM_MIN",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x00c",
+        "operation": "ATOM_ADD",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x00e",
+        "operation": "ATOM_INC",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x00f",
+        "operation": "ATOM_DEC",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x010",
+        "operation": "ATOM_AND",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x011",
+        "operation": "ATOM_OR",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x012",
+        "operation": "ATOM_XOR",
+        "operand_fields": [
+          "destination0",
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "destination0",
+            "resolver": "ordered B.IOT destination binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x013",
+        "operation": "RED_MAX",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x014",
+        "operation": "RED_MIN",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x015",
+        "operation": "RED_ADD",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x016",
+        "operation": "RED_INC",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x017",
+        "operation": "RED_DEC",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x018",
+        "operation": "RED_AND",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x019",
+        "operation": "RED_OR",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x01a",
+        "operation": "RED_XOR",
+        "operand_fields": [
+          "address",
+          "source0",
+          "source1"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          },
+          {
+            "field": "source1",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
+      },
+      {
+        "family": "TLSU",
+        "selector": "0x01b",
+        "operation": "RED_POPC",
+        "operand_fields": [
+          "address",
+          "source0"
+        ],
+        "operand_resolutions": [
+          {
+            "field": "address",
+            "resolver": "B.IOR ordered GPR input slot for address",
+            "default": "XLEN zero when B.IOR is omitted",
+            "raw_value_policy": "XLEN Word",
+            "slot": "RegSrc0"
+          },
+          {
+            "field": "source0",
+            "resolver": "ordered B.IOT source binding",
+            "default": "0",
+            "raw_value_policy": "absolute TileIndex"
+          }
+        ],
+        "gpr_input_slots": {
+          "address": "RegSrc0"
+        },
+        "gpr_input_count": 1,
+        "representable": true,
+        "unsupported_operand_fields": [],
+        "complete_bundle_schema": null,
+        "commit_disposition": "execute-after-complete-binding"
       }
     ]
   },
@@ -6849,7 +7895,7 @@
       "tests/asl/block/model/faults/rollback/block-exec-tile-commit-001.asl:TestBundleTileCommitRollback",
       "tests/asl/block/operands/B.IOR/block-exec-b-ior-end-to-end-001.asl:TestBundleScalarBindingSchemaDefaults"
     ],
-    "canonical_form_case_count": 76,
+    "canonical_form_case_count": 94,
     "decoded_complete_bundle_matrix": [
       {
         "case": "canonical-none-observable-D",
@@ -6921,12 +7967,12 @@
   "independent_comparison": {
     "source": "content-addressed independent executable ISA snapshot",
     "aggregate_sha256": "1f8862ef90ee72d0e917398b2d96b2799f541f2e7198c103d9fc47af998a54ec",
-    "matched_form_ids": 76,
-    "exact_encoding_matches": 61,
+    "matched_form_ids": 94,
+    "exact_encoding_matches": 60,
     "accepted_abi_encoding_divergences": 8,
     "executable_subset": 53,
-    "decode_only": 16,
-    "missing": 7,
+    "decode_only": 15,
+    "missing": 26,
     "authority": "non-normative structural comparison only",
     "limitation": "The independent snapshot predates seven accepted PTO 0.58.0 command encoding changes and the completed direct-operation bundle schema. It stages bundle headers rather than tile payload execution, so the PTO catalogs, ADR 0055, and PTO-owned ASL evidence remain authoritative."
   },
