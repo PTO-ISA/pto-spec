@@ -12,11 +12,14 @@
   "baseline": "f2bb7bb3182f1ceec477c69409877e5e72d853f1",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
-    "PTO-BLOCK-MSET-FILL-001"
+    "PTO-BLOCK-MSET-FILL-001",
+    "PTO-INST-BLOCK-MSET"
   ],
   "affected_units": [
     "PTO-BLOCK-MSET",
-    "PTO-BLOCK-MODEL-COMMIT-EFFECTS"
+    "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+    "PTO-SCALAR-MODEL-AGU-MEMORY"
   ],
   "resolves": [],
   "supersedes": [],

@@ -22175,13 +22175,19 @@
       ],
       "blockers": [],
       "ndf_ids": [
-        "PTO-BLOCK-MSET-FILL-001"
+        "PTO-BLOCK-MSET-FILL-001",
+        "PTO-INST-BLOCK-MSET"
       ],
       "released_versions": [],
       "stage": "executable",
       "subject_id": "ADR-0119",
       "test_ids": [
+        "PTO-AVS-BLOCK-CMD-CTRLSTART-001",
+        "PTO-AVS-BLOCK-CMD-HEADER-001",
+        "PTO-AVS-BLOCK-CMD-LIFECYCLE-001",
+        "PTO-AVS-BLOCK-CMD-TILESTART-001",
         "PTO-AVS-BLOCK-MODEL-COMMIT-EFFECTS-STATIC-001",
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-COMMANDS-STATIC-001",
         "PTO-AVS-BLOCK-MSET-DATAPAGE-002",
         "PTO-AVS-BLOCK-MSET-DECODE-001",
         "PTO-AVS-BLOCK-MSET-FILL-001",
@@ -22189,11 +22195,17 @@
         "PTO-AVS-BLOCK-MSET-RANGE-005",
         "PTO-AVS-BLOCK-MSET-RESERVATION-003",
         "PTO-AVS-BLOCK-MSET-XLEN-004",
-        "PTO-AVS-BLOCK-TESTBUNDLETILECOMMITLIFECYCLE-STATE-TRANSITION-001"
+        "PTO-AVS-BLOCK-TESTBUNDLECOMMANDTOTALITYBOUNDARIES-BOUNDARY-001",
+        "PTO-AVS-BLOCK-TESTBUNDLETILECOMMITLIFECYCLE-STATE-TRANSITION-001",
+        "PTO-AVS-SCALAR-MODEL-AGU-MEMORY-STATIC-001",
+        "PTO-AVS-SCALAR-TESTSCALARMEMORY-EXECUTION-001",
+        "PTO-AVS-SCALAR-TESTSCALARPAIRMEMORYCOMPLETION-EXECUTION-001"
       ],
       "unit_ids": [
         "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
-        "PTO-BLOCK-MSET"
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MSET",
+        "PTO-SCALAR-MODEL-AGU-MEMORY"
       ],
       "validated_commit": null
     }
@@ -22202,7 +22214,7 @@
   "sources": {
     "adr_records": {
       "count": 113,
-      "sha256": "d159243f002b9a5d7d1358dea11f1f3deb6686573f736eae07ab96b5339b15bd"
+      "sha256": "ab9f939bb1d8540d8b2d976b5710aa71ff60363892aa9d92e22dc0fceacc3e74"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -22210,7 +22222,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "8d20949fef0d60032d6c08f971c213229770ef3e504537d6bee0b88e9096a4b9",
+      "sha256": "49164aa18704349d05dbff9ef41e289ae3bc10dbcc5b117fa09f8502480c2725",
       "test_count": 3754,
       "unit_count": 853
     }

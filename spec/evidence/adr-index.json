@@ -8842,11 +8842,14 @@
     {
       "accepted": "2026-09-01",
       "affected_ndf": [
-        "PTO-BLOCK-MSET-FILL-001"
+        "PTO-BLOCK-MSET-FILL-001",
+        "PTO-INST-BLOCK-MSET"
       ],
       "affected_units": [
         "PTO-BLOCK-MSET",
-        "PTO-BLOCK-MODEL-COMMIT-EFFECTS"
+        "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-SCALAR-MODEL-AGU-MEMORY"
       ],
       "approvers": [
         "zhoubot"

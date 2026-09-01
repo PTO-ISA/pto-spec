@@ -4683,7 +4683,9 @@
       "owners": [
         "asl/block/lifecycle/MSET.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0119"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-MSET-DATAPAGE-002",
         "PTO-AVS-BLOCK-MSET-DECODE-001",
@@ -18507,7 +18509,7 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "2a76208540c9826b4a1794aac8dde6bdc20424dda295693b6d7f6aea2e146e9d",
+    "spec/evidence/adr-index.json": "48ef4486bcc46f2ae9c507d92752d6a80489725f97008058fa02354aa1a51376",
     "spec/evidence/instruction-contract-closure.json": "3173a0b82e7cdc752078c53d91ebda748ec8f7c7292c43cf89e629217feca33e",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
@@ -63784,7 +63786,8 @@
         "ADR-0099",
         "ADR-0108",
         "ADR-0109",
-        "ADR-0116"
+        "ADR-0116",
+        "ADR-0119"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-CMD-CTRLSTART-001",
@@ -79756,7 +79759,9 @@
       "documentation": "docs/scalar/model/agu/memory.md",
       "id": "PTO-SCALAR-MODEL-AGU-MEMORY",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0119"
+      ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-TESTSCALARMEMORY-EXECUTION-001",
         "PTO-AVS-SCALAR-TESTSCALARPAIRMEMORYCOMPLETION-EXECUTION-001"

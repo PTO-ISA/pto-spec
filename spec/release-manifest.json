@@ -3446,7 +3446,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "885b8a46310d67bd5b3481ff0f4c8b28432a341f64f66abd55c9831cef6cf9eb"
+      "sha256": "980fb2b6e8f7bf4317959cc30ccc43ab79f1380965a817463199c6b531c97ea4"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3454,15 +3454,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "a49eea2ade4618d16829329ae56f3d38c68cf25cad9a0dd4e4fd0608905f6e85"
+      "sha256": "83c0f548f7e92ca37bdc6d82db10e76951fa8e2c5018f92f8b1035d0da4b278e"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "92ebdb9d5407315bd053d4102cd582b3f1c46ddbb5f7d0754f5850929ddb17bb"
+      "sha256": "ddb95f3fada42204173816b43d4d932b7bab7e7e6c0c506b6870b88f8ee68720"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "8d20949fef0d60032d6c08f971c213229770ef3e504537d6bee0b88e9096a4b9"
+      "sha256": "49164aa18704349d05dbff9ef41e289ae3bc10dbcc5b117fa09f8502480c2725"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3508,7 +3508,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "ee26b79e94eff09451d2700bacf6df2b6f1011e48a2beef0f67016a2d1d1d088",
+  "content_sha256": "b75b375de82f8bc1b0f810f86725b9262d5aa8b001bb7010a9278949e71eacf1",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -7829,8 +7829,7 @@
     "architecture_version": "0.58.5",
     "baseline_commit": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
     "blockers": [
-      "release NDF drift is not covered by an accepted target ADR: PTO-INST-BLOCK-MSET",
-      "release ASL unit drift is not covered by an accepted target ADR: PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME, PTO-SCALAR-MODEL-AGU-MEMORY"
+      "release ASL unit drift is not covered by an accepted target ADR: PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
     ],
     "excluded_draft_adrs": [
       "ADR-0086",
