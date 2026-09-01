@@ -1284,9 +1284,13 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0119"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-BLOCK-MSET-RANGE-005",
+        "PTO-AVS-BLOCK-MSET-XLEN-004"
+      ]
     },
     {
       "executable": false,
@@ -4682,7 +4686,9 @@
         "PTO-AVS-BLOCK-MSET-DECODE-001",
         "PTO-AVS-BLOCK-MSET-FILL-001",
         "PTO-AVS-BLOCK-MSET-GPR-001",
-        "PTO-AVS-BLOCK-MSET-RESERVATION-003"
+        "PTO-AVS-BLOCK-MSET-RANGE-005",
+        "PTO-AVS-BLOCK-MSET-RESERVATION-003",
+        "PTO-AVS-BLOCK-MSET-XLEN-004"
       ]
     },
     {
@@ -16920,11 +16926,11 @@
     "asl/block/lifecycle/HL.QPUSH.asl": "7eacde3838de2f920447cb725e4c7e122362da7ff5ce36dfd474701d4f9da11c",
     "asl/block/lifecycle/L.BSTOP.asl": "4af30b944982bc856a07a69a5f7c8484b57b158b1e62532486a3e5a73d419e9a",
     "asl/block/lifecycle/MCOPY.asl": "db49373a481ffb30922c7a852a3f01e4bdb0442c39292fe8d48375f55cb520b9",
-    "asl/block/lifecycle/MSET.asl": "8fc1dadfcd532ac0a62238247620e79fa26f370bebafac12d6e9b7b81561b1cf",
-    "asl/block/model/commit/effects.asl": "5385a24c6b55b3eb680fb1b1f6cd8e8478f817dc54feee8b6d31b2a0ad2613f0",
+    "asl/block/lifecycle/MSET.asl": "94242606a278bdfa0ebc148e452dc2b5bc5fe2591b1964c8c37ed510dec7ac62",
+    "asl/block/model/commit/effects.asl": "dd0a425fb8691f4156243649b9db6f12436cd541c73e6217010533d171456d9b",
     "asl/block/model/commit/validation.asl": "f22cac246c59a10aebedb4ab19805f0314130ef0fade576559816eb3608b12f5",
     "asl/block/model/dispatch/cell-rearrangement-schema.asl": "18f22fd96b5385ce47617c00aafdaa460c2fec6cab1cc867f28b1a772b259bc2",
-    "asl/block/model/dispatch/commands.asl": "5d264458b50dfc5d78a9be561acfe422d753682e3ea3e92896f41f371e76817e",
+    "asl/block/model/dispatch/commands.asl": "9c64142be921878c26cbe801d24a01c6124a87d32bdd17eacd2cfd93e88eb364",
     "asl/block/model/dispatch/comparison-schema.asl": "d871c4b700fd4c87298e7c818e9e9c8413e2bd34cf28228a31a27637d606e14b",
     "asl/block/model/dispatch/cube-destination.asl": "ee31e918e78a40a17608cb76c1343186130f841b4cbb5fbd26e50d99dbcc07cd",
     "asl/block/model/dispatch/cube-tmatmul.asl": "4a65098b22408fedd8b76b362ac7a45bffecd6ed88c1654b59d29226e06c71e8",
@@ -17418,7 +17424,7 @@
     "asl/scalar/fsu/SCVTF.asl": "2a25406768f59669f98978e499ffc54bbf0c03a8c9aedf3b4318da70f0fab7a5",
     "asl/scalar/fsu/UCVTF.asl": "fc41ba9ad3c4b04f2684437e92c9a5ef04857f0a48e24f941e659bf020ece0c2",
     "asl/scalar/model/agu/addressing.asl": "2b99385665915f8f3ef589e60f4654296b8ba1f0fc64db9896909c8cea6884ed",
-    "asl/scalar/model/agu/memory.asl": "3e11650bdd6950bf78085be8b1de9735f65310d69b1edfb54d92e59baffee643",
+    "asl/scalar/model/agu/memory.asl": "2a8591d9c20cfd98d678b901b6eff377b686490fbc8d4bffbb3411b58b917017",
     "asl/scalar/model/alu/bitfield.asl": "65583faea051e6c15cc35c30e65bd3a969993a37cd606d374f68827811096dd4",
     "asl/scalar/model/alu/semantics.asl": "a4906d72081773c46f0369e9102a7bb42827717d0398e2e757b17ef72b4b4527",
     "asl/scalar/model/amo/semantics.asl": "feac3f10edbf29d34595f827eb66a39925be56eb3345e38574a5bab2424a871a",
@@ -17773,11 +17779,11 @@
     "docs/block/lifecycle/HL.QPUSH.md": "b722484830ed08d96ccda6309b7f990577c58663a7da0ccfa2a74ffa43e9c66c",
     "docs/block/lifecycle/L.BSTOP.md": "d206f8e041bf181ed81be8c01879d6f89964b05cb3c8eb04397c04817a16359e",
     "docs/block/lifecycle/MCOPY.md": "04780dd1cb12e9df66f9496e39eaafeb53b55b9520485731cfcdba95d50c8dda",
-    "docs/block/lifecycle/MSET.md": "7a1cf1b9e8118f7bda249d41d52dcc8fb4620bb8a0847a61eabf948b4c1a8d75",
-    "docs/block/model/commit/effects.md": "613fa6cdb152cc1a9c0bf3314d99bb6de5926680ef63e52308774b73bd12994b",
+    "docs/block/lifecycle/MSET.md": "f719c51552a8c1616e4f909dfca16da56282b5932642441bdfaa48d0b629d185",
+    "docs/block/model/commit/effects.md": "6544e5ab1a6ed2a8cad01726b42a3a602525ba318a1e12a9240434f60a5988e6",
     "docs/block/model/commit/validation.md": "36b6696303e975621e2688bd7f0850519f8b1a75f87c91512b2db972d0e2c808",
     "docs/block/model/dispatch/cell-rearrangement-schema.md": "910f3a6b49bf2097ab4e14a2d7a581b4834c19f4d88d6e1326fed1c4c3915991",
-    "docs/block/model/dispatch/commands.md": "4432d730222f8d5b50174d6fb6a43d7a3f9f175af9efee5cc5a1a9f6d68547ab",
+    "docs/block/model/dispatch/commands.md": "25b136375aa526c3e7d8e8f4c85faf8610396da41661174072ba1df8a9ae6aa2",
     "docs/block/model/dispatch/comparison-schema.md": "c7268b5a2db38bf13159a1655aa68274997cc63e3b46bb9ce00b4f00e6ec5e9e",
     "docs/block/model/dispatch/cube-destination.md": "bec93765a939bf244b1ac629cf56bb8080482a2b55e062a06cc90dc46fb4a611",
     "docs/block/model/dispatch/cube-tmatmul.md": "a54b5b307dec8f37df25978b3a701cac597955e74623a666849ae3aaecbe3da1",
@@ -18271,7 +18277,7 @@
     "docs/scalar/fsu/SCVTF.md": "8cbb383bae6a7c43e140b466a65e26711da943d8334fd2b3954883881197c097",
     "docs/scalar/fsu/UCVTF.md": "61b427a3233b0e6fdb9578fb510adef289f1bde8bbf5cbc1c0957da6a1ae33b1",
     "docs/scalar/model/agu/addressing.md": "915e21e8abe9381fc7950bb8b0e521f86bf1e5837665e03507aa1f0f665f25cb",
-    "docs/scalar/model/agu/memory.md": "49ba74af963b146d5edc0fae4778e78db738c54f85c65409635fb14b04ae803f",
+    "docs/scalar/model/agu/memory.md": "5213c9a2925b512043dafc32941b249a66b8cb205480fe0080c133d0e1aab9f2",
     "docs/scalar/model/alu/bitfield.md": "63d97c6b2874372d48dbbecd9f9aec6ff60a7b5d27c65d20e8e04cc3c76a7fca",
     "docs/scalar/model/alu/semantics.md": "e0147155552210c654445597554ae81d42e8868c71da0e3f27df7859411bfbf8",
     "docs/scalar/model/amo/semantics.md": "10b8d163b0ce595751b228841c17a1d799e02979408b6c8853576d54acd62d54",
@@ -18498,8 +18504,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "ce7425e2e0e535e25b76b27b070647c99ecc0641cb691d2e2bac43219ca9c9ad",
-    "spec/evidence/instruction-contract-closure.json": "fffacddec4ad524faa5f9543ec1e0ad80339ef180b5482b87482a4dda3b81f33",
+    "spec/evidence/adr-index.json": "2a76208540c9826b4a1794aac8dde6bdc20424dda295693b6d7f6aea2e146e9d",
+    "spec/evidence/instruction-contract-closure.json": "3173a0b82e7cdc752078c53d91ebda748ec8f7c7292c43cf89e629217feca33e",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -18954,8 +18960,10 @@
     "tests/asl/block/lifecycle/MSET/block-decode-mset-canonical-001.asl": "9684b1189710db556e24181bae94b20cd9606077e112b3c5d01631c13200ec7f",
     "tests/asl/block/lifecycle/MSET/block-exec-mset-fill-001.asl": "51b801069c9663c00c60ad488edf0e462b652ebcfa5f4fc4206999053213afe7",
     "tests/asl/block/lifecycle/MSET/block-exec-mset-reservation-003.asl": "4e960c18be316e55dcf2646c75bd8f9377c4c5445b197be7f2f0ef2a64ba7b2e",
+    "tests/asl/block/lifecycle/MSET/block-exec-mset-xlen-004.asl": "e8949dbaee0b1e6c14ea053f946cf72654cd4adf87cfd15f7756748ee67def91",
     "tests/asl/block/lifecycle/MSET/block-fault-mset-datapage-002.asl": "d0a6d3abf920d9b4c80a6d699eb3e6580e09ccbd49462c8f1779eeabe11962e9",
     "tests/asl/block/lifecycle/MSET/block-fault-mset-gpr-001.asl": "b2c13752c9eb302ef6746756ba1d98baec6f2dca9823bfb02dbe97cba99f0a42",
+    "tests/asl/block/lifecycle/MSET/block-fault-mset-range-005.asl": "c03ada724e7a2e35acdc7bf64958724a7930b8ff3f7f1fe431a264dafdf541b9",
     "tests/asl/block/model/commit/effects/block-state-tile-commit-lifecycle-001.asl": "d66a72e64b46feced51550967e6e6ac90833403caa81e20556fa5565fb26b139",
     "tests/asl/block/model/commit/effects/block-static-effects-contract-001.asl": "a11d5cd4c0e10b6163717f452f5d934c63a8fbdba2a709fc03936eba9f06f0a6",
     "tests/asl/block/model/commit/validation/block-static-validation-contract-001.asl": "61d8f687f36ed4e5f143f06b73e0160202213625c8f8f75b31474dcd36d72846",
@@ -22260,7 +22268,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1025,
     "status": "closed",
-    "test_count": 3751,
+    "test_count": 3753,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -34451,6 +34459,17 @@
       "source": "asl/block/lifecycle/MSET.asl"
     },
     {
+      "id": "PTO-AVS-BLOCK-MSET-RANGE-005",
+      "kind": "fault",
+      "path": "tests/asl/block/lifecycle/MSET/block-fault-mset-range-005.asl",
+      "requirements": [
+        "PTO-INST-BLOCK-MSET",
+        "PTO-BLOCK-MSET-FILL-001"
+      ],
+      "sha256": "c03ada724e7a2e35acdc7bf64958724a7930b8ff3f7f1fe431a264dafdf541b9",
+      "source": "asl/block/lifecycle/MSET.asl"
+    },
+    {
       "id": "PTO-AVS-BLOCK-MSET-RESERVATION-003",
       "kind": "execution",
       "path": "tests/asl/block/lifecycle/MSET/block-exec-mset-reservation-003.asl",
@@ -34458,6 +34477,17 @@
         "PTO-INST-BLOCK-MSET"
       ],
       "sha256": "4e960c18be316e55dcf2646c75bd8f9377c4c5445b197be7f2f0ef2a64ba7b2e",
+      "source": "asl/block/lifecycle/MSET.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-MSET-XLEN-004",
+      "kind": "execution",
+      "path": "tests/asl/block/lifecycle/MSET/block-exec-mset-xlen-004.asl",
+      "requirements": [
+        "PTO-INST-BLOCK-MSET",
+        "PTO-BLOCK-MSET-FILL-001"
+      ],
+      "sha256": "e8949dbaee0b1e6c14ea053f946cf72654cd4adf87cfd15f7756748ee67def91",
       "source": "asl/block/lifecycle/MSET.asl"
     },
     {
@@ -63627,13 +63657,16 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0119"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-MSET-DATAPAGE-002",
         "PTO-AVS-BLOCK-MSET-FILL-001",
         "PTO-AVS-BLOCK-MSET-GPR-001",
-        "PTO-AVS-BLOCK-MSET-RESERVATION-003"
+        "PTO-AVS-BLOCK-MSET-RANGE-005",
+        "PTO-AVS-BLOCK-MSET-RESERVATION-003",
+        "PTO-AVS-BLOCK-MSET-XLEN-004"
       ],
       "source": "asl/block/lifecycle/MSET.asl",
       "surface": "block",
@@ -63642,7 +63675,9 @@
         "PTO-AVS-BLOCK-MSET-DECODE-001",
         "PTO-AVS-BLOCK-MSET-FILL-001",
         "PTO-AVS-BLOCK-MSET-GPR-001",
-        "PTO-AVS-BLOCK-MSET-RESERVATION-003"
+        "PTO-AVS-BLOCK-MSET-RANGE-005",
+        "PTO-AVS-BLOCK-MSET-RESERVATION-003",
+        "PTO-AVS-BLOCK-MSET-XLEN-004"
       ]
     },
     {
@@ -63657,7 +63692,8 @@
       "readiness_subjects": [
         "ADR-0022",
         "ADR-0032",
-        "ADR-0055"
+        "ADR-0055",
+        "ADR-0119"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TESTBUNDLETILECOMMITLIFECYCLE-STATE-TRANSITION-001"

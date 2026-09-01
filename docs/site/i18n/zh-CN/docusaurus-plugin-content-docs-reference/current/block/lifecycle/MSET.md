@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/lifecycle/MSET.asl`
 
-Fills a bounded byte range from three absolute GPR operands after complete access preflight.
+Fills an arbitrary complete-XLEN byte range from three absolute GPR operands after complete access preflight.
 
 ## Normative identity {#PTO-INST-BLOCK-MSET}
 
@@ -28,7 +28,7 @@ The current instruction contract is owned by the ASL source linked above.
 
 已接受载体使用 `L32` 编码类别；命令在读取绑定或改变状态前，会先解析所有显示字段。
 
-命令先快照目的地址、填充值和完整 `0..63` 长度，再在第一次存储前预检完整目的范围。
+命令先快照目的地址、填充值和完整无符号 XLEN 长度，再在第一次存储前预检完整目的范围。
 
 <!-- PTO-READER-BLOCK: block-mset-inputs role=inputs-outputs -->
 ## 载体、绑定与输入
@@ -151,6 +151,12 @@ begin
     return TRUE;
 end;
 
+pure func InstructionContractAcceptsCompleteXLENLength_MSET()
+    => boolean
+begin
+    return TRUE;
+end;
+
 pure func InstructionContractWritesMemory_MSET()
     => boolean
 begin
@@ -162,12 +168,12 @@ end;
 ## Defaults and encoded zero
 
 - All three absolute GPR fields are encoded and required; encoded zero reads the architectural zero GPR.
-- LengthBytes is the complete unsigned XLEN value. Zero is a successful zero-length command; values 1 through 63 fill that many bytes.
+- LengthBytes is the complete unsigned XLEN value. Zero is a successful zero-length command; every nonzero value names that many bytes and no fixed instruction-length ceiling applies.
 
 ## Legality
 
 - RegSrc0, RegSrc1, and RegSrc2 each accept only absolute GPR codes 0 through 23; 24 through 31 are reserved.
-- The complete unsigned LengthBytes value must be at most 63; it is never truncated to a smaller surrogate.
+- The complete unsigned LengthBytes value is assigned and is never truncated to a smaller surrogate; every nonzero destination interval must be non-wrapping.
 - Every byte address is naturally aligned and the full destination range must pass write access preflight before effects.
 
 ## State effects
@@ -190,7 +196,7 @@ end;
 ## Exceptions
 
 - Selectors 24 through 31 in any source field raise Fault_IllegalInstruction before register, memory, reservation, last-command, or TPC effects.
-- LengthBytes greater than 63 raises Fault_IllegalInstruction before memory or last-command effects.
+- A nonzero destination interval that wraps modulo 2^PTO_XLEN raises Fault_IllegalInstruction before memory or last-command effects.
 - A destination access fault is reported before the first store and leaves the complete range unchanged.
 
 ## Examples

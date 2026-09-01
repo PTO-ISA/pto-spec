@@ -1055,5 +1055,6 @@ nav:
           - "ADR 0116: B.HINT TRACE preserves the predecessor-selected transfer": status/decisions/0116-trace-preserves-predecessor-transfer.md
           - "ADR 0117: Bind finite scalar FP32 and FP64 pto-v0 reference semantics": status/decisions/0117-finite-scalar-floating-reference-profile.md
           - "ADR 0118: Assign CSEL raw selector 10 to false-source negation": status/decisions/0118-csel-negate-selector-encoding.md
+          - "ADR 0119: Restore MSET complete-XLEN arbitrary length semantics": status/decisions/0119-mset-complete-xlen-length.md
       - Open:
           - "Open architecture decisions": status/open/index.md

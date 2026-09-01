@@ -17281,7 +17281,7 @@
           "semantic_family": "CMD",
           "semantic_group": "Bundle Split",
           "semantic_handler": "ExecuteMemorySet",
-          "semantic_summary": "Fills zero through 63 bytes with the low byte of an absolute GPR after complete access preflight.",
+          "semantic_summary": "Fills a complete unsigned XLEN byte range with the low byte of an absolute GPR after complete access preflight.",
           "status": "accepted"
         }
       ],
@@ -17297,7 +17297,7 @@
         ],
         "defaults": [
           "All three absolute GPR fields are encoded and required; encoded zero reads the architectural zero GPR.",
-          "LengthBytes is the complete unsigned XLEN value. Zero is a successful zero-length command; values 1 through 63 fill that many bytes."
+          "LengthBytes is the complete unsigned XLEN value. Zero is a successful zero-length command; every nonzero value names that many bytes and no fixed instruction-length ceiling applies."
         ],
         "encoded_fields": [
           {
@@ -17374,13 +17374,13 @@
         ],
         "exceptions": [
           "Selectors 24 through 31 in any source field raise Fault_IllegalInstruction before register, memory, reservation, last-command, or TPC effects.",
-          "LengthBytes greater than 63 raises Fault_IllegalInstruction before memory or last-command effects.",
+          "A nonzero destination interval that wraps modulo 2^PTO_XLEN raises Fault_IllegalInstruction before memory or last-command effects.",
           "A destination access fault is reported before the first store and leaves the complete range unchanged."
         ],
         "field_domains": [],
         "legality": [
           "RegSrc0, RegSrc1, and RegSrc2 each accept only absolute GPR codes 0 through 23; 24 through 31 are reserved.",
-          "The complete unsigned LengthBytes value must be at most 63; it is never truncated to a smaller surrogate.",
+          "The complete unsigned LengthBytes value is assigned and is never truncated to a smaller surrogate; every nonzero destination interval must be non-wrapping.",
           "Every byte address is naturally aligned and the full destination range must pass write access preflight before effects."
         ],
         "memory_effects": [
@@ -17416,7 +17416,7 @@
       "mnemonic": "MSET",
       "ndf_clause": "PTO-INST-BLOCK-MSET",
       "source": "asl/block/lifecycle/MSET.asl",
-      "summary": "Fills a bounded byte range from three absolute GPR operands after complete access preflight.",
+      "summary": "Fills an arbitrary complete-XLEN byte range from three absolute GPR operands after complete access preflight.",
       "surface": "block"
     },
     {

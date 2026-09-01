@@ -233,21 +233,33 @@ begin
     end;
 end;
 
-func ExecuteBoundedMemorySet(destination: Word, value: Word, length: Word)
+func ExecuteMemorySet(destination: Word, value: Word, length: Word)
 begin
-    if UInt(length) > 63 then
+    if MemoryRangeWraps(destination, length) then
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return;
     end;
-    let byte_count = UInt(length) as integer {0..63};
+
+    // The fixed storage size is a bounded-reference-model parameter.  A
+    // portable MSET has no corresponding architectural length ceiling.
+    if UInt(length) > PTO_MODEL_MEMORY_BYTES then
+        SetFault(Fault_DataPage, destination);
+        return;
+    end;
+
+    let byte_count = UInt(length)
+        as integer {0..PTO_MODEL_MEMORY_BYTES};
     if byte_count != 0 then
         let access_size = byte_count as integer {1..262144};
         let write_probe = ProbeDataAccess(destination, access_size, 1, TRUE);
         if RaiseDataAccessFault(write_probe, destination) then
             return;
         else
-            StoreTranslatedFillBounded(destination, write_probe.translated_address,
-                byte_count, value[7:0]);
+            StoreTranslatedFillModelBounded(
+                destination,
+                write_probe.translated_address,
+                byte_count as integer {1..PTO_MODEL_MEMORY_BYTES},
+                value[7:0]);
         end;
     end;
     if _LastFault == Fault_None then

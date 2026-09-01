@@ -4990,7 +4990,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteMemorySet",
-      "semantic_summary": "Fills zero through 63 bytes with the low byte of an absolute GPR after complete access preflight.",
+      "semantic_summary": "Fills a complete unsigned XLEN byte range with the low byte of an absolute GPR after complete access preflight.",
       "status": "accepted"
     },
     {

@@ -496,7 +496,7 @@ begin
                 ExecuteMemoryCopyTemplate(destination, source, length);
             end;
         when CommandHandler_ExecuteMemorySet =>
-            ExecuteBoundedMemorySet(
+            ExecuteMemorySet(
                 ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,
                     CommandField_RegSrc0)),
                 ReadScalarRegisterOperand(CommandDecodedReg5(instruction, form,

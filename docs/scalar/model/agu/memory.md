@@ -195,17 +195,17 @@ begin
     end;
 end;
 
-func StoreTranslatedFillBounded(original_address: Word,
-                                translated_address: Word,
-                                byte_count: integer {0..63},
-                                value: Byte)
+func StoreTranslatedFillModelBounded(
+    original_address: Word,
+    translated_address: Word,
+    byte_count: integer {1..PTO_MODEL_MEMORY_BYTES},
+    value: Byte)
 begin
-    for byte_index = 0 to 63 do
-        if byte_index < byte_count then
-            let byte_address = translated_address +
-                NaturalToWord(byte_index as integer {0..262144});
-            WriteMemoryByte(byte_address, value);
-        end;
+    for byte_index = 0 to byte_count - 1
+        looplimit PTO_MODEL_MEMORY_BYTES do
+        let byte_address = translated_address +
+            NaturalToWord(byte_index as integer {0..262144});
+        WriteMemoryByte(byte_address, value);
     end;
     if _ReservationValid &&
        RangesOverlap(original_address, byte_count,
