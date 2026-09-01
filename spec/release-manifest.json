@@ -210,11 +210,11 @@
     },
     {
       "path": "asl/arch/profile/reference-conversion.asl",
-      "sha256": "8df9232cff4af782a416e9fde0eb4c246c00276cf5e20c89bd9db35deb2a3c01"
+      "sha256": "fd53f48fb3211b0f80081c8511fc531993901106fbb551e52207c95744abc961"
     },
     {
       "path": "asl/arch/profile/reference-profile.asl",
-      "sha256": "7ebc32aa26bf656a4a84492b410047eb5718d0db4a1aa33e4c1d64a4fbee0fe4"
+      "sha256": "85f75a12a2f894188c498eabe7de972ce040dd357ca15a6a876bfc6c5070b6da"
     },
     {
       "path": "asl/arch/profile/reference-quantization.asl",
@@ -2522,7 +2522,7 @@
     },
     {
       "path": "asl/scalar/model/agu/memory.asl",
-      "sha256": "2a8591d9c20cfd98d678b901b6eff377b686490fbc8d4bffbb3411b58b917017"
+      "sha256": "f88f74b396b0b74702d99d1f17786261214fb2c15a4080b00028bc4f35489317"
     },
     {
       "path": "asl/scalar/model/alu/bitfield.asl",
@@ -3470,7 +3470,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "4ede278894737c50ba13b487bd78f0b1e10d6a6f0b6cec6081f2e412a4055517"
+      "sha256": "11485d81590b8f6d7ab527be1520e7760d4f3201083d4a98e678d99f67cfcd27"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3478,15 +3478,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "54e752dd9030fcf04a33d8ab040a4c8cc11bf78e1470e96b7f92c2bd2299fbb3"
+      "sha256": "b18205e4726802efe5b0c36c24fbcd5256a26d2aa4870646d78264ae2645b045"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "6d372963af615ff6657bbb319b8a7172ed6ea49f5450500599073e6c9941f91b"
+      "sha256": "41e6c3a52babb26a4a9de2e4d27449dac950380b8cdcd5552f2613aa951d3021"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "57a7404c86c8310b6c20293b914913f11979dbcaf411241ae1d3ee33d4c0233f"
+      "sha256": "dc384e0b6fa897dbed77d8704c4368d8721c29c7705301eaceb35d74590bd4ed"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3532,7 +3532,7 @@
     },
     "tile_operations_total": 108
   },
-  "content_sha256": "8fd44cabc8b4b7ec56fc226cec1ba10d176982481c115062ad5c8c25c1a94a6d",
+  "content_sha256": "d393fb266ae162f41ba6c5dfa3fb086a994e8d9333b506e6a508690331430d02",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3824,12 +3824,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-conversion.md",
-      "sha256": "f2c73eeec780204d25ad8e7f89f01b58bea1fae207228d126a4c5e602009d288"
+      "sha256": "ebc47f0a570fde5e029351130c93dc0da973b621b82382d4bf88954b13b538cd"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-profile.md",
-      "sha256": "5fd6286ae459f9e8301d61cc8eac1ba9546c4c457e8b2ae0caa0a0dcbc281749"
+      "sha256": "c32515a0955c8790fdb86d2dc13928299cec89bb426ced50af232ba0a0853f07"
     },
     {
       "kind": "generated-documentation",
@@ -6714,7 +6714,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/agu/memory.md",
-      "sha256": "5213c9a2925b512043dafc32941b249a66b8cb205480fe0080c133d0e1aab9f2"
+      "sha256": "6d08be9897d32fff59f1c9c6368d9c6719f135da9b386b3b9c433621b120d9ea"
     },
     {
       "kind": "generated-documentation",

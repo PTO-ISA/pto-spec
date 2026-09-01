@@ -175,6 +175,58 @@ begin
         Zeros{5});
 end;
 
+pure func ReferenceMatrixOrdinaryFloatingInputSupported(
+    data_type: TileDataType) => boolean
+begin
+    return data_type == TileDataType_FP32 ||
+           data_type == TileDataType_TF32 ||
+           data_type == TileDataType_HF32 ||
+           data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16;
+end;
+
+pure func ReferenceMatrixOrdinaryFloatingValue(
+    value: Word, data_type: TileDataType) => real
+begin
+    assert ReferenceMatrixOrdinaryFloatingInputSupported(data_type);
+    if data_type == TileDataType_FP16 ||
+       data_type == TileDataType_BF16 then
+        return ReferenceBinary16FiniteValue(value, data_type);
+    end;
+    return ReferenceFP32FiniteValue(value[31:0]);
+end;
+
+pure func ReferenceMatrixOrdinaryFloatingCarrierFinite(
+    value: Word, data_type: TileDataType) => boolean
+begin
+    if !ReferenceMatrixOrdinaryFloatingInputSupported(data_type) then
+        return FALSE;
+    end;
+    let value_class = TileNumericValueClass(data_type, value);
+    return value_class == NumericValue_PositiveZero ||
+           value_class == NumericValue_NegativeZero ||
+           value_class == NumericValue_PositiveSubnormal ||
+           value_class == NumericValue_NegativeSubnormal ||
+           value_class == NumericValue_PositiveNormal ||
+           value_class == NumericValue_NegativeNormal;
+end;
+
+func ReferenceMatrixOrdinaryFloatingAccumulate(
+    accumulator: Word, left: Word, right: Word,
+    left_type: TileDataType, right_type: TileDataType,
+    control: NumericExecutionControl) => Word
+begin
+    let left_value = ReferenceMatrixOrdinaryFloatingValue(left, left_type);
+    let right_value = ReferenceMatrixOrdinaryFloatingValue(right, right_type);
+    let (product, -) = ReferenceMatrixFloatingEncoding(
+        left_value * right_value, TileDataType_FP32, control);
+    let accumulator_value = ReferenceFP32FiniteValue(accumulator[31:0]);
+    let product_value = ReferenceFP32FiniteValue(product[31:0]);
+    let (result, -) = ReferenceMatrixFloatingEncoding(
+        accumulator_value + product_value, TileDataType_FP32, control);
+    return result;
+end;
+
 func ReferenceTileFloatingModulo(
     data_type: TileDataType, left: Word, right: Word) => (Word, bits(5))
 begin

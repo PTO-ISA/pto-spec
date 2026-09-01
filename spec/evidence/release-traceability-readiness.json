@@ -17265,8 +17265,8 @@
     "asl/arch/profile/extension-first-use.asl": "ef0bbe915fc5fd01cc93cca2a176844dcbdcb6d48af9bf36404c0bfa897615f3",
     "asl/arch/profile/matrix-postprocess.asl": "f69bbad94a6064490398c10817a50f8a7249d7a32b5ab95f807761e14363b30c",
     "asl/arch/profile/matrix-quantization.asl": "981f3fed75f88449740b4d42e342f4ce28b67647603c444a438ad59e3dc83373",
-    "asl/arch/profile/reference-conversion.asl": "8df9232cff4af782a416e9fde0eb4c246c00276cf5e20c89bd9db35deb2a3c01",
-    "asl/arch/profile/reference-profile.asl": "7ebc32aa26bf656a4a84492b410047eb5718d0db4a1aa33e4c1d64a4fbee0fe4",
+    "asl/arch/profile/reference-conversion.asl": "fd53f48fb3211b0f80081c8511fc531993901106fbb551e52207c95744abc961",
+    "asl/arch/profile/reference-profile.asl": "85f75a12a2f894188c498eabe7de972ce040dd357ca15a6a876bfc6c5070b6da",
     "asl/arch/profile/reference-quantization.asl": "d4757aa97a073dcb9e8f5531190213319f358e007a365c6bc029d23cf062e463",
     "asl/arch/profile/reset.asl": "0138e72f6fdcac4a2f7c19c71b16c61dcf8bfb4fc5bb4b63c09e4a9f7ddff94d",
     "asl/arch/profile/trap-context-recovery.asl": "6c87ee4d53ed316f6ad72768ac84f67bcdf19c3af52dd96f3eb97eddc07c1357",
@@ -17843,7 +17843,7 @@
     "asl/scalar/fsu/SCVTF.asl": "83f6d74151446d168b34cceac551bc446cfb035a20b0e96f0c3a72ef62b6c732",
     "asl/scalar/fsu/UCVTF.asl": "9879d0bdca06916ae217e5c72fab36ff8f5f1b838365f2d8309c1060c0e366f3",
     "asl/scalar/model/agu/addressing.asl": "2b99385665915f8f3ef589e60f4654296b8ba1f0fc64db9896909c8cea6884ed",
-    "asl/scalar/model/agu/memory.asl": "2a8591d9c20cfd98d678b901b6eff377b686490fbc8d4bffbb3411b58b917017",
+    "asl/scalar/model/agu/memory.asl": "f88f74b396b0b74702d99d1f17786261214fb2c15a4080b00028bc4f35489317",
     "asl/scalar/model/alu/bitfield.asl": "65583faea051e6c15cc35c30e65bd3a969993a37cd606d374f68827811096dd4",
     "asl/scalar/model/alu/semantics.asl": "a4906d72081773c46f0369e9102a7bb42827717d0398e2e757b17ef72b4b4527",
     "asl/scalar/model/amo/semantics.asl": "feac3f10edbf29d34595f827eb66a39925be56eb3345e38574a5bab2424a871a",
@@ -18124,8 +18124,8 @@
     "docs/arch/profile/extension-first-use.md": "fb16e18d1c162fed1f5d1d64bb5c422c21e30a33a1824fa00d9a1b9a04002f52",
     "docs/arch/profile/matrix-postprocess.md": "6c620e8f326fa991a2a35cf3d9aad4e1e9b9321ea63bc78e8fdabdfb17802378",
     "docs/arch/profile/matrix-quantization.md": "345a80455b11084670964309b2ad6e3b1e176a91dae84eb542c6291fb1b52d10",
-    "docs/arch/profile/reference-conversion.md": "f2c73eeec780204d25ad8e7f89f01b58bea1fae207228d126a4c5e602009d288",
-    "docs/arch/profile/reference-profile.md": "5fd6286ae459f9e8301d61cc8eac1ba9546c4c457e8b2ae0caa0a0dcbc281749",
+    "docs/arch/profile/reference-conversion.md": "ebc47f0a570fde5e029351130c93dc0da973b621b82382d4bf88954b13b538cd",
+    "docs/arch/profile/reference-profile.md": "c32515a0955c8790fdb86d2dc13928299cec89bb426ced50af232ba0a0853f07",
     "docs/arch/profile/reference-quantization.md": "064c01f2330cd8c3f95fc9e4b591877fb8a240b181bc1ab43d79dff18765de0f",
     "docs/arch/profile/reset.md": "0f706bd47b14d3a2e526dbf20617bf704507a2829ed45ebb93e4f80a72f915f2",
     "docs/arch/profile/trap-context-recovery.md": "8ba8fe4b76085c3c6ca002c57bab6f964c524e936f0b73e755fa3bf0acc33af7",
@@ -18702,7 +18702,7 @@
     "docs/scalar/fsu/SCVTF.md": "29433236c53c2db36b89061bdee6f140d3f6ee6f1889f5351bc18a93dd4ed71b",
     "docs/scalar/fsu/UCVTF.md": "60cc1f3e58dff2ba9e12b5afaf5cdde2bdefbb9ac73252e56fd713ef8096f518",
     "docs/scalar/model/agu/addressing.md": "915e21e8abe9381fc7950bb8b0e521f86bf1e5837665e03507aa1f0f665f25cb",
-    "docs/scalar/model/agu/memory.md": "5213c9a2925b512043dafc32941b249a66b8cb205480fe0080c133d0e1aab9f2",
+    "docs/scalar/model/agu/memory.md": "6d08be9897d32fff59f1c9c6368d9c6719f135da9b386b3b9c433621b120d9ea",
     "docs/scalar/model/alu/bitfield.md": "63d97c6b2874372d48dbbecd9f9aec6ff60a7b5d27c65d20e8e04cc3c76a7fca",
     "docs/scalar/model/alu/semantics.md": "e0147155552210c654445597554ae81d42e8868c71da0e3f27df7859411bfbf8",
     "docs/scalar/model/amo/semantics.md": "10b8d163b0ce595751b228841c17a1d799e02979408b6c8853576d54acd62d54",
@@ -19081,6 +19081,7 @@
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-exponential-008.asl": "344da1461904ae2a456be8e94ee94344cf452dec526cfa3252232e26a721006a",
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp32-010.asl": "c348ec2c549d2dc5e28dae70136ee8f1b9d5eef74a40331c7356c05392dc3a32",
     "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp64-011.asl": "9a5794370015a98c9b00acea4ba7f5f5770a7eefb9711a8fc9004a1d317d9e72",
+    "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-matrix-015.asl": "c799827e19b44b27741b7552ac5807ad46849c8429b6719eb080757d1ed96b12",
     "tests/asl/arch/profile/reference-profile/arch-static-reference-profile-contract-001.asl": "58ea19f523b6a5a5d43b22a58c28b5c4e1ed0bce3d05344713c5e24b652cba29",
     "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-001.asl": "77a1aeec8c6b63e08c22aca602ea197a22a51320e033721fa531bdfbb1046fea",
     "tests/asl/arch/profile/reference-quantization/arch-exec-reference-quantization-special-binary-002.asl": "31ccf41fd250516e3b0a7b05973b92bfd72fab03c4c1b1bbf8e9bbc1a459e95e",
@@ -21839,7 +21840,7 @@
     "tests/asl/scalar/fsu/UCVTF/scalar-state-ucvtf-flags-001.asl": "97827bf19aeea1da5767cd6f8968882adcaa0de0d1e2b9ee55b56af61f550f8b",
     "tests/asl/scalar/model/agu/addressing/scalar-exec-agu-dispatch-effects-001.asl": "cbcb6f4f3a04789872993a6f8d486bf311a596d9d17738809953622d7e36979d",
     "tests/asl/scalar/model/agu/addressing/scalar-static-addressing-contract-001.asl": "5b720c104d678e877e0cfefba90a05401c4f4891457160925e2c3d9c0ea6f69a",
-    "tests/asl/scalar/model/agu/memory/scalar-exec-memory-effects-001.asl": "e8092a4fcc7267269aa95bbf908894050070343813c2a5260ce52fde46aeaf09",
+    "tests/asl/scalar/model/agu/memory/scalar-exec-memory-effects-001.asl": "4166335c4d101415676661dd384e36a1a24e489d5f89725d9d7ceaa3c39e943a",
     "tests/asl/scalar/model/agu/memory/scalar-exec-pair-completion-001.asl": "e998f84da89580079f56d07ee9bda7620c1bfc9bcf3d00317a6974f5fc066196",
     "tests/asl/scalar/model/agu/memory/scalar-static-memory-contract-001.asl": "a344a3eee4c2e9e8b7d94d799def75411bd223f3ed741cf2c90ee1e53d421d26",
     "tests/asl/scalar/model/alu/bitfield/scalar-exec-byte-field-contract-001.asl": "757fd0a97174c035886360c46a530f1022cf6705fbd6538852dc50fc42cd2515",
@@ -22760,7 +22761,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1033,
     "status": "closed",
-    "test_count": 3817,
+    "test_count": 3818,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -31480,6 +31481,14 @@
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp64-011.asl",
       "requirements": [],
       "sha256": "9a5794370015a98c9b00acea4ba7f5f5770a7eefb9711a8fc9004a1d317d9e72",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-REFERENCE-PROFILE-MATRIX-015",
+      "kind": "execution",
+      "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-matrix-015.asl",
+      "requirements": [],
+      "sha256": "c799827e19b44b27741b7552ac5807ad46849c8429b6719eb080757d1ed96b12",
       "source": "asl/arch/profile/reference-profile.asl"
     },
     {
@@ -53012,7 +53021,7 @@
       "kind": "execution",
       "path": "tests/asl/scalar/model/agu/memory/scalar-exec-memory-effects-001.asl",
       "requirements": [],
-      "sha256": "e8092a4fcc7267269aa95bbf908894050070343813c2a5260ce52fde46aeaf09",
+      "sha256": "4166335c4d101415676661dd384e36a1a24e489d5f89725d9d7ceaa3c39e943a",
       "source": "asl/scalar/model/agu/memory.asl"
     },
     {
@@ -62330,7 +62339,8 @@
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-010",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-POWER-013",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-STREAM-014",
-        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011"
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-MATRIX-015"
       ],
       "source": "asl/arch/profile/reference-profile.asl",
       "surface": "arch",
@@ -62350,7 +62360,8 @@
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-010",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-POWER-013",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-STREAM-014",
-        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011"
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-MATRIX-015"
       ]
     },
     {
