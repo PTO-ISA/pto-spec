@@ -8874,12 +8874,102 @@
         "0.58.5"
       ],
       "title": "Restore MSET complete-XLEN arbitrary length semantics"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-FENTRY-RESTARTABLE-FRAME-001",
+        "PTO-FEXIT-RESTARTABLE-FRAME-001",
+        "PTO-FRET-RA-RESTARTABLE-FRAME-001",
+        "PTO-FRET-STK-RESTARTABLE-FRAME-001",
+        "PTO-INST-BLOCK-FENTRY",
+        "PTO-INST-BLOCK-FEXIT",
+        "PTO-INST-BLOCK-FRET-RA",
+        "PTO-INST-BLOCK-FRET-STK"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-FENTRY",
+        "PTO-BLOCK-FEXIT",
+        "PTO-BLOCK-FRET-RA",
+        "PTO-BLOCK-FRET-STK",
+        "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "62948f7dde41a4ede05fe424648ef3372fe220e6",
+      "created": "2026-09-01",
+      "id": "ADR-0120",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/203",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0120-frame-lifecycle-architectural-sp.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Bind frame lifecycle to architectural sp GPR1"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-FCVTA-DECISION-BINDING-001",
+        "PTO-FCVTM-DECISION-BINDING-001",
+        "PTO-FCVTN-DECISION-BINDING-001",
+        "PTO-FCVTP-DECISION-BINDING-001",
+        "PTO-FCVTZ-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-FCVTA",
+        "PTO-INST-SCALAR-FCVTM",
+        "PTO-INST-SCALAR-FCVTN",
+        "PTO-INST-SCALAR-FCVTP",
+        "PTO-INST-SCALAR-FCVTZ"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-FCVTA",
+        "PTO-SCALAR-FCVTM",
+        "PTO-SCALAR-FCVTN",
+        "PTO-SCALAR-FCVTP",
+        "PTO-SCALAR-FCVTZ",
+        "PTO-SCALAR-MODEL-DISPATCH-FSU",
+        "PTO-SCALAR-MODEL-FSU-PROFILE"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "62948f7dde41a4ede05fe424648ef3372fe220e6",
+      "created": "2026-09-01",
+      "id": "ADR-0121",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/205",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0121-fp-to-integer-dsttype-encoding.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Restore FP-to-integer raw DstType encoding"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 113
+    "record_count": 115
   }
 }

@@ -12,6 +12,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0106](docs/status/decisions/0106-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets
 - [ADR-0113](docs/status/decisions/0113-bstart-preserves-predecessor-transfer.md): Following BSTART preserves the predecessor-selected transfer
 - [ADR-0116](docs/status/decisions/0116-trace-preserves-predecessor-transfer.md): B.HINT TRACE preserves the predecessor-selected transfer
+- [ADR-0120](docs/status/decisions/0120-frame-lifecycle-architectural-sp.md): Bind frame lifecycle to architectural sp GPR1
 
 ### Cross-cutting
 - [ADR-0105](docs/status/decisions/0105-shared-whole-parent-readiness.md): Shared whole-parent readiness and single-issuer publication
@@ -29,6 +30,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0114](docs/status/decisions/0114-normalize-agu-srcrtype-encoding.md): Normalize the AGU SrcRType arithmetic modifier encoding
 - [ADR-0115](docs/status/decisions/0115-byte-granular-hl-bfi.md): Define HL.BFI as byte-granular insertion
 - [ADR-0118](docs/status/decisions/0118-csel-negate-selector-encoding.md): Assign CSEL raw selector 10 to false-source negation
+- [ADR-0121](docs/status/decisions/0121-fp-to-integer-dsttype-encoding.md): Restore FP-to-integer raw DstType encoding
 
 ### Tile
 - [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement
