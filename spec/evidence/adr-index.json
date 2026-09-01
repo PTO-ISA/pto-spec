@@ -9028,12 +9028,67 @@
         "0.58.5"
       ],
       "title": "Complete scalar conversion and shared Tile conversion semantics"
+    },
+    {
+      "accepted": "2026-09-01",
+      "affected_ndf": [
+        "PTO-INDEXED-TLSU-STRIDE-001",
+        "PTO-MGATHER-BYTE-DISPLACEMENT-001",
+        "PTO-MGATHER-CAS-ATOMIC-001",
+        "PTO-MGATHER-CAS-PUBLICATION-001",
+        "PTO-MGATHER-MASK-PREDICATE-001",
+        "PTO-MGATHER-MASK-PUBLICATION-001",
+        "PTO-MGATHER-MASK-TYPE-002",
+        "PTO-MSCATTER-BYTE-DISPLACEMENT-001",
+        "PTO-MSCATTER-DUPLICATE-ORDER-001",
+        "PTO-MSCATTER-MASK-DUPLICATE-001",
+        "PTO-MSCATTER-MASK-PREDICATE-001",
+        "PTO-MSCATTER-MASK-TYPE-002"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+        "PTO-TILE-MGATHER",
+        "PTO-TILE-MGATHER-CAS",
+        "PTO-TILE-MGATHER-MASK",
+        "PTO-TILE-MODEL-MEMORY-ADDRESSING",
+        "PTO-TILE-MODEL-MEMORY-ATOMICS",
+        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+        "PTO-TILE-MSCATTER",
+        "PTO-TILE-MSCATTER-MASK"
+      ],
+      "approvers": [
+        "zhoubot"
+      ],
+      "authors": [
+        "Codex"
+      ],
+      "baseline": "6c966aacf5cba60e2389e377cd515cdc8bab7615",
+      "created": "2026-09-01",
+      "id": "ADR-0123",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/209",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0123-indexed-tlsu-row-stride.md",
+      "rejected": null,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "Bind indexed TLSU row-stride addressing"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 116
+    "record_count": 117
   }
 }

@@ -26,6 +26,7 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0117](docs/status/decisions/0117-finite-scalar-floating-reference-profile.md): Bind finite scalar FP32 and FP64 pto-v0 reference semantics
 - [ADR-0119](docs/status/decisions/0119-mset-complete-xlen-length.md): Restore MSET complete-XLEN arbitrary length semantics
 - [ADR-0122](docs/status/decisions/0122-finite-scalar-fp16-destination.md): Complete scalar conversion and shared Tile conversion semantics
+- [ADR-0123](docs/status/decisions/0123-indexed-tlsu-row-stride.md): Bind indexed TLSU row-stride addressing
 
 ### Scalar
 - [ADR-0114](docs/status/decisions/0114-normalize-agu-srcrtype-encoding.md): Normalize the AGU SrcRType arithmetic modifier encoding
