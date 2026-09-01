@@ -10,9 +10,9 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 
 ### Block
 - [ADR-0106](docs/status/decisions/0106-shared-source-subview-per-pe.md): Shared source B.SUBVIEW uses per-PE offsets
-- [ADR-0113](docs/status/decisions/0113-bstart-preserves-predecessor-transfer.md): Following BSTART preserves the predecessor-selected transfer
-- [ADR-0116](docs/status/decisions/0116-trace-preserves-predecessor-transfer.md): B.HINT TRACE preserves the predecessor-selected transfer
-- [ADR-0120](docs/status/decisions/0120-frame-lifecycle-architectural-sp.md): Bind frame lifecycle to architectural sp GPR1
+- [ADR-0115](docs/status/decisions/0115-bstart-preserves-predecessor-transfer.md): Following BSTART preserves the predecessor-selected transfer
+- [ADR-0118](docs/status/decisions/0118-trace-preserves-predecessor-transfer.md): B.HINT TRACE preserves the predecessor-selected transfer
+- [ADR-0122](docs/status/decisions/0122-frame-lifecycle-architectural-sp.md): Bind frame lifecycle to architectural sp GPR1
 
 ### Cross-cutting
 - [ADR-0105](docs/status/decisions/0105-shared-whole-parent-readiness.md): Shared whole-parent readiness and single-issuer publication
@@ -22,17 +22,17 @@ not architecture authority; current meaning remains in the owning ASL/NDF.
 - [ADR-0110](docs/status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md): TCVT CUBE_M16 and CUBE_M32 layout closure
 - [ADR-0112](docs/status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md): Tile operation type roles and source reinterpretation
 - [ADR-0113](docs/status/decisions/0113-cube-predicate-carriers-and-tgpr2t-superseding-contract.md): CUBE predicate carriers and TGPR2T superseding contract
-- [ADR-0112](docs/status/decisions/0112-scalar-stream-enters-bundle-body.md): Decoded scalar stream enters the active bundle body
-- [ADR-0117](docs/status/decisions/0117-finite-scalar-floating-reference-profile.md): Bind finite scalar FP32 and FP64 pto-v0 reference semantics
-- [ADR-0119](docs/status/decisions/0119-mset-complete-xlen-length.md): Restore MSET complete-XLEN arbitrary length semantics
-- [ADR-0122](docs/status/decisions/0122-finite-scalar-fp16-destination.md): Complete scalar conversion and shared Tile conversion semantics
-- [ADR-0123](docs/status/decisions/0123-indexed-tlsu-row-stride.md): Bind indexed TLSU row-stride addressing
+- [ADR-0114](docs/status/decisions/0114-scalar-stream-enters-bundle-body.md): Decoded scalar stream enters the active bundle body
+- [ADR-0119](docs/status/decisions/0119-finite-scalar-floating-reference-profile.md): Bind finite scalar FP32 and FP64 pto-v0 reference semantics
+- [ADR-0121](docs/status/decisions/0121-mset-complete-xlen-length.md): Restore MSET complete-XLEN arbitrary length semantics
+- [ADR-0124](docs/status/decisions/0124-finite-scalar-fp16-destination.md): Complete scalar conversion and shared Tile conversion semantics
+- [ADR-0125](docs/status/decisions/0125-indexed-tlsu-row-stride.md): Bind indexed TLSU row-stride addressing
 
 ### Scalar
-- [ADR-0114](docs/status/decisions/0114-normalize-agu-srcrtype-encoding.md): Normalize the AGU SrcRType arithmetic modifier encoding
-- [ADR-0115](docs/status/decisions/0115-byte-granular-hl-bfi.md): Define HL.BFI as byte-granular insertion
-- [ADR-0118](docs/status/decisions/0118-csel-negate-selector-encoding.md): Assign CSEL raw selector 10 to false-source negation
-- [ADR-0121](docs/status/decisions/0121-fp-to-integer-dsttype-encoding.md): Restore FP-to-integer raw DstType encoding
+- [ADR-0116](docs/status/decisions/0116-normalize-agu-srcrtype-encoding.md): Normalize the AGU SrcRType arithmetic modifier encoding
+- [ADR-0117](docs/status/decisions/0117-byte-granular-hl-bfi.md): Define HL.BFI as byte-granular insertion
+- [ADR-0120](docs/status/decisions/0120-csel-negate-selector-encoding.md): Assign CSEL raw selector 10 to false-source negation
+- [ADR-0123](docs/status/decisions/0123-fp-to-integer-dsttype-encoding.md): Restore FP-to-integer raw DstType encoding
 
 ### Tile
 - [ADR-0103](docs/status/decisions/0103-private-cube-vector-and-cell-rearrangement.md): Private CUBE vector execution and CELL rearrangement

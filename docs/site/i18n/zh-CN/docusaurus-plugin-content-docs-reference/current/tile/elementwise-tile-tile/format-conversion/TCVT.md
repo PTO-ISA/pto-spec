@@ -88,7 +88,7 @@ This operation has no standalone opcode.
 
 ## Field value dispositions
 
-### B.DATR.DataType (`PTO-FIELD-BLOCK-DATATYPE`)
+### BSTART.DataType (`PTO-FIELD-BLOCK-DATATYPE`)
 
 Selects the Tile element data type carried by Block data attributes and typed Block starts.
 
@@ -131,7 +131,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 **Reserved-value behavior:** Reserved values are held for future extension and reject before architectural effects.
 
-### BSTART.DataType (`PTO-FIELD-BLOCK-DATATYPE`)
+### B.DATR.DataType (`PTO-FIELD-BLOCK-DATATYPE`)
 
 Selects the Tile element data type carried by Block data attributes and typed Block starts.
 

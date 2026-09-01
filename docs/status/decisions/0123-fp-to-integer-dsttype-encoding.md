@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0121",
+  "id": "ADR-0123",
   "title": "Restore FP-to-integer raw DstType encoding",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "62948f7dde41a4ede05fe424648ef3372fe220e6",
+  "baseline": "835ae4dbafd9fd65eda082ba8f83cb0825c9f2c0",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-FCVTA-DECISION-BINDING-001",
@@ -41,7 +41,7 @@
 }
 ---
 
-# ADR 0121: Restore FP-to-integer raw DstType encoding
+# ADR 0123: Restore FP-to-integer raw DstType encoding
 
 ## Context
 

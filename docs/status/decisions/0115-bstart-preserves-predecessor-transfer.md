@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0113",
+  "id": "ADR-0115",
   "title": "Following BSTART preserves the predecessor-selected transfer",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "92dfece46f768e46260e0da0a8a917024738c300",
+  "baseline": "3918b6aa0ffcc73be79699d4e18c15d8ccc13ba2",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001"
@@ -26,7 +26,7 @@
 }
 ---
 
-# ADR 0113: Following BSTART preserves the predecessor-selected transfer
+# ADR 0115: Following BSTART preserves the predecessor-selected transfer
 
 ## Context
 

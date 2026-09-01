@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0112",
+  "id": "ADR-0114",
   "title": "Decoded scalar stream enters the active bundle body",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "6fc3141ac790b6b6fed192bedc99a9264f2b25ac",
+  "baseline": "8966a3e5a5e2bf5bc1d3264288e3cd315d2e2e32",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-REQ-INSTRUCTION-DISPATCH-001",
@@ -29,7 +29,7 @@
 }
 ---
 
-# ADR 0112: Decoded scalar stream enters the active bundle body
+# ADR 0114: Decoded scalar stream enters the active bundle body
 
 ## Context
 

@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0119",
+  "id": "ADR-0121",
   "title": "Restore MSET complete-XLEN arbitrary length semantics",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "f2bb7bb3182f1ceec477c69409877e5e72d853f1",
+  "baseline": "27f41909deffce3be07360a0c82e5a7f28e6e468",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-BLOCK-MSET-FILL-001",
@@ -30,7 +30,7 @@
 }
 ---
 
-# ADR 0119: Restore MSET complete-XLEN arbitrary length semantics
+# ADR 0121: Restore MSET complete-XLEN arbitrary length semantics
 
 ## Context
 

@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0122",
+  "id": "ADR-0124",
   "title": "Complete scalar conversion and shared Tile conversion semantics",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "54429a8f1c40d9260352a903d2a9726b59842486",
+  "baseline": "7c1fea1f866eb9fc787a7935de26228ca01483c9",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-COMMON-CONVERSION-PROFILE-001",
@@ -58,7 +58,7 @@
 }
 ---
 
-# ADR 0122: Complete scalar conversion and shared Tile conversion semantics
+# ADR 0124: Complete scalar conversion and shared Tile conversion semantics
 
 ## Context
 

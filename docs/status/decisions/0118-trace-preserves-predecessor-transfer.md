@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0116",
+  "id": "ADR-0118",
   "title": "B.HINT TRACE preserves the predecessor-selected transfer",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "4208f3fd690aaf7e0b8da4a49ea5f3d63946d8ed",
+  "baseline": "6df97a3cf31aa83b2c90a8664c2ccb15ef74c8d9",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-B-HINT-LIFECYCLE-001",
@@ -28,7 +28,7 @@
 }
 ---
 
-# ADR 0116: B.HINT TRACE preserves the predecessor-selected transfer
+# ADR 0118: B.HINT TRACE preserves the predecessor-selected transfer
 
 ## Context
 

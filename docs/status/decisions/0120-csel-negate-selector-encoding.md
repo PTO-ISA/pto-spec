@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0118",
+  "id": "ADR-0120",
   "title": "Assign CSEL raw selector 10 to false-source negation",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "622f99f9743ecaf62ef1c1b4f5e5a70f44427428",
+  "baseline": "661b9bd19aafc5faafd74803d0f8ec5a6f2d1cf1",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-INST-SCALAR-CSEL"
@@ -27,7 +27,7 @@
 }
 ---
 
-# ADR 0118: Assign CSEL raw selector 10 to false-source negation
+# ADR 0120: Assign CSEL raw selector 10 to false-source negation
 
 ## Context
 

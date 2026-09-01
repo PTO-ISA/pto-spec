@@ -31,10 +31,9 @@ begin
            BundleTileBindingCount() == 0 &&
            BundleSharedBindingCount() == 0;
 end;
-func ExecuteDecodedBundleCommand(instruction: bits(64),
-                                form: integer {0..PTO_COMMAND_FORM_COUNT-1},
-                                length_bits: integer {16,32,48,64})
-                                => CommandExecutionStatus
+func ExecuteDecodedBundleCommand(
+    instruction: bits(64), form: integer {0..PTO_COMMAND_FORM_COUNT-1},
+    length_bits: integer {16,32,48,64}) => CommandExecutionStatus
 begin
     let handler = CommandHandlerOfForm(form);
     let hint_trace = handler == CommandHandler_SetBundleHint &&
@@ -59,9 +58,7 @@ begin
             SetFault(Fault_IllegalInstruction, ReadTPC());
             return CommandExecution_Rejected;
         end;
-        let source_left = CommandDecodedReg5(
-            instruction,
-            form,
+        let source_left = CommandDecodedReg5(instruction, form,
             CommandField_SrcL);
         if !ScalarSourceSelectorLegal(source_left) then
             SetFault(Fault_IllegalInstruction, ReadTPC());
@@ -78,9 +75,7 @@ begin
             end;
         end;
     elsif handler == CommandHandler_ExecuteQueuePush then
-        let source_left = CommandDecodedReg5(
-            instruction,
-            form,
+        let source_left = CommandDecodedReg5(instruction, form,
             CommandField_SrcL);
         let source_right = CommandDecodedReg5(
             instruction,
@@ -246,8 +241,8 @@ begin
             end;
             let pe_mask = PTOv0PEMaskOfPEMode(pe_mode);
             if pe_mask == Zeros{4} then
-                // Strict no-op: zero participation suppresses every later
-                // placement, stream, schema, allocation, and descriptor check.
+                // Strict no-op: zero participation suppresses placement, stream,
+                // schema, allocation, and descriptor checks.
                 if _BundleActive && !_BundleBodyActive then
                     _BundleZeroParticipationSeen = TRUE;
                     OpenBundleRangeTileGroup(TRUE,
@@ -304,9 +299,8 @@ begin
                 CommandField_SrcSelect);
             let uimm11 = DecodeCommandOperandRaw(instruction, form,
                 CommandField_uimm11)[10:0];
-            // Decode legality is checked before PEMode suppression and before
-            // any GPR read.  Reserved selectors/codes therefore leave all
-            // carriers and the range-group state unchanged.
+            // Decode legality precedes PEMode suppression and every GPR read;
+            // reserved selectors/codes leave carriers and range state unchanged.
             if !ScalarSourceSelectorLegal(reg_src) ||
                !BundleRangeSubviewRawLegal(size_code) then
                 SetFault(Fault_IllegalInstruction, ReadTPC());

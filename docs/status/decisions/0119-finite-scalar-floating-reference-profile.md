@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0117",
+  "id": "ADR-0119",
   "title": "Bind finite scalar FP32 and FP64 pto-v0 reference semantics",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "03e57c9a7d1da65ed492a962c2ac25bb26432b4c",
+  "baseline": "dba352e1eed67e365f5fa3d8f8987f9454900ed0",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-FCVTA-DECISION-BINDING-001",
@@ -71,7 +71,7 @@
 }
 ---
 
-# ADR 0117: Bind finite scalar FP32 and FP64 pto-v0 reference semantics
+# ADR 0119: Bind finite scalar FP32 and FP64 pto-v0 reference semantics
 
 ## Context
 

@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0115",
+  "id": "ADR-0117",
   "title": "Define HL.BFI as byte-granular insertion",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "c0c85094e15ac1507eb36ffe7fe13e60aa7bac32",
+  "baseline": "b83b23930510c3ea96ec81b9838ce6c6a0929a4c",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-HL-BFI-DECISION-BINDING-001",
@@ -30,7 +30,7 @@
 }
 ---
 
-# ADR 0115: Define HL.BFI as byte-granular insertion
+# ADR 0117: Define HL.BFI as byte-granular insertion
 
 ## Context
 

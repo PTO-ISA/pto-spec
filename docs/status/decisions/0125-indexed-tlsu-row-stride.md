@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0123",
+  "id": "ADR-0125",
   "title": "Bind indexed TLSU row-stride addressing",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "6c966aacf5cba60e2389e377cd515cdc8bab7615",
+  "baseline": "cbcd6abb2dc4d7f933d4db1124fadd11934d4c56",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-BSTART-MGATHER-CAS-SCHEMA-001",
@@ -71,7 +71,7 @@
 }
 ---
 
-# ADR 0123: Bind indexed TLSU row-stride addressing
+# ADR 0125: Bind indexed TLSU row-stride addressing
 
 ## Context
 

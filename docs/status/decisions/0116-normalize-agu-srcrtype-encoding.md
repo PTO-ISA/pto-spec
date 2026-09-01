@@ -1,6 +1,6 @@
 ---
 {
-  "id": "ADR-0114",
+  "id": "ADR-0116",
   "title": "Normalize the AGU SrcRType arithmetic modifier encoding",
   "status": "accepted",
   "authors": ["Codex"],
@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "f6d5823c6924562bd418febba960166499eb5579",
+  "baseline": "1f338aa0e4c46e21eb80d4465b3430e906a7c54f",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-INST-SCALAR-HL-LB-PO",
@@ -145,7 +145,7 @@
 }
 ---
 
-# ADR 0114: Normalize the AGU SrcRType arithmetic modifier encoding
+# ADR 0116: Normalize the AGU SrcRType arithmetic modifier encoding
 
 ## Context
 
