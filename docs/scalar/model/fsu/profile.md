@@ -29,11 +29,17 @@ begin
     end;
 end;
 
+pure func ScalarConvertFloatingTypeCode(source_type: bits(2)) => bits(5)
+begin
+    return ZeroExtend{5}(source_type);
+end;
+
 pure func ScalarSignedIntegerSourceTypeCode(source_type: bits(2)) => bits(5)
 begin
     if source_type == '00' then return '01000';
     elsif source_type == '01' then return '01001';
-    else return '11111';
+    elsif source_type == '10' then return '01010';
+    else return '01011';
     end;
 end;
 
@@ -41,18 +47,60 @@ pure func ScalarUnsignedIntegerSourceTypeCode(source_type: bits(2)) => bits(5)
 begin
     if source_type == '00' then return '00000';
     elsif source_type == '01' then return '00001';
-    else return '11111';
+    elsif source_type == '10' then return '00010';
+    else return '00011';
     end;
 end;
 
 pure func ScalarFPTypeCodeSupported(data_type: bits(5)) => boolean
 begin
-    return UInt(data_type) <= 14;
+    return UInt(data_type) <= 1;
+end;
+
+pure func ScalarConvertFloatingTypeCodeSupported(data_type: bits(5))
+    => boolean
+begin
+    return UInt(data_type) <= 3;
 end;
 
 pure func ScalarIntegerTypeCodeSupported(data_type: bits(5)) => boolean
 begin
     return UInt(data_type) <= 14;
+end;
+
+pure func ScalarConvertIntegerTypeCodeSupported(data_type: bits(5))
+    => boolean
+begin
+    return UInt(data_type) <= 3 ||
+           (UInt(data_type) >= 8 && UInt(data_type) <= 11);
+end;
+
+pure func ScalarConvertFloatingTileDataType(data_type: bits(5))
+    => TileDataType
+begin
+    case UInt(data_type) of
+        when 0 => return TileDataType_FP64;
+        when 1 => return TileDataType_FP32;
+        when 2 => return TileDataType_FP16;
+        when 3 => return TileDataType_E4M3;
+        otherwise => unreachable;
+    end;
+end;
+
+pure func ScalarConvertIntegerTileDataType(data_type: bits(5))
+    => TileDataType
+begin
+    case UInt(data_type) of
+        when 0 => return TileDataType_U64;
+        when 1 => return TileDataType_U32;
+        when 2 => return TileDataType_U16;
+        when 3 => return TileDataType_U8;
+        when 8 => return TileDataType_S64;
+        when 9 => return TileDataType_S32;
+        when 10 => return TileDataType_S16;
+        when 11 => return TileDataType_S8;
+        otherwise => unreachable;
+    end;
 end;
 
 pure func ScalarFPToIntegerDestinationRawLegal(encoded: bits(5))
@@ -112,8 +160,24 @@ end;
 pure func NormalizeScalarIntegerSource(value: Word, data_type: bits(5)) => Word
 begin
     if data_type == '00001' then return ZeroExtend{PTO_XLEN}(value[31:0]);
+    elsif data_type == '00010' then return ZeroExtend{PTO_XLEN}(value[15:0]);
+    elsif data_type == '00011' then return ZeroExtend{PTO_XLEN}(value[7:0]);
     elsif data_type == '01001' then return SignExtend{PTO_XLEN}(value[31:0]);
+    elsif data_type == '01010' then return SignExtend{PTO_XLEN}(value[15:0]);
+    elsif data_type == '01011' then return SignExtend{PTO_XLEN}(value[7:0]);
     else return value;
+    end;
+end;
+
+pure func NormalizeScalarConvertFloating(value: Word,
+                                          data_type: bits(5)) => Word
+begin
+    case UInt(data_type) of
+        when 0 => return value;
+        when 1 => return ZeroExtend{PTO_XLEN}(value[31:0]);
+        when 2 => return ZeroExtend{PTO_XLEN}(value[15:0]);
+        when 3 => return ZeroExtend{PTO_XLEN}(value[7:0]);
+        otherwise => unreachable;
     end;
 end;
 
@@ -360,8 +424,8 @@ impdef func ScalarFPToIntegerProfile(rounding_mode: NumericRoundingMode,
                                      source_type: bits(5), value: Word)
                                      => (Word, bits(5))
 begin
-    assert ScalarIntegerTypeCodeSupported(destination_type);
-    assert ScalarFPTypeCodeSupported(source_type);
+    assert ScalarConvertIntegerTypeCodeSupported(destination_type);
+    assert ScalarConvertFloatingTypeCodeSupported(source_type);
     return (value, Zeros{5});
 end;
 
@@ -370,8 +434,8 @@ impdef func ScalarFPConvertProfile(rounding_mode: NumericRoundingMode,
                                    source_type: bits(5), value: Word)
                                    => (Word, bits(5))
 begin
-    assert ScalarFPTypeCodeSupported(destination_type);
-    assert ScalarFPTypeCodeSupported(source_type);
+    assert ScalarConvertFloatingTypeCodeSupported(destination_type);
+    assert ScalarConvertFloatingTypeCodeSupported(source_type);
     return (value, Zeros{5});
 end;
 
@@ -380,8 +444,8 @@ impdef func ScalarIntegerToFPProfile(rounding_mode: NumericRoundingMode,
                                      destination_type: bits(5), value: Word)
                                      => (Word, bits(5))
 begin
-    assert ScalarIntegerTypeCodeSupported(source_type);
-    assert ScalarFPTypeCodeSupported(destination_type);
+    assert ScalarConvertIntegerTypeCodeSupported(source_type);
+    assert ScalarConvertFloatingTypeCodeSupported(destination_type);
     return (value, Zeros{5});
 end;
 ```

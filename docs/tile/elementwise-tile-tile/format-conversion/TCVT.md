@@ -88,7 +88,7 @@ This operation has no standalone opcode.
 
 ## Field value dispositions
 
-### BSTART.DataType (`PTO-FIELD-BLOCK-DATATYPE`)
+### B.DATR.DataType (`PTO-FIELD-BLOCK-DATATYPE`)
 
 Selects the Tile element data type carried by Block data attributes and typed Block starts.
 
@@ -131,7 +131,7 @@ Selects the Tile element data type carried by Block data attributes and typed Bl
 
 **Reserved-value behavior:** Reserved values are held for future extension and reject before architectural effects.
 
-### B.DATR.DataType (`PTO-FIELD-BLOCK-DATATYPE`)
+### BSTART.DataType (`PTO-FIELD-BLOCK-DATATYPE`)
 
 Selects the Tile element data type carried by Block data attributes and typed Block starts.
 
@@ -281,6 +281,7 @@ end;
 - Define or undefine every physical padding coordinate according to PadValue and publish the destination; ordinary conversions use the public representation, while CUBE_M16 and CUBE_M32 conversions retain the Matrix CUBE representation.
 - The source may alias the destination; execution observes the complete pre-execution source snapshot.
 - For a supported E8M0 conversion, map the rounded base-two exponent to code exponent+127 and accumulate exact NV/UF/OF/NX status before atomic publication.
+- For FP64, FP32, FP16, E4M3, S64, S32, S16, S8, U64, U32, U16, and U8 source/destination pairs, TCVT uses the same deterministic conversion result and flags as the scalar conversion family.
 
 ## Memory effects and ordering
 

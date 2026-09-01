@@ -54,7 +54,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/e8m0-conversion.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-E8M0-CONVERSION","surface":"arch","classification":["profile","e8m0-conversion"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-E8M0-CONVERSION","surface":"arch","classification":["profile","e8m0-conversion"],"depends_on":["PTO-ARCH-PROFILE-REFERENCE-CONVERSION","PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS"]}
 
 // NDF-BEGIN: PTO-TCVT-E8M0-PROFILE-001
 // ndf: kind=executable level=L3 layer=architecture status=accepted
@@ -213,7 +213,11 @@ implementation func TileProfileConvert(
     destination_type: TileDataType,
     control: NumericExecutionControl) => (Word, bits(5))
 begin
-    if destination_type == TileDataType_E8M0 then
+    if ReferenceCommonConversionTypeSupported(source_type) &&
+       ReferenceCommonConversionTypeSupported(destination_type) then
+        return ReferenceCommonConvert(
+            value, source_type, destination_type, control);
+    elsif destination_type == TileDataType_E8M0 then
         return ReferenceFloatToE8M0(value, source_type, control);
     elsif !TileDataTypeIsFloating(destination_type) then
         return (

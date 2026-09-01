@@ -66,6 +66,7 @@ nav:
           - Extension First Use: arch/profile/extension-first-use.md
           - Matrix Postprocess: arch/profile/matrix-postprocess.md
           - Matrix Quantization: arch/profile/matrix-quantization.md
+          - Reference Conversion: arch/profile/reference-conversion.md
           - Reference Profile: arch/profile/reference-profile.md
           - Reference Quantization: arch/profile/reference-quantization.md
           - Reset: arch/profile/reset.md
@@ -1058,5 +1059,6 @@ nav:
           - "ADR 0119: Restore MSET complete-XLEN arbitrary length semantics": status/decisions/0119-mset-complete-xlen-length.md
           - "ADR 0120: Bind frame lifecycle to architectural sp GPR1": status/decisions/0120-frame-lifecycle-architectural-sp.md
           - "ADR 0121: Restore FP-to-integer raw DstType encoding": status/decisions/0121-fp-to-integer-dsttype-encoding.md
+          - "ADR 0122: Complete scalar conversion and shared Tile conversion semantics": status/decisions/0122-finite-scalar-fp16-destination.md
       - Open:
           - "Open architecture decisions": status/open/index.md

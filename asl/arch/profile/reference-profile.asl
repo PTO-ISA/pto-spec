@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-APPLICABILITY"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-APPLICABILITY","PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION"]}
 
 readonly implementation func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
@@ -131,42 +131,6 @@ begin
     return ReferenceScalarFPFusedFinite(
         operation, rounding_mode, source_type, addend, left, right);
 end;
-implementation func ScalarFPToIntegerProfile(
-    rounding_mode: NumericRoundingMode, destination_type: bits(5),
-    source_type: bits(5), value: Word) => (Word, bits(5))
-begin
-    assert ScalarIntegerTypeCodeSupported(destination_type);
-    assert ScalarFPTypeCodeSupported(source_type);
-    return ReferenceScalarFPToIntegerFinite(
-        rounding_mode, source_type, value);
-end;
-
-implementation func ScalarFPConvertProfile(
-    rounding_mode: NumericRoundingMode, destination_type: bits(5),
-    source_type: bits(5), value: Word) => (Word, bits(5))
-begin
-    assert ScalarFPTypeCodeSupported(destination_type);
-    assert ScalarFPTypeCodeSupported(source_type);
-    if destination_type != '00000' && destination_type != '00001' then
-        return (value, Zeros{5});
-    end;
-    return ReferenceScalarFPConvertFinite(
-        rounding_mode, destination_type, source_type, value);
-end;
-
-implementation func ScalarIntegerToFPProfile(
-    rounding_mode: NumericRoundingMode, source_type: bits(5),
-    destination_type: bits(5), value: Word) => (Word, bits(5))
-begin
-    assert ScalarIntegerTypeCodeSupported(source_type);
-    assert ScalarFPTypeCodeSupported(destination_type);
-    if destination_type != '00000' && destination_type != '00001' then
-        return (value, Zeros{5});
-    end;
-    return ReferenceScalarIntegerToFPFinite(
-        rounding_mode, source_type, destination_type, value);
-end;
-
 implementation func TileSquareRoot(value: Word) => Word
 begin
     return value;

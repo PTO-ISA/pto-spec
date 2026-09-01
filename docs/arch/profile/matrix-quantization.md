@@ -509,7 +509,19 @@ func ReferenceMatrixFloatingEncoding(
     value: real, destination_type: TileDataType,
     control: NumericExecutionControl) => (Word, bits(5))
 begin
-    if destination_type == TileDataType_FP32 then
+    if destination_type == TileDataType_FP64 then
+        let (result, flags) = ReferenceFP64FiniteEncoding(
+            value, control.rounding_mode);
+        if control.saturating &&
+           (flags AND (Zeros{5} + 4)) != Zeros{5} then
+            let sign = result AND
+                (Zeros{PTO_XLEN} + 0x8000000000000000);
+            return (
+                sign OR (Zeros{PTO_XLEN} + 0x7fefffffffffffff),
+                flags);
+        end;
+        return (result, flags);
+    elsif destination_type == TileDataType_FP32 then
         let (result, flags) = ReferenceFP32FiniteEncoding(
             value, control.rounding_mode);
         if control.saturating && (flags AND (Zeros{5} + 4)) != Zeros{5} then

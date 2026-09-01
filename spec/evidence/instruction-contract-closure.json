@@ -32314,32 +32314,13 @@
           "asm": "fcvt.{srcT2dstT} SrcL, ->{t, u, Rd}",
           "constraints": [
             {
-              "field": "SrcType",
-              "operator": "one-of",
-              "values": [
-                0,
-                1
-              ]
-            },
-            {
               "field": "DstType",
               "operator": "one-of",
               "values": [
                 0,
                 1,
                 2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14
+                3
               ]
             }
           ],
@@ -32408,7 +32389,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVT converts a selected FP64 or FP32 source carrier to destination carrier code 0 through 14 through the active numeric profile.",
+          "semantic_summary": "FCVT converts an FP64, FP32, FP16, or E4M3 source to any of those four floating destinations through the common scalar/TCVT profile.",
           "status": "accepted"
         }
       ],
@@ -32424,15 +32405,15 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
-          "DstType codes 0..14 are assigned carrier widths and codes 15..31 are reserved."
+          "SrcType codes 0..3 select FP64, FP32, FP16, and E4M3; every code is assigned.",
+          "DstType codes 0..3 select FP64, FP32, FP16, and E4M3; codes 4..31 are reserved."
         ],
         "encoded_fields": [
           {
             "assigned_ranges": [
               [
                 0,
-                14
+                3
               ]
             ],
             "field": "DstType",
@@ -32441,7 +32422,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
+                4,
                 31
               ]
             ],
@@ -32488,19 +32469,14 @@
             "assigned_ranges": [
               [
                 0,
-                1
+                3
               ]
             ],
             "field": "SrcType",
             "form_id": "fcvt_32_1102f5aeeda9",
             "other_owner_values": [],
-            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
-            "reserved_ranges": [
-              [
-                2,
-                3
-              ]
-            ],
+            "rejection": "none",
+            "reserved_ranges": [],
             "role": "source carrier selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -32520,8 +32496,8 @@
         "legality": [
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
-          "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
-          "DstType codes 0 through 14 are assigned; codes 15 through 31 are reserved."
+          "Every SrcType code is assigned: 0, 1, 2, and 3 select FP64, FP32, FP16, and E4M3.",
+          "DstType codes 0 through 3 select FP64, FP32, FP16, and E4M3; codes 4 through 31 are reserved."
         ],
         "memory_effects": [
           "none"
@@ -32551,10 +32527,10 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVT converts a selected FP64 or FP32 source carrier to destination carrier code 0 through 14 through the active numeric profile.",
+          "FCVT converts an FP64, FP32, FP16, or E4M3 source to any of those four floating destinations through the common scalar/TCVT profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
-          "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
+          "The pto-v0 reference profile uses the same deterministic conversion rule and flags as TCVT for every shared scalar type pair; scalar conversion supplies saturation disabled.",
+          "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
           "Successful execution advances TPC by four bytes."
         ]
       },
@@ -32563,7 +32539,7 @@
       "mnemonic": "FCVT",
       "ndf_clause": "PTO-INST-SCALAR-FCVT",
       "source": "asl/scalar/fsu/FCVT.asl",
-      "summary": "FCVT converts a selected FP64 or FP32 source carrier to destination carrier code 0 through 14 through the active numeric profile.",
+      "summary": "FCVT converts an FP64, FP32, FP16, or E4M3 source to any of those four floating destinations through the common scalar/TCVT profile.",
       "surface": "scalar"
     },
     {
@@ -32573,14 +32549,6 @@
         {
           "asm": "fcvta.{srcT2dstT} SrcL, ->{t, u, Rd}",
           "constraints": [
-            {
-              "field": "SrcType",
-              "operator": "one-of",
-              "values": [
-                0,
-                1
-              ]
-            },
             {
               "field": "DstType",
               "operator": "one-of",
@@ -32661,7 +32629,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTA converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-away mode.",
+          "semantic_summary": "FCVTA converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-away mode.",
           "status": "accepted"
         }
       ],
@@ -32677,7 +32645,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
+          "SrcType codes 0..3 select FP64, FP32, FP16, and E4M3; every code is assigned.",
           "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
@@ -32741,19 +32709,14 @@
             "assigned_ranges": [
               [
                 0,
-                1
+                3
               ]
             ],
             "field": "SrcType",
             "form_id": "fcvta_32_010837b9acbd",
             "other_owner_values": [],
-            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
-            "reserved_ranges": [
-              [
-                2,
-                3
-              ]
-            ],
+            "rejection": "none",
+            "reserved_ranges": [],
             "role": "source carrier selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -32773,7 +32736,7 @@
         "legality": [
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
-          "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
+          "Every SrcType code is assigned: 0, 1, 2, and 3 select FP64, FP32, FP16, and E4M3.",
           "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
@@ -32804,9 +32767,9 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTA converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-away mode.",
+          "FCVTA converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-away mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
+          "The pto-v0 reference profile uses the same deterministic conversion rule and flags as TCVT for every shared scalar type pair; scalar conversion supplies saturation disabled.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -32816,7 +32779,7 @@
       "mnemonic": "FCVTA",
       "ndf_clause": "PTO-INST-SCALAR-FCVTA",
       "source": "asl/scalar/fsu/FCVTA.asl",
-      "summary": "FCVTA converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-away mode.",
+      "summary": "FCVTA converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-away mode.",
       "surface": "scalar"
     },
     {
@@ -32826,14 +32789,6 @@
         {
           "asm": "fcvtm.{srcT2dstT} SrcL, ->{t, u, Rd}",
           "constraints": [
-            {
-              "field": "SrcType",
-              "operator": "one-of",
-              "values": [
-                0,
-                1
-              ]
-            },
             {
               "field": "DstType",
               "operator": "one-of",
@@ -32914,7 +32869,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTM converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-down mode.",
+          "semantic_summary": "FCVTM converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-down mode.",
           "status": "accepted"
         }
       ],
@@ -32930,7 +32885,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
+          "SrcType codes 0..3 select FP64, FP32, FP16, and E4M3; every code is assigned.",
           "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
@@ -32994,19 +32949,14 @@
             "assigned_ranges": [
               [
                 0,
-                1
+                3
               ]
             ],
             "field": "SrcType",
             "form_id": "fcvtm_32_8801f1562870",
             "other_owner_values": [],
-            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
-            "reserved_ranges": [
-              [
-                2,
-                3
-              ]
-            ],
+            "rejection": "none",
+            "reserved_ranges": [],
             "role": "source carrier selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -33026,7 +32976,7 @@
         "legality": [
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
-          "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
+          "Every SrcType code is assigned: 0, 1, 2, and 3 select FP64, FP32, FP16, and E4M3.",
           "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
@@ -33057,9 +33007,9 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTM converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-down mode.",
+          "FCVTM converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-down mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
+          "The pto-v0 reference profile uses the same deterministic conversion rule and flags as TCVT for every shared scalar type pair; scalar conversion supplies saturation disabled.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -33069,7 +33019,7 @@
       "mnemonic": "FCVTM",
       "ndf_clause": "PTO-INST-SCALAR-FCVTM",
       "source": "asl/scalar/fsu/FCVTM.asl",
-      "summary": "FCVTM converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-down mode.",
+      "summary": "FCVTM converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-down mode.",
       "surface": "scalar"
     },
     {
@@ -33079,14 +33029,6 @@
         {
           "asm": "fcvtn.{srcT2dstT} SrcL, ->{t, u, Rd}",
           "constraints": [
-            {
-              "field": "SrcType",
-              "operator": "one-of",
-              "values": [
-                0,
-                1
-              ]
-            },
             {
               "field": "DstType",
               "operator": "one-of",
@@ -33167,7 +33109,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTN converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-nearest mode.",
+          "semantic_summary": "FCVTN converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-nearest mode.",
           "status": "accepted"
         }
       ],
@@ -33183,7 +33125,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
+          "SrcType codes 0..3 select FP64, FP32, FP16, and E4M3; every code is assigned.",
           "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
@@ -33247,19 +33189,14 @@
             "assigned_ranges": [
               [
                 0,
-                1
+                3
               ]
             ],
             "field": "SrcType",
             "form_id": "fcvtn_32_8714ba358d80",
             "other_owner_values": [],
-            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
-            "reserved_ranges": [
-              [
-                2,
-                3
-              ]
-            ],
+            "rejection": "none",
+            "reserved_ranges": [],
             "role": "source carrier selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -33279,7 +33216,7 @@
         "legality": [
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
-          "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
+          "Every SrcType code is assigned: 0, 1, 2, and 3 select FP64, FP32, FP16, and E4M3.",
           "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
@@ -33310,9 +33247,9 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTN converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-nearest mode.",
+          "FCVTN converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-nearest mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
+          "The pto-v0 reference profile uses the same deterministic conversion rule and flags as TCVT for every shared scalar type pair; scalar conversion supplies saturation disabled.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -33322,7 +33259,7 @@
       "mnemonic": "FCVTN",
       "ndf_clause": "PTO-INST-SCALAR-FCVTN",
       "source": "asl/scalar/fsu/FCVTN.asl",
-      "summary": "FCVTN converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-nearest mode.",
+      "summary": "FCVTN converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-nearest mode.",
       "surface": "scalar"
     },
     {
@@ -33332,14 +33269,6 @@
         {
           "asm": "fcvtp.{srcT2dstT} SrcL, ->{t, u, Rd}",
           "constraints": [
-            {
-              "field": "SrcType",
-              "operator": "one-of",
-              "values": [
-                0,
-                1
-              ]
-            },
             {
               "field": "DstType",
               "operator": "one-of",
@@ -33420,7 +33349,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTP converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-up mode.",
+          "semantic_summary": "FCVTP converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-up mode.",
           "status": "accepted"
         }
       ],
@@ -33436,7 +33365,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
+          "SrcType codes 0..3 select FP64, FP32, FP16, and E4M3; every code is assigned.",
           "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
@@ -33500,19 +33429,14 @@
             "assigned_ranges": [
               [
                 0,
-                1
+                3
               ]
             ],
             "field": "SrcType",
             "form_id": "fcvtp_32_84354a7aa6b1",
             "other_owner_values": [],
-            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
-            "reserved_ranges": [
-              [
-                2,
-                3
-              ]
-            ],
+            "rejection": "none",
+            "reserved_ranges": [],
             "role": "source carrier selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -33532,7 +33456,7 @@
         "legality": [
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
-          "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
+          "Every SrcType code is assigned: 0, 1, 2, and 3 select FP64, FP32, FP16, and E4M3.",
           "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
@@ -33563,9 +33487,9 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTP converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-up mode.",
+          "FCVTP converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-up mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
+          "The pto-v0 reference profile uses the same deterministic conversion rule and flags as TCVT for every shared scalar type pair; scalar conversion supplies saturation disabled.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -33575,7 +33499,7 @@
       "mnemonic": "FCVTP",
       "ndf_clause": "PTO-INST-SCALAR-FCVTP",
       "source": "asl/scalar/fsu/FCVTP.asl",
-      "summary": "FCVTP converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-up mode.",
+      "summary": "FCVTP converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-up mode.",
       "surface": "scalar"
     },
     {
@@ -33585,14 +33509,6 @@
         {
           "asm": "fcvtz.{srcT2dstT} SrcL, ->{t, u, Rd}",
           "constraints": [
-            {
-              "field": "SrcType",
-              "operator": "one-of",
-              "values": [
-                0,
-                1
-              ]
-            },
             {
               "field": "DstType",
               "operator": "one-of",
@@ -33673,7 +33589,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTZ converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-toward-zero mode.",
+          "semantic_summary": "FCVTZ converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-toward-zero mode.",
           "status": "accepted"
         }
       ],
@@ -33689,7 +33605,7 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
+          "SrcType codes 0..3 select FP64, FP32, FP16, and E4M3; every code is assigned.",
           "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
@@ -33753,19 +33669,14 @@
             "assigned_ranges": [
               [
                 0,
-                1
+                3
               ]
             ],
             "field": "SrcType",
             "form_id": "fcvtz_32_bee01d31217c",
             "other_owner_values": [],
-            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
-            "reserved_ranges": [
-              [
-                2,
-                3
-              ]
-            ],
+            "rejection": "none",
+            "reserved_ranges": [],
             "role": "source carrier selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -33785,7 +33696,7 @@
         "legality": [
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
-          "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
+          "Every SrcType code is assigned: 0, 1, 2, and 3 select FP64, FP32, FP16, and E4M3.",
           "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
@@ -33816,9 +33727,9 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTZ converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-toward-zero mode.",
+          "FCVTZ converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-toward-zero mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
+          "The pto-v0 reference profile uses the same deterministic conversion rule and flags as TCVT for every shared scalar type pair; scalar conversion supplies saturation disabled.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -33828,7 +33739,7 @@
       "mnemonic": "FCVTZ",
       "ndf_clause": "PTO-INST-SCALAR-FCVTZ",
       "source": "asl/scalar/fsu/FCVTZ.asl",
-      "summary": "FCVTZ converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-toward-zero mode.",
+      "summary": "FCVTZ converts an FP64, FP32, FP16, or E4M3 source to U64/U32/U16/U8 or S64/S32/S16/S8 with fixed round-toward-zero mode.",
       "surface": "scalar"
     },
     {
@@ -99172,32 +99083,13 @@
           "asm": "scvtf.{srcT2dstT} SrcL, ->{t, u, Rd}",
           "constraints": [
             {
-              "field": "SrcType",
-              "operator": "one-of",
-              "values": [
-                0,
-                1
-              ]
-            },
-            {
               "field": "DstType",
               "operator": "one-of",
               "values": [
                 0,
                 1,
                 2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14
+                3
               ]
             }
           ],
@@ -99266,7 +99158,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "SCVTF converts a signed 64-bit or sign-extended signed 32-bit source to floating carrier code 0 through 14 through the active numeric profile.",
+          "semantic_summary": "SCVTF converts an S64, S32, S16, or S8 source to FP64, FP32, FP16, or E4M3 through the common scalar/TCVT profile.",
           "status": "accepted"
         }
       ],
@@ -99282,15 +99174,15 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcType=0 selects signed 64-bit and SrcType=1 selects signed 32-bit with sign extension. SrcType=2 and SrcType=3 are reserved.",
-          "DstType codes 0..14 are assigned carrier widths and codes 15..31 are reserved."
+          "SrcType codes 0..3 select S64, S32, S16, and S8 with sign extension.",
+          "DstType codes 0..3 select FP64, FP32, FP16, and E4M3; codes 4..31 are reserved."
         ],
         "encoded_fields": [
           {
             "assigned_ranges": [
               [
                 0,
-                14
+                3
               ]
             ],
             "field": "DstType",
@@ -99299,7 +99191,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
+                4,
                 31
               ]
             ],
@@ -99346,19 +99238,14 @@
             "assigned_ranges": [
               [
                 0,
-                1
+                3
               ]
             ],
             "field": "SrcType",
             "form_id": "scvtf_32_01861bbd5ef2",
             "other_owner_values": [],
-            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
-            "reserved_ranges": [
-              [
-                2,
-                3
-              ]
-            ],
+            "rejection": "none",
+            "reserved_ranges": [],
             "role": "source carrier selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -99378,8 +99265,8 @@
         "legality": [
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
-          "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
-          "DstType codes 0 through 14 are assigned; codes 15 through 31 are reserved."
+          "Every SrcType code is assigned: 0, 1, 2, and 3 select S64, S32, S16, and S8.",
+          "DstType codes 0 through 3 select FP64, FP32, FP16, and E4M3; codes 4 through 31 are reserved."
         ],
         "memory_effects": [
           "none"
@@ -99409,9 +99296,9 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "SCVTF converts a signed 64-bit or sign-extended signed 32-bit source to floating carrier code 0 through 14 through the active numeric profile.",
+          "SCVTF converts an S64, S32, S16, or S8 source to FP64, FP32, FP16, or E4M3 through the common scalar/TCVT profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
+          "The pto-v0 reference profile uses the same deterministic conversion rule and flags as TCVT for every shared scalar type pair; scalar conversion supplies saturation disabled.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -99421,7 +99308,7 @@
       "mnemonic": "SCVTF",
       "ndf_clause": "PTO-INST-SCALAR-SCVTF",
       "source": "asl/scalar/fsu/SCVTF.asl",
-      "summary": "SCVTF converts a signed 64-bit or sign-extended signed 32-bit source to floating carrier code 0 through 14 through the active numeric profile.",
+      "summary": "SCVTF converts an S64, S32, S16, or S8 source to FP64, FP32, FP16, or E4M3 through the common scalar/TCVT profile.",
       "surface": "scalar"
     },
     {
@@ -114225,32 +114112,13 @@
           "asm": "ucvtf.{srcT2dstT} SrcL, ->{t, u, Rd}",
           "constraints": [
             {
-              "field": "SrcType",
-              "operator": "one-of",
-              "values": [
-                0,
-                1
-              ]
-            },
-            {
               "field": "DstType",
               "operator": "one-of",
               "values": [
                 0,
                 1,
                 2,
-                3,
-                4,
-                5,
-                6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14
+                3
               ]
             }
           ],
@@ -114319,7 +114187,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "UCVTF converts an unsigned 64-bit or zero-extended unsigned 32-bit source to floating carrier code 0 through 14 through the active numeric profile.",
+          "semantic_summary": "UCVTF converts a U64, U32, U16, or U8 source to FP64, FP32, FP16, or E4M3 through the common scalar/TCVT profile.",
           "status": "accepted"
         }
       ],
@@ -114335,15 +114203,15 @@
         ],
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
-          "SrcType=0 selects unsigned 64-bit and SrcType=1 selects unsigned 32-bit with zero extension. SrcType=2 and SrcType=3 are reserved.",
-          "DstType codes 0..14 are assigned carrier widths and codes 15..31 are reserved."
+          "SrcType codes 0..3 select U64, U32, U16, and U8 with zero extension.",
+          "DstType codes 0..3 select FP64, FP32, FP16, and E4M3; codes 4..31 are reserved."
         ],
         "encoded_fields": [
           {
             "assigned_ranges": [
               [
                 0,
-                14
+                3
               ]
             ],
             "field": "DstType",
@@ -114352,7 +114220,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
+                4,
                 31
               ]
             ],
@@ -114399,19 +114267,14 @@
             "assigned_ranges": [
               [
                 0,
-                1
+                3
               ]
             ],
             "field": "SrcType",
             "form_id": "ucvtf_32_987f4e019c32",
             "other_owner_values": [],
-            "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
-            "reserved_ranges": [
-              [
-                2,
-                3
-              ]
-            ],
+            "rejection": "none",
+            "reserved_ranges": [],
             "role": "source carrier selector",
             "signedness": "encoding-defined",
             "width": 2,
@@ -114431,8 +114294,8 @@
         "legality": [
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
-          "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
-          "DstType codes 0 through 14 are assigned; codes 15 through 31 are reserved."
+          "Every SrcType code is assigned: 0, 1, 2, and 3 select U64, U32, U16, and U8.",
+          "DstType codes 0 through 3 select FP64, FP32, FP16, and E4M3; codes 4 through 31 are reserved."
         ],
         "memory_effects": [
           "none"
@@ -114462,9 +114325,9 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "UCVTF converts an unsigned 64-bit or zero-extended unsigned 32-bit source to floating carrier code 0 through 14 through the active numeric profile.",
+          "UCVTF converts a U64, U32, U16, or U8 source to FP64, FP32, FP16, or E4M3 through the common scalar/TCVT profile.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
-          "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
+          "The pto-v0 reference profile uses the same deterministic conversion rule and flags as TCVT for every shared scalar type pair; scalar conversion supplies saturation disabled.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
           "Successful execution advances TPC by four bytes."
         ]
@@ -114474,7 +114337,7 @@
       "mnemonic": "UCVTF",
       "ndf_clause": "PTO-INST-SCALAR-UCVTF",
       "source": "asl/scalar/fsu/UCVTF.asl",
-      "summary": "UCVTF converts an unsigned 64-bit or zero-extended unsigned 32-bit source to floating carrier code 0 through 14 through the active numeric profile.",
+      "summary": "UCVTF converts a U64, U32, U16, or U8 source to FP64, FP32, FP16, or E4M3 through the common scalar/TCVT profile.",
       "surface": "scalar"
     },
     {
@@ -120634,7 +120497,7 @@
                 "value": 28
               }
             ],
-            "field": "BSTART.DataType",
+            "field": "B.DATR.DataType",
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
@@ -120754,7 +120617,7 @@
                 "value": 28
               }
             ],
-            "field": "B.DATR.DataType",
+            "field": "BSTART.DataType",
             "id": "PTO-FIELD-BLOCK-DATATYPE",
             "rejection": "Reserved values are held for future extension and reject before architectural effects.",
             "reserved": [
@@ -120809,7 +120672,8 @@
           "Snapshot the persistent source, convert every valid logical element under the resolved rounding and saturation controls, and write the corresponding logical coordinate in the destination layout.",
           "Define or undefine every physical padding coordinate according to PadValue and publish the destination; ordinary conversions use the public representation, while CUBE_M16 and CUBE_M32 conversions retain the Matrix CUBE representation.",
           "The source may alias the destination; execution observes the complete pre-execution source snapshot.",
-          "For a supported E8M0 conversion, map the rounded base-two exponent to code exponent+127 and accumulate exact NV/UF/OF/NX status before atomic publication."
+          "For a supported E8M0 conversion, map the rounded base-two exponent to code exponent+127 and accumulate exact NV/UF/OF/NX status before atomic publication.",
+          "For FP64, FP32, FP16, E4M3, S64, S32, S16, S8, U64, U32, U16, and U8 source/destination pairs, TCVT uses the same deterministic conversion result and flags as the scalar conversion family."
         ]
       },
       "documentation": "docs/tile/elementwise-tile-tile/format-conversion/TCVT.md",

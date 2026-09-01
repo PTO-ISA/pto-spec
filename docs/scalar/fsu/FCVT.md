@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/scalar/fsu/FCVT.asl`
 
-FCVT converts a selected FP64 or FP32 source carrier to destination carrier code 0 through 14 through the active numeric profile.
+FCVT converts an FP64, FP32, FP16, or E4M3 source to any of those four floating destinations through the common scalar/TCVT profile.
 
 ## Normative identity {#PTO-INST-SCALAR-FCVT}
 
@@ -19,16 +19,16 @@ The current instruction contract is owned by the ASL source linked above.
 <!-- PTO-READER-BLOCK: scalar-fcvt-purpose role=purpose -->
 ## What FCVT does
 
-`FCVT` converts FP64 or FP32 input to destination carrier code `0..14` using active rounding through the active numeric profile.
+`FCVT` converts FP64, FP32, FP16, or E4M3 input to the FP64, FP32, FP16, or E4M3 destination selected by raw `DstType=0..3` using active rounding through the active numeric profile.
 
 <!-- PTO-READER-BLOCK: scalar-fcvt-mechanism role=mechanism -->
 ## Numeric mechanism
 
-`SrcType=00` selects a complete FP64 carrier; `SrcType=01` selects the zero-extended low 32-bit FP32 carrier.
+`SrcType=00`, `01`, `10`, and `11` select FP64, FP32, FP16, and E4M3 carriers respectively.
 
 The active profile receives snapshotted operands and the mnemonic-selected operation, then returns a result and exact `NV`, `DZ`, `OF`, `UF`, `NX` vector.
 
-In the `pto-v0` reference profile, normalized source bits are retained in the selected destination-carrier width. This deterministic reference rule is not an IEEE-754 or target-hardware claim.
+In the `pto-v0` reference profile, finite and special FP64, FP32, FP16, and E4M3 sources convert under the active rounding mode through the common scalar/TCVT profile.
 
 <!-- PTO-READER-BLOCK: scalar-fcvt-inputs-outputs role=inputs-outputs -->
 ## Inputs and output
@@ -57,9 +57,9 @@ The result is published or discarded, then `TPC` advances by `4` bytes. The inst
 <!-- PTO-READER-BLOCK: scalar-fcvt-constraints role=constraints -->
 ## Type and profile boundaries
 
-`SrcType=10` and `SrcType=11` are reserved. Reserved types and unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
+All four `SrcType` values are assigned. Unavailable T/U sources raise `Fault_IllegalInstruction` before source, profile, flag, queue, destination, or `TPC` effects.
 
-Destination carrier codes `0..14` are assigned; `15..31` are reserved and reject before effects.
+Raw `DstType=0..3` select FP64, FP32, FP16, and E4M3; `4..31` are reserved and reject before effects.
 
 The portable instruction contract owns carrier selection, snapshots, flag accumulation, publication, and fault order; the active named profile owns the numeric result and produced flags.
 
@@ -81,7 +81,7 @@ fcvt.{srcT2dstT} SrcL, ->{t, u, Rd}
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| fcvt_32_1102f5aeeda9 | L32 | 32 | 0x0000006b / 0x01f0707f | [{"field":"SrcType","operator":"one-of","values":[0,1]},{"field":"DstType","operator":"one-of","values":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14]}] |
+| fcvt_32_1102f5aeeda9 | L32 | 32 | 0x0000006b / 0x01f0707f | [{"field":"DstType","operator":"one-of","values":[0,1,2,3]}] |
 
 ### Fields
 
@@ -103,13 +103,12 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| fcvt_32_1102f5aeeda9 | DstType | 5 | 0–14 | none | 15–31 | destination carrier selector | Encoded zero selects the 64-bit destination carrier; it is not omission. |
+| fcvt_32_1102f5aeeda9 | DstType | 5 | 0–3 | none | 4–31 | destination carrier selector | Encoded zero selects the 64-bit destination carrier; it is not omission. |
 | fcvt_32_1102f5aeeda9 | RegDst | 5 | 0–31 | none | none | Reg5 destination or discard | Encoded zero discards the result. |
 | fcvt_32_1102f5aeeda9 | SrcL | 5 | 0–31 | none | none | left or sole Reg5 source | Encoded zero reads the architectural zero GPR. |
-| fcvt_32_1102f5aeeda9 | SrcType | 2 | 0–1 | none | 2–3 | source carrier selector | Encoded zero selects the 64-bit source carrier; it is not omission. |
+| fcvt_32_1102f5aeeda9 | SrcType | 2 | 0–3 | none | none | source carrier selector | Encoded zero selects the 64-bit source carrier; it is not omission. |
 
 - `fcvt_32_1102f5aeeda9.DstType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
-- `fcvt_32_1102f5aeeda9.SrcType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
 ## Operands and results
 
@@ -145,20 +144,20 @@ end;
 pure func InstructionContractSourceTypeLegal_FCVT(encoded: bits(2))
     => boolean
 begin
-    return encoded == '00' || encoded == '01';
+    return TRUE;
 end;
 
 pure func InstructionContractSourceCarrier_FCVT(encoded: bits(2))
     => bits(5)
 begin
     assert InstructionContractSourceTypeLegal_FCVT(encoded);
-    return ScalarFPSourceTypeCode(encoded);
+    return ScalarConvertFloatingTypeCode(encoded);
 end;
 
 pure func InstructionContractDestinationTypeLegal_FCVT(encoded: bits(5))
     => boolean
 begin
-    return UInt(encoded) <= 14;
+    return UInt(encoded) <= 3;
 end;
 
 pure func InstructionContractSourceArity_FCVT()
@@ -184,22 +183,22 @@ end;
 ## Defaults and encoded zero
 
 - Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
-- SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.
-- DstType codes 0..14 are assigned carrier widths and codes 15..31 are reserved.
+- SrcType codes 0..3 select FP64, FP32, FP16, and E4M3; every code is assigned.
+- DstType codes 0..3 select FP64, FP32, FP16, and E4M3; codes 4..31 are reserved.
 
 ## Legality
 
 - Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.
 - Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.
-- SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.
-- DstType codes 0 through 14 are assigned; codes 15 through 31 are reserved.
+- Every SrcType code is assigned: 0, 1, 2, and 3 select FP64, FP32, FP16, and E4M3.
+- DstType codes 0 through 3 select FP64, FP32, FP16, and E4M3; codes 4 through 31 are reserved.
 
 ## State effects
 
-- FCVT converts a selected FP64 or FP32 source carrier to destination carrier code 0 through 14 through the active numeric profile.
+- FCVT converts an FP64, FP32, FP16, or E4M3 source to any of those four floating destinations through the common scalar/TCVT profile.
 - The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.
-- For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.
-- Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.
+- The pto-v0 reference profile uses the same deterministic conversion rule and flags as TCVT for every shared scalar type pair; scalar conversion supplies saturation disabled.
+- Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.
 - Successful execution advances TPC by four bytes.
 
 ## Memory effects and ordering

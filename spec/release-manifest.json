@@ -194,7 +194,7 @@
     },
     {
       "path": "asl/arch/profile/e8m0-conversion.asl",
-      "sha256": "e46324c90eff21e4270558e315c684089f11b6d6a47f6dc4ee0b30411761fd57"
+      "sha256": "7e94f1b7c5f3f0d76bf89cda5ece4e0aa363b1d699d01acf0b0f66c0d893199a"
     },
     {
       "path": "asl/arch/profile/extension-first-use.asl",
@@ -206,15 +206,19 @@
     },
     {
       "path": "asl/arch/profile/matrix-quantization.asl",
-      "sha256": "7fe767f6545495eb8b36f6fa9246e3d3b36d08915368eaf110f79b31308de440"
+      "sha256": "981f3fed75f88449740b4d42e342f4ce28b67647603c444a438ad59e3dc83373"
+    },
+    {
+      "path": "asl/arch/profile/reference-conversion.asl",
+      "sha256": "86a0c3a2909be5a866fe29e9b12b78fc50a1fefdf4643901c0786730b1bea587"
     },
     {
       "path": "asl/arch/profile/reference-profile.asl",
-      "sha256": "e94cccda13ab05e1ea9f84c1c661636aef907bc8af1a04b925c3c9d2a34e80d3"
+      "sha256": "63b83b8db0d8e44d717bb3435617cc4738c82e758cf02e6c34d7beb64ffbf8d5"
     },
     {
       "path": "asl/arch/profile/reference-quantization.asl",
-      "sha256": "348136c21018a5541b5b0c70d45c656e07ea3ef1eca4d71192a1931845ef21e2"
+      "sha256": "c7f13ab0d16cdf709e40fd426559dca9f48348e04f667404809f99345e18b2f3"
     },
     {
       "path": "asl/arch/profile/reset.asl",
@@ -2394,27 +2398,27 @@
     },
     {
       "path": "asl/scalar/fsu/FCVT.asl",
-      "sha256": "b145040aa460270fb4faa1f5cff3863fddeda697a2ff0c3cad46e894a183eb6e"
+      "sha256": "1c819546d6490604c3c4922baad1f92dfaee18f7ea8ef2ab76ac7b5ba31e519b"
     },
     {
       "path": "asl/scalar/fsu/FCVTA.asl",
-      "sha256": "0f936dc13f9f012517d622406de2f1bd61c2a543989e7429a44b744c9377b336"
+      "sha256": "8096bbf5aa763ba69787f9927b24e8eb6452bfa9003b3cd85b593716dbd1021a"
     },
     {
       "path": "asl/scalar/fsu/FCVTM.asl",
-      "sha256": "e299f94463149062cfd741f25b0dabc77f8242c4a0e9d61e3ec6a7b2fceafbec"
+      "sha256": "572c2c6b1a43fb3a00df7c492cd46ec9508b5d5865a75e65e9003839f604273e"
     },
     {
       "path": "asl/scalar/fsu/FCVTN.asl",
-      "sha256": "de7012476b85946ed5a4eda4430a5c81fd472fed12e0e3d7b3fbb67b61faeed3"
+      "sha256": "ddf7cd2a6353b8d3517da3dc07e8164aa8a6f02f03250d3ab8f2402cb82c07c9"
     },
     {
       "path": "asl/scalar/fsu/FCVTP.asl",
-      "sha256": "7e49239eab87ecca1994a0512b615a7d780a01e8d84c154b4200209167616c7f"
+      "sha256": "7a3c0b4c3d1e00951deb860fad3e48f45cabd086f3e4b929aae7a1ec971e3c5f"
     },
     {
       "path": "asl/scalar/fsu/FCVTZ.asl",
-      "sha256": "4d82517dcfc9e0a0be63ee60ffde622a47a1d205ac1739e06b0920657f2b6068"
+      "sha256": "0da6605d6f245fbb51752fd20aac2b873edc5634d9397fb3cc16e19d14298717"
     },
     {
       "path": "asl/scalar/fsu/FDIV.asl",
@@ -2498,11 +2502,11 @@
     },
     {
       "path": "asl/scalar/fsu/SCVTF.asl",
-      "sha256": "2a25406768f59669f98978e499ffc54bbf0c03a8c9aedf3b4318da70f0fab7a5"
+      "sha256": "83f6d74151446d168b34cceac551bc446cfb035a20b0e96f0c3a72ef62b6c732"
     },
     {
       "path": "asl/scalar/fsu/UCVTF.asl",
-      "sha256": "fc41ba9ad3c4b04f2684437e92c9a5ef04857f0a48e24f941e659bf020ece0c2"
+      "sha256": "9879d0bdca06916ae217e5c72fab36ff8f5f1b838365f2d8309c1060c0e366f3"
     },
     {
       "path": "asl/scalar/model/agu/addressing.asl",
@@ -2550,7 +2554,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
-      "sha256": "c954c5ccdfaebc0fa238c1415364844c4f547b385e59aa540504f5490acdddca"
+      "sha256": "af92b1824af2047674748f967a2bc9695b5eaf7aaa35538d0e6fe5b6fa99837d"
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
@@ -2566,7 +2570,7 @@
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
-      "sha256": "df81ebe5d6e58d179a843ae2b6da48928f653bb248ef6aa75c7c3942039a0bca"
+      "sha256": "f408fda5e6ce896b8e2f7b574e36ee4345bf6f88b58730f550dae28dacca4778"
     },
     {
       "path": "asl/scalar/model/sys/registers.asl",
@@ -2750,7 +2754,7 @@
     },
     {
       "path": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl",
-      "sha256": "60787d338c9b3da12a9a2beefe6fa883b2f94c65bd207341e97cb76c745a3afe"
+      "sha256": "4674e12ee6c912c4e6df37f8c7c37028d7dec88b48b570834996132df31e8e9f"
     },
     {
       "path": "asl/tile/elementwise-tile-tile/logical/TABS.asl",
@@ -3434,7 +3438,7 @@
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "1f10a8cacab01d45bd790657f678e65eeb5683df4f4f4373ebbf943179bed7e7"
+      "sha256": "e045c5303b402c1420b4cfc088f3d225eafdb47993f0e5159577dec18418fb07"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -3446,23 +3450,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "0e29c575f13f290eec6d72af2fba5fe233ca11c190c93ceaaf28bf6691330757"
+      "sha256": "d66cf5ef73f6ce25620b624a604847d639364898156c452e7ae84646a0d14d4a"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "0d25020799bfba14e238a8ebd4c9419215cf2935f3531b8fcacebd3c17f712a0"
+      "sha256": "5dc7eb1dd0a8d78fe43099c2f67dd0c744514a484546bd8192b54a7f6d425b12"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "e312daa06362adb5d951492e650028c44fed2b1ab948a014b2b013ed6578dd8d"
+      "sha256": "37252c0b6a25bd365f02c5e667be336a5a947f2653b5c0663c7e364e3ae84321"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "0574a07115e3e154ad984bd0b36dd8d47546279f721d38cb771595aed3ee016f"
+      "sha256": "93a05c4eb09fb646761982721aa5dca42033438c7f4a086afbf53abc888c1c83"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "5e9431fdaa68487485ee967cac026b8c9454ab7f5b6af35ef761dc0ae1bcc9d5"
+      "sha256": "6c0c02b4644818e815c5341274b9e7af3d55537572d9bbdba5a4ec824ed45cff"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3508,7 +3512,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "e83f193a0e50342622608b79afa1064506e038dfa9f93380b864303835226354",
+  "content_sha256": "6bd7a7ee8b05fcad2846f12152dff00da869c897385055df3f3075070b56480f",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3527,7 +3531,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "b2615654e077fbb55d08f56dac293da21a8604a330dc4fd9e70ccce55df68b5f",
+  "encoding_projection_sha256": "8757aa8561cade0a93fb531280b6884131ef545d06e53877066e922cc45ab43a",
   "hardware_conformance_profile": {
     "evidence": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
@@ -3780,7 +3784,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/e8m0-conversion.md",
-      "sha256": "5904a9f4af89a6a049a27857559aa5f2b6d71347f04865c66949627f34d35b7e"
+      "sha256": "d37b356b3f853454189d23a09346db5ce5c78d6f036fef3b75963cc49f9bbf37"
     },
     {
       "kind": "generated-documentation",
@@ -3795,17 +3799,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/matrix-quantization.md",
-      "sha256": "0af8e5da79bf30a369992e5eecdd4d7e36603f8eb6140ed7b5952d3d5962acd8"
+      "sha256": "345a80455b11084670964309b2ad6e3b1e176a91dae84eb542c6291fb1b52d10"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/profile/reference-conversion.md",
+      "sha256": "bace39a4314b71d71a5ba2800d163cb731087d0c9262f06f74a6b564662e7b2f"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-profile.md",
-      "sha256": "af1fc8fd7a19e316a79821aec377f6732c5d86913879c7fe6ccd475b716e7271"
+      "sha256": "945b016433ae4a3f493c5dcb0596b6259f1f1f626c00c83f89727a863c7148f7"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-quantization.md",
-      "sha256": "f16c3a87f741a3ac1da9559e9643dd22fa9209e28523d48d1c05ff35d2491668"
+      "sha256": "28476ac6018bcc187a094f61181c36f28e68bf084eeb295eead526bfff670c54"
     },
     {
       "kind": "generated-documentation",
@@ -6530,32 +6539,32 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVT.md",
-      "sha256": "04c9065ace8613f8830f61e4ec596214e3916c8a68f7e4aa8ebf1a7a6a83d90a"
+      "sha256": "10c8168818b7135c9d39af7781ca9ddcff7f61c581dcc45d3270db89a2ec3f94"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTA.md",
-      "sha256": "e477ccbc086868c90a3378266e005b820825fd5896f93681c8b958258eaf5f68"
+      "sha256": "d62c9b0ced8f354d58d2661093728f1a5e3cfad15c3dcbef8a4b732006978c22"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTM.md",
-      "sha256": "2b312714732a471e4ac55006d3984cc27a8f0cf44c11137d73cb8e24331c79f1"
+      "sha256": "6f1cc2a76370f31aa39d8e956f5604d24a593167e98c2d3d377aab6eeba069d6"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTN.md",
-      "sha256": "50652ebfec5e2a369a74f8a473e5d6c145e66bc2319bb50614e147d4f269bfcd"
+      "sha256": "4b6adb2b78b68a5d13be4c5a5809dd6b300a5bd6e12b4015062934a85e471aba"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTP.md",
-      "sha256": "2fd92aed3065b85a547c96a49404b3368b4ca5ab7a62d18ec7690de141d926e5"
+      "sha256": "f89b275af3ec0f473b829cd34e84d801bfaf08b1d41241ae1598afa2cc3bd2a9"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTZ.md",
-      "sha256": "dc3fb25ea32297d487f013fb2c2385f7214ab6ccd4916d9f511b368edebcd53d"
+      "sha256": "1d27254a5845a9ca4e202e4f50155bbc5e844987dcf41ba17dc1e78d87d9fa8c"
     },
     {
       "kind": "generated-documentation",
@@ -6660,12 +6669,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/SCVTF.md",
-      "sha256": "8cbb383bae6a7c43e140b466a65e26711da943d8334fd2b3954883881197c097"
+      "sha256": "29433236c53c2db36b89061bdee6f140d3f6ee6f1889f5351bc18a93dd4ed71b"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/UCVTF.md",
-      "sha256": "61b427a3233b0e6fdb9578fb510adef289f1bde8bbf5cbc1c0957da6a1ae33b1"
+      "sha256": "60cc1f3e58dff2ba9e12b5afaf5cdde2bdefbb9ac73252e56fd713ef8096f518"
     },
     {
       "kind": "generated-documentation",
@@ -6725,7 +6734,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/dispatch/fsu.md",
-      "sha256": "8a474146b3626dd0bb112d6ecaf8c95d3eaa4716ef11c616d56c6648ec129eca"
+      "sha256": "09320d3bfba5ff4637743cbb3be164cd31f102c2eb1c5e6c686703a472add83c"
     },
     {
       "kind": "generated-documentation",
@@ -6745,7 +6754,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/fsu/profile.md",
-      "sha256": "058c1b25a146463fda9b0fe0b9cdb48b91cbab9aaad4f4187bda9821d3fa84e8"
+      "sha256": "a124962766c17cf029b953bf8e1ceec2551a8b3d0f71402521a2dc515aafba85"
     },
     {
       "kind": "generated-documentation",
@@ -6975,7 +6984,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/elementwise-tile-tile/format-conversion/TCVT.md",
-      "sha256": "3b2c57243b8a71ba6c011616477402d1d6108cb6dfd8596c345cf3b3d6d7d298"
+      "sha256": "98e86aed42f2dc4e3d8aecb7b5df73adf408e002bf071572c7495f0ac7c2b83a"
     },
     {
       "kind": "generated-documentation",
@@ -7810,12 +7819,12 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-abi-vectors.json",
-      "sha256": "4003988792c863057eabd06a9d5d0d669311b13d9db9f7dc1c75fa1f72fdb197"
+      "sha256": "9a1baf9ae3e14bdbba2ab721e2b19ee4b335a41f5fe700cd6a443b6b97e0035d"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-encoding-totality.json",
-      "sha256": "0c95400e640bf7ad0be37be3d2b792a2b60cd2e06c47d512675b2837d068f7e7"
+      "sha256": "c9f0e885eb7a751e7b1cf6b4da69198ec8cb819ad1db66de096fe4928218d3b8"
     },
     {
       "kind": "generated-evidence",
@@ -8225,6 +8234,10 @@
       {
         "id": "PTO-CLZ-DECISION-BINDING-001",
         "sha256": "16ed3966de916fc2e3cf6c99c1d8b1f9e2a5b7bd86cdcd4fd147016491f87666"
+      },
+      {
+        "id": "PTO-COMMON-CONVERSION-PROFILE-001",
+        "sha256": "2ed7a10a1d1e9f46257777a7bf6c5be2e82662baf5de5da25903fdecb696fcd9"
       },
       {
         "id": "PTO-CTZ-DECISION-BINDING-001",
@@ -9144,27 +9157,27 @@
       },
       {
         "id": "PTO-INST-SCALAR-FCVT",
-        "sha256": "aaae1580f871a086a175933a0b141d5e0192891922e9fc4036241517e08e64a1"
+        "sha256": "243bea248b567eb1871567689fa9a85f277b67545c09f0bcd158f75c07bfd7f4"
       },
       {
         "id": "PTO-INST-SCALAR-FCVTA",
-        "sha256": "87d4a7fd00b09c5be38b5c0042cc77602a17f1334423d0e94160b7dcc37c1440"
+        "sha256": "bea6040906045a4d0e9b0b77ea873be56081af8d39c393edf89ef503cfc31585"
       },
       {
         "id": "PTO-INST-SCALAR-FCVTM",
-        "sha256": "21b28f53a4a936500486b3af67c01ca09e0ebf9ee83e49cdc01a921e3dd629c3"
+        "sha256": "da519d0fc7456f2e634ecc676de23ec7c44426186e9166f6964981c4ca762d11"
       },
       {
         "id": "PTO-INST-SCALAR-FCVTN",
-        "sha256": "90cae3828fbe3963b074dfd0236a8bcb23a3b19e9c01b6a12c89da538b538fac"
+        "sha256": "5ecf8de167c823943a1a12aefa555682498d022c0e5a38487952368b62f8ad5a"
       },
       {
         "id": "PTO-INST-SCALAR-FCVTP",
-        "sha256": "aadda528e4eb0a32db992676cf14477937e7e15979b6a9c043aa0dbaa4c9c1d4"
+        "sha256": "84d7236932a4b127b1017267c03a8f8e6bb66990dbb0eef4177575ae93de21c6"
       },
       {
         "id": "PTO-INST-SCALAR-FCVTZ",
-        "sha256": "c3704a2902ce429c82b9b85997ab7f242b13cf4b656f7bbcdbd10412576c811e"
+        "sha256": "5083ff30af45b611eb73847b441d86f178aebc6743a6185f9656a00474d3faa0"
       },
       {
         "id": "PTO-INST-SCALAR-FDIV",
@@ -10324,7 +10337,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-SCVTF",
-        "sha256": "18bf718772d0c8be992a4b5c5243dc88b17c4dcf4ea31335062d666bbd8b16c7"
+        "sha256": "e66122e75180dc72b273b539b2db325b3eb9ffa0df6fbf0c5f30df86efa15bee"
       },
       {
         "id": "PTO-INST-SCALAR-SD",
@@ -10632,7 +10645,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-UCVTF",
-        "sha256": "ae332904991ec346791791c9e73aed8a370468fd460a01350f69cede8ea2c104"
+        "sha256": "399f5388de28b1c266b3a4b96c3540d1555a009498b39d803b25ed03f8578688"
       },
       {
         "id": "PTO-INST-SCALAR-XOR",
@@ -10768,7 +10781,7 @@
       },
       {
         "id": "PTO-INST-TILE-TCVT",
-        "sha256": "767054a9f9d3cc7e07d49ea25b805be1df31fd96222a588b3523e6a272ac5768"
+        "sha256": "1a706960e000671cb70f09d9cca6701bf420bed5e56a5dfbce2f24602deb2f3f"
       },
       {
         "id": "PTO-INST-TILE-TDEQUANT",
@@ -11580,7 +11593,7 @@
       },
       {
         "id": "PTO-TCVT-CONTRACT-001",
-        "sha256": "184c4aad90d1a06471cacbd937e4aa290fad9a015d0704edd48263bcaa5c87fc"
+        "sha256": "02d33fc9534cf2af856c1d6860dc4d4bf58bde92b32518ae29527a3138eaff5d"
       },
       {
         "id": "PTO-TCVT-E8M0-PROFILE-001",
@@ -12050,7 +12063,8 @@
       "ADR-0118",
       "ADR-0119",
       "ADR-0120",
-      "ADR-0121"
+      "ADR-0121",
+      "ADR-0122"
     ]
   },
   "schema_version": 1,

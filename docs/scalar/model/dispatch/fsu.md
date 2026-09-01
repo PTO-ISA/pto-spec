@@ -160,23 +160,28 @@ begin
     if operation == ScalarOperation_SCVTF then
         source_type = ScalarSignedIntegerSourceTypeCode(source_selector);
         destination_type = raw_destination_type;
-        source_supported = ScalarIntegerTypeCodeSupported(source_type);
-        destination_supported = ScalarFPTypeCodeSupported(destination_type);
+        source_supported = ScalarConvertIntegerTypeCodeSupported(source_type);
+        destination_supported =
+            ScalarConvertFloatingTypeCodeSupported(destination_type);
     elsif operation == ScalarOperation_UCVTF then
         source_type = ScalarUnsignedIntegerSourceTypeCode(source_selector);
         destination_type = raw_destination_type;
-        source_supported = ScalarIntegerTypeCodeSupported(source_type);
-        destination_supported = ScalarFPTypeCodeSupported(destination_type);
+        source_supported = ScalarConvertIntegerTypeCodeSupported(source_type);
+        destination_supported =
+            ScalarConvertFloatingTypeCodeSupported(destination_type);
     else
-        source_type = ScalarFPSourceTypeCode(source_selector);
-        source_supported = ScalarFPTypeCodeSupported(source_type);
+        source_type = ScalarConvertFloatingTypeCode(source_selector);
+        source_supported =
+            ScalarConvertFloatingTypeCodeSupported(source_type);
         if operation == ScalarOperation_FCVT then
             destination_type = raw_destination_type;
-            destination_supported = ScalarFPTypeCodeSupported(destination_type);
+            destination_supported =
+                ScalarConvertFloatingTypeCodeSupported(destination_type);
         else
             destination_type = ScalarFPToIntegerDestinationTypeCode(
                 raw_destination_type);
-            destination_supported = ScalarIntegerTypeCodeSupported(destination_type);
+            destination_supported =
+                ScalarConvertIntegerTypeCodeSupported(destination_type);
         end;
     end;
     if !source_supported || !destination_supported then
@@ -192,19 +197,21 @@ begin
     if operation == ScalarOperation_FCVT then
         (result, flags) = ScalarFPConvertProfile(
             ScalarFPActiveRoundingMode(), destination_type, source_type,
-            NormalizeScalarFPSource(value, source_type));
-        result = NormalizeScalarFPResult(result, destination_type);
+            NormalizeScalarConvertFloating(value, source_type));
+        result = NormalizeScalarConvertFloating(
+            result, destination_type);
     elsif operation == ScalarOperation_SCVTF ||
           operation == ScalarOperation_UCVTF then
         (result, flags) = ScalarIntegerToFPProfile(
             ScalarFPActiveRoundingMode(), source_type, destination_type,
             NormalizeScalarIntegerSource(value, source_type));
-        result = NormalizeScalarFPResult(result, destination_type);
+        result = NormalizeScalarConvertFloating(
+            result, destination_type);
     else
         let rounding_mode = ScalarFPFixedConversionRoundingMode(operation);
         (result, flags) = ScalarFPToIntegerProfile(
             rounding_mode, destination_type, source_type,
-            NormalizeScalarFPSource(value, source_type));
+            NormalizeScalarConvertFloating(value, source_type));
         result = NormalizeScalarIntegerResult(result, destination_type);
     end;
     ScalarFPRecordFlags(flags);

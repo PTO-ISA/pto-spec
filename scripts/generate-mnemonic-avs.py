@@ -675,11 +675,12 @@ def render_scalar_fsu_avs(unit: AslUnit) -> list[tuple[Path, str]]:
     owner_directory = (
         Path("tests/asl") / unit.source_path.relative_to("asl").with_suffix("")
     )
-    bounds_summary = (
-        "covers finite zeros, signed values, and extrema"
-        if unit.mnemonic in {"FCVTA", "FCVTM", "FCVTN", "FCVTP", "FCVTZ"}
-        else "covers zeros, infinities, NaNs, extrema, and signed carriers"
-    )
+    if unit.mnemonic in {"FCVTA", "FCVTM", "FCVTN", "FCVTP", "FCVTZ"}:
+        bounds_summary = "covers finite zeros, signed values, and extrema"
+    elif unit.mnemonic in {"SCVTF", "UCVTF"}:
+        bounds_summary = "covers integer source widths and destination range boundaries"
+    else:
+        bounds_summary = "covers zeros, infinities, NaNs, extrema, and signed carriers"
     points = [
         (
             "EXEC",

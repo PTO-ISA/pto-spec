@@ -27,8 +27,10 @@ begin
     assert _LastFault == Fault_None;
     assert _Tiles[[1]].layout == TileLayout_CUBE_M32;
     assert _Tiles[[1]].location == TileLocation_Matrix;
-    assert ReadTileElement(1, 0, 0) == Zeros{PTO_XLEN} + 7;
-    assert ReadTileElement(1, 16, 8) == Zeros{PTO_XLEN} + 9;
+    assert ReadTileElement(1, 0, 0) ==
+        Zeros{PTO_XLEN} + 0x34e00000;
+    assert ReadTileElement(1, 16, 8) ==
+        Zeros{PTO_XLEN} + 0x35100000;
     assert _Tiles[[1]].contents_defined;
     return 0;
 end;

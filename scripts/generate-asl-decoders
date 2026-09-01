@@ -3532,11 +3532,11 @@ def scalar_signed_integer_source_type_code(src_type: int) -> int:
 
 
 def scalar_unsigned_integer_source_type_code(src_type: int) -> int:
-    if src_type == 0:
-        return 0
-    if src_type == 1:
-        return 1
-    return 31
+    return src_type if 0 <= src_type <= 3 else 31
+
+
+def scalar_convert_floating_type_code(src_type: int) -> int:
+    return src_type if 0 <= src_type <= 3 else 31
 
 
 def scalar_fp_to_integer_destination_type_code(dst_type: int) -> int:
@@ -3580,8 +3580,16 @@ def normalize_scalar_fp_source_py(value: int, data_type: int) -> int:
 def normalize_scalar_integer_source_py(value: int, data_type: int) -> int:
     if data_type == 1:
         return value & MASK32
+    if data_type == 2:
+        return value & 0xFFFF
+    if data_type == 3:
+        return value & 0xFF
     if data_type == 9:
         return sign_extended(value, 32)
+    if data_type == 10:
+        return sign_extended(value, 16)
+    if data_type == 11:
+        return sign_extended(value, 8)
     return value & MASK64
 
 
@@ -3654,12 +3662,142 @@ def scalar_fp_decode_finite_py(value: int, src_type: int) -> float:
     raise ValueError(f"unsupported decoded FSU source type: {src_type}")
 
 
+def scalar_e4m3_decode_finite_py(value: int) -> float:
+    code = value & 0xFF
+    exponent = (code >> 3) & 0xF
+    fraction = code & 0x7
+    if exponent == 0xF and fraction == 0x7:
+        raise ValueError("E4M3 NaN is not finite")
+    magnitude = fraction * 2.0**-9 if exponent == 0 else (
+        1.0 + fraction / 8.0
+    ) * 2.0 ** (exponent - 7)
+    return -magnitude if code & 0x80 else magnitude
+
+
+def scalar_convert_fp_decode_finite_py(value: int, src_type: int) -> float:
+    if src_type in {0, 1}:
+        return scalar_fp_decode_finite_py(value, src_type)
+    if src_type == 2:
+        return struct.unpack(">e", struct.pack(">H", value & 0xFFFF))[0]
+    if src_type == 3:
+        return scalar_e4m3_decode_finite_py(value)
+    raise ValueError(f"unsupported scalar conversion source type: {src_type}")
+
+
+def scalar_convert_fp_class_py(value: int, src_type: int) -> str:
+    if src_type == 0:
+        exponent = (value >> 52) & 0x7FF
+        fraction = value & ((1 << 52) - 1)
+        sign = bool(value & (1 << 63))
+        quiet = bool(fraction & (1 << 51))
+    elif src_type == 1:
+        value &= MASK32
+        exponent = (value >> 23) & 0xFF
+        fraction = value & 0x7FFFFF
+        sign = bool(value & 0x80000000)
+        quiet = bool(fraction & 0x400000)
+    elif src_type == 2:
+        value &= 0xFFFF
+        exponent = (value >> 10) & 0x1F
+        fraction = value & 0x3FF
+        sign = bool(value & 0x8000)
+        quiet = bool(fraction & 0x200)
+    elif src_type == 3:
+        value &= 0xFF
+        if value & 0x7F == 0x7F:
+            return "qnan"
+        if value & 0x7F == 0:
+            return "negative_zero" if value & 0x80 else "positive_zero"
+        return "finite"
+    else:
+        raise ValueError(f"unsupported scalar conversion source type: {src_type}")
+    maximum_exponent = {0: 0x7FF, 1: 0xFF, 2: 0x1F}[src_type]
+    if exponent == maximum_exponent:
+        if fraction == 0:
+            return "negative_infinity" if sign else "positive_infinity"
+        return "qnan" if quiet else "snan"
+    if exponent == 0 and fraction == 0:
+        return "negative_zero" if sign else "positive_zero"
+    return "finite"
+
+
+def scalar_convert_fp_canonical_nan_py(dst_type: int) -> int:
+    return {
+        0: 0x7FF8000000000000,
+        1: 0x7FC00000,
+        2: 0x7E00,
+        3: 0x7F,
+    }[dst_type]
+
+
+def scalar_convert_fp_zero_py(dst_type: int, negative: bool) -> int:
+    return (1 << {0: 63, 1: 31, 2: 15, 3: 7}[dst_type]) if negative else 0
+
+
+def scalar_convert_fp_infinity_py(dst_type: int, negative: bool) -> tuple[int, int]:
+    if dst_type == 3:
+        return 0x7F, 0x14
+    return {
+        0: 0xFFF0000000000000 if negative else 0x7FF0000000000000,
+        1: 0xFF800000 if negative else 0x7F800000,
+        2: 0xFC00 if negative else 0x7C00,
+    }[dst_type], 0
+
+
 def scalar_fp_encode_finite_py(value: float, src_type: int) -> int:
     if src_type == 1:
         return struct.unpack(">I", struct.pack(">f", value))[0]
     if src_type == 0:
         return struct.unpack(">Q", struct.pack(">d", value))[0]
     raise ValueError(f"unsupported decoded FSU source type: {src_type}")
+
+
+def scalar_fp_encode_half_rne_py(value: float) -> tuple[int, int]:
+    try:
+        encoded = struct.unpack(">H", struct.pack(">e", value))[0]
+    except OverflowError:
+        return (0xFC00 if value < 0.0 else 0x7C00), 0x14
+    rounded = struct.unpack(">e", struct.pack(">H", encoded))[0]
+    if rounded == value:
+        return encoded, 0
+    if abs(rounded) < 2.0**-14:
+        return encoded, 0x18
+    return encoded, 0x10
+
+
+def scalar_fp_encode_e4m3_rne_py(value: float) -> tuple[int, int]:
+    if abs(value) > 448.0:
+        return 0x7F, 0x14
+    candidates = [
+        (scalar_e4m3_decode_finite_py(code), code)
+        for code in range(256)
+        if code & 0x7F != 0x7F
+    ]
+    best_value, best_code = min(
+        candidates,
+        key=lambda item: (abs(item[0] - value), item[1] & 1, item[1]),
+    )
+    if best_value == value:
+        return best_code, 0
+    return best_code, 0x18 if abs(best_value) < 2.0**-6 else 0x10
+
+
+def scalar_convert_fp_encode_rne_py(value: float, dst_type: int) -> tuple[int, int]:
+    if dst_type == 0:
+        encoded = struct.unpack(">Q", struct.pack(">d", value))[0]
+        return encoded, 0
+    if dst_type == 1:
+        try:
+            encoded = struct.unpack(">I", struct.pack(">f", value))[0]
+        except OverflowError:
+            return (0xFF800000 if value < 0.0 else 0x7F800000), 0x14
+        rounded = struct.unpack(">f", struct.pack(">I", encoded))[0]
+        return encoded, 0 if rounded == value else 0x10
+    if dst_type == 2:
+        return scalar_fp_encode_half_rne_py(value)
+    if dst_type == 3:
+        return scalar_fp_encode_e4m3_rne_py(value)
+    raise ValueError(f"unsupported scalar conversion destination type: {dst_type}")
 
 
 def scalar_fp_reference_exp_py(value: float) -> float:
@@ -3813,13 +3951,13 @@ def scalar_fsu_success_inputs(row: dict) -> tuple[int, int, int, int, int]:
             "GE": (0x40000000, 0x3F800000),
         }[operation]
     elif class_id == "scalar-fp-format-convert":
-        dst_type = 4
+        dst_type = 2
     elif class_id == "scalar-fp-to-integer":
         dst_type = 4
         left = 0x1234567880000001
     elif class_id == "scalar-integer-to-fp":
-        dst_type = 4
-        left = 0x1234567880000001
+        dst_type = 2
+        left = 5
     return left, right, addend, src_type, dst_type
 
 
@@ -3911,10 +4049,25 @@ def scalar_fsu_expected(
             raise ValueError(f"unclassified FSU fused operation: {mnemonic}")
         return scalar_fp_encode_finite_py(result, src_type), flags
     if class_id == "scalar-fp-format-convert":
-        return normalize_scalar_fp_result_py(left_fp, dst_type), flags
+        value_class = scalar_convert_fp_class_py(left_fp, src_type)
+        if value_class in {"qnan", "snan"}:
+            return scalar_convert_fp_canonical_nan_py(dst_type), (
+                1 if value_class == "snan" else 0
+            )
+        if value_class in {"positive_infinity", "negative_infinity"}:
+            return scalar_convert_fp_infinity_py(
+                dst_type, value_class == "negative_infinity"
+            )
+        if value_class in {"positive_zero", "negative_zero"}:
+            return scalar_convert_fp_zero_py(
+                dst_type, value_class == "negative_zero"
+            ), 0
+        return scalar_convert_fp_encode_rne_py(
+            scalar_convert_fp_decode_finite_py(left_fp, src_type), dst_type
+        )
     if class_id == "scalar-fp-to-integer":
         destination_type = scalar_fp_to_integer_destination_type_code(dst_type)
-        finite_value = scalar_fp_decode_finite_py(left_fp, src_type)
+        finite_value = scalar_convert_fp_decode_finite_py(left_fp, src_type)
         rounded = scalar_fp_to_integer_round(finite_value, mnemonic)
         flags = 0 if float(rounded) == finite_value else 0x10
         return normalize_scalar_integer_result_py(
@@ -3926,7 +4079,9 @@ def scalar_fsu_expected(
         else:
             integer_type = scalar_unsigned_integer_source_type_code(src_type)
         result = normalize_scalar_integer_source_py(left, integer_type)
-        return normalize_scalar_fp_result_py(result, dst_type), flags
+        signed = mnemonic == "SCVTF"
+        integer = signed_integer(result, 64) if signed else result & MASK64
+        return scalar_convert_fp_encode_rne_py(float(integer), dst_type)
     raise ValueError(f"unhandled FSU effect class: {class_id}")
 
 
@@ -3943,11 +4098,10 @@ def scalar_fsu_sensitivity_inputs(row: dict) -> tuple[int, int, int, int, int]:
         }[row["mnemonic"]]
     elif class_id == "scalar-fp-to-integer":
         left = 0x3FC00000
-    elif class_id in {
-        "scalar-fp-format-convert",
-        "scalar-integer-to-fp",
-    }:
+    elif class_id == "scalar-fp-format-convert":
         left = 5
+    elif class_id == "scalar-integer-to-fp":
+        left = 7
     elif class_id.startswith("scalar-fp-compare"):
         operation = scalar_fsu_operation(row)
         left, right = {
@@ -3972,7 +4126,7 @@ def emit_scalar_fsu_setup(
     addend: int,
     destination: int,
     flags: int = 0,
-    rounding_mode: int = 2,
+    rounding_mode: int = 0,
 ) -> None:
     print("    SetCurrentACR(0);")
     print("    ClearFault();")
@@ -4001,7 +4155,7 @@ def emit_scalar_fsu_success(
     *,
     sticky_flags: int = 0,
     compare_against: int | None = None,
-    rounding_mode: int = 2,
+    rounding_mode: int = 0,
 ) -> None:
     destination_sentinel = 0x5555555555555555
     observed_flags = sticky_flags | expected_flags
@@ -4079,25 +4233,30 @@ def scalar_fsu_type_cases(row: dict) -> list[tuple[str, int, int, bool]]:
             (f"src-{src_type:02b}", src_type, 1, src_type < 2) for src_type in range(4)
         ]
     class_id = scalar_fsu_effect_class(row)
-    valid_destination_types = (
-        range(8) if class_id == "scalar-fp-to-integer" else range(15)
-    )
-    first_reserved_destination = (
-        8 if class_id == "scalar-fp-to-integer" else 15
-    )
+    conversion = class_id in {
+        "scalar-fp-format-convert",
+        "scalar-fp-to-integer",
+        "scalar-integer-to-fp",
+    }
+    valid_destination_types = range(8) if class_id == "scalar-fp-to-integer" else range(4)
+    first_reserved_destination = 8 if class_id == "scalar-fp-to-integer" else 4
+    source_types = range(4) if conversion else range(2)
     cases = [
         (f"src-{src_type:02b}-dst-{dst_type:02d}", src_type, dst_type, True)
-        for src_type in range(2)
+        for src_type in source_types
         for dst_type in valid_destination_types
     ]
-    cases.extend(
-        (f"src-{src_type:02b}-dst-00", src_type, 0, False) for src_type in (2, 3)
-    )
+    if not conversion:
+        cases.extend(
+            (f"src-{src_type:02b}-dst-00", src_type, 0, False)
+            for src_type in (2, 3)
+        )
     cases.extend(
         (f"src-00-dst-{dst_type:02d}", 0, dst_type, False)
         for dst_type in range(first_reserved_destination, 32)
     )
-    cases.append(("src-10-dst-31-both-invalid", 2, 31, False))
+    if not conversion:
+        cases.append(("src-10-dst-31-both-invalid", 2, 31, False))
     return cases
 
 
@@ -4260,7 +4419,7 @@ def scalar_fsu_boundary_cases(
                 "maximum_finite",
                 "all_ones",
             ):
-                destination_type = 4
+                destination_type = 2
                 cases.append(
                     (
                         f"{width_label}-{name}",
@@ -4360,11 +4519,12 @@ def emit_scalar_fsu_alias_case(
     field_values: dict[str, int],
 ) -> None:
     class_id = scalar_fsu_effect_class(row)
-    dst_type = 4 if class_id in {
-        "scalar-fp-format-convert",
-        "scalar-fp-to-integer",
-        "scalar-integer-to-fp",
-    } else 1
+    if class_id == "scalar-fp-to-integer":
+        dst_type = 4
+    elif class_id in {"scalar-fp-format-convert", "scalar-integer-to-fp"}:
+        dst_type = 2
+    else:
+        dst_type = 1
     witness = scalar_fsu_witness(
         row,
         family_constraints,
@@ -4652,13 +4812,23 @@ def emit_scalar_fsu_type_validation(
     row: dict, family_constraints: list[dict], *, legal: bool
 ) -> int:
     mnemonic = asl_identifier(row["mnemonic"])
+    class_id = scalar_fsu_effect_class(row)
+    conversion = class_id in {
+        "scalar-fp-format-convert",
+        "scalar-fp-to-integer",
+        "scalar-integer-to-fp",
+    }
     suffix = "Legal" if legal else "Reserved"
     label_prefix = "FSU-TYPE-LEGAL" if legal else "FSU-TYPE-RESERVED"
     base_left, base_right, base_addend, _, _ = scalar_fsu_success_inputs(row)
     cases = [case for case in scalar_fsu_type_cases(row) if case[3] == legal]
     print(f"func ValidateScalarFSUTypes{suffix}_{mnemonic}()")
     print("begin")
-    for src_type in ((0, 1) if legal else (2, 3)):
+    if conversion:
+        source_assertions = tuple(range(4)) if legal else ()
+    else:
+        source_assertions = (0, 1) if legal else (2, 3)
+    for src_type in source_assertions:
         operator = "" if legal else "!"
         print(
             f"    assert {operator}InstructionContractSourceTypeLegal_{mnemonic}("
@@ -7885,7 +8055,7 @@ def _emit_monolithic() -> None:
         + scalar_fsu_alias_case_count
         + scalar_fsu_sticky_case_count
     )
-    expected_fsu_counts = (453, 239, 500, 152, 920, 210, 2235)
+    expected_fsu_counts = (500, 248, 500, 152, 920, 210, 2282)
     actual_fsu_counts = (
         scalar_fsu_type_case_count,
         scalar_fsu_type_fault_case_count,
@@ -9796,8 +9966,8 @@ def _emit_monolithic() -> None:
             )
     expected_fsu_shard_counts = {
         "execute": 30,
-        "types_legal": 214,
-        "types_reserved": 239,
+        "types_legal": 252,
+        "types_reserved": 248,
         "bounds": 500,
         "rounding": 152,
         "flags": 210,

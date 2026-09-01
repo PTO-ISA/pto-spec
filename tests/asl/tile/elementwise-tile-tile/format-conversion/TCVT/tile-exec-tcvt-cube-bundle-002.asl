@@ -46,7 +46,9 @@ begin
     assert _Tiles[[destination]].columns == 10;
     assert _Tiles[[destination]].valid_rows == 16;
     assert _Tiles[[destination]].valid_columns == 9;
-    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 7;
-    assert ReadTileElement(destination, 15, 8) == Zeros{PTO_XLEN} + 9;
+    assert ReadTileElement(destination, 0, 0) ==
+        Zeros{PTO_XLEN} + 0x34e00000;
+    assert ReadTileElement(destination, 15, 8) ==
+        Zeros{PTO_XLEN} + 0x35100000;
     return 0;
 end;
