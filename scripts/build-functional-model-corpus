@@ -153,7 +153,7 @@ CASES = {
              "post_bpc": 0x120, "raw_instruction_le": 0x00008013,
              "length_bits": 32, "sequence": 18},
             {"pre_tpc": 0x12E, "post_tpc": 0x132, "pre_bpc": 0x120,
-             "post_bpc": 0x120, "raw_instruction_le": 0x00185E13,
+             "post_bpc": 0x120, "raw_instruction_le": 0x00085E13,
              "length_bits": 32, "sequence": 19},
             {"pre_tpc": 0x132, "post_tpc": 0x134, "pre_bpc": 0x120,
              "post_bpc": 0, "raw_instruction_le": 0,
