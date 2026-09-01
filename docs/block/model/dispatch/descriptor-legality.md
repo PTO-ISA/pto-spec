@@ -192,6 +192,26 @@ end;
 readonly func BundleOperationBindingsComplete(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
+    let decoded_operation = TileOperationOfIndex(operation);
+    if decoded_operation == TileOperation_TCMP ||
+       decoded_operation == TileOperation_TCMPS ||
+       decoded_operation == TileOperation_TSEL ||
+       decoded_operation == TileOperation_TSELS then
+        // Comparison/select carriers own their complete mutually-exclusive
+        // binding schemas; the generic tile operand arity is not applicable.
+        return TRUE;
+    end;
+    if decoded_operation == TileOperation_TGPR2T then
+        if BundleTileBindingCount() != 1 ||
+           !_BundleTileBindings[[0]].valid ||
+           !_BundleTileBindings[[0]].destination_valid ||
+           _BundleTileBindings[[0]].source0_valid ||
+           _BundleTileBindings[[0]].source1_valid ||
+           !_BundleTileBindings[[0]].last then
+            return FALSE;
+        end;
+        return TRUE;
+    end;
     var destination_count: integer = 0;
     var source_count: integer = 0;
     var binding_count: integer = 0;

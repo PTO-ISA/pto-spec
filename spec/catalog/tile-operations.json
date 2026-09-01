@@ -1,6 +1,6 @@
 {
   "isa": "PTO Instruction Set Architecture",
-  "operation_count": 107,
+  "operation_count": 108,
   "rejected_review_only_codes": {
     "CUBE": [],
     "TEPL": [],
@@ -699,7 +699,8 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "CMode",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Sat"
         ],
         "pad_union": "pad-value"
       },
@@ -714,7 +715,7 @@
       "operands": [
         {
           "field": "destination0",
-          "role": "predicate destination"
+          "role": "legacy Predicate or CUBE PredicateCell destination; absent for GPR carrier"
         },
         {
           "field": "source0",
@@ -733,7 +734,7 @@
       "selector": "0x00D",
       "semantic_handler": "ExecuteTileCompare",
       "state_effects": [
-        "operand:destination0:packed-predicate-destination",
+        "operand:destination0:variant-predicate-carrier-destination",
         "operand:source0:persistent-source-left",
         "operand:source1:persistent-source-right",
         "operand:comparison:six-mode-comparison",
@@ -1222,7 +1223,7 @@
         },
         {
           "field": "source0",
-          "role": "packed predicate mask"
+          "role": "legacy Predicate, CUBE PredicateCell, or first GPR-mask role"
         },
         {
           "field": "source1",
@@ -1238,7 +1239,7 @@
       "semantic_handler": "ExecuteTileSelect",
       "state_effects": [
         "operand:destination0:numeric-destination",
-        "operand:source0:packed-predicate-mask",
+        "operand:source0:variant-predicate-mask-carrier",
         "operand:source1:persistent-source-true",
         "operand:source2:persistent-source-false",
         "runtime:CurrentBundlePadValue:numeric-padding"
@@ -2070,7 +2071,8 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "CMode",
-          "PadValueOrByteId"
+          "PadValueOrByteId",
+          "Sat"
         ],
         "pad_union": "pad-value"
       },
@@ -2085,7 +2087,7 @@
       "operands": [
         {
           "field": "destination0",
-          "role": "new packed Local predicate destination"
+          "role": "legacy Predicate or CUBE PredicateCell destination; absent for GPR carrier"
         },
         {
           "field": "source0",
@@ -2104,7 +2106,7 @@
       "selector": "0x02D",
       "semantic_handler": "ExecuteTileCompareScalar",
       "state_effects": [
-        "operand:destination0:packed-predicate-destination",
+        "operand:destination0:variant-predicate-carrier-destination",
         "operand:source0:persistent-local-source",
         "operand:scalar0:private-gpr-raw-element",
         "operand:comparison:six-mode-comparison",
@@ -2151,7 +2153,7 @@
         },
         {
           "field": "source0",
-          "role": "packed Local predicate mask"
+          "role": "legacy Predicate, CUBE PredicateCell, or GPR mask role"
         },
         {
           "field": "source1",
@@ -2167,7 +2169,7 @@
       "semantic_handler": "ExecuteTileSelectScalar",
       "state_effects": [
         "operand:destination0:new-local-numeric-destination",
-        "operand:source0:packed-predicate-mask",
+        "operand:source0:variant-predicate-mask-carrier",
         "operand:source1:persistent-local-source-true",
         "operand:scalar0:private-gpr-scalar-false",
         "runtime:CurrentBundlePadValue:numeric-padding"
@@ -6181,6 +6183,76 @@
         "operand:destination0:destination",
         "operand:source0:source",
         "operand:scalar0:unpack-control"
+      ],
+      "classification": "layout-and-rearrangement",
+      "engine": "SFU"
+    },
+    {
+      "arguments": [
+        {
+          "operand": "destination0"
+        },
+        {
+          "operand": "source0"
+        },
+        {
+          "operand": "source1"
+        },
+        {
+          "operand": "source2"
+        },
+        {
+          "operand": "source3"
+        }
+      ],
+      "command_mnemonic": "BSTART.TEPL",
+      "contract_status": "reviewed-complete",
+      "datr_contract": {
+        "allowed_nonzero_fields": [
+          "PadValueOrByteId",
+          "RMode"
+        ],
+        "pad_union": "pad-value"
+      },
+      "disposition": "accepted-direct-operation",
+      "effect_contract": "TGPR2T",
+      "family": "TEPL",
+      "fault_contract": "ExecuteTileInstruction",
+      "function": 30,
+      "legality_handler": "TileOperandsLegal_TGPR2T",
+      "mode": 3,
+      "name": "TGPR2T",
+      "operands": [
+        {
+          "field": "destination0",
+          "role": "destination"
+        },
+        {
+          "field": "source0",
+          "role": "source0"
+        },
+        {
+          "field": "source1",
+          "role": "source1"
+        },
+        {
+          "field": "source2",
+          "role": "source2"
+        },
+        {
+          "field": "source3",
+          "role": "source3"
+        }
+      ],
+      "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+      "selector": "0x07E",
+      "semantic_handler": "TGPR2T",
+      "state_effects": [
+        "operand:destination0:CUBE U8 destination",
+        "operand:source0:ordered source-only GPR0",
+        "operand:source1:ordered source-only GPR1",
+        "operand:source2:ordered source-only GPR2",
+        "operand:source3:ordered source-only GPR3"
       ],
       "classification": "layout-and-rearrangement",
       "engine": "SFU"

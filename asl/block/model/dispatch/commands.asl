@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMANDS","surface":"block","classification":["model","dispatch","commands"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-START","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-COMMANDS","surface":"block","classification":["model","dispatch","commands"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-START","PTO-BLOCK-MODEL-OPERANDS-RANGE-MODIFIERS"]}
 readonly func BundleFixedPointAttributesCanBePlaced() => boolean
 begin
     if !_BundleActive ||
@@ -6,17 +6,14 @@ begin
        _BundleFixedPointAttributes.valid then
         return FALSE;
     end;
-
     if _BundleOperation.valid &&
        _BundleOperation.operation_class != BundleOperation_TileMatrix then
         return FALSE;
     end;
-
     return !_BundleScalarBindings[[0]].valid &&
            BundleTileBindingCount() == 0 &&
            BundleSharedBindingCount() == 0;
 end;
-
 func ExecuteDecodedBundleCommand(instruction: bits(64),
                                 form: integer {0..PTO_COMMAND_FORM_COUNT-1},
                                 length_bits: integer {16,32,48,64})
@@ -29,11 +26,14 @@ begin
         SetFault(Fault_IllegalInstruction, ReadTPC());
         return CommandExecution_Rejected;
     end;
+    if !DecodedBundleCommandKeepsTGPR2TStreamLegal(instruction, form) then
+        SetFault(Fault_BundleControl, ReadTPC());
+        return CommandExecution_Rejected;
+    end;
     let range_modifier = handler == CommandHandler_ApplyBundleSubview ||
         handler == CommandHandler_ApplyBundleAssemble;
     if !range_modifier then
-        // Any non-modifier command terminates the immediately preceding
-        // binder/modifier group.  The association is never retroactive.
+        // A non-modifier closes the preceding non-retroactive range group.
         CloseBundleRangeGroup();
     end;
     if handler == CommandHandler_ExecuteQueueMove then
@@ -192,16 +192,25 @@ begin
                     shared_size != 0);
             end;
         when CommandHandler_BindBundleScalarIO =>
+            let selected_tgpr2t = BundleTGPR2TSelected();
+            var binding_index: integer {0..1} = 0;
+            if selected_tgpr2t && _BundleScalarBindings[[0]].valid then
+                binding_index = 1;
+            end;
             if !_BundleActive || _BundleBodyActive ||
-               _BundleScalarBindings[[0]].valid then
+               _BundleScalarBindings[[binding_index]].valid ||
+               (!selected_tgpr2t && _BundleScalarBindings[[0]].valid) ||
+               !BundleTGPR2TScalarCommandCanBePlaced(
+                   binding_index, instruction, form) then
                 SetFault(Fault_BundleControl, ReadTPC());
                 return CommandExecution_Rejected;
             end;
-            SetBundleScalarBinding(0,
+            SetBundleScalarBinding(binding_index,
                 CommandDecodedReg5(instruction, form, CommandField_RegDst),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc0),
                 CommandDecodedReg5(instruction, form, CommandField_RegSrc1),
-                CommandDecodedReg5(instruction, form, CommandField_RegSrc2), 3);
+                CommandDecodedReg5(instruction, form, CommandField_RegSrc2),
+                if selected_tgpr2t && binding_index == 1 then 1 else 3);
         when CommandHandler_BindBundleTileIO =>
             let pe_mode = DecodeCommandOperandRaw(
                 instruction, form, CommandField_PEMode)[2:0];
@@ -231,6 +240,10 @@ begin
                 end;
                 WriteTPC(ReadTPC() + (Zeros{PTO_XLEN} + (length_bits DIV 8)));
                 return CommandExecution_Executed;
+            end;
+            if BundleTGPR2TSelected() && !BundleTGPR2TScalarBindingsComplete() then
+                SetFault(Fault_BundleControl, ReadTPC());
+                return CommandExecution_Rejected;
             end;
             if !_BundleActive || _BundleBodyActive ||
                BundleTileBindingSequenceClosed() then

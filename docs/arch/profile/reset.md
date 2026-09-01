@@ -103,6 +103,7 @@ begin
         _Tiles[[index]].valid_rows = 0;
         _Tiles[[index]].valid_columns = 0;
         _Tiles[[index]].data_type = TileDataType_U64;
+        _Tiles[[index]].predicate_basis_type = TileDataType_U64;
         _Tiles[[index]].layout = TileLayout_RowMajor;
         _Tiles[[index]].location = TileLocation_Any;
         _Tiles[[index]].cube_k_repeat = 0;

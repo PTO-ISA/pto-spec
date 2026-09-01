@@ -214,6 +214,7 @@ begin
     tile.valid_rows = pe_m;
     tile.valid_columns = k;
     tile.data_type = data_type;
+    tile.predicate_basis_type = data_type;
     tile.layout = TileLayout_RowMajor;
     tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
@@ -275,6 +276,7 @@ begin
     tile.valid_rows = pe_m;
     tile.valid_columns = scale_groups;
     tile.data_type = scale_type;
+    tile.predicate_basis_type = scale_type;
     tile.layout = TileLayout_RowMajor;
     tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;
@@ -356,6 +358,7 @@ begin
     tile.valid_rows = logical_rows;
     tile.valid_columns = logical_columns;
     tile.data_type = data_type;
+    tile.predicate_basis_type = data_type;
     tile.layout = TileLayout_RowMajor;
     tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;

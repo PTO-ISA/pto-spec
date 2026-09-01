@@ -67,7 +67,8 @@ type TileExecutionStatus of enumeration {
 
 type TileStorageKind of enumeration {
     TileStorage_Numeric,
-    TileStorage_Predicate
+    TileStorage_Predicate,
+    TileStorage_PredicateCell
 };
 
 // Uniform decoded operand carrier for direct tile instructions. Catalog
@@ -164,6 +165,7 @@ type TileInfo of record {
     valid_rows: integer {0..65535},
     valid_columns: integer {0..65535},
     data_type: TileDataType,
+    predicate_basis_type: TileDataType,
     layout: TileLayout,
     location: TileLocation,
     cube_k_repeat: integer {0..65535},

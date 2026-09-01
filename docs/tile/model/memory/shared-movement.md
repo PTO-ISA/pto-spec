@@ -127,6 +127,7 @@ begin
     tile.valid_rows = valid_rows;
     tile.valid_columns = valid_columns;
     tile.data_type = data_type;
+    tile.predicate_basis_type = data_type;
     tile.layout = layout;
     tile.location = TileLocation_Any;
     tile.cube_k_repeat = 0;

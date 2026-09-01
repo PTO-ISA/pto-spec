@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/tile-scalar-and-immediate/logical/TSELS.asl`
 
-Select each result encoding from a Local Tile or private-GPR scalar under one packed predicate Tile.
+Select each result encoding from a Local Tile or scalar under one legacy Predicate, CUBE PredicateCell, or GPR mask carrier.
 
 ## Normative identity {#PTO-INST-TILE-TSELS}
 
@@ -159,10 +159,10 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new Local numeric destination |
-| source0 | packed Local predicate mask |
-| source1 | persistent Local source selected by one |
-| scalar0 | per-participating-PE scalar selected by zero |
+| destination0 | new RowMajor or CUBE numeric destination |
+| source0 | legacy packed Predicate, CUBE PredicateCell, or GPR mask role |
+| source1 | persistent source selected by predicate one |
+| scalar0 | independent scalar selected by predicate zero |
 
 ## Decode
 
@@ -183,8 +183,8 @@ B.DATR PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
-B.IOT Predicate, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR ScalarFalseGPR, zero, zero, ->zero (optional)
+B.IOT PredicateCell, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize> OR GPR predicate form without PredicateCell
+B.IOR predicate-GPR source and optional scalar-false source
 BSTOP
 ```
 
@@ -244,12 +244,11 @@ end;
 
 ## Legality
 
-- TSELS is selected only by the TEPL raw carrier Mode 1 Function 26 and executes on VEC.
-- Exactly one terminating Local B.IOT supplies packed Predicate, numeric SrcTrue, and one newly allocated numeric destination. B.IOS and additional Tile bindings are illegal.
-- The data DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.
-- Predicate uses packed predicate-kind storage with matching logical geometry and every valid bit defined. SrcTrue and destination match physical shape, valid shape, row-major layout, and DataType; numeric encoding validity is not required for selected source or scalar carrier payloads.
-- Only RegSrc0 may be nonzero in B.IOR and only PadValueOrByteId is applicable in B.DATR.
-- PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
+- TSELS selects TEPL Mode 1 Function 26 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
+- Legacy RowMajor form uses one terminating B.IOT with packed Predicate, SrcTrue, and one new destination; one B.IOR source supplies scalar-false or omission selects zero.
+- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with basis-matched PredicateCell, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects zero. The data type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
+- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue and one new CUBE destination. One source-only B.IOR carries the complete predicate mask followed by the independent scalar-false source: two sources for one-word masks and three for U8's two-word mask. The type is 32-bit or 16-bit types from the closed CUBE domain, plus U8.
+- Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
 
 ## State effects
 
@@ -270,9 +269,8 @@ end;
 
 ## Exceptions
 
-- Malformed binding order, B.IOS presence, surplus B.IOR fields, unsupported type, ordinary numeric mask storage, undefined predicate or true-source data, shape mismatch, capacity failure, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.
-- Selection copies exact encodings and does not itself raise floating invalid for a selected NaN.
-- CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation.
+- Malformed or mixed carrier schemas, unsupported type, wrong PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.
+- TSELS copies raw carrier encodings and does not itself raise floating invalid for a selected NaN payload.
 
 ## Examples
 

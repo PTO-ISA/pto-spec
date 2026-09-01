@@ -53,3 +53,20 @@ begin
         output_columns as integer {1..65535}, physical_columns,
         _Tiles[[source_left]].data_type);
 end;
+func ConfigureBundleTileDestination(
+    index: TileIndex, capacity_bytes: integer {0..262144},
+    valid_rows: integer {0..65535}, columns: integer {0..65535},
+    valid_columns: integer {0..65535}, data_type: TileDataType,
+    layout: TileLayout, allocation_mask: bits(4), tgpr2t: boolean)
+    => boolean
+begin
+    if tgpr2t then
+        return ConfigureCubeTileForMask(index, capacity_bytes, valid_rows,
+            valid_columns, data_type, layout, TileLocation_Matrix,
+            allocation_mask);
+    end;
+    ConfigureTileForMask(index, capacity_bytes, valid_rows, columns,
+        valid_rows, valid_columns, data_type, layout, TileLocation_Any,
+        allocation_mask);
+    return TRUE;
+end;

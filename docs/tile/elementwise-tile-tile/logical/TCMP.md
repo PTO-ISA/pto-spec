@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/elementwise-tile-tile/logical/TCMP.asl`
 
-Compare two Local numeric Tiles and produce one packed Local predicate Tile.
+Compare two Local numeric Tiles and produce one legacy Predicate, CUBE PredicateCell, or GPR carrier.
 
 ## Normative identity {#PTO-INST-TILE-TCMP}
 
@@ -92,7 +92,7 @@ This operation has no standalone opcode.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new packed Local predicate destination |
+| destination0 | legacy packed Predicate or CUBE PredicateCell destination; absent for GPR producer |
 | source0 | ordered left Local numeric source |
 | source1 | ordered right Local numeric source |
 | comparison | EQ, NE, LT, GT, LE, or GE selected by CMode |
@@ -118,11 +118,12 @@ end;
 
 ```asm
 BSTART.VEC TCMP, DataType
-B.DATR CMode, PadValue (optional)
+B.DATR CMode, PadValue, SatMode (U8 GPR form only)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
-B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->Predicate<TSize>
+B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->PredicateCell<TSize> OR no destination
+B.IOR predicate-GPR destination (GPR form only)
 BSTOP
 ```
 
@@ -182,19 +183,18 @@ end;
 
 ## Legality
 
-- TCMP is selected only by VEC Mode 0 Function 13 and has no standalone opcode.
-- Exactly one terminating Local B.IOT supplies two ordered Local numeric sources and one new Local predicate destination. B.IOR, B.IOS, and additional bindings are illegal.
-- The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
-- Both sources match physical shape, valid shape, row-major layout, and DataType; every valid source element is defined and every constrained floating encoding is valid.
-- The destination uses predicate-kind storage with the same Row, Col, ValidRow, and ValidCol. Logical index i occupies bit i mod 8 of byte floor(i/8), and TSize holds at least ceil(Row*Col/8) bytes.
-- CMode and PadValueOrByteId are the only applicable B.DATR fields. Explicit nondefault Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
-- All participating Tiles use one PE_MASK. PE_MASK=0000 is a strict no-op before schema, descriptor, source, allocation, status, or payload checks.
+- TCMP selects VEC Mode 0 Function 13. PE_MASK=0000 is a strict no-op before schema, descriptor, source, allocation, GPR, status, or payload checks.
+- Legacy RowMajor form uses one terminating B.IOT with two numeric sources and one new packed Predicate destination; B.IOR is absent and the existing sixteen-type domain remains unchanged.
+- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with two numeric sources and one new U8 PredicateCell destination tagged with the source basis DataType; B.IOR is absent and the source type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
+- CUBE_M16/M32 GPR form uses one terminating source-only B.IOT plus one destination-only B.IOR. The source type is 32-bit or 16-bit types from the closed CUBE domain, plus U8; one 64-bit GPR is written atomically, and U8 Sat selects Low or High predicate columns.
+- Legacy, PredicateCell, and GPR carriers are complete and mutually exclusive. CMode and PadValue apply to every form; Sat is nonzero only for U8 GPR selection; Canonicalize, secondary DataType, RMode, and Layout remain zero.
+- Predicate padding is Zero/Min=0, Max=1, and Null unspecified or undefined according to the selected GPR/PredicateCell carrier.
 
 ## State effects
 
-- Compare corresponding valid elements using signed, unsigned, or selected floating-profile ordering. NaN makes EQ, LT, GT, LE, and GE false and NE true; positive and negative zero compare equal.
-- Pack one result bit per logical element with lower logical indices in lower byte bits.
-- Publish predicate payload, padding definedness, numeric status, and destination descriptor atomically. Rejection leaves source and destination architectural state unchanged, and sources persist.
+- Compare corresponding valid source elements under the selected signed, unsigned, or floating relation.
+- Publish exactly one selected predicate carrier: legacy packed bits, canonical PredicateCell bytes 0x00/0x01 with basis tag, or one 64-bit GPR predicate word.
+- Payload, predicate padding, numeric status, descriptor/GPR result, and definedness publish atomically; rejection leaves all architectural state unchanged.
 
 ## Memory effects and ordering
 
@@ -209,9 +209,8 @@ end;
 
 ## Exceptions
 
-- Malformed bindings, B.IOR or B.IOS presence, missing or zero dimensions, reserved CMode, unsupported DataType, mismatched shape, type or layout, undefined source data, invalid floating source encoding, or insufficient packed destination capacity raises Fault_TileLegality or Fault_TileAllocation before architectural effects.
-- A signaling floating NaN produces the relation result defined for NaN and records the selected profile invalid status only with the atomically published destination.
-- CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion behavior after an accepted operation.
+- Malformed or mixed carrier schemas, missing dimensions, reserved CMode, unsupported DataType, mismatched CUBE shape/layout, undefined or invalid source data, insufficient destination capacity, or allocation failure rejects before source reads or effects.
+- A signaling floating NaN records invalid status only with the atomically published GPR or PredicateCell result.
 
 ## Examples
 

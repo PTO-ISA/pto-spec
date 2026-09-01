@@ -3050,7 +3050,7 @@
       ],
       "contract": {
         "block_composition": [
-          "Optional once after BSTART and before the block body for every schema that declares GPR inputs or outputs."
+          "One B.IOR may appear after BSTART and before the block body when the complete schema declares GPR operands. TGPR2T instead requires exactly two immediately contiguous source-only records before its destination B.IOT."
         ],
         "canonical_assembly": [
           "B.IOR [<gpr>[, <gpr>[, <gpr>]]][, -><gpr>]"
@@ -3157,7 +3157,7 @@
         ],
         "exceptions": [
           "An out-of-range selector raises Fault_IllegalInstruction before binding state changes.",
-          "Standalone, body-phase, or duplicate B.IOR raises Illegal Block Exception before binding state changes.",
+          "Standalone or body-phase B.IOR raises Illegal Block Exception before binding state changes. A duplicate non-TGPR2T record, a TGPR2T third record, or any command between TGPR2T's first and second B.IOR raises Fault_BundleControl and preserves accepted prior state.",
           "A nonzero unused field or other operation-schema mismatch raises a block/tile legality fault before operation effects."
         ],
         "field_domains": [
@@ -3631,11 +3631,10 @@
           }
         ],
         "legality": [
-          "B.IOR is legal only after BSTART and before the block body, in any block whose complete schema declares GPR operands; an explicitly all-zero B.IOR is also legal when the schema consumes none.",
-          "A block contains at most one B.IOR; a second instruction raises Illegal Block Exception and preserves the first binding.",
+          "B.IOR is legal only after BSTART and before the block body when the complete selected schema declares GPR operands; an explicitly encoded zero selector names GPR0 and is not omission.",
+          "Every non-TGPR2T block accepts at most one B.IOR. TGPR2T accepts exactly two immediately contiguous source-only records with arity 3+1; destination-bearing, missing, reordered, intervening-command, wrong-split, or surplus records reject before effects.",
           "RegDst and RegSrc0..RegSrc2 accept only absolute GPR selectors 0..23; selectors 24..31 are reserved and reject before effects.",
-          "Sources may repeat and may alias RegDst. Any nonzero field not consumed by the selected complete-block schema rejects before block effects.",
-          "RegDst remains zero unless the selected complete-block schema explicitly declares a GPR result; current Matrix B.FPATR schemas consume only RegSrc inputs."
+          "Sources may repeat and may alias RegDst where the selected complete schema permits a destination. Any nonzero unconsumed field rejects before block effects."
         ],
         "memory_effects": [
           "none"
@@ -3663,8 +3662,8 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "Record one explicit B.IOR instruction and its four absolute GPR selectors as pending block-header state; effective arity is derived from the complete operation schema.",
-          "Inputs are read according to the selected operation before destination publication; no GPR is modified merely by executing B.IOR."
+          "Record the schema-permitted B.IOR selector state: one record for ordinary consumers or two contiguous source-only records for TGPR2T. Effective arity and roles derive from the complete operation schema.",
+          "Inputs are read according to the selected operation before destination publication; executing B.IOR itself modifies no GPR."
         ]
       },
       "documentation": "docs/block/operands/B.IOR.md",
@@ -117346,7 +117345,8 @@
           "datr_contract": {
             "allowed_nonzero_fields": [
               "CMode",
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Sat"
             ],
             "pad_union": "pad-value"
           },
@@ -117362,7 +117362,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "predicate destination"
+              "role": "legacy Predicate or CUBE PredicateCell destination; absent for GPR carrier"
             },
             {
               "field": "source0",
@@ -117381,7 +117381,7 @@
           "selector": "0x00D",
           "semantic_handler": "ExecuteTileCompare",
           "state_effects": [
-            "operand:destination0:packed-predicate-destination",
+            "operand:destination0:variant-predicate-carrier-destination",
             "operand:source0:persistent-source-left",
             "operand:source1:persistent-source-right",
             "operand:comparison:six-mode-comparison",
@@ -117396,11 +117396,12 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TCMP, DataType",
-          "B.DATR CMode, PadValue (optional)",
+          "B.DATR CMode, PadValue, SatMode (U8 GPR form only)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
-          "B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->Predicate<TSize>",
+          "B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->PredicateCell<TSize> OR no destination",
+          "B.IOR predicate-GPR destination (GPR form only)",
           "BSTOP"
         ],
         "canonical_assembly": [
@@ -117417,19 +117418,17 @@
           "BSTART.VEC TCMP, U64; B.DATR EQ, Null (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcLeft, SrcRight, mask=PE_MASK, <last>, ->Predicate<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, B.IOR or B.IOS presence, missing or zero dimensions, reserved CMode, unsupported DataType, mismatched shape, type or layout, undefined source data, invalid floating source encoding, or insufficient packed destination capacity raises Fault_TileLegality or Fault_TileAllocation before architectural effects.",
-          "A signaling floating NaN produces the relation result defined for NaN and records the selected profile invalid status only with the atomically published destination.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion behavior after an accepted operation."
+          "Malformed or mixed carrier schemas, missing dimensions, reserved CMode, unsupported DataType, mismatched CUBE shape/layout, undefined or invalid source data, insufficient destination capacity, or allocation failure rejects before source reads or effects.",
+          "A signaling floating NaN records invalid status only with the atomically published GPR or PredicateCell result."
         ],
         "field_domains": [],
         "legality": [
-          "TCMP is selected only by VEC Mode 0 Function 13 and has no standalone opcode.",
-          "Exactly one terminating Local B.IOT supplies two ordered Local numeric sources and one new Local predicate destination. B.IOR, B.IOS, and additional bindings are illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "Both sources match physical shape, valid shape, row-major layout, and DataType; every valid source element is defined and every constrained floating encoding is valid.",
-          "The destination uses predicate-kind storage with the same Row, Col, ValidRow, and ValidCol. Logical index i occupies bit i mod 8 of byte floor(i/8), and TSize holds at least ceil(Row*Col/8) bytes.",
-          "CMode and PadValueOrByteId are the only applicable B.DATR fields. Explicit nondefault Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "All participating Tiles use one PE_MASK. PE_MASK=0000 is a strict no-op before schema, descriptor, source, allocation, status, or payload checks."
+          "TCMP selects VEC Mode 0 Function 13. PE_MASK=0000 is a strict no-op before schema, descriptor, source, allocation, GPR, status, or payload checks.",
+          "Legacy RowMajor form uses one terminating B.IOT with two numeric sources and one new packed Predicate destination; B.IOR is absent and the existing sixteen-type domain remains unchanged.",
+          "CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with two numeric sources and one new U8 PredicateCell destination tagged with the source basis DataType; B.IOR is absent and the source type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.",
+          "CUBE_M16/M32 GPR form uses one terminating source-only B.IOT plus one destination-only B.IOR. The source type is 32-bit or 16-bit types from the closed CUBE domain, plus U8; one 64-bit GPR is written atomically, and U8 Sat selects Low or High predicate columns.",
+          "Legacy, PredicateCell, and GPR carriers are complete and mutually exclusive. CMode and PadValue apply to every form; Sat is nonzero only for U8 GPR selection; Canonicalize, secondary DataType, RMode, and Layout remain zero.",
+          "Predicate padding is Zero/Min=0, Max=1, and Null unspecified or undefined according to the selected GPR/PredicateCell carrier."
         ],
         "memory_effects": [
           "none"
@@ -117437,7 +117436,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new packed Local predicate destination"
+            "role": "legacy packed Predicate or CUBE PredicateCell destination; absent for GPR producer"
           },
           {
             "field": "source0",
@@ -117458,9 +117457,9 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Compare corresponding valid elements using signed, unsigned, or selected floating-profile ordering. NaN makes EQ, LT, GT, LE, and GE false and NE true; positive and negative zero compare equal.",
-          "Pack one result bit per logical element with lower logical indices in lower byte bits.",
-          "Publish predicate payload, padding definedness, numeric status, and destination descriptor atomically. Rejection leaves source and destination architectural state unchanged, and sources persist."
+          "Compare corresponding valid source elements under the selected signed, unsigned, or floating relation.",
+          "Publish exactly one selected predicate carrier: legacy packed bits, canonical PredicateCell bytes 0x00/0x01 with basis tag, or one 64-bit GPR predicate word.",
+          "Payload, predicate padding, numeric status, descriptor/GPR result, and definedness publish atomically; rejection leaves all architectural state unchanged."
         ]
       },
       "documentation": "docs/tile/elementwise-tile-tile/logical/TCMP.md",
@@ -117468,7 +117467,7 @@
       "mnemonic": "TCMP",
       "ndf_clause": "PTO-INST-TILE-TCMP",
       "source": "asl/tile/elementwise-tile-tile/logical/TCMP.asl",
-      "summary": "Compare two Local numeric Tiles and produce one packed Local predicate Tile.",
+      "summary": "Compare two Local numeric Tiles and produce one legacy Predicate, CUBE PredicateCell, or GPR carrier.",
       "surface": "tile"
     },
     {
@@ -117496,7 +117495,8 @@
           "datr_contract": {
             "allowed_nonzero_fields": [
               "CMode",
-              "PadValueOrByteId"
+              "PadValueOrByteId",
+              "Sat"
             ],
             "pad_union": "pad-value"
           },
@@ -117512,7 +117512,7 @@
           "operands": [
             {
               "field": "destination0",
-              "role": "new packed Local predicate destination"
+              "role": "legacy Predicate or CUBE PredicateCell destination; absent for GPR carrier"
             },
             {
               "field": "source0",
@@ -117531,7 +117531,7 @@
           "selector": "0x02D",
           "semantic_handler": "ExecuteTileCompareScalar",
           "state_effects": [
-            "operand:destination0:packed-predicate-destination",
+            "operand:destination0:variant-predicate-carrier-destination",
             "operand:source0:persistent-local-source",
             "operand:scalar0:private-gpr-raw-element",
             "operand:comparison:six-mode-comparison",
@@ -117546,12 +117546,12 @@
       "contract": {
         "block_composition": [
           "BSTART.VEC TCMPS, DataType",
-          "B.DATR CMode, PadValue (optional)",
+          "B.DATR CMode, PadValue, SatMode (U8 GPR form only)",
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
-          "B.IOT SrcTile, mask=PE_MASK, <last>, ->Predicate<TSize>",
-          "B.IOR ScalarGPR, zero, zero, ->zero (optional)",
+          "B.IOT SrcTile, mask=PE_MASK, <last>, ->PredicateCell<TSize> OR no destination",
+          "B.IOR scalar-compare source and optional predicate-GPR destination",
           "BSTOP"
         ],
         "canonical_assembly": [
@@ -117568,9 +117568,8 @@
           "BSTART.VEC TCMPS, DataType; B.DATR CMode, PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT SrcTile, mask=PE_MASK, <last>, ->Predicate<TSize>; B.IOR ScalarGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
-          "Malformed bindings, B.IOS presence, surplus B.IOR fields, reserved CMode, unsupported DataType, undefined or invalid source encoding, predicate capacity failure, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
-          "Signaling floating NaN records invalid only with the atomically published predicate destination.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
+          "Malformed or mixed carrier schemas, missing dimensions, reserved CMode, unsupported DataType, undefined or invalid source/scalar data, insufficient PredicateCell capacity, or allocation failure rejects before effects.",
+          "Signaling floating NaN status publishes atomically with the selected GPR or PredicateCell result."
         ],
         "field_domains": [
           {
@@ -117759,12 +117758,11 @@
           }
         ],
         "legality": [
-          "TCMPS is selected only by the TEPL raw carrier Mode 1 Function 13 and executes on VEC.",
-          "Exactly one terminating Local B.IOT supplies one persistent numeric source and one new packed predicate destination. B.IOS and additional Tile bindings are illegal.",
-          "The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.",
-          "The source is row-major and completely defined. The predicate destination has matching logical geometry and capacity of at least ceil(Row*Col/8) bytes.",
-          "Only CMode and PadValueOrByteId are applicable in B.DATR. When B.IOR is present, only RegSrc0 may be nonzero.",
-          "PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks."
+          "TCMPS selects TEPL Mode 1 Function 13 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks.",
+          "Legacy RowMajor form uses one terminating B.IOT with source and new packed Predicate destination; one optional B.IOR supplies the compare scalar.",
+          "CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with source and new basis-tagged U8 PredicateCell destination plus an optional scalar-source B.IOR; omission selects zero. The source type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.",
+          "CUBE_M16/M32 GPR form uses one source-only B.IOT and one B.IOR carrying the scalar source plus one destination GPR. The source type is 32-bit or 16-bit types from the closed CUBE domain, plus U8; U8 Sat selects Low or High columns.",
+          "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. CMode and PadValue apply to all; Sat is nonzero only for U8 GPR selection; Canonicalize remains zero."
         ],
         "memory_effects": [
           "none"
@@ -117772,7 +117770,7 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new packed Local predicate destination"
+            "role": "legacy packed Predicate or CUBE PredicateCell destination; absent for GPR producer"
           },
           {
             "field": "source0",
@@ -117780,7 +117778,7 @@
           },
           {
             "field": "scalar0",
-            "role": "per-participating-PE private-GPR scalar"
+            "role": "per-participating-PE compare scalar"
           },
           {
             "field": "comparison",
@@ -117793,9 +117791,9 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "Logical element i publishes its comparison result in bit i mod 8 of byte floor(i/8), with low logical indices in low bits.",
+          "Each valid comparison publishes through the selected carrier: legacy low-first packed bit, canonical PredicateCell byte, or GPR predicate bit.",
           "Zero and Min padding write zero predicate bits, Max writes one bits, and Null leaves padding undefined.",
-          "Packed payload, padding definedness, numeric status, and destination descriptor publish atomically; rejection has no architectural effect."
+          "Selected carrier payload, padding, numeric status, and descriptor or GPR result publish atomically; rejection has no architectural effect."
         ]
       },
       "documentation": "docs/tile/tile-scalar-and-immediate/logical/TCMPS.md",
@@ -117803,7 +117801,7 @@
       "mnemonic": "TCMPS",
       "ndf_clause": "PTO-INST-TILE-TCMPS",
       "source": "asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl",
-      "summary": "Compare each valid Local Tile element with one private-GPR scalar and produce a packed predicate Tile.",
+      "summary": "Compare each valid Local Tile element with a scalar and produce one legacy Predicate, CUBE PredicateCell, or GPR carrier.",
       "surface": "tile"
     },
     {
@@ -123453,6 +123451,162 @@
       "ndf_clause": "PTO-INST-TILE-TGEMV-MX-BIAS",
       "source": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
       "summary": "Multiply the scaled matrix and vector and add the bias Tile.",
+      "surface": "tile"
+    },
+    {
+      "alias_engine": null,
+      "alias_of": null,
+      "catalog_records": [
+        {
+          "arguments": [
+            {
+              "operand": "destination0"
+            },
+            {
+              "operand": "source0"
+            },
+            {
+              "operand": "source1"
+            },
+            {
+              "operand": "source2"
+            },
+            {
+              "operand": "source3"
+            }
+          ],
+          "classification": "layout-and-rearrangement",
+          "command_mnemonic": "BSTART.TEPL",
+          "contract_status": "reviewed-complete",
+          "datr_contract": {
+            "allowed_nonzero_fields": [
+              "PadValueOrByteId",
+              "RMode"
+            ],
+            "pad_union": "pad-value"
+          },
+          "disposition": "accepted-direct-operation",
+          "effect_contract": "TGPR2T",
+          "engine": "SFU",
+          "family": "TEPL",
+          "fault_contract": "ExecuteTileInstruction",
+          "function": 30,
+          "legality_handler": "TileOperandsLegal_TGPR2T",
+          "mode": 3,
+          "name": "TGPR2T",
+          "operands": [
+            {
+              "field": "destination0",
+              "role": "destination"
+            },
+            {
+              "field": "source0",
+              "role": "source0"
+            },
+            {
+              "field": "source1",
+              "role": "source1"
+            },
+            {
+              "field": "source2",
+              "role": "source2"
+            },
+            {
+              "field": "source3",
+              "role": "source3"
+            }
+          ],
+          "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
+          "selector": "0x07E",
+          "semantic_handler": "TGPR2T",
+          "state_effects": [
+            "operand:destination0:CUBE U8 destination",
+            "operand:source0:ordered source-only GPR0",
+            "operand:source1:ordered source-only GPR1",
+            "operand:source2:ordered source-only GPR2",
+            "operand:source3:ordered source-only GPR3"
+          ]
+        }
+      ],
+      "classification": [
+        "layout-and-rearrangement",
+        "layout"
+      ],
+      "contract": {
+        "block_composition": [
+          "BSTART.SFU TGPR2T, U8",
+          "B.DATR PadValueOrByteId, RMode (optional)",
+          "B.DIM LB0=ValidCol",
+          "B.DIM LB1=ValidRow",
+          "B.IOR GPR0, GPR1, GPR2",
+          "B.IOR GPR3",
+          "B.IOT mask=PE_MASK, <last>, ->destination<TSize>",
+          "BSTOP"
+        ],
+        "canonical_assembly": [
+          "TGPR2T <bundle operands>"
+        ],
+        "defaults": [
+          "Omitted B.DATR selects Zero padding and ByteOffset0.",
+          "LB1/LB0=32/4 selects CUBE_M32; LB1/LB0=16/8 selects CUBE_M16. Both dimensions are mandatory and LB2 is absent."
+        ],
+        "encoded_fields": [],
+        "encoding_class": "selector-encoded-block-operation",
+        "examples": [
+          "BSTART.SFU TGPR2T, U8; B.DATR PadValueOrByteId, RMode; B.DIM LB0=ValidCol; B.DIM LB1=ValidRow; B.IOR a0, a1, a2; B.IOR a3; B.IOT mask=1111, <last>, ->T0<TSize>; BSTOP"
+        ],
+        "exceptions": [
+          "RMode[17] must be zero. PadValue accepts only Zero or Max; Min and Null reject before effects.",
+          "Exactly two immediately contiguous source-only B.IOR records split 3+1 are required, followed by one destination B.IOT. Missing dimensions, an intervening command, wrong order/split, GPR destination, or surplus record rejects before effects."
+        ],
+        "field_domains": [],
+        "legality": [
+          "TGPR2T uses TEPL Mode 3 Function 30 (0x07E) with U8 operation type.",
+          "Exact dimensions 32x4 select an ordinary numeric CUBE_M32 destination and 16x8 select CUBE_M16; LB2 is absent and the encoded TSize must cover the complete descriptor.",
+          "Four ordered source-only 64-bit GPRs are supplied by exactly two contiguous B.IOR records with arity 3+1; selectors are absolute GPR0..GPR23.",
+          "Zero and Max are the only padding values. PE_MASK=0000 is a strict no-op before schema, GPR reads, allocation, or effects."
+        ],
+        "memory_effects": [
+          "none"
+        ],
+        "operands": [
+          {
+            "field": "destination0",
+            "role": "ordinary numeric U8 CUBE destination"
+          },
+          {
+            "field": "source0",
+            "role": "ordered source-only GPR0"
+          },
+          {
+            "field": "source1",
+            "role": "ordered source-only GPR1"
+          },
+          {
+            "field": "source2",
+            "role": "ordered source-only GPR2"
+          },
+          {
+            "field": "source3",
+            "role": "ordered source-only GPR3"
+          }
+        ],
+        "ordering": [
+          "All four GPR sources and PE mask are snapshotted before destination publication.",
+          "No old destination payload is read; successful publication is atomic."
+        ],
+        "standalone_opcode": false,
+        "state_effects": [
+          "Pack M32 rows as eight predicate bits into one selected U8 byte; pack M16 rows as sixteen bits into two selected U8 bytes.",
+          "PadValue is independent of ByteOffset; the operation does not change GPRs or status."
+        ]
+      },
+      "documentation": "docs/tile/layout-and-rearrangement/layout/TGPR2T.md",
+      "engine": "SFU",
+      "mnemonic": "TGPR2T",
+      "ndf_clause": "PTO-INST-TILE-TGPR2T",
+      "source": "asl/tile/layout-and-rearrangement/layout/TGPR2T.asl",
+      "summary": "Re-encode four GPR predicate planes into an ordinary CUBE U8 Tile.",
       "surface": "tile"
     },
     {
@@ -132689,7 +132843,7 @@
             },
             {
               "field": "source0",
-              "role": "packed predicate mask"
+              "role": "legacy Predicate, CUBE PredicateCell, or first GPR-mask role"
             },
             {
               "field": "source1",
@@ -132705,7 +132859,7 @@
           "semantic_handler": "ExecuteTileSelect",
           "state_effects": [
             "operand:destination0:numeric-destination",
-            "operand:source0:packed-predicate-mask",
+            "operand:source0:variant-predicate-mask-carrier",
             "operand:source1:persistent-source-true",
             "operand:source2:persistent-source-false",
             "runtime:CurrentBundlePadValue:numeric-padding"
@@ -132723,8 +132877,9 @@
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
-          "B.IOT Predicate, SrcTrue, mask=PE_MASK",
-          "B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>",
+          "B.IOT PredicateCell, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize> OR GPR predicate form without PredicateCell",
+          "B.IOT SrcFalse, <last>, ->DstTile<TSize> (CellReg form only)",
+          "B.IOR predicate-GPR source (GPR form only)",
           "BSTOP"
         ],
         "canonical_assembly": [
@@ -132741,19 +132896,16 @@
           "BSTART.VEC TSEL, E3M2; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK; B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>; BSTOP"
         ],
         "exceptions": [
-          "Malformed binding order, B.IOR or B.IOS presence, missing or zero dimensions, ordinary numeric mask storage, undefined predicate or data elements, unsupported DataType, shape, type or layout mismatch, unequal masks, or insufficient destination capacity raises Fault_TileLegality or Fault_TileAllocation before architectural effects.",
-          "TSEL performs no conversion and therefore raises no floating invalid condition solely because a selected source encoding represents NaN.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion behavior after an accepted operation."
+          "Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, wrong PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
+          "TSEL is a raw-carrier select and does not raise floating invalid solely because a selected source payload encodes NaN."
         ],
         "field_domains": [],
         "legality": [
-          "TSEL is selected only by VEC Mode 0 Function 26 and has no standalone opcode.",
-          "Exactly two ordered Local B.IOT bindings are required. The first supplies packed Predicate and SrcTrue without Last or a destination; the second supplies SrcFalse and one new terminating destination. B.IOR, B.IOS, and additional bindings are illegal.",
-          "The data DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.",
-          "SrcTrue, SrcFalse, and destination match physical shape, valid shape, row-major layout, and DataType; every valid element of both data sources is defined, and numeric encoding validity is not required for selected carrier payloads.",
-          "Predicate uses predicate-kind storage, has the same Row, Col, ValidRow, and ValidCol as the data Tiles, and defines every valid predicate bit. An ordinary numeric Tile is not a legal mask.",
-          "PadValueOrByteId is the only applicable B.DATR field. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.",
-          "Both B.IOT bindings use one PE_MASK. PE_MASK=0000 is a strict no-op before schema, source, allocation, or payload checks."
+          "TSEL selects VEC Mode 0 Function 26. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.",
+          "Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent.",
+          "CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a canonical PredicateCell whose basis DataType, valid shape, and layout match the numeric sources. The data type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8; B.IOR is absent.",
+          "CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The type is 32-bit or 16-bit types from the closed CUBE domain, plus U8; U8 consumes two mask GPRs and other accepted types consume one.",
+          "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field."
         ],
         "memory_effects": [
           "none"
@@ -132761,19 +132913,19 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local numeric destination"
+            "role": "new RowMajor or CUBE numeric destination"
           },
           {
             "field": "source0",
-            "role": "packed one-bit Local predicate mask"
+            "role": "legacy packed Predicate, CUBE PredicateCell, or first GPR-mask role"
           },
           {
             "field": "source1",
-            "role": "persistent Local source selected by one"
+            "role": "persistent source selected by predicate one"
           },
           {
             "field": "source2",
-            "role": "persistent Local source selected by zero"
+            "role": "persistent source selected by predicate zero"
           }
         ],
         "ordering": [
@@ -132782,7 +132934,7 @@
         ],
         "standalone_opcode": false,
         "state_effects": [
-          "For logical element i, read bit i mod 8 of byte floor(i/8), selecting the exact SrcTrue encoding when one and SrcFalse encoding when zero.",
+          "For each logical element, read the selected carrier predicate and copy the exact SrcTrue encoding when one or SrcFalse encoding when zero.",
           "Perform no rounding, saturation, canonicalization, arithmetic, or floating-status update.",
           "Publish selected payload, padding definedness, and destination descriptor atomically. Rejection has no architectural effect and all three sources persist."
         ]
@@ -132792,7 +132944,7 @@
       "mnemonic": "TSEL",
       "ndf_clause": "PTO-INST-TILE-TSEL",
       "source": "asl/tile/elementwise-tile-tile/logical/TSEL.asl",
-      "summary": "Select exact element encodings from two Local Tiles under one packed predicate Tile.",
+      "summary": "Select exact element encodings under one legacy Predicate, CUBE PredicateCell, or GPR mask carrier.",
       "surface": "tile"
     },
     {
@@ -132839,7 +132991,7 @@
             },
             {
               "field": "source0",
-              "role": "packed Local predicate mask"
+              "role": "legacy Predicate, CUBE PredicateCell, or GPR mask role"
             },
             {
               "field": "source1",
@@ -132855,7 +133007,7 @@
           "semantic_handler": "ExecuteTileSelectScalar",
           "state_effects": [
             "operand:destination0:new-local-numeric-destination",
-            "operand:source0:packed-predicate-mask",
+            "operand:source0:variant-predicate-mask-carrier",
             "operand:source1:persistent-local-source-true",
             "operand:scalar0:private-gpr-scalar-false",
             "runtime:CurrentBundlePadValue:numeric-padding"
@@ -132873,8 +133025,8 @@
           "B.DIM LB0=ValidCol",
           "B.DIM LB1=ValidRow (optional)",
           "B.DIM LB2=Col (optional)",
-          "B.IOT Predicate, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize>",
-          "B.IOR ScalarFalseGPR, zero, zero, ->zero (optional)",
+          "B.IOT PredicateCell, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize> OR GPR predicate form without PredicateCell",
+          "B.IOR predicate-GPR source and optional scalar-false source",
           "BSTOP"
         ],
         "canonical_assembly": [
@@ -132891,9 +133043,8 @@
           "BSTART.VEC TSELS, DataType; B.DATR PadValue (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT Predicate, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR ScalarFalseGPR, zero, zero, ->zero (optional); BSTOP"
         ],
         "exceptions": [
-          "Malformed binding order, B.IOS presence, surplus B.IOR fields, unsupported type, ordinary numeric mask storage, undefined predicate or true-source data, shape mismatch, capacity failure, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.",
-          "Selection copies exact encodings and does not itself raise floating invalid for a selected NaN.",
-          "CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation."
+          "Malformed or mixed carrier schemas, unsupported type, wrong PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.",
+          "TSELS copies raw carrier encodings and does not itself raise floating invalid for a selected NaN payload."
         ],
         "field_domains": [
           {
@@ -133043,12 +133194,11 @@
           }
         ],
         "legality": [
-          "TSELS is selected only by the TEPL raw carrier Mode 1 Function 26 and executes on VEC.",
-          "Exactly one terminating Local B.IOT supplies packed Predicate, numeric SrcTrue, and one newly allocated numeric destination. B.IOS and additional Tile bindings are illegal.",
-          "The data DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.",
-          "Predicate uses packed predicate-kind storage with matching logical geometry and every valid bit defined. SrcTrue and destination match physical shape, valid shape, row-major layout, and DataType; numeric encoding validity is not required for selected source or scalar carrier payloads.",
-          "Only RegSrc0 may be nonzero in B.IOR and only PadValueOrByteId is applicable in B.DATR.",
-          "PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks."
+          "TSELS selects TEPL Mode 1 Function 26 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.",
+          "Legacy RowMajor form uses one terminating B.IOT with packed Predicate, SrcTrue, and one new destination; one B.IOR source supplies scalar-false or omission selects zero.",
+          "CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with basis-matched PredicateCell, SrcTrue, and one new CUBE destination plus an optional scalar-false B.IOR source; omission selects zero. The data type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.",
+          "CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue and one new CUBE destination. One source-only B.IOR carries the complete predicate mask followed by the independent scalar-false source: two sources for one-word masks and three for U8's two-word mask. The type is 32-bit or 16-bit types from the closed CUBE domain, plus U8.",
+          "Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field."
         ],
         "memory_effects": [
           "none"
@@ -133056,19 +133206,19 @@
         "operands": [
           {
             "field": "destination0",
-            "role": "new Local numeric destination"
+            "role": "new RowMajor or CUBE numeric destination"
           },
           {
             "field": "source0",
-            "role": "packed Local predicate mask"
+            "role": "legacy packed Predicate, CUBE PredicateCell, or GPR mask role"
           },
           {
             "field": "source1",
-            "role": "persistent Local source selected by one"
+            "role": "persistent source selected by predicate one"
           },
           {
             "field": "scalar0",
-            "role": "per-participating-PE scalar selected by zero"
+            "role": "independent scalar selected by predicate zero"
           }
         ],
         "ordering": [
@@ -133087,7 +133237,7 @@
       "mnemonic": "TSELS",
       "ndf_clause": "PTO-INST-TILE-TSELS",
       "source": "asl/tile/tile-scalar-and-immediate/logical/TSELS.asl",
-      "summary": "Select each result encoding from a Local Tile or private-GPR scalar under one packed predicate Tile.",
+      "summary": "Select each result encoding from a Local Tile or scalar under one legacy Predicate, CUBE PredicateCell, or GPR mask carrier.",
       "surface": "tile"
     },
     {
@@ -136667,9 +136817,9 @@
   "schema": "pto.instruction-contract-closure.v1",
   "summary": {
     "encoded_form_count": 542,
-    "mnemonic_count": 634,
+    "mnemonic_count": 635,
     "placeholder_count": 0,
-    "selector_operation_count": 107,
+    "selector_operation_count": 108,
     "status": "closed",
     "unresolved_field_count": 0
   }

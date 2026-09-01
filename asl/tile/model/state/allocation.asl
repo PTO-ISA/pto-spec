@@ -35,6 +35,7 @@ begin
     _Tiles[[index]].valid_rows = valid_rows;
     _Tiles[[index]].valid_columns = valid_columns;
     _Tiles[[index]].data_type = data_type;
+    _Tiles[[index]].predicate_basis_type = data_type;
     _Tiles[[index]].layout = layout;
     _Tiles[[index]].location = location;
     _Tiles[[index]].cube_k_repeat = 0;
@@ -82,6 +83,7 @@ begin
     _Tiles[[index]].valid_rows = valid_rows;
     _Tiles[[index]].valid_columns = valid_columns;
     _Tiles[[index]].data_type = TileDataType_U8;
+    _Tiles[[index]].predicate_basis_type = TileDataType_U8;
     _Tiles[[index]].layout = TileLayout_RowMajor;
     _Tiles[[index]].location = TileLocation_Any;
     _Tiles[[index]].cube_k_repeat = 0;
@@ -163,6 +165,7 @@ begin
     _Tiles[[index]].valid_rows = valid_rows;
     _Tiles[[index]].valid_columns = valid_columns;
     _Tiles[[index]].data_type = data_type;
+    _Tiles[[index]].predicate_basis_type = data_type;
     _Tiles[[index]].layout = layout;
     _Tiles[[index]].location = location;
     _Tiles[[index]].cube_k_repeat = k_repeat;
@@ -202,10 +205,42 @@ begin
     _Tiles[[index]].valid_rows = 0;
     _Tiles[[index]].valid_columns = 0;
     _Tiles[[index]].data_type = TileDataType_U8;
+    _Tiles[[index]].predicate_basis_type = TileDataType_U8;
     _Tiles[[index]].layout = TileLayout_RowMajor;
     _Tiles[[index]].location = TileLocation_Any;
     _Tiles[[index]].cube_k_repeat = 0;
     _Tiles[[index]].cube_n_repeat = 0;
     _Tiles[[index]].cube_cell_count = 0;
     _Tiles[[index]].cube_storage_bytes = 0;
+end;
+
+func ConfigurePredicateCellForMask(
+    index: TileIndex, capacity_bytes: integer {0..262144},
+    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
+    basis_type: TileDataType, layout: TileLayout,
+    allocation_mask: bits(4)) => boolean
+begin
+    if (layout != TileLayout_CUBE_M16 && layout != TileLayout_CUBE_M32) ||
+       !TileCubePredicateDataTypeSupported(basis_type) then
+        return FALSE;
+    end;
+    if !ConfigureCubeTileForMask(
+           index, capacity_bytes, valid_rows, valid_columns,
+           TileDataType_U8, layout, TileLocation_Matrix,
+           allocation_mask) then
+        return FALSE;
+    end;
+    _Tiles[[index]].storage_kind = TileStorage_PredicateCell;
+    _Tiles[[index]].predicate_basis_type = basis_type;
+    return TRUE;
+end;
+
+func ConfigurePredicateCell(
+    index: TileIndex, capacity_bytes: integer {0..262144},
+    valid_rows: integer {0..65535}, valid_columns: integer {0..65535},
+    basis_type: TileDataType, layout: TileLayout) => boolean
+begin
+    return ConfigurePredicateCellForMask(
+        index, capacity_bytes, valid_rows, valid_columns,
+        basis_type, layout, '0001');
 end;

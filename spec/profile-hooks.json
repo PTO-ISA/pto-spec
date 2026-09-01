@@ -474,6 +474,22 @@
       ]
     },
     {
+      "domain": "tile-predicate-padding",
+      "model": "asl/tile/model/execution/comparison.asl",
+      "name": "TileProfilePredicateNullGPRPadding",
+      "portable_default": "Return all-zero bits for CUBE GPR predicate positions outside the valid region when PadValue is Null.",
+      "profile_obligations": [
+        "Choose only the otherwise-unspecified GPR predicate bits outside the valid CUBE region for Null padding; preserve all valid predicate bits, deterministic Zero/Min and Max padding, destination selection, and numeric status."
+      ],
+      "requirement": "PTO-TCMP-CONTRACT-001",
+      "implementation_status": "implemented-by-pto-v0",
+      "conformance_status": "reference-profile-closed",
+      "maturity_target": null,
+      "tests": [
+        "tests/asl/arch/profile/reference-profile/arch-exec-predicate-null-gpr-padding-002.asl"
+      ]
+    },
+    {
       "domain": "tile-reduction",
       "model": "asl/tile/model/execution/reduction.asl",
       "name": "TileProfileReductionInitial",

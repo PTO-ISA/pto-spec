@@ -84,6 +84,8 @@ begin
     _LocalGenerations[[slot]].parent_descriptor.valid_rows = 0;
     _LocalGenerations[[slot]].parent_descriptor.valid_columns = 0;
     _LocalGenerations[[slot]].parent_descriptor.data_type = TileDataType_FP64;
+    _LocalGenerations[[slot]].parent_descriptor.predicate_basis_type =
+        TileDataType_FP64;
     _LocalGenerations[[slot]].parent_descriptor.layout = TileLayout_RowMajor;
     _LocalGenerations[[slot]].parent_descriptor.location = TileLocation_Any;
     _LocalGenerations[[slot]].parent_descriptor.cube_k_repeat = 0;
@@ -244,6 +246,7 @@ begin
            actual.valid_rows == expected.valid_rows &&
            actual.valid_columns == expected.valid_columns &&
            actual.data_type == expected.data_type &&
+           actual.predicate_basis_type == expected.predicate_basis_type &&
            actual.layout == expected.layout &&
            actual.location == expected.location &&
            actual.cube_k_repeat == expected.cube_k_repeat &&
@@ -402,6 +405,8 @@ begin
                 _LocalGenerations[[slot]].parent_descriptor.valid_rows = _Tiles[[destination]].valid_rows;
                 _LocalGenerations[[slot]].parent_descriptor.valid_columns = _Tiles[[destination]].valid_columns;
                 _LocalGenerations[[slot]].parent_descriptor.data_type = _Tiles[[destination]].data_type;
+                _LocalGenerations[[slot]].parent_descriptor.predicate_basis_type =
+                    _Tiles[[destination]].predicate_basis_type;
                 _LocalGenerations[[slot]].parent_descriptor.layout = _Tiles[[destination]].layout;
                 _LocalGenerations[[slot]].parent_descriptor.location = _Tiles[[destination]].location;
                 _LocalGenerations[[slot]].parent_descriptor.cube_k_repeat = _Tiles[[destination]].cube_k_repeat;

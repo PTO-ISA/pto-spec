@@ -443,6 +443,7 @@ begin
              TileHandler_TPERMUTE,
              TileHandler_TSHUF,
              TileHandler_TPACK,
+             TileHandler_TGPR2T,
              TileHandler_TUNPACK,
              TileHandler_TTRI =>
             return BundleProducerEffect_RollbackSafe;

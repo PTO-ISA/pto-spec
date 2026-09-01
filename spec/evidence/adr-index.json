@@ -8590,12 +8590,95 @@
         "0.58.5"
       ],
       "title": "Tile operation type roles and source reinterpretation"
+    },
+    {
+      "accepted": "2026-08-31",
+      "affected_ndf": [
+        "PTO-B-IOR-BINDING-001",
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-TCMP-CONTRACT-001",
+        "PTO-TCMPS-CONTRACT-001",
+        "PTO-TSEL-CONTRACT-001",
+        "PTO-TSELS-CONTRACT-001",
+        "PTO-TGPR2T-CONTRACT-001",
+        "PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001",
+        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001",
+        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001",
+        "PTO-INST-BLOCK-B-DATR",
+        "PTO-INST-BLOCK-B-IOR",
+        "PTO-INST-TILE-TCMP",
+        "PTO-INST-TILE-TCMPS",
+        "PTO-INST-TILE-TGPR2T",
+        "PTO-INST-TILE-TSEL",
+        "PTO-INST-TILE-TSELS"
+      ],
+      "affected_units": [
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-ARCH-PROFILE-RESET",
+        "PTO-BLOCK-B-IOR",
+        "PTO-BLOCK-B-DATR",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+        "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+        "PTO-BLOCK-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+        "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+        "PTO-TILE-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+        "PTO-TILE-MODEL-DISPATCH-LAYOUT-AND-REARRANGEMENT",
+        "PTO-TILE-TCMP",
+        "PTO-TILE-TCMPS",
+        "PTO-TILE-TSEL",
+        "PTO-TILE-TSELS",
+        "PTO-TILE-TGPR2T"
+      ],
+      "approvers": [
+        "PTO ISA maintainers"
+      ],
+      "authors": [
+        "PTO ISA maintainers"
+      ],
+      "baseline": "e811355419182144784af802ff4c86d6a7014c70",
+      "created": "2026-08-31",
+      "id": "ADR-0113",
+      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/pull/172",
+      "legacy_ids": [],
+      "path": "docs/status/decisions/0113-cube-predicate-carriers-and-tgpr2t-superseding-contract.md",
+      "rejected": null,
+      "release_boundary": true,
+      "release_impact": "required",
+      "resolves": [],
+      "status": "accepted",
+      "superseded": null,
+      "superseded_by": [],
+      "supersedes": [],
+      "target_releases": [
+        "0.58.5"
+      ],
+      "title": "CUBE predicate carriers and TGPR2T superseding contract"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 11,
     "legacy_id_count": 198,
-    "record_count": 106
+    "record_count": 107
   }
 }

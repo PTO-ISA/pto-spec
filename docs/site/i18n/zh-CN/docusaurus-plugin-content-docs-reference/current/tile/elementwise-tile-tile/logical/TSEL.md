@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/elementwise-tile-tile/logical/TSEL.asl`
 
-Select exact element encodings from two Local Tiles under one packed predicate Tile.
+Select exact element encodings under one legacy Predicate, CUBE PredicateCell, or GPR mask carrier.
 
 ## Normative identity {#PTO-INST-TILE-TSEL}
 
@@ -99,10 +99,10 @@ This operation has no standalone opcode.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new Local numeric destination |
-| source0 | packed one-bit Local predicate mask |
-| source1 | persistent Local source selected by one |
-| source2 | persistent Local source selected by zero |
+| destination0 | new RowMajor or CUBE numeric destination |
+| source0 | legacy packed Predicate, CUBE PredicateCell, or first GPR-mask role |
+| source1 | persistent source selected by predicate one |
+| source2 | persistent source selected by predicate zero |
 
 ## Decode
 
@@ -123,8 +123,9 @@ B.DATR PadValue (optional)
 B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
-B.IOT Predicate, SrcTrue, mask=PE_MASK
-B.IOT SrcFalse, mask=PE_MASK, <last>, ->DstTile<TSize>
+B.IOT PredicateCell, SrcTrue, mask=PE_MASK, <last>, ->DstTile<TSize> OR GPR predicate form without PredicateCell
+B.IOT SrcFalse, <last>, ->DstTile<TSize> (CellReg form only)
+B.IOR predicate-GPR source (GPR form only)
 BSTOP
 ```
 
@@ -184,17 +185,15 @@ end;
 
 ## Legality
 
-- TSEL is selected only by VEC Mode 0 Function 26 and has no standalone opcode.
-- Exactly two ordered Local B.IOT bindings are required. The first supplies packed Predicate and SrcTrue without Last or a destination; the second supplies SrcFalse and one new terminating destination. B.IOR, B.IOS, and additional bindings are illegal.
-- The data DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8; every other type rejects before effects.
-- SrcTrue, SrcFalse, and destination match physical shape, valid shape, row-major layout, and DataType; every valid element of both data sources is defined, and numeric encoding validity is not required for selected carrier payloads.
-- Predicate uses predicate-kind storage, has the same Row, Col, ValidRow, and ValidCol as the data Tiles, and defines every valid predicate bit. An ordinary numeric Tile is not a legal mask.
-- PadValueOrByteId is the only applicable B.DATR field. Explicit nondefault CMode, Sat, Canonicalize, secondary DataType, RMode, or Layout is illegal.
-- Both B.IOT bindings use one PE_MASK. PE_MASK=0000 is a strict no-op before schema, source, allocation, or payload checks.
+- TSEL selects VEC Mode 0 Function 26. PE_MASK=0000 is a strict no-op before GPR, predicate, source, allocation, or payload checks.
+- Legacy RowMajor form uses two ordered B.IOT records: packed Predicate plus SrcTrue, then SrcFalse plus one new destination; B.IOR is absent.
+- CUBE_M16/M32 PredicateCell form uses the same two-record Tile structure with a canonical PredicateCell whose basis DataType, valid shape, and layout match the numeric sources. The data type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8; B.IOR is absent.
+- CUBE_M16/M32 GPR form uses one B.IOT with SrcTrue, SrcFalse, and one new CUBE destination plus one source-only B.IOR carrying the complete mask. The type is 32-bit or 16-bit types from the closed CUBE domain, plus U8; U8 consumes two mask GPRs and other accepted types consume one.
+- Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. PadValueOrByteId is the only applicable B.DATR field.
 
 ## State effects
 
-- For logical element i, read bit i mod 8 of byte floor(i/8), selecting the exact SrcTrue encoding when one and SrcFalse encoding when zero.
+- For each logical element, read the selected carrier predicate and copy the exact SrcTrue encoding when one or SrcFalse encoding when zero.
 - Perform no rounding, saturation, canonicalization, arithmetic, or floating-status update.
 - Publish selected payload, padding definedness, and destination descriptor atomically. Rejection has no architectural effect and all three sources persist.
 
@@ -211,9 +210,8 @@ end;
 
 ## Exceptions
 
-- Malformed binding order, B.IOR or B.IOS presence, missing or zero dimensions, ordinary numeric mask storage, undefined predicate or data elements, unsupported DataType, shape, type or layout mismatch, unequal masks, or insufficient destination capacity raises Fault_TileLegality or Fault_TileAllocation before architectural effects.
-- TSEL performs no conversion and therefore raises no floating invalid condition solely because a selected source encoding represents NaN.
-- CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion behavior after an accepted operation.
+- Malformed or mixed carrier schemas, missing dimensions, unsupported DataType, wrong PredicateCell basis, noncanonical predicate bytes, undefined source data, shape/layout mismatch, insufficient destination capacity, or allocation failure rejects before effects.
+- TSEL is a raw-carrier select and does not raise floating invalid solely because a selected source payload encodes NaN.
 
 ## Examples
 

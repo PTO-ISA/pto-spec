@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
+// PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE","surface":"block","classification":["model","dispatch","destination-shape"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-CELL-REARRANGEMENT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY","PTO-BLOCK-MODEL-DISPATCH-EXPANSION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-HISTOGRAM-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-NUMERIC-CONTROL","PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-QUANTIZATION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-REDUCTION-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-SORTING-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION","PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA","PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA","PTO-TILE-MODEL-STATE-SHARED-REGISTERS"]}
 readonly func BundleDestinationValidRows(shape_source_valid: boolean,
                                          shape_source: TileIndex)
                                          => integer {0..65535}
@@ -134,6 +134,7 @@ begin
     end;
     let matrix = _BundleOperation.valid &&
         _BundleOperation.operation_class == BundleOperation_TileMatrix;
+    let decoded_operation = DecodeTileOperation(BundleTileDecodeFamily(_BundleOperation.operation_class), BundleOperationDecodeCode(_BundleOperation));
     let accumulator_type = TileMatrixAccumulatorDataType(selected_type);
     let matrix_output_type = if matrix &&
         UInt(_BundleFixedPointAttributes.pre_quant_mode) == 0 then
@@ -221,6 +222,7 @@ begin
             let valid_columns = if explicit_shape then
                 explicit_valid_columns else BundleDestinationValidColumns(
                     shape_source_valid, shape_source);
+            let destination_layout = if decoded_operation != PTO_TILE_OPERATION_COUNT && TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T then if valid_rows == 32 then TileLayout_CUBE_M32 else TileLayout_CUBE_M16 else CurrentBundleTileLayout();
             let columns = if explicit_shape then explicit_columns else
                 BundleDestinationPhysicalColumns(
                     shape_source_valid, shape_source);
@@ -246,14 +248,17 @@ begin
                 else valid_columns;
             let capacity_bytes = BundleLocalDestinationAllocationBytes(
                 binding as BundleTileBindingIndex);
-            ConfigureTileForMask(resolved[[binding]],
-                capacity_bytes, valid_rows, auxiliary_columns, valid_rows,
-                auxiliary_valid_columns, destination_type,
-                CurrentBundleTileLayout(), TileLocation_Any,
-                _BundleTileBindings[[binding]].pe_mask);
+            let tgpr2t = decoded_operation != PTO_TILE_OPERATION_COUNT && TileOperationOfIndex(decoded_operation as integer {0..PTO_TILE_OPERATION_COUNT-1}) == TileOperation_TGPR2T;
+            if !ConfigureBundleTileDestination(resolved[[binding]],
+                    capacity_bytes, valid_rows, auxiliary_columns,
+                    auxiliary_valid_columns, destination_type,
+                    destination_layout, _BundleTileBindings[[binding]].pe_mask,
+                    tgpr2t) then
+                SetFault(Fault_TileAllocation, ReadTPC());
+                return FALSE;
+            end;
             _BundleTileBindings[[binding]].destination = resolved[[binding]];
-            _BundleTileBindings[[binding]].destination_allocated_by_bundle =
-                TRUE;
+            _BundleTileBindings[[binding]].destination_allocated_by_bundle = TRUE;
             destination_ordinal = destination_ordinal + 1;
         end;
     end;
@@ -276,67 +281,6 @@ end;
 func ResolveBundleTileDestinations() => boolean
 begin
     return ResolveBundleTileDestinationsWithShape(FALSE, 0, 0, 0);
-end;
-func ResolveBundlePredicateDestination() => boolean
-begin
-    var destination_binding: BundleTileBindingIndex = 0;
-    var destination_seen = FALSE;
-    for binding = 0 to PTO_BUNDLE_TILE_BINDING_COUNT - 1 do
-        if !destination_seen &&
-           _BundleTileBindings[[binding]].valid &&
-           _BundleTileBindings[[binding]].destination_valid then
-            destination_binding = binding as BundleTileBindingIndex;
-            destination_seen = TRUE;
-        end;
-    end;
-    if !destination_seen then
-        SetFault(Fault_BundleControl, ReadTPC());
-        return FALSE;
-    end;
-    let binding = _BundleTileBindings[[destination_binding]];
-    let source = binding.source0;
-    let source_tile = _Tiles[[source]];
-    let capacity_bytes = BundleLocalDestinationAllocationBytes(
-        destination_binding);
-    if source_tile.storage_kind != TileStorage_Numeric ||
-       source_tile.rows * source_tile.columns >
-           TileLogicalElementCapacity(source_tile.capacity_bytes,
-               source_tile.data_type) ||
-       PredicateTileStorageBytes(
-           source_tile.rows,
-           source_tile.columns) > capacity_bytes then
-        SetFault(Fault_TileAllocation, ReadTPC());
-        return FALSE;
-    end;
-    if !LocalTileAllocationFits(binding.pe_mask, capacity_bytes) then
-        SetFault(Fault_TileAllocation, ReadTPC());
-        return FALSE;
-    end;
-    let hand = UInt(binding.destination_hand);
-    var resolved: TileIndex = 0;
-    var found = FALSE;
-    for offset = 0 to 15 do
-        let raw_index: integer = hand * 16 + offset;
-        if !found && !_Tiles[[raw_index]].allocated then
-            resolved = raw_index as TileIndex;
-            found = TRUE;
-        end;
-    end;
-    if !found then
-        SetFault(Fault_TileAllocation, ReadTPC());
-        return FALSE;
-    end;
-    ConfigurePredicateTileForMask(
-        resolved,
-        capacity_bytes,
-        source_tile.rows,
-        source_tile.columns,
-        source_tile.valid_rows,
-        source_tile.valid_columns,
-        binding.pe_mask);
-    _BundleTileBindings[[destination_binding]].destination = resolved;
-    _BundleTileBindings[[destination_binding]].destination_allocated_by_bundle = TRUE;
-    return TRUE;
 end;
 func ResolveBundleTileDestinationsForOperation(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
@@ -459,6 +403,12 @@ begin
        TileOperationUsesClosedTCMPSSchema(operation) then
         return ResolveBundlePredicateDestination();
     end;
+    if (TileOperationUsesClosedTSELSchema(operation) ||
+        TileOperationUsesClosedTSELSSchema(operation)) &&
+       SelectedBundleComparisonCUBE(
+           BundleComparisonSelectTrueSource(operation)) then
+        return ResolveBundleCUBESelectDestination(operation);
+    end;
     if TileExpansionOperationIsExponentialDifference(operation) then
         let (types_legal, -, destination_type) =
             SelectedBundleExpansionExponentialDifferenceTypes();
@@ -488,13 +438,8 @@ begin
        !TileOperationUsesClosedTileScalarSchema(operation) then
         return ResolveBundleTileDestinations();
     end;
-    let valid_columns = UInt(_BundleDimensions[[0]])
-        as integer {1..65535};
-    let valid_rows = if _BundleDimensionPresent[[1]] then
-        UInt(_BundleDimensions[[1]]) as integer {1..65535} else 1;
-    let columns = if _BundleDimensionPresent[[2]] then
-        UInt(_BundleDimensions[[2]]) as integer {1..65535}
-        else valid_columns;
-    return ResolveBundleTileDestinationsWithShape(
-        TRUE, valid_rows, valid_columns, columns);
+    let valid_columns = UInt(_BundleDimensions[[0]]) as integer {1..65535};
+    let valid_rows = if _BundleDimensionPresent[[1]] then UInt(_BundleDimensions[[1]]) as integer {1..65535} else 1;
+    let columns = if _BundleDimensionPresent[[2]] then UInt(_BundleDimensions[[2]]) as integer {1..65535} else valid_columns;
+    return ResolveBundleTileDestinationsWithShape(TRUE, valid_rows, valid_columns, columns);
 end;

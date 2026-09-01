@@ -220,6 +220,10 @@ Optional header command after BSTART and before B.IOR, B.IOT, B.IOS, or the firs
 
 <!-- GENERATED-ASL-BEGIN: operation source=asl/block/attributes/B.DATR.asl -->
 ```asl
+// B.DATR fields retain their operation-selected meanings. For TGPR2T,
+// PadValueOrByteId is numeric U8 Zero/Max whole-tile padding, RMode[16:15]
+// selects ByteOffset 0..3, and RMode[17] is reserved-zero. Null padding is
+// rejected by TGPR2T before allocation or publication.
 // DataType code 31 has the canonical spelling DTYPE_NONE. It is an encoded
 // field sentinel, not a TileDataType. A concrete B.DATR type overrides the
 // BSTART type; DTYPE_NONE preserves a concrete BSTART type and still latches
