@@ -9,7 +9,7 @@
   "accepted": "2026-09-01",
   "rejected": null,
   "superseded": null,
-  "baseline": "e811355419182144784af802ff4c86d6a7014c70",
+  "baseline": "961fa81eb7f39b095b3173e4b4efb7299c45186d",
   "target_releases": ["0.58.5"],
   "affected_ndf": [
     "PTO-ATOM-RED-ENCODING-001",
