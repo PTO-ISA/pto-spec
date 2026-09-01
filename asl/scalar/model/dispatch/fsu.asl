@@ -134,25 +134,31 @@ func ExecuteDecodedFPConvert(
     operation: ScalarOperation)
 begin
     let source_selector = ScalarDecodedFPSourceType(instruction, form);
-    let destination_type = ScalarDecodedBits5(
+    let raw_destination_type = ScalarDecodedBits5(
         instruction, form, ScalarField_DstType);
     var source_type: bits(5);
+    var destination_type: bits(5);
     var source_supported: boolean;
     var destination_supported: boolean;
     if operation == ScalarOperation_SCVTF then
         source_type = ScalarSignedIntegerSourceTypeCode(source_selector);
+        destination_type = raw_destination_type;
         source_supported = ScalarIntegerTypeCodeSupported(source_type);
         destination_supported = ScalarFPTypeCodeSupported(destination_type);
     elsif operation == ScalarOperation_UCVTF then
         source_type = ScalarUnsignedIntegerSourceTypeCode(source_selector);
+        destination_type = raw_destination_type;
         source_supported = ScalarIntegerTypeCodeSupported(source_type);
         destination_supported = ScalarFPTypeCodeSupported(destination_type);
     else
         source_type = ScalarFPSourceTypeCode(source_selector);
         source_supported = ScalarFPTypeCodeSupported(source_type);
         if operation == ScalarOperation_FCVT then
+            destination_type = raw_destination_type;
             destination_supported = ScalarFPTypeCodeSupported(destination_type);
         else
+            destination_type = ScalarFPToIntegerDestinationTypeCode(
+                raw_destination_type);
             destination_supported = ScalarIntegerTypeCodeSupported(destination_type);
         end;
     end;

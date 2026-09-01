@@ -2858,7 +2858,8 @@
         "ADR-0059",
         "ADR-0084",
         "ADR-0102",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "tests": []
     },
@@ -2875,7 +2876,8 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "tests": []
     },
@@ -2892,7 +2894,8 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "tests": []
     },
@@ -2909,7 +2912,8 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "tests": []
     },
@@ -2926,9 +2930,13 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-SCALAR-FCVTZ-DSTTYPE-MAP-002",
+        "PTO-AVS-SCALAR-FCVTZ-RAW-SD-002"
+      ]
     },
     {
       "executable": false,
@@ -2968,7 +2976,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0120"
       ],
       "tests": []
     },
@@ -2982,7 +2991,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0120"
       ],
       "tests": []
     },
@@ -3072,7 +3082,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0120"
       ],
       "tests": []
     },
@@ -3086,7 +3097,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0120"
       ],
       "tests": [
         "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004"
@@ -4557,7 +4569,9 @@
       "owners": [
         "asl/block/lifecycle/FENTRY.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0120"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-FENTRY-ACCESS-RECOVERY-002",
         "PTO-AVS-BLOCK-FENTRY-DECODE-001",
@@ -4571,7 +4585,9 @@
       "owners": [
         "asl/block/lifecycle/FEXIT.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0120"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-FEXIT-DECODE-001",
         "PTO-AVS-BLOCK-FEXIT-FRAME-001",
@@ -4584,7 +4600,9 @@
       "owners": [
         "asl/block/lifecycle/FRET.RA.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0120"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-FRET-RA-ACCESS-RECOVERY-002",
         "PTO-AVS-BLOCK-FRET-RA-DECODE-001",
@@ -4597,7 +4615,9 @@
       "owners": [
         "asl/block/lifecycle/FRET.STK.asl"
       ],
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0120"
+      ],
       "tests": [
         "PTO-AVS-BLOCK-FRET-STK-DECODE-001",
         "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004",
@@ -5978,7 +5998,8 @@
         "asl/scalar/fsu/FCVTA.asl"
       ],
       "readiness_subjects": [
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "tests": [
         "PTO-AVS-FSU-FCVTA-BOUND-001",
@@ -6000,7 +6021,8 @@
         "asl/scalar/fsu/FCVTM.asl"
       ],
       "readiness_subjects": [
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "tests": [
         "PTO-AVS-FSU-FCVTM-BOUND-001",
@@ -6022,7 +6044,8 @@
         "asl/scalar/fsu/FCVTN.asl"
       ],
       "readiness_subjects": [
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "tests": [
         "PTO-AVS-FSU-FCVTN-BOUND-001",
@@ -6044,7 +6067,8 @@
         "asl/scalar/fsu/FCVTP.asl"
       ],
       "readiness_subjects": [
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "tests": [
         "PTO-AVS-FSU-FCVTP-BOUND-001",
@@ -6066,7 +6090,8 @@
         "asl/scalar/fsu/FCVTZ.asl"
       ],
       "readiness_subjects": [
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "tests": [
         "PTO-AVS-FSU-FCVTZ-BOUND-001",
@@ -6078,7 +6103,9 @@
         "PTO-AVS-FSU-FCVTZ-SNAP-001",
         "PTO-AVS-FSU-FCVTZ-SRC-001",
         "PTO-AVS-FSU-FCVTZ-TYPE-001",
-        "PTO-AVS-SCALAR-FCVTZ-DECODE-001"
+        "PTO-AVS-SCALAR-FCVTZ-DECODE-001",
+        "PTO-AVS-SCALAR-FCVTZ-DSTTYPE-MAP-002",
+        "PTO-AVS-SCALAR-FCVTZ-RAW-SD-002"
       ]
     },
     {
@@ -12365,6 +12392,7 @@
         "PTO-AVS-BLOCK-TLOAD-SHARED-001",
         "PTO-AVS-BLOCK-TLOAD-STRIDE-001",
         "PTO-AVS-BLOCK-TLOAD-ZERO-MASK-001",
+        "PTO-AVS-TILE-TLOAD-16X16-STRIDE-003",
         "PTO-AVS-TILE-TLOAD-DIRECT-001",
         "PTO-AVS-TILE-TLOAD-SHARED-PARENT-002",
         "PTO-AVS-TILE-TLOAD-STATIC-001"
@@ -15647,7 +15675,9 @@
         "ADR-0096",
         "ADR-0108"
       ],
-      "tests": []
+      "tests": [
+        "PTO-AVS-TILE-TLOAD-16X16-STRIDE-003"
+      ]
     },
     {
       "executable": false,
@@ -17401,11 +17431,11 @@
     "asl/scalar/fsu/FABS.asl": "99bb0856c09d8400b419dad06937b1fc79979afc3f2aac3b46c44541eebb581a",
     "asl/scalar/fsu/FADD.asl": "c5e17fe86f753a0b76c64aea421d7188e0161aa41f6178162d31cc21a9b884d6",
     "asl/scalar/fsu/FCVT.asl": "b145040aa460270fb4faa1f5cff3863fddeda697a2ff0c3cad46e894a183eb6e",
-    "asl/scalar/fsu/FCVTA.asl": "69810f553ec9be69dafbd50a3ee6001513fe02099e689922ed98568f8026f926",
-    "asl/scalar/fsu/FCVTM.asl": "c59e3d99454d811ac89a72489e8163dd8509175fd20a56ecb265609deaff40b0",
-    "asl/scalar/fsu/FCVTN.asl": "fffe1e78ecab6f33be10fbe1620a8f4a6f080564880ca1cbd466cf49eadf7e41",
-    "asl/scalar/fsu/FCVTP.asl": "d308d99a5651e60235e051cfc39ba3733382da455ee0215fb814079fdaf6fcc9",
-    "asl/scalar/fsu/FCVTZ.asl": "31880220c35e05787a2f5177a8cc089f4a5149523495d8768aef65f2f7d1aafe",
+    "asl/scalar/fsu/FCVTA.asl": "0f936dc13f9f012517d622406de2f1bd61c2a543989e7429a44b744c9377b336",
+    "asl/scalar/fsu/FCVTM.asl": "e299f94463149062cfd741f25b0dabc77f8242c4a0e9d61e3ec6a7b2fceafbec",
+    "asl/scalar/fsu/FCVTN.asl": "de7012476b85946ed5a4eda4430a5c81fd472fed12e0e3d7b3fbb67b61faeed3",
+    "asl/scalar/fsu/FCVTP.asl": "7e49239eab87ecca1994a0512b615a7d780a01e8d84c154b4200209167616c7f",
+    "asl/scalar/fsu/FCVTZ.asl": "4d82517dcfc9e0a0be63ee60ffde622a47a1d205ac1739e06b0920657f2b6068",
     "asl/scalar/fsu/FDIV.asl": "0abce64a1bd7de320827acd79bc1de531d2e89c31689e01605f79747a4ee87e3",
     "asl/scalar/fsu/FEQ.asl": "ee79d71688250f722430c5b49e2b05e54c5610321079ff7a5c4d1fe602ef1d30",
     "asl/scalar/fsu/FEQS.asl": "67b443e4461a26f4db7c5c231e492dcdbb3018e9fb9ae2fe9187a1a834cc2e29",
@@ -17439,11 +17469,11 @@
     "asl/scalar/model/dispatch/amo.asl": "6c1cbff9ffb76d530083ce68fc0b2b288475080ba5713b28d363f3fb23ea2666",
     "asl/scalar/model/dispatch/bru.asl": "ff1616fb96e8fa5f6add13f2ce39c54f985d38b558510370dee134cb09d845ee",
     "asl/scalar/model/dispatch/decode.asl": "045d0d7faa48a02adf549e08b670e6d7573b7354dfeaf5ce0c422a0c1634180c",
-    "asl/scalar/model/dispatch/fsu.asl": "07ea4132a13f28b549578473df9ba986a9e6d107c3514ac300b5ea44bc0a54a3",
+    "asl/scalar/model/dispatch/fsu.asl": "c954c5ccdfaebc0fa238c1415364844c4f547b385e59aa540504f5490acdddca",
     "asl/scalar/model/dispatch/sys.asl": "3962b4109ea93dfb583d5f27b5eff22367ddd1e33b55f364a5ce0b7dfa43e8e5",
     "asl/scalar/model/dispatch/top-level.asl": "1968a9513ab3113288fc958070209511676440e0db93eb7ae67b1b7f0d029d4f",
     "asl/scalar/model/fsu/arithmetic.asl": "21bdc927b7c5e13f0db364ccb07d87a8e303b82041212bc2bb289e5fa9377288",
-    "asl/scalar/model/fsu/profile.asl": "c429ac19ea648dd0b0180a736af1fcd3990cb949b2397ca2e33003b3da593295",
+    "asl/scalar/model/fsu/profile.asl": "df81ebe5d6e58d179a843ae2b6da48928f653bb248ef6aa75c7c3942039a0bca",
     "asl/scalar/model/sys/registers.asl": "9ca955860f45c7660bbc1a8dce879ad77c945e8504ec08d607ffb96d2a708cbb",
     "asl/scalar/model/sys/semantics.asl": "fbea73b3fb29bcb2cee5d7027c0a6a363d156ba514d03bf86a5c8f33438da754",
     "asl/scalar/model/types/operands.asl": "f1bfb9a3ea9012c6895705aa0ce14c20eb17976bf0a98b1f31290786bd0c5fcb",
@@ -18254,11 +18284,11 @@
     "docs/scalar/fsu/FABS.md": "a4a65bbf8f9bb1b1f454e79ff0c21c3ceade1f50e6abd39b5a63bae3f6012f06",
     "docs/scalar/fsu/FADD.md": "323233ec28d3a804b7cb86975c88ffc1d72349f06b20e13bddeacbbcc18c0f04",
     "docs/scalar/fsu/FCVT.md": "04c9065ace8613f8830f61e4ec596214e3916c8a68f7e4aa8ebf1a7a6a83d90a",
-    "docs/scalar/fsu/FCVTA.md": "ba891b50d45ce40608b135db223d1605fcba78c0c44701dc351ed3377be87269",
-    "docs/scalar/fsu/FCVTM.md": "2475dfd102bdf464e1cb050e65d4f0601ab5792d03534f317bfc511f524bce7e",
-    "docs/scalar/fsu/FCVTN.md": "13a3229e6b17e1ddfcb239a5be6cb7ef02659a85ec0d2917190453b118ae6db4",
-    "docs/scalar/fsu/FCVTP.md": "47eb9107d5cca4f1553dc7ceb80631605fa9d20b02a3de47694b0cb16642d6d0",
-    "docs/scalar/fsu/FCVTZ.md": "fb16768d36918f8ee9bc565c639ff6e1eca26fbf140e3b34a09de1024bef5645",
+    "docs/scalar/fsu/FCVTA.md": "e477ccbc086868c90a3378266e005b820825fd5896f93681c8b958258eaf5f68",
+    "docs/scalar/fsu/FCVTM.md": "2b312714732a471e4ac55006d3984cc27a8f0cf44c11137d73cb8e24331c79f1",
+    "docs/scalar/fsu/FCVTN.md": "50652ebfec5e2a369a74f8a473e5d6c145e66bc2319bb50614e147d4f269bfcd",
+    "docs/scalar/fsu/FCVTP.md": "2fd92aed3065b85a547c96a49404b3368b4ca5ab7a62d18ec7690de141d926e5",
+    "docs/scalar/fsu/FCVTZ.md": "dc3fb25ea32297d487f013fb2c2385f7214ab6ccd4916d9f511b368edebcd53d",
     "docs/scalar/fsu/FDIV.md": "b8baf8f4034c72aa86162df4cdafb737654afe6f1ddff1297e0c64d684af55cf",
     "docs/scalar/fsu/FEQ.md": "dc81b6326a8f1142aa4ed59ae16184740f408184138aca460b522d9275d98225",
     "docs/scalar/fsu/FEQS.md": "3e463dd643d47ad53add901a2a5cbcbfa49645f0e8f31cedd5317c4e4b150919",
@@ -18292,11 +18322,11 @@
     "docs/scalar/model/dispatch/amo.md": "2b4894acc4e69dd07784b99634d76d68ffe7da2542f9d92dd56511038726ac71",
     "docs/scalar/model/dispatch/bru.md": "88ba74d99c48603f9fb46f428a06563ffe300375d0e954a2bed9a3e05014f5ac",
     "docs/scalar/model/dispatch/decode.md": "c6c464c3c1fc0472a64c4001b0752f63f7ecd93a0f5de11e56dab879530a9ed1",
-    "docs/scalar/model/dispatch/fsu.md": "0028b652ed811f2c550f6b2fec339e7b3f5415afb5de6587f2c5c851ff5f7488",
+    "docs/scalar/model/dispatch/fsu.md": "8a474146b3626dd0bb112d6ecaf8c95d3eaa4716ef11c616d56c6648ec129eca",
     "docs/scalar/model/dispatch/sys.md": "b76b031973de5b74eb269dd4029f8e629c981157bcc50a2a33677314e7638855",
     "docs/scalar/model/dispatch/top-level.md": "690c02fd8c112c52c34759ad4616c3fad323b8e9b8f1a7be883dabb0c3277df7",
     "docs/scalar/model/fsu/arithmetic.md": "b153847a3fac645297eb00f768790d62809cf47b4e8c0c474ee356a9b0eb71b8",
-    "docs/scalar/model/fsu/profile.md": "e55fee963910a53f515f95a3e4fdcf9fbf7fa86334a949842a4c3f3ce74c0477",
+    "docs/scalar/model/fsu/profile.md": "058c1b25a146463fda9b0fe0b9cdb48b91cbab9aaad4f4187bda9821d3fa84e8",
     "docs/scalar/model/sys/registers.md": "69ceaf6dbaa025f7b36fad552923f09d7f53bbef11c9cdb2b5a875ea6364d908",
     "docs/scalar/model/sys/semantics.md": "761bd37dcea7d78a626d63b620b10980232946a9e4a4bb3ba458aa8c8d38bb2c",
     "docs/scalar/model/types/operands.md": "dbe5436afc2eecd8c5045770c3b4c9df49a27aae7c1473ab274299e086592fef",
@@ -18509,8 +18539,8 @@
     "docs/tile/tile-scalar-and-immediate/logical/TSHLS.md": "5d8ea9e618f7edf596cbfeec6480dbfe99868eed869d5a34781324a9426a376c",
     "docs/tile/tile-scalar-and-immediate/logical/TSHRS.md": "53d0d493b2de2fabe000aa93cee93df34b31e390b3fec260a0d59bdb5a8525c8",
     "docs/tile/tile-scalar-and-immediate/logical/TXORS.md": "53d4f5911cc544fe3f97bfa7336659469086ef9075ea4a8c4929a7de1ed1a874",
-    "spec/evidence/adr-index.json": "48ef4486bcc46f2ae9c507d92752d6a80489725f97008058fa02354aa1a51376",
-    "spec/evidence/instruction-contract-closure.json": "3173a0b82e7cdc752078c53d91ebda748ec8f7c7292c43cf89e629217feca33e",
+    "spec/evidence/adr-index.json": "584e1766eea5bc6faaf1a9c028c387de46de0ffaa76132ee79a0dcc9be020694",
+    "spec/evidence/instruction-contract-closure.json": "0d25020799bfba14e238a8ebd4c9419215cf2935f3531b8fcacebd3c17f712a0",
     "tests/asl/arch/data-types/fault/arch-fault-complete-trap-envelope-001.asl": "7b876a89dc7673cceb61ed326f196fd959295c0173c58ca18ca96b7085b9adcb",
     "tests/asl/arch/data-types/fault/arch-static-fault-contract-001.asl": "09298fe7a9f3232db427f7d0f0b8a64d3cf22fb5374675f2e1a72145d8ef89ee",
     "tests/asl/arch/data-types/floating-point/arch-static-floating-point-contract-001.asl": "88ba63e7b74ee830e8e5ea54b14571d9a12631ea4a92e9e1a9aab30f4579af1e",
@@ -18637,6 +18667,8 @@
     "tests/asl/arch/profile/matrix-quantization/arch-exec-matrix-intermediate-002.asl": "d6cb36092f0003111e8003e8e027c323e2686e8b88965bccd59e7332f5e2306e",
     "tests/asl/arch/profile/matrix-quantization/arch-exec-matrix-quantization-001.asl": "58ba7a5c35d1c667e57c23b82a434006709c925c88a0c91b64190cf859160c50",
     "tests/asl/arch/profile/matrix-quantization/arch-static-matrix-quantization-contract-001.asl": "bd64d8ee6c83946d3d622e3bede11ae210e662fba80f0793bfac6f18ad8629c8",
+    "tests/asl/arch/profile/reference-profile/arch-bound-reference-profile-fp32-power-013.asl": "70cf943a4fd1a6feff9d3d27ffb5b5d7c14d26262bc6f1a94f59750da275eb7d",
+    "tests/asl/arch/profile/reference-profile/arch-bound-reference-profile-fp32-stream-014.asl": "bdd86c47974d848b37835e51d9bbc9000e4cc031f3f562eb2fdb8bfa089d3969",
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl": "38814e41be41d630c7839bdd6988e4df6e4ca8eb0667764d6a6e8b6eedd6ace5",
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-access-005.asl": "eb604d8c6f7b0bb4aabce0500ea989b246177cf88fd1f4742c6b11ab64eade12",
     "tests/asl/arch/profile/reference-profile/arch-exec-concrete-reset-007.asl": "fa24ce2bbb3f85a16e9a83bb2eda73c28371e202ae82f2cc19afdecd49833c9c",
@@ -21125,7 +21157,7 @@
     "tests/asl/scalar/fsu/FCVT/scalar-state-fcvt-flags-001.asl": "e501c97ccd0f5d6639e1931da782afd676e256434433506c2f154d710b925b5e",
     "tests/asl/scalar/fsu/FCVTA/scalar-bound-fcvta-round-001.asl": "ef478fc15d1c9c44ac2d6074132d44a8b7544cebda3e41ac7c04c0575ffd271f",
     "tests/asl/scalar/fsu/FCVTA/scalar-bound-fcvta-types-001.asl": "196b7836703552ee109bfa8a0b6bce4167302de6f5a0f0c6c42ee5d5c1546fb5",
-    "tests/asl/scalar/fsu/FCVTA/scalar-bound-fcvta-values-001.asl": "1447f020a588ca96e19686155cd6e799e1f235af0bd634c65a87090c42e25c2f",
+    "tests/asl/scalar/fsu/FCVTA/scalar-bound-fcvta-values-001.asl": "4c3585034b634b0957653a5ff4c82afacc8f6e8cf9c1d78690178c4ba253b0b6",
     "tests/asl/scalar/fsu/FCVTA/scalar-decode-fcvta-canonical-001.asl": "4467f33a286e1048629148377760add8045977c48eba17bcd8536868f9828191",
     "tests/asl/scalar/fsu/FCVTA/scalar-exec-fcvta-direct-001.asl": "28b385992edef24a8a642725e7bb149609a850863c915332ec709e26d6e36e7b",
     "tests/asl/scalar/fsu/FCVTA/scalar-exec-fcvta-dst-001.asl": "1c097971737b584d8b4e83fe1dc8a3d9ebf6eaab47c6a63f5c1140a64b5090c5",
@@ -21135,7 +21167,7 @@
     "tests/asl/scalar/fsu/FCVTA/scalar-state-fcvta-flags-001.asl": "0c85be581b429bcc1e251ddad59faf904a77cf13d0d157692ac7ce6a23f2a925",
     "tests/asl/scalar/fsu/FCVTM/scalar-bound-fcvtm-round-001.asl": "41f24f9fed2d90f10f2e8a910f54f619489a7a2c0500a6fccf724be601fe3480",
     "tests/asl/scalar/fsu/FCVTM/scalar-bound-fcvtm-types-001.asl": "7c30f9935ba4cb6bd2496fc8cdf692914db6ff5ee88c00ab055e3b006d25a9b7",
-    "tests/asl/scalar/fsu/FCVTM/scalar-bound-fcvtm-values-001.asl": "8813c54b00b186822d20e4fedd4c79501471f383feeaadd782939b9eb3541729",
+    "tests/asl/scalar/fsu/FCVTM/scalar-bound-fcvtm-values-001.asl": "f66c0a6ccc0b8a9f37a2306a9a037221d5efd0549e7ff26b9efee4cc6122473f",
     "tests/asl/scalar/fsu/FCVTM/scalar-decode-fcvtm-canonical-001.asl": "5ebf4f1115ba229f1495f6b0834577a3f63aedd291888724f4a08b3c691beb82",
     "tests/asl/scalar/fsu/FCVTM/scalar-exec-fcvtm-direct-001.asl": "19cbdd34c3e16e7857376972a8d7425bcd0afb445a08bf3c578561a121e01213",
     "tests/asl/scalar/fsu/FCVTM/scalar-exec-fcvtm-dst-001.asl": "06fe1b6e7ac4384b6e5bf0e2d2be797a36cc6dd71f782ab701ff12bc453b39a6",
@@ -21145,7 +21177,7 @@
     "tests/asl/scalar/fsu/FCVTM/scalar-state-fcvtm-flags-001.asl": "362151c42a5e984856842f02325970363820340972dc17f9ce2f2208397c7047",
     "tests/asl/scalar/fsu/FCVTN/scalar-bound-fcvtn-round-001.asl": "eef698324f17a185924a684d1a9881c3329c47d25a173b2bbcdb6dfebddb4290",
     "tests/asl/scalar/fsu/FCVTN/scalar-bound-fcvtn-types-001.asl": "255c80c5c18043918a4dc19c70cdbe910fd1ad5875cec5012abe433fd332c093",
-    "tests/asl/scalar/fsu/FCVTN/scalar-bound-fcvtn-values-001.asl": "62de7bab8c43b4436ad7e9a696ef333a1546168ff4e0bef1cbd1290c506f8dd3",
+    "tests/asl/scalar/fsu/FCVTN/scalar-bound-fcvtn-values-001.asl": "d9ac335dc00d862a130963334c5537663342ba6115d5e2fbd7683d05e306457e",
     "tests/asl/scalar/fsu/FCVTN/scalar-decode-fcvtn-canonical-001.asl": "5c537f82555d94a1b0c609770a0072922a1f3ad5852f1e9f3872ce0510d1e85d",
     "tests/asl/scalar/fsu/FCVTN/scalar-exec-fcvtn-direct-001.asl": "5a5bdd6a47b766c86cd9e832331f773bdf6a141d4cadcd79be47fdc3cbc8d0cb",
     "tests/asl/scalar/fsu/FCVTN/scalar-exec-fcvtn-dst-001.asl": "3d5c0e56d52d042673b158b7d38eab008948f67cdafe13152d4c326f7b3002b1",
@@ -21155,7 +21187,7 @@
     "tests/asl/scalar/fsu/FCVTN/scalar-state-fcvtn-flags-001.asl": "54a7b27203d63de6485709fa6e7bfba7fc04b83cc0d125f359eed574e2b3fc6c",
     "tests/asl/scalar/fsu/FCVTP/scalar-bound-fcvtp-round-001.asl": "d5ea7a8febc38d6bf7ffe9e17fbbd6d7b081f231d11a73fb04e417c19739ebab",
     "tests/asl/scalar/fsu/FCVTP/scalar-bound-fcvtp-types-001.asl": "4a6e27dc11b7b2a7628a3defda8c63eb4f2748c310ce030e0c0394fbfa9ead46",
-    "tests/asl/scalar/fsu/FCVTP/scalar-bound-fcvtp-values-001.asl": "d9edca8f642431dbad0116df86e220ff24d6cd11399e0205abda006f76c952e8",
+    "tests/asl/scalar/fsu/FCVTP/scalar-bound-fcvtp-values-001.asl": "6394b5c5d8c962cd2be91742d6b3626056db1c02c16222f84f8508c89037ee68",
     "tests/asl/scalar/fsu/FCVTP/scalar-decode-fcvtp-canonical-001.asl": "6f3f5e3c0294e4f1c14732815f8ea63e4995ffa6e9197dd3ec770354a18c8760",
     "tests/asl/scalar/fsu/FCVTP/scalar-exec-fcvtp-direct-001.asl": "542509b7946cdd673caaa637934cf90ca914168bd912e735b4e1f3cab13b0cf1",
     "tests/asl/scalar/fsu/FCVTP/scalar-exec-fcvtp-dst-001.asl": "f4033c831cd2a336df1659562dfae4df4ddb4847a3c7d6890f6b6a16a20d3fac",
@@ -21163,12 +21195,14 @@
     "tests/asl/scalar/fsu/FCVTP/scalar-exec-fcvtp-src-001.asl": "32b97ff3694d4447ffea29eaf2c1d305ff95f075f8f31bfcbf9c1920b5a34350",
     "tests/asl/scalar/fsu/FCVTP/scalar-fault-fcvtp-types-001.asl": "1fea7af461ae997127185ded499108dbae7b18f37b2e474f35fddaa3db3453a4",
     "tests/asl/scalar/fsu/FCVTP/scalar-state-fcvtp-flags-001.asl": "ce0e1f26283a8f4b282e4f34eed501d9f893e9e6608ede026a1cc874a93a8827",
+    "tests/asl/scalar/fsu/FCVTZ/scalar-bound-fcvtz-dsttype-map-002.asl": "337b38cbd19d31ab260194baca65d57ce7684de025c405686587159db581851c",
     "tests/asl/scalar/fsu/FCVTZ/scalar-bound-fcvtz-round-001.asl": "c1b663057e9e10868b06b54e742e1f47605a4881047f7de7d690204704a13832",
     "tests/asl/scalar/fsu/FCVTZ/scalar-bound-fcvtz-types-001.asl": "34671bcd6930a097e330dec791e2c340e348257bca6b7b4100e029f3ae90cd2c",
-    "tests/asl/scalar/fsu/FCVTZ/scalar-bound-fcvtz-values-001.asl": "781ae71d270edab04a7839cc1b3a359d202f50484b6155689c93cededf603c4a",
+    "tests/asl/scalar/fsu/FCVTZ/scalar-bound-fcvtz-values-001.asl": "eb9a82fd5f5762dc971a1f85d5da87d1784ec4d800eb25a02c870bcc4a5a76b1",
     "tests/asl/scalar/fsu/FCVTZ/scalar-decode-fcvtz-canonical-001.asl": "2113ebd57fe7176a4bdc5c7b0eb7261ad8ab6d63011fcb872d432ca55a1ebf7d",
     "tests/asl/scalar/fsu/FCVTZ/scalar-exec-fcvtz-direct-001.asl": "bbd61d86b8db0c620a3824a9c7ed55a210905815d5a6e121d53ade206c0af734",
     "tests/asl/scalar/fsu/FCVTZ/scalar-exec-fcvtz-dst-001.asl": "77f80b64a9552c1224834f1c058e83e86fffb2cc7f8aa55fbfb07bc1770512ed",
+    "tests/asl/scalar/fsu/FCVTZ/scalar-exec-fcvtz-raw-sd-002.asl": "e508e6648625b3a6e44d2180bf974ce308a717a69e8782c640175dbbd16ad480",
     "tests/asl/scalar/fsu/FCVTZ/scalar-exec-fcvtz-snap-001.asl": "d5bc6ef6c1bb5357181b3eb839b0a14bbfe7c8bb8ebcd12f74ec90f8a8bc7ad3",
     "tests/asl/scalar/fsu/FCVTZ/scalar-exec-fcvtz-src-001.asl": "36e91e14a05ac0644d5751fddc431688e903f03d22bc7917e6a85641d1a05698",
     "tests/asl/scalar/fsu/FCVTZ/scalar-fault-fcvtz-types-001.asl": "957e1902a233830d8974976333e5d3ea271a6f973af3419e409a46c775bc3680",
@@ -22000,6 +22034,7 @@
     "tests/asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK/tile-static-mscatter-mask-contract-001.asl": "a48bc146713e995e0c4a0c241b5a3b31c1ecb3791aade966310cc26f5a0051ce",
     "tests/asl/tile/memory-and-data-movement/pe-movement/GMOV/tile-exec-gmov-copy-001.asl": "b8127ce000396df0a9f32c1a8a1c31a172625f4d359fd0254e24aa3bdfa87e1e",
     "tests/asl/tile/memory-and-data-movement/pe-movement/GMOV/tile-static-gmov-contract-001.asl": "1306fabceb4a4ebf0c894dd9aa9623df2ba3d382c4893eee803d04425679cb43",
+    "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-bound-tload-16x16-stride-003.asl": "ac46b7d01b326059317e981d98eeb92623ba6f178c6ec5d07417a0836f9219da",
     "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-exec-tload-direct-001.asl": "04cbcc92cfcbe1f32c9eba0f886529b0b21d713bb7e2c8bdf69a092283673eee",
     "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-exec-tload-shared-parent-002.asl": "dd5595d47a2c4b72a379d544f09f7db0b13c53c907af3773a58a61ef66874e05",
     "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-static-tload-contract-001.asl": "7a63b4f22265af0b715ee8ac01f48b32006c4ecbc85aae9819282ea5dd93682b",
@@ -22274,7 +22309,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1025,
     "status": "closed",
-    "test_count": 3754,
+    "test_count": 3759,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -30910,6 +30945,22 @@
       "path": "tests/asl/arch/profile/reference-profile/arch-exec-reference-profile-fp32-010.asl",
       "requirements": [],
       "sha256": "c348ec2c549d2dc5e28dae70136ee8f1b9d5eef74a40331c7356c05392dc3a32",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-POWER-013",
+      "kind": "boundary",
+      "path": "tests/asl/arch/profile/reference-profile/arch-bound-reference-profile-fp32-power-013.asl",
+      "requirements": [],
+      "sha256": "70cf943a4fd1a6feff9d3d27ffb5b5d7c14d26262bc6f1a94f59750da275eb7d",
+      "source": "asl/arch/profile/reference-profile.asl"
+    },
+    {
+      "id": "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-STREAM-014",
+      "kind": "boundary",
+      "path": "tests/asl/arch/profile/reference-profile/arch-bound-reference-profile-fp32-stream-014.asl",
+      "requirements": [],
+      "sha256": "bdd86c47974d848b37835e51d9bbc9000e4cc031f3f562eb2fdb8bfa089d3969",
       "source": "asl/arch/profile/reference-profile.asl"
     },
     {
@@ -40985,7 +41036,7 @@
       "requirements": [
         "PTO-INST-SCALAR-FCVTA"
       ],
-      "sha256": "1447f020a588ca96e19686155cd6e799e1f235af0bd634c65a87090c42e25c2f",
+      "sha256": "4c3585034b634b0957653a5ff4c82afacc8f6e8cf9c1d78690178c4ba253b0b6",
       "source": "asl/scalar/fsu/FCVTA.asl"
     },
     {
@@ -41075,7 +41126,7 @@
       "requirements": [
         "PTO-INST-SCALAR-FCVTM"
       ],
-      "sha256": "8813c54b00b186822d20e4fedd4c79501471f383feeaadd782939b9eb3541729",
+      "sha256": "f66c0a6ccc0b8a9f37a2306a9a037221d5efd0549e7ff26b9efee4cc6122473f",
       "source": "asl/scalar/fsu/FCVTM.asl"
     },
     {
@@ -41165,7 +41216,7 @@
       "requirements": [
         "PTO-INST-SCALAR-FCVTN"
       ],
-      "sha256": "62de7bab8c43b4436ad7e9a696ef333a1546168ff4e0bef1cbd1290c506f8dd3",
+      "sha256": "d9ac335dc00d862a130963334c5537663342ba6115d5e2fbd7683d05e306457e",
       "source": "asl/scalar/fsu/FCVTN.asl"
     },
     {
@@ -41255,7 +41306,7 @@
       "requirements": [
         "PTO-INST-SCALAR-FCVTP"
       ],
-      "sha256": "d9edca8f642431dbad0116df86e220ff24d6cd11399e0205abda006f76c952e8",
+      "sha256": "6394b5c5d8c962cd2be91742d6b3626056db1c02c16222f84f8508c89037ee68",
       "source": "asl/scalar/fsu/FCVTP.asl"
     },
     {
@@ -41345,7 +41396,7 @@
       "requirements": [
         "PTO-INST-SCALAR-FCVTZ"
       ],
-      "sha256": "781ae71d270edab04a7839cc1b3a359d202f50484b6155689c93cededf603c4a",
+      "sha256": "eb9a82fd5f5762dc971a1f85d5da87d1784ec4d800eb25a02c870bcc4a5a76b1",
       "source": "asl/scalar/fsu/FCVTZ.asl"
     },
     {
@@ -45390,6 +45441,28 @@
         "PTO-INST-SCALAR-FCVTZ"
       ],
       "sha256": "2113ebd57fe7176a4bdc5c7b0eb7261ad8ab6d63011fcb872d432ca55a1ebf7d",
+      "source": "asl/scalar/fsu/FCVTZ.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-FCVTZ-DSTTYPE-MAP-002",
+      "kind": "boundary",
+      "path": "tests/asl/scalar/fsu/FCVTZ/scalar-bound-fcvtz-dsttype-map-002.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-FCVTZ",
+        "PTO-FCVTZ-DECISION-BINDING-001"
+      ],
+      "sha256": "337b38cbd19d31ab260194baca65d57ce7684de025c405686587159db581851c",
+      "source": "asl/scalar/fsu/FCVTZ.asl"
+    },
+    {
+      "id": "PTO-AVS-SCALAR-FCVTZ-RAW-SD-002",
+      "kind": "execution",
+      "path": "tests/asl/scalar/fsu/FCVTZ/scalar-exec-fcvtz-raw-sd-002.asl",
+      "requirements": [
+        "PTO-INST-SCALAR-FCVTZ",
+        "PTO-FCVTZ-DECISION-BINDING-001"
+      ],
+      "sha256": "e508e6648625b3a6e44d2180bf974ce308a717a69e8782c640175dbbd16ad480",
       "source": "asl/scalar/fsu/FCVTZ.asl"
     },
     {
@@ -57156,6 +57229,17 @@
       "source": "asl/tile/layout-and-rearrangement/layout/TINSERT.asl"
     },
     {
+      "id": "PTO-AVS-TILE-TLOAD-16X16-STRIDE-003",
+      "kind": "boundary",
+      "path": "tests/asl/tile/memory-and-data-movement/regular/TLOAD/tile-bound-tload-16x16-stride-003.asl",
+      "requirements": [
+        "PTO-INST-TILE-TLOAD",
+        "PTO-TLOAD-MEMORY-001"
+      ],
+      "sha256": "ac46b7d01b326059317e981d98eeb92623ba6f178c6ec5d07417a0836f9219da",
+      "source": "asl/tile/memory-and-data-movement/regular/TLOAD.asl"
+    },
+    {
       "id": "PTO-AVS-TILE-TLOAD-CUBE-001",
       "kind": "execution",
       "path": "tests/asl/tile/model/memory/load-store/tile-exec-tload-cube-001.asl",
@@ -61139,6 +61223,8 @@
         "PTO-AVS-ARCH-REFERENCE-PROFILE-DIVZERO-009",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-EXPONENTIAL-008",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-010",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-POWER-013",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-STREAM-014",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011"
       ],
       "source": "asl/arch/profile/reference-profile.asl",
@@ -61156,6 +61242,8 @@
         "PTO-AVS-ARCH-REFERENCE-PROFILE-DIVZERO-009",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-EXPONENTIAL-008",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-010",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-POWER-013",
+        "PTO-AVS-ARCH-REFERENCE-PROFILE-FP32-STREAM-014",
         "PTO-AVS-ARCH-REFERENCE-PROFILE-FP64-011"
       ]
     },
@@ -63386,7 +63474,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0120"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-FENTRY-ACCESS-RECOVERY-002",
@@ -63418,7 +63507,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0120"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-FEXIT-FRAME-001",
@@ -63448,7 +63538,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0120"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-FRET-RA-ACCESS-RECOVERY-002",
@@ -63478,7 +63569,8 @@
         "ADR-0032",
         "ADR-0052",
         "ADR-0059",
-        "ADR-0084"
+        "ADR-0084",
+        "ADR-0120"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-FRET-STK-FRAME-PRESERVATION-004",
@@ -64747,7 +64839,8 @@
       "mnemonic": null,
       "readiness_subjects": [
         "ADR-0032",
-        "ADR-0055"
+        "ADR-0055",
+        "ADR-0120"
       ],
       "semantic_tests": [
         "PTO-AVS-BLOCK-TESTBUNDLETILEALLOCATIONANDLIFETIME-EXECUTION-001",
@@ -78566,7 +78659,8 @@
         "ADR-0059",
         "ADR-0084",
         "ADR-0102",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTA-BOUND-001",
@@ -78613,7 +78707,8 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTM-BOUND-001",
@@ -78660,7 +78755,8 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTN-BOUND-001",
@@ -78707,7 +78803,8 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTP-BOUND-001",
@@ -78754,7 +78851,8 @@
         "ADR-0047",
         "ADR-0059",
         "ADR-0084",
-        "ADR-0117"
+        "ADR-0117",
+        "ADR-0121"
       ],
       "semantic_tests": [
         "PTO-AVS-FSU-FCVTZ-BOUND-001",
@@ -78765,7 +78863,9 @@
         "PTO-AVS-FSU-FCVTZ-RSVD-001",
         "PTO-AVS-FSU-FCVTZ-SNAP-001",
         "PTO-AVS-FSU-FCVTZ-SRC-001",
-        "PTO-AVS-FSU-FCVTZ-TYPE-001"
+        "PTO-AVS-FSU-FCVTZ-TYPE-001",
+        "PTO-AVS-SCALAR-FCVTZ-DSTTYPE-MAP-002",
+        "PTO-AVS-SCALAR-FCVTZ-RAW-SD-002"
       ],
       "source": "asl/scalar/fsu/FCVTZ.asl",
       "surface": "scalar",
@@ -78779,7 +78879,9 @@
         "PTO-AVS-FSU-FCVTZ-SNAP-001",
         "PTO-AVS-FSU-FCVTZ-SRC-001",
         "PTO-AVS-FSU-FCVTZ-TYPE-001",
-        "PTO-AVS-SCALAR-FCVTZ-DECODE-001"
+        "PTO-AVS-SCALAR-FCVTZ-DECODE-001",
+        "PTO-AVS-SCALAR-FCVTZ-DSTTYPE-MAP-002",
+        "PTO-AVS-SCALAR-FCVTZ-RAW-SD-002"
       ]
     },
     {
@@ -79989,7 +80091,9 @@
       "documentation": "docs/scalar/model/dispatch/fsu.md",
       "id": "PTO-SCALAR-MODEL-DISPATCH-FSU",
       "mnemonic": null,
-      "readiness_subjects": [],
+      "readiness_subjects": [
+        "ADR-0121"
+      ],
       "semantic_tests": [
         "PTO-AVS-SCALAR-FP-FLAGS-001",
         "PTO-AVS-SCALAR-FP-ROUND-001"
@@ -80134,7 +80238,8 @@
       "id": "PTO-SCALAR-MODEL-FSU-PROFILE",
       "mnemonic": null,
       "readiness_subjects": [
-        "ADR-0048"
+        "ADR-0048",
+        "ADR-0121"
       ],
       "semantic_tests": [],
       "source": "asl/scalar/model/fsu/profile.asl",
@@ -83848,12 +83953,14 @@
         "ADR-0108"
       ],
       "semantic_tests": [
+        "PTO-AVS-TILE-TLOAD-16X16-STRIDE-003",
         "PTO-AVS-TILE-TLOAD-DIRECT-001",
         "PTO-AVS-TILE-TLOAD-SHARED-PARENT-002"
       ],
       "source": "asl/tile/memory-and-data-movement/regular/TLOAD.asl",
       "surface": "tile",
       "tests": [
+        "PTO-AVS-TILE-TLOAD-16X16-STRIDE-003",
         "PTO-AVS-TILE-TLOAD-DIRECT-001",
         "PTO-AVS-TILE-TLOAD-SHARED-PARENT-002",
         "PTO-AVS-TILE-TLOAD-STATIC-001"

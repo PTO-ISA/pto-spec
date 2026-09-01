@@ -38,6 +38,24 @@ begin
     return UInt(data_type) <= 14;
 end;
 
+pure func ScalarFPToIntegerDestinationRawLegal(encoded: bits(5))
+    => boolean
+begin
+    return UInt(encoded) <= 7;
+end;
+
+pure func ScalarFPToIntegerDestinationTypeCode(encoded: bits(5))
+    => bits(5)
+begin
+    if UInt(encoded) <= 3 then
+        return encoded;
+    elsif UInt(encoded) <= 7 then
+        return encoded + (Zeros{5} + 4);
+    else
+        return Ones{5};
+    end;
+end;
+
 readonly func ScalarFPActiveRoundingMode() => NumericRoundingMode
 begin
     return ResolveScalarFPActiveRoundingMode(_SystemRegisters.core_state[39:37]);

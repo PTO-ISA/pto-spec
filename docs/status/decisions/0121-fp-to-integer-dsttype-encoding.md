@@ -45,7 +45,7 @@
 
 ## Context
 
-The Linx FP-to-integer conversion encoding assigns raw DstType values 0 through
+The established FP-to-integer compiler contract assigns raw DstType values 0 through
 3 to unsigned 64-, 32-, 16-, and 8-bit results and values 4 through 7 to the
 corresponding signed results.  Values above seven are reserved.
 

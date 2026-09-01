@@ -4946,14 +4946,7 @@
             4,
             5,
             6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14
+            7
           ]
         }
       ],
@@ -5022,7 +5015,7 @@
       "semantic_family": "FSU",
       "semantic_group": "FSU",
       "semantic_handler": "ConvertFloatingEncoding",
-      "semantic_summary": "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-to-nearest, ties-away mode.",
+      "semantic_summary": "FCVTA converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-away mode.",
       "status": "accepted"
     },
     {
@@ -5047,14 +5040,7 @@
             4,
             5,
             6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14
+            7
           ]
         }
       ],
@@ -5123,7 +5109,7 @@
       "semantic_family": "FSU",
       "semantic_group": "FSU",
       "semantic_handler": "ConvertFloatingEncoding",
-      "semantic_summary": "FCVTM converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-down mode.",
+      "semantic_summary": "FCVTM converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-down mode.",
       "status": "accepted"
     },
     {
@@ -5148,14 +5134,7 @@
             4,
             5,
             6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14
+            7
           ]
         }
       ],
@@ -5224,7 +5203,7 @@
       "semantic_family": "FSU",
       "semantic_group": "FSU",
       "semantic_handler": "ConvertFloatingEncoding",
-      "semantic_summary": "FCVTN converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-nearest mode.",
+      "semantic_summary": "FCVTN converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-nearest mode.",
       "status": "accepted"
     },
     {
@@ -5249,14 +5228,7 @@
             4,
             5,
             6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14
+            7
           ]
         }
       ],
@@ -5325,7 +5297,7 @@
       "semantic_family": "FSU",
       "semantic_group": "FSU",
       "semantic_handler": "ConvertFloatingEncoding",
-      "semantic_summary": "FCVTP converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-up mode.",
+      "semantic_summary": "FCVTP converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-up mode.",
       "status": "accepted"
     },
     {
@@ -5350,14 +5322,7 @@
             4,
             5,
             6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14
+            7
           ]
         }
       ],
@@ -5426,7 +5391,7 @@
       "semantic_family": "FSU",
       "semantic_group": "FSU",
       "semantic_handler": "ConvertFloatingEncoding",
-      "semantic_summary": "FCVTZ converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-toward-zero mode.",
+      "semantic_summary": "FCVTZ converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-toward-zero mode.",
       "status": "accepted"
     },
     {

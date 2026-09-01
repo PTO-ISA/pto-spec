@@ -2398,23 +2398,23 @@
     },
     {
       "path": "asl/scalar/fsu/FCVTA.asl",
-      "sha256": "69810f553ec9be69dafbd50a3ee6001513fe02099e689922ed98568f8026f926"
+      "sha256": "0f936dc13f9f012517d622406de2f1bd61c2a543989e7429a44b744c9377b336"
     },
     {
       "path": "asl/scalar/fsu/FCVTM.asl",
-      "sha256": "c59e3d99454d811ac89a72489e8163dd8509175fd20a56ecb265609deaff40b0"
+      "sha256": "e299f94463149062cfd741f25b0dabc77f8242c4a0e9d61e3ec6a7b2fceafbec"
     },
     {
       "path": "asl/scalar/fsu/FCVTN.asl",
-      "sha256": "fffe1e78ecab6f33be10fbe1620a8f4a6f080564880ca1cbd466cf49eadf7e41"
+      "sha256": "de7012476b85946ed5a4eda4430a5c81fd472fed12e0e3d7b3fbb67b61faeed3"
     },
     {
       "path": "asl/scalar/fsu/FCVTP.asl",
-      "sha256": "d308d99a5651e60235e051cfc39ba3733382da455ee0215fb814079fdaf6fcc9"
+      "sha256": "7e49239eab87ecca1994a0512b615a7d780a01e8d84c154b4200209167616c7f"
     },
     {
       "path": "asl/scalar/fsu/FCVTZ.asl",
-      "sha256": "31880220c35e05787a2f5177a8cc089f4a5149523495d8768aef65f2f7d1aafe"
+      "sha256": "4d82517dcfc9e0a0be63ee60ffde622a47a1d205ac1739e06b0920657f2b6068"
     },
     {
       "path": "asl/scalar/fsu/FDIV.asl",
@@ -2550,7 +2550,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
-      "sha256": "07ea4132a13f28b549578473df9ba986a9e6d107c3514ac300b5ea44bc0a54a3"
+      "sha256": "c954c5ccdfaebc0fa238c1415364844c4f547b385e59aa540504f5490acdddca"
     },
     {
       "path": "asl/scalar/model/dispatch/sys.asl",
@@ -2566,7 +2566,7 @@
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
-      "sha256": "c429ac19ea648dd0b0180a736af1fcd3990cb949b2397ca2e33003b3da593295"
+      "sha256": "df81ebe5d6e58d179a843ae2b6da48928f653bb248ef6aa75c7c3942039a0bca"
     },
     {
       "path": "asl/scalar/model/sys/registers.asl",
@@ -3434,7 +3434,7 @@
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "0144de80b9997e9a936e6b0ec9b1a613c5bc61c72cf0aa28789e85b84756b1ab"
+      "sha256": "1f10a8cacab01d45bd790657f678e65eeb5683df4f4f4373ebbf943179bed7e7"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -3446,23 +3446,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "980fb2b6e8f7bf4317959cc30ccc43ab79f1380965a817463199c6b531c97ea4"
+      "sha256": "0e29c575f13f290eec6d72af2fba5fe233ca11c190c93ceaaf28bf6691330757"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "3173a0b82e7cdc752078c53d91ebda748ec8f7c7292c43cf89e629217feca33e"
+      "sha256": "0d25020799bfba14e238a8ebd4c9419215cf2935f3531b8fcacebd3c17f712a0"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "83c0f548f7e92ca37bdc6d82db10e76951fa8e2c5018f92f8b1035d0da4b278e"
+      "sha256": "e312daa06362adb5d951492e650028c44fed2b1ab948a014b2b013ed6578dd8d"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "ddb95f3fada42204173816b43d4d932b7bab7e7e6c0c506b6870b88f8ee68720"
+      "sha256": "0574a07115e3e154ad984bd0b36dd8d47546279f721d38cb771595aed3ee016f"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "49164aa18704349d05dbff9ef41e289ae3bc10dbcc5b117fa09f8502480c2725"
+      "sha256": "5e9431fdaa68487485ee967cac026b8c9454ab7f5b6af35ef761dc0ae1bcc9d5"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3508,7 +3508,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "b75b375de82f8bc1b0f810f86725b9262d5aa8b001bb7010a9278949e71eacf1",
+  "content_sha256": "e83f193a0e50342622608b79afa1064506e038dfa9f93380b864303835226354",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3527,7 +3527,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "f372271dc0edb773681030373a56be4c645491624ddfe65f904d7509b5f456c3",
+  "encoding_projection_sha256": "b2615654e077fbb55d08f56dac293da21a8604a330dc4fd9e70ccce55df68b5f",
   "hardware_conformance_profile": {
     "evidence": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
@@ -6535,27 +6535,27 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTA.md",
-      "sha256": "ba891b50d45ce40608b135db223d1605fcba78c0c44701dc351ed3377be87269"
+      "sha256": "e477ccbc086868c90a3378266e005b820825fd5896f93681c8b958258eaf5f68"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTM.md",
-      "sha256": "2475dfd102bdf464e1cb050e65d4f0601ab5792d03534f317bfc511f524bce7e"
+      "sha256": "2b312714732a471e4ac55006d3984cc27a8f0cf44c11137d73cb8e24331c79f1"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTN.md",
-      "sha256": "13a3229e6b17e1ddfcb239a5be6cb7ef02659a85ec0d2917190453b118ae6db4"
+      "sha256": "50652ebfec5e2a369a74f8a473e5d6c145e66bc2319bb50614e147d4f269bfcd"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTP.md",
-      "sha256": "47eb9107d5cca4f1553dc7ceb80631605fa9d20b02a3de47694b0cb16642d6d0"
+      "sha256": "2fd92aed3065b85a547c96a49404b3368b4ca5ab7a62d18ec7690de141d926e5"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/fsu/FCVTZ.md",
-      "sha256": "fb16768d36918f8ee9bc565c639ff6e1eca26fbf140e3b34a09de1024bef5645"
+      "sha256": "dc3fb25ea32297d487f013fb2c2385f7214ab6ccd4916d9f511b368edebcd53d"
     },
     {
       "kind": "generated-documentation",
@@ -6725,7 +6725,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/dispatch/fsu.md",
-      "sha256": "0028b652ed811f2c550f6b2fec339e7b3f5415afb5de6587f2c5c851ff5f7488"
+      "sha256": "8a474146b3626dd0bb112d6ecaf8c95d3eaa4716ef11c616d56c6648ec129eca"
     },
     {
       "kind": "generated-documentation",
@@ -6745,7 +6745,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/fsu/profile.md",
-      "sha256": "e55fee963910a53f515f95a3e4fdcf9fbf7fa86334a949842a4c3f3ce74c0477"
+      "sha256": "058c1b25a146463fda9b0fe0b9cdb48b91cbab9aaad4f4187bda9821d3fa84e8"
     },
     {
       "kind": "generated-documentation",
@@ -7810,12 +7810,12 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-abi-vectors.json",
-      "sha256": "ce1bf33a327564fd606bdd012bd51b8b927d80e7b14bba736f141c7d2f93956c"
+      "sha256": "4003988792c863057eabd06a9d5d0d669311b13d9db9f7dc1c75fa1f72fdb197"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-encoding-totality.json",
-      "sha256": "6334fcf5528fbf3d401027c360cf801f5f938f521d9114a31847b626f92d858a"
+      "sha256": "0c95400e640bf7ad0be37be3d2b792a2b60cd2e06c47d512675b2837d068f7e7"
     },
     {
       "kind": "generated-evidence",
@@ -7828,9 +7828,7 @@
   "release_selection": {
     "architecture_version": "0.58.5",
     "baseline_commit": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
-    "blockers": [
-      "release ASL unit drift is not covered by an accepted target ADR: PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
-    ],
+    "blockers": [],
     "excluded_draft_adrs": [
       "ADR-0086",
       "ADR-0087",
@@ -9150,23 +9148,23 @@
       },
       {
         "id": "PTO-INST-SCALAR-FCVTA",
-        "sha256": "53357704cb5841a8f78910362e215080c93b598ba41420f07fedb21c03ca99a1"
+        "sha256": "87d4a7fd00b09c5be38b5c0042cc77602a17f1334423d0e94160b7dcc37c1440"
       },
       {
         "id": "PTO-INST-SCALAR-FCVTM",
-        "sha256": "c2aa248ffcb10e06173a6e111412f177663dafa7201b15d4ac391ef67a7e9d24"
+        "sha256": "21b28f53a4a936500486b3af67c01ca09e0ebf9ee83e49cdc01a921e3dd629c3"
       },
       {
         "id": "PTO-INST-SCALAR-FCVTN",
-        "sha256": "19a127646cd226ecab2c5730ba4f79f0596bf58dba5d081886092295b341e5a5"
+        "sha256": "90cae3828fbe3963b074dfd0236a8bcb23a3b19e9c01b6a12c89da538b538fac"
       },
       {
         "id": "PTO-INST-SCALAR-FCVTP",
-        "sha256": "398627b448320c68242ce0302937a536a853d851e6be02d03f4903911d32519b"
+        "sha256": "aadda528e4eb0a32db992676cf14477937e7e15979b6a9c043aa0dbaa4c9c1d4"
       },
       {
         "id": "PTO-INST-SCALAR-FCVTZ",
-        "sha256": "5912ccea99e6fd24f9f734f75e802771ef18b335ada5002ab43346eb3938be29"
+        "sha256": "c3704a2902ce429c82b9b85997ab7f242b13cf4b656f7bbcdbd10412576c811e"
       },
       {
         "id": "PTO-INST-SCALAR-FDIV",
@@ -12050,7 +12048,9 @@
       "ADR-0116",
       "ADR-0117",
       "ADR-0118",
-      "ADR-0119"
+      "ADR-0119",
+      "ADR-0120",
+      "ADR-0121"
     ]
   },
   "schema_version": 1,

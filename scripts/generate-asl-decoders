@@ -3502,7 +3502,7 @@ def scalar_fsu_witness(
         values["DstType"] = dst_type
     elif field_by_name(row, "DstType") is not None:
         class_id = scalar_fsu_effect_class(row)
-        values["DstType"] = 9 if class_id == "scalar-fp-to-integer" else 1
+        values["DstType"] = 4 if class_id == "scalar-fp-to-integer" else 1
     if field_values is not None:
         values.update(field_values)
     for field_name, value in values.items():
@@ -3537,6 +3537,38 @@ def scalar_unsigned_integer_source_type_code(src_type: int) -> int:
     if src_type == 1:
         return 1
     return 31
+
+
+def scalar_fp_to_integer_destination_type_code(dst_type: int) -> int:
+    if 0 <= dst_type <= 3:
+        return dst_type
+    if 4 <= dst_type <= 7:
+        return dst_type + 4
+    return 31
+
+
+def scalar_fp_to_integer_round(value: float, mnemonic: str) -> int:
+    if mnemonic == "FCVTZ":
+        return math.trunc(value)
+    if mnemonic == "FCVTM":
+        return math.floor(value)
+    if mnemonic == "FCVTP":
+        return math.ceil(value)
+    lower = math.floor(value)
+    fraction = value - lower
+    if mnemonic == "FCVTN":
+        if fraction < 0.5:
+            return lower
+        if fraction > 0.5:
+            return lower + 1
+        return lower if lower % 2 == 0 else lower + 1
+    if mnemonic == "FCVTA":
+        if fraction < 0.5:
+            return lower
+        if fraction > 0.5:
+            return lower + 1
+        return lower if value < 0.0 else lower + 1
+    raise ValueError(f"unclassified FP-to-integer rounding mnemonic: {mnemonic}")
 
 
 def normalize_scalar_fp_source_py(value: int, data_type: int) -> int:
@@ -3783,7 +3815,7 @@ def scalar_fsu_success_inputs(row: dict) -> tuple[int, int, int, int, int]:
     elif class_id == "scalar-fp-format-convert":
         dst_type = 4
     elif class_id == "scalar-fp-to-integer":
-        dst_type = 9
+        dst_type = 4
         left = 0x1234567880000001
     elif class_id == "scalar-integer-to-fp":
         dst_type = 4
@@ -3881,7 +3913,13 @@ def scalar_fsu_expected(
     if class_id == "scalar-fp-format-convert":
         return normalize_scalar_fp_result_py(left_fp, dst_type), flags
     if class_id == "scalar-fp-to-integer":
-        return normalize_scalar_integer_result_py(left_fp, dst_type), flags
+        destination_type = scalar_fp_to_integer_destination_type_code(dst_type)
+        finite_value = scalar_fp_decode_finite_py(left_fp, src_type)
+        rounded = scalar_fp_to_integer_round(finite_value, mnemonic)
+        flags = 0 if float(rounded) == finite_value else 0x10
+        return normalize_scalar_integer_result_py(
+            rounded & MASK64, destination_type
+        ), flags
     if class_id == "scalar-integer-to-fp":
         if mnemonic == "SCVTF":
             integer_type = scalar_signed_integer_source_type_code(src_type)
@@ -3903,9 +3941,10 @@ def scalar_fsu_sensitivity_inputs(row: dict) -> tuple[int, int, int, int, int]:
             "FRECIP": 0x40800000,
             "FSQRT": 0x41100000,
         }[row["mnemonic"]]
+    elif class_id == "scalar-fp-to-integer":
+        left = 0x3FC00000
     elif class_id in {
         "scalar-fp-format-convert",
-        "scalar-fp-to-integer",
         "scalar-integer-to-fp",
     }:
         left = 5
@@ -4039,16 +4078,24 @@ def scalar_fsu_type_cases(row: dict) -> list[tuple[str, int, int, bool]]:
         return [
             (f"src-{src_type:02b}", src_type, 1, src_type < 2) for src_type in range(4)
         ]
+    class_id = scalar_fsu_effect_class(row)
+    valid_destination_types = (
+        range(8) if class_id == "scalar-fp-to-integer" else range(15)
+    )
+    first_reserved_destination = (
+        8 if class_id == "scalar-fp-to-integer" else 15
+    )
     cases = [
         (f"src-{src_type:02b}-dst-{dst_type:02d}", src_type, dst_type, True)
         for src_type in range(2)
-        for dst_type in range(15)
+        for dst_type in valid_destination_types
     ]
     cases.extend(
         (f"src-{src_type:02b}-dst-00", src_type, 0, False) for src_type in (2, 3)
     )
     cases.extend(
-        (f"src-00-dst-{dst_type:02d}", 0, dst_type, False) for dst_type in range(15, 32)
+        (f"src-00-dst-{dst_type:02d}", 0, dst_type, False)
+        for dst_type in range(first_reserved_destination, 32)
     )
     cases.append(("src-10-dst-31-both-invalid", 2, 31, False))
     return cases
@@ -4189,6 +4236,23 @@ def scalar_fsu_boundary_cases(
                         1,
                     )
                 )
+        elif class_id == "scalar-fp-to-integer":
+            for name in (
+                "positive_zero",
+                "negative_zero",
+                "negative_one",
+                "maximum_finite",
+            ):
+                cases.append(
+                    (
+                        f"{width_label}-{name}",
+                        values[name],
+                        3,
+                        5,
+                        src_type,
+                        4,
+                    )
+                )
         else:
             for name in (
                 "positive_zero",
@@ -4196,7 +4260,7 @@ def scalar_fsu_boundary_cases(
                 "maximum_finite",
                 "all_ones",
             ):
-                destination_type = 9 if class_id == "scalar-fp-to-integer" else 4
+                destination_type = 4
                 cases.append(
                     (
                         f"{width_label}-{name}",
@@ -4296,13 +4360,11 @@ def emit_scalar_fsu_alias_case(
     field_values: dict[str, int],
 ) -> None:
     class_id = scalar_fsu_effect_class(row)
-    dst_type = (
-        9
-        if class_id == "scalar-fp-to-integer"
-        else 4
-        if class_id in {"scalar-fp-format-convert", "scalar-integer-to-fp"}
-        else 1
-    )
+    dst_type = 4 if class_id in {
+        "scalar-fp-format-convert",
+        "scalar-fp-to-integer",
+        "scalar-integer-to-fp",
+    } else 1
     witness = scalar_fsu_witness(
         row,
         family_constraints,
@@ -7823,7 +7885,7 @@ def _emit_monolithic() -> None:
         + scalar_fsu_alias_case_count
         + scalar_fsu_sticky_case_count
     )
-    expected_fsu_counts = (488, 204, 500, 152, 920, 210, 2270)
+    expected_fsu_counts = (453, 239, 500, 152, 920, 210, 2235)
     actual_fsu_counts = (
         scalar_fsu_type_case_count,
         scalar_fsu_type_fault_case_count,
@@ -9734,8 +9796,8 @@ def _emit_monolithic() -> None:
             )
     expected_fsu_shard_counts = {
         "execute": 30,
-        "types_legal": 284,
-        "types_reserved": 204,
+        "types_legal": 214,
+        "types_reserved": 239,
         "bounds": 500,
         "rounding": 152,
         "flags": 210,

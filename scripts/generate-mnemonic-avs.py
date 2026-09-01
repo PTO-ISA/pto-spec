@@ -675,6 +675,11 @@ def render_scalar_fsu_avs(unit: AslUnit) -> list[tuple[Path, str]]:
     owner_directory = (
         Path("tests/asl") / unit.source_path.relative_to("asl").with_suffix("")
     )
+    bounds_summary = (
+        "covers finite zeros, signed values, and extrema"
+        if unit.mnemonic in {"FCVTA", "FCVTM", "FCVTN", "FCVTP", "FCVTZ"}
+        else "covers zeros, infinities, NaNs, extrema, and signed carriers"
+    )
     points = [
         (
             "EXEC",
@@ -706,7 +711,7 @@ def render_scalar_fsu_avs(unit: AslUnit) -> list[tuple[Path, str]]:
             "bound",
             "values",
             f"ValidateScalarFSUBounds_{identifier}",
-            "covers zeros, infinities, NaNs, extrema, and signed carriers",
+            bounds_summary,
         ),
         (
             "FLAGS",

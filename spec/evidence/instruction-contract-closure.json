@@ -32592,14 +32592,7 @@
                 4,
                 5,
                 6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14
+                7
               ]
             }
           ],
@@ -32668,7 +32661,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-to-nearest, ties-away mode.",
+          "semantic_summary": "FCVTA converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-away mode.",
           "status": "accepted"
         }
       ],
@@ -32685,14 +32678,14 @@
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
           "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
-          "DstType codes 0..14 are assigned carrier widths and codes 15..31 are reserved."
+          "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
           {
             "assigned_ranges": [
               [
                 0,
-                14
+                7
               ]
             ],
             "field": "DstType",
@@ -32701,7 +32694,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
+                8,
                 31
               ]
             ],
@@ -32781,7 +32774,7 @@
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
           "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
-          "DstType codes 0 through 14 are assigned; codes 15 through 31 are reserved."
+          "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
           "none"
@@ -32811,7 +32804,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-to-nearest, ties-away mode.",
+          "FCVTA converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-away mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
           "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
@@ -32823,7 +32816,7 @@
       "mnemonic": "FCVTA",
       "ndf_clause": "PTO-INST-SCALAR-FCVTA",
       "source": "asl/scalar/fsu/FCVTA.asl",
-      "summary": "FCVTA converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-to-nearest, ties-away mode.",
+      "summary": "FCVTA converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-away mode.",
       "surface": "scalar"
     },
     {
@@ -32852,14 +32845,7 @@
                 4,
                 5,
                 6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14
+                7
               ]
             }
           ],
@@ -32928,7 +32914,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTM converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-down mode.",
+          "semantic_summary": "FCVTM converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-down mode.",
           "status": "accepted"
         }
       ],
@@ -32945,14 +32931,14 @@
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
           "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
-          "DstType codes 0..14 are assigned carrier widths and codes 15..31 are reserved."
+          "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
           {
             "assigned_ranges": [
               [
                 0,
-                14
+                7
               ]
             ],
             "field": "DstType",
@@ -32961,7 +32947,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
+                8,
                 31
               ]
             ],
@@ -33041,7 +33027,7 @@
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
           "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
-          "DstType codes 0 through 14 are assigned; codes 15 through 31 are reserved."
+          "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
           "none"
@@ -33071,7 +33057,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTM converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-down mode.",
+          "FCVTM converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-down mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
           "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
@@ -33083,7 +33069,7 @@
       "mnemonic": "FCVTM",
       "ndf_clause": "PTO-INST-SCALAR-FCVTM",
       "source": "asl/scalar/fsu/FCVTM.asl",
-      "summary": "FCVTM converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-down mode.",
+      "summary": "FCVTM converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-down mode.",
       "surface": "scalar"
     },
     {
@@ -33112,14 +33098,7 @@
                 4,
                 5,
                 6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14
+                7
               ]
             }
           ],
@@ -33188,7 +33167,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTN converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-nearest mode.",
+          "semantic_summary": "FCVTN converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-nearest mode.",
           "status": "accepted"
         }
       ],
@@ -33205,14 +33184,14 @@
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
           "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
-          "DstType codes 0..14 are assigned carrier widths and codes 15..31 are reserved."
+          "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
           {
             "assigned_ranges": [
               [
                 0,
-                14
+                7
               ]
             ],
             "field": "DstType",
@@ -33221,7 +33200,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
+                8,
                 31
               ]
             ],
@@ -33301,7 +33280,7 @@
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
           "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
-          "DstType codes 0 through 14 are assigned; codes 15 through 31 are reserved."
+          "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
           "none"
@@ -33331,7 +33310,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTN converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-nearest mode.",
+          "FCVTN converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-nearest mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
           "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
@@ -33343,7 +33322,7 @@
       "mnemonic": "FCVTN",
       "ndf_clause": "PTO-INST-SCALAR-FCVTN",
       "source": "asl/scalar/fsu/FCVTN.asl",
-      "summary": "FCVTN converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-nearest mode.",
+      "summary": "FCVTN converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-nearest mode.",
       "surface": "scalar"
     },
     {
@@ -33372,14 +33351,7 @@
                 4,
                 5,
                 6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14
+                7
               ]
             }
           ],
@@ -33448,7 +33420,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTP converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-up mode.",
+          "semantic_summary": "FCVTP converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-up mode.",
           "status": "accepted"
         }
       ],
@@ -33465,14 +33437,14 @@
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
           "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
-          "DstType codes 0..14 are assigned carrier widths and codes 15..31 are reserved."
+          "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
           {
             "assigned_ranges": [
               [
                 0,
-                14
+                7
               ]
             ],
             "field": "DstType",
@@ -33481,7 +33453,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
+                8,
                 31
               ]
             ],
@@ -33561,7 +33533,7 @@
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
           "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
-          "DstType codes 0 through 14 are assigned; codes 15 through 31 are reserved."
+          "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
           "none"
@@ -33591,7 +33563,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTP converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-up mode.",
+          "FCVTP converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-up mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
           "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
@@ -33603,7 +33575,7 @@
       "mnemonic": "FCVTP",
       "ndf_clause": "PTO-INST-SCALAR-FCVTP",
       "source": "asl/scalar/fsu/FCVTP.asl",
-      "summary": "FCVTP converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-up mode.",
+      "summary": "FCVTP converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-up mode.",
       "surface": "scalar"
     },
     {
@@ -33632,14 +33604,7 @@
                 4,
                 5,
                 6,
-                7,
-                8,
-                9,
-                10,
-                11,
-                12,
-                13,
-                14
+                7
               ]
             }
           ],
@@ -33708,7 +33673,7 @@
           "semantic_family": "FSU",
           "semantic_group": "FSU",
           "semantic_handler": "ConvertFloatingEncoding",
-          "semantic_summary": "FCVTZ converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-toward-zero mode.",
+          "semantic_summary": "FCVTZ converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-toward-zero mode.",
           "status": "accepted"
         }
       ],
@@ -33725,14 +33690,14 @@
         "defaults": [
           "Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.",
           "SrcType=0 selects an FP64 carrier and SrcType=1 selects the zero-extended low-word FP32 carrier. SrcType=2 and SrcType=3 are reserved.",
-          "DstType codes 0..14 are assigned carrier widths and codes 15..31 are reserved."
+          "DstType raw codes 0..3 select UD/UW/UH/UB, raw codes 4..7 select SD/SW/SH/SB, and raw codes 8..31 are reserved."
         ],
         "encoded_fields": [
           {
             "assigned_ranges": [
               [
                 0,
-                14
+                7
               ]
             ],
             "field": "DstType",
@@ -33741,7 +33706,7 @@
             "rejection": "Reserved encodings raise Fault_IllegalInstruction before architectural effects.",
             "reserved_ranges": [
               [
-                15,
+                8,
                 31
               ]
             ],
@@ -33821,7 +33786,7 @@
           "Every Reg5 source uses codes 0..23 for absolute GPRs, 24..27 for T#1..T#4, and 28..31 for U#1..U#4 without consumption.",
           "Every Reg5 destination is assigned: codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard only the result.",
           "SrcType codes 0 and 1 are assigned; codes 2 and 3 are reserved.",
-          "DstType codes 0 through 14 are assigned; codes 15 through 31 are reserved."
+          "DstType raw codes 0 through 3 map to unsigned 64-, 32-, 16-, and 8-bit results; raw codes 4 through 7 map to the corresponding signed results; raw codes 8 through 31 are reserved."
         ],
         "memory_effects": [
           "none"
@@ -33851,7 +33816,7 @@
         ],
         "standalone_opcode": true,
         "state_effects": [
-          "FCVTZ converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-toward-zero mode.",
+          "FCVTZ converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-toward-zero mode.",
           "The selected numeric profile returns an exact NV, DZ, OF, UF, NX vector which is ORed into existing sticky CORE_STATE flags.",
           "For pto-v0 finite FP32 and FP64 carriers, execute the declared operation through the reference finite floating profile using the selected rounding mode and publish the returned NV, DZ, OF, UF, and NX flags.",
           "Destination codes 1..23 write GPRs, 30 pushes U, 31 pushes T, and 0 plus 24..29 discard the result.",
@@ -33863,7 +33828,7 @@
       "mnemonic": "FCVTZ",
       "ndf_clause": "PTO-INST-SCALAR-FCVTZ",
       "source": "asl/scalar/fsu/FCVTZ.asl",
-      "summary": "FCVTZ converts a selected FP64 or FP32 carrier to integer carrier code 0 through 14 with fixed round-toward-zero mode.",
+      "summary": "FCVTZ converts a selected FP64 or FP32 carrier to UD/UW/UH/UB or SD/SW/SH/SB with fixed round-toward-zero mode.",
       "surface": "scalar"
     },
     {
