@@ -20,6 +20,7 @@ pure func FaultMaskGatherIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
+    instruction[24:20] = Zeros{5} + 4;
     return instruction;
 end;
 
@@ -40,6 +41,7 @@ begin
     let started = ExecuteCommandInstruction(FaultMaskGatherStart(), 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 3);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 3);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     let bound = ExecuteCommandInstruction(FaultMaskGatherBinding(), 32);
     assert bound == CommandExecution_Executed;

@@ -39,7 +39,8 @@ begin
     - = AddInitialWriteEvent(Zeros{PTO_XLEN} + 384, 8,
         Zeros{PTO_XLEN});
     SetBundleControlAttributeState(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE);
-    MSCATTER(Zeros{PTO_XLEN} + 384, 5, 6);
+    MSCATTER(Zeros{PTO_XLEN} + 384,
+        Zeros{PTO_XLEN} + 2, 5, 6);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[2]].kind == MemoryEvent_Store;

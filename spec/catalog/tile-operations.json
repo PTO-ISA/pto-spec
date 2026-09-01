@@ -4811,6 +4811,9 @@
           "operand": "address"
         },
         {
+          "operand": "scalar0"
+        },
+        {
           "operand": "source0"
         },
         {
@@ -4843,6 +4846,10 @@
           "role": "base-address"
         },
         {
+          "field": "scalar0",
+          "role": "GM row stride in elements"
+        },
+        {
           "field": "source0",
           "role": "indices"
         }
@@ -4852,7 +4859,8 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:source0:byte-displacement-indices",
+        "operand:scalar0:gm-row-stride-elements",
+        "operand:source0:logical-linear-element-indices",
         "runtime:CurrentBundlePadValue:physical-padding"
       ],
       "classification": "memory-and-data-movement",
@@ -4862,6 +4870,9 @@
       "arguments": [
         {
           "operand": "address"
+        },
+        {
+          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -4891,20 +4902,25 @@
           "role": "base-address"
         },
         {
+          "field": "scalar0",
+          "role": "GM row stride in elements"
+        },
+        {
           "field": "source0",
           "role": "source"
         },
         {
           "field": "source1",
-          "role": "byte-displacement-indices"
+          "role": "logical-linear-element-indices"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
       "semantic_handler": "MSCATTER",
       "state_effects": [
         "operand:address:base-address",
+        "operand:scalar0:gm-row-stride-elements",
         "operand:source0:source",
-        "operand:source1:byte-displacement-indices"
+        "operand:source1:logical-linear-element-indices"
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -4916,6 +4932,9 @@
         },
         {
           "operand": "address"
+        },
+        {
+          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -4953,6 +4972,10 @@
           "role": "base-address"
         },
         {
+          "field": "scalar0",
+          "role": "GM row stride in elements"
+        },
+        {
           "field": "source0",
           "role": "indices"
         },
@@ -4966,7 +4989,8 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
-        "operand:source0:byte-displacement-indices",
+        "operand:scalar0:gm-row-stride-elements",
+        "operand:source0:logical-linear-element-indices",
         "operand:source1:exact-predicate-mask",
         "runtime:CurrentBundlePadValue:inactive-and-physical-padding"
       ],
@@ -4977,6 +5001,9 @@
       "arguments": [
         {
           "operand": "address"
+        },
+        {
+          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -5009,12 +5036,16 @@
           "role": "base-address"
         },
         {
+          "field": "scalar0",
+          "role": "GM row stride in elements"
+        },
+        {
           "field": "source0",
           "role": "source"
         },
         {
           "field": "source1",
-          "role": "byte-displacement-indices"
+          "role": "logical-linear-element-indices"
         },
         {
           "field": "source2",
@@ -5025,8 +5056,9 @@
       "semantic_handler": "MSCATTER_MASK",
       "state_effects": [
         "operand:address:base-address",
+        "operand:scalar0:gm-row-stride-elements",
         "operand:source0:source",
-        "operand:source1:byte-displacement-indices",
+        "operand:source1:logical-linear-element-indices",
         "operand:source2:exact-predicate-mask"
       ],
       "classification": "memory-and-data-movement",
@@ -5039,6 +5071,9 @@
         },
         {
           "operand": "address"
+        },
+        {
+          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -5079,6 +5114,10 @@
           "role": "base-address"
         },
         {
+          "field": "scalar0",
+          "role": "GM row stride in elements"
+        },
+        {
           "field": "source0",
           "role": "indices"
         },
@@ -5096,7 +5135,8 @@
       "state_effects": [
         "operand:destination0:observed-old-values",
         "operand:address:base-address",
-        "operand:source0:byte-displacement-indices",
+        "operand:scalar0:gm-row-stride-elements",
+        "operand:source0:logical-linear-element-indices",
         "operand:source1:expected-values",
         "operand:source2:replacement-values",
         "runtime:CurrentBundlePadValue:physical-padding"

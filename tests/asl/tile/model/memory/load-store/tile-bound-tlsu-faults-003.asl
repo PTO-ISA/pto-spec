@@ -70,14 +70,14 @@ begin
         Store(base_address + 2, 1, Zeros{PTO_XLEN} + 0x65);
         ClearFault();
         StartMemoryEventCapture(2);
-        MGATHER(27, base_address, 28);
+        MGATHER(27, base_address, Zeros{PTO_XLEN} + 3, 28);
         assert _LastFault == Fault_DataPage;
         assert _MemoryEventCount == 0;
         StopMemoryEventCapture();
 
         ClearFault();
         StartMemoryEventCapture(2);
-        MSCATTER(base_address, 27, 28);
+        MSCATTER(base_address, Zeros{PTO_XLEN} + 3, 27, 28);
         assert _LastFault == Fault_DataPage;
         assert _MemoryEventCount == 0;
         StopMemoryEventCapture();

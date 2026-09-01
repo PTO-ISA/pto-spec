@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MSCATTER.asl`
 
-Begins a TLSU byte-displacement scatter block and selects its transfer DataType.
+Begins a strided indexed TLSU scatter block.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MSCATTER}
 
@@ -149,6 +149,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Field | Architectural role |
 | --- | --- |
 | DataType | memory transfer element type selector |
+| B.IOR.RegSrc0 | per-PE private-GPR GM base address |
+| B.IOR.RegSrc1 | per-PE private-GPR GM row stride in elements |
 
 ## Decode
 
@@ -170,7 +172,7 @@ B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
 B.IOT DataTile, IndexTile, mask=PE_MASK, <last>
-B.IOR BaseGPR, zero, zero, ->zero
+B.IOR BaseGPR, StrideGPR, zero, ->zero
 BSTOP
 ```
 
@@ -200,13 +202,14 @@ end;
 ## Defaults and encoded zero
 
 - DataType is always encoded and selects the memory transfer type.
-- The completed schema requires explicit B.IOR and LB0. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR selects NORM layout.
+- The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.
 
 ## Legality
 
 - bstart_mscatter_32_0f0ba08bd798.DataType accepts only 0..14, 16..20, and 24..28 at decode; all other encodings are reserved.
 - Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 because MSCATTER carries no nibble selector.
 - The body must complete the exact MSCATTER schema documented by PTO-TILE-MSCATTER; no B.IOS or destination is accepted.
+- B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero.
 
 ## State effects
 
@@ -217,7 +220,7 @@ end;
 
 ### Memory effects
 
-- The start itself performs no memory access. BSTOP or the next BSTART commits the completed byte-displacement scatter only after full preflight.
+- The start itself performs no memory access. BSTOP or the next BSTART commits the completed strided indexed scatter only after full preflight.
 
 ### Ordering
 
@@ -230,4 +233,4 @@ end;
 
 ## Examples
 
-- BSTART.MSCATTER DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK, <last>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
+- BSTART.MSCATTER DataType; B.DATR Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT DataTile, IndexTile, mask=PE_MASK, <last>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP

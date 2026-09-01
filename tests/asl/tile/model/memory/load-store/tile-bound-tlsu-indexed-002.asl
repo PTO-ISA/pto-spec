@@ -39,7 +39,8 @@ begin
     Store(Zeros{PTO_XLEN} + 0x180, 1, Zeros{PTO_XLEN} + 0x21);
     Store(Zeros{PTO_XLEN} + 0x181, 1, Zeros{PTO_XLEN} + 0x43);
     StartMemoryEventCapture(1);
-    MGATHER(3, Zeros{PTO_XLEN} + 0x180, 4);
+    MGATHER(3, Zeros{PTO_XLEN} + 0x180,
+        Zeros{PTO_XLEN} + 3, 4);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
     assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x181;
@@ -59,7 +60,8 @@ begin
     WriteTileElement(4, 0, 2, Zeros{PTO_XLEN} + 1);
     Store(Zeros{PTO_XLEN} + 0x190, 1, Zeros{PTO_XLEN} + 0xa9);
     StartMemoryEventCapture(1);
-    MSCATTER(Zeros{PTO_XLEN} + 0x190, 5, 4);
+    MSCATTER(Zeros{PTO_XLEN} + 0x190,
+        Zeros{PTO_XLEN} + 3, 5, 4);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
@@ -154,7 +156,8 @@ begin
     Store(Zeros{PTO_XLEN} + 4095, 1, Zeros{PTO_XLEN} + 0xbb);
     ClearFault();
     StartMemoryEventCapture(2);
-    MSCATTER(Zeros{PTO_XLEN} + 4094, 15, 14);
+    MSCATTER(Zeros{PTO_XLEN} + 4094,
+        Zeros{PTO_XLEN} + 3, 15, 14);
     assert _LastFault == Fault_DataPage;
     assert _MemoryEventCount == 0;
     StopMemoryEventCapture();

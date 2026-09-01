@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-SCATTER-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-BSTART-MSCATTER-SCHEMA-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"MSCATTER writes only the valid region at full-width S64 byte displacements while preserving both sources.","pass_condition":"A 2x2 U8 source and S64 IndexTile with different physical column counts write four byte-displaced addresses and leave both source descriptors unchanged.","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-SCATTER-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MSCATTER-SCHEMA-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"MSCATTER writes only the valid region at full-width S64 logical element indices while preserving both sources.","pass_condition":"A 2x2 U8 source and S64 IndexTile with different physical column counts write four logical-index-derived addresses and leave both source descriptors unchanged.","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func ScatterStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00511181;
@@ -22,6 +22,7 @@ pure func ScatterIOR(register: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = register;
+    instruction[24:20] = Zeros{5} + 4;
     return instruction;
 end;
 
@@ -45,6 +46,7 @@ begin
         ScatterStart(Zeros{5} + 27), 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     let tiles = ExecuteCommandInstruction(

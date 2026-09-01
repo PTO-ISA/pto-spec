@@ -23,10 +23,11 @@ begin
     let started = ExecuteCommandInstruction(start, 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 3);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 3);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, FALSE, 3, 0, TRUE);
-    SetBundleScalarBinding(0, 0, 2, 0, 0, 1);
+    SetBundleScalarBinding(0, 0, 2, 4, 0, 2);
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
     assert !completed;

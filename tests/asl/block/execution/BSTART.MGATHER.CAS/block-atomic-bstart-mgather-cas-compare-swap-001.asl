@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-CAS-EXEC-001","source":"asl/block/execution/BSTART.MGATHER.CAS.asl","requirements":["PTO-BSTART-MGATHER-CAS-SCHEMA-001","PTO-MGATHER-CAS-ATOMIC-001","PTO-MGATHER-CAS-PUBLICATION-001","PTO-INST-TILE-MGATHER-CAS","PTO-INST-BLOCK-BSTART-MGATHER-CAS"],"kind":"atomicity","summary":"MGATHER.CAS performs typed byte-displacement CAS operations and publishes observed old values.","pass_condition":"Four unique U8 lanes produce two successful writes, two failed writes, the complete old-value destination, and Max padding outside the valid region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-cas.asl","asl/tile/model/memory/atomics.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-CAS-EXEC-001","source":"asl/block/execution/BSTART.MGATHER.CAS.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-CAS-SCHEMA-001","PTO-MGATHER-CAS-ATOMIC-001","PTO-MGATHER-CAS-PUBLICATION-001","PTO-INST-TILE-MGATHER-CAS","PTO-INST-BLOCK-BSTART-MGATHER-CAS"],"kind":"atomicity","summary":"MGATHER.CAS performs typed logical-index CAS operations and publishes observed old values.","pass_condition":"Four unique U8 lanes produce two successful writes, two failed writes, the complete old-value destination, and Max padding outside the valid region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-cas.asl","asl/tile/model/memory/atomics.asl"]}
 pure func CasStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00811181;
@@ -31,6 +31,7 @@ pure func CasIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
+    instruction[24:20] = Zeros{5} + 4;
     return instruction;
 end;
 
@@ -72,6 +73,7 @@ begin
     let padded = ExecuteCommandInstruction(CasMaxPad(), 32);
     assert padded == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
     SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
     let inputs = ExecuteCommandInstruction(CasInputs('001'), 32);
     assert inputs == CommandExecution_Executed;

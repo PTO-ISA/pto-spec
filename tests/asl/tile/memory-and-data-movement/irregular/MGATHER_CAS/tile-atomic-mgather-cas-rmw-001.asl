@@ -20,7 +20,8 @@ begin
     Store(Zeros{PTO_XLEN} + 0x301, 1, Zeros{PTO_XLEN} + 6);
 
     StartMemoryEventCapture(0);
-    MGATHER_CAS(0, Zeros{PTO_XLEN} + 0x300, 1, 2, 3);
+    MGATHER_CAS(0, Zeros{PTO_XLEN} + 0x300,
+        Zeros{PTO_XLEN} + 2, 1, 2, 3);
 
     assert _MemoryEventCount == 2;
     let replaced = LoadUnsigned(Zeros{PTO_XLEN} + 0x300, 1);

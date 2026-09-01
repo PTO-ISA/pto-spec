@@ -17,7 +17,8 @@ begin
     Store(Zeros{PTO_XLEN} + 0x2c1, 1, Zeros{PTO_XLEN} + 0xbb);
 
     StartMemoryEventCapture(0);
-    MSCATTER_MASK(Zeros{PTO_XLEN} + 0x2c0, 0, 1, 2);
+    MSCATTER_MASK(Zeros{PTO_XLEN} + 0x2c0,
+        Zeros{PTO_XLEN} + 2, 0, 1, 2);
 
     assert _MemoryEventCount == 1;
     let enabled = LoadUnsigned(Zeros{PTO_XLEN} + 0x2c0, 1);

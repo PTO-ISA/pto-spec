@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER uses U32 byte displacements, applies dimension defaults, and pads the full physical destination.","pass_condition":"Two U32 indices load base+0 and base+3 into a U8 destination whose omitted LB1/LB2 defaults are 1 and LB0; every non-valid physical element receives Max padding.","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER uses U32 logical element indices, applies dimension defaults, and pads the full physical destination.","pass_condition":"Two U32 indices load base+0 and base+3 into a U8 destination whose omitted LB1/LB2 defaults are 1 and LB0; every non-valid physical element receives Max padding.","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func GatherStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -21,6 +21,7 @@ pure func GatherIOR(register: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = register;
+    instruction[24:20] = Zeros{5} + 4;
     return instruction;
 end;
 
@@ -47,6 +48,7 @@ begin
     let attributed = ExecuteCommandInstruction(GatherMaxPad(), 32);
     assert attributed == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
     let tiles = ExecuteCommandInstruction(GatherBinding('001'), 32);
     assert tiles == CommandExecution_Executed;
     let scalar = ExecuteCommandInstruction(GatherIOR(Zeros{5} + 2), 32);

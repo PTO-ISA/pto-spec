@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MGATHER.asl`
 
-Begins a TLSU byte-displacement gather block and selects its transfer DataType.
+Begins a strided indexed TLSU gather block.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MGATHER}
 
@@ -149,6 +149,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Field | Architectural role |
 | --- | --- |
 | DataType | tile element data type selector |
+| B.IOR.RegSrc0 | per-PE private-GPR GM base address |
+| B.IOR.RegSrc1 | per-PE private-GPR GM row stride in elements |
 
 ## Decode
 
@@ -170,7 +172,7 @@ B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
 B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, zero, zero, ->zero
+B.IOR BaseGPR, StrideGPR, zero, ->zero
 BSTOP
 ```
 
@@ -200,13 +202,14 @@ end;
 ## Defaults and encoded zero
 
 - DataType is always encoded; its accepted values select the transfer element type and reserved encodings are rejected.
-- The completed MGATHER schema requires explicit B.IOR and LB0. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR selects Null padding with NORM layout.
+- The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.
 
 ## Legality
 
 - bstart_mgather_32_c9defbf18276.DataType accepts only 0..14, 16..20, and 24..28 at decode; all other encodings are reserved.
 - Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 before allocation because MGATHER carries no nibble selector.
 - The body must complete the exact MGATHER schema documented by PTO-TILE-MGATHER; no B.IOS or additional Tile source is accepted.
+- B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero.
 
 ## State effects
 
@@ -217,7 +220,7 @@ end;
 
 ### Memory effects
 
-- The start itself performs no memory access. BSTOP or the next BSTART commits the completed byte-displacement gather atomically after full preflight.
+- The start itself performs no memory access. BSTOP or the next BSTART commits the completed strided indexed gather atomically after full preflight.
 
 ### Ordering
 
@@ -230,4 +233,4 @@ end;
 
 ## Examples
 
-- BSTART.MGATHER DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
+- BSTART.MGATHER DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP

@@ -50,9 +50,11 @@ end;
 
 readonly func TileOperandsLegal_MGATHER(
     destination: TileIndex, base_address: Word,
-    indices: TileIndex, pad_value: TilePadValue) => boolean
+    row_stride_elements: Word, indices: TileIndex,
+    pad_value: TilePadValue) => boolean
 begin
     return TileDescriptorLegal(destination) && TileDescriptorLegal(indices) &&
+           UInt(row_stride_elements) >= _Tiles[[destination]].valid_columns &&
            _Tiles[[destination]].valid_rows == _Tiles[[indices]].valid_rows &&
            _Tiles[[destination]].valid_columns ==
                _Tiles[[indices]].valid_columns &&
@@ -63,17 +65,19 @@ end;
 
 readonly func TileOperandsLegal_MGATHER(
     destination: TileIndex, base_address: Word,
-    indices: TileIndex) => boolean
+    row_stride_elements: Word, indices: TileIndex) => boolean
 begin
-    return TileOperandsLegal_MGATHER(destination, base_address, indices,
-        TilePad_Null);
+    return TileOperandsLegal_MGATHER(destination, base_address,
+        row_stride_elements, indices, TilePad_Null);
 end;
 
 readonly func TileOperandsLegal_MSCATTER(
-    base_address: Word, source: TileIndex, indices: TileIndex) => boolean
+    base_address: Word, row_stride_elements: Word,
+    source: TileIndex, indices: TileIndex) => boolean
 begin
     return TileSourceContentsDefined(source) &&
            TileSourceContentsDefined(indices) &&
+           UInt(row_stride_elements) >= _Tiles[[source]].valid_columns &&
            IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(_Tiles[[source]].data_type) &&
            _Tiles[[source]].valid_rows == _Tiles[[indices]].valid_rows &&
@@ -84,11 +88,13 @@ end;
 
 readonly func TileOperandsLegal_MGATHER_MASK(
     destination: TileIndex, base_address: Word,
-    indices: TileIndex, mask: TileIndex, pad_value: TilePadValue) => boolean
+    row_stride_elements: Word, indices: TileIndex,
+    mask: TileIndex, pad_value: TilePadValue) => boolean
 begin
     return TileDescriptorLegal(destination) &&
            TileSourceContentsDefined(indices) &&
            TilePredicateValuesLegal(mask) &&
+           UInt(row_stride_elements) >= _Tiles[[destination]].valid_columns &&
            IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(
                _Tiles[[destination]].data_type) &&
@@ -103,12 +109,13 @@ begin
 end;
 
 readonly func TileOperandsLegal_MSCATTER_MASK(
-    base_address: Word, source: TileIndex, indices: TileIndex,
-    mask: TileIndex) => boolean
+    base_address: Word, row_stride_elements: Word,
+    source: TileIndex, indices: TileIndex, mask: TileIndex) => boolean
 begin
     return TileSourceContentsDefined(source) &&
            TileSourceContentsDefined(indices) &&
            TilePredicateValuesLegal(mask) &&
+           UInt(row_stride_elements) >= _Tiles[[source]].valid_columns &&
            IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(_Tiles[[source]].data_type) &&
            _Tiles[[source]].valid_rows == _Tiles[[indices]].valid_rows &&
@@ -121,7 +128,8 @@ begin
 end;
 
 readonly func TileOperandsLegal_MGATHER_CAS(
-    destination: TileIndex, base_address: Word, indices: TileIndex,
+    destination: TileIndex, base_address: Word,
+    row_stride_elements: Word, indices: TileIndex,
     expected: TileIndex, replacement: TileIndex,
     pad_value: TilePadValue) => boolean
 begin
@@ -129,6 +137,7 @@ begin
            TileSourceContentsDefined(indices) &&
            TileSourceContentsDefined(expected) &&
            TileSourceContentsDefined(replacement) &&
+           UInt(row_stride_elements) >= _Tiles[[destination]].valid_columns &&
            IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) &&
            IndexedTLSUTransferDataTypeLegal(
                _Tiles[[destination]].data_type) &&
@@ -148,11 +157,12 @@ begin
 end;
 
 readonly func TileOperandsLegal_MGATHER_CAS(
-    destination: TileIndex, base_address: Word, indices: TileIndex,
+    destination: TileIndex, base_address: Word,
+    row_stride_elements: Word, indices: TileIndex,
     expected: TileIndex, replacement: TileIndex) => boolean
 begin
-    return TileOperandsLegal_MGATHER_CAS(destination, base_address, indices,
-        expected, replacement, TilePad_Null);
+    return TileOperandsLegal_MGATHER_CAS(destination, base_address,
+        row_stride_elements, indices, expected, replacement, TilePad_Null);
 end;
 
 readonly func TileOperandsLegal_TPREFETCH(

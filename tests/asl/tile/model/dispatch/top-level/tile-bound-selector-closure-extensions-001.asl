@@ -39,24 +39,26 @@ begin
     ConfigurePredicateTile(57, 128, 1, 4, 1, 3);
     ExecuteTileFillScalar(55, Zeros{PTO_XLEN} + 0xaa);
     WriteTileElement(56, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 8);
-    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 16);
+    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 2);
     WriteTilePredicateBit(57, 0, 0, TRUE);
     WriteTilePredicateBit(57, 0, 1, FALSE);
     WriteTilePredicateBit(57, 0, 2, TRUE);
     Store(Zeros{PTO_XLEN} + 1536, 8, Zeros{PTO_XLEN} + 11);
     Store(Zeros{PTO_XLEN} + 1544, 8, Zeros{PTO_XLEN} + 22);
     Store(Zeros{PTO_XLEN} + 1552, 8, Zeros{PTO_XLEN} + 33);
-    MGATHER_MASK(55, Zeros{PTO_XLEN} + 1536, 56, 57, TilePad_Zero);
+    MGATHER_MASK(55, Zeros{PTO_XLEN} + 1536,
+        Zeros{PTO_XLEN} + 3, 56, 57, TilePad_Zero);
     assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
     assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN};
     assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;
 
-    // MSCATTER_MASK uses the same byte-displacement IndexTile values.
+    // MSCATTER_MASK uses the same logical linear element indices.
     Store(Zeros{PTO_XLEN} + 2048, 8, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 2056, 8, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 2064, 8, Zeros{PTO_XLEN});
-    MSCATTER_MASK(Zeros{PTO_XLEN} + 2048, 55, 56, 57);
+    MSCATTER_MASK(Zeros{PTO_XLEN} + 2048,
+        Zeros{PTO_XLEN} + 3, 55, 56, 57);
     let masked_scatter_first = LoadUnsigned(Zeros{PTO_XLEN} + 2048, 8);
     let masked_scatter_middle = LoadUnsigned(Zeros{PTO_XLEN} + 2056, 8);
     let masked_scatter_last = LoadUnsigned(Zeros{PTO_XLEN} + 2064, 8);
@@ -74,11 +76,12 @@ begin
     WriteTileElement(59, 0, 0, Zeros{PTO_XLEN} + 111);
     WriteTileElement(59, 0, 1, Zeros{PTO_XLEN} + 222);
     WriteTileElement(59, 0, 2, Zeros{PTO_XLEN} + 333);
-    // MGATHER_CAS indices are signed or unsigned byte displacements.
+    // MGATHER_CAS indices are signed or unsigned logical element indices.
     WriteTileElement(56, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 8);
-    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 16);
-    MGATHER_CAS(55, Zeros{PTO_XLEN} + 1536, 56, 58, 59);
+    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 2);
+    MGATHER_CAS(55, Zeros{PTO_XLEN} + 1536,
+        Zeros{PTO_XLEN} + 3, 56, 58, 59);
     assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
     assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN} + 22;
     assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;

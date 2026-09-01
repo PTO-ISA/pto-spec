@@ -34,13 +34,13 @@ begin
     StopMemoryEventCapture();
 
     StartMemoryEventCapture(2);
-    MGATHER(40, source_address, 42);
+    MGATHER(40, source_address, Zeros{PTO_XLEN} + 1, 42);
     assert _MemoryEventCount == 1;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
     StopMemoryEventCapture();
 
     StartMemoryEventCapture(2);
-    MSCATTER(destination_address, 41, 42);
+    MSCATTER(destination_address, Zeros{PTO_XLEN} + 1, 41, 42);
     assert _MemoryEventCount == 1;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Store;
     StopMemoryEventCapture();

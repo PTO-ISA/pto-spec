@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MGATHER.CAS.asl`
 
-Begins a TLSU byte-displacement atomic compare-and-swap gather block.
+Begins an atomic compare-and-swap strided indexed TLSU gather block.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MGATHER-CAS}
 
@@ -150,6 +150,8 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Field | Architectural role |
 | --- | --- |
 | DataType | transfer, comparison, replacement, and destination element type |
+| B.IOR.RegSrc0 | per-PE private-GPR GM base address |
+| B.IOR.RegSrc1 | per-PE private-GPR GM row stride in elements |
 
 ## Decode
 
@@ -172,7 +174,7 @@ B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
 B.IOT IndexTile, ExpectedTile, mask=PE_MASK
 B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, zero, zero, ->zero
+B.IOR BaseGPR, StrideGPR, zero, ->zero
 BSTOP
 ```
 
@@ -202,7 +204,7 @@ end;
 ## Defaults and encoded zero
 
 - DataType is always encoded and selects the transfer, comparison, replacement, and destination element type.
-- The completed schema requires explicit B.IOR and LB0. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR selects Null padding with NORM layout.
+- The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.
 
 ## Legality
 
@@ -210,6 +212,7 @@ end;
 - Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 because MGATHER.CAS carries no nibble selector.
 - The body must complete the exact two-B.IOT Local schema documented by PTO-TILE-MGATHER-CAS. B.IOS and extra bindings are not accepted.
 - PE_MASK=0000 is a strict no-op before all schema, GPR, source, dimension, allocation, address, and fault checks.
+- B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero.
 
 ## State effects
 
@@ -234,4 +237,4 @@ end;
 
 ## Examples
 
-- BSTART.MGATHER.CAS DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
+- BSTART.MGATHER.CAS DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-MASK-SCATTER-001","source":"asl/block/execution/BSTART.MSCATTER.MASK.asl","requirements":["PTO-BSTART-MSCATTER-MASK-SCHEMA-001","PTO-MSCATTER-MASK-PREDICATE-001","PTO-INST-TILE-MSCATTER-MASK","PTO-INST-BLOCK-BSTART-MSCATTER-MASK"],"kind":"execution","summary":"MSCATTER.MASK writes exact-one lanes at byte displacements and ignores disabled addresses.","pass_condition":"Two enabled lanes write signed byte displacements, one disabled invalid displacement creates no check or event, and all sources persist.","related_sources":["asl/block/model/dispatch/tlsu-mscatter-mask.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-MASK-SCATTER-001","source":"asl/block/execution/BSTART.MSCATTER.MASK.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MSCATTER-MASK-SCHEMA-001","PTO-MSCATTER-MASK-PREDICATE-001","PTO-INST-TILE-MSCATTER-MASK","PTO-INST-BLOCK-BSTART-MSCATTER-MASK"],"kind":"execution","summary":"MSCATTER.MASK writes exact-one lanes at logical element indices and ignores disabled addresses.","pass_condition":"Two enabled lanes write signed logical element indices, one disabled invalid displacement creates no check or event, and all sources persist.","related_sources":["asl/block/model/dispatch/tlsu-mscatter-mask.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func MaskScatterStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00711181;
@@ -48,13 +48,14 @@ begin
         MaskScatterStart(Zeros{5} + 27), 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 3);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 3);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     let first = ExecuteCommandInstruction(
         MaskScatterFirst(Zeros{6} + 1, Zeros{6} + 2), 32);
     assert first == CommandExecution_Executed;
     let last = ExecuteCommandInstruction(MaskScatterLast(Zeros{6} + 3), 32);
     assert last == CommandExecution_Executed;
-    SetBundleScalarBinding(0, 0, 2, 0, 0, 1);
+    SetBundleScalarBinding(0, 0, 2, 4, 0, 2);
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
     assert completed;

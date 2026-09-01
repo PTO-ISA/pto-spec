@@ -1,5 +1,6 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","surface":"tile","classification":["model","memory","gather-scatter"],"depends_on":["PTO-TILE-MODEL-MEMORY-LOAD-STORE"]}
-func MGATHER(destination: TileIndex, base_address: Word, indices: TileIndex,
+func MGATHER(destination: TileIndex, base_address: Word,
+             row_stride_elements: Word, indices: TileIndex,
              pad_value: TilePadValue)
 begin
     let destination_tile = _Tiles[[destination]];
@@ -19,8 +20,10 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let index_element = TileLinearIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryByteDisplacementAddress(base_address,
-                index_payload[[index_element]], index_tile.data_type);
+            let address = TileMemoryIndexedStridedAddress(
+                base_address, index_payload[[index_element]],
+                index_tile.data_type, index_tile.valid_columns,
+                row_stride_elements, destination_tile.data_type);
             let probe = ProbeTileMemoryAccess(address,
                 destination_tile.data_type, FALSE);
             if RaiseDataAccessFault(probe, address) then return; end;
@@ -53,9 +56,11 @@ begin
     MarkTilePhysicalRegionDefined(destination);
 end;
 
-func MGATHER(destination: TileIndex, base_address: Word, indices: TileIndex)
+func MGATHER(destination: TileIndex, base_address: Word,
+             row_stride_elements: Word, indices: TileIndex)
 begin
-    MGATHER(destination, base_address, indices, TilePad_Null);
+    MGATHER(destination, base_address, row_stride_elements, indices,
+        TilePad_Null);
 end;
 
 func CommitScatterLanes(source_tile: TileInfo,
@@ -103,7 +108,8 @@ begin
     end;
 end;
 
-func MSCATTER(base_address: Word, source: TileIndex, indices: TileIndex)
+func MSCATTER(base_address: Word, row_stride_elements: Word,
+              source: TileIndex, indices: TileIndex)
 begin
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
@@ -127,8 +133,10 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let index_element = TileLinearIndex(index_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryByteDisplacementAddress(base_address,
-                index_payload[[index_element]], index_tile.data_type);
+            let address = TileMemoryIndexedStridedAddress(
+                base_address, index_payload[[index_element]],
+                index_tile.data_type, index_tile.valid_columns,
+                row_stride_elements, source_tile.data_type);
             let probe = ProbeTileMemoryAccess(address,
                 source_tile.data_type, TRUE);
             if RaiseDataAccessFault(probe, address) then return; end;
@@ -230,7 +238,8 @@ begin
                 as TileDataTypeEncoding));
 end;
 
-func MGATHER_MASK(destination: TileIndex, base_address: Word, indices: TileIndex,
+func MGATHER_MASK(destination: TileIndex, base_address: Word,
+                  row_stride_elements: Word, indices: TileIndex,
                   mask: TileIndex, pad_value: TilePadValue)
 begin
     let destination_tile = _Tiles[[destination]];
@@ -263,8 +272,10 @@ begin
                 mask,
                 row as integer {0..65535},
                 column as integer {0..65535}) then
-                let address = TileMemoryByteDisplacementAddress(base_address,
-                    index_payload[[index_element]], index_tile.data_type);
+                let address = TileMemoryIndexedStridedAddress(
+                    base_address, index_payload[[index_element]],
+                    index_tile.data_type, index_tile.valid_columns,
+                    row_stride_elements, destination_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
                     destination_tile.data_type, FALSE);
                 if RaiseDataAccessFault(probe, address) then return; end;
@@ -301,8 +312,8 @@ begin
     MarkTilePhysicalRegionDefined(destination);
 end;
 
-func MSCATTER_MASK(base_address: Word, source: TileIndex, indices: TileIndex,
-                   mask: TileIndex)
+func MSCATTER_MASK(base_address: Word, row_stride_elements: Word,
+                   source: TileIndex, indices: TileIndex, mask: TileIndex)
 begin
     let source_tile = _Tiles[[source]];
     let index_tile = _Tiles[[indices]];
@@ -336,8 +347,10 @@ begin
                 mask,
                 row as integer {0..65535},
                 column as integer {0..65535}) then
-                let address = TileMemoryByteDisplacementAddress(base_address,
-                    index_payload[[index_element]], index_tile.data_type);
+                let address = TileMemoryIndexedStridedAddress(
+                    base_address, index_payload[[index_element]],
+                    index_tile.data_type, index_tile.valid_columns,
+                    row_stride_elements, source_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
                     source_tile.data_type, TRUE);
                 if RaiseDataAccessFault(probe, address) then return; end;

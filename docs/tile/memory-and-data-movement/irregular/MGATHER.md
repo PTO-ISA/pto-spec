@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MGATHER.asl`
 
-Gather GM elements at signed or unsigned byte displacements into a newly allocated Local Tile.
+Gather GM elements addressed by signed or unsigned logical linear element indices into a newly allocated Local Tile.
 
 ## Normative identity {#PTO-INST-TILE-MGATHER}
 
@@ -86,12 +86,101 @@ MGATHER <bundle operands>
 
 This operation has no standalone opcode.
 
+## Field value dispositions
+
+### B.IOR.RegSrc0 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
+### B.IOR.RegSrc1 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
+
+Selects one absolute architectural GPR for B.IOR input or output binding.
+
+**Encoded zero:** Code zero names the architectural zero GPR; it never means an omitted B.IOR field.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | zero |
+| 1 | assigned | sp |
+| 2 | assigned | a0 |
+| 3 | assigned | a1 |
+| 4 | assigned | a2 |
+| 5 | assigned | a3 |
+| 6 | assigned | a4 |
+| 7 | assigned | a5 |
+| 8 | assigned | a6 |
+| 9 | assigned | a7 |
+| 10 | assigned | ra |
+| 11 | assigned | s0 |
+| 12 | assigned | s1 |
+| 13 | assigned | s2 |
+| 14 | assigned | s3 |
+| 15 | assigned | s4 |
+| 16 | assigned | s5 |
+| 17 | assigned | s6 |
+| 18 | assigned | s7 |
+| 19 | assigned | s8 |
+| 20 | assigned | x0 |
+| 21 | assigned | x1 |
+| 22 | assigned | x2 |
+| 23 | assigned | x3 |
+| 24 | reserved | future extension |
+| 25 | reserved | future extension |
+| 26 | reserved | future extension |
+| 27 | reserved | future extension |
+| 28 | reserved | future extension |
+| 29 | reserved | future extension |
+| 30 | reserved | future extension |
+| 31 | reserved | future extension |
+
+**Reserved-value behavior:** Selectors 24 through 31 are reserved and raise Fault_IllegalInstruction before binding state changes.
+
 ## Operands and results
 
 | Field | Architectural role |
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
+| scalar0 | per-PE private-GPR GM row stride in elements |
 | source0 | indices |
 
 ## Decode
@@ -114,7 +203,7 @@ B.DIM LB0=ValidCol
 B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
 B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, zero, zero, ->zero
+B.IOR BaseGPR, StrideGPR, zero, ->zero
 BSTOP
 ```
 
@@ -127,7 +216,7 @@ begin
     return TileHandler_MGATHER;
 end;
 
-pure func InstructionContractUsesByteDisplacements_MGATHER()
+pure func InstructionContractUsesLogicalElementIndices_MGATHER()
     => boolean
 begin
     return TRUE;
@@ -155,20 +244,21 @@ end;
 
 ## Defaults and encoded zero
 
-- B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the byte-address base; zero selects architectural base address zero. Unused B.IOR fields must encode zero.
+- B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.
 - LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.
 - Omitted B.DATR selects PadValue=Null and Layout=NORM. An explicit encoded PadValue is used for every physical destination element outside ValidRow x ValidCol.
-- Each IndexTile logical element is a signed or unsigned byte displacement and is added directly to the base without transfer-data-type scaling.
+- Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling.
 
 ## Legality
 
 - MGATHER is selected only by BSTART.MGATHER function 4 in the TLSU selector space; it has no standalone opcode.
 - Exactly one Local B.IOT binding supplies IndexTile and one destination, uses L=1, and carries the common PE_MASK and destination TSize. B.IOS is not accepted.
-- IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Its ValidRow x ValidCol must equal the resolved destination valid region.
+- IndexTile must be allocated, fully defined, generically indexable, and use S32, U32, S64, or U64. Its ValidRow x ValidCol must equal the resolved destination valid region, and every element is interpreted as a signed or unsigned logical linear element index.
 - The transfer DataType may be any accepted BSTART.MGATHER DataType except E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2, whose missing nibble selector makes them reserved for indexed TLSU transfer.
 - Destination physical Rows are derived from TSize, physical Col, and transfer DataType. Rows and Col are powers of two and the physical region must contain ValidRow x ValidCol.
 - B.IOT PE_MASK=0000 is a strict no-op before all schema, GPR, source, dimension, allocation, and memory checks.
 - B.DATR applicability allows only PadValueOrByteId as PadValue and Layout.
+- The B.IOR row stride is nonzero and no smaller than ValidCol; an invalid stride rejects before address probes or effects.
 
 ## State effects
 
@@ -180,19 +270,20 @@ end;
 
 ### Memory effects
 
-- For every valid destination coordinate, load one transfer-typed element from BaseGPR plus the sign- or zero-extended byte displacement in the corresponding IndexTile coordinate.
+- For every valid destination coordinate, load one transfer-typed element from BaseGPR plus ((floor(index / ValidCol) * row_stride_elements) + (index mod ValidCol)) times the transfer element size.
 - Probe the complete valid region before recording memory events. After successful preflight, publish the loaded valid region and pad every remaining physical destination coordinate atomically.
 
 ### Ordering
 
 - Selected lanes contribute load events in destination row/column order using the block memory-order attributes; no cross-PE request order is guaranteed.
+- Base, stride, dimensions, and all enabled indices are snapshotted before complete address preflight.
 
 ## Exceptions
 
-- A missing B.IOR, missing LB0, malformed B.IOT, non-integer IndexTile, shape mismatch, non-power-of-two physical Col, or packed four-bit transfer DataType raises Fault_TileLegality before allocation, memory events, or destination effects.
+- A missing B.IOR, missing LB0, malformed B.IOT, non-integer IndexTile, shape mismatch, non-power-of-two physical Col, or packed four-bit transfer DataType, zero row stride, or row stride smaller than ValidCol raises Fault_TileLegality before allocation, memory events, or destination effects.
 - Every valid-region address is probed before the first event or destination update; any access fault leaves the destination unallocated and produces no partial event or payload effect.
 - CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior after an accepted operation.
 
 ## Examples
 
-- BSTART.MGATHER DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
+- BSTART.MGATHER DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP

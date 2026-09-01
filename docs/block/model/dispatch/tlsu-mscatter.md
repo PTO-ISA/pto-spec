@@ -83,13 +83,20 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    if !TileOperandsLegal_MSCATTER(Zeros{PTO_XLEN}, source, indices) then
+    let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
+        _BundleScalarBindings[[0]].source0);
+    let row_stride_elements = ReadPEAbsoluteGPROperand(
+        _CurrentMemoryAgent, _BundleScalarBindings[[0]].source1);
+    if UInt(row_stride_elements) < valid_columns then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
-        _BundleScalarBindings[[0]].source0);
-    MSCATTER(base_address, source, indices);
+    if !TileOperandsLegal_MSCATTER(Zeros{PTO_XLEN},
+           row_stride_elements, source, indices) then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    MSCATTER(base_address, row_stride_elements, source, indices);
     if _LastFault != Fault_None then return FALSE; end;
     FinalizeBundleTileAttempt(TileExecution_Executed);
     return TRUE;

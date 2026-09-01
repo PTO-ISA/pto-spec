@@ -828,7 +828,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleScalarIO",
-      "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; TLOAD/TSTORE use source zero as GM base and source one as byte row stride.",
+      "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one as row stride and indexed TLSU uses it as GM row stride in elements.",
       "status": "accepted"
     },
     {
@@ -1736,7 +1736,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Begins a TLSU byte-displacement gather block and selects its transfer DataType.",
+      "semantic_summary": "Begins a strided indexed TLSU gather block.",
       "status": "accepted"
     },
     {
@@ -1803,7 +1803,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Begins a TLSU byte-displacement atomic compare-and-swap gather block.",
+      "semantic_summary": "Begins an atomic compare-and-swap strided indexed TLSU gather block.",
       "status": "accepted"
     },
     {
@@ -1870,7 +1870,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Begins a predicate-masked TLSU byte-displacement gather block.",
+      "semantic_summary": "Begins a predicate-masked strided indexed TLSU gather block.",
       "status": "accepted"
     },
     {
@@ -1937,7 +1937,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Begins a predicate-masked TLSU byte-displacement scatter block.",
+      "semantic_summary": "Begins a predicate-masked strided indexed TLSU scatter block.",
       "status": "accepted"
     },
     {
@@ -2004,7 +2004,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Begins a TLSU byte-displacement scatter block and selects its transfer DataType.",
+      "semantic_summary": "Begins a strided indexed TLSU scatter block.",
       "status": "accepted"
     },
     {

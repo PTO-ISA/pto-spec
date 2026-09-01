@@ -1070,5 +1070,6 @@ nav:
           - "ADR 0120: Bind frame lifecycle to architectural sp GPR1": status/decisions/0120-frame-lifecycle-architectural-sp.md
           - "ADR 0121: Restore FP-to-integer raw DstType encoding": status/decisions/0121-fp-to-integer-dsttype-encoding.md
           - "ADR 0122: Complete scalar conversion and shared Tile conversion semantics": status/decisions/0122-finite-scalar-fp16-destination.md
+          - "ADR 0123: Bind indexed TLSU row-stride addressing": status/decisions/0123-indexed-tlsu-row-stride.md
       - Open:
           - "Open architecture decisions": status/open/index.md

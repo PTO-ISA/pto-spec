@@ -93,19 +93,26 @@ begin
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
+    let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
+        _BundleScalarBindings[[0]].source0);
+    let row_stride_elements = ReadPEAbsoluteGPROperand(
+        _CurrentMemoryAgent, _BundleScalarBindings[[0]].source1);
+    if UInt(row_stride_elements) < valid_columns then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
     if !ResolveBundleTileDestinationsWithShapeAndType(TRUE, valid_rows,
            valid_columns, columns, TRUE, data_type) then return FALSE; end;
     let destination = _BundleTileBindings[[0]].destination;
     let pad_value = CurrentBundlePadValue();
     if !TileOperandsLegal_MGATHER(destination, Zeros{PTO_XLEN},
-           binding.source0, pad_value) then
+           row_stride_elements, binding.source0, pad_value) then
         RollBackBundleTileDestinations();
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
-    let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
-        _BundleScalarBindings[[0]].source0);
-    MGATHER(destination, base_address, binding.source0, pad_value);
+    MGATHER(destination, base_address, row_stride_elements,
+        binding.source0, pad_value);
     if _LastFault != Fault_None then
         RollBackBundleTileDestinations();
         return FALSE;

@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-S4-INDEX-002","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"execution","summary":"MGATHER sign-extends a packed S4 IndexTile byte displacement.","pass_condition":"The low-nibble S4 value -3 addresses base minus three without scaling or a nibble selector.","related_sources":["asl/tile/model/memory/addressing.asl","asl/tile/model/definedness/elements.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-S4-INDEX-002","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"execution","summary":"MGATHER sign-extends a packed S4 IndexTile logical element index.","pass_condition":"The low-nibble S4 value -3 addresses base minus three without scaling or a nibble selector.","related_sources":["asl/tile/model/memory/addressing.asl","asl/tile/model/definedness/elements.asl"]}
 
 pure func PackedSignedGatherStart() => bits(64)
 begin
@@ -20,6 +20,7 @@ pure func PackedSignedGatherIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
+    instruction[24:20] = Zeros{5} + 4;
     return instruction;
 end;
 
@@ -35,6 +36,7 @@ begin
     let started = ExecuteCommandInstruction(PackedSignedGatherStart(), 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 1);
     let bound = ExecuteCommandInstruction(PackedSignedGatherBinding(), 32);
     assert bound == CommandExecution_Executed;
     let scalar = ExecuteCommandInstruction(PackedSignedGatherIOR(), 32);

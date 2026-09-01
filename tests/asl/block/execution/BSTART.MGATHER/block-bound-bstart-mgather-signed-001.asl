@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-SIGNED-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"boundary","summary":"Signed S32 IndexTile elements are sign-extended byte displacements.","pass_condition":"S32 values -3 and -1 access base-3 and base-1 without transfer-type scaling.","related_sources":["asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-SIGNED-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"boundary","summary":"Signed S32 IndexTile elements select logical elements before the GM base.","pass_condition":"With ValidCol and stride two, S32 indices -2 and -1 address the two U16 elements immediately before the base.","related_sources":["asl/tile/model/memory/addressing.asl"]}
 pure func SignedGatherStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -19,6 +19,7 @@ pure func SignedGatherIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
+    instruction[24:20] = Zeros{5} + 4;
     return instruction;
 end;
 
@@ -27,14 +28,15 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_S32,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xfffffffd);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xfffffffe);
     WriteTileElement(0, 0, 1, Ones{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 0x100, 2, Zeros{PTO_XLEN} + 0x2211);
     Store(Zeros{PTO_XLEN} + 0x102, 2, Zeros{PTO_XLEN} + 0x4433);
-    WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x103);
+    WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x104);
     let started = ExecuteCommandInstruction(SignedGatherStart(), 32);
     assert started == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
     let tiles = ExecuteCommandInstruction(SignedGatherBinding(), 32);
     assert tiles == CommandExecution_Executed;
     let scalar = ExecuteCommandInstruction(SignedGatherIOR(), 32);

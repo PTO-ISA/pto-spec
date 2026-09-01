@@ -15,7 +15,8 @@ begin
     Store(Zeros{PTO_XLEN} + 0x281, 1, Zeros{PTO_XLEN} + 0x73);
 
     StartMemoryEventCapture(0);
-    MGATHER_MASK(0, Zeros{PTO_XLEN} + 0x280, 1, 2, TilePad_Zero);
+    MGATHER_MASK(0, Zeros{PTO_XLEN} + 0x280,
+        Zeros{PTO_XLEN} + 2, 1, 2, TilePad_Zero);
 
     assert _MemoryEventCount == 1;
     assert ReadTileElement(0, 0, 0) == Zeros{PTO_XLEN} + 0x62;

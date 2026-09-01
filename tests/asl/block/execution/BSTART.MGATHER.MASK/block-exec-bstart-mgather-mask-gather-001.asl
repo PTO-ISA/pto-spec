@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-MASK-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.MASK.asl","requirements":["PTO-BSTART-MGATHER-MASK-SCHEMA-001","PTO-MGATHER-MASK-PREDICATE-001","PTO-MGATHER-MASK-PUBLICATION-001","PTO-INST-TILE-MGATHER-MASK","PTO-INST-BLOCK-BSTART-MGATHER-MASK"],"kind":"execution","summary":"MGATHER.MASK loads only exact-one lanes and pads every other physical destination element.","pass_condition":"Signed byte displacements load two U8 elements, a disabled invalid displacement produces no event or fault, and Max fills both the disabled valid lane and the complete non-valid physical region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-mask.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-MASK-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.MASK.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-MASK-SCHEMA-001","PTO-MGATHER-MASK-PREDICATE-001","PTO-MGATHER-MASK-PUBLICATION-001","PTO-INST-TILE-MGATHER-MASK","PTO-INST-BLOCK-BSTART-MGATHER-MASK"],"kind":"execution","summary":"MGATHER.MASK loads only exact-one lanes and pads every other physical destination element.","pass_condition":"Signed logical element indices load two U8 elements, a disabled invalid displacement produces no event or fault, and Max fills both the disabled valid lane and the complete non-valid physical region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-mask.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func MaskGatherStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00611181;
@@ -20,6 +20,7 @@ pure func MaskGatherIOR() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00000013;
     instruction[19:15] = Zeros{5} + 2;
+    instruction[24:20] = Zeros{5} + 4;
     return instruction;
 end;
 
@@ -50,6 +51,7 @@ begin
     let padded = ExecuteCommandInstruction(MaskGatherMaxPad(), 32);
     assert padded == CommandExecution_Executed;
     SetBundleDimension(0, Zeros{PTO_XLEN} + 3);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 3);
     SetBundleDimension(2, Zeros{PTO_XLEN} + 4);
     let bound = ExecuteCommandInstruction(MaskGatherBinding('001'), 32);
     assert bound == CommandExecution_Executed;
