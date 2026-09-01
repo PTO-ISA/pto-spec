@@ -17341,7 +17341,7 @@
     "asl/block/model/commit/effects.asl": "dd0a425fb8691f4156243649b9db6f12436cd541c73e6217010533d171456d9b",
     "asl/block/model/commit/validation.asl": "f22cac246c59a10aebedb4ab19805f0314130ef0fade576559816eb3608b12f5",
     "asl/block/model/dispatch/cell-rearrangement-schema.asl": "18f22fd96b5385ce47617c00aafdaa460c2fec6cab1cc867f28b1a772b259bc2",
-    "asl/block/model/dispatch/commands.asl": "f3ee998378759bd7dfd390b7cda015bb57390f40a229ef4768b070d0d37f3890",
+    "asl/block/model/dispatch/commands.asl": "f91d868856af69dcabde143399745f8262453f9788c60c7b0e5bc87f9c24fd55",
     "asl/block/model/dispatch/comparison-schema.asl": "2ab4829a931b2f11e577d5df43e8ef13594ddbcf65e1d14fb0ebeacb43860ab9",
     "asl/block/model/dispatch/cube-destination.asl": "ee31e918e78a40a17608cb76c1343186130f841b4cbb5fbd26e50d99dbcc07cd",
     "asl/block/model/dispatch/cube-tmatmul.asl": "4a65098b22408fedd8b76b362ac7a45bffecd6ed88c1654b59d29226e06c71e8",
@@ -17357,7 +17357,7 @@
     "asl/block/model/dispatch/predicate-destination.asl": "59d86f2f69f7e85993c21e03d99f9dbc696ae7d652a0912eb0b853c80a1692a9",
     "asl/block/model/dispatch/quantization-schema.asl": "4ffadc99a63f4f2946c2e0faaae97329427dba5858e7adb1593e489ab1d06259",
     "asl/block/model/dispatch/reduction-schema.asl": "d00dd8b782a9af6de6c689957cec0a289f1120daefdec922e771410c6621fb91",
-    "asl/block/model/dispatch/scalar-schema.asl": "b1fea15df5dd8ad01c717239a9afc6fc1f76e5ca3645272d8970cd1b7b4a43ff",
+    "asl/block/model/dispatch/scalar-schema.asl": "10d321844cb8f515f9c31ff77b8b136acee23703402c721352d86cccab045eff",
     "asl/block/model/dispatch/shared-cube-matrix.asl": "f295fd84f83a482fa8f5a659cb74cd4919fb6b85d8d5b7d8a173756ac6e48ec7",
     "asl/block/model/dispatch/shared-tlsu.asl": "e26cda013f071354913d4d990954588d9983af5bdd6768f806a15503e347ffcf",
     "asl/block/model/dispatch/sorting-schema.asl": "996a280c5cc4425c9d5783e47dcaaceea30b0cbc5a4d5ce4a5d657c03cfdc4ed",
@@ -18200,7 +18200,7 @@
     "docs/block/model/commit/effects.md": "6544e5ab1a6ed2a8cad01726b42a3a602525ba318a1e12a9240434f60a5988e6",
     "docs/block/model/commit/validation.md": "36b6696303e975621e2688bd7f0850519f8b1a75f87c91512b2db972d0e2c808",
     "docs/block/model/dispatch/cell-rearrangement-schema.md": "910f3a6b49bf2097ab4e14a2d7a581b4834c19f4d88d6e1326fed1c4c3915991",
-    "docs/block/model/dispatch/commands.md": "128eeae413ad397237c50ca04ccd630a5f8fdeac509930c193520901821454da",
+    "docs/block/model/dispatch/commands.md": "2cf7a4e37956cf1003ee0e9e10043fdde6294f0a5a67e016be5850e9350495fe",
     "docs/block/model/dispatch/comparison-schema.md": "44ba6ad68803c91d8b1bd2777ebc11a478dc4c68430559097fc3b62c7f0f62b9",
     "docs/block/model/dispatch/cube-destination.md": "bec93765a939bf244b1ac629cf56bb8080482a2b55e062a06cc90dc46fb4a611",
     "docs/block/model/dispatch/cube-tmatmul.md": "a54b5b307dec8f37df25978b3a701cac597955e74623a666849ae3aaecbe3da1",
@@ -18216,7 +18216,7 @@
     "docs/block/model/dispatch/predicate-destination.md": "6bb0915d5bec7333ad82cf848b5996009ccceda2ec9f4da5c785bf469e3b654e",
     "docs/block/model/dispatch/quantization-schema.md": "c2fbc02d3d41141758d004af45948b201d3b786ce72e7ed239d4bf1e764d1dc0",
     "docs/block/model/dispatch/reduction-schema.md": "d918b420bb1fa3044b630be5949d093d38e57240db4d24bbd0bcbd94782624f8",
-    "docs/block/model/dispatch/scalar-schema.md": "3786eea320c97a5283b6fc247347bc7cd92d01111b60c9b1d182116f1193966d",
+    "docs/block/model/dispatch/scalar-schema.md": "b498eae879edb5fb369fbcbec642083f26e206ac2309840a9b54674ed92832e1",
     "docs/block/model/dispatch/shared-cube-matrix.md": "fede7ca740906f80cbfa6368af7af31e82040283968310ba79a9ec647330ef0b",
     "docs/block/model/dispatch/shared-tlsu.md": "57bf4fe5f7727b449c45b6ba9eb1bcf38036c52eea7011e8786f5d389947366d",
     "docs/block/model/dispatch/sorting-schema.md": "3ecb39ccc7ce566b780cf6d8475d853d4acfb958a40737475990b3fd4f26a46a",
@@ -19478,6 +19478,7 @@
     "tests/asl/block/model/dispatch/quantization-schema/block-static-quantization-schema-contract-001.asl": "5c18945171a69b79c29859ce4b7eab089b49444bf87326e36e11c6d92147f29e",
     "tests/asl/block/model/dispatch/reduction-schema/block-bound-trowsum-schema-001.asl": "93d0643418ade6de8b418e0839ff22ab512ef23d5ccd4d640a37288f68edf0ae",
     "tests/asl/block/model/dispatch/reduction-schema/block-static-reduction-schema-contract-001.asl": "47350f615c9f4dc735d53fc63c361882b357baba28478f51a1eafe894074086c",
+    "tests/asl/block/model/dispatch/scalar-schema/block-bound-scalar-schema-tgpr2t-class-001.asl": "6b7660c4c9a23467ccdfa0c5107c9845f1ece50abdfb9c16579425c987dd5099",
     "tests/asl/block/model/dispatch/scalar-schema/block-static-scalar-schema-contract-001.asl": "26a1eef09b2ff830e33b85e1d1b8c73c4108c6b9e26a061638a938d9f5366c4b",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-exec-shared-cube-scale-transpose-002.asl": "fc9538d3ba766ac00a59249f5626bd7419cf9983f1a52abd70e68531bbd3c00e",
     "tests/asl/block/model/dispatch/shared-cube-matrix/block-static-shared-cube-matrix-contract-001.asl": "9a87138fcf0fe7bba46f6d3447358753f3997f7110d0b9785d0858890355faf7",
@@ -22749,7 +22750,7 @@
     "mnemonics_without_semantic_tests": [],
     "requirement_count": 1033,
     "status": "closed",
-    "test_count": 3812,
+    "test_count": 3813,
     "uncovered_executable_requirement_count": 0,
     "uncovered_executable_requirements": [],
     "uncovered_unit_count": 0,
@@ -39053,6 +39054,14 @@
       ],
       "sha256": "97ece6fcbde1490d41bb47eb6cda89008066e462ab60b03360a4b196fb4d3531",
       "source": "asl/block/execution/BSTART.TGEMVMX.asl"
+    },
+    {
+      "id": "PTO-AVS-BLOCK-TGPR2T-CLASS-BOUND-001",
+      "kind": "boundary",
+      "path": "tests/asl/block/model/dispatch/scalar-schema/block-bound-scalar-schema-tgpr2t-class-001.asl",
+      "requirements": [],
+      "sha256": "6b7660c4c9a23467ccdfa0c5107c9845f1ece50abdfb9c16579425c987dd5099",
+      "source": "asl/block/model/dispatch/scalar-schema.asl"
     },
     {
       "id": "PTO-AVS-BLOCK-TGPR2T-DECODED-001",
@@ -65413,11 +65422,14 @@
         "ADR-0055",
         "ADR-0113"
       ],
-      "semantic_tests": [],
+      "semantic_tests": [
+        "PTO-AVS-BLOCK-TGPR2T-CLASS-BOUND-001"
+      ],
       "source": "asl/block/model/dispatch/scalar-schema.asl",
       "surface": "block",
       "tests": [
-        "PTO-AVS-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA-STATIC-001"
+        "PTO-AVS-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA-STATIC-001",
+        "PTO-AVS-BLOCK-TGPR2T-CLASS-BOUND-001"
       ]
     },
     {

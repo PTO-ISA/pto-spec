@@ -32,7 +32,12 @@ end;
 
 readonly func BundleTGPR2TSelected() => boolean
 begin
-    if !_BundleOperation.valid then return FALSE; end;
+    if !_BundleOperation.valid ||
+       (_BundleOperation.operation_class != BundleOperation_TileElement &&
+        _BundleOperation.operation_class != BundleOperation_TileMemory &&
+        _BundleOperation.operation_class != BundleOperation_TileMatrix) then
+        return FALSE;
+    end;
     let decoded = DecodeTileOperation(
         BundleTileDecodeFamily(_BundleOperation.operation_class),
         BundleOperationDecodeCode(_BundleOperation));
