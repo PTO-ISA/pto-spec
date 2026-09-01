@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TGPR2T-BYTE-OFFSET-001","source":"asl/tile/layout-and-rearrangement/layout/TGPR2T.asl","requirements":["PTO-INST-TILE-TGPR2T"],"kind":"execution","summary":"TGPR2T maps four GPR predicate planes into the selected byte of a CUBE U8 destination","pass_condition":"M32 output rows contain the packed source bytes at ByteOffset 3 and preserve independent PadValue","related_sources":["asl/tile/model/execution/comparison.asl","asl/tile/model/execution/predicate-carriers.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TGPR2T-BYTE-OFFSET-001","source":"asl/tile/layout-and-rearrangement/layout/TGPR2T.asl","requirements":["PTO-INST-TILE-TGPR2T","PTO-TGPR2T-CONTRACT-001"],"kind":"execution","summary":"TGPR2T maps four GPR predicate planes into the selected byte of a CUBE U8 destination","pass_condition":"M32 output rows contain the packed source bytes at ByteOffset 3 and preserve independent PadValue","related_sources":["asl/tile/model/execution/comparison.asl","asl/tile/model/execution/predicate-carriers.asl"]}
 func main() => integer
 begin
     ResetProfileState();

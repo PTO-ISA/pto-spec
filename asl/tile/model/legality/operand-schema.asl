@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","surface":"tile","classification":["model","legality","operand-schema"],"depends_on":["PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA","surface":"tile","classification":["model","legality","operand-schema"],"depends_on":["PTO-TILE-MODEL-EXECUTION-UNARY","PTO-TILE-MODEL-LEGALITY-ALLOCATION-CAPACITY","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
 readonly func TileElementwiseDescriptorLegal(index: TileIndex) => boolean
 begin
     let tile = _Tiles[[index]];
@@ -191,15 +191,11 @@ readonly func TileOperandsLegal_ExecuteTileCompare(
 begin
     if _Tiles[[source_left]].layout == TileLayout_CUBE_M16 ||
        _Tiles[[source_left]].layout == TileLayout_CUBE_M32 then
-        return TileShapeAndTypeMatch(source_left, source_right) &&
-               _Tiles[[source_left]].storage_kind == TileStorage_Numeric &&
-               TileCompareDataTypeSupported(_Tiles[[source_left]].data_type) &&
-               TileSourceContentsDefined(source_left) &&
-               TileSourceContentsDefined(source_right) &&
-               TileLogicalShapeMatch(destination, source_left) &&
-               _Tiles[[destination]].storage_kind == TileStorage_PredicateCell &&
-               _Tiles[[destination]].data_type == TileDataType_U8 &&
-               _Tiles[[destination]].layout == _Tiles[[source_left]].layout;
+        return TileCubeNumericShapeAndTypeMatch(source_left, source_right) &&
+               TileCubeNumericSourceLegal(source_left) &&
+               TileCubeNumericSourceLegal(source_right) &&
+               TilePredicateCellShapeMatchesNumeric(
+                   destination, source_left);
     end;
     return TileShapeAndTypeMatch(source_left, source_right) &&
            _Tiles[[source_left]].storage_kind == TileStorage_Numeric &&
@@ -221,15 +217,10 @@ begin
         _Tiles[[source]].data_type);
     if _Tiles[[source]].layout == TileLayout_CUBE_M16 ||
        _Tiles[[source]].layout == TileLayout_CUBE_M32 then
-        return _Tiles[[source]].storage_kind == TileStorage_Numeric &&
-               TileCompareDataTypeSupported(_Tiles[[source]].data_type) &&
-               TileSourceContentsDefined(source) &&
+        return TileCubeNumericSourceLegal(source) &&
                TileNumericEncodingValid(
                    _Tiles[[source]].data_type, normalized_scalar) &&
-               TileLogicalShapeMatch(destination, source) &&
-               _Tiles[[destination]].storage_kind == TileStorage_PredicateCell &&
-               _Tiles[[destination]].data_type == TileDataType_U8 &&
-               _Tiles[[destination]].layout == _Tiles[[source]].layout;
+               TilePredicateCellShapeMatchesNumeric(destination, source);
     end;
     return _Tiles[[source]].storage_kind == TileStorage_Numeric &&
            _Tiles[[source]].layout == TileLayout_RowMajor &&
@@ -248,16 +239,12 @@ readonly func TileOperandsLegal_ExecuteTileSelect(
 begin
     if _Tiles[[source_true]].layout == TileLayout_CUBE_M16 ||
        _Tiles[[source_true]].layout == TileLayout_CUBE_M32 then
-        return TileShapeAndTypeMatch(source_true, source_false) &&
-               _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
-               TileSelectDataTypeSupported(_Tiles[[source_true]].data_type) &&
-               TileSourceContentsDefined(source_true) &&
-               TileSourceContentsDefined(source_false) &&
+        return TileCubeNumericShapeAndTypeMatch(source_true, source_false) &&
+               TileCubeNumericContentsDefined(source_true) &&
+               TileCubeNumericContentsDefined(source_false) &&
                TilePredicateCellValuesLegal(mask) &&
-               TileLogicalShapeMatch(mask, source_true) &&
-               TileShapeAndTypeMatch(destination, source_true) &&
-               _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
-               _Tiles[[mask]].layout == _Tiles[[source_true]].layout;
+               TilePredicateCellShapeMatchesNumeric(mask, source_true) &&
+               TileCubeNumericShapeAndTypeMatch(destination, source_true);
     end;
     return TileShapeAndTypeMatch(source_true, source_false) &&
            _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
@@ -276,14 +263,10 @@ readonly func TileOperandsLegal_ExecuteTileSelectScalar(
 begin
     if _Tiles[[source_true]].layout == TileLayout_CUBE_M16 ||
        _Tiles[[source_true]].layout == TileLayout_CUBE_M32 then
-        return _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
-               TileSelectDataTypeSupported(_Tiles[[source_true]].data_type) &&
-               TileSourceContentsDefined(source_true) &&
+        return TileCubeNumericContentsDefined(source_true) &&
                TilePredicateCellValuesLegal(mask) &&
-               TileLogicalShapeMatch(mask, source_true) &&
-               TileShapeAndTypeMatch(destination, source_true) &&
-               _Tiles[[destination]].storage_kind == TileStorage_Numeric &&
-               _Tiles[[mask]].layout == _Tiles[[source_true]].layout;
+               TilePredicateCellShapeMatchesNumeric(mask, source_true) &&
+               TileCubeNumericShapeAndTypeMatch(destination, source_true);
     end;
     return _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
            _Tiles[[source_true]].layout == TileLayout_RowMajor &&

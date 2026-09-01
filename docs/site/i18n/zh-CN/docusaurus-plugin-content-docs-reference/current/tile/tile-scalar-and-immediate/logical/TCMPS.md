@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl`
 
-Compare each valid Local Tile element with one private-GPR scalar and produce a packed predicate Tile.
+Compare each valid Local Tile element with a scalar and produce one legacy Predicate, CUBE PredicateCell, or GPR carrier.
 
 ## Normative identity {#PTO-INST-TILE-TCMPS}
 
@@ -171,9 +171,9 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 
 | Field | Architectural role |
 | --- | --- |
-| destination0 | new packed Local predicate destination |
+| destination0 | legacy packed Predicate or CUBE PredicateCell destination; absent for GPR producer |
 | source0 | persistent Local numeric source |
-| scalar0 | per-participating-PE private-GPR scalar |
+| scalar0 | per-participating-PE compare scalar |
 | comparison | six-mode comparison |
 
 ## Decode
@@ -262,20 +262,17 @@ end;
 
 ## Legality
 
-- TCMPS is selected only by the TEPL raw carrier Mode 1 Function 13 and executes on VEC.
-- Exactly one terminating Local B.IOT supplies one persistent numeric source and one new packed predicate destination. B.IOS and additional Tile bindings are illegal.
-- The source DataType is exactly FP64, FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S64, S32, S16, S8, U64, U32, U16, or U8.
-- The source is row-major and completely defined. The predicate destination has matching logical geometry and capacity of at least ceil(Row*Col/8) bytes.
-- Only CMode and PadValueOrByteId are applicable in B.DATR. When B.IOR is present, only RegSrc0 may be nonzero.
-- PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks.
-- CUBE forms use exactly one carrier. CellReg form retains the scalar compare B.IOR source and writes a descriptor-tagged U8 PredicateCell; GPR form uses the same scalar source plus at most one B.IOR destination GPR.
-- GPR U8 Low/High selection is operation-specific SatMode; Canonicalize remains zero.
+- TCMPS selects TEPL Mode 1 Function 13 and executes on VEC. PE_MASK=0000 is a strict no-op before GPR, source, allocation, status, or payload checks.
+- Legacy RowMajor form uses one terminating B.IOT with source and new packed Predicate destination; one optional B.IOR supplies the compare scalar.
+- CUBE_M16/M32 PredicateCell form uses one terminating B.IOT with source and new basis-tagged U8 PredicateCell destination plus an optional scalar-source B.IOR; omission selects zero. The source type is exactly one of FP32, TF32, HF32, FP16, BF16, E4M3, E5M2, S32, S16, S8, U32, U16, or U8.
+- CUBE_M16/M32 GPR form uses one source-only B.IOT and one B.IOR carrying the scalar source plus one destination GPR. The source type is 32-bit or 16-bit types from the closed CUBE domain, plus U8; U8 Sat selects Low or High columns.
+- Legacy, PredicateCell, and GPR forms are complete and mutually exclusive. CMode and PadValue apply to all; Sat is nonzero only for U8 GPR selection; Canonicalize remains zero.
 
 ## State effects
 
-- Logical element i publishes its comparison result in bit i mod 8 of byte floor(i/8), with low logical indices in low bits.
+- Each valid comparison publishes through the selected carrier: legacy low-first packed bit, canonical PredicateCell byte, or GPR predicate bit.
 - Zero and Min padding write zero predicate bits, Max writes one bits, and Null leaves padding undefined.
-- Packed payload, padding definedness, numeric status, and destination descriptor publish atomically; rejection has no architectural effect.
+- Selected carrier payload, padding, numeric status, and descriptor or GPR result publish atomically; rejection has no architectural effect.
 
 ## Memory effects and ordering
 
@@ -290,11 +287,8 @@ end;
 
 ## Exceptions
 
-- Malformed bindings, B.IOS presence, surplus B.IOR fields, reserved CMode, unsupported DataType, undefined or invalid source encoding, predicate capacity failure, or allocation failure raises Fault_TileLegality or Fault_TileAllocation before effects.
-- Signaling floating NaN records invalid only with the atomically published predicate destination.
-- CompleteBundleAtWithAcceptedApplicabilityRules supplies precise restart and completion after an accepted operation.
-- CUBE forms use exactly one carrier. CellReg form retains the scalar compare B.IOR source and writes a descriptor-tagged U8 PredicateCell; GPR form uses the same scalar source plus at most one B.IOR destination GPR.
-- GPR U8 Low/High selection is operation-specific SatMode; Canonicalize remains zero.
+- Malformed or mixed carrier schemas, missing dimensions, reserved CMode, unsupported DataType, undefined or invalid source/scalar data, insufficient PredicateCell capacity, or allocation failure rejects before effects.
+- Signaling floating NaN status publishes atomically with the selected GPR or PredicateCell result.
 
 ## Examples
 

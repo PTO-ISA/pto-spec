@@ -1,7 +1,3 @@
-// NDF-BEGIN: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001
-// ndf: kind=contract level=L1 layer=block status=accepted
-// TGPR2T consumes exactly two contiguous source-only B.IOR records (3+1) and one terminating destination B.IOT; missing, non-contiguous, wrong-split, surplus, or destination-bearing forms reject before effects.
-// NDF-END: PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA","surface":"block","classification":["model","dispatch","tile-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR","PTO-TILE-MODEL-EXECUTION-UNARY"]}
 func BundleTileInstructionOperands(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1})

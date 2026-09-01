@@ -115,6 +115,38 @@ begin
     return selector < PTO_ABSOLUTE_GPR_COUNT;
 end;
 
+pure func BundleComparisonBindingUsesNoSources(
+    binding: BundleScalarBinding) => boolean
+begin
+    return binding.source0 == 0 &&
+           binding.source1 == 0 &&
+           binding.source2 == 0;
+end;
+
+pure func BundleComparisonBindingUsesOneSource(
+    binding: BundleScalarBinding) => boolean
+begin
+    return BundleComparisonGPRSelectorLegal(binding.source0) &&
+           binding.source1 == 0 &&
+           binding.source2 == 0;
+end;
+
+pure func BundleComparisonBindingUsesTwoSources(
+    binding: BundleScalarBinding) => boolean
+begin
+    return BundleComparisonGPRSelectorLegal(binding.source0) &&
+           BundleComparisonGPRSelectorLegal(binding.source1) &&
+           binding.source2 == 0;
+end;
+
+pure func BundleComparisonBindingUsesThreeSources(
+    binding: BundleScalarBinding) => boolean
+begin
+    return BundleComparisonGPRSelectorLegal(binding.source0) &&
+           BundleComparisonGPRSelectorLegal(binding.source1) &&
+           BundleComparisonGPRSelectorLegal(binding.source2);
+end;
+
 readonly func BundleComparisonCodeAsTileComparison() => TileComparison
 begin
     case UInt(_BundleDataAttributes.comparison_mode) of
@@ -148,6 +180,24 @@ begin
     return FALSE;
 end;
 
+readonly func SelectedBundleComparisonProducesGPR(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    let decoded = TileOperationOfIndex(operation);
+    return SelectedBundleComparisonUsesGPRCarrier(operation) &&
+           (decoded == TileOperation_TCMP ||
+            decoded == TileOperation_TCMPS);
+end;
+
+readonly func SelectedBundleComparisonConsumesGPR(
+    operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
+begin
+    let decoded = TileOperationOfIndex(operation);
+    return SelectedBundleComparisonUsesGPRCarrier(operation) &&
+           (decoded == TileOperation_TSEL ||
+            decoded == TileOperation_TSELS);
+end;
+
 readonly func SelectedBundleClosedTCMPSchemaLegal(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin
@@ -174,7 +224,15 @@ begin
         (!TileLayoutIsCube(_Tiles[[source_right]].layout) &&
          !TileSourceEncodingsValid(source_right))) ||
        !SelectedBundleComparisonShapeMatches(source_left) then return FALSE; end;
-    if !SelectedBundleComparisonCUBE(source_left) then
+    let cube = SelectedBundleComparisonCUBE(source_left);
+    if cube && !TileCubePredicateDataTypeSupported(data_type) then
+        return FALSE;
+    end;
+    if cube && (!TileCubeNumericSourceLegal(source_left) ||
+                !TileCubeNumericSourceLegal(source_right)) then
+        return FALSE;
+    end;
+    if !cube then
         return binding.destination_valid &&
                !binding.destination_allocated_by_bundle &&
                BundleTileDestinationSizeLegal(0) &&
@@ -183,20 +241,22 @@ begin
     end;
     // CUBE CellReg form has a Local PredicateCell destination and no B.IOR.
     if binding.destination_valid then
+        let capacity_bytes = BundleLocalDestinationAllocationBytes(0);
         return !_BundleScalarBindings[[0]].valid &&
                !_BundleDataAttributes.saturating &&
                !_BundleDataAttributes.canonicalize &&
                !binding.destination_allocated_by_bundle &&
                BundleTileDestinationSizeLegal(0) &&
-               _Tiles[[binding.destination]].storage_kind ==
-                   TileStorage_PredicateCell &&
-               _Tiles[[binding.destination]].data_type == TileDataType_U8 &&
-               _Tiles[[binding.destination]].layout == _Tiles[[source_left]].layout;
+               TileCubeDescriptorShapeLegal(
+                   capacity_bytes, _Tiles[[source_left]].valid_rows,
+                   _Tiles[[source_left]].valid_columns, TileDataType_U8,
+                   _Tiles[[source_left]].layout);
     end;
     // CUBE GPR form has no tile destination and exactly one destination-only
     // B.IOR record.  Encoded zero is still architectural GPR0.
     return _BundleScalarBindings[[0]].valid &&
-           _BundleScalarBindings[[0]].source_count == 0 &&
+           BundleComparisonBindingUsesNoSources(
+               _BundleScalarBindings[[0]]) &&
            BundleComparisonGPRSelectorLegal(
                _BundleScalarBindings[[0]].destination) &&
            !binding.destination_valid &&
@@ -232,9 +292,11 @@ begin
         let source_true = BundleTileSourceIndex(0, TRUE);
         let source_false = BundleTileSourceIndex(1, FALSE);
         return !_BundleScalarBindings[[0]].valid &&
+               (!SelectedBundleComparisonCUBE(source_true) ||
+                TileCubePredicateDataTypeSupported(data_type)) &&
                (if SelectedBundleComparisonCUBE(source_true) then
                    TilePredicateCellValuesLegal(mask) &&
-                   _Tiles[[mask]].layout == _Tiles[[source_true]].layout
+                   TilePredicateCellShapeMatchesNumeric(mask, source_true)
                 else
                    TilePredicateValuesLegal(mask)) &&
                SelectedBundleComparisonShapeAndTypeMatch(source_true, source_false) &&
@@ -242,7 +304,6 @@ begin
                _Tiles[[source_true]].data_type == data_type &&
                SelectedBundleComparisonSourceContentsDefined(source_true) &&
                SelectedBundleComparisonSourceContentsDefined(source_false) &&
-               TileLogicalShapeMatch(mask, source_true) &&
                SelectedBundleComparisonShapeMatches(source_true);
     end;
     // GPR mask form has one B.IOT for true/false/destination and a
@@ -254,18 +315,19 @@ begin
        !binding.source1_valid || !binding.last ||
        !_BundleScalarBindings[[0]].valid ||
        _BundleScalarBindings[[0]].destination != 0 ||
-       !BundleComparisonGPRSelectorLegal(
-           _BundleScalarBindings[[0]].source0) ||
-       ( _BundleScalarBindings[[0]].source_count > 1 &&
-         !BundleComparisonGPRSelectorLegal(
-             _BundleScalarBindings[[0]].source1)) ||
-       _BundleScalarBindings[[0]].source_count !=
-           SelectedBundleComparisonGPRMaskWordCount(binding.source0) then
+       (if SelectedBundleComparisonGPRMaskWordCount(binding.source0) == 2 then
+            !BundleComparisonBindingUsesTwoSources(
+                _BundleScalarBindings[[0]])
+        else
+            !BundleComparisonBindingUsesOneSource(
+                _BundleScalarBindings[[0]])) then
         return FALSE;
     end;
     let source_true = BundleTileSourceIndex(0, FALSE);
     let source_false = BundleTileSourceIndex(0, TRUE);
-    return SelectedBundleComparisonShapeAndTypeMatch(source_true, source_false) &&
+    return TileCubePredicateGPRDataTypeSupported(data_type) &&
+           TileCubePredicateGPRShapeLegal(source_true) &&
+           SelectedBundleComparisonShapeAndTypeMatch(source_true, source_false) &&
            _Tiles[[source_true]].storage_kind == TileStorage_Numeric &&
            _Tiles[[source_true]].data_type == data_type &&
            SelectedBundleComparisonCUBE(source_true) &&

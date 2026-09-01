@@ -1,4 +1,4 @@
-// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPARISON","surface":"tile","classification":["model","execution","comparison"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE"]}
+// PTO-UNIT: {"id":"PTO-TILE-MODEL-EXECUTION-COMPARISON","surface":"tile","classification":["model","execution","comparison"],"depends_on":["PTO-TILE-MODEL-EXECUTION-ELEMENTWISE","PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS"]}
 // PTO-REQ-TEPL-COMPARISON-001: packed predicate compare and select semantics.
 pure func TileCompareDataTypeSupported(data_type: TileDataType) => boolean
 begin
@@ -7,22 +7,6 @@ end;
 pure func TileSelectDataTypeSupported(data_type: TileDataType) => boolean
 begin
     return TileVecArithmeticDataTypeSupported(data_type);
-end;
-pure func TileCubePredicateDataTypeSupported(data_type: TileDataType) => boolean
-begin
-    return data_type == TileDataType_FP32 ||
-           data_type == TileDataType_TF32 ||
-           data_type == TileDataType_HF32 ||
-           data_type == TileDataType_FP16 ||
-           data_type == TileDataType_BF16 ||
-           data_type == TileDataType_E4M3 ||
-           data_type == TileDataType_E5M2 ||
-           data_type == TileDataType_S32 ||
-           data_type == TileDataType_S16 ||
-           data_type == TileDataType_S8 ||
-           data_type == TileDataType_U32 ||
-           data_type == TileDataType_U16 ||
-           data_type == TileDataType_U8;
 end;
 pure func TileCompareBoolean(
     comparison: TileComparison,
@@ -96,6 +80,22 @@ begin
         UInt(TileFloatingOrderKey(data_type, right));
     return (TileCompareBoolean(comparison, left_less, equal), Zeros{5});
 end;
+
+readonly impdef func TileProfilePredicateNullGPRPadding() => Word
+begin
+    // Portable reference default for architecturally unspecified Null bits.
+    return Zeros{PTO_XLEN};
+end;
+
+readonly func TilePredicateGPRPaddingValue() => Word
+begin
+    case CurrentBundlePadValue() of
+        when TilePad_Zero, TilePad_Min => return Zeros{PTO_XLEN};
+        when TilePad_Max => return Ones{PTO_XLEN};
+        when TilePad_Null => return TileProfilePredicateNullGPRPadding();
+    end;
+end;
+
 func TileCompareElement(
     comparison: TileComparison,
     data_type: TileDataType,
@@ -323,18 +323,6 @@ begin
 end;
 // CUBE predicate-carrier extension.  The legacy packed row-major path above is
 // intentionally unchanged; these helpers are selected only for CUBE layouts.
-pure func TileCubePredicateFieldCount(data_type: TileDataType,
-                                      layout: TileLayout) => integer {1..8}
-begin
-    assert TileCubePredicateDataTypeSupported(data_type);
-    if layout == TileLayout_CUBE_M32 then return 2; end;
-    assert layout == TileLayout_CUBE_M16;
-    return if TileElementBits(data_type) == 32 then 2 else 4;
-end;
-pure func TileCubePredicateRowBits(layout: TileLayout) => integer {16,32}
-begin
-    return if layout == TileLayout_CUBE_M32 then 32 else 16;
-end;
 pure func TileCubePredicateColumnBase(data_type: TileDataType,
                                       layout: TileLayout,
                                       high: boolean) => integer {0..8}
@@ -346,19 +334,18 @@ end;
 readonly func TileOperandsLegal_ExecuteTileCompareGPR(
     source_left: TileIndex, source_right: TileIndex, high: boolean) => boolean
 begin
-    if !TileShapeAndTypeMatch(source_left, source_right) ||
-       _Tiles[[source_left]].storage_kind != TileStorage_Numeric then
+    if !TileCubeNumericShapeAndTypeMatch(source_left, source_right) then
         return FALSE;
     end;
     let left = _Tiles[[source_left]];
     if left.layout != TileLayout_CUBE_M16 && left.layout != TileLayout_CUBE_M32 then
         return FALSE;
     end;
-    return TileCubePredicateDataTypeSupported(left.data_type) &&
-           TileSourceContentsDefined(source_left) &&
-           TileSourceContentsDefined(source_right) &&
-           TileSourceEncodingsValid(source_left) &&
-           TileSourceEncodingsValid(source_right);
+    return TileCubePredicateGPRDataTypeSupported(left.data_type) &&
+           TileCubePredicateGPRShapeLegal(source_left) &&
+           (left.data_type == TileDataType_U8 || !high) &&
+           TileCubeNumericSourceLegal(source_left) &&
+           TileCubeNumericSourceLegal(source_right);
 end;
 func TileCompareCUBEToGPR(source_left: TileIndex, source_right: TileIndex,
                           comparison: TileComparison, high: boolean) => Word
@@ -369,7 +356,7 @@ begin
     let width = TileCubePredicateRowBits(left.layout);
     let fields = TileCubePredicateFieldCount(left.data_type, left.layout);
     let base = TileCubePredicateColumnBase(left.data_type, left.layout, high);
-    var result = Zeros{PTO_XLEN};
+    var result = TilePredicateGPRPaddingValue();
     var flags = Zeros{5};
     for field = 0 to fields - 1 looplimit 8 do
         let column = base + field;
@@ -394,41 +381,6 @@ begin
     RecordNumericStatusFlags(flags);
     return result;
 end;
-readonly func TilePredicateCellValuesLegal(index: TileIndex) => boolean
-begin
-    let tile = _Tiles[[index]];
-    if tile.storage_kind != TileStorage_PredicateCell ||
-       tile.data_type != TileDataType_U8 ||
-       (tile.layout != TileLayout_CUBE_M16 &&
-        tile.layout != TileLayout_CUBE_M32) ||
-       !tile.allocated || tile.location != TileLocation_Matrix ||
-       !TileCubePredicateDataTypeSupported(tile.data_type) ||
-       !TileCubeDescriptorShapeLegal(tile.capacity_bytes, tile.valid_rows,
-           tile.valid_columns, tile.data_type, tile.layout) ||
-       tile.rows != TileCubeStorageRows(
-           tile.layout, tile.valid_rows, tile.data_type) ||
-       tile.columns != TileCubeStorageColumns(
-           tile.layout, tile.valid_columns, tile.data_type) ||
-       tile.cube_k_repeat != TileCubeKRepeat(
-           tile.layout, tile.valid_rows, tile.valid_columns, tile.data_type) ||
-       tile.cube_n_repeat != TileCubeNRepeat(
-           tile.layout, tile.valid_rows, tile.valid_columns, tile.data_type) ||
-       tile.cube_cell_count != TileCubeCellCount(
-           tile.layout, tile.valid_rows, tile.valid_columns, tile.data_type) ||
-       tile.cube_storage_bytes != TileCubeRequiredBytes(
-           tile.layout, tile.valid_rows, tile.valid_columns, tile.data_type) ||
-       tile.cube_storage_bytes > tile.capacity_bytes ||
-       !tile.contents_defined then return FALSE; end;
-    for row = 0 to tile.valid_rows - 1 looplimit 65536 do
-        for column = 0 to tile.valid_columns - 1 looplimit 65536 do
-            let element = TileLogicalLinearIndex(tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let value = TileReadLogicalElement(tile, element)[7:0];
-            if value != '00000000' && value != '00000001' then return FALSE; end;
-        end;
-    end;
-    return TRUE;
-end;
 func ExecuteTileCompareCell(destination: TileIndex, source_left: TileIndex,
                             source_right: TileIndex, comparison: TileComparison)
 begin
@@ -450,7 +402,7 @@ begin
             flags = flags OR element_flags;
         end;
     end;
-    result = TileWithPadding(result, CurrentBundlePadValue());
+    result = PredicateCellWithPadding(result, CurrentBundlePadValue());
     result.defined_valid_elements =
         (result.valid_rows * result.valid_columns) as integer {0..524288};
     result.contents_defined = TRUE;
@@ -479,6 +431,7 @@ begin
             flags = flags OR element_flags;
         end;
     end;
+    result = PredicateCellWithPadding(result, CurrentBundlePadValue());
     result.defined_valid_elements =
         (result.valid_rows * result.valid_columns) as integer {0..524288};
     result.contents_defined = TRUE;

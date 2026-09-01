@@ -170,6 +170,7 @@ nav:
               - Histogram Schema: block/model/dispatch/histogram-schema.md
               - Matrix Scale: block/model/dispatch/matrix-scale.md
               - Numeric Control: block/model/dispatch/numeric-control.md
+              - Predicate Destination: block/model/dispatch/predicate-destination.md
               - Quantization Schema: block/model/dispatch/quantization-schema.md
               - Reduction Schema: block/model/dispatch/reduction-schema.md
               - Scalar Schema: block/model/dispatch/scalar-schema.md
@@ -179,6 +180,7 @@ nav:
               - Start: block/model/dispatch/start.md
               - Tcvt Destination: block/model/dispatch/tcvt-destination.md
               - Tcvt Schema: block/model/dispatch/tcvt-schema.md
+              - Tgpr2t Schema: block/model/dispatch/tgpr2t-schema.md
               - Tile Execution: block/model/dispatch/tile-execution.md
               - Tile Scalar Schema: block/model/dispatch/tile-scalar-schema.md
               - Tile Schema: block/model/dispatch/tile-schema.md
@@ -862,6 +864,7 @@ nav:
               - Memory Schema: tile/model/legality/memory-schema.md
               - Operand Schema: tile/model/legality/operand-schema.md
               - PE Mask: tile/model/legality/pe-mask.md
+              - Predicate Carriers: tile/model/legality/predicate-carriers.md
               - Reduction And Expansion: tile/model/legality/reduction-and-expansion.md
               - Sorting: tile/model/legality/sorting.md
           - Memory:

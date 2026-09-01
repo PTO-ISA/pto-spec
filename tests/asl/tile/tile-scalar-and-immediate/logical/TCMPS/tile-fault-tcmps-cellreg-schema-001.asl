@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TCMPS-CELLREG-SCHEMA-001","source":"asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl","requirements":["PTO-INST-TILE-TCMPS"],"kind":"fault","summary":"TCMPS CellReg producer retains exactly one scalar compare B.IOR source","pass_condition":"the CellReg producer accepts its scalar source, while missing, surplus, or destination-role B.IOR bindings reject","related_sources":["asl/block/model/dispatch/tile-scalar-schema.asl","asl/tile/model/state/allocation.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TCMPS-CELLREG-SCHEMA-001","source":"asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl","requirements":["PTO-INST-TILE-TCMPS"],"kind":"fault","summary":"TCMPS PredicateCell scalar binding is optional and otherwise exact","pass_condition":"the PredicateCell producer accepts an omitted or one-source scalar binding, while surplus or destination-role B.IOR bindings reject","related_sources":["asl/block/model/dispatch/tile-scalar-schema.asl","asl/tile/model/state/allocation.asl"]}
 func ConfigureTCMPSCellRegSchema()
 begin
     ResetProfileState();
@@ -6,7 +6,7 @@ begin
         1, 128, 1, 1, TileDataType_U8,
         TileLayout_CUBE_M32, TileLocation_Matrix);
     let predicate_configured = ConfigurePredicateCell(
-        2, 128, 1, 1, TileLayout_CUBE_M32);
+        2, 128, 1, 1, TileDataType_U8, TileLayout_CUBE_M32);
     assert source_configured && predicate_configured;
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 1);
@@ -48,6 +48,6 @@ begin
 
     ConfigureTCMPSCellRegSchema();
     _BundleScalarBindings[[0]].valid = FALSE;
-    assert !SelectedBundleClosedTCMPSSchemaLegal(37);
+    assert SelectedBundleClosedTCMPSSchemaLegal(37);
     return 0;
 end;

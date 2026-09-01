@@ -168,6 +168,7 @@ type LocalGenerationParentDescriptor of record {
     valid_rows: integer {0..65535},
     valid_columns: integer {0..65535},
     data_type: TileDataType,
+    predicate_basis_type: TileDataType,
     layout: TileLayout,
     location: TileLocation,
     cube_k_repeat: integer {0..65535},

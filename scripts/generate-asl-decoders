@@ -87,6 +87,10 @@ TILE_DATR_PAD_UNION_ENUM = {
 }
 TILE_LEGALITY_OWNS_SOURCE_DEFINEDNESS = {
     "ExecuteTileBinary",
+    "ExecuteTileCompare",
+    "ExecuteTileCompareScalar",
+    "ExecuteTileSelect",
+    "ExecuteTileSelectScalar",
     "ExecuteTileScalar",
     "ExecuteTileUnary",
     "TFMA",

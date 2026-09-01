@@ -310,6 +310,11 @@ begin
     return (TileCompareBoolean(comparison, left_less, equal), Zeros{5});
 end;
 
+readonly implementation func TileProfilePredicateNullGPRPadding() => Word
+begin
+    return Zeros{PTO_XLEN};
+end;
+
 implementation func TileProfileReductionInitial(
     operation: TileReductionOperation,
     data_type: TileDataType,

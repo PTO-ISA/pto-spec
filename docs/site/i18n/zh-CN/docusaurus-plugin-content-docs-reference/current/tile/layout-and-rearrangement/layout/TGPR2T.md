@@ -69,6 +69,8 @@ end;
 ```asm
 BSTART.SFU TGPR2T, U8
 B.DATR PadValueOrByteId, RMode (optional)
+B.DIM LB0=ValidCol
+B.DIM LB1=ValidRow
 B.IOR GPR0, GPR1, GPR2
 B.IOR GPR3
 B.IOT mask=PE_MASK, <last>, ->destination<TSize>
@@ -111,13 +113,15 @@ end;
 
 ## Defaults and encoded zero
 
-- B.DATR PadValueOrByteId defaults to Zero and RMode defaults to ByteOffset0.
+- Omitted B.DATR selects Zero padding and ByteOffset0.
+- LB1/LB0=32/4 selects CUBE_M32; LB1/LB0=16/8 selects CUBE_M16. Both dimensions are mandatory and LB2 is absent.
 
 ## Legality
 
-- TGPR2T uses TEPL Mode 3 Function 30 (0x07E), encoded as mask=0x000fffff and match=0x07e19181.
-- The destination is an ordinary numeric U8 CUBE_M32 32x4 or CUBE_M16 16x8 Tile.
-- Four ordered source-only 64-bit GPRs are required; source selectors are absolute GPR0..GPR23.
+- TGPR2T uses TEPL Mode 3 Function 30 (0x07E) with U8 operation type.
+- Exact dimensions 32x4 select an ordinary numeric CUBE_M32 destination and 16x8 select CUBE_M16; LB2 is absent and the encoded TSize must cover the complete descriptor.
+- Four ordered source-only 64-bit GPRs are supplied by exactly two contiguous B.IOR records with arity 3+1; selectors are absolute GPR0..GPR23.
+- Zero and Max are the only padding values. PE_MASK=0000 is a strict no-op before schema, GPR reads, allocation, or effects.
 
 ## State effects
 
@@ -137,10 +141,9 @@ end;
 
 ## Exceptions
 
-- RMode[17] must be zero; reserved ByteOffset encodings reject before effects.
-- Exactly two contiguous source-only B.IOR records, split 3+1, are required; no GPR destination is allowed.
-- CompleteBundleAtWithAcceptedApplicabilityRules supplies restart and completion behavior.
+- RMode[17] must be zero. PadValue accepts only Zero or Max; Min and Null reject before effects.
+- Exactly two immediately contiguous source-only B.IOR records split 3+1 are required, followed by one destination B.IOT. Missing dimensions, an intervening command, wrong order/split, GPR destination, or surplus record rejects before effects.
 
 ## Examples
 
-- BSTART.SFU TGPR2T, U8; B.DATR PadValueOrByteId, RMode; B.IOR a0, a1, a2; B.IOR a3; B.IOT mask=1111, <last>, ->T0<TSize>; BSTOP
+- BSTART.SFU TGPR2T, U8; B.DATR PadValueOrByteId, RMode; B.DIM LB0=ValidCol; B.DIM LB1=ValidRow; B.IOR a0, a1, a2; B.IOR a3; B.IOT mask=1111, <last>, ->T0<TSize>; BSTOP

@@ -218,6 +218,7 @@ begin
         end;
     end;
     result.data_type = output_type;
+    result.predicate_basis_type = output_type;
     result.payload = payload;
     return (result, flags);
 end;

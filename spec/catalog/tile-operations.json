@@ -715,7 +715,7 @@
       "operands": [
         {
           "field": "destination0",
-          "role": "predicate destination"
+          "role": "legacy Predicate or CUBE PredicateCell destination; absent for GPR carrier"
         },
         {
           "field": "source0",
@@ -734,7 +734,7 @@
       "selector": "0x00D",
       "semantic_handler": "ExecuteTileCompare",
       "state_effects": [
-        "operand:destination0:packed-predicate-destination",
+        "operand:destination0:variant-predicate-carrier-destination",
         "operand:source0:persistent-source-left",
         "operand:source1:persistent-source-right",
         "operand:comparison:six-mode-comparison",
@@ -1223,7 +1223,7 @@
         },
         {
           "field": "source0",
-          "role": "packed predicate mask"
+          "role": "legacy Predicate, CUBE PredicateCell, or first GPR-mask role"
         },
         {
           "field": "source1",
@@ -1239,7 +1239,7 @@
       "semantic_handler": "ExecuteTileSelect",
       "state_effects": [
         "operand:destination0:numeric-destination",
-        "operand:source0:packed-predicate-mask",
+        "operand:source0:variant-predicate-mask-carrier",
         "operand:source1:persistent-source-true",
         "operand:source2:persistent-source-false",
         "runtime:CurrentBundlePadValue:numeric-padding"
@@ -2087,7 +2087,7 @@
       "operands": [
         {
           "field": "destination0",
-          "role": "new packed Local predicate destination"
+          "role": "legacy Predicate or CUBE PredicateCell destination; absent for GPR carrier"
         },
         {
           "field": "source0",
@@ -2106,7 +2106,7 @@
       "selector": "0x02D",
       "semantic_handler": "ExecuteTileCompareScalar",
       "state_effects": [
-        "operand:destination0:packed-predicate-destination",
+        "operand:destination0:variant-predicate-carrier-destination",
         "operand:source0:persistent-local-source",
         "operand:scalar0:private-gpr-raw-element",
         "operand:comparison:six-mode-comparison",
@@ -2153,7 +2153,7 @@
         },
         {
           "field": "source0",
-          "role": "packed Local predicate mask"
+          "role": "legacy Predicate, CUBE PredicateCell, or GPR mask role"
         },
         {
           "field": "source1",
@@ -2169,7 +2169,7 @@
       "semantic_handler": "ExecuteTileSelectScalar",
       "state_effects": [
         "operand:destination0:new-local-numeric-destination",
-        "operand:source0:packed-predicate-mask",
+        "operand:source0:variant-predicate-mask-carrier",
         "operand:source1:persistent-local-source-true",
         "operand:scalar0:private-gpr-scalar-false",
         "runtime:CurrentBundlePadValue:numeric-padding"

@@ -32,15 +32,14 @@ end;
 readonly func TileOperandsLegal_ExecuteTileCompareCUBEScalarGPR(
     source: TileIndex, scalar: Word) => boolean
 begin
-    if _Tiles[[source]].storage_kind != TileStorage_Numeric ||
-       (_Tiles[[source]].layout != TileLayout_CUBE_M16 &&
-        _Tiles[[source]].layout != TileLayout_CUBE_M32) ||
-       !TileCompareDataTypeSupported(_Tiles[[source]].data_type) ||
-       !TileSourceContentsDefined(source) ||
-       !TileSourceEncodingsValid(source) then return FALSE; end;
+    let tile = _Tiles[[source]];
+    if !TileCubeNumericSourceLegal(source) ||
+       !TileCubePredicateGPRDataTypeSupported(tile.data_type) ||
+       !TileCubePredicateGPRShapeLegal(source) then
+        return FALSE;
+    end;
     return TileNumericEncodingValid(
-        _Tiles[[source]].data_type,
-        TileRawElementValue(scalar, _Tiles[[source]].data_type));
+        tile.data_type, TileRawElementValue(scalar, tile.data_type));
 end;
 
 func TileCompareCUBEScalarToGPR(source: TileIndex, scalar: Word,
@@ -49,10 +48,11 @@ func TileCompareCUBEScalarToGPR(source: TileIndex, scalar: Word,
 begin
     assert TileOperandsLegal_ExecuteTileCompareCUBEScalarGPR(source, scalar);
     let tile = _Tiles[[source]];
+    let normalized_scalar = TileRawElementValue(scalar, tile.data_type);
     let rows = TileCubePredicateRowBits(tile.layout);
     let fields = TileCubePredicateFieldCount(tile.data_type, tile.layout);
     let base = TileCubePredicateColumnBase(tile.data_type, tile.layout, high);
-    var result = Zeros{PTO_XLEN};
+    var result = TilePredicateGPRPaddingValue();
     var flags = Zeros{5};
     for field = 0 to fields - 1 looplimit 8 do
         let column = base + field;
@@ -65,7 +65,7 @@ begin
                     let (predicate, element_flags) = TileCompareElement(
                         comparison, tile.data_type,
                         TileReadLogicalElement(tile, element),
-                        scalar);
+                        normalized_scalar);
                     flags = flags OR element_flags;
                     result[row + field * rows] = if predicate then '1' else '0';
                 end;
@@ -141,6 +141,18 @@ begin
     return UInt(raw_rmode[1:0]) as integer {0..3};
 end;
 
+readonly func TileTGPR2TEffectivePadValue() => TilePadValue
+begin
+    return if _BundleDataAttributesPresent then CurrentBundlePadValue()
+        else TilePad_Zero;
+end;
+
+readonly func TileTGPR2TPadLegal() => boolean
+begin
+    let pad = TileTGPR2TEffectivePadValue();
+    return pad == TilePad_Zero || pad == TilePad_Max;
+end;
+
 pure func TileTGPR2TPredicateBit(
     gpr0: Word, gpr1: Word, gpr2: Word, gpr3: Word,
     plane: integer {0..15}, row: integer {0..31}) => bit
@@ -204,11 +216,12 @@ begin
        source1 >= PTO_ABSOLUTE_GPR_COUNT ||
        source2 >= PTO_ABSOLUTE_GPR_COUNT ||
        source3 >= PTO_ABSOLUTE_GPR_COUNT ||
+       !TileCubeDescriptorLegal(_Tiles[[destination]]) ||
        _Tiles[[destination]].storage_kind != TileStorage_Numeric ||
        _Tiles[[destination]].data_type != TileDataType_U8 ||
        !TileLayoutIsCube(_Tiles[[destination]].layout) ||
        !TileTGPR2TRModeLegal(_BundleDataAttributes.rounding_mode) ||
-       CurrentBundlePadValue() == TilePad_Null then
+       !TileTGPR2TPadLegal() then
         return FALSE;
     end;
     let tile = _Tiles[[destination]];
@@ -227,9 +240,9 @@ begin
     let gpr1 = ReadGPR(source1 as GPRIndex);
     let gpr2 = ReadGPR(source2 as GPRIndex);
     let gpr3 = ReadGPR(source3 as GPRIndex);
-    var result = TileWithPadding(_Tiles[[destination]],
-        CurrentBundlePadValue());
-    let pad = TilePadValueForDataType(CurrentBundlePadValue(),
+    let selected_pad = TileTGPR2TEffectivePadValue();
+    var result = TileWithPadding(_Tiles[[destination]], selected_pad);
+    let pad = TilePadValueForDataType(selected_pad,
         result.data_type);
     for row = 0 to result.valid_rows - 1 looplimit 32 do
         for column = 0 to result.valid_columns - 1 looplimit 8 do

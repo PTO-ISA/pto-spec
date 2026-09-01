@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-TGPR2T-DECODED-001","source":"asl/block/model/dispatch/tile-schema.asl","requirements":["PTO-INST-TILE-TGPR2T","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001"],"kind":"execution","summary":"Decoded TGPR2T binds the exact 3+1 source-only B.IOR stream and publishes ordinary numeric CUBE output for M32 and M16 shapes.","pass_condition":"Real decoded BSTART/B.DATR/B.IOR/B.IOT commands accept legal M32 and M16 bundles with Zero or Max whole-tile padding, while malformed binding streams fault before destination allocation.","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/dispatch/scalar-schema.asl","asl/block/model/dispatch/descriptor-legality.asl","asl/tile/model/execution/predicate-carriers.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-TGPR2T-DECODED-001","source":"asl/block/model/dispatch/tile-schema.asl","requirements":["PTO-INST-TILE-TGPR2T","PTO-TGPR2T-CONTRACT-001","PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001"],"kind":"execution","summary":"Decoded TGPR2T binds the exact dimensions and ordered contiguous 3+1 source-only B.IOR stream","pass_condition":"Real B.DIM/B.IOR/B.IOT commands accept M32 and M16 with omitted-Zero or Max padding and reject missing shape, Min/Null padding, reordered, intervening, destination-bearing, or surplus carriers","related_sources":["asl/block/model/dispatch/commands.asl","asl/block/model/dispatch/tgpr2t-schema.asl","asl/tile/model/execution/predicate-carriers.asl"]}
 
 pure func TGPR2TStart() => bits(64)
 begin
@@ -46,6 +46,17 @@ begin
     return instruction;
 end;
 
+pure func TGPR2TDimension(
+    destination: BundleDimensionIndex, value: bits(17)) => bits(64)
+begin
+    var instruction = Zeros{64} + 0x43;
+    instruction[14:12] = Zeros{3} + destination;
+    instruction[19:15] = Zeros{5};
+    instruction[31:20] = value[11:0];
+    instruction[11:7] = value[16:12];
+    return instruction;
+end;
+
 func SeedTGPR2TGPRs()
 begin
     // Each source contributes one bit to every first-row plane.  The first
@@ -74,8 +85,12 @@ begin
         TGPR2TDataAttributes(layout, pad, rmode), 32);
     assert started == CommandExecution_Executed;
     assert attributes == CommandExecution_Executed;
-    SetBundleDimension(0, Zeros{PTO_XLEN} + columns);
-    SetBundleDimension(1, Zeros{PTO_XLEN} + rows);
+    let valid_columns = ExecuteCommandInstruction(
+        TGPR2TDimension(0, Zeros{17} + columns), 32);
+    let valid_rows = ExecuteCommandInstruction(
+        TGPR2TDimension(1, Zeros{17} + rows), 32);
+    assert valid_columns == CommandExecution_Executed;
+    assert valid_rows == CommandExecution_Executed;
     SeedTGPR2TGPRs();
 end;
 
@@ -153,6 +168,27 @@ end;
 
 func TestTGPR2TMalformedStreams()
 begin
+    // A participating destination cannot precede the complete 3+1 pair.
+    ResetProfileState();
+    StartTGPR2T(Zeros{5}, '00', '000', 32, 4);
+    let early_destination = ExecuteCommandInstruction(
+        TGPR2TDestination('0001'), 32);
+    assert early_destination == CommandExecution_Rejected;
+    assert _LastFault == Fault_BundleControl;
+    assert BundleTileBindingCount() == 0;
+
+    // A participating destination cannot intervene between the two records.
+    ResetProfileState();
+    StartTGPR2T(Zeros{5}, '00', '000', 32, 4);
+    let partial = ExecuteCommandInstruction(TGPR2TSourceBinding(
+        Zeros{5} + 2, Zeros{5} + 3, Zeros{5} + 4), 32);
+    let intervening_destination = ExecuteCommandInstruction(
+        TGPR2TDestination('0001'), 32);
+    assert partial == CommandExecution_Executed;
+    assert intervening_destination == CommandExecution_Rejected;
+    assert _LastFault == Fault_BundleControl;
+    assert BundleTileBindingCount() == 0;
+
     // A third B.IOR is rejected at the command boundary and cannot create a
     // third owner slot or partially allocate the destination.
     ResetProfileState();
@@ -180,10 +216,68 @@ begin
     assert _LastFault == Fault_BundleControl;
 end;
 
+func TestTGPR2TContiguousAndShapeRules()
+begin
+    // The second B.IOR must be immediately contiguous with the first.
+    ResetProfileState();
+    StartTGPR2T(Zeros{5}, '00', '000', 32, 4);
+    let first = ExecuteCommandInstruction(TGPR2TSourceBinding(
+        Zeros{5} + 2, Zeros{5} + 3, Zeros{5} + 4), 32);
+    let intervening = ExecuteCommandInstruction(
+        TGPR2TDimension(0, Zeros{17} + 4), 32);
+    assert first == CommandExecution_Executed;
+    assert intervening == CommandExecution_Rejected;
+    assert _LastFault == Fault_BundleControl;
+
+    // The canonical carrier requires explicit 32x4 or 16x8 dimensions.
+    ResetProfileState();
+    let started = ExecuteCommandInstruction(TGPR2TStart(), 32);
+    assert started == CommandExecution_Executed;
+    BindTGPR2T3Plus1();
+    let missing_shape = ExecuteBundleTileOperation();
+    assert !missing_shape && _LastFault == Fault_TileLegality;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
+end;
+
+func TestTGPR2TPaddingDomain()
+begin
+    // Omitted B.DATR selects Zero padding.
+    ResetProfileState();
+    let started = ExecuteCommandInstruction(TGPR2TStart(), 32);
+    let columns = ExecuteCommandInstruction(
+        TGPR2TDimension(0, Zeros{17} + 4), 32);
+    let rows = ExecuteCommandInstruction(
+        TGPR2TDimension(1, Zeros{17} + 32), 32);
+    assert started == CommandExecution_Executed;
+    assert columns == CommandExecution_Executed;
+    assert rows == CommandExecution_Executed;
+    SeedTGPR2TGPRs();
+    BindTGPR2T3Plus1();
+    let completed = ExecuteBundleTileOperation();
+    assert completed && _LastFault == Fault_None;
+    let destination = _BundleTileBindings[[0]].destination;
+    assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN};
+
+    // Min and Null are outside the TGPR2T padding domain.
+    ResetProfileState();
+    StartTGPR2T(Zeros{5}, '10', '000', 32, 4);
+    BindTGPR2T3Plus1();
+    let min_rejected = ExecuteBundleTileOperation();
+    assert !min_rejected && _LastFault == Fault_TileLegality;
+
+    ResetProfileState();
+    StartTGPR2T(Zeros{5}, '11', '000', 32, 4);
+    BindTGPR2T3Plus1();
+    let null_rejected = ExecuteBundleTileOperation();
+    assert !null_rejected && _LastFault == Fault_TileLegality;
+end;
+
 func main() => integer
 begin
     TestTGPR2TM32();
     TestTGPR2TM16();
     TestTGPR2TMalformedStreams();
+    TestTGPR2TContiguousAndShapeRules();
+    TestTGPR2TPaddingDomain();
     return 0;
 end;

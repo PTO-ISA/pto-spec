@@ -1,9 +1,9 @@
-// PTO-TEST: {"id":"PTO-AVS-TILE-TSELS-CELLREG-SCHEMA-001","source":"asl/tile/tile-scalar-and-immediate/logical/TSELS.asl","requirements":["PTO-INST-TILE-TSELS"],"kind":"fault","summary":"TSELS CellReg predicate form retains exactly one scalar-false B.IOR source","pass_condition":"the CellReg predicate form accepts its independent scalar-false source, while missing, surplus, or mixed-role B.IOR bindings reject","related_sources":["asl/block/model/dispatch/tile-scalar-schema.asl","asl/tile/model/state/allocation.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-TILE-TSELS-CELLREG-SCHEMA-001","source":"asl/tile/tile-scalar-and-immediate/logical/TSELS.asl","requirements":["PTO-INST-TILE-TSELS"],"kind":"fault","summary":"TSELS PredicateCell scalar binding is optional and otherwise exact","pass_condition":"the PredicateCell form accepts an omitted or one-source false scalar binding, while surplus or mixed-role B.IOR bindings reject","related_sources":["asl/block/model/dispatch/tile-scalar-schema.asl","asl/tile/model/state/allocation.asl"]}
 func ConfigureTSELSCellRegSchema()
 begin
     ResetProfileState();
     let predicate_configured = ConfigurePredicateCell(
-        1, 128, 1, 1, TileLayout_CUBE_M32);
+        1, 128, 1, 1, TileDataType_FP32, TileLayout_CUBE_M32);
     let true_configured = ConfigureCubeTile(
         2, 128, 1, 1, TileDataType_FP32,
         TileLayout_CUBE_M32, TileLocation_Matrix);
@@ -45,7 +45,7 @@ begin
 
     ConfigureTSELSCellRegSchema();
     _BundleScalarBindings[[0]].valid = FALSE;
-    assert !SelectedBundleClosedTSELSSchemaLegal(38);
+    assert SelectedBundleClosedTSELSSchemaLegal(38);
 
     ConfigureTSELSCellRegSchema();
     SetBundleScalarBinding(0, 0, 4, 5, 0, 2);

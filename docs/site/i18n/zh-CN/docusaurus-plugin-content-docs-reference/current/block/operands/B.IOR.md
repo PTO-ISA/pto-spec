@@ -297,7 +297,7 @@ end;
 ## Block composition
 
 ```asm
-Optional once after BSTART and before the block body for every schema that declares GPR inputs or outputs.
+One B.IOR may appear after BSTART and before the block body when the complete schema declares GPR operands. TGPR2T instead requires exactly two immediately contiguous source-only records before its destination B.IOT.
 ```
 
 ## Operation
@@ -314,8 +314,8 @@ Optional once after BSTART and before the block body for every schema that decla
 // B.IOR binds at most three dense input slots, RegSrc0..RegSrc2, in the
 // operation-independent logical order address, scalar0, scalar1, diagonal,
 // flag0. Omission is distinct from an encoded zero selector. Consumers own
-// raw-value validation before constrained assignment; a second B.IOR faults
-// with Fault_BundleControl and preserves the first binding.
+// raw-value validation before constrained assignment; a second non-TGPR2T
+// B.IOR faults with Fault_BundleControl and preserves the first binding.
 // Matrix complete-bundle consumers append optional scalar QuantParam then
 // scalar LReLUParam in the same dense RegSrc order. Their omission/default,
 // surplus-zero, and raw-carrier policy is owned by the dynamic schema at
@@ -371,16 +371,15 @@ end;
 
 ## Legality
 
-- B.IOR is legal only after BSTART and before the block body, in any block whose complete schema declares GPR operands; an explicitly all-zero B.IOR is also legal when the schema consumes none.
-- A block contains at most one B.IOR; a second instruction raises Illegal Block Exception and preserves the first binding.
+- B.IOR is legal only after BSTART and before the block body when the complete selected schema declares GPR operands; an explicitly encoded zero selector names GPR0 and is not omission.
+- Every non-TGPR2T block accepts at most one B.IOR. TGPR2T accepts exactly two immediately contiguous source-only records with arity 3+1; destination-bearing, missing, reordered, intervening-command, wrong-split, or surplus records reject before effects.
 - RegDst and RegSrc0..RegSrc2 accept only absolute GPR selectors 0..23; selectors 24..31 are reserved and reject before effects.
-- Sources may repeat and may alias RegDst. Any nonzero field not consumed by the selected complete-block schema rejects before block effects.
-- RegDst remains zero unless the selected complete-block schema explicitly declares a GPR result; current Matrix B.FPATR schemas consume only RegSrc inputs.
+- Sources may repeat and may alias RegDst where the selected complete schema permits a destination. Any nonzero unconsumed field rejects before block effects.
 
 ## State effects
 
-- Record one explicit B.IOR instruction and its four absolute GPR selectors as pending block-header state; effective arity is derived from the complete operation schema.
-- Inputs are read according to the selected operation before destination publication; no GPR is modified merely by executing B.IOR.
+- Record the schema-permitted B.IOR selector state: one record for ordinary consumers or two contiguous source-only records for TGPR2T. Effective arity and roles derive from the complete operation schema.
+- Inputs are read according to the selected operation before destination publication; executing B.IOR itself modifies no GPR.
 
 ## Memory effects and ordering
 
@@ -395,7 +394,7 @@ end;
 ## Exceptions
 
 - An out-of-range selector raises Fault_IllegalInstruction before binding state changes.
-- Standalone, body-phase, or duplicate B.IOR raises Illegal Block Exception before binding state changes.
+- Standalone or body-phase B.IOR raises Illegal Block Exception before binding state changes. A duplicate non-TGPR2T record, a TGPR2T third record, or any command between TGPR2T's first and second B.IOR raises Fault_BundleControl and preserves accepted prior state.
 - A nonzero unused field or other operation-schema mismatch raises a block/tile legality fault before operation effects.
 
 ## Examples

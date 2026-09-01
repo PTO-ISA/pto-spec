@@ -16,6 +16,49 @@ This page is a generated reference view of the normative ASL unit.
 <!-- GENERATED-ASL-BEGIN: unit source=asl/block/model/dispatch/scalar-schema.asl -->
 ```asl
 // PTO-UNIT: {"id":"PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA","surface":"block","classification":["model","dispatch","scalar-schema"],"depends_on":["PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY","PTO-TILE-MODEL-NUMERIC-FORMATS"]}
+readonly func DecodedBundleCommandKeepsTGPR2TStreamLegal(
+    instruction: bits(64), form: integer {0..PTO_COMMAND_FORM_COUNT-1})
+    => boolean
+begin
+    let handler = CommandHandlerOfForm(form);
+    let zero_participation = handler == CommandHandler_BindBundleTileIO &&
+        PTOv0PEMaskOfPEMode(DecodeCommandOperandRaw(
+            instruction, form, CommandField_PEMode)[2:0]) == Zeros{4};
+    return _BundleZeroParticipationSeen ||
+           !BundleTGPR2TSelected() ||
+           !_BundleScalarBindings[[0]].valid ||
+           _BundleScalarBindings[[1]].valid ||
+           handler == CommandHandler_BindBundleScalarIO ||
+           zero_participation;
+end;
+
+readonly func BundleTGPR2TScalarCommandCanBePlaced(
+    binding_index: integer {0..1}, instruction: bits(64),
+    form: integer {0..PTO_COMMAND_FORM_COUNT-1}) => boolean
+begin
+    return !BundleTGPR2TSelected() ||
+           ((binding_index != 0 || BundleTileBindingCount() == 0) &&
+            CommandDecodedReg5(instruction, form, CommandField_RegDst) == 0);
+end;
+
+readonly func BundleTGPR2TScalarBindingsComplete() => boolean
+begin
+    return _BundleScalarBindings[[0]].valid &&
+           _BundleScalarBindings[[1]].valid;
+end;
+
+readonly func BundleTGPR2TSelected() => boolean
+begin
+    if !_BundleOperation.valid then return FALSE; end;
+    let decoded = DecodeTileOperation(
+        BundleTileDecodeFamily(_BundleOperation.operation_class),
+        BundleOperationDecodeCode(_BundleOperation));
+    return decoded != PTO_TILE_OPERATION_COUNT &&
+           TileOperationOfIndex(
+               decoded as integer {0..PTO_TILE_OPERATION_COUNT-1}) ==
+               TileOperation_TGPR2T;
+end;
+
 pure func BundleOperationConsumesScalarSource0(
     operation: integer {0..PTO_TILE_OPERATION_COUNT-1}) => boolean
 begin

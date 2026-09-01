@@ -3232,7 +3232,7 @@
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
-        "source0": "packed predicate mask",
+        "source0": "legacy Predicate, CUBE PredicateCell, or first GPR-mask role",
         "source1": "source-true",
         "source2": "source-false"
       },
@@ -3294,7 +3294,7 @@
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
-        "source0": "packed predicate mask",
+        "source0": "legacy Predicate, CUBE PredicateCell, or first GPR-mask role",
         "source1": "source-true",
         "source2": "source-false"
       },
@@ -3356,7 +3356,7 @@
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
-        "source0": "packed predicate mask",
+        "source0": "legacy Predicate, CUBE PredicateCell, or first GPR-mask role",
         "source1": "source-true",
         "source2": "source-false"
       },
@@ -3416,7 +3416,7 @@
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
-        "source0": "packed predicate mask",
+        "source0": "legacy Predicate, CUBE PredicateCell, or first GPR-mask role",
         "source1": "source-true",
         "source2": "source-false"
       },
@@ -5177,7 +5177,7 @@
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
-        "source0": "packed Local predicate mask",
+        "source0": "legacy Predicate, CUBE PredicateCell, or GPR mask role",
         "source1": "persistent Local source selected by one"
       },
       "datr_word": null,
@@ -5233,7 +5233,7 @@
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
-        "source0": "packed Local predicate mask",
+        "source0": "legacy Predicate, CUBE PredicateCell, or GPR mask role",
         "source1": "persistent Local source selected by one"
       },
       "datr_word": null,
@@ -5287,7 +5287,7 @@
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
-        "source0": "packed Local predicate mask",
+        "source0": "legacy Predicate, CUBE PredicateCell, or GPR mask role",
         "source1": "persistent Local source selected by one"
       },
       "datr_word": null,
