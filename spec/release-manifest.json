@@ -518,11 +518,11 @@
     },
     {
       "path": "asl/block/lifecycle/MSET.asl",
-      "sha256": "8fc1dadfcd532ac0a62238247620e79fa26f370bebafac12d6e9b7b81561b1cf"
+      "sha256": "94242606a278bdfa0ebc148e452dc2b5bc5fe2591b1964c8c37ed510dec7ac62"
     },
     {
       "path": "asl/block/model/commit/effects.asl",
-      "sha256": "5385a24c6b55b3eb680fb1b1f6cd8e8478f817dc54feee8b6d31b2a0ad2613f0"
+      "sha256": "dd0a425fb8691f4156243649b9db6f12436cd541c73e6217010533d171456d9b"
     },
     {
       "path": "asl/block/model/commit/validation.asl",
@@ -534,7 +534,7 @@
     },
     {
       "path": "asl/block/model/dispatch/commands.asl",
-      "sha256": "5d264458b50dfc5d78a9be561acfe422d753682e3ea3e92896f41f371e76817e"
+      "sha256": "9c64142be921878c26cbe801d24a01c6124a87d32bdd17eacd2cfd93e88eb364"
     },
     {
       "path": "asl/block/model/dispatch/comparison-schema.asl",
@@ -2510,7 +2510,7 @@
     },
     {
       "path": "asl/scalar/model/agu/memory.asl",
-      "sha256": "3e11650bdd6950bf78085be8b1de9735f65310d69b1edfb54d92e59baffee643"
+      "sha256": "2a8591d9c20cfd98d678b901b6eff377b686490fbc8d4bffbb3411b58b917017"
     },
     {
       "path": "asl/scalar/model/alu/bitfield.asl",
@@ -3418,7 +3418,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "2df86181747660ba95dd1dff1d16c9b98896db686714424f32cfaa72974115e9"
+      "sha256": "7c02477c09098266f6f261022a0519ab3f267dce903b90dbe61633d08bcfeaf5"
     },
     {
       "path": "spec/catalog/extension-encoding-reservations.json",
@@ -3446,23 +3446,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "6f21c30cba2397d705498dd431016be07ddc210b70eadbfc81ba87338eaa24ab"
+      "sha256": "75be0ca34c30db5514bd0d5cda49f18dae21490c343323cb441e64bde92c6eb6"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "fffacddec4ad524faa5f9543ec1e0ad80339ef180b5482b87482a4dda3b81f33"
+      "sha256": "3173a0b82e7cdc752078c53d91ebda748ec8f7c7292c43cf89e629217feca33e"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "83849aa7da36e14fff05d0ae3fd75f3966140a832134354634863170f16e0b19"
+      "sha256": "a49eea2ade4618d16829329ae56f3d38c68cf25cad9a0dd4e4fd0608905f6e85"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "0a23abf5035a7f5561790f06dda763d480d95e8ac1f3472d92034b234ec8b290"
+      "sha256": "80004a94234f599c37efc3e1f8f2ee4de3222cd3ac5ccc14930719ede9357bbe"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "d2c71b28a8c2370ddc1c52a4901827dfc58fb353fdba9bf577be3a0882e93dd2"
+      "sha256": "2f7e5b241200aa5b409f5821e9faa73c93e99c0335191b51a4dd3662845418af"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3508,7 +3508,7 @@
     },
     "tile_operations_total": 107
   },
-  "content_sha256": "2d3bcda8ecec42d673cdfadad1e827c2c20eb2928199a66efd0cfc797e3d0573",
+  "content_sha256": "633efa9f53c895a732e8af68435c61b50d68c5699163690a2e9c1d4b899da35c",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4185,12 +4185,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/lifecycle/MSET.md",
-      "sha256": "7a1cf1b9e8118f7bda249d41d52dcc8fb4620bb8a0847a61eabf948b4c1a8d75"
+      "sha256": "f719c51552a8c1616e4f909dfca16da56282b5932642441bdfaa48d0b629d185"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/commit/effects.md",
-      "sha256": "613fa6cdb152cc1a9c0bf3314d99bb6de5926680ef63e52308774b73bd12994b"
+      "sha256": "6544e5ab1a6ed2a8cad01726b42a3a602525ba318a1e12a9240434f60a5988e6"
     },
     {
       "kind": "generated-documentation",
@@ -4205,7 +4205,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/commands.md",
-      "sha256": "4432d730222f8d5b50174d6fb6a43d7a3f9f175af9efee5cc5a1a9f6d68547ab"
+      "sha256": "25b136375aa526c3e7d8e8f4c85faf8610396da41661174072ba1df8a9ae6aa2"
     },
     {
       "kind": "generated-documentation",
@@ -6675,7 +6675,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/agu/memory.md",
-      "sha256": "49ba74af963b146d5edc0fae4778e78db738c54f85c65409635fb14b04ae803f"
+      "sha256": "5213c9a2925b512043dafc32941b249a66b8cb205480fe0080c133d0e1aab9f2"
     },
     {
       "kind": "generated-documentation",
@@ -7828,7 +7828,10 @@
   "release_selection": {
     "architecture_version": "0.58.5",
     "baseline_commit": "5114fb699fa510abd9a3c42bcfa5c592cd724961",
-    "blockers": [],
+    "blockers": [
+      "release NDF drift is not covered by an accepted target ADR: PTO-INST-BLOCK-MSET",
+      "release ASL unit drift is not covered by an accepted target ADR: PTO-SCALAR-MODEL-AGU-MEMORY"
+    ],
     "excluded_draft_adrs": [
       "ADR-0086",
       "ADR-0087",
@@ -8000,7 +8003,7 @@
       },
       {
         "id": "PTO-BLOCK-MSET-FILL-001",
-        "sha256": "7a17016abc6098f2f6e23302df47cfd302b3aba7314a4ac50c095f49c85667e0"
+        "sha256": "ad5bdf73b3cc04a956ae31b953d34a33805c85505578f28b183ea39f16f2d5b4"
       },
       {
         "id": "PTO-BLOCK-TILE-OPERATION-APPLICABILITY-001",
@@ -8780,7 +8783,7 @@
       },
       {
         "id": "PTO-INST-BLOCK-MSET",
-        "sha256": "0fc516f80c4f4df1495e64ca05c1d87818a8e839c5d255245ae53170c15e0f4f"
+        "sha256": "08c125631f72b7bbed0a1e26cd58c1ab2f83b719270d49060e7729fcfc9f7ccf"
       },
       {
         "id": "PTO-INST-BLOCK-XB",
@@ -12047,7 +12050,8 @@
       "ADR-0115",
       "ADR-0116",
       "ADR-0117",
-      "ADR-0118"
+      "ADR-0118",
+      "ADR-0119"
     ]
   },
   "schema_version": 1,
