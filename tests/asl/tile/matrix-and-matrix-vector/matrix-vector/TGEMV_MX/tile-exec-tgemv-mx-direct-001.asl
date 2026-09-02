@@ -29,12 +29,12 @@ begin
     let cube_configuration_3 = ConfigureCubeTile(3, 128, 1, 1, TileDataType_FP32,
         TileLayout_CUBE_M16, TileLocation_Matrix);
     assert cube_configuration_3;
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4000);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x4200);
 
     assert TileOperandsLegal_TGEMV_MX(3, 1, 0, 2, 0);
     TGEMV_MX(3, 1, 0, 2, 0);
     assert ReadTileElement(3, 0, 0) ==
-        Zeros{PTO_XLEN} + 6;
+        Zeros{PTO_XLEN} + 0x40c00000;
     return 0;
 end;

@@ -76,8 +76,8 @@ begin
     assert left && right;
     InstallRelativeTileFixture(1, 1);
     InstallRelativeTileFixture(2, 2);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4000);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x4200);
 end;
 func Writer(init: boolean, last: boolean) => boolean
 begin
@@ -99,7 +99,8 @@ begin
         BundleProducerEffect_NonRollbackAuxiliary;
     assert BundleProducerEffectClassOfHandler(TileHandler_TMATMUL) ==
         BundleProducerEffect_AtomicAuxiliary;
-    for operation = 0 to PTO_TILE_OPERATION_COUNT - 1 looplimit 109 do
+    for operation = 0 to PTO_TILE_OPERATION_COUNT - 1
+        looplimit PTO_TILE_OPERATION_COUNT do
         let effect_class = BundleProducerEffectClassOfOperation(operation);
         assert effect_class == BundleProducerEffect_RollbackSafe ||
                effect_class == BundleProducerEffect_AtomicAuxiliary ||
@@ -187,8 +188,10 @@ begin
         BundleConsumerDependency_Retired;
     let whole_output = _BundleTileBindings[[0]].destination;
     assert _Tiles[[whole_output]].allocated &&
-           ReadTileElement(whole_output, 0, 0) == Zeros{PTO_XLEN} + 18 &&
-           ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 6;
+           ReadTileElement(whole_output, 0, 0) ==
+               Zeros{PTO_XLEN} + 0x41900000 &&
+           ReadTileElement(destination, 0, 0) ==
+               Zeros{PTO_XLEN} + 0x40c00000;
 
     // Re-enter the decoded range path after publication to prove the same
     // selected-cell observable, while the first range consumer above proves
@@ -199,7 +202,7 @@ begin
     SetBundleFixedPointAttributeState(Zeros{6}, Zeros{3}, Zeros{4},
         FALSE, FALSE, FALSE, FALSE);
     let range_binding2 = ExecuteCommandInstruction(
-        MatrixBinding(destination, 2, 1, 1), 32);
+        MatrixBinding(destination, 3, 1, 1), 32);
     let range_view2 = ExecuteCommandInstruction(Subview(), 32);
     assert range_start2 == CommandExecution_Executed &&
            range_data2 == CommandExecution_Executed &&
@@ -209,8 +212,10 @@ begin
     assert range_ready && _LastFault == Fault_None;
     let range_output = _BundleTileBindings[[0]].destination;
     assert _Tiles[[range_output]].allocated &&
-           ReadTileElement(range_output, 0, 0) == Zeros{PTO_XLEN} + 18 &&
-           ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 6;
+           ReadTileElement(range_output, 0, 0) ==
+               Zeros{PTO_XLEN} + 0x41900000 &&
+           ReadTileElement(destination, 0, 0) ==
+               Zeros{PTO_XLEN} + 0x40c00000;
 
     ResetProfileState();
     ConfigureTileForMask(1, 128, 1, 1, 1, 1,

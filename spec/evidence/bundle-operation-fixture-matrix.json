@@ -11637,7 +11637,7 @@
       "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-214",
       "row_assertion": "case_0214_exact_fault",
-      "gpr_word": "0x00010013",
+      "gpr_word": "0x00310013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
@@ -11693,7 +11693,7 @@
       "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-215",
       "row_assertion": "case_0215_exact_fault",
-      "gpr_word": "0x00010013",
+      "gpr_word": "0x00310013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
@@ -11749,7 +11749,7 @@
       "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-216",
       "row_assertion": "case_0216_exact_fault",
-      "gpr_word": "0x00010013",
+      "gpr_word": "0x00310013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
@@ -11803,7 +11803,7 @@
       "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-217",
       "row_assertion": "case_0217_exact_fault",
-      "gpr_word": "0x00010013",
+      "gpr_word": "0x00310013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
@@ -17014,7 +17014,7 @@
         "source3",
         "destination0"
       ],
-      "decoded_start": "0x27e19181",
+      "decoded_start": "0xdfe19181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -17023,21 +17023,14 @@
         "B.IOT",
         "B.IOS"
       ],
-      "modifier": "B.SUBVIEW",
+      "modifier": "none",
       "binding_groups": [
         [
-          "source0",
-          "source1"
-        ],
-        [
-          "source2",
-          "source3",
           "destination0"
         ]
       ],
       "binding_words": [
-        "0x08104e13",
-        "0x1038ce13"
+        "0x0008ee13"
       ],
       "modifier_word": "0x000000d3",
       "modifier_words": [
@@ -17050,7 +17043,7 @@
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-288",
       "row_assertion": "case_0288_normal_commit",
       "gpr_word": null,
-      "fixture_data_type": 4,
+      "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
@@ -17079,7 +17072,7 @@
         "source3",
         "destination0"
       ],
-      "decoded_start": "0x27e19181",
+      "decoded_start": "0xdfe19181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -17088,25 +17081,18 @@
         "B.IOT",
         "B.IOS"
       ],
-      "modifier": "B.SUBVIEW",
+      "modifier": "none",
       "binding_groups": [
         [
-          "source0",
-          "source1"
-        ],
-        [
-          "source2",
-          "source3",
           "destination0"
         ]
       ],
       "binding_words": [
-        "0x08104e13",
-        "0x1038ce13"
+        "0x0008ee13"
       ],
-      "modifier_word": "0x800000d3",
+      "modifier_word": "0x000000d3",
       "modifier_words": [
-        "0x800000d3"
+        "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
       "expected_fault": null,
@@ -17115,7 +17101,7 @@
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-289",
       "row_assertion": "case_0289_normal_commit",
       "gpr_word": null,
-      "fixture_data_type": 4,
+      "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
@@ -17144,7 +17130,7 @@
         "source3",
         "destination0"
       ],
-      "decoded_start": "0x27e19181",
+      "decoded_start": "0xdfe19181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -17153,21 +17139,14 @@
         "B.IOT",
         "B.IOS"
       ],
-      "modifier": "B.SUBVIEW",
+      "modifier": "none",
       "binding_groups": [
         [
-          "source0",
-          "source1"
-        ],
-        [
-          "source2",
-          "source3",
           "destination0"
         ]
       ],
       "binding_words": [
-        "0x08104e13",
-        "0x1038ce13"
+        "0x0008ee13"
       ],
       "modifier_word": "0x000000d3",
       "modifier_words": [
@@ -17180,7 +17159,7 @@
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-290",
       "row_assertion": "case_0290_normal_commit",
       "gpr_word": null,
-      "fixture_data_type": 4,
+      "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
@@ -17209,7 +17188,7 @@
         "source3",
         "destination0"
       ],
-      "decoded_start": "0x27e19181",
+      "decoded_start": "0xdfe19181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -17218,25 +17197,18 @@
         "B.IOT",
         "B.IOS"
       ],
-      "modifier": "B.SUBVIEW",
+      "modifier": "none",
       "binding_groups": [
         [
-          "source0",
-          "source1"
-        ],
-        [
-          "source2",
-          "source3",
           "destination0"
         ]
       ],
       "binding_words": [
-        "0x08104e13",
-        "0x1038ce13"
+        "0x0008ee13"
       ],
-      "modifier_word": "0x800000d3",
+      "modifier_word": "0x000000d3",
       "modifier_words": [
-        "0x800000d3"
+        "0x000000d3"
       ],
       "normal_dispatch": "ExecuteBundleTileOperation",
       "expected_fault": null,
@@ -17245,7 +17217,7 @@
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-291",
       "row_assertion": "case_0291_normal_commit",
       "gpr_word": null,
-      "fixture_data_type": 4,
+      "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
@@ -17274,7 +17246,7 @@
         "source3",
         "destination0"
       ],
-      "decoded_start": "0x27e19181",
+      "decoded_start": "0xdfe19181",
       "decoded_attributes": [
         "B.DIM"
       ],
@@ -17286,18 +17258,11 @@
       "modifier": "B.ASSEMBLE INIT_LAST",
       "binding_groups": [
         [
-          "source0",
-          "source1"
-        ],
-        [
-          "source2",
-          "source3",
           "destination0"
         ]
       ],
       "binding_words": [
-        "0x08104e13",
-        "0x1038ce13"
+        "0x0008ee13"
       ],
       "modifier_word": "0x800018d3",
       "modifier_words": [],
@@ -17308,7 +17273,7 @@
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-292",
       "row_assertion": "case_0292_normal_commit",
       "gpr_word": null,
-      "fixture_data_type": 4,
+      "fixture_data_type": 27,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
       "fixture_role_kinds": {

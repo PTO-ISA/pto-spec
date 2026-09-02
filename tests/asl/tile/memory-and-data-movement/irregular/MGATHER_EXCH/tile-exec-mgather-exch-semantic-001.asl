@@ -5,7 +5,7 @@ begin
     assert GMAtomicOperationFromFunction(9) == GMAtomic_EXCH;
     assert GMAtomicOperationDataTypeLegal(GMAtomic_EXCH, TileDataType_U32);
     let (result, performed) = GMAtomicResult(GMAtomic_EXCH, TileDataType_U32,
-        Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN} + 0,
+        Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN} + 9,
         Zeros{PTO_XLEN} + 0, Zeros{PTO_XLEN} + 0);
     assert result == Zeros{PTO_XLEN} + 9;
     assert performed;

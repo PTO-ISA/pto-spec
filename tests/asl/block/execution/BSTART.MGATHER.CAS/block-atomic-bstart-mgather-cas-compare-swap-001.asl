@@ -1,8 +1,8 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-CAS-EXEC-001","source":"asl/block/execution/BSTART.MGATHER.CAS.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-CAS-SCHEMA-001","PTO-MGATHER-CAS-ATOMIC-001","PTO-MGATHER-CAS-PUBLICATION-001","PTO-INST-TILE-MGATHER-CAS","PTO-INST-BLOCK-BSTART-MGATHER-CAS"],"kind":"atomicity","summary":"MGATHER.CAS performs typed logical-index CAS operations and publishes observed old values.","pass_condition":"Four unique U8 lanes produce two successful writes, two failed writes, the complete old-value destination, and Max padding outside the valid region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-cas.asl","asl/tile/model/memory/atomics.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-CAS-EXEC-001","source":"asl/block/execution/BSTART.MGATHER.CAS.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-CAS-SCHEMA-001","PTO-MGATHER-CAS-ATOMIC-001","PTO-MGATHER-CAS-PUBLICATION-001","PTO-INST-TILE-MGATHER-CAS","PTO-INST-BLOCK-BSTART-MGATHER-CAS"],"kind":"atomicity","summary":"MGATHER.CAS performs typed logical-index CAS operations and publishes observed old values.","pass_condition":"Four unique U16 lanes produce two successful writes, two failed writes, the complete old-value destination, and Max padding outside the valid region.","related_sources":["asl/block/model/dispatch/tlsu-mgather-cas.asl","asl/tile/model/memory/atomics.asl"]}
 pure func CasStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00811181;
-    instruction[31:27] = Zeros{5} + 27;
+    instruction[31:27] = Zeros{5} + 26;
     return instruction;
 end;
 
@@ -47,14 +47,14 @@ begin
     ResetProfileState();
     ConfigureTile(0, 128, 2, 2, 2, 2, TileDataType_S16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(1, 128, 2, 4, 2, 2, TileDataType_U8,
+    ConfigureTile(1, 128, 2, 4, 2, 2, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 2, 4, 2, 2, TileDataType_U8,
+    ConfigureTile(2, 128, 2, 4, 2, 2, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(0, 0, 0, Ones{PTO_XLEN} - 7);
-    WriteTileElement(0, 0, 1, Ones{PTO_XLEN} - 4);
-    WriteTileElement(0, 1, 0, Ones{PTO_XLEN} - 2);
-    WriteTileElement(0, 1, 1, Ones{PTO_XLEN});
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
+    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(0, 1, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(0, 1, 1, Zeros{PTO_XLEN} + 3);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 10);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 99);
     WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 30);
@@ -63,11 +63,11 @@ begin
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 101);
     WriteTileElement(2, 1, 0, Zeros{PTO_XLEN} + 102);
     WriteTileElement(2, 1, 1, Zeros{PTO_XLEN} + 103);
-    Store(Zeros{PTO_XLEN} + 0x100, 1, Zeros{PTO_XLEN} + 10);
-    Store(Zeros{PTO_XLEN} + 0x103, 1, Zeros{PTO_XLEN} + 20);
-    Store(Zeros{PTO_XLEN} + 0x105, 1, Zeros{PTO_XLEN} + 30);
-    Store(Zeros{PTO_XLEN} + 0x107, 1, Zeros{PTO_XLEN} + 40);
-    WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x108);
+    Store(Zeros{PTO_XLEN} + 0x100, 2, Zeros{PTO_XLEN} + 10);
+    Store(Zeros{PTO_XLEN} + 0x102, 2, Zeros{PTO_XLEN} + 20);
+    Store(Zeros{PTO_XLEN} + 0x104, 2, Zeros{PTO_XLEN} + 30);
+    Store(Zeros{PTO_XLEN} + 0x106, 2, Zeros{PTO_XLEN} + 40);
+    WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x100);
     let started = ExecuteCommandInstruction(CasStart(), 32);
     assert started == CommandExecution_Executed;
     let padded = ExecuteCommandInstruction(CasMaxPad(), 32);
@@ -89,7 +89,7 @@ begin
     assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN} + 20;
     assert ReadTileElement(destination, 1, 0) == Zeros{PTO_XLEN} + 30;
     assert ReadTileElement(destination, 1, 1) == Zeros{PTO_XLEN} + 40;
-    assert ReadTileElement(destination, 2, 0) == Zeros{PTO_XLEN} + 0xff;
+    assert ReadTileElement(destination, 2, 0) == Zeros{PTO_XLEN} + 0xffff;
     assert _MemoryEventCount == 4;
     var writes: integer {0..4} = 0;
     for event = 0 to 3 do
@@ -100,10 +100,10 @@ begin
     end;
     assert writes == 2;
     StopMemoryEventCapture();
-    let memory0 = LoadUnsigned(Zeros{PTO_XLEN} + 0x100, 1);
-    let memory1 = LoadUnsigned(Zeros{PTO_XLEN} + 0x103, 1);
-    let memory2 = LoadUnsigned(Zeros{PTO_XLEN} + 0x105, 1);
-    let memory3 = LoadUnsigned(Zeros{PTO_XLEN} + 0x107, 1);
+    let memory0 = LoadUnsigned(Zeros{PTO_XLEN} + 0x100, 2);
+    let memory1 = LoadUnsigned(Zeros{PTO_XLEN} + 0x102, 2);
+    let memory2 = LoadUnsigned(Zeros{PTO_XLEN} + 0x104, 2);
+    let memory3 = LoadUnsigned(Zeros{PTO_XLEN} + 0x106, 2);
     assert memory0 == Zeros{PTO_XLEN} + 100;
     assert memory1 == Zeros{PTO_XLEN} + 20;
     assert memory2 == Zeros{PTO_XLEN} + 102;

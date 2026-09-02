@@ -45,6 +45,8 @@ begin
     let right = ConfigureCubeTileForMask(1, 128, 1, 1,
         TileDataType_FP16, TileLayout_CUBE_N8, TileLocation_Matrix, '1111');
     assert left && right;
+    InstallRelativeTileFixture(0, 0);
+    InstallRelativeTileFixture(1, 1);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 11);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 13);
     let started = ExecuteCommandInstruction(Start(), 32);
@@ -71,6 +73,9 @@ begin
     assert _LocalGenerations[[BundleLocalGenerationSlot(0, '1111')]].published_destination != 0;
     assert BundleReadSubviewElement(0, FALSE, 0, 0) ==
         Zeros{PTO_XLEN} + 11;
+    _BundleActive = FALSE;
+    _BundleBodyActive = FALSE;
+    ClearBundleHeaderState();
 
     // A replacement generation faults at LAST before publication.  The
     // committed old object/name and payload remain the consumer snapshot.

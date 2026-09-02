@@ -2,7 +2,7 @@
   "family_constraint_application_count": 0,
   "family_constraint_count": 0,
   "family_constraints": [],
-  "form_constraint_count": 96,
+  "form_constraint_count": 98,
   "form_count": 466,
   "forms": [
     {
@@ -16317,6 +16317,15 @@
       "asm": "hl.prf{.l1,.l2,.l3} [SrcL, SrcR<{.sw,.uw}><<<shamt>]",
       "constraints": [
         {
+          "field": "SrcRType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
           "field": "model",
           "operator": "one-of",
           "values": [
@@ -16418,6 +16427,15 @@
       },
       "asm": "hl.prf.a{.l1,.l2,.l3} [SrcL, SrcR<{.sw,.uw}><<<shamt>], ->{t, u, Rd}",
       "constraints": [
+        {
+          "field": "SrcRType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2
+          ]
+        },
         {
           "field": "model",
           "operator": "one-of",

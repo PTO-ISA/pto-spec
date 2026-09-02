@@ -12,6 +12,7 @@ import re
 import struct
 import sys
 from collections import Counter
+from fractions import Fraction
 from pathlib import Path
 
 
@@ -245,7 +246,8 @@ SCALAR_AGU_UPDATE_MODE_COUNTS = {
 }
 SCALAR_AGU_DESTINATION_SPECIAL_SELECTORS = (0, 24, 25, 26, 27, 28, 29, 30, 31)
 SCALAR_AGU_TEMP_SOURCE_SELECTORS = (24, 25, 26, 27, 28, 29, 30, 31)
-SCALAR_AGU_SRC_R_TYPE_VALUES = (0, 1, 2, 3)
+SCALAR_AGU_SRC_R_TYPE_ASSIGNED_VALUES = (0, 1, 2)
+SCALAR_AGU_SRC_R_TYPE_RESERVED_VALUES = (3,)
 SCALAR_AGU_SHAMT_BOUNDARY_VALUES = (0, 31)
 SCALAR_AGU_PREFETCH_MODEL_ASSIGNED_VALUES = (0, 1, 2)
 SCALAR_AGU_PREFETCH_MODEL_RESERVED_VALUES = tuple(range(3, 32))
@@ -3650,6 +3652,221 @@ def scalar_fp_width(src_type: int) -> int:
     raise ValueError(f"unsupported decoded FSU source type: {src_type}")
 
 
+def scalar_fp_fraction_py(value: int, src_type: int) -> Fraction:
+    width = scalar_fp_width(src_type)
+    fraction_width = 52 if width == 64 else 23
+    exponent_width = 11 if width == 64 else 8
+    exponent_bias = 1023 if width == 64 else 127
+    mask = (1 << width) - 1
+    value &= mask
+    exponent = (value >> fraction_width) & ((1 << exponent_width) - 1)
+    fraction = value & ((1 << fraction_width) - 1)
+    if exponent == (1 << exponent_width) - 1:
+        raise ValueError("non-finite scalar carrier has no rational value")
+    if exponent == 0:
+        significand = fraction
+        binary_exponent = 1 - exponent_bias - fraction_width
+    else:
+        significand = (1 << fraction_width) | fraction
+        binary_exponent = exponent - exponent_bias - fraction_width
+    result = Fraction(significand)
+    if binary_exponent >= 0:
+        result *= 1 << binary_exponent
+    else:
+        result /= 1 << -binary_exponent
+    return -result if value & (1 << (width - 1)) else result
+
+
+def scalar_fp_class_py(value: int, src_type: int) -> str:
+    return scalar_convert_fp_class_py(value, src_type)
+
+
+def scalar_fp_special_encoding_py(src_type: int, value_class: str) -> int:
+    width = scalar_fp_width(src_type)
+    encodings = {
+        64: {
+            "positive_zero": 0x0000000000000000,
+            "negative_zero": 0x8000000000000000,
+            "positive_infinity": 0x7FF0000000000000,
+            "negative_infinity": 0xFFF0000000000000,
+            "qnan": 0x7FF8000000000000,
+        },
+        32: {
+            "positive_zero": 0x00000000,
+            "negative_zero": 0x80000000,
+            "positive_infinity": 0x7F800000,
+            "negative_infinity": 0xFF800000,
+            "qnan": 0x7FC00000,
+        },
+    }
+    return encodings[width][value_class]
+
+
+def scalar_fp_class_is_nan_py(value_class: str) -> bool:
+    return value_class in {"qnan", "snan"}
+
+
+def scalar_fp_class_is_infinity_py(value_class: str) -> bool:
+    return value_class in {"positive_infinity", "negative_infinity"}
+
+
+def scalar_fp_class_is_zero_py(value_class: str) -> bool:
+    return value_class in {"positive_zero", "negative_zero"}
+
+
+def scalar_fp_class_is_negative_py(value_class: str) -> bool:
+    return value_class.startswith("negative_")
+
+
+def scalar_fp_encode_fraction_rne_py(
+    value: Fraction, src_type: int
+) -> tuple[int, int]:
+    width = scalar_fp_width(src_type)
+    negative = value < 0
+    try:
+        approximate = float(value)
+    except OverflowError:
+        approximate = -math.inf if negative else math.inf
+    if width == 32 and math.isfinite(approximate):
+        try:
+            encoded = struct.unpack(">I", struct.pack(">f", approximate))[0]
+        except OverflowError:
+            encoded = 0xFF800000 if negative else 0x7F800000
+    elif width == 32:
+        encoded = 0xFF800000 if negative else 0x7F800000
+    else:
+        encoded = struct.unpack(">Q", struct.pack(">d", approximate))[0]
+    fraction_width = 52 if width == 64 else 23
+    exponent_width = 11 if width == 64 else 8
+    exponent = (encoded >> fraction_width) & ((1 << exponent_width) - 1)
+    if exponent == (1 << exponent_width) - 1:
+        return encoded, 0x14
+    if scalar_fp_fraction_py(encoded, src_type) == value:
+        return encoded, 0
+    return encoded, 0x18 if exponent == 0 else 0x10
+
+
+def scalar_fp_binary_special_py(
+    operation: str, left: int, right: int, src_type: int
+) -> tuple[int, int] | None:
+    left_class = scalar_fp_class_py(left, src_type)
+    right_class = scalar_fp_class_py(right, src_type)
+    signaling_nan = left_class == "snan" or right_class == "snan"
+    if scalar_fp_class_is_nan_py(left_class) or scalar_fp_class_is_nan_py(
+        right_class
+    ):
+        return scalar_fp_special_encoding_py(src_type, "qnan"), (
+            1 if signaling_nan else 0
+        )
+    left_infinity = scalar_fp_class_is_infinity_py(left_class)
+    right_infinity = scalar_fp_class_is_infinity_py(right_class)
+    left_zero = scalar_fp_class_is_zero_py(left_class)
+    right_zero = scalar_fp_class_is_zero_py(right_class)
+    left_negative = scalar_fp_class_is_negative_py(left_class)
+    right_negative = scalar_fp_class_is_negative_py(right_class)
+    result_negative = left_negative != right_negative
+    if operation in {"ADD", "SUB"}:
+        effective_right_negative = (
+            not right_negative if operation == "SUB" else right_negative
+        )
+        if left_infinity and right_infinity and (
+            left_negative != effective_right_negative
+        ):
+            return scalar_fp_special_encoding_py(src_type, "qnan"), 1
+        if left_infinity:
+            return scalar_fp_special_encoding_py(
+                src_type,
+                "negative_infinity" if left_negative else "positive_infinity",
+            ), 0
+        if right_infinity:
+            return scalar_fp_special_encoding_py(
+                src_type,
+                "negative_infinity"
+                if effective_right_negative
+                else "positive_infinity",
+            ), 0
+    elif operation == "MUL":
+        if (left_zero and right_infinity) or (left_infinity and right_zero):
+            return scalar_fp_special_encoding_py(src_type, "qnan"), 1
+        if left_infinity or right_infinity:
+            return scalar_fp_special_encoding_py(
+                src_type,
+                "negative_infinity" if result_negative else "positive_infinity",
+            ), 0
+        if left_zero or right_zero:
+            return scalar_fp_special_encoding_py(
+                src_type,
+                "negative_zero" if result_negative else "positive_zero",
+            ), 0
+    elif operation == "DIV":
+        if (left_zero and right_zero) or (left_infinity and right_infinity):
+            return scalar_fp_special_encoding_py(src_type, "qnan"), 1
+        if left_infinity:
+            return scalar_fp_special_encoding_py(
+                src_type,
+                "negative_infinity" if result_negative else "positive_infinity",
+            ), 0
+        if right_infinity:
+            return scalar_fp_special_encoding_py(
+                src_type, "negative_zero" if result_negative else "positive_zero"
+            ), 0
+        if right_zero:
+            return scalar_fp_special_encoding_py(
+                src_type,
+                "negative_infinity" if result_negative else "positive_infinity",
+            ), 2
+        if left_zero:
+            return scalar_fp_special_encoding_py(
+                src_type, "negative_zero" if result_negative else "positive_zero"
+            ), 0
+    return None
+
+
+def scalar_fp_fused_special_py(
+    operation: str, addend: int, left: int, right: int, src_type: int
+) -> tuple[int, int] | None:
+    addend_class = scalar_fp_class_py(addend, src_type)
+    left_class = scalar_fp_class_py(left, src_type)
+    right_class = scalar_fp_class_py(right, src_type)
+    classes = (addend_class, left_class, right_class)
+    if any(scalar_fp_class_is_nan_py(value_class) for value_class in classes):
+        return scalar_fp_special_encoding_py(src_type, "qnan"), (
+            1 if "snan" in classes else 0
+        )
+    left_infinity = scalar_fp_class_is_infinity_py(left_class)
+    right_infinity = scalar_fp_class_is_infinity_py(right_class)
+    left_zero = scalar_fp_class_is_zero_py(left_class)
+    right_zero = scalar_fp_class_is_zero_py(right_class)
+    if (left_infinity and right_zero) or (right_infinity and left_zero):
+        return scalar_fp_special_encoding_py(src_type, "qnan"), 1
+    product_infinity = left_infinity or right_infinity
+    product_negative = scalar_fp_class_is_negative_py(
+        left_class
+    ) != scalar_fp_class_is_negative_py(right_class)
+    addend_infinity = scalar_fp_class_is_infinity_py(addend_class)
+    effective_addend_negative = scalar_fp_class_is_negative_py(addend_class)
+    if operation in {"MSUB", "NMSUB"}:
+        effective_addend_negative = not effective_addend_negative
+    negate_result = operation in {"NMADD", "NMSUB"}
+    if product_infinity and addend_infinity and (
+        product_negative != effective_addend_negative
+    ):
+        return scalar_fp_special_encoding_py(src_type, "qnan"), 1
+    if product_infinity:
+        result_negative = product_negative != negate_result
+        return scalar_fp_special_encoding_py(
+            src_type,
+            "negative_infinity" if result_negative else "positive_infinity",
+        ), 0
+    if addend_infinity:
+        result_negative = effective_addend_negative != negate_result
+        return scalar_fp_special_encoding_py(
+            src_type,
+            "negative_infinity" if result_negative else "positive_infinity",
+        ), 0
+    return None
+
+
 def scalar_fp_decode_finite_py(value: int, src_type: int) -> float:
     if src_type == 1:
         return struct.unpack(">f", struct.pack(">I", value & MASK32))[0]
@@ -3971,23 +4188,74 @@ def scalar_fsu_expected(
         result = left_fp & ((1 << (scalar_fp_width(src_type) - 1)) - 1)
         return normalize_scalar_fp_result_py(result, source_type), flags
     if class_id == "scalar-fp-unary-profile":
-        finite = scalar_fp_decode_finite_py(left_fp, src_type)
+        value_class = scalar_fp_class_py(left_fp, src_type)
+        if scalar_fp_class_is_nan_py(value_class):
+            return scalar_fp_special_encoding_py(src_type, "qnan"), (
+                1 if value_class == "snan" else 0
+            )
         if mnemonic == "FEXP":
-            result = scalar_fp_reference_exp_py(finite)
-            flags = 0 if finite == 0.0 else 0x10
+            if value_class == "positive_infinity":
+                return scalar_fp_special_encoding_py(
+                    src_type, "positive_infinity"
+                ), 0
+            if value_class == "negative_infinity":
+                return scalar_fp_special_encoding_py(src_type, "positive_zero"), 0
+            finite = scalar_fp_fraction_py(left_fp, src_type)
+            result = Fraction(1)
+            term = Fraction(1)
+            for index in range(1, 19):
+                term = term * finite / index
+                result += term
+            return scalar_fp_encode_fraction_rne_py(result, src_type)
         elif mnemonic == "FRECIP":
-            if scalar_fp_is_zero(left_fp, src_type):
-                return normalize_scalar_fp_result_py(MASK64, source_type), 2
-            result = 1.0 / finite
+            negative = scalar_fp_class_is_negative_py(value_class)
+            if scalar_fp_class_is_zero_py(value_class):
+                return scalar_fp_special_encoding_py(
+                    src_type,
+                    "negative_infinity" if negative else "positive_infinity",
+                ), 2
+            if scalar_fp_class_is_infinity_py(value_class):
+                return scalar_fp_special_encoding_py(
+                    src_type, "negative_zero" if negative else "positive_zero"
+                ), 0
+            finite = scalar_fp_fraction_py(left_fp, src_type)
+            return scalar_fp_encode_fraction_rne_py(1 / finite, src_type)
         elif mnemonic == "FSQRT":
-            result = math.sqrt(finite)
+            negative = scalar_fp_class_is_negative_py(value_class)
+            if scalar_fp_class_is_zero_py(value_class):
+                return scalar_fp_special_encoding_py(
+                    src_type, "negative_zero" if negative else "positive_zero"
+                ), 0
+            if value_class == "positive_infinity":
+                return scalar_fp_special_encoding_py(
+                    src_type, "positive_infinity"
+                ), 0
+            if negative:
+                return scalar_fp_special_encoding_py(src_type, "qnan"), 1
+            finite = scalar_fp_fraction_py(left_fp, src_type)
+            numerator_root = math.isqrt(finite.numerator)
+            denominator_root = math.isqrt(finite.denominator)
+            if (
+                numerator_root * numerator_root == finite.numerator
+                and denominator_root * denominator_root == finite.denominator
+            ):
+                return scalar_fp_encode_fraction_rne_py(
+                    Fraction(numerator_root, denominator_root), src_type
+                )
+            result = math.sqrt(float(finite))
+            encoded = scalar_fp_encode_finite_py(result, src_type)
+            return encoded, 0x10
         else:
             raise ValueError(f"unclassified FSU unary operation: {mnemonic}")
-        return scalar_fp_encode_finite_py(result, src_type), flags
     if class_id == "scalar-fp-binary-profile":
         operation = scalar_fsu_operation(row)
-        left_value = scalar_fp_decode_finite_py(left_fp, src_type)
-        right_value = scalar_fp_decode_finite_py(right_fp, src_type)
+        special = scalar_fp_binary_special_py(
+            operation, left_fp, right_fp, src_type
+        )
+        if special is not None:
+            return special
+        left_value = scalar_fp_fraction_py(left_fp, src_type)
+        right_value = scalar_fp_fraction_py(right_fp, src_type)
         if operation == "ADD":
             result = left_value + right_value
         elif operation == "SUB":
@@ -3995,12 +4263,10 @@ def scalar_fsu_expected(
         elif operation == "MUL":
             result = left_value * right_value
         elif operation == "DIV":
-            if scalar_fp_is_zero(right_fp, src_type):
-                return normalize_scalar_fp_result_py(MASK64, source_type), 2
             result = left_value / right_value
         else:
             raise ValueError(f"unclassified FSU binary operation: {mnemonic}")
-        return scalar_fp_encode_finite_py(result, src_type), flags
+        return scalar_fp_encode_fraction_rne_py(result, src_type)
     if class_id == "scalar-fp-minmax":
         result = scalar_fp_minmax_py(
             scalar_fsu_operation(row), left_fp, right_fp, src_type
@@ -4028,11 +4294,16 @@ def scalar_fsu_expected(
         )
         return result, flags
     if class_id == "scalar-fp-fused-profile":
-        left_value = scalar_fp_decode_finite_py(left_fp, src_type)
-        right_value = scalar_fp_decode_finite_py(right_fp, src_type)
-        addend_value = scalar_fp_decode_finite_py(addend_fp, src_type)
-        product = left_value * right_value
         operation = mnemonic.removeprefix("F")
+        special = scalar_fp_fused_special_py(
+            operation, addend_fp, left_fp, right_fp, src_type
+        )
+        if special is not None:
+            return special
+        left_value = scalar_fp_fraction_py(left_fp, src_type)
+        right_value = scalar_fp_fraction_py(right_fp, src_type)
+        addend_value = scalar_fp_fraction_py(addend_fp, src_type)
+        product = left_value * right_value
         if operation == "MADD":
             result = product + addend_value
         elif operation == "MSUB":
@@ -4043,7 +4314,7 @@ def scalar_fsu_expected(
             result = -(product - addend_value)
         else:
             raise ValueError(f"unclassified FSU fused operation: {mnemonic}")
-        return scalar_fp_encode_finite_py(result, src_type), flags
+        return scalar_fp_encode_fraction_rne_py(result, src_type)
     if class_id == "scalar-fp-format-convert":
         value_class = scalar_convert_fp_class_py(left_fp, src_type)
         if value_class in {"qnan", "snan"}:
@@ -5194,10 +5465,10 @@ def agu_register_offset(row: dict, metadata: dict) -> tuple[int, int, int, int]:
     if field_by_name(row, "shamt") is not None:
         modified = 2
         shift = 1
-        return (-modified) & MASK64, 3, shift, modified << shift
+        return modified, 0, shift, modified << shift
     scale = metadata["offset_scale"]
     modified = max(1, metadata["size_bytes"] >> scale)
-    return (-modified) & MASK64, 3, 0, modified << scale
+    return modified, 0, 0, modified << scale
 
 
 def scalar_agu_witness(
@@ -5736,6 +6007,38 @@ def emit_scalar_agu_register_modifier_case(
     src_r_type: int,
 ) -> None:
     witness = scalar_agu_witness(row, family_constraints, case_index)
+    if src_r_type in SCALAR_AGU_SRC_R_TYPE_RESERVED_VALUES:
+        instruction = encode_field(
+            row, "SrcRType", witness["instruction"], src_r_type
+        )
+        print(
+            f"    // AGU-SRCRTYPE-RESERVED: {src_r_type}/{row['form_id']}"
+        )
+        emit_scalar_agu_decoded_setup()
+        print(
+            f"    assert DecodeScalarForm({bit_literal(instruction, 48)}, "
+            f"{row['length_bits']}) == {row['_form_index']};"
+        )
+        print(
+            f"    assert DecodeScalarOperandRaw({bit_literal(instruction, 48)}, "
+            f"{row['_form_index']}, ScalarField_SrcRType) == "
+            f"{bit_literal(src_r_type, 48)};"
+        )
+        print(
+            f"    assert !ScalarFormOperandsLegal({bit_literal(instruction, 48)}, "
+            f"{row['_form_index']});"
+        )
+        emit_scalar_agu_controlled_execution(
+            row,
+            instruction,
+            case_index,
+            0x100,
+            label=f"srcrtype-reserved-{src_r_type}",
+            base=0x100,
+            src_r_value=1,
+            expected_fault="Fault_IllegalInstruction",
+        )
+        return
     shamt = (
         1
         if field_by_name(row, "shamt") is not None
@@ -5842,7 +6145,8 @@ def emit_scalar_agu_wrap_case(
 
     if metadata["update_mode"] == "PostIndex":
         if metadata["address_kind"] == "Register":
-            overrides["SrcRType"] = 3
+            overrides["SrcRType"] = 0
+            src_r_value = MASK64
             negative_offset = (-positive_offset) & MASK64
         else:
             field = agu_immediate_field(row)
@@ -6787,8 +7091,8 @@ def emit_canonical_command_execution_setup(
     ):
         print(
             "    BeginBundle(BundleKind_Standard, "
-            "BundleTransfer_Direct, Zeros{PTO_XLEN} + 8, "
-            "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, TRUE);"
+            "BundleTransfer_Conditional, Zeros{PTO_XLEN} + 8, "
+            "Zeros{PTO_XLEN}, Zeros{PTO_XLEN} + 4, FALSE);"
         )
     if handler in {
         "ExecuteFrameEntry",
@@ -6796,7 +7100,7 @@ def emit_canonical_command_execution_setup(
         "ExecuteFrameReturnAddress",
         "ExecuteFrameReturnStack",
     }:
-        print("    WriteGPR(2, Zeros{PTO_XLEN} + 0x100);")
+        print("    WriteGPR(1, Zeros{PTO_XLEN} + 0x100);")
     if handler in {
         "ExecuteFrameExit",
         "ExecuteFrameReturnAddress",
@@ -7137,7 +7441,10 @@ def emit_scalar_agu_bounds_validation(
         )
         case_index += 1
     if field_by_name(row, "SrcRType") is not None:
-        for src_r_type in SCALAR_AGU_SRC_R_TYPE_VALUES:
+        for src_r_type in (
+            SCALAR_AGU_SRC_R_TYPE_ASSIGNED_VALUES
+            + SCALAR_AGU_SRC_R_TYPE_RESERVED_VALUES
+        ):
             emit_scalar_agu_register_modifier_case(
                 row,
                 family_constraints,
@@ -8230,7 +8537,8 @@ def _emit_monolithic() -> None:
         len(scalar_agu_immediate_boundary_cases(row)) for row in scalar_agu_effect_rows
     )
     scalar_agu_src_r_type_case_count = sum(
-        len(SCALAR_AGU_SRC_R_TYPE_VALUES)
+        len(SCALAR_AGU_SRC_R_TYPE_ASSIGNED_VALUES)
+        + len(SCALAR_AGU_SRC_R_TYPE_RESERVED_VALUES)
         for row in scalar_agu_effect_rows
         if field_by_name(row, "SrcRType") is not None
     )
@@ -12643,11 +12951,6 @@ def _emit_monolithic() -> None:
                 f"    assert DecodeTileOperation(TileDecode_{family}, {bit_literal(value, 12)}) "
                 "== PTO_TILE_OPERATION_COUNT;"
             )
-    for function in (9, 10, 11, 12, 14):
-        print(
-            f"    assert DecodeTileOperation(TileDecode_TLSU, {bit_literal(function, 12)}) "
-            "== PTO_TILE_OPERATION_COUNT;"
-        )
     print(
         f"    assert DecodeTileOperation(TileDecode_TEPL, {bit_literal(0x400, 12)}) == PTO_TILE_OPERATION_COUNT;"
     )

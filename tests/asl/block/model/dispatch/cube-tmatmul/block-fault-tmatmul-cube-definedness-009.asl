@@ -27,25 +27,39 @@ begin
     assert cube_configuration_2;
 end;
 
+pure func DefinednessFP16Value(value: integer {1..8}) => Word
+begin
+    case value of
+        when 1 => return Zeros{PTO_XLEN} + 0x3c00;
+        when 2 => return Zeros{PTO_XLEN} + 0x4000;
+        when 3 => return Zeros{PTO_XLEN} + 0x4200;
+        when 4 => return Zeros{PTO_XLEN} + 0x4400;
+        when 5 => return Zeros{PTO_XLEN} + 0x4500;
+        when 6 => return Zeros{PTO_XLEN} + 0x4600;
+        when 7 => return Zeros{PTO_XLEN} + 0x4700;
+        when 8 => return Zeros{PTO_XLEN} + 0x4800;
+    end;
+end;
+
 func WriteDefinednessPayload()
 begin
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(1, 1, 1, Zeros{PTO_XLEN} + 4);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 5);
-    WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 6);
-    WriteTileElement(2, 1, 0, Zeros{PTO_XLEN} + 7);
-    WriteTileElement(2, 1, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(1, 0, 0, DefinednessFP16Value(1));
+    WriteTileElement(1, 0, 1, DefinednessFP16Value(2));
+    WriteTileElement(1, 1, 0, DefinednessFP16Value(3));
+    WriteTileElement(1, 1, 1, DefinednessFP16Value(4));
+    WriteTileElement(2, 0, 0, DefinednessFP16Value(5));
+    WriteTileElement(2, 0, 1, DefinednessFP16Value(6));
+    WriteTileElement(2, 1, 0, DefinednessFP16Value(7));
+    WriteTileElement(2, 1, 1, DefinednessFP16Value(8));
 end;
 
 func main() => integer
 begin
     ResetProfileState();
     ConfigureDefinednessPrimaries();
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(1, 0, 0, DefinednessFP16Value(1));
+    WriteTileElement(1, 0, 1, DefinednessFP16Value(2));
+    WriteTileElement(1, 1, 0, DefinednessFP16Value(3));
     MarkTileValidRegionDefined(2);
     StartDefinednessTMATMUL();
     let undefined_valid = ExecuteBundleTileOperation();
@@ -68,8 +82,8 @@ begin
     assert _LastFault == Fault_None;
     let destination = _BundleTileBindings[[0]].destination;
     assert ReadTileElement(destination, 0, 0) ==
-        Zeros{PTO_XLEN} + 19;
+        Zeros{PTO_XLEN} + 0x41980000;
     assert ReadTileElement(destination, 1, 1) ==
-        Zeros{PTO_XLEN} + 50;
+        Zeros{PTO_XLEN} + 0x42480000;
     return 0;
 end;

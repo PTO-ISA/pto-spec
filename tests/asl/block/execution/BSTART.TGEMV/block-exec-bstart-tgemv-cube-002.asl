@@ -24,8 +24,8 @@ begin
         TileDataType_FP16, TileLayout_CUBE_N8,
         TileLocation_Matrix, '1111');
     assert a_ready && b_ready;
-    FillTGEMVCube(1, 1);
-    FillTGEMVCube(2, 1);
+    FillTGEMVCube(1, 0x3c00);
+    FillTGEMVCube(2, 0x3c00);
 
     var start: bits(64) = Zeros{64} + 0x01031181;
     start[31:27] = Zeros{5} + 4;
@@ -48,8 +48,8 @@ begin
     assert d.layout == TileLayout_CUBE_M16;
     assert d.valid_rows == 1 && d.valid_columns == 10;
     assert d.payload[[TileStorageIndex(d, 0, 0)]] ==
-        Zeros{PTO_XLEN} + 9;
+        Zeros{PTO_XLEN} + 0x41100000;
     assert d.payload[[TileStorageIndex(d, 0, 9)]] ==
-        Zeros{PTO_XLEN} + 9;
+        Zeros{PTO_XLEN} + 0x41100000;
     return 0;
 end;

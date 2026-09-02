@@ -28,16 +28,16 @@ begin
     assert cube_configuration_2;
     ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Matrix);
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x40a00000);
     let cube_configuration_3 = ConfigureCubeTile(4, 128, 1, 1, TileDataType_FP32,
         TileLayout_CUBE_M16, TileLocation_Matrix);
     assert cube_configuration_3;
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 3);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4000);
+    WriteTileElement(2, 0, 0, Zeros{PTO_XLEN} + 0x4200);
 
     assert TileOperandsLegal_TMATMUL_BIAS(4, 1, 2, 3);
     TMATMUL_BIAS(4, 1, 2, 3);
     assert ReadTileElement(4, 0, 0) ==
-        Zeros{PTO_XLEN} + 11;
+        Zeros{PTO_XLEN} + 0x41300000;
     return 0;
 end;

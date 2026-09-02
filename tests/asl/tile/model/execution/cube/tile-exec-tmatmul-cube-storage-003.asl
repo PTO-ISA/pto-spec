@@ -8,6 +8,18 @@ begin
     _Tiles[[index]].payload[[element]] = Zeros{PTO_XLEN} + value;
 end;
 
+pure func CubeStorageFP16Value(value: integer {1..6}) => Word
+begin
+    case value of
+        when 1 => return Zeros{PTO_XLEN} + 0x3c00;
+        when 2 => return Zeros{PTO_XLEN} + 0x4000;
+        when 3 => return Zeros{PTO_XLEN} + 0x4200;
+        when 4 => return Zeros{PTO_XLEN} + 0x4400;
+        when 5 => return Zeros{PTO_XLEN} + 0x4500;
+        when 6 => return Zeros{PTO_XLEN} + 0x4600;
+    end;
+end;
+
 func main() => integer
 begin
     ResetProfileState();
@@ -32,18 +44,18 @@ begin
         TileDataType_FP32, TileLayout_CUBE_M16, TileLocation_Matrix);
     assert a_ready && b_ready && d_ready;
 
-    WriteCubeStorageValue(1, 0, 0, 1);
-    WriteCubeStorageValue(1, 0, 1, 2);
-    WriteCubeStorageValue(1, 0, 2, 3);
-    WriteCubeStorageValue(1, 1, 0, 4);
-    WriteCubeStorageValue(1, 1, 1, 5);
-    WriteCubeStorageValue(1, 1, 2, 6);
-    WriteCubeStorageValue(2, 0, 0, 1);
-    WriteCubeStorageValue(2, 0, 1, 2);
-    WriteCubeStorageValue(2, 1, 0, 3);
-    WriteCubeStorageValue(2, 1, 1, 4);
-    WriteCubeStorageValue(2, 2, 0, 5);
-    WriteCubeStorageValue(2, 2, 1, 6);
+    WriteCubeStorageValue(1, 0, 0, UInt(CubeStorageFP16Value(1)));
+    WriteCubeStorageValue(1, 0, 1, UInt(CubeStorageFP16Value(2)));
+    WriteCubeStorageValue(1, 0, 2, UInt(CubeStorageFP16Value(3)));
+    WriteCubeStorageValue(1, 1, 0, UInt(CubeStorageFP16Value(4)));
+    WriteCubeStorageValue(1, 1, 1, UInt(CubeStorageFP16Value(5)));
+    WriteCubeStorageValue(1, 1, 2, UInt(CubeStorageFP16Value(6)));
+    WriteCubeStorageValue(2, 0, 0, UInt(CubeStorageFP16Value(1)));
+    WriteCubeStorageValue(2, 0, 1, UInt(CubeStorageFP16Value(2)));
+    WriteCubeStorageValue(2, 1, 0, UInt(CubeStorageFP16Value(3)));
+    WriteCubeStorageValue(2, 1, 1, UInt(CubeStorageFP16Value(4)));
+    WriteCubeStorageValue(2, 2, 0, UInt(CubeStorageFP16Value(5)));
+    WriteCubeStorageValue(2, 2, 1, UInt(CubeStorageFP16Value(6)));
     MarkTileValidRegionDefined(1);
     MarkTileValidRegionDefined(2);
 
@@ -54,13 +66,13 @@ begin
     assert d.layout == TileLayout_CUBE_M16;
     assert d.location == TileLocation_Matrix;
     assert d.payload[[TileStorageIndex(d, 0, 0)]] ==
-        Zeros{PTO_XLEN} + 22;
+        Zeros{PTO_XLEN} + 0x41b00000;
     assert d.payload[[TileStorageIndex(d, 0, 1)]] ==
-        Zeros{PTO_XLEN} + 28;
+        Zeros{PTO_XLEN} + 0x41e00000;
     assert d.payload[[TileStorageIndex(d, 1, 0)]] ==
-        Zeros{PTO_XLEN} + 49;
+        Zeros{PTO_XLEN} + 0x42440000;
     assert d.payload[[TileStorageIndex(d, 1, 1)]] ==
-        Zeros{PTO_XLEN} + 64;
+        Zeros{PTO_XLEN} + 0x42800000;
     assert d.contents_defined && d.defined_valid_elements == 4;
     return 0;
 end;

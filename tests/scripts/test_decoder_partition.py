@@ -110,6 +110,30 @@ end;
         self.assertIn('"name": "ValidateKnown"', index)
         self.assertIn('"dependencies": []', index)
 
+    def test_canonical_validation_never_rejects_assigned_tlsu_functions(self) -> None:
+        completed = subprocess.run(
+            [
+                str(GENERATOR),
+                "--kind",
+                "validation-shard",
+                "--entrypoint",
+                "ValidateCanonicalDecoders",
+            ],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr[-4000:])
+        for function in range(8, 28):
+            encoded = f"'{function:012b}'"
+            rejected = (
+                "assert DecodeTileOperation(TileDecode_TLSU, "
+                f"{encoded}) == PTO_TILE_OPERATION_COUNT;"
+            )
+            with self.subTest(function=function):
+                self.assertNotIn(rejected, completed.stdout)
+
     def test_scalar_bru_validation_uses_current_barg_state(self) -> None:
         shards = {}
         for entrypoint in ("ValidateScalarBRUAlias_JR",):

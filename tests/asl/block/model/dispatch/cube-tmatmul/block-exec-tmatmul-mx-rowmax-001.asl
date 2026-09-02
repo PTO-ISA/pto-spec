@@ -7,6 +7,20 @@ begin
     return instruction;
 end;
 
+pure func MatrixMXRowMaxFP16Value(value: integer {1..8}) => Word
+begin
+    case value of
+        when 1 => return Zeros{PTO_XLEN} + 0x3c00;
+        when 2 => return Zeros{PTO_XLEN} + 0x4000;
+        when 3 => return Zeros{PTO_XLEN} + 0x4200;
+        when 4 => return Zeros{PTO_XLEN} + 0x4400;
+        when 5 => return Zeros{PTO_XLEN} + 0x4500;
+        when 6 => return Zeros{PTO_XLEN} + 0x4600;
+        when 7 => return Zeros{PTO_XLEN} + 0x4700;
+        when 8 => return Zeros{PTO_XLEN} + 0x4800;
+    end;
+end;
+
 func main() => integer
 begin
     ResetProfileState();
@@ -19,12 +33,13 @@ begin
     assert a_ready && b_ready;
     ConfigureTile(3, 128, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4000);
     for column = 0 to 7 looplimit 8 do
         WriteTileElement(2, 0, column,
-            Zeros{PTO_XLEN} + column + 1);
+            MatrixMXRowMaxFP16Value(
+                (column + 1) as integer {1..8}));
     end;
-    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 100);
+    WriteTileElement(3, 0, 0, Zeros{PTO_XLEN} + 0x42c80000);
 
     let started = ExecuteCommandInstruction(MatrixMXRowMaxStart(), 32);
     assert started == CommandExecution_Executed;
@@ -42,6 +57,7 @@ begin
     assert completed;
     assert _LastFault == Fault_None;
     let row_max = BundleMatrixDestinationAt(1);
-    assert ReadTileElement(row_max, 0, 0) == Zeros{PTO_XLEN} + 100;
+    assert ReadTileElement(row_max, 0, 0) ==
+        Zeros{PTO_XLEN} + 0x42c80000;
     return 0;
 end;

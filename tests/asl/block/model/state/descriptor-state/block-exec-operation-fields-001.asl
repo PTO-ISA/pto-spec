@@ -79,11 +79,11 @@ begin
             BeginBundleAt(
                 ReadTPC(),
                 BundleKind_Standard,
-                BundleTransfer_Direct,
+                BundleTransfer_Conditional,
                 Zeros{PTO_XLEN} + 0x440,
+                ReadTPC(),
                 Zeros{PTO_XLEN} + 0x302,
-                Zeros{PTO_XLEN} + 0x302,
-                TRUE);
+                FALSE);
         elsif branch_type == 7 then
             _ReturnAddress = Zeros{PTO_XLEN} + 0x520;
         end;

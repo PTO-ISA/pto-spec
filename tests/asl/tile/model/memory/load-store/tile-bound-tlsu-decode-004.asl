@@ -13,6 +13,12 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
+func ConfigureHalfwordTlsuTile(index: TileIndex, columns: integer {1..16})
+begin
+    ConfigureTile(index, 128, 1, 16, 1, columns, TileDataType_U16,
+        TileLayout_RowMajor, TileLocation_Any);
+end;
+
 func TestTlsuDecodedSelectorClosure()
 begin
     StopMemoryEventCapture();
@@ -21,8 +27,8 @@ begin
     ConfigureTile(22, 1024, 1, 16, 1, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigurePredicateTile(23, 128, 1, 16, 1, 1);
-    ConfigureByteTlsuTile(24, 1);
-    ConfigureByteTlsuTile(25, 1);
+    ConfigureHalfwordTlsuTile(24, 1);
+    ConfigureHalfwordTlsuTile(25, 1);
     WriteTileElement(20, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(21, 0, 0, Zeros{PTO_XLEN} + 3);
     WriteTileElement(22, 0, 0, Zeros{PTO_XLEN});
@@ -71,6 +77,7 @@ begin
     let (prefetch_status, -) = ExecuteTileInstruction(
         TileDecode_TLSU, Zeros{12} + 3, operands);
     assert prefetch_status == TileExecution_Executed;
+    ResetBundleControlState();
 
     ReleaseTile(20);
     ConfigureByteTlsuTile(20, 1);
@@ -81,6 +88,7 @@ begin
     operands = DefaultTileInstructionOperands();
     operands.destination0 = 20;
     operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.scalar0 = Zeros{PTO_XLEN} + 1;
     operands.source0 = 22;
     let (gather_status, -) = ExecuteTileInstruction(
         TileDecode_TLSU, Zeros{12} + 4, operands);
@@ -92,15 +100,23 @@ begin
 
     operands = DefaultTileInstructionOperands();
     operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.scalar0 = Zeros{PTO_XLEN} + 1;
     operands.source0 = 21;
     operands.source1 = 22;
     let (scatter_status, -) = ExecuteTileInstruction(
         TileDecode_TLSU, Zeros{12} + 5, operands);
     assert scatter_status == TileExecution_Executed;
 
+    ReleaseTile(20);
+    ConfigureHalfwordTlsuTile(20, 1);
+    ReleaseTile(21);
+    ConfigureHalfwordTlsuTile(21, 1);
+    WriteTileElement(21, 0, 0, Zeros{PTO_XLEN} + 3);
+
     operands = DefaultTileInstructionOperands();
     operands.destination0 = 20;
     operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.scalar0 = Zeros{PTO_XLEN} + 1;
     operands.source0 = 22;
     operands.source1 = 23;
     let (masked_gather_status, -) = ExecuteTileInstruction(
@@ -110,6 +126,7 @@ begin
 
     operands = DefaultTileInstructionOperands();
     operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.scalar0 = Zeros{PTO_XLEN} + 1;
     operands.source0 = 21;
     operands.source1 = 22;
     operands.source2 = 23;
@@ -120,6 +137,7 @@ begin
     operands = DefaultTileInstructionOperands();
     operands.destination0 = 20;
     operands.address = Zeros{PTO_XLEN} + 0x300;
+    operands.scalar0 = Zeros{PTO_XLEN} + 1;
     operands.source0 = 22;
     operands.source1 = 24;
     operands.source2 = 25;

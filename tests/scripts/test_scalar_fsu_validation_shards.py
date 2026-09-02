@@ -20,7 +20,88 @@ SCALAR_CATALOG = json.loads(
 )
 
 
+def scalar_form(mnemonic: str) -> dict:
+    for index, row in enumerate(SCALAR_CATALOG["forms"]):
+        if row["mnemonic"] == mnemonic:
+            return {**row, "_form_index": index}
+    raise AssertionError(f"missing scalar form {mnemonic}")
+
+
 class ScalarFsuValidationShardTest(unittest.TestCase):
+    def test_python_oracle_matches_reference_profile_special_values(self) -> None:
+        expected = GENERATOR["scalar_fsu_expected"]
+
+        self.assertEqual(
+            expected(
+                scalar_form("FADD"),
+                0x7FF8000000000042,
+                0x7FF0000000000042,
+                0,
+                0,
+                1,
+            ),
+            (0x7FF8000000000000, 0x01),
+        )
+        self.assertEqual(
+            expected(
+                scalar_form("FDIV"),
+                0x3F800000,
+                0x80000000,
+                0,
+                1,
+                1,
+            ),
+            (0xFF800000, 0x02),
+        )
+        self.assertEqual(
+            expected(
+                scalar_form("FSQRT"),
+                0x8000000000000000,
+                0,
+                0,
+                0,
+                1,
+            ),
+            (0x8000000000000000, 0x00),
+        )
+        self.assertEqual(
+            expected(
+                scalar_form("FMADD"),
+                0x7FF0000000000042,
+                0x3FF0000000000000,
+                0x3FF0000000000000,
+                0,
+                1,
+            ),
+            (0x7FF8000000000000, 0x01),
+        )
+
+    def test_python_oracle_tracks_exact_reference_rounding_flags(self) -> None:
+        expected = GENERATOR["scalar_fsu_expected"]
+
+        self.assertEqual(
+            expected(
+                scalar_form("FADD"),
+                0x3F800001,
+                0x40000002,
+                0,
+                1,
+                1,
+            )[1],
+            0x10,
+        )
+        self.assertEqual(
+            expected(
+                scalar_form("FEXP"),
+                0x3FF0000000000000,
+                0,
+                0,
+                0,
+                1,
+            ),
+            (0x4005BF0A8B145769, 0x10),
+        )
+
     def test_conversion_rejects_reserved_types_before_source_read(self) -> None:
         dispatch = (ROOT / "asl/scalar/model/dispatch/fsu.asl").read_text(
             encoding="utf-8"

@@ -119,31 +119,31 @@ begin
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(29, 256, 1, 2, 1, 2, TileDataType_FP16,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(5, 1, 1, Zeros{PTO_XLEN} + 4);
-    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 5);
-    WriteTileElement(6, 0, 1, Zeros{PTO_XLEN} + 6);
-    WriteTileElement(6, 1, 0, Zeros{PTO_XLEN} + 7);
-    WriteTileElement(6, 1, 1, Zeros{PTO_XLEN} + 8);
-    WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 2);
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
+    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 0x4000);
+    WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 0x4200);
+    WriteTileElement(5, 1, 1, Zeros{PTO_XLEN} + 0x4400);
+    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 0x4500);
+    WriteTileElement(6, 0, 1, Zeros{PTO_XLEN} + 0x4600);
+    WriteTileElement(6, 1, 0, Zeros{PTO_XLEN} + 0x4700);
+    WriteTileElement(6, 1, 1, Zeros{PTO_XLEN} + 0x4800);
+    WriteTileElement(27, 0, 0, Zeros{PTO_XLEN} + 0x4000);
+    WriteTileElement(27, 1, 0, Zeros{PTO_XLEN} + 0x4200);
+    WriteTileElement(29, 0, 0, Zeros{PTO_XLEN} + 0x3c00);
+    WriteTileElement(29, 0, 1, Zeros{PTO_XLEN} + 0x4000);
 
     ConfigureTile(61, 256, 1, 1, 1, 1, TileDataType_FP32,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(61, 0, 0, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(61, 0, 0, Zeros{PTO_XLEN} + 0x3f800000);
     SelectTestCUBEDataType('00100');
     TMATMUL_MX(7, 5, 0, 6, 0);
-    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 19;
+    assert ReadTileElement(7, 0, 0) == Zeros{PTO_XLEN} + 0x41980000;
     TGEMV_BIAS(28, 29, 27, 61);
-    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 9;
+    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 0x41100000;
     TGEMV_ACC(28, 28, 29, 27);
-    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 17;
+    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 0x41880000;
     TGEMV_MX(28, 29, 0, 27, 0);
-    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 8;
+    assert ReadTileElement(28, 0, 0) == Zeros{PTO_XLEN} + 0x41000000;
 end;
 func main() => integer
 begin

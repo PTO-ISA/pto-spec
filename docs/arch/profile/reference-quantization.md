@@ -348,6 +348,7 @@ pure func ReferenceScalarFPDataType(source_type: bits(5)) => TileDataType
 begin
     if source_type == '00001' then return TileDataType_FP32; end;
     if source_type == '00100' then return TileDataType_FP16; end;
+    if source_type == '00101' then return TileDataType_BF16; end;
     assert source_type == '00000';
     return TileDataType_FP64;
 end;
@@ -383,6 +384,8 @@ begin
             (if negative then 0xff800000 else 0x7f800000); end;
         if source_type == '00100' then return Zeros{PTO_XLEN} +
             (if negative then 0xfc00 else 0x7c00); end;
+        if source_type == '00101' then return Zeros{PTO_XLEN} +
+            (if negative then 0xff80 else 0x7f80); end;
         return Zeros{PTO_XLEN} + (if negative then 0xfff0000000000000
             else 0x7ff0000000000000);
     end;
@@ -390,6 +393,8 @@ begin
     if source_type == '00001' then return Zeros{PTO_XLEN} +
         (if negative then 0x80000000 else 0); end;
     if source_type == '00100' then return Zeros{PTO_XLEN} +
+        (if negative then 0x8000 else 0); end;
+    if source_type == '00101' then return Zeros{PTO_XLEN} +
         (if negative then 0x8000 else 0); end;
     return Zeros{PTO_XLEN} +
         (if negative then 0x8000000000000000 else 0);
@@ -474,6 +479,7 @@ begin
     end;
     return (FALSE, Zeros{PTO_XLEN}, Zeros{5});
 end;
+
 
 implementation func TileProfileQuantize(value: Word, scale: Word,
                                          zero_point: Word,

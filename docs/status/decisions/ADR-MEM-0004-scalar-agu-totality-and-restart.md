@@ -544,6 +544,20 @@ non-ordinary destination selector for every encoded AGU field. Repository
 checks derive the expected inventory from the scalar catalog and reject
 missing, extra, or reclassified evidence.
 
+## Binary envelope consequence
+
+The accepted encoded-form count remains 560. The `HL.PRF` and `HL.PRF.A`
+catalog projections now carry the already accepted `SrcRType` assigned-value
+constraint; no form identity, instruction length, mask, match, or field
+position changes.
+
+The reviewed encoded-form fingerprint is rebound from
+`2f776989bf4cfa6acfa4d8918f79580f0e5d445557e9f00148c80145237e4fc0` to
+`79ae73d0b5244b914ab420b86f34c2e651eb84c5d151065f0200abde32addbe4`.
+The release encoding projection is correspondingly rebound from
+`f0e2ca9e265a09e9a289aedc0c982d19ba1f8ac164210435a86b8772f5685636` to
+`f1d274691e7eeebc8117e838a26b716cfb9b455d131ded03f951be04129b1a07`.
+
 The short-lived shared-arithmetic `SrcRType` ordering was inferred from Sail
 and LLVM after those implementations had already diverged from the AGU
 interface, creating circular evidence. Issue

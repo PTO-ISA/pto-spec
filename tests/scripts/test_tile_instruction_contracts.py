@@ -58,6 +58,32 @@ class TileInstructionContractsTest(unittest.TestCase):
         self.assertEqual(tfma.metadata["engine"], "VEC")
         self.assertEqual(tfma.metadata["catalog_records"][0]["function"], 28)
 
+    def test_assigned_tepl_selectors_do_not_overlap_reserved_ranges(self) -> None:
+        units = load_units(ROOT / "asl")
+        top_level = next(
+            unit
+            for unit in units
+            if unit.unit_id == "PTO-TILE-MODEL-DISPATCH-TOP-LEVEL"
+        )
+        assigned = {
+            int(record["selector"], 0)
+            for unit in units
+            if unit.surface == "tile" and unit.mnemonic is not None
+            for record in unit.metadata["catalog_records"]
+            if record["family"] == "TEPL"
+        }
+        reserved = {
+            selector
+            for start, end in top_level.metadata["catalog_projection"]["reserved"][
+                "tepl_selector_ranges"
+            ]
+            for selector in range(int(start, 0), int(end, 0) + 1)
+        }
+
+        self.assertTrue(assigned.isdisjoint(reserved))
+        self.assertEqual(len(assigned), 86)
+        self.assertEqual(len(reserved), 42)
+
 
 if __name__ == "__main__":
     unittest.main()

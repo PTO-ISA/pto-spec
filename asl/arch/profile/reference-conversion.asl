@@ -33,7 +33,7 @@ begin
         when TileDataType_FP64 => return ReferenceFP64FiniteValue(value);
         when TileDataType_FP32 =>
             return ReferenceFP32FiniteValue(value[31:0]);
-        when TileDataType_FP16 =>
+        when TileDataType_FP16, TileDataType_BF16 =>
             return ReferenceBinary16FiniteValue(value, data_type);
         when TileDataType_E4M3 =>
             return ReferenceFP8FiniteValue(data_type, value[7:0]);
@@ -231,7 +231,8 @@ func ReferenceTileFloatingModulo(
     data_type: TileDataType, left: Word, right: Word) => (Word, bits(5))
 begin
     assert data_type == TileDataType_FP32 ||
-           data_type == TileDataType_FP16;
+           data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16;
     let left_class = TileNumericValueClass(data_type, left);
     let right_class = TileNumericValueClass(data_type, right);
     let signaling_nan = left_class == NumericValue_SignalingNaN ||
@@ -308,7 +309,8 @@ func ReferenceTileUnaryFinite(
     value: Word) => (Word, bits(5))
 begin
     assert data_type == TileDataType_FP32 ||
-           data_type == TileDataType_FP16;
+           data_type == TileDataType_FP16 ||
+           data_type == TileDataType_BF16;
     let input = ReferenceCommonFloatingFiniteValue(value, data_type);
     var result: real = input;
     case operation of

@@ -14,11 +14,11 @@ begin
     BeginBundleAt(
         ReadTPC(),
         BundleKind_Standard,
-        BundleTransfer_Direct,
+        BundleTransfer_Conditional,
         Zeros{PTO_XLEN} + 0x440,
+        Zeros{PTO_XLEN} + 0x200,
         Zeros{PTO_XLEN} + 0x202,
-        Zeros{PTO_XLEN} + 0x202,
-        TRUE);
+        FALSE);
     let indirect = ExecuteCommandInstruction(Zeros{64} + 0x2880, 16);
     assert indirect == CommandExecution_Executed;
     assert _BARG.block_type == BundleKind_Floating;

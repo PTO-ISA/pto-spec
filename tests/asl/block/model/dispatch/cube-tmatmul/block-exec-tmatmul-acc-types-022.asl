@@ -14,9 +14,12 @@ begin
         accumulator_type, TileLayout_CUBE_M16,
         TileLocation_Matrix, '1111');
     assert a_ready && b_ready && c_ready;
-    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 3);
-    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} + 5);
+    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} +
+        (if input_type == TileDataType_FP16 then 0x4000 else 2));
+    WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} +
+        (if input_type == TileDataType_FP16 then 0x4200 else 3));
+    WriteTileElement(6, 0, 0, Zeros{PTO_XLEN} +
+        (if accumulator_type == TileDataType_FP32 then 0x40a00000 else 5));
     let c_before = ReadTileElement(6, 0, 0);
 
     var start: bits(64) = Zeros{64} + 0x00231181;
@@ -36,8 +39,8 @@ begin
     let destination = BundleMatrixDestinationAt(0);
     assert destination != 6;
     assert _Tiles[[destination]].data_type == accumulator_type;
-    assert ReadTileElement(destination, 0, 0) ==
-        Zeros{PTO_XLEN} + 11;
+    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} +
+        (if accumulator_type == TileDataType_FP32 then 0x41300000 else 11);
     assert ReadTileElement(6, 0, 0) == c_before;
 end;
 

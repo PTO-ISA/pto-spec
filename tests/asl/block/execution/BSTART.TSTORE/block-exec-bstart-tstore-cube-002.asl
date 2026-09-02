@@ -32,6 +32,7 @@ begin
         TileDataType_FP16, TileLayout_CUBE_M16,
         TileLocation_Matrix, '0001');
     assert configured;
+    InstallRelativeTileFixture(0, 0);
     var source_tile = _Tiles[[0]];
     for row = 0 to 1 do
         for column = 0 to 2 do

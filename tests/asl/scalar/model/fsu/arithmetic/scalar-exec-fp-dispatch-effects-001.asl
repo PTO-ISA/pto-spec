@@ -85,8 +85,8 @@ begin
     assert ReadGPR(10) == Zeros{PTO_XLEN};
     assert ScalarFPFlags() == '10001';
 
-    WriteGPR(2, Zeros{PTO_XLEN} + 0x1234567887654321);
-    WriteGPR(3, Zeros{PTO_XLEN} + 0x11111111);
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x3fc00000);
+    WriteGPR(3, Zeros{PTO_XLEN} + 0x40100000);
     var binary_profile: bits(48) = Zeros{48} + 0x0000004b;
     binary_profile[11:7] = Zeros{5} + 11;
     binary_profile[19:15] = Zeros{5} + 2;
@@ -94,9 +94,11 @@ begin
     binary_profile[26:25] = '01';
     let binary_profile_status = ExecuteScalarInstruction(binary_profile, 32);
     assert binary_profile_status == ScalarExecution_Executed;
-    assert ReadGPR(11) == Zeros{PTO_XLEN} + 0x98765432;
+    assert ReadGPR(11) == Zeros{PTO_XLEN} + 0x40700000;
 
-    WriteGPR(4, Zeros{PTO_XLEN} + 0x76543210);
+    WriteGPR(2, Zeros{PTO_XLEN} + 0x40000000);
+    WriteGPR(3, Zeros{PTO_XLEN} + 0x40400000);
+    WriteGPR(4, Zeros{PTO_XLEN} + 0x3f800000);
     var fused_profile: bits(48) = Zeros{48} + 0x0000404b;
     fused_profile[11:7] = Zeros{5} + 12;
     fused_profile[19:15] = Zeros{5} + 2;
@@ -105,17 +107,17 @@ begin
     fused_profile[26:25] = '01';
     let fused_profile_status = ExecuteScalarInstruction(fused_profile, 32);
     assert fused_profile_status == ScalarExecution_Executed;
-    assert ReadGPR(12) == Zeros{PTO_XLEN} + 0xd3b3d841;
+    assert ReadGPR(12) == Zeros{PTO_XLEN} + 0x40e00000;
 
-    WriteGPR(2, Zeros{PTO_XLEN} + 0x1234567880000001);
-    var signed_conversion: bits(48) = Zeros{48} + 0x0000506b;
+    WriteGPR(2, Zeros{PTO_XLEN} + 0xfffffffffffffffe);
+    var signed_conversion: bits(48) = Zeros{48} + 0x0000606b;
     signed_conversion[11:7] = Zeros{5} + 13;
     signed_conversion[19:15] = Zeros{5} + 2;
-    signed_conversion[31:27] = Zeros{5} + 9;
+    signed_conversion[31:27] = Zeros{5} + 1;
     let signed_conversion_status =
         ExecuteScalarInstruction(signed_conversion, 32);
     assert signed_conversion_status == ScalarExecution_Executed;
-    assert ReadGPR(13) == Zeros{PTO_XLEN} + 0xffffffff80000001;
+    assert ReadGPR(13) == Zeros{PTO_XLEN} + 0xc0000000;
 
     ClearFault();
     WriteGPR(14, Zeros{PTO_XLEN} + 0x55);

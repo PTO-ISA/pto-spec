@@ -38,6 +38,7 @@ begin
         11, 128, 2, 4, TileDataType_S16,
         TileLayout_CUBE_M16, TileLocation_Matrix);
     assert predicate_ready && true_ready && false_ready;
+    InstallRelativeTileFixture(8, 8);
     for row = 0 to 1 looplimit 2 do
         for column = 0 to 3 looplimit 4 do
             let index = row * 4 + column;

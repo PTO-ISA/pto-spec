@@ -33,8 +33,10 @@ begin
         TileDataType_FP16, TileLayout_CUBE_N8,
         TileLocation_Matrix, '1111');
     assert a_ready && b_ready;
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 2);
-    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 3);
+    InstallRelativeTileFixture(0, 0);
+    InstallRelativeTileFixture(1, 1);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0x4000);
+    WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x4200);
 
     let start = ExecuteCommandInstruction(MatrixNoScaleStart(), 32);
     let attributes = ExecuteCommandInstruction(MatrixNoScaleFPATR(), 32);
@@ -47,7 +49,8 @@ begin
     assert completed;
     assert _LastFault == Fault_None;
     let destination = _BundleTileBindings[[0]].destination;
-    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 6;
+    assert ReadTileElement(destination, 0, 0) ==
+        Zeros{PTO_XLEN} + 0x40c00000;
     assert _Tiles[[destination]].data_type == TileDataType_FP32;
     return 0;
 end;

@@ -6,6 +6,6 @@ begin
     assert GMReductionOperationDataTypeLegal(GMReduction_AND, TileDataType_U32);
     assert GMReductionResult(GMReduction_AND, TileDataType_U32,
         Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN} + 5) ==
-        Zeros{PTO_XLEN} + 0;
+        Zeros{PTO_XLEN} + 1;
     return 0;
 end;

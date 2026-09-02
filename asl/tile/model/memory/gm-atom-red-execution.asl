@@ -109,7 +109,7 @@ begin
 end;
 
 
-func GMReductionResult(operation: GMReductionOperation,
+readonly func GMReductionResult(operation: GMReductionOperation,
                             data_type: TileDataType, old: Word,
                             input: Word) => Word
 begin

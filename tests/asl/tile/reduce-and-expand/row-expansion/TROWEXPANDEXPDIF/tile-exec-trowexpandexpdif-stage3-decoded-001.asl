@@ -27,9 +27,9 @@ begin
             when TileDataType_BF16 => return Zeros{PTO_XLEN} + 0x3f80;
             when TileDataType_FP32 =>
                 if fp32_discriminator == '01' then
-                    return Zeros{PTO_XLEN} + 0x3c000000;
-                elsif fp32_discriminator == '10' then
                     return Zeros{PTO_XLEN} + 0x3f800000;
+                elsif fp32_discriminator == '10' then
+                    return Zeros{PTO_XLEN} + 0x3f000000;
                 else
                     return Zeros{PTO_XLEN} + 0x40000000;
                 end;
@@ -41,9 +41,9 @@ begin
         when TileDataType_BF16 => return Zeros{PTO_XLEN} + 0x3b00;
         when TileDataType_FP32 =>
             if fp32_discriminator == '01' then
-                return Zeros{PTO_XLEN} + 0x33800000;
+                return Zeros{PTO_XLEN};
             elsif fp32_discriminator == '10' then
-                return Zeros{PTO_XLEN} + 0x3b000000;
+                return Zeros{PTO_XLEN};
             else
                 return Zeros{PTO_XLEN} + 0x3f800000;
             end;

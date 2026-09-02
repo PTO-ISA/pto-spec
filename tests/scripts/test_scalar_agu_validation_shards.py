@@ -143,6 +143,62 @@ class ScalarAguValidationShardTest(unittest.TestCase):
             generated = output.getvalue()
             self.assertIn("_TQueueValid[[0]] = TRUE;", generated)
 
+    def test_register_address_witness_uses_an_assigned_modifier(self) -> None:
+        for mnemonic in ("LD", "SD"):
+            with self.subTest(mnemonic=mnemonic):
+                row = scalar_form(mnemonic)
+                witness = GENERATOR["scalar_agu_witness"](
+                    row, FAMILY_CONSTRAINTS, 0
+                )
+                modifier = GENERATOR["decode_field"](
+                    row, "SrcRType", witness["instruction"]
+                )
+
+                self.assertEqual(modifier, 0)
+                shift = (
+                    GENERATOR["decode_field"](
+                        row, "shamt", witness["instruction"]
+                    )
+                    if any(field["name"] == "shamt" for field in row["fields"])
+                    else row["agu"]["offset_scale"]
+                )
+                self.assertEqual(
+                    witness["offset"], witness["src_r_value"] << shift
+                )
+
+    def test_reserved_address_modifier_is_rejected_before_offset_decode(self) -> None:
+        output = io.StringIO()
+
+        with redirect_stdout(output):
+            GENERATOR["emit_scalar_agu_bounds_validation"](
+                scalar_form("LW"), FAMILY_CONSTRAINTS
+            )
+
+        reserved = output.getvalue().split(
+            "// AGU-SRCRTYPE-RESERVED: 3/", 1
+        )[1].split("// AGU-TOTALITY-DECODED: shamt-0/", 1)[0]
+        self.assertIn("assert !ScalarFormOperandsLegal(", reserved)
+        self.assertIn("ScalarExecution_Rejected", reserved)
+        self.assertIn("Fault_IllegalInstruction", reserved)
+        self.assertNotIn("ScalarDecodedAGUOffset", reserved)
+
+    def test_register_prefetch_metadata_rejects_reserved_modifiers(self) -> None:
+        for mnemonic in ("HL.PRF", "HL.PRF.A"):
+            with self.subTest(mnemonic=mnemonic):
+                constraints = {
+                    constraint["field"]: constraint
+                    for constraint in scalar_form(mnemonic)["constraints"]
+                }
+
+                self.assertEqual(
+                    constraints["SrcRType"],
+                    {
+                        "field": "SrcRType",
+                        "operator": "one-of",
+                        "values": [0, 1, 2],
+                    },
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

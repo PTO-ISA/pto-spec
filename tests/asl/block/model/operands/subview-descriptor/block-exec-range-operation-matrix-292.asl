@@ -12,32 +12,33 @@ begin
         if tile == 0 then
             let configured =
             ConfigureCubeTileForMask(tile, 128, 1,
-                4, TileDataType_FP16, TileLayout_CUBE_M16,
+                4, TileDataType_U8, TileLayout_CUBE_M16,
                 TileLocation_Matrix, '1111');
             assert configured;
         else
             ConfigureTileForMask(tile, 128,
-                16, 4, 1,
-                4, TileDataType_FP16,
+                32, 4, 1,
+                4, TileDataType_U8,
                 TileLayout_RowMajor, TileLocation_Any, '1111');
         end;
         InstallRelativeTileFixture(tile, tile);
         MarkTileValidRegionDefined(tile);
     end;
-    let started = ExecuteCommandInstruction(Zeros{64} + 0x27e19181, 32);
+    let started = ExecuteCommandInstruction(Zeros{64} + 0xdfe19181, 32);
     assert started == CommandExecution_Executed;
     let dim_400043 = ExecuteCommandInstruction(Zeros{64} + 0x00400043, 32);
     assert dim_400043 == CommandExecution_Executed;
-    let dim_101043 = ExecuteCommandInstruction(Zeros{64} + 0x00101043, 32);
-    assert dim_101043 == CommandExecution_Executed;
-    let dim_402043 = ExecuteCommandInstruction(Zeros{64} + 0x00402043, 32);
-    assert dim_402043 == CommandExecution_Executed;
-    let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x08104e13, 32);
+    let dim_2001043 = ExecuteCommandInstruction(Zeros{64} + 0x02001043, 32);
+    assert dim_2001043 == CommandExecution_Executed;
+    WriteGPR(5, Zeros{PTO_XLEN} + 1);
+    let tgpr_sources_0 = ExecuteCommandInstruction(Zeros{64} + 0x20310013, 32);
+    let tgpr_sources_1 = ExecuteCommandInstruction(Zeros{64} + 0x00028013, 32);
+    assert tgpr_sources_0 == CommandExecution_Executed;
+    assert tgpr_sources_1 == CommandExecution_Executed;
+    let bind_0 = ExecuteCommandInstruction(Zeros{64} + 0x0008ee13, 32);
     assert bind_0 == CommandExecution_Executed;
-    let bind_1 = ExecuteCommandInstruction(Zeros{64} + 0x1038ce13, 32);
-    assert bind_1 == CommandExecution_Executed;
-    let assemble_1 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
-    assert assemble_1 == CommandExecution_Executed;
+    let assemble_0 = ExecuteCommandInstruction(Zeros{64} + 0x800018d3, 32);
+    assert assemble_0 == CommandExecution_Executed;
     assert BundleOperationBindingsComplete(107);
     let prepared_stage2 = PrepareSelectedBundleStage2();
     assert prepared_stage2;

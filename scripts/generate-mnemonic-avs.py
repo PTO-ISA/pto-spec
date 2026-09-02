@@ -369,25 +369,25 @@ def _tile_assertions(unit: AslUnit, source_text: str | None = None) -> list[str]
 
 GM_ATOM_SEMANTIC_OPERATIONS = {
     "MGATHER_CAS": ("GMAtomic_CAS", "U16", "9", "3", "3", "9"),
-    "MGATHER_EXCH": ("GMAtomic_EXCH", "U32", "9", "0", "0", "0"),
-    "MGATHER_MAX": ("GMAtomic_MAX", "U32", "5", "0", "0", "0"),
+    "MGATHER_EXCH": ("GMAtomic_EXCH", "U32", "9", "9", "0", "0"),
+    "MGATHER_MAX": ("GMAtomic_MAX", "U32", "5", "5", "0", "0"),
     "MGATHER_MIN": ("GMAtomic_MIN", "U32", "3", "5", "0", "0"),
     "MGATHER_ADD": ("GMAtomic_ADD", "U32", "12", "9", "0", "0"),
-    "MGATHER_INC": ("GMAtomic_INC", "U32", "5", "5", "0", "0"),
+    "MGATHER_INC": ("GMAtomic_INC", "U32", "4", "5", "0", "0"),
     "MGATHER_DEC": ("GMAtomic_DEC", "U32", "2", "5", "0", "0"),
     "MGATHER_AND": ("GMAtomic_AND", "U32", "0", "0xF0", "0", "0"),
-    "MGATHER_OR": ("GMAtomic_OR", "U32", "0xFF", "0xF0", "0", "0"),
-    "MGATHER_XOR": ("GMAtomic_XOR", "U32", "0xFF", "0xF0", "0", "0"),
+    "MGATHER_OR": ("GMAtomic_OR", "U32", "0xF3", "0xF0", "0", "0"),
+    "MGATHER_XOR": ("GMAtomic_XOR", "U32", "0xF3", "0xF0", "0", "0"),
 }
 GM_RED_SEMANTIC_OPERATIONS = {
     "MSCATTER_MAX": ("GMReduction_MAX", "5"),
     "MSCATTER_MIN": ("GMReduction_MIN", "3"),
-    "MSCATTER_ADD": ("GMReduction_ADD", "12"),
-    "MSCATTER_INC": ("GMReduction_INC", "5"),
+    "MSCATTER_ADD": ("GMReduction_ADD", "8"),
+    "MSCATTER_INC": ("GMReduction_INC", "4"),
     "MSCATTER_DEC": ("GMReduction_DEC", "2"),
-    "MSCATTER_AND": ("GMReduction_AND", "0"),
-    "MSCATTER_OR": ("GMReduction_OR", "0xFF"),
-    "MSCATTER_XOR": ("GMReduction_XOR", "0xFF"),
+    "MSCATTER_AND": ("GMReduction_AND", "1"),
+    "MSCATTER_OR": ("GMReduction_OR", "7"),
+    "MSCATTER_XOR": ("GMReduction_XOR", "6"),
 }
 
 

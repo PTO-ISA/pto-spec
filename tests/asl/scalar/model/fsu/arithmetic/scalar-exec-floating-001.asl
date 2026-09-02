@@ -11,7 +11,7 @@ begin
     assert ScalarUnsignedIntegerSourceTypeCode('00') == '00000';
     assert ScalarUnsignedIntegerSourceTypeCode('01') == '00001';
     assert ScalarFPTypeCodeSupported(Zeros{5});
-    assert ScalarFPTypeCodeSupported(Zeros{5} + 14);
+    assert ScalarFPTypeCodeSupported(Zeros{5} + 1);
     assert !ScalarFPTypeCodeSupported(Zeros{5} + 15);
     assert !ScalarFPTypeCodeSupported(Ones{5});
     assert ScalarIntegerTypeCodeSupported(Zeros{5});
@@ -30,9 +30,10 @@ begin
     let rounded_zero = FloatingToInteger(-3.75, NumericRound_RTZ);
     assert rounded_down == 3;
     assert rounded_zero == -3;
-    let converted_encoding = ConvertFloatingEncoding(Zeros{PTO_XLEN} + 0x1234,
+    let converted_encoding = ConvertFloatingEncoding(
+        Zeros{PTO_XLEN} + 0x3ff0000000000000,
         Zeros{5}, Zeros{5} + 1, Zeros{3});
-    assert converted_encoding == Zeros{PTO_XLEN} + 0x1234;
+    assert converted_encoding == Zeros{PTO_XLEN} + 0x3f800000;
 end;
 func main() => integer
 begin
