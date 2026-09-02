@@ -90,7 +90,7 @@ def _affected_pto_ids(document: object) -> list[str]:
         uri = item["uri"]
         if uri in conformance_targets or (
             uri.startswith("ndf://pto-spec/PTO-INST-")
-            and item.get("kind") in {"added", "modified", "moved", "superseded", "removed"}
+            and item.get("kind") in {"added", "modified", "moved"}
         ):
             affected.add(uri.removeprefix("ndf://pto-spec/"))
     return sorted(affected)
@@ -109,6 +109,11 @@ def main() -> int:
     parser.add_argument("--aslref", required=True, type=Path)
     parser.add_argument("--impact", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument(
+        "--selection",
+        type=Path,
+        default=ROOT / "spec/model-closure-selection.json",
+    )
     parser.add_argument("--mandatory-case-id", action="append", default=[])
     parser.add_argument("--workflow-commit", required=True)
     parser.add_argument("--run-id", required=True)
@@ -125,8 +130,23 @@ def main() -> int:
         output_root = arguments.output.resolve()
         impact = json.loads(impact_path.read_text(encoding="utf-8"))
         affected = _affected_pto_ids(impact)
-        if not arguments.mandatory_case_id:
-            raise ValueError("at least one mandatory model closure case is required")
+        selection = json.loads(arguments.selection.read_text(encoding="utf-8"))
+        if (
+            selection.get("schema") != "pto.model-closure-selection.v1"
+            or selection.get("release") != EXPECTED_RELEASE
+        ):
+            raise ValueError("model closure selection identity mismatch")
+        selected_mandatory = selection.get("mandatory_case_ids")
+        if (
+            not isinstance(selected_mandatory, list)
+            or not selected_mandatory
+            or selected_mandatory != sorted(set(selected_mandatory))
+        ):
+            raise ValueError("model closure selection has invalid mandatory cases")
+        if arguments.mandatory_case_id and (
+            sorted(set(arguments.mandatory_case_id)) != selected_mandatory
+        ):
+            raise ValueError("command-line mandatory cases differ from release selection")
         request = {
             "schema": "pto-closure-request-v1",
             "identity": _identity(),
@@ -149,7 +169,7 @@ def main() -> int:
             },
             "policy": {
                 "affected_pto_ids": affected,
-                "mandatory_case_ids": sorted(set(arguments.mandatory_case_id)),
+                "mandatory_case_ids": selected_mandatory,
             },
         }
         output_root.mkdir(parents=True, exist_ok=False)

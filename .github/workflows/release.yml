@@ -270,7 +270,7 @@ jobs:
           test "$(git rev-parse HEAD)" = "$PTO_COMMIT"
           git fetch origin main
           test "$(git rev-parse origin/main)" = "$PTO_COMMIT"
-          BASELINE="$(python3 -c 'import json; print(json.load(open("spec/release-selection.json"))["baseline_commit"])')"
+          BASELINE="$(python3 -c 'import json; print(json.load(open("spec/model-closure-selection.json"))["adoption_baseline_commit"])')"
           [[ "$BASELINE" =~ ^[0-9a-f]{40}$ ]]
           git worktree add --detach "$RUNNER_TEMP/pto-before" "$BASELINE"
           git -C "$RUNNER_TEMP/pto-before" submodule update --init tools/ndf

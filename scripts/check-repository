@@ -80,6 +80,7 @@ required_files=(
     docs/ndf/supplements/scalar-02.json
     docs/ndf/supplements/tile-01.json
     docs/ndf/supplements/tile-02.json
+    spec/model-closure-selection.json
     spec/catalog/scalar-forms.json
     spec/catalog/command-forms.json
     spec/catalog/numeric-profile-identities.json
@@ -97,6 +98,7 @@ required_files=(
     spec/evidence/mnemonic-descriptions/coverage-summary.json
     spec/schemas/pto-closure-run-envelope-v1.schema.json
     spec/schemas/pto-closure-semantic-payload-v1.schema.json
+    spec/schemas/pto-model-closure-selection-v1.schema.json
     scripts/generate-mnemonic-description-inventory
     scripts/generate-mnemonic-description-coverage
     scripts/check-mnemonic-explanations

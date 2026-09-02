@@ -76,6 +76,15 @@ needs the exact LLVM and ASL-MODEL candidates. It rejects mismatched ELF
 `.note.pto.isa` identities, incomplete impact coverage, differing semantic
 payload digests, and failed, skipped, timed-out, stale, or unknown cases.
 
+[`spec/model-closure-selection.json`](../../spec/model-closure-selection.json)
+fixes the 0.58.5 compiler/model adoption baseline and mandatory family
+canaries. Pre-adoption changes remain historical backlog rather than being
+misrepresented as per-instruction runtime coverage. Every instruction identity
+added, changed, or moved after that immutable baseline is selected by NDF impact
+and requires an explicit ASL-MODEL execution case before release. Removed and
+superseded encodings remain compiler-owned negative MC/LLD obligations and may
+not be represented as successful model execution.
+
 ## Fail-closed rules
 
 - A pending, skipped, cancelled, failed, stale, or different-commit result is

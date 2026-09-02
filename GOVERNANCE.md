@@ -38,6 +38,11 @@ golden comparison, and closure payload. The manual PTO release workflow invokes
 that corpus in the same protected run and rejects a missing, stale, partial, or
 different-version result.
 
+The first integrated release uses the immutable adoption baseline and mandatory
+case set in `spec/model-closure-selection.json`. That baseline is not a waiver:
+it marks where the new cross-repository gate becomes authoritative. Every later
+instruction-identity change must close its ASL-MODEL mapping before publication.
+
 ## Change control
 
 - **Interface definition** changes an externally visible encoding, operand or

@@ -98,6 +98,8 @@ class ReleaseClosureTest(unittest.TestCase):
                     "scripts/run-model-closure",
                     "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
                     "spec/schemas/pto-closure-run-envelope-v1.schema.json",
+                    "spec/model-closure-selection.json",
+                    "spec/schemas/pto-model-closure-selection-v1.schema.json",
                 ],
             },
             gate["gates"],
@@ -167,6 +169,8 @@ class ReleaseClosureTest(unittest.TestCase):
                 "spec/schemas/pto-spec-release-event-v1.schema.json",
                 "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
                 "spec/schemas/pto-closure-run-envelope-v1.schema.json",
+                "spec/model-closure-selection.json",
+                "spec/schemas/pto-model-closure-selection-v1.schema.json",
             },
         )
         for row in registry["evidence"]:
