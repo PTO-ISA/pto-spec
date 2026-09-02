@@ -114,7 +114,11 @@ def main() -> int:
     parser.add_argument("--target", default="linx64-unknown-none-elf")
     arguments = parser.parse_args()
     try:
-        impact = json.loads(arguments.impact.read_text(encoding="utf-8"))
+        impact_path = arguments.impact.resolve()
+        asl_model_root = arguments.asl_model_root.resolve()
+        llvm_root = arguments.llvm_root.resolve()
+        output_root = arguments.output.resolve()
+        impact = json.loads(impact_path.read_text(encoding="utf-8"))
         affected = _affected_pto_ids(impact)
         if not arguments.mandatory_case_id:
             raise ValueError("at least one mandatory model closure case is required")
@@ -128,14 +132,14 @@ def main() -> int:
                     "path": str(ROOT),
                 },
                 "llvm": {
-                    "repository": _repository(arguments.llvm_root),
-                    "commit": _git(arguments.llvm_root, "rev-parse", "HEAD"),
-                    "path": str(arguments.llvm_root.resolve()),
+                    "repository": _repository(llvm_root),
+                    "commit": _git(llvm_root, "rev-parse", "HEAD"),
+                    "path": str(llvm_root),
                 },
                 "asl_model": {
-                    "repository": _repository(arguments.asl_model_root),
-                    "commit": _git(arguments.asl_model_root, "rev-parse", "HEAD"),
-                    "path": str(arguments.asl_model_root.resolve()),
+                    "repository": _repository(asl_model_root),
+                    "commit": _git(asl_model_root, "rev-parse", "HEAD"),
+                    "path": str(asl_model_root),
                 },
             },
             "policy": {
@@ -143,25 +147,25 @@ def main() -> int:
                 "mandatory_case_ids": sorted(set(arguments.mandatory_case_id)),
             },
         }
-        arguments.output.mkdir(parents=True, exist_ok=False)
-        request_path = arguments.output / "closure-request.json"
+        output_root.mkdir(parents=True, exist_ok=False)
+        request_path = output_root / "closure-request.json"
         request_path.write_text(
             json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n",
             encoding="utf-8",
         )
-        evidence = arguments.output / "evidence"
+        evidence = output_root / "evidence"
         subprocess.run(
             [
-                str(arguments.asl_model_root / "scripts/pto-closure"),
+                str(asl_model_root / "scripts/pto-closure"),
                 "--request", str(request_path),
-                "--ndf-impact", str(arguments.impact),
-                "--ndf-root", str(arguments.ndf_root),
-                "--aslref-root", str(arguments.aslref_root),
-                "--asl-spec", str(arguments.asl_spec),
-                "--clang", str(arguments.clang),
-                "--llvm-mc", str(arguments.llvm_mc),
-                "--ld-lld", str(arguments.ld_lld),
-                "--aslref", str(arguments.aslref),
+                "--ndf-impact", str(impact_path),
+                "--ndf-root", str(arguments.ndf_root.resolve()),
+                "--aslref-root", str(arguments.aslref_root.resolve()),
+                "--asl-spec", str(arguments.asl_spec.resolve()),
+                "--clang", str(arguments.clang.resolve()),
+                "--llvm-mc", str(arguments.llvm_mc.resolve()),
+                "--ld-lld", str(arguments.ld_lld.resolve()),
+                "--aslref", str(arguments.aslref.resolve()),
                 "--target", arguments.target,
                 "--output", str(evidence),
                 "--workflow-repository", "PTO-ISA/pto-spec",
@@ -174,7 +178,7 @@ def main() -> int:
                 "--builder-identity", arguments.builder_identity,
             ],
             check=True,
-            cwd=arguments.asl_model_root,
+            cwd=asl_model_root,
         )
         subprocess.run(
             [
@@ -182,9 +186,9 @@ def main() -> int:
                 "--semantic-payload", str(evidence / "closure-semantic-payload.json"),
                 "--run-envelope", str(evidence / "closure-run-envelope.json"),
                 "--pto-commit", _git(ROOT, "rev-parse", "HEAD"),
-                "--llvm-repository", _repository(arguments.llvm_root),
-                "--llvm-commit", _git(arguments.llvm_root, "rev-parse", "HEAD"),
-                "--asl-model-commit", _git(arguments.asl_model_root, "rev-parse", "HEAD"),
+                "--llvm-repository", _repository(llvm_root),
+                "--llvm-commit", _git(llvm_root, "rev-parse", "HEAD"),
+                "--asl-model-commit", _git(asl_model_root, "rev-parse", "HEAD"),
                 "--workflow-commit", arguments.workflow_commit,
                 "--run-id", arguments.run_id,
                 "--run-attempt", str(arguments.run_attempt),
