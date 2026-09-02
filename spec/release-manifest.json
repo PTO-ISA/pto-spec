@@ -238,7 +238,7 @@
     },
     {
       "path": "asl/arch/programming-model/general-queue-management.asl",
-      "sha256": "fbe8a1fa4b7b67271b461f5c5072891e1977c4a499653ea7fdd2b87a5a655493"
+      "sha256": "cfabc9f02f3aa0e42e290059bf383640e3f0f5dc007423d2dec4e100138a1b20"
     },
     {
       "path": "asl/arch/programming-model/predicate-registers.asl",
@@ -634,7 +634,7 @@
     },
     {
       "path": "asl/block/model/dispatch/destination-auxiliary.asl",
-      "sha256": "48a34b8dfbafa1f694087e5956131829134a1d7b0b43d4a75ccda14f104a4680"
+      "sha256": "5349586b821d6af60a1ae34717e36e3ad2776c9e8cb10f7ef2e08fa356baf029"
     },
     {
       "path": "asl/block/model/dispatch/destination-shape.asl",
@@ -3602,11 +3602,11 @@
     },
     {
       "path": "spec/catalog/numeric-profile-applicability.json",
-      "sha256": "851e366e2865b1e4f662ea5535b1241c8a4a5dac16512bfc5f62ef81885e0e7c"
+      "sha256": "970dcb1f50ad6f96ffcb1dc11243641842ec5de3fcdfd3d447aaf7af10d976f2"
     },
     {
       "path": "spec/catalog/numeric-profile-identities.json",
-      "sha256": "22f1306db6c0fefe82beacbcc9942b92bf6b27c73142fbaada376b628de7c9b3"
+      "sha256": "f1954b8ed6f778fde46357cf0450cfff09960eea87b70208eeac4771baf2f3be"
     },
     {
       "path": "spec/catalog/scalar-forms.json",
@@ -3622,7 +3622,7 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "29f8e740f51327bcb3dac9d9c18d34580447c86b7ff1a5ce7505d4d279a2d4fb"
+      "sha256": "aa66d75a5a8384c96640ae0401ea531b632617be5777dc8c48b287d12686d4a5"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -3630,15 +3630,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "6c89643d5a1ce880c7f84bced000611a645f73330166f796abc9b02ec8f50ed9"
+      "sha256": "84ba2e429714d51151bcc7aa8b838fa10a4e99dc3ed7a1bedf4cbecf9579e459"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "1759f540e087556619e62cf2234047bb5a5ccb4825e14c66b481686c5870c539"
+      "sha256": "3abaa652e5da97076320169aa826b5216c54fe59cc1aa0ea1782698711da0d75"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "45e64e08fc9aec0412c580474a50d619d782f1202f1b95d5495e733fab16530f"
+      "sha256": "c4b43d8c481f0f48569f3f7cfbc0879685197c7e0e6555a1c0ecb457cc739328"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3684,7 +3684,7 @@
     },
     "tile_operations_total": 126
   },
-  "content_sha256": "aa8a4fb6e3a28ab53a7209176979d857c17bb30e6edafc01a1359b6711fe5c7e",
+  "content_sha256": "eb7e50bedc02614745d90b72ccadd3b2b6d5d669f0f4977148f46da3e938eac8",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -4011,7 +4011,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/programming-model/general-queue-management.md",
-      "sha256": "d3589238a70eebbaca07bdad1db5e8f15cdce3041dae2451d054807a227d2ea0"
+      "sha256": "1d4385e157dad37e364133e906ffcad8533d784ceb5b6521a9757f3e45147b63"
     },
     {
       "kind": "generated-documentation",
@@ -4506,7 +4506,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/destination-auxiliary.md",
-      "sha256": "d1e24fa29d025c2c79668e97955e8f0a8066919f0f36106ee2718825c8af73fe"
+      "sha256": "0862f094ccabfdbcd9e3f3c9f7d3f10ae8278c1f212f5837d80a905ed6104c66"
     },
     {
       "kind": "generated-documentation",

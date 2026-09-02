@@ -145,8 +145,8 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             artifact = json.loads((ROOT / relative).read_text(encoding="utf-8"))
             self.assertEqual(artifact["profile_id"], accepted_profile)
         for relative in (
-            "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md",
-            "docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md",
+            "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
+            "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
         ):
             self.assertIn(
                 accepted_profile,
@@ -167,10 +167,10 @@ class NumericDecisionMigrationTest(unittest.TestCase):
             )
         )["summary"]
         rounding_body = (
-            ROOT / "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md"
+            ROOT / "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md"
         ).read_text(encoding="utf-8")
         subnormal_body = (
-            ROOT / "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md"
+            ROOT / "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn(

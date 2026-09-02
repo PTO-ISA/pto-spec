@@ -13,6 +13,7 @@ type GQMQueueSlot of integer {0..PTO_MODEL_GQM_QUEUE_SLOTS-1};
 // PTO_MODEL_GQM_QUEUE_SLOTS value.
 type GQMQueueLookup of integer {0..16};
 type GQMQueueCapacity of integer {0..PTO_GQM_MAX_CAPACITY};
+type GQMNonzeroCapacity of integer {1..PTO_GQM_MAX_CAPACITY};
 type GQMQueueEntryIndex of integer {0..PTO_GQM_MAX_CAPACITY-1};
 
 type GQMQueueEntry of record {
@@ -204,11 +205,13 @@ begin
     if _GQMQueueSuspended[[slot]] || remaining == 0 then
         return GQMResult(remaining, '01');
     end;
+    assert _GQMQueueCapacity[[slot]] > 0;
+    let capacity = _GQMQueueCapacity[[slot]] as GQMNonzeroCapacity;
 
     var entry_index: GQMQueueEntryIndex = 0;
     if at_head then
         if _GQMQueueHead[[slot]] == 0 then
-            entry_index = (_GQMQueueCapacity[[slot]] - 1)
+            entry_index = (capacity - 1)
                 as GQMQueueEntryIndex;
         else
             entry_index = (_GQMQueueHead[[slot]] - 1)
@@ -217,7 +220,7 @@ begin
         _GQMQueueHead[[slot]] = entry_index;
     else
         entry_index = ((_GQMQueueHead[[slot]] + _GQMQueueCount[[slot]])
-            MOD _GQMQueueCapacity[[slot]]) as GQMQueueEntryIndex;
+            MOD capacity) as GQMQueueEntryIndex;
     end;
 
     var release_epoch: integer = 0;
@@ -256,10 +259,12 @@ begin
         response.result = GQMResult(0, '01');
         return response;
     end;
+    assert _GQMQueueCapacity[[slot]] > 0;
+    let capacity = _GQMQueueCapacity[[slot]] as GQMNonzeroCapacity;
 
     let head = _GQMQueueHead[[slot]];
     let entry = _GQMQueueEntries[[slot]][[head]];
-    let next_head = ((head + 1) MOD _GQMQueueCapacity[[slot]])
+    let next_head = ((head + 1) MOD capacity)
         as GQMQueueEntryIndex;
     _GQMQueueHead[[slot]] = next_head;
     _GQMQueueCount[[slot]] = (_GQMQueueCount[[slot]] - 1)

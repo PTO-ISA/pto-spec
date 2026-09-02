@@ -22,6 +22,7 @@ architecture authority. Current records remain in the
 
 ADR identities use `ADR-TYPE-NNNN`. `NNNN` is allocated independently within
 one canonical decision type rather than from one repository-wide sequence.
+The canonical filename is `ADR-TYPE-NNNN-slug.md`.
 
 | Type | Decision area |
 | --- | --- |

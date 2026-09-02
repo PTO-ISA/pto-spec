@@ -48,7 +48,7 @@ class AdrRecordTest(unittest.TestCase):
         return metadata
 
     def write_metadata(
-        self, root: Path, name: str = "BLOCK-0001-example.md", **updates: object
+        self, root: Path, name: str = "ADR-BLOCK-0001-example.md", **updates: object
     ) -> Path:
         return self.write_adr(
             root,
@@ -65,7 +65,7 @@ class AdrRecordTest(unittest.TestCase):
         updates.setdefault("legacy_ids", [f"ADR-{number:04d}"])
         path = self.write_metadata(
             root,
-            name=f"{adr_type}-{serial:04d}-example.md",
+            name=f"ADR-{adr_type}-{serial:04d}-example.md",
             id=adr_id,
             **updates,
         )
@@ -538,7 +538,7 @@ class AdrRecordTest(unittest.TestCase):
 
     def test_missing_frontmatter_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "BLOCK-0001-example.md"
+            path = Path(directory) / "ADR-BLOCK-0001-example.md"
             path.write_text("# ADR 0075: Example\n", encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "JSON frontmatter"):
                 parse_adr(path)
@@ -547,7 +547,7 @@ class AdrRecordTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = self.write_adr(
                 Path(directory),
-                "BLOCK-0001-example.md",
+                "ADR-BLOCK-0001-example.md",
                 '{"id":"ADR-BLOCK-0001","title":"Example","status":"done"}',
                 "# ADR 0075: Example",
             )
@@ -581,7 +581,7 @@ class AdrRecordTest(unittest.TestCase):
                 parse_adr(
                     self.write_metadata(
                         root,
-                        name="TILE-0001-example.md",
+                        name="ADR-TILE-0001-example.md",
                         id="ADR-TILE-0001",
                         legacy_ids=[],
                     )
@@ -589,7 +589,7 @@ class AdrRecordTest(unittest.TestCase):
             record = parse_adr(
                 self.write_metadata(
                     root,
-                    name="TILE-0001-example.md",
+                    name="ADR-TILE-0001-example.md",
                     id="ADR-TILE-0001",
                     legacy_ids=[],
                     interface_change=True,
@@ -654,7 +654,7 @@ class AdrRecordTest(unittest.TestCase):
 
     def test_filename_must_match_id(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            path = self.write_metadata(Path(directory), name="BLOCK-0002-example.md")
+            path = self.write_metadata(Path(directory), name="ADR-BLOCK-0002-example.md")
             with self.assertRaisesRegex(ValueError, "filename.*ADR-BLOCK-0001"):
                 parse_adr(path)
 
@@ -997,7 +997,7 @@ class AdrRecordTest(unittest.TestCase):
             root = Path(directory)
             nested = root / "docs/status/decisions/topic"
             nested.mkdir(parents=True)
-            (nested / "BLOCK-0001-example.md").write_text(
+            (nested / "ADR-BLOCK-0001-example.md").write_text(
                 "# ADR 0075: Missing metadata\n", encoding="utf-8"
             )
             result = self.run_checker(root)

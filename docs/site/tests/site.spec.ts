@@ -603,7 +603,7 @@ test('TLOAD workbench preserves source identity and evidence interaction', async
   await decisionEntry.getByText('Sources and references', {exact: true}).click();
   await expect(decisionEntry.getByRole('link', {name: /Open exact decision source/})).toHaveAttribute(
     'href',
-    /github\.com\/PTO-ISA\/pto-spec\/blob\/[0-9a-f]{40}\/docs\/status\/decisions\/MEM-0008-tload-tstore-gm-byte-row-stride\.md/,
+    /github\.com\/PTO-ISA\/pto-spec\/blob\/[0-9a-f]{40}\/docs\/status\/decisions\/ADR-MEM-0008-tload-tstore-gm-byte-row-stride\.md/,
   );
   const collapseAll = page.getByRole('button', {name: 'Collapse groups'});
   if (testInfo.project.name === 'mobile-chromium') {

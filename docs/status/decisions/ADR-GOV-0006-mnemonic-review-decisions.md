@@ -103,17 +103,17 @@ inventory; generated catalogs and release evidence remain authoritative.
 The 183 operative mnemonic decisions and their legacy identities are now owned
 by the following decision-scoped records:
 
-- [ADR 0075](BLOCK-0012-block-attributes-and-lifecycle.md) — Block attributes and lifecycle
-- [ADR 0076](BLOCK-0013-block-scalar-and-tile-bindings.md) — Block scalar and tile bindings
-- [ADR 0077](BLOCK-0014-block-start-and-extension-reservations.md) — Block start and extension reservations
-- [ADR 0078](MEM-0009-tlsu-and-global-memory-operations.md) — TLSU and global-memory operations
-- [ADR 0079](CUBE-0009-cube-and-matrix-operations.md) — CUBE and matrix operations
-- [ADR 0080](TILE-0008-tile-elementwise-and-irregular-operations.md) — Tile elementwise and irregular operations
-- [ADR 0081](TILE-0009-tile-scalar-and-immediate-operations.md) — Tile scalar and immediate operations
-- [ADR 0082](TILE-0010-tile-reduction-expansion-and-generation.md) — Tile reduction, expansion, and generation
-- [ADR 0083](TILE-0011-tile-conversion-layout-and-partial-operations.md) — Tile conversion, layout, and partial operations
-- [ADR 0084](SCALAR-0006-scalar-system-and-queue-operations.md) — Scalar, system, and queue operations
-- [ADR 0085](NUM-0012-numeric-postprocess-and-format-operations.md) — Numeric post-process and format operations
+- [ADR 0075](ADR-BLOCK-0012-block-attributes-and-lifecycle.md) — Block attributes and lifecycle
+- [ADR 0076](ADR-BLOCK-0013-block-scalar-and-tile-bindings.md) — Block scalar and tile bindings
+- [ADR 0077](ADR-BLOCK-0014-block-start-and-extension-reservations.md) — Block start and extension reservations
+- [ADR 0078](ADR-MEM-0009-tlsu-and-global-memory-operations.md) — TLSU and global-memory operations
+- [ADR 0079](ADR-CUBE-0009-cube-and-matrix-operations.md) — CUBE and matrix operations
+- [ADR 0080](ADR-TILE-0008-tile-elementwise-and-irregular-operations.md) — Tile elementwise and irregular operations
+- [ADR 0081](ADR-TILE-0009-tile-scalar-and-immediate-operations.md) — Tile scalar and immediate operations
+- [ADR 0082](ADR-TILE-0010-tile-reduction-expansion-and-generation.md) — Tile reduction, expansion, and generation
+- [ADR 0083](ADR-TILE-0011-tile-conversion-layout-and-partial-operations.md) — Tile conversion, layout, and partial operations
+- [ADR 0084](ADR-SCALAR-0006-scalar-system-and-queue-operations.md) — Scalar, system, and queue operations
+- [ADR 0085](ADR-NUM-0012-numeric-postprocess-and-format-operations.md) — Numeric post-process and format operations
 
 This record is historical provenance only and owns no current semantic impact
 or legacy identifier.

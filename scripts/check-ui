@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Shared presentation helpers for repository validation commands.
+
+check_ui_title=""
+check_ui_started=0
+check_ui_passed=0
+check_ui_workspace=""
+
+check_ui_cleanup() {
+    if [[ -n ${check_ui_workspace:-} && -d $check_ui_workspace ]]; then
+        rm -rf -- "$check_ui_workspace"
+    fi
+}
+
+check_ui_begin() {
+    check_ui_title=$1
+    check_ui_started=$SECONDS
+    check_ui_passed=0
+    check_ui_workspace=$(mktemp -d "${TMPDIR:-/tmp}/pto-check.XXXXXX")
+    trap check_ui_cleanup EXIT
+    printf '%s\n' "$check_ui_title"
+    printf '%s\n' '------------------------------------------------------------'
+}
+
+check_ui_section() {
+    printf '\n%s\n' "$1"
+}
+
+check_ui_indent_log() {
+    local log=$1
+    [[ -s $log ]] || return 0
+    sed 's/^/      /' "$log"
+}
+
+check_ui_step() {
+    local label=$1
+    shift
+
+    local log="$check_ui_workspace/step-$((check_ui_passed + 1)).log"
+    local started=$SECONDS
+    local status=0
+    if ("$@") >"$log" 2>&1; then
+        status=0
+    else
+        status=$?
+    fi
+    local duration=$((SECONDS - started))
+
+    if [[ $status -eq 0 ]]; then
+        check_ui_passed=$((check_ui_passed + 1))
+        printf '  %-42s PASS · %3ss\n' "$label" "$duration"
+        if [[ ${PTO_CHECK_VERBOSE:-0} == 1 ]]; then
+            check_ui_indent_log "$log"
+        fi
+        return 0
+    fi
+
+    printf '  %-42s FAIL · %3ss\n' "$label" "$duration" >&2
+    check_ui_indent_log "$log" >&2
+    printf '\nResult\n  FAIL · %s · %s checks passed · %ss\n' \
+        "$label" "$check_ui_passed" "$((SECONDS - check_ui_started))" >&2
+    return "$status"
+}
+
+check_ui_finish() {
+    printf '\nResult\n'
+    printf '  PASS · %s checks · %ss\n' \
+        "$check_ui_passed" "$((SECONDS - check_ui_started))"
+}
+
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
+    echo "error: scripts/check-ui is a sourced shell library" >&2
+    exit 2
+fi

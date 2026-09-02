@@ -180,7 +180,7 @@ def _validate_baselines(records: tuple[AdrRecord, ...], root: Path) -> list[str]
             for legacy_id in record.legacy_ids
             if re.fullmatch(r"ADR-[0-9]{4}", legacy_id)
         ]
-        filename = re.fullmatch(r"[A-Z]+-[0-9]{4}-(.+\.md)", relative.name)
+        filename = re.fullmatch(r"ADR-[A-Z]+-[0-9]{4}-(.+\.md)", relative.name)
         if len(old_ids) == 1 and filename is not None:
             candidates.append(
                 relative.with_name(

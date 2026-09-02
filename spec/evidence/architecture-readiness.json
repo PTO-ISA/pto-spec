@@ -17861,6 +17861,9 @@
         "PTO-AVS-ARCH-ENCODING-OWNERSHIP-LONG-BSTART-001",
         "PTO-AVS-ARCH-ENCODING-OWNERSHIP-MACHINE-BLOCK-001",
         "PTO-AVS-ARCH-ENCODING-OWNERSHIP-VECTOR-ROOT-001",
+        "PTO-AVS-ARCH-GQM-RESET-001",
+        "PTO-AVS-ARCH-GQM-STATIC-001",
+        "PTO-AVS-ARCH-GQM-STATUS-002",
         "PTO-AVS-ARCH-OVERVIEW-ENCODING-OWNERSHIP-STATIC-001",
         "PTO-AVS-BLOCK-ERCOV-DECODE-001",
         "PTO-AVS-BLOCK-ERCOV-RSVD-001",
@@ -18559,6 +18562,7 @@
         "PTO-AVS-SYS-TLB-IV-USRC-001"
       ],
       "unit_ids": [
+        "PTO-ARCH-GQM",
         "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
         "PTO-BLOCK-ERCOV",
         "PTO-BLOCK-ESAVE",
@@ -22924,7 +22928,7 @@
   "sources": {
     "adr_records": {
       "count": 104,
-      "sha256": "023a2dee1566c955fd2885bce5ffd5a318b0b2563894a4f6da19d83d96b3c8ed"
+      "sha256": "0c1b48ea1d3db9edc023cbcc45e6140cf41ac8515ce9591dd897f94392cf4244"
     },
     "instruction_contract": {
       "path": "spec/evidence/instruction-contract-closure.json",
@@ -22932,7 +22936,7 @@
     },
     "release_traceability": {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "45e64e08fc9aec0412c580474a50d619d782f1202f1b95d5495e733fab16530f",
+      "sha256": "c4b43d8c481f0f48569f3f7cfbc0879685197c7e0e6555a1c0ecb457cc739328",
       "test_count": 3935,
       "unit_count": 897
     }

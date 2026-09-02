@@ -105,7 +105,8 @@ def main(argv: Sequence[str] | None = None, *, output: TextIO = sys.stdout) -> i
     parser.add_argument("--pattern", default="test_*.py")
     parser.add_argument("--module", action="append", default=[])
     parser.add_argument("-j", "--jobs", type=int)
-    parser.add_argument("--slowest", type=int, default=10)
+    parser.add_argument("--slowest", type=int, default=0)
+    parser.add_argument("-v", "--verbose", action="store_true")
     arguments = parser.parse_args(argv)
 
     try:
@@ -130,12 +131,13 @@ def main(argv: Sequence[str] | None = None, *, output: TextIO = sys.stdout) -> i
     failures = tuple(result for result in results if result.returncode != 0)
 
     for result in results:
-        status = "PASS" if result.returncode == 0 else "FAIL"
-        print(
-            f"{status} {result.module} "
-            f"({result.test_count} tests, {result.duration_seconds:.3f}s)",
-            file=output,
-        )
+        if arguments.verbose or result.returncode != 0:
+            status = "PASS" if result.returncode == 0 else "FAIL"
+            print(
+                f"{status} {result.module} "
+                f"({result.test_count} tests, {result.duration_seconds:.3f}s)",
+                file=output,
+            )
         if result.returncode != 0:
             if result.stdout:
                 print(result.stdout.rstrip(), file=output)
@@ -143,7 +145,7 @@ def main(argv: Sequence[str] | None = None, *, output: TextIO = sys.stdout) -> i
                 print(result.stderr.rstrip(), file=output)
 
     if arguments.slowest:
-        print("SLOWEST MODULES", file=output)
+        print("Slowest modules", file=output)
         slowest = sorted(
             results,
             key=lambda result: (-result.duration_seconds, result.module),
@@ -154,11 +156,12 @@ def main(argv: Sequence[str] | None = None, *, output: TextIO = sys.stdout) -> i
                 file=output,
             )
 
+    status = "FAIL" if failures else "PASS"
     print(
-        "SUMMARY "
-        f"{len(results)} modules, "
-        f"{sum(result.test_count for result in results)} tests, "
-        f"{len(failures)} failed, {elapsed:.3f}s elapsed, jobs={jobs}",
+        "Python tests: "
+        f"{status} · {len(results)} modules · "
+        f"{sum(result.test_count for result in results)} tests · "
+        f"{len(failures)} failed · {elapsed:.3f}s · {jobs} jobs",
         file=output,
     )
     return 1 if failures else 0

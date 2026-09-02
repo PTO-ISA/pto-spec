@@ -26,9 +26,6 @@ class PullRequestCheckTest(unittest.TestCase):
             commands,
             [
                 "./scripts/check-adrs",
-                "./scripts/check-adr-id-migration",
-                "./scripts/check-adr-bilingual",
-                "./scripts/check-ndf-supplements",
                 "make --no-print-directory check-decoder-partition",
                 "./scripts/check-release-event-schema",
                 "./scripts/check-release-workflow",
@@ -111,15 +108,23 @@ class PullRequestCheckTest(unittest.TestCase):
         self.assertNotIn('| grep -Fxq "$path"', checker)
         self.assertIn('grep -Fxq -- "$path" <<<"$assembled"', checker)
 
-    def test_local_runner_parallelizes_the_two_fail_closed_lanes(self) -> None:
+    def test_local_runner_buffers_steps_and_runs_lanes_sequentially(self) -> None:
         checker = SCRIPT.read_text(encoding="utf-8")
 
-        self.assertIn('run_commands source "${source_commands[@]}" &', checker)
-        self.assertIn('run_commands tooling "${tooling_commands[@]}" &', checker)
-        self.assertIn('wait "$source_pid"', checker)
-        self.assertIn('wait "$tooling_pid"', checker)
-        self.assertIn("PR check failed: source=%s tooling=%s", checker)
-        self.assertIn("date +%s", checker)
+        self.assertIn('source "$repo_root/scripts/check-ui"', checker)
+        self.assertIn("run_source_checks\nrun_tooling_checks", checker)
+        self.assertNotIn("source_pid", checker)
+        self.assertNotIn("tooling_pid", checker)
+
+    def test_local_runner_uses_professional_summary_output(self) -> None:
+        checker = SCRIPT.read_text(encoding="utf-8")
+        ui = (ROOT / "scripts/check-ui").read_text(encoding="utf-8")
+
+        self.assertIn('check_ui_begin "PTO PR validation"', checker)
+        self.assertIn('check_ui_step "Python test suite"', checker)
+        self.assertIn("PTO_CHECK_VERBOSE", ui)
+        self.assertIn("PASS ·", ui)
+        self.assertIn("FAIL ·", ui)
 
     def test_repository_checker_rejects_every_obsolete_active_tree(self) -> None:
         checker = REPOSITORY_CHECK.read_text(encoding="utf-8")

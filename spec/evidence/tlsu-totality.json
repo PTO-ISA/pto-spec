@@ -39,8 +39,8 @@
     "asl/tile/model/state/shared-registers.asl",
     "asl/tile/model/state/types.asl",
     "spec/evidence/tlsu-totality.json",
-    "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
-    "docs/status/decisions/TILE-0007-pto-isa-0580-tile-operation-cleanup.md"
+    "docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md",
+    "docs/status/decisions/ADR-TILE-0007-pto-isa-0580-tile-operation-cleanup.md"
   ],
   "validation": [
     {

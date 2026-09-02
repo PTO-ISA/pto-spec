@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-ADR = ROOT / "docs/status/decisions/BLOCK-0015-b-iot-b-ios-sizecode-pemode.md"
+ADR = ROOT / "docs/status/decisions/ADR-BLOCK-0015-b-iot-b-ios-sizecode-pemode.md"
 MAKEFILE = ROOT / "Makefile"
 REPOSITORY_CHECK = ROOT / "scripts/check-repository"
 RELEASE_GATE_GENERATOR = ROOT / "scripts/generate-release-gate-readiness"

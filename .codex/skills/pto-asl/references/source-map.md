@@ -45,6 +45,11 @@ ADR only for a new externally visible PTO interface; implementation corrections
 under an existing interface update ASL/tests directly. Reuse and amend the
 existing topic ADR whenever it already owns the interface.
 
+Typed ADR source filenames are `ADR-TYPE-NNNN-slug.md`. Choose the type from the
+primary public owner (`GOV`, `STATE`, `MEM`, `BLOCK`, `SCALAR`, `TILE`, `CUBE`,
+or `NUM`) and record cross-cutting impact in metadata rather than creating
+parallel decisions.
+
 PTO-SPEC carries only PTO-owned NDF identifiers. ASL-Model owns and numbers its
 own model NDF records; link those downstream records as evidence rather than
 copying their IDs into PTO metadata.

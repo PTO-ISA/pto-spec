@@ -248,7 +248,7 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md"
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md"
     },
     {
       "adr": "ADR-NUM-0010",
@@ -268,7 +268,7 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "acceptance_record": "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md"
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md"
     },
     {
       "adr": "ADR-NUM-0013",

@@ -188,7 +188,7 @@ def validate_migration(root: Path, mapping_path: Path) -> list[str]:
             old_serial = int(old_match.group(1))
             new_serial = int(new_match.group(2))
             old_prefix = f"{old_serial:04d}-"
-            new_prefix = f"{type_name}-{new_serial:04d}-"
+            new_prefix = f"ADR-{type_name}-{new_serial:04d}-"
             if old_path.parent != Path("docs/status/decisions") or not old_path.name.startswith(old_prefix):
                 errors.append(f"record {index} old_path does not agree with old_id")
             if new_path.parent != old_path.parent or not new_path.name.startswith(new_prefix):

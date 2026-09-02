@@ -985,7 +985,7 @@ def render_nav(
                         adr_type: [] for adr_type in ADR_TYPE_ORDER
                     }
                     for path in pages:
-                        match = re.match(r"([A-Z]+)-([0-9]{4})-", path.name)
+                        match = re.match(r"ADR-([A-Z]+)-([0-9]{4})-", path.name)
                         if match is None or match.group(1) not in by_type:
                             raise ValueError(f"invalid typed ADR filename: {path}")
                         by_type[match.group(1)].append(path)
@@ -995,7 +995,7 @@ def render_nav(
                             sorted(
                                 by_type[adr_type],
                                 key=lambda path: adr_sort_key(
-                                    "ADR-" + "-".join(path.name.split("-", 2)[:2])
+                                    "ADR-" + "-".join(path.name.split("-", 3)[1:3])
                                 ),
                             ),
                         )

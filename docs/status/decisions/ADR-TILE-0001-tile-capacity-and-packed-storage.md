@@ -43,7 +43,7 @@
 ## Decision scope
 
 The minimum-allocation clause is superseded by
-[ADR 0054](BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md).
+[ADR 0054](ADR-BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md).
 ADR 0054 defines the current per-PE TSize map: codes 1 through 7 represent
 128 bytes through 8 KiB. The capacity-accounting, packed-storage, precision,
 and rollback decisions below remain current.
