@@ -1019,8 +1019,8 @@
   "legacy_ids": [],
   "amendments": [
     {
-      "date": "2026-09-01",
-      "baseline": "661b9bd19aafc5faafd74803d0f8ec5a6f2d1cf1",
+      "date": "2026-09-02",
+      "baseline": "cb0d65b584ce3ad82dd133176e34a97babcfd8ca",
       "approvers": [
         "zhoubot"
       ],
@@ -1467,11 +1467,13 @@ new semantic ambiguity must be recorded as a new open item rather than guessed.
 Corrections to an already assigned encoded interface update the owning ASL and
 evidence without allocating a new ADR. In particular:
 
-- `CSEL` raw selector `10` negates the false source; `00`, `01`, and `11` are
+- `CSEL` raw selector `11` negates the false source; `00`, `01`, and `10` are
   unmodified aliases.
 - `FCVTA/M/N/P/Z` raw destination codes 0..3 select unsigned 64/32/16/8 and
   4..7 select signed 64/32/16/8; 8..31 are reserved.
 
 Issues [#197](https://github.com/PTO-ISA/pto-spec/issues/197) and
 [#205](https://github.com/PTO-ISA/pto-spec/issues/205) preserve the exact
-compiler encodings, regression evidence, and implementation history.
+encodings, regression evidence, and implementation history. For CSEL, compiler
+output produced after the compiler selector table had already been remapped is
+not independent architecture evidence.

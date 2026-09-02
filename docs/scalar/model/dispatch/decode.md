@@ -24,9 +24,9 @@ This page is a generated reference view of the normative ASL unit.
 
 // NDF-BEGIN: PTO-REQ-AGU-SRCRTYPE-001
 // ndf: kind=contract level=L1 layer=scalar status=accepted
-// Every register-offset AGU form MUST decode SrcRType as 00=.sw, 01=.uw,
-// 10=.neg, and 11=unchanged, and MUST apply that transformation before the
-// encoded or fixed left shift used to form the offset.
+// Every register-offset AGU form MUST decode SrcRType as 00=unchanged,
+// 01=.sw, and 10=.uw before the encoded or fixed left shift. Raw 11 is
+// reserved and MUST reject before source reads or architectural effects.
 // NDF-END: PTO-REQ-AGU-SRCRTYPE-001
 
 type ScalarExecutionStatus of enumeration {
@@ -186,7 +186,7 @@ end;
 pure func DecodeScalarSelectRightModifier(raw: bits(2))
                                           => ScalarRightModifier
 begin
-    if raw == '10' then
+    if raw == '11' then
         return ScalarRight_NegateOrNot;
     else
         return ScalarRight_None;
@@ -197,10 +197,10 @@ pure func DecodeScalarAddressRightModifier(raw: bits(2))
                                            => ScalarRightModifier
 begin
     case raw of
-        when '00' => return ScalarRight_SignedWord;
-        when '01' => return ScalarRight_UnsignedWord;
-        when '10' => return ScalarRight_NegateOrNot;
-        when '11' => return ScalarRight_None;
+        when '00' => return ScalarRight_None;
+        when '01' => return ScalarRight_SignedWord;
+        when '10' => return ScalarRight_UnsignedWord;
+        when '11' => unreachable;
     end;
 end;
 

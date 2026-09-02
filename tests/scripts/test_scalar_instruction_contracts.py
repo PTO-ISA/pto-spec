@@ -51,8 +51,8 @@ class ScalarInstructionContractsTest(unittest.TestCase):
             )
         )
         self.assertIn("Only an all-zero SrcP is false", rendered)
-        self.assertIn("Codes 00, 01, and 11 leave SrcR unchanged", rendered)
-        self.assertIn("code 10 negates", rendered)
+        self.assertIn("Codes 00, 01, and 10 leave SrcR unchanged", rendered)
+        self.assertIn("code 11 negates", rendered)
         self.assertIn("24..27 select T#1..T#4", rendered)
         self.assertIn("28..31 select U#1..U#4", rendered)
         self.assertIn("Read all three Reg5 sources eagerly", rendered)
@@ -108,7 +108,8 @@ class ScalarInstructionContractsTest(unittest.TestCase):
         for required in (
             "codes 24..27 select T#1..T#4",
             "codes 28..31 select U#1..U#4",
-            "SrcRType=0 sign-extends SrcR[31:0]",
+            "SrcRType=0 leaves SrcR unchanged",
+            "SrcRType=3 is reserved",
             "shamt values 0..31",
             "modulo 2^PTO_XLEN",
             "aligned little-endian 8-byte value",

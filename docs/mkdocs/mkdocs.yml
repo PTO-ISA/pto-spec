@@ -681,7 +681,6 @@ nav:
               - Addressing: scalar/model/agu/addressing.md
               - Memory: scalar/model/agu/memory.md
           - ALU:
-              - Bitfield: scalar/model/alu/bitfield.md
               - Semantics: scalar/model/alu/semantics.md
           - AMO:
               - Semantics: scalar/model/amo/semantics.md

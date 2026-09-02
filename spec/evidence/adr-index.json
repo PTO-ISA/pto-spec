@@ -1314,7 +1314,6 @@
         "PTO-SCALAR-CTZ",
         "PTO-SCALAR-REV",
         "PTO-SCALAR-HL-BFI",
-        "PTO-SCALAR-MODEL-ALU-BITFIELD",
         "PTO-SCALAR-MODEL-ALU-SEMANTICS",
         "PTO-SCALAR-MODEL-DISPATCH-ALU"
       ],
@@ -1326,15 +1325,14 @@
           ],
           "affected_units": [
             "PTO-SCALAR-HL-BFI",
-            "PTO-SCALAR-MODEL-ALU-BITFIELD",
             "PTO-SCALAR-MODEL-ALU-SEMANTICS",
             "PTO-SCALAR-MODEL-DISPATCH-ALU"
           ],
           "approvers": [
             "zhoubot"
           ],
-          "baseline": "b83b23930510c3ea96ec81b9838ce6c6a0929a4c",
-          "date": "2026-09-01",
+          "baseline": "cb0d65b584ce3ad82dd133176e34a97babcfd8ca",
+          "date": "2026-09-02",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/194"
         }
       ],
@@ -2299,8 +2297,8 @@
           "approvers": [
             "zhoubot"
           ],
-          "baseline": "1f338aa0e4c46e21eb80d4465b3430e906a7c54f",
-          "date": "2026-09-01",
+          "baseline": "cb0d65b584ce3ad82dd133176e34a97babcfd8ca",
+          "date": "2026-09-02",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/193"
         }
       ],
@@ -5755,8 +5753,8 @@
           "approvers": [
             "zhoubot"
           ],
-          "baseline": "661b9bd19aafc5faafd74803d0f8ec5a6f2d1cf1",
-          "date": "2026-09-01",
+          "baseline": "cb0d65b584ce3ad82dd133176e34a97babcfd8ca",
+          "date": "2026-09-02",
           "issue": "https://github.com/PTO-ISA/pto-spec/issues/197"
         },
         {
