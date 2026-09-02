@@ -57,8 +57,9 @@ Rejections are matched against their diagnostic class, not only a nonzero exit.
 Otherwise a fixture failing in the wrong phase could satisfy a canary without
 testing the intended parser, type-checker, or interpreter behavior.
 
-The expectations are tied to the commit in `.aslref-version`. Update and
-explain affected fixtures whenever that pin changes.
+The expectations are tied to the repository in `.aslref-origin` and commit in
+`.aslref-version`. Update and explain affected fixtures whenever either pin
+changes.
 
 See `CONTRIBUTING.md` and `.codex/skills/pto-asl/references/formal-quality.md`
 for the evidence required by normative changes.

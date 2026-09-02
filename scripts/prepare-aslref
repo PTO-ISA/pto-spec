@@ -3,8 +3,8 @@ set -euo pipefail
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 pin=$(tr -d '[:space:]' < "$repo_root/.aslref-version")
+origin=$(tr -d '[:space:]' < "$repo_root/.aslref-origin")
 aslref_root=${PTO_ASLREF_ROOT:-"$repo_root/.cache/herdtools7"}
-upstream=https://github.com/herd/herdtools7.git
 
 if [[ ! $pin =~ ^[0-9a-f]{40}$ ]]; then
     echo "error: .aslref-version must contain one full Git commit SHA" >&2
@@ -19,9 +19,9 @@ fi
 if [[ ! -d "$aslref_root/.git" ]]; then
     mkdir -p "$aslref_root"
     git -C "$aslref_root" init --quiet
-    git -C "$aslref_root" remote add origin "$upstream"
-elif [[ $(git -C "$aslref_root" remote get-url origin) != "$upstream" ]]; then
-    echo "error: cached ASLRef origin is not $upstream" >&2
+    git -C "$aslref_root" remote add origin "$origin"
+elif [[ $(git -C "$aslref_root" remote get-url origin) != "$origin" ]]; then
+    echo "error: cached ASLRef origin is not $origin" >&2
     exit 1
 fi
 

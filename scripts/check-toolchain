@@ -18,12 +18,12 @@ cd "$repo_root"
 
 aslref=${ASLREF:-./scripts/aslref}
 
-# Diagnostic prefixes come from Error.PPrint in the pinned herdtools7 tree,
-# which renders every diagnostic as "ASL <kind> error:". Update them with the
-# pin if a release renames a kind.
-parse_error="ASL Grammar error:"
-type_error="ASL Type error:"
-dynamic_error="ASL Dynamic error:"
+# The pinned ASLRef may append a stable error code in parentheses while
+# preserving the diagnostic class. Match the complete class prefix and the
+# optional code, never merely a nonzero exit.
+parse_error='ASL Grammar error( \([[:alnum:]_]+\))?:'
+type_error='ASL Type error( \([[:alnum:]_]+\))?:'
+dynamic_error='ASL Dynamic error( \([[:alnum:]_]+\))?:'
 
 captured=""
 captured_status=0
@@ -50,12 +50,12 @@ expect_accept() {
 }
 
 expect_reject() {
-    local fixture=$1 diagnostic=$2
+    local fixture=$1 diagnostic_pattern=$2
     run_aslref --type-check-strict --no-exec "$fixture"
     [[ $captured_status -ne 0 ]] ||
         report "ASLRef accepted known-bad $fixture"
-    printf '%s' "$captured" | grep -qF "$diagnostic" ||
-        report "$fixture was rejected, but not with '$diagnostic', so it does not exercise that error class"
+    printf '%s' "$captured" | grep -qE "$diagnostic_pattern" ||
+        report "$fixture was rejected, but not with '$diagnostic_pattern', so it does not exercise that error class"
 }
 
 expect_exec_success() {
@@ -66,12 +66,12 @@ expect_exec_success() {
 }
 
 expect_exec_failure() {
-    local fixture=$1 diagnostic=$2
+    local fixture=$1 diagnostic_pattern=$2
     run_aslref --type-check-strict "$fixture"
     [[ $captured_status -ne 0 ]] ||
         report "ASLRef reported success for $fixture, which fails at run time"
-    printf '%s' "$captured" | grep -qF "$diagnostic" ||
-        report "$fixture failed, but not with '$diagnostic', so the failure did not come from execution"
+    printf '%s' "$captured" | grep -qE "$diagnostic_pattern" ||
+        report "$fixture failed, but not with '$diagnostic_pattern', so the failure did not come from execution"
 }
 
 echo "toolchain canary: pinned ASLRef $(cat .aslref-version)"

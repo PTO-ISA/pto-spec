@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "spec/evidence/release-gate-readiness.json"
 PAGE_SIZE = 100
 SOURCE_PATHS = (
+    ".aslref-origin",
     ".aslref-version",
     ".github/workflows/asl.yml",
     ".github/workflows/full-validation.yml",
@@ -89,6 +90,7 @@ GATES = (
         "name": "pinned ASLRef canaries",
         "command": "make toolchain-check",
         "evidence": [
+            ".aslref-origin",
             ".aslref-version",
             "scripts/check-toolchain",
             "scripts/prepare-aslref",

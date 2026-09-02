@@ -26,8 +26,8 @@ larger bounded value for a host with more cores.
 ## Full-model environment
 
 Full verification additionally requires OCaml, opam, network access, and the
-repository-pinned ASLRef source. Prepare it once, then run the release-equivalent
-sequence:
+PTO-ISA ASLRef fork pinned by `.aslref-origin`. Prepare it once, then run the
+release-equivalent sequence:
 
 ```bash
 make setup
@@ -35,8 +35,9 @@ make release-verify
 make release-prepare
 ```
 
-The setup command verifies the upstream origin and full commit pin before it
-builds the read-only executable cache.
+The setup command verifies the PTO-ISA origin and full commit pin before it
+builds the read-only executable cache. The fork is public, so hosted and local
+validation use the same credential-free HTTPS fetch path.
 
 ## Typical edit loop
 

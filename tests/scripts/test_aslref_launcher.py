@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 LAUNCHER = ROOT / "scripts" / "aslref"
 PREPARER = ROOT / "scripts" / "prepare-aslref"
-UPSTREAM = "https://github.com/herd/herdtools7.git"
+UPSTREAM = (ROOT / ".aslref-origin").read_text(encoding="utf-8").strip()
 PIN = (ROOT / ".aslref-version").read_text(encoding="utf-8").strip()
 
 
@@ -81,6 +81,30 @@ esac
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout, "aslref:--type-check-strict fixture.asl\n")
+
+    def test_launcher_rejects_a_different_origin(self) -> None:
+        cache = self.temp / "wrong-origin-cache"
+        (cache / ".git").mkdir(parents=True)
+        binary = cache / "_build" / "default" / "asllib" / "aslref.exe"
+        binary.parent.mkdir(parents=True)
+        self._write_executable(binary, "#!/usr/bin/env bash\nprintf 'must-not-run\\n'\n")
+
+        result = subprocess.run(
+            [str(LAUNCHER), "--version"],
+            cwd=ROOT,
+            env={
+                **self.env,
+                "PTO_ASLREF_ROOT": str(cache),
+                "PTO_TEST_UPSTREAM": "https://github.com/herd/herdtools7.git",
+            },
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertNotIn("must-not-run", result.stdout)
+        self.assertIn("cached ASLRef origin", result.stderr)
 
     def test_prepared_launcher_raises_soft_stack_to_hard_limit(self) -> None:
         cache = self.temp / "stack-cache"

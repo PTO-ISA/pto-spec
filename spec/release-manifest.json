@@ -1,8 +1,12 @@
 {
   "canonical_inputs": [
     {
+      "path": ".aslref-origin",
+      "sha256": "c44c64ef49c7ed2476ddb6215dee372a754e9e64858f2907e974fb48d57d5d49"
+    },
+    {
       "path": ".aslref-version",
-      "sha256": "943437e8563813c276417b022296f0c51b34fadbb8da49ca70dbac7f6589db63"
+      "sha256": "bdbc87fdf9bc8aa0571921027d404135b11de59178eab6ae0b0bb2b5b5e7d671"
     },
     {
       "path": "asl/arch/data-types/fault.asl",

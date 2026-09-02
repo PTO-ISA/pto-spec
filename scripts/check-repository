@@ -36,6 +36,7 @@ check_mnemonic_inventory() {
 }
 
 required_files=(
+    .aslref-origin
     .aslref-version
     AGENTS.md
     CODE_OF_CONDUCT.md
@@ -132,6 +133,9 @@ done
 
 pin=$(tr -d '[:space:]' < .aslref-version)
 [[ $pin =~ ^[0-9a-f]{40}$ ]] || fail ".aslref-version must contain one full Git commit SHA"
+origin=$(tr -d '[:space:]' < .aslref-origin)
+[[ $origin == https://github.com/PTO-ISA/herdtools7.git ]] ||
+    fail ".aslref-origin must name the PTO-ISA herdtools7 fork"
 
 if git ls-files | grep -Eq '^(build|\.cache)/'; then
     fail "generated build or cache files are tracked"

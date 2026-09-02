@@ -22,8 +22,8 @@ from scripts.workflow_contract import (
 CHECKOUT = f"actions/checkout@{CHECKOUT_ACTION_SHA}"
 UPLOAD = f"actions/upload-artifact@{UPLOAD_ARTIFACT_SHA}"
 DOWNLOAD = f"actions/download-artifact@{DOWNLOAD_ARTIFACT_SHA}"
-CACHE = f"actions/cache@{CACHE_ACTION_SHA}"
 OCAML = f"ocaml/setup-ocaml@{OCAML_ACTION_SHA}"
+CACHE = f"actions/cache@{CACHE_ACTION_SHA}"
 
 
 def _full_jobs() -> dict[str, object]:
@@ -45,8 +45,8 @@ def _full_jobs() -> dict[str, object]:
         "with": {
             "path": ".cache/herdtools7",
             "key": "aslref-${{ runner.os }}-${{ runner.arch }}-ocaml-5.2.1-"
-            "${{ hashFiles('.aslref-version', 'scripts/setup-aslref', "
-            "'scripts/prepare-aslref') }}",
+            "${{ hashFiles('.aslref-origin', '.aslref-version', "
+            "'scripts/setup-aslref', 'scripts/prepare-aslref') }}",
         },
     }
     setup = {
@@ -319,7 +319,7 @@ def validate_full_validation_workflow(workflow: str) -> list[str]:
                     "inputs": {
                         "commit": {"required": "true", "type": "string"},
                         "authority": {"required": "true", "type": "string"},
-                    }
+                    },
                 }
             },
             "permissions": {"contents": "read"},
