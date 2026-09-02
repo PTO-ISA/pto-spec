@@ -48,4 +48,10 @@ fi
 # shards and defeats `make test-parallel`.
 aslref_stack_limit=$(ulimit -Hs)
 ulimit -s "$aslref_stack_limit"
+if [[ -z ${OCAMLRUNPARAM:-} ]]; then
+    # Eight million words keeps short-lived interpreter values in the minor
+    # heap long enough to avoid repeated promotion and major-heap marking on
+    # reset-heavy points. Preserve an explicit caller override.
+    export OCAMLRUNPARAM=s=8M,o=200
+fi
 exec "$aslref_binary" "$@"

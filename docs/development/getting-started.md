@@ -65,6 +65,10 @@ exact current IDs without planning the full release matrix:
 Run `make setup` once before parallel execution when the pinned ASLRef cache is
 not already prepared.
 
+The launcher supplies a reset-heavy interpreter GC default of
+`OCAMLRUNPARAM=s=8M,o=200`. Set `OCAMLRUNPARAM` explicitly to benchmark or use a
+different host-specific allocation policy; explicit values are preserved.
+
 ## Troubleshooting
 
 - **Submodule or NDF tool missing:** run `git submodule update --init --recursive`.

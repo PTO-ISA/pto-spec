@@ -134,6 +134,56 @@ esac
         )
         self.assertEqual(result.stdout, f"stack:{expected}\n")
 
+    def test_prepared_launcher_sets_gc_defaults(self) -> None:
+        cache = self.temp / "gc-default-cache"
+        (cache / ".git").mkdir(parents=True)
+        binary = cache / "_build" / "default" / "asllib" / "aslref.exe"
+        binary.parent.mkdir(parents=True)
+        self._write_executable(
+            binary,
+            "#!/usr/bin/env bash\nprintf 'gc:%s\\n' \"${OCAMLRUNPARAM:-unset}\"\n",
+        )
+        env = {**self.env, "PTO_ASLREF_ROOT": str(cache)}
+        env.pop("OCAMLRUNPARAM", None)
+
+        result = subprocess.run(
+            [str(LAUNCHER), "--version"],
+            cwd=ROOT,
+            env=env,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "gc:s=8M,o=200\n")
+
+    def test_prepared_launcher_preserves_gc_override(self) -> None:
+        cache = self.temp / "gc-override-cache"
+        (cache / ".git").mkdir(parents=True)
+        binary = cache / "_build" / "default" / "asllib" / "aslref.exe"
+        binary.parent.mkdir(parents=True)
+        self._write_executable(
+            binary,
+            "#!/usr/bin/env bash\nprintf 'gc:%s\\n' \"${OCAMLRUNPARAM:-unset}\"\n",
+        )
+
+        result = subprocess.run(
+            [str(LAUNCHER), "--version"],
+            cwd=ROOT,
+            env={
+                **self.env,
+                "OCAMLRUNPARAM": "s=1M,o=100",
+                "PTO_ASLREF_ROOT": str(cache),
+            },
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "gc:s=1M,o=100\n")
+
     def test_launcher_rejects_a_dirty_pinned_checkout(self) -> None:
         cache = self.temp / "dirty-cache"
         (cache / ".git").mkdir(parents=True)
