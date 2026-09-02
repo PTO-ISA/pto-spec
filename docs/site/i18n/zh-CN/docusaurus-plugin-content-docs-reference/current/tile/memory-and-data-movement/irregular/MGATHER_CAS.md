@@ -49,6 +49,7 @@ This operation has no standalone opcode.
 | --- | --- |
 | destination0 | destination |
 | address | base-address |
+| scalar0 | GM row stride in elements |
 | source0 | indices |
 | source1 | expected |
 | source2 | replacement |
@@ -70,7 +71,7 @@ end;
 BSTART.MGATHER.CAS DataType
 B.IOT IndexTile, ExpectedTile, mask=PE_MASK
 B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, zero, zero, ->zero
+B.IOR BaseGPR, RowStrideGPR, zero, ->zero
 BSTOP
 ```
 
@@ -117,4 +118,4 @@ end;
 
 ## Examples
 
-- BSTART.MGATHER.CAS DataType; B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP
+- BSTART.MGATHER.CAS DataType; B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, RowStrideGPR, zero, ->zero; BSTOP

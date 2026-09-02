@@ -66,7 +66,7 @@ This page is a generated reference view of the normative ASL unit.
 
 <!-- GENERATED-ASL-BEGIN: unit source=asl/arch/profile/reference-profile.asl -->
 ```asl
-// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-APPLICABILITY","PTO-ARCH-PROFILE-REFERENCE-CONVERSION","PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION"]}
+// PTO-UNIT: {"id":"PTO-ARCH-PROFILE-REFERENCE-PROFILE","surface":"arch","classification":["profile","reference-profile"],"depends_on":["PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH","PTO-ARCH-PROFILE-APPLICABILITY","PTO-ARCH-PROFILE-REFERENCE-CONVERSION","PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION","PTO-ARCH-PROFILE-REFERENCE-SCALAR-FP-SPECIALS"]}
 
 readonly implementation func ReadPhysicalMemoryByte(address: Word) => Byte
 begin
@@ -132,17 +132,31 @@ implementation func ScalarFPBinaryProfile(operation: FloatingBinaryOperation,
                                            left: Word, right: Word)
                                            => (Word, bits(5))
 begin
-    assert ScalarFPTypeCodeSupported(source_type) || source_type == '00100';
+    assert ScalarFPTypeCodeSupported(source_type) ||
+           source_type == '00100' || source_type == '00101';
     let (special, special_result, special_flags) =
         ReferenceScalarFPBinarySpecial(
             operation, source_type, left, right);
     if special then return (special_result, special_flags); end;
 
-    let left_value = ReferenceScalarFPFiniteValue(left, source_type);
-    let right_value = ReferenceScalarFPFiniteValue(right, source_type);
+    let left_value = if source_type == '00101' then
+        ReferenceBinary16FiniteValue(left, TileDataType_BF16)
+        else ReferenceScalarFPFiniteValue(left, source_type);
+    let right_value = if source_type == '00101' then
+        ReferenceBinary16FiniteValue(right, TileDataType_BF16)
+        else ReferenceScalarFPFiniteValue(right, source_type);
     case operation of
         when FloatingBinary_ADD, FloatingBinary_SUB,
              FloatingBinary_MUL, FloatingBinary_DIV =>
+            if source_type == '00101' then
+                return ReferenceBinary16Encoding(
+                    FloatingBinary(operation, left_value, right_value),
+                    TileDataType_BF16,
+                    NumericExecutionControl {
+                        rounding_mode = rounding_mode,
+                        saturating = FALSE
+                    });
+            end;
             return ReferenceScalarFPFiniteEncoding(
                 FloatingBinary(operation, left_value, right_value),
                 source_type,
@@ -164,31 +178,10 @@ implementation func ScalarFPUnaryProfile(operation: FloatingUnaryOperation,
                                           source_type: bits(5), value: Word)
                                           => (Word, bits(5))
 begin
-    assert ScalarFPTypeCodeSupported(source_type);
-    case operation of
-        when FloatingUnary_ABS =>
-            if source_type == '00001' then
-                return (ZeroExtend{PTO_XLEN}(value[30:0]), Zeros{5});
-            else return (value AND (Zeros{PTO_XLEN} + 0x7fffffffffffffff), Zeros{5});
-            end;
-        when FloatingUnary_SQRT, FloatingUnary_EXP =>
-            return ReferenceScalarFPFiniteEncoding(
-                FloatingUnary(
-                    operation,
-                    ReferenceScalarFPFiniteValue(value, source_type)),
-                source_type,
-                rounding_mode);
-        when FloatingUnary_RECIP =>
-            if ScalarFPCarrierIsZero(value, source_type) then
-                return (Ones{PTO_XLEN}, Zeros{5} + 2);
-            end;
-            return ReferenceScalarFPFiniteEncoding(
-                FloatingUnary(
-                    operation,
-                    ReferenceScalarFPFiniteValue(value, source_type)),
-                source_type,
-                rounding_mode);
-    end;
+    assert ScalarFPTypeCodeSupported(source_type) ||
+           source_type == '00100' || source_type == '00101';
+    return ReferenceScalarFPUnaryProfile(
+        operation, rounding_mode, source_type, value);
 end;
 implementation func ScalarFPFusedProfile(operation: FloatingFusedOperation,
                                           rounding_mode: NumericRoundingMode,
@@ -196,8 +189,8 @@ implementation func ScalarFPFusedProfile(operation: FloatingFusedOperation,
                                           left: Word, right: Word)
                                           => (Word, bits(5))
 begin
-    assert ScalarFPTypeCodeSupported(source_type);
-    return ReferenceScalarFPFusedFinite(
+    assert ScalarFPTypeCodeSupported(source_type) || source_type == '00100';
+    return ReferenceScalarFPFusedProfile(
         operation, rounding_mode, source_type, addend, left, right);
 end;
 implementation func TileSquareRoot(value: Word) => Word

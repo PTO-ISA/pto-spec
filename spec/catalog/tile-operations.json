@@ -5114,6 +5114,10 @@
           "role": "base-address"
         },
         {
+          "field": "scalar0",
+          "role": "GM row stride in elements"
+        },
+        {
           "field": "source0",
           "role": "indices"
         },
@@ -5131,6 +5135,7 @@
       "state_effects": [
         "operand:destination0:destination",
         "operand:address:base-address",
+        "operand:scalar0:GM row stride in elements",
         "operand:source0:indices",
         "operand:source1:expected",
         "operand:source2:replacement"
@@ -7528,6 +7533,10 @@
       ],
       [
         "0x079",
+        "0x07D"
+      ],
+      [
+        "0x07F",
         "0x07F"
       ]
     ],

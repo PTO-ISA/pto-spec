@@ -69,6 +69,7 @@ nav:
           - Reference Conversion: arch/profile/reference-conversion.md
           - Reference Profile: arch/profile/reference-profile.md
           - Reference Quantization: arch/profile/reference-quantization.md
+          - Reference Scalar Fp Specials: arch/profile/reference-scalar-fp-specials.md
           - Reset: arch/profile/reset.md
           - Trap Context Recovery: arch/profile/trap-context-recovery.md
       - Programming Model:

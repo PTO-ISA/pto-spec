@@ -163,7 +163,7 @@ begin
     return old - (Zeros{PTO_XLEN} + 1);
 end;
 
-impdef func GMFloatingAddPTX(data_type: TileDataType, old: Word,
+readonly impdef func GMFloatingAddPTX(data_type: TileDataType, old: Word,
                              value: Word) => Word
 begin
     // PTO GM floating ADD follows the frozen PTX-derived profile: RN-even;
