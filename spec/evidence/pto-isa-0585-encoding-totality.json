@@ -1,6 +1,6 @@
 {
   "contract_status_counts": {
-    "reviewed-complete": 108
+    "reviewed-complete": 126
   },
   "cube": {
     "function_map": {
@@ -46,12 +46,12 @@
     "unknown_or_reserved_selector": "TileExecution_Rejected"
   },
   "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "d8deb7e99bae8dec66a624b36b93bb3f85bcf93dfa02d3ee07357d1efb1ede18",
+  "encoding_projection_sha256": "f0e2ca9e265a09e9a289aedc0c982d19ba1f8ac164210435a86b8772f5685636",
   "family_counts": {
     "CUBE": 12,
     "TEPL": 86,
-    "TLSU": 10,
-    "total": 108
+    "TLSU": 28,
+    "total": 126
   },
   "negative_raw_vectors": [
     {
@@ -422,14 +422,32 @@
     "function_map": {
       "0": "TLOAD",
       "1": "TSTORE",
+      "10": "MGATHER_MAX",
+      "11": "MGATHER_MIN",
+      "12": "MGATHER_ADD",
       "13": "GMOV",
+      "14": "MGATHER_INC",
+      "15": "MGATHER_DEC",
+      "16": "MGATHER_AND",
+      "17": "MGATHER_OR",
+      "18": "MGATHER_XOR",
+      "19": "MSCATTER_MAX",
       "2": "TMOV",
+      "20": "MSCATTER_MIN",
+      "21": "MSCATTER_ADD",
+      "22": "MSCATTER_INC",
+      "23": "MSCATTER_DEC",
+      "24": "MSCATTER_AND",
+      "25": "MSCATTER_OR",
+      "26": "MSCATTER_XOR",
+      "27": "MSCATTER_POPC",
       "3": "TPREFETCH",
       "4": "MGATHER",
       "5": "MSCATTER",
       "6": "MGATHER_MASK",
       "7": "MSCATTER_MASK",
-      "8": "MGATHER_CAS"
+      "8": "MGATHER_CAS",
+      "9": "MGATHER_EXCH"
     }
   }
 }

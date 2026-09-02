@@ -69,7 +69,9 @@ begin
        !TileSourceContentsDefined(expected) ||
        !TileSourceContentsDefined(replacement) ||
        !IndexedTLSUIndexDataTypeLegal(_Tiles[[indices]].data_type) ||
-       !IndexedTLSUTransferDataTypeLegal(data_type) ||
+       !(data_type == TileDataType_U16 ||
+         data_type == TileDataType_U32 ||
+         data_type == TileDataType_U64) ||
        _Tiles[[expected]].data_type != data_type ||
        _Tiles[[replacement]].data_type != data_type then
         SetFault(Fault_TileLegality, ReadTPC());

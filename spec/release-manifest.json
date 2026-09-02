@@ -357,20 +357,92 @@
       "sha256": "5bc8047a23da2ba23a5834959d1219a3a38a4a50b8ab9174a4b96d8b93c28f7f"
     },
     {
+      "path": "asl/block/execution/BSTART.MGATHER.ADD.asl",
+      "sha256": "a1862383c405513eac00a9228de06fd800da003fbece6269235e6410101a1fc0"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MGATHER.AND.asl",
+      "sha256": "5596eb3f75c6be34f1f2074d7acb227da56f054c9867b08de83bc114a84816ab"
+    },
+    {
       "path": "asl/block/execution/BSTART.MGATHER.CAS.asl",
       "sha256": "6f334188abcd8d4ee5e86eebf8f8aea5ae7b09fb802c034ef0446297f391a6e9"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MGATHER.DEC.asl",
+      "sha256": "0a265d6aa5c2a9b0b66604e9131feb71ebe1666ea6746274021fa011579a98ce"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MGATHER.EXCH.asl",
+      "sha256": "c1c57640d670b9e34f4f0d60ab07a02f8119010ce6113297edae60961e123483"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MGATHER.INC.asl",
+      "sha256": "1ad5d64c9df8801973870b80331c8126f47f03bc79cc2d458c3299282a27fe4c"
     },
     {
       "path": "asl/block/execution/BSTART.MGATHER.MASK.asl",
       "sha256": "6f36d5e0b98d657f06cf084f2f2ff5f07bfc655a7059bdd22ab709954258f91b"
     },
     {
+      "path": "asl/block/execution/BSTART.MGATHER.MAX.asl",
+      "sha256": "3cc297ccc3ade805d7920fde3eebc0ce7f825f24f16706019638f394ca35272f"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MGATHER.MIN.asl",
+      "sha256": "1536447e717966d006dfb42787a25cd7f10b2567e30287c021c12dda66d14a2e"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MGATHER.OR.asl",
+      "sha256": "ce5a1df7ca94a1bed95139fa0155ab3fe8d33e8a21a15d08be1fc6d301cfcc04"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MGATHER.XOR.asl",
+      "sha256": "154383e2a366c1f436b017be78caf4e1ce09a837f3789aec6a4fb2faf6866418"
+    },
+    {
       "path": "asl/block/execution/BSTART.MGATHER.asl",
       "sha256": "dd8b5054da4f54f5a392dba65c85f5aef540da90fce558bfbf8a81e072e6808d"
     },
     {
+      "path": "asl/block/execution/BSTART.MSCATTER.ADD.asl",
+      "sha256": "0ca53d09bca3237706dfdf4d622538ef16286e639a8fc3b98f9d7e11e55d03ea"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MSCATTER.AND.asl",
+      "sha256": "e31aa52b4ff99b47ed8622d1d59f4a60444309e829212a9a4bb35d8ff0b53e00"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MSCATTER.DEC.asl",
+      "sha256": "e2ac54200864640c79d66d3d2c59e563db3da27bb918f40286d34633672fd8b3"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MSCATTER.INC.asl",
+      "sha256": "61e677609295eb87c730de7bfe6c8c1324cfb75e557e518188013726abf34bde"
+    },
+    {
       "path": "asl/block/execution/BSTART.MSCATTER.MASK.asl",
       "sha256": "cd2f3170fbfdf6f44dd299155b2217651eea23591f8f4f4503535eb01a40f7e9"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MSCATTER.MAX.asl",
+      "sha256": "547382fc89667759902518399733179c732d34cad957d38353873b3635ef23aa"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MSCATTER.MIN.asl",
+      "sha256": "a5b0db4138642e76b0b03a5c7f8eaddae7a80e0de13d33bf304d0b8e9d6dce7a"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MSCATTER.OR.asl",
+      "sha256": "baa41ab7e9f98e4da87150f1a57af1d0a56bcf4838d50857da78f0376285b459"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MSCATTER.POPC.asl",
+      "sha256": "322950ef61a411df633438f655b1301befec1453355ad0273c9e120c66c42758"
+    },
+    {
+      "path": "asl/block/execution/BSTART.MSCATTER.XOR.asl",
+      "sha256": "d13b9b3fa8a90601f5eab64669e282c6f9189c790947419dea600b6906ffeb3d"
     },
     {
       "path": "asl/block/execution/BSTART.MSCATTER.asl",
@@ -634,7 +706,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tile-execution.asl",
-      "sha256": "b35143ba57e07a58a06b4eab92fb8ec5620c7667917bc10eee0d528e64082054"
+      "sha256": "f674b64d535c7c7856cc19c1836ddc02c3593b8834083b91b1abab5e71c38f4d"
     },
     {
       "path": "asl/block/model/dispatch/tile-scalar-schema.asl",
@@ -643,6 +715,10 @@
     {
       "path": "asl/block/model/dispatch/tile-schema.asl",
       "sha256": "ae2c0c68112dd92eccf4599c9a39185d67da21c50f8de8f6c575bdf278343cc1"
+    },
+    {
+      "path": "asl/block/model/dispatch/tlsu-gm-atom-red.asl",
+      "sha256": "0b2c65a197536b48d516f56975d6303d275f2a649f3409a20368ea0445ae9812"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-gmov.asl",
@@ -654,7 +730,7 @@
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-cas.asl",
-      "sha256": "0231bd8ab7d9c60fc9d93cca6af278e871a36103481f763fdc676c4aa25f372c"
+      "sha256": "3de51afff6cadfab0030b8572763fabf92dafa11fc8fe76013d435426209bbfb"
     },
     {
       "path": "asl/block/model/dispatch/tlsu-mgather-mask.asl",
@@ -706,7 +782,7 @@
     },
     {
       "path": "asl/block/model/operands/portable-carriers.asl",
-      "sha256": "8d9a4cd2829b7e3df53ce42b904798a52b5b8928442ebb5dd39c1fce8ceb01b1"
+      "sha256": "340b205243b454b6ff0416a21fa69e6fb31071b870b4485d5923374ed9634ccd"
     },
     {
       "path": "asl/block/model/operands/range-modifiers.asl",
@@ -2961,20 +3037,92 @@
       "sha256": "1885ed9ce36f544317ad288c4a99307c759a7578226777e0f2cdf96a0dffded1"
     },
     {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_ADD.asl",
+      "sha256": "9bc22a5bae6d82442d90ac8e365a94d4c3ca9d6a55981cd715d720752d20ac92"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_AND.asl",
+      "sha256": "f50b5b30a1ef299e96b558f63a07f0a4328647529f7f91c6da2fed95c89512d2"
+    },
+    {
       "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl",
-      "sha256": "610ed56a2dc8afc3cb253af09c5f659fe893bd4947e27c57426fee87ec1e0f38"
+      "sha256": "c44949e6054b3e2689674b0eefb239cb7ff6294ec808d58cf4c221ad748ae26a"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_DEC.asl",
+      "sha256": "435ac629346bbfe316b5d1a715d5218bb23d4e8cff098a99b35be61c1ca0f12c"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_EXCH.asl",
+      "sha256": "2599f55564d0a6dcf42eb90f053c70557c5f88370154fa07c43a4f7940b51514"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_INC.asl",
+      "sha256": "0c28642b111b7c1274b4d96170247f31d7a11f40b3c90b1947d9601be36519d4"
     },
     {
       "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl",
       "sha256": "1d2aaa960894b09be1dacd38d87c5fc31ac2ce992da46ed9618db7af7493e7d4"
     },
     {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_MAX.asl",
+      "sha256": "74f61109601e2a63669c3c2a938c9d96ab401bfea52ff9a7c1152aa46753c806"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_MIN.asl",
+      "sha256": "d19f007552cc4e8ebb1923c8677b27563fd6380d59e219fe33a767a88c6a5b3f"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_OR.asl",
+      "sha256": "c08cd1fd69a84b74007132bff42c5142ae64ce5086d035d057c43e2aba25b612"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_XOR.asl",
+      "sha256": "65cef8481d3a3d57b44d0ccbb9079ce1e409fda0c116068ad2d5f1c71af5780d"
+    },
+    {
       "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
       "sha256": "576dc5b2fc1f828cb0861c7c42ed66e5899ae1a9954948fe2cc9452fd8f0ba14"
     },
     {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_ADD.asl",
+      "sha256": "7ad3a062a019c77557b605b7ec55107200282e028719d7c90d25da42885376a9"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_AND.asl",
+      "sha256": "68015221b50d89d108ac4c05eeb569c601873ca46e08d95f0c4303fec11b2b91"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_DEC.asl",
+      "sha256": "9cefc2bed526756bbf8e49bf40cedd8e94d49dde339686ecb8118abe18852799"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_INC.asl",
+      "sha256": "c9cb506c9aa8bcd770417f80a1e0308cd93669ae93d8580c8ce216abeb2d313b"
+    },
+    {
       "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
       "sha256": "a0491dee7518ccaa8b84125362876c260345e08d094301992fef2c4da12085c2"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MAX.asl",
+      "sha256": "1b5ec0a6760e054146697e0f869ac53936527d76242245a36204f5ee8ec3d8b5"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MIN.asl",
+      "sha256": "a844b797c1d17f23062afe6b5aac1381a4c19ffd9ed7ebd34e9ad31d31a5666e"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_OR.asl",
+      "sha256": "425ff72943ffe539fe29f8ad3e852b69efaceee7922016f49392d9329e34eb8b"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_POPC.asl",
+      "sha256": "3c3e4d90863a4a3edd0cc46732fccd81699e600ea14fd5b5383f06a91fde56c9"
+    },
+    {
+      "path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_XOR.asl",
+      "sha256": "7666a73e2a4d81b0c1027aa961905c8d4d48241eae127304afc0af91f8aa860c"
     },
     {
       "path": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
@@ -3038,7 +3186,7 @@
     },
     {
       "path": "asl/tile/model/dispatch/top-level.asl",
-      "sha256": "0ccc42d7aa5b7e56eee8ba280b98a027f25fa7dd8b3e0c1339bd66a0a8fe131a"
+      "sha256": "086642bac8b2a315465de2eee585ea13a2a266d9b3ebf9a0f6b44fdae05f3cf9"
     },
     {
       "path": "asl/tile/model/execution/comparison.asl",
@@ -3162,7 +3310,7 @@
     },
     {
       "path": "asl/tile/model/legality/memory-schema.asl",
-      "sha256": "49c79261322fd2772e9870edf3fa232b6a642109f8ec3a06bd5be2750402af25"
+      "sha256": "adf05d65417e96f55ac0f8a13035cf0c30715a76c164b09eaa9eb425d2029b3d"
     },
     {
       "path": "asl/tile/model/legality/operand-schema.asl",
@@ -3195,6 +3343,14 @@
     {
       "path": "asl/tile/model/memory/gather-scatter.asl",
       "sha256": "31bbe991c2b26813c78b6b940d698193f4f7518a32bb98dfd9aa524bd3228366"
+    },
+    {
+      "path": "asl/tile/model/memory/gm-atom-red-execution.asl",
+      "sha256": "2c8999e464c34ddbb72840aa3a299f1c087368bc0385cd3177dade610408a552"
+    },
+    {
+      "path": "asl/tile/model/memory/gm-atom-red.asl",
+      "sha256": "3b5be798fcbec05563452c1399f2fee4910cdaa46ecce4ada180b62c8cc50e5e"
     },
     {
       "path": "asl/tile/model/memory/load-store.asl",
@@ -3438,7 +3594,7 @@
     },
     {
       "path": "spec/catalog/command-forms.json",
-      "sha256": "9f2b57e8919c01a215f8905584ee44a6ac288dac1e2cce4ffb802a133a67426d"
+      "sha256": "242196b82be83611ca27b448b6677b9050912898a18b4a28764f0bb0450f73be"
     },
     {
       "path": "spec/catalog/extension-encoding-reservations.json",
@@ -3462,15 +3618,15 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "39390924b3311741fdf3995b710b37a957480bfc32795bdf9f4eda340875a698"
+      "sha256": "babde2fa00c34dccc84daf57432ca6d3ed0abe5569dcfd6df70fb5406501d277"
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "eae81a0e4c33b6f2c1811cdbb60257ee03a63d83a6f73c1f08e0307b6783e871"
+      "sha256": "fd42d4938023e15f3d3d67a7801a9abe333de4cff3fcd58227554a2a8a884a19"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "4895275e28d709ea89820b99924e8953fd0ecccff1e72a806fd3e3823cd631d5"
+      "sha256": "ba4b13d890add56a972923ca31abcdd6d332d4f16802df89ff9bd174612d4750"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
@@ -3478,11 +3634,11 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "800f28dd4032b5798a35b03a03089a56aa0ae7957ca44578d94e54439dad4721"
+      "sha256": "0617cc58f02fb5e7cfc107460dc16f5f2b39d88e73dcddb5aa4199b0f8feb5a5"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "03f104805643eecb8728a1126d9c91b9376c96c5602e345cb887c89ff016b9e7"
+      "sha256": "df4fb74d7f5bc30b2a4f27a48d8105d30198b66cdd7c3bb0a2aa11bc90cca89e"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3512,11 +3668,11 @@
   "catalog_counts": {
     "command_form_families": {
       "BBD": 5,
-      "CMD": 71
+      "CMD": 89
     },
-    "command_forms": 76,
+    "command_forms": 94,
     "contract_status_counts": {
-      "reviewed-complete": 108
+      "reviewed-complete": 126
     },
     "extension_encoding_reservations": 46,
     "pending_base_operations": 0,
@@ -3524,11 +3680,11 @@
     "tile_operations": {
       "CUBE": 12,
       "TEPL": 86,
-      "TLSU": 10
+      "TLSU": 28
     },
-    "tile_operations_total": 108
+    "tile_operations_total": 126
   },
-  "content_sha256": "3a0eb710726063b91a376d97981818f4c91998a24a63043538916d3d1d2607f0",
+  "content_sha256": "5ef8d33a0bb05b8683e51d8f5bc832a0c0ac6a94d32245f6ad84ee46f3418661",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3547,7 +3703,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "d8deb7e99bae8dec66a624b36b93bb3f85bcf93dfa02d3ee07357d1efb1ede18",
+  "encoding_projection_sha256": "f0e2ca9e265a09e9a289aedc0c982d19ba1f8ac164210435a86b8772f5685636",
   "hardware_conformance_profile": {
     "evidence": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
@@ -4004,8 +4160,33 @@
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MGATHER.ADD.md",
+      "sha256": "ca1751939ad5ee1eed2da33e2567c9265036c453d51da37cd1c62e0ff105feba"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MGATHER.AND.md",
+      "sha256": "0f0e33b83aa6aa42a9fe53396729c9d2fcdfa52789e4c79eac73ad3583ee2585"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.CAS.md",
       "sha256": "74c96fb45c175a2f86497b8c604ef0d722278e27f35025b48f9f9415852bf19e"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MGATHER.DEC.md",
+      "sha256": "6a38c9ba5790d03a81453d938917725b31c29f37ffc31638bbebb652a116c64d"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MGATHER.EXCH.md",
+      "sha256": "0eddb59849e670a0f833223518e84ab9fb21b5d75bba4a7a7a5d467812ff39ac"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MGATHER.INC.md",
+      "sha256": "818589127522e6ff1d89c92866172130339388df470d8fab2544c8fd3644d4a2"
     },
     {
       "kind": "generated-documentation",
@@ -4014,13 +4195,78 @@
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MGATHER.MAX.md",
+      "sha256": "00750a6a01d320812c29caae7be00a24ec0130e832b07c2af982a82cf02ceccc"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MGATHER.MIN.md",
+      "sha256": "8a551a5cdd4ef1e42c3b16b169b0bddf7e83d6960b5a492130a104e1f4b9bde8"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MGATHER.OR.md",
+      "sha256": "0f07f2e77e8852fe021f3f938dd451b98dd8fc44d4face1c950e68caa1e98c9f"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MGATHER.XOR.md",
+      "sha256": "bf7926e2eafea7b8d3828af5c0a14047cb331d700c56bbb6a74d4b7eee6b77bf"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MGATHER.md",
       "sha256": "d2ae41bea36df299093934ddf9037625a0ce18056a8b313063a65d420dd285e6"
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MSCATTER.ADD.md",
+      "sha256": "736595fe8ff240699e57f18573cfc439b078867e5580443ec57e7c8e1e959061"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MSCATTER.AND.md",
+      "sha256": "63bb8fbbbe48a1954a6677dda0162ebe092ddffd8d3593be8259a607ab7fd812"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MSCATTER.DEC.md",
+      "sha256": "63aae3de564efd1bbaeb8138525b05d72e0322aee90e48ba892b79fe07b510a7"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MSCATTER.INC.md",
+      "sha256": "45fcbc207f41ee89fa3fbaaa6233d53432c6a4a66e1f41b35625c695cdc2ad3a"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/block/execution/BSTART.MSCATTER.MASK.md",
       "sha256": "5f8e7092411df7def912c27ef2c0b71f54a073abe006eb179a809c6ae56226da"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MSCATTER.MAX.md",
+      "sha256": "0b74a7e65f852ebbae74e5387b115b1531b7b499dbcbf701dd2db8838d3bc7e1"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MSCATTER.MIN.md",
+      "sha256": "3a1029054ed8c0a3d209f17df869f404030efd2b3ad18c9eb3f8ffd5d4d2ad56"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MSCATTER.OR.md",
+      "sha256": "c91ca0b6e31ba66f555fa7319b1a152ef8301954553ade1104c063d667faea19"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MSCATTER.POPC.md",
+      "sha256": "09737659c4f7f5fc119ebc8d93a1b2a295fef7b8eb1315808479a47b7070e8ed"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/execution/BSTART.MSCATTER.XOR.md",
+      "sha256": "5ac5febfb3a917b2366ede0701ff5c938a16fe36e82f6e449ccc9230c0a07fed"
     },
     {
       "kind": "generated-documentation",
@@ -4350,7 +4596,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tile-execution.md",
-      "sha256": "43449945753d890643efea5659cf104729537ef5d35b7a75ee83a4d61f7d3036"
+      "sha256": "89ec9e8f3983903b105dce9a3a323a9284333b76a3bc6a47cf3a148a1d4fcdfd"
     },
     {
       "kind": "generated-documentation",
@@ -4361,6 +4607,11 @@
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tile-schema.md",
       "sha256": "8ede4fdc92169051e49e12981cfbc36c095a4b32547d6256bcd27f1dd3cdb8c2"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/block/model/dispatch/tlsu-gm-atom-red.md",
+      "sha256": "a00f26ed3540f9c56c3bbbb312c79c3cb04dc730ddea9a3c3489a6e012be976c"
     },
     {
       "kind": "generated-documentation",
@@ -4375,7 +4626,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/dispatch/tlsu-mgather-cas.md",
-      "sha256": "a071372b56e05a87cbfd76ed126dbb37223c107fd3181f3b7a0d940975f2a0db"
+      "sha256": "208c2b3c2102c887ec853df30ff0c1b058067c934e33cde57bb346851142a0a9"
     },
     {
       "kind": "generated-documentation",
@@ -4440,7 +4691,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/block/model/operands/portable-carriers.md",
-      "sha256": "6efc419ca6b8ef897d08b9e0eda2fe02cbab1c2870b6418ba66f71c7a78345c2"
+      "sha256": "e107ddec6d9c5d180e2f328d3fe001c4b62f19178f8e39e0640f525195a6d47f"
     },
     {
       "kind": "generated-documentation",
@@ -7259,8 +7510,33 @@
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_ADD.md",
+      "sha256": "ebcdf12d36a0a27a475c947773fa58dac06f70d8112cbd14dafe65dff4deabb6"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_AND.md",
+      "sha256": "c925e95b2101851a731dc96d3b07241e73ca688580d8d88bfaa1192ab7e97ca6"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_CAS.md",
-      "sha256": "d4528068d28087b8f99388e73a6b0ceea471549e1833beae4ad6c1896ccce6c0"
+      "sha256": "45857acad4808325be917eba1b7b330d18a2096dd26ed98175bd60696f09edd2"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_DEC.md",
+      "sha256": "b719ba42b10252d03ddf42770625b3e9ad0ddb495459391f97b7cf5b5a22f60b"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_EXCH.md",
+      "sha256": "bb9d97e7a4b52d7aae6ed68f1753201a25d18ade1ef2263c46d71f5e9457b44a"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_INC.md",
+      "sha256": "1ae9cacf68296ce3184ae15bcfd86bcb2b4f75c121c0a9875f185073e93f7ccc"
     },
     {
       "kind": "generated-documentation",
@@ -7269,13 +7545,78 @@
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_MAX.md",
+      "sha256": "4b031534fda21351a22adda811143d03280978a3fb2044222991d20a56b62c1b"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_MIN.md",
+      "sha256": "46ba27b5d02cd2317f7205c15c04235fbb8252476425625a92d4921e3c4391d1"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_OR.md",
+      "sha256": "404d0a30da06a4d560c17d238d93f2da6cabbdcf7192726e060b108dfdb62496"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_XOR.md",
+      "sha256": "e23de2f2ccf4aa620f4031d5a0374036d992ae4e8c159c83a7125fafd5f252ad"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER.md",
       "sha256": "8564b5777bcd0be76324a799c259820b3cbd37fbcbbbd6808ca0e1f0892bbbae"
     },
     {
       "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_ADD.md",
+      "sha256": "9ec67c55354e6f100288bb9fe161b2331557be9b5de2311ab96c015419f38d32"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_AND.md",
+      "sha256": "71acd59b8c90d5454704a23044f17700285519bf3241e6598691591ff8ebd4d6"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_DEC.md",
+      "sha256": "2000d3854a2214be5d16718b3800b60d6b68e44d7eeffc2f5dc50eb58f24ebb1"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_INC.md",
+      "sha256": "76ba54cb28fdd250e6434a7eba535345c7588c195f3b1e286cb322e9c0a8afb9"
+    },
+    {
+      "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_MASK.md",
       "sha256": "21bbfdb063977edd677867cada068df9a8780c562bc42e46d08f5a341fca3d8d"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_MAX.md",
+      "sha256": "4d9383932046e73e518b21664b2b54f113af97566368051266cca220e2ae2c22"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_MIN.md",
+      "sha256": "d9efeb26dc325648e4143b30e3c62ceba26d0256959d6eb55f3d83cde6188a0b"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_OR.md",
+      "sha256": "af3472060d0801ce636073507f5aaeaf9625453090bf768178da32a4665e2041"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_POPC.md",
+      "sha256": "6e4adf5762c9f1d92920ff98b1668968e0812b392cc19960a0be1e9efb2edf77"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/memory-and-data-movement/irregular/MSCATTER_XOR.md",
+      "sha256": "58d613890ae7968be0d759b8eeeab2641590393d3b961602ef1bebc80ffb3433"
     },
     {
       "kind": "generated-documentation",
@@ -7355,7 +7696,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/dispatch/top-level.md",
-      "sha256": "0d4d6f2f8b8d9922891e33f2e468c6250310a473c608682c12d1561ca0687317"
+      "sha256": "23da00adbca241c2fded341749e12c3365fa8c6c3f0d7f965baf57c2e1cbfaf8"
     },
     {
       "kind": "generated-documentation",
@@ -7510,7 +7851,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/memory-schema.md",
-      "sha256": "a974b051df2cdf6f564fb65a2f7726c38e3a09f421fa77d35313a2baf59d1c2b"
+      "sha256": "0c67254edbc98098748aee53a48ca29aef26c4b880a8607c637cae44f43cb3ff"
     },
     {
       "kind": "generated-documentation",
@@ -7551,6 +7892,16 @@
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/gather-scatter.md",
       "sha256": "bec2e21efdac0068d0351a8a7411280ec3950b95eb95f23b7a5050f3d2552a2b"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/model/memory/gm-atom-red-execution.md",
+      "sha256": "fccf5a55769bbca39fe0215680fd62ddb0c8b9afcf0299e5951168040f6de745"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/tile/model/memory/gm-atom-red.md",
+      "sha256": "f9df234bfc8f1bb15f9e3e201be0c5aeca07d7d53e78e924009296b43c88bb18"
     },
     {
       "kind": "generated-documentation",
@@ -7855,12 +8206,12 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-abi-vectors.json",
-      "sha256": "644ef5b096e06da6b8a4875883ac7416652a1a408e187ba67b047f313f51fd7e"
+      "sha256": "7df4f5d3666c0eceeab7b6681c8c2b454dafd9e35c48080854e4a8ef44fa6f59"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-encoding-totality.json",
-      "sha256": "5aab67db1d1139823f5207869ef63a1a05d83d58dab8cd66bc0145ce9007230d"
+      "sha256": "25072ac12ffcdfd60f053725021a39996463f5fa1d76632cc4681ecdd6b75f90"
     },
     {
       "kind": "generated-evidence",
@@ -7942,6 +8293,34 @@
       {
         "id": "PTO-ARCH-TILE-INSTRUCTION-CLASS-001",
         "sha256": "f6c0227ef30b2c9402532e5aa4e775771a832f8ae7da05011405eb6d36d803f2"
+      },
+      {
+        "id": "PTO-ATOM-RED-BODY-SCHEMA-001",
+        "sha256": "3df712dabe8ed06844a6ced17c546a590694b38d59f15de4a75b6b21f11be04f"
+      },
+      {
+        "id": "PTO-ATOM-RED-ENCODING-001",
+        "sha256": "eec19d17dd4d58d904c2ea20e11fbc5a18aba6ac9bcdf9d45b47d4078b530a32"
+      },
+      {
+        "id": "PTO-ATOM-RED-FAULTS-001",
+        "sha256": "06153fd7afdb50979e81607899f92cff5bde619e6712ff33b5a27dcefb65bf5e"
+      },
+      {
+        "id": "PTO-ATOM-RED-INC-DEC-SEMANTICS-001",
+        "sha256": "4afcc96a0a840526fb13cdbb413d2d81b7200c6a7270820ad665397bc08ac831"
+      },
+      {
+        "id": "PTO-ATOM-RED-ORDERING-001",
+        "sha256": "34f23b142e5aa3fd22e67ce7a87b2e14218e7f24243e6f113ffd008eb81d1949"
+      },
+      {
+        "id": "PTO-ATOM-RED-POPC-SEMANTICS-001",
+        "sha256": "bba8e055849f335ab80abe8ef66b0b25c6d51b985016ed6f1d890b184f5af41c"
+      },
+      {
+        "id": "PTO-ATOM-RED-TYPE-LEGALITY-001",
+        "sha256": "c66badc8c376d0f6d53d0e10d993a519ac0df17d5050fa39d4b2d752904b7809"
       },
       {
         "id": "PTO-B-ASSEMBLE-CONSUMER-READINESS-001",
@@ -8668,20 +9047,92 @@
         "sha256": "ec922e1f8217c824878ee5198fc106727b41f276addc5774dddd2138d3096fac"
       },
       {
+        "id": "PTO-INST-BLOCK-BSTART-MGATHER-ADD",
+        "sha256": "71952c1137c323677403c6fd479d26a610a2c5909eb5a5a71278c17d41ae52f7"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MGATHER-AND",
+        "sha256": "7082fea1a4ff8c4ec8b84e0230d77600e1a66bc7c9bae8b7abba032808894c87"
+      },
+      {
         "id": "PTO-INST-BLOCK-BSTART-MGATHER-CAS",
         "sha256": "e445e0a894081da5bff999f1d599d2f0e3d3deca45cd4ab4356c93e9be2d5971"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MGATHER-DEC",
+        "sha256": "3f691fb4e2928db4c6c53c71af37bb8fe8f3554faac02d09e0571b69869076ea"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MGATHER-EXCH",
+        "sha256": "ddee3ec1cfe7098332e2fcf1ca4e144d804249f4b5948b8613ae009534a891ba"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MGATHER-INC",
+        "sha256": "23cec704186705adca54c14c80c087145cc9b833b93e7607763c46412102a638"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-MGATHER-MASK",
         "sha256": "48d1a0c42802de9967042573d26287cd842f67762066c584b28b90baf92a132c"
       },
       {
+        "id": "PTO-INST-BLOCK-BSTART-MGATHER-MAX",
+        "sha256": "ae985f90d9b85b4c5960a5ce1861b4aaaa47c4e3cf89d311e6e3d57307471de0"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MGATHER-MIN",
+        "sha256": "fbb3d66d95973df855de9a169421f4f248d788eee742f34ca71e22b522e9ffce"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MGATHER-OR",
+        "sha256": "d7a8a44b3eb55fbaab9e50ba0fcfd16c03a63ca5cd9fa1885937a66f82abb463"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MGATHER-XOR",
+        "sha256": "47714d5e4aefc17d780a142ecf48930aaccedc2fdaa6c74e92da1e99743976b1"
+      },
+      {
         "id": "PTO-INST-BLOCK-BSTART-MSCATTER",
         "sha256": "5c04b6952706ce74ec5a1391529290029e3a6a82de187dd2aa1f1a39ffdb1ab1"
       },
       {
+        "id": "PTO-INST-BLOCK-BSTART-MSCATTER-ADD",
+        "sha256": "6e9349d100480f70349177113b94c3f9cf695e562f436529ea6e355f0cb52fd2"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MSCATTER-AND",
+        "sha256": "5ce9346eba50ebfc68cd34d1f9296bf82c7125bcd2e4929aafc5b37e6f909075"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MSCATTER-DEC",
+        "sha256": "7d78cc6e5c2936bf3151c563f1f03acdb5515339815253f43fcccbaeef93ed7e"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MSCATTER-INC",
+        "sha256": "3840c5bf305c4589db05dc135fdc5d6c5f90a3d4a6e7ddfe7993b98f68e38908"
+      },
+      {
         "id": "PTO-INST-BLOCK-BSTART-MSCATTER-MASK",
         "sha256": "9f288e37ca672891d173168a94cc086748bc9243af0ba34cd0706da42fa24eb2"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MSCATTER-MAX",
+        "sha256": "58b9717dd47d86e9f69653c6fe7f148526e9cb3263cc01b48a6726ecc071843e"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MSCATTER-MIN",
+        "sha256": "92f20f7d23aec83be06ecea1bcdec3077c3949293db549885f7e337f755cf409"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MSCATTER-OR",
+        "sha256": "14edc086dccc034a730efda46c060be86607f682a682837c5c9662eb56ec8bf1"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MSCATTER-POPC",
+        "sha256": "36971773126f91856cef2fe56a0662a8e2fe27e57c48e2ce4eac26c04554ee49"
+      },
+      {
+        "id": "PTO-INST-BLOCK-BSTART-MSCATTER-XOR",
+        "sha256": "086965c3da9545d4703c33db591c7493fdd4aed9610a9014a933a4b24692d3c9"
       },
       {
         "id": "PTO-INST-BLOCK-BSTART-SFU",
@@ -10720,20 +11171,92 @@
         "sha256": "fb7bb8be1945fc4940d66dfa424564f300aefef6eafe6353852cbdb1fc30e904"
       },
       {
+        "id": "PTO-INST-TILE-MGATHER-ADD",
+        "sha256": "404b3c5015a43a80aa90b862899ffece2f465913a21e5d055f90353a132fa27d"
+      },
+      {
+        "id": "PTO-INST-TILE-MGATHER-AND",
+        "sha256": "29d351f46ec9d456a9c99a2b9fe315fd519d17f347b7b905f5c2a2237732bcde"
+      },
+      {
         "id": "PTO-INST-TILE-MGATHER-CAS",
-        "sha256": "6438240736f45639c69b7f2d7715890f53e6f77d89371666f1878941df0c3b6a"
+        "sha256": "78c2259843cf933f11d48f82b2fe6b9e538b0eb3dcdf079ea49e23aaeb20a397"
+      },
+      {
+        "id": "PTO-INST-TILE-MGATHER-DEC",
+        "sha256": "6696a97a84e765218024f129f1bb0d5725c9397ad44c8a54a14b3cefe0b798d0"
+      },
+      {
+        "id": "PTO-INST-TILE-MGATHER-EXCH",
+        "sha256": "24ef0baf98b4747a6e63a40feeeea62bab132d5147abe57cd3671ea20d95dd3f"
+      },
+      {
+        "id": "PTO-INST-TILE-MGATHER-INC",
+        "sha256": "ae9202a154b0af190fb7ba4d329aee2fce96fa8278060ab5753e8434f179dd9f"
       },
       {
         "id": "PTO-INST-TILE-MGATHER-MASK",
         "sha256": "6e49604d73e1acfbf031d53c3e493ca71eab41e5007d25de6d2e77c410facf73"
       },
       {
+        "id": "PTO-INST-TILE-MGATHER-MAX",
+        "sha256": "c61ab8d5a3e89c36e1b25cd33678d5269fbdf2cf6999af199272b1de9ed14fc1"
+      },
+      {
+        "id": "PTO-INST-TILE-MGATHER-MIN",
+        "sha256": "3d682b8650b599389fcd049ee59d7222ddbd85c09572d9ebf1bd926c3521cf5c"
+      },
+      {
+        "id": "PTO-INST-TILE-MGATHER-OR",
+        "sha256": "860a8648cab7cbb1f50194057febc238bc1aea068a86b70f3a3aadec028ea84b"
+      },
+      {
+        "id": "PTO-INST-TILE-MGATHER-XOR",
+        "sha256": "75e73c5f31fda888af0ca702e9537607125d7a970303971357f745bfacb2406f"
+      },
+      {
         "id": "PTO-INST-TILE-MSCATTER",
         "sha256": "4c3b8f6bd24e6f603d9142383a6e8eeb86635d8db58b30c2fd75b04c0254e543"
       },
       {
+        "id": "PTO-INST-TILE-MSCATTER-ADD",
+        "sha256": "9640442e4d5899cc3a9ed0179fe9a414b6ff5a02597b092d2e67e0c2f3e5b75d"
+      },
+      {
+        "id": "PTO-INST-TILE-MSCATTER-AND",
+        "sha256": "09ac8aaa07455482067ab4656e7042a3da6f8f480981562b12b1b9047d3d53d0"
+      },
+      {
+        "id": "PTO-INST-TILE-MSCATTER-DEC",
+        "sha256": "f53923a47c84e519acb53dc21221e8ee81f012aae0f24c10e23c991a7f8a1685"
+      },
+      {
+        "id": "PTO-INST-TILE-MSCATTER-INC",
+        "sha256": "8a19b8e947b1632358720fb67fe954e04d1e159ada70f7d2e154848886aa31b1"
+      },
+      {
         "id": "PTO-INST-TILE-MSCATTER-MASK",
         "sha256": "dc956c9a78be32498ff0915153e9937dbadd5310b1231ee6178a58325f05defc"
+      },
+      {
+        "id": "PTO-INST-TILE-MSCATTER-MAX",
+        "sha256": "bbe71e3a3f0b6a22b7346b04da89ae29a196cba390e612876eef08abab7e17a3"
+      },
+      {
+        "id": "PTO-INST-TILE-MSCATTER-MIN",
+        "sha256": "d2ebbc6a3c1ea1a72df634cd67c30cb742a7a0dd8f42060be1095907e1854c24"
+      },
+      {
+        "id": "PTO-INST-TILE-MSCATTER-OR",
+        "sha256": "49e2b7e9b9f5e95bbcd9f0a2109c17f1662877a41778111dd3ec46c941682a97"
+      },
+      {
+        "id": "PTO-INST-TILE-MSCATTER-POPC",
+        "sha256": "874390c81afa5c99750a2283ddbf55430f83cdd5095f4635dff5f0cdbdd7641c"
+      },
+      {
+        "id": "PTO-INST-TILE-MSCATTER-XOR",
+        "sha256": "137fb8f67bbd1572ee5885440509ea7c7057d923edcf5468142632d0ee3a529c"
       },
       {
         "id": "PTO-INST-TILE-TABS",
@@ -11181,11 +11704,11 @@
       },
       {
         "id": "PTO-MGATHER-CAS-ATOMIC-001",
-        "sha256": "8ba2cc44ab1b2f0ec4cd468a6e1127aae4df1a86f3c7935bb087419c583a0a3e"
+        "sha256": "2867956dc2fb70927320166936fb803506f4f8e3487c987711c8f1c5c732a703"
       },
       {
         "id": "PTO-MGATHER-CAS-PUBLICATION-001",
-        "sha256": "fcf30f7cdab6968c23c7c2272a2803b1126150d62241630d7d55ab2a0042f0ac"
+        "sha256": "8a094851b4c2e2bf0c78b335f2fab8d2c30c56e3bd36c99d2a90a6717b8981ae"
       },
       {
         "id": "PTO-MGATHER-MASK-PREDICATE-001",

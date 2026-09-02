@@ -2657,10 +2657,10 @@
       "status": "ownership-inventoried-result-rule-required"
     },
     {
-      "id": "numeric-vp/tile-compare/ordered-and-unordered-comparison",
+      "id": "numeric-vp/tile-compare/ordemscatter-and-unordered-comparison",
       "domain_id": "tile-compare",
       "lane": "N3",
-      "dimension_id": "ordered-and-unordered-comparison",
+      "dimension_id": "ordemscatter-and-unordered-comparison",
       "label": "ordered and unordered comparison",
       "operation_keys": [
         "tile:TEPL:TCMP",
@@ -6210,7 +6210,7 @@
       ],
       "variation_point_ids": [
         "numeric-vp/tile-compare/nan-behavior",
-        "numeric-vp/tile-compare/ordered-and-unordered-comparison",
+        "numeric-vp/tile-compare/ordemscatter-and-unordered-comparison",
         "numeric-vp/tile-compare/result-encoding",
         "numeric-vp/tile-compare/signed-zero"
       ],
@@ -6228,7 +6228,7 @@
       ],
       "variation_point_ids": [
         "numeric-vp/tile-compare/nan-behavior",
-        "numeric-vp/tile-compare/ordered-and-unordered-comparison",
+        "numeric-vp/tile-compare/ordemscatter-and-unordered-comparison",
         "numeric-vp/tile-compare/result-encoding",
         "numeric-vp/tile-compare/signed-zero"
       ],
@@ -7747,7 +7747,7 @@
       ],
       "variation_point_ids": [
         "numeric-vp/tile-compare/nan-behavior",
-        "numeric-vp/tile-compare/ordered-and-unordered-comparison",
+        "numeric-vp/tile-compare/ordemscatter-and-unordered-comparison",
         "numeric-vp/tile-compare/result-encoding",
         "numeric-vp/tile-compare/signed-zero"
       ],

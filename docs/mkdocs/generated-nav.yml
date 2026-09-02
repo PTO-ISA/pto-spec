@@ -110,10 +110,28 @@ nav:
           - BSTART.FP: block/execution/BSTART.FP.md
           - BSTART.GMOV: block/execution/BSTART.GMOV.md
           - BSTART.ICALL: block/execution/BSTART.ICALL.md
+          - BSTART.MGATHER.ADD: block/execution/BSTART.MGATHER.ADD.md
+          - BSTART.MGATHER.AND: block/execution/BSTART.MGATHER.AND.md
           - BSTART.MGATHER.CAS: block/execution/BSTART.MGATHER.CAS.md
+          - BSTART.MGATHER.DEC: block/execution/BSTART.MGATHER.DEC.md
+          - BSTART.MGATHER.EXCH: block/execution/BSTART.MGATHER.EXCH.md
+          - BSTART.MGATHER.INC: block/execution/BSTART.MGATHER.INC.md
           - BSTART.MGATHER.MASK: block/execution/BSTART.MGATHER.MASK.md
+          - BSTART.MGATHER.MAX: block/execution/BSTART.MGATHER.MAX.md
+          - BSTART.MGATHER.MIN: block/execution/BSTART.MGATHER.MIN.md
+          - BSTART.MGATHER.OR: block/execution/BSTART.MGATHER.OR.md
+          - BSTART.MGATHER.XOR: block/execution/BSTART.MGATHER.XOR.md
           - BSTART.MGATHER: block/execution/BSTART.MGATHER.md
+          - BSTART.MSCATTER.ADD: block/execution/BSTART.MSCATTER.ADD.md
+          - BSTART.MSCATTER.AND: block/execution/BSTART.MSCATTER.AND.md
+          - BSTART.MSCATTER.DEC: block/execution/BSTART.MSCATTER.DEC.md
+          - BSTART.MSCATTER.INC: block/execution/BSTART.MSCATTER.INC.md
           - BSTART.MSCATTER.MASK: block/execution/BSTART.MSCATTER.MASK.md
+          - BSTART.MSCATTER.MAX: block/execution/BSTART.MSCATTER.MAX.md
+          - BSTART.MSCATTER.MIN: block/execution/BSTART.MSCATTER.MIN.md
+          - BSTART.MSCATTER.OR: block/execution/BSTART.MSCATTER.OR.md
+          - BSTART.MSCATTER.POPC: block/execution/BSTART.MSCATTER.POPC.md
+          - BSTART.MSCATTER.XOR: block/execution/BSTART.MSCATTER.XOR.md
           - BSTART.MSCATTER: block/execution/BSTART.MSCATTER.md
           - BSTART.SFU: block/execution/BSTART.SFU.md
           - BSTART.STD: block/execution/BSTART.STD.md
@@ -186,6 +204,7 @@ nav:
               - Tile Execution: block/model/dispatch/tile-execution.md
               - Tile Scalar Schema: block/model/dispatch/tile-scalar-schema.md
               - Tile Schema: block/model/dispatch/tile-schema.md
+              - TLSU Gm Atom Red: block/model/dispatch/tlsu-gm-atom-red.md
               - TLSU Gmov: block/model/dispatch/tlsu-gmov.md
               - TLSU Layout Conversion: block/model/dispatch/tlsu-layout-conversion.md
               - TLSU Mgather Cas: block/model/dispatch/tlsu-mgather-cas.md
@@ -805,10 +824,28 @@ nav:
       - Memory And Data Movement:
           - Irregular:
               - MGATHER: tile/memory-and-data-movement/irregular/MGATHER.md
+              - MGATHER_ADD: tile/memory-and-data-movement/irregular/MGATHER_ADD.md
+              - MGATHER_AND: tile/memory-and-data-movement/irregular/MGATHER_AND.md
               - MGATHER_CAS: tile/memory-and-data-movement/irregular/MGATHER_CAS.md
+              - MGATHER_DEC: tile/memory-and-data-movement/irregular/MGATHER_DEC.md
+              - MGATHER_EXCH: tile/memory-and-data-movement/irregular/MGATHER_EXCH.md
+              - MGATHER_INC: tile/memory-and-data-movement/irregular/MGATHER_INC.md
               - MGATHER_MASK: tile/memory-and-data-movement/irregular/MGATHER_MASK.md
+              - MGATHER_MAX: tile/memory-and-data-movement/irregular/MGATHER_MAX.md
+              - MGATHER_MIN: tile/memory-and-data-movement/irregular/MGATHER_MIN.md
+              - MGATHER_OR: tile/memory-and-data-movement/irregular/MGATHER_OR.md
+              - MGATHER_XOR: tile/memory-and-data-movement/irregular/MGATHER_XOR.md
               - MSCATTER: tile/memory-and-data-movement/irregular/MSCATTER.md
+              - MSCATTER_ADD: tile/memory-and-data-movement/irregular/MSCATTER_ADD.md
+              - MSCATTER_AND: tile/memory-and-data-movement/irregular/MSCATTER_AND.md
+              - MSCATTER_DEC: tile/memory-and-data-movement/irregular/MSCATTER_DEC.md
+              - MSCATTER_INC: tile/memory-and-data-movement/irregular/MSCATTER_INC.md
               - MSCATTER_MASK: tile/memory-and-data-movement/irregular/MSCATTER_MASK.md
+              - MSCATTER_MAX: tile/memory-and-data-movement/irregular/MSCATTER_MAX.md
+              - MSCATTER_MIN: tile/memory-and-data-movement/irregular/MSCATTER_MIN.md
+              - MSCATTER_OR: tile/memory-and-data-movement/irregular/MSCATTER_OR.md
+              - MSCATTER_POPC: tile/memory-and-data-movement/irregular/MSCATTER_POPC.md
+              - MSCATTER_XOR: tile/memory-and-data-movement/irregular/MSCATTER_XOR.md
           - PE Movement:
               - GMOV: tile/memory-and-data-movement/pe-movement/GMOV.md
           - Regular:
@@ -873,6 +910,8 @@ nav:
               - Addressing: tile/model/memory/addressing.md
               - Atomics: tile/model/memory/atomics.md
               - Gather Scatter: tile/model/memory/gather-scatter.md
+              - Gm Atom Red Execution: tile/model/memory/gm-atom-red-execution.md
+              - Gm Atom Red: tile/model/memory/gm-atom-red.md
               - Load Store: tile/model/memory/load-store.md
               - Restart: tile/model/memory/restart.md
               - Shared Movement: tile/model/memory/shared-movement.md

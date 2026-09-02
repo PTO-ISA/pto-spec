@@ -11,9 +11,9 @@ import subprocess
 
 
 ROOT = Path(__file__).resolve().parent.parent
-EXPECTED_FORM_COUNT = 542
+EXPECTED_FORM_COUNT = 560
 EXPECTED_FINGERPRINT = (
-    "17f0c3fabd6c373ab0bbd616fe1c708ab505bc8b2c94ba2b741d96e72f86780c"
+    "2f776989bf4cfa6acfa4d8918f79580f0e5d445557e9f00148c80145237e4fc0"
 )
 EXPECTED_RELEASE = "0.58.5"
 EXPECTED_ENCODING_ABI = "pto-isa-0.58.5-mode-function-v1"
@@ -97,22 +97,22 @@ def check_release_linkage() -> str:
             f"{manifest_encoding_hash}, computed {computed_encoding_hash}"
         )
     counts = manifest.get("catalog_counts", {})
-    if counts.get("scalar_forms") != 466 or counts.get("command_forms") != 76:
+    if counts.get("scalar_forms") != 466 or counts.get("command_forms") != 94:
         raise SystemExit(
-            "release manifest scalar/command closure must remain exactly 466/76"
+            "release manifest scalar/command closure must remain exactly 466/94"
         )
-    if counts.get("command_form_families") != {"CMD": 71, "BBD": 5}:
+    if counts.get("command_form_families") != {"CMD": 89, "BBD": 5}:
         raise SystemExit(
-            "release manifest command families must remain exactly CMD=71/BBD=5"
+            "release manifest command families must remain exactly CMD=89/BBD=5"
         )
-    if counts.get("tile_operations") != {"TEPL": 86, "TLSU": 10, "CUBE": 12}:
-        raise SystemExit("release manifest tile closure must be exactly 86/10/12")
-    if counts.get("tile_operations_total") != 108:
-        raise SystemExit("release manifest tile operation total must be exactly 108")
+    if counts.get("tile_operations") != {"TEPL": 86, "TLSU": 28, "CUBE": 12}:
+        raise SystemExit("release manifest tile closure must be exactly 86/28/12")
+    if counts.get("tile_operations_total") != 126:
+        raise SystemExit("release manifest tile operation total must be exactly 126")
     if counts.get("pending_base_operations") != 0:
         raise SystemExit("release manifest must have zero pending base operations")
-    if counts.get("contract_status_counts") != {"reviewed-complete": 108}:
-        raise SystemExit("release manifest must close all 108 operation contracts")
+    if counts.get("contract_status_counts") != {"reviewed-complete": 126}:
+        raise SystemExit("release manifest must close all 126 operation contracts")
     return computed_encoding_hash
 
 

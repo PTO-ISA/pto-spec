@@ -213,7 +213,7 @@ def _block_assertions(
         )
     alias_engine = unit.metadata.get("alias_engine")
     if alias_target is not None:
-        if alias_engine not in {"VEC", "SFU"}:
+        if alias_engine not in {"VEC", "SFU", "TLSU"}:
             raise ValueError(f"{unit.source_path}: invalid Block alias engine")
         lines.append(
             f"    assert InstructionContractAliasEngine_{mnemonic}() == "
@@ -367,6 +367,137 @@ def _tile_assertions(unit: AslUnit, source_text: str | None = None) -> list[str]
     return lines
 
 
+GM_ATOM_SEMANTIC_OPERATIONS = {
+    "MGATHER_CAS": ("GMAtomic_CAS", "U16", "9", "3", "3", "9"),
+    "MGATHER_EXCH": ("GMAtomic_EXCH", "U32", "9", "0", "0", "0"),
+    "MGATHER_MAX": ("GMAtomic_MAX", "U32", "5", "0", "0", "0"),
+    "MGATHER_MIN": ("GMAtomic_MIN", "U32", "3", "5", "0", "0"),
+    "MGATHER_ADD": ("GMAtomic_ADD", "U32", "12", "9", "0", "0"),
+    "MGATHER_INC": ("GMAtomic_INC", "U32", "5", "5", "0", "0"),
+    "MGATHER_DEC": ("GMAtomic_DEC", "U32", "2", "5", "0", "0"),
+    "MGATHER_AND": ("GMAtomic_AND", "U32", "0", "0xF0", "0", "0"),
+    "MGATHER_OR": ("GMAtomic_OR", "U32", "0xFF", "0xF0", "0", "0"),
+    "MGATHER_XOR": ("GMAtomic_XOR", "U32", "0xFF", "0xF0", "0", "0"),
+}
+GM_RED_SEMANTIC_OPERATIONS = {
+    "MSCATTER_MAX": ("GMReduction_MAX", "5"),
+    "MSCATTER_MIN": ("GMReduction_MIN", "3"),
+    "MSCATTER_ADD": ("GMReduction_ADD", "12"),
+    "MSCATTER_INC": ("GMReduction_INC", "5"),
+    "MSCATTER_DEC": ("GMReduction_DEC", "2"),
+    "MSCATTER_AND": ("GMReduction_AND", "0"),
+    "MSCATTER_OR": ("GMReduction_OR", "0xFF"),
+    "MSCATTER_XOR": ("GMReduction_XOR", "0xFF"),
+}
+
+
+def render_gm_semantic_avs(unit: AslUnit) -> tuple[Path, str] | None:
+    """Render owner-local semantic evidence for the frozen GM atom/red owners."""
+
+    if unit.mnemonic is None or unit.surface not in {"block", "tile"}:
+        return None
+    name = unit.mnemonic.removeprefix("BSTART.").replace(".", "_")
+    function = next(
+        (record.get("function") for _, record in _catalog(unit)), None
+    )
+    if not isinstance(function, int):
+        function = {
+            "MGATHER_CAS": 8,
+            "MGATHER_EXCH": 9,
+            "MGATHER_MAX": 10,
+            "MGATHER_MIN": 11,
+            "MGATHER_ADD": 12,
+            "MGATHER_INC": 14,
+            "MGATHER_DEC": 15,
+            "MGATHER_AND": 16,
+            "MGATHER_OR": 17,
+            "MGATHER_XOR": 18,
+            "MSCATTER_MAX": 19,
+            "MSCATTER_MIN": 20,
+            "MSCATTER_ADD": 21,
+            "MSCATTER_INC": 22,
+            "MSCATTER_DEC": 23,
+            "MSCATTER_AND": 24,
+            "MSCATTER_OR": 25,
+            "MSCATTER_XOR": 26,
+            "MSCATTER_POPC": 27,
+        }.get(name)
+    if not isinstance(function, int):
+        return None
+    statements: list[str]
+    if name in GM_ATOM_SEMANTIC_OPERATIONS:
+        operation, data_type, expected_result, value, expected, replacement = (
+            GM_ATOM_SEMANTIC_OPERATIONS[name]
+        )
+        statements = [
+            f"    assert GMAtomicOperationFromFunction({function}) == {operation};",
+            f"    assert GMAtomicOperationDataTypeLegal({operation}, TileDataType_{data_type});",
+            f"    let (result, performed) = GMAtomicResult({operation}, TileDataType_{data_type},",
+            f"        Zeros{{PTO_XLEN}} + 3, Zeros{{PTO_XLEN}} + {value},",
+            f"        Zeros{{PTO_XLEN}} + {expected}, Zeros{{PTO_XLEN}} + {replacement});",
+            f"    assert result == Zeros{{PTO_XLEN}} + {expected_result};",
+            "    assert performed;",
+        ]
+        if name == "MGATHER_CAS":
+            statements.extend(
+                [
+                    "    let (cas_miss, cas_performed) = GMAtomicResult(GMAtomic_CAS,",
+                    "        TileDataType_U16, Zeros{PTO_XLEN} + 3, Zeros{PTO_XLEN},",
+                    "        Zeros{PTO_XLEN} + 4, Zeros{PTO_XLEN} + 9);",
+                    "    assert cas_miss == Zeros{PTO_XLEN} + 3;",
+                    "    assert !cas_performed;",
+                ]
+            )
+    elif name in GM_RED_SEMANTIC_OPERATIONS:
+        operation, expected_result = GM_RED_SEMANTIC_OPERATIONS[name]
+        statements = [
+            f"    assert GMReductionOperationFromFunction({function}) == {operation};",
+            f"    assert GMReductionOperationDataTypeLegal({operation}, TileDataType_U32);",
+            f"    assert GMReductionResult({operation}, TileDataType_U32,",
+            f"        Zeros{{PTO_XLEN}} + 3, Zeros{{PTO_XLEN}} + 5) ==",
+            f"        Zeros{{PTO_XLEN}} + {expected_result};",
+        ]
+    elif name == "MSCATTER_POPC":
+        statements = [
+            f"    assert GMReductionOperationFromFunction({function}) == GMReduction_POPC;",
+            "    assert GMReductionOperationDataTypeLegal(GMReduction_POPC, TileDataType_U32);",
+        ]
+    else:
+        return None
+    mnemonic = sanitize(unit.mnemonic).lower()
+    test_id = f"PTO-AVS-{unit.surface.upper()}-{sanitize(unit.mnemonic)}-SEMANTIC-001"
+    metadata = {
+        "id": test_id,
+        "source": unit.source_path.as_posix(),
+        "requirements": [instruction_clause_id(unit.surface, unit.mnemonic)],
+        "kind": "execution",
+        "summary": f"{unit.mnemonic} exercises its GM semantic primitive at the owner boundary",
+        "pass_condition": "the decoded owner mapping and representative GM effect assertions hold",
+        "related_sources": [
+            "asl/tile/model/memory/gm-atom-red.asl",
+            "asl/tile/model/memory/gm-atom-red-execution.asl",
+        ],
+    }
+    path = (
+        Path("tests/asl")
+        / unit.source_path.relative_to("asl").with_suffix("")
+        / f"{unit.surface}-exec-{mnemonic}-semantic-001.asl"
+    )
+    document = "\n".join(
+        (
+            GENERATED_MARKER,
+            f"// PTO-TEST: {json.dumps(metadata, separators=(',', ':'))}",
+            "func main() => integer",
+            "begin",
+            *statements,
+            "    return 0;",
+            "end;",
+            "",
+        )
+    )
+    return path, document
+
+
 def render_mnemonic_avs(
     unit: AslUnit,
     scalar_witnesses: dict[int, int] | None = None,
@@ -429,7 +560,7 @@ def render_block_alias_avs(
     if unit.surface != "block" or unit.mnemonic is None:
         raise ValueError(f"{unit.source_path}: engine alias must be a Block mnemonic")
     alias_engine = unit.metadata.get("alias_engine")
-    if alias_engine not in {"VEC", "SFU"}:
+    if alias_engine not in {"VEC", "SFU", "TLSU"}:
         return []
 
     operation_partition: list[tuple[int, str]] = []
@@ -2035,6 +2166,9 @@ def generated_documents(root: Path) -> dict[Path, str]:
                 (root / unit.source_path).read_text(encoding="utf-8"),
             )
         )
+        gm_semantic = render_gm_semantic_avs(unit)
+        if gm_semantic is not None:
+            documents.append(gm_semantic)
         if alias_target is not None:
             documents.extend(render_block_alias_avs(unit, units))
         if unit.surface == "scalar" and unit.classification == ("agu",):

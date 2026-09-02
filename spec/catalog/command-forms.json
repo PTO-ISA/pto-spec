@@ -1,6 +1,6 @@
 {
-  "form_count": 76,
-  "form_constraint_count": 88,
+  "form_count": 94,
+  "form_constraint_count": 106,
   "forms": [
     {
       "asm": "B.CATR {trap, atomic, <aq, rl, aqrl>, far, dr}",
@@ -5714,11 +5714,1217 @@
       "semantic_handler": "ApplyBundleAssemble",
       "semantic_summary": "Decodes one destination-range assemble modifier and retains its XLEN-wrapped derived offset in the immediately preceding binder group.",
       "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MGATHER.EXCH DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00911181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mgather_exch_32_gm09",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MGATHER.EXCH",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mgather.exch operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MGATHER.MAX DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00a11181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mgather_max_32_gm10",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MGATHER.MAX",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mgather.max operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MGATHER.MIN DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00b11181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mgather_min_32_gm11",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MGATHER.MIN",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mgather.min operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MGATHER.ADD DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00c11181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mgather_add_32_gm12",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MGATHER.ADD",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mgather.add operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MGATHER.INC DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00e11181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mgather_inc_32_gm14",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MGATHER.INC",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mgather.inc operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MGATHER.DEC DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x00f11181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mgather_dec_32_gm15",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MGATHER.DEC",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mgather.dec operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MGATHER.AND DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01011181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mgather_and_32_gm16",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MGATHER.AND",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mgather.and operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MGATHER.OR DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01111181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mgather_or_32_gm17",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MGATHER.OR",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mgather.or operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MGATHER.XOR DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01211181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mgather_xor_32_gm18",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MGATHER.XOR",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mgather.xor operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MSCATTER.MAX DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01311181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mscatter_max_32_gm19",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MSCATTER.MAX",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mscatter.max operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MSCATTER.MIN DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01411181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mscatter_min_32_gm20",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MSCATTER.MIN",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mscatter.min operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MSCATTER.ADD DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01511181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mscatter_add_32_gm21",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MSCATTER.ADD",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mscatter.add operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MSCATTER.INC DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01611181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mscatter_inc_32_gm22",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MSCATTER.INC",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mscatter.inc operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MSCATTER.DEC DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01711181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mscatter_dec_32_gm23",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MSCATTER.DEC",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mscatter.dec operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MSCATTER.AND DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01811181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mscatter_and_32_gm24",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MSCATTER.AND",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mscatter.and operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MSCATTER.OR DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01911181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mscatter_or_32_gm25",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MSCATTER.OR",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mscatter.or operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MSCATTER.XOR DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01a11181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mscatter_xor_32_gm26",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MSCATTER.XOR",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mscatter.xor operation.",
+      "status": "accepted"
+    },
+    {
+      "asm": "BSTART.MSCATTER.POPC DataType",
+      "constraints": [
+        {
+          "field": "DataType",
+          "operator": "one-of",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            19,
+            20,
+            24,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
+      ],
+      "encoding": [
+        {
+          "index": 0,
+          "mask": "0x07ffffff",
+          "match": "0x01b11181",
+          "width_bits": 32
+        }
+      ],
+      "encoding_kind": "L32",
+      "fields": [
+        {
+          "name": "DataType",
+          "pieces": [
+            {
+              "instruction_lsb": 27,
+              "value_lsb": 0,
+              "width": 5
+            }
+          ],
+          "signedness": "encoding-defined",
+          "width": 5
+        }
+      ],
+      "form_id": "bstart_mscatter_popc_32_gm27",
+      "length_bits": 32,
+      "mnemonic": "BSTART.MSCATTER.POPC",
+      "semantic_family": "CMD",
+      "semantic_group": "Bundle Split",
+      "semantic_handler": "ExecuteBundleStart",
+      "semantic_summary": "Starts GM indexed mscatter.popc operation.",
+      "status": "accepted"
     }
   ],
   "isa": "PTO Instruction Set Architecture",
   "operand_field_count": 78,
-  "operand_piece_count": 172,
+  "operand_piece_count": 190,
   "reviewed_encoding_overlaps": [
     {
       "broad_form_id": "b_iot_32_10db6db84f5d",

@@ -528,13 +528,15 @@ def validate_frozen_block_tile_mappings(evidence_root: pathlib.Path,
         "pending": sum(page["disposition"] == "pending" for page in inventory["pages"]),
     }
     expected = {
+        # CAS is a single canonical MGATHER owner; consolidating the former
+        # duplicate ATOM_CAS owner reduces current block units by one.
         "block": {"mapped_pages": 11, "mapped_units": 11,
-                  "multiple_page_units": 0, "unmapped_current_units": 50},
+                  "multiple_page_units": 0, "unmapped_current_units": 68},
         # TGPR2T is a newly registered current owner with no legacy source
         # page mapping; the frozen archive therefore gains one pending
         # current-owner-only tile unit without changing archived page counts.
         "tile": {"mapped_pages": 86, "mapped_units": 86,
-                 "multiple_page_units": 0, "unmapped_current_units": 22},
+                 "multiple_page_units": 0, "unmapped_current_units": 40},
         "terminal_pages": {"non_mnemonic": 15, "omit_old": 34, "pending": 0},
     }
     if inventory["archive_sha256"] == EXPECTED_ARCHIVE_SHA256 and summaries != expected:
