@@ -44,6 +44,16 @@
       "generator": "scripts/check-release-event-schema",
       "path": "spec/schemas/pto-spec-release-event-v1.schema.json",
       "role": "canonical-input"
+    },
+    {
+      "generator": "scripts/check-model-closure-schema",
+      "path": "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
+      "role": "canonical-input"
+    },
+    {
+      "generator": "scripts/check-model-closure-schema",
+      "path": "spec/schemas/pto-closure-run-envelope-v1.schema.json",
+      "role": "canonical-input"
     }
   ],
   "schema": "pto.release-inputs.v1"

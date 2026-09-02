@@ -7,6 +7,14 @@ on:
         description: Exact reviewed commit to verify (40 lowercase hexadecimal characters)
         required: true
         type: string
+      llvm_commit:
+        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.5
+        required: true
+        type: string
+      asl_model_commit:
+        description: Exact reviewed PTO ASL-MODEL commit and AVS corpus
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -139,10 +147,212 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+  model-closure:
+    name: Release / LLVM-to-ASL model closure
+    needs: full-validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    outputs:
+      semantic-payload-sha256: ${{ steps.closure.outputs.semantic-payload-sha256 }}
+      artifact-digest: ${{ steps.closure-artifact.outputs.artifact-digest }}
+    steps:
+      - name: Validate exact component inputs
+        shell: bash
+        env:
+          PTO_COMMIT: ${{ inputs.commit }}
+          LLVM_COMMIT: ${{ inputs.llvm_commit }}
+          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
+        run: |
+          [[ "$PTO_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$LLVM_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$ASL_MODEL_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+
+      - name: Check out exact PTO-SPEC candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: ${{ inputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: recursive
+
+      - name: Check out exact LLVM candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: LinxISA/llvm-project
+          ref: ${{ inputs.llvm_commit }}
+          path: build/closure/llvm-project
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check out exact ASL-MODEL candidate
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: PTO-ISA/asl-model
+          ref: ${{ inputs.asl_model_commit }}
+          path: build/closure/asl-model
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve ASL-MODEL dependency pins
+        id: model-pins
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os
+          import pathlib
+          import re
+
+          text = pathlib.Path("build/closure/asl-model/ndf.lock").read_text()
+          rows = dict(re.findall(
+              r"^  ([a-z-]+):\n(?:    [^\n]+\n)*?    revision: ([0-9a-f]{40})$",
+              text,
+              re.MULTILINE,
+          ))
+          if set(rows) != {"ndf", "pto-spec"}:
+              raise SystemExit("ASL-MODEL ndf.lock dependency set mismatch")
+          with pathlib.Path(os.environ["GITHUB_OUTPUT"]).open("a") as output:
+              output.write(f"ndf={rows['ndf']}\n")
+              output.write(f"pto={rows['pto-spec']}\n")
+          PY
+
+      - name: Check out ASL-MODEL pinned NDF
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: PTO-ISA/normative_language
+          ref: ${{ steps.model-pins.outputs.ndf }}
+          path: build/closure/asl-model/tools/ndf
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Check out ASL-MODEL pinned PTO graph
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          repository: PTO-ISA/pto-spec
+          ref: ${{ steps.model-pins.outputs.pto }}
+          path: build/closure/asl-model/vendor/pto-spec
+          fetch-depth: 1
+          persist-credentials: false
+          submodules: false
+
+      - name: Set up pinned OCaml
+        uses: ocaml/setup-ocaml@15d660006c1d3110d77c34b7faa3bddefe8b82f0 # v3
+        with:
+          ocaml-compiler: "5.2.1"
+          dune-cache: true
+
+      - name: Restore closure build caches
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .cache/herdtools7
+            build/closure/llvm-build
+            tools/ndf/target
+            build/closure/asl-model/tools/ndf/target
+          key: pto-closure-${{ runner.os }}-${{ runner.arch }}-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
+
+      - name: Prepare exact ASL and LLVM tools
+        shell: bash
+        run: |
+          make setup build
+          cmake -S build/closure/llvm-project/llvm \
+            -B build/closure/llvm-build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DLLVM_ENABLE_PROJECTS='clang;lld' \
+            -DLLVM_TARGETS_TO_BUILD='' \
+            -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=LinxISA
+          ninja -C build/closure/llvm-build clang lld llvm-mc llvm-readelf
+
+      - name: Build exact NDF impact
+        shell: bash
+        env:
+          PTO_COMMIT: ${{ inputs.commit }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$PTO_COMMIT"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$PTO_COMMIT"
+          BASELINE="$(python3 -c 'import json; print(json.load(open("spec/release-selection.json"))["baseline_commit"])')"
+          [[ "$BASELINE" =~ ^[0-9a-f]{40}$ ]]
+          git worktree add --detach "$RUNNER_TEMP/pto-before" "$BASELINE"
+          git -C "$RUNNER_TEMP/pto-before" submodule update --init tools/ndf
+          tools/ndf/scripts/ndf build \
+            --root "$RUNNER_TEMP/pto-before" \
+            --output build/closure/pto-before.sqlite
+          tools/ndf/scripts/ndf build \
+            --root . \
+            --output build/closure/pto-after.sqlite
+          build/closure/asl-model/tools/ndf/scripts/ndf build \
+            --root build/closure/asl-model \
+            --output build/closure/asl-model.sqlite
+          ./scripts/generate-model-closure-impact \
+            --before build/closure/pto-before.sqlite \
+            --after build/closure/pto-after.sqlite \
+            --consumer-index build/closure/asl-model.sqlite \
+            --output build/closure/ndf-impact.json
+
+      - name: Run twice and validate exact closure
+        id: closure
+        shell: bash
+        env:
+          PTO_COMMIT: ${{ inputs.commit }}
+          LLVM_COMMIT: ${{ inputs.llvm_commit }}
+          ASL_MODEL_COMMIT: ${{ inputs.asl_model_commit }}
+          WORKFLOW_COMMIT: ${{ github.workflow_sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$PTO_COMMIT"
+          test "$(git -C build/closure/llvm-project rev-parse HEAD)" = "$LLVM_COMMIT"
+          test "$(git -C build/closure/asl-model rev-parse HEAD)" = "$ASL_MODEL_COMMIT"
+          TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          for RUN_NUMBER in 1 2; do
+            ./scripts/run-model-closure \
+              --asl-model-root build/closure/asl-model \
+              --llvm-root build/closure/llvm-project \
+              --ndf-root build/closure/asl-model/tools/ndf \
+              --aslref-root .cache/herdtools7 \
+              --asl-spec build/pto-spec.asl \
+              --clang build/closure/llvm-build/bin/clang \
+              --llvm-mc build/closure/llvm-build/bin/llvm-mc \
+              --ld-lld build/closure/llvm-build/bin/ld.lld \
+              --aslref .cache/herdtools7/_build/default/asllib/aslref.exe \
+              --impact build/closure/ndf-impact.json \
+              --output "build/model-closure-run-${RUN_NUMBER}" \
+              --mandatory-case-id block_64_stop_pc \
+              --mandatory-case-id host_exit_group \
+              --mandatory-case-id scalar-c-return \
+              --mandatory-case-id scalar-ir-return \
+              --mandatory-case-id scalar_stop_pc \
+              --mandatory-case-id tile_tadd_stop_pc \
+              --workflow-commit "$WORKFLOW_COMMIT" \
+              --run-id "${RUN_ID}-${RUN_NUMBER}" \
+              --run-attempt "$RUN_ATTEMPT" \
+              --timestamp "$TIMESTAMP" \
+              --runner-image "${RUNNER_OS}-${RUNNER_ARCH}" \
+              --builder-identity github-hosted
+          done
+          FIRST="$(python3 -c 'import hashlib,json; print(hashlib.sha256(json.dumps(json.load(open("build/model-closure-run-1/evidence/closure-semantic-payload.json")),sort_keys=True,separators=(",",":")).encode()).hexdigest())')"
+          SECOND="$(python3 -c 'import hashlib,json; print(hashlib.sha256(json.dumps(json.load(open("build/model-closure-run-2/evidence/closure-semantic-payload.json")),sort_keys=True,separators=(",",":")).encode()).hexdigest())')"
+          test "$FIRST" = "$SECOND"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$PTO_COMMIT"
+          echo "semantic-payload-sha256=$FIRST" >> "$GITHUB_OUTPUT"
+
+      - name: Upload immutable model closure evidence
+        id: closure-artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pto-model-closure-${{ inputs.commit }}-${{ inputs.llvm_commit }}-${{ inputs.asl_model_commit }}
+          path: |
+            build/closure/ndf-impact.json
+            build/model-closure-run-1/evidence
+            build/model-closure-run-2/evidence
+          if-no-files-found: error
+          retention-days: 90
+
   validate:
     name: Release / validate
     if: always()
-    needs: [full-validation, release-evidence, release-site]
+    needs: [full-validation, release-evidence, release-site, model-closure]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -152,9 +362,15 @@ jobs:
           FULL_VALIDATION_RESULT: ${{ needs.full-validation.result }}
           RELEASE_EVIDENCE_RESULT: ${{ needs.release-evidence.result }}
           RELEASE_SITE_RESULT: ${{ needs.release-site.result }}
+          MODEL_CLOSURE_RESULT: ${{ needs.model-closure.result }}
           SITE_ARTIFACT_DIGEST: ${{ needs.release-site.outputs.artifact-digest }}
+          MODEL_CLOSURE_ARTIFACT_DIGEST: ${{ needs.model-closure.outputs.artifact-digest }}
+          MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256: ${{ needs.model-closure.outputs.semantic-payload-sha256 }}
         run: |
           test "$FULL_VALIDATION_RESULT" = success
           test "$RELEASE_EVIDENCE_RESULT" = success
           test "$RELEASE_SITE_RESULT" = success
+          test "$MODEL_CLOSURE_RESULT" = success
           [[ "$SITE_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$MODEL_CLOSURE_ARTIFACT_DIGEST" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$MODEL_CLOSURE_SEMANTIC_PAYLOAD_SHA256" =~ ^[0-9a-f]{64}$ ]]

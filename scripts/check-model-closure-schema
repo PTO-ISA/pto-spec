@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+"""Check the two versioned model-closure artifact schemas."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import sys
+
+
+ROOT = Path(__file__).resolve().parents[1]
+CONTRACTS = {
+    "spec/schemas/pto-closure-semantic-payload-v1.schema.json": (
+        "pto-closure-semantic-payload-v1",
+        {"schema", "closure_lock", "closure_lock_sha256", "ndf_impact", "obligations", "cases", "case_manifests"},
+    ),
+    "spec/schemas/pto-closure-run-envelope-v1.schema.json": (
+        "pto-closure-run-envelope-v1",
+        {"schema", "semantic_payload_sha256", "workflow", "run", "runner", "artifact_sha256", "attestation"},
+    ),
+}
+
+
+def validate() -> list[str]:
+    errors: list[str] = []
+    for relative, (schema_name, required) in CONTRACTS.items():
+        try:
+            document = json.loads((ROOT / relative).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"{relative}: invalid JSON schema: {error}")
+            continue
+        if document.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
+            errors.append(f"{relative}: must use JSON Schema draft 2020-12")
+        if document.get("type") != "object" or document.get("additionalProperties") is not False:
+            errors.append(f"{relative}: root must be a closed object")
+        if set(document.get("required", [])) != required:
+            errors.append(f"{relative}: required field set mismatch")
+        properties = document.get("properties")
+        if not isinstance(properties, dict) or set(properties) != required:
+            errors.append(f"{relative}: property field set mismatch")
+            continue
+        if properties.get("schema") != {"const": schema_name}:
+            errors.append(f"{relative}: artifact schema discriminator mismatch")
+    return errors
+
+
+def main() -> int:
+    errors = validate()
+    if errors:
+        for error in errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+    print("model closure schema contracts passed")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
