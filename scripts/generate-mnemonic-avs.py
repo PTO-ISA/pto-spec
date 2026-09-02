@@ -368,26 +368,26 @@ def _tile_assertions(unit: AslUnit, source_text: str | None = None) -> list[str]
 
 
 GM_ATOM_SEMANTIC_OPERATIONS = {
-    "ATOM_CAS": ("GMAtomic_CAS", "U16", "9", "3", "3", "9"),
-    "ATOM_EXCH": ("GMAtomic_EXCH", "U32", "9", "0", "0", "0"),
-    "ATOM_MAX": ("GMAtomic_MAX", "U32", "5", "0", "0", "0"),
-    "ATOM_MIN": ("GMAtomic_MIN", "U32", "3", "5", "0", "0"),
-    "ATOM_ADD": ("GMAtomic_ADD", "U32", "12", "9", "0", "0"),
-    "ATOM_INC": ("GMAtomic_INC", "U32", "5", "5", "0", "0"),
-    "ATOM_DEC": ("GMAtomic_DEC", "U32", "2", "5", "0", "0"),
-    "ATOM_AND": ("GMAtomic_AND", "U32", "0", "0xF0", "0", "0"),
-    "ATOM_OR": ("GMAtomic_OR", "U32", "0xFF", "0xF0", "0", "0"),
-    "ATOM_XOR": ("GMAtomic_XOR", "U32", "0xFF", "0xF0", "0", "0"),
+    "MGATHER_CAS": ("GMAtomic_CAS", "U16", "9", "3", "3", "9"),
+    "MGATHER_EXCH": ("GMAtomic_EXCH", "U32", "9", "0", "0", "0"),
+    "MGATHER_MAX": ("GMAtomic_MAX", "U32", "5", "0", "0", "0"),
+    "MGATHER_MIN": ("GMAtomic_MIN", "U32", "3", "5", "0", "0"),
+    "MGATHER_ADD": ("GMAtomic_ADD", "U32", "12", "9", "0", "0"),
+    "MGATHER_INC": ("GMAtomic_INC", "U32", "5", "5", "0", "0"),
+    "MGATHER_DEC": ("GMAtomic_DEC", "U32", "2", "5", "0", "0"),
+    "MGATHER_AND": ("GMAtomic_AND", "U32", "0", "0xF0", "0", "0"),
+    "MGATHER_OR": ("GMAtomic_OR", "U32", "0xFF", "0xF0", "0", "0"),
+    "MGATHER_XOR": ("GMAtomic_XOR", "U32", "0xFF", "0xF0", "0", "0"),
 }
 GM_RED_SEMANTIC_OPERATIONS = {
-    "RED_MAX": ("GMReduction_MAX", "5"),
-    "RED_MIN": ("GMReduction_MIN", "3"),
-    "RED_ADD": ("GMReduction_ADD", "12"),
-    "RED_INC": ("GMReduction_INC", "5"),
-    "RED_DEC": ("GMReduction_DEC", "2"),
-    "RED_AND": ("GMReduction_AND", "0"),
-    "RED_OR": ("GMReduction_OR", "0xFF"),
-    "RED_XOR": ("GMReduction_XOR", "0xFF"),
+    "MSCATTER_MAX": ("GMReduction_MAX", "5"),
+    "MSCATTER_MIN": ("GMReduction_MIN", "3"),
+    "MSCATTER_ADD": ("GMReduction_ADD", "12"),
+    "MSCATTER_INC": ("GMReduction_INC", "5"),
+    "MSCATTER_DEC": ("GMReduction_DEC", "2"),
+    "MSCATTER_AND": ("GMReduction_AND", "0"),
+    "MSCATTER_OR": ("GMReduction_OR", "0xFF"),
+    "MSCATTER_XOR": ("GMReduction_XOR", "0xFF"),
 }
 
 
@@ -402,25 +402,25 @@ def render_gm_semantic_avs(unit: AslUnit) -> tuple[Path, str] | None:
     )
     if not isinstance(function, int):
         function = {
-            "ATOM_CAS": 8,
-            "ATOM_EXCH": 9,
-            "ATOM_MAX": 10,
-            "ATOM_MIN": 11,
-            "ATOM_ADD": 12,
-            "ATOM_INC": 14,
-            "ATOM_DEC": 15,
-            "ATOM_AND": 16,
-            "ATOM_OR": 17,
-            "ATOM_XOR": 18,
-            "RED_MAX": 19,
-            "RED_MIN": 20,
-            "RED_ADD": 21,
-            "RED_INC": 22,
-            "RED_DEC": 23,
-            "RED_AND": 24,
-            "RED_OR": 25,
-            "RED_XOR": 26,
-            "RED_POPC": 27,
+            "MGATHER_CAS": 8,
+            "MGATHER_EXCH": 9,
+            "MGATHER_MAX": 10,
+            "MGATHER_MIN": 11,
+            "MGATHER_ADD": 12,
+            "MGATHER_INC": 14,
+            "MGATHER_DEC": 15,
+            "MGATHER_AND": 16,
+            "MGATHER_OR": 17,
+            "MGATHER_XOR": 18,
+            "MSCATTER_MAX": 19,
+            "MSCATTER_MIN": 20,
+            "MSCATTER_ADD": 21,
+            "MSCATTER_INC": 22,
+            "MSCATTER_DEC": 23,
+            "MSCATTER_AND": 24,
+            "MSCATTER_OR": 25,
+            "MSCATTER_XOR": 26,
+            "MSCATTER_POPC": 27,
         }.get(name)
     if not isinstance(function, int):
         return None
@@ -438,7 +438,7 @@ def render_gm_semantic_avs(unit: AslUnit) -> tuple[Path, str] | None:
             f"    assert result == Zeros{{PTO_XLEN}} + {expected_result};",
             "    assert performed;",
         ]
-        if name == "ATOM_CAS":
+        if name == "MGATHER_CAS":
             statements.extend(
                 [
                     "    let (cas_miss, cas_performed) = GMAtomicResult(GMAtomic_CAS,",
@@ -457,7 +457,7 @@ def render_gm_semantic_avs(unit: AslUnit) -> tuple[Path, str] | None:
             f"        Zeros{{PTO_XLEN}} + 3, Zeros{{PTO_XLEN}} + 5) ==",
             f"        Zeros{{PTO_XLEN}} + {expected_result};",
         ]
-    elif name == "RED_POPC":
+    elif name == "MSCATTER_POPC":
         statements = [
             f"    assert GMReductionOperationFromFunction({function}) == GMReduction_POPC;",
             "    assert GMReductionOperationDataTypeLegal(GMReduction_POPC, TileDataType_U32);",

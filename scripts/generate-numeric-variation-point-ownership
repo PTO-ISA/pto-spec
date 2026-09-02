@@ -67,7 +67,7 @@ DIMENSION_IDS = {
     "saturation": "saturation",
     "divide-by-zero": "divide-by-zero",
     "multiply-add precision": "multiply-add-precision",
-    "ordered and unordered comparison": "ordered-and-unordered-comparison",
+    "ordered and unordered comparison": "ordemscatter-and-unordered-comparison",
     "NaN behavior": "nan-behavior",
     "result encoding": "result-encoding",
     "accumulation width": "accumulation-width",

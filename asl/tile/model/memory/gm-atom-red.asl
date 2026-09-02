@@ -1,7 +1,7 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-GM-ATOM-RED","surface":"tile","classification":["model","memory","gm-atom-red"],"depends_on":["PTO-TILE-MODEL-MEMORY-ATOMICS","PTO-TILE-MODEL-EXECUTION-ELEMENTWISE"]}
 // NDF-BEGIN: PTO-MGATHER-CAS-ATOMIC-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// The legacy MGATHER_CAS spelling aliases atom.cas and MUST accept only
+// The legacy MGATHER_CAS spelling aliases mgather.cas and MUST accept only
 // U16, U32, and U64 transfer DataTypes. Each valid request MUST perform one
 // atomic compare-and-swap at its signed or unsigned byte displacement and
 // place the value observed by that request in the corresponding destination
@@ -23,7 +23,7 @@
 // NDF-BEGIN: PTO-ATOM-RED-BODY-SCHEMA-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
 // Atom forms bind a destination-bearing Local B.IOT; red forms bind only
-// source tiles. red.popc has indices only and no ValueTile.
+// source tiles. mscatter.popc has indices only and no ValueTile.
 // NDF-END: PTO-ATOM-RED-BODY-SCHEMA-001
 // NDF-BEGIN: PTO-ATOM-RED-TYPE-LEGALITY-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
@@ -37,7 +37,7 @@
 // NDF-END: PTO-ATOM-RED-INC-DEC-SEMANTICS-001
 // NDF-BEGIN: PTO-ATOM-RED-POPC-SEMANTICS-001
 // ndf: kind=contract level=L1 layer=tile status=accepted
-// red.popc contributes one U32 increment per valid effective GM address and
+// mscatter.popc contributes one U32 increment per valid effective GM address and
 // has no ValueTile or destination.
 // NDF-END: PTO-ATOM-RED-POPC-SEMANTICS-001
 // NDF-BEGIN: PTO-ATOM-RED-ORDERING-001

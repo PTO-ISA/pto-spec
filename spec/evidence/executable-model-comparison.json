@@ -14015,7 +14015,7 @@
       ],
       "independent_status": "missing",
       "index": 75,
-      "mnemonic": "BSTART.ATOM.ADD",
+      "mnemonic": "BSTART.MGATHER.ADD",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14024,7 +14024,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_add_32_gm12",
+      "stable_id": "bstart_mgather_add_32_gm12",
       "surface": "command"
     },
     {
@@ -14036,7 +14036,7 @@
       ],
       "independent_status": "missing",
       "index": 76,
-      "mnemonic": "BSTART.ATOM.AND",
+      "mnemonic": "BSTART.MGATHER.AND",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14045,7 +14045,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_and_32_gm16",
+      "stable_id": "bstart_mgather_and_32_gm16",
       "surface": "command"
     },
     {
@@ -14057,7 +14057,7 @@
       ],
       "independent_status": "missing",
       "index": 77,
-      "mnemonic": "BSTART.ATOM.CAS",
+      "mnemonic": "BSTART.MGATHER.CAS",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14066,7 +14066,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_cas_32_gm08",
+      "stable_id": "bstart_mgather_cas_32_gm08",
       "surface": "command"
     },
     {
@@ -14078,7 +14078,7 @@
       ],
       "independent_status": "missing",
       "index": 78,
-      "mnemonic": "BSTART.ATOM.DEC",
+      "mnemonic": "BSTART.MGATHER.DEC",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14087,7 +14087,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_dec_32_gm15",
+      "stable_id": "bstart_mgather_dec_32_gm15",
       "surface": "command"
     },
     {
@@ -14099,7 +14099,7 @@
       ],
       "independent_status": "missing",
       "index": 79,
-      "mnemonic": "BSTART.ATOM.EXCH",
+      "mnemonic": "BSTART.MGATHER.EXCH",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14108,7 +14108,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_exch_32_gm09",
+      "stable_id": "bstart_mgather_exch_32_gm09",
       "surface": "command"
     },
     {
@@ -14120,7 +14120,7 @@
       ],
       "independent_status": "missing",
       "index": 80,
-      "mnemonic": "BSTART.ATOM.INC",
+      "mnemonic": "BSTART.MGATHER.INC",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14129,7 +14129,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_inc_32_gm14",
+      "stable_id": "bstart_mgather_inc_32_gm14",
       "surface": "command"
     },
     {
@@ -14141,7 +14141,7 @@
       ],
       "independent_status": "missing",
       "index": 81,
-      "mnemonic": "BSTART.ATOM.MAX",
+      "mnemonic": "BSTART.MGATHER.MAX",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14150,7 +14150,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_max_32_gm10",
+      "stable_id": "bstart_mgather_max_32_gm10",
       "surface": "command"
     },
     {
@@ -14162,7 +14162,7 @@
       ],
       "independent_status": "missing",
       "index": 82,
-      "mnemonic": "BSTART.ATOM.MIN",
+      "mnemonic": "BSTART.MGATHER.MIN",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14171,7 +14171,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_min_32_gm11",
+      "stable_id": "bstart_mgather_min_32_gm11",
       "surface": "command"
     },
     {
@@ -14183,7 +14183,7 @@
       ],
       "independent_status": "missing",
       "index": 83,
-      "mnemonic": "BSTART.ATOM.OR",
+      "mnemonic": "BSTART.MGATHER.OR",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14192,7 +14192,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_or_32_gm17",
+      "stable_id": "bstart_mgather_or_32_gm17",
       "surface": "command"
     },
     {
@@ -14204,7 +14204,7 @@
       ],
       "independent_status": "missing",
       "index": 84,
-      "mnemonic": "BSTART.ATOM.XOR",
+      "mnemonic": "BSTART.MGATHER.XOR",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14213,7 +14213,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_atom_xor_32_gm18",
+      "stable_id": "bstart_mgather_xor_32_gm18",
       "surface": "command"
     },
     {
@@ -14225,7 +14225,7 @@
       ],
       "independent_status": "missing",
       "index": 85,
-      "mnemonic": "BSTART.RED.ADD",
+      "mnemonic": "BSTART.MSCATTER.ADD",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14234,7 +14234,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_red_add_32_gm21",
+      "stable_id": "bstart_mscatter_add_32_gm21",
       "surface": "command"
     },
     {
@@ -14246,7 +14246,7 @@
       ],
       "independent_status": "missing",
       "index": 86,
-      "mnemonic": "BSTART.RED.AND",
+      "mnemonic": "BSTART.MSCATTER.AND",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14255,7 +14255,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_red_and_32_gm24",
+      "stable_id": "bstart_mscatter_and_32_gm24",
       "surface": "command"
     },
     {
@@ -14267,7 +14267,7 @@
       ],
       "independent_status": "missing",
       "index": 87,
-      "mnemonic": "BSTART.RED.DEC",
+      "mnemonic": "BSTART.MSCATTER.DEC",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14276,7 +14276,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_red_dec_32_gm23",
+      "stable_id": "bstart_mscatter_dec_32_gm23",
       "surface": "command"
     },
     {
@@ -14288,7 +14288,7 @@
       ],
       "independent_status": "missing",
       "index": 88,
-      "mnemonic": "BSTART.RED.INC",
+      "mnemonic": "BSTART.MSCATTER.INC",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14297,7 +14297,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_red_inc_32_gm22",
+      "stable_id": "bstart_mscatter_inc_32_gm22",
       "surface": "command"
     },
     {
@@ -14309,7 +14309,7 @@
       ],
       "independent_status": "missing",
       "index": 89,
-      "mnemonic": "BSTART.RED.MAX",
+      "mnemonic": "BSTART.MSCATTER.MAX",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14318,7 +14318,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_red_max_32_gm19",
+      "stable_id": "bstart_mscatter_max_32_gm19",
       "surface": "command"
     },
     {
@@ -14330,7 +14330,7 @@
       ],
       "independent_status": "missing",
       "index": 90,
-      "mnemonic": "BSTART.RED.MIN",
+      "mnemonic": "BSTART.MSCATTER.MIN",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14339,7 +14339,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_red_min_32_gm20",
+      "stable_id": "bstart_mscatter_min_32_gm20",
       "surface": "command"
     },
     {
@@ -14351,7 +14351,7 @@
       ],
       "independent_status": "missing",
       "index": 91,
-      "mnemonic": "BSTART.RED.OR",
+      "mnemonic": "BSTART.MSCATTER.OR",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14360,7 +14360,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_red_or_32_gm25",
+      "stable_id": "bstart_mscatter_or_32_gm25",
       "surface": "command"
     },
     {
@@ -14372,7 +14372,7 @@
       ],
       "independent_status": "missing",
       "index": 92,
-      "mnemonic": "BSTART.RED.POPC",
+      "mnemonic": "BSTART.MSCATTER.POPC",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14381,7 +14381,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_red_popc_32_gm27",
+      "stable_id": "bstart_mscatter_popc_32_gm27",
       "surface": "command"
     },
     {
@@ -14393,7 +14393,7 @@
       ],
       "independent_status": "missing",
       "index": 93,
-      "mnemonic": "BSTART.RED.XOR",
+      "mnemonic": "BSTART.MSCATTER.XOR",
       "pto_command_disposition": "accepted PTO command absent from the independent snapshot",
       "pto_disposition": "PTO command catalog has no independent comparison row; the missing comparison remains an explicit divergence.",
       "requirements": [
@@ -14402,7 +14402,7 @@
         "PTO-REQ-BUNDLE-STATE-001"
       ],
       "semantic_handler": "ExecuteBundleStart",
-      "stable_id": "bstart_red_xor_32_gm26",
+      "stable_id": "bstart_mscatter_xor_32_gm26",
       "surface": "command"
     }
   ],

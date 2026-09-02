@@ -499,8 +499,8 @@
     },
     {
       "form_index": 23,
-      "form_id": "bstart_atom_cas_32_gm08",
-      "mnemonic": "BSTART.ATOM.CAS",
+      "form_id": "bstart_mgather_cas_32_gm08",
+      "mnemonic": "BSTART.MGATHER.CAS",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1393,8 +1393,8 @@
     },
     {
       "form_index": 76,
-      "form_id": "bstart_atom_exch_32_gm09",
-      "mnemonic": "BSTART.ATOM.EXCH",
+      "form_id": "bstart_mgather_exch_32_gm09",
+      "mnemonic": "BSTART.MGATHER.EXCH",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1409,8 +1409,8 @@
     },
     {
       "form_index": 77,
-      "form_id": "bstart_atom_max_32_gm10",
-      "mnemonic": "BSTART.ATOM.MAX",
+      "form_id": "bstart_mgather_max_32_gm10",
+      "mnemonic": "BSTART.MGATHER.MAX",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1425,8 +1425,8 @@
     },
     {
       "form_index": 78,
-      "form_id": "bstart_atom_min_32_gm11",
-      "mnemonic": "BSTART.ATOM.MIN",
+      "form_id": "bstart_mgather_min_32_gm11",
+      "mnemonic": "BSTART.MGATHER.MIN",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1441,8 +1441,8 @@
     },
     {
       "form_index": 79,
-      "form_id": "bstart_atom_add_32_gm12",
-      "mnemonic": "BSTART.ATOM.ADD",
+      "form_id": "bstart_mgather_add_32_gm12",
+      "mnemonic": "BSTART.MGATHER.ADD",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1457,8 +1457,8 @@
     },
     {
       "form_index": 80,
-      "form_id": "bstart_atom_inc_32_gm14",
-      "mnemonic": "BSTART.ATOM.INC",
+      "form_id": "bstart_mgather_inc_32_gm14",
+      "mnemonic": "BSTART.MGATHER.INC",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1473,8 +1473,8 @@
     },
     {
       "form_index": 81,
-      "form_id": "bstart_atom_dec_32_gm15",
-      "mnemonic": "BSTART.ATOM.DEC",
+      "form_id": "bstart_mgather_dec_32_gm15",
+      "mnemonic": "BSTART.MGATHER.DEC",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1489,8 +1489,8 @@
     },
     {
       "form_index": 82,
-      "form_id": "bstart_atom_and_32_gm16",
-      "mnemonic": "BSTART.ATOM.AND",
+      "form_id": "bstart_mgather_and_32_gm16",
+      "mnemonic": "BSTART.MGATHER.AND",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1505,8 +1505,8 @@
     },
     {
       "form_index": 83,
-      "form_id": "bstart_atom_or_32_gm17",
-      "mnemonic": "BSTART.ATOM.OR",
+      "form_id": "bstart_mgather_or_32_gm17",
+      "mnemonic": "BSTART.MGATHER.OR",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1521,8 +1521,8 @@
     },
     {
       "form_index": 84,
-      "form_id": "bstart_atom_xor_32_gm18",
-      "mnemonic": "BSTART.ATOM.XOR",
+      "form_id": "bstart_mgather_xor_32_gm18",
+      "mnemonic": "BSTART.MGATHER.XOR",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1537,8 +1537,8 @@
     },
     {
       "form_index": 85,
-      "form_id": "bstart_red_max_32_gm19",
-      "mnemonic": "BSTART.RED.MAX",
+      "form_id": "bstart_mscatter_max_32_gm19",
+      "mnemonic": "BSTART.MSCATTER.MAX",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1553,8 +1553,8 @@
     },
     {
       "form_index": 86,
-      "form_id": "bstart_red_min_32_gm20",
-      "mnemonic": "BSTART.RED.MIN",
+      "form_id": "bstart_mscatter_min_32_gm20",
+      "mnemonic": "BSTART.MSCATTER.MIN",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1569,8 +1569,8 @@
     },
     {
       "form_index": 87,
-      "form_id": "bstart_red_add_32_gm21",
-      "mnemonic": "BSTART.RED.ADD",
+      "form_id": "bstart_mscatter_add_32_gm21",
+      "mnemonic": "BSTART.MSCATTER.ADD",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1585,8 +1585,8 @@
     },
     {
       "form_index": 88,
-      "form_id": "bstart_red_inc_32_gm22",
-      "mnemonic": "BSTART.RED.INC",
+      "form_id": "bstart_mscatter_inc_32_gm22",
+      "mnemonic": "BSTART.MSCATTER.INC",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1601,8 +1601,8 @@
     },
     {
       "form_index": 89,
-      "form_id": "bstart_red_dec_32_gm23",
-      "mnemonic": "BSTART.RED.DEC",
+      "form_id": "bstart_mscatter_dec_32_gm23",
+      "mnemonic": "BSTART.MSCATTER.DEC",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1617,8 +1617,8 @@
     },
     {
       "form_index": 90,
-      "form_id": "bstart_red_and_32_gm24",
-      "mnemonic": "BSTART.RED.AND",
+      "form_id": "bstart_mscatter_and_32_gm24",
+      "mnemonic": "BSTART.MSCATTER.AND",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1633,8 +1633,8 @@
     },
     {
       "form_index": 91,
-      "form_id": "bstart_red_or_32_gm25",
-      "mnemonic": "BSTART.RED.OR",
+      "form_id": "bstart_mscatter_or_32_gm25",
+      "mnemonic": "BSTART.MSCATTER.OR",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1649,8 +1649,8 @@
     },
     {
       "form_index": 92,
-      "form_id": "bstart_red_xor_32_gm26",
-      "mnemonic": "BSTART.RED.XOR",
+      "form_id": "bstart_mscatter_xor_32_gm26",
+      "mnemonic": "BSTART.MSCATTER.XOR",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -1665,8 +1665,8 @@
     },
     {
       "form_index": 93,
-      "form_id": "bstart_red_popc_32_gm27",
-      "mnemonic": "BSTART.RED.POPC",
+      "form_id": "bstart_mscatter_popc_32_gm27",
+      "mnemonic": "BSTART.MSCATTER.POPC",
       "semantic_handler": "ExecuteBundleStart",
       "decoded_fields": [
         "DataType"
@@ -5185,7 +5185,7 @@
       {
         "family": "TLSU",
         "selector": "0x008",
-        "operation": "ATOM_CAS",
+        "operation": "MGATHER_CAS",
         "operand_fields": [
           "destination0",
           "address",
@@ -7130,7 +7130,7 @@
       {
         "family": "TLSU",
         "selector": "0x009",
-        "operation": "ATOM_EXCH",
+        "operation": "MGATHER_EXCH",
         "operand_fields": [
           "destination0",
           "address",
@@ -7176,7 +7176,7 @@
       {
         "family": "TLSU",
         "selector": "0x00a",
-        "operation": "ATOM_MAX",
+        "operation": "MGATHER_MAX",
         "operand_fields": [
           "destination0",
           "address",
@@ -7222,7 +7222,7 @@
       {
         "family": "TLSU",
         "selector": "0x00b",
-        "operation": "ATOM_MIN",
+        "operation": "MGATHER_MIN",
         "operand_fields": [
           "destination0",
           "address",
@@ -7268,7 +7268,7 @@
       {
         "family": "TLSU",
         "selector": "0x00c",
-        "operation": "ATOM_ADD",
+        "operation": "MGATHER_ADD",
         "operand_fields": [
           "destination0",
           "address",
@@ -7314,7 +7314,7 @@
       {
         "family": "TLSU",
         "selector": "0x00e",
-        "operation": "ATOM_INC",
+        "operation": "MGATHER_INC",
         "operand_fields": [
           "destination0",
           "address",
@@ -7360,7 +7360,7 @@
       {
         "family": "TLSU",
         "selector": "0x00f",
-        "operation": "ATOM_DEC",
+        "operation": "MGATHER_DEC",
         "operand_fields": [
           "destination0",
           "address",
@@ -7406,7 +7406,7 @@
       {
         "family": "TLSU",
         "selector": "0x010",
-        "operation": "ATOM_AND",
+        "operation": "MGATHER_AND",
         "operand_fields": [
           "destination0",
           "address",
@@ -7452,7 +7452,7 @@
       {
         "family": "TLSU",
         "selector": "0x011",
-        "operation": "ATOM_OR",
+        "operation": "MGATHER_OR",
         "operand_fields": [
           "destination0",
           "address",
@@ -7498,7 +7498,7 @@
       {
         "family": "TLSU",
         "selector": "0x012",
-        "operation": "ATOM_XOR",
+        "operation": "MGATHER_XOR",
         "operand_fields": [
           "destination0",
           "address",
@@ -7544,7 +7544,7 @@
       {
         "family": "TLSU",
         "selector": "0x013",
-        "operation": "RED_MAX",
+        "operation": "MSCATTER_MAX",
         "operand_fields": [
           "address",
           "source0",
@@ -7583,7 +7583,7 @@
       {
         "family": "TLSU",
         "selector": "0x014",
-        "operation": "RED_MIN",
+        "operation": "MSCATTER_MIN",
         "operand_fields": [
           "address",
           "source0",
@@ -7622,7 +7622,7 @@
       {
         "family": "TLSU",
         "selector": "0x015",
-        "operation": "RED_ADD",
+        "operation": "MSCATTER_ADD",
         "operand_fields": [
           "address",
           "source0",
@@ -7661,7 +7661,7 @@
       {
         "family": "TLSU",
         "selector": "0x016",
-        "operation": "RED_INC",
+        "operation": "MSCATTER_INC",
         "operand_fields": [
           "address",
           "source0",
@@ -7700,7 +7700,7 @@
       {
         "family": "TLSU",
         "selector": "0x017",
-        "operation": "RED_DEC",
+        "operation": "MSCATTER_DEC",
         "operand_fields": [
           "address",
           "source0",
@@ -7739,7 +7739,7 @@
       {
         "family": "TLSU",
         "selector": "0x018",
-        "operation": "RED_AND",
+        "operation": "MSCATTER_AND",
         "operand_fields": [
           "address",
           "source0",
@@ -7778,7 +7778,7 @@
       {
         "family": "TLSU",
         "selector": "0x019",
-        "operation": "RED_OR",
+        "operation": "MSCATTER_OR",
         "operand_fields": [
           "address",
           "source0",
@@ -7817,7 +7817,7 @@
       {
         "family": "TLSU",
         "selector": "0x01a",
-        "operation": "RED_XOR",
+        "operation": "MSCATTER_XOR",
         "operand_fields": [
           "address",
           "source0",
@@ -7856,7 +7856,7 @@
       {
         "family": "TLSU",
         "selector": "0x01b",
-        "operation": "RED_POPC",
+        "operation": "MSCATTER_POPC",
         "operand_fields": [
           "address",
           "source0"

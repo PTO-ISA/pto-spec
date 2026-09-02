@@ -57,7 +57,7 @@ begin
         SetFault(Fault_BundleControl, ReadTPC());
         return FALSE;
     end;
-    // atom.cas and the legacy MGATHER.CAS alias use the two-command schema:
+    // mgather.cas and the legacy MGATHER.CAS alias use the two-command schema:
     // the first B.IOT carries indices and expected values, while the second
     // carries replacement and the destination.  Other atom forms carry all
     // operands in one destination-bearing B.IOT.

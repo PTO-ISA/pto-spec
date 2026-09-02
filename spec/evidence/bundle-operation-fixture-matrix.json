@@ -11596,7 +11596,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0214",
       "operation_index": 89,
-      "operation": "ATOM_CAS",
+      "operation": "MGATHER_CAS",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_CAS",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -11652,7 +11652,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0215",
       "operation_index": 89,
-      "operation": "ATOM_CAS",
+      "operation": "MGATHER_CAS",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_CAS",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -11708,7 +11708,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0216",
       "operation_index": 89,
-      "operation": "ATOM_CAS",
+      "operation": "MGATHER_CAS",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_CAS",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -11764,7 +11764,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0217",
       "operation_index": 89,
-      "operation": "ATOM_CAS",
+      "operation": "MGATHER_CAS",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_CAS",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17323,7 +17323,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0293",
       "operation_index": 108,
-      "operation": "ATOM_EXCH",
+      "operation": "MGATHER_EXCH",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17377,7 +17377,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0294",
       "operation_index": 108,
-      "operation": "ATOM_EXCH",
+      "operation": "MGATHER_EXCH",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17431,7 +17431,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0295",
       "operation_index": 108,
-      "operation": "ATOM_EXCH",
+      "operation": "MGATHER_EXCH",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17483,7 +17483,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0296",
       "operation_index": 109,
-      "operation": "ATOM_MAX",
+      "operation": "MGATHER_MAX",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17537,7 +17537,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0297",
       "operation_index": 109,
-      "operation": "ATOM_MAX",
+      "operation": "MGATHER_MAX",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17591,7 +17591,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0298",
       "operation_index": 109,
-      "operation": "ATOM_MAX",
+      "operation": "MGATHER_MAX",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17643,7 +17643,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0299",
       "operation_index": 110,
-      "operation": "ATOM_MIN",
+      "operation": "MGATHER_MIN",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17697,7 +17697,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0300",
       "operation_index": 110,
-      "operation": "ATOM_MIN",
+      "operation": "MGATHER_MIN",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17751,7 +17751,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0301",
       "operation_index": 110,
-      "operation": "ATOM_MIN",
+      "operation": "MGATHER_MIN",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17803,7 +17803,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0302",
       "operation_index": 111,
-      "operation": "ATOM_ADD",
+      "operation": "MGATHER_ADD",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17857,7 +17857,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0303",
       "operation_index": 111,
-      "operation": "ATOM_ADD",
+      "operation": "MGATHER_ADD",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17911,7 +17911,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0304",
       "operation_index": 111,
-      "operation": "ATOM_ADD",
+      "operation": "MGATHER_ADD",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -17963,7 +17963,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0305",
       "operation_index": 112,
-      "operation": "ATOM_INC",
+      "operation": "MGATHER_INC",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18017,7 +18017,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0306",
       "operation_index": 112,
-      "operation": "ATOM_INC",
+      "operation": "MGATHER_INC",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18071,7 +18071,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0307",
       "operation_index": 112,
-      "operation": "ATOM_INC",
+      "operation": "MGATHER_INC",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18123,7 +18123,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0308",
       "operation_index": 113,
-      "operation": "ATOM_DEC",
+      "operation": "MGATHER_DEC",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18177,7 +18177,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0309",
       "operation_index": 113,
-      "operation": "ATOM_DEC",
+      "operation": "MGATHER_DEC",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18231,7 +18231,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0310",
       "operation_index": 113,
-      "operation": "ATOM_DEC",
+      "operation": "MGATHER_DEC",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18283,7 +18283,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0311",
       "operation_index": 114,
-      "operation": "ATOM_AND",
+      "operation": "MGATHER_AND",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18337,7 +18337,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0312",
       "operation_index": 114,
-      "operation": "ATOM_AND",
+      "operation": "MGATHER_AND",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18391,7 +18391,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0313",
       "operation_index": 114,
-      "operation": "ATOM_AND",
+      "operation": "MGATHER_AND",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18443,7 +18443,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0314",
       "operation_index": 115,
-      "operation": "ATOM_OR",
+      "operation": "MGATHER_OR",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18497,7 +18497,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0315",
       "operation_index": 115,
-      "operation": "ATOM_OR",
+      "operation": "MGATHER_OR",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18551,7 +18551,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0316",
       "operation_index": 115,
-      "operation": "ATOM_OR",
+      "operation": "MGATHER_OR",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18603,7 +18603,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0317",
       "operation_index": 116,
-      "operation": "ATOM_XOR",
+      "operation": "MGATHER_XOR",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18657,7 +18657,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0318",
       "operation_index": 116,
-      "operation": "ATOM_XOR",
+      "operation": "MGATHER_XOR",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18711,7 +18711,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0319",
       "operation_index": 116,
-      "operation": "ATOM_XOR",
+      "operation": "MGATHER_XOR",
       "family": "TLSU",
       "semantic_handler": "GM_ATOM_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18763,7 +18763,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0320",
       "operation_index": 117,
-      "operation": "RED_MAX",
+      "operation": "MSCATTER_MAX",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18816,7 +18816,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0321",
       "operation_index": 117,
-      "operation": "RED_MAX",
+      "operation": "MSCATTER_MAX",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18869,7 +18869,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0322",
       "operation_index": 118,
-      "operation": "RED_MIN",
+      "operation": "MSCATTER_MIN",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18922,7 +18922,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0323",
       "operation_index": 118,
-      "operation": "RED_MIN",
+      "operation": "MSCATTER_MIN",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -18975,7 +18975,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0324",
       "operation_index": 119,
-      "operation": "RED_ADD",
+      "operation": "MSCATTER_ADD",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19028,7 +19028,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0325",
       "operation_index": 119,
-      "operation": "RED_ADD",
+      "operation": "MSCATTER_ADD",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19081,7 +19081,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0326",
       "operation_index": 120,
-      "operation": "RED_INC",
+      "operation": "MSCATTER_INC",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19134,7 +19134,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0327",
       "operation_index": 120,
-      "operation": "RED_INC",
+      "operation": "MSCATTER_INC",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19187,7 +19187,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0328",
       "operation_index": 121,
-      "operation": "RED_DEC",
+      "operation": "MSCATTER_DEC",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19240,7 +19240,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0329",
       "operation_index": 121,
-      "operation": "RED_DEC",
+      "operation": "MSCATTER_DEC",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19293,7 +19293,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0330",
       "operation_index": 122,
-      "operation": "RED_AND",
+      "operation": "MSCATTER_AND",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19346,7 +19346,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0331",
       "operation_index": 122,
-      "operation": "RED_AND",
+      "operation": "MSCATTER_AND",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19399,7 +19399,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0332",
       "operation_index": 123,
-      "operation": "RED_OR",
+      "operation": "MSCATTER_OR",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19452,7 +19452,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0333",
       "operation_index": 123,
-      "operation": "RED_OR",
+      "operation": "MSCATTER_OR",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19505,7 +19505,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0334",
       "operation_index": 124,
-      "operation": "RED_XOR",
+      "operation": "MSCATTER_XOR",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19558,7 +19558,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0335",
       "operation_index": 124,
-      "operation": "RED_XOR",
+      "operation": "MSCATTER_XOR",
       "family": "TLSU",
       "semantic_handler": "GM_RED_VALUE",
       "handler_effect_class": "nonrollback-auxiliary",
@@ -19611,7 +19611,7 @@
     {
       "case_id": "RANGE-MATRIX-CASE-0336",
       "operation_index": 125,
-      "operation": "RED_POPC",
+      "operation": "MSCATTER_POPC",
       "family": "TLSU",
       "semantic_handler": "GM_RED_POPC",
       "handler_effect_class": "nonrollback-auxiliary",
