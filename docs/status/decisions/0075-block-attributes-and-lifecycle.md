@@ -4,10 +4,12 @@
   "title": "Block attributes and lifecycle",
   "status": "accepted",
   "authors": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "Codex"
   ],
   "approvers": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "zhoubot"
   ],
   "created": "2026-08-21",
   "accepted": "2026-08-21",
@@ -16,7 +18,8 @@
   "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
   "target_releases": [
     "0.58.1",
-    "0.58.2"
+    "0.58.2",
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-B-CATR-CONTROL-001",
@@ -28,7 +31,17 @@
     "PTO-C-BSTOP-DECISION-BINDING-001",
     "PTO-CUBE-CELL-TRANSPORT-001",
     "PTO-L-BSTOP-DECISION-BINDING-001",
-    "PTO-TCVT-CONTRACT-001"
+    "PTO-TCVT-CONTRACT-001",
+    "PTO-REQ-INSTRUCTION-DISPATCH-001",
+    "PTO-REQ-SCALAR-BODY-ENTRY-001",
+    "PTO-FENTRY-RESTARTABLE-FRAME-001",
+    "PTO-FEXIT-RESTARTABLE-FRAME-001",
+    "PTO-FRET-RA-RESTARTABLE-FRAME-001",
+    "PTO-FRET-STK-RESTARTABLE-FRAME-001",
+    "PTO-INST-BLOCK-FENTRY",
+    "PTO-INST-BLOCK-FEXIT",
+    "PTO-INST-BLOCK-FRET-RA",
+    "PTO-INST-BLOCK-FRET-STK"
   ],
   "affected_units": [
     "PTO-BLOCK-B-CATR",
@@ -39,7 +52,15 @@
     "PTO-BLOCK-BSTOP",
     "PTO-BLOCK-C-BSTOP",
     "PTO-BLOCK-L-BSTOP",
-    "PTO-TILE-TCVT"
+    "PTO-TILE-TCVT",
+    "PTO-ARCH-DISPATCH-TOP-LEVEL",
+    "PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP",
+    "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+    "PTO-BLOCK-FENTRY",
+    "PTO-BLOCK-FEXIT",
+    "PTO-BLOCK-FRET-RA",
+    "PTO-BLOCK-FRET-STK",
+    "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
   ],
   "resolves": [],
   "supersedes": [
@@ -47,7 +68,7 @@
   ],
   "superseded_by": [],
   "implementation_issue": null,
-  "release_impact": "not-required",
+  "release_impact": "required",
   "legacy_ids": [
     "PRD-001",
     "PRD-002",
@@ -66,6 +87,50 @@
     "PRD-015",
     "PRD-016",
     "PRD-017"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-01",
+      "baseline": "8966a3e5a5e2bf5bc1d3264288e3cd315d2e2e32",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/191",
+      "affected_ndf": [
+        "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "PTO-REQ-SCALAR-BODY-ENTRY-001"
+      ],
+      "affected_units": [
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
+        "PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL"
+      ]
+    },
+    {
+      "date": "2026-09-01",
+      "baseline": "835ae4dbafd9fd65eda082ba8f83cb0825c9f2c0",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/203",
+      "affected_ndf": [
+        "PTO-FENTRY-RESTARTABLE-FRAME-001",
+        "PTO-FEXIT-RESTARTABLE-FRAME-001",
+        "PTO-FRET-RA-RESTARTABLE-FRAME-001",
+        "PTO-FRET-STK-RESTARTABLE-FRAME-001",
+        "PTO-INST-BLOCK-FENTRY",
+        "PTO-INST-BLOCK-FEXIT",
+        "PTO-INST-BLOCK-FRET-RA",
+        "PTO-INST-BLOCK-FRET-STK"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-FENTRY",
+        "PTO-BLOCK-FEXIT",
+        "PTO-BLOCK-FRET-RA",
+        "PTO-BLOCK-FRET-STK",
+        "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
+      ]
+    }
   ]
 }
 ---
@@ -275,3 +340,21 @@ opens an empty block and records the selected boundary.
 The TRACE form MUST NOT complete or commit the empty block by itself. The block
 MUST subsequently be terminated by `BSTOP` or by the next `BSTART`, following
 the normal block lifecycle and commit rules.
+
+## Lifecycle corrections
+
+The first successfully decoded scalar form in an active header enters the
+bundle body before operation applicability and operand legality are checked.
+An unmatched scalar encoding does not enter the body. Empty blocks remain
+committable through `BSTOP` or a following `BSTART` without synthesizing a body
+instruction.
+
+`FENTRY`, `FEXIT`, `FRET.RA`, and `FRET.STK` use the architectural `sp`, GPR1,
+for all implicit stack accesses. The earlier GPR2 use was an ASL and fixture
+bug under the existing register map.
+
+Issue [#191](https://github.com/PTO-ISA/pto-spec/issues/191) records the body
+entry interface, while [#203](https://github.com/PTO-ISA/pto-spec/issues/203)
+records the direct stack-pointer implementation correction. Selected-path
+installation for following `BSTART` and TRACE boundaries remains owned by
+ADR-0061.

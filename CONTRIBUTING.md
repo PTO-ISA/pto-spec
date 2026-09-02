@@ -7,18 +7,33 @@ every architectural statement. Read [Governance](GOVERNANCE.md), the
 
 ## Choose the change scenario
 
-### Normative architecture change
+### PTO interface definition change
 
 1. Open an NDF architecture issue against a full baseline commit.
 2. Name the affected stable `PTO-*` clauses, owning ASL units, defaults,
    unspecified behavior, compatibility, open questions, evidence, and release
    impact.
-3. Reach the required ADR state before implementation.
-4. Change the owning ASL/NDF first; never create a parallel prose definition.
-5. Regenerate its Markdown, catalog, decoder, AVS, and release-evidence
+3. Identify the existing topic ADR and update it. Allocate a new ADR only when
+   the change defines a genuinely new externally visible PTO interface.
+4. Reach the required ADR state before implementation.
+5. Change the owning ASL/NDF first; never create a parallel prose definition.
+6. Regenerate its Markdown, catalog, decoder, AVS, and release-evidence
    projections together.
-6. Add focused positive, boundary, negative, fault, alias, ordering, and state
+7. Add focused positive, boundary, negative, fault, alias, ordering, and state
    transition points as applicable.
+
+### ASL or specification implementation correction
+
+When the public interface is already decided and ASL, decode, dispatch,
+reference-profile code, a bounded model, or a test implements it incorrectly,
+fix the owning ASL/tests directly. Link the governing interface ADR when one
+exists, but do not allocate a new ADR. The issue and commit history record why
+the correction was needed.
+
+Before downstream consumers adopt a newly allocated ADR number, collapse it
+into the existing topic ADR if review shows that it covers the same interface.
+Remove the temporary record, reuse the established owner number, and regenerate
+all ADR and release projections.
 
 ### Documentation or generated projection
 
@@ -70,6 +85,11 @@ merge-base semantic-delta aid. It does not replace source review. A pull request
 must link the governing issue or ADR, identify changed NDF clauses and ASL
 owners, describe compatibility and release impact, and explain any validation
 gap.
+
+PTO-SPEC ADRs and ASL NDF regions contain only PTO-owned identities.
+ASL-Model and other downstream repositories own their own NDF numbering;
+reference those records by repository URL rather than copying their IDs into
+PTO metadata.
 
 For an ASL owner or family rerun, put its exact current IDs in a file and use
 `scripts/print-asl-test-matrix --ids-file`. Run the emitted page through

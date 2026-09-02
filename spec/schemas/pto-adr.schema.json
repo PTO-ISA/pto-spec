@@ -11,7 +11,11 @@
     "implementation_issue", "release_impact", "legacy_ids"
   ],
   "properties": {
-    "id": {"type": "string", "pattern": "^ADR-[0-9]{4}$"},
+    "id": {
+      "type": "string",
+      "pattern": "^ADR-[0-9]{4}$",
+      "not": {"const": "ADR-0104"}
+    },
     "title": {"type": "string", "minLength": 1},
     "status": {"enum": ["draft", "accepted", "rejected", "superseded"]},
     "authors": {
@@ -33,11 +37,19 @@
     },
     "affected_ndf": {
       "type": "array", "uniqueItems": true,
-      "items": {"type": "string", "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$"}
+      "items": {
+        "type": "string",
+        "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$",
+        "not": {"pattern": "^PTO-MODEL-"}
+      }
     },
     "affected_units": {
       "type": "array", "uniqueItems": true,
-      "items": {"type": "string", "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$"}
+      "items": {
+        "type": "string",
+        "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$",
+        "not": {"pattern": "^PTO-MODEL-"}
+      }
     },
     "resolves": {
       "type": "array", "uniqueItems": true,
@@ -63,6 +75,28 @@
       "default": false,
       "description": "True only when the ADR records a release boundary and may retain impacts that existed at the selected release baseline but are retired from the current tree."
     },
+    "interface_change": {
+      "type": "boolean",
+      "default": false,
+      "description": "True only when the ADR defines a new externally visible PTO interface. Required for newly allocated ADR numbers beginning with ADR-0111."
+    },
+    "amendments": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "baseline", "approvers", "issue", "affected_ndf", "affected_units"],
+        "properties": {
+          "date": {"type": "string", "format": "date"},
+          "baseline": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "approvers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "issue": {"type": "string", "format": "uri", "pattern": "^https://"},
+          "affected_ndf": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^PTO-(?!MODEL-)[A-Z0-9]+(?:-[A-Z0-9]+)*$"}},
+          "affected_units": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^PTO-(?!MODEL-)[A-Z0-9]+(?:-[A-Z0-9]+)*$"}}
+        }
+      }
+    },
     "legacy_ids": {
       "type": "array", "uniqueItems": true,
       "items": {
@@ -72,6 +106,13 @@
     }
   },
   "allOf": [
+    {
+      "if": {"properties": {"id": {"pattern": "^ADR-(?:01(?:1[1-9]|[2-9][0-9])|0[2-9][0-9]{2}|[1-9][0-9]{3})$"}}},
+      "then": {
+        "required": ["interface_change"],
+        "properties": {"interface_change": {"const": true}}
+      }
+    },
     {
       "if": {"properties": {"status": {"const": "accepted"}}},
       "then": {

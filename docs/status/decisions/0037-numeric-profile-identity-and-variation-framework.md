@@ -50,10 +50,12 @@ contract permits target profiles to narrow support and identifies numeric
 variation points, while also stating that target profiles cannot redefine the
 semantics of legal PTO operations.
 
-The active `pto-v0` implementation profile is deterministic raw-carrier
-reference behavior. It proves executable totality but is not an IEEE or target
-hardware profile. CPU simulation is also an implementation under test, so its
-host arithmetic cannot qualify itself as the independent oracle.
+The active `pto-v0` implementation profile is deterministic reference
+behavior. Accepted finite scalar FP32/FP64 and shared conversion subsets use
+their typed mathematical rules; remaining carrier or delegated hooks still do
+not make `pto-v0` an IEEE or target-hardware profile. CPU simulation is also
+an implementation under test, so its host arithmetic cannot qualify itself as
+the independent oracle.
 
 The numeric decision register retains 12 questions over 20 domains. Exact
 format encodings, rounding modes, subnormal handling, special values, flags,
@@ -93,8 +95,8 @@ The following selection rules are normative:
 5. CPU observations are diagnostic evidence from an implementation under test.
    They cannot define a PTO result or serve as the independent S5-T2 oracle.
 
-`pto-v0` remains the active executable raw-carrier reference profile. The new
-identities do not alter, inherit, or re-label its arithmetic as target behavior.
+`pto-v0` remains the active executable reference profile. The new identities
+do not alter, inherit, or re-label its arithmetic as target behavior.
 
 ## Consequences
 

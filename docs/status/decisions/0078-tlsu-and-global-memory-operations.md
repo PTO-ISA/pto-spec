@@ -4,10 +4,12 @@
   "title": "TLSU and global-memory operations",
   "status": "accepted",
   "authors": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "Codex"
   ],
   "approvers": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "zhoubot"
   ],
   "created": "2026-08-21",
   "accepted": "2026-08-21",
@@ -16,7 +18,8 @@
   "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
   "target_releases": [
     "0.58.1",
-    "0.58.2"
+    "0.58.2",
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-B-DATR-FIELDS-001",
@@ -52,7 +55,15 @@
     "PTO-TLOAD-MEMORY-001",
     "PTO-TPREFETCH-FOOTPRINT-001",
     "PTO-TSTORE-CUBE-001",
-    "PTO-TSTORE-MEMORY-001"
+    "PTO-TSTORE-MEMORY-001",
+    "PTO-INDEXED-TLSU-STRIDE-001",
+    "PTO-INST-BLOCK-B-IOR",
+    "PTO-INST-BLOCK-BSTART-MGATHER",
+    "PTO-INST-BLOCK-BSTART-MGATHER-CAS",
+    "PTO-INST-BLOCK-BSTART-MGATHER-MASK",
+    "PTO-INST-BLOCK-BSTART-MSCATTER",
+    "PTO-INST-BLOCK-BSTART-MSCATTER-MASK",
+    "PTO-REQ-TILE-001"
   ],
   "affected_units": [
     "PTO-BLOCK-B-DATR",
@@ -77,7 +88,32 @@
     "PTO-TILE-MSCATTER-MASK",
     "PTO-TILE-TLOAD",
     "PTO-TILE-TPREFETCH",
-    "PTO-TILE-TSTORE"
+    "PTO-TILE-TSTORE",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+    "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+    "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+    "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+    "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+    "PTO-BLOCK-MODEL-DISPATCH-DECODE",
+    "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+    "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+    "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+    "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+    "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+    "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+    "PTO-BLOCK-MODEL-STATE-TYPES",
+    "PTO-ARCH-PROFILE-RESET",
+    "PTO-TILE-MODEL-STATE-ALLOCATION",
+    "PTO-TILE-MODEL-STATE-DESCRIPTORS",
+    "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+    "PTO-TILE-MODEL-STATE-TYPES",
+    "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
+    "PTO-TILE-MODEL-MEMORY-ADDRESSING",
+    "PTO-TILE-MODEL-MEMORY-ATOMICS",
+    "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"
   ],
   "resolves": [],
   "supersedes": [
@@ -85,7 +121,7 @@
   ],
   "superseded_by": [],
   "implementation_issue": null,
-  "release_impact": "not-required",
+  "release_impact": "required",
   "legacy_ids": [
     "PRD-040",
     "PRD-041",
@@ -98,6 +134,84 @@
     "PRD-048",
     "PRD-144",
     "PRD-145"
+  ],
+  "amendments": [
+    {
+      "date": "2026-09-01",
+      "baseline": "cbcd6abb2dc4d7f933d4db1124fadd11934d4c56",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/209",
+      "affected_ndf": [
+        "PTO-BSTART-MGATHER-CAS-SCHEMA-001",
+        "PTO-BSTART-MGATHER-MASK-SCHEMA-001",
+        "PTO-BSTART-MGATHER-SCHEMA-001",
+        "PTO-BSTART-MSCATTER-MASK-SCHEMA-001",
+        "PTO-BSTART-MSCATTER-SCHEMA-001",
+        "PTO-B-DATR-FIELDS-001",
+        "PTO-B-IOT-STREAM-001",
+        "PTO-INDEXED-TLSU-STRIDE-001",
+        "PTO-INST-BLOCK-B-IOR",
+        "PTO-INST-BLOCK-BSTART-MGATHER",
+        "PTO-INST-BLOCK-BSTART-MGATHER-CAS",
+        "PTO-INST-BLOCK-BSTART-MGATHER-MASK",
+        "PTO-INST-BLOCK-BSTART-MSCATTER",
+        "PTO-INST-BLOCK-BSTART-MSCATTER-MASK",
+        "PTO-MGATHER-BYTE-DISPLACEMENT-001",
+        "PTO-MGATHER-CAS-ATOMIC-001",
+        "PTO-MGATHER-CAS-PUBLICATION-001",
+        "PTO-MGATHER-MASK-PREDICATE-001",
+        "PTO-MGATHER-MASK-PUBLICATION-001",
+        "PTO-MGATHER-MASK-TYPE-002",
+        "PTO-MSCATTER-BYTE-DISPLACEMENT-001",
+        "PTO-MSCATTER-DUPLICATE-ORDER-001",
+        "PTO-MSCATTER-MASK-DUPLICATE-001",
+        "PTO-MSCATTER-MASK-PREDICATE-001",
+        "PTO-MSCATTER-MASK-TYPE-002",
+        "PTO-REQ-TILE-001"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-B-DATR",
+        "PTO-BLOCK-B-IOR",
+        "PTO-BLOCK-BSTART-MGATHER",
+        "PTO-BLOCK-BSTART-MGATHER-CAS",
+        "PTO-BLOCK-BSTART-MGATHER-MASK",
+        "PTO-BLOCK-BSTART-MSCATTER",
+        "PTO-BLOCK-BSTART-MSCATTER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-B-IOT",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-DISPATCH-DECODE",
+        "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+        "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+        "PTO-BLOCK-MODEL-STATE-TYPES",
+        "PTO-ARCH-PROFILE-RESET",
+        "PTO-TILE-MGATHER",
+        "PTO-TILE-MGATHER-CAS",
+        "PTO-TILE-MGATHER-MASK",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-STATE-DESCRIPTORS",
+        "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+        "PTO-TILE-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
+        "PTO-TILE-MODEL-MEMORY-ADDRESSING",
+        "PTO-TILE-MODEL-MEMORY-ATOMICS",
+        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+        "PTO-TILE-MSCATTER",
+        "PTO-TILE-MSCATTER-MASK"
+      ]
+    }
   ]
 }
 ---
@@ -189,20 +303,21 @@ For every nonzero mask, failure of convergence, participant agreement,
 descriptor compatibility, peer selection, or any source-readiness check MUST
 raise Illegal Block Exception before effects in any PE.
 
-## Decision 043: `MGATHER` indexes are signed or unsigned byte displacements
+## Decision 043: `MGATHER` indexes are signed or unsigned logical element indices
 
-`MGATHER` consumes one scalar base pointer and one Local IndexTile. Each
-IndexTile element is a byte displacement that software has already calculated;
-it is not a logical element index and is not scaled by the gathered data type.
+`MGATHER` consumes one scalar base pointer, one scalar row stride in elements,
+and one Local IndexTile. Each IndexTile element is a logical linear element
+index. `ValidCol` splits index `k` into row `q=floor(k/ValidCol)` and column
+`r=k-q*ValidCol`; the element offset is `q*stride+r`, and the byte address is
+the base plus that offset scaled by the transfer DataType size.
 
 An IndexTile MAY use a signed `SINT` integer data type or an unsigned integer
-data type. A signed displacement is sign-extended from the IndexTile element
-width. An unsigned displacement is zero-extended from that width. For every
-valid destination element, the effective byte address is the scalar base
-pointer plus the extended displacement. Address validity, translation,
-permission, alignment, and access-size checks MUST complete according to the
-ordinary precise TLSU memory contract before destination or memory-event
-effects.
+data type. A signed index is sign-extended from the IndexTile element width;
+an unsigned index is zero-extended from that width. For every valid destination
+element, the effective byte address follows the logical-index formula above.
+Address validity, translation, permission, alignment, and access-size checks
+MUST complete according to the ordinary precise TLSU memory contract before
+destination or memory-event effects.
 
 Non-integer IndexTile data types MUST raise Illegal Block Exception before
 architectural or pending block effects.
@@ -231,19 +346,18 @@ zero is intended. An explicitly encoded `zero` selector therefore supplies a
 base pointer value of zero, while omission remains a distinct illegal schema.
 Unused `B.IOR` fields MUST remain zero according to the complete block schema.
 
-## Decision 046: indexed TLSU operations use explicit bases and byte displacements
+## Decision 046: indexed TLSU operations use explicit bases, row strides, and logical indices
 
-Every indexed TLSU operation consumes an explicit `B.IOR.RegSrc0` scalar base
-binding and one Local IndexTile. This rule applies to `MGATHER`,
+Every indexed TLSU operation consumes an explicit `B.IOR.RegSrc0` scalar base,
+an explicit nonzero `B.IOR.RegSrc1` row stride in elements, and one Local
+IndexTile. `RegSrc2` and `RegDst` remain zero. This rule applies to `MGATHER`,
 `MGATHER.MASK`, `MGATHER.CAS`, `MSCATTER`, and `MSCATTER.MASK`.
 
-Each IndexTile element is a byte displacement that software has already
-calculated. A signed integer IndexTile element is sign-extended from its
-encoded element width; an unsigned integer element is zero-extended. The
-effective address is the selected PE's private-GPR base plus that extended
-byte displacement. The displacement is not scaled by the transferred data
-type. Non-integer IndexTile data types MUST raise Illegal Block Exception
-before effects.
+Each IndexTile element is sign- or zero-extended from its integer element type
+and interpreted by Decision 043. The stride MUST be at least `ValidCol` and is
+validated before address probes or effects. Non-integer IndexTile data types
+MUST raise Illegal Block Exception before effects. Disabled mask lanes do not
+evaluate their index or address.
 
 Omitting `B.IOR.RegSrc0` is illegal and does not select address zero. Software
 MAY explicitly bind the architectural `zero` register to request a zero base.
@@ -253,8 +367,8 @@ Unused `B.IOR` fields MUST remain zero according to the complete block schema.
 
 `MSCATTER` consumes one Local data source Tile and one Local IndexTile with the
 same logical shape. The data source Tile MUST use the `BSTART.MSCATTER`
-DataType. The IndexTile uses the independent signed-or-unsigned integer byte
-displacement rule from Decision 046 in ADR-0078 and is not required to share the data source
+DataType. The IndexTile uses the independent signed-or-unsigned logical-index
+rule from Decision 046 in ADR-0078 and is not required to share the data source
 type.
 
 Only elements inside the source Tile's valid rectangle produce memory writes.
@@ -289,7 +403,7 @@ enabled effect becomes visible.
 ## Decision 145: indexed TLSU transfers reject packed four-bit data types
 
 `MGATHER`, `MGATHER.MASK`, `MGATHER.CAS`, `MSCATTER`, and
-`MSCATTER.MASK` use byte displacements and do not encode an independent
+`MSCATTER.MASK` use logical element indices and do not encode an independent
 low-versus-high-nibble selector. Their transferred data type MUST therefore
 not be `E2M1X2`, `E1M2X2`, `HiF4X2`, `S4X2`, or `U4X2`. Selecting any of
 those packed four-bit transfer types MUST raise Illegal Block Exception before
@@ -298,7 +412,7 @@ effects, or memory events.
 
 This restriction applies only to the transferred data. An IndexTile MAY still
 use `S4X2` or `U4X2`: each logical IndexTile element is independently sign- or
-zero-extended from four bits and denotes one byte displacement under Decision 043 in ADR-0078
+zero-extended from four bits and denotes one logical element index under Decision 043 in ADR-0078
 and Decision 046 in ADR-0078.
 
 ## Decision 144: an unallocated Shared `TSTORE` source derives minimum capacity
@@ -314,3 +428,8 @@ Exception before reading GPRs or writing memory. Otherwise every selected
 source element has the ordinary undefined-register value. The temporary
 descriptor is read-only and MUST NOT allocate, initialize, or otherwise modify
 the Shared register.
+
+Issue [#209](https://github.com/PTO-ISA/pto-spec/issues/209) records the row
+stride and logical-index interface closure plus compiler-generated golden
+evidence. Because indexed TLSU was already owned by this decision family, the
+accepted interface amendment is folded here rather than assigned a new ADR.

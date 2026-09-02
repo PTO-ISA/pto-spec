@@ -43,6 +43,29 @@ For source-to-normative migration or reconciliation, also read
 
 Never turn a repository-maintenance request into a normative modeling change.
 
+## Decide whether an ADR is allowed
+
+Allocate a new PTO ADR only for a genuinely new externally visible PTO
+interface definition: accepted encodings/forms, operand or bundle schemas,
+architectural state interfaces, legality/fault contracts, ordering/commit
+boundaries, profile interfaces, or assembly contracts.
+
+Do not allocate an ADR for an ASL or implementation correction under an
+existing interface. Fix incorrect decode, dispatch, handler, reference-profile
+code, leaked model bounds, generated projections, and tests directly in their
+owners, with issue/commit/AVS evidence. When an existing ADR already owns the
+interface, amend it instead of creating a parallel ADR.
+
+Before downstream consumers adopt a newly allocated number, collapse it into
+the existing topic ADR if the reviewed scope overlaps: transfer the durable
+rationale and affected-owner metadata, remove the temporary record, reuse the
+existing number, and regenerate every ADR/release projection.
+
+PTO-SPEC records only PTO-owned NDF and ASL unit identities. ASL-Model owns its
+own `PTO-MODEL-*` NDF namespace. Cite downstream records by repository URL;
+never copy or mint their identifiers in PTO ADR metadata or PTO ASL NDF
+regions.
+
 ## Model workflow
 
 1. Identify the public PTO requirement and assign or cite stable requirement IDs.
@@ -78,7 +101,10 @@ documentation, and independent tests. Continue until
 occupied reservation `FORMAL-COMPLETE`; an audit-review count does not satisfy
 this implementation gate.
 
-Do not invent missing semantics. Stop at a documented requirement gap and open or request an architecture decision.
+Do not invent missing semantics. Stop at a documented interface gap and open
+or request an architecture decision. When the interface is already defined,
+classify the discrepancy as an implementation correction and repair the owner
+without allocating an ADR.
 
 ## ASL rules
 

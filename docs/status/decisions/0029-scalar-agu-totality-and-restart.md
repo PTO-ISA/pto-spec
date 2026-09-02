@@ -4,10 +4,12 @@
   "title": "Scalar AGU totality, aliases, and restart",
   "status": "accepted",
   "authors": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "Codex"
   ],
   "approvers": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "zhoubot"
   ],
   "created": "2026-07-31",
   "accepted": "2026-07-31",
@@ -15,7 +17,8 @@
   "superseded": null,
   "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
   "target_releases": [
-    "unassigned"
+    "unassigned",
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-HL-PRF-A-CACHE-MODEL-001",
@@ -42,7 +45,67 @@
     "PTO-SW-PCR-ADR-CONTRACT-001",
     "PTO-SW-U-ADR-CONTRACT-001",
     "PTO-SWI-ADR-CONTRACT-001",
-    "PTO-SWI-U-ADR-CONTRACT-001"
+    "PTO-SWI-U-ADR-CONTRACT-001",
+    "PTO-INST-SCALAR-HL-LB-PO",
+    "PTO-INST-SCALAR-HL-LB-PR",
+    "PTO-INST-SCALAR-HL-LBP",
+    "PTO-INST-SCALAR-HL-LBU-PO",
+    "PTO-INST-SCALAR-HL-LBU-PR",
+    "PTO-INST-SCALAR-HL-LBUP",
+    "PTO-INST-SCALAR-HL-LD-PO",
+    "PTO-INST-SCALAR-HL-LD-PR",
+    "PTO-INST-SCALAR-HL-LDP",
+    "PTO-INST-SCALAR-HL-LH-PO",
+    "PTO-INST-SCALAR-HL-LH-PR",
+    "PTO-INST-SCALAR-HL-LHP",
+    "PTO-INST-SCALAR-HL-LHU-PO",
+    "PTO-INST-SCALAR-HL-LHU-PR",
+    "PTO-INST-SCALAR-HL-LHUP",
+    "PTO-INST-SCALAR-HL-LW-PO",
+    "PTO-INST-SCALAR-HL-LW-PR",
+    "PTO-INST-SCALAR-HL-LWP",
+    "PTO-INST-SCALAR-HL-LWU-PO",
+    "PTO-INST-SCALAR-HL-LWU-PR",
+    "PTO-INST-SCALAR-HL-LWUP",
+    "PTO-INST-SCALAR-HL-PRF",
+    "PTO-INST-SCALAR-HL-PRF-A",
+    "PTO-INST-SCALAR-HL-SB-PO",
+    "PTO-INST-SCALAR-HL-SB-PR",
+    "PTO-INST-SCALAR-HL-SBP",
+    "PTO-INST-SCALAR-HL-SD-PO",
+    "PTO-INST-SCALAR-HL-SD-PR",
+    "PTO-INST-SCALAR-HL-SD-UPO",
+    "PTO-INST-SCALAR-HL-SD-UPR",
+    "PTO-INST-SCALAR-HL-SDP",
+    "PTO-INST-SCALAR-HL-SDP-U",
+    "PTO-INST-SCALAR-HL-SH-PO",
+    "PTO-INST-SCALAR-HL-SH-PR",
+    "PTO-INST-SCALAR-HL-SH-UPO",
+    "PTO-INST-SCALAR-HL-SH-UPR",
+    "PTO-INST-SCALAR-HL-SHP",
+    "PTO-INST-SCALAR-HL-SHP-U",
+    "PTO-INST-SCALAR-HL-SW-PO",
+    "PTO-INST-SCALAR-HL-SW-PR",
+    "PTO-INST-SCALAR-HL-SW-UPO",
+    "PTO-INST-SCALAR-HL-SW-UPR",
+    "PTO-INST-SCALAR-HL-SWP",
+    "PTO-INST-SCALAR-HL-SWP-U",
+    "PTO-INST-SCALAR-LB",
+    "PTO-INST-SCALAR-LBU",
+    "PTO-INST-SCALAR-LD",
+    "PTO-INST-SCALAR-LH",
+    "PTO-INST-SCALAR-LHU",
+    "PTO-INST-SCALAR-LW",
+    "PTO-INST-SCALAR-LWU",
+    "PTO-INST-SCALAR-PRF",
+    "PTO-INST-SCALAR-SB",
+    "PTO-INST-SCALAR-SD",
+    "PTO-INST-SCALAR-SD-U",
+    "PTO-INST-SCALAR-SH",
+    "PTO-INST-SCALAR-SH-U",
+    "PTO-INST-SCALAR-SW",
+    "PTO-INST-SCALAR-SW-U",
+    "PTO-REQ-AGU-SRCRTYPE-001"
   ],
   "affected_units": [
     "PTO-SCALAR-C-LDI",
@@ -227,14 +290,151 @@
     "PTO-SCALAR-SW-PCR",
     "PTO-SCALAR-SW-U",
     "PTO-SCALAR-SWI",
-    "PTO-SCALAR-SWI-U"
+    "PTO-SCALAR-SWI-U",
+    "PTO-SCALAR-MODEL-DISPATCH-AGU",
+    "PTO-SCALAR-MODEL-DISPATCH-DECODE"
   ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
   "implementation_issue": null,
   "release_impact": "required",
-  "legacy_ids": []
+  "legacy_ids": [],
+  "amendments": [
+    {
+      "date": "2026-09-01",
+      "baseline": "1f338aa0e4c46e21eb80d4465b3430e906a7c54f",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/193",
+      "affected_ndf": [
+        "PTO-INST-SCALAR-HL-LB-PO",
+        "PTO-INST-SCALAR-HL-LB-PR",
+        "PTO-INST-SCALAR-HL-LBP",
+        "PTO-INST-SCALAR-HL-LBU-PO",
+        "PTO-INST-SCALAR-HL-LBU-PR",
+        "PTO-INST-SCALAR-HL-LBUP",
+        "PTO-INST-SCALAR-HL-LD-PO",
+        "PTO-INST-SCALAR-HL-LD-PR",
+        "PTO-INST-SCALAR-HL-LDP",
+        "PTO-INST-SCALAR-HL-LH-PO",
+        "PTO-INST-SCALAR-HL-LH-PR",
+        "PTO-INST-SCALAR-HL-LHP",
+        "PTO-INST-SCALAR-HL-LHU-PO",
+        "PTO-INST-SCALAR-HL-LHU-PR",
+        "PTO-INST-SCALAR-HL-LHUP",
+        "PTO-INST-SCALAR-HL-LW-PO",
+        "PTO-INST-SCALAR-HL-LW-PR",
+        "PTO-INST-SCALAR-HL-LWP",
+        "PTO-INST-SCALAR-HL-LWU-PO",
+        "PTO-INST-SCALAR-HL-LWU-PR",
+        "PTO-INST-SCALAR-HL-LWUP",
+        "PTO-INST-SCALAR-HL-PRF",
+        "PTO-INST-SCALAR-HL-PRF-A",
+        "PTO-INST-SCALAR-HL-SB-PO",
+        "PTO-INST-SCALAR-HL-SB-PR",
+        "PTO-INST-SCALAR-HL-SBP",
+        "PTO-INST-SCALAR-HL-SD-PO",
+        "PTO-INST-SCALAR-HL-SD-PR",
+        "PTO-INST-SCALAR-HL-SD-UPO",
+        "PTO-INST-SCALAR-HL-SD-UPR",
+        "PTO-INST-SCALAR-HL-SDP",
+        "PTO-INST-SCALAR-HL-SDP-U",
+        "PTO-INST-SCALAR-HL-SH-PO",
+        "PTO-INST-SCALAR-HL-SH-PR",
+        "PTO-INST-SCALAR-HL-SH-UPO",
+        "PTO-INST-SCALAR-HL-SH-UPR",
+        "PTO-INST-SCALAR-HL-SHP",
+        "PTO-INST-SCALAR-HL-SHP-U",
+        "PTO-INST-SCALAR-HL-SW-PO",
+        "PTO-INST-SCALAR-HL-SW-PR",
+        "PTO-INST-SCALAR-HL-SW-UPO",
+        "PTO-INST-SCALAR-HL-SW-UPR",
+        "PTO-INST-SCALAR-HL-SWP",
+        "PTO-INST-SCALAR-HL-SWP-U",
+        "PTO-INST-SCALAR-LB",
+        "PTO-INST-SCALAR-LBU",
+        "PTO-INST-SCALAR-LD",
+        "PTO-INST-SCALAR-LH",
+        "PTO-INST-SCALAR-LHU",
+        "PTO-INST-SCALAR-LW",
+        "PTO-INST-SCALAR-LWU",
+        "PTO-INST-SCALAR-PRF",
+        "PTO-INST-SCALAR-SB",
+        "PTO-INST-SCALAR-SD",
+        "PTO-INST-SCALAR-SD-U",
+        "PTO-INST-SCALAR-SH",
+        "PTO-INST-SCALAR-SH-U",
+        "PTO-INST-SCALAR-SW",
+        "PTO-INST-SCALAR-SW-U",
+        "PTO-REQ-AGU-SRCRTYPE-001"
+      ],
+      "affected_units": [
+        "PTO-SCALAR-HL-LB-PO",
+        "PTO-SCALAR-HL-LB-PR",
+        "PTO-SCALAR-HL-LBP",
+        "PTO-SCALAR-HL-LBU-PO",
+        "PTO-SCALAR-HL-LBU-PR",
+        "PTO-SCALAR-HL-LBUP",
+        "PTO-SCALAR-HL-LD-PO",
+        "PTO-SCALAR-HL-LD-PR",
+        "PTO-SCALAR-HL-LDP",
+        "PTO-SCALAR-HL-LH-PO",
+        "PTO-SCALAR-HL-LH-PR",
+        "PTO-SCALAR-HL-LHP",
+        "PTO-SCALAR-HL-LHU-PO",
+        "PTO-SCALAR-HL-LHU-PR",
+        "PTO-SCALAR-HL-LHUP",
+        "PTO-SCALAR-HL-LW-PO",
+        "PTO-SCALAR-HL-LW-PR",
+        "PTO-SCALAR-HL-LWP",
+        "PTO-SCALAR-HL-LWU-PO",
+        "PTO-SCALAR-HL-LWU-PR",
+        "PTO-SCALAR-HL-LWUP",
+        "PTO-SCALAR-HL-PRF",
+        "PTO-SCALAR-HL-PRF-A",
+        "PTO-SCALAR-HL-SB-PO",
+        "PTO-SCALAR-HL-SB-PR",
+        "PTO-SCALAR-HL-SBP",
+        "PTO-SCALAR-HL-SD-PO",
+        "PTO-SCALAR-HL-SD-PR",
+        "PTO-SCALAR-HL-SD-UPO",
+        "PTO-SCALAR-HL-SD-UPR",
+        "PTO-SCALAR-HL-SDP",
+        "PTO-SCALAR-HL-SDP-U",
+        "PTO-SCALAR-HL-SH-PO",
+        "PTO-SCALAR-HL-SH-PR",
+        "PTO-SCALAR-HL-SH-UPO",
+        "PTO-SCALAR-HL-SH-UPR",
+        "PTO-SCALAR-HL-SHP",
+        "PTO-SCALAR-HL-SHP-U",
+        "PTO-SCALAR-HL-SW-PO",
+        "PTO-SCALAR-HL-SW-PR",
+        "PTO-SCALAR-HL-SW-UPO",
+        "PTO-SCALAR-HL-SW-UPR",
+        "PTO-SCALAR-HL-SWP",
+        "PTO-SCALAR-HL-SWP-U",
+        "PTO-SCALAR-LB",
+        "PTO-SCALAR-LBU",
+        "PTO-SCALAR-LD",
+        "PTO-SCALAR-LH",
+        "PTO-SCALAR-LHU",
+        "PTO-SCALAR-LW",
+        "PTO-SCALAR-LWU",
+        "PTO-SCALAR-MODEL-DISPATCH-AGU",
+        "PTO-SCALAR-MODEL-DISPATCH-DECODE",
+        "PTO-SCALAR-PRF",
+        "PTO-SCALAR-SB",
+        "PTO-SCALAR-SD",
+        "PTO-SCALAR-SD-U",
+        "PTO-SCALAR-SH",
+        "PTO-SCALAR-SH-U",
+        "PTO-SCALAR-SW",
+        "PTO-SCALAR-SW-U"
+      ]
+    }
+  ]
 }
 ---
 # ADR 0029: Scalar AGU totality, aliases, and restart
@@ -251,9 +451,9 @@
 AGU arithmetic is modulo 2^64. Immediate fields are sign extended to XLEN
 before their form-defined scale is applied. PC-relative forms use the current
 TPC with bits 1:0 cleared and then add a four-byte-scaled displacement.
-Register offsets apply `SrcRType` before scaling: `00` preserves the word,
-`01` sign extends its low 32 bits, `10` zero extends its low 32 bits, and `11`
-negates the full word. A present `shamt` supplies the scale; otherwise the
+Register offsets apply `SrcRType` before scaling: `00` sign-extends the low
+32 bits, `01` zero-extends the low 32 bits, `10` negates the complete XLEN
+value, and `11` preserves the complete XLEN value. A present `shamt` supplies the scale; otherwise the
 catalog-derived element scale applies. The `.U`, `.UPR`, and `.UPO` forms are
 unscaled. Compressed forms use their encoded base and scaled signed immediate.
 
@@ -339,3 +539,9 @@ aliases. Absolute GPR and R0 source behavior is retained from the closed Stage
 non-ordinary destination selector for every encoded AGU field. Repository
 checks derive the expected inventory from the scalar catalog and reject
 missing, extra, or reclassified evidence.
+
+The former alternate `SrcRType` ordering in PTO ASL conflicted with the
+already-established 0.58.5 encoding. Issue
+[#193](https://github.com/PTO-ISA/pto-spec/issues/193) records its correction;
+because the public interface did not change, the fix belongs to this existing
+AGU owner rather than a new ADR.

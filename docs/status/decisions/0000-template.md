@@ -19,6 +19,8 @@
   "implementation_issue": null,
   "release_impact": "not-required",
   "release_boundary": false,
+  "interface_change": true,
+  "amendments": [],
   "legacy_ids": []
 }
 ---
@@ -31,6 +33,13 @@
 ## Decision
 
 ## Normative delta
+
+## Externally visible interface delta
+
+State the encoding, operand/schema, architectural state, legality/fault,
+ordering/commit, profile, or other software-visible interface that changes.
+If there is no such delta, do not allocate an ADR; fix the owning ASL/tests and
+record the correction in the issue and commit history.
 
 ## Defaults and intentionally unspecified behavior
 

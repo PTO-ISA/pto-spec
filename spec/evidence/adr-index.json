@@ -224,18 +224,48 @@
         "PTO-ARCH-TILE-INSTRUCTION-CLASS-001",
         "PTO-RELEASE-VERIFICATION",
         "PTO-SOURCE-HIERARCHY",
-        "PTO-TILE-CAPACITY-PER-PE"
+        "PTO-TILE-CAPACITY-PER-PE",
+        "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "PTO-REQ-INSTRUCTION-FETCH-001",
+        "PTO-REQ-PHYSICAL-MEMORY-BINDING-001"
       ],
       "affected_units": [
         "PTO-ARCH-OVERVIEW-ARCHITECTURE",
         "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
-        "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION"
+        "PTO-ARCH-OVERVIEW-INSTRUCTION-CLASSIFICATION",
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
+        "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
+        "PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH",
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-REQ-INSTRUCTION-DISPATCH-001",
+            "PTO-REQ-INSTRUCTION-FETCH-001",
+            "PTO-REQ-PHYSICAL-MEMORY-BINDING-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-DISPATCH-TOP-LEVEL",
+            "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
+            "PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH",
+            "PTO-ARCH-PROFILE-REFERENCE-PROFILE"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "e9b621ddce041ff2c770bef67adc41946db87295",
+          "date": "2026-08-31",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/179"
+        }
       ],
       "approvers": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "zhoubot"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
       ],
       "baseline": "007844f182ca87c843ebf274d7c9509188e68e01",
       "created": "2026-07-28",
@@ -251,7 +281,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "unassigned",
+        "0.58.5"
       ],
       "title": "Define PTO as a scalar, bundle/command, and tile ISA"
     },
@@ -1269,7 +1300,9 @@
         "PTO-BXU-DECISION-BINDING-001",
         "PTO-CLZ-DECISION-BINDING-001",
         "PTO-CTZ-DECISION-BINDING-001",
-        "PTO-REV-DECISION-BINDING-001"
+        "PTO-REV-DECISION-BINDING-001",
+        "PTO-HL-BFI-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-HL-BFI"
       ],
       "affected_units": [
         "PTO-SCALAR-BCNT",
@@ -1279,13 +1312,39 @@
         "PTO-SCALAR-BXU",
         "PTO-SCALAR-CLZ",
         "PTO-SCALAR-CTZ",
-        "PTO-SCALAR-REV"
+        "PTO-SCALAR-REV",
+        "PTO-SCALAR-HL-BFI",
+        "PTO-SCALAR-MODEL-ALU-BITFIELD",
+        "PTO-SCALAR-MODEL-ALU-SEMANTICS",
+        "PTO-SCALAR-MODEL-DISPATCH-ALU"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-HL-BFI-DECISION-BINDING-001",
+            "PTO-INST-SCALAR-HL-BFI"
+          ],
+          "affected_units": [
+            "PTO-SCALAR-HL-BFI",
+            "PTO-SCALAR-MODEL-ALU-BITFIELD",
+            "PTO-SCALAR-MODEL-ALU-SEMANTICS",
+            "PTO-SCALAR-MODEL-DISPATCH-ALU"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "b83b23930510c3ea96ec81b9838ce6c6a0929a4c",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/194"
+        }
       ],
       "approvers": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "zhoubot"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
       ],
       "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
       "created": "2026-07-31",
@@ -1301,7 +1360,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "unassigned",
+        "0.58.5"
       ],
       "title": "Scalar bitfield and byte-reversal bounds"
     },
@@ -1635,7 +1695,28 @@
         "PTO-FNE-DECISION-BINDING-001",
         "PTO-FNES-DECISION-BINDING-001",
         "PTO-SCVTF-DECISION-BINDING-001",
-        "PTO-UCVTF-DECISION-BINDING-001"
+        "PTO-UCVTF-DECISION-BINDING-001",
+        "PTO-INST-SCALAR-FADD",
+        "PTO-INST-SCALAR-FCVT",
+        "PTO-INST-SCALAR-FCVTA",
+        "PTO-INST-SCALAR-FCVTM",
+        "PTO-INST-SCALAR-FCVTN",
+        "PTO-INST-SCALAR-FCVTP",
+        "PTO-INST-SCALAR-FCVTZ",
+        "PTO-INST-SCALAR-FDIV",
+        "PTO-INST-SCALAR-FEXP",
+        "PTO-INST-SCALAR-FMADD",
+        "PTO-INST-SCALAR-FMSUB",
+        "PTO-INST-SCALAR-FMUL",
+        "PTO-INST-SCALAR-FNMADD",
+        "PTO-INST-SCALAR-FNMSUB",
+        "PTO-INST-SCALAR-FRECIP",
+        "PTO-INST-SCALAR-FSQRT",
+        "PTO-INST-SCALAR-FSUB",
+        "PTO-INST-SCALAR-SCVTF",
+        "PTO-INST-SCALAR-UCVTF",
+        "PTO-COMMON-CONVERSION-PROFILE-001",
+        "PTO-TCVT-CONTRACT-001"
       ],
       "affected_units": [
         "PTO-SCALAR-FABS",
@@ -1667,13 +1748,131 @@
         "PTO-SCALAR-FSQRT",
         "PTO-SCALAR-FSUB",
         "PTO-SCALAR-SCVTF",
-        "PTO-SCALAR-UCVTF"
+        "PTO-SCALAR-UCVTF",
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+        "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+        "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+        "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+        "PTO-SCALAR-MODEL-DISPATCH-FSU",
+        "PTO-SCALAR-MODEL-FSU-PROFILE",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-TILE-TCVT"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-FCVTA-DECISION-BINDING-001",
+            "PTO-FCVTM-DECISION-BINDING-001",
+            "PTO-FCVTN-DECISION-BINDING-001",
+            "PTO-FCVTP-DECISION-BINDING-001",
+            "PTO-FCVTZ-DECISION-BINDING-001",
+            "PTO-INST-SCALAR-FADD",
+            "PTO-INST-SCALAR-FCVT",
+            "PTO-INST-SCALAR-FCVTA",
+            "PTO-INST-SCALAR-FCVTM",
+            "PTO-INST-SCALAR-FCVTN",
+            "PTO-INST-SCALAR-FCVTP",
+            "PTO-INST-SCALAR-FCVTZ",
+            "PTO-INST-SCALAR-FDIV",
+            "PTO-INST-SCALAR-FEXP",
+            "PTO-INST-SCALAR-FMADD",
+            "PTO-INST-SCALAR-FMSUB",
+            "PTO-INST-SCALAR-FMUL",
+            "PTO-INST-SCALAR-FNMADD",
+            "PTO-INST-SCALAR-FNMSUB",
+            "PTO-INST-SCALAR-FRECIP",
+            "PTO-INST-SCALAR-FSQRT",
+            "PTO-INST-SCALAR-FSUB",
+            "PTO-INST-SCALAR-SCVTF",
+            "PTO-INST-SCALAR-UCVTF",
+            "PTO-SCVTF-DECISION-BINDING-001",
+            "PTO-UCVTF-DECISION-BINDING-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+            "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+            "PTO-SCALAR-FADD",
+            "PTO-SCALAR-FCVT",
+            "PTO-SCALAR-FCVTA",
+            "PTO-SCALAR-FCVTM",
+            "PTO-SCALAR-FCVTN",
+            "PTO-SCALAR-FCVTP",
+            "PTO-SCALAR-FCVTZ",
+            "PTO-SCALAR-FDIV",
+            "PTO-SCALAR-FEXP",
+            "PTO-SCALAR-FMADD",
+            "PTO-SCALAR-FMSUB",
+            "PTO-SCALAR-FMUL",
+            "PTO-SCALAR-FNMADD",
+            "PTO-SCALAR-FNMSUB",
+            "PTO-SCALAR-FRECIP",
+            "PTO-SCALAR-FSQRT",
+            "PTO-SCALAR-FSUB",
+            "PTO-SCALAR-SCVTF",
+            "PTO-SCALAR-UCVTF"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "dba352e1eed67e365f5fa3d8f8987f9454900ed0",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/196"
+        },
+        {
+          "affected_ndf": [
+            "PTO-COMMON-CONVERSION-PROFILE-001",
+            "PTO-FCVTA-DECISION-BINDING-001",
+            "PTO-FCVTM-DECISION-BINDING-001",
+            "PTO-FCVTN-DECISION-BINDING-001",
+            "PTO-FCVTP-DECISION-BINDING-001",
+            "PTO-FCVTZ-DECISION-BINDING-001",
+            "PTO-INST-SCALAR-FCVT",
+            "PTO-INST-SCALAR-FCVTA",
+            "PTO-INST-SCALAR-FCVTM",
+            "PTO-INST-SCALAR-FCVTN",
+            "PTO-INST-SCALAR-FCVTP",
+            "PTO-INST-SCALAR-FCVTZ",
+            "PTO-INST-SCALAR-SCVTF",
+            "PTO-INST-SCALAR-UCVTF",
+            "PTO-SCVTF-DECISION-BINDING-001",
+            "PTO-TCVT-CONTRACT-001",
+            "PTO-UCVTF-DECISION-BINDING-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-PROFILE-E8M0-CONVERSION",
+            "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
+            "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
+            "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+            "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
+            "PTO-SCALAR-FCVT",
+            "PTO-SCALAR-FCVTA",
+            "PTO-SCALAR-FCVTM",
+            "PTO-SCALAR-FCVTN",
+            "PTO-SCALAR-FCVTP",
+            "PTO-SCALAR-FCVTZ",
+            "PTO-SCALAR-MODEL-DISPATCH-FSU",
+            "PTO-SCALAR-MODEL-FSU-PROFILE",
+            "PTO-SCALAR-SCVTF",
+            "PTO-SCALAR-UCVTF",
+            "PTO-TILE-MODEL-NUMERIC-FORMATS",
+            "PTO-TILE-TCVT"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "7c1fea1f866eb9fc787a7935de26228ca01483c9",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/206"
+        }
       ],
       "approvers": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "zhoubot"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
       ],
       "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
       "created": "2026-07-31",
@@ -1689,7 +1888,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "unassigned",
+        "0.58.5"
       ],
       "title": "Scalar FSU totality and numeric-profile boundary"
     },
@@ -1720,7 +1920,67 @@
         "PTO-SW-PCR-ADR-CONTRACT-001",
         "PTO-SW-U-ADR-CONTRACT-001",
         "PTO-SWI-ADR-CONTRACT-001",
-        "PTO-SWI-U-ADR-CONTRACT-001"
+        "PTO-SWI-U-ADR-CONTRACT-001",
+        "PTO-INST-SCALAR-HL-LB-PO",
+        "PTO-INST-SCALAR-HL-LB-PR",
+        "PTO-INST-SCALAR-HL-LBP",
+        "PTO-INST-SCALAR-HL-LBU-PO",
+        "PTO-INST-SCALAR-HL-LBU-PR",
+        "PTO-INST-SCALAR-HL-LBUP",
+        "PTO-INST-SCALAR-HL-LD-PO",
+        "PTO-INST-SCALAR-HL-LD-PR",
+        "PTO-INST-SCALAR-HL-LDP",
+        "PTO-INST-SCALAR-HL-LH-PO",
+        "PTO-INST-SCALAR-HL-LH-PR",
+        "PTO-INST-SCALAR-HL-LHP",
+        "PTO-INST-SCALAR-HL-LHU-PO",
+        "PTO-INST-SCALAR-HL-LHU-PR",
+        "PTO-INST-SCALAR-HL-LHUP",
+        "PTO-INST-SCALAR-HL-LW-PO",
+        "PTO-INST-SCALAR-HL-LW-PR",
+        "PTO-INST-SCALAR-HL-LWP",
+        "PTO-INST-SCALAR-HL-LWU-PO",
+        "PTO-INST-SCALAR-HL-LWU-PR",
+        "PTO-INST-SCALAR-HL-LWUP",
+        "PTO-INST-SCALAR-HL-PRF",
+        "PTO-INST-SCALAR-HL-PRF-A",
+        "PTO-INST-SCALAR-HL-SB-PO",
+        "PTO-INST-SCALAR-HL-SB-PR",
+        "PTO-INST-SCALAR-HL-SBP",
+        "PTO-INST-SCALAR-HL-SD-PO",
+        "PTO-INST-SCALAR-HL-SD-PR",
+        "PTO-INST-SCALAR-HL-SD-UPO",
+        "PTO-INST-SCALAR-HL-SD-UPR",
+        "PTO-INST-SCALAR-HL-SDP",
+        "PTO-INST-SCALAR-HL-SDP-U",
+        "PTO-INST-SCALAR-HL-SH-PO",
+        "PTO-INST-SCALAR-HL-SH-PR",
+        "PTO-INST-SCALAR-HL-SH-UPO",
+        "PTO-INST-SCALAR-HL-SH-UPR",
+        "PTO-INST-SCALAR-HL-SHP",
+        "PTO-INST-SCALAR-HL-SHP-U",
+        "PTO-INST-SCALAR-HL-SW-PO",
+        "PTO-INST-SCALAR-HL-SW-PR",
+        "PTO-INST-SCALAR-HL-SW-UPO",
+        "PTO-INST-SCALAR-HL-SW-UPR",
+        "PTO-INST-SCALAR-HL-SWP",
+        "PTO-INST-SCALAR-HL-SWP-U",
+        "PTO-INST-SCALAR-LB",
+        "PTO-INST-SCALAR-LBU",
+        "PTO-INST-SCALAR-LD",
+        "PTO-INST-SCALAR-LH",
+        "PTO-INST-SCALAR-LHU",
+        "PTO-INST-SCALAR-LW",
+        "PTO-INST-SCALAR-LWU",
+        "PTO-INST-SCALAR-PRF",
+        "PTO-INST-SCALAR-SB",
+        "PTO-INST-SCALAR-SD",
+        "PTO-INST-SCALAR-SD-U",
+        "PTO-INST-SCALAR-SH",
+        "PTO-INST-SCALAR-SH-U",
+        "PTO-INST-SCALAR-SW",
+        "PTO-INST-SCALAR-SW-U",
+        "PTO-REQ-AGU-SRCRTYPE-001"
       ],
       "affected_units": [
         "PTO-SCALAR-C-LDI",
@@ -1905,13 +2165,152 @@
         "PTO-SCALAR-SW-PCR",
         "PTO-SCALAR-SW-U",
         "PTO-SCALAR-SWI",
-        "PTO-SCALAR-SWI-U"
+        "PTO-SCALAR-SWI-U",
+        "PTO-SCALAR-MODEL-DISPATCH-AGU",
+        "PTO-SCALAR-MODEL-DISPATCH-DECODE"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-INST-SCALAR-HL-LB-PO",
+            "PTO-INST-SCALAR-HL-LB-PR",
+            "PTO-INST-SCALAR-HL-LBP",
+            "PTO-INST-SCALAR-HL-LBU-PO",
+            "PTO-INST-SCALAR-HL-LBU-PR",
+            "PTO-INST-SCALAR-HL-LBUP",
+            "PTO-INST-SCALAR-HL-LD-PO",
+            "PTO-INST-SCALAR-HL-LD-PR",
+            "PTO-INST-SCALAR-HL-LDP",
+            "PTO-INST-SCALAR-HL-LH-PO",
+            "PTO-INST-SCALAR-HL-LH-PR",
+            "PTO-INST-SCALAR-HL-LHP",
+            "PTO-INST-SCALAR-HL-LHU-PO",
+            "PTO-INST-SCALAR-HL-LHU-PR",
+            "PTO-INST-SCALAR-HL-LHUP",
+            "PTO-INST-SCALAR-HL-LW-PO",
+            "PTO-INST-SCALAR-HL-LW-PR",
+            "PTO-INST-SCALAR-HL-LWP",
+            "PTO-INST-SCALAR-HL-LWU-PO",
+            "PTO-INST-SCALAR-HL-LWU-PR",
+            "PTO-INST-SCALAR-HL-LWUP",
+            "PTO-INST-SCALAR-HL-PRF",
+            "PTO-INST-SCALAR-HL-PRF-A",
+            "PTO-INST-SCALAR-HL-SB-PO",
+            "PTO-INST-SCALAR-HL-SB-PR",
+            "PTO-INST-SCALAR-HL-SBP",
+            "PTO-INST-SCALAR-HL-SD-PO",
+            "PTO-INST-SCALAR-HL-SD-PR",
+            "PTO-INST-SCALAR-HL-SD-UPO",
+            "PTO-INST-SCALAR-HL-SD-UPR",
+            "PTO-INST-SCALAR-HL-SDP",
+            "PTO-INST-SCALAR-HL-SDP-U",
+            "PTO-INST-SCALAR-HL-SH-PO",
+            "PTO-INST-SCALAR-HL-SH-PR",
+            "PTO-INST-SCALAR-HL-SH-UPO",
+            "PTO-INST-SCALAR-HL-SH-UPR",
+            "PTO-INST-SCALAR-HL-SHP",
+            "PTO-INST-SCALAR-HL-SHP-U",
+            "PTO-INST-SCALAR-HL-SW-PO",
+            "PTO-INST-SCALAR-HL-SW-PR",
+            "PTO-INST-SCALAR-HL-SW-UPO",
+            "PTO-INST-SCALAR-HL-SW-UPR",
+            "PTO-INST-SCALAR-HL-SWP",
+            "PTO-INST-SCALAR-HL-SWP-U",
+            "PTO-INST-SCALAR-LB",
+            "PTO-INST-SCALAR-LBU",
+            "PTO-INST-SCALAR-LD",
+            "PTO-INST-SCALAR-LH",
+            "PTO-INST-SCALAR-LHU",
+            "PTO-INST-SCALAR-LW",
+            "PTO-INST-SCALAR-LWU",
+            "PTO-INST-SCALAR-PRF",
+            "PTO-INST-SCALAR-SB",
+            "PTO-INST-SCALAR-SD",
+            "PTO-INST-SCALAR-SD-U",
+            "PTO-INST-SCALAR-SH",
+            "PTO-INST-SCALAR-SH-U",
+            "PTO-INST-SCALAR-SW",
+            "PTO-INST-SCALAR-SW-U",
+            "PTO-REQ-AGU-SRCRTYPE-001"
+          ],
+          "affected_units": [
+            "PTO-SCALAR-HL-LB-PO",
+            "PTO-SCALAR-HL-LB-PR",
+            "PTO-SCALAR-HL-LBP",
+            "PTO-SCALAR-HL-LBU-PO",
+            "PTO-SCALAR-HL-LBU-PR",
+            "PTO-SCALAR-HL-LBUP",
+            "PTO-SCALAR-HL-LD-PO",
+            "PTO-SCALAR-HL-LD-PR",
+            "PTO-SCALAR-HL-LDP",
+            "PTO-SCALAR-HL-LH-PO",
+            "PTO-SCALAR-HL-LH-PR",
+            "PTO-SCALAR-HL-LHP",
+            "PTO-SCALAR-HL-LHU-PO",
+            "PTO-SCALAR-HL-LHU-PR",
+            "PTO-SCALAR-HL-LHUP",
+            "PTO-SCALAR-HL-LW-PO",
+            "PTO-SCALAR-HL-LW-PR",
+            "PTO-SCALAR-HL-LWP",
+            "PTO-SCALAR-HL-LWU-PO",
+            "PTO-SCALAR-HL-LWU-PR",
+            "PTO-SCALAR-HL-LWUP",
+            "PTO-SCALAR-HL-PRF",
+            "PTO-SCALAR-HL-PRF-A",
+            "PTO-SCALAR-HL-SB-PO",
+            "PTO-SCALAR-HL-SB-PR",
+            "PTO-SCALAR-HL-SBP",
+            "PTO-SCALAR-HL-SD-PO",
+            "PTO-SCALAR-HL-SD-PR",
+            "PTO-SCALAR-HL-SD-UPO",
+            "PTO-SCALAR-HL-SD-UPR",
+            "PTO-SCALAR-HL-SDP",
+            "PTO-SCALAR-HL-SDP-U",
+            "PTO-SCALAR-HL-SH-PO",
+            "PTO-SCALAR-HL-SH-PR",
+            "PTO-SCALAR-HL-SH-UPO",
+            "PTO-SCALAR-HL-SH-UPR",
+            "PTO-SCALAR-HL-SHP",
+            "PTO-SCALAR-HL-SHP-U",
+            "PTO-SCALAR-HL-SW-PO",
+            "PTO-SCALAR-HL-SW-PR",
+            "PTO-SCALAR-HL-SW-UPO",
+            "PTO-SCALAR-HL-SW-UPR",
+            "PTO-SCALAR-HL-SWP",
+            "PTO-SCALAR-HL-SWP-U",
+            "PTO-SCALAR-LB",
+            "PTO-SCALAR-LBU",
+            "PTO-SCALAR-LD",
+            "PTO-SCALAR-LH",
+            "PTO-SCALAR-LHU",
+            "PTO-SCALAR-LW",
+            "PTO-SCALAR-LWU",
+            "PTO-SCALAR-MODEL-DISPATCH-AGU",
+            "PTO-SCALAR-MODEL-DISPATCH-DECODE",
+            "PTO-SCALAR-PRF",
+            "PTO-SCALAR-SB",
+            "PTO-SCALAR-SD",
+            "PTO-SCALAR-SD-U",
+            "PTO-SCALAR-SH",
+            "PTO-SCALAR-SH-U",
+            "PTO-SCALAR-SW",
+            "PTO-SCALAR-SW-U"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "1f338aa0e4c46e21eb80d4465b3430e906a7c54f",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/193"
+        }
       ],
       "approvers": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "zhoubot"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
       ],
       "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
       "created": "2026-07-31",
@@ -1927,7 +2326,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "unassigned",
+        "0.58.5"
       ],
       "title": "Scalar AGU totality, aliases, and restart"
     },
@@ -2185,7 +2585,8 @@
         "PTO-HL-QPUSH-GQM-001",
         "PTO-L-BSTOP-DECISION-BINDING-001",
         "PTO-MCOPY-RESTART-001",
-        "PTO-REQ-BUNDLE-STATE-001"
+        "PTO-REQ-BUNDLE-STATE-001",
+        "PTO-INST-BLOCK-MSET"
       ],
       "affected_units": [
         "PTO-BLOCK-B-CATR",
@@ -2295,13 +2696,36 @@
         "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
         "PTO-BLOCK-MODEL-STATE-TYPES",
         "PTO-BLOCK-MSET",
-        "PTO-BLOCK-XB"
+        "PTO-BLOCK-XB",
+        "PTO-SCALAR-MODEL-AGU-MEMORY"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-BLOCK-MSET-FILL-001",
+            "PTO-INST-BLOCK-MSET"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MSET",
+            "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+            "PTO-SCALAR-MODEL-AGU-MEMORY"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "27f41909deffce3be07360a0c82e5a7f28e6e468",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/198"
+        }
       ],
       "approvers": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "zhoubot"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
       ],
       "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
       "created": "2026-07-30",
@@ -2317,7 +2741,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "unassigned"
+        "unassigned",
+        "0.58.5"
       ],
       "title": "Bundle-command totality and PTO-v0 profile boundaries"
     },
@@ -4673,7 +5098,13 @@
         "PTO-XOR-ADR-CONTRACT-001",
         "PTO-XORI-ADR-CONTRACT-001",
         "PTO-XORIW-ADR-CONTRACT-001",
-        "PTO-XORW-ADR-CONTRACT-001"
+        "PTO-XORW-ADR-CONTRACT-001",
+        "PTO-INST-SCALAR-CSEL",
+        "PTO-INST-SCALAR-FCVTA",
+        "PTO-INST-SCALAR-FCVTM",
+        "PTO-INST-SCALAR-FCVTN",
+        "PTO-INST-SCALAR-FCVTP",
+        "PTO-INST-SCALAR-FCVTZ"
       ],
       "affected_units": [
         "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
@@ -5307,13 +5738,64 @@
         "PTO-TILE-TSUBS",
         "PTO-TILE-TTRI",
         "PTO-TILE-TXOR",
-        "PTO-TILE-TXORS"
+        "PTO-TILE-TXORS",
+        "PTO-SCALAR-MODEL-DISPATCH-DECODE",
+        "PTO-SCALAR-MODEL-DISPATCH-FSU",
+        "PTO-SCALAR-MODEL-FSU-PROFILE"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-INST-SCALAR-CSEL"
+          ],
+          "affected_units": [
+            "PTO-SCALAR-CSEL",
+            "PTO-SCALAR-MODEL-DISPATCH-DECODE"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "661b9bd19aafc5faafd74803d0f8ec5a6f2d1cf1",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/197"
+        },
+        {
+          "affected_ndf": [
+            "PTO-FCVTA-DECISION-BINDING-001",
+            "PTO-FCVTM-DECISION-BINDING-001",
+            "PTO-FCVTN-DECISION-BINDING-001",
+            "PTO-FCVTP-DECISION-BINDING-001",
+            "PTO-FCVTZ-DECISION-BINDING-001",
+            "PTO-INST-SCALAR-FCVTA",
+            "PTO-INST-SCALAR-FCVTM",
+            "PTO-INST-SCALAR-FCVTN",
+            "PTO-INST-SCALAR-FCVTP",
+            "PTO-INST-SCALAR-FCVTZ"
+          ],
+          "affected_units": [
+            "PTO-SCALAR-FCVTA",
+            "PTO-SCALAR-FCVTM",
+            "PTO-SCALAR-FCVTN",
+            "PTO-SCALAR-FCVTP",
+            "PTO-SCALAR-FCVTZ",
+            "PTO-SCALAR-MODEL-DISPATCH-FSU",
+            "PTO-SCALAR-MODEL-FSU-PROFILE"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "835ae4dbafd9fd65eda082ba8f83cb0825c9f2c0",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/205"
+        }
       ],
       "approvers": [
-        "PTO ISA maintainers"
+        "PTO ISA maintainers",
+        "zhoubot"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
       ],
       "baseline": "4d115387b8a8a3c135f78189778d38547e75c697",
       "created": "2026-08-11",
@@ -5329,7 +5811,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "0.58.1"
+        "0.58.1",
+        "0.58.5"
       ],
       "title": "Mnemonic and Encoded-Field Contract Closure"
     },
@@ -5374,7 +5857,10 @@
         "PTO-C-BSTOP-DECISION-BINDING-001",
         "PTO-C-SETC-TGT-SNAPSHOT-001",
         "PTO-L-BSTOP-DECISION-BINDING-001",
-        "PTO-SETC-TGT-ADR-CONTRACT-001"
+        "PTO-SETC-TGT-ADR-CONTRACT-001",
+        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001",
+        "PTO-B-HINT-LIFECYCLE-001",
+        "PTO-INST-BLOCK-B-HINT"
       ],
       "affected_units": [
         "PTO-BLOCK-BSTART",
@@ -5383,13 +5869,50 @@
         "PTO-BLOCK-L-BSTOP",
         "PTO-BLOCK-MODEL-STATE-BARG",
         "PTO-SCALAR-C-SETC-TGT",
-        "PTO-SCALAR-SETC-TGT"
+        "PTO-SCALAR-SETC-TGT",
+        "PTO-BLOCK-MODEL-DISPATCH-START",
+        "PTO-BLOCK-B-HINT",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-MODEL-DISPATCH-START"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "3918b6aa0ffcc73be79699d4e18c15d8ccc13ba2",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/192"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-HINT-LIFECYCLE-001",
+            "PTO-INST-BLOCK-B-HINT"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-HINT",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "6df97a3cf31aa83b2c90a8664c2ccb15ef74c8d9",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/195"
+        }
       ],
       "approvers": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "zhoubot"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
       ],
       "baseline": "4d115387b8a8a3c135f78189778d38547e75c697",
       "created": "2026-08-11",
@@ -5405,7 +5928,8 @@
       "superseded_by": [],
       "supersedes": [],
       "target_releases": [
-        "0.58.1"
+        "0.58.1",
+        "0.58.5"
       ],
       "title": "Bundle commit state uses BARG/BPCN"
     },
@@ -6029,7 +6553,17 @@
         "PTO-C-BSTOP-DECISION-BINDING-001",
         "PTO-CUBE-CELL-TRANSPORT-001",
         "PTO-L-BSTOP-DECISION-BINDING-001",
-        "PTO-TCVT-CONTRACT-001"
+        "PTO-TCVT-CONTRACT-001",
+        "PTO-REQ-INSTRUCTION-DISPATCH-001",
+        "PTO-REQ-SCALAR-BODY-ENTRY-001",
+        "PTO-FENTRY-RESTARTABLE-FRAME-001",
+        "PTO-FEXIT-RESTARTABLE-FRAME-001",
+        "PTO-FRET-RA-RESTARTABLE-FRAME-001",
+        "PTO-FRET-STK-RESTARTABLE-FRAME-001",
+        "PTO-INST-BLOCK-FENTRY",
+        "PTO-INST-BLOCK-FEXIT",
+        "PTO-INST-BLOCK-FRET-RA",
+        "PTO-INST-BLOCK-FRET-STK"
       ],
       "affected_units": [
         "PTO-BLOCK-B-CATR",
@@ -6040,13 +6574,67 @@
         "PTO-BLOCK-BSTOP",
         "PTO-BLOCK-C-BSTOP",
         "PTO-BLOCK-L-BSTOP",
-        "PTO-TILE-TCVT"
+        "PTO-TILE-TCVT",
+        "PTO-ARCH-DISPATCH-TOP-LEVEL",
+        "PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP",
+        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL",
+        "PTO-BLOCK-FENTRY",
+        "PTO-BLOCK-FEXIT",
+        "PTO-BLOCK-FRET-RA",
+        "PTO-BLOCK-FRET-STK",
+        "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-REQ-INSTRUCTION-DISPATCH-001",
+            "PTO-REQ-SCALAR-BODY-ENTRY-001"
+          ],
+          "affected_units": [
+            "PTO-ARCH-DISPATCH-TOP-LEVEL",
+            "PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP",
+            "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "8966a3e5a5e2bf5bc1d3264288e3cd315d2e2e32",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/191"
+        },
+        {
+          "affected_ndf": [
+            "PTO-FENTRY-RESTARTABLE-FRAME-001",
+            "PTO-FEXIT-RESTARTABLE-FRAME-001",
+            "PTO-FRET-RA-RESTARTABLE-FRAME-001",
+            "PTO-FRET-STK-RESTARTABLE-FRAME-001",
+            "PTO-INST-BLOCK-FENTRY",
+            "PTO-INST-BLOCK-FEXIT",
+            "PTO-INST-BLOCK-FRET-RA",
+            "PTO-INST-BLOCK-FRET-STK"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-FENTRY",
+            "PTO-BLOCK-FEXIT",
+            "PTO-BLOCK-FRET-RA",
+            "PTO-BLOCK-FRET-STK",
+            "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "835ae4dbafd9fd65eda082ba8f83cb0825c9f2c0",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/203"
+        }
       ],
       "approvers": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "zhoubot"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
       ],
       "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
@@ -6073,7 +6661,7 @@
       ],
       "path": "docs/status/decisions/0075-block-attributes-and-lifecycle.md",
       "rejected": null,
-      "release_impact": "not-required",
+      "release_impact": "required",
       "resolves": [],
       "status": "accepted",
       "superseded": null,
@@ -6083,7 +6671,8 @@
       ],
       "target_releases": [
         "0.58.1",
-        "0.58.2"
+        "0.58.2",
+        "0.58.5"
       ],
       "title": "Block attributes and lifecycle"
     },
@@ -6250,7 +6839,15 @@
         "PTO-TLOAD-MEMORY-001",
         "PTO-TPREFETCH-FOOTPRINT-001",
         "PTO-TSTORE-CUBE-001",
-        "PTO-TSTORE-MEMORY-001"
+        "PTO-TSTORE-MEMORY-001",
+        "PTO-INDEXED-TLSU-STRIDE-001",
+        "PTO-INST-BLOCK-B-IOR",
+        "PTO-INST-BLOCK-BSTART-MGATHER",
+        "PTO-INST-BLOCK-BSTART-MGATHER-CAS",
+        "PTO-INST-BLOCK-BSTART-MGATHER-MASK",
+        "PTO-INST-BLOCK-BSTART-MSCATTER",
+        "PTO-INST-BLOCK-BSTART-MSCATTER-MASK",
+        "PTO-REQ-TILE-001"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -6275,13 +6872,118 @@
         "PTO-TILE-MSCATTER-MASK",
         "PTO-TILE-TLOAD",
         "PTO-TILE-TPREFETCH",
-        "PTO-TILE-TSTORE"
+        "PTO-TILE-TSTORE",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-DISPATCH-DECODE",
+        "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+        "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+        "PTO-BLOCK-MODEL-STATE-TYPES",
+        "PTO-ARCH-PROFILE-RESET",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-STATE-DESCRIPTORS",
+        "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+        "PTO-TILE-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
+        "PTO-TILE-MODEL-MEMORY-ADDRESSING",
+        "PTO-TILE-MODEL-MEMORY-ATOMICS",
+        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-BSTART-MGATHER-CAS-SCHEMA-001",
+            "PTO-BSTART-MGATHER-MASK-SCHEMA-001",
+            "PTO-BSTART-MGATHER-SCHEMA-001",
+            "PTO-BSTART-MSCATTER-MASK-SCHEMA-001",
+            "PTO-BSTART-MSCATTER-SCHEMA-001",
+            "PTO-B-DATR-FIELDS-001",
+            "PTO-B-IOT-STREAM-001",
+            "PTO-INDEXED-TLSU-STRIDE-001",
+            "PTO-INST-BLOCK-B-IOR",
+            "PTO-INST-BLOCK-BSTART-MGATHER",
+            "PTO-INST-BLOCK-BSTART-MGATHER-CAS",
+            "PTO-INST-BLOCK-BSTART-MGATHER-MASK",
+            "PTO-INST-BLOCK-BSTART-MSCATTER",
+            "PTO-INST-BLOCK-BSTART-MSCATTER-MASK",
+            "PTO-MGATHER-BYTE-DISPLACEMENT-001",
+            "PTO-MGATHER-CAS-ATOMIC-001",
+            "PTO-MGATHER-CAS-PUBLICATION-001",
+            "PTO-MGATHER-MASK-PREDICATE-001",
+            "PTO-MGATHER-MASK-PUBLICATION-001",
+            "PTO-MGATHER-MASK-TYPE-002",
+            "PTO-MSCATTER-BYTE-DISPLACEMENT-001",
+            "PTO-MSCATTER-DUPLICATE-ORDER-001",
+            "PTO-MSCATTER-MASK-DUPLICATE-001",
+            "PTO-MSCATTER-MASK-PREDICATE-001",
+            "PTO-MSCATTER-MASK-TYPE-002",
+            "PTO-REQ-TILE-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-B-DATR",
+            "PTO-BLOCK-B-IOR",
+            "PTO-BLOCK-BSTART-MGATHER",
+            "PTO-BLOCK-BSTART-MGATHER-CAS",
+            "PTO-BLOCK-BSTART-MGATHER-MASK",
+            "PTO-BLOCK-BSTART-MSCATTER",
+            "PTO-BLOCK-BSTART-MSCATTER-MASK",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
+            "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+            "PTO-BLOCK-B-IOT",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+            "PTO-BLOCK-MODEL-DISPATCH-DECODE",
+            "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+            "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+            "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
+            "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
+            "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
+            "PTO-BLOCK-MODEL-STATE-TYPES",
+            "PTO-ARCH-PROFILE-RESET",
+            "PTO-TILE-MGATHER",
+            "PTO-TILE-MGATHER-CAS",
+            "PTO-TILE-MGATHER-MASK",
+            "PTO-TILE-MODEL-STATE-ALLOCATION",
+            "PTO-TILE-MODEL-STATE-DESCRIPTORS",
+            "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
+            "PTO-TILE-MODEL-STATE-TYPES",
+            "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
+            "PTO-TILE-MODEL-MEMORY-ADDRESSING",
+            "PTO-TILE-MODEL-MEMORY-ATOMICS",
+            "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
+            "PTO-TILE-MSCATTER",
+            "PTO-TILE-MSCATTER-MASK"
+          ],
+          "approvers": [
+            "zhoubot"
+          ],
+          "baseline": "cbcd6abb2dc4d7f933d4db1124fadd11934d4c56",
+          "date": "2026-09-01",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/209"
+        }
       ],
       "approvers": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "zhoubot"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex"
       ],
       "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
@@ -6302,7 +7004,7 @@
       ],
       "path": "docs/status/decisions/0078-tlsu-and-global-memory-operations.md",
       "rejected": null,
-      "release_impact": "not-required",
+      "release_impact": "required",
       "resolves": [],
       "status": "accepted",
       "superseded": null,
@@ -6312,7 +7014,8 @@
       ],
       "target_releases": [
         "0.58.1",
-        "0.58.2"
+        "0.58.2",
+        "0.58.5"
       ],
       "title": "TLSU and global-memory operations"
     },
@@ -6455,7 +7158,73 @@
         "PTO-TSHR-CONTRACT-001",
         "PTO-TSQRT-CONTRACT-001",
         "PTO-TSUB-CONTRACT-001",
-        "PTO-TXOR-CONTRACT-001"
+        "PTO-TXOR-CONTRACT-001",
+        "PTO-TILE-CARRIER-REINTERPRETATION-001",
+        "PTO-INST-BLOCK-BSTART-TMOV",
+        "PTO-INST-TILE-TADD",
+        "PTO-INST-TILE-TSUB",
+        "PTO-INST-TILE-TMUL",
+        "PTO-INST-TILE-TDIV",
+        "PTO-INST-TILE-TREM",
+        "PTO-INST-TILE-TMAX",
+        "PTO-INST-TILE-TMIN",
+        "PTO-INST-TILE-TABS",
+        "PTO-INST-TILE-TNEG",
+        "PTO-INST-TILE-TRELU",
+        "PTO-INST-TILE-TRECIP",
+        "PTO-INST-TILE-TRSQRT",
+        "PTO-INST-TILE-TSQRT",
+        "PTO-INST-TILE-TEXP",
+        "PTO-INST-TILE-TLOG",
+        "PTO-INST-TILE-TADDS",
+        "PTO-INST-TILE-TSUBS",
+        "PTO-INST-TILE-TMULS",
+        "PTO-INST-TILE-TDIVS",
+        "PTO-INST-TILE-TREMS",
+        "PTO-INST-TILE-TMAXS",
+        "PTO-INST-TILE-TMINS",
+        "PTO-INST-TILE-TAND",
+        "PTO-INST-TILE-TANDS",
+        "PTO-INST-TILE-TOR",
+        "PTO-INST-TILE-TORS",
+        "PTO-INST-TILE-TXOR",
+        "PTO-INST-TILE-TXORS",
+        "PTO-INST-TILE-TSHL",
+        "PTO-INST-TILE-TSHLS",
+        "PTO-INST-TILE-TSHR",
+        "PTO-INST-TILE-TSHRS",
+        "PTO-INST-TILE-TCVT",
+        "PTO-INST-TILE-TMOV",
+        "PTO-INST-TILE-TCONCAT",
+        "PTO-INST-TILE-TEXTRACT",
+        "PTO-INST-TILE-TINSERT",
+        "PTO-INST-TILE-TIMG2COL",
+        "PTO-TADDS-CONTRACT-001",
+        "PTO-TSUBS-CONTRACT-001",
+        "PTO-TMULS-CONTRACT-001",
+        "PTO-TDIVS-CONTRACT-001",
+        "PTO-TREMS-CONTRACT-001",
+        "PTO-TMAXS-CONTRACT-001",
+        "PTO-TMINS-CONTRACT-001",
+        "PTO-TANDS-CONTRACT-001",
+        "PTO-TORS-CONTRACT-001",
+        "PTO-TXORS-CONTRACT-001",
+        "PTO-TSHLS-CONTRACT-001",
+        "PTO-TSHRS-CONTRACT-001",
+        "PTO-TCONCAT-CONTRACT-001",
+        "PTO-TCMPS-CONTRACT-001",
+        "PTO-TSELS-CONTRACT-001",
+        "PTO-TGPR2T-CONTRACT-001",
+        "PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001",
+        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001",
+        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001",
+        "PTO-INST-BLOCK-B-DATR",
+        "PTO-INST-BLOCK-B-IOR",
+        "PTO-INST-TILE-TCMP",
+        "PTO-INST-TILE-TCMPS",
+        "PTO-INST-TILE-TGPR2T",
+        "PTO-INST-TILE-TSEL",
+        "PTO-INST-TILE-TSELS"
       ],
       "affected_units": [
         "PTO-BLOCK-B-DATR",
@@ -6493,13 +7262,278 @@
         "PTO-TILE-TSHR",
         "PTO-TILE-TSQRT",
         "PTO-TILE-TSUB",
-        "PTO-TILE-TXOR"
+        "PTO-TILE-TXOR",
+        "PTO-BLOCK-BSTART-TMOV",
+        "PTO-TILE-TADDS",
+        "PTO-TILE-TSUBS",
+        "PTO-TILE-TMULS",
+        "PTO-TILE-TDIVS",
+        "PTO-TILE-TREMS",
+        "PTO-TILE-TMAXS",
+        "PTO-TILE-TMINS",
+        "PTO-TILE-TANDS",
+        "PTO-TILE-TORS",
+        "PTO-TILE-TXORS",
+        "PTO-TILE-TSHLS",
+        "PTO-TILE-TSHRS",
+        "PTO-TILE-TCONCAT",
+        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
+        "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
+        "PTO-TILE-MODEL-LEGALITY-IMAGE-TO-COLUMN",
+        "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
+        "PTO-TILE-MODEL-EXECUTION-UNARY",
+        "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
+        "PTO-TILE-MODEL-NUMERIC-FORMATS",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION",
+        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+        "PTO-ARCH-PROFILE-RESET",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+        "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+        "PTO-BLOCK-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+        "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+        "PTO-TILE-MODEL-STATE-ALLOCATION",
+        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+        "PTO-TILE-MODEL-STATE-TYPES",
+        "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+        "PTO-TILE-MODEL-DISPATCH-LAYOUT-AND-REARRANGEMENT",
+        "PTO-TILE-TCMPS",
+        "PTO-TILE-TSELS",
+        "PTO-TILE-TGPR2T"
+      ],
+      "amendments": [
+        {
+          "affected_ndf": [
+            "PTO-TILE-CARRIER-REINTERPRETATION-001",
+            "PTO-INST-BLOCK-BSTART-TMOV",
+            "PTO-INST-TILE-TADD",
+            "PTO-INST-TILE-TSUB",
+            "PTO-INST-TILE-TMUL",
+            "PTO-INST-TILE-TDIV",
+            "PTO-INST-TILE-TREM",
+            "PTO-INST-TILE-TMAX",
+            "PTO-INST-TILE-TMIN",
+            "PTO-INST-TILE-TABS",
+            "PTO-INST-TILE-TNEG",
+            "PTO-INST-TILE-TRELU",
+            "PTO-INST-TILE-TRECIP",
+            "PTO-INST-TILE-TRSQRT",
+            "PTO-INST-TILE-TSQRT",
+            "PTO-INST-TILE-TEXP",
+            "PTO-INST-TILE-TLOG",
+            "PTO-INST-TILE-TADDS",
+            "PTO-INST-TILE-TSUBS",
+            "PTO-INST-TILE-TMULS",
+            "PTO-INST-TILE-TDIVS",
+            "PTO-INST-TILE-TREMS",
+            "PTO-INST-TILE-TMAXS",
+            "PTO-INST-TILE-TMINS",
+            "PTO-INST-TILE-TAND",
+            "PTO-INST-TILE-TANDS",
+            "PTO-INST-TILE-TOR",
+            "PTO-INST-TILE-TORS",
+            "PTO-INST-TILE-TXOR",
+            "PTO-INST-TILE-TXORS",
+            "PTO-INST-TILE-TSHL",
+            "PTO-INST-TILE-TSHLS",
+            "PTO-INST-TILE-TSHR",
+            "PTO-INST-TILE-TSHRS",
+            "PTO-INST-TILE-TCVT",
+            "PTO-INST-TILE-TMOV",
+            "PTO-INST-TILE-TCONCAT",
+            "PTO-INST-TILE-TEXTRACT",
+            "PTO-INST-TILE-TINSERT",
+            "PTO-INST-TILE-TIMG2COL",
+            "PTO-TADD-CONTRACT-001",
+            "PTO-TSUB-CONTRACT-001",
+            "PTO-TMUL-CONTRACT-001",
+            "PTO-TDIV-CONTRACT-001",
+            "PTO-TREM-CONTRACT-001",
+            "PTO-TMAX-CONTRACT-001",
+            "PTO-TMIN-CONTRACT-001",
+            "PTO-TABS-CONTRACT-001",
+            "PTO-TNEG-CONTRACT-001",
+            "PTO-TRELU-CONTRACT-001",
+            "PTO-TRECIP-CONTRACT-001",
+            "PTO-TRSQRT-CONTRACT-001",
+            "PTO-TSQRT-CONTRACT-001",
+            "PTO-TEXP-CONTRACT-001",
+            "PTO-TLOG-CONTRACT-001",
+            "PTO-TADDS-CONTRACT-001",
+            "PTO-TSUBS-CONTRACT-001",
+            "PTO-TMULS-CONTRACT-001",
+            "PTO-TDIVS-CONTRACT-001",
+            "PTO-TREMS-CONTRACT-001",
+            "PTO-TMAXS-CONTRACT-001",
+            "PTO-TMINS-CONTRACT-001",
+            "PTO-TAND-CONTRACT-001",
+            "PTO-TANDS-CONTRACT-001",
+            "PTO-TOR-CONTRACT-001",
+            "PTO-TORS-CONTRACT-001",
+            "PTO-TXOR-CONTRACT-001",
+            "PTO-TXORS-CONTRACT-001",
+            "PTO-TSHL-CONTRACT-001",
+            "PTO-TSHLS-CONTRACT-001",
+            "PTO-TSHR-CONTRACT-001",
+            "PTO-TSHRS-CONTRACT-001",
+            "PTO-TCVT-CONTRACT-001",
+            "PTO-TMOV-CONTRACT-001",
+            "PTO-TCONCAT-CONTRACT-001",
+            "PTO-TEXTRACT-CONTRACT-001",
+            "PTO-TINSERT-CONTRACT-001",
+            "PTO-TIMG2COL-CONTRACT-001"
+          ],
+          "affected_units": [
+            "PTO-BLOCK-BSTART-TMOV",
+            "PTO-TILE-TADD",
+            "PTO-TILE-TSUB",
+            "PTO-TILE-TMUL",
+            "PTO-TILE-TDIV",
+            "PTO-TILE-TREM",
+            "PTO-TILE-TMAX",
+            "PTO-TILE-TMIN",
+            "PTO-TILE-TABS",
+            "PTO-TILE-TNEG",
+            "PTO-TILE-TRELU",
+            "PTO-TILE-TRECIP",
+            "PTO-TILE-TRSQRT",
+            "PTO-TILE-TSQRT",
+            "PTO-TILE-TEXP",
+            "PTO-TILE-TLOG",
+            "PTO-TILE-TADDS",
+            "PTO-TILE-TSUBS",
+            "PTO-TILE-TMULS",
+            "PTO-TILE-TDIVS",
+            "PTO-TILE-TREMS",
+            "PTO-TILE-TMAXS",
+            "PTO-TILE-TMINS",
+            "PTO-TILE-TAND",
+            "PTO-TILE-TANDS",
+            "PTO-TILE-TOR",
+            "PTO-TILE-TORS",
+            "PTO-TILE-TXOR",
+            "PTO-TILE-TXORS",
+            "PTO-TILE-TSHL",
+            "PTO-TILE-TSHLS",
+            "PTO-TILE-TSHR",
+            "PTO-TILE-TSHRS",
+            "PTO-TILE-TCVT",
+            "PTO-TILE-TMOV",
+            "PTO-TILE-TCONCAT",
+            "PTO-TILE-TEXTRACT",
+            "PTO-TILE-TINSERT",
+            "PTO-TILE-TIMG2COL",
+            "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
+            "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
+            "PTO-TILE-MODEL-LEGALITY-IMAGE-TO-COLUMN",
+            "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
+            "PTO-TILE-MODEL-EXECUTION-UNARY",
+            "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
+            "PTO-TILE-MODEL-NUMERIC-FORMATS",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION"
+          ],
+          "approvers": [
+            "PTO ISA maintainers"
+          ],
+          "baseline": "0d3365264eee82827214e7240c8aeaf270a6f94a",
+          "date": "2026-08-30",
+          "issue": "https://github.com/PTO-ISA/pto-spec/issues/162"
+        },
+        {
+          "affected_ndf": [
+            "PTO-B-IOR-BINDING-001",
+            "PTO-B-DATR-FIELDS-001",
+            "PTO-TCMP-CONTRACT-001",
+            "PTO-TCMPS-CONTRACT-001",
+            "PTO-TSEL-CONTRACT-001",
+            "PTO-TSELS-CONTRACT-001",
+            "PTO-TGPR2T-CONTRACT-001",
+            "PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001",
+            "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001",
+            "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001",
+            "PTO-INST-BLOCK-B-DATR",
+            "PTO-INST-BLOCK-B-IOR",
+            "PTO-INST-TILE-TCMP",
+            "PTO-INST-TILE-TCMPS",
+            "PTO-INST-TILE-TGPR2T",
+            "PTO-INST-TILE-TSEL",
+            "PTO-INST-TILE-TSELS"
+          ],
+          "affected_units": [
+            "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
+            "PTO-ARCH-PROFILE-RESET",
+            "PTO-BLOCK-B-IOR",
+            "PTO-BLOCK-B-DATR",
+            "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+            "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
+            "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
+            "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
+            "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
+            "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
+            "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
+            "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
+            "PTO-BLOCK-MODEL-STATE-TYPES",
+            "PTO-TILE-MODEL-EXECUTION-COMPARISON",
+            "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
+            "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
+            "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
+            "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
+            "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
+            "PTO-TILE-MODEL-STATE-ALLOCATION",
+            "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
+            "PTO-TILE-MODEL-STATE-TYPES",
+            "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
+            "PTO-TILE-MODEL-DISPATCH-LAYOUT-AND-REARRANGEMENT",
+            "PTO-TILE-TCMP",
+            "PTO-TILE-TCMPS",
+            "PTO-TILE-TSEL",
+            "PTO-TILE-TSELS",
+            "PTO-TILE-TGPR2T"
+          ],
+          "approvers": [
+            "PTO ISA maintainers"
+          ],
+          "baseline": "e811355419182144784af802ff4c86d6a7014c70",
+          "date": "2026-08-31",
+          "issue": "https://github.com/PTO-ISA/pto-spec/pull/172"
+        }
       ],
       "approvers": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "PTO ISA maintainers"
       ],
       "authors": [
-        "Kevin Zhou <zhoubot@gmail.com>"
+        "Kevin Zhou <zhoubot@gmail.com>",
+        "Codex",
+        "PTO ISA maintainers"
       ],
       "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
       "created": "2026-08-21",
@@ -6538,7 +7572,7 @@
       ],
       "path": "docs/status/decisions/0080-tile-elementwise-and-irregular-operations.md",
       "rejected": null,
-      "release_impact": "not-required",
+      "release_impact": "required",
       "resolves": [],
       "status": "accepted",
       "superseded": null,
@@ -6548,7 +7582,8 @@
       ],
       "target_releases": [
         "0.58.1",
-        "0.58.2"
+        "0.58.2",
+        "0.58.5"
       ],
       "title": "Tile elementwise and irregular operations"
     },
@@ -8403,974 +9438,12 @@
         "0.58.5"
       ],
       "title": "TCVT CUBE_M16 and CUBE_M32 layout closure"
-    },
-    {
-      "accepted": "2026-08-31",
-      "affected_ndf": [
-        "PTO-REQ-INSTRUCTION-DISPATCH-001",
-        "PTO-REQ-INSTRUCTION-FETCH-001",
-        "PTO-REQ-PHYSICAL-MEMORY-BINDING-001"
-      ],
-      "affected_units": [
-        "PTO-ARCH-DISPATCH-TOP-LEVEL",
-        "PTO-ARCH-MEMORY-MODEL-ADDRESS-SPACE",
-        "PTO-ARCH-MEMORY-MODEL-INSTRUCTION-FETCH",
-        "PTO-ARCH-PROFILE-REFERENCE-PROFILE"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "e9b621ddce041ff2c770bef67adc41946db87295",
-      "created": "2026-08-29",
-      "id": "ADR-0111",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/179",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0111-asl-functional-model-execution-boundary.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "ASL instruction fetch and functional-model boundary"
-    },
-    {
-      "accepted": "2026-08-30",
-      "affected_ndf": [
-        "PTO-TILE-CARRIER-REINTERPRETATION-001",
-        "PTO-INST-BLOCK-BSTART-TMOV",
-        "PTO-INST-TILE-TADD",
-        "PTO-INST-TILE-TSUB",
-        "PTO-INST-TILE-TMUL",
-        "PTO-INST-TILE-TDIV",
-        "PTO-INST-TILE-TREM",
-        "PTO-INST-TILE-TMAX",
-        "PTO-INST-TILE-TMIN",
-        "PTO-INST-TILE-TABS",
-        "PTO-INST-TILE-TNEG",
-        "PTO-INST-TILE-TRELU",
-        "PTO-INST-TILE-TRECIP",
-        "PTO-INST-TILE-TRSQRT",
-        "PTO-INST-TILE-TSQRT",
-        "PTO-INST-TILE-TEXP",
-        "PTO-INST-TILE-TLOG",
-        "PTO-INST-TILE-TADDS",
-        "PTO-INST-TILE-TSUBS",
-        "PTO-INST-TILE-TMULS",
-        "PTO-INST-TILE-TDIVS",
-        "PTO-INST-TILE-TREMS",
-        "PTO-INST-TILE-TMAXS",
-        "PTO-INST-TILE-TMINS",
-        "PTO-INST-TILE-TAND",
-        "PTO-INST-TILE-TANDS",
-        "PTO-INST-TILE-TOR",
-        "PTO-INST-TILE-TORS",
-        "PTO-INST-TILE-TXOR",
-        "PTO-INST-TILE-TXORS",
-        "PTO-INST-TILE-TSHL",
-        "PTO-INST-TILE-TSHLS",
-        "PTO-INST-TILE-TSHR",
-        "PTO-INST-TILE-TSHRS",
-        "PTO-INST-TILE-TCVT",
-        "PTO-INST-TILE-TMOV",
-        "PTO-INST-TILE-TCONCAT",
-        "PTO-INST-TILE-TEXTRACT",
-        "PTO-INST-TILE-TINSERT",
-        "PTO-INST-TILE-TIMG2COL",
-        "PTO-TADD-CONTRACT-001",
-        "PTO-TSUB-CONTRACT-001",
-        "PTO-TMUL-CONTRACT-001",
-        "PTO-TDIV-CONTRACT-001",
-        "PTO-TREM-CONTRACT-001",
-        "PTO-TMAX-CONTRACT-001",
-        "PTO-TMIN-CONTRACT-001",
-        "PTO-TABS-CONTRACT-001",
-        "PTO-TNEG-CONTRACT-001",
-        "PTO-TRELU-CONTRACT-001",
-        "PTO-TRECIP-CONTRACT-001",
-        "PTO-TRSQRT-CONTRACT-001",
-        "PTO-TSQRT-CONTRACT-001",
-        "PTO-TEXP-CONTRACT-001",
-        "PTO-TLOG-CONTRACT-001",
-        "PTO-TADDS-CONTRACT-001",
-        "PTO-TSUBS-CONTRACT-001",
-        "PTO-TMULS-CONTRACT-001",
-        "PTO-TDIVS-CONTRACT-001",
-        "PTO-TREMS-CONTRACT-001",
-        "PTO-TMAXS-CONTRACT-001",
-        "PTO-TMINS-CONTRACT-001",
-        "PTO-TAND-CONTRACT-001",
-        "PTO-TANDS-CONTRACT-001",
-        "PTO-TOR-CONTRACT-001",
-        "PTO-TORS-CONTRACT-001",
-        "PTO-TXOR-CONTRACT-001",
-        "PTO-TXORS-CONTRACT-001",
-        "PTO-TSHL-CONTRACT-001",
-        "PTO-TSHLS-CONTRACT-001",
-        "PTO-TSHR-CONTRACT-001",
-        "PTO-TSHRS-CONTRACT-001",
-        "PTO-TCVT-CONTRACT-001",
-        "PTO-TMOV-CONTRACT-001",
-        "PTO-TCONCAT-CONTRACT-001",
-        "PTO-TEXTRACT-CONTRACT-001",
-        "PTO-TINSERT-CONTRACT-001",
-        "PTO-TIMG2COL-CONTRACT-001"
-      ],
-      "affected_units": [
-        "PTO-BLOCK-BSTART-TMOV",
-        "PTO-TILE-TADD",
-        "PTO-TILE-TSUB",
-        "PTO-TILE-TMUL",
-        "PTO-TILE-TDIV",
-        "PTO-TILE-TREM",
-        "PTO-TILE-TMAX",
-        "PTO-TILE-TMIN",
-        "PTO-TILE-TABS",
-        "PTO-TILE-TNEG",
-        "PTO-TILE-TRELU",
-        "PTO-TILE-TRECIP",
-        "PTO-TILE-TRSQRT",
-        "PTO-TILE-TSQRT",
-        "PTO-TILE-TEXP",
-        "PTO-TILE-TLOG",
-        "PTO-TILE-TADDS",
-        "PTO-TILE-TSUBS",
-        "PTO-TILE-TMULS",
-        "PTO-TILE-TDIVS",
-        "PTO-TILE-TREMS",
-        "PTO-TILE-TMAXS",
-        "PTO-TILE-TMINS",
-        "PTO-TILE-TAND",
-        "PTO-TILE-TANDS",
-        "PTO-TILE-TOR",
-        "PTO-TILE-TORS",
-        "PTO-TILE-TXOR",
-        "PTO-TILE-TXORS",
-        "PTO-TILE-TSHL",
-        "PTO-TILE-TSHLS",
-        "PTO-TILE-TSHR",
-        "PTO-TILE-TSHRS",
-        "PTO-TILE-TCVT",
-        "PTO-TILE-TMOV",
-        "PTO-TILE-TCONCAT",
-        "PTO-TILE-TEXTRACT",
-        "PTO-TILE-TINSERT",
-        "PTO-TILE-TIMG2COL",
-        "PTO-TILE-MODEL-LEGALITY-DTYPE-LAYOUT",
-        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
-        "PTO-TILE-MODEL-LEGALITY-LAYOUT-REARRANGEMENT",
-        "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
-        "PTO-TILE-MODEL-LEGALITY-IMAGE-TO-COLUMN",
-        "PTO-TILE-MODEL-EXECUTION-ELEMENTWISE",
-        "PTO-TILE-MODEL-EXECUTION-UNARY",
-        "PTO-TILE-MODEL-EXECUTION-REARRANGEMENT",
-        "PTO-TILE-MODEL-NUMERIC-FORMATS",
-        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
-        "PTO-BLOCK-MODEL-DISPATCH-TCVT-SCHEMA",
-        "PTO-BLOCK-MODEL-DISPATCH-TCVT-DESTINATION"
-      ],
-      "approvers": [
-        "PTO ISA maintainers"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "0d3365264eee82827214e7240c8aeaf270a6f94a",
-      "created": "2026-08-30",
-      "id": "ADR-0112",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/162",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0112-tile-operation-type-roles-and-source-reinterpretation.md",
-      "rejected": null,
-      "release_boundary": true,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Tile operation type roles and source reinterpretation"
-    },
-    {
-      "accepted": "2026-08-31",
-      "affected_ndf": [
-        "PTO-B-IOR-BINDING-001",
-        "PTO-B-DATR-FIELDS-001",
-        "PTO-TCMP-CONTRACT-001",
-        "PTO-TCMPS-CONTRACT-001",
-        "PTO-TSEL-CONTRACT-001",
-        "PTO-TSELS-CONTRACT-001",
-        "PTO-TGPR2T-CONTRACT-001",
-        "PTO-TILE-MODEL-DEFINEDNESS-PREDICATE-CELL-001",
-        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA-001",
-        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-BOUNDARY-001",
-        "PTO-INST-BLOCK-B-DATR",
-        "PTO-INST-BLOCK-B-IOR",
-        "PTO-INST-TILE-TCMP",
-        "PTO-INST-TILE-TCMPS",
-        "PTO-INST-TILE-TGPR2T",
-        "PTO-INST-TILE-TSEL",
-        "PTO-INST-TILE-TSELS"
-      ],
-      "affected_units": [
-        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
-        "PTO-ARCH-PROFILE-RESET",
-        "PTO-BLOCK-B-IOR",
-        "PTO-BLOCK-B-DATR",
-        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
-        "PTO-BLOCK-MODEL-DISPATCH-COMPARISON-SCHEMA",
-        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
-        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-SHAPE",
-        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
-        "PTO-BLOCK-MODEL-DISPATCH-TILE-EXECUTION",
-        "PTO-BLOCK-MODEL-DISPATCH-PREDICATE-DESTINATION",
-        "PTO-BLOCK-MODEL-DISPATCH-TGPR2T-SCHEMA",
-        "PTO-BLOCK-MODEL-DISPATCH-DESTINATION-AUXILIARY",
-        "PTO-BLOCK-MODEL-DISPATCH-SCALAR-SCHEMA",
-        "PTO-BLOCK-MODEL-DISPATCH-SHARED-CUBE-MATRIX",
-        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCALAR-SCHEMA",
-        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
-        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
-        "PTO-BLOCK-MODEL-STATE-TYPES",
-        "PTO-TILE-MODEL-EXECUTION-COMPARISON",
-        "PTO-TILE-MODEL-EXECUTION-POSTPROCESS",
-        "PTO-TILE-MODEL-EXECUTION-PREDICATE-CARRIERS",
-        "PTO-TILE-MODEL-LEGALITY-PREDICATE-CARRIERS",
-        "PTO-TILE-MODEL-LEGALITY-OPERAND-SCHEMA",
-        "PTO-TILE-MODEL-MEMORY-SHARED-MOVEMENT",
-        "PTO-TILE-MODEL-STATE-ALLOCATION",
-        "PTO-TILE-MODEL-STATE-SHARED-REGISTERS",
-        "PTO-TILE-MODEL-STATE-TYPES",
-        "PTO-TILE-MODEL-DEFINEDNESS-ELEMENTS",
-        "PTO-TILE-MODEL-DISPATCH-LAYOUT-AND-REARRANGEMENT",
-        "PTO-TILE-TCMP",
-        "PTO-TILE-TCMPS",
-        "PTO-TILE-TSEL",
-        "PTO-TILE-TSELS",
-        "PTO-TILE-TGPR2T"
-      ],
-      "approvers": [
-        "PTO ISA maintainers"
-      ],
-      "authors": [
-        "PTO ISA maintainers"
-      ],
-      "baseline": "e811355419182144784af802ff4c86d6a7014c70",
-      "created": "2026-08-31",
-      "id": "ADR-0113",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/pull/172",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0113-cube-predicate-carriers-and-tgpr2t-superseding-contract.md",
-      "rejected": null,
-      "release_boundary": true,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "CUBE predicate carriers and TGPR2T superseding contract"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-REQ-INSTRUCTION-DISPATCH-001",
-        "PTO-REQ-SCALAR-BODY-ENTRY-001"
-      ],
-      "affected_units": [
-        "PTO-ARCH-DISPATCH-TOP-LEVEL",
-        "PTO-BLOCK-MODEL-LIFECYCLE-ENTER-STOP",
-        "PTO-SCALAR-MODEL-DISPATCH-TOP-LEVEL"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "8966a3e5a5e2bf5bc1d3264288e3cd315d2e2e32",
-      "created": "2026-09-01",
-      "id": "ADR-0114",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/191",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0114-scalar-stream-enters-bundle-body.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Decoded scalar stream enters the active bundle body"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001"
-      ],
-      "affected_units": [
-        "PTO-BLOCK-MODEL-DISPATCH-START"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "3918b6aa0ffcc73be79699d4e18c15d8ccc13ba2",
-      "created": "2026-09-01",
-      "id": "ADR-0115",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/192",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0115-bstart-preserves-predecessor-transfer.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Following BSTART preserves the predecessor-selected transfer"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-INST-SCALAR-HL-LB-PO",
-        "PTO-INST-SCALAR-HL-LB-PR",
-        "PTO-INST-SCALAR-HL-LBP",
-        "PTO-INST-SCALAR-HL-LBU-PO",
-        "PTO-INST-SCALAR-HL-LBU-PR",
-        "PTO-INST-SCALAR-HL-LBUP",
-        "PTO-INST-SCALAR-HL-LD-PO",
-        "PTO-INST-SCALAR-HL-LD-PR",
-        "PTO-INST-SCALAR-HL-LDP",
-        "PTO-INST-SCALAR-HL-LH-PO",
-        "PTO-INST-SCALAR-HL-LH-PR",
-        "PTO-INST-SCALAR-HL-LHP",
-        "PTO-INST-SCALAR-HL-LHU-PO",
-        "PTO-INST-SCALAR-HL-LHU-PR",
-        "PTO-INST-SCALAR-HL-LHUP",
-        "PTO-INST-SCALAR-HL-LW-PO",
-        "PTO-INST-SCALAR-HL-LW-PR",
-        "PTO-INST-SCALAR-HL-LWP",
-        "PTO-INST-SCALAR-HL-LWU-PO",
-        "PTO-INST-SCALAR-HL-LWU-PR",
-        "PTO-INST-SCALAR-HL-LWUP",
-        "PTO-INST-SCALAR-HL-PRF",
-        "PTO-INST-SCALAR-HL-PRF-A",
-        "PTO-INST-SCALAR-HL-SB-PO",
-        "PTO-INST-SCALAR-HL-SB-PR",
-        "PTO-INST-SCALAR-HL-SBP",
-        "PTO-INST-SCALAR-HL-SD-PO",
-        "PTO-INST-SCALAR-HL-SD-PR",
-        "PTO-INST-SCALAR-HL-SD-UPO",
-        "PTO-INST-SCALAR-HL-SD-UPR",
-        "PTO-INST-SCALAR-HL-SDP",
-        "PTO-INST-SCALAR-HL-SDP-U",
-        "PTO-INST-SCALAR-HL-SH-PO",
-        "PTO-INST-SCALAR-HL-SH-PR",
-        "PTO-INST-SCALAR-HL-SH-UPO",
-        "PTO-INST-SCALAR-HL-SH-UPR",
-        "PTO-INST-SCALAR-HL-SHP",
-        "PTO-INST-SCALAR-HL-SHP-U",
-        "PTO-INST-SCALAR-HL-SW-PO",
-        "PTO-INST-SCALAR-HL-SW-PR",
-        "PTO-INST-SCALAR-HL-SW-UPO",
-        "PTO-INST-SCALAR-HL-SW-UPR",
-        "PTO-INST-SCALAR-HL-SWP",
-        "PTO-INST-SCALAR-HL-SWP-U",
-        "PTO-INST-SCALAR-LB",
-        "PTO-INST-SCALAR-LBU",
-        "PTO-INST-SCALAR-LD",
-        "PTO-INST-SCALAR-LH",
-        "PTO-INST-SCALAR-LHU",
-        "PTO-INST-SCALAR-LW",
-        "PTO-INST-SCALAR-LWU",
-        "PTO-INST-SCALAR-PRF",
-        "PTO-INST-SCALAR-SB",
-        "PTO-INST-SCALAR-SD",
-        "PTO-INST-SCALAR-SD-U",
-        "PTO-INST-SCALAR-SH",
-        "PTO-INST-SCALAR-SH-U",
-        "PTO-INST-SCALAR-SW",
-        "PTO-INST-SCALAR-SW-U",
-        "PTO-REQ-AGU-SRCRTYPE-001"
-      ],
-      "affected_units": [
-        "PTO-SCALAR-HL-LB-PO",
-        "PTO-SCALAR-HL-LB-PR",
-        "PTO-SCALAR-HL-LBP",
-        "PTO-SCALAR-HL-LBU-PO",
-        "PTO-SCALAR-HL-LBU-PR",
-        "PTO-SCALAR-HL-LBUP",
-        "PTO-SCALAR-HL-LD-PO",
-        "PTO-SCALAR-HL-LD-PR",
-        "PTO-SCALAR-HL-LDP",
-        "PTO-SCALAR-HL-LH-PO",
-        "PTO-SCALAR-HL-LH-PR",
-        "PTO-SCALAR-HL-LHP",
-        "PTO-SCALAR-HL-LHU-PO",
-        "PTO-SCALAR-HL-LHU-PR",
-        "PTO-SCALAR-HL-LHUP",
-        "PTO-SCALAR-HL-LW-PO",
-        "PTO-SCALAR-HL-LW-PR",
-        "PTO-SCALAR-HL-LWP",
-        "PTO-SCALAR-HL-LWU-PO",
-        "PTO-SCALAR-HL-LWU-PR",
-        "PTO-SCALAR-HL-LWUP",
-        "PTO-SCALAR-HL-PRF",
-        "PTO-SCALAR-HL-PRF-A",
-        "PTO-SCALAR-HL-SB-PO",
-        "PTO-SCALAR-HL-SB-PR",
-        "PTO-SCALAR-HL-SBP",
-        "PTO-SCALAR-HL-SD-PO",
-        "PTO-SCALAR-HL-SD-PR",
-        "PTO-SCALAR-HL-SD-UPO",
-        "PTO-SCALAR-HL-SD-UPR",
-        "PTO-SCALAR-HL-SDP",
-        "PTO-SCALAR-HL-SDP-U",
-        "PTO-SCALAR-HL-SH-PO",
-        "PTO-SCALAR-HL-SH-PR",
-        "PTO-SCALAR-HL-SH-UPO",
-        "PTO-SCALAR-HL-SH-UPR",
-        "PTO-SCALAR-HL-SHP",
-        "PTO-SCALAR-HL-SHP-U",
-        "PTO-SCALAR-HL-SW-PO",
-        "PTO-SCALAR-HL-SW-PR",
-        "PTO-SCALAR-HL-SW-UPO",
-        "PTO-SCALAR-HL-SW-UPR",
-        "PTO-SCALAR-HL-SWP",
-        "PTO-SCALAR-HL-SWP-U",
-        "PTO-SCALAR-LB",
-        "PTO-SCALAR-LBU",
-        "PTO-SCALAR-LD",
-        "PTO-SCALAR-LH",
-        "PTO-SCALAR-LHU",
-        "PTO-SCALAR-LW",
-        "PTO-SCALAR-LWU",
-        "PTO-SCALAR-MODEL-DISPATCH-AGU",
-        "PTO-SCALAR-MODEL-DISPATCH-DECODE",
-        "PTO-SCALAR-PRF",
-        "PTO-SCALAR-SB",
-        "PTO-SCALAR-SD",
-        "PTO-SCALAR-SD-U",
-        "PTO-SCALAR-SH",
-        "PTO-SCALAR-SH-U",
-        "PTO-SCALAR-SW",
-        "PTO-SCALAR-SW-U"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "1f338aa0e4c46e21eb80d4465b3430e906a7c54f",
-      "created": "2026-09-01",
-      "id": "ADR-0116",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/193",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0116-normalize-agu-srcrtype-encoding.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Normalize the AGU SrcRType arithmetic modifier encoding"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-HL-BFI-DECISION-BINDING-001",
-        "PTO-INST-SCALAR-HL-BFI"
-      ],
-      "affected_units": [
-        "PTO-SCALAR-HL-BFI",
-        "PTO-SCALAR-MODEL-ALU-BITFIELD",
-        "PTO-SCALAR-MODEL-ALU-SEMANTICS",
-        "PTO-SCALAR-MODEL-DISPATCH-ALU"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "b83b23930510c3ea96ec81b9838ce6c6a0929a4c",
-      "created": "2026-09-01",
-      "id": "ADR-0117",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/194",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0117-byte-granular-hl-bfi.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Define HL.BFI as byte-granular insertion"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-B-HINT-LIFECYCLE-001",
-        "PTO-INST-BLOCK-B-HINT"
-      ],
-      "affected_units": [
-        "PTO-BLOCK-B-HINT",
-        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "6df97a3cf31aa83b2c90a8664c2ccb15ef74c8d9",
-      "created": "2026-09-01",
-      "id": "ADR-0118",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/195",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0118-trace-preserves-predecessor-transfer.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "B.HINT TRACE preserves the predecessor-selected transfer"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-FCVTA-DECISION-BINDING-001",
-        "PTO-FCVTM-DECISION-BINDING-001",
-        "PTO-FCVTN-DECISION-BINDING-001",
-        "PTO-FCVTP-DECISION-BINDING-001",
-        "PTO-FCVTZ-DECISION-BINDING-001",
-        "PTO-INST-SCALAR-FADD",
-        "PTO-INST-SCALAR-FCVT",
-        "PTO-INST-SCALAR-FCVTA",
-        "PTO-INST-SCALAR-FCVTM",
-        "PTO-INST-SCALAR-FCVTN",
-        "PTO-INST-SCALAR-FCVTP",
-        "PTO-INST-SCALAR-FCVTZ",
-        "PTO-INST-SCALAR-FDIV",
-        "PTO-INST-SCALAR-FEXP",
-        "PTO-INST-SCALAR-FMADD",
-        "PTO-INST-SCALAR-FMSUB",
-        "PTO-INST-SCALAR-FMUL",
-        "PTO-INST-SCALAR-FNMADD",
-        "PTO-INST-SCALAR-FNMSUB",
-        "PTO-INST-SCALAR-FRECIP",
-        "PTO-INST-SCALAR-FSQRT",
-        "PTO-INST-SCALAR-FSUB",
-        "PTO-INST-SCALAR-SCVTF",
-        "PTO-INST-SCALAR-UCVTF",
-        "PTO-SCVTF-DECISION-BINDING-001",
-        "PTO-UCVTF-DECISION-BINDING-001"
-      ],
-      "affected_units": [
-        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
-        "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
-        "PTO-SCALAR-FADD",
-        "PTO-SCALAR-FCVT",
-        "PTO-SCALAR-FCVTA",
-        "PTO-SCALAR-FCVTM",
-        "PTO-SCALAR-FCVTN",
-        "PTO-SCALAR-FCVTP",
-        "PTO-SCALAR-FCVTZ",
-        "PTO-SCALAR-FDIV",
-        "PTO-SCALAR-FEXP",
-        "PTO-SCALAR-FMADD",
-        "PTO-SCALAR-FMSUB",
-        "PTO-SCALAR-FMUL",
-        "PTO-SCALAR-FNMADD",
-        "PTO-SCALAR-FNMSUB",
-        "PTO-SCALAR-FRECIP",
-        "PTO-SCALAR-FSQRT",
-        "PTO-SCALAR-FSUB",
-        "PTO-SCALAR-SCVTF",
-        "PTO-SCALAR-UCVTF"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "dba352e1eed67e365f5fa3d8f8987f9454900ed0",
-      "created": "2026-09-01",
-      "id": "ADR-0119",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/196",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0119-finite-scalar-floating-reference-profile.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Bind finite scalar FP32 and FP64 pto-v0 reference semantics"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-INST-SCALAR-CSEL"
-      ],
-      "affected_units": [
-        "PTO-SCALAR-CSEL",
-        "PTO-SCALAR-MODEL-DISPATCH-DECODE"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "661b9bd19aafc5faafd74803d0f8ec5a6f2d1cf1",
-      "created": "2026-09-01",
-      "id": "ADR-0120",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/197",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0120-csel-negate-selector-encoding.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Assign CSEL raw selector 10 to false-source negation"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-BLOCK-MSET-FILL-001",
-        "PTO-INST-BLOCK-MSET"
-      ],
-      "affected_units": [
-        "PTO-BLOCK-MSET",
-        "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
-        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
-        "PTO-SCALAR-MODEL-AGU-MEMORY"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "27f41909deffce3be07360a0c82e5a7f28e6e468",
-      "created": "2026-09-01",
-      "id": "ADR-0121",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/198",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0121-mset-complete-xlen-length.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Restore MSET complete-XLEN arbitrary length semantics"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-FENTRY-RESTARTABLE-FRAME-001",
-        "PTO-FEXIT-RESTARTABLE-FRAME-001",
-        "PTO-FRET-RA-RESTARTABLE-FRAME-001",
-        "PTO-FRET-STK-RESTARTABLE-FRAME-001",
-        "PTO-INST-BLOCK-FENTRY",
-        "PTO-INST-BLOCK-FEXIT",
-        "PTO-INST-BLOCK-FRET-RA",
-        "PTO-INST-BLOCK-FRET-STK"
-      ],
-      "affected_units": [
-        "PTO-BLOCK-FENTRY",
-        "PTO-BLOCK-FEXIT",
-        "PTO-BLOCK-FRET-RA",
-        "PTO-BLOCK-FRET-STK",
-        "PTO-BLOCK-MODEL-LIFECYCLE-LIFETIME"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "835ae4dbafd9fd65eda082ba8f83cb0825c9f2c0",
-      "created": "2026-09-01",
-      "id": "ADR-0122",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/203",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0122-frame-lifecycle-architectural-sp.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Bind frame lifecycle to architectural sp GPR1"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-FCVTA-DECISION-BINDING-001",
-        "PTO-FCVTM-DECISION-BINDING-001",
-        "PTO-FCVTN-DECISION-BINDING-001",
-        "PTO-FCVTP-DECISION-BINDING-001",
-        "PTO-FCVTZ-DECISION-BINDING-001",
-        "PTO-INST-SCALAR-FCVTA",
-        "PTO-INST-SCALAR-FCVTM",
-        "PTO-INST-SCALAR-FCVTN",
-        "PTO-INST-SCALAR-FCVTP",
-        "PTO-INST-SCALAR-FCVTZ"
-      ],
-      "affected_units": [
-        "PTO-SCALAR-FCVTA",
-        "PTO-SCALAR-FCVTM",
-        "PTO-SCALAR-FCVTN",
-        "PTO-SCALAR-FCVTP",
-        "PTO-SCALAR-FCVTZ",
-        "PTO-SCALAR-MODEL-DISPATCH-FSU",
-        "PTO-SCALAR-MODEL-FSU-PROFILE"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "835ae4dbafd9fd65eda082ba8f83cb0825c9f2c0",
-      "created": "2026-09-01",
-      "id": "ADR-0123",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/205",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0123-fp-to-integer-dsttype-encoding.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Restore FP-to-integer raw DstType encoding"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-COMMON-CONVERSION-PROFILE-001",
-        "PTO-FCVTA-DECISION-BINDING-001",
-        "PTO-FCVTM-DECISION-BINDING-001",
-        "PTO-FCVTN-DECISION-BINDING-001",
-        "PTO-FCVTP-DECISION-BINDING-001",
-        "PTO-FCVTZ-DECISION-BINDING-001",
-        "PTO-INST-SCALAR-FCVT",
-        "PTO-INST-SCALAR-FCVTA",
-        "PTO-INST-SCALAR-FCVTM",
-        "PTO-INST-SCALAR-FCVTN",
-        "PTO-INST-SCALAR-FCVTP",
-        "PTO-INST-SCALAR-FCVTZ",
-        "PTO-INST-SCALAR-SCVTF",
-        "PTO-INST-SCALAR-UCVTF",
-        "PTO-SCVTF-DECISION-BINDING-001",
-        "PTO-TCVT-CONTRACT-001",
-        "PTO-UCVTF-DECISION-BINDING-001"
-      ],
-      "affected_units": [
-        "PTO-ARCH-PROFILE-E8M0-CONVERSION",
-        "PTO-ARCH-PROFILE-MATRIX-QUANTIZATION",
-        "PTO-ARCH-PROFILE-REFERENCE-CONVERSION",
-        "PTO-ARCH-PROFILE-REFERENCE-PROFILE",
-        "PTO-ARCH-PROFILE-REFERENCE-QUANTIZATION",
-        "PTO-SCALAR-FCVT",
-        "PTO-SCALAR-FCVTA",
-        "PTO-SCALAR-FCVTM",
-        "PTO-SCALAR-FCVTN",
-        "PTO-SCALAR-FCVTP",
-        "PTO-SCALAR-FCVTZ",
-        "PTO-SCALAR-MODEL-DISPATCH-FSU",
-        "PTO-SCALAR-MODEL-FSU-PROFILE",
-        "PTO-SCALAR-SCVTF",
-        "PTO-SCALAR-UCVTF",
-        "PTO-TILE-MODEL-NUMERIC-FORMATS",
-        "PTO-TILE-TCVT"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "7c1fea1f866eb9fc787a7935de26228ca01483c9",
-      "created": "2026-09-01",
-      "id": "ADR-0124",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/206",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0124-finite-scalar-fp16-destination.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Complete scalar conversion and shared Tile conversion semantics"
-    },
-    {
-      "accepted": "2026-09-01",
-      "affected_ndf": [
-        "PTO-BSTART-MGATHER-CAS-SCHEMA-001",
-        "PTO-BSTART-MGATHER-MASK-SCHEMA-001",
-        "PTO-BSTART-MGATHER-SCHEMA-001",
-        "PTO-BSTART-MSCATTER-MASK-SCHEMA-001",
-        "PTO-BSTART-MSCATTER-SCHEMA-001",
-        "PTO-B-DATR-FIELDS-001",
-        "PTO-B-IOT-STREAM-001",
-        "PTO-INDEXED-TLSU-STRIDE-001",
-        "PTO-INST-BLOCK-B-IOR",
-        "PTO-INST-BLOCK-BSTART-MGATHER",
-        "PTO-INST-BLOCK-BSTART-MGATHER-CAS",
-        "PTO-INST-BLOCK-BSTART-MGATHER-MASK",
-        "PTO-INST-BLOCK-BSTART-MSCATTER",
-        "PTO-INST-BLOCK-BSTART-MSCATTER-MASK",
-        "PTO-MGATHER-BYTE-DISPLACEMENT-001",
-        "PTO-MGATHER-CAS-ATOMIC-001",
-        "PTO-MGATHER-CAS-PUBLICATION-001",
-        "PTO-MGATHER-MASK-PREDICATE-001",
-        "PTO-MGATHER-MASK-PUBLICATION-001",
-        "PTO-MGATHER-MASK-TYPE-002",
-        "PTO-MSCATTER-BYTE-DISPLACEMENT-001",
-        "PTO-MSCATTER-DUPLICATE-ORDER-001",
-        "PTO-MSCATTER-MASK-DUPLICATE-001",
-        "PTO-MSCATTER-MASK-PREDICATE-001",
-        "PTO-MSCATTER-MASK-TYPE-002",
-        "PTO-REQ-TILE-001"
-      ],
-      "affected_units": [
-        "PTO-BLOCK-B-DATR",
-        "PTO-BLOCK-B-IOR",
-        "PTO-BLOCK-BSTART-MGATHER",
-        "PTO-BLOCK-BSTART-MGATHER-CAS",
-        "PTO-BLOCK-BSTART-MGATHER-MASK",
-        "PTO-BLOCK-BSTART-MSCATTER",
-        "PTO-BLOCK-BSTART-MSCATTER-MASK",
-        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER",
-        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-CAS",
-        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MGATHER-MASK",
-        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER",
-        "PTO-BLOCK-MODEL-DISPATCH-TLSU-MSCATTER-MASK",
-        "PTO-BLOCK-MODEL-DISPATCH-TILE-SCHEMA",
-        "PTO-BLOCK-MODEL-DISPATCH-DESCRIPTOR-LEGALITY",
-        "PTO-BLOCK-B-IOT",
-        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
-        "PTO-BLOCK-MODEL-DISPATCH-DECODE",
-        "PTO-BLOCK-MODEL-LIFECYCLE-RESET",
-        "PTO-BLOCK-MODEL-OPERANDS-LOCAL-GENERATION",
-        "PTO-BLOCK-MODEL-OPERANDS-PORTABLE-CARRIERS",
-        "PTO-BLOCK-MODEL-OPERANDS-SUBVIEW-DESCRIPTOR",
-        "PTO-BLOCK-MODEL-OPERANDS-TILE-BINDINGS",
-        "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
-        "PTO-BLOCK-MODEL-STATE-TYPES",
-        "PTO-ARCH-PROFILE-RESET",
-        "PTO-TILE-MGATHER",
-        "PTO-TILE-MGATHER-CAS",
-        "PTO-TILE-MGATHER-MASK",
-        "PTO-TILE-MODEL-STATE-ALLOCATION",
-        "PTO-TILE-MODEL-STATE-DESCRIPTORS",
-        "PTO-TILE-MODEL-STATE-LOCAL-REGISTERS",
-        "PTO-TILE-MODEL-STATE-TYPES",
-        "PTO-TILE-MODEL-LEGALITY-MEMORY-SCHEMA",
-        "PTO-TILE-MODEL-MEMORY-ADDRESSING",
-        "PTO-TILE-MODEL-MEMORY-ATOMICS",
-        "PTO-TILE-MODEL-MEMORY-GATHER-SCATTER",
-        "PTO-TILE-MSCATTER",
-        "PTO-TILE-MSCATTER-MASK"
-      ],
-      "approvers": [
-        "zhoubot"
-      ],
-      "authors": [
-        "Codex"
-      ],
-      "baseline": "cbcd6abb2dc4d7f933d4db1124fadd11934d4c56",
-      "created": "2026-09-01",
-      "id": "ADR-0125",
-      "implementation_issue": "https://github.com/PTO-ISA/pto-spec/issues/209",
-      "legacy_ids": [],
-      "path": "docs/status/decisions/0125-indexed-tlsu-row-stride.md",
-      "rejected": null,
-      "release_impact": "required",
-      "resolves": [],
-      "status": "accepted",
-      "superseded": null,
-      "superseded_by": [],
-      "supersedes": [],
-      "target_releases": [
-        "0.58.5"
-      ],
-      "title": "Bind indexed TLSU row-stride addressing"
     }
   ],
   "schema": "pto.adr-index",
   "summary": {
     "draft_count": 10,
     "legacy_id_count": 198,
-    "record_count": 119
+    "record_count": 104
   }
 }

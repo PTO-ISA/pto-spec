@@ -105,7 +105,9 @@ it is not itself a byte stride.
 - Complete-footprint preflight, precise faults, restart, PTO-TSO events,
   source snapshots, destination publication, PE masks, and cross-PE conflict
   obligations are unchanged.
-- Indexed TLSU already uses byte displacements and is unchanged.
+- Indexed TLSU uses its separately owned base-plus-element-row-stride and
+  logical-index contract in ADR-0078; this dense TLOAD/TSTORE decision does not
+  redefine that interface.
 - `TPREFETCH` retains its separately owned logical-element row-stride contract;
   this decision does not change its encoding or address formula.
 - No compiler, emulator, timing model, benchmark, or backend mechanism becomes

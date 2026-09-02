@@ -233,7 +233,7 @@ class AdrRecordTest(unittest.TestCase):
                     for row in index["records"]
                     if row.get("release_boundary") is True
                 },
-                {"ADR-0099", "ADR-0102", "ADR-0108", "ADR-0110", "ADR-0112", "ADR-0113"},
+                {"ADR-0099", "ADR-0102", "ADR-0108", "ADR-0110"},
             )
             self.assertTrue(
                 all(
@@ -529,7 +529,70 @@ class AdrRecordTest(unittest.TestCase):
             self.assertEqual(record.authors, ("architect",))
             self.assertEqual(record.target_releases, ("unassigned",))
             self.assertFalse(record.release_boundary)
+            self.assertFalse(record.interface_change)
             self.assertEqual(record.path, path)
+
+    def test_new_adr_number_requires_explicit_interface_change(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with self.assertRaisesRegex(ValueError, "interface_change=true"):
+                parse_adr(
+                    self.write_metadata(
+                        root,
+                        name="0111-example.md",
+                        id="ADR-0111",
+                    )
+                )
+            record = parse_adr(
+                self.write_metadata(
+                    root,
+                    name="0111-example.md",
+                    id="ADR-0111",
+                    interface_change=True,
+                )
+            )
+            self.assertTrue(record.interface_change)
+
+    def test_reserved_gap_number_cannot_be_reused(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "reserved historical ADR number"):
+                parse_adr(
+                    self.write_metadata(
+                        Path(directory),
+                        name="0104-example.md",
+                        id="ADR-0104",
+                    )
+                )
+
+    def test_interface_change_must_be_boolean(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaisesRegex(ValueError, "interface_change must be a boolean"):
+                parse_adr(
+                    self.write_metadata(
+                        Path(directory),
+                        interface_change="true",
+                    )
+                )
+
+    def test_amendment_provenance_is_parsed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            amendment = {
+                "date": "2026-09-01",
+                "baseline": "4be7d809e79af23401073edaf80d8cca82ccef95",
+                "approvers": ["reviewer"],
+                "issue": "https://example.com/issues/1",
+                "affected_ndf": ["PTO-EXAMPLE-CONTRACT"],
+                "affected_units": ["PTO-SCALAR-EXAMPLE"],
+            }
+            record = parse_adr(
+                self.write_metadata(
+                    Path(directory),
+                    affected_ndf=["PTO-EXAMPLE-CONTRACT"],
+                    affected_units=["PTO-SCALAR-EXAMPLE"],
+                    amendments=[amendment],
+                )
+            )
+            self.assertEqual(record.amendments[0].baseline, amendment["baseline"])
 
     def test_release_boundary_must_be_boolean(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -609,6 +672,21 @@ class AdrRecordTest(unittest.TestCase):
             path = self.write_metadata(Path(directory), affected_ndf=["UNKNOWN-NDF"])
             with self.assertRaisesRegex(ValueError, "affected_ndf"):
                 parse_adr(path)
+
+    def test_downstream_asl_model_identifiers_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for field in ("affected_ndf", "affected_units"):
+                with self.subTest(field=field):
+                    path = self.write_metadata(
+                        root,
+                        **{field: ["PTO-MODEL-STEP-001"]},
+                    )
+                    with self.assertRaisesRegex(
+                        ValueError,
+                        "downstream ASL-Model identifier PTO-MODEL-STEP-001",
+                    ):
+                        parse_adr(path)
 
     def test_absolute_implementation_issue_uri_is_accepted(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -696,6 +774,32 @@ class AdrRecordTest(unittest.TestCase):
             },
         )
 
+    def test_schema_defines_interface_change_and_rejects_model_namespace(self) -> None:
+        schema = json.loads(
+            (ROOT / "spec/schemas/pto-adr.schema.json").read_text(encoding="utf-8")
+        )
+        self.assertNotIn("interface_change", schema["required"])
+        self.assertEqual(
+            schema["properties"]["interface_change"]["type"],
+            "boolean",
+        )
+        self.assertEqual(
+            schema["properties"]["affected_ndf"]["items"]["not"]["pattern"],
+            "^PTO-MODEL-",
+        )
+        self.assertEqual(
+            schema["properties"]["affected_units"]["items"]["not"]["pattern"],
+            "^PTO-MODEL-",
+        )
+        self.assertEqual(schema["properties"]["id"]["not"]["const"], "ADR-0104")
+        self.assertTrue(
+            any(
+                row.get("then", {}).get("properties", {}).get("interface_change")
+                == {"const": True}
+                for row in schema["allOf"]
+            )
+        )
+
     def test_duplicate_adr_ids_are_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -710,6 +814,14 @@ class AdrRecordTest(unittest.TestCase):
             record = self.parsed_record(Path(directory), 75, resolves=["ADR-9999"])
             self.assertTrue(
                 any("unknown ADR reference ADR-9999" in error for error in validate_adr_graph([record]))
+            )
+
+    def test_future_adr_numbers_must_be_contiguous(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            record = self.parsed_record(root, 112, interface_change=True)
+            self.assertTrue(
+                any("contiguous from ADR-0111" in error for error in validate_adr_graph([record]))
             )
 
     def test_supersession_cycles_are_rejected(self) -> None:

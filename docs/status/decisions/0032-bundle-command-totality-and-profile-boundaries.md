@@ -4,10 +4,12 @@
   "title": "Bundle-command totality and PTO-v0 profile boundaries",
   "status": "accepted",
   "authors": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "Codex"
   ],
   "approvers": [
-    "Kevin Zhou <zhoubot@gmail.com>"
+    "Kevin Zhou <zhoubot@gmail.com>",
+    "zhoubot"
   ],
   "created": "2026-07-30",
   "accepted": "2026-07-30",
@@ -15,7 +17,8 @@
   "superseded": null,
   "baseline": "8054a21fc7f98318f936b1dff9d2132b2aa990be",
   "target_releases": [
-    "unassigned"
+    "unassigned",
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-B-CATR-CONTROL-001",
@@ -80,7 +83,8 @@
     "PTO-HL-QPUSH-GQM-001",
     "PTO-L-BSTOP-DECISION-BINDING-001",
     "PTO-MCOPY-RESTART-001",
-    "PTO-REQ-BUNDLE-STATE-001"
+    "PTO-REQ-BUNDLE-STATE-001",
+    "PTO-INST-BLOCK-MSET"
   ],
   "affected_units": [
     "PTO-BLOCK-B-CATR",
@@ -190,14 +194,35 @@
     "PTO-BLOCK-MODEL-STATE-DESCRIPTOR-STATE",
     "PTO-BLOCK-MODEL-STATE-TYPES",
     "PTO-BLOCK-MSET",
-    "PTO-BLOCK-XB"
+    "PTO-BLOCK-XB",
+    "PTO-SCALAR-MODEL-AGU-MEMORY"
   ],
   "resolves": [],
   "supersedes": [],
   "superseded_by": [],
   "implementation_issue": null,
   "release_impact": "required",
-  "legacy_ids": []
+  "legacy_ids": [],
+  "amendments": [
+    {
+      "date": "2026-09-01",
+      "baseline": "27f41909deffce3be07360a0c82e5a7f28e6e468",
+      "approvers": [
+        "zhoubot"
+      ],
+      "issue": "https://github.com/PTO-ISA/pto-spec/issues/198",
+      "affected_ndf": [
+        "PTO-BLOCK-MSET-FILL-001",
+        "PTO-INST-BLOCK-MSET"
+      ],
+      "affected_units": [
+        "PTO-BLOCK-MSET",
+        "PTO-BLOCK-MODEL-COMMIT-EFFECTS",
+        "PTO-BLOCK-MODEL-DISPATCH-COMMANDS",
+        "PTO-SCALAR-MODEL-AGU-MEMORY"
+      ]
+    }
+  ]
 }
 ---
 # ADR-0032: Bundle-command totality and PTO-v0 profile boundaries
@@ -277,9 +302,10 @@ All remaining forms have a defined effect:
 - dimension, body-address, scalar binding, tile binding, control-attribute,
   and data-attribute fields are stored without truncation in their named
   bundle state;
-- `MSET` accepts an XLEN length from 0 through 63 bytes, including zero
-  length, and rejects larger values before memory or last-command state
-  changes;
+- `MSET` consumes the complete unsigned XLEN byte length. Zero remains a
+  successful memory-free no-op; every non-wrapping range proceeds through the
+  ordinary data-access checks, and a fixed reference-model bound is not an ISA
+  legality limit;
 - Decision 152 in ADR 0084 supersedes the former `MCOPY` 63-byte bound and
   snapshot rule:
   `MCOPY` accepts its complete XLEN length, rejects wrapping or overlapping
@@ -351,3 +377,7 @@ representable execution and missing/incompatible binding rollback.
 - Direct tile and bundle commit use the same canonical operation schemas.
 - Future operands require a catalog/default update and executable evidence;
   they cannot silently inherit an unrelated header field.
+
+Issue [#198](https://github.com/PTO-ISA/pto-spec/issues/198) records the MSET
+correction. The removed 63-byte ceiling was a bounded-model implementation
+artifact and therefore did not allocate a new ADR.
