@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/schemas/pto-closure-run-envelope-v1.schema.json",
+  "title": "PTO closure per-run provenance envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "semantic_payload_sha256", "workflow", "run", "runner", "artifact_sha256", "attestation"],
+  "properties": {
+    "schema": {"const": "pto-closure-run-envelope-v1"},
+    "semantic_payload_sha256": {"$ref": "#/$defs/sha256"},
+    "workflow": {"type": "object", "additionalProperties": false, "required": ["repository", "path", "commit"], "properties": {"repository": {"const": "PTO-ISA/pto-spec"}, "path": {"const": ".github/workflows/release.yml"}, "commit": {"$ref": "#/$defs/git"}}},
+    "run": {"type": "object", "additionalProperties": false, "required": ["id", "attempt", "timestamp"], "properties": {"id": {"type": "string", "minLength": 1}, "attempt": {"type": "integer", "minimum": 1}, "timestamp": {"type": "string", "format": "date-time", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"}}},
+    "runner": {"type": "object", "additionalProperties": false, "required": ["image", "builder_identity"], "properties": {"image": {"type": "string", "minLength": 1}, "builder_identity": {"type": "string", "minLength": 1}}},
+    "artifact_sha256": {"$ref": "#/$defs/sha256"},
+    "attestation": {"type": "null"}
+  },
+  "$defs": {
+    "git": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

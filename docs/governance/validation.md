@@ -9,7 +9,7 @@ authority remains in the Make targets, scripts, and pinned workflows.
 | --- | --- | --- |
 | Pull request | Push or pull request head | `PR / validate` requires both lightweight correctness workers; it checks source structure, projections, script tests, documentation, workflow policy, and diff hygiene without claiming full-model or release readiness |
 | Nightly | Schedule or dispatch, after proving the workflow commit equals latest `origin/main` | Reuses full validation as non-authoritative health; `Nightly / health` requires exact latest-`main` identity and the complete model |
-| Release | Dispatch with one full lowercase commit SHA | Reuses full validation with release authority, aggregates the exact AVS result set, regenerates evidence, and requires `Release / validate` for that same commit |
+| Release | Dispatch with full lowercase PTO-SPEC, LLVM, and ASL-MODEL commit SHAs | Reuses full validation with release authority, aggregates the exact ASL AVS result set, builds NDF release impact, compiles the ASL-MODEL corpus with the exact LLVM candidate, runs every selected ELF twice through the exact ASLRef model, and requires `Release / validate` for the complete version tuple |
 
 Nightly results are diagnostic. Pull-request results establish merge readiness
 only. Release results can support release eligibility but do not create a tag,
@@ -59,7 +59,10 @@ make release-prepare
 
 `make setup` verifies and prepares the exact `.aslref-version` commit. The
 release commands validate the strict assembled model, execute the complete test
-matrix, and reproduce registered evidence.
+matrix, and reproduce registered evidence. Hosted release verification also
+needs the exact LLVM and ASL-MODEL candidates. It rejects mismatched ELF
+`.note.pto.isa` identities, incomplete impact coverage, differing semantic
+payload digests, and failed, skipped, timed-out, stale, or unknown cases.
 
 ## Fail-closed rules
 

@@ -53,6 +53,7 @@ jobs:
           ./scripts/check-adrs
           ./scripts/check-asl-tests
           ./scripts/check-release-event-schema
+          ./scripts/check-model-closure-schema
           python3 scripts/project_asl_catalogs.py --root . --check
           python3 scripts/instruction_docs.py --check
           python3 scripts/generate-mnemonic-avs.py --check
@@ -835,6 +836,30 @@ class HostedFullValidationContractTest(unittest.TestCase):
         self.assert_release_rejected(
             '          test "$FULL_VALIDATION_RESULT" = success\n',
             '          test -n "$FULL_VALIDATION_RESULT"\n',
+        )
+
+    def test_release_requires_exact_llvm_and_asl_model_candidates(self) -> None:
+        self.assert_release_rejected(
+            "      llvm_commit:\n"
+            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.5\n"
+            "        required: true\n",
+            "      llvm_commit:\n"
+            "        description: Exact reviewed LinxISA LLVM commit for PTO 0.58.5\n"
+            "        required: false\n",
+        )
+        self.assert_release_rejected(
+            "          ref: ${{ inputs.asl_model_commit }}\n",
+            "          ref: main\n",
+        )
+
+    def test_release_model_closure_is_mandatory_and_same_run(self) -> None:
+        self.assert_release_rejected(
+            "  model-closure:\n",
+            "  optional-model-closure:\n",
+        )
+        self.assert_release_rejected(
+            '          test "$MODEL_CLOSURE_RESULT" = success\n',
+            '          test -n "$MODEL_CLOSURE_RESULT"\n',
         )
 
     def test_nightly_requires_schedule_and_manual_dispatch(self) -> None:

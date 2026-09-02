@@ -20,6 +20,10 @@
       "pattern": "^[0-9a-f]{64}$",
       "type": "string"
     },
+    "model_closure_semantic_payload_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
     "release_url": {
       "pattern": "^https://github\\.com/PTO-ISA/pto-spec/releases/tag/v(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:\\.(?:0|[1-9][0-9]*)){0,2}$",
       "type": "string"
@@ -43,6 +47,7 @@
     "release_id",
     "release_url",
     "release_manifest_sha256",
+    "model_closure_semantic_payload_sha256",
     "published_at"
   ],
   "title": "PTO-SPEC stable release event v1",

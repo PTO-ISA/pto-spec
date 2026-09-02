@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PTO-ISA/pto-spec/blob/main/spec/schemas/pto-closure-semantic-payload-v1.schema.json",
+  "title": "PTO closure stable semantic payload v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "closure_lock", "closure_lock_sha256", "ndf_impact", "obligations", "cases", "case_manifests"],
+  "properties": {
+    "schema": {"const": "pto-closure-semantic-payload-v1"},
+    "closure_lock": {"type": "object"},
+    "closure_lock_sha256": {"$ref": "#/$defs/sha256"},
+    "ndf_impact": {"type": "object", "additionalProperties": false, "required": ["sha256", "affected_pto_ids"], "properties": {"sha256": {"$ref": "#/$defs/sha256"}, "affected_pto_ids": {"$ref": "#/$defs/strings"}}},
+    "obligations": {"type": "object", "additionalProperties": false, "required": ["selected", "completed", "passed", "failed"], "properties": {"selected": {"$ref": "#/$defs/strings"}, "completed": {"$ref": "#/$defs/strings"}, "passed": {"$ref": "#/$defs/strings"}, "failed": {"$ref": "#/$defs/strings"}}},
+    "cases": {"type": "object", "additionalProperties": false, "required": ["selected", "completed", "passed", "failed", "skipped", "timeout", "unknown"], "properties": {"selected": {"$ref": "#/$defs/strings"}, "completed": {"$ref": "#/$defs/strings"}, "passed": {"$ref": "#/$defs/strings"}, "failed": {"$ref": "#/$defs/strings"}, "skipped": {"$ref": "#/$defs/strings"}, "timeout": {"$ref": "#/$defs/strings"}, "unknown": {"$ref": "#/$defs/strings"}}},
+    "case_manifests": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["case_id", "sha256"], "properties": {"case_id": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "strings": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+  }
+}

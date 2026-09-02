@@ -74,6 +74,8 @@ required_files=(
     spec/evidence/release-traceability-readiness.json
     spec/evidence/mnemonic-descriptions/schema.json
     spec/evidence/mnemonic-descriptions/coverage-summary.json
+    spec/schemas/pto-closure-run-envelope-v1.schema.json
+    spec/schemas/pto-closure-semantic-payload-v1.schema.json
     scripts/generate-mnemonic-description-inventory
     scripts/generate-mnemonic-description-coverage
     scripts/check-mnemonic-explanations
@@ -88,6 +90,10 @@ required_files=(
     scripts/check-asl-tests
     scripts/check-ndf
     scripts/check-release-closure
+    scripts/check-model-closure
+    scripts/check-model-closure-schema
+    scripts/generate-model-closure-impact
+    scripts/run-model-closure
     scripts/print-asl-test-matrix
     scripts/prepare-aslref
     scripts/report-asl-page-results

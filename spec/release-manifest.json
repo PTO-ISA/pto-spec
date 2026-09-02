@@ -3478,7 +3478,7 @@
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "800f28dd4032b5798a35b03a03089a56aa0ae7957ca44578d94e54439dad4721"
+      "sha256": "5782bd91f4a66eb8f854c69f1f54dc79618c316e2b8a2c30f07afe89453993fb"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
@@ -3490,11 +3490,19 @@
     },
     {
       "path": "spec/release-inputs.json",
-      "sha256": "13570bcef4fd50ea324d6f6100e6a008973dee5f9495e5bdd4b3ef8ad3119c8e"
+      "sha256": "9421760ce41d1d711f26f3da31dab7375d2b0c64f27a2da3e4524a618c69fc3e"
     },
     {
       "path": "spec/release-selection.json",
       "sha256": "ee7e46ec4512feb2872776034c355363a8ab780ccc6062611b225603c3db0631"
+    },
+    {
+      "path": "spec/schemas/pto-closure-run-envelope-v1.schema.json",
+      "sha256": "b70056448b0325d2252b462f355168ca02926f2884f6b007e4ea13747c878667"
+    },
+    {
+      "path": "spec/schemas/pto-closure-semantic-payload-v1.schema.json",
+      "sha256": "71fff5c5ba2a4aedbaf5b7c5c3a5736c4b63af1e5a77f33b65233cd1c36ff00d"
     },
     {
       "path": "spec/schemas/pto-release-selection.schema.json",
@@ -3502,7 +3510,7 @@
     },
     {
       "path": "spec/schemas/pto-spec-release-event-v1.schema.json",
-      "sha256": "5b73fc15917140e93cd6634b4cf76f418df5d44c437af258368f6999ae2fc995"
+      "sha256": "f987efc6f0bdd3757a616647c1a8890f90d404b01fc01e4ccd6e6ac771720062"
     },
     {
       "path": "specification.toml",
@@ -3528,7 +3536,7 @@
     },
     "tile_operations_total": 108
   },
-  "content_sha256": "3a0eb710726063b91a376d97981818f4c91998a24a63043538916d3d1d2607f0",
+  "content_sha256": "d7c7473ffe597eebafff47a4ed41905a9e461c5f4ef665a441e8a8acdb60a749",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",

@@ -404,7 +404,7 @@ dependencies:
 dependencies:
   ndf:
     uri: https://github.com/PTO-ISA/normative_language.git
-    revision: ed356980ce7ecb2e8482902988d5012fb54058b3
+    revision: 5e3e6b5f09e06b09aaf52844c4b37e38362ac097
     path: tools/ndf
 """,
         )

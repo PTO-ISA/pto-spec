@@ -30,6 +30,14 @@ The [validation guide](docs/governance/validation.md) is the canonical human
 description of lane triggers, commands, authority, and failure handling. The
 workflows and validation scripts remain the executable contracts.
 
+Compiler-to-model acceptance is owned by
+[`PTO-ISA/asl-model`](https://github.com/PTO-ISA/asl-model). PTO-SPEC keeps its
+direct ASL semantic AVS, while the ASL-MODEL corpus owns the exact LLVM
+compile/link to PTO ELF, ELF identity validation, ASLRef execution, independent
+golden comparison, and closure payload. The manual PTO release workflow invokes
+that corpus in the same protected run and rejects a missing, stale, partial, or
+different-version result.
+
 ## Change control
 
 - **Interface definition** changes an externally visible encoding, operand or
