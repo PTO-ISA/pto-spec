@@ -302,8 +302,8 @@
   "legacy_ids": [],
   "amendments": [
     {
-      "date": "2026-09-01",
-      "baseline": "1f338aa0e4c46e21eb80d4465b3430e906a7c54f",
+      "date": "2026-09-02",
+      "baseline": "cb0d65b584ce3ad82dd133176e34a97babcfd8ca",
       "approvers": [
         "zhoubot"
       ],
@@ -451,11 +451,12 @@
 AGU arithmetic is modulo 2^64. Immediate fields are sign extended to XLEN
 before their form-defined scale is applied. PC-relative forms use the current
 TPC with bits 1:0 cleared and then add a four-byte-scaled displacement.
-Register offsets apply `SrcRType` before scaling: `00` sign-extends the low
-32 bits, `01` zero-extends the low 32 bits, `10` negates the complete XLEN
-value, and `11` preserves the complete XLEN value. A present `shamt` supplies the scale; otherwise the
-catalog-derived element scale applies. The `.U`, `.UPR`, and `.UPO` forms are
-unscaled. Compressed forms use their encoded base and scaled signed immediate.
+Register offsets apply `SrcRType` before scaling: `00` preserves the complete
+XLEN value, `01` sign-extends the low 32 bits, and `10` zero-extends the low
+32 bits. Raw `11` is reserved and rejects before source reads or architectural
+effects. A present `shamt` supplies the scale; otherwise the catalog-derived
+element scale applies. The `.U`, `.UPR`, and `.UPO` forms are unscaled.
+Compressed forms use their encoded base and scaled signed immediate.
 
 No-update and pre-index accesses use `base + offset`. Post-index accesses use
 the original base and publish `base + offset` only after the access completes.
@@ -530,7 +531,7 @@ code from appearing to widen the accepted ISA.
 
 `spec/evidence/scalar-agu-totality.json` owns the exact catalog-derived case
 inventory. Generated decoded tests cover all 183 form IDs, immediate limits,
-all register modifiers, shift limits, all 32 values of every encoded prefetch
+all three assigned register modifiers, reserved raw `11`, shift limits, all 32 values of every encoded prefetch
 `model` field, modulo wrap, alignment and permission
 precedence, first- and second-pair faults, full-reissue restart, non-faulting
 prefetch, every temporary Reg5 source and special destination class, and ordered pair
@@ -540,8 +541,9 @@ non-ordinary destination selector for every encoded AGU field. Repository
 checks derive the expected inventory from the scalar catalog and reject
 missing, extra, or reclassified evidence.
 
-The former alternate `SrcRType` ordering in PTO ASL conflicted with the
-already-established 0.58.5 encoding. Issue
-[#193](https://github.com/PTO-ISA/pto-spec/issues/193) records its correction;
-because the public interface did not change, the fix belongs to this existing
-AGU owner rather than a new ADR.
+The short-lived shared-arithmetic `SrcRType` ordering was inferred from Sail
+and LLVM after those implementations had already diverged from the AGU
+interface, creating circular evidence. Issue
+[#193](https://github.com/PTO-ISA/pto-spec/issues/193) records the rollback to
+the address-specific contract; because this corrects an implementation error,
+it remains in this existing AGU owner rather than allocating a new ADR.

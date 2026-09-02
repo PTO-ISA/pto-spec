@@ -671,10 +671,11 @@ def scalar_nonbinary_alu_witness(row: dict, family_constraints: list[dict]) -> i
     for field_name, value in values.items():
         if field_by_name(row, field_name) is not None:
             instruction = encode_field(row, field_name, instruction, value)
-    if not form_constraints_hold(row, instruction):
-        raise ValueError(
-            f"ALU effect witness violates constraint for {row['form_id']}"
-        )
+    for constraint in row["constraints"]:
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            raise ValueError(
+                f"ALU effect witness violates constraint for {row['form_id']}"
+            )
     return instruction
 
 
@@ -809,12 +810,11 @@ def scalar_bitfield_expected(
         return result
     if mnemonic == "HL.BFI":
         result = left
-        for byte_index in range(width):
-            destination_byte = (offset + byte_index) % 8
-            destination_shift = destination_byte * 8
-            source_shift = byte_index * 8
-            result &= ~(0xFF << destination_shift)
-            result |= ((right >> source_shift) & 0xFF) << destination_shift
+        insert_width = ((last - offset + 64) % 64) + 1
+        for bit_index in range(insert_width):
+            destination = (offset + bit_index) % 64
+            result &= ~(1 << destination)
+            result |= ((right >> bit_index) & 1) << destination
         return result & MASK64
     raise ValueError(f"unclassified scalar bitfield effect: {mnemonic}")
 
@@ -962,12 +962,12 @@ def scalar_alu_boundary_field_values(row: dict, label: str) -> dict[str, int]:
             values[name] = 63 if label == "upper" else 0
         elif name == "immr":
             if row["mnemonic"] == "HL.BFI":
-                values[name] = {"zero": 0, "lower": 1, "upper": 7}[label]
+                values[name] = {"zero": 0, "lower": 63, "upper": 0}[label]
             else:
                 values[name] = 63 if label == "lower" else 0
         elif name == "imms":
             if row["mnemonic"] == "HL.BFI":
-                values[name] = {"zero": 0, "lower": 7, "upper": 0}[label]
+                values[name] = {"zero": 0, "lower": 0, "upper": 63}[label]
             else:
                 values[name] = 63 if label == "lower" else 0
         elif name == "shamt":
@@ -1008,10 +1008,11 @@ def scalar_alu_boundary_witness(
     for field_name, value in values.items():
         if field_by_name(row, field_name) is not None:
             instruction = encode_field(row, field_name, instruction, value)
-    if not form_constraints_hold(row, instruction):
-        raise ValueError(
-            f"ALU boundary witness violates constraint for {row['form_id']}"
-        )
+    for constraint in row["constraints"]:
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            raise ValueError(
+                f"ALU boundary witness violates constraint for {row['form_id']}"
+            )
     return instruction, values
 
 
@@ -1091,16 +1092,6 @@ def scalar_alu_boundary_expected(
             field_values.get("shamt", 4),
         )
     if class_id == "scalar-bitfield-value":
-        if mnemonic == "HL.BFI":
-            return (
-                scalar_bitfield_expected(
-                    mnemonic,
-                    left,
-                    right,
-                    field_values["immr"] + 1,
-                    field_values["imms"],
-                ),
-            )
         return (
             scalar_bitfield_expected(
                 mnemonic,
@@ -1124,7 +1115,7 @@ def scalar_alu_boundary_expected(
         return (scalar_materialize_expected(mnemonic, left, raw_immediate),)
     if class_id == "scalar-select-value":
         modifier = field_values.get("SrcRType", 0)
-        selected_false = (-right) & MASK64 if modifier == 2 else right
+        selected_false = (-right) & MASK64 if modifier == 3 else right
         return (left if predicate != 0 else selected_false,)
     if class_id == "scalar-control-value":
         if mnemonic == "C.SETC.TGT":
@@ -1366,10 +1357,11 @@ def scalar_bru_totality_witness(
     for field_name, value in values.items():
         if field_by_name(row, field_name) is not None:
             instruction = encode_field(row, field_name, instruction, value)
-    if not form_constraints_hold(row, instruction):
-        raise ValueError(
-            f"BRU totality witness violates constraint for {row['form_id']}"
-        )
+    for constraint in row["constraints"]:
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            raise ValueError(
+                f"BRU totality witness violates constraint for {row['form_id']}"
+            )
     decoded_values = {
         field["name"]: decode_field(row, field["name"], instruction)
         for field in row["fields"]
@@ -1678,10 +1670,11 @@ def scalar_bru_alias_witness(
                 f"BRU alias witness requested absent {field_name} in {row['form_id']}"
             )
         instruction = encode_field(row, field_name, instruction, value)
-    if not form_constraints_hold(row, instruction):
-        raise ValueError(
-            f"BRU alias witness violates constraint for {row['form_id']}"
-        )
+    for constraint in row["constraints"]:
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            raise ValueError(
+                f"BRU alias witness violates constraint for {row['form_id']}"
+            )
     return instruction
 
 
@@ -2125,10 +2118,11 @@ def scalar_bru_effect_witness(row: dict, family_constraints: list[dict]) -> int:
     immediate = scalar_bru_immediate_raw(row)
     if immediate is not None:
         instruction = encode_field(row, immediate[0], instruction, immediate[1])
-    if not form_constraints_hold(row, instruction):
-        raise ValueError(
-            f"BRU effect witness violates constraint for {row['form_id']}"
-        )
+    for constraint in row["constraints"]:
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            raise ValueError(
+                f"BRU effect witness violates constraint for {row['form_id']}"
+            )
     return instruction
 
 
@@ -2273,10 +2267,11 @@ def scalar_amo_effect_witness(row: dict, family_constraints: list[dict]) -> int:
     for field_name, value in values.items():
         if field_by_name(row, field_name) is not None:
             instruction = encode_field(row, field_name, instruction, value)
-    if not form_constraints_hold(row, instruction):
-        raise ValueError(
-            f"AMO effect witness violates constraint for {row['form_id']}"
-        )
+    for constraint in row["constraints"]:
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            raise ValueError(
+                f"AMO effect witness violates constraint for {row['form_id']}"
+            )
     return instruction
 
 
@@ -2399,10 +2394,11 @@ def scalar_amo_instruction(
             instruction = encode_field(
                 row, field_name, instruction, (modifiers or {}).get(field_name, 0)
             )
-    if not form_constraints_hold(row, instruction):
-        raise ValueError(
-            f"AMO totality witness violates constraint for {row['form_id']}"
-        )
+    for constraint in row["constraints"]:
+        if decode_field(row, constraint["field"], instruction) == constraint["value"]:
+            raise ValueError(
+                f"AMO totality witness violates constraint for {row['form_id']}"
+            )
     return instruction
 
 

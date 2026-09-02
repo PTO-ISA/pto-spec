@@ -308,6 +308,18 @@ begin
     if subtract then return left - product; else return left + product; end;
 end;
 
+pure func InsertBitfield(base: Word, source: Word,
+                         first: integer {0..63}, last: integer {0..63}) => Word
+begin
+    let width: integer = (((last - first) + 64) MOD 64) + 1;
+    var result = base;
+    for bit_index = 0 to width - 1 do
+        let destination = ((first + bit_index) MOD 64) as integer {0..63};
+        result[destination] = source[bit_index];
+    end;
+    return result;
+end;
+
 func ExecuteConcatenatePair(destination_low: Reg5Selector,
                             destination_high: Reg5Selector,
                             left: Word, right: Word,

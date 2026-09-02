@@ -69,14 +69,14 @@ This walkthrough explains how to use the page and does not add instruction behav
 ## Assembly
 
 ```asm
-hl.sbp SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw,.neg}>]
+hl.sbp SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw}>]
 ```
 
 ## Encoding
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| hl_sbp_48_12e03c011f0a | HL48 | 48 | 0x00000049001e / 0x00007ffff83f | [] |
+| hl_sbp_48_12e03c011f0a | HL48 | 48 | 0x00000049001e / 0x00007ffff83f | [{"field":"SrcRType","operator":"one-of","values":[0,1,2]}] |
 
 ### Fields
 
@@ -103,7 +103,9 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | hl_sbp_48_12e03c011f0a | SrcD1 | 5 | 0–31 | none | none | Reg5 second store-data source | Encoded zero reads the architectural zero GPR. |
 | hl_sbp_48_12e03c011f0a | SrcL | 5 | 0–31 | none | none | Reg5 address-base source | Encoded zero reads the architectural zero GPR. |
 | hl_sbp_48_12e03c011f0a | SrcR | 5 | 0–31 | none | none | Reg5 register-offset source | Encoded zero reads the architectural zero GPR. |
-| hl_sbp_48_12e03c011f0a | SrcRType | 2 | 0–3 | none | none | register-offset transformation selector | Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier. |
+| hl_sbp_48_12e03c011f0a | SrcRType | 2 | 0–2 | none | 3 | register-offset transformation selector | Encoded zero leaves the complete PTO_XLEN register-offset value unchanged. |
+
+- `hl_sbp_48_12e03c011f0a.SrcRType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
 ## Operands and results
 
@@ -183,7 +185,7 @@ end;
 ## Defaults and encoded zero
 
 - Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
-- SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. The register offset uses a fixed scale factor of 1; no shamt field is encoded.
+- SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 is reserved. The register offset uses a fixed scale factor of 1; no shamt field is encoded.
 
 ## Legality
 
@@ -219,4 +221,4 @@ end;
 
 ## Examples
 
-- hl.sbp SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw,.neg}>]
+- hl.sbp SrcD, SrcD1, [SrcL, SrcR<{.sw,.uw}>]

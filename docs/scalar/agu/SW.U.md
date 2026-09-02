@@ -64,14 +64,14 @@ With base `0x100`, unchanged offset source `4`, and the fixed shift `0`, the ali
 ## Assembly
 
 ```asm
-sw.u SrcD, [SrcL, SrcR<{.sw,.uw,.neg}>]
+sw.u SrcD, [SrcL, SrcR<{.sw,.uw}>]
 ```
 
 ## Encoding
 
 | Form | Kind | Bits | Match / mask | Constraints |
 | --- | --- | ---: | --- | --- |
-| sw_u_32_718a61f75d33 | L32 | 32 | 0x00006049 / 0x00007fff | [] |
+| sw_u_32_718a61f75d33 | L32 | 32 | 0x00006049 / 0x00007fff | [{"field":"SrcRType","operator":"one-of","values":[0,1,2]}] |
 
 ### Fields
 
@@ -96,7 +96,9 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | sw_u_32_718a61f75d33 | SrcD | 5 | 0–31 | none | none | Reg5 first store-data source | Encoded zero reads the architectural zero GPR. |
 | sw_u_32_718a61f75d33 | SrcL | 5 | 0–31 | none | none | Reg5 address-base source | Encoded zero reads the architectural zero GPR. |
 | sw_u_32_718a61f75d33 | SrcR | 5 | 0–31 | none | none | Reg5 register-offset source | Encoded zero reads the architectural zero GPR. |
-| sw_u_32_718a61f75d33 | SrcRType | 2 | 0–3 | none | none | register-offset transformation selector | Encoded zero sign-extends SrcR[31:0] to PTO_XLEN; it does not mean an omitted modifier. |
+| sw_u_32_718a61f75d33 | SrcRType | 2 | 0–2 | none | 3 | register-offset transformation selector | Encoded zero leaves the complete PTO_XLEN register-offset value unchanged. |
+
+- `sw_u_32_718a61f75d33.SrcRType` reserved values: Reserved encodings raise Fault_IllegalInstruction before architectural effects.
 
 ## Operands and results
 
@@ -175,12 +177,12 @@ end;
 ## Defaults and encoded zero
 
 - Every displayed operand field is encoded explicitly; encoded zero is a value and never denotes omission.
-- SrcRType=0 sign-extends SrcR[31:0], SrcRType=1 zero-extends SrcR[31:0], SrcRType=2 negates the full PTO_XLEN value, and SrcRType=3 leaves the complete PTO_XLEN value unchanged. Encoded shamt zero performs no shift.
+- SrcRType=0 leaves SrcR unchanged, SrcRType=1 sign-extends SrcR[31:0], SrcRType=2 zero-extends SrcR[31:0], and SrcRType=3 is reserved. Encoded shamt zero performs no shift.
 
 ## Legality
 
 - Every encoded Reg5 source uses the complete domain: codes 0..23 select absolute GPRs, codes 24..27 select T#1..T#4, and codes 28..31 select U#1..U#4 without consumption.
-- All four SrcRType values and all shamt values 0..31 are assigned; apply the modifier before the shift.
+- SrcRType values 0, 1, and 2 and all shamt values 0..31 are assigned; SrcRType=3 is reserved; apply the modifier before the shift.
 - Each memory address must be aligned to the 4-byte access size; a 4-byte access is the complete transfer unit.
 
 ## State effects
@@ -210,4 +212,4 @@ end;
 
 ## Examples
 
-- sw.u SrcD, [SrcL, SrcR<{.sw,.uw,.neg}>]
+- sw.u SrcD, [SrcL, SrcR<{.sw,.uw}>]

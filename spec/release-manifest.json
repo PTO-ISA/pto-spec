@@ -814,11 +814,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.LB.PO.asl",
-      "sha256": "4e16eba809264856234aa8e9865f847fd2d982109c7b4a3bc111131a73d02596"
+      "sha256": "3d84d095907c188ae55562104b68fccc779a158fa63021664c3357a3757de423"
     },
     {
       "path": "asl/scalar/agu/HL.LB.PR.asl",
-      "sha256": "07ac9a0b130536b2baf4106ec5bdc62f64eaecd75c21ea05d05e9854a1768ecc"
+      "sha256": "375f6e7ada2fd26959766bc770959172b916accb433cb242fd66c20b7ada7a1a"
     },
     {
       "path": "asl/scalar/agu/HL.LBI.PO.asl",
@@ -838,7 +838,7 @@
     },
     {
       "path": "asl/scalar/agu/HL.LBP.asl",
-      "sha256": "0ab0928b5cb017bb4a66e282fc43e8dc9583f2a8a074a52021a9ceb198e4528f"
+      "sha256": "8cc2b2db932895b849b67ef9ee5a958dbd0eefd620dbddd1bf8bff4c1e8534bd"
     },
     {
       "path": "asl/scalar/agu/HL.LBU.PCR.asl",
@@ -846,11 +846,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.LBU.PO.asl",
-      "sha256": "854e7ca1f237972aed3b0e4c6ec5be2ad0a1885ef36320820a5a048cbfbc0d5b"
+      "sha256": "cfdccfba1306957941b857a93e3c7990bff525cb6ca6aceb2a8db30af21ba783"
     },
     {
       "path": "asl/scalar/agu/HL.LBU.PR.asl",
-      "sha256": "fa8195ab3b62bc0bfea60cb94fc3f779f3b6dd944f3ede5a7921f0d8781ea39c"
+      "sha256": "7361d78205340710136c6ffc36cb420dbf8107edc7ff082eb2dd8df54d479cc6"
     },
     {
       "path": "asl/scalar/agu/HL.LBUI.PO.asl",
@@ -870,7 +870,7 @@
     },
     {
       "path": "asl/scalar/agu/HL.LBUP.asl",
-      "sha256": "1a630cb4443abd64b5d6081dfaf69cfb090dd76b7f099e8b9c9c385663dbff8a"
+      "sha256": "83c16ad83ae5104097587f54ad19ce5da5aa2c0e353255f76336663e6e005c80"
     },
     {
       "path": "asl/scalar/agu/HL.LD.PCR.asl",
@@ -878,11 +878,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.LD.PO.asl",
-      "sha256": "db9af9a3313fe1546d740884abc25f43a25521e1fa7f5959666f56a48441b7dc"
+      "sha256": "810964afbb52dcb5b05403a12166ecaa8bb20b35809eb23a7797f6d6161a3130"
     },
     {
       "path": "asl/scalar/agu/HL.LD.PR.asl",
-      "sha256": "7e030e321264a7b17061dd28a9c103c98448a964b096a7b576461600599d17f1"
+      "sha256": "f1ffce4abd4ec4cf4fcd45280d629376a162f1cfac52c7d0217b629c4880554e"
     },
     {
       "path": "asl/scalar/agu/HL.LDI.PO.asl",
@@ -918,7 +918,7 @@
     },
     {
       "path": "asl/scalar/agu/HL.LDP.asl",
-      "sha256": "e17fe88506f30539984e814e575441e47913ab4f2109b65c1734e5146dbc0036"
+      "sha256": "f94faeccedc304f0882b615acdc8a4181878178ffe54c65f1abf3de69ec74fd9"
     },
     {
       "path": "asl/scalar/agu/HL.LH.PCR.asl",
@@ -926,11 +926,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.LH.PO.asl",
-      "sha256": "7716af19da398c95dd97a7cddbb79a3e44c89e09028171132ce43df24d796d90"
+      "sha256": "7d0cc9aacc6e6fe8d7bad84bcd150879980ab6beb8e62ce1088b50d4f3ab5c8f"
     },
     {
       "path": "asl/scalar/agu/HL.LH.PR.asl",
-      "sha256": "926711977e7f8e955abd31eb1ed0d0e6b21a32b42973221b487ae4bdbe3ec407"
+      "sha256": "ff6d8d3d6dd0406269f1f27a62f698cd1aa2f4c823c017c14baefe91c91f93f3"
     },
     {
       "path": "asl/scalar/agu/HL.LHI.PO.asl",
@@ -966,7 +966,7 @@
     },
     {
       "path": "asl/scalar/agu/HL.LHP.asl",
-      "sha256": "ce0c1ee4ae66daa76b0c43ac6a4c0604c8c7bdf89635a5ebbbb03aa6239e248b"
+      "sha256": "f501e9e999e74323cf6635d88c298070d82cadca1d51e34be207e6e4894d7c24"
     },
     {
       "path": "asl/scalar/agu/HL.LHU.PCR.asl",
@@ -974,11 +974,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.LHU.PO.asl",
-      "sha256": "fc61ffb9ff63e723c946c69a690a373fa3d34ec6c76de9e07881cbf63e6d1bdc"
+      "sha256": "01072295b6080f3461fdfb72f46cbb68200e1d985d1799af32f6567b75dcf057"
     },
     {
       "path": "asl/scalar/agu/HL.LHU.PR.asl",
-      "sha256": "869f7e6886aa587bb363bd720e5d1df1013043c12382c9e194898110e1b9adfd"
+      "sha256": "3f083cf961c5317b771dd9629b1b2c65a343f57952851bca285cd4cc3f02ed5f"
     },
     {
       "path": "asl/scalar/agu/HL.LHUI.PO.asl",
@@ -1014,7 +1014,7 @@
     },
     {
       "path": "asl/scalar/agu/HL.LHUP.asl",
-      "sha256": "5f3cd6c473f0a97516b2b398c708272b04b47ed5bb612c349f1ad83d4f46eb88"
+      "sha256": "cda45d4bd177966e3522cdcb6976df99f25165d80f883187bebdf3b914ef5e3a"
     },
     {
       "path": "asl/scalar/agu/HL.LW.PCR.asl",
@@ -1022,11 +1022,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.LW.PO.asl",
-      "sha256": "d6a12570083cf8b3e84954fc3ae60df1211cba2821e0360648dd3ffa6e2bfe8b"
+      "sha256": "c67cb2ecf83a9d44997766d73a37c4f5c4bc216da519e74a28bdf4999d3cbc80"
     },
     {
       "path": "asl/scalar/agu/HL.LW.PR.asl",
-      "sha256": "06f21bf5bab6eda7889bee198757e6c0d9a3b10da1861552104a539f1056597d"
+      "sha256": "48fc075185322bc1363df086840a9be9e91fa68133012833c2cb50618257e3ac"
     },
     {
       "path": "asl/scalar/agu/HL.LWI.PO.asl",
@@ -1062,7 +1062,7 @@
     },
     {
       "path": "asl/scalar/agu/HL.LWP.asl",
-      "sha256": "dd729c3262c0c22bfb7adccfe4213403143a239623e79b90a87aacdbb4051a0a"
+      "sha256": "792e0f96de1cdcce1966e04cf6d205f2b74598dd7286a486f6f038490ddeb3bd"
     },
     {
       "path": "asl/scalar/agu/HL.LWU.PCR.asl",
@@ -1070,11 +1070,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.LWU.PO.asl",
-      "sha256": "04615bb5878cae1a5f264399236cdc4fd2a715e1f3ef56149187a58e385e1131"
+      "sha256": "25447b4158302dc429a59129b28478b7c44f44b7d703c0cbc19bc3dbba31c7c2"
     },
     {
       "path": "asl/scalar/agu/HL.LWU.PR.asl",
-      "sha256": "f2a49033140fe10d4b6d0b0a669ff599a30b778169c884f1384ae3c67c24000b"
+      "sha256": "fb82579e71aa8c20399ec747966d2705c9cddd0503239e39eb15aaf3ccc2dd9d"
     },
     {
       "path": "asl/scalar/agu/HL.LWUI.PO.asl",
@@ -1110,15 +1110,15 @@
     },
     {
       "path": "asl/scalar/agu/HL.LWUP.asl",
-      "sha256": "2aa48176e274e5ef6c830468baeebcbbf9eb31560a5b1fcd7cc3fc97f84d2e41"
+      "sha256": "19772aea848a766c0a8f782851ddaad11daba234183246cf82b12983788cb471"
     },
     {
       "path": "asl/scalar/agu/HL.PRF.A.asl",
-      "sha256": "d9561822f0adcaf5c3fbd467811b4492e1c1b6784ae16349983fa2c449014ae0"
+      "sha256": "3d8d2b79670db37994fc05653ea48410536456b96db187d6aa04d88e969850b0"
     },
     {
       "path": "asl/scalar/agu/HL.PRF.asl",
-      "sha256": "a6adbea0f3b17eeb0cc29b8c4aef4d92a2a0907f4eabfcdb98128babeaa27081"
+      "sha256": "f38b59d65f72bef1b80b3afc6182dff0d4e5c0c0a27c23ee5134a7d7983f2a30"
     },
     {
       "path": "asl/scalar/agu/HL.PRFI.U.asl",
@@ -1134,11 +1134,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.SB.PO.asl",
-      "sha256": "0a79b00f674cb77fca70f2e7649240d031ad797d9d81729bd827877183ea2d60"
+      "sha256": "fddfc287cc2fbe4b3927ffdaa060f40e0c46938d4b34e5f7ceaf333944079b41"
     },
     {
       "path": "asl/scalar/agu/HL.SB.PR.asl",
-      "sha256": "7b4ab826bc1d39fe3f24eaaa9665203fdd46ff995f058a1c043713c41955b4ad"
+      "sha256": "864125bec6424ad80f098114b25a5782748c6401923ebb280ce8d98ded916dac"
     },
     {
       "path": "asl/scalar/agu/HL.SBI.PO.asl",
@@ -1158,7 +1158,7 @@
     },
     {
       "path": "asl/scalar/agu/HL.SBP.asl",
-      "sha256": "68abc8162163680ed11e3893484c86716d0ee8a27393a81baae72cd10d0457c6"
+      "sha256": "c0afc83e293d1a58b7bc2e0e3754c7e8940d3a0c9194395e59c8662c3f3cf2b7"
     },
     {
       "path": "asl/scalar/agu/HL.SD.PCR.asl",
@@ -1166,19 +1166,19 @@
     },
     {
       "path": "asl/scalar/agu/HL.SD.PO.asl",
-      "sha256": "edf4eff60d1f86bdb425112e5706056730bef438e592c16bcd8f7f2cc6fad8c8"
+      "sha256": "bb089eeebb9b70c0bf662021aaf109ce70dfcec261613605fdf4811061245046"
     },
     {
       "path": "asl/scalar/agu/HL.SD.PR.asl",
-      "sha256": "c8743fc9fd7c60cd6b896c11be442e0f279d317774893188b2077b8896574f2a"
+      "sha256": "788953a3562b02ad32245613210d75d1466cdcba4c3f82ff5b627be868f8789b"
     },
     {
       "path": "asl/scalar/agu/HL.SD.UPO.asl",
-      "sha256": "913de370c682f013769ba91d39a10bceb4127afca939a9c069b508fb13879331"
+      "sha256": "9e5436a8934187f4278398008e015aa037bbaea2a812de686c402facc0df3bc4"
     },
     {
       "path": "asl/scalar/agu/HL.SD.UPR.asl",
-      "sha256": "f776dc87908f9ddc137afb09dbe9cffa480b54fc9dde4da8b69d5d4f94fa1872"
+      "sha256": "f3d3881cb915bb9945c171566a746146802530e6f21c10b2b869c68fa329958e"
     },
     {
       "path": "asl/scalar/agu/HL.SDI.PO.asl",
@@ -1214,11 +1214,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.SDP.U.asl",
-      "sha256": "b8541d4beaf974e391daf630fc457009532e57ee14e86dea1b94a478d812c28c"
+      "sha256": "409004b6576ca7ee96e465caf93fac4172db54acacd6de07acfda4f5539df1a2"
     },
     {
       "path": "asl/scalar/agu/HL.SDP.asl",
-      "sha256": "d0028db2991d162d245dd90b2c1d764b9ba5c50f3e78e7a00daecbc179fd06a3"
+      "sha256": "566b8330490397166511344bdb408d190a0571ea3f7b90874a26d868a30cb9c7"
     },
     {
       "path": "asl/scalar/agu/HL.SH.PCR.asl",
@@ -1226,19 +1226,19 @@
     },
     {
       "path": "asl/scalar/agu/HL.SH.PO.asl",
-      "sha256": "a278b95d73728a227ca9e61e6bad3d6122f7e05a6624174c82b553cef1a63cb1"
+      "sha256": "a9d349bf7b371c7aa67a1092406bf9e567fd3898374b1b77beae3fab361c1f58"
     },
     {
       "path": "asl/scalar/agu/HL.SH.PR.asl",
-      "sha256": "e1fdf10e87c88c10eb0fc293257f4f0679c17ed6377c476de308459c4acb88b8"
+      "sha256": "47881f183b02273eeccd25e40c3799de7eb4adc464fc431bb0a3ea7548df52fc"
     },
     {
       "path": "asl/scalar/agu/HL.SH.UPO.asl",
-      "sha256": "8a93ec57f97b3520369fc9cc36dd4a4f4e68ea369eea0afb07e858740d0af9d0"
+      "sha256": "13a067382d3dcba5503fa4f03ed87961ba98674ecc806b5731af2de5bd778932"
     },
     {
       "path": "asl/scalar/agu/HL.SH.UPR.asl",
-      "sha256": "647fb8f5cb7cd9d6f6de597f825bfec200e529c58e62783d9604ee93e0e216fe"
+      "sha256": "9bc7a7542f0582eb90da71cf33eeae20df836739a28ea886ff1d5e10df6197d2"
     },
     {
       "path": "asl/scalar/agu/HL.SHI.PO.asl",
@@ -1274,11 +1274,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.SHP.U.asl",
-      "sha256": "c9ce88e4b2cd18d51eaacfd44978d31a97414e1f97e06a20bb65c0742d0bc457"
+      "sha256": "1e898acc8fcd024f640e24bb133ab3fa45d513c9ab952b91a1c3a10b1e2604ab"
     },
     {
       "path": "asl/scalar/agu/HL.SHP.asl",
-      "sha256": "047be77fb5573956e3a66a5227ea5f33e74cea491ad3e2e3fb133fed6946a746"
+      "sha256": "8793f20d038962f73d086354a2aa73a9ce0f0b5aeaf5eac8f1cbaa47458ebaee"
     },
     {
       "path": "asl/scalar/agu/HL.SW.PCR.asl",
@@ -1286,19 +1286,19 @@
     },
     {
       "path": "asl/scalar/agu/HL.SW.PO.asl",
-      "sha256": "729bbda344218482275386c016d98743be8a5285899ca6fa909dfd66c3b10f6d"
+      "sha256": "eadb1a62022a5779d34b2fcf4c6802d3a5d6300b45e41045d25baea1b0bef45f"
     },
     {
       "path": "asl/scalar/agu/HL.SW.PR.asl",
-      "sha256": "d2232d65dd2e739b84602d13b0ab8817abbbfb502506d6b53dbd7fda9d869d8f"
+      "sha256": "4e14d94ad64815ef5b4cc0f07e8dbb7bb2ba04178c7c9c5e87b19b36946db2f9"
     },
     {
       "path": "asl/scalar/agu/HL.SW.UPO.asl",
-      "sha256": "c69c783a7bbceb1c6db23a6b03ced5a39fc149fc1b4cfb6631bf7eb031132c58"
+      "sha256": "be1988f5c2a52c572c7e5b99f5c5f4069b98ee326880286790c33113b7a8ad53"
     },
     {
       "path": "asl/scalar/agu/HL.SW.UPR.asl",
-      "sha256": "7717a5d7412dbcbc403db171ac442fe0c975f94bdb328aaaeea1ba3b08bd4531"
+      "sha256": "185d38dff2d033143e3d15612af8e9967e6ad0d031d2faddd1562ce43bb980ce"
     },
     {
       "path": "asl/scalar/agu/HL.SWI.PO.asl",
@@ -1334,11 +1334,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.SWP.U.asl",
-      "sha256": "a4fde59a11b518905dd476a1d76390c92727c42ec8b5eeb5a3525f5a17dbb140"
+      "sha256": "91421a0d6ca2b9f6aeeb88e0a539be0456f6aba4470a47f4f0cb83d2b2f825db"
     },
     {
       "path": "asl/scalar/agu/HL.SWP.asl",
-      "sha256": "eee09dfc019912a9429c7f40aaf38640c9a384846bce4803b14c29b8f3869469"
+      "sha256": "b708be1277a207dd7731b638fd146e87989ac290d11b6881484ab4d0fd52f996"
     },
     {
       "path": "asl/scalar/agu/LB.PCR.asl",
@@ -1346,7 +1346,7 @@
     },
     {
       "path": "asl/scalar/agu/LB.asl",
-      "sha256": "fb2923bf1180f5d31c50d54515a2e3d7e6af18ed2fb38f6b3f6e797fb99cbddc"
+      "sha256": "a58a8f06af6a90de5f9e858ff5e907b42212d85c97e0b6bd2bc37dc7fe82b52a"
     },
     {
       "path": "asl/scalar/agu/LBI.asl",
@@ -1358,7 +1358,7 @@
     },
     {
       "path": "asl/scalar/agu/LBU.asl",
-      "sha256": "ef81857160f177249a64eec437ad9012afdde32d0d643604839575d608c12af4"
+      "sha256": "e8acfe1d99feb647dab3f8e12e507cc9592ebe5f4fc54a9b8d79f007360af6f4"
     },
     {
       "path": "asl/scalar/agu/LBUI.asl",
@@ -1370,7 +1370,7 @@
     },
     {
       "path": "asl/scalar/agu/LD.asl",
-      "sha256": "0e934282c6ac4a14c591ccd72c1eb9ea0dd26b2583e52f07294dba706c6f4fd1"
+      "sha256": "fc064e8035a7712421ac4b17430fc0033168084404dc52ce17ecfe7e08fd3faa"
     },
     {
       "path": "asl/scalar/agu/LDI.U.asl",
@@ -1386,7 +1386,7 @@
     },
     {
       "path": "asl/scalar/agu/LH.asl",
-      "sha256": "55758d6744bb77b576e484e7889c05afbfe6836d99baf7417433a70aa80cb8e1"
+      "sha256": "925a81f28cb6f2df56d1fe92975e6e991dd60f0bd0a6d1a5d73bfc668c26ad26"
     },
     {
       "path": "asl/scalar/agu/LHI.U.asl",
@@ -1402,7 +1402,7 @@
     },
     {
       "path": "asl/scalar/agu/LHU.asl",
-      "sha256": "b48edc97b4cb63477b664928005a5871aa24d0e2a585b43c2e08f69a5fc2f764"
+      "sha256": "76b40744b527284ea1f5f9fec40ccb1b323058b89786682a3d2a980b47d968f5"
     },
     {
       "path": "asl/scalar/agu/LHUI.U.asl",
@@ -1418,7 +1418,7 @@
     },
     {
       "path": "asl/scalar/agu/LW.asl",
-      "sha256": "120be494f753bc650127604e2fbf3b13c7bd9ed587810bd70297bdade312d9fb"
+      "sha256": "08a3370565c42f7f0d20a508ed006428bc5145740be3b0a44531ff8e7973d011"
     },
     {
       "path": "asl/scalar/agu/LWI.U.asl",
@@ -1434,7 +1434,7 @@
     },
     {
       "path": "asl/scalar/agu/LWU.asl",
-      "sha256": "0f012877401ef5ff695036daa5d242821991f122f0a009de50388fd697f792d8"
+      "sha256": "74bf95ef348c3b61c18c1a17291c024eb1bddf50f37e43ef3271f8e39559ad42"
     },
     {
       "path": "asl/scalar/agu/LWUI.U.asl",
@@ -1446,7 +1446,7 @@
     },
     {
       "path": "asl/scalar/agu/PRF.asl",
-      "sha256": "e0bc12389278f92b73cbc9a915580a82ec73ab3c1f0589765cd46dd98e1d45b5"
+      "sha256": "dafcf04a263115da6a957887766853721fc65038ba49fbfa6ec5215d7f767edb"
     },
     {
       "path": "asl/scalar/agu/PRFI.U.asl",
@@ -1458,7 +1458,7 @@
     },
     {
       "path": "asl/scalar/agu/SB.asl",
-      "sha256": "8a0fbba9918a620e3e683b1a610551d3e0bb23ba398281522186fa645f5f1b14"
+      "sha256": "3d2b32e1696812408ef14d814b1fc574119e5d447d06d71ce5a64dee1f147faa"
     },
     {
       "path": "asl/scalar/agu/SBI.asl",
@@ -1470,11 +1470,11 @@
     },
     {
       "path": "asl/scalar/agu/SD.U.asl",
-      "sha256": "3d3561d360d6d77d7822e93b762f8a9827c97f1e496384f6ccc3686eb4db1951"
+      "sha256": "a79024c9918a5728950e9e6abebd2a38df0347d496380cbb7b910a129e0bca3b"
     },
     {
       "path": "asl/scalar/agu/SD.asl",
-      "sha256": "2690034f9603ec9308da2fe028b0a92784e8eebc56cced8c6931bf354e21d2e3"
+      "sha256": "319775661bec9f9e0ff07b97e5b2b1de52c6e83eef9b41509a1389b9a2a33c78"
     },
     {
       "path": "asl/scalar/agu/SDI.U.asl",
@@ -1490,11 +1490,11 @@
     },
     {
       "path": "asl/scalar/agu/SH.U.asl",
-      "sha256": "50623dfe92653211eb6e6d9fd5064b7df06db7549446fe02bf06b2c6f4216531"
+      "sha256": "98f5c5dbe465f0069178485f6f51484022e84a57378ae5c8f15355f3e3c94e6e"
     },
     {
       "path": "asl/scalar/agu/SH.asl",
-      "sha256": "b2e005e0e485110c0d7a2119a29594eac8a27f68bc63b2062359fa4d64bdb6c2"
+      "sha256": "098270f7619c49e66572dbb043945c467f90e76ec566f1b1fa1b8184e2771dbf"
     },
     {
       "path": "asl/scalar/agu/SHI.U.asl",
@@ -1510,11 +1510,11 @@
     },
     {
       "path": "asl/scalar/agu/SW.U.asl",
-      "sha256": "d5e5d73adff990d1859fc63fb418c7636b3e31c62ada328ed6fd2574dc68da13"
+      "sha256": "a7ba6c51031e9ba28a74a4138b034d2bec376023ffb6b0d5182021f3d07c5774"
     },
     {
       "path": "asl/scalar/agu/SW.asl",
-      "sha256": "11ab5c4125473f85ed686b7a2d1e6479bc3cfa8fde4d231e20d8b5847035d1e3"
+      "sha256": "77131cd8cce4d55f438d1a22dd700e8823e2e78a1b65f2b5b500f61866288b5f"
     },
     {
       "path": "asl/scalar/agu/SWI.U.asl",
@@ -1650,7 +1650,7 @@
     },
     {
       "path": "asl/scalar/alu/CSEL.asl",
-      "sha256": "e1df83fea66ec27a59bcecb76d56d54922e7fc0741e3d55a22b8b6f10b34dc85"
+      "sha256": "79b14f86ccca58efb097e635b619db93e7d18188cf36ff488f5f8328c8c7a444"
     },
     {
       "path": "asl/scalar/alu/CTZ.asl",
@@ -1690,7 +1690,7 @@
     },
     {
       "path": "asl/scalar/alu/HL.BFI.asl",
-      "sha256": "b4f16035325688b8bf7e5786f1d430927d8a47c969fb79a090516ec4421939c2"
+      "sha256": "5ef936119d4b1988d9a1acdfc5cb8fcd4263e4d18f1aab26cbe49c0335f3f4f7"
     },
     {
       "path": "asl/scalar/alu/HL.CCAT.asl",
@@ -2525,12 +2525,8 @@
       "sha256": "f88f74b396b0b74702d99d1f17786261214fb2c15a4080b00028bc4f35489317"
     },
     {
-      "path": "asl/scalar/model/alu/bitfield.asl",
-      "sha256": "65583faea051e6c15cc35c30e65bd3a969993a37cd606d374f68827811096dd4"
-    },
-    {
       "path": "asl/scalar/model/alu/semantics.asl",
-      "sha256": "a4906d72081773c46f0369e9102a7bb42827717d0398e2e757b17ef72b4b4527"
+      "sha256": "3ea286b50965fd9a218d6a5ef9a1f8f230638d0163a734d536b3b6158039ca47"
     },
     {
       "path": "asl/scalar/model/amo/semantics.asl",
@@ -2546,7 +2542,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/alu.asl",
-      "sha256": "fe0181028b2795ef4b764c402ac7ad7588fe889c6c4c14c17f3dde8c22fc9e43"
+      "sha256": "aae66b82e868949861a1a93427ac9a35091d4ad339ed4535b500b0a1fc408c45"
     },
     {
       "path": "asl/scalar/model/dispatch/amo.asl",
@@ -2558,7 +2554,7 @@
     },
     {
       "path": "asl/scalar/model/dispatch/decode.asl",
-      "sha256": "045d0d7faa48a02adf549e08b670e6d7573b7354dfeaf5ce0c422a0c1634180c"
+      "sha256": "e1fbb14635d7037fdf8f9ad53d59610dff23faf39ecd57e2dc619c9a9399a647"
     },
     {
       "path": "asl/scalar/model/dispatch/fsu.asl",
@@ -3458,7 +3454,7 @@
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "e045c5303b402c1420b4cfc088f3d225eafdb47993f0e5159577dec18418fb07"
+      "sha256": "0cf45e973a23f50613fc2f411422c73c05ff2ceacdf33da42870091931614af3"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -3470,23 +3466,23 @@
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
-      "sha256": "de6fab6aac09025af1f198ca41fee4927e59e4a569a3061f1cc8c9b61ed473d9"
+      "sha256": "eae81a0e4c33b6f2c1811cdbb60257ee03a63d83a6f73c1f08e0307b6783e871"
     },
     {
       "path": "spec/evidence/instruction-contract-closure.json",
-      "sha256": "93f814c40311dfeebdfd087c39bc92b84d181173d95207cb509fe95f4a45dcdf"
+      "sha256": "4895275e28d709ea89820b99924e8953fd0ecccff1e72a806fd3e3823cd631d5"
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "9229953254d42c853e195295ce4094406ae7e28d3456d31165533c5ed3452fb8"
+      "sha256": "5f900e490483c1c47296ffd3891539fe2735fd097383f89652bbb82d7b9fb160"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "7439176eebfc70dffb400424583358c354aac834eb18c805b88b4a202830f902"
+      "sha256": "800f28dd4032b5798a35b03a03089a56aa0ae7957ca44578d94e54439dad4721"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "bb39a8c0de3528cdb0d30a8975b9ec7ae4982e1eefcee79599ef4fc54f5f5114"
+      "sha256": "03f104805643eecb8728a1126d9c91b9376c96c5602e345cb887c89ff016b9e7"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3532,7 +3528,7 @@
     },
     "tile_operations_total": 108
   },
-  "content_sha256": "7c3935b7ae48f2f2adcf0fefab22ef7f654638798f50165b5dd5bb1b05f4f7f2",
+  "content_sha256": "3a0eb710726063b91a376d97981818f4c91998a24a63043538916d3d1d2607f0",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3551,7 +3547,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "d02ba5f4eb051406437aead50773b81c2bbb5ab1e8b1ea9966e5e967690ea48d",
+  "encoding_projection_sha256": "d8deb7e99bae8dec66a624b36b93bb3f85bcf93dfa02d3ee07357d1efb1ede18",
   "hardware_conformance_profile": {
     "evidence": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
@@ -4579,12 +4575,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LB.PO.md",
-      "sha256": "b106a3ddff5723fb9e68d12e6418cdfa70918397cb58229ae925ddc9fa3942a9"
+      "sha256": "57c99dcfa25b028426ec61a289d95e9112d80bbdbc47f02682d59eb53acb3c98"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LB.PR.md",
-      "sha256": "491303d0c56ece7eac55a79d650a926a501a1f59c6632380bea3d12ddca9934e"
+      "sha256": "884af382960c6d7605bee05c5fc35d13e365e4da20f532a9f03d6088931fceb1"
     },
     {
       "kind": "generated-documentation",
@@ -4609,7 +4605,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LBP.md",
-      "sha256": "d8b8d7b9cfd2da9b7a90a3e51dcf2ded9602952c9b53f78e698a345810dea496"
+      "sha256": "580836af21e88db48581d6dc0835f56cf389bc371726cce37924af5707714f3d"
     },
     {
       "kind": "generated-documentation",
@@ -4619,12 +4615,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LBU.PO.md",
-      "sha256": "ed3033b7b77da3b14f2c7db7685efb87b7061ea09ca03e9256fed018ad5428d9"
+      "sha256": "228d0d82f8098d826b848f8c5b54a091333f9891efd83f3a5c72d85b8b5c7445"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LBU.PR.md",
-      "sha256": "49fd8aad592c802698d8feb5f2af94de59d120789061f9a811c740f340ac32ac"
+      "sha256": "7dbe1e40cd5b0c0a4c9b94aadb96916f0472a3b024581725d1e7fbfc0c360c69"
     },
     {
       "kind": "generated-documentation",
@@ -4649,7 +4645,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LBUP.md",
-      "sha256": "4fd9aa69e908117afa1c62b1335540ad376b4800f63f2518cbf31d00888518e8"
+      "sha256": "addff19c6cf2853123f7524c774541dded8541cfd31b566cdcb66dddb5453483"
     },
     {
       "kind": "generated-documentation",
@@ -4659,12 +4655,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LD.PO.md",
-      "sha256": "363b2ca4559cc6b3a61b118c737ff6eba0a33c8586ecefdd59e04f78b85bdc93"
+      "sha256": "b87681d839d97883d1a6986c75475ce84c3a8b138a54c2ca7b7b29820a97f041"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LD.PR.md",
-      "sha256": "d76d2b3715b7e9520eb482ce942f19e04727ec11d2e27a56081be3efbf350436"
+      "sha256": "4d06a25720ed1e6a77a62150b14eefabc25a49be9e00dc3f465b0aa4a993f611"
     },
     {
       "kind": "generated-documentation",
@@ -4709,7 +4705,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LDP.md",
-      "sha256": "9e7d54b09e30967ce322a9c465915e4ba5cdc9471f25240d054ce2b82f8e6d41"
+      "sha256": "129fa45d5e47c93306b749e99ab1f9803e28b24ec9ea8974ae568e28b449eee1"
     },
     {
       "kind": "generated-documentation",
@@ -4719,12 +4715,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LH.PO.md",
-      "sha256": "06924d0edda8788c3fe481cd45b43a8989837a5c3aac835a42f3cc1191e3c976"
+      "sha256": "325e9b84e994314aa2ea5ab122bb9d74ae8d4d696d0c10699c6ce25ef102652b"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LH.PR.md",
-      "sha256": "281968363a7ed575f18d88b8a56edb2c543c93c58a6405d66be1026a0dd3bcba"
+      "sha256": "ec138bc547828ae9060dece5bf17dbf2c3850f233f7a5d22f3fd52e59d2d36c2"
     },
     {
       "kind": "generated-documentation",
@@ -4769,7 +4765,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LHP.md",
-      "sha256": "aa6cacc823878e7d59369691126be8053253bad14793f006dcaf0ae136726246"
+      "sha256": "0317a581a5bc63dc9318be4925c5c6ce312cd446d2c5f84be5bb88f662772cf7"
     },
     {
       "kind": "generated-documentation",
@@ -4779,12 +4775,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LHU.PO.md",
-      "sha256": "e5979384688c73336ec57ba3814479726d459ad73a7a1f704ab547c2c46eb610"
+      "sha256": "0c1438459d539696e922c15e15d012a8429e3dbebd650c7b2cbc59df496447c3"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LHU.PR.md",
-      "sha256": "bd8ad73ffb60029c2339f3f8e83c63562d09d018806f08bba5606557d219ba59"
+      "sha256": "82dfe7cb3602270113f1e4d119db03aad8d8af479ee8932a2092b4e5e5012d92"
     },
     {
       "kind": "generated-documentation",
@@ -4829,7 +4825,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LHUP.md",
-      "sha256": "330aaaae99df5858d102af33ebfa6dac9fe2b82a5f65e3015b5f70c2747c652e"
+      "sha256": "91dcc9305b658b49291137466df37da5bb2866c03554deaac028487f38374f52"
     },
     {
       "kind": "generated-documentation",
@@ -4839,12 +4835,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LW.PO.md",
-      "sha256": "e377b8efd657efbe5bc2041dc9311a506d66f885fce5bef266505cd850501895"
+      "sha256": "1cf3f24dd7b7e660f5be39dae6dfa583113c2db8a00f7cc0f8549c5186236699"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LW.PR.md",
-      "sha256": "5d0706e5555ce474a6fa85c1ffd69275499294e0d6f52327be1862b744b2809e"
+      "sha256": "f0c4f20fa2f32337a57bfdcf66b5e4b47713e18f5a8ee2b33872efad15b9175e"
     },
     {
       "kind": "generated-documentation",
@@ -4889,7 +4885,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LWP.md",
-      "sha256": "5bf33ec1f9ded5d82844ab68d526412b2cbf8bc5fc4163cab792331c3d179a20"
+      "sha256": "eee591040d72774c911a043ec6ef6ae45d504e872ce06d035993d39edd36d88a"
     },
     {
       "kind": "generated-documentation",
@@ -4899,12 +4895,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LWU.PO.md",
-      "sha256": "490662b176a0f9cf8c6794fce52d08b25449ce1f033c978ef4b11bb88d3c7577"
+      "sha256": "6c3e794d5b8d575e03109ce69732aaf78de87a22063fdada545a086bcf5b729d"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LWU.PR.md",
-      "sha256": "f5b9b710ff47c06751fadf82ff6349302425d24e92a00e4f6a1f1628fb6ea389"
+      "sha256": "758724130d7b173ac2ccee424fc2836f23503fd0bf158c1fe2a47a4769191cc5"
     },
     {
       "kind": "generated-documentation",
@@ -4949,17 +4945,17 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.LWUP.md",
-      "sha256": "3e1aa1fd039ff81b807bb4cf865dab8158884cf60bcbd9f28bdc6e605f38dadf"
+      "sha256": "70e4dc1f0abfb0dacba773605e000db080689a611ca74993cf99a9b4272c7142"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.PRF.A.md",
-      "sha256": "3c2f2bfee1160e50693700bf58557aa9fab61044ab39f595e6cb8705381a8925"
+      "sha256": "2dedea743fdf60abc87312f993c57a98d14a9bd7770e9110b98c5ad1cd207b89"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.PRF.md",
-      "sha256": "261dccc81675aaf47ac9a80bb199a51e01917b8dab17a367298f3981698b7c47"
+      "sha256": "4ddfd10acbab8ef048083a43357f0868e52b3a675cd0ec34fd32c3b8b00a8f32"
     },
     {
       "kind": "generated-documentation",
@@ -4979,12 +4975,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SB.PO.md",
-      "sha256": "35d8bf813c4d7f4dd5311e3484530390f2e713511ffed71480aabce6f0ef4d8a"
+      "sha256": "f8c2e76f1b24b1c64f41c86dd0a43a2fa3326fd5920fae5927ae929c54593b1d"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SB.PR.md",
-      "sha256": "92efd0a2ed80b0f929f85c8c1097f02c559f17d323c910b05cc74b3fdf230275"
+      "sha256": "f99932c2470c01cd83c844d0ff536dfeb7ef56be274dc55fd5305f7b4d5537a6"
     },
     {
       "kind": "generated-documentation",
@@ -5009,7 +5005,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SBP.md",
-      "sha256": "001c6833cced0de69858274e1555962f2b9abf996c600b7a976313bc07e3a2d4"
+      "sha256": "c4bb78abeaf0302bd135d8204a8bae67234f6c9a1d1e2afd94bb2cf7dfeaec64"
     },
     {
       "kind": "generated-documentation",
@@ -5019,22 +5015,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SD.PO.md",
-      "sha256": "07784414e1551cdbba6de4c0b38bbfe34ab61272649d2d286e5f336f36049f44"
+      "sha256": "7bc54f3340381ed6a5fa37992ab513ab6646210c7936ca20912047c82da25d7b"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SD.PR.md",
-      "sha256": "cbec22dbc61b99d36d94c215c3c71049a5674183581ead25dbae1dd2c43200de"
+      "sha256": "4b4005b6842be081a421234509479343dde76665db9e7ef87616a06a34e32e2e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SD.UPO.md",
-      "sha256": "1cce9610d5c11cdd7f376822909acb7f747d0f6e7dd1d234584726d810839a80"
+      "sha256": "4cdcef7f53de95e405550c1c5567cfcb2e4ac14abb342048a734333df9061c09"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SD.UPR.md",
-      "sha256": "4136b8f877d03efcc95a1ae765cbf289246fac51b401c7604bcd6dbb296c645e"
+      "sha256": "f1f9a6c4704b97dff552353e6c9be873a2eeb397e0f4e0fd42b3721edcabba3b"
     },
     {
       "kind": "generated-documentation",
@@ -5079,12 +5075,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SDP.U.md",
-      "sha256": "458eceaeccf3a58893a31377a9180dc95bc3f96a75d0707bf80af2052d6e4e6f"
+      "sha256": "29a3df23c3da6a3415fed89eb9a820814d55afb1d6ded53668470045910667d5"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SDP.md",
-      "sha256": "4918fca3f269da46f6763db61ca2292c789d025dfffd18d843dce6d8a3d9dd3b"
+      "sha256": "10fb04f4846c99dae02dd22dcdb9a8732e99df4f1980fe985c1947bab6d967c8"
     },
     {
       "kind": "generated-documentation",
@@ -5094,22 +5090,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SH.PO.md",
-      "sha256": "d4ecaa926e466c4dada15064878d16b4984482b695440f95c744d74a49d8bfd0"
+      "sha256": "e7caea1fb66348184e4be83146d33b8fe38c112c523fff3c1027c56eb28647c1"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SH.PR.md",
-      "sha256": "336de2c553af1268df808ff8e49e7fc3c154a9fad0b906cdeaf8f6b500a009df"
+      "sha256": "99af06ffb45a32938aa9f054adc17b6fedc5ea3131d64eee996bceff2bae9933"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SH.UPO.md",
-      "sha256": "0fb09a95b54eeb6682bf92c74e6550d028591f8e2148ec5c354158b91b64bc2d"
+      "sha256": "2cc067c51da7c0ef5421c25b53252209e1402d1f7d371738c109713350f67ca4"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SH.UPR.md",
-      "sha256": "5c874b79d0d1b27b088532b9ac2d44733834a99c73251214a1e82f95007fa7ed"
+      "sha256": "c43df9545e57d091c5220baf82d90b9b81c2adb0a2d61f83532138cef6e95222"
     },
     {
       "kind": "generated-documentation",
@@ -5154,12 +5150,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SHP.U.md",
-      "sha256": "a087ffa954e3b85b7cb1e81a5f4407042b0054202601386e82b62a757e93491c"
+      "sha256": "7f1ca4699aedf37dabf0c096ecb110e468e0a1d21587235eeedd7ed012aa7c1b"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SHP.md",
-      "sha256": "6bc984b10bdfee5fad2267684258938d22b1b3fe4e77d0bb6de51670b9359a43"
+      "sha256": "392b861de47409c98b08785fb478c434898365ec8788d7c614bc1b6366f25bbd"
     },
     {
       "kind": "generated-documentation",
@@ -5169,22 +5165,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SW.PO.md",
-      "sha256": "1d7afe230b6d9e7aefa262a5b474f3d2afcdac2c24414106311cbe2edaa4fc2a"
+      "sha256": "e4b03633da78563c471276669ac80d8f3a398e8a69325601212b18b402098f10"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SW.PR.md",
-      "sha256": "763e5ba65ddf21a6347263f7c367683e7f9918c0abf1a9b660a054bdab16eb31"
+      "sha256": "1c143a54cddd280646a2a6d0add12f5d0bbce1a0a40a3e9a1f3851762b856ec2"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SW.UPO.md",
-      "sha256": "bf17e18faad1e479986b2c2e04f15b93a8c0d27b2f176f4e389a25763ea3e850"
+      "sha256": "e444660ceb400db7f4b12bbf1a54cd869afc1d6b12c6213c6fd29031f1a42370"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SW.UPR.md",
-      "sha256": "4dc8317de3629823e615abc6fefef7059105653895b3bc2b7cfea6fac92b6834"
+      "sha256": "cb8a567973dca4b9aef5e0081ed7b3167ad83fe9c75c5408b567b8070c88e64e"
     },
     {
       "kind": "generated-documentation",
@@ -5229,12 +5225,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SWP.U.md",
-      "sha256": "aa7d94eaa5bafb528ed5cbb210b521b7d0a0b9cc66712edf3c56f210e3092877"
+      "sha256": "454e371d70f35ed5b2dcaf71dabe0eda4328d17fa55158d344c8530de68bbe8e"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.SWP.md",
-      "sha256": "902815a3abad3dc544f84938e384236aaefc9216eee671498ed3cf9b71197a1e"
+      "sha256": "fde49c2ce9f64194cbf6df6eacc4e5ed1849e8ec5b1deedd3fe1932e9c1093c3"
     },
     {
       "kind": "generated-documentation",
@@ -5244,7 +5240,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/LB.md",
-      "sha256": "0e60cd154d3f77463cdf4e85d8cb4bdbfcc13de05324633ea321f73718fb10a0"
+      "sha256": "9a67e8622abd4d55dd36a5729265171b9cbde9989e11c598b55bba2980e9a254"
     },
     {
       "kind": "generated-documentation",
@@ -5259,7 +5255,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/LBU.md",
-      "sha256": "08bd659f6ec2c10fa6f758838361042e8e8989015f0dcb62e06934484ab35721"
+      "sha256": "d7d995956ac954c384d47ea9c54c11dc8b3a9ceb3978d1122f0578e4988a7598"
     },
     {
       "kind": "generated-documentation",
@@ -5274,7 +5270,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/LD.md",
-      "sha256": "c3d0fe50eb6fe0cdb21b3f697ac624cb3c48cbdaacee14692c5f88abe206ab14"
+      "sha256": "bbd2f6ca51862b3d455ea830600d4a2b9c4c734d3cd6615e585d39432e674806"
     },
     {
       "kind": "generated-documentation",
@@ -5294,7 +5290,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/LH.md",
-      "sha256": "e162f99399aa52e7696a38d3e2409a95512c2bb6273f8e094700ef06ab013fa3"
+      "sha256": "2482e514484ea3b2589695057ec73bd56defb359452fa4c037c4a5f2843214aa"
     },
     {
       "kind": "generated-documentation",
@@ -5314,7 +5310,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/LHU.md",
-      "sha256": "024be99e636d6ce1bccc8216bbbc65e324d21733c81441bd68e0d6754d1dce18"
+      "sha256": "f2167c41cae38d05108ce3e1da1805821d774d36ff4c04b481355d85c62aea3e"
     },
     {
       "kind": "generated-documentation",
@@ -5334,7 +5330,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/LW.md",
-      "sha256": "c5da359ee8eb5d67d8a5bb683cc7fd0278c9faccfe2b31df6b9a35acbcb16601"
+      "sha256": "703e14c86cf89fa4dcd6a6e40f19887e3d53c4b9294afa5519f92d84a9635ee7"
     },
     {
       "kind": "generated-documentation",
@@ -5354,7 +5350,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/LWU.md",
-      "sha256": "d6afa545cfa2f566f98b175fd20aa7a8f288ed74a9ae75b54fee5e2e7467c291"
+      "sha256": "338503ddb68408937c0ce318ed154bcc41648ac35631779d4f408b5ed24ba7fe"
     },
     {
       "kind": "generated-documentation",
@@ -5369,7 +5365,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/PRF.md",
-      "sha256": "d5098c058231c8345b478795ab368051bd6769489859cb8d80e0a7ff9f5c87dc"
+      "sha256": "f2b97fdc0fa890d2a5c4af9a16379315c9893f8076dcae3a056ae115c325fb57"
     },
     {
       "kind": "generated-documentation",
@@ -5384,7 +5380,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/SB.md",
-      "sha256": "cfe06c9b3f2663b4d878377e744e1d65fc7f749a91d21d50256af0b3af484a9b"
+      "sha256": "07fe1067864192b8e637c7db72e8839074c4d19e11c2c076a20d51c3767f323a"
     },
     {
       "kind": "generated-documentation",
@@ -5399,12 +5395,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/SD.U.md",
-      "sha256": "6363eeb70696e8abd0deb5a3fd13915e3de1be33f5867f84aa7ff388f53c542d"
+      "sha256": "274e9573676faece21cea7e4a913f919c714d454d9eaac5ad1e538586aa52229"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/SD.md",
-      "sha256": "82821ae88d5f1bfb37154b8169ef1ed8c71269c046e2ca9d20cf04fcc222effa"
+      "sha256": "bb52bdf4135533c73238f0f1a4f4f38dffed1ec0ba04cb99d0526234689ba28a"
     },
     {
       "kind": "generated-documentation",
@@ -5424,12 +5420,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/SH.U.md",
-      "sha256": "f0dad88dca2138f1526662977247af17417e9453ff1ba44a1b55f2d63ded14cc"
+      "sha256": "bdf4d47837bc94f5e912443ed6bece6c3d6b10b463b1e56207745f789d92f561"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/SH.md",
-      "sha256": "6d823200302620049dddd248ec31477fb390ff35068c976897f5bb61256b06f2"
+      "sha256": "d0a07532342d19e4410c4e0606258b4ff0d8d84d53e0ac0aa80b12e261f667c0"
     },
     {
       "kind": "generated-documentation",
@@ -5449,12 +5445,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/SW.U.md",
-      "sha256": "82c6ac5ca3c33f2b9ac3af362a469c5a9ac875baf1de00fde710d6c474aac717"
+      "sha256": "5835fc60e58b68063de936a1af212f67b2ead9292ba7884f724da1d8efcf387c"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/SW.md",
-      "sha256": "415b7f1dc5fdf0044cfcb363b224812cb5e3c657bc617d00a3bfd996b5d4d515"
+      "sha256": "24f8d315e3db10aef9aa209954c20f8de1ae3bee19526b3b74e7b4c8ed72e89c"
     },
     {
       "kind": "generated-documentation",
@@ -5624,7 +5620,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/alu/CSEL.md",
-      "sha256": "2579b25cd78d592ea65e48ff27ad3914caadaf578513b5d011d3ceb338bfacbb"
+      "sha256": "0beb9ac79efc1efd0af89907073dcd9e80fe45dab0d4a750a7140be14cd9eea2"
     },
     {
       "kind": "generated-documentation",
@@ -5674,7 +5670,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/alu/HL.BFI.md",
-      "sha256": "69d02ab978ebb548e9e2dce004850bdb1f3eb7ea14e5a95f183e545aab76473a"
+      "sha256": "da6b9097c2636ddeeb433c3d216412ccb9c0f8ab2c4d66f80df4febac2a4e8a2"
     },
     {
       "kind": "generated-documentation",
@@ -6718,13 +6714,8 @@
     },
     {
       "kind": "generated-documentation",
-      "path": "docs/scalar/model/alu/bitfield.md",
-      "sha256": "63d97c6b2874372d48dbbecd9f9aec6ff60a7b5d27c65d20e8e04cc3c76a7fca"
-    },
-    {
-      "kind": "generated-documentation",
       "path": "docs/scalar/model/alu/semantics.md",
-      "sha256": "e0147155552210c654445597554ae81d42e8868c71da0e3f27df7859411bfbf8"
+      "sha256": "8cb1eabc757c3ff2d1572a665fcafb85e06dd08136f2156f04959cb9140c8a2f"
     },
     {
       "kind": "generated-documentation",
@@ -6744,7 +6735,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/dispatch/alu.md",
-      "sha256": "cb23a3cfd1bb08ba002e0d4b67309004ad330effeb00e3fa568a59452bd64bb7"
+      "sha256": "657ec080cd7b1af7c86989e8280f0cef5abd9b121493286fd83e9b71b7904f19"
     },
     {
       "kind": "generated-documentation",
@@ -6759,7 +6750,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/dispatch/decode.md",
-      "sha256": "c6c464c3c1fc0472a64c4001b0752f63f7ecd93a0f5de11e56dab879530a9ed1"
+      "sha256": "67ec50edf9397a295976488eed3cf0cf6fbc36af3c46337c4ae6e8989ad732f1"
     },
     {
       "kind": "generated-documentation",
@@ -7864,12 +7855,12 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-abi-vectors.json",
-      "sha256": "0babe3d8177d9e8e8133ff69571483ff5f59c33dbb73ab67c078a30dda7bb791"
+      "sha256": "644ef5b096e06da6b8a4875883ac7416652a1a408e187ba67b047f313f51fd7e"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-encoding-totality.json",
-      "sha256": "bb2e86e1513d658dfb53085213eaebc8f492397599433b5ca9de42e952a4e654"
+      "sha256": "5aab67db1d1139823f5207869ef63a1a05d83d58dab8cd66bc0145ce9007230d"
     },
     {
       "kind": "generated-evidence",
@@ -8434,7 +8425,7 @@
       },
       {
         "id": "PTO-HL-BFI-DECISION-BINDING-001",
-        "sha256": "de319004379530a953317669c0b12c2916516c581fc0a02406ee158bfc821780"
+        "sha256": "a604395c5fe366555872bca873a1f42205bfea356becba5d650d04f8e93a9885"
       },
       {
         "id": "PTO-HL-CCAT-CONTRACT-001",
@@ -9142,7 +9133,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-CSEL",
-        "sha256": "5ca670c9755ce175db074b903589ac9dfe52763e9a556588f802df268987c9dd"
+        "sha256": "c962aa05603ad1a8af3d860b3c80c44efe3c71eff3c82fe7ae5bacdbbb65b77a"
       },
       {
         "id": "PTO-INST-SCALAR-CTZ",
@@ -9346,7 +9337,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-BFI",
-        "sha256": "4af3e2684f46d6c9c01e0a78fdc378c7aede44aad04d37601c455b88aaf44817"
+        "sha256": "12ed71a2d299de1a104579be20b810f9befdb98e69d3005737148dc385ef65a8"
       },
       {
         "id": "PTO-INST-SCALAR-HL-CASB",
@@ -9426,11 +9417,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LB-PO",
-        "sha256": "d6a95f28f0696f37d766d369615d3d74936ce031faf4dfcf86e8cbf5d19bd925"
+        "sha256": "5e35ce1af5e9b02cb6d1e68005f1db78d54cf6621102b4c3dcc33f8ecac7c592"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LB-PR",
-        "sha256": "a061740df0bc7d8d03030d865865e429442b811e96e2213e6d970d0fb2fa11ca"
+        "sha256": "b0df794ff1e989d2601ccc1ed3ca9485cc866364439ef58619513043eaa6610e"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LBI",
@@ -9450,7 +9441,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LBP",
-        "sha256": "ce16ba644db9bb5561527abcefba30f9e4d638949cdb6e65264460a32656cbd6"
+        "sha256": "a32834c6b5965b794fe22f1ea4953d6923ebbe335fb6d1df839af40bae425303"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LBU-PCR",
@@ -9458,11 +9449,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LBU-PO",
-        "sha256": "9bdce9503d79cd833dd56d81ddb2a09ec785de1e16231556bb7323a6cbde5d07"
+        "sha256": "a58c27d77ce01ed2825d4657a7dc6b0391f8299111f5dff3396bcb36778d73ea"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LBU-PR",
-        "sha256": "bb700711dbdd1c5c979352d5c319e3ef49fa9dffea3c9ff41d7f0c084b17bd3c"
+        "sha256": "2c7969baddd1390e3c72d1a08a8c658a7732d09d5e8cdeec06543608f10c8ed0"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LBUI",
@@ -9482,7 +9473,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LBUP",
-        "sha256": "be6b5abcc1252c7a6968ec733bb9c2c7b2bbbef8046560d111a95c782487340d"
+        "sha256": "15bc433047c64060e20a0323d1a5c73e476da0c40265adc5c43ecd61fbf8c85b"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LD-PCR",
@@ -9490,11 +9481,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LD-PO",
-        "sha256": "8966cf3b580d519c61b4cb98ceeab1948c1b1a6574545bb9b47adcbea6c9190a"
+        "sha256": "74fbcc9bba9efeace80eb07b5de70157ccb3df9936c18e68f05c43eca3391845"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LD-PR",
-        "sha256": "62a1b5b8da925eb2bfa746b550bd95dc6002f5223892819f4f086b417534bcce"
+        "sha256": "11fe51fbeeab0f79d0f50d89933da5124042a0d2a8aff1643f8c752476266111"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LDI",
@@ -9530,7 +9521,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LDP",
-        "sha256": "5d2c3a7f9eb616e9cc8349574fdc3af5bbc27917b1e2154fd9368684f8970e9b"
+        "sha256": "2a23569662d0b9c0423db52f4f47ae35070e0260e89c6b5859bfbc993fc3558f"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LH-PCR",
@@ -9538,11 +9529,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LH-PO",
-        "sha256": "6d5e29529835b50ff1c9ade08761ab965d29521c1df3f387924df8d12c1928ce"
+        "sha256": "7ced894549bb380a48bdc3bf71bd30b9cda03c34f7858889b043f0fecd8f05e6"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LH-PR",
-        "sha256": "07eca7f8f8f350ccd405c69b6f288b866ecf012e4d9d7cf9307ba4d3996db5f0"
+        "sha256": "e0db9b15b936db8a9b77f5699d3a38706742f990fd1f24f9babba9ee5b7bd016"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LHI",
@@ -9578,7 +9569,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LHP",
-        "sha256": "099ad02604025ba34162185b25d4542f39c10187df15fb4b43713053c3f3e306"
+        "sha256": "dbe2f92873067e03e6f1e4572097a641a41ee8eb1033aa3e5ef3ef78677d2c86"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LHU-PCR",
@@ -9586,11 +9577,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LHU-PO",
-        "sha256": "98ff6370ba77258a8c4336f090c507211bc349c4b7b34295d8eeb72984ea584e"
+        "sha256": "a9bf5144e0448f42f22f677608dc82363dd77f55907f3ec0b8fe05befdfee34b"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LHU-PR",
-        "sha256": "e8bd7a69116ade23960a60f5d320ae69210e1841f31cee3146f28055abfac615"
+        "sha256": "b9b9073bcea321b308aa4d9cb0d55375137303f7498df13dfd2d848675bbbf3d"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LHUI",
@@ -9626,7 +9617,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LHUP",
-        "sha256": "dd48d25655ce52d96334729b2d94f17d3aa9a83ce74f69d97fed74f21ba4ecf2"
+        "sha256": "40b8c55c69b489458244bce2cd87dccb24cd178008c3b29d70e02915abdab87d"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LIS",
@@ -9646,11 +9637,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LW-PO",
-        "sha256": "edb17f411d367460b498dce4c5ced24c1e6d48d54a5cffb0dc0306400f3fd8f1"
+        "sha256": "d4e108898ad19420885628e963fefec69cd228cd42354211c7bd43d814b01e26"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LW-PR",
-        "sha256": "d57bbefb7d1431ae7f81f14568d76a3ad09ffca86c4db46b5977efd682b904b3"
+        "sha256": "fa1cb061726c28df64baae5c8d0f6b27899dfd2650c93551d9db4b7dcde4fd8b"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LWI",
@@ -9686,7 +9677,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LWP",
-        "sha256": "644b419ad8d7d5dc73a928aa828af129d1f308b50f7fbab771e93db020c51434"
+        "sha256": "36639c28517a962b568013e5f7e38c93fec0204a34ddcda6f83aad97253f82d2"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LWU-PCR",
@@ -9694,11 +9685,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LWU-PO",
-        "sha256": "6fa2696080ae5aaffd101b7cc6ad9fceeac124288f7d68b97cf864a9b0b5bfe6"
+        "sha256": "df0806121512b71c2c91250a98e727f46ad43adcc01c68f7dab2cacc6ba54f64"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LWU-PR",
-        "sha256": "d04936ed46d65c96931653ab98ce00b50f0d94f17af0b3a3b26e7b7f11f1910a"
+        "sha256": "7ff735a08cd51150816489069c251b28ebd9d74fae0c9c6f01af321ae57b9d12"
       },
       {
         "id": "PTO-INST-SCALAR-HL-LWUI",
@@ -9734,7 +9725,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-LWUP",
-        "sha256": "d333c4c7c85b4252f0887bcd5ade128c48155b0939516417acfd0deb4f173404"
+        "sha256": "04c1fd5095705c63d29510cb3877eb8a57430fb554dd25bd47ce17ae93d7e44e"
       },
       {
         "id": "PTO-INST-SCALAR-HL-MADD",
@@ -9770,11 +9761,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-PRF",
-        "sha256": "15c3a4f608a9c190a92a2530738d7b1568327348f5628af901a8a6bbaa1663f2"
+        "sha256": "9046f10fb0f4dcfc9b42eaf98cb48bba7a5ffd74e2851b0e7b745a18e4189506"
       },
       {
         "id": "PTO-INST-SCALAR-HL-PRF-A",
-        "sha256": "afc3213d463b01fc825e1bb5415435b002efb9128ae933c49d208811b4d5129c"
+        "sha256": "5418ddc918950e55055c6329f73ae52a1a37f1bba664474fc814f3d1bdf85ec8"
       },
       {
         "id": "PTO-INST-SCALAR-HL-PRFI-U",
@@ -9806,11 +9797,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-SB-PO",
-        "sha256": "e9b5da72c2a537346f5d5056a6a78ea4626c314e85c0590a1d90501c3bbb5da7"
+        "sha256": "d4baf7ce7149d9e07a104fbcc8dd44d3509a49238b943b47d9e0080ac23269c1"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SB-PR",
-        "sha256": "f4107daf4fb510351208955518523f5084d3fc3684dceb8a133b7182d03c0e5e"
+        "sha256": "d352e8dda57e540e4c1d32e4e64cc64c06bd149f0c30c68d3c24f060f4d8dd89"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SBI",
@@ -9830,7 +9821,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-SBP",
-        "sha256": "79599a404a21fe5a34baf47f320ce33f92e0d148e5a074097f75fba92d33a0f5"
+        "sha256": "df330dd08ec7696d4acd4342670d6d1a8fda6f9979fecc372bb4c056241b6f28"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SD-PCR",
@@ -9838,19 +9829,19 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-SD-PO",
-        "sha256": "090e972b794461b7e64cdbd763051cd48010c80890fc22ecaa6e215a0f052d5b"
+        "sha256": "39f509906e23cf5408d10b9ef0796169a8728b8677f6459a659fb9b7a7fe40f0"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SD-PR",
-        "sha256": "99ad4c9bcaef239233ae531742f34908f4dc40663e564175e7eae1411465da4e"
+        "sha256": "6a486a429cbbb8df94e817c4cb368fd74f91f81c0bce4a7ea93c358e606dbe13"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SD-UPO",
-        "sha256": "bf183bf02cc810e0372e49f626449d29c44fd6050a44d5d9e132063ec75ac2d0"
+        "sha256": "dc74406f0f45c82ed690054111c29b4b6962c6fb4e3af8075daceb71bdd8f879"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SD-UPR",
-        "sha256": "a9327910f45fabc5a3ce2786b5de042adae945fbfdbe56d9159a949291a5f15f"
+        "sha256": "13ae51535230d6253d8c88a6efe2df4d12017a296a5bf56810b1bb8414c0e154"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SDI",
@@ -9886,11 +9877,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-SDP",
-        "sha256": "756b1c3ec2dd762da568074baa3a45453df655a522831feeb980c8c0ba4ebef9"
+        "sha256": "34d20ab61f76677a40cd42c85b35be223abee3f845bc0a492f35e7987daae2a5"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SDP-U",
-        "sha256": "5e38c7d781e9a5ff4abf5c66843894a566c9afa8fea2f1191912ae95a33b125f"
+        "sha256": "5dc4c238b96e637a0299bb09067dcc0fea89c5ee7cc3b5ef6bc8a7a2c235a812"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SETC-ANDI",
@@ -9934,19 +9925,19 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-SH-PO",
-        "sha256": "3607fcc53204d5c92878439cbd08d2334f0fd327a6cd5ba3a2e534f1cda9f719"
+        "sha256": "0df32b9ad884b7154692909e6c2965af2a373f55ce554ebc76d0fe2e9f18aa23"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SH-PR",
-        "sha256": "e1d6c7ae9488b2078745c32a141cd9a6891d2ca666ffa1aaf354857e96470910"
+        "sha256": "17a18ac970ac6b684c6faeda4e375a1be0b4b4108c127e3513b6b83d1f645417"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SH-UPO",
-        "sha256": "de5ca7a409a0cd51d676efce262d3fc4a694735be1b3f57c4151d67100a49c00"
+        "sha256": "53fd27107e6277ae8abdc38c96185d03182f059ebfc8decfb60a4a2d98d071da"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SH-UPR",
-        "sha256": "7e22840ea9305de081ca620f1f7f1674e12e6a43ce6c7d29276d87c8c1a8d053"
+        "sha256": "54f36504b98420f2796ee03d10f0523e7ad6a82411cbff4b26bebc9f108f0f05"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SHI",
@@ -9982,11 +9973,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-SHP",
-        "sha256": "c9894cad5198a4e4ea20e4d867960ad2ba89a60ad3a0089dea151d9b7f0a56b6"
+        "sha256": "9dbd29234a0343a57470292002bd2b7580302608fd9e11acd1d8cb897c2346e0"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SHP-U",
-        "sha256": "d26a5897c0be126a73563ae624abb6753ba2aaa3ea57eb918e704b8b8633d7b6"
+        "sha256": "9fbecd93cad877d51af2c9c3f8c49799cfb96473b21da0095dcd8d7cfdbb11bf"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SSRGET",
@@ -10010,19 +10001,19 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-SW-PO",
-        "sha256": "471293f6f22860a1c9e4a4a03bca4a4cb369f9f60ee07d228da9c244a747a267"
+        "sha256": "e5b6b33b60a2df83930469b5edc35d39b6e076ca9f2a85eb339562c64965d66f"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SW-PR",
-        "sha256": "54c1c12b08459ff91eaa142996878765eeb1951cd4752c4241ae966c79bd9fd8"
+        "sha256": "612a122c03f5017d8e944a92751eaed3023cd1f072c9d32ce7d7327dc29207fe"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SW-UPO",
-        "sha256": "f370e904163034a667e1eeac3a243339d0406997ab2e9e6f3ccf444652c5553e"
+        "sha256": "c014d3a66743a7328faeb7fca1df33b827e37f6543e25d243d5e755f3b614883"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SW-UPR",
-        "sha256": "b127a44b4c5dd253502585b45ffa037833155d2925e18069d80d84d87288406c"
+        "sha256": "eba282b69452ec88b961f0101c3c181bc45c510a964ff9e7308da953b7cb5182"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SWI",
@@ -10058,11 +10049,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-SWP",
-        "sha256": "d55a8b7b63f738d89c3002b6c00b101d89d61d5b0724b46c7300c660c9f32a25"
+        "sha256": "c1825753431d5d98f862c41b52c96630cb0cdba37acab07f032ff16119ced4fb"
       },
       {
         "id": "PTO-INST-SCALAR-HL-SWP-U",
-        "sha256": "f730fc02d1839c764c8544b143ea55c9a59cc9f18a8350469802ea719c52f2a5"
+        "sha256": "286f2022f457968460e4cce816ea02b16eae4f5362c4a2463fb384f67da8b04f"
       },
       {
         "id": "PTO-INST-SCALAR-HL-XORI",
@@ -10090,7 +10081,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-LB",
-        "sha256": "bb01d80480fe8467e0f08ef1ee83a5d1f17ede10b537cffacdecf288acff86be"
+        "sha256": "eab80959e292a760b254b79529d5d15c4fb95573d4698c45d208c8841bab4c06"
       },
       {
         "id": "PTO-INST-SCALAR-LB-PCR",
@@ -10102,7 +10093,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-LBU",
-        "sha256": "c36520f374f31ef02daade0e481524ddba6f6da32301d70d106e27c8b15d93f6"
+        "sha256": "58837b25bd4239837dcd5fe654f35d66bdb4c4bb5b406650e93e506835116306"
       },
       {
         "id": "PTO-INST-SCALAR-LBU-PCR",
@@ -10114,7 +10105,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-LD",
-        "sha256": "4529d6deb76fdd471c884321097fdf56dd370fdd9b3f07d1d04ef0f3ddfb9dbc"
+        "sha256": "a99d38acbecf43a00954ea2b719f303c5b72d5414858574a1b6abfe418d4ff4a"
       },
       {
         "id": "PTO-INST-SCALAR-LD-ADD",
@@ -10162,7 +10153,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-LH",
-        "sha256": "ec6bfe1f7a6e3d5983ef0184d8ee4e71c7aadf99e5902fee1311b49404839de2"
+        "sha256": "c763c0cb36143584d6e53e6f79492f8aca5903b431a0ad7cac5021f396fa2746"
       },
       {
         "id": "PTO-INST-SCALAR-LH-PCR",
@@ -10178,7 +10169,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-LHU",
-        "sha256": "b0cb74370221107617c44aca4fef0ed8d0db84b1825154d355484be6e1e787f3"
+        "sha256": "68a6194f5a628eeea67e5a80263d979b511b48ec2a11186a30435188a8d80c59"
       },
       {
         "id": "PTO-INST-SCALAR-LHU-PCR",
@@ -10218,7 +10209,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-LW",
-        "sha256": "8da228e4d8d8a839b734fdfa24af6df822c9f29a6bcec0ae6ba060395d483191"
+        "sha256": "379591a300447f41076fd665c4ed06cc3a81beb89773552af49b23ad60bfe15d"
       },
       {
         "id": "PTO-INST-SCALAR-LW-ADD",
@@ -10266,7 +10257,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-LWU",
-        "sha256": "549cd06fef82f713cc8e9cf1ae6d75436e6a8c6ae508021da4f942ca0bf53ef2"
+        "sha256": "73fc082afb3a53b2a86c409e02cdfe36eb22d3f56d959fde4342fca0e0004928"
       },
       {
         "id": "PTO-INST-SCALAR-LWU-PCR",
@@ -10338,7 +10329,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-PRF",
-        "sha256": "97d9f1d06b1a102486ae2ce4e0beff65ad4d594a7335961d929cc7c79c051467"
+        "sha256": "9d983a82402c5b9553bac02c4c5d4fdca2fde1ad4a51cdc1bc76a7e5d0da268e"
       },
       {
         "id": "PTO-INST-SCALAR-PRFI-U",
@@ -10366,7 +10357,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-SB",
-        "sha256": "de021750a7a6b500e701db158a79e8dd6b1267250b28464cc6766e084f1070dd"
+        "sha256": "555a5b8815b16560bed5ddf37ccc38bc403eb7d6bc696a0c19eaca8a0143c29a"
       },
       {
         "id": "PTO-INST-SCALAR-SB-PCR",
@@ -10398,7 +10389,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-SD",
-        "sha256": "d7d330f977c9bb9b831c1dc22b92341e9815adef2b6b8f07ee8f16f86ab128e5"
+        "sha256": "90871f2256ca59636ea1ef2ee9be40bb065380abae666092c954b20b320c2199"
       },
       {
         "id": "PTO-INST-SCALAR-SD-ADD",
@@ -10426,7 +10417,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-SD-U",
-        "sha256": "187b346819e3a46a1ed1155695d02a3bb4d37ca23bf100e9734da5b087b26fbc"
+        "sha256": "1a36f484ec80e2ba95d3d1db9f8f3839e83552d7dbc8ff8a548fce9dc6b32cab"
       },
       {
         "id": "PTO-INST-SCALAR-SD-UMAX",
@@ -10522,7 +10513,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-SH",
-        "sha256": "f1e6db8c632c0607c25c9c95bdc74907335e0755510c4180aeb01a212ade8dfd"
+        "sha256": "41a5d362f885b143e997f3a1ddc3a6259dd42fad36972dbc396f3ac0129521aa"
       },
       {
         "id": "PTO-INST-SCALAR-SH-PCR",
@@ -10530,7 +10521,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-SH-U",
-        "sha256": "781827415167f6f7397f02698c92e3139a28689f35bf856ba844b010cb56e497"
+        "sha256": "343126349d33736972a6677bd5e67fcf3bbcdf22a64eab736bcf8fd8d18d2e35"
       },
       {
         "id": "PTO-INST-SCALAR-SHI",
@@ -10618,7 +10609,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-SW",
-        "sha256": "f4c35d3c7ef83d51cae5f3d95cf68a44b623d16b9e2bfb72b8a93154101523fa"
+        "sha256": "76bdc7f4c89193da5820f0ae4eb496087bab5d19c068309db89c8e754e026b94"
       },
       {
         "id": "PTO-INST-SCALAR-SW-ADD",
@@ -10646,7 +10637,7 @@
       },
       {
         "id": "PTO-INST-SCALAR-SW-U",
-        "sha256": "69eb00eea71adf2778ca8ea58f6cb08ddd0cecc223b0aa0b4d89dc86cb4b2f52"
+        "sha256": "2e2095b1e65053e010004699811d9a04d89c0892c5fba74c062c04f030113ad4"
       },
       {
         "id": "PTO-INST-SCALAR-SW-UMAX",
@@ -11258,7 +11249,7 @@
       },
       {
         "id": "PTO-REQ-AGU-SRCRTYPE-001",
-        "sha256": "808c065bd119e3c5fde4b5c6a990b856401d9bb05d0f0110253db236030ef56d"
+        "sha256": "8f2f89ba1bb64df2b9b893897ffe53c80122c6d8188ea7017fa82144ebb97ba7"
       },
       {
         "id": "PTO-REQ-BSTART-PREDECESSOR-TRANSFER-001",

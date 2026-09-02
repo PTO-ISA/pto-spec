@@ -42,7 +42,6 @@
     "PTO-SCALAR-CTZ",
     "PTO-SCALAR-REV",
     "PTO-SCALAR-HL-BFI",
-    "PTO-SCALAR-MODEL-ALU-BITFIELD",
     "PTO-SCALAR-MODEL-ALU-SEMANTICS",
     "PTO-SCALAR-MODEL-DISPATCH-ALU"
   ],
@@ -54,8 +53,8 @@
   "legacy_ids": [],
   "amendments": [
     {
-      "date": "2026-09-01",
-      "baseline": "b83b23930510c3ea96ec81b9838ce6c6a0929a4c",
+      "date": "2026-09-02",
+      "baseline": "cb0d65b584ce3ad82dd133176e34a97babcfd8ca",
       "approvers": [
         "zhoubot"
       ],
@@ -66,7 +65,6 @@
       ],
       "affected_units": [
         "PTO-SCALAR-HL-BFI",
-        "PTO-SCALAR-MODEL-ALU-BITFIELD",
         "PTO-SCALAR-MODEL-ALU-SEMANTICS",
         "PTO-SCALAR-MODEL-DISPATCH-ALU"
       ]
@@ -93,12 +91,11 @@ that is not a multiple of eight completes normally and returns zero; it is not
 an illegal instruction and raises no fault. `imml` and `immr` remain independent
 encoded operands and must not be collapsed or substituted for one another.
 
-`HL.BFI` is byte-granular. `imms[2:0]` selects destination byte offset `M`, and
-`immr[2:0]` encodes byte count `N` minus one. The operation snapshots both
-sources, copies the low `N` bytes of `SrcR`, and replaces `N` bytes of `SrcL`
-starting at byte `M`, wrapping modulo eight bytes. Encodings with either
-six-bit field above seven are reserved and reject before source reads or
-architectural effects.
+`HL.BFI` is bit-granular. `immr` selects the first destination bit and `imms`
+selects the last destination bit. The operation snapshots both sources and,
+starting with source bit zero, replaces the inclusive destination interval,
+wrapping through bit 63 when `imms` precedes `immr`. All six-bit values are
+assigned; equal endpoints select one bit.
 
 All source values are read before the first destination write. Consequently,
 an absolute or temporary-queue destination that aliases a source observes the
@@ -106,12 +103,12 @@ pre-instruction source value.
 
 ## Rationale
 
-This disposition keeps the ordinary bitfield operands independent while
-restoring the established byte-field interface of `HL.BFI`. The earlier
-bit-granular `HL.BFI` ASL was an implementation defect, not a new interface
-decision. Issue
-[#194](https://github.com/PTO-ISA/pto-spec/issues/194) records the exact
-compiler-shaped correction and evidence.
+This disposition restores the reviewed bit-interval interface. The short-lived
+byte-granular interpretation was inferred from implementation behavior after
+that behavior had diverged from the architecture, so it cannot define the
+interface. Issue
+[#194](https://github.com/PTO-ISA/pto-spec/issues/194) records the correction
+and downstream compatibility impact.
 
 ## Verification
 
