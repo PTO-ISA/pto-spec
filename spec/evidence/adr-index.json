@@ -484,7 +484,7 @@
       "legacy_ids": [
         "ADR-0001"
       ],
-      "path": "docs/status/decisions/GOV-0001-pto-architecture-scope.md",
+      "path": "docs/status/decisions/ADR-GOV-0001-pto-architecture-scope.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -531,7 +531,7 @@
       "legacy_ids": [
         "ADR-0005"
       ],
-      "path": "docs/status/decisions/GOV-0002-pto-v0-concrete-reference-profile.md",
+      "path": "docs/status/decisions/ADR-GOV-0002-pto-v0-concrete-reference-profile.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -566,7 +566,7 @@
       "legacy_ids": [
         "ADR-0036"
       ],
-      "path": "docs/status/decisions/GOV-0003-formal-source-and-evidence-boundary.md",
+      "path": "docs/status/decisions/ADR-GOV-0003-formal-source-and-evidence-boundary.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -940,7 +940,7 @@
       "legacy_ids": [
         "ADR-0052"
       ],
-      "path": "docs/status/decisions/GOV-0004-direct-tile-and-bundle-catalog-closure.md",
+      "path": "docs/status/decisions/ADR-GOV-0004-direct-tile-and-bundle-catalog-closure.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2009,7 +2009,7 @@
       "legacy_ids": [
         "ADR-0059"
       ],
-      "path": "docs/status/decisions/GOV-0005-mnemonic-field-encoding-closure.md",
+      "path": "docs/status/decisions/ADR-GOV-0005-mnemonic-field-encoding-closure.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2041,7 +2041,7 @@
       "legacy_ids": [
         "ADR-0062"
       ],
-      "path": "docs/status/decisions/GOV-0006-mnemonic-review-decisions.md",
+      "path": "docs/status/decisions/ADR-GOV-0006-mnemonic-review-decisions.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2098,7 +2098,7 @@
       "legacy_ids": [
         "ADR-0099"
       ],
-      "path": "docs/status/decisions/GOV-0007-0583-to-0584-compatibility.md",
+      "path": "docs/status/decisions/ADR-GOV-0007-0583-to-0584-compatibility.md",
       "rejected": null,
       "release_boundary": true,
       "release_impact": "required",
@@ -2142,7 +2142,7 @@
       "legacy_ids": [
         "ADR-0102"
       ],
-      "path": "docs/status/decisions/GOV-0008-0584-1-publication-contract-corrections.md",
+      "path": "docs/status/decisions/ADR-GOV-0008-0584-1-publication-contract-corrections.md",
       "rejected": null,
       "release_boundary": true,
       "release_impact": "required",
@@ -2344,7 +2344,7 @@
       "legacy_ids": [
         "ADR-0108"
       ],
-      "path": "docs/status/decisions/GOV-0009-0584-1-to-0585-compatibility.md",
+      "path": "docs/status/decisions/ADR-GOV-0009-0584-1-to-0585-compatibility.md",
       "rejected": null,
       "release_boundary": true,
       "release_impact": "required",
@@ -2396,7 +2396,7 @@
       "legacy_ids": [
         "ADR-0003"
       ],
-      "path": "docs/status/decisions/STATE-0001-pto-owned-system-register-names.md",
+      "path": "docs/status/decisions/ADR-STATE-0001-pto-owned-system-register-names.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2456,7 +2456,7 @@
       "legacy_ids": [
         "ADR-0008"
       ],
-      "path": "docs/status/decisions/STATE-0002-architectural-state-contract.md",
+      "path": "docs/status/decisions/ADR-STATE-0002-architectural-state-contract.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2504,7 +2504,7 @@
       "legacy_ids": [
         "ADR-0009"
       ],
-      "path": "docs/status/decisions/STATE-0003-scalar-tpc-and-execution-status.md",
+      "path": "docs/status/decisions/ADR-STATE-0003-scalar-tpc-and-execution-status.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2546,7 +2546,7 @@
       "legacy_ids": [
         "ADR-0010"
       ],
-      "path": "docs/status/decisions/STATE-0004-acr-routing-and-context-reset.md",
+      "path": "docs/status/decisions/ADR-STATE-0004-acr-routing-and-context-reset.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2583,7 +2583,7 @@
       "legacy_ids": [
         "ADR-0011"
       ],
-      "path": "docs/status/decisions/STATE-0005-visible-ebarg-snapshot.md",
+      "path": "docs/status/decisions/ADR-STATE-0005-visible-ebarg-snapshot.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2618,7 +2618,7 @@
       "legacy_ids": [
         "ADR-0012"
       ],
-      "path": "docs/status/decisions/STATE-0006-acrc-service-request.md",
+      "path": "docs/status/decisions/ADR-STATE-0006-acrc-service-request.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2659,7 +2659,7 @@
       "legacy_ids": [
         "ADR-0016"
       ],
-      "path": "docs/status/decisions/STATE-0007-interrupt-pending-and-timer-state.md",
+      "path": "docs/status/decisions/ADR-STATE-0007-interrupt-pending-and-timer-state.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2704,7 +2704,7 @@
       "legacy_ids": [
         "ADR-0017"
       ],
-      "path": "docs/status/decisions/STATE-0008-system-register-behavior-classes.md",
+      "path": "docs/status/decisions/ADR-STATE-0008-system-register-behavior-classes.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2797,7 +2797,7 @@
       "legacy_ids": [
         "ADR-0018"
       ],
-      "path": "docs/status/decisions/STATE-0009-pto-v0-trap-disposition.md",
+      "path": "docs/status/decisions/ADR-STATE-0009-pto-v0-trap-disposition.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2843,7 +2843,7 @@
       "legacy_ids": [
         "ADR-0021"
       ],
-      "path": "docs/status/decisions/STATE-0010-scalar-pc-relative-and-return-address.md",
+      "path": "docs/status/decisions/ADR-STATE-0010-scalar-pc-relative-and-return-address.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2905,7 +2905,7 @@
       "legacy_ids": [
         "ADR-0022"
       ],
-      "path": "docs/status/decisions/STATE-0011-bundle-operation-descriptor-and-commit.md",
+      "path": "docs/status/decisions/ADR-STATE-0011-bundle-operation-descriptor-and-commit.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -2947,7 +2947,7 @@
       "legacy_ids": [
         "ADR-0023"
       ],
-      "path": "docs/status/decisions/STATE-0012-uniform-instruction-attempt-status.md",
+      "path": "docs/status/decisions/ADR-STATE-0012-uniform-instruction-attempt-status.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -3043,7 +3043,7 @@
       "legacy_ids": [
         "ADR-0031"
       ],
-      "path": "docs/status/decisions/STATE-0013-scalar-sys-totality-and-profile-boundaries.md",
+      "path": "docs/status/decisions/ADR-STATE-0013-scalar-sys-totality-and-profile-boundaries.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -3083,7 +3083,7 @@
       "legacy_ids": [
         "ADR-0006"
       ],
-      "path": "docs/status/decisions/MEM-0001-pto-total-store-order.md",
+      "path": "docs/status/decisions/ADR-MEM-0001-pto-total-store-order.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -3238,7 +3238,7 @@
       "legacy_ids": [
         "ADR-0020"
       ],
-      "path": "docs/status/decisions/MEM-0002-production-memory-events-and-atomic-corners.md",
+      "path": "docs/status/decisions/ADR-MEM-0002-production-memory-events-and-atomic-corners.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -3307,7 +3307,7 @@
       "legacy_ids": [
         "ADR-0024"
       ],
-      "path": "docs/status/decisions/MEM-0003-pc-relative-and-unscaled-agu-addressing.md",
+      "path": "docs/status/decisions/ADR-MEM-0003-pc-relative-and-unscaled-agu-addressing.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -3747,7 +3747,7 @@
       "legacy_ids": [
         "ADR-0029"
       ],
-      "path": "docs/status/decisions/MEM-0004-scalar-agu-totality-and-restart.md",
+      "path": "docs/status/decisions/ADR-MEM-0004-scalar-agu-totality-and-restart.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -3847,7 +3847,7 @@
       "legacy_ids": [
         "ADR-0030"
       ],
-      "path": "docs/status/decisions/MEM-0005-scalar-amo-totality-and-reservation.md",
+      "path": "docs/status/decisions/ADR-MEM-0005-scalar-amo-totality-and-reservation.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -3931,7 +3931,7 @@
       "legacy_ids": [
         "ADR-0033"
       ],
-      "path": "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
+      "path": "docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -4017,7 +4017,7 @@
       "legacy_ids": [
         "ADR-0056"
       ],
-      "path": "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
+      "path": "docs/status/decisions/ADR-MEM-0007-pto-encoding-ownership-and-gm-access.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -4066,7 +4066,7 @@
       "legacy_ids": [
         "ADR-0074"
       ],
-      "path": "docs/status/decisions/MEM-0008-tload-tstore-gm-byte-row-stride.md",
+      "path": "docs/status/decisions/ADR-MEM-0008-tload-tstore-gm-byte-row-stride.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -4482,7 +4482,7 @@
         "PRD-145",
         "ADR-0078"
       ],
-      "path": "docs/status/decisions/MEM-0009-tlsu-and-global-memory-operations.md",
+      "path": "docs/status/decisions/ADR-MEM-0009-tlsu-and-global-memory-operations.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -4520,7 +4520,7 @@
       "legacy_ids": [
         "ADR-0019"
       ],
-      "path": "docs/status/decisions/BLOCK-0001-predicate-register-contract.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0001-predicate-register-contract.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -4556,7 +4556,7 @@
       "legacy_ids": [
         "ADR-0046"
       ],
-      "path": "docs/status/decisions/BLOCK-0002-separate-execution-mask-and-warp-predicates.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0002-separate-execution-mask-and-warp-predicates.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -4593,7 +4593,7 @@
       "legacy_ids": [
         "ADR-0051"
       ],
-      "path": "docs/status/decisions/BLOCK-0003-predicate-state-namespace-boundary.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0003-predicate-state-namespace-boundary.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -4648,7 +4648,7 @@
       "legacy_ids": [
         "ADR-0054"
       ],
-      "path": "docs/status/decisions/BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -4796,7 +4796,7 @@
       "legacy_ids": [
         "ADR-0055"
       ],
-      "path": "docs/status/decisions/BLOCK-0005-complete-bundle-bior-schema-and-defaults.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5048,7 +5048,7 @@
       "legacy_ids": [
         "ADR-0057"
       ],
-      "path": "docs/status/decisions/BLOCK-0006-tile-classification-and-engine-aliases.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0006-tile-classification-and-engine-aliases.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5091,7 +5091,7 @@
       "legacy_ids": [
         "ADR-0058"
       ],
-      "path": "docs/status/decisions/BLOCK-0007-complete-bundle-gpr-operand-resolution.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0007-complete-bundle-gpr-operand-resolution.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5126,7 +5126,7 @@
       "legacy_ids": [
         "ADR-0060"
       ],
-      "path": "docs/status/decisions/BLOCK-0008-l-bstop-common-long-form.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0008-l-bstop-common-long-form.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5213,7 +5213,7 @@
       "legacy_ids": [
         "ADR-0061"
       ],
-      "path": "docs/status/decisions/BLOCK-0009-barg-bpcn-commit-state.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0009-barg-bpcn-commit-state.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5249,7 +5249,7 @@
       "legacy_ids": [
         "ADR-0067"
       ],
-      "path": "docs/status/decisions/BLOCK-0010-conditional-branch-extension-reservation.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0010-conditional-branch-extension-reservation.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5286,7 +5286,7 @@
       "legacy_ids": [
         "ADR-0068"
       ],
-      "path": "docs/status/decisions/BLOCK-0011-extension-first-use-profile-hook.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0011-extension-first-use-profile-hook.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5419,7 +5419,7 @@
         "PRD-017",
         "ADR-0075"
       ],
-      "path": "docs/status/decisions/BLOCK-0012-block-attributes-and-lifecycle.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0012-block-attributes-and-lifecycle.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5475,7 +5475,7 @@
         "PRD-030",
         "ADR-0076"
       ],
-      "path": "docs/status/decisions/BLOCK-0013-block-scalar-and-tile-bindings.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0013-block-scalar-and-tile-bindings.md",
       "rejected": null,
       "release_impact": "not-required",
       "resolves": [],
@@ -5548,7 +5548,7 @@
         "PRD-039",
         "ADR-0077"
       ],
-      "path": "docs/status/decisions/BLOCK-0014-block-start-and-extension-reservations.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0014-block-start-and-extension-reservations.md",
       "rejected": null,
       "release_impact": "not-required",
       "resolves": [],
@@ -5642,7 +5642,7 @@
       "legacy_ids": [
         "ADR-0096"
       ],
-      "path": "docs/status/decisions/BLOCK-0015-b-iot-b-ios-sizecode-pemode.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0015-b-iot-b-ios-sizecode-pemode.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5713,7 +5713,7 @@
       "legacy_ids": [
         "ADR-0098"
       ],
-      "path": "docs/status/decisions/BLOCK-0016-b-range-modifiers.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0016-b-range-modifiers.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5760,7 +5760,7 @@
       "legacy_ids": [
         "ADR-0109"
       ],
-      "path": "docs/status/decisions/BLOCK-0017-local-single-object-cap.md",
+      "path": "docs/status/decisions/ADR-BLOCK-0017-local-single-object-cap.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -5835,7 +5835,7 @@
       "legacy_ids": [
         "ADR-0025"
       ],
-      "path": "docs/status/decisions/SCALAR-0001-scalar-bitfield-and-reverse-bounds.md",
+      "path": "docs/status/decisions/ADR-SCALAR-0001-scalar-bitfield-and-reverse-bounds.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -6033,7 +6033,7 @@
       "legacy_ids": [
         "ADR-0026"
       ],
-      "path": "docs/status/decisions/SCALAR-0002-scalar-alu-totality-and-alias-order.md",
+      "path": "docs/status/decisions/ADR-SCALAR-0002-scalar-alu-totality-and-alias-order.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -6158,7 +6158,7 @@
       "legacy_ids": [
         "ADR-0027"
       ],
-      "path": "docs/status/decisions/SCALAR-0003-scalar-bru-totality-and-target-legality.md",
+      "path": "docs/status/decisions/ADR-SCALAR-0003-scalar-bru-totality-and-target-legality.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -6372,7 +6372,7 @@
       "legacy_ids": [
         "ADR-0028"
       ],
-      "path": "docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -6410,7 +6410,7 @@
       "legacy_ids": [
         "ADR-0066"
       ],
-      "path": "docs/status/decisions/SCALAR-0005-addtpc-page-scaled-immediate.md",
+      "path": "docs/status/decisions/ADR-SCALAR-0005-addtpc-page-scaled-immediate.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -6605,6 +6605,7 @@
         "PTO-XORW-ADR-CONTRACT-001"
       ],
       "affected_units": [
+        "PTO-ARCH-GQM",
         "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
         "PTO-BLOCK-ERCOV",
         "PTO-BLOCK-ESAVE",
@@ -6823,7 +6824,7 @@
         "PRD-173",
         "ADR-0084"
       ],
-      "path": "docs/status/decisions/SCALAR-0006-scalar-system-and-queue-operations.md",
+      "path": "docs/status/decisions/ADR-SCALAR-0006-scalar-system-and-queue-operations.md",
       "rejected": null,
       "release_impact": "not-required",
       "resolves": [],
@@ -6835,7 +6836,8 @@
       ],
       "target_releases": [
         "0.58.1",
-        "0.58.2"
+        "0.58.2",
+        "0.58.5"
       ],
       "title": "Scalar, system, and queue operations",
       "title_zh": "\u6807\u91cf\u3001\u7cfb\u7edf\u4e0e\u961f\u5217\u64cd\u4f5c"
@@ -6865,7 +6867,7 @@
       "legacy_ids": [
         "ADR-0013"
       ],
-      "path": "docs/status/decisions/TILE-0001-tile-capacity-and-packed-storage.md",
+      "path": "docs/status/decisions/ADR-TILE-0001-tile-capacity-and-packed-storage.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -6902,7 +6904,7 @@
       "legacy_ids": [
         "ADR-0014"
       ],
-      "path": "docs/status/decisions/TILE-0002-element-level-tile-definedness.md",
+      "path": "docs/status/decisions/ADR-TILE-0002-element-level-tile-definedness.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -6943,7 +6945,7 @@
       "legacy_ids": [
         "ADR-0015"
       ],
-      "path": "docs/status/decisions/TILE-0003-explicit-tile-handoff-slots.md",
+      "path": "docs/status/decisions/ADR-TILE-0003-explicit-tile-handoff-slots.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -7171,7 +7173,7 @@
       "legacy_ids": [
         "ADR-0032"
       ],
-      "path": "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
+      "path": "docs/status/decisions/ADR-TILE-0004-bundle-command-totality-and-profile-boundaries.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -7255,7 +7257,7 @@
       "legacy_ids": [
         "ADR-0034"
       ],
-      "path": "docs/status/decisions/TILE-0005-cube-raw-carrier-totality.md",
+      "path": "docs/status/decisions/ADR-TILE-0005-cube-raw-carrier-totality.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -7454,7 +7456,7 @@
       "legacy_ids": [
         "ADR-0035"
       ],
-      "path": "docs/status/decisions/TILE-0006-vec-sfu-carrier-totality.md",
+      "path": "docs/status/decisions/ADR-TILE-0006-vec-sfu-carrier-totality.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -7513,7 +7515,7 @@
       "legacy_ids": [
         "ADR-0053"
       ],
-      "path": "docs/status/decisions/TILE-0007-pto-isa-0580-tile-operation-cleanup.md",
+      "path": "docs/status/decisions/ADR-TILE-0007-pto-isa-0580-tile-operation-cleanup.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -7979,7 +7981,7 @@
         "PRD-128",
         "ADR-0080"
       ],
-      "path": "docs/status/decisions/TILE-0008-tile-elementwise-and-irregular-operations.md",
+      "path": "docs/status/decisions/ADR-TILE-0008-tile-elementwise-and-irregular-operations.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8070,7 +8072,7 @@
         "PRD-096",
         "ADR-0081"
       ],
-      "path": "docs/status/decisions/TILE-0009-tile-scalar-and-immediate-operations.md",
+      "path": "docs/status/decisions/ADR-TILE-0009-tile-scalar-and-immediate-operations.md",
       "rejected": null,
       "release_impact": "not-required",
       "resolves": [],
@@ -8212,7 +8214,7 @@
         "PRD-132",
         "ADR-0082"
       ],
-      "path": "docs/status/decisions/TILE-0010-tile-reduction-expansion-and-generation.md",
+      "path": "docs/status/decisions/ADR-TILE-0010-tile-reduction-expansion-and-generation.md",
       "rejected": null,
       "release_impact": "not-required",
       "resolves": [],
@@ -8280,7 +8282,7 @@
         "PRD-143",
         "ADR-0083"
       ],
-      "path": "docs/status/decisions/TILE-0011-tile-conversion-layout-and-partial-operations.md",
+      "path": "docs/status/decisions/ADR-TILE-0011-tile-conversion-layout-and-partial-operations.md",
       "rejected": null,
       "release_impact": "not-required",
       "resolves": [],
@@ -8340,7 +8342,7 @@
       "legacy_ids": [
         "ADR-0041"
       ],
-      "path": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md",
+      "path": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8379,7 +8381,7 @@
       "legacy_ids": [
         "ADR-0064"
       ],
-      "path": "docs/status/decisions/CUBE-0002-b-fpatr-complete-bundle-postprocess.md",
+      "path": "docs/status/decisions/ADR-CUBE-0002-b-fpatr-complete-bundle-postprocess.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8463,7 +8465,7 @@
       "legacy_ids": [
         "ADR-0065"
       ],
-      "path": "docs/status/decisions/CUBE-0003-cube-matrix-family-contract.md",
+      "path": "docs/status/decisions/ADR-CUBE-0003-cube-matrix-family-contract.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8498,7 +8500,7 @@
       "legacy_ids": [
         "ADR-0069"
       ],
-      "path": "docs/status/decisions/CUBE-0004-local-cube-cell-state-and-geometry.md",
+      "path": "docs/status/decisions/ADR-CUBE-0004-local-cube-cell-state-and-geometry.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8548,7 +8550,7 @@
       "legacy_ids": [
         "ADR-0070"
       ],
-      "path": "docs/status/decisions/CUBE-0005-gm-local-cube-layout-transport.md",
+      "path": "docs/status/decisions/ADR-CUBE-0005-gm-local-cube-layout-transport.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8633,7 +8635,7 @@
       "legacy_ids": [
         "ADR-0071"
       ],
-      "path": "docs/status/decisions/CUBE-0006-local-cube-matrix-operands.md",
+      "path": "docs/status/decisions/ADR-CUBE-0006-local-cube-matrix-operands.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8729,7 +8731,7 @@
       "legacy_ids": [
         "ADR-0072"
       ],
-      "path": "docs/status/decisions/CUBE-0007-cooperative-shared-cube-transpose.md",
+      "path": "docs/status/decisions/ADR-CUBE-0007-cooperative-shared-cube-transpose.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8782,7 +8784,7 @@
       "legacy_ids": [
         "ADR-0073"
       ],
-      "path": "docs/status/decisions/CUBE-0008-cube-accumulator-atomic-output.md",
+      "path": "docs/status/decisions/ADR-CUBE-0008-cube-accumulator-atomic-output.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8881,7 +8883,7 @@
         "PRD-055",
         "ADR-0079"
       ],
-      "path": "docs/status/decisions/CUBE-0009-cube-and-matrix-operations.md",
+      "path": "docs/status/decisions/ADR-CUBE-0009-cube-and-matrix-operations.md",
       "rejected": null,
       "release_impact": "not-required",
       "resolves": [],
@@ -8941,7 +8943,7 @@
       "legacy_ids": [
         "ADR-0097"
       ],
-      "path": "docs/status/decisions/CUBE-0010-local-shared-capacity-and-cooperative-m-sharding.md",
+      "path": "docs/status/decisions/ADR-CUBE-0010-local-shared-capacity-and-cooperative-m-sharding.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -8985,7 +8987,7 @@
       "legacy_ids": [
         "ADR-0100"
       ],
-      "path": "docs/status/decisions/CUBE-0011-cooperative-group-m-distribution.md",
+      "path": "docs/status/decisions/ADR-CUBE-0011-cooperative-group-m-distribution.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9039,7 +9041,7 @@
       "legacy_ids": [
         "ADR-0101"
       ],
-      "path": "docs/status/decisions/CUBE-0012-matrix-scale-and-cscale.md",
+      "path": "docs/status/decisions/ADR-CUBE-0012-matrix-scale-and-cscale.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9081,7 +9083,7 @@
       "legacy_ids": [
         "ADR-0103"
       ],
-      "path": "docs/status/decisions/CUBE-0013-private-cube-vector-and-cell-rearrangement.md",
+      "path": "docs/status/decisions/ADR-CUBE-0013-private-cube-vector-and-cell-rearrangement.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9122,7 +9124,7 @@
       "legacy_ids": [
         "ADR-0105"
       ],
-      "path": "docs/status/decisions/CUBE-0014-shared-whole-parent-readiness.md",
+      "path": "docs/status/decisions/ADR-CUBE-0014-shared-whole-parent-readiness.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9162,7 +9164,7 @@
       "legacy_ids": [
         "ADR-0106"
       ],
-      "path": "docs/status/decisions/CUBE-0015-shared-source-subview-per-pe.md",
+      "path": "docs/status/decisions/ADR-CUBE-0015-shared-source-subview-per-pe.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9201,7 +9203,7 @@
       "legacy_ids": [
         "ADR-0107"
       ],
-      "path": "docs/status/decisions/CUBE-0016-remove-legacy-shared-movement.md",
+      "path": "docs/status/decisions/ADR-CUBE-0016-remove-legacy-shared-movement.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9242,7 +9244,7 @@
       "legacy_ids": [
         "ADR-0110"
       ],
-      "path": "docs/status/decisions/CUBE-0017-tcvt-cube-m16-m32-layout-closure.md",
+      "path": "docs/status/decisions/ADR-CUBE-0017-tcvt-cube-m16-m32-layout-closure.md",
       "rejected": null,
       "release_boundary": true,
       "release_impact": "required",
@@ -9285,7 +9287,7 @@
       "legacy_ids": [
         "ADR-0037"
       ],
-      "path": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
+      "path": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9363,7 +9365,7 @@
       "legacy_ids": [
         "ADR-0038"
       ],
-      "path": "docs/status/decisions/NUM-0002-scalar-numeric-flag-state-and-ownership.md",
+      "path": "docs/status/decisions/ADR-NUM-0002-scalar-numeric-flag-state-and-ownership.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9410,7 +9412,7 @@
       "legacy_ids": [
         "ADR-0039"
       ],
-      "path": "docs/status/decisions/NUM-0003-numeric-rounding-selector-ownership.md",
+      "path": "docs/status/decisions/ADR-NUM-0003-numeric-rounding-selector-ownership.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9453,7 +9455,7 @@
       "legacy_ids": [
         "ADR-0040"
       ],
-      "path": "docs/status/decisions/NUM-0004-numeric-format-namespace-ownership.md",
+      "path": "docs/status/decisions/ADR-NUM-0004-numeric-format-namespace-ownership.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9495,7 +9497,7 @@
       "legacy_ids": [
         "ADR-0042"
       ],
-      "path": "docs/status/decisions/NUM-0005-numeric-variation-point-ownership.md",
+      "path": "docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9536,7 +9538,7 @@
         "PD-02-SC2",
         "ADR-0043"
       ],
-      "path": "docs/status/decisions/NUM-0006-public-numeric-type-identity-and-availability.md",
+      "path": "docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9571,7 +9573,7 @@
       "legacy_ids": [
         "ADR-0044"
       ],
-      "path": "docs/status/decisions/NUM-0007-public-integer-conversion-result-subset.md",
+      "path": "docs/status/decisions/ADR-NUM-0007-public-integer-conversion-result-subset.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9621,7 +9623,7 @@
         "PD-03",
         "ADR-0047"
       ],
-      "path": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
+      "path": "docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9689,7 +9691,7 @@
         "PD-05-SC1",
         "ADR-0048"
       ],
-      "path": "docs/status/decisions/NUM-0009-numeric-format-value-classification.md",
+      "path": "docs/status/decisions/ADR-NUM-0009-numeric-format-value-classification.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9728,7 +9730,7 @@
         "PD-04",
         "ADR-0049"
       ],
-      "path": "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md",
+      "path": "docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9776,7 +9778,7 @@
         "PD-05-SC2",
         "ADR-0050"
       ],
-      "path": "docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md",
+      "path": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9825,7 +9827,7 @@
         "PRD-183",
         "ADR-0085"
       ],
-      "path": "docs/status/decisions/NUM-0012-numeric-postprocess-and-format-operations.md",
+      "path": "docs/status/decisions/ADR-NUM-0012-numeric-postprocess-and-format-operations.md",
       "rejected": null,
       "release_impact": "not-required",
       "resolves": [],
@@ -9858,7 +9860,7 @@
         "PD-01",
         "ADR-0086"
       ],
-      "path": "docs/status/decisions/NUM-0013-numeric-profile-applicability.md",
+      "path": "docs/status/decisions/ADR-NUM-0013-numeric-profile-applicability.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9888,7 +9890,7 @@
         "PD-02",
         "ADR-0087"
       ],
-      "path": "docs/status/decisions/NUM-0014-numeric-format-legality.md",
+      "path": "docs/status/decisions/ADR-NUM-0014-numeric-format-legality.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9918,7 +9920,7 @@
         "PD-05",
         "ADR-0088"
       ],
-      "path": "docs/status/decisions/NUM-0015-numeric-special-values.md",
+      "path": "docs/status/decisions/ADR-NUM-0015-numeric-special-values.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9948,7 +9950,7 @@
         "PD-06",
         "ADR-0089"
       ],
-      "path": "docs/status/decisions/NUM-0016-numeric-exception-flags.md",
+      "path": "docs/status/decisions/ADR-NUM-0016-numeric-exception-flags.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -9978,7 +9980,7 @@
         "PD-07",
         "ADR-0090"
       ],
-      "path": "docs/status/decisions/NUM-0017-conversion-range-results.md",
+      "path": "docs/status/decisions/ADR-NUM-0017-conversion-range-results.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -10008,7 +10010,7 @@
         "PD-08",
         "ADR-0091"
       ],
-      "path": "docs/status/decisions/NUM-0018-elementary-function-accuracy.md",
+      "path": "docs/status/decisions/ADR-NUM-0018-elementary-function-accuracy.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -10038,7 +10040,7 @@
         "PD-09",
         "ADR-0092"
       ],
-      "path": "docs/status/decisions/NUM-0019-reduction-order-and-stability.md",
+      "path": "docs/status/decisions/ADR-NUM-0019-reduction-order-and-stability.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -10068,7 +10070,7 @@
         "PD-10",
         "ADR-0093"
       ],
-      "path": "docs/status/decisions/NUM-0020-quantization-contract.md",
+      "path": "docs/status/decisions/ADR-NUM-0020-quantization-contract.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -10098,7 +10100,7 @@
         "PD-11",
         "ADR-0094"
       ],
-      "path": "docs/status/decisions/NUM-0021-matrix-numeric-contract.md",
+      "path": "docs/status/decisions/ADR-NUM-0021-matrix-numeric-contract.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],
@@ -10128,7 +10130,7 @@
         "PD-12",
         "ADR-0095"
       ],
-      "path": "docs/status/decisions/NUM-0022-bounded-numeric-variation.md",
+      "path": "docs/status/decisions/ADR-NUM-0022-bounded-numeric-variation.md",
       "rejected": null,
       "release_impact": "required",
       "resolves": [],

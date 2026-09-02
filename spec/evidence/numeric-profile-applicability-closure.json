@@ -3,7 +3,7 @@
   "artifact_id": "numeric-profile-applicability-closure",
   "target": "S5-T2-A3:ADR-NUM-0013",
   "status": "a2a3-mx-unsupported-profile-tuples-closed-results-open",
-  "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md",
+  "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
   "policy": {
     "support_boundary": "Applicability rules decide whether a profile supports an operation/type tuple. They do not define numeric result semantics.",
     "rejection_boundary": "The six A2/A3 MX CUBE rules reject with IllegalInstruction before operand legality, handler dispatch, or operation effects.",
@@ -41,7 +41,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -66,7 +66,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -91,7 +91,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -116,7 +116,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -141,7 +141,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -166,7 +166,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md"
     }
   ],
   "expanded_tuples": [
@@ -5136,7 +5136,7 @@
       "selection": "Requires a complete A2A3 operation/type legality matrix and one accepted result rule for every supported tuple.",
       "relation_to_pto_v0": "Future alternative target profile distinct from pto-v0; pto-v0 raw-carrier results are not inherited as hardware arithmetic.",
       "rule_status": "decision-required",
-      "acceptance_record": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
+      "acceptance_record": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
       "source_ids": [
         "public-portability-rules",
         "public-target-profiles",
@@ -5496,7 +5496,7 @@
       "sha256": "06adeaf18564ef4a525cffdaf68b38354462ed86033e874dc6c53ab74687e381"
     },
     {
-      "path": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md",
+      "path": "docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md",
       "sha256": "fac4a0023748f31bc1634fdd68eb1627b388ac41aaee0cb2a61e4a341d7e38b8"
     }
   ],

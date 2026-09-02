@@ -306,7 +306,7 @@ def parse_adr(path: Path) -> AdrRecord:
     adr_id = _string(metadata, "id", path, _ADR_ID)
     _, adr_type, serial = adr_id.split("-")
     filename = re.fullmatch(
-        r"([A-Z]+)-([0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*\.md", path.name
+        r"ADR-([A-Z]+)-([0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*\.md", path.name
     )
     if filename is None or filename.groups() != (adr_type, serial):
         raise _error(path, f"filename does not match {adr_id}")

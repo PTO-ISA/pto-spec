@@ -4,8 +4,8 @@
   "decision_id": "ADR-NUM-0014",
   "checkpoint_id": "ADR-NUM-0014-SC1",
   "status": "namespace-carrier-and-value-classification-closed-operation-rules-open",
-  "acceptance_record": "docs/status/decisions/NUM-0004-numeric-format-namespace-ownership.md",
-  "classification_acceptance_record": "docs/status/decisions/NUM-0009-numeric-format-value-classification.md",
+  "acceptance_record": "docs/status/decisions/ADR-NUM-0004-numeric-format-namespace-ownership.md",
+  "classification_acceptance_record": "docs/status/decisions/ADR-NUM-0009-numeric-format-value-classification.md",
   "classification_checkpoint_id": "ADR-NUM-0014-SC2:ADR-NUM-0015-SC1",
   "policy": {
     "namespace_locality": "Scalar source, scalar floating destination, scalar integer destination, TLSU/TALLOC, and bundle DataType codes are distinct namespaces. Equal integers do not imply equal types across namespaces.",
@@ -2198,19 +2198,19 @@
       "sha256": "9df548e07c24e683ff375e0cb33a0786432f19455633d4c167d32f2b25161f99"
     },
     {
-      "path": "docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "1be39ca1ffda14b703ca03df9654f323d03b9cac620ba37d5cbe6ce8f3f9c486"
     },
     {
-      "path": "docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md",
+      "path": "docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md",
       "sha256": "6fd4f3016f503498cf6a1068907f48998e39f3c29b034d7ddfc486cd6494104b"
     },
     {
-      "path": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
+      "path": "docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md",
       "sha256": "b09efd36ccfc7258d1743c974f42b875ead42137c503f576a12f471f65b52e30"
     },
     {
-      "path": "docs/status/decisions/NUM-0009-numeric-format-value-classification.md",
+      "path": "docs/status/decisions/ADR-NUM-0009-numeric-format-value-classification.md",
       "sha256": "ce3ecd1851e22b5517d07076ab8bd2db36b6b4582111c761db19240275853d9c"
     }
   ],

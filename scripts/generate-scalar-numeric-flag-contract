@@ -21,7 +21,7 @@ SCALAR_CATALOG = ROOT / "spec/catalog/scalar-forms.json"
 NUMERIC_CONTRACTS = ROOT / "spec/evidence/numeric-contracts.json"
 OUTPUT = ROOT / "spec/evidence/scalar-numeric-flag-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/status/decisions/NUM-0002-scalar-numeric-flag-state-and-ownership.md"
+    "docs/status/decisions/ADR-NUM-0002-scalar-numeric-flag-state-and-ownership.md"
 )
 
 QUIET_COMPARISONS = {"FEQ", "FGE", "FLT", "FNE"}
@@ -190,7 +190,7 @@ def generate() -> dict[str, Any]:
             *source_rows(ROOT, "asl/scalar/model/dispatch/*.asl"),
             *source_rows(ROOT, "asl/arch/profile/*.asl"),
             source(
-                "docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md"
+                "docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md"
             ),
         ],
         "summary": {

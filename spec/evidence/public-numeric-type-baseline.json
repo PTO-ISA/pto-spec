@@ -4,7 +4,7 @@
   "decision_id": "ADR-NUM-0014",
   "checkpoint_id": "ADR-NUM-0014-SC2",
   "status": "public-type-identity-catalog-binding-and-target-availability-closed-result-and-legality-open",
-  "acceptance_record": "docs/status/decisions/NUM-0006-public-numeric-type-identity-and-availability.md",
+  "acceptance_record": "docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md",
   "policy": {
     "authority": "Only the pinned public PTO contract defines public type identities and target availability.",
     "support_not_semantics": "Availability is a type-support fact, not an operation/type legality or numeric-result rule.",
@@ -537,7 +537,7 @@
       "sha256": "77fddc69370f9648018b33baf0b947c29e2f36994c5b7fdd733feccf0f8efbfa"
     },
     {
-      "path": "docs/status/decisions/NUM-0006-public-numeric-type-identity-and-availability.md",
+      "path": "docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md",
       "sha256": "4fa14704464afe3ea85b98835f2f6e7d6fa832a1f297100f41414cd3faf66924"
     }
   ],

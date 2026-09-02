@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+    echo "usage: $0 <aslref command> [arguments ...]" >&2
+    exit 2
+fi
+
+diagnostics=$(mktemp "${TMPDIR:-/tmp}/pto-aslref.XXXXXX")
+trap 'rm -f -- "$diagnostics"' EXIT
+
+status=0
+if "$@" >"$diagnostics" 2>&1; then
+    status=0
+else
+    status=$?
+fi
+
+if [[ $status -ne 0 ]]; then
+    cat "$diagnostics" >&2
+    exit "$status"
+fi
+
+if grep -Fq 'ASL Warning:' "$diagnostics"; then
+    cat "$diagnostics" >&2
+    echo "error: ASLRef completed with warnings" >&2
+    exit 1
+fi
+
+if [[ ${PTO_CHECK_VERBOSE:-0} == 1 && -s $diagnostics ]]; then
+    cat "$diagnostics"
+fi
+echo "ASLRef strict type check passed with 0 warnings"

@@ -630,7 +630,7 @@ class InstructionDocsTest(unittest.TestCase):
         (decisions / "0000-template.md").write_text(
             "# ADR-TYPE-0000: Decision template\n", encoding="utf-8"
         )
-        (decisions / "GOV-0001-accepted.md").write_text(
+        (decisions / "ADR-GOV-0001-accepted.md").write_text(
             "# ADR-GOV-0001: Accepted decision\n", encoding="utf-8"
         )
 
@@ -639,7 +639,7 @@ class InstructionDocsTest(unittest.TestCase):
         self.assertNotIn("0000-template.md", navigation)
         self.assertNotIn("ADR-TYPE-0000", navigation)
         self.assertIn(
-            '              - "ADR-GOV-0001: Accepted decision": status/decisions/GOV-0001-accepted.md',
+            '              - "ADR-GOV-0001: Accepted decision": status/decisions/ADR-GOV-0001-accepted.md',
             navigation,
         )
 

@@ -12,15 +12,15 @@ README = ROOT / "README.md"
 MANIFEST = ROOT / "spec/release-manifest.json"
 TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
 RESERVATIONS = ROOT / "spec/catalog/extension-encoding-reservations.json"
-AUDIT_ADR = ROOT / "docs/status/decisions/GOV-0006-mnemonic-review-decisions.md"
-ARCH_SCOPE_ADR = ROOT / "docs/status/decisions/GOV-0001-pto-architecture-scope.md"
+AUDIT_ADR = ROOT / "docs/status/decisions/ADR-GOV-0006-mnemonic-review-decisions.md"
+ARCH_SCOPE_ADR = ROOT / "docs/status/decisions/ADR-GOV-0001-pto-architecture-scope.md"
 HISTORICAL_INVENTORY_ADRS = (
-    ROOT / "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
-    ROOT / "docs/status/decisions/BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md",
-    ROOT / "docs/status/decisions/BLOCK-0005-complete-bundle-bior-schema-and-defaults.md",
-    ROOT / "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
-    ROOT / "docs/status/decisions/BLOCK-0008-l-bstop-common-long-form.md",
-    ROOT / "docs/status/decisions/CUBE-0002-b-fpatr-complete-bundle-postprocess.md",
+    ROOT / "docs/status/decisions/ADR-TILE-0004-bundle-command-totality-and-profile-boundaries.md",
+    ROOT / "docs/status/decisions/ADR-BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md",
+    ROOT / "docs/status/decisions/ADR-BLOCK-0005-complete-bundle-bior-schema-and-defaults.md",
+    ROOT / "docs/status/decisions/ADR-MEM-0007-pto-encoding-ownership-and-gm-access.md",
+    ROOT / "docs/status/decisions/ADR-BLOCK-0008-l-bstop-common-long-form.md",
+    ROOT / "docs/status/decisions/ADR-CUBE-0002-b-fpatr-complete-bundle-postprocess.md",
 )
 AUDIT_FREEZE_SCALAR_FORMS = 466
 AUDIT_FREEZE_BLOCK_FORMS = 74

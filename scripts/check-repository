@@ -4,6 +4,9 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
+# shellcheck source=scripts/check-ui
+source "$repo_root/scripts/check-ui"
+
 structure_only=false
 for argument in "$@"; do
     case $argument in
@@ -20,12 +23,17 @@ fail() {
     exit 1
 }
 
-./scripts/check-active-paths
-./scripts/check-adr-id-migration
-./scripts/check-adr-bilingual
-./scripts/check-ndf-supplements
-python3 scripts/generate-mnemonic-description-inventory --check
-python3 scripts/check-mnemonic-explanations
+check_governance_contracts() {
+    ./scripts/check-active-paths
+    ./scripts/check-adr-id-migration
+    ./scripts/check-adr-bilingual
+    ./scripts/check-ndf-supplements
+}
+
+check_mnemonic_inventory() {
+    python3 scripts/generate-mnemonic-description-inventory --check
+    python3 scripts/check-mnemonic-explanations
+}
 
 required_files=(
     .aslref-version
@@ -45,22 +53,22 @@ required_files=(
     asl/scalar/alu/ADD.asl
     asl/tile/memory-and-data-movement/regular/TLOAD.asl
     docs/mkdocs/mkdocs.yml
-    docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md
-    docs/status/decisions/NUM-0002-scalar-numeric-flag-state-and-ownership.md
-    docs/status/decisions/NUM-0003-numeric-rounding-selector-ownership.md
-    docs/status/decisions/NUM-0008-numeric-rounding-semantics.md
-    docs/status/decisions/NUM-0004-numeric-format-namespace-ownership.md
-    docs/status/decisions/NUM-0009-numeric-format-value-classification.md
-    docs/status/decisions/NUM-0010-hardware-subnormal-policy.md
-    docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md
-    docs/status/decisions/BLOCK-0003-predicate-state-namespace-boundary.md
-    docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md
-    docs/status/decisions/NUM-0005-numeric-variation-point-ownership.md
-    docs/status/decisions/NUM-0006-public-numeric-type-identity-and-availability.md
-    docs/status/decisions/NUM-0007-public-integer-conversion-result-subset.md
-    docs/status/decisions/GOV-0004-direct-tile-and-bundle-catalog-closure.md
-    docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md
-    docs/status/decisions/BLOCK-0002-separate-execution-mask-and-warp-predicates.md
+    docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md
+    docs/status/decisions/ADR-NUM-0002-scalar-numeric-flag-state-and-ownership.md
+    docs/status/decisions/ADR-NUM-0003-numeric-rounding-selector-ownership.md
+    docs/status/decisions/ADR-NUM-0008-numeric-rounding-semantics.md
+    docs/status/decisions/ADR-NUM-0004-numeric-format-namespace-ownership.md
+    docs/status/decisions/ADR-NUM-0009-numeric-format-value-classification.md
+    docs/status/decisions/ADR-NUM-0010-hardware-subnormal-policy.md
+    docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md
+    docs/status/decisions/ADR-BLOCK-0003-predicate-state-namespace-boundary.md
+    docs/status/decisions/ADR-CUBE-0001-a2a3-mx-profile-applicability.md
+    docs/status/decisions/ADR-NUM-0005-numeric-variation-point-ownership.md
+    docs/status/decisions/ADR-NUM-0006-public-numeric-type-identity-and-availability.md
+    docs/status/decisions/ADR-NUM-0007-public-integer-conversion-result-subset.md
+    docs/status/decisions/ADR-GOV-0004-direct-tile-and-bundle-catalog-closure.md
+    docs/status/decisions/ADR-MEM-0007-pto-encoding-ownership-and-gm-access.md
+    docs/status/decisions/ADR-BLOCK-0002-separate-execution-mask-and-warp-predicates.md
     spec/release-inputs.json
     spec/adr-id-migration.json
     spec/schemas/pto-adr-id-migration.schema.json
@@ -117,6 +125,7 @@ required_files=(
     spec/evidence/bundle-operation-fixture-matrix.json
 )
 
+check_repository_structure() {
 for path in "${required_files[@]}"; do
     [[ -f $path ]] || fail "required repository file is missing: $path"
 done
@@ -188,26 +197,43 @@ git diff --check
 git diff --cached --check
 
 ./scripts/check-script-entrypoints
+}
 
-./scripts/check-asl-layout
-./scripts/check-ndf
-./scripts/check-asl-tests
-python3 scripts/project_asl_catalogs.py --root . --check
-python3 scripts/instruction_docs.py --check
-python3 scripts/instruction_contracts.py --check --require-complete
-# The checked-in instruction-contract closure is release evidence. Architecture
-# PRs validate the live contracts above; release-evidence-check owns projection
-# freshness after the pending decisions receive one release identity.
-python3 scripts/generate-mnemonic-avs.py --check
-python3 scripts/generate-bundle-operation-matrix.py --check
-./scripts/generate-bundle-command-totality --check
-./scripts/generate-public-source-reconciliation --check
-python3 scripts/check-publication-hygiene
+check_asl_and_ndf_structure() {
+    ./scripts/check-asl-layout
+    ./scripts/check-ndf
+    ./scripts/check-asl-tests
+}
+
+check_generated_projections() {
+    python3 scripts/project_asl_catalogs.py --root . --check
+    python3 scripts/instruction_docs.py --check
+    python3 scripts/instruction_contracts.py --check --require-complete
+    # The checked-in instruction-contract closure is release evidence. Architecture
+    # PRs validate the live contracts above; release-evidence-check owns projection
+    # freshness after the pending decisions receive one release identity.
+    python3 scripts/generate-mnemonic-avs.py --check
+    python3 scripts/generate-bundle-operation-matrix.py --check
+    ./scripts/generate-bundle-command-totality --check
+    ./scripts/generate-public-source-reconciliation --check
+}
+
+check_ui_begin "PTO repository validation"
+check_ui_section "Repository contracts"
+check_ui_step "Governance and decision records" check_governance_contracts
+check_ui_step "Mnemonic description inventory" check_mnemonic_inventory
+check_ui_step "Required files and source membership" check_repository_structure
+
+check_ui_section "Architecture projections"
+check_ui_step "ASL, NDF, and AVS structure" check_asl_and_ndf_structure
+check_ui_step "Catalog and documentation projections" check_generated_projections
+check_ui_step "Publication hygiene" python3 scripts/check-publication-hygiene
 
 if [[ $structure_only == true ]]; then
-    echo "repository structure checks passed"
+    check_ui_finish
     exit 0
 fi
 
-./scripts/check-binary-closure
-echo "repository checks passed"
+check_ui_section "Binary closure"
+check_ui_step "Encoding and fingerprint closure" ./scripts/check-binary-closure
+check_ui_finish

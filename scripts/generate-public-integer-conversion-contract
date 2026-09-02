@@ -28,7 +28,7 @@ ASL_TESTS = (
 )
 OUTPUT = ROOT / "spec/evidence/public-integer-conversion-contract.json"
 ACCEPTANCE_RECORD = (
-    "docs/status/decisions/NUM-0007-public-integer-conversion-result-subset.md"
+    "docs/status/decisions/ADR-NUM-0007-public-integer-conversion-result-subset.md"
 )
 
 

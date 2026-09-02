@@ -116,7 +116,7 @@ class ExecutableModelComparisonTest(unittest.TestCase):
             self.assertTrue(row["encoding_match"])
             self.assertIn("4 KiB page displacement", row["pto_disposition"])
             self.assertIn(
-                "docs/status/decisions/SCALAR-0005-addtpc-page-scaled-immediate.md",
+                "docs/status/decisions/ADR-SCALAR-0005-addtpc-page-scaled-immediate.md",
                 row["evidence"],
             )
         self.assertEqual(

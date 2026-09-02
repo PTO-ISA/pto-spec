@@ -41,10 +41,10 @@ $(VALIDATION_INDEX): $(DECODER_GENERATION_INPUTS)
 
 $(ASL_SOURCE_ORDER): $(ASL_UNIT_SOURCES) scripts/generate-asl-source-order scripts/asl_units.py
 	@mkdir -p build
-	./scripts/generate-asl-source-order --root . --output $@
+	@./scripts/generate-asl-source-order --root . --output $@
 
 $(SPEC): $(ASL_SOURCE_ORDER) $(DECODER_SPEC) scripts/assemble-asl Makefile
-	./scripts/assemble-asl --order $(ASL_SOURCE_ORDER) --decoder $(DECODER_SPEC) --output $@
+	@./scripts/assemble-asl --order $(ASL_SOURCE_ORDER) --decoder $(DECODER_SPEC) --output $@
 
 check-asl-layout:
 	./scripts/check-asl-layout
@@ -86,11 +86,10 @@ check-mnemonic-explanations:
 	./scripts/generate-mnemonic-description-coverage --check
 
 pr-check:
-	./scripts/check-pr
+	@./scripts/check-pr
 
 repo-check: $(SPEC)
-	./scripts/check-repository
-	./scripts/check-binary-closure
+	@./scripts/check-repository
 
 release-manifest:
 	./scripts/generate-release-manifest
@@ -116,7 +115,8 @@ toolchain-check:
 	ASLREF="$(ASLREF)" ./scripts/check-toolchain
 
 check: $(SPEC)
-	$(ASLREF) --type-check-strict --no-exec $(SPEC)
+	@./scripts/check-aslref-diagnostics \
+		$(ASLREF) --type-check-strict --no-exec $(SPEC)
 
 release-check: pr-check release-evidence-check toolchain-check check
 	@test -n "$(RELEASE_COMMIT)" || \

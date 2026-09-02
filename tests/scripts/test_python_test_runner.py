@@ -91,7 +91,33 @@ class PythonTestRunnerTest(unittest.TestCase):
         self.assertIn("FAIL tests.scripts.test_fail", text)
         self.assertIn("boom", text)
         self.assertIn("2.000s tests.scripts.test_slow", text)
-        self.assertIn("SUMMARY 2 modules, 5 tests, 1 failed", text)
+        self.assertIn("Python tests: FAIL · 2 modules · 5 tests · 1 failed", text)
+
+    def test_clean_default_output_is_summary_only(self) -> None:
+        results = (
+            ModuleResult("tests.scripts.test_alpha", 0, 0.25, 2, "", ""),
+            ModuleResult("tests.scripts.test_beta", 0, 0.50, 3, "", ""),
+        )
+
+        def fake_run_modules(root, modules, jobs):
+            return results
+
+        output = io.StringIO()
+        original = RUNNER["main"].__globals__["run_modules"]
+        RUNNER["main"].__globals__["run_modules"] = fake_run_modules
+        try:
+            returncode = RUNNER["main"](
+                ["--module", "tests.scripts.test_alpha", "-j", "2"],
+                output=output,
+            )
+        finally:
+            RUNNER["main"].__globals__["run_modules"] = original
+
+        text = output.getvalue()
+        self.assertEqual(returncode, 0)
+        self.assertEqual(text.count("\n"), 1)
+        self.assertNotIn("tests.scripts.test_alpha", text)
+        self.assertIn("Python tests: PASS · 2 modules · 5 tests", text)
 
 
 if __name__ == "__main__":

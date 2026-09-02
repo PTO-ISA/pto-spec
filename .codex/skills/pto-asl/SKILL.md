@@ -32,6 +32,16 @@ Read `GOVERNANCE.md`, `CONTRIBUTING.md`, status records, and release evidence
 only when the selected lane needs those contracts. A review may combine lanes;
 ordinary maintenance should not.
 
+## Decide whether an ADR is needed
+
+Default to the existing owner. ASL/NDF/test/documentation corrections do not
+receive a new ADR when the public interface is already decided. Reuse and amend
+the topic ADR that owns the interface. Allocate a new ADR only for a genuinely
+new externally visible decision boundary with no current owner, and set
+`interface_change=true` before implementation. For the complete allocation
+test, classification table, filename contract, and examples, read
+[adr-governance.md](references/adr-governance.md).
+
 ## Preserve these invariants
 
 Current semantics: owning ASL/NDF -> generated mirror -> AVS -> commit-scoped evidence.

@@ -5,7 +5,7 @@ Draft numeric decisions are generated from ADR records. They are review inputs a
 
 Implementation, AVS, validation, and release stages are derived in the [architecture-readiness projection](../../../spec/evidence/architecture-readiness.json).
 
-## [ADR-NUM-0013: Numeric profile applicability](../decisions/NUM-0013-numeric-profile-applicability.md)
+## [ADR-NUM-0013: Numeric profile applicability](../decisions/ADR-NUM-0013-numeric-profile-applicability.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned
@@ -14,7 +14,7 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Complete every remaining domain operation/type applicability table after the accepted A2A3 MX negative slice.
   - Accept one portable or target disposition for every supported and rejected tuple.
 
-## [ADR-NUM-0014: Numeric format legality](../decisions/NUM-0014-numeric-format-legality.md)
+## [ADR-NUM-0014: Numeric format legality](../decisions/ADR-NUM-0014-numeric-format-legality.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned
@@ -26,7 +26,7 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Resolve the E5M2/E5M3FN spelling conflict.
   - Publish positive and negative target-availability vectors for every accepted tuple.
 
-## [ADR-NUM-0015: Numeric special values](../decisions/NUM-0015-numeric-special-values.md)
+## [ADR-NUM-0015: Numeric special values](../decisions/ADR-NUM-0015-numeric-special-values.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned
@@ -36,7 +36,7 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Define infinity arithmetic and special results for conversions, reductions, quantization, and matrix operations.
   - Complete signaling-NaN flag and status interactions for every affected family.
 
-## [ADR-NUM-0016: Numeric exception flags](../decisions/NUM-0016-numeric-exception-flags.md)
+## [ADR-NUM-0016: Numeric exception flags](../decisions/ADR-NUM-0016-numeric-exception-flags.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned
@@ -46,7 +46,7 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Define tininess detection and NX coupling in every affected operation/type rule.
   - Publish independent simultaneous-flag and special-value vectors.
 
-## [ADR-NUM-0017: Conversion range results](../decisions/NUM-0017-conversion-range-results.md)
+## [ADR-NUM-0017: Conversion range results](../decisions/ADR-NUM-0017-conversion-range-results.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned
@@ -57,7 +57,7 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Choose overflow, NaN, and infinity results.
   - Define non-saturating narrowing, wrap behavior, and omitted-saturation defaults per profile/type pair.
 
-## [ADR-NUM-0018: Elementary-function accuracy](../decisions/NUM-0018-elementary-function-accuracy.md)
+## [ADR-NUM-0018: Elementary-function accuracy](../decisions/ADR-NUM-0018-elementary-function-accuracy.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned
@@ -67,7 +67,7 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Set per-operation/type/profile error bounds.
   - Define domain boundaries and monotonic intervals.
 
-## [ADR-NUM-0019: Reduction order and stability](../decisions/NUM-0019-reduction-order-and-stability.md)
+## [ADR-NUM-0019: Reduction order and stability](../decisions/ADR-NUM-0019-reduction-order-and-stability.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned
@@ -77,7 +77,7 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Define argument and equal-value ties.
   - Bound floating permutation sensitivity and partial merges.
 
-## [ADR-NUM-0020: Quantization contract](../decisions/NUM-0020-quantization-contract.md)
+## [ADR-NUM-0020: Quantization contract](../decisions/ADR-NUM-0020-quantization-contract.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned
@@ -88,7 +88,7 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Define group axes, sizes, and tails.
   - Define sentinels, packing, round-trip tolerances, and whether `SET_QUANT` configuration is architectural state.
 
-## [ADR-NUM-0021: Matrix numeric contract](../decisions/NUM-0021-matrix-numeric-contract.md)
+## [ADR-NUM-0021: Matrix numeric contract](../decisions/ADR-NUM-0021-matrix-numeric-contract.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned
@@ -99,7 +99,7 @@ Implementation, AVS, validation, and release stages are derived in the [architec
   - Resolve the public A5 MX E4M3-only versus implementation FP4/mixed-FP8 conflict.
   - Define MX scale layout, logical versus capacity K multiples, and non-A5 rejection.
 
-## [ADR-NUM-0022: Bounded numeric variation](../decisions/NUM-0022-bounded-numeric-variation.md)
+## [ADR-NUM-0022: Bounded numeric variation](../decisions/ADR-NUM-0022-bounded-numeric-variation.md)
 
 - Target release: unassigned
 - Implementation issue: not assigned

@@ -130,7 +130,7 @@ complete ADR 0087 result decision.
 - `spec/evidence/tlsu-totality.json`
 - `asl/types.asl`
 - `asl/numeric/formats.asl`
-- `docs/status/decisions/NUM-0009-numeric-format-value-classification.md`
+- `docs/status/decisions/ADR-NUM-0009-numeric-format-value-classification.md`
 - `asl/scalar/floating.asl`
 - `asl/tile/state.asl`
 - `asl/tile/memory.asl`
@@ -138,9 +138,9 @@ complete ADR 0087 result decision.
 - `spec/evidence/numeric-format-namespace-contract.json`
 - `spec/evidence/release-traceability-readiness.json`
 - `tests/asl/tile/model/memory/load-store/tile-bound-tlsu-totality-001.asl`
-- `docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md`
-- `docs/status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md`
-- `docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md`
+- `docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md`
+- `docs/status/decisions/ADR-MEM-0006-tlsu-four-bit-memory-packing.md`
+- `docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md`
 
 ## Bilingual decision detail / 双语决策详述
 

@@ -52,7 +52,7 @@ class AslBuildDependenciesTest(unittest.TestCase):
             "check-decoder-partition: $(DECODER_SPEC) $(VALIDATION_INDEX)",
             makefile,
         )
-        self.assertIn("pr-check:\n\t./scripts/check-pr", makefile)
+        self.assertIn("pr-check:\n\t@./scripts/check-pr", makefile)
         self.assertIn(
             '"make --no-print-directory check-decoder-partition"', checker
         )

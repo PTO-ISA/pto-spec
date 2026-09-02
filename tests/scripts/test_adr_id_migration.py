@@ -37,7 +37,7 @@ class AdrIdMigrationTest(unittest.TestCase):
             ("STATE", "0003", "0001", "state.md"),
         ):
             old_path = f"docs/status/decisions/{old_serial}-{slug}"
-            new_path = f"docs/status/decisions/{type_name}-{new_serial}-{slug}"
+            new_path = f"docs/status/decisions/ADR-{type_name}-{new_serial}-{slug}"
             body = bodies[old_serial]
             self.write_adr(root, old_path, f"ADR-{old_serial}", body)
             records.append(
@@ -121,7 +121,7 @@ class AdrIdMigrationTest(unittest.TestCase):
             records = document["records"]
             assert isinstance(records, list) and isinstance(records[0], dict)
             records[0]["new_id"] = "ADR-GOV-0002"
-            records[0]["new_path"] = "docs/status/decisions/GOV-0002-scope.md"
+            records[0]["new_path"] = "docs/status/decisions/ADR-GOV-0002-scope.md"
             mapping.write_text(json.dumps(document), encoding="utf-8")
             errors = validate_migration(root, mapping)
             self.assertTrue(any("contiguous" in error for error in errors), errors)

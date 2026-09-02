@@ -17,7 +17,8 @@
   "baseline": "1e91bf98ad2f918c24ddbb394c3be73fa9d5de9f",
   "target_releases": [
     "0.58.1",
-    "0.58.2"
+    "0.58.2",
+    "0.58.5"
   ],
   "affected_ndf": [
     "PTO-ACRC-DECISION-BINDING-001",
@@ -198,6 +199,7 @@
     "PTO-XORW-ADR-CONTRACT-001"
   ],
   "affected_units": [
+    "PTO-ARCH-GQM",
     "PTO-ARCH-OVERVIEW-ENCODING-OWNERSHIP",
     "PTO-BLOCK-ERCOV",
     "PTO-BLOCK-ESAVE",

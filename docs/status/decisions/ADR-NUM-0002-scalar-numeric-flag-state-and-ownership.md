@@ -148,7 +148,7 @@ The repository maturity therefore remains M4 and `S5-T2` remains open.
 - `asl/scalar/dispatch.asl`
 - `asl/profiles/pto-v0.asl`
 - `tests/asl/scalar/model/dispatch/fsu/scalar-exec-flag-and-rounding-helpers-001.asl`
-- `docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md`
+- `docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md`
 - `spec/evidence/numeric-profile-decision-proposals.json`
 
 ## Bilingual decision detail / 双语决策详述

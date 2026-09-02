@@ -12,7 +12,7 @@
             "type": "string"
           },
           "new_path": {
-            "pattern": "^docs/status/decisions/(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}-[^/]+\\.md$",
+            "pattern": "^docs/status/decisions/ADR-(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}-[^/]+\\.md$",
             "type": "string"
           },
           "old_body_sha256": {

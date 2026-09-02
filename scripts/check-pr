@@ -4,11 +4,11 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 cd "$repo_root"
 
+# shellcheck source=scripts/check-ui
+source "$repo_root/scripts/check-ui"
+
 source_commands=(
     "./scripts/check-adrs"
-    "./scripts/check-adr-id-migration"
-    "./scripts/check-adr-bilingual"
-    "./scripts/check-ndf-supplements"
     "make --no-print-directory check-decoder-partition"
     "./scripts/check-release-event-schema"
     "./scripts/check-release-workflow"
@@ -19,17 +19,19 @@ tooling_commands=(
     "./scripts/run-python-tests"
 )
 
-run_commands() {
-    local lane=$1
-    shift
-    local command started finished
-    for command in "$@"; do
-        started=$(date +%s)
-        printf '+ [%s] %s\n' "$lane" "$command"
-        bash -c "$command"
-        finished=$(date +%s)
-        printf 'PASS [%s] %ss %s\n' "$lane" "$((finished - started))" "$command"
-    done
+run_source_checks() {
+    check_ui_section "Source contracts"
+    check_ui_step "ADR records" bash -c "${source_commands[0]}"
+    check_ui_step "Decoder partition" bash -c "${source_commands[1]}"
+    check_ui_step "Release event schema" bash -c "${source_commands[2]}"
+    check_ui_step "Release workflow" bash -c "${source_commands[3]}"
+    check_ui_step "Repository structure and projections" bash -c "${source_commands[4]}"
+    check_ui_step "Patch whitespace" bash -c "${source_commands[5]}"
+}
+
+run_tooling_checks() {
+    check_ui_section "Tooling tests"
+    check_ui_step "Python test suite" bash -c "${tooling_commands[0]}"
 }
 
 case ${1:-} in
@@ -39,12 +41,16 @@ case ${1:-} in
         ;;
     --source)
         [[ $# -eq 1 ]] || { echo "usage: $0 [--list|--source|--tooling]" >&2; exit 2; }
-        run_commands source "${source_commands[@]}"
+        check_ui_begin "PTO PR source validation"
+        run_source_checks
+        check_ui_finish
         exit 0
         ;;
     --tooling)
         [[ $# -eq 1 ]] || { echo "usage: $0 [--list|--source|--tooling]" >&2; exit 2; }
-        run_commands tooling "${tooling_commands[@]}"
+        check_ui_begin "PTO PR tooling validation"
+        run_tooling_checks
+        check_ui_finish
         exit 0
         ;;
     "")
@@ -55,19 +61,7 @@ case ${1:-} in
         ;;
 esac
 
-run_commands source "${source_commands[@]}" &
-source_pid=$!
-run_commands tooling "${tooling_commands[@]}" &
-tooling_pid=$!
-
-source_status=0
-tooling_status=0
-wait "$source_pid" || source_status=$?
-wait "$tooling_pid" || tooling_status=$?
-
-if [[ $source_status -ne 0 || $tooling_status -ne 0 ]]; then
-    printf 'PR check failed: source=%s tooling=%s\n' "$source_status" "$tooling_status" >&2
-    exit 1
-fi
-
-echo "PR check passed"
+check_ui_begin "PTO PR validation"
+run_source_checks
+run_tooling_checks
+check_ui_finish

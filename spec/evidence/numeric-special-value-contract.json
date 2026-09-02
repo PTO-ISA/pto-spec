@@ -4,7 +4,7 @@
   "decision_id": "ADR-NUM-0015",
   "checkpoint_id": "ADR-NUM-0015-SC2",
   "status": "named-hardware-special-value-checkpoint-accepted-adr0088-open",
-  "acceptance_record": "docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md",
+  "acceptance_record": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
   "current_profile_evidence_id": "pto-hardware-numeric-0.58.5-ieee-v1",
   "policy": {
@@ -582,7 +582,7 @@
   },
   "sources": [
     {
-      "path": "docs/status/decisions/NUM-0011-hardware-special-value-checkpoint.md",
+      "path": "docs/status/decisions/ADR-NUM-0011-hardware-special-value-checkpoint.md",
       "sha256": "08cfdeb16bf245980c9db849994e181e5079efc53475762cdad1df9f555993b5"
     },
     {

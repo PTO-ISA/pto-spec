@@ -133,8 +133,8 @@ decision remain valid.
 - `asl/bundle/state.asl`
 - `asl/bundle/dispatch.asl`
 - `tests/asl/arch/data-types/rounding/arch-static-rounding-contract-001.asl`
-- `docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md`
-- `docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md`
+- `docs/status/decisions/ADR-SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md`
+- `docs/status/decisions/ADR-NUM-0001-numeric-profile-identity-and-variation-framework.md`
 
 ## Bilingual decision detail / 双语决策详述
 
