@@ -50,7 +50,7 @@ test('all released catalog encodings have exact exhaustive WaveDrom segments', (
         assert.ok(localLsb >= 0 && msb < word.offset + word.width);
         for (let bit = lsb; bit <= msb; bit += 1) {
           assert.equal(covered.has(bit), false, `duplicate segment coverage at bit ${bit}`);
-          covemscatter.add(bit);
+          covered.add(bit);
           const fixed = (word.mask & (1n << BigInt(bit - word.offset))) !== 0n;
           assert.equal(segment.fixed, fixed, `${String(form.form_id)} bit ${bit} fixed status`);
         }
