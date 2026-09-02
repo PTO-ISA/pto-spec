@@ -5,6 +5,7 @@ import unittest
 
 from scripts.model_closure import (
     canonical_sha256,
+    invocation_path,
     validate_run_envelope,
     validate_semantic_payload,
 )
@@ -127,6 +128,19 @@ def valid_envelope(payload: object) -> dict[str, object]:
 
 
 class ModelClosureTest(unittest.TestCase):
+    def test_invocation_path_preserves_driver_symlink_name(self) -> None:
+        import pathlib
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            driver = root / "lld"
+            driver.write_text("driver", encoding="utf-8")
+            alias = root / "ld.lld"
+            alias.symlink_to(driver)
+            self.assertEqual(invocation_path(alias), alias.absolute())
+            self.assertEqual(invocation_path(alias).name, "ld.lld")
+
     def test_complete_same_run_closure_is_accepted(self) -> None:
         payload = valid_payload()
         envelope = valid_envelope(payload)

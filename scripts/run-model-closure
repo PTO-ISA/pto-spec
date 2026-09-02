@@ -12,6 +12,11 @@ import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.model_closure import invocation_path  # noqa: E402
+
 EXPECTED_RELEASE = "0.58.5"
 EXPECTED_PUBLICATION = "0.58.5.0"
 EXPECTED_ABI = "pto-isa-0.58.5-mode-function-v1"
@@ -159,13 +164,13 @@ def main() -> int:
                 str(asl_model_root / "scripts/pto-closure"),
                 "--request", str(request_path),
                 "--ndf-impact", str(impact_path),
-                "--ndf-root", str(arguments.ndf_root.resolve()),
-                "--aslref-root", str(arguments.aslref_root.resolve()),
-                "--asl-spec", str(arguments.asl_spec.resolve()),
-                "--clang", str(arguments.clang.resolve()),
-                "--llvm-mc", str(arguments.llvm_mc.resolve()),
-                "--ld-lld", str(arguments.ld_lld.resolve()),
-                "--aslref", str(arguments.aslref.resolve()),
+                "--ndf-root", str(invocation_path(arguments.ndf_root)),
+                "--aslref-root", str(invocation_path(arguments.aslref_root)),
+                "--asl-spec", str(invocation_path(arguments.asl_spec)),
+                "--clang", str(invocation_path(arguments.clang)),
+                "--llvm-mc", str(invocation_path(arguments.llvm_mc)),
+                "--ld-lld", str(invocation_path(arguments.ld_lld)),
+                "--aslref", str(invocation_path(arguments.aslref)),
                 "--target", arguments.target,
                 "--output", str(evidence),
                 "--workflow-repository", "PTO-ISA/pto-spec",
