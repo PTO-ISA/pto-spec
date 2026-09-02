@@ -31,6 +31,12 @@ def canonical_sha256(value: object) -> str:
     return hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
+def invocation_path(path: Path) -> Path:
+    """Make a command path absolute without dereferencing a driver symlink."""
+
+    return path.absolute()
+
+
 def _exact_object(
     value: object, label: str, fields: tuple[str, ...], errors: list[str]
 ) -> dict[str, Any]:
