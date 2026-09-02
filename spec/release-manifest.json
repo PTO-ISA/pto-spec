@@ -214,15 +214,19 @@
     },
     {
       "path": "asl/arch/profile/reference-conversion.asl",
-      "sha256": "fd53f48fb3211b0f80081c8511fc531993901106fbb551e52207c95744abc961"
+      "sha256": "ed1e073ec50cdc8173641e6b5978fb635748cc8516e8185ac19ce43e68c14e68"
     },
     {
       "path": "asl/arch/profile/reference-profile.asl",
-      "sha256": "85f75a12a2f894188c498eabe7de972ce040dd357ca15a6a876bfc6c5070b6da"
+      "sha256": "c83348395e169f4b9fd989f56d53ae886752116c2bcada4e7e37682f8a9f4ed4"
     },
     {
       "path": "asl/arch/profile/reference-quantization.asl",
-      "sha256": "d4757aa97a073dcb9e8f5531190213319f358e007a365c6bc029d23cf062e463"
+      "sha256": "caca6e962c25cc3edc44d44693bfd7e52f0d649a1855d56d3b31fcac9f3c6d92"
+    },
+    {
+      "path": "asl/arch/profile/reference-scalar-fp-specials.asl",
+      "sha256": "949721ddfb69b114010b6975241196412a8708900dbbbca0086adb2cdc790204"
     },
     {
       "path": "asl/arch/profile/reset.asl",
@@ -1194,11 +1198,11 @@
     },
     {
       "path": "asl/scalar/agu/HL.PRF.A.asl",
-      "sha256": "3d8d2b79670db37994fc05653ea48410536456b96db187d6aa04d88e969850b0"
+      "sha256": "3acc5a6aa39513d27f7249d8df3e2c7c1278572f9d5840f34d40985132a57b30"
     },
     {
       "path": "asl/scalar/agu/HL.PRF.asl",
-      "sha256": "f38b59d65f72bef1b80b3afc6182dff0d4e5c0c0a27c23ee5134a7d7983f2a30"
+      "sha256": "042f60c19bf877d7f3739b8b42df8e6d568686dd031bf4a8e4eaac1af55b6b1f"
     },
     {
       "path": "asl/scalar/agu/HL.PRFI.U.asl",
@@ -2654,7 +2658,7 @@
     },
     {
       "path": "asl/scalar/model/fsu/profile.asl",
-      "sha256": "f408fda5e6ce896b8e2f7b574e36ee4345bf6f88b58730f550dae28dacca4778"
+      "sha256": "3a8543a5640e6ff72b5e81f1c002280f1f0363acde56000538bdff161eab2c39"
     },
     {
       "path": "asl/scalar/model/sys/registers.asl",
@@ -3050,7 +3054,7 @@
     },
     {
       "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_CAS.asl",
-      "sha256": "e40158c7f4035f04ba315ba0a213f1d27a0ebf0b5693593834ed5c4ebdf23651"
+      "sha256": "146e50c2f92505777f4fff76d7f01b740e884c91b1210e09f3a35fa16caba593"
     },
     {
       "path": "asl/tile/memory-and-data-movement/irregular/MGATHER_DEC.asl",
@@ -3190,7 +3194,7 @@
     },
     {
       "path": "asl/tile/model/dispatch/top-level.asl",
-      "sha256": "086642bac8b2a315465de2eee585ea13a2a266d9b3ebf9a0f6b44fdae05f3cf9"
+      "sha256": "dc23dddace68246929b9110a3f78c22381b748cefb97bb8aaba8d57fb916a684"
     },
     {
       "path": "asl/tile/model/execution/comparison.asl",
@@ -3318,7 +3322,7 @@
     },
     {
       "path": "asl/tile/model/legality/operand-schema.asl",
-      "sha256": "714d57c9ca89673d8255c32afe2f8f107709a30df1f3e46ff2438eacfb214dea"
+      "sha256": "ec82a2a3355f5d1aff68e73d415a4b44f5257ed7322239a595fa38315d32afeb"
     },
     {
       "path": "asl/tile/model/legality/pe-mask.asl",
@@ -3350,11 +3354,11 @@
     },
     {
       "path": "asl/tile/model/memory/gm-atom-red-execution.asl",
-      "sha256": "2c8999e464c34ddbb72840aa3a299f1c087368bc0385cd3177dade610408a552"
+      "sha256": "77723ad33fc68b94f3a31511d4963a146aafc3f40fa2a4ad149ac5721ac6ba25"
     },
     {
       "path": "asl/tile/model/memory/gm-atom-red.asl",
-      "sha256": "3b5be798fcbec05563452c1399f2fee4910cdaa46ecce4ada180b62c8cc50e5e"
+      "sha256": "2cfa3c61b74f17242fdede31b2fad7abeb93c0f60cd4d0dd3956dd3cc3095541"
     },
     {
       "path": "asl/tile/model/memory/load-store.asl",
@@ -3614,7 +3618,7 @@
     },
     {
       "path": "spec/catalog/scalar-forms.json",
-      "sha256": "0cf45e973a23f50613fc2f411422c73c05ff2ceacdf33da42870091931614af3"
+      "sha256": "659feca66ad67db81726c8e0139e614b3ced2694e645f9e5dda534832920d2dd"
     },
     {
       "path": "spec/catalog/system-registers.json",
@@ -3622,7 +3626,7 @@
     },
     {
       "path": "spec/catalog/tile-operations.json",
-      "sha256": "babde2fa00c34dccc84daf57432ca6d3ed0abe5569dcfd6df70fb5406501d277"
+      "sha256": "1fb9d2de470f251905ee344bc468356ba55efb7d7b62a75f15f5394902f234cb"
     },
     {
       "path": "spec/evidence/architecture-readiness.json",
@@ -3634,15 +3638,15 @@
     },
     {
       "path": "spec/evidence/mnemonic-descriptions/coverage-summary.json",
-      "sha256": "84ba2e429714d51151bcc7aa8b838fa10a4e99dc3ed7a1bedf4cbecf9579e459"
+      "sha256": "786bf2873d5d1551def7d9bdafb1d9d8bc714eed7e7af45c6365a3490014de34"
     },
     {
       "path": "spec/evidence/release-gate-readiness.json",
-      "sha256": "3abaa652e5da97076320169aa826b5216c54fe59cc1aa0ea1782698711da0d75"
+      "sha256": "6949f9c9aa39d9bcf804b4cfc4c49bb59c1c571e2c2849c8a2277f23be55af0d"
     },
     {
       "path": "spec/evidence/release-traceability-readiness.json",
-      "sha256": "c4b43d8c481f0f48569f3f7cfbc0879685197c7e0e6555a1c0ecb457cc739328"
+      "sha256": "daafb4794aeed9117359f9214f43a0ec213945f425824207d0ebb198eb3cf9b6"
     },
     {
       "path": "spec/hardware-conformance-profile.json",
@@ -3688,7 +3692,7 @@
     },
     "tile_operations_total": 126
   },
-  "content_sha256": "eb7e50bedc02614745d90b72ccadd3b2b6d5d669f0f4977148f46da3e938eac8",
+  "content_sha256": "923080a62794f21506e1ac686494a42579417b1d4734560d610d4137aeeba662",
   "elf_identity": {
     "alignment_bytes": 4,
     "descriptor_encoding": "UTF-8 JSON with lexicographically sorted keys and no insignificant whitespace",
@@ -3707,7 +3711,7 @@
     "section": ".note.pto.isa"
   },
   "encoding_abi": "pto-isa-0.58.5-mode-function-v1",
-  "encoding_projection_sha256": "f0e2ca9e265a09e9a289aedc0c982d19ba1f8ac164210435a86b8772f5685636",
+  "encoding_projection_sha256": "f1d274691e7eeebc8117e838a26b716cfb9b455d131ded03f951be04129b1a07",
   "hardware_conformance_profile": {
     "evidence": "spec/evidence/pto-isa-0585-hardware-numeric-vectors.json",
     "path": "spec/hardware-conformance-profile.json",
@@ -3980,17 +3984,22 @@
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-conversion.md",
-      "sha256": "ebc47f0a570fde5e029351130c93dc0da973b621b82382d4bf88954b13b538cd"
+      "sha256": "15b252326d0055568b2369cf74977f6e9679f38ac2ec27943f136a7e2c5cfcf7"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-profile.md",
-      "sha256": "c32515a0955c8790fdb86d2dc13928299cec89bb426ced50af232ba0a0853f07"
+      "sha256": "4db72bd05dfd012c00c45bc835f48a0180763486475562abbc0fa8c72b347ca3"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/arch/profile/reference-quantization.md",
-      "sha256": "064c01f2330cd8c3f95fc9e4b591877fb8a240b181bc1ab43d79dff18765de0f"
+      "sha256": "00184066258b747b93050c9a9084c823f97078f7f125c6bcb72775d37e1df0dc"
+    },
+    {
+      "kind": "generated-documentation",
+      "path": "docs/arch/profile/reference-scalar-fp-specials.md",
+      "sha256": "74f7a4ee69d0b1bba1ed1c2014dc019f598336fed86304d6cdc0188cb8562074"
     },
     {
       "kind": "generated-documentation",
@@ -5205,12 +5214,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.PRF.A.md",
-      "sha256": "2dedea743fdf60abc87312f993c57a98d14a9bd7770e9110b98c5ad1cd207b89"
+      "sha256": "8a9c710817606fcac09853a4de512553998ebf55a29843dec3060d8e9ba7018c"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/agu/HL.PRF.md",
-      "sha256": "4ddfd10acbab8ef048083a43357f0868e52b3a675cd0ec34fd32c3b8b00a8f32"
+      "sha256": "f00f263d4b69d4ac8951414685caa552cf1161f5a7bd8dbc5791965a9542e6f5"
     },
     {
       "kind": "generated-documentation",
@@ -7030,7 +7039,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/scalar/model/fsu/profile.md",
-      "sha256": "a124962766c17cf029b953bf8e1ceec2551a8b3d0f71402521a2dc515aafba85"
+      "sha256": "96a35f6c50f7f500e4b7df7343fc02df9b0c48f9f0dcb635e931ea0fbad12604"
     },
     {
       "kind": "generated-documentation",
@@ -7525,7 +7534,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/memory-and-data-movement/irregular/MGATHER_CAS.md",
-      "sha256": "45857acad4808325be917eba1b7b330d18a2096dd26ed98175bd60696f09edd2"
+      "sha256": "da32d1435d1e1044c6d4ed880b7289978d4cf31986be4daf742057edf5fbd47f"
     },
     {
       "kind": "generated-documentation",
@@ -7700,7 +7709,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/dispatch/top-level.md",
-      "sha256": "23da00adbca241c2fded341749e12c3365fa8c6c3f0d7f965baf57c2e1cbfaf8"
+      "sha256": "ba8f6e518ffa3f9f0ecdcaabddcf6b4b836efa41fcede0a79ed463d000c08916"
     },
     {
       "kind": "generated-documentation",
@@ -7860,7 +7869,7 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/legality/operand-schema.md",
-      "sha256": "0ab31cc10f5d4896d6038d782bea512f6f6c3d34704a2af35385ab29f5853bcc"
+      "sha256": "6a5d100dc66c2bada95edabb5f54dd2b36b2f90dc510fbf42e5c239efda3fa5b"
     },
     {
       "kind": "generated-documentation",
@@ -7900,12 +7909,12 @@
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/gm-atom-red-execution.md",
-      "sha256": "fccf5a55769bbca39fe0215680fd62ddb0c8b9afcf0299e5951168040f6de745"
+      "sha256": "1dfd6635e07ad6bd6e7b804f55fe34dc4e14237362fbb022957bc1895221fc1d"
     },
     {
       "kind": "generated-documentation",
       "path": "docs/tile/model/memory/gm-atom-red.md",
-      "sha256": "f9df234bfc8f1bb15f9e3e201be0c5aeca07d7d53e78e924009296b43c88bb18"
+      "sha256": "4cc07f1d2e9e301974bd2349e78902fffab4d0a3e913576450824b2a5faa36c8"
     },
     {
       "kind": "generated-documentation",
@@ -8210,12 +8219,12 @@
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-abi-vectors.json",
-      "sha256": "7df4f5d3666c0eceeab7b6681c8c2b454dafd9e35c48080854e4a8ef44fa6f59"
+      "sha256": "de002e741f1d243567819dccfc9ae3a1e746b6a4df2bf496a7e6b5174f6e355d"
     },
     {
       "kind": "generated-evidence",
       "path": "spec/evidence/pto-isa-0585-encoding-totality.json",
-      "sha256": "25072ac12ffcdfd60f053725021a39996463f5fa1d76632cc4681ecdd6b75f90"
+      "sha256": "a748776ddeea2d24098ec61cda414f1a0c0c555bde275d66efa301dbcbfb15fa"
     },
     {
       "kind": "generated-evidence",
@@ -10216,11 +10225,11 @@
       },
       {
         "id": "PTO-INST-SCALAR-HL-PRF",
-        "sha256": "9046f10fb0f4dcfc9b42eaf98cb48bba7a5ffd74e2851b0e7b745a18e4189506"
+        "sha256": "576bfa547987c4c511f22dd616be01e81c662b91be00c44c8abbcff24e81e460"
       },
       {
         "id": "PTO-INST-SCALAR-HL-PRF-A",
-        "sha256": "5418ddc918950e55055c6329f73ae52a1a37f1bba664474fc814f3d1bdf85ec8"
+        "sha256": "4bdb175bc43a53f7049058d937de9e849d6b5e55c41132915d4a093f2345cf6f"
       },
       {
         "id": "PTO-INST-SCALAR-HL-PRFI-U",
@@ -11184,7 +11193,7 @@
       },
       {
         "id": "PTO-INST-TILE-MGATHER-CAS",
-        "sha256": "fac7d0005b4216a354e48f041fdaba0a8a7e10e71f0c20bbd09a0142361d13d7"
+        "sha256": "ea4e3a10cf3a1873744b7434d0ad0517fd5498de315dd5ef104293af80914d87"
       },
       {
         "id": "PTO-INST-TILE-MGATHER-DEC",
