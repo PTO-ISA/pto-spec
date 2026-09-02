@@ -132,7 +132,11 @@ begin
             _BundleOperation.data_type as TileDataTypeEncoding)
         else _Tiles[[destination]].data_type;
     if op == TileUnary_NOT then
-        return TileElementwiseShapeAndTypeMatch(destination, source);
+        return TileElementwiseShapeAndTypeMatch(destination, source) &&
+               _Tiles[[destination]].data_type == operation_type &&
+               TileVecScalarIntegerDataTypeSupported(operation_type) &&
+               _Tiles[[source]].layout == TileLayout_RowMajor &&
+               TileElementwiseSourceContentsDefined(source);
     end;
     if !TileElementwiseShapeMatch(destination, source) ||
        _Tiles[[destination]].data_type != operation_type ||

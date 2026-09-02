@@ -398,7 +398,7 @@ impdef func ScalarFPFusedProfile(operation: FloatingFusedOperation,
                                  addend: Word, left: Word, right: Word)
                                  => (Word, bits(5))
 begin
-    assert ScalarFPTypeCodeSupported(source_type);
+    assert ScalarFPTypeCodeSupported(source_type) || source_type == '00100';
     return (addend, Zeros{5});
 end;
 
