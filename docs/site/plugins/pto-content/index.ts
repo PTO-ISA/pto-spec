@@ -87,6 +87,7 @@ interface TraceabilityData {
 interface AdrIndexRecord {
   id: string;
   title: string;
+  title_zh: string;
   status: string;
   path: string;
   accepted: string | null;
@@ -99,6 +100,13 @@ interface AdrIndexRecord {
 
 interface AdrIndexData {
   records: AdrIndexRecord[];
+}
+
+interface NdfSupplement {
+  id: string;
+  source_path: string;
+  title: {en: string; 'zh-CN': string};
+  summary: {en: string; 'zh-CN': string};
 }
 
 interface LoadedPtoContent {
@@ -1499,6 +1507,7 @@ function parseNdfClauses(
   sourcePath: string,
   release?: PtoReleaseIdentity,
   unit?: TraceabilityUnit,
+  supplements?: Map<string, NdfSupplement>,
 ): PtoNdfClause[] {
   const lines = source.split(/\r?\n/);
   const clauses: PtoNdfClause[] = [];
@@ -1534,8 +1543,14 @@ function parseNdfClauses(
     }
 
     const text = body.join('\n');
+    const supplement = supplements?.get(id);
+    if (supplements !== undefined && supplement === undefined) {
+      fail(`missing bilingual NDF supplement for ${id}`);
+    }
     clauses.push({
       id,
+      title: supplement?.title ?? {en: id, 'zh-CN': id},
+      summary: supplement?.summary ?? {en: text, 'zh-CN': text},
       kind: metadata[1],
       level: metadata[2],
       layer: metadata[3],
@@ -1556,6 +1571,26 @@ function parseNdfClauses(
   }
 
   return clauses;
+}
+
+function loadNdfSupplements(root: string): Map<string, NdfSupplement> {
+  const directory = path.join(root, 'docs/ndf/supplements');
+  const result = new Map<string, NdfSupplement>();
+  for (const name of readdirSync(directory).filter((value) => value.endsWith('.json')).sort()) {
+    const document = readJson<{
+      schema: string;
+      non_normative: boolean;
+      entries: NdfSupplement[];
+    }>(root, `docs/ndf/supplements/${name}`);
+    if (document.schema !== 'pto.ndf-supplements.v1' || document.non_normative !== true) {
+      fail(`invalid NDF supplement document ${name}`);
+    }
+    for (const entry of document.entries) {
+      if (result.has(entry.id)) fail(`duplicate bilingual NDF supplement ${entry.id}`);
+      result.set(entry.id, entry);
+    }
+  }
+  return result;
 }
 
 function requirementSourceIndex(
@@ -2310,6 +2345,8 @@ function ndfCatalogData(
         layer: clause.layer,
         status: clause.status,
         text: clause.text,
+        title: clause.title,
+        summary: clause.summary,
         route: localizedRoute(context, `/ndf/${encodeURIComponent(id)}/`),
         sourcePath: clause.sourcePath,
         sourceSha256: clause.sourceSha256,
@@ -2331,6 +2368,8 @@ function ndfCatalogData(
       layer: 'instruction',
       status: requirementsById.get(id)?.executable ? 'executable' : 'contract',
       text: null,
+      title: null,
+      summary: null,
       route: owner.route,
       sourcePath: identity.sourcePath,
       sourceSha256: identity.sourceSha256,
@@ -2497,6 +2536,7 @@ function buildUnitData(
   evidence: PtoArtifactEvidence[],
   guideContext: ReaderGuideContext,
   requirementSources: Map<string, RequirementSourceIdentity>,
+  ndfSupplements: Map<string, NdfSupplement>,
 ): PtoUnitWorkbenchData {
   const sourceText = readText(root, unit.source);
   const sourceDigest = sha256(sourceText);
@@ -2520,7 +2560,9 @@ function buildUnitData(
     fail(`metadata and traceability mnemonics disagree for ${unit.source}`);
   }
 
-  const ndfClauses = parseNdfClauses(sourceText, unit.source, release, unit);
+  const ndfClauses = parseNdfClauses(
+    sourceText, unit.source, release, unit, ndfSupplements,
+  );
   const requirementIds = new Set(ndfClauses.map((clause) => clause.id));
   for (const clause of ndfClauses) {
     const requirement = requirementsById.get(clause.id);
@@ -2623,11 +2665,13 @@ function publicAdr(root: string, release: PtoReleaseIdentity, record: AdrIndexRe
     fail(`ADR source is outside canonical decision owners: ${record.path}`);
   }
   const source = readText(root, record.path);
-  const decisionNumber = record.id.match(/^ADR-(\d{4})$/)?.[1];
-  if (decisionNumber === undefined) fail(`invalid ADR identity ${record.id}`);
+  const decisionIdentity = record.id.match(/^ADR-([A-Z]+)-(\d{4})$/);
+  if (decisionIdentity === null) fail(`invalid ADR identity ${record.id}`);
+  const [, decisionType, decisionNumber] = decisionIdentity;
   return {
     id: record.id,
     title: record.title,
+    titleZh: record.title_zh,
     status: record.status,
     path: record.path,
     accepted: record.accepted,
@@ -2644,6 +2688,7 @@ function publicAdr(root: string, release: PtoReleaseIdentity, record: AdrIndexRe
       anchor: `adr-${record.id.toLocaleLowerCase('en-US')}`,
       facets: [
         {role: 'decision', label: 'ADR'},
+        {role: 'category', label: decisionType},
         {role: 'case', label: decisionNumber},
       ],
     },
@@ -2878,6 +2923,7 @@ function searchData(
   adrIndex: AdrIndexData,
   requirementSources: Map<string, RequirementSourceIdentity>,
 ): PtoSearchData {
+  const chinese = context.i18n.currentLocale === 'zh-CN';
   const entries = new Map<string, PtoSearchEntry>();
   const instructionContracts = new Map(
     traceability.units
@@ -2949,12 +2995,14 @@ function searchData(
   for (const record of adrIndex.records) {
     addEntry({
       id: record.id,
-      label: record.title,
+      label: chinese ? record.title_zh : record.title,
       kind: 'adr',
       path: record.path,
       url: sourceUrl(release.commit, record.path),
       keywords: [
         record.status,
+        record.title,
+        record.title_zh,
         ...record.target_releases,
         ...record.affected_ndf,
         ...record.affected_units,
@@ -2984,6 +3032,7 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
         'spec/evidence/release-traceability-readiness.json',
       );
       const adrIndex = readJson<AdrIndexData>(root, 'spec/evidence/adr-index.json');
+      const ndfSupplements = loadNdfSupplements(root);
       const requirementSources = requirementSourceIndex(root, release, traceability);
       const graph = graphData(release, traceability, adrIndex, requirementSources);
       const requirementsById = new Map(
@@ -3074,6 +3123,7 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
               evidence,
               guideContext,
               requirementSources,
+              ndfSupplements,
             ),
           };
         });
@@ -3494,7 +3544,9 @@ export default function ptoContentPlugin(context: LoadContext): Plugin<LoadedPto
       const decisionDirectory = path.join(siteOutDir, 'evidence/decisions');
       mkdirSync(decisionDirectory, {recursive: true});
       for (const [id, nodes] of Object.entries(content.adrDecisions)) {
-        if (!/^ADR-\d{4}$/.test(id)) fail(`unsafe ADR asset identity ${id}`);
+        if (!/^ADR-(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-\d{4}$/.test(id)) {
+          fail(`unsafe ADR asset identity ${id}`);
+        }
         writeFileSync(
           path.join(decisionDirectory, `${id}.json`),
           `${JSON.stringify(nodes)}\n`,

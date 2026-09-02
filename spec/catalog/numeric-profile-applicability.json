@@ -2,7 +2,7 @@
   "schema_version": 1,
   "catalog_id": "numeric-profile-applicability",
   "status": "a2a3-mx-support-rejection-closed-results-open",
-  "target": "S5-T2-A3:ADR-0086",
+  "target": "S5-T2-A3:ADR-NUM-0013",
   "profiles": [
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -35,7 +35,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -60,7 +60,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -85,7 +85,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -110,7 +110,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -135,7 +135,7 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
     },
     {
       "profile_id": "pto-a2a3-numeric-v1",
@@ -160,11 +160,11 @@
         "public-intrinsic-api",
         "executable-model-comparison"
       ],
-      "acceptance_record": "docs/status/decisions/0041-a2a3-mx-profile-applicability.md"
+      "acceptance_record": "docs/status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md"
     }
   ],
   "open_parent_decisions": [
-    "ADR-0086",
+    "ADR-NUM-0013",
     "cube-matrix",
     "S5-T2"
   ]

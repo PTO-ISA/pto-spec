@@ -229,7 +229,7 @@
   ],
   "decisions": [
     {
-      "adr": "ADR-0047",
+      "adr": "ADR-NUM-0008",
       "status": "accepted",
       "affected_domains": [
         "cube-matrix",
@@ -248,10 +248,10 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md"
+      "acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md"
     },
     {
-      "adr": "ADR-0049",
+      "adr": "ADR-NUM-0010",
       "status": "accepted",
       "affected_domains": [
         "cube-matrix",
@@ -268,10 +268,10 @@
         "tile-reduction",
         "tile-unary"
       ],
-      "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md"
+      "acceptance_record": "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md"
     },
     {
-      "adr": "ADR-0086",
+      "adr": "ADR-NUM-0013",
       "status": "draft",
       "affected_domains": [
         "cube-matrix",
@@ -295,7 +295,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0087",
+      "adr": "ADR-NUM-0014",
       "status": "draft",
       "affected_domains": [
         "cube-matrix",
@@ -319,7 +319,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0088",
+      "adr": "ADR-NUM-0015",
       "status": "draft",
       "affected_domains": [
         "cube-matrix",
@@ -342,7 +342,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0089",
+      "adr": "ADR-NUM-0016",
       "status": "draft",
       "affected_domains": [
         "scalar-binary",
@@ -355,7 +355,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0090",
+      "adr": "ADR-NUM-0017",
       "status": "draft",
       "affected_domains": [
         "scalar-fp-convert",
@@ -368,7 +368,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0091",
+      "adr": "ADR-NUM-0018",
       "status": "draft",
       "affected_domains": [
         "scalar-binary",
@@ -380,7 +380,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0092",
+      "adr": "ADR-NUM-0019",
       "status": "draft",
       "affected_domains": [
         "tile-compare",
@@ -390,7 +390,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0093",
+      "adr": "ADR-NUM-0020",
       "status": "draft",
       "affected_domains": [
         "tile-dequantize",
@@ -399,7 +399,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0094",
+      "adr": "ADR-NUM-0021",
       "status": "draft",
       "affected_domains": [
         "cube-matrix"
@@ -407,7 +407,7 @@
       "acceptance_record": null
     },
     {
-      "adr": "ADR-0095",
+      "adr": "ADR-NUM-0022",
       "status": "draft",
       "affected_domains": [
         "cube-matrix",
@@ -453,14 +453,14 @@
         "NV/DZ/OF/UF/NX flags"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -485,14 +485,14 @@
         "NV/DZ/OF/UF/NX flags"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -518,13 +518,13 @@
         "NV/DZ/OF/UF/NX flags"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -551,13 +551,13 @@
         "NV/NX flags"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0090",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -580,14 +580,14 @@
         "NV/OF/UF/NX flags"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0089",
-        "ADR-0090",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0016",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -611,12 +611,12 @@
         "NX flag"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0089",
-        "ADR-0090",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0016",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -662,13 +662,13 @@
         "NaN and infinity"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -703,13 +703,13 @@
         "saturation"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -732,12 +732,12 @@
         "NaN and infinity"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -760,11 +760,11 @@
         "result encoding"
       ],
       "decision_adr_ids": [
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0092",
-        "ADR-0095"
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0019",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -799,13 +799,13 @@
         "arg tie-breaking"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0092",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0019",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -843,13 +843,13 @@
         "saturation"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0091",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0018",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -872,13 +872,13 @@
         "saturation"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0090",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0017",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -901,14 +901,14 @@
         "exception behavior"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0090",
-        "ADR-0093",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0017",
+        "ADR-NUM-0020",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -931,14 +931,14 @@
         "exception behavior"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0090",
-        "ADR-0093",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0017",
+        "ADR-NUM-0020",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -963,11 +963,11 @@
         "ascending and descending tie behavior"
       ],
       "decision_adr_ids": [
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0092",
-        "ADR-0095"
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0019",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null
@@ -1005,13 +1005,13 @@
         "NaN and infinity"
       ],
       "decision_adr_ids": [
-        "ADR-0047",
-        "ADR-0049",
-        "ADR-0086",
-        "ADR-0087",
-        "ADR-0088",
-        "ADR-0094",
-        "ADR-0095"
+        "ADR-NUM-0008",
+        "ADR-NUM-0010",
+        "ADR-NUM-0013",
+        "ADR-NUM-0014",
+        "ADR-NUM-0015",
+        "ADR-NUM-0021",
+        "ADR-NUM-0022"
       ],
       "status": "profile-rule-required",
       "selected_profile_rule": null

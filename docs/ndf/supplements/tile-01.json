@@ -1,0 +1,812 @@
+{
+  "schema": "pto.ndf-supplements.v1",
+  "non_normative": true,
+  "surface": "tile",
+  "chunk": 1,
+  "entries": [
+    {
+      "id": "PTO-ATOM-RED-BODY-SCHEMA-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "Atomic and reduction body bindings",
+        "zh-CN": "原子与归约操作的块体绑定"
+      },
+      "summary": {
+        "en": "The operand schema separates atomic forms from reduction forms: atomic operations bind a Local B.IOT with a destination, reductions bind source Tiles only, and mscatter.popc carries indices without a value or destination Tile. This distinction lets bundle validation determine which Tile state can be read or published.",
+        "zh-CN": "操作数模式将原子形式与归约形式分开：原子操作绑定带目标的 Local B.IOT，归约操作只绑定源 Tile，而 mscatter.popc 仅携带索引，不使用值 Tile 或目标 Tile。该区分使块校验能够明确哪些 Tile 状态会被读取或发布。"
+      }
+    },
+    {
+      "id": "PTO-ATOM-RED-ENCODING-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "Atomic and reduction encoding range",
+        "zh-CN": "原子与归约操作的编码范围"
+      },
+      "summary": {
+        "en": "TLSU Function values 8 through 27 identify the GM atomic and reduction family with low carrier 0x11181 and mask 0x07ffffff. Values 28 through 31 stay reserved, so decoders can distinguish assigned operations from unallocated encodings.",
+        "zh-CN": "TLSU Function 值 8 至 27 使用低位载体 0x11181 和掩码 0x07ffffff 标识 GM 原子与归约操作族。值 28 至 31 保持保留，使解码器能够区分已分配操作与未分配编码。"
+      }
+    },
+    {
+      "id": "PTO-ATOM-RED-FAULTS-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "Atomic and reduction fault boundaries",
+        "zh-CN": "原子与归约操作的故障边界"
+      },
+      "summary": {
+        "en": "The clause assigns separate fault classes to reserved encodings, unsupported operation/type tuples, malformed bundles, and memory alignment or page failures. Address-related failures are discovered during preflight, so a rejected request produces no partial architectural update.",
+        "zh-CN": "该条款分别规定保留编码、不支持的操作/类型组合、格式错误的块以及内存对齐或页面失败的故障类别。地址相关失败在预检阶段发现，因此被拒绝的请求不会产生部分架构状态更新。"
+      }
+    },
+    {
+      "id": "PTO-ATOM-RED-INC-DEC-SEMANTICS-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "Atomic increment and decrement limits",
+        "zh-CN": "原子递增与递减的限值语义"
+      },
+      "summary": {
+        "en": "INC and DEC interpret their operands as U32 limit operations rather than ordinary wraparound arithmetic. INC produces zero when the old value reaches or exceeds the limit, while DEC produces the limit when the old value is zero or already above the limit.",
+        "zh-CN": "INC 和 DEC 将操作数解释为 U32 限值操作，而不是普通的回绕算术。旧值达到或超过限值时，INC 产生零；旧值为零或已超过限值时，DEC 产生该限值。"
+      }
+    },
+    {
+      "id": "PTO-ATOM-RED-ORDERING-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "Atomic request ordering",
+        "zh-CN": "原子请求的顺序规则"
+      },
+      "summary": {
+        "en": "Each valid request forms one indivisible atomic event. Requests that resolve to the same address all take effect in an implementation-defined serialization order, after every address probe has completed and before any Local result is published.",
+        "zh-CN": "每个有效请求形成一个不可分割的原子事件。落到同一地址的请求都会生效，并按实现定义的顺序串行化；所有地址探测先完成，随后才发生原子事件和任何 Local 结果发布。"
+      }
+    },
+    {
+      "id": "PTO-ATOM-RED-POPC-SEMANTICS-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "Population-count scatter reduction",
+        "zh-CN": "散射计数归约语义"
+      },
+      "summary": {
+        "en": "mscatter.popc contributes one U32 increment at every valid effective GM address. Because the contribution is implicit, the operation has neither a ValueTile input nor a destination Tile output.",
+        "zh-CN": "mscatter.popc 在每个有效的 GM 有效地址上贡献一次 U32 递增。由于贡献值是隐含的，该操作既没有 ValueTile 输入，也没有目标 Tile 输出。"
+      }
+    },
+    {
+      "id": "PTO-ATOM-RED-TYPE-LEGALITY-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "Atomic and reduction type legality",
+        "zh-CN": "原子与归约操作的类型合法性"
+      },
+      "summary": {
+        "en": "An explicit operation/type matrix defines the supported GM atomic and reduction combinations. Shared operands, vector forms, packed f16x2 or bf16x2 carriers, and U128 fall outside this family and are rejected before effects.",
+        "zh-CN": "显式的操作/类型矩阵定义了受支持的 GM 原子与归约组合。Shared 操作数、向量形式、打包的 f16x2 或 bf16x2 载体以及 U128 不属于该操作族，并在产生效果前被拒绝。"
+      }
+    },
+    {
+      "id": "PTO-B-SHARED-WHOLE-PARENT-READY-001",
+      "source_path": "asl/tile/model/state/shared-registers.asl",
+      "title": {
+        "en": "Shared parent readiness and visibility",
+        "zh-CN": "Shared 父 Tile 的就绪与可见性"
+      },
+      "summary": {
+        "en": "Shared producer participation, logical coverage, whole-parent readiness, and published visibility are tracked as distinct conditions. A consumer waits or becomes a no-op before payload access until both readiness and publication are true, independently of the producer and consumer masks.",
+        "zh-CN": "Shared 生产者参与范围、逻辑覆盖范围、完整父 Tile 就绪状态和已发布可见性分别记录。无论生产者与消费者掩码如何，在就绪与发布均成立之前，消费者都会等待或成为空操作，不会访问载荷。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-CELL-STATE-001",
+      "source_path": "asl/tile/model/shape/cube-cell.asl",
+      "title": {
+        "en": "Local CUBE CELL storage",
+        "zh-CN": "Local CUBE 的 CELL 存储映射"
+      },
+      "summary": {
+        "en": "Local CUBE layouts use assigned, element-width-dependent mappings within 128-byte CELLs. Physical storage is derived independently of valid M, N, and K dimensions, and unsupported types or insufficient per-PE capacity are detected before any state changes.",
+        "zh-CN": "Local CUBE 布局在 128 字节 CELL 中采用由元素宽度决定的已分配映射。物理存储独立于有效 M、N、K 维度推导；不支持的类型或每个 PE 容量不足会在任何状态改变之前被发现。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-LOCAL-MATRIX-001",
+      "source_path": "asl/tile/model/legality/matrix-cube-primary.asl",
+      "title": {
+        "en": "Local matrix CUBE layouts",
+        "zh-CN": "Local 矩阵的 CUBE 布局"
+      },
+      "summary": {
+        "en": "Local matrix operands A, C, and D share a compatible CUBE_M16 or CUBE_M32 layout, while operand B uses CUBE_N8. Their logical M, N, and K dimensions remain separate from the per-PE TSize capacity used to hold each operand.",
+        "zh-CN": "Local 矩阵操作数 A、C 和 D 使用相互兼容的 CUBE_M16 或 CUBE_M32 布局，操作数 B 使用 CUBE_N8。其逻辑 M、N、K 维度与用于容纳各操作数的每 PE TSize 容量彼此独立。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-MATRIX-SCALE-001",
+      "source_path": "asl/tile/model/legality/matrix-functions.asl",
+      "title": {
+        "en": "Matrix-MX scale selection and binding",
+        "zh-CN": "Matrix-MX 缩放因子的选择与绑定"
+      },
+      "summary": {
+        "en": "Each Matrix-MX primary input selects its scale independently: MX FP8 or FP4 carriers use group-32 E8M0 scales, while HiF4X2 uses group-64 raw U32 scales. Scale Tiles remain separately bound ordinary Tiles at the same Local or Shared location class as their corresponding primary input.",
+        "zh-CN": "每个 Matrix-MX 主输入独立选择缩放因子：MX FP8 或 FP4 载体使用每 32 个元素一组的 E8M0 缩放因子，HiF4X2 使用每 64 个元素一组的原始 U32 缩放因子。缩放 Tile 作为独立绑定的普通 Tile，与对应主输入保持相同的 Local 或 Shared 位置类别。"
+      }
+    },
+    {
+      "id": "PTO-CUBE-MATRIX-SCALE-CELL-001",
+      "source_path": "asl/tile/model/shape/cube-cell.asl",
+      "title": {
+        "en": "Matrix scale CELL grid",
+        "zh-CN": "矩阵缩放 Tile 的 CELL 网格"
+      },
+      "summary": {
+        "en": "A CUBE_M32 matrix scale Tile occupies a two-dimensional grid of 128-byte CellRegs, with column or K groups advancing first and 32-row blocks advancing second. Unused slots in the final group or row block remain invalid storage tail rather than expanding primary matrix legality.",
+        "zh-CN": "CUBE_M32 矩阵缩放 Tile 使用由 128 字节 CellReg 构成的二维网格，其中列或 K 分组先递增，32 行块后递增。末尾分组或行块中未使用的位置保持为无效存储尾部，不会扩大主矩阵操作数的合法范围。"
+      }
+    },
+    {
+      "id": "PTO-GMOV-CORE4-PEER-001",
+      "source_path": "asl/tile/memory-and-data-movement/pe-movement/GMOV.asl",
+      "title": {
+        "en": "GMOV Core4 peer transfer",
+        "zh-CN": "GMOV 的 Core4 对等传输"
+      },
+      "summary": {
+        "en": "GMOV completes Core4 source readiness before moving data. Each selected PE reads the Local fragment named by its private peer_tid and updates only its same-index Local destination; partial masks are supported, a zero mask has no effect, and Shared Tile state is untouched.",
+        "zh-CN": "GMOV 在移动数据前完成 Core4 源就绪检查。每个被选中的 PE 读取其私有 peer_tid 指定的 Local 分片，并只更新同索引的 Local 目标；部分掩码可用，零掩码不产生效果，Shared Tile 状态不会被访问。"
+      }
+    },
+    {
+      "id": "PTO-INDEXED-TLSU-STRIDE-001",
+      "source_path": "asl/tile/model/memory/addressing.asl",
+      "title": {
+        "en": "Indexed TLSU row-stride addressing",
+        "zh-CN": "索引式 TLSU 的行步长寻址"
+      },
+      "summary": {
+        "en": "Indexed TLSU treats each IndexTile value as a signed or unsigned logical linear element index. It splits that index by ValidCol, applies the element row stride from B.IOR RegSrc1, then scales the resulting element position by transfer width before probing memory.",
+        "zh-CN": "索引式 TLSU 将每个 IndexTile 值解释为有符号或无符号的逻辑线性元素索引。地址生成先按 ValidCol 将索引拆为行列，再应用 B.IOR RegSrc1 提供的元素行步长，最后按传输元素宽度缩放后探测内存。"
+      }
+    },
+    {
+      "id": "PTO-MGATHER-BYTE-DISPLACEMENT-001",
+      "source_path": "asl/tile/memory-and-data-movement/irregular/MGATHER.asl",
+      "title": {
+        "en": "MGATHER indexed transfer",
+        "zh-CN": "MGATHER 索引式传输"
+      },
+      "summary": {
+        "en": "MGATHER combines non-packed B8-NP, B16, B32, or B64 transfers with S32, U32, S64, or U64 logical linear indices. It moves raw carrier bits, preflights the complete valid region, and fills physical elements outside that region with the selected padding; packed four-bit transfers are outside the operation boundary.",
+        "zh-CN": "MGATHER 将非打包的 B8-NP、B16、B32 或 B64 传输与 S32、U32、S64 或 U64 逻辑线性索引组合使用。操作按原始载体位移动数据，预检完整有效区域，并用选定填充值定义区域外的物理元素；打包四位传输不在该操作范围内。"
+      }
+    },
+    {
+      "id": "PTO-MGATHER-CAS-ATOMIC-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "MGATHER compare-and-swap requests",
+        "zh-CN": "MGATHER 比较并交换请求"
+      },
+      "summary": {
+        "en": "The legacy MGATHER_CAS spelling denotes mgather.cas for U16, U32, and U64 transfers. Each valid lane performs one atomic compare-and-swap at its signed or unsigned byte displacement and records the value observed by that request; duplicate addresses serialize without imposing row-major order.",
+        "zh-CN": "旧名称 MGATHER_CAS 表示用于 U16、U32 和 U64 传输的 mgather.cas。每个有效通道在其有符号或无符号字节位移处执行一次原子比较并交换，并记录该请求观察到的值；重复地址会串行化，但不规定按行优先顺序执行。"
+      }
+    },
+    {
+      "id": "PTO-MGATHER-CAS-PUBLICATION-001",
+      "source_path": "asl/tile/model/memory/gm-atom-red.asl",
+      "title": {
+        "en": "MGATHER compare-and-swap publication",
+        "zh-CN": "MGATHER 比较并交换的发布边界"
+      },
+      "summary": {
+        "en": "MGATHER_CAS checks every valid-region read and write address before the first atomic event. After successful execution, it publishes one fully defined destination and fills non-valid physical elements with the selected pad value, avoiding a partially visible result.",
+        "zh-CN": "MGATHER_CAS 在第一个原子事件之前检查有效区域内的全部读写地址。执行成功后，操作一次性发布完整定义的目标，并以选定填充值填充非有效物理元素，从而避免出现部分可见的结果。"
+      }
+    },
+    {
+      "id": "PTO-MGATHER-MASK-PREDICATE-001",
+      "source_path": "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl",
+      "title": {
+        "en": "Masked MGATHER predicate behavior",
+        "zh-CN": "MGATHER_MASK 的谓词行为"
+      },
+      "summary": {
+        "en": "MGATHER_MASK reads fully defined bits from packed predicate storage. A zero bit suppresses address generation, checks, memory access, and events for that lane and selects padding, while a one bit enables the indexed load.",
+        "zh-CN": "MGATHER_MASK 从打包谓词存储中读取已完整定义的位。零位会抑制对应通道的地址生成、检查、内存访问和事件，并选择填充值；一位则启用该通道的索引加载。"
+      }
+    },
+    {
+      "id": "PTO-MGATHER-MASK-PUBLICATION-001",
+      "source_path": "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl",
+      "title": {
+        "en": "MGATHER_MASK preflight and publication",
+        "zh-CN": "MGATHER_MASK 的预检与发布"
+      },
+      "summary": {
+        "en": "MGATHER_MASK preflights exactly the addresses enabled by the predicate before any load takes effect. On success, it publishes one fully defined destination, using the selected pad value for disabled lanes and physical elements outside the valid region.",
+        "zh-CN": "MGATHER_MASK 在任何加载生效之前，只预检谓词启用的地址。成功后，操作发布一个完整定义的目标，并对禁用通道及有效区域外的物理元素使用选定填充值。"
+      }
+    },
+    {
+      "id": "PTO-MGATHER-MASK-TYPE-002",
+      "source_path": "asl/tile/memory-and-data-movement/irregular/MGATHER_MASK.asl",
+      "title": {
+        "en": "MGATHER_MASK transfer and index types",
+        "zh-CN": "MGATHER_MASK 的传输与索引类型"
+      },
+      "summary": {
+        "en": "MGATHER_MASK pairs non-packed B8-NP, B16, B32, or B64 transfers with S32, U32, S64, or U64 logical linear indices. The operation preserves raw carrier bits and excludes packed four-bit transfer types before destination allocation.",
+        "zh-CN": "MGATHER_MASK 将非打包的 B8-NP、B16、B32 或 B64 传输与 S32、U32、S64 或 U64 逻辑线性索引配对使用。操作保留原始载体位，并在目标分配之前排除打包四位传输类型。"
+      }
+    },
+    {
+      "id": "PTO-MSCATTER-BYTE-DISPLACEMENT-001",
+      "source_path": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
+      "title": {
+        "en": "MSCATTER indexed transfer",
+        "zh-CN": "MSCATTER 索引式传输"
+      },
+      "summary": {
+        "en": "MSCATTER combines non-packed B8-NP, B16, B32, or B64 transfers with S32, U32, S64, or U64 logical linear indices. It preserves raw carrier bits, preflights every valid lane before the first store, and leaves source descriptors unchanged; packed transfer types are excluded.",
+        "zh-CN": "MSCATTER 将非打包的 B8-NP、B16、B32 或 B64 传输与 S32、U32、S64 或 U64 逻辑线性索引组合使用。操作保留原始载体位，在第一次存储前预检所有有效通道，并保持源描述符不变；打包传输类型不在其范围内。"
+      }
+    },
+    {
+      "id": "PTO-MSCATTER-DUPLICATE-ORDER-001",
+      "source_path": "asl/tile/memory-and-data-movement/irregular/MSCATTER.asl",
+      "title": {
+        "en": "MSCATTER duplicate-address ordering",
+        "zh-CN": "MSCATTER 重复地址的顺序规则"
+      },
+      "summary": {
+        "en": "When MSCATTER lanes target duplicate or overlapping addresses, the final winning store is implementation-defined. B.CATR.atomic prevents interleaving of the complete block effect but does not define an internal lane order.",
+        "zh-CN": "当 MSCATTER 的多个通道指向重复或重叠地址时，最终胜出的存储由实现定义。B.CATR.atomic 只阻止整个块效果与外部操作交错，并不规定块内通道顺序。"
+      }
+    },
+    {
+      "id": "PTO-MSCATTER-MASK-DUPLICATE-001",
+      "source_path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
+      "title": {
+        "en": "Masked MSCATTER duplicate-address ordering",
+        "zh-CN": "MSCATTER_MASK 重复地址的顺序规则"
+      },
+      "summary": {
+        "en": "If multiple enabled MSCATTER_MASK lanes address the same location, the final winning store is implementation-defined. B.CATR.atomic makes the complete block effect non-interleavable without imposing an order among enabled lanes.",
+        "zh-CN": "如果多个已启用的 MSCATTER_MASK 通道访问同一位置，最终胜出的存储由实现定义。B.CATR.atomic 使整个块效果不可交错，但不规定已启用通道之间的先后顺序。"
+      }
+    },
+    {
+      "id": "PTO-MSCATTER-MASK-PREDICATE-001",
+      "source_path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
+      "title": {
+        "en": "Masked MSCATTER predicate behavior",
+        "zh-CN": "MSCATTER_MASK 的谓词行为"
+      },
+      "summary": {
+        "en": "MSCATTER_MASK reads fully defined bits from packed predicate storage. A zero bit suppresses address generation, translation, permission checks, stores, and events for that lane, while a one bit enables the indexed store.",
+        "zh-CN": "MSCATTER_MASK 从打包谓词存储中读取已完整定义的位。零位会抑制对应通道的地址生成、地址转换、权限检查、存储和事件；一位则启用该通道的索引存储。"
+      }
+    },
+    {
+      "id": "PTO-MSCATTER-MASK-TYPE-002",
+      "source_path": "asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl",
+      "title": {
+        "en": "MSCATTER_MASK transfer and index types",
+        "zh-CN": "MSCATTER_MASK 的传输与索引类型"
+      },
+      "summary": {
+        "en": "MSCATTER_MASK pairs non-packed B8-NP, B16, B32, or B64 transfers with S32, U32, S64, or U64 logical linear indices. It preserves raw carrier bits and rejects packed four-bit transfers before any store effect.",
+        "zh-CN": "MSCATTER_MASK 将非打包的 B8-NP、B16、B32 或 B64 传输与 S32、U32、S64 或 U64 逻辑线性索引配对使用。操作保留原始载体位，并在任何存储效果发生之前拒绝打包四位传输。"
+      }
+    },
+    {
+      "id": "PTO-REQ-SHARED-TILE-001",
+      "source_path": "asl/tile/model/state/local-registers.asl",
+      "title": {
+        "en": "Shared Tile register ownership",
+        "zh-CN": "Shared Tile 寄存器的状态归属"
+      },
+      "summary": {
+        "en": "Shared Tile registers belong to the core-private architectural state defined by PTO-STATE-TILE-SHARED. Implementations and readers should therefore interpret Shared operands through that state owner rather than as aliases of Local Tile registers.",
+        "zh-CN": "Shared Tile 寄存器属于 PTO-STATE-TILE-SHARED 定义的核私有架构状态。因此，实现与文档读取者应通过该状态所有者解释 Shared 操作数，而不能把它们视为 Local Tile 寄存器的别名。"
+      }
+    },
+    {
+      "id": "PTO-REQ-TILE-001",
+      "source_path": "asl/tile/model/state/local-registers.asl",
+      "title": {
+        "en": "Local Tile register generations",
+        "zh-CN": "Local Tile 寄存器的代次管理"
+      },
+      "summary": {
+        "en": "Local Tile registers and allocation masks belong to PTO-STATE-TILE-LOCAL. For each T, U, M, or N hand, #1 names the newest published generation; publishing a destination shifts older live generations toward #16 while source generations remain available.",
+        "zh-CN": "Local Tile 寄存器及其分配掩码归 PTO-STATE-TILE-LOCAL 所有。对于 T、U、M、N 各组，#1 表示最新发布的代次；发布新目标时，较旧的存活代次向 #16 方向移动，而源代次继续保留。"
+      }
+    },
+    {
+      "id": "PTO-TABS-CONTRACT-001",
+      "source_path": "asl/tile/elementwise-tile-tile/logical/TABS.asl",
+      "title": {
+        "en": "TABS typed absolute value",
+        "zh-CN": "TABS 类型化绝对值运算"
+      },
+      "summary": {
+        "en": "TABS uses VEC Mode 0 Function 15 to compute a typed absolute value from one ordered Local source. Integer values follow element-width behavior and floating values clear the sign bit; legality and capacity checks complete before the source snapshot and atomic destination publication.",
+        "zh-CN": "TABS 使用 VEC Mode 0 Function 15，对一个有序 Local 源计算类型化绝对值。整数按元素宽度处理，浮点值清除符号位；合法性与容量检查在源快照和目标原子发布之前完成。"
+      }
+    },
+    {
+      "id": "PTO-TADD-CONTRACT-001",
+      "source_path": "asl/tile/elementwise-tile-tile/arithmetic/TADD.asl",
+      "title": {
+        "en": "TADD elementwise addition",
+        "zh-CN": "TADD 逐元素加法"
+      },
+      "summary": {
+        "en": "TADD uses VEC Mode 0 Function 0 to add two ordered Local Tile sources element by element into a newly allocated Local destination. The sources share the selected shape and interpretation, and complete preflight precedes source snapshots and publication of the valid result with its padding.",
+        "zh-CN": "TADD 使用 VEC Mode 0 Function 0，将两个有序 Local Tile 源逐元素相加，并写入新分配的 Local 目标。两个源共享选定的形状与数据解释；完整预检先于源快照及有效结果和填充区域的整体发布。"
+      }
+    },
+    {
+      "id": "PTO-TADDS-CONTRACT-001",
+      "source_path": "asl/tile/tile-scalar-and-immediate/arithmetic/TADDS.asl",
+      "title": {
+        "en": "TADDS Tile-scalar addition",
+        "zh-CN": "TADDS Tile 与标量加法"
+      },
+      "summary": {
+        "en": "TADDS adds one per-participating-PE private-GPR scalar to every valid element of one Local source and publishes a renamed Local destination. The scalar comes from optional B.IOR.RegSrc0, and legality, allocation, source, and scalar preflight complete before the result, padding, status, and descriptor become visible together.",
+        "zh-CN": "TADDS 将每个参与 PE 的私有 GPR 标量加到一个 Local 源的所有有效元素上，并发布重命名后的 Local 目标。标量来自可选的 B.IOR.RegSrc0；合法性、分配、源和标量预检完成后，结果、填充、状态和描述符才一同可见。"
+      }
+    },
+    {
+      "id": "PTO-TAND-CONTRACT-001",
+      "source_path": "asl/tile/elementwise-tile-tile/logical/TAND.asl",
+      "title": {
+        "en": "TAND elementwise bitwise AND",
+        "zh-CN": "TAND 逐元素按位与"
+      },
+      "summary": {
+        "en": "TAND uses VEC Mode 0 Function 6 to compute the bitwise AND of corresponding signed or unsigned integer elements. It follows the closed Local binary Tile schema, so shape, padding, source snapshots, and the destination update are handled as one preflighted operation.",
+        "zh-CN": "TAND 使用 VEC Mode 0 Function 6，对对应的有符号或无符号整数元素执行按位与。操作遵循封闭的 Local 二元 Tile 模式，因此形状、填充、源快照和目标更新作为一次经预检的整体操作处理。"
+      }
+    },
+    {
+      "id": "PTO-TANDS-CONTRACT-001",
+      "source_path": "asl/tile/tile-scalar-and-immediate/logical/TANDS.asl",
+      "title": {
+        "en": "TANDS Tile-scalar bitwise AND",
+        "zh-CN": "TANDS Tile 与标量按位与"
+      },
+      "summary": {
+        "en": "TANDS applies one per-participating-PE private-GPR scalar as a bitwise AND mask to every valid integer element of a Local source. The optional B.IOR.RegSrc0 supplies the scalar, and the renamed Local result, padding, status, and descriptor are published together after preflight.",
+        "zh-CN": "TANDS 把每个参与 PE 的私有 GPR 标量作为按位与掩码，应用于 Local 源的每个有效整数元素。可选的 B.IOR.RegSrc0 提供该标量；预检完成后，重命名的 Local 结果、填充、状态和描述符一同发布。"
+      }
+    },
+    {
+      "id": "PTO-TCI-CONTRACT-001",
+      "source_path": "asl/tile/irregular-and-complex/initialization/TCI.asl",
+      "title": {
+        "en": "TCI integer sequence initialization",
+        "zh-CN": "TCI 整数序列初始化"
+      },
+      "summary": {
+        "en": "TCI uses SFU Mode 3 Function 6 to create a one-row Local integer sequence. Each column contains start plus or minus its column index at the selected element width; omitting B.IOR starts at zero and selects ascending order.",
+        "zh-CN": "TCI 使用 SFU Mode 3 Function 6 创建一行 Local 整数序列。每列的值是在选定元素宽度下用起始值加上或减去列索引；省略 B.IOR 时从零开始并采用升序。"
+      }
+    },
+    {
+      "id": "PTO-TCMP-CONTRACT-001",
+      "source_path": "asl/tile/elementwise-tile-tile/logical/TCMP.asl",
+      "title": {
+        "en": "TCMP comparison result carriers",
+        "zh-CN": "TCMP 比较结果载体"
+      },
+      "summary": {
+        "en": "TCMP compares two Local numeric sources and publishes the predicate through exactly one selected carrier: packed RowMajor predicate storage, CUBE PredicateCell storage, or a complete GPR predicate word. Each carrier has its own supported source types, CMode values 6 and 7 are excluded, and all checks finish before source snapshots or result publication.",
+        "zh-CN": "TCMP 比较两个 Local 数值源，并且只通过一种选定载体发布谓词：打包的 RowMajor 谓词存储、CUBE PredicateCell 存储或完整 GPR 谓词字。每种载体都有各自支持的源类型，CMode 6 和 7 被排除，所有检查在源快照或结果发布前完成。"
+      }
+    },
+    {
+      "id": "PTO-TCMPS-CONTRACT-001",
+      "source_path": "asl/tile/tile-scalar-and-immediate/logical/TCMPS.asl",
+      "title": {
+        "en": "TCMPS scalar comparison carriers",
+        "zh-CN": "TCMPS 标量比较结果载体"
+      },
+      "summary": {
+        "en": "TCMPS compares one Local numeric source with a selected scalar and publishes through one of the RowMajor, PredicateCell, or GPR predicate carriers. Omitting B.IOR supplies an all-zero scalar, only CMode 0 through 5 participate, and scalar input and GPR result roles remain separate through preflight and atomic publication.",
+        "zh-CN": "TCMPS 将一个 Local 数值源与选定标量比较，并通过 RowMajor、PredicateCell 或 GPR 谓词载体之一发布结果。省略 B.IOR 时使用全零标量，仅 CMode 0 至 5 参与；标量输入与 GPR 结果角色在预检和原子发布过程中保持分离。"
+      }
+    },
+    {
+      "id": "PTO-TCOLARGMAX-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-reduction/TCOLARGMAX.asl",
+      "title": {
+        "en": "TCOLARGMAX column index reduction",
+        "zh-CN": "TCOLARGMAX 列方向索引归约"
+      },
+      "summary": {
+        "en": "TCOLARGMAX uses SFU Mode 2 Function 28 to scan each column in increasing row order and publish the S32 or U32 row index of its maximum. Equal values retain the lowest index, and a fully defined source is snapshotted only after shape, type, padding, and destination checks complete.",
+        "zh-CN": "TCOLARGMAX 使用 SFU Mode 2 Function 28，按行号递增顺序扫描每列，并发布该列最大值对应的 S32 或 U32 行索引。值相等时保留较小索引；形状、类型、填充和目标检查完成后才对完整定义的源取快照。"
+      }
+    },
+    {
+      "id": "PTO-TCOLARGMIN-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-reduction/TCOLARGMIN.asl",
+      "title": {
+        "en": "TCOLARGMIN column index reduction",
+        "zh-CN": "TCOLARGMIN 列方向索引归约"
+      },
+      "summary": {
+        "en": "TCOLARGMIN uses SFU Mode 2 Function 29 to scan each column in increasing row order and publish the S32 or U32 row index of its minimum. Equal values retain the lowest index, and a fully defined source is snapshotted only after shape, type, padding, and destination checks complete.",
+        "zh-CN": "TCOLARGMIN 使用 SFU Mode 2 Function 29，按行号递增顺序扫描每列，并发布该列最小值对应的 S32 或 U32 行索引。值相等时保留较小索引；形状、类型、填充和目标检查完成后才对完整定义的源取快照。"
+      }
+    },
+    {
+      "id": "PTO-TCOLEXPAND-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPAND.asl",
+      "title": {
+        "en": "TCOLEXPAND row broadcast",
+        "zh-CN": "TCOLEXPAND 单行广播"
+      },
+      "summary": {
+        "en": "TCOLEXPAND broadcasts one Local source row down the destination rows without changing its carrier bits. The bundle uses one terminating Local B.IOT and no B.IOR or B.IOS records, and publishes the renamed result with padding and descriptor only after preflight and source snapshot.",
+        "zh-CN": "TCOLEXPAND 将一个 Local 源行按位不变地广播到目标各行。该块使用一个终止型 Local B.IOT，不使用 B.IOR 或 B.IOS；预检和源快照完成后，重命名结果连同填充和描述符一并发布。"
+      }
+    },
+    {
+      "id": "PTO-TCOLEXPANDADD-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDADD.asl",
+      "title": {
+        "en": "TCOLEXPANDADD row-broadcast addition",
+        "zh-CN": "TCOLEXPANDADD 行广播加法"
+      },
+      "summary": {
+        "en": "TCOLEXPANDADD broadcasts a one-row Local source across rows and adds it to the corresponding elements of a full-shape Local source at the selected DataType. The closed B.IOT-only schema and complete preflight keep source snapshots, status, padding, descriptor, and renamed result publication coherent.",
+        "zh-CN": "TCOLEXPANDADD 将一行 Local 源沿行方向广播，并按选定 DataType 与完整形状 Local 源的对应元素相加。封闭的纯 B.IOT 模式和完整预检使源快照、状态、填充、描述符及重命名结果保持一致发布。"
+      }
+    },
+    {
+      "id": "PTO-TCOLEXPANDDIV-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDDIV.asl",
+      "title": {
+        "en": "TCOLEXPANDDIV row-broadcast division",
+        "zh-CN": "TCOLEXPANDDIV 行广播除法"
+      },
+      "summary": {
+        "en": "TCOLEXPANDDIV broadcasts a one-row Local divisor across rows and divides each corresponding full-shape source element at the selected DataType. The operation accepts only its listed types and uses a terminating Local B.IOT, with preflight and source snapshots preceding atomic result publication.",
+        "zh-CN": "TCOLEXPANDDIV 将一行 Local 除数沿行方向广播，并按选定 DataType 对完整形状源的对应元素执行除法。操作仅接受其列出的类型并使用终止型 Local B.IOT；预检和源快照先于结果的原子发布。"
+      }
+    },
+    {
+      "id": "PTO-TCOLEXPANDEXPDIF-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDEXPDIF.asl",
+      "title": {
+        "en": "TCOLEXPANDEXPDIF broadcast exponential difference",
+        "zh-CN": "TCOLEXPANDEXPDIF 广播指数差"
+      },
+      "summary": {
+        "en": "TCOLEXPANDEXPDIF subtracts a broadcast one-row source from a full-shape source, then exponentiates the difference at the resolved destination type. The source and destination type pair is limited to the listed FP16, BF16, and FP32 combinations, and invalid pairs are rejected before source snapshots or publication.",
+        "zh-CN": "TCOLEXPANDEXPDIF 从完整形状源中减去沿行广播的一行源，再按解析后的目标类型对差值求指数。源与目标类型仅限条款列出的 FP16、BF16 和 FP32 组合；无效组合在源快照或结果发布之前被拒绝。"
+      }
+    },
+    {
+      "id": "PTO-TCOLEXPANDMAX-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMAX.asl",
+      "title": {
+        "en": "TCOLEXPANDMAX row-broadcast maximum",
+        "zh-CN": "TCOLEXPANDMAX 行广播最大值"
+      },
+      "summary": {
+        "en": "TCOLEXPANDMAX broadcasts a one-row Local source across rows and selects the elementwise maximum against a full-shape source at the selected DataType. The B.IOT-only schema and preflight ensure the complete renamed destination, status, padding, and descriptor appear together.",
+        "zh-CN": "TCOLEXPANDMAX 将一行 Local 源沿行方向广播，并按选定 DataType 与完整形状源逐元素选择最大值。纯 B.IOT 模式和预检保证完整的重命名目标、状态、填充和描述符一同可见。"
+      }
+    },
+    {
+      "id": "PTO-TCOLEXPANDMIN-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMIN.asl",
+      "title": {
+        "en": "TCOLEXPANDMIN row-broadcast minimum",
+        "zh-CN": "TCOLEXPANDMIN 行广播最小值"
+      },
+      "summary": {
+        "en": "TCOLEXPANDMIN broadcasts a one-row Local source across rows and selects the elementwise minimum against a full-shape source at the selected DataType. The B.IOT-only schema and preflight ensure the complete renamed destination, status, padding, and descriptor appear together.",
+        "zh-CN": "TCOLEXPANDMIN 将一行 Local 源沿行方向广播，并按选定 DataType 与完整形状源逐元素选择最小值。纯 B.IOT 模式和预检保证完整的重命名目标、状态、填充和描述符一同可见。"
+      }
+    },
+    {
+      "id": "PTO-TCOLEXPANDMUL-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDMUL.asl",
+      "title": {
+        "en": "TCOLEXPANDMUL row-broadcast multiplication",
+        "zh-CN": "TCOLEXPANDMUL 行广播乘法"
+      },
+      "summary": {
+        "en": "TCOLEXPANDMUL broadcasts a one-row Local source across rows and multiplies it with the corresponding elements of a full-shape source at the selected DataType. Complete preflight and source snapshots precede coherent publication of the renamed result and its accompanying state.",
+        "zh-CN": "TCOLEXPANDMUL 将一行 Local 源沿行方向广播，并按选定 DataType 与完整形状源的对应元素相乘。完整预检和源快照先于重命名结果及其伴随状态的一致发布。"
+      }
+    },
+    {
+      "id": "PTO-TCOLEXPANDSUB-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-expansion/TCOLEXPANDSUB.asl",
+      "title": {
+        "en": "TCOLEXPANDSUB row-broadcast subtraction",
+        "zh-CN": "TCOLEXPANDSUB 行广播减法"
+      },
+      "summary": {
+        "en": "TCOLEXPANDSUB broadcasts a one-row Local source across rows and subtracts it from the corresponding elements of a full-shape source at the selected DataType. The closed operand schema and preflight ensure no destination state becomes visible before both sources are validated and snapshotted.",
+        "zh-CN": "TCOLEXPANDSUB 将一行 Local 源沿行方向广播，并按选定 DataType 从完整形状源的对应元素中减去该值。封闭的操作数模式和预检保证在两个源完成校验与快照之前，不会有任何目标状态可见。"
+      }
+    },
+    {
+      "id": "PTO-TCOLMAX-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-reduction/TCOLMAX.asl",
+      "title": {
+        "en": "TCOLMAX column maximum reduction",
+        "zh-CN": "TCOLMAX 列最大值归约"
+      },
+      "summary": {
+        "en": "TCOLMAX uses SFU Mode 2 Function 17 to fold each column in increasing row order with typed TMAX, starting from row zero. The destination preserves the source DataType, and preflight plus source snapshot precede publication of the result, status, padding, and descriptor.",
+        "zh-CN": "TCOLMAX 使用 SFU Mode 2 Function 17，从第零行开始，按行号递增顺序以类型化 TMAX 归约每一列。目标保持源 DataType；预检和源快照先于结果、状态、填充及描述符的发布。"
+      }
+    },
+    {
+      "id": "PTO-TCOLMIN-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-reduction/TCOLMIN.asl",
+      "title": {
+        "en": "TCOLMIN column minimum reduction",
+        "zh-CN": "TCOLMIN 列最小值归约"
+      },
+      "summary": {
+        "en": "TCOLMIN uses SFU Mode 2 Function 18 to fold each column in increasing row order with typed TMIN, starting from row zero. The destination preserves the source DataType, and preflight plus source snapshot precede publication of the result, status, padding, and descriptor.",
+        "zh-CN": "TCOLMIN 使用 SFU Mode 2 Function 18，从第零行开始，按行号递增顺序以类型化 TMIN 归约每一列。目标保持源 DataType；预检和源快照先于结果、状态、填充及描述符的发布。"
+      }
+    },
+    {
+      "id": "PTO-TCOLPROD-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-reduction/TCOLPROD.asl",
+      "title": {
+        "en": "TCOLPROD column product reduction",
+        "zh-CN": "TCOLPROD 列乘积归约"
+      },
+      "summary": {
+        "en": "TCOLPROD uses SFU Mode 2 Function 19 to multiply each column in increasing row order as a typed left fold initialized to one. Integer arithmetic stays at the selected element width, and the fully defined source is snapshotted before the complete result is published.",
+        "zh-CN": "TCOLPROD 使用 SFU Mode 2 Function 19，将每列按行号递增顺序执行类型化左折叠乘法，初值为一。整数算术保持选定元素宽度；完整定义的源在整体结果发布前被快照。"
+      }
+    },
+    {
+      "id": "PTO-TCOLSUM-CONTRACT-001",
+      "source_path": "asl/tile/reduce-and-expand/column-reduction/TCOLSUM.asl",
+      "title": {
+        "en": "TCOLSUM column sum reduction",
+        "zh-CN": "TCOLSUM 列求和归约"
+      },
+      "summary": {
+        "en": "TCOLSUM uses SFU Mode 2 Function 16 to add each column in increasing row order as a typed left fold initialized to zero. Integer arithmetic stays at the selected element width, and the fully defined source is snapshotted before the complete result is published.",
+        "zh-CN": "TCOLSUM 使用 SFU Mode 2 Function 16，将每列按行号递增顺序执行类型化左折叠加法，初值为零。整数算术保持选定元素宽度；完整定义的源在整体结果发布前被快照。"
+      }
+    },
+    {
+      "id": "PTO-TCONCAT-CONTRACT-001",
+      "source_path": "asl/tile/layout-and-rearrangement/layout/TCONCAT.asl",
+      "title": {
+        "en": "TCONCAT horizontal Tile concatenation",
+        "zh-CN": "TCONCAT Tile 横向拼接"
+      },
+      "summary": {
+        "en": "TCONCAT joins exactly two persistent Local sources along the column dimension; it has no axis operand and no vertical form. Both sources are validated and snapshotted before the destination payload, definedness, Null padding, and descriptor become visible together.",
+        "zh-CN": "TCONCAT 沿列方向拼接恰好两个持久 Local 源，不提供轴操作数，也没有纵向形式。两个源完成校验和快照后，目标载荷、定义状态、Null 填充和描述符才一同可见。"
+      }
+    },
+    {
+      "id": "PTO-TCVT-CONTRACT-001",
+      "source_path": "asl/tile/elementwise-tile-tile/format-conversion/TCVT.asl",
+      "title": {
+        "en": "TCVT type and layout conversion",
+        "zh-CN": "TCVT 类型与布局转换"
+      },
+      "summary": {
+        "en": "TCVT resolves both a destination DataType and a layout transformation across the assigned Tile representations. It distinguishes an omitted or DTYPE_NONE destination from encoded FP64, preserves the matrix shape while recomputing CUBE storage for supported NORM conversions, and rejects incompatible private/public representations before allocation or payload effects.",
+        "zh-CN": "TCVT 在已分配的 Tile 表示之间同时解析目标 DataType 与布局转换。它区分省略或 DTYPE_NONE 的目标类型与显式编码的 FP64；对受支持的 NORM 矩阵转换，在保持矩阵有效形状的同时重新计算 CUBE 存储，并在分配或载荷效果发生前拒绝不兼容的私有/公共表示。"
+      }
+    },
+    {
+      "id": "PTO-TDEQUANT-CONTRACT-001",
+      "source_path": "asl/tile/irregular-and-complex/format-conversion/TDEQUANT.asl",
+      "title": {
+        "en": "TDEQUANT affine dequantization",
+        "zh-CN": "TDEQUANT 仿射反量化"
+      },
+      "summary": {
+        "en": "TDEQUANT uses SFU Mode 3 Function 11 to convert a persistent Local S8 or U8 source into a newly allocated Local FP32 destination. Each valid result applies source minus zero point, followed by multiplication by a positive finite FP32 multiplier and one FP32 rounding; omitted B.IOR selects multiplier 1.0 and zero point zero.",
+        "zh-CN": "TDEQUANT 使用 SFU Mode 3 Function 11，将持久 Local S8 或 U8 源转换为新分配的 Local FP32 目标。每个有效结果先计算源值减零点，再乘以正有限 FP32 乘数并执行一次 FP32 舍入；省略 B.IOR 时乘数为 1.0、零点为零。"
+      }
+    },
+    {
+      "id": "PTO-TDIV-CONTRACT-001",
+      "source_path": "asl/tile/elementwise-tile-tile/transcendental/TDIV.asl",
+      "title": {
+        "en": "TDIV elementwise division",
+        "zh-CN": "TDIV 逐元素除法"
+      },
+      "summary": {
+        "en": "TDIV retains TEPL Mode 0 Function 3 while executing on the SFU engine and divides an ordered Local numerator by denominator at the selected arithmetic type. An integer zero denominator rejects the block before effects, while floating zero follows the applicable numeric rules; ordinary binary-Tile preflight and publication boundaries still apply.",
+        "zh-CN": "TDIV 在 SFU 引擎上执行，同时保留 TEPL Mode 0 Function 3，并按选定算术类型将有序 Local 分子除以分母。整数零分母会在效果发生前拒绝该块，浮点零则遵循适用的数值规则；普通二元 Tile 的预检与发布边界仍然适用。"
+      }
+    },
+    {
+      "id": "PTO-TDIVS-CONTRACT-001",
+      "source_path": "asl/tile/tile-scalar-and-immediate/arithmetic/TDIVS.asl",
+      "title": {
+        "en": "TDIVS Tile-scalar division",
+        "zh-CN": "TDIVS Tile 与标量除法"
+      },
+      "summary": {
+        "en": "TDIVS divides every valid element of one Local source by a per-participating-PE private-GPR scalar and publishes a renamed Local destination. The optional B.IOR.RegSrc0 supplies the scalar, and complete preflight precedes source and scalar snapshots plus coherent publication of result, padding, status, and descriptor.",
+        "zh-CN": "TDIVS 用每个参与 PE 的私有 GPR 标量除一个 Local 源的每个有效元素，并发布重命名的 Local 目标。可选的 B.IOR.RegSrc0 提供标量；完整预检先于源和标量快照，以及结果、填充、状态和描述符的一致发布。"
+      }
+    },
+    {
+      "id": "PTO-TEXP-CONTRACT-001",
+      "source_path": "asl/tile/elementwise-tile-tile/transcendental/TEXP.asl",
+      "title": {
+        "en": "TEXP natural exponential",
+        "zh-CN": "TEXP 自然指数运算"
+      },
+      "summary": {
+        "en": "TEXP retains TEPL Mode 0 Function 18 while the SFU computes a natural exponential for every valid FP16, FP32, or BF16 element. The source persists, the destination keeps the selected type, and preflight plus source snapshot precede special-value handling, status accumulation, padding, and atomic publication.",
+        "zh-CN": "TEXP 在 SFU 为每个有效 FP16、FP32 或 BF16 元素计算自然指数时保留 TEPL Mode 0 Function 18。源保持不变，目标维持选定类型；预检和源快照先于特殊值处理、状态累积、填充和原子发布。"
+      }
+    },
+    {
+      "id": "PTO-TEXPANDS-CONTRACT-001",
+      "source_path": "asl/tile/tile-scalar-and-immediate/initialization/TEXPANDS.asl",
+      "title": {
+        "en": "TEXPANDS scalar Tile fill",
+        "zh-CN": "TEXPANDS 标量填充 Tile"
+      },
+      "summary": {
+        "en": "TEXPANDS fills the valid region of a renamed Local numeric destination with the low-width encoding of an optional private-GPR scalar. It has no Tile source, obtains the scalar from B.IOR.RegSrc0 when present, and publishes the value, padding, and descriptor together after legality and capacity preflight.",
+        "zh-CN": "TEXPANDS 使用可选私有 GPR 标量的低位宽编码填充重命名 Local 数值目标的有效区域。操作没有 Tile 源；存在 B.IOR.RegSrc0 时从中取得标量，并在合法性与容量预检后一起发布数值、填充和描述符。"
+      }
+    },
+    {
+      "id": "PTO-TEXTRACT-CONTRACT-001",
+      "source_path": "asl/tile/layout-and-rearrangement/layout/TEXTRACT.asl",
+      "title": {
+        "en": "TEXTRACT rectangular Tile window",
+        "zh-CN": "TEXTRACT 矩形 Tile 窗口提取"
+      },
+      "summary": {
+        "en": "TEXTRACT copies an in-range rectangular window from one Local source into a renamed Local destination. Two optional private-GPR offsets choose the starting position and default to zero; preflight and a complete source snapshot precede result, padding, and descriptor publication.",
+        "zh-CN": "TEXTRACT 从一个 Local 源复制范围内的矩形窗口到重命名的 Local 目标。两个可选私有 GPR 偏移选择起始位置，省略时默认为零；预检和完整源快照先于结果、填充和描述符的发布。"
+      }
+    },
+    {
+      "id": "PTO-TFMA-CONTRACT-001",
+      "source_path": "asl/tile/elementwise-tile-tile/arithmetic/TFMA.asl",
+      "title": {
+        "en": "TFMA fused multiply-add",
+        "zh-CN": "TFMA 融合乘加"
+      },
+      "summary": {
+        "en": "TFMA uses VEC Mode 0 Function 28 to compute a same-type fused elementwise left-times-right-plus-addend result. The closed three-source schema, supported types, exceptional floating cases, padding, and capacity are all resolved before the sources are snapshotted and the destination is published atomically.",
+        "zh-CN": "TFMA 使用 VEC Mode 0 Function 28，计算同类型的逐元素“左源乘右源再加加数”的融合结果。封闭的三源模式、支持类型、浮点异常情形、填充和容量均在源快照及目标原子发布之前解析完成。"
+      }
+    },
+    {
+      "id": "PTO-TGATHER-CONTRACT-001",
+      "source_path": "asl/tile/irregular-and-complex/layout/TGATHER.asl",
+      "title": {
+        "en": "TGATHER row-selection rearrangement",
+        "zh-CN": "TGATHER 行选择重排"
+      },
+      "summary": {
+        "en": "TGATHER uses each index element as a logical source-row selector at the current column, combining non-packed B8-NP, B16, B32, or B64 values with supported signed or unsigned integer indices. Invalid references are rejected before effects; successful execution snapshots both sources and publishes a same-type destination with Null physical padding.",
+        "zh-CN": "TGATHER 将每个索引元素解释为当前列上的逻辑源行选择器，可组合非打包的 B8-NP、B16、B32 或 B64 值与受支持的有符号或无符号整数索引。无效引用在效果发生前被拒绝；成功执行时对两个源取快照，并发布带 Null 物理填充的同类型目标。"
+      }
+    },
+    {
+      "id": "PTO-TGEMV-ACC-CONTRACT-001",
+      "source_path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_ACC.asl",
+      "title": {
+        "en": "TGEMV_ACC Local matrix-vector accumulation",
+        "zh-CN": "TGEMV_ACC 矩阵向量累加"
+      },
+      "summary": {
+        "en": "TGEMV_ACC uses CUBE Function 18 to compute a Local matrix-vector result with an explicit M-by-N accumulator C and a newly published destination D, with M fixed to one. Shared and transpose forms are excluded, C remains unchanged, and complete schema, shape, type, capacity, alias, and readiness checks precede source snapshots and atomic output publication.",
+        "zh-CN": "TGEMV_ACC 使用 CUBE Function 18 计算 Local 矩阵向量结果，并使用显式 M×N 累加源 C 和新发布目标 D，其中 M 固定为一。Shared 与转置形式不在范围内，C 保持不变；模式、形状、类型、容量、别名和就绪检查完成后，才进行源快照和输出原子发布。"
+      }
+    },
+    {
+      "id": "PTO-TGEMV-BIAS-CONTRACT-001",
+      "source_path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_BIAS.asl",
+      "title": {
+        "en": "TGEMV_BIAS Local matrix-vector bias",
+        "zh-CN": "TGEMV_BIAS 矩阵向量偏置"
+      },
+      "summary": {
+        "en": "TGEMV_BIAS uses CUBE Function 17 to compute a Local matrix-vector result with one Local row-major 1-by-N bias source, with M fixed to one. Shared and transpose forms are excluded, one B.FPATR supplies postprocess operands and defaults, and successful output becomes visible only after complete preflight and source snapshots.",
+        "zh-CN": "TGEMV_BIAS 使用 CUBE Function 17 计算带一个 Local 行优先 1×N 偏置源的矩阵向量结果，其中 M 固定为一。Shared 与转置形式不在范围内；一个 B.FPATR 提供后处理操作数和默认值，完整预检与源快照完成后，成功输出才可见。"
+      }
+    },
+    {
+      "id": "PTO-TGEMV-CONTRACT-001",
+      "source_path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV.asl",
+      "title": {
+        "en": "TGEMV matrix-vector multiplication",
+        "zh-CN": "TGEMV 矩阵向量乘法"
+      },
+      "summary": {
+        "en": "TGEMV uses CUBE Function 16 for ordinary Local matrix-vector multiplication, with M fixed to one and positive Local N and K dimensions independent of per-PE TSize. A and B come from one supported numeric class, Shared and transpose forms are excluded, and output publication follows complete preflight and source snapshots.",
+        "zh-CN": "TGEMV 使用 CUBE Function 16 执行普通 Local 矩阵向量乘法，其中 M 固定为一，正的 Local N、K 维度独立于每 PE TSize。A 与 B 来自同一受支持数值类别；Shared 与转置形式不在范围内，输出在完整预检和源快照后发布。"
+      }
+    },
+    {
+      "id": "PTO-TGEMV-MX-ACC-CONTRACT-001",
+      "source_path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_ACC.asl",
+      "title": {
+        "en": "TGEMV_MX_ACC scaled matrix-vector accumulation",
+        "zh-CN": "TGEMV_MX_ACC 缩放矩阵向量累加"
+      },
+      "summary": {
+        "en": "TGEMV_MX_ACC uses CUBE Function 22 for Local Matrix-MX vector multiplication with an explicit accumulator C and a distinct newly published destination D, with M fixed to one. Each non-FP16/BF16 MX input side has its own E8M0 scale, Shared and transpose forms are excluded, and C persists through preflight, snapshots, and atomic output publication.",
+        "zh-CN": "TGEMV_MX_ACC 使用 CUBE Function 22 执行 Local Matrix-MX 矩阵向量乘法，并使用显式累加源 C 与不同的新发布目标 D，其中 M 固定为一。每个非 FP16/BF16 的 MX 输入侧都有独立 E8M0 缩放 Tile；Shared 与转置形式不在范围内，C 在预检、快照和输出原子发布过程中保持不变。"
+      }
+    },
+    {
+      "id": "PTO-TGEMV-MX-BIAS-CONTRACT-001",
+      "source_path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX_BIAS.asl",
+      "title": {
+        "en": "TGEMV_MX_BIAS scaled matrix-vector bias",
+        "zh-CN": "TGEMV_MX_BIAS 缩放矩阵向量偏置"
+      },
+      "summary": {
+        "en": "TGEMV_MX_BIAS uses CUBE Function 21 for Local Matrix-MX vector multiplication with a Local row-major 1-by-N bias, with M fixed to one. Each non-FP16/BF16 MX input side has an independent E8M0 scale, Shared and transpose forms are excluded, and the result publishes atomically after complete preflight and source snapshots.",
+        "zh-CN": "TGEMV_MX_BIAS 使用 CUBE Function 21 执行带 Local 行优先 1×N 偏置的 Matrix-MX 矩阵向量乘法，其中 M 固定为一。每个非 FP16/BF16 的 MX 输入侧都有独立 E8M0 缩放 Tile；Shared 与转置形式不在范围内，结果在完整预检和源快照后原子发布。"
+      }
+    },
+    {
+      "id": "PTO-TGEMV-MX-CONTRACT-001",
+      "source_path": "asl/tile/matrix-and-matrix-vector/matrix-vector/TGEMV_MX.asl",
+      "title": {
+        "en": "TGEMV_MX scaled matrix-vector multiplication",
+        "zh-CN": "TGEMV_MX 缩放矩阵向量乘法"
+      },
+      "summary": {
+        "en": "TGEMV_MX uses CUBE Function 20 for Local Matrix-MX vector multiplication, with M fixed to one and positive N and K dimensions independent of per-PE capacity. Each non-FP16/BF16 MX input side has an independent E8M0 scale, Shared and transpose forms are excluded, and output publication follows full preflight and source snapshots.",
+        "zh-CN": "TGEMV_MX 使用 CUBE Function 20 执行 Local Matrix-MX 矩阵向量乘法，其中 M 固定为一，正的 N、K 维度独立于每 PE 容量。每个非 FP16/BF16 的 MX 输入侧都有独立 E8M0 缩放 Tile；Shared 与转置形式不在范围内，输出在完整预检和源快照后发布。"
+      }
+    },
+    {
+      "id": "PTO-TGPR2T-CONTRACT-001",
+      "source_path": "asl/tile/layout-and-rearrangement/layout/TGPR2T.asl",
+      "title": {
+        "en": "TGPR2T GPR predicate-plane packing",
+        "zh-CN": "TGPR2T 谓词平面打包"
+      },
+      "summary": {
+        "en": "TGPR2T transposes four complete 64-bit GPR predicate sub-planes into ordinary numeric CUBE U8 storage. Exact 32-by-4 or 16-by-8 dimensions select the destination layout, two adjacent source-only B.IOR records provide the GPRs in a 3+1 split, and the operation publishes one new B.IOT destination without changing GPR or numeric status.",
+        "zh-CN": "TGPR2T 将四个完整的 64 位 GPR 谓词子平面转置到普通数值 CUBE U8 存储中。精确的 32×4 或 16×8 维度选择目标布局，两个相邻的纯源 B.IOR 记录按 3+1 分组提供 GPR；操作发布一个新的 B.IOT 目标，不改变 GPR 或数值状态。"
+      }
+    },
+    {
+      "id": "PTO-THISTOGRAM-CONTRACT-001",
+      "source_path": "asl/tile/irregular-and-complex/initialization/THISTOGRAM.asl",
+      "title": {
+        "en": "THISTOGRAM prefix histogram",
+        "zh-CN": "THISTOGRAM 前缀直方图"
+      },
+      "summary": {
+        "en": "THISTOGRAM uses SFU Mode 3 Function 8 to produce one inclusive 256-bin U32 prefix histogram for each row of a row-major Local U16 or U32 source. A structurally present Local U8 filter and a mandatory B.DATR define the operation boundary, and publication occurs only after full preflight and source and filter snapshots.",
+        "zh-CN": "THISTOGRAM 使用 SFU Mode 3 Function 8，为行优先 Local U16 或 U32 源的每一行生成一个包含当前桶的 256 桶 U32 前缀直方图。结构上存在的 Local U8 过滤器与必需的 B.DATR 界定操作边界；完整预检以及源和过滤器快照完成后才发布结果。"
+      }
+    }
+  ]
+}

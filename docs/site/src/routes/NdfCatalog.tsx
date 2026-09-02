@@ -18,6 +18,10 @@ export default function NdfCatalog({catalog}: {catalog: PtoNdfCatalogData}): Rea
       entry.layer,
       entry.status,
       entry.text ?? '',
+      entry.title?.en ?? '',
+      entry.title?.['zh-CN'] ?? '',
+      entry.summary?.en ?? '',
+      entry.summary?.['zh-CN'] ?? '',
       entry.sourcePath,
       ...entry.owners.map((owner) => owner.mnemonic ?? owner.id),
     ].join(' ').toLocaleLowerCase().includes(normalized));
@@ -50,9 +54,9 @@ export default function NdfCatalog({catalog}: {catalog: PtoNdfCatalogData}): Rea
           {entries.map((entry) => (
             <article className={styles.card} key={entry.id} id={`index-${entry.id.toLocaleLowerCase()}`}>
               <div className={styles.identity}>{entry.id}</div>
-              <h2><Link to={entry.route}>{entry.kind}</Link></h2>
+              <h2><Link to={entry.route}>{entry.title?.[chinese ? 'zh-CN' : 'en'] ?? entry.kind}</Link></h2>
               <div className={styles.meta}>{entry.level} · {entry.layer} · {entry.status}</div>
-              <p className={styles.summary}>{entry.text ?? (chinese
+              <p className={styles.summary}>{entry.summary?.[chinese ? 'zh-CN' : 'en'] ?? entry.text ?? (chinese
                 ? '该稳定身份由 instruction contract 拥有；链接直接打开 canonical unit workbench。'
                 : 'This stable identity is owned by an instruction contract; the link opens its canonical unit workbench directly.')}</p>
               <ul className={styles.owners} aria-label={chinese ? '相关 owner' : 'Related owners'}>

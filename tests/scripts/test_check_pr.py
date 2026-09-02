@@ -26,6 +26,9 @@ class PullRequestCheckTest(unittest.TestCase):
             commands,
             [
                 "./scripts/check-adrs",
+                "./scripts/check-adr-id-migration",
+                "./scripts/check-adr-bilingual",
+                "./scripts/check-ndf-supplements",
                 "make --no-print-directory check-decoder-partition",
                 "./scripts/check-release-event-schema",
                 "./scripts/check-release-workflow",

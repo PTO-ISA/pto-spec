@@ -12,15 +12,15 @@ README = ROOT / "README.md"
 MANIFEST = ROOT / "spec/release-manifest.json"
 TRACEABILITY = ROOT / "spec/evidence/release-traceability-readiness.json"
 RESERVATIONS = ROOT / "spec/catalog/extension-encoding-reservations.json"
-AUDIT_ADR = ROOT / "docs/status/decisions/0062-mnemonic-review-decisions.md"
-ARCH_SCOPE_ADR = ROOT / "docs/status/decisions/0001-pto-architecture-scope.md"
+AUDIT_ADR = ROOT / "docs/status/decisions/GOV-0006-mnemonic-review-decisions.md"
+ARCH_SCOPE_ADR = ROOT / "docs/status/decisions/GOV-0001-pto-architecture-scope.md"
 HISTORICAL_INVENTORY_ADRS = (
-    ROOT / "docs/status/decisions/0032-bundle-command-totality-and-profile-boundaries.md",
-    ROOT / "docs/status/decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md",
-    ROOT / "docs/status/decisions/0055-complete-bundle-bior-schema-and-defaults.md",
-    ROOT / "docs/status/decisions/0056-pto-encoding-ownership-and-gm-access.md",
-    ROOT / "docs/status/decisions/0060-l-bstop-common-long-form.md",
-    ROOT / "docs/status/decisions/0064-b-fpatr-complete-bundle-postprocess.md",
+    ROOT / "docs/status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md",
+    ROOT / "docs/status/decisions/BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md",
+    ROOT / "docs/status/decisions/BLOCK-0005-complete-bundle-bior-schema-and-defaults.md",
+    ROOT / "docs/status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md",
+    ROOT / "docs/status/decisions/BLOCK-0008-l-bstop-common-long-form.md",
+    ROOT / "docs/status/decisions/CUBE-0002-b-fpatr-complete-bundle-postprocess.md",
 )
 AUDIT_FREEZE_SCALAR_FORMS = 466
 AUDIT_FREEZE_BLOCK_FORMS = 74

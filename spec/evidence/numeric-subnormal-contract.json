@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "target": "S5-T2-A2:ADR-0049",
-  "decision_id": "ADR-0049",
+  "target": "S5-T2-A2:ADR-NUM-0010",
+  "decision_id": "ADR-NUM-0010",
   "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
-  "acceptance_record": "docs/status/decisions/0049-hardware-subnormal-policy.md",
+  "acceptance_record": "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md",
   "profile_id": "pto-hardware-numeric-0.57.1-ieee-v1",
   "current_profile_evidence_id": "pto-hardware-numeric-0.58.5-ieee-v1",
   "policy": {
@@ -2521,7 +2521,7 @@
       "sha256": "38814e41be41d630c7839bdd6988e4df6e4ca8eb0667764d6a6e8b6eedd6ace5"
     },
     {
-      "path": "docs/status/decisions/0049-hardware-subnormal-policy.md",
+      "path": "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md",
       "sha256": "ac969b6247bbaa16e480ae96c9f227f68ffa859d06121df838c8d3b6f141ca3a"
     }
   ],

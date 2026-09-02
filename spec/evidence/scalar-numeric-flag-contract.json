@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "target": "S5-T2-A2:ADR-0089",
-  "decision_id": "ADR-0089",
+  "target": "S5-T2-A2:ADR-NUM-0016",
+  "decision_id": "ADR-NUM-0016",
   "status": "state-owner-matrix-closed-profile-production-open",
-  "acceptance_record": "docs/status/decisions/0038-scalar-numeric-flag-state-and-ownership.md",
+  "acceptance_record": "docs/status/decisions/NUM-0002-scalar-numeric-flag-state-and-ownership.md",
   "architecture_contract": {
     "storage": {
       "system_register": "CORE_STATE",
@@ -607,7 +607,7 @@
       "sha256": "6c87ee4d53ed316f6ad72768ac84f67bcdf19c3af52dd96f3eb97eddc07c1357"
     },
     {
-      "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "1be39ca1ffda14b703ca03df9654f323d03b9cac620ba37d5cbe6ce8f3f9c486"
     }
   ],

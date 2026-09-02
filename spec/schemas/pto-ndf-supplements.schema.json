@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PTO-ISA/pto-spec/spec/schemas/pto-ndf-supplements.schema.json",
+  "title": "PTO non-normative bilingual NDF supplements",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "non_normative", "surface", "chunk", "entries"],
+  "properties": {
+    "schema": {"const": "pto.ndf-supplements.v1"},
+    "non_normative": {"const": true},
+    "surface": {"enum": ["arch", "block", "scalar", "tile"]},
+    "chunk": {"type": "integer", "minimum": 1},
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "source_path", "title", "summary"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*$"},
+          "source_path": {"type": "string", "pattern": "^asl/(arch|block|scalar|tile)/.+\\.asl$"},
+          "title": {"$ref": "#/$defs/localized"},
+          "summary": {"$ref": "#/$defs/localized"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "localized": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["en", "zh-CN"],
+      "properties": {
+        "en": {"type": "string", "minLength": 8},
+        "zh-CN": {"type": "string", "minLength": 4, "pattern": "[\\u3400-\\u9fff]"}
+      }
+    }
+  }
+}

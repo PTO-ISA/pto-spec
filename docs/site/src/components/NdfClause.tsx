@@ -86,10 +86,13 @@ export default function NdfClause({
                     >↕ {chinese ? '拖动排序' : 'Drag to reorder'}</button>
                     <div>
                       <SemanticIdPath identity={clause.identity} chinese={chinese} />
-                      <h3 id={`${clause.identity.anchor}-title`}>{clause.kind === 'contract' ? (chinese ? '规范契约' : 'Normative contract') : clause.kind}</h3>
+                      <h3 id={`${clause.identity.anchor}-title`}>
+                        {clause.title[chinese ? 'zh-CN' : 'en']}
+                      </h3>
                     </div>
                     {meta && <span className={styles.ndfStatus}>{meta}</span>}
                   </header>
+                  <p>{clause.summary[chinese ? 'zh-CN' : 'en']}</p>
                   <p className={styles.ndfBody}>{clause.text}</p>
                   <div className={styles.ndfOrderControls} aria-label={`${id} temporary order controls`}>
                     <button type="button" onClick={() => move(id, -1)} disabled={index === 0}>{chinese ? '上移' : 'Move up'}</button>

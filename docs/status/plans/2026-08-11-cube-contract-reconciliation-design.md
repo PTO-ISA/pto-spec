@@ -4,7 +4,7 @@
 
 Historical implementation planning record. This document is not an active or
 normative ISA definition. Where its preliminary alternatives differ from the
-accepted ASL-linked decisions in ADR-0062, the ASL owners and those later
+accepted ASL-linked decisions in ADR-GOV-0006, the ASL owners and those later
 decisions govern.
 
 The formal mnemonic audit subsequently completed and is frozen at 634/634

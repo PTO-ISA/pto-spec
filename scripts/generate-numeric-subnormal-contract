@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the named hardware-profile ADR-0049 subnormal contract."""
+"""Generate the named hardware-profile ADR-NUM-0010 subnormal contract."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ FORMAT_CONTRACT = ROOT / "spec/evidence/numeric-format-namespace-contract.json"
 COMPARISON = ROOT / "spec/evidence/executable-model-comparison.json"
 HARDWARE_PROFILE = ROOT / "spec/hardware-conformance-profile.json"
 OUTPUT = ROOT / "spec/evidence/numeric-subnormal-contract.json"
-ACCEPTANCE_RECORD = "docs/status/decisions/0049-hardware-subnormal-policy.md"
+ACCEPTANCE_RECORD = "docs/status/decisions/NUM-0010-hardware-subnormal-policy.md"
 PROFILE_ID = "pto-hardware-numeric-0.57.1-ieee-v1"
 EVIDENCE_PROFILE_ID = "pto-hardware-numeric-0.58.5-ieee-v1"
 
@@ -81,11 +81,11 @@ def generate() -> dict[str, Any]:
     comparison = load(COMPARISON)
     profile = load(HARDWARE_PROFILE)
 
-    adr0049 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-0049")
-    require(adr0049["status"] == "accepted", "ADR-0049 status drift")
+    adr0049 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-NUM-0010")
+    require(adr0049["status"] == "accepted", "ADR-NUM-0010 status drift")
     require(
         adr0049["acceptance_record"] == ACCEPTANCE_RECORD,
-        "ADR-0049 acceptance record drift",
+        "ADR-NUM-0010 acceptance record drift",
     )
     require(
         profile["profile_id"] == EVIDENCE_PROFILE_ID,
@@ -159,7 +159,7 @@ def generate() -> dict[str, Any]:
         )
     domain_rows_by_name = {}
     for row in inputs["domain_matrix"]:
-        if "ADR-0049" not in row["decision_adr_ids"]:
+        if "ADR-NUM-0010" not in row["decision_adr_ids"]:
             continue
         operations = operations_by_domain[row["domain"]]
         require(
@@ -188,10 +188,10 @@ def generate() -> dict[str, Any]:
         }
     require(
         set(domain_rows_by_name) == set(adr0049["affected_domains"]),
-        "ADR-0049 domain membership drift",
+        "ADR-NUM-0010 domain membership drift",
     )
     domain_rows = [domain_rows_by_name[name] for name in adr0049["affected_domains"]]
-    require(len(domain_rows) == 13, "ADR-0049 domain count drift")
+    require(len(domain_rows) == 13, "ADR-NUM-0010 domain count drift")
     operation_rows = [
         {
             "operation_key": operation_key,
@@ -206,7 +206,7 @@ def generate() -> dict[str, Any]:
         for row in domain_rows
         for operation_key in row["operation_keys"]
     ]
-    require(len(operation_rows) == 89, "ADR-0049 operation applicability count drift")
+    require(len(operation_rows) == 89, "ADR-NUM-0010 operation applicability count drift")
 
     independent = formats["independent_comparison"]
     require(
@@ -225,8 +225,8 @@ def generate() -> dict[str, Any]:
     hooks = sorted({hook for row in domain_rows for hook in row["hooks"]})
     return {
         "schema_version": 1,
-        "target": "S5-T2-A2:ADR-0049",
-        "decision_id": "ADR-0049",
+        "target": "S5-T2-A2:ADR-NUM-0010",
+        "decision_id": "ADR-NUM-0010",
         "status": "named-hardware-profile-subnormal-policy-accepted-other-numeric-decisions-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "profile_id": PROFILE_ID,

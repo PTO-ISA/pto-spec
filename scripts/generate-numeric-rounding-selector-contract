@@ -22,7 +22,7 @@ COMMAND_CATALOG = ROOT / "spec/catalog/command-forms.json"
 DECISION_INPUTS = ROOT / "spec/evidence/numeric-profile-decision-inputs.json"
 IDENTITY_CATALOG = ROOT / "spec/catalog/numeric-profile-identities.json"
 OUTPUT = ROOT / "spec/evidence/numeric-rounding-selector-contract.json"
-ACCEPTANCE_RECORD = "docs/status/decisions/0047-numeric-rounding-semantics.md"
+ACCEPTANCE_RECORD = "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md"
 
 ACTIVE_ROUNDING = (
     (0, "assigned", "RNE", "nearest-ties-even"),
@@ -72,7 +72,7 @@ DOMAIN_RULES = {
     ),
     "scalar-unary": (
         "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
-        "Apply the resolved active scalar mode once when the operation-defined mathematical result is encoded in the destination format; ADR-0091 still owns approximation bounds.",
+        "Apply the resolved active scalar mode once when the operation-defined mathematical result is encoded in the destination format; ADR-NUM-0018 still owns approximation bounds.",
         "not-applicable",
     ),
     "scalar-fused": (
@@ -83,7 +83,7 @@ DOMAIN_RULES = {
     "scalar-fp-to-integer": (
         "fixed FCVTA/FCVTM/FCVTN/FCVTP/FCVTZ mnemonic override",
         "Apply the mnemonic-selected mode once to the finite source before destination range handling; FCVTA is nearest with ties away, not directed away from zero.",
-        "round-before-ADR-0090-range-or-indefinite-result-selection",
+        "round-before-ADR-NUM-0017-range-or-indefinite-result-selection",
     ),
     "scalar-fp-convert": (
         "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
@@ -102,7 +102,7 @@ DOMAIN_RULES = {
     ),
     "tile-unary": (
         "operation-fixed pto-v0 rule",
-        "Floating results round once using RNE at the destination boundary; exact sign, bitwise, and selection operations do not round; ADR-0091 retains approximation bounds.",
+        "Floating results round once using RNE at the destination boundary; exact sign, bitwise, and selection operations do not round; ADR-NUM-0018 retains approximation bounds.",
         "not-applicable",
     ),
     "tile-fused": (
@@ -123,17 +123,17 @@ DOMAIN_RULES = {
     "tile-convert": (
         "TileNumericSelection from direct operands or B.DATR.RMode",
         "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",
-        "round-before-saturation-clamp-or-ADR-0090-nonsaturating-result-selection",
+        "round-before-saturation-clamp-or-ADR-NUM-0017-nonsaturating-result-selection",
     ),
     "tile-quantize": (
         "TileNumericSelection from direct operands or B.DATR.RMode",
         "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round once after the affine quantization expression and before destination packing.",
-        "round-before-saturation-clamp-or-ADR-0090-nonsaturating-result-selection",
+        "round-before-saturation-clamp-or-ADR-NUM-0017-nonsaturating-result-selection",
     ),
     "tile-dequantize": (
         "TileNumericSelection from direct operands or B.DATR.RMode",
         "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round once after the dequantization expression at the destination-format boundary.",
-        "round-before-saturation-clamp-or-ADR-0090-nonsaturating-result-selection",
+        "round-before-saturation-clamp-or-ADR-NUM-0017-nonsaturating-result-selection",
     ),
     "cube-matrix": (
         "operation-fixed pto-v0 rule",
@@ -166,11 +166,11 @@ def generate() -> dict[str, Any]:
     inputs = load(DECISION_INPUTS)
     identities = load(IDENTITY_CATALOG)
 
-    adr0047 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-0047")
-    require(adr0047["status"] == "accepted", "ADR-0047 status drift")
+    adr0047 = next(row for row in inputs["decisions"] if row["adr"] == "ADR-NUM-0008")
+    require(adr0047["status"] == "accepted", "ADR-NUM-0008 status drift")
     require(
         adr0047["acceptance_record"] == ACCEPTANCE_RECORD,
-        "ADR-0047 acceptance record drift",
+        "ADR-NUM-0008 acceptance record drift",
     )
 
     scalar_forms = {row["mnemonic"]: row for row in scalar["forms"]}
@@ -227,7 +227,7 @@ def generate() -> dict[str, Any]:
 
     domain_rows_by_name = {}
     for row in inputs["domain_matrix"]:
-        if "ADR-0047" not in row["decision_adr_ids"]:
+        if "ADR-NUM-0008" not in row["decision_adr_ids"]:
             continue
         domain_rows_by_name[row["domain"]] = {
             "domain": row["domain"],
@@ -250,22 +250,22 @@ def generate() -> dict[str, Any]:
 
     require(
         set(domain_rows_by_name) == set(adr0047["affected_domains"]),
-        "ADR-0047 domain ordering or membership drift",
+        "ADR-NUM-0008 domain ordering or membership drift",
     )
     hooks = sorted({hook for row in domain_rows for hook in row["hooks"]})
 
     return {
         "schema_version": 1,
-        "target": "S5-T2-A2:ADR-0047",
-        "decision_id": "ADR-0047",
+        "target": "S5-T2-A2:ADR-NUM-0008",
+        "decision_id": "ADR-NUM-0008",
         "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
         "acceptance_record": ACCEPTANCE_RECORD,
         "policy": {
             "namespace_separation": "Scalar FRM, scalar fixed conversion overrides, bundle RMode, public API modes, matrix controls, and stochastic controls are distinct selector namespaces unless an accepted rule maps them.",
             "no_backend_inheritance": "Backend CAST, ROUND, PART, and stochastic-control values are evidence only and cannot create portable PTO encodings.",
             "unknown_selection": "All scalar and bundle three-bit patterns have deterministic resolution. Unknown public selector ordinals or missing delegated rules reject before architectural effects under ADR 0037.",
-            "saturation_order": "Rounding selection and saturation selection are independent inputs. Every applicable conversion or quantization domain rounds before saturation or the ADR-0090 nonsaturating result rule.",
-            "adr0047_boundary": "ADR-0047 is accepted for selector mapping, tie behavior, rounding points, and saturation order. ADR 0049 separately owns ADR-0049 subnormal behavior for the named hardware profile; ADR-0087 and ADR-0088 through ADR-0095 own the remaining format, special-value, flag, range, accuracy, quantization, matrix, and bounded-variation dimensions.",
+            "saturation_order": "Rounding selection and saturation selection are independent inputs. Every applicable conversion or quantization domain rounds before saturation or the ADR-NUM-0017 nonsaturating result rule.",
+            "adr0047_boundary": "ADR-NUM-0008 is accepted for selector mapping, tie behavior, rounding points, and saturation order. ADR 0049 separately owns ADR-NUM-0010 subnormal behavior for the named hardware profile; ADR-NUM-0014 and ADR-NUM-0015 through ADR-NUM-0022 own the remaining format, special-value, flag, range, accuracy, quantization, matrix, and bounded-variation dimensions.",
         },
         "scalar_active_rounding": active_rows,
         "scalar_fixed_conversion_overrides": fixed_rows,
@@ -345,10 +345,10 @@ def generate() -> dict[str, Any]:
             source("spec/catalog/tile-operations.json"),
             source("spec/hardware-conformance-profile.json"),
             source(
-                "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md"
+                "docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md"
             ),
             source(
-                "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md"
+                "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md"
             ),
             source(ACCEPTANCE_RECORD),
         ],

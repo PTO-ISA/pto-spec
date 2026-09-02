@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "target": "S5-T2-A2:ADR-0047",
-  "decision_id": "ADR-0047",
+  "target": "S5-T2-A2:ADR-NUM-0008",
+  "decision_id": "ADR-NUM-0008",
   "status": "rounding-selection-and-domain-rules-accepted-other-numeric-dimensions-open",
-  "acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+  "acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
   "policy": {
     "namespace_separation": "Scalar FRM, scalar fixed conversion overrides, bundle RMode, public API modes, matrix controls, and stochastic controls are distinct selector namespaces unless an accepted rule maps them.",
     "no_backend_inheritance": "Backend CAST, ROUND, PART, and stochastic-control values are evidence only and cannot create portable PTO encodings.",
     "unknown_selection": "All scalar and bundle three-bit patterns have deterministic resolution. Unknown public selector ordinals or missing delegated rules reject before architectural effects under ADR 0037.",
-    "saturation_order": "Rounding selection and saturation selection are independent inputs. Every applicable conversion or quantization domain rounds before saturation or the ADR-0090 nonsaturating result rule.",
-    "adr0047_boundary": "ADR-0047 is accepted for selector mapping, tie behavior, rounding points, and saturation order. ADR 0049 separately owns ADR-0049 subnormal behavior for the named hardware profile; ADR-0087 and ADR-0088 through ADR-0095 own the remaining format, special-value, flag, range, accuracy, quantization, matrix, and bounded-variation dimensions."
+    "saturation_order": "Rounding selection and saturation selection are independent inputs. Every applicable conversion or quantization domain rounds before saturation or the ADR-NUM-0017 nonsaturating result rule.",
+    "adr0047_boundary": "ADR-NUM-0008 is accepted for selector mapping, tie behavior, rounding points, and saturation order. ADR 0049 separately owns ADR-NUM-0010 subnormal behavior for the named hardware profile; ADR-NUM-0014 and ADR-NUM-0015 through ADR-NUM-0022 own the remaining format, special-value, flag, range, accuracy, quantization, matrix, and bounded-variation dimensions."
   },
   "scalar_active_rounding": [
     {
@@ -435,7 +435,7 @@
       ],
       "selector_owner": "fixed FCVTA/FCVTM/FCVTN/FCVTP/FCVTZ mnemonic override",
       "rounding_rule": "Apply the mnemonic-selected mode once to the finite source before destination range handling; FCVTA is nearest with ties away, not directed away from zero.",
-      "saturation_order_rule": "round-before-ADR-0090-range-or-indefinite-result-selection",
+      "saturation_order_rule": "round-before-ADR-NUM-0017-range-or-indefinite-result-selection",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
@@ -500,7 +500,7 @@
         "pto-a5-numeric-v1"
       ],
       "selector_owner": "CORE_STATE.FRM resolved by ResolveScalarFPActiveRoundingMode",
-      "rounding_rule": "Apply the resolved active scalar mode once when the operation-defined mathematical result is encoded in the destination format; ADR-0091 still owns approximation bounds.",
+      "rounding_rule": "Apply the resolved active scalar mode once when the operation-defined mathematical result is encoded in the destination format; ADR-NUM-0018 still owns approximation bounds.",
       "saturation_order_rule": "not-applicable",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
@@ -564,7 +564,7 @@
       ],
       "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
       "rounding_rule": "Resolve NONE to RTZ for floating-to-integer TCVT and to RNE otherwise; explicit codes 1 through 7 use their bundle mapping, then round once to the destination format.",
-      "saturation_order_rule": "round-before-saturation-clamp-or-ADR-0090-nonsaturating-result-selection",
+      "saturation_order_rule": "round-before-saturation-clamp-or-ADR-NUM-0017-nonsaturating-result-selection",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
@@ -584,7 +584,7 @@
       ],
       "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
       "rounding_rule": "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round once after the dequantization expression at the destination-format boundary.",
-      "saturation_order_rule": "round-before-saturation-clamp-or-ADR-0090-nonsaturating-result-selection",
+      "saturation_order_rule": "round-before-saturation-clamp-or-ADR-NUM-0017-nonsaturating-result-selection",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
@@ -659,7 +659,7 @@
       ],
       "selector_owner": "TileNumericSelection from direct operands or B.DATR.RMode",
       "rounding_rule": "Resolve NONE to RNE; explicit codes 1 through 7 use their bundle mapping, then round once after the affine quantization expression and before destination packing.",
-      "saturation_order_rule": "round-before-saturation-clamp-or-ADR-0090-nonsaturating-result-selection",
+      "saturation_order_rule": "round-before-saturation-clamp-or-ADR-NUM-0017-nonsaturating-result-selection",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     },
     {
@@ -722,7 +722,7 @@
         "pto-a5-numeric-v1"
       ],
       "selector_owner": "operation-fixed pto-v0 rule",
-      "rounding_rule": "Floating results round once using RNE at the destination boundary; exact sign, bitwise, and selection operations do not round; ADR-0091 retains approximation bounds.",
+      "rounding_rule": "Floating results round once using RNE at the destination boundary; exact sign, bitwise, and selection operations do not round; ADR-NUM-0018 retains approximation bounds.",
       "saturation_order_rule": "not-applicable",
       "status": "rounding-rule-accepted-other-numeric-dimensions-open"
     }
@@ -995,15 +995,15 @@
       "sha256": "e8734ac34bbbbf6c6bce22562d2d0a8577890eb95cc9a061a95dc11246a9248c"
     },
     {
-      "path": "docs/status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md",
+      "path": "docs/status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md",
       "sha256": "1be39ca1ffda14b703ca03df9654f323d03b9cac620ba37d5cbe6ce8f3f9c486"
     },
     {
-      "path": "docs/status/decisions/0037-numeric-profile-identity-and-variation-framework.md",
+      "path": "docs/status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md",
       "sha256": "b09efd36ccfc7258d1743c974f42b875ead42137c503f576a12f471f65b52e30"
     },
     {
-      "path": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "path": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "sha256": "5a7a0f1ddc09885943d3a337b989e6a2b02feba246a7427d5719cb4ba61cd1c8"
     }
   ],

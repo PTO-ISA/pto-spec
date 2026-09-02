@@ -16,7 +16,15 @@ const traceability = JSON.parse(readFileSync(
 const adrIndex = JSON.parse(readFileSync(
   resolve(process.cwd(), '../../spec/evidence/adr-index.json'),
   'utf8',
-)) as {records: Array<{id: string}>};
+)) as {records: Array<{id: string; title: string; title_zh: string}>};
+const archNdfSupplements = JSON.parse(readFileSync(
+  resolve(process.cwd(), '../../docs/ndf/supplements/arch-01.json'),
+  'utf8',
+)) as {entries: Array<{
+  id: string;
+  title: {en: string; 'zh-CN': string};
+  summary: {en: string; 'zh-CN': string};
+}>};
 const instructionUnits = traceability.units.filter((unit) => unit.mnemonic !== null);
 const instructionSurfaceTotals = Object.fromEntries(
   ['scalar', 'block', 'tile'].map((surface) => [
@@ -110,7 +118,7 @@ test('instruction and NDF indexes route every identity to one canonical page', a
   await page.getByRole('searchbox', {name: 'Search NDF'}).fill('PTO-TLOAD-MEMORY-001');
   const ndfCard = page.locator('#index-pto-tload-memory-001');
   await expect(ndfCard).toBeVisible();
-  await ndfCard.getByRole('link', {name: 'contract', exact: true}).click();
+  await ndfCard.locator('a[href="/ndf/PTO-TLOAD-MEMORY-001/"]').click();
   await expect(page).toHaveURL('/ndf/PTO-TLOAD-MEMORY-001/');
   await expect(page.getByText(/byte row stride/).first()).toBeVisible();
   const ownerPages = page.getByRole('region', {name: 'Instruction and unit pages'});
@@ -123,6 +131,11 @@ test('instruction and NDF indexes route every identity to one canonical page', a
   await expect(page.getByRole('heading', {name: '指令索引', level: 1})).toBeVisible();
   await page.goto('/zh-CN/ndf/PTO-TLOAD-MEMORY-001/');
   await expect(page).toHaveURL('/zh-CN/ndf/PTO-TLOAD-MEMORY-001/');
+
+  const localizedClause = archNdfSupplements.entries[0];
+  await page.goto(`/zh-CN/ndf/${localizedClause.id}/`);
+  await expect(page.getByRole('heading', {name: localizedClause.title['zh-CN']})).toBeVisible();
+  await expect(page.getByText(localizedClause.summary['zh-CN'], {exact: true})).toBeVisible();
 });
 
 test('instruction rail and facet buttons share the URL-selected surface', async ({page}, testInfo) => {
@@ -332,6 +345,7 @@ test('left navigation exposes the complete source-derived hierarchy', async ({pa
   await expect(navigation.locator('[data-navigation-unit-id]')).toHaveCount(traceability.units.length);
   await expect(navigation.locator('[data-navigation-ndf-id]')).toHaveCount(traceability.requirements.length);
   await expect(navigation.locator('[data-navigation-adr-id]')).toHaveCount(adrIndex.records.length);
+  expect(adrIndex.records.every((record) => record.title_zh.trim().length > 0)).toBe(true);
   await expect(navigation.locator('[data-navigation-unit-id="PTO-TILE-TLOAD"]')).toHaveAttribute(
     'aria-current',
     'page',
@@ -352,6 +366,12 @@ test('left navigation exposes the complete source-derived hierarchy', async ({pa
   await expect(navigation.locator('[data-navigation-branch="ndf"]')).toHaveAttribute('data-open', 'true');
   await navigation.getByRole('button', {name: 'Collapse hierarchy'}).click();
   await expect(navigation.locator('[data-navigation-branch="records"]')).toHaveAttribute('data-open', 'false');
+});
+
+test('Chinese search uses ADR Chinese labels', async ({page}) => {
+  const record = adrIndex.records[0];
+  await page.goto(`/zh-CN/search/?q=${encodeURIComponent(record.id)}`);
+  await expect(page.getByText(record.title_zh, {exact: true})).toBeVisible();
 });
 
 test('Architecture landing is source-backed and exposes every required mental-model topic', async ({page}) => {
@@ -573,17 +593,17 @@ test('TLOAD workbench preserves source identity and evidence interaction', async
   await capacityEntry.locator('summary').first().click();
   await expect(capacityEntry.getByRole('button', {name: /Copy complete stable ID PTO-AVS-BLOCK-B-IOS-CAPACITY-003/})).toBeVisible();
 
-  await evidenceSearch.fill('ADR-0074');
-  const decisionEntry = page.locator('#adr-adr-0074').locator('details').first();
+  await evidenceSearch.fill('ADR-MEM-0008');
+  const decisionEntry = page.locator('#adr-adr-mem-0008').locator('details').first();
   await expect(decisionEntry).toHaveAttribute('open', '');
   await expect(decisionEntry.getByRole('heading', {name: 'Decision record'})).toBeVisible();
   await expect(decisionEntry.getByRole('heading', {name: 'Decision', exact: true})).toBeVisible();
   await expect(decisionEntry.getByRole('heading', {name: 'Compatibility and supersession'})).toBeVisible();
-  await expect(decisionEntry.getByText(/RegSrc1.*row_stride_bytes/)).toBeVisible();
+  await expect(decisionEntry.getByText(/RegSrc1.*row_stride_bytes/).first()).toBeVisible();
   await decisionEntry.getByText('Sources and references', {exact: true}).click();
   await expect(decisionEntry.getByRole('link', {name: /Open exact decision source/})).toHaveAttribute(
     'href',
-    /github\.com\/PTO-ISA\/pto-spec\/blob\/[0-9a-f]{40}\/docs\/status\/decisions\/0074-tload-tstore-gm-byte-row-stride\.md/,
+    /github\.com\/PTO-ISA\/pto-spec\/blob\/[0-9a-f]{40}\/docs\/status\/decisions\/MEM-0008-tload-tstore-gm-byte-row-stride\.md/,
   );
   const collapseAll = page.getByRole('button', {name: 'Collapse groups'});
   if (testInfo.project.name === 'mobile-chromium') {

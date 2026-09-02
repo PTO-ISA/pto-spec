@@ -987,109 +987,117 @@ nav:
               - TXORS: tile/tile-scalar-and-immediate/logical/TXORS.md
   - Status:
       - Decisions:
-          - "ADR-0001: Define PTO as a scalar, bundle/command, and tile ISA": status/decisions/0001-pto-architecture-scope.md
-          - "ADR-0003: Use PTO-owned system-register names": status/decisions/0003-pto-owned-system-register-names.md
-          - "ADR-0005: PTO v0 concrete reference profile": status/decisions/0005-pto-v0-concrete-reference-profile.md
-          - "ADR-0006: PTO total store order candidate model": status/decisions/0006-pto-total-store-order.md
-          - "ADR-0008: Define the PTO architectural state contract": status/decisions/0008-architectural-state-contract.md
-          - "ADR 0009: scalar TPC and execution status": status/decisions/0009-scalar-tpc-and-execution-status.md
-          - "ADR 0010: PTO v0 ACR routing and context reset": status/decisions/0010-acr-routing-and-context-reset.md
-          - "ADR 0011: Make EBARG the visible PTO v0 trap snapshot": status/decisions/0011-visible-ebarg-snapshot.md
-          - "ADR 0012: Define PTO v0 ACRC service requests": status/decisions/0012-acrc-service-request.md
-          - "ADR 0013: Define tile capacity and packed storage": status/decisions/0013-tile-capacity-and-packed-storage.md
-          - "ADR 0014: Track tile definedness per element": status/decisions/0014-element-level-tile-definedness.md
-          - "ADR 0015: Define explicit tile handoff slots": status/decisions/0015-explicit-tile-handoff-slots.md
-          - "ADR 0016: Define interrupt pending and timer state": status/decisions/0016-interrupt-pending-and-timer-state.md
-          - "ADR 0017: Classify every visible system register behavior": status/decisions/0017-system-register-behavior-classes.md
-          - "ADR 0018: Define the PTO v0 disposition of every trap identity": status/decisions/0018-pto-v0-trap-disposition.md
-          - "ADR 0019: Define the PTO predicate-register contract": status/decisions/0019-predicate-register-contract.md
-          - "ADR-0020: Production memory events and atomic corners": status/decisions/0020-production-memory-events-and-atomic-corners.md
-          - "ADR-0021: Scalar PC-relative and return-address state": status/decisions/0021-scalar-pc-relative-and-return-address.md
-          - "ADR 0022: Bundle operation descriptor and transactional commit": status/decisions/0022-bundle-operation-descriptor-and-commit.md
-          - "ADR 0023: Uniform instruction-attempt status and fault isolation": status/decisions/0023-uniform-instruction-attempt-status.md
-          - "ADR 0024: PC-relative and unscaled AGU addressing": status/decisions/0024-pc-relative-and-unscaled-agu-addressing.md
-          - "ADR 0025: Scalar bitfield and byte-reversal bounds": status/decisions/0025-scalar-bitfield-and-reverse-bounds.md
-          - "ADR 0026: Scalar ALU totality and alias order": status/decisions/0026-scalar-alu-totality-and-alias-order.md
-          - "ADR 0027: Scalar BRU totality and target legality": status/decisions/0027-scalar-bru-totality-and-target-legality.md
-          - "ADR 0028: Scalar FSU totality and numeric-profile boundary": status/decisions/0028-scalar-fsu-totality-and-profile-boundary.md
-          - "ADR 0029: Scalar AGU totality, aliases, and restart": status/decisions/0029-scalar-agu-totality-and-restart.md
-          - "ADR-0030: Scalar AMO totality, reservations, and restart": status/decisions/0030-scalar-amo-totality-and-reservation.md
-          - "ADR-0031: Scalar SYS totality and PTO-v0 profile boundaries": status/decisions/0031-scalar-sys-totality-and-profile-boundaries.md
-          - "ADR-0032: Bundle-command totality and PTO-v0 profile boundaries": status/decisions/0032-bundle-command-totality-and-profile-boundaries.md
-          - "ADR-0033: TLSU four-bit memory packing and totality": status/decisions/0033-tlsu-four-bit-memory-packing.md
-          - "ADR-0034: CUBE raw-carrier totality and composite preflight": status/decisions/0034-cube-raw-carrier-totality.md
-          - "ADR 0035: VEC/SFU carrier totality and profile boundary": status/decisions/0035-vec-sfu-carrier-totality.md
-          - "ADR 0036: Formal source and evidence boundary": status/decisions/0036-formal-source-and-evidence-boundary.md
-          - "ADR 0037: Numeric profile identity and bounded variation framework": status/decisions/0037-numeric-profile-identity-and-variation-framework.md
-          - "ADR 0038: Scalar numeric flag state and producer ownership": status/decisions/0038-scalar-numeric-flag-state-and-ownership.md
-          - "ADR 0039: Numeric rounding selector ownership": status/decisions/0039-numeric-rounding-selector-ownership.md
-          - "ADR 0040: Numeric format namespace ownership": status/decisions/0040-numeric-format-namespace-ownership.md
-          - "ADR 0041: A2/A3 MX CUBE profile applicability": status/decisions/0041-a2a3-mx-profile-applicability.md
-          - "ADR 0042: Numeric variation-point ownership": status/decisions/0042-numeric-variation-point-ownership.md
-          - "ADR 0043: Public numeric type identity and target availability": status/decisions/0043-public-numeric-type-identity-and-availability.md
-          - "ADR 0044: Public integer conversion result subset": status/decisions/0044-public-integer-conversion-result-subset.md
-          - "ADR 0046: Separate execution-mask and predicate domains (superseded)": status/decisions/0046-separate-execution-mask-and-warp-predicates.md
-          - "ADR 0047: Numeric rounding semantics": status/decisions/0047-numeric-rounding-semantics.md
-          - "ADR 0048: Numeric format value classification": status/decisions/0048-numeric-format-value-classification.md
-          - "ADR 0049: Hardware numeric subnormal policy": status/decisions/0049-hardware-subnormal-policy.md
-          - "ADR 0050: Hardware special-value result checkpoint": status/decisions/0050-hardware-special-value-checkpoint.md
-          - "ADR 0051: Predicate state namespace boundary (superseded)": status/decisions/0051-predicate-state-namespace-boundary.md
-          - "ADR 0052: Direct Tile and bundle catalog closure": status/decisions/0052-direct-tile-and-bundle-catalog-closure.md
-          - "ADR 0053: PTO ISA 0.58.0 Tile Operation Cleanup": status/decisions/0053-pto-isa-0580-tile-operation-cleanup.md
-          - "ADR 0054: PE-Local Tile Size and 32-bit Shared I/O Binding": status/decisions/0054-pe-local-tile-size-and-32-bit-shared-io-binding.md
-          - "ADR 0055: Complete-Bundle B.IOR Schema and Defaults": status/decisions/0055-complete-bundle-bior-schema-and-defaults.md
-          - "ADR 0056: PTO Encoding Ownership and Per-PE GM Access": status/decisions/0056-pto-encoding-ownership-and-gm-access.md
-          - "ADR 0057: Tile Classification and Execution-Engine Aliases": status/decisions/0057-tile-classification-and-engine-aliases.md
-          - "ADR 0058: Complete-Bundle GPR Operand Resolution": status/decisions/0058-complete-bundle-gpr-operand-resolution.md
-          - "ADR 0059: Mnemonic and Encoded-Field Contract Closure": status/decisions/0059-mnemonic-field-encoding-closure.md
-          - "ADR 0060: Restore `L.BSTOP` as the common 64-bit bundle stop": status/decisions/0060-l-bstop-common-long-form.md
-          - "ADR 0061: Bundle commit state uses BARG/BPCN": status/decisions/0061-barg-bpcn-commit-state.md
-          - "ADR 0062: PTO mnemonic review decisions (historical summary)": status/decisions/0062-mnemonic-review-decisions.md
-          - "ADR 0064: B.FPATR Complete-Bundle Matrix PostProcess": status/decisions/0064-b-fpatr-complete-bundle-postprocess.md
-          - "ADR 0065: CUBE Matrix Family Contract": status/decisions/0065-cube-matrix-family-contract.md
-          - "ADR 0066: ADDTPC page-scaled immediate": status/decisions/0066-addtpc-page-scaled-immediate.md
-          - "ADR 0067: conditional branch extension reservation": status/decisions/0067-conditional-branch-extension-reservation.md
-          - "ADR 0068: Extension first-use is a target-profile hook": status/decisions/0068-extension-first-use-profile-hook.md
-          - "ADR 0069: Local CUBE CELL State and Geometry": status/decisions/0069-local-cube-cell-state-and-geometry.md
-          - "ADR 0070: GM/Local CUBE Layout Transport": status/decisions/0070-gm-local-cube-layout-transport.md
-          - "ADR 0071: Local CUBE Matrix Operand Contract": status/decisions/0071-local-cube-matrix-operands.md
-          - "ADR 0072: Cooperative Shared CUBE Inputs and Transpose": status/decisions/0072-cooperative-shared-cube-transpose.md
-          - "ADR 0073: CUBE Accumulator and Atomic Output Contract": status/decisions/0073-cube-accumulator-atomic-output.md
-          - "ADR 0074: TLOAD/TSTORE GM Byte Row Stride": status/decisions/0074-tload-tstore-gm-byte-row-stride.md
-          - "ADR 0075: Block attributes and lifecycle": status/decisions/0075-block-attributes-and-lifecycle.md
-          - "ADR 0076: Block scalar and tile bindings": status/decisions/0076-block-scalar-and-tile-bindings.md
-          - "ADR 0077: Block start and extension reservations": status/decisions/0077-block-start-and-extension-reservations.md
-          - "ADR 0078: TLSU and global-memory operations": status/decisions/0078-tlsu-and-global-memory-operations.md
-          - "ADR 0079: CUBE and matrix operations": status/decisions/0079-cube-and-matrix-operations.md
-          - "ADR 0080: Tile elementwise and irregular operations": status/decisions/0080-tile-elementwise-and-irregular-operations.md
-          - "ADR 0081: Tile scalar and immediate operations": status/decisions/0081-tile-scalar-and-immediate-operations.md
-          - "ADR 0082: Tile reduction, expansion, and generation": status/decisions/0082-tile-reduction-expansion-and-generation.md
-          - "ADR 0083: Tile conversion, layout, and partial operations": status/decisions/0083-tile-conversion-layout-and-partial-operations.md
-          - "ADR 0084: Scalar, system, and queue operations": status/decisions/0084-scalar-system-and-queue-operations.md
-          - "ADR 0085: Numeric post-process and format operations": status/decisions/0085-numeric-postprocess-and-format-operations.md
-          - "ADR 0086: Numeric profile applicability": status/decisions/0086-numeric-profile-applicability.md
-          - "ADR 0087: Numeric format legality": status/decisions/0087-numeric-format-legality.md
-          - "ADR 0088: Numeric special values": status/decisions/0088-numeric-special-values.md
-          - "ADR 0089: Numeric exception flags": status/decisions/0089-numeric-exception-flags.md
-          - "ADR 0090: Conversion range results": status/decisions/0090-conversion-range-results.md
-          - "ADR 0091: Elementary-function accuracy": status/decisions/0091-elementary-function-accuracy.md
-          - "ADR 0092: Reduction order and stability": status/decisions/0092-reduction-order-and-stability.md
-          - "ADR 0093: Quantization contract": status/decisions/0093-quantization-contract.md
-          - "ADR 0094: Matrix numeric contract": status/decisions/0094-matrix-numeric-contract.md
-          - "ADR 0095: Bounded numeric variation": status/decisions/0095-bounded-numeric-variation.md
-          - "ADR 0096: Re-encode B.IOT and B.IOS size and PE mode fields": status/decisions/0096-b-iot-b-ios-sizecode-pemode.md
-          - "ADR 0097: Local and Shared capacity pools with cooperative M-sharding": status/decisions/0097-local-shared-capacity-and-cooperative-m-sharding.md
-          - "ADR 0098: B.SUBVIEW and B.ASSEMBLE range-modifier association": status/decisions/0098-b-range-modifiers.md
-          - "ADR 0099: PTO ISA 0.58.3 to 0.58.4 compatibility boundary": status/decisions/0099-0583-to-0584-compatibility.md
-          - "ADR 0100: Cooperative Group-M Distribution and Inactive PE Semantics": status/decisions/0100-cooperative-group-m-distribution.md
-          - "ADR 0101: Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale": status/decisions/0101-matrix-scale-and-cscale.md
-          - "ADR 0102: PTO ISA 0.58.4.1 publication-contract correction boundary": status/decisions/0102-0584-1-publication-contract-corrections.md
-          - "ADR 0103: Private CUBE vector execution and CELL rearrangement": status/decisions/0103-private-cube-vector-and-cell-rearrangement.md
-          - "ADR 0105: Shared whole-parent readiness and single-issuer publication": status/decisions/0105-shared-whole-parent-readiness.md
-          - "ADR 0106: Shared source B.SUBVIEW uses per-PE offsets": status/decisions/0106-shared-source-subview-per-pe.md
-          - "ADR 0107: Remove legacy Shared movement Functions": status/decisions/0107-remove-legacy-shared-movement.md
-          - "ADR 0108: PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary": status/decisions/0108-0584-1-to-0585-compatibility.md
-          - "ADR 0109: Local single-object cap versus aggregate Local pool": status/decisions/0109-local-single-object-cap.md
-          - "ADR 0110: TCVT CUBE_M16 and CUBE_M32 layout closure": status/decisions/0110-tcvt-cube-m16-m32-layout-closure.md
+          - GOV:
+              - "ADR-GOV-0001: Define PTO as a scalar, bundle/command, and tile ISA": status/decisions/GOV-0001-pto-architecture-scope.md
+              - "ADR-GOV-0002: PTO v0 concrete reference profile": status/decisions/GOV-0002-pto-v0-concrete-reference-profile.md
+              - "ADR-GOV-0003: Formal source and evidence boundary": status/decisions/GOV-0003-formal-source-and-evidence-boundary.md
+              - "ADR-GOV-0004: Direct Tile and bundle catalog closure": status/decisions/GOV-0004-direct-tile-and-bundle-catalog-closure.md
+              - "ADR-GOV-0005: Mnemonic and Encoded-Field Contract Closure": status/decisions/GOV-0005-mnemonic-field-encoding-closure.md
+              - "ADR-GOV-0006: PTO mnemonic review decisions (historical summary)": status/decisions/GOV-0006-mnemonic-review-decisions.md
+              - "ADR-GOV-0007: PTO ISA 0.58.3 to 0.58.4 compatibility boundary": status/decisions/GOV-0007-0583-to-0584-compatibility.md
+              - "ADR-GOV-0008: PTO ISA 0.58.4.1 publication-contract correction boundary": status/decisions/GOV-0008-0584-1-publication-contract-corrections.md
+              - "ADR-GOV-0009: PTO ISA 0.58.4.1 to 0.58.5 compatibility boundary": status/decisions/GOV-0009-0584-1-to-0585-compatibility.md
+          - STATE:
+              - "ADR-STATE-0001: Use PTO-owned system-register names": status/decisions/STATE-0001-pto-owned-system-register-names.md
+              - "ADR-STATE-0002: Define the PTO architectural state contract": status/decisions/STATE-0002-architectural-state-contract.md
+              - "ADR-STATE-0003: scalar TPC and execution status": status/decisions/STATE-0003-scalar-tpc-and-execution-status.md
+              - "ADR-STATE-0004: PTO v0 ACR routing and context reset": status/decisions/STATE-0004-acr-routing-and-context-reset.md
+              - "ADR-STATE-0005: Make EBARG the visible PTO v0 trap snapshot": status/decisions/STATE-0005-visible-ebarg-snapshot.md
+              - "ADR-STATE-0006: Define PTO v0 ACRC service requests": status/decisions/STATE-0006-acrc-service-request.md
+              - "ADR-STATE-0007: Define interrupt pending and timer state": status/decisions/STATE-0007-interrupt-pending-and-timer-state.md
+              - "ADR-STATE-0008: Classify every visible system register behavior": status/decisions/STATE-0008-system-register-behavior-classes.md
+              - "ADR-STATE-0009: Define the PTO v0 disposition of every trap identity": status/decisions/STATE-0009-pto-v0-trap-disposition.md
+              - "ADR-STATE-0010: Scalar PC-relative and return-address state": status/decisions/STATE-0010-scalar-pc-relative-and-return-address.md
+              - "ADR-STATE-0011: Bundle operation descriptor and transactional commit": status/decisions/STATE-0011-bundle-operation-descriptor-and-commit.md
+              - "ADR-STATE-0012: Uniform instruction-attempt status and fault isolation": status/decisions/STATE-0012-uniform-instruction-attempt-status.md
+              - "ADR-STATE-0013: Scalar SYS totality and PTO-v0 profile boundaries": status/decisions/STATE-0013-scalar-sys-totality-and-profile-boundaries.md
+          - MEM:
+              - "ADR-MEM-0001: PTO total store order candidate model": status/decisions/MEM-0001-pto-total-store-order.md
+              - "ADR-MEM-0002: Production memory events and atomic corners": status/decisions/MEM-0002-production-memory-events-and-atomic-corners.md
+              - "ADR-MEM-0003: PC-relative and unscaled AGU addressing": status/decisions/MEM-0003-pc-relative-and-unscaled-agu-addressing.md
+              - "ADR-MEM-0004: Scalar AGU totality, aliases, and restart": status/decisions/MEM-0004-scalar-agu-totality-and-restart.md
+              - "ADR-MEM-0005: Scalar AMO totality, reservations, and restart": status/decisions/MEM-0005-scalar-amo-totality-and-reservation.md
+              - "ADR-MEM-0006: TLSU four-bit memory packing and totality": status/decisions/MEM-0006-tlsu-four-bit-memory-packing.md
+              - "ADR-MEM-0007: PTO Encoding Ownership and Per-PE GM Access": status/decisions/MEM-0007-pto-encoding-ownership-and-gm-access.md
+              - "ADR-MEM-0008: TLOAD/TSTORE GM Byte Row Stride": status/decisions/MEM-0008-tload-tstore-gm-byte-row-stride.md
+              - "ADR-MEM-0009: TLSU and global-memory operations": status/decisions/MEM-0009-tlsu-and-global-memory-operations.md
+          - BLOCK:
+              - "ADR-BLOCK-0001: Define the PTO predicate-register contract": status/decisions/BLOCK-0001-predicate-register-contract.md
+              - "ADR-BLOCK-0002: Separate execution-mask and predicate domains (superseded)": status/decisions/BLOCK-0002-separate-execution-mask-and-warp-predicates.md
+              - "ADR-BLOCK-0003: Predicate state namespace boundary (superseded)": status/decisions/BLOCK-0003-predicate-state-namespace-boundary.md
+              - "ADR-BLOCK-0004: PE-Local Tile Size and 32-bit Shared I/O Binding": status/decisions/BLOCK-0004-pe-local-tile-size-and-32-bit-shared-io-binding.md
+              - "ADR-BLOCK-0005: Complete-Bundle B.IOR Schema and Defaults": status/decisions/BLOCK-0005-complete-bundle-bior-schema-and-defaults.md
+              - "ADR-BLOCK-0006: Tile Classification and Execution-Engine Aliases": status/decisions/BLOCK-0006-tile-classification-and-engine-aliases.md
+              - "ADR-BLOCK-0007: Complete-Bundle GPR Operand Resolution": status/decisions/BLOCK-0007-complete-bundle-gpr-operand-resolution.md
+              - "ADR-BLOCK-0008: Restore `L.BSTOP` as the common 64-bit bundle stop": status/decisions/BLOCK-0008-l-bstop-common-long-form.md
+              - "ADR-BLOCK-0009: Bundle commit state uses BARG/BPCN": status/decisions/BLOCK-0009-barg-bpcn-commit-state.md
+              - "ADR-BLOCK-0010: conditional branch extension reservation": status/decisions/BLOCK-0010-conditional-branch-extension-reservation.md
+              - "ADR-BLOCK-0011: Extension first-use is a target-profile hook": status/decisions/BLOCK-0011-extension-first-use-profile-hook.md
+              - "ADR-BLOCK-0012: Block attributes and lifecycle": status/decisions/BLOCK-0012-block-attributes-and-lifecycle.md
+              - "ADR-BLOCK-0013: Block scalar and tile bindings": status/decisions/BLOCK-0013-block-scalar-and-tile-bindings.md
+              - "ADR-BLOCK-0014: Block start and extension reservations": status/decisions/BLOCK-0014-block-start-and-extension-reservations.md
+              - "ADR-BLOCK-0015: Re-encode B.IOT and B.IOS size and PE mode fields": status/decisions/BLOCK-0015-b-iot-b-ios-sizecode-pemode.md
+              - "ADR-BLOCK-0016: B.SUBVIEW and B.ASSEMBLE range-modifier association": status/decisions/BLOCK-0016-b-range-modifiers.md
+              - "ADR-BLOCK-0017: Local single-object cap versus aggregate Local pool": status/decisions/BLOCK-0017-local-single-object-cap.md
+          - SCALAR:
+              - "ADR-SCALAR-0001: Scalar bitfield and byte-reversal bounds": status/decisions/SCALAR-0001-scalar-bitfield-and-reverse-bounds.md
+              - "ADR-SCALAR-0002: Scalar ALU totality and alias order": status/decisions/SCALAR-0002-scalar-alu-totality-and-alias-order.md
+              - "ADR-SCALAR-0003: Scalar BRU totality and target legality": status/decisions/SCALAR-0003-scalar-bru-totality-and-target-legality.md
+              - "ADR-SCALAR-0004: Scalar FSU totality and numeric-profile boundary": status/decisions/SCALAR-0004-scalar-fsu-totality-and-profile-boundary.md
+              - "ADR-SCALAR-0005: ADDTPC page-scaled immediate": status/decisions/SCALAR-0005-addtpc-page-scaled-immediate.md
+              - "ADR-SCALAR-0006: Scalar, system, and queue operations": status/decisions/SCALAR-0006-scalar-system-and-queue-operations.md
+          - TILE:
+              - "ADR-TILE-0001: Define tile capacity and packed storage": status/decisions/TILE-0001-tile-capacity-and-packed-storage.md
+              - "ADR-TILE-0002: Track tile definedness per element": status/decisions/TILE-0002-element-level-tile-definedness.md
+              - "ADR-TILE-0003: Define explicit tile handoff slots": status/decisions/TILE-0003-explicit-tile-handoff-slots.md
+              - "ADR-TILE-0004: Bundle-command totality and PTO-v0 profile boundaries": status/decisions/TILE-0004-bundle-command-totality-and-profile-boundaries.md
+              - "ADR-TILE-0005: CUBE raw-carrier totality and composite preflight": status/decisions/TILE-0005-cube-raw-carrier-totality.md
+              - "ADR-TILE-0006: VEC/SFU carrier totality and profile boundary": status/decisions/TILE-0006-vec-sfu-carrier-totality.md
+              - "ADR-TILE-0007: PTO ISA 0.58.0 Tile Operation Cleanup": status/decisions/TILE-0007-pto-isa-0580-tile-operation-cleanup.md
+              - "ADR-TILE-0008: Tile elementwise and irregular operations": status/decisions/TILE-0008-tile-elementwise-and-irregular-operations.md
+              - "ADR-TILE-0009: Tile scalar and immediate operations": status/decisions/TILE-0009-tile-scalar-and-immediate-operations.md
+              - "ADR-TILE-0010: Tile reduction, expansion, and generation": status/decisions/TILE-0010-tile-reduction-expansion-and-generation.md
+              - "ADR-TILE-0011: Tile conversion, layout, and partial operations": status/decisions/TILE-0011-tile-conversion-layout-and-partial-operations.md
+          - CUBE:
+              - "ADR-CUBE-0001: A2/A3 MX CUBE profile applicability": status/decisions/CUBE-0001-a2a3-mx-profile-applicability.md
+              - "ADR-CUBE-0002: B.FPATR Complete-Bundle Matrix PostProcess": status/decisions/CUBE-0002-b-fpatr-complete-bundle-postprocess.md
+              - "ADR-CUBE-0003: CUBE Matrix Family Contract": status/decisions/CUBE-0003-cube-matrix-family-contract.md
+              - "ADR-CUBE-0004: Local CUBE CELL State and Geometry": status/decisions/CUBE-0004-local-cube-cell-state-and-geometry.md
+              - "ADR-CUBE-0005: GM/Local CUBE Layout Transport": status/decisions/CUBE-0005-gm-local-cube-layout-transport.md
+              - "ADR-CUBE-0006: Local CUBE Matrix Operand Contract": status/decisions/CUBE-0006-local-cube-matrix-operands.md
+              - "ADR-CUBE-0007: Cooperative Shared CUBE Inputs and Transpose": status/decisions/CUBE-0007-cooperative-shared-cube-transpose.md
+              - "ADR-CUBE-0008: CUBE Accumulator and Atomic Output Contract": status/decisions/CUBE-0008-cube-accumulator-atomic-output.md
+              - "ADR-CUBE-0009: CUBE and matrix operations": status/decisions/CUBE-0009-cube-and-matrix-operations.md
+              - "ADR-CUBE-0010: Local and Shared capacity pools with cooperative M-sharding": status/decisions/CUBE-0010-local-shared-capacity-and-cooperative-m-sharding.md
+              - "ADR-CUBE-0011: Cooperative Group-M Distribution and Inactive PE Semantics": status/decisions/CUBE-0011-cooperative-group-m-distribution.md
+              - "ADR-CUBE-0012: Matrix Scale Cell Layouts, HiF4 Scale Words, and CScale": status/decisions/CUBE-0012-matrix-scale-and-cscale.md
+              - "ADR-CUBE-0013: Private CUBE vector execution and CELL rearrangement": status/decisions/CUBE-0013-private-cube-vector-and-cell-rearrangement.md
+              - "ADR-CUBE-0014: Shared whole-parent readiness and single-issuer publication": status/decisions/CUBE-0014-shared-whole-parent-readiness.md
+              - "ADR-CUBE-0015: Shared source B.SUBVIEW uses per-PE offsets": status/decisions/CUBE-0015-shared-source-subview-per-pe.md
+              - "ADR-CUBE-0016: Remove legacy Shared movement Functions": status/decisions/CUBE-0016-remove-legacy-shared-movement.md
+              - "ADR-CUBE-0017: TCVT CUBE_M16 and CUBE_M32 layout closure": status/decisions/CUBE-0017-tcvt-cube-m16-m32-layout-closure.md
+          - NUM:
+              - "ADR-NUM-0001: Numeric profile identity and bounded variation framework": status/decisions/NUM-0001-numeric-profile-identity-and-variation-framework.md
+              - "ADR-NUM-0002: Scalar numeric flag state and producer ownership": status/decisions/NUM-0002-scalar-numeric-flag-state-and-ownership.md
+              - "ADR-NUM-0003: Numeric rounding selector ownership": status/decisions/NUM-0003-numeric-rounding-selector-ownership.md
+              - "ADR-NUM-0004: Numeric format namespace ownership": status/decisions/NUM-0004-numeric-format-namespace-ownership.md
+              - "ADR-NUM-0005: Numeric variation-point ownership": status/decisions/NUM-0005-numeric-variation-point-ownership.md
+              - "ADR-NUM-0006: Public numeric type identity and target availability": status/decisions/NUM-0006-public-numeric-type-identity-and-availability.md
+              - "ADR-NUM-0007: Public integer conversion result subset": status/decisions/NUM-0007-public-integer-conversion-result-subset.md
+              - "ADR-NUM-0008: Numeric rounding semantics": status/decisions/NUM-0008-numeric-rounding-semantics.md
+              - "ADR-NUM-0009: Numeric format value classification": status/decisions/NUM-0009-numeric-format-value-classification.md
+              - "ADR-NUM-0010: Hardware numeric subnormal policy": status/decisions/NUM-0010-hardware-subnormal-policy.md
+              - "ADR-NUM-0011: Hardware special-value result checkpoint": status/decisions/NUM-0011-hardware-special-value-checkpoint.md
+              - "ADR-NUM-0012: Numeric post-process and format operations": status/decisions/NUM-0012-numeric-postprocess-and-format-operations.md
+              - "ADR-NUM-0013: Numeric profile applicability": status/decisions/NUM-0013-numeric-profile-applicability.md
+              - "ADR-NUM-0014: Numeric format legality": status/decisions/NUM-0014-numeric-format-legality.md
+              - "ADR-NUM-0015: Numeric special values": status/decisions/NUM-0015-numeric-special-values.md
+              - "ADR-NUM-0016: Numeric exception flags": status/decisions/NUM-0016-numeric-exception-flags.md
+              - "ADR-NUM-0017: Conversion range results": status/decisions/NUM-0017-conversion-range-results.md
+              - "ADR-NUM-0018: Elementary-function accuracy": status/decisions/NUM-0018-elementary-function-accuracy.md
+              - "ADR-NUM-0019: Reduction order and stability": status/decisions/NUM-0019-reduction-order-and-stability.md
+              - "ADR-NUM-0020: Quantization contract": status/decisions/NUM-0020-quantization-contract.md
+              - "ADR-NUM-0021: Matrix numeric contract": status/decisions/NUM-0021-matrix-numeric-contract.md
+              - "ADR-NUM-0022: Bounded numeric variation": status/decisions/NUM-0022-bounded-numeric-variation.md
       - Open:
           - "Open architecture decisions": status/open/index.md

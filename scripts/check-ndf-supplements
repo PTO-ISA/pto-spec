@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""Validate complete bilingual, non-normative supplements for explicit NDF clauses."""
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.ndf import parse_ndf_regions  # noqa: E402
+
+
+CHINESE = re.compile(r"[\u3400-\u9fff]")
+ENGLISH_WORD = re.compile(r"\b[A-Za-z][A-Za-z-]*\b")
+SURFACES = ("arch", "block", "scalar", "tile")
+
+
+def validate(root: Path) -> list[str]:
+    errors: list[str] = []
+    expected: dict[str, tuple[str, str]] = {}
+    for path in sorted((root / "asl").rglob("*.asl")):
+        relative = path.relative_to(root).as_posix()
+        surface = path.relative_to(root / "asl").parts[0]
+        for clause in parse_ndf_regions(path.read_text(encoding="utf-8"), path.relative_to(root)):
+            expected[clause.clause_id] = (relative, surface)
+
+    seen: dict[str, str] = {}
+    directory = root / "docs/ndf/supplements"
+    paths = sorted(directory.glob("*.json")) if directory.is_dir() else []
+    if not paths:
+        return ["no NDF supplement files found"]
+    for path in paths:
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            errors.append(f"{path}: invalid JSON: {error}")
+            continue
+        required = {"schema", "non_normative", "surface", "chunk", "entries"}
+        if not isinstance(document, dict) or set(document) != required:
+            errors.append(f"{path}: top-level fields must be exact")
+            continue
+        if document["schema"] != "pto.ndf-supplements.v1" or document["non_normative"] is not True:
+            errors.append(f"{path}: supplements must be schema v1 and non_normative=true")
+        surface = document["surface"]
+        if surface not in SURFACES:
+            errors.append(f"{path}: invalid surface {surface!r}")
+        entries = document["entries"]
+        if not isinstance(entries, list) or not entries:
+            errors.append(f"{path}: entries must be a non-empty array")
+            continue
+        for index, entry in enumerate(entries):
+            where = f"{path}:{index}"
+            if not isinstance(entry, dict) or set(entry) != {"id", "source_path", "title", "summary"}:
+                errors.append(f"{where}: entry fields must be exact")
+                continue
+            clause_id = entry["id"]
+            source_path = entry["source_path"]
+            if not isinstance(clause_id, str) or clause_id not in expected:
+                errors.append(f"{where}: unknown explicit NDF ID {clause_id!r}")
+                continue
+            if clause_id in seen:
+                errors.append(f"{where}: duplicate NDF supplement also in {seen[clause_id]}")
+            seen[clause_id] = str(path)
+            expected_path, expected_surface = expected[clause_id]
+            if source_path != expected_path or surface != expected_surface:
+                errors.append(f"{where}: source path or surface disagrees with owning NDF region")
+            for field in ("title", "summary"):
+                localized = entry[field]
+                if not isinstance(localized, dict) or set(localized) != {"en", "zh-CN"}:
+                    errors.append(f"{where}: {field} must contain exact en and zh-CN keys")
+                    continue
+                english = localized["en"]
+                chinese = localized["zh-CN"]
+                if not isinstance(english, str) or len(ENGLISH_WORD.findall(english)) < 3:
+                    errors.append(f"{where}: {field}.en is not substantive")
+                if not isinstance(chinese, str) or len(CHINESE.findall(chinese)) < 4:
+                    errors.append(f"{where}: {field}.zh-CN is not substantive")
+                elif "待补充" in chinese:
+                    errors.append(f"{where}: {field}.zh-CN still contains a placeholder")
+    missing = sorted(set(expected) - set(seen))
+    if missing:
+        errors.append(f"missing NDF supplements: {', '.join(missing)}")
+    return errors
+
+
+def main() -> int:
+    errors = validate(ROOT)
+    if errors:
+        print("\n".join(f"error: {error}" for error in errors), file=sys.stderr)
+        return 1
+    print("NDF bilingual supplements passed: 405 explicit clauses")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

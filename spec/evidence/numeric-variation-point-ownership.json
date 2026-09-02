@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "artifact_id": "numeric-variation-point-ownership",
-  "target": "S5-T2-A4:ADR-0095",
-  "decision_id": "ADR-0095",
+  "target": "S5-T2-A4:ADR-NUM-0022",
+  "decision_id": "ADR-NUM-0022",
   "status": "variation-point-discovery-and-ownership-closed-result-bounds-open",
-  "acceptance_record": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+  "acceptance_record": "docs/status/decisions/NUM-0005-numeric-variation-point-ownership.md",
   "policy": {
     "applies_to": "Named target-conformance profiles; pto-v0 remains a deterministic raw-carrier reference and is not a target result fallback.",
     "authority": "Every open numeric dimension remains owned by pto-numeric-v1 until an accepted PTO decision delegates the exact variation point.",
@@ -62,10 +62,10 @@
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0094",
+        "primary_decision_id": "ADR-NUM-0021",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -130,10 +130,10 @@
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0094",
+        "primary_decision_id": "ADR-NUM-0021",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -198,10 +198,10 @@
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -252,7 +252,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/cube-matrix",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -285,10 +285,10 @@
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0094",
+        "primary_decision_id": "ADR-NUM-0021",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -369,10 +369,10 @@
       ],
       "requirement_id": "PTO-REQ-CUBE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -425,10 +425,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -479,7 +479,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-binary",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -500,10 +500,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -556,10 +556,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -612,10 +612,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0049",
+        "primary_decision_id": "ADR-NUM-0010",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -668,10 +668,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0089",
+        "primary_decision_id": "ADR-NUM-0016",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -721,10 +721,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0087",
+        "primary_decision_id": "ADR-NUM-0014",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -786,10 +786,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -840,7 +840,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-fp-convert",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -858,10 +858,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -911,10 +911,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0090",
+        "primary_decision_id": "ADR-NUM-0017",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -964,10 +964,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0089",
+        "primary_decision_id": "ADR-NUM-0016",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1021,10 +1021,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1075,7 +1075,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-fp-to-integer",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -1097,10 +1097,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0090",
+        "primary_decision_id": "ADR-NUM-0017",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1154,10 +1154,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1211,10 +1211,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0090",
+        "primary_decision_id": "ADR-NUM-0017",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1284,10 +1284,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0089",
+        "primary_decision_id": "ADR-NUM-0016",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1340,10 +1340,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1394,7 +1394,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-fused",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -1415,10 +1415,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1471,10 +1471,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1527,10 +1527,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0095",
+        "primary_decision_id": "ADR-NUM-0022",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1583,10 +1583,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0089",
+        "primary_decision_id": "ADR-NUM-0016",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1637,10 +1637,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0087",
+        "primary_decision_id": "ADR-NUM-0014",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1703,10 +1703,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0087",
+        "primary_decision_id": "ADR-NUM-0014",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1769,10 +1769,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1823,7 +1823,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-integer-to-fp",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -1842,10 +1842,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0090",
+        "primary_decision_id": "ADR-NUM-0017",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1896,10 +1896,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0089",
+        "primary_decision_id": "ADR-NUM-0016",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -1951,10 +1951,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2005,7 +2005,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/scalar-unary",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -2025,10 +2025,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0091",
+        "primary_decision_id": "ADR-NUM-0018",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2080,10 +2080,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2135,10 +2135,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2190,10 +2190,10 @@
       ],
       "requirement_id": "PTO-REQ-SCALAR-FP-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0089",
+        "primary_decision_id": "ADR-NUM-0016",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2266,10 +2266,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0087",
+        "primary_decision_id": "ADR-NUM-0014",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2354,10 +2354,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2408,7 +2408,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-binary",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -2449,10 +2449,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0095",
+        "primary_decision_id": "ADR-NUM-0022",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2541,10 +2541,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0091",
+        "primary_decision_id": "ADR-NUM-0018",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2617,10 +2617,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2671,10 +2671,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0092",
+        "primary_decision_id": "ADR-NUM-0019",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2725,10 +2725,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2779,10 +2779,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2833,10 +2833,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0087",
+        "primary_decision_id": "ADR-NUM-0014",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2898,10 +2898,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0087",
+        "primary_decision_id": "ADR-NUM-0014",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -2963,10 +2963,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3017,7 +3017,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-convert",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -3035,10 +3035,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3088,10 +3088,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0090",
+        "primary_decision_id": "ADR-NUM-0017",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3141,10 +3141,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0090",
+        "primary_decision_id": "ADR-NUM-0017",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3210,10 +3210,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0093",
+        "primary_decision_id": "ADR-NUM-0020",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3263,10 +3263,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0093",
+        "primary_decision_id": "ADR-NUM-0020",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3316,10 +3316,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3370,7 +3370,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-dequantize",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -3388,10 +3388,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0090",
+        "primary_decision_id": "ADR-NUM-0017",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3441,10 +3441,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0093",
+        "primary_decision_id": "ADR-NUM-0020",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3509,10 +3509,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0087",
+        "primary_decision_id": "ADR-NUM-0014",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3589,10 +3589,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3643,7 +3643,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-expand",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -3676,10 +3676,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0091",
+        "primary_decision_id": "ADR-NUM-0018",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3744,10 +3744,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3812,10 +3812,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-EXPAND-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0095",
+        "primary_decision_id": "ADR-NUM-0022",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3881,10 +3881,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0095",
+        "primary_decision_id": "ADR-NUM-0022",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3934,10 +3934,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -3988,7 +3988,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-fused",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -4006,10 +4006,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0095",
+        "primary_decision_id": "ADR-NUM-0022",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4059,10 +4059,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0095",
+        "primary_decision_id": "ADR-NUM-0022",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4128,10 +4128,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4183,10 +4183,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0092",
+        "primary_decision_id": "ADR-NUM-0019",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4250,10 +4250,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4305,10 +4305,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4360,10 +4360,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0092",
+        "primary_decision_id": "ADR-NUM-0019",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4415,10 +4415,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-COMPLEX-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0092",
+        "primary_decision_id": "ADR-NUM-0019",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4468,10 +4468,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0093",
+        "primary_decision_id": "ADR-NUM-0020",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4521,10 +4521,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0093",
+        "primary_decision_id": "ADR-NUM-0020",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4574,10 +4574,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4628,7 +4628,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-quantize",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -4646,10 +4646,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0093",
+        "primary_decision_id": "ADR-NUM-0020",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4715,10 +4715,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-CONVERT-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0093",
+        "primary_decision_id": "ADR-NUM-0020",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4780,10 +4780,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-REDUCE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0092",
+        "primary_decision_id": "ADR-NUM-0019",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4845,10 +4845,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-REDUCE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0092",
+        "primary_decision_id": "ADR-NUM-0019",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4910,10 +4910,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-REDUCE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -4964,7 +4964,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-reduction",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -4994,10 +4994,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-REDUCE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -5059,10 +5059,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-REDUCE-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0092",
+        "primary_decision_id": "ADR-NUM-0019",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -5124,10 +5124,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0087",
+        "primary_decision_id": "ADR-NUM-0014",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -5201,10 +5201,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0047",
+        "primary_decision_id": "ADR-NUM-0008",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -5255,7 +5255,7 @@
         "profile_id": "pto-numeric-v1"
       },
       "result_rule_id": "adr0047-rounding/tile-unary",
-      "result_acceptance_record": "docs/status/decisions/0047-numeric-rounding-semantics.md",
+      "result_acceptance_record": "docs/status/decisions/NUM-0008-numeric-rounding-semantics.md",
       "missing_rule_disposition": "reject-before-effects",
       "status": "portable-rounding-rule-accepted"
     },
@@ -5285,10 +5285,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0091",
+        "primary_decision_id": "ADR-NUM-0018",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -5350,10 +5350,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0088",
+        "primary_decision_id": "ADR-NUM-0015",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -5415,10 +5415,10 @@
       ],
       "requirement_id": "PTO-REQ-TEPL-001",
       "decision_ownership": {
-        "primary_decision_id": "ADR-0095",
+        "primary_decision_id": "ADR-NUM-0022",
         "cross_cutting_decision_ids": [
-          "ADR-0086",
-          "ADR-0095"
+          "ADR-NUM-0013",
+          "ADR-NUM-0022"
         ]
       },
       "decision_owner_kind": "portable-architecture",
@@ -8321,7 +8321,7 @@
       "sha256": "851aa222c5c9f5cb0e192ab7e753f1501a6819c8de8aebcd99aef574815d07a8"
     },
     {
-      "path": "docs/status/decisions/0042-numeric-variation-point-ownership.md",
+      "path": "docs/status/decisions/NUM-0005-numeric-variation-point-ownership.md",
       "sha256": "f25df23306837e4199f6b7c03f70de853a693fdc6435c65ead57b2a174076081"
     }
   ],

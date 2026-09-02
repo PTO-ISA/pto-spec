@@ -4877,7 +4877,7 @@
       "name": "TFILLPAD",
       "public_symbol": "TFILLPAD",
       "disposition": "retired-from-active-release-reserved-illegal",
-      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
+      "resolution": "ADR-CUBE-0013 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     },
     {
       "name": "TFREE",
@@ -4901,7 +4901,7 @@
       "name": "TPARTADD",
       "public_symbol": "TPARTADD",
       "disposition": "retired-from-active-release-reserved-illegal",
-      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
+      "resolution": "ADR-CUBE-0013 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     },
     {
       "name": "TPARTARGMAX",
@@ -4919,19 +4919,19 @@
       "name": "TPARTMAX",
       "public_symbol": "TPARTMAX",
       "disposition": "retired-from-active-release-reserved-illegal",
-      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
+      "resolution": "ADR-CUBE-0013 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     },
     {
       "name": "TPARTMIN",
       "public_symbol": "TPARTMIN",
       "disposition": "retired-from-active-release-reserved-illegal",
-      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
+      "resolution": "ADR-CUBE-0013 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     },
     {
       "name": "TPARTMUL",
       "public_symbol": "TPARTMUL",
       "disposition": "retired-from-active-release-reserved-illegal",
-      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
+      "resolution": "ADR-CUBE-0013 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     },
     {
       "name": "TPOP",
@@ -4955,7 +4955,7 @@
       "name": "TTRANS",
       "public_symbol": "TTRANS",
       "disposition": "retired-from-active-release-reserved-illegal",
-      "resolution": "ADR-0103 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
+      "resolution": "ADR-CUBE-0013 retires this pinned public symbol from the active PTO ISA; its former selector is reserved-illegal and has no accepted alias or replacement."
     }
   ]
 }

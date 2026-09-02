@@ -28,7 +28,16 @@ STAGES = (
     "released",
 )
 COMMIT = re.compile(r"[0-9a-f]{40}\Z")
-ADR_ID = re.compile(r"ADR-[0-9]{4}\Z")
+ADR_TYPE_ORDER = ("GOV", "STATE", "MEM", "BLOCK", "SCALAR", "TILE", "CUBE", "NUM")
+ADR_TYPE_INDEX = {adr_type: index for index, adr_type in enumerate(ADR_TYPE_ORDER)}
+ADR_ID = re.compile(rf"ADR-(?:{'|'.join(ADR_TYPE_ORDER)})-[0-9]{{4}}\Z")
+
+
+def _adr_sort_key(adr_id: str) -> tuple[int, int]:
+    if ADR_ID.fullmatch(adr_id) is None:
+        raise ValueError(f"invalid ADR identity {adr_id!r}")
+    _, adr_type, serial = adr_id.split("-")
+    return (ADR_TYPE_INDEX[adr_type], int(serial))
 
 
 @dataclass(frozen=True)
@@ -74,9 +83,7 @@ def _strings(value: object, field: str) -> tuple[str, ...]:
     return items
 
 
-def _digest_rows(
-    rows: tuple[dict[str, object], ...], *, label: str
-) -> dict[str, str]:
+def _digest_rows(rows: tuple[dict[str, object], ...], *, label: str) -> dict[str, str]:
     indexed = _unique_rows(rows, "id", label)
     digests: dict[str, str] = {}
     for row_id, row in indexed.items():
@@ -137,16 +144,23 @@ def validate_selection(
     )
     if included_statuses != ("accepted",):
         raise ValueError("release selection must include every accepted NDF")
-    excluded = _strings(
-        selection.get("excluded_draft_adrs"), "excluded_draft_adrs"
-    )
-    if tuple(sorted(excluded)) != excluded:
+    excluded = _strings(selection.get("excluded_draft_adrs"), "excluded_draft_adrs")
+    if any(ADR_ID.fullmatch(adr_id) is None for adr_id in excluded):
+        raise ValueError(
+            "release selection draft exclusion contains an invalid ADR identity"
+        )
+    if tuple(sorted(excluded, key=_adr_sort_key)) != excluded:
         raise ValueError("release selection draft exclusion must be sorted")
     floor = selection.get("required_readiness_floor")
     if floor not in STAGES or floor in {"draft", "architecture-defined", "modeled"}:
-        raise ValueError("release selection readiness floor must be executable or later")
+        raise ValueError(
+            "release selection readiness floor must be executable or later"
+        )
 
     adrs = _unique_rows(adr_records, "id", "ADR")
+    for adr_id in adrs:
+        if ADR_ID.fullmatch(adr_id) is None:
+            raise ValueError(f"ADR contains an invalid identity {adr_id!r}")
     readiness = _unique_rows(readiness_rows, "subject_id", "readiness subject")
     ndf = _unique_rows(ndf_rows, "id", "NDF")
     unknown_excluded = sorted(set(excluded) - set(adrs))
@@ -156,39 +170,50 @@ def validate_selection(
         adr_id for adr_id in excluded if adrs[adr_id].get("status") != "draft"
     )
     if accepted_excluded:
-        raise ValueError(f"draft exclusion contains accepted ADR {accepted_excluded[0]}")
-    drafts = tuple(sorted(
-        adr_id for adr_id, row in adrs.items() if row.get("status") == "draft"
-    ))
+        raise ValueError(
+            f"draft exclusion contains accepted ADR {accepted_excluded[0]}"
+        )
+    drafts = tuple(
+        sorted(
+            (adr_id for adr_id, row in adrs.items() if row.get("status") == "draft"),
+            key=_adr_sort_key,
+        )
+    )
     if excluded != drafts:
         raise ValueError("release selection draft exclusion is incomplete")
 
-    current_selected_ndf = tuple(sorted(
-        ndf_id for ndf_id, row in ndf.items() if row.get("status") in included_statuses
-    ))
+    current_selected_ndf = tuple(
+        sorted(
+            ndf_id
+            for ndf_id, row in ndf.items()
+            if row.get("status") in included_statuses
+        )
+    )
     if not current_selected_ndf:
         raise ValueError("release selection contains no accepted NDF clauses")
     current_selected_ndf_set = set(current_selected_ndf)
     current_unit_ids = {
-        row.get("id")
-        for row in unit_rows
-        if isinstance(row.get("id"), str)
+        row.get("id") for row in unit_rows if isinstance(row.get("id"), str)
     }
-    current_selected_adrs = tuple(sorted(
-        adr_id
-        for adr_id, row in adrs.items()
-        if row.get("status") == "accepted"
-        and (
-            current_selected_ndf_set.intersection(row.get("affected_ndf", ()))
-            or current_unit_ids.intersection(row.get("affected_units", ()))
+    current_selected_adrs = tuple(
+        sorted(
+            (
+                adr_id
+                for adr_id, row in adrs.items()
+                if row.get("status") == "accepted"
+                and (
+                    current_selected_ndf_set.intersection(row.get("affected_ndf", ()))
+                    or current_unit_ids.intersection(row.get("affected_units", ()))
+                )
+            ),
+            key=_adr_sort_key,
         )
-    ))
+    )
     current_digests = tuple(
         (ndf_id, str(ndf[ndf_id]["sha256"])) for ndf_id in current_selected_ndf
     )
     if any(
-        re.fullmatch(r"[0-9a-f]{64}", digest) is None
-        for _, digest in current_digests
+        re.fullmatch(r"[0-9a-f]{64}", digest) is None for _, digest in current_digests
     ):
         raise ValueError("selected NDF digest is invalid")
     selected_ndf = current_selected_ndf
@@ -210,9 +235,7 @@ def validate_selection(
             not isinstance(row, dict) for row in expanded_ndf
         ):
             raise ValueError("baseline manifest expanded NDF rows are invalid")
-        baseline_ndf_digests = _digest_rows(
-            tuple(expanded_ndf), label="baseline NDF"
-        )
+        baseline_ndf_digests = _digest_rows(tuple(expanded_ndf), label="baseline NDF")
         current_ndf_digests = dict(current_digests)
         baseline_unit_digests = _digest_rows(
             baseline_unit_rows, label="baseline ASL unit"
@@ -289,10 +312,9 @@ def validate_selection(
         stage = row.get("stage")
         if stage not in STAGES:
             raise ValueError(f"readiness subject {adr_id} has an invalid stage")
-        if (
-            architecture_version in record.get("target_releases", ())
-            or publication_version in record.get("target_releases", ())
-        ):
+        if architecture_version in record.get(
+            "target_releases", ()
+        ) or publication_version in record.get("target_releases", ()):
             if adr_id not in selected_adrs or STAGES.index(stage) < floor_index:
                 raise ValueError(
                     f"target release ADR {adr_id} is below required readiness floor"
@@ -390,11 +412,15 @@ def _baseline_inputs(
     try:
         resolved = _git(root, "rev-parse", "--verify", f"{baseline}^{{commit}}")
     except subprocess.CalledProcessError as exc:
-        raise ValueError("release selection baseline_commit cannot be resolved") from exc
+        raise ValueError(
+            "release selection baseline_commit cannot be resolved"
+        ) from exc
     if resolved.stdout.decode("ascii").strip() != baseline:
         raise ValueError("release selection baseline_commit does not resolve exactly")
     if (
-        _git(root, "merge-base", "--is-ancestor", baseline, "HEAD", check=False).returncode
+        _git(
+            root, "merge-base", "--is-ancestor", baseline, "HEAD", check=False
+        ).returncode
         != 0
     ):
         raise ValueError("release selection baseline_commit is not an ancestor of HEAD")
@@ -417,9 +443,13 @@ def _baseline_inputs(
     if not isinstance(identity, str) or not identity:
         raise ValueError("baseline manifest release identity is invalid")
     try:
-        tagged = _git(root, "rev-parse", "--verify", f"refs/tags/v{identity}^{{commit}}")
+        tagged = _git(
+            root, "rev-parse", "--verify", f"refs/tags/v{identity}^{{commit}}"
+        )
     except subprocess.CalledProcessError as exc:
-        raise ValueError(f"baseline immutable tag v{identity} cannot be resolved") from exc
+        raise ValueError(
+            f"baseline immutable tag v{identity} cannot be resolved"
+        ) from exc
     if tagged.stdout.decode("ascii").strip() != baseline:
         raise ValueError(
             f"release selection baseline_commit does not equal immutable tag v{identity}"
@@ -486,8 +516,7 @@ def manifest_selection(result: ReleaseSelectionResult) -> dict[str, object]:
         "required_readiness_floor": result.required_readiness_floor,
         "selected_adr_ids": list(result.selected_adr_ids),
         "expanded_ndf": [
-            {"id": ndf_id, "sha256": digest}
-            for ndf_id, digest in result.ndf_digests
+            {"id": ndf_id, "sha256": digest} for ndf_id, digest in result.ndf_digests
         ],
         "blockers": list(result.blockers),
     }

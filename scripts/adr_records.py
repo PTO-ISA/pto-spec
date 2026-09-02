@@ -25,6 +25,7 @@ class AdrAmendment:
 class AdrRecord:
     adr_id: str
     title: str
+    title_zh: str
     status: str
     authors: tuple[str, ...]
     approvers: tuple[str, ...]
@@ -51,6 +52,7 @@ class AdrRecord:
 _FIELDS = {
     "id",
     "title",
+    "title_zh",
     "status",
     "authors",
     "approvers",
@@ -73,12 +75,12 @@ _FIELDS = {
     "legacy_ids",
 }
 _OPTIONAL_FIELDS = {"release_boundary", "interface_change", "amendments"}
-_ADR_ID = re.compile(r"ADR-[0-9]{4}\Z")
+ADR_TYPE_ORDER = ("GOV", "STATE", "MEM", "BLOCK", "SCALAR", "TILE", "CUBE", "NUM")
+_ADR_TYPE_INDEX = {adr_type: index for index, adr_type in enumerate(ADR_TYPE_ORDER)}
+_ADR_ID = re.compile(rf"ADR-(?:{'|'.join(ADR_TYPE_ORDER)})-[0-9]{{4}}\Z")
 _BASELINE = re.compile(r"[0-9a-f]{40}\Z")
 _RELEASE = re.compile(r"(?:[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?|unassigned)\Z")
 _NDF_ID = re.compile(r"PTO-[A-Z0-9]+(?:-[A-Z0-9]+)*\Z")
-_NEW_ADR_INTERFACE_FLOOR = 111
-_RESERVED_ADR_IDS = frozenset({"ADR-0104"})
 _AMENDMENT_FIELDS = {
     "date",
     "baseline",
@@ -87,7 +89,9 @@ _AMENDMENT_FIELDS = {
     "affected_ndf",
     "affected_units",
 }
-_LEGACY_ID = re.compile(r"(?:PRD-[0-9]{3}|PDR-[0-9]{3}|PD-[0-9]{2}(?:-[A-Z0-9]+)?)\Z")
+_LEGACY_ID = re.compile(
+    r"(?:ADR-[0-9]{4}|PRD-[0-9]{3}|PDR-[0-9]{3}|PD-[0-9]{2}(?:-[A-Z0-9]+)?)\Z"
+)
 _URI_LABEL = r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?"
 _URI_HOST = rf"{_URI_LABEL}(?:\.{_URI_LABEL})*"
 _URI_PORT = (
@@ -126,8 +130,20 @@ def _error(path: Path, message: str) -> ValueError:
     return ValueError(f"{path}: {message}")
 
 
+def adr_sort_key(adr_id: str) -> tuple[int, int]:
+    """Return the canonical category/serial ordering for a validated ADR ID."""
+    match = _ADR_ID.fullmatch(adr_id)
+    if match is None:
+        raise ValueError(f"invalid ADR id: {adr_id!r}")
+    _, adr_type, serial = adr_id.split("-")
+    return (_ADR_TYPE_INDEX[adr_type], int(serial))
+
+
 def _string(
-    metadata: dict[str, object], key: str, path: Path, pattern: re.Pattern[str] | None = None
+    metadata: dict[str, object],
+    key: str,
+    path: Path,
+    pattern: re.Pattern[str] | None = None,
 ) -> str:
     value = metadata[key]
     if not isinstance(value, str) or not value:
@@ -215,7 +231,11 @@ def _reject_downstream_identifiers(
     path: Path, field: str, identifiers: tuple[str, ...]
 ) -> None:
     downstream = next(
-        (identifier for identifier in identifiers if identifier.startswith("PTO-MODEL-")),
+        (
+            identifier
+            for identifier in identifiers
+            if identifier.startswith("PTO-MODEL-")
+        ),
         None,
     )
     if downstream is not None:
@@ -239,13 +259,19 @@ def _amendments(metadata: dict[str, object], path: Path) -> tuple[AdrAmendment, 
         missing = sorted(_AMENDMENT_FIELDS - item.keys())
         unknown = sorted(item.keys() - _AMENDMENT_FIELDS)
         if missing or unknown:
-            raise _error(path, f"{where} fields mismatch: missing={missing}, unknown={unknown}")
+            raise _error(
+                path, f"{where} fields mismatch: missing={missing}, unknown={unknown}"
+            )
         date_value = _date(_string(item, "date", path), f"{where}.date", path)
         baseline = _string(item, "baseline", path, _BASELINE)
         approvers = _strings(item, "approvers", path, min_items=1)
         issue = _absolute_uri(_string(item, "issue", path), f"{where}.issue", path)
-        affected_ndf = _strings(item, "affected_ndf", path, min_items=1, pattern=_NDF_ID)
-        affected_units = _strings(item, "affected_units", path, min_items=1, pattern=_NDF_ID)
+        affected_ndf = _strings(
+            item, "affected_ndf", path, min_items=1, pattern=_NDF_ID
+        )
+        affected_units = _strings(
+            item, "affected_units", path, min_items=1, pattern=_NDF_ID
+        )
         _reject_downstream_identifiers(path, f"{where}.affected_ndf", affected_ndf)
         _reject_downstream_identifiers(path, f"{where}.affected_units", affected_units)
         identity = (date_value, baseline, issue)
@@ -278,13 +304,15 @@ def parse_adr(path: Path) -> AdrRecord:
         raise _error(path, f"unknown fields: {', '.join(unknown)}")
 
     adr_id = _string(metadata, "id", path, _ADR_ID)
-    if adr_id in _RESERVED_ADR_IDS:
-        raise _error(path, f"reserved historical ADR number cannot be reused: {adr_id}")
-    filename = re.fullmatch(r"([0-9]{4})-.+\.md", path.name)
-    if filename is None or filename.group(1) != adr_id.removeprefix("ADR-"):
+    _, adr_type, serial = adr_id.split("-")
+    filename = re.fullmatch(
+        r"([A-Z]+)-([0-9]{4})-[a-z0-9]+(?:-[a-z0-9]+)*\.md", path.name
+    )
+    if filename is None or filename.groups() != (adr_type, serial):
         raise _error(path, f"filename does not match {adr_id}")
 
     title = _string(metadata, "title", path)
+    title_zh = _string(metadata, "title_zh", path)
     authors = _strings(metadata, "authors", path, min_items=1)
     approvers = _strings(metadata, "approvers", path)
     created = _date(_string(metadata, "created", path), "created", path)
@@ -305,9 +333,7 @@ def parse_adr(path: Path) -> AdrRecord:
     resolves = _strings(metadata, "resolves", path, pattern=_ADR_ID)
     supersedes = _strings(metadata, "supersedes", path, pattern=_ADR_ID)
     superseded_by = _strings(metadata, "superseded_by", path, pattern=_ADR_ID)
-    implementation_issue = _optional_string(
-        metadata, "implementation_issue", path
-    )
+    implementation_issue = _optional_string(metadata, "implementation_issue", path)
     if implementation_issue is not None:
         implementation_issue = _absolute_uri(
             implementation_issue, "implementation_issue", path
@@ -321,21 +347,24 @@ def parse_adr(path: Path) -> AdrRecord:
     interface_change = metadata.get("interface_change", False)
     if not isinstance(interface_change, bool):
         raise _error(path, "interface_change must be a boolean")
-    adr_number = int(adr_id.removeprefix("ADR-"))
-    if adr_number >= _NEW_ADR_INTERFACE_FLOOR and not interface_change:
+    legacy_ids = _strings(metadata, "legacy_ids", path, pattern=_LEGACY_ID)
+    migrated_from_adr = any(re.fullmatch(r"ADR-[0-9]{4}", item) for item in legacy_ids)
+    if not migrated_from_adr and not interface_change:
         raise _error(
             path,
-            "new ADR numbers require interface_change=true; implementation and ASL "
+            "new typed ADRs require interface_change=true; implementation and ASL "
             "bug fixes must update their existing decision owner",
         )
     amendments = _amendments(metadata, path)
     for amendment in amendments:
         if not set(amendment.affected_ndf).issubset(affected_ndf):
-            raise _error(path, "amendment affected_ndf must be included in ADR affected_ndf")
+            raise _error(
+                path, "amendment affected_ndf must be included in ADR affected_ndf"
+            )
         if not set(amendment.affected_units).issubset(affected_units):
-            raise _error(path, "amendment affected_units must be included in ADR affected_units")
-    legacy_ids = _strings(metadata, "legacy_ids", path, pattern=_LEGACY_ID)
-
+            raise _error(
+                path, "amendment affected_units must be included in ADR affected_units"
+            )
     if status == "accepted":
         if not approvers:
             raise _error(path, "accepted ADR requires approvers")
@@ -354,6 +383,7 @@ def parse_adr(path: Path) -> AdrRecord:
     return AdrRecord(
         adr_id=adr_id,
         title=title,
+        title_zh=title_zh,
         status=status,
         authors=authors,
         approvers=approvers,
@@ -386,7 +416,12 @@ def load_adrs(root: Path) -> tuple[AdrRecord, ...]:
         for path in root.rglob("*.md")
         if path.is_file() and path.suffix == ".md" and path.name != "0000-template.md"
     )
-    return tuple(parse_adr(path) for path in paths)
+    return tuple(
+        sorted(
+            (parse_adr(path) for path in paths),
+            key=lambda row: adr_sort_key(row.adr_id),
+        )
+    )
 
 
 def validate_adr_graph(records: Sequence[AdrRecord]) -> list[str]:
@@ -401,18 +436,19 @@ def validate_adr_graph(records: Sequence[AdrRecord]) -> list[str]:
         else:
             by_id[record.adr_id] = record
 
-    future_numbers = sorted(
-        int(adr_id.removeprefix("ADR-"))
-        for adr_id in by_id
-        if int(adr_id.removeprefix("ADR-")) >= _NEW_ADR_INTERFACE_FLOOR
-    )
-    if future_numbers:
-        expected = list(range(_NEW_ADR_INTERFACE_FLOOR, future_numbers[-1] + 1))
-        if future_numbers != expected:
-            errors.append(
-                "new ADR numbers must be contiguous from ADR-0111; "
-                f"found {future_numbers}"
-            )
+    for adr_type in ADR_TYPE_ORDER:
+        serials = sorted(
+            int(adr_id.rsplit("-", 1)[1])
+            for adr_id in by_id
+            if adr_id.startswith(f"ADR-{adr_type}-")
+        )
+        if serials:
+            expected = list(range(1, serials[-1] + 1))
+            if serials != expected:
+                errors.append(
+                    f"{adr_type} ADR serials must be contiguous from 0001; "
+                    f"found {serials}"
+                )
 
     legacy_owner: dict[str, AdrRecord] = {}
     for record in records:
@@ -472,7 +508,7 @@ def validate_adr_graph(records: Sequence[AdrRecord]) -> list[str]:
         stack.pop()
         colors[adr_id] = 2
 
-    for adr_id in sorted(by_id):
+    for adr_id in sorted(by_id, key=adr_sort_key):
         if colors.get(adr_id, 0) == 0:
             visit(adr_id, [])
 

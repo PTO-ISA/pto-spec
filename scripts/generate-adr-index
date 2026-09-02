@@ -15,7 +15,12 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.adr_records import AdrRecord, load_adrs, validate_adr_graph
+from scripts.adr_records import (  # noqa: E402
+    ADR_TYPE_ORDER,
+    AdrRecord,
+    load_adrs,
+    validate_adr_graph,
+)
 
 
 DEFAULT_OUTPUT = ROOT / "spec/evidence/adr-index.json"
@@ -45,16 +50,31 @@ def _index() -> dict[str, object]:
         for record in records
         for legacy_id in record.legacy_ids
     }
+    legacy_adr_map = {
+        legacy_id: record.adr_id
+        for record in records
+        for legacy_id in record.legacy_ids
+        if re.fullmatch(r"ADR-[0-9]{4}", legacy_id)
+    }
+    type_counts = {
+        adr_type: sum(
+            record.adr_id.startswith(f"ADR-{adr_type}-") for record in records
+        )
+        for adr_type in ADR_TYPE_ORDER
+    }
     drafts = [record.adr_id for record in records if record.status == "draft"]
     return {
         "schema": "pto.adr-index",
         "records": [_record_row(record) for record in records],
         "legacy_map": dict(sorted(legacy_map.items())),
-        "open": sorted(drafts),
+        "legacy_adr_map": dict(sorted(legacy_adr_map.items())),
+        "type_order": list(ADR_TYPE_ORDER),
+        "open": drafts,
         "summary": {
             "record_count": len(records),
             "draft_count": len(drafts),
             "legacy_id_count": len(legacy_map),
+            "type_counts": type_counts,
         },
     }
 

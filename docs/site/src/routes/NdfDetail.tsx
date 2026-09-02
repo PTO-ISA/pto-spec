@@ -10,7 +10,10 @@ import styles from '@site/src/components/CatalogIndex.module.css';
 export default function NdfDetail({detail}: {detail: PtoNdfDetailData}): React.JSX.Element {
   const chinese = useLocation().pathname.startsWith('/zh-CN/');
   return (
-    <PortalShell title={detail.clause.id} description={detail.clause.text} currentPageLabel={detail.clause.id}>
+    <PortalShell
+      title={`${detail.clause.id} · ${detail.clause.title[chinese ? 'zh-CN' : 'en']}`}
+      description={detail.clause.summary[chinese ? 'zh-CN' : 'en']}
+      currentPageLabel={detail.clause.id}>
       <main className={styles.page}>
         <header className={styles.hero}>
           <div>

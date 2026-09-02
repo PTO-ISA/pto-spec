@@ -1,0 +1,247 @@
+---
+{
+  "id": "ADR-NUM-0010",
+  "title": "Hardware numeric subnormal policy",
+  "title_zh": "硬件数值非规格化数策略",
+  "status": "accepted",
+  "authors": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "approvers": [
+    "Kevin Zhou <zhoubot@gmail.com>"
+  ],
+  "created": "2026-08-01",
+  "accepted": "2026-08-01",
+  "rejected": null,
+  "superseded": null,
+  "baseline": "0e0fc43b42a7d9417bb8650e604c02e6b67852f2",
+  "target_releases": [
+    "unassigned"
+  ],
+  "affected_ndf": [
+    "PTO-NUMERIC-FINITE-DECOMPOSITION-001",
+    "PTO-NUMERIC-FORMAT-DESCRIPTOR-001"
+  ],
+  "affected_units": [
+    "PTO-ARCH-DATA-TYPES-FORMAT-DESCRIPTOR",
+    "PTO-ARCH-DATA-TYPES-NUMERIC-FORMATS",
+    "PTO-ARCH-PROFILE-APPLICABILITY"
+  ],
+  "resolves": [],
+  "supersedes": [],
+  "superseded_by": [],
+  "implementation_issue": null,
+  "release_impact": "required",
+  "legacy_ids": [
+    "PD-04",
+    "ADR-0049"
+  ]
+}
+---
+# ADR-NUM-0010: Hardware numeric subnormal policy
+
+> Historical-evidence note: test paths named below record the evidence used when this ADR was accepted; they are not active architecture or release owners. Current ownership is the four-surface ASL tree, with per-ID AVS coverage projected into `spec/evidence/release-traceability-readiness.json`.
+
+## Decision scope
+
+For the named `pto-hardware-numeric-0.57.1-ieee-v1` profile, this decision
+completes subnormal handling for every otherwise-supported operation/type tuple. It does not
+change the active `pto-v0` raw-carrier profile or close any operation/type
+support tuple.
+
+## Affected domains
+
+- `cube-matrix`
+- `scalar-binary`
+- `scalar-fp-convert`
+- `scalar-fused`
+- `scalar-unary`
+- `tile-binary`
+- `tile-convert`
+- `tile-dequantize`
+- `tile-expand`
+- `tile-fused`
+- `tile-partial`
+- `tile-quantize`
+- `tile-reduction`
+- `tile-unary`
+
+## Context
+
+ADR 0048 made the subnormal encodings of eleven PTO numeric types executable,
+but it deliberately left input handling, result underflow, tininess, and mode
+selection open. The hardware profile already required support for every
+subnormal encoding defined by those formats, prohibited flush-to-zero and
+denormals-are-zero behavior, and selected after-rounding tininess detection.
+Leaving subnormal handling open despite that profile text would permit an implementation to
+invent hidden mode state or silently apply a backend-specific shortcut.
+
+## Decision
+
+### Input and result rules
+
+For every otherwise-supported operation/type tuple in the named hardware
+profile:
+
+- a source format that defines subnormal encodings preserves the exact source
+  value; there is no denormals-are-zero input transform;
+- a destination format that defines subnormal encodings uses gradual
+  underflow; there is no flush-to-zero result transform; and
+- tininess is detected after rounding.
+
+Input preservation and result gradual underflow are distinct typed ASL rules.
+A tuple can consume a format with subnormals, produce one, or do both. This
+decision applies only to the side that exists for that tuple. A format without
+subnormal encodings reports the rule as not applicable.
+
+This policy does not make an unsupported operation/type tuple legal. Profile
+support and numeric result semantics remain separate obligations under ADR
+0037.
+
+### Selection and configuration
+
+The policy is fixed by the profile identifier. PTO 0.57.1 exposes:
+
+- no architectural FTZ or DAZ mode bit;
+- no reset, save, restore, or trap-context state for subnormal modes; and
+- no operation-local subnormal override.
+
+A conformance configuration that requests FTZ, DAZ, or an operation-local
+override is not this profile and must reject before architectural effects. An
+implementation must not infer the request from backend state.
+
+### Exact format boundaries
+
+The ASL exposes exact raw encodings for the minimum positive subnormal,
+maximum positive subnormal, and minimum positive normal:
+
+| Type | Minimum subnormal | Maximum subnormal | Minimum normal |
+| --- | ---: | ---: | ---: |
+| FP64 | `0x0000000000000001` | `0x000FFFFFFFFFFFFF` | `0x0010000000000000` |
+| FP32 | `0x00000001` | `0x007FFFFF` | `0x00800000` |
+| TF32 | `0x00002000` | `0x007FE000` | `0x00800000` |
+| HF32 | `0x00001000` | `0x007FF000` | `0x00800000` |
+| FP16 | `0x0001` | `0x03FF` | `0x0400` |
+| BF16 | `0x0001` | `0x007F` | `0x0080` |
+| HiF8 | `0x01` | `0x07` | `0x08` |
+| E4M3 | `0x01` | `0x07` | `0x08` |
+| E5M2 | `0x01` | `0x03` | `0x04` |
+| E3M2 | `0x01` | `0x03` | `0x04` |
+| E2M3 | `0x01` | `0x07` | `0x08` |
+
+TF32 and HF32 boundaries retain their required low zero bits. E3M2 and E2M3
+boundaries retain their required carrier-high zero bits. Applying the format's
+sign bit to either subnormal endpoint produces the corresponding negative
+subnormal.
+
+### Domain applicability
+
+The generated subnormal contract enumerates every affected domain, operation key,
+profile hook, and each operation's eleven conditional format rows from the
+numeric decision-input and contract ledgers. Its 93 compressed operation rows
+therefore represent 1,023 operation/type obligations instead of relying on
+mnemonic families or backend behavior. Operation-specific special values,
+exception flags, range results, approximation error, reduction ties,
+quantization equations, and matrix precision remain owned by ADR 0088 through
+ADR 0095. ADR 0050 separately owns the bounded checkpoint for produced
+canonical NaNs, comparison NaN/signed-zero results, and MIN/MAX NaN/signed-zero
+results; it does not relax this subnormal policy or create operation/type
+support.
+
+## Rejected alternatives
+
+- **Add hidden FTZ/DAZ state.** Rejected because no PTO 0.57.1 architectural
+  selector, reset rule, lifetime, or trap-context field owns such state.
+- **Make backend state select the rule.** Rejected because target variation
+  must cross a named profile or visible architectural selector.
+- **Default to FTZ for performance.** Rejected because it contradicts the
+  named hardware profile and changes both source and result values.
+- **Apply the rule to `pto-v0`.** Rejected because `pto-v0` remains the
+  architecture's deterministic raw-carrier reference profile.
+
+## Consequences
+
+Subnormal handling is complete for the named hardware profile. The accepted numeric
+decision count increases to two of twelve. This decision does not complete a
+numeric domain because every affected domain still has other open decision
+dimensions, and it does not select a generic implementation-defined variation
+route. ADR 0095 must still make every remaining target variation discoverable and
+bounded.
+
+## Verification obligations
+
+Executable assertions cover:
+
+- exact positive and negative minimum/maximum subnormal encodings;
+- the minimum normal boundary for every subnormal-capable type;
+- preserved-input and gradual-underflow rule selection;
+- formats for which the rule is not applicable;
+- rejection of FTZ, DAZ, and operation-local overrides; and
+- the existing invalid internal TF32, HF32, E3M2, and E2M3 encodings.
+
+The generated evidence binds these assertions, the hardware profile, all
+affected domains and operations, and the accepted decision record.
+
+These assertions are Stage 5 profile-decision evidence. Arithmetic input/output
+and underflow-transition vectors remain required by `S5-T2-C`; accepting this decision
+does not claim that any implementation has passed them. ADR 0050's
+special-value checkpoint likewise remains profile-decision evidence rather
+than an implementation-conformance result.
+
+## Evidence
+
+- `asl/types.asl`
+- `asl/numeric/formats.asl`
+- `spec/hardware-conformance-profile.json`
+- `spec/evidence/numeric-subnormal-contract.json`
+- `scripts/generate-numeric-subnormal-contract`
+- `tests/asl/arch/profile/reference-profile/arch-exec-concrete-001.asl`
+- `spec/evidence/release-traceability-readiness.json`
+- `spec/evidence/numeric-profile-decision-inputs.json`
+- `spec/evidence/numeric-contracts.json`
+- `spec/evidence/numeric-format-namespace-contract.json`
+- `spec/evidence/executable-model-comparison.json`
+
+## Bilingual decision detail / 双语决策详述
+
+### Why this decision / 为什么做出此决策
+
+**English.** Leaving subnormal handling to backend state would introduce
+hidden FTZ/DAZ modes and make identical PTO inputs produce target-dependent
+values without an architectural selector.
+
+**中文。** 若把非规格化数处理留给 backend 状态，会引入隐藏 FTZ/DAZ mode，并使
+相同 PTO 输入在没有架构 selector 时产生目标相关值。
+
+### Detailed decision / 详细决策
+
+**English.** For otherwise-supported hardware tuples, subnormal inputs retain
+their values, subnormal-capable destinations use gradual underflow, and
+tininess is detected after rounding. No architectural FTZ/DAZ state or local
+override exists; exact boundary encodings and affected rows are enumerated.
+
+**中文。** 对其他条件已支持的硬件组合，非规格化输入保持其值，支持非规格化数的
+目标使用渐进下溢，并在舍入后检测 tininess。不增加架构 FTZ/DAZ 状态或局部
+override；精确边界编码及受影响行均被枚举。
+
+### What changed / 改动内容
+
+#### English
+
+- Fixed input preservation, gradual underflow, and after-rounding tininess.
+- Rejected hidden FTZ, DAZ, and backend-selected behavior.
+- Added exact subnormal/normal boundaries and applicability evidence.
+
+#### 中文
+
+- 固定输入保持、渐进下溢与舍入后 tininess。
+- 拒绝隐藏 FTZ、DAZ 及 backend 自选行为。
+- 增加精确非规格化/规格化边界与适用性证据。
+
+### Scope and boundaries / 范围与边界
+
+**English.** This policy does not make unsupported tuples legal or settle
+special values, flags, range, reduction, quantization, or matrix precision.
+
+**中文。** 本策略不使未支持组合合法，也不解决特殊值、标志、范围、归约、量化或
+矩阵精度。

@@ -20,7 +20,7 @@
     },
     "excluded_draft_adrs": {
       "items": {
-        "pattern": "^ADR-[0-9]{4}$",
+        "pattern": "^ADR-(GOV|STATE|MEM|BLOCK|SCALAR|TILE|CUBE|NUM)-[0-9]{4}$",
         "type": "string"
       },
       "type": "array",
