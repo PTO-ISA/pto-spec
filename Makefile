@@ -85,10 +85,8 @@ check-mnemonic-explanations:
 	python3 scripts/generate-mnemonic-description-inventory --check
 	./scripts/generate-mnemonic-description-coverage --check
 
-pr-check: check-asl-layout check-ndf check-adrs check-asl-tests check-decoder-partition check-projections check-publication-hygiene check-release-event-schema
-	./scripts/check-release-workflow
-	python3 -m unittest discover -s tests/scripts -p 'test_*.py'
-	git diff --check
+pr-check:
+	./scripts/check-pr
 
 repo-check: $(SPEC)
 	./scripts/check-repository

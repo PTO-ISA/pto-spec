@@ -1,0 +1,168 @@
+#!/usr/bin/env python3
+"""Run Python test modules in isolated bounded parallel processes."""
+
+from __future__ import annotations
+
+import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
+import os
+from pathlib import Path
+import re
+import subprocess
+import sys
+import time
+from typing import Callable, Sequence, TextIO
+
+
+ROOT = Path(__file__).resolve().parent.parent
+TEST_COUNT = re.compile(r"\bRan ([0-9]+) tests?\b")
+
+
+@dataclass(frozen=True)
+class ModuleResult:
+    module: str
+    returncode: int
+    duration_seconds: float
+    test_count: int
+    stdout: str
+    stderr: str
+
+
+def discover_modules(
+    root: Path,
+    start_directory: Path = Path("tests/scripts"),
+    pattern: str = "test_*.py",
+) -> tuple[str, ...]:
+    root = root.resolve()
+    directory = (root / start_directory).resolve()
+    directory.relative_to(root)
+    return tuple(
+        ".".join(path.relative_to(root).with_suffix("").parts)
+        for path in sorted(directory.glob(pattern))
+        if path.is_file()
+    )
+
+
+def run_module(root: Path, module: str) -> ModuleResult:
+    started = time.monotonic()
+    completed = subprocess.run(
+        [sys.executable, "-m", "unittest", module],
+        cwd=root,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    duration = time.monotonic() - started
+    transcript = completed.stdout + "\n" + completed.stderr
+    match = TEST_COUNT.search(transcript)
+    return ModuleResult(
+        module=module,
+        returncode=completed.returncode,
+        duration_seconds=duration,
+        test_count=int(match.group(1)) if match is not None else 0,
+        stdout=completed.stdout,
+        stderr=completed.stderr,
+    )
+
+
+def run_modules(
+    root: Path,
+    modules: Sequence[str],
+    jobs: int,
+    *,
+    runner: Callable[[Path, str], ModuleResult] = run_module,
+) -> tuple[ModuleResult, ...]:
+    if jobs <= 0:
+        raise ValueError("jobs must be positive")
+    if not modules:
+        return ()
+    results: list[ModuleResult] = []
+    with ThreadPoolExecutor(max_workers=min(jobs, len(modules))) as executor:
+        futures = {executor.submit(runner, root, module): module for module in modules}
+        for future in as_completed(futures):
+            results.append(future.result())
+    return tuple(sorted(results, key=lambda result: result.module))
+
+
+def default_jobs() -> int:
+    configured = os.environ.get("PTO_PYTHON_TEST_JOBS")
+    if configured is not None:
+        try:
+            value = int(configured)
+        except ValueError as error:
+            raise ValueError("PTO_PYTHON_TEST_JOBS must be an integer") from error
+        if value <= 0:
+            raise ValueError("PTO_PYTHON_TEST_JOBS must be positive")
+        return value
+    return min(4, os.cpu_count() or 1)
+
+
+def main(argv: Sequence[str] | None = None, *, output: TextIO = sys.stdout) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root", type=Path, default=ROOT)
+    parser.add_argument("--start-directory", type=Path, default=Path("tests/scripts"))
+    parser.add_argument("--pattern", default="test_*.py")
+    parser.add_argument("--module", action="append", default=[])
+    parser.add_argument("-j", "--jobs", type=int)
+    parser.add_argument("--slowest", type=int, default=10)
+    arguments = parser.parse_args(argv)
+
+    try:
+        jobs = arguments.jobs if arguments.jobs is not None else default_jobs()
+        if jobs <= 0:
+            raise ValueError("jobs must be positive")
+        if arguments.slowest < 0:
+            raise ValueError("slowest must be nonnegative")
+        root = arguments.root.resolve()
+        modules = tuple(arguments.module) or discover_modules(
+            root, arguments.start_directory, arguments.pattern
+        )
+        if not modules:
+            raise ValueError("no Python test modules discovered")
+    except (OSError, ValueError) as error:
+        print(f"error: {error}", file=output)
+        return 2
+
+    started = time.monotonic()
+    results = run_modules(root, modules, jobs)
+    elapsed = time.monotonic() - started
+    failures = tuple(result for result in results if result.returncode != 0)
+
+    for result in results:
+        status = "PASS" if result.returncode == 0 else "FAIL"
+        print(
+            f"{status} {result.module} "
+            f"({result.test_count} tests, {result.duration_seconds:.3f}s)",
+            file=output,
+        )
+        if result.returncode != 0:
+            if result.stdout:
+                print(result.stdout.rstrip(), file=output)
+            if result.stderr:
+                print(result.stderr.rstrip(), file=output)
+
+    if arguments.slowest:
+        print("SLOWEST MODULES", file=output)
+        slowest = sorted(
+            results,
+            key=lambda result: (-result.duration_seconds, result.module),
+        )[: arguments.slowest]
+        for result in slowest:
+            print(
+                f"  {result.duration_seconds:9.3f}s {result.module}",
+                file=output,
+            )
+
+    print(
+        "SUMMARY "
+        f"{len(results)} modules, "
+        f"{sum(result.test_count for result in results)} tests, "
+        f"{len(failures)} failed, {elapsed:.3f}s elapsed, jobs={jobs}",
+        file=output,
+    )
+    return 1 if failures else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -25,22 +25,13 @@ class PullRequestCheckTest(unittest.TestCase):
         self.assertEqual(
             commands,
             [
-                "./scripts/check-asl-layout",
-                "./scripts/check-ndf",
                 "./scripts/check-adrs",
-                "./scripts/check-asl-tests",
+                "make --no-print-directory check-decoder-partition",
                 "./scripts/check-release-event-schema",
                 "./scripts/check-release-workflow",
                 "./scripts/check-repository --structure-only",
-                "python3 -m unittest discover -s tests/scripts -p 'test_*.py'",
-                "python3 scripts/project_asl_catalogs.py --root . --check",
-                "python3 scripts/instruction_docs.py --check",
-                "python3 scripts/generate-mnemonic-avs.py --check",
-                "python3 scripts/generate-bundle-operation-matrix.py --check",
-                "./scripts/generate-bundle-command-totality --check",
-                "./scripts/generate-public-source-reconciliation --check",
-                "python3 scripts/check-publication-hygiene",
                 "git diff --check",
+                "./scripts/run-python-tests",
             ],
         )
         lowered = "\n".join(commands).lower()
@@ -61,19 +52,8 @@ class PullRequestCheckTest(unittest.TestCase):
         self.assertIn("name: PR / source-contract", workflow)
         self.assertIn("name: PR / tooling-tests", workflow)
         self.assertIn("name: PR / validate", workflow)
-        for gate in (
-            "./scripts/check-asl-layout",
-            "./scripts/check-ndf",
-            "./scripts/check-adrs",
-            "./scripts/check-asl-tests",
-            "./scripts/check-release-event-schema",
-            "python3 scripts/project_asl_catalogs.py --root . --check",
-            "python3 scripts/instruction_docs.py --check",
-            "./scripts/generate-bundle-command-totality --check",
-            "./scripts/generate-public-source-reconciliation --check",
-            "python3 scripts/check-publication-hygiene",
-        ):
-            self.assertIn(gate, workflow)
+        self.assertEqual(workflow.count("./scripts/check-pr --source"), 1)
+        self.assertEqual(workflow.count("./scripts/check-pr --tooling"), 1)
         self.assertEqual(workflow.count("runs-on:"), 3)
         self.assertIn("needs: [source-contract, tooling-tests]", workflow)
         self.assertIn("if: always()", workflow)
@@ -99,7 +79,7 @@ class PullRequestCheckTest(unittest.TestCase):
             capture_output=True,
         )
         for command in result.stdout.splitlines():
-            self.assertEqual(workflow.count(command), 1, command)
+            self.assertNotIn(command, workflow, command)
 
     def test_pull_request_workflow_caches_only_the_ndf_tool_build(self) -> None:
         workflow = WORKFLOW.read_text(encoding="utf-8")
@@ -127,6 +107,16 @@ class PullRequestCheckTest(unittest.TestCase):
 
         self.assertNotIn('| grep -Fxq "$path"', checker)
         self.assertIn('grep -Fxq -- "$path" <<<"$assembled"', checker)
+
+    def test_local_runner_parallelizes_the_two_fail_closed_lanes(self) -> None:
+        checker = SCRIPT.read_text(encoding="utf-8")
+
+        self.assertIn('run_commands source "${source_commands[@]}" &', checker)
+        self.assertIn('run_commands tooling "${tooling_commands[@]}" &', checker)
+        self.assertIn('wait "$source_pid"', checker)
+        self.assertIn('wait "$tooling_pid"', checker)
+        self.assertIn("PR check failed: source=%s tooling=%s", checker)
+        self.assertIn("date +%s", checker)
 
     def test_repository_checker_rejects_every_obsolete_active_tree(self) -> None:
         checker = REPOSITORY_CHECK.read_text(encoding="utf-8")

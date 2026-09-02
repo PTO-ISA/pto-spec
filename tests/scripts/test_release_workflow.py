@@ -47,22 +47,7 @@ jobs:
           fetch-depth: 0
           submodules: recursive
       - name: Validate source, projection, and publication contracts
-        run: |
-          ./scripts/check-asl-layout
-          ./scripts/check-ndf
-          ./scripts/check-adrs
-          ./scripts/check-asl-tests
-          ./scripts/check-release-event-schema
-          python3 scripts/project_asl_catalogs.py --root . --check
-          python3 scripts/instruction_docs.py --check
-          python3 scripts/generate-mnemonic-avs.py --check
-          python3 scripts/generate-bundle-operation-matrix.py --check
-          ./scripts/generate-bundle-command-totality --check
-          ./scripts/generate-public-source-reconciliation --check
-          python3 scripts/check-publication-hygiene
-          ./scripts/check-release-workflow
-          ./scripts/check-repository --structure-only
-          git diff --check
+        run: ./scripts/check-pr --source
   tooling-tests:
     name: PR / tooling-tests
     runs-on: ubuntu-latest
@@ -83,7 +68,7 @@ jobs:
           path: tools/ndf/target
           key: ndf-${{ runner.os }}-${{ runner.arch }}-${{ steps.ndf-revision.outputs.sha }}-${{ hashFiles('tools/ndf/Cargo.lock') }}
       - name: Run script and NDF parity tests
-        run: python3 -m unittest discover -s tests/scripts -p 'test_*.py'
+        run: ./scripts/check-pr --tooling
   validate:
     name: PR / validate
     if: always()
@@ -301,29 +286,21 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("unexpected" in error for error in errors))
 
-    def test_pr_workflow_requires_every_lightweight_gate(self) -> None:
+    def test_pr_workflow_requires_source_contract_entrypoint(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          ./scripts/check-ndf\n",
+            "        run: ./scripts/check-pr --source\n",
             "",
         )
         errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("check-ndf" in error for error in errors))
+        self.assertTrue(any("check-pr --source" in error for error in errors))
 
-    def test_pr_workflow_requires_adr_gate(self) -> None:
+    def test_pr_workflow_requires_tooling_entrypoint(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          ./scripts/check-adrs\n",
+            "        run: ./scripts/check-pr --tooling\n",
             "",
         )
         errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("check-adrs" in error for error in errors))
-
-    def test_pr_workflow_requires_release_event_schema_gate(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace(
-            "          ./scripts/check-release-event-schema\n",
-            "",
-        )
-        errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("check-release-event-schema" in error for error in errors))
+        self.assertTrue(any("script unit tests" in error for error in errors))
 
     def test_pr_workflow_requires_exact_parallel_job_shape(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace("  tooling-tests:\n", "  extra:\n", 1)
@@ -352,12 +329,13 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_duplicate_production_gate(self) -> None:
         duplicated = VALID_PR_WORKFLOW.replace(
-            "          ./scripts/check-adrs\n",
-            "          ./scripts/check-adrs\n"
-            "          ./scripts/check-adrs\n",
+            "        run: ./scripts/check-pr --source\n",
+            "        run: |\n"
+            "          ./scripts/check-pr --source\n"
+            "          ./scripts/check-pr --source\n",
         )
         errors = validate_pr_workflow(duplicated)
-        self.assertTrue(any("exactly once" in error and "check-adrs" in error for error in errors), errors)
+        self.assertTrue(any("exactly once" in error and "check-pr --source" in error for error in errors), errors)
 
     def test_pr_workflow_requires_narrow_ndf_cache(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
@@ -412,14 +390,18 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_commented_checker_does_not_count_as_execution(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          ./scripts/check-adrs\n",
-            "          # ./scripts/check-adrs\n",
+            "        run: ./scripts/check-pr --source\n",
+            "        run: |\n          # ./scripts/check-pr --source\n",
         )
         errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("check-adrs" in error for error in errors), errors)
+        self.assertTrue(any("check-pr --source" in error for error in errors), errors)
 
     def test_folded_run_block_is_outside_the_supported_subset(self) -> None:
-        workflow = VALID_PR_WORKFLOW.replace("        run: |\n", "        run: >\n", 1)
+        workflow = VALID_PR_WORKFLOW.replace(
+            "        run: ./scripts/check-pr --source\n",
+            "        run: >\n          ./scripts/check-pr --source\n",
+            1,
+        )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("invalid structure" in error for error in errors), errors)
 
@@ -482,59 +464,65 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
 
     def test_pr_workflow_rejects_an_extra_checker(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          ./scripts/check-adrs\n",
-            "          ./scripts/check-adrs\n"
-            "          ./scripts/check-adrs\n",
+            "        run: ./scripts/check-pr --source\n",
+            "        run: |\n"
+            "          ./scripts/check-pr --source\n"
+            "          ./scripts/check-pr --source\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exactly once" in error for error in errors), errors)
 
     def test_pr_workflow_rejects_env_prefixed_duplicate_checker(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          ./scripts/check-adrs\n",
-            "          ./scripts/check-adrs\n"
-            "          CHECK_MODE=duplicate ./scripts/check-adrs\n",
+            "        run: ./scripts/check-pr --source\n",
+            "        run: |\n"
+            "          ./scripts/check-pr --source\n"
+            "          CHECK_MODE=duplicate ./scripts/check-pr --source\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("unexpected active line" in error for error in errors), errors)
 
     def test_pr_workflow_rejects_alternate_checker_invocation(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          ./scripts/check-adrs\n",
-            "          ./scripts/check-adrs\n"
-            "          python3 scripts/check-adrs\n",
+            "        run: ./scripts/check-pr --source\n",
+            "        run: |\n"
+            "          ./scripts/check-pr --source\n"
+            "          bash scripts/check-pr --source\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("unexpected active line" in error for error in errors), errors)
 
     def test_pr_workflow_rejects_obfuscated_forbidden_tool(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
-            "          ./scripts/check-adrs\n",
-            "          ./scripts/check-adrs\n"
+            "        run: ./scripts/check-pr --source\n",
+            "        run: |\n"
+            "          ./scripts/check-pr --source\n"
             "          o'p'am --version\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("unexpected active line" in error for error in errors), errors)
 
     def test_source_checker_cannot_move_to_tooling_worker(self) -> None:
-        command = "          ./scripts/check-adrs\n"
-        workflow = VALID_PR_WORKFLOW.replace(command, "", 1).replace(
-            "        run: python3 -m unittest discover -s tests/scripts -p 'test_*.py'",
+        command = "          ./scripts/check-pr --source\n"
+        workflow = VALID_PR_WORKFLOW.replace(
+            "        run: ./scripts/check-pr --source\n", "", 1
+        ).replace(
+            "        run: ./scripts/check-pr --tooling",
             "        run: |\n"
             + command
-            + "          python3 -m unittest discover -s tests/scripts -p 'test_*.py'",
+            + "          ./scripts/check-pr --tooling",
             1,
         )
         errors = validate_pr_workflow(workflow)
-        self.assertTrue(any("source-contract" in error and "check-adrs" in error for error in errors), errors)
+        self.assertTrue(any("source-contract" in error and "check-pr --source" in error for error in errors), errors)
 
     def test_source_correctness_step_rejects_false_condition(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
             "      - name: Validate source, projection, and publication contracts\n"
-            "        run: |\n",
+            "        run: ./scripts/check-pr --source\n",
             "      - name: Validate source, projection, and publication contracts\n"
             "        if: false\n"
-            "        run: |\n",
+            "        run: ./scripts/check-pr --source\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)
@@ -551,10 +539,10 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
     def test_source_correctness_step_rejects_continue_on_error(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
             "      - name: Validate source, projection, and publication contracts\n"
-            "        run: |\n",
+            "        run: ./scripts/check-pr --source\n",
             "      - name: Validate source, projection, and publication contracts\n"
             "        continue-on-error: true\n"
-            "        run: |\n",
+            "        run: ./scripts/check-pr --source\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)
@@ -571,10 +559,10 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
     def test_source_correctness_step_rejects_nonexecuting_shell(self) -> None:
         workflow = VALID_PR_WORKFLOW.replace(
             "      - name: Validate source, projection, and publication contracts\n"
-            "        run: |\n",
+            "        run: ./scripts/check-pr --source\n",
             "      - name: Validate source, projection, and publication contracts\n"
             "        shell: echo {0}\n"
-            "        run: |\n",
+            "        run: ./scripts/check-pr --source\n",
         )
         errors = validate_pr_workflow(workflow)
         self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)
@@ -597,10 +585,10 @@ class PullRequestWorkflowContractTest(unittest.TestCase):
             with self.subTest(override=override):
                 workflow = VALID_PR_WORKFLOW.replace(
                     "      - name: Validate source, projection, and publication contracts\n"
-                    "        run: |\n",
+                    "        run: ./scripts/check-pr --source\n",
                     "      - name: Validate source, projection, and publication contracts\n"
                     + override
-                    + "        run: |\n",
+                    + "        run: ./scripts/check-pr --source\n",
                 )
                 errors = validate_pr_workflow(workflow)
                 self.assertTrue(any("exact ordered step mappings" in error for error in errors), errors)

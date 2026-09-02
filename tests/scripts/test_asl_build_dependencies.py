@@ -46,14 +46,16 @@ class AslBuildDependenciesTest(unittest.TestCase):
 
     def test_pr_check_enforces_the_decoder_partition(self) -> None:
         makefile = MAKEFILE.read_text(encoding="utf-8")
+        checker = (ROOT / "scripts/check-pr").read_text(encoding="utf-8")
 
         self.assertIn(
             "check-decoder-partition: $(DECODER_SPEC) $(VALIDATION_INDEX)",
             makefile,
         )
-        pr_rule = re.search(r"^pr-check:(?P<dependencies>[^\n]*)$", makefile, re.MULTILINE)
-        self.assertIsNotNone(pr_rule)
-        self.assertIn("check-decoder-partition", pr_rule.group("dependencies"))
+        self.assertIn("pr-check:\n\t./scripts/check-pr", makefile)
+        self.assertIn(
+            '"make --no-print-directory check-decoder-partition"', checker
+        )
 
 
 if __name__ == "__main__":
