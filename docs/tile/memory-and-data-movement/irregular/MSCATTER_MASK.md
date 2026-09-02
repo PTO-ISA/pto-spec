@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/tile/memory-and-data-movement/irregular/MSCATTER_MASK.asl`
 
-Scatter exact-one source lanes to GM using signed or unsigned logical linear element indices.
+Scatter Local data through explicit Row or Elem relative-index mode.
 
 ## Normative identity {#PTO-INST-TILE-MSCATTER-MASK}
 
@@ -88,6 +88,25 @@ MSCATTER_MASK <bundle operands>
 This operation has no standalone opcode.
 
 ## Field value dispositions
+
+### B.DATR.CMode (`PTO-FIELD-BLOCK-CMODE`)
+
+Selects the operation-defined comparison or indexed-memory mode.
+
+**Encoded zero:** Equality for comparisons; Row mode for indexed TLSU.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | EQ-or-Row |
+| 1 | assigned | NE-or-Elem |
+| 2 | assigned | LT |
+| 3 | assigned | GT |
+| 4 | assigned | LE |
+| 5 | assigned | GE |
+| 6 | reserved | future extension |
+| 7 | reserved | future extension |
+
+**Reserved-value behavior:** Codes 6 and 7 are reserved and reject before architectural effects.
 
 ### B.IOR.RegSrc0 (`PTO-FIELD-BLOCK-GPR-SELECTOR`)
 
@@ -182,7 +201,7 @@ Selects one absolute architectural GPR for B.IOR input or output binding.
 | address | base-address |
 | scalar0 | per-PE private-GPR GM row stride in elements |
 | source0 | source data |
-| source1 | logical linear element indices |
+| source1 | relative row indices |
 | source2 | exact zero-or-one predicate mask |
 
 ## Decode
@@ -219,7 +238,7 @@ begin
     return TileHandler_MSCATTER_MASK;
 end;
 
-pure func InstructionContractUsesLogicalElementIndices_MSCATTER_MASK()
+pure func InstructionContractSupportsRowAndElemIndices_MSCATTER_MASK()
     => boolean
 begin
     return TRUE;
@@ -250,18 +269,21 @@ end;
 - B.IOR is required. RegSrc0 names the PE-private absolute GPR containing the GM base address, RegSrc1 names the nonzero GM row stride in elements, and RegSrc2 plus RegDst must encode zero.
 - LB0 is required and supplies ValidCol. Omitted LB1 defaults ValidRow to one. Omitted LB2 defaults physical Col to ValidCol. Explicit zero is illegal for every present dimension.
 - Omitted B.DATR selects Layout=NORM; every other B.DATR field must remain zero.
-- Each IndexTile logical element is a signed or unsigned logical linear element index. ValidCol splits it into a logical row and column; RegSrc1 replaces ValidCol as the GM row stride before transfer-element-size scaling.
+- B.DATR CMode=0 selects Row mode and CMode=1 selects Elem mode; codes 2..5 are inapplicable. Row mode uses a canonical row-major 1 x ValidRow S32/U32 IndexTile and consumes RegSrc1 as a GM row stride in elements. Elem mode uses a row-major S32/U32 IndexTile matching the data valid shape, requires RegSrc1 to encode zero, and treats each index as a relative element displacement from BaseGPR.
 
 ## Legality
 
 - MSCATTER_MASK is selected only by BSTART.MSCATTER.MASK function 7 in the TLSU selector space; it has no standalone opcode.
 - Exactly two Local B.IOT records supply DataTile plus IndexTile and then MaskTile with the sole last marker. Neither record has a destination or TSize; B.IOS and additional bindings are illegal.
-- All three sources are allocated and fully defined, share ValidRow x ValidCol and Layout, and persist after execution. DataTile DataType equals BSTART DataType; IndexTile uses S32, U32, S64, or U64 logical linear element indices; MaskTile valid elements are exactly zero or one.
 - DataTile physical Col equals LB2. IndexTile and MaskTile may use different physical shapes outside the common valid rectangle.
 - Packed four-bit transfer DataTypes E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 reject because the block carries no nibble selector.
 - PE_MASK is common across both B.IOT records. PE_MASK=0000 is a strict no-op before schema, predicate, GPR, address, permission, event, or memory checks.
 - B.DATR applicability allows only Layout.
-- The B.IOR row stride is nonzero and no smaller than ValidCol; an invalid stride rejects before address probes or effects.
+- DataTile must match resolved ValidRow x ValidCol, physical Col, selected Layout, and BSTART DataType.
+- MaskTile must match DataTile valid shape and layout and contain only exact zero-or-one predicates.
+- For indexed TLSU, B.DATR CMode accepts only Row=0 and Elem=1; CMode 2..5 raises Fault_TileLegality before address generation or effects.
+- Row mode requires a canonical row-major 1 x ValidRow S32/U32 IndexTile and a RegSrc1 row-stride value no smaller than ValidCol.
+- Elem mode requires a row-major S32/U32 IndexTile matching the data valid shape and requires B.IOR RegSrc1, RegSrc2, and RegDst to encode zero.
 
 ## State effects
 
@@ -272,7 +294,8 @@ end;
 
 ### Memory effects
 
-- For each valid coordinate whose MaskTile value is one, store the corresponding DataTile element to the address obtained by splitting the logical linear index by ValidCol, applying row_stride_elements to the row, and scaling the resulting element offset by the transfer element size.
+- Row mode stores data coordinate (r,c) at BaseGPR + (IndexTile[0,r] * row_stride_elements + c) * sizeof(DataType).
+- Elem mode stores data coordinate (r,c) at BaseGPR + IndexTile[r,c] * sizeof(DataType).
 - A zero mask value performs no address generation, translation, permission check, store, or memory event. Physical source elements outside ValidRow x ValidCol also have no effect.
 - All enabled lanes are preflighted before stores. Duplicate or overlapping enabled targets have an implementation-defined final winner.
 

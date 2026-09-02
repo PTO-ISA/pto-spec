@@ -31,15 +31,13 @@ begin
     ResetProfileState();
     ConfigureTile(1, 128, 1, 4, 1, 3, TileDataType_U8,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 1, 8, 1, 3, TileDataType_S32,
+    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_S32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigurePredicateTile(3, 128, 1, 4, 1, 3);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x11);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x22);
     WriteTileElement(1, 0, 2, Zeros{PTO_XLEN} + 0x33);
-    WriteTileElement(2, 0, 0, Ones{PTO_XLEN} - 1);
-    WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 5000);
-    WriteTileElement(2, 0, 2, Zeros{PTO_XLEN} + 4);
+    WriteTileElement(2, 0, 0, Ones{PTO_XLEN});
     WriteTilePredicateBit(3, 0, 0, TRUE);
     WriteTilePredicateBit(3, 0, 1, FALSE);
     WriteTilePredicateBit(3, 0, 2, TRUE);
@@ -61,8 +59,8 @@ begin
     assert completed;
     assert _MemoryEventCount == 2;
     StopMemoryEventCapture();
-    let first_value = LoadUnsigned(Zeros{PTO_XLEN} + 0x200, 1);
-    let last_value = LoadUnsigned(Zeros{PTO_XLEN} + 0x206, 1);
+    let first_value = LoadUnsigned(Zeros{PTO_XLEN} + 0x1ff, 1);
+    let last_value = LoadUnsigned(Zeros{PTO_XLEN} + 0x201, 1);
     assert first_value == Zeros{PTO_XLEN} + 0x11;
     assert last_value == Zeros{PTO_XLEN} + 0x33;
     assert _Tiles[[1]].allocated && _Tiles[[2]].allocated &&

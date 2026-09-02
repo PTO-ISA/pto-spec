@@ -34,7 +34,7 @@ begin
 
     ConfigureTile(55, 256, 1, 4, 1, 3, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(56, 256, 1, 4, 1, 3, TileDataType_U64,
+    ConfigureTile(56, 256, 1, 4, 1, 3, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigurePredicateTile(57, 128, 1, 4, 1, 3);
     ExecuteTileFillScalar(55, Zeros{PTO_XLEN} + 0xaa);
@@ -44,11 +44,14 @@ begin
     WriteTilePredicateBit(57, 0, 0, TRUE);
     WriteTilePredicateBit(57, 0, 1, FALSE);
     WriteTilePredicateBit(57, 0, 2, TRUE);
+    SetBundleDataAttributeState(DTYPE_NONE, Zeros{5}, '11', '001',
+        Zeros{3}, FALSE, FALSE);
+    _BundleDataAttributesPresent = TRUE;
     Store(Zeros{PTO_XLEN} + 1536, 8, Zeros{PTO_XLEN} + 11);
     Store(Zeros{PTO_XLEN} + 1544, 8, Zeros{PTO_XLEN} + 22);
     Store(Zeros{PTO_XLEN} + 1552, 8, Zeros{PTO_XLEN} + 33);
     MGATHER_MASK(55, Zeros{PTO_XLEN} + 1536,
-        Zeros{PTO_XLEN} + 3, 56, 57, TilePad_Zero);
+        Zeros{PTO_XLEN}, 56, 57, TilePad_Zero);
     assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
     assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN};
     assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;
@@ -58,7 +61,7 @@ begin
     Store(Zeros{PTO_XLEN} + 2056, 8, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 2064, 8, Zeros{PTO_XLEN});
     MSCATTER_MASK(Zeros{PTO_XLEN} + 2048,
-        Zeros{PTO_XLEN} + 3, 55, 56, 57);
+        Zeros{PTO_XLEN}, 55, 56, 57);
     let masked_scatter_first = LoadUnsigned(Zeros{PTO_XLEN} + 2048, 8);
     let masked_scatter_middle = LoadUnsigned(Zeros{PTO_XLEN} + 2056, 8);
     let masked_scatter_last = LoadUnsigned(Zeros{PTO_XLEN} + 2064, 8);
@@ -76,12 +79,13 @@ begin
     WriteTileElement(59, 0, 0, Zeros{PTO_XLEN} + 111);
     WriteTileElement(59, 0, 1, Zeros{PTO_XLEN} + 222);
     WriteTileElement(59, 0, 2, Zeros{PTO_XLEN} + 333);
-    // MGATHER_CAS indices are signed or unsigned logical element indices.
+    // MGATHER_CAS indices are signed or unsigned byte displacements.
     WriteTileElement(56, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 2);
-    MGATHER_CAS(55, Zeros{PTO_XLEN} + 1536,
-        Zeros{PTO_XLEN} + 3, 56, 58, 59);
+    WriteTileElement(56, 0, 1, Zeros{PTO_XLEN} + 8);
+    WriteTileElement(56, 0, 2, Zeros{PTO_XLEN} + 16);
+    SetBundleDataAttributeState(DTYPE_NONE, Zeros{5}, '11', '000',
+        Zeros{3}, FALSE, FALSE);
+    MGATHER_CAS(55, Zeros{PTO_XLEN} + 1536, 56, 58, 59);
     assert ReadTileElement(55, 0, 0) == Zeros{PTO_XLEN} + 11;
     assert ReadTileElement(55, 0, 1) == Zeros{PTO_XLEN} + 22;
     assert ReadTileElement(55, 0, 2) == Zeros{PTO_XLEN} + 33;
@@ -91,6 +95,7 @@ begin
     assert cas_first == Zeros{PTO_XLEN} + 111;
     assert cas_middle == Zeros{PTO_XLEN} + 22;
     assert cas_last == Zeros{PTO_XLEN} + 333;
+    ResetProfileState();
 
     ConfigureTile(2, 256, 2, 2, 2, 2, TileDataType_FP16,
         TileLayout_RowMajor, TileLocation_Matrix);

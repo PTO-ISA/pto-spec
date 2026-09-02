@@ -4901,7 +4901,6 @@
         "operand_fields": [
           "destination0",
           "address",
-          "scalar0",
           "source0",
           "source1",
           "source2"
@@ -4919,13 +4918,6 @@
             "default": "XLEN zero when B.IOR is omitted",
             "raw_value_policy": "XLEN Word",
             "slot": "RegSrc0"
-          },
-          {
-            "field": "scalar0",
-            "resolver": "B.IOR ordered GPR input slot for scalar0",
-            "default": "XLEN zero, except TLOAD/TSTORE dense-row stride",
-            "raw_value_policy": "XLEN Word",
-            "slot": "RegSrc1"
           },
           {
             "field": "source0",
@@ -4947,10 +4939,9 @@
           }
         ],
         "gpr_input_slots": {
-          "address": "RegSrc0",
-          "scalar0": "RegSrc1"
+          "address": "RegSrc0"
         },
-        "gpr_input_count": 2,
+        "gpr_input_count": 1,
         "representable": true,
         "unsupported_operand_fields": [],
         "complete_bundle_schema": null,

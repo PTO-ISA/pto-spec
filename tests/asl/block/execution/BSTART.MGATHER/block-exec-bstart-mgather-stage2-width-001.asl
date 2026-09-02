@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"decoded MGATHER preserves full-width logical indices and accepts narrower integer IndexTiles","pass_condition":"U64 and U16 logical indices execute at their encoded widths, an upper-half U64 index is scaled by the U64 transfer width without truncation, and an invalid raw TF32 memory encoding is published unchanged","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-BSTART-MGATHER-SCHEMA-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"decoded MGATHER accepts the S32/U32 index common subset and preserves raw transfer carriers","pass_condition":"U32 and S32 row indices execute, and an invalid raw TF32 memory encoding is published unchanged","related_sources":["asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
 
 pure func MgatherStage2Start(data_type: bits(5)) => bits(64)
 begin
@@ -58,7 +58,7 @@ begin
     let wide_address = Zeros{PTO_XLEN} + 0x100;
     let expected_u64 = Zeros{PTO_XLEN} + 0x1122334455667788;
     PrepareMgatherStage2(
-        TileDataType_U64,
+        TileDataType_U32,
         Zeros{PTO_XLEN},
         Zeros{5} + 24);
     Store(wide_address, 8, expected_u64);
@@ -73,25 +73,8 @@ begin
     assert _MemoryEvents[[0]].size_bytes == 8;
     StopMemoryEventCapture();
 
-    // A nonzero upper half remains part of the logical element index and is
-    // scaled by the U64 transfer width. Truncation would reach the base.
-    let full_width_index = Zeros{PTO_XLEN} + 0x0000000100000000;
-    let full_width_address = Zeros{PTO_XLEN} + 0x0000000800000100;
     PrepareMgatherStage2(
-        TileDataType_U64,
-        full_width_index,
-        Zeros{5} + 24);
-    StartMemoryEventCapture(0);
-    let full_width_rejected = ExecuteBundleTileOperation();
-    assert !full_width_rejected;
-    assert _LastFault == Fault_DataPage;
-    assert _FaultAddress == full_width_address;
-    assert _MemoryEventCount == 0;
-    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
-    StopMemoryEventCapture();
-
-    PrepareMgatherStage2(
-        TileDataType_U16,
+        TileDataType_S32,
         Zeros{PTO_XLEN},
         Zeros{5} + 27);
     Store(Zeros{PTO_XLEN} + 0x100, 1, Zeros{PTO_XLEN} + 0x5a);

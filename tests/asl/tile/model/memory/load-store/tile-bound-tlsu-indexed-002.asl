@@ -9,7 +9,7 @@ end;
 
 func ConfigureIndexTlsuTile(index: TileIndex, columns: integer {1..16})
 begin
-    ConfigureTile(index, 2048, 1, 16, 1, columns, TileDataType_U64,
+    ConfigureTile(index, 2048, 1, 16, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
@@ -33,31 +33,28 @@ begin
     ConfigurePackedTlsuTile(11, 3);
     ConfigurePackedTlsuTile(12, 3);
 
-    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(4, 0, 1, Zeros{PTO_XLEN});
-    WriteTileElement(4, 0, 2, Zeros{PTO_XLEN} + 1);
+    WriteTileElement(4, 0, 0, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 0x180, 1, Zeros{PTO_XLEN} + 0x21);
     Store(Zeros{PTO_XLEN} + 0x181, 1, Zeros{PTO_XLEN} + 0x43);
+    Store(Zeros{PTO_XLEN} + 0x182, 1, Zeros{PTO_XLEN} + 0x65);
     StartMemoryEventCapture(1);
     MGATHER(3, Zeros{PTO_XLEN} + 0x180,
         Zeros{PTO_XLEN} + 3, 4);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[0]].kind == MemoryEvent_Load;
-    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x181;
+    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x180;
     assert _MemoryEvents[[0]].size_bytes == 1;
-    assert _MemoryEvents[[1]].address == Zeros{PTO_XLEN} + 0x180;
-    assert _MemoryEvents[[2]].address == Zeros{PTO_XLEN} + 0x181;
-    assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x43;
-    assert ReadTileElement(3, 0, 1) == Zeros{PTO_XLEN} + 0x21;
-    assert ReadTileElement(3, 0, 2) == Zeros{PTO_XLEN} + 0x43;
+    assert _MemoryEvents[[1]].address == Zeros{PTO_XLEN} + 0x181;
+    assert _MemoryEvents[[2]].address == Zeros{PTO_XLEN} + 0x182;
+    assert ReadTileElement(3, 0, 0) == Zeros{PTO_XLEN} + 0x21;
+    assert ReadTileElement(3, 0, 1) == Zeros{PTO_XLEN} + 0x43;
+    assert ReadTileElement(3, 0, 2) == Zeros{PTO_XLEN} + 0x65;
     StopMemoryEventCapture();
 
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 4);
     WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 5);
     WriteTileElement(5, 0, 2, Zeros{PTO_XLEN} + 6);
     WriteTileElement(4, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(4, 0, 1, Zeros{PTO_XLEN});
-    WriteTileElement(4, 0, 2, Zeros{PTO_XLEN} + 1);
     Store(Zeros{PTO_XLEN} + 0x190, 1, Zeros{PTO_XLEN} + 0xa9);
     StartMemoryEventCapture(1);
     MSCATTER(Zeros{PTO_XLEN} + 0x190,
@@ -69,9 +66,8 @@ begin
     StopMemoryEventCapture();
     let scatter_byte = LoadUnsigned(Zeros{PTO_XLEN} + 0x190, 1);
     let scatter_next = LoadUnsigned(Zeros{PTO_XLEN} + 0x191, 1);
-    assert scatter_byte == Zeros{PTO_XLEN} + 4 ||
-           scatter_byte == Zeros{PTO_XLEN} + 5;
-    assert scatter_next == Zeros{PTO_XLEN} + 6;
+    assert scatter_byte == Zeros{PTO_XLEN} + 4;
+    assert scatter_next == Zeros{PTO_XLEN} + 5;
 
 end;
 
@@ -147,8 +143,6 @@ begin
     assert fault_tstore_byte1 == Zeros{PTO_XLEN} + 0xbb;
 
     WriteTileElement(14, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(14, 0, 1, Zeros{PTO_XLEN} + 1);
-    WriteTileElement(14, 0, 2, Zeros{PTO_XLEN} + 4);
     WriteTileElement(15, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(15, 0, 1, Zeros{PTO_XLEN} + 8);
     WriteTileElement(15, 0, 2, Zeros{PTO_XLEN} + 9);

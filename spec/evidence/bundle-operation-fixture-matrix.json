@@ -11207,7 +11207,7 @@
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
         "source0": "source",
-        "source1": "logical-linear-element-indices"
+        "source1": "relative-row-indices"
       },
       "datr_word": null,
       "destination_size_code": 1
@@ -11260,7 +11260,7 @@
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
         "source0": "source",
-        "source1": "logical-linear-element-indices"
+        "source1": "relative-row-indices"
       },
       "datr_word": null,
       "destination_size_code": 1
@@ -11474,7 +11474,7 @@
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
         "source0": "source",
-        "source1": "logical-linear-element-indices",
+        "source1": "relative-row-indices",
         "source2": "exact-predicate-mask"
       },
       "datr_word": null,
@@ -11529,7 +11529,7 @@
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
         "source0": "source",
-        "source1": "logical-linear-element-indices",
+        "source1": "relative-row-indices",
         "source2": "exact-predicate-mask"
       },
       "datr_word": null,
@@ -11584,7 +11584,7 @@
       "fixture_role_layouts": {},
       "fixture_role_kinds": {
         "source0": "source",
-        "source1": "logical-linear-element-indices",
+        "source1": "relative-row-indices",
         "source2": "exact-predicate-mask"
       },
       "datr_word": null,
@@ -11634,7 +11634,7 @@
       "observable": "decoded B.SUBVIEW reaches normal dispatch for source0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-214",
       "row_assertion": "case_0214_exact_fault",
-      "gpr_word": "0x00310013",
+      "gpr_word": "0x00010013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
@@ -11690,7 +11690,7 @@
       "observable": "decoded B.SUBVIEW reaches normal dispatch for source1; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-215",
       "row_assertion": "case_0215_exact_fault",
-      "gpr_word": "0x00310013",
+      "gpr_word": "0x00010013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
@@ -11746,7 +11746,7 @@
       "observable": "decoded B.SUBVIEW reaches normal dispatch for source2; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-216",
       "row_assertion": "case_0216_exact_fault",
-      "gpr_word": "0x00310013",
+      "gpr_word": "0x00010013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},
@@ -11800,7 +11800,7 @@
       "observable": "decoded B.ASSEMBLE INIT_LAST reaches normal dispatch for destination0; Fault_TileLegality is raised before handler/effects (shared-stage3-fault)",
       "test_id": "PTO-AVS-BLOCK-RANGE-OPERATION-MATRIX-217",
       "row_assertion": "case_0217_exact_fault",
-      "gpr_word": "0x00310013",
+      "gpr_word": "0x00010013",
       "fixture_data_type": 4,
       "fixture_role_data_types": {},
       "fixture_role_layouts": {},

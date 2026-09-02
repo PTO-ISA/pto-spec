@@ -4825,7 +4825,8 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "PadValueOrByteId",
-          "Layout"
+          "Layout",
+          "CMode"
         ],
         "pad_union": "pad-value"
       },
@@ -4847,7 +4848,7 @@
         },
         {
           "field": "scalar0",
-          "role": "GM row stride in elements"
+          "role": "Row-mode GM stride in elements; zero in Elem mode"
         },
         {
           "field": "source0",
@@ -4860,7 +4861,7 @@
         "operand:destination0:destination",
         "operand:address:base-address",
         "operand:scalar0:gm-row-stride-elements",
-        "operand:source0:logical-linear-element-indices",
+        "operand:source0:CMode-selected-relative-indices",
         "runtime:CurrentBundlePadValue:physical-padding"
       ],
       "classification": "memory-and-data-movement",
@@ -4885,7 +4886,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "Layout"
+          "Layout",
+          "CMode"
         ],
         "pad_union": "must-zero"
       },
@@ -4903,7 +4905,7 @@
         },
         {
           "field": "scalar0",
-          "role": "GM row stride in elements"
+          "role": "Row-mode GM stride in elements; zero in Elem mode"
         },
         {
           "field": "source0",
@@ -4911,7 +4913,7 @@
         },
         {
           "field": "source1",
-          "role": "logical-linear-element-indices"
+          "role": "relative-row-indices"
         }
       ],
       "restart_contract": "CompleteBundleAtWithAcceptedApplicabilityRules",
@@ -4920,7 +4922,7 @@
         "operand:address:base-address",
         "operand:scalar0:gm-row-stride-elements",
         "operand:source0:source",
-        "operand:source1:logical-linear-element-indices"
+        "operand:source1:CMode-selected-relative-indices"
       ],
       "classification": "memory-and-data-movement",
       "engine": "TLSU"
@@ -4951,7 +4953,8 @@
       "datr_contract": {
         "allowed_nonzero_fields": [
           "PadValueOrByteId",
-          "Layout"
+          "Layout",
+          "CMode"
         ],
         "pad_union": "pad-value"
       },
@@ -4973,7 +4976,7 @@
         },
         {
           "field": "scalar0",
-          "role": "GM row stride in elements"
+          "role": "Row-mode GM stride in elements; zero in Elem mode"
         },
         {
           "field": "source0",
@@ -4990,7 +4993,7 @@
         "operand:destination0:destination",
         "operand:address:base-address",
         "operand:scalar0:gm-row-stride-elements",
-        "operand:source0:logical-linear-element-indices",
+        "operand:source0:CMode-selected-relative-indices",
         "operand:source1:exact-predicate-mask",
         "runtime:CurrentBundlePadValue:inactive-and-physical-padding"
       ],
@@ -5019,7 +5022,8 @@
       "contract_status": "reviewed-complete",
       "datr_contract": {
         "allowed_nonzero_fields": [
-          "Layout"
+          "Layout",
+          "CMode"
         ],
         "pad_union": "must-zero"
       },
@@ -5037,7 +5041,7 @@
         },
         {
           "field": "scalar0",
-          "role": "GM row stride in elements"
+          "role": "Row-mode GM stride in elements; zero in Elem mode"
         },
         {
           "field": "source0",
@@ -5045,7 +5049,7 @@
         },
         {
           "field": "source1",
-          "role": "logical-linear-element-indices"
+          "role": "relative-row-indices"
         },
         {
           "field": "source2",
@@ -5058,7 +5062,7 @@
         "operand:address:base-address",
         "operand:scalar0:gm-row-stride-elements",
         "operand:source0:source",
-        "operand:source1:logical-linear-element-indices",
+        "operand:source1:CMode-selected-relative-indices",
         "operand:source2:exact-predicate-mask"
       ],
       "classification": "memory-and-data-movement",
@@ -5071,9 +5075,6 @@
         },
         {
           "operand": "address"
-        },
-        {
-          "operand": "scalar0"
         },
         {
           "operand": "source0"
@@ -5114,10 +5115,6 @@
           "role": "base-address"
         },
         {
-          "field": "scalar0",
-          "role": "GM row stride in elements"
-        },
-        {
           "field": "source0",
           "role": "indices"
         },
@@ -5135,8 +5132,7 @@
       "state_effects": [
         "operand:destination0:observed-old-values",
         "operand:address:base-address",
-        "operand:scalar0:gm-row-stride-elements",
-        "operand:source0:logical-linear-element-indices",
+        "operand:source0:byte-displacement-indices",
         "operand:source1:expected-values",
         "operand:source2:replacement-values",
         "runtime:CurrentBundlePadValue:physical-padding"

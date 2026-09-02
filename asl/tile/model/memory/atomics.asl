@@ -1,6 +1,5 @@
 // PTO-UNIT: {"id":"PTO-TILE-MODEL-MEMORY-ATOMICS","surface":"tile","classification":["model","memory","atomics"],"depends_on":["PTO-TILE-MODEL-MEMORY-GATHER-SCATTER","PTO-ARCH-MEMORY-MODEL-ATOMICITY"]}
-func MGATHER_CAS(destination: TileIndex, base_address: Word,
-                 row_stride_elements: Word, indices: TileIndex,
+func MGATHER_CAS(destination: TileIndex, base_address: Word, indices: TileIndex,
                  expected: TileIndex, replacement: TileIndex,
                  pad_value: TilePadValue)
 begin
@@ -36,10 +35,8 @@ begin
                 row as integer {0..65535}, column as integer {0..65535});
             let replacement_element = TileLinearIndex(_Tiles[[replacement]],
                 row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryIndexedStridedAddress(
-                base_address, index_payload[[index_element]],
-                index_tile.data_type, index_tile.valid_columns,
-                row_stride_elements, destination_tile.data_type);
+            let address = TileMemoryByteDisplacementAddress(base_address,
+                index_payload[[index_element]], index_tile.data_type);
             let read_probe = ProbeTileMemoryAccess(address,
                 destination_tile.data_type, FALSE);
             if RaiseDataAccessFault(read_probe, address) then return; end;
@@ -121,10 +118,10 @@ begin
 end;
 
 func MGATHER_CAS(destination: TileIndex, base_address: Word,
-                 row_stride_elements: Word, indices: TileIndex,
+                 indices: TileIndex,
                  expected: TileIndex,
                  replacement: TileIndex)
 begin
-    MGATHER_CAS(destination, base_address, row_stride_elements, indices,
-        expected, replacement, TilePad_Null);
+    MGATHER_CAS(destination, base_address, indices, expected, replacement,
+        TilePad_Null);
 end;

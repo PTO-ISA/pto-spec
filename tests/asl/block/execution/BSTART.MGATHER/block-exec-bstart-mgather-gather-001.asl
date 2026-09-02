@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER inherits its BSTART type through explicit DTYPE_NONE, applies dimension defaults, and pads the destination.","pass_condition":"Explicit B.DATR DTYPE_NONE with Max padding preserves the U8 BSTART type while two logical indices load the expected addresses and non-valid elements receive Max.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-GATHER-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-B-DATR-FIELDS-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-BSTART-MGATHER-SCHEMA-001","PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER","PTO-INST-BLOCK-BSTART-MGATHER"],"kind":"execution","summary":"MGATHER inherits its BSTART type, applies a relative row index and stride, and pads the destination.","pass_condition":"A one-element row-index vector selects GM row one; two destination columns load adjacent elements and non-valid elements receive Max.","related_sources":["asl/block/model/dispatch/tile-schema.asl","asl/block/model/dispatch/tlsu-mgather.asl","asl/tile/model/memory/gather-scatter.asl"]}
 pure func GatherStart(data_type: bits(5)) => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -36,11 +36,10 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U32,
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 3);
-    Store(Zeros{PTO_XLEN} + 0x100, 1, Zeros{PTO_XLEN} + 0x11);
+    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 1);
+    Store(Zeros{PTO_XLEN} + 0x102, 1, Zeros{PTO_XLEN} + 0x11);
     Store(Zeros{PTO_XLEN} + 0x103, 1, Zeros{PTO_XLEN} + 0x44);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x100);
     let started = ExecuteCommandInstruction(
@@ -62,7 +61,7 @@ begin
     assert _Tiles[[destination]].valid_columns == 2;
     assert _Tiles[[destination]].columns == 2;
     assert _MemoryEventCount == 2;
-    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x100;
+    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x102;
     assert _MemoryEvents[[1]].address == Zeros{PTO_XLEN} + 0x103;
     assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 0x11;
     assert ReadTileElement(destination, 0, 1) == Zeros{PTO_XLEN} + 0x44;

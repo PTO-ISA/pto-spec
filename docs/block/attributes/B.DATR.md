@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/attributes/B.DATR.asl`
 
-Latches the optional per-block tile layout, data type, padding, comparison, rounding, saturation, and canonicalization attributes.
+Latches optional per-block layout, type, padding, operation mode, rounding, saturation, and canonicalization attributes.
 
 ## Normative identity {#PTO-INST-BLOCK-B-DATR}
 
@@ -94,14 +94,14 @@ B.DATR {layout, datatype, padvalue_or_byteid, cmode, rmode, sat, canonicalize}
 
 ### CMode (`PTO-FIELD-BLOCK-CMODE`)
 
-Selects the comparison relation used by TCMP and TCMPS.
+Selects the operation-defined comparison or indexed-memory mode.
 
-**Encoded zero:** Code zero selects equality comparison.
+**Encoded zero:** Equality for comparisons; Row mode for indexed TLSU.
 
 | Code | Disposition | Meaning |
 | ---: | --- | --- |
-| 0 | assigned | EQ |
-| 1 | assigned | NE |
+| 0 | assigned | EQ-or-Row |
+| 1 | assigned | NE-or-Elem |
 | 2 | assigned | LT |
 | 3 | assigned | GT |
 | 4 | assigned | LE |
@@ -175,7 +175,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 
 | Form | Field | Bits | Assigned | Other owner | Reserved | Architectural role | Encoded zero |
 | --- | --- | ---: | --- | --- | --- | --- | --- |
-| b_datr_32_c161a042ff38 | CMode | 3 | 0–5 | none | 6–7 | comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE | EQ |
+| b_datr_32_c161a042ff38 | CMode | 3 | 0–5 | none | 6–7 | operation-selected comparison or indexed-memory mode | EQ for comparison operations; Row for indexed TLSU. |
 | b_datr_32_c161a042ff38 | PadValueOrByteId | 2 | 0–3 | none | none | operation-selected padding value or byte identifier | Zero padding, or ByteId zero when the selected operation interprets the union as a byte identifier |
 | b_datr_32_c161a042ff38 | Sat | 1 | 0–1 | none | none | saturation enable | disabled |
 | b_datr_32_c161a042ff38 | Canonicalize | 1 | 0–1 | none | none | TCVT private-format canonicalization enable | disabled |
@@ -194,7 +194,7 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | Layout | tile data layout or exact GM-to-CUBE/CUBE-to-GM conversion selector |
 | DataType | concrete Tile element type or DTYPE_NONE inheritance sentinel |
 | PadValueOrByteId | operation-selected padding value or byte identifier |
-| CMode | comparison predicate selector: 0 EQ, 1 NE, 2 LT, 3 GT, 4 LE, 5 GE |
+| CMode | operation-selected comparison or indexed-memory mode |
 | RMode | rounding selector: 0 operation default, 1 RNE, 2 RTZ, 3 RTM, 4 RTP, 5 RNA, 6 RTO, 7 RHB |
 | Sat | saturation enable |
 | Canonicalize | TCVT private-format canonicalization enable |
@@ -250,7 +250,7 @@ end;
 
 ## Defaults and encoded zero
 
-- B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, and Canonicalize retain their zero meanings.
+- B.DATR is optional. When omitted, DataType inherits the typed BSTART DataType, PadValueOrByteId supplies Null padding to pad-valued operations, and Layout, CMode, RMode, Sat, and Canonicalize retain their operation-selected zero meanings.
 - An explicit B.DATR encodes every field. Concrete DataType codes override the BSTART type; DTYPE_NONE preserves the BSTART type while latching the remaining controls. Encoded DataType zero selects FP64 and encoded PadValueOrByteId zero selects Zero padding or ByteId zero.
 
 ## Legality
@@ -258,7 +258,7 @@ end;
 - B.DATR may appear at most once, after BSTART and before the block body.
 - DataType accepts the 25 concrete TileDataType codes plus code 31 DTYPE_NONE; codes 15, 21..23, and 29..30 are reserved and reject before effects.
 - Layout codes 0, 1, 3, 4, 6, 8, 9, 17, 18, 20, 21 through 28, and 30 are assigned. Codes 21 through 26 select ND2M32, ND2M16, ND2N8, M322ND, M162ND, and N82ND respectively.
-- CMode codes 0..5 select EQ, NE, LT, GT, LE, and GE respectively; codes 6..7 are reserved.
+- CMode is operation-selected. TCMP/TCMPS use codes 0..5 as EQ, NE, LT, GT, LE, and GE. MGATHER/MSCATTER and MASK variants use only Row=0 and Elem=1; codes 2..5 are operation-inapplicable. Codes 6..7 are reserved globally.
 - All RMode codes 0..7 are assigned: operation default, RNE, RTZ, RTM, RTP, RNA, RTO, and RHB.
 - Canonicalize is legal only for TCVT; each selected tile operation separately constrains the applicable nonzero B.DATR fields and PadValueOrByteId interpretation.
 

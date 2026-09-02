@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-FAULT-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER"],"kind":"fault","summary":"MGATHER preflights every lane before events or destination publication.","pass_condition":"A fault on the second U16 lane rolls back destination allocation and leaves the event log empty.","related_sources":["asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-FAULT-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-MGATHER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MGATHER"],"kind":"fault","summary":"MGATHER preflights every row-indexed lane before events or destination publication.","pass_condition":"A fault on the second U16 column rolls back destination allocation and leaves the event log empty.","related_sources":["asl/tile/model/memory/gather-scatter.asl"]}
 pure func FaultGatherStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -26,10 +26,9 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_U32,
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(0, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 2);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 4094);
     let started = ExecuteCommandInstruction(FaultGatherStart(), 32);
     assert started == CommandExecution_Executed;

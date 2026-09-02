@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-U4-INDEX-003","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"execution","summary":"MGATHER zero-extends a packed U4 IndexTile logical element index.","pass_condition":"The low-nibble U4 value fifteen addresses base plus fifteen with transfer-element-size scaling.","related_sources":["asl/tile/model/memory/addressing.asl","asl/tile/model/definedness/elements.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-U4-INDEX-003","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"fault","summary":"MGATHER rejects a packed U4 IndexTile outside the S32/U32 common subset.","pass_condition":"The block rejects before memory events or destination allocation.","related_sources":["asl/tile/model/memory/addressing.asl","asl/tile/model/definedness/elements.asl"]}
 
 pure func PackedUnsignedGatherStart() => bits(64)
 begin
@@ -43,11 +43,10 @@ begin
     assert scalar == CommandExecution_Executed;
     StartMemoryEventCapture(0);
     let completed = ExecuteBundleTileOperation();
-    assert completed;
-    let destination = _BundleTileBindings[[0]].destination;
-    assert _MemoryEventCount == 1;
-    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x10f;
-    assert ReadTileElement(destination, 0, 0) == Zeros{PTO_XLEN} + 0xa5;
+    assert !completed;
+    assert _LastFault == Fault_TileLegality;
+    assert _MemoryEventCount == 0;
+    assert !_BundleTileBindings[[0]].destination_allocated_by_bundle;
     StopMemoryEventCapture();
     return 0;
 end;

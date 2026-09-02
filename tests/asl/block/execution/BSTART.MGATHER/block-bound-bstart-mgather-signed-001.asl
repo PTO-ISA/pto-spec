@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-SIGNED-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"boundary","summary":"Signed S32 IndexTile elements select logical elements before the GM base.","pass_condition":"With ValidCol and stride two, S32 indices -2 and -1 address the two U16 elements immediately before the base.","related_sources":["asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MGATHER-SIGNED-001","source":"asl/block/execution/BSTART.MGATHER.asl","requirements":["PTO-INDEXED-TLSU-STRIDE-001","PTO-MGATHER-BYTE-DISPLACEMENT-001"],"kind":"boundary","summary":"A signed S32 relative row index selects a GM row before the base.","pass_condition":"With ValidCol and stride two, row index -1 addresses the two U16 elements immediately before the base.","related_sources":["asl/tile/model/memory/addressing.asl"]}
 pure func SignedGatherStart() => bits(64)
 begin
     var instruction: bits(64) = Zeros{64} + 0x00411181;
@@ -26,10 +26,9 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 2, 1, 2, TileDataType_S32,
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_S32,
         TileLayout_RowMajor, TileLocation_Any);
-    WriteTileElement(0, 0, 0, Zeros{PTO_XLEN} + 0xfffffffe);
-    WriteTileElement(0, 0, 1, Ones{PTO_XLEN});
+    WriteTileElement(0, 0, 0, Ones{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 0x100, 2, Zeros{PTO_XLEN} + 0x2211);
     Store(Zeros{PTO_XLEN} + 0x102, 2, Zeros{PTO_XLEN} + 0x4433);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x104);

@@ -271,7 +271,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Data Attribute",
       "semantic_handler": "SetBundleDataAttributes",
-      "semantic_summary": "Latches the optional per-block tile layout, data type, padding, comparison, rounding, saturation, and canonicalization attributes.",
+      "semantic_summary": "Latches optional per-block layout, type, padding, operation mode, rounding, saturation, and canonicalization attributes.",
       "status": "accepted"
     },
     {
@@ -828,7 +828,7 @@
       "semantic_family": "CMD",
       "semantic_group": "Bundle Input & Output",
       "semantic_handler": "BindBundleScalarIO",
-      "semantic_summary": "Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one as row stride and indexed TLSU uses it as GM row stride in elements.",
+      "semantic_summary": "Bind absolute GPR operands; indexed TLSU consumes base plus a mode-dependent row stride.",
       "status": "accepted"
     },
     {
@@ -1742,9 +1742,11 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Begins a strided indexed TLSU gather block.",
+      "state_effects": [],
       "status": "accepted"
     },
     {
+      "arguments": [],
       "asm": "BSTART.MGATHER.CAS DataType",
       "constraints": [
         {
@@ -1805,10 +1807,12 @@
       "form_id": "bstart_mgather_cas_32_fd8c8a3b720a",
       "length_bits": 32,
       "mnemonic": "BSTART.MGATHER.CAS",
+      "operands": [],
       "semantic_family": "CMD",
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
-      "semantic_summary": "Begins an atomic compare-and-swap strided indexed TLSU gather block.",
+      "semantic_summary": "Begins an atomic compare-and-swap byte-displacement indexed TLSU gather block.",
+      "state_effects": [],
       "status": "accepted"
     },
     {
@@ -1876,6 +1880,7 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Begins a predicate-masked strided indexed TLSU gather block.",
+      "state_effects": [],
       "status": "accepted"
     },
     {
@@ -1943,6 +1948,7 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Begins a predicate-masked strided indexed TLSU scatter block.",
+      "state_effects": [],
       "status": "accepted"
     },
     {
@@ -2010,6 +2016,7 @@
       "semantic_group": "Bundle Split",
       "semantic_handler": "ExecuteBundleStart",
       "semantic_summary": "Begins a strided indexed TLSU scatter block.",
+      "state_effects": [],
       "status": "accepted"
     },
     {

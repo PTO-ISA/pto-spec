@@ -24,23 +24,33 @@ begin
     let index_tile = _Tiles[[indices]];
     assert destination_tile.allocated;
     assert index_tile.allocated && index_tile.contents_defined;
-    assert destination_tile.valid_rows == index_tile.valid_rows;
-    assert destination_tile.valid_columns == index_tile.valid_columns;
+    assert CurrentBundleIndexedTLSUModeLegal();
+    assert IndexedTLSUIndexShapeLegal(destination, indices);
+    assert index_tile.layout == TileLayout_RowMajor;
     assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(destination_tile.data_type);
     let index_payload = index_tile.payload;
+    let element_mode = CurrentBundleIndexedTLSUUsesElementIndices();
     var translated_addresses: TilePayload;
     var result_payload = destination_tile.payload;
     for row = 0 to destination_tile.valid_rows - 1 looplimit 65536 do
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
             let destination_element = TileLinearIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryIndexedStridedAddress(
-                base_address, index_payload[[index_element]],
-                index_tile.data_type, index_tile.valid_columns,
-                row_stride_elements, destination_tile.data_type);
+            let index_element = if element_mode then
+                TileLinearIndex(index_tile,
+                    row as integer {0..65535},
+                    column as integer {0..65535})
+                else TileLinearIndex(index_tile, 0,
+                    row as integer {0..65535});
+            let address = if element_mode then
+                TileMemoryRelativeElementAddress(
+                    base_address, index_payload[[index_element]],
+                    index_tile.data_type, destination_tile.data_type)
+                else TileMemoryRelativeRowAddress(
+                    base_address, index_payload[[index_element]],
+                    index_tile.data_type, column as integer {0..65535},
+                    row_stride_elements, destination_tile.data_type);
             let probe = ProbeTileMemoryAccess(address,
                 destination_tile.data_type, FALSE);
             if RaiseDataAccessFault(probe, address) then return; end;
@@ -132,13 +142,14 @@ begin
     let index_tile = _Tiles[[indices]];
     assert source_tile.allocated && source_tile.contents_defined;
     assert index_tile.allocated && index_tile.contents_defined;
-    assert source_tile.valid_rows == index_tile.valid_rows;
-    assert source_tile.valid_columns == index_tile.valid_columns;
-    assert source_tile.layout == index_tile.layout;
+    assert CurrentBundleIndexedTLSUModeLegal();
+    assert IndexedTLSUIndexShapeLegal(source, indices);
+    assert index_tile.layout == TileLayout_RowMajor;
     assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(source_tile.data_type);
     let source_payload = source_tile.payload;
     let index_payload = index_tile.payload;
+    let element_mode = CurrentBundleIndexedTLSUUsesElementIndices();
     var lane_order: ScatterLaneOrder;
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
     var original_addresses: TilePayload;
@@ -148,12 +159,20 @@ begin
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
             let source_element = TileLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
-                row as integer {0..65535}, column as integer {0..65535});
-            let address = TileMemoryIndexedStridedAddress(
-                base_address, index_payload[[index_element]],
-                index_tile.data_type, index_tile.valid_columns,
-                row_stride_elements, source_tile.data_type);
+            let index_element = if element_mode then
+                TileLinearIndex(index_tile,
+                    row as integer {0..65535},
+                    column as integer {0..65535})
+                else TileLinearIndex(index_tile, 0,
+                    row as integer {0..65535});
+            let address = if element_mode then
+                TileMemoryRelativeElementAddress(
+                    base_address, index_payload[[index_element]],
+                    index_tile.data_type, source_tile.data_type)
+                else TileMemoryRelativeRowAddress(
+                    base_address, index_payload[[index_element]],
+                    index_tile.data_type, column as integer {0..65535},
+                    row_stride_elements, source_tile.data_type);
             let probe = ProbeTileMemoryAccess(address,
                 source_tile.data_type, TRUE);
             if RaiseDataAccessFault(probe, address) then return; end;
@@ -265,16 +284,17 @@ begin
     assert destination_tile.allocated;
     assert index_tile.allocated && index_tile.contents_defined;
     assert mask_tile.allocated && mask_tile.contents_defined;
-    assert destination_tile.valid_rows == index_tile.valid_rows;
-    assert destination_tile.valid_columns == index_tile.valid_columns;
+    assert CurrentBundleIndexedTLSUModeLegal();
+    assert IndexedTLSUIndexShapeLegal(destination, indices);
     assert destination_tile.valid_rows == mask_tile.valid_rows;
     assert destination_tile.valid_columns == mask_tile.valid_columns;
-    assert destination_tile.layout == index_tile.layout;
+    assert index_tile.layout == TileLayout_RowMajor;
     assert destination_tile.layout == mask_tile.layout;
     assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(destination_tile.data_type);
     assert TilePredicateValuesLegal(mask);
     let index_payload = index_tile.payload;
+    let element_mode = CurrentBundleIndexedTLSUUsesElementIndices();
     var translated_addresses: TilePayload;
     var active_lanes: bits(PTO_MODEL_TILE_ELEMENTS) =
         Zeros{PTO_MODEL_TILE_ELEMENTS};
@@ -283,16 +303,24 @@ begin
         for column = 0 to destination_tile.valid_columns - 1 looplimit 65536 do
             let destination_element = TileLinearIndex(destination_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
-                row as integer {0..65535}, column as integer {0..65535});
             if ReadTilePredicateBit(
                 mask,
                 row as integer {0..65535},
                 column as integer {0..65535}) then
-                let address = TileMemoryIndexedStridedAddress(
-                    base_address, index_payload[[index_element]],
-                    index_tile.data_type, index_tile.valid_columns,
-                    row_stride_elements, destination_tile.data_type);
+                let index_element = if element_mode then
+                    TileLinearIndex(index_tile,
+                        row as integer {0..65535},
+                        column as integer {0..65535})
+                    else TileLinearIndex(index_tile, 0,
+                        row as integer {0..65535});
+                let address = if element_mode then
+                    TileMemoryRelativeElementAddress(
+                        base_address, index_payload[[index_element]],
+                        index_tile.data_type, destination_tile.data_type)
+                    else TileMemoryRelativeRowAddress(
+                        base_address, index_payload[[index_element]],
+                        index_tile.data_type, column as integer {0..65535},
+                        row_stride_elements, destination_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
                     destination_tile.data_type, FALSE);
                 if RaiseDataAccessFault(probe, address) then return; end;
@@ -338,17 +366,18 @@ begin
     assert source_tile.allocated && source_tile.contents_defined;
     assert index_tile.allocated && index_tile.contents_defined;
     assert mask_tile.allocated && mask_tile.contents_defined;
-    assert source_tile.valid_rows == index_tile.valid_rows;
-    assert source_tile.valid_columns == index_tile.valid_columns;
+    assert CurrentBundleIndexedTLSUModeLegal();
+    assert IndexedTLSUIndexShapeLegal(source, indices);
     assert source_tile.valid_rows == mask_tile.valid_rows;
     assert source_tile.valid_columns == mask_tile.valid_columns;
-    assert source_tile.layout == index_tile.layout;
+    assert index_tile.layout == TileLayout_RowMajor;
     assert source_tile.layout == mask_tile.layout;
     assert IndexedTLSUIndexDataTypeLegal(index_tile.data_type);
     assert IndexedTLSUTransferDataTypeLegal(source_tile.data_type);
     assert TilePredicateValuesLegal(mask);
     let source_payload = source_tile.payload;
     let index_payload = index_tile.payload;
+    let element_mode = CurrentBundleIndexedTLSUUsesElementIndices();
     var lane_order: ScatterLaneOrder;
     var lane_count: integer {0..PTO_MODEL_TILE_ELEMENTS} = 0;
     var original_addresses: TilePayload;
@@ -358,16 +387,24 @@ begin
         for column = 0 to source_tile.valid_columns - 1 looplimit 65536 do
             let source_element = TileLinearIndex(source_tile,
                 row as integer {0..65535}, column as integer {0..65535});
-            let index_element = TileLinearIndex(index_tile,
-                row as integer {0..65535}, column as integer {0..65535});
             if ReadTilePredicateBit(
                 mask,
                 row as integer {0..65535},
                 column as integer {0..65535}) then
-                let address = TileMemoryIndexedStridedAddress(
-                    base_address, index_payload[[index_element]],
-                    index_tile.data_type, index_tile.valid_columns,
-                    row_stride_elements, source_tile.data_type);
+                let index_element = if element_mode then
+                    TileLinearIndex(index_tile,
+                        row as integer {0..65535},
+                        column as integer {0..65535})
+                    else TileLinearIndex(index_tile, 0,
+                        row as integer {0..65535});
+                let address = if element_mode then
+                    TileMemoryRelativeElementAddress(
+                        base_address, index_payload[[index_element]],
+                        index_tile.data_type, source_tile.data_type)
+                    else TileMemoryRelativeRowAddress(
+                        base_address, index_payload[[index_element]],
+                        index_tile.data_type, column as integer {0..65535},
+                        row_stride_elements, source_tile.data_type);
                 let probe = ProbeTileMemoryAccess(address,
                     source_tile.data_type, TRUE);
                 if RaiseDataAccessFault(probe, address) then return; end;

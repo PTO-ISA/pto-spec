@@ -1,15 +1,14 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-FAULT-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER"],"kind":"fault","summary":"MSCATTER preflights all valid lanes before its first write or event.","pass_condition":"A faulting second U16 lane leaves the first address unchanged and records no memory event.","related_sources":["asl/tile/model/memory/gather-scatter.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-FAULT-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER"],"kind":"fault","summary":"MSCATTER preflights all row-indexed lanes before its first write or event.","pass_condition":"A faulting second U16 column leaves the first address unchanged and records no memory event.","related_sources":["asl/tile/model/memory/gather-scatter.asl"]}
 func main() => integer
 begin
     ResetProfileState();
     ConfigureTile(1, 128, 1, 2, 1, 2, TileDataType_U16,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(2, 128, 1, 2, 1, 2, TileDataType_U32,
+    ConfigureTile(2, 128, 1, 1, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x1111);
     WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x2222);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
-    WriteTileElement(2, 0, 1, Zeros{PTO_XLEN} + 2);
     Store(Zeros{PTO_XLEN} + 4094, 2, Zeros{PTO_XLEN} + 0xaaaa);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 4094);
     var start: bits(64) = Zeros{64} + 0x00511181;

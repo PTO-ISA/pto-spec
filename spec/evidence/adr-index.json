@@ -9364,7 +9364,7 @@
       "target_releases": [
         "0.58.5"
       ],
-      "title": "Bind indexed TLSU row-stride addressing"
+      "title": "Bind indexed TLSU Row and Elem addressing"
     }
   ],
   "schema": "pto.adr-index",

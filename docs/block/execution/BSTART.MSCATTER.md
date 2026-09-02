@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MSCATTER.asl`
 
-Begins a strided indexed TLSU scatter block.
+Scatter Local data through explicit Row or Elem relative-index mode.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MSCATTER}
 
@@ -90,6 +90,25 @@ BSTART.MSCATTER DataType
 - **Standalone opcode:** `yes`
 
 ## Field value dispositions
+
+### B.DATR.CMode (`PTO-FIELD-BLOCK-CMODE`)
+
+Selects the operation-defined comparison or indexed-memory mode.
+
+**Encoded zero:** Equality for comparisons; Row mode for indexed TLSU.
+
+| Code | Disposition | Meaning |
+| ---: | --- | --- |
+| 0 | assigned | EQ-or-Row |
+| 1 | assigned | NE-or-Elem |
+| 2 | assigned | LT |
+| 3 | assigned | GT |
+| 4 | assigned | LE |
+| 5 | assigned | GE |
+| 6 | reserved | future extension |
+| 7 | reserved | future extension |
+
+**Reserved-value behavior:** Codes 6 and 7 are reserved and reject before architectural effects.
 
 ### DataType (`PTO-FIELD-BLOCK-DATATYPE`)
 
@@ -203,6 +222,7 @@ end;
 
 - DataType is always encoded and selects the memory transfer type.
 - The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.
+- B.DATR CMode=0 selects Row mode and CMode=1 selects Elem mode; codes 2..5 are inapplicable. Row mode uses a canonical row-major 1 x ValidRow S32/U32 IndexTile and consumes RegSrc1 as a GM row stride in elements. Elem mode uses a row-major S32/U32 IndexTile matching the data valid shape, requires RegSrc1 to encode zero, and treats each index as a relative element displacement from BaseGPR.
 
 ## Legality
 
@@ -210,6 +230,9 @@ end;
 - Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 because MSCATTER carries no nibble selector.
 - The body must complete the exact MSCATTER schema documented by PTO-TILE-MSCATTER; no B.IOS or destination is accepted.
 - B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero.
+- For indexed TLSU, B.DATR CMode accepts only Row=0 and Elem=1; CMode 2..5 raises Fault_TileLegality before address generation or effects.
+- Row mode requires a canonical row-major 1 x ValidRow S32/U32 IndexTile and a RegSrc1 row-stride value no smaller than ValidCol.
+- Elem mode requires a row-major S32/U32 IndexTile matching the data valid shape and requires B.IOR RegSrc1, RegSrc2, and RegDst to encode zero.
 
 ## State effects
 
@@ -220,7 +243,8 @@ end;
 
 ### Memory effects
 
-- The start itself performs no memory access. BSTOP or the next BSTART commits the completed strided indexed scatter only after full preflight.
+- Row mode stores data coordinate (r,c) at BaseGPR + (IndexTile[0,r] * row_stride_elements + c) * sizeof(DataType).
+- Elem mode stores data coordinate (r,c) at BaseGPR + IndexTile[r,c] * sizeof(DataType).
 
 ### Ordering
 

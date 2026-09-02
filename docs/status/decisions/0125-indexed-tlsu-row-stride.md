@@ -1,7 +1,7 @@
 ---
 {
   "id": "ADR-0125",
-  "title": "Bind indexed TLSU row-stride addressing",
+  "title": "Bind indexed TLSU Row and Elem addressing",
   "status": "accepted",
   "authors": ["Codex"],
   "approvers": ["zhoubot"],
@@ -88,60 +88,68 @@
 }
 ---
 
-# ADR 0125: Bind indexed TLSU row-stride addressing
+# ADR 0125: Bind indexed TLSU Row and Elem addressing
 
 ## Context
 
-The compiler supplies two B.IOR sources for indexed TLSU blocks: the GM base
-address and the GM row stride. PTO modeled the second source as required zero
-and interpreted IndexTile elements as byte displacements. Complete compiler
-MGATHER and MSCATTER blocks therefore rejected before execution.
+Indexed gather and scatter require both one-index-per-row and
+one-index-per-element addressing. Row addressing also requires an independent
+GM stride, while element addressing does not. The architecture therefore needs
+an explicit mode rather than inferring semantics from an IndexTile shape.
 
 ## Decision
 
-MGATHER, MSCATTER, MGATHER.MASK, MSCATTER.MASK, and MGATHER.CAS use this common
-address rule:
+MGATHER, MSCATTER, MGATHER.MASK, and MSCATTER.MASK use B.DATR CMode as an
+operation-specific coalescing selector:
 
-- B.IOR RegSrc0 supplies the GM base address;
-- B.IOR RegSrc1 supplies the nonzero GM row stride in elements;
-- RegSrc2 and RegDst remain zero;
-- each signed or unsigned IndexTile element is a logical linear element index;
-- `ValidCol` is the logical row width used to split index `k` into
-  `q=floor(k/ValidCol)` and `r=k-q*ValidCol`, where `0 <= r < ValidCol`;
-- the GM element offset is `q*stride+r`, and the byte address is the base plus
-  that element offset times the transfer DataType size;
-- stride must be at least ValidCol and rejects before address probes, memory
-  events, allocation, destination publication, or stores.
+- CMode=0 selects Row; CMode=1 selects Elem; CMode 2..5 is inapplicable;
+- RegSrc0 always supplies the GM base address;
+- Row uses a canonical row-major `1 x ValidRow` S32/U32 IndexTile and consumes
+  RegSrc1 as a nonzero GM row stride in elements;
+- Row address `(r,c)` is
+  `base + (IndexTile[0,r] * stride + c) * sizeof(DataType)`;
+- Elem uses a row-major S32/U32 IndexTile matching the data valid shape and
+  requires RegSrc1 to encode zero;
+- Elem address `(r,c)` is
+  `base + IndexTile[r,c] * sizeof(DataType)`;
+- RegSrc2 and RegDst remain zero in both modes.
 
 B.IOT source codes remain relative T/U/M/N selectors. Each source is resolved
 against the newest-first published hand order before the indexed operation;
 each successfully published destination becomes #1 of its selected hand and
 older persistent generations shift toward #16.
 
-Signed negative indices use the same floor-division rule and may address rows
-before the base. Disabled mask lanes do not evaluate their index or address.
+Signed negative indices may address before the base. Disabled mask lanes do
+not evaluate their selected index or address.
+
+MGATHER.CAS is not part of that row-index ABI. It retains the existing
+per-element byte-displacement rule and requires B.IOR RegSrc1, RegSrc2, and
+RegDst to encode zero.
 
 ## Compatibility
 
 - Opcode, Tile binding order, dimensions, types, masks, preflight, ordering,
   fault precision, duplicate-address policy, and publication do not change.
-- B.IOR RegSrc1 changes from required zero to required row stride.
-- IndexTile elements change from byte displacements to logical element
-  indices. A contiguous row-major tensor uses stride equal to ValidCol.
+- The four non-CAS indexed TLSU operations explicitly support both programming
+  model modes without changing their opcodes.
+- Row consumes RegSrc1 stride; Elem requires RegSrc1 zero.
+- IndexTile is restricted to the S32/U32 PTO common subset.
+- MGATHER.CAS remains byte-displacement based and does not consume stride.
 - Relative Tile naming is restored in the executable ASL model without
   changing source persistence, L semantics, or encoded B.IOT fields.
 
 ## Verification obligations
 
-- Direct and decoded tests cover contiguous and padded row strides, signed
-  negative indices, every transfer width, and stride rejection.
+- Direct and decoded tests cover Row and Elem, contiguous and padded row
+  strides, signed negative indices, S32/U32 legality, mode rejection, and the
+  Elem zero-stride-selector rule.
 - MASK variants prove disabled invalid indices remain unobserved.
-- CAS and scatter preserve complete preflight and atomic publication rules.
-- The six compiler-generated MGATHER/MSCATTER ELF cases match independent
-  result goldens.
+- CAS preserves its byte-displacement ABI and atomic publication rules;
+  scatter preserves complete preflight.
 - A TLOAD-index, MGATHER-destination, TSTORE chain proves that the new T
   generation becomes T#1 while the prior IndexTile remains available as T#2.
 
 ## Decision state
 
-The architecture owner confirmed the required stride operand on 2026-09-01.
+The architecture owner confirmed explicit Row/Elem CMode semantics on
+2026-09-02.

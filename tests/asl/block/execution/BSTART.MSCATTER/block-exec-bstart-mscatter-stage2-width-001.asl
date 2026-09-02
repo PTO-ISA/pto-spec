@@ -1,4 +1,4 @@
-// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-BSTART-MSCATTER-SCHEMA-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"decoded MSCATTER preserves full-width logical indices and accepts narrower integer IndexTiles","pass_condition":"U64 and S16 logical indices execute at their encoded widths, an upper-half U64 index is scaled by the U64 transfer width without truncation, and a raw invalid TF32 carrier is stored unchanged","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
+// PTO-TEST: {"id":"PTO-AVS-BLOCK-MSCATTER-STAGE2-WIDTH-001","source":"asl/block/execution/BSTART.MSCATTER.asl","requirements":["PTO-BSTART-MSCATTER-SCHEMA-001","PTO-INDEXED-TLSU-STRIDE-001","PTO-MSCATTER-BYTE-DISPLACEMENT-001","PTO-INST-TILE-MSCATTER","PTO-INST-BLOCK-BSTART-MSCATTER"],"kind":"execution","summary":"decoded MSCATTER accepts the S32/U32 index common subset and preserves raw transfer carriers","pass_condition":"U32 and S32 row indices execute, and a raw invalid TF32 carrier is stored unchanged","related_sources":["asl/block/model/dispatch/tlsu-mscatter.asl","asl/tile/model/memory/gather-scatter.asl","asl/tile/model/memory/addressing.asl"]}
 
 pure func MscatterStage2Start(data_type: bits(5)) => bits(64)
 begin
@@ -75,7 +75,7 @@ begin
     let source_value = Zeros{PTO_XLEN} + 0x1122334455667788;
     PrepareMscatterStage2(
         TileDataType_U64,
-        TileDataType_U64,
+        TileDataType_U32,
         Zeros{PTO_XLEN},
         Zeros{5} + 24);
     WriteTileElement(1, 0, 0, source_value);
@@ -91,30 +91,9 @@ begin
     assert ReadTileElement(1, 0, 0) == source_value;
     StopMemoryEventCapture();
 
-    // The upper half of a U64 logical index is architectural and the element
-    // offset is scaled by the U64 transfer width rather than truncated.
-    let full_width_index = Zeros{PTO_XLEN} + 0x0000000100000000;
-    let full_width_address = Zeros{PTO_XLEN} + 0x0000000800000100;
     PrepareMscatterStage2(
         TileDataType_U64,
-        TileDataType_U64,
-        full_width_index,
-        Zeros{5} + 24);
-    Store(target, 8, Zeros{PTO_XLEN} + 0xdeadbeefdeadbeef);
-    StartMemoryEventCapture(0);
-    let full_width_rejected = ExecuteBundleTileOperation();
-    assert !full_width_rejected;
-    assert _LastFault == Fault_DataPage;
-    assert _FaultAddress == full_width_address;
-    assert _MemoryEventCount == 0;
-    let unchanged_after_full_width = LoadUnsigned(target, 8);
-    assert unchanged_after_full_width ==
-        Zeros{PTO_XLEN} + 0xdeadbeefdeadbeef;
-    StopMemoryEventCapture();
-
-    PrepareMscatterStage2(
-        TileDataType_U64,
-        TileDataType_S16,
+        TileDataType_S32,
         Zeros{PTO_XLEN},
         Zeros{5} + 24);
     Store(target, 8, Zeros{PTO_XLEN} + 0xdeadbeefdeadbeef);

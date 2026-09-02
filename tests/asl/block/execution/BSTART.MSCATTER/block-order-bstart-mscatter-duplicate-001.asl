@@ -20,20 +20,21 @@ end;
 func RunDuplicateScatter(atomic: boolean, base: Word)
 begin
     ResetProfileState();
-    ConfigureTile(1, 128, 1, 2, 1, 2, TileDataType_U8,
+    ConfigureTile(1, 128, 2, 1, 2, 1, TileDataType_U8,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(2, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x31);
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x72);
+    WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 0x72);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN});
     WritePEGPR(0, 2, base);
     let started = ExecuteCommandInstruction(DuplicateScatterStart(), 32);
     assert started == CommandExecution_Executed;
     SetBundleControlAttributeState(FALSE, atomic, FALSE, FALSE, FALSE, FALSE);
-    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
-    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 1);
     let tiles = ExecuteCommandInstruction(DuplicateScatterBinding(), 32);
     assert tiles == CommandExecution_Executed;
     SetBundleScalarBinding(0, 0, 2, 4, 0, 2);

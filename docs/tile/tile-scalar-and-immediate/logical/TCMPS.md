@@ -92,14 +92,14 @@ This operation has no standalone opcode.
 
 ### B.DATR.CMode (`PTO-FIELD-BLOCK-CMODE`)
 
-Selects the comparison relation used by TCMP and TCMPS.
+Selects the operation-defined comparison or indexed-memory mode.
 
-**Encoded zero:** Code zero selects equality comparison.
+**Encoded zero:** Equality for comparisons; Row mode for indexed TLSU.
 
 | Code | Disposition | Meaning |
 | ---: | --- | --- |
-| 0 | assigned | EQ |
-| 1 | assigned | NE |
+| 0 | assigned | EQ-or-Row |
+| 1 | assigned | NE-or-Elem |
 | 2 | assigned | LT |
 | 3 | assigned | GT |
 | 4 | assigned | LE |

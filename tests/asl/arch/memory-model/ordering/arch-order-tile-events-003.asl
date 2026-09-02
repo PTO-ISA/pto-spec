@@ -14,7 +14,8 @@ begin
     Store(source_address, 8, Zeros{PTO_XLEN} + 7);
     ConfigureOneElementMemoryTile(40);
     ConfigureOneElementMemoryTile(41);
-    ConfigureOneElementMemoryTile(42);
+    ConfigureTile(42, 256, 1, 1, 1, 1, TileDataType_U32,
+        TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(41, 0, 0, Zeros{PTO_XLEN} + 7);
     WriteTileElement(42, 0, 0, Zeros{PTO_XLEN});
 

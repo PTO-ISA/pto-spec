@@ -34,16 +34,14 @@ end;
 func main() => integer
 begin
     ResetProfileState();
-    ConfigureTile(0, 128, 1, 4, 1, 3, TileDataType_S32,
+    ConfigureTile(0, 128, 1, 1, 1, 1, TileDataType_S32,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigurePredicateTile(1, 128, 1, 4, 1, 3);
-    WriteTileElement(0, 0, 0, Ones{PTO_XLEN} - 7);
-    WriteTileElement(0, 0, 1, Zeros{PTO_XLEN} + 0x7fff);
-    WriteTileElement(0, 0, 2, Ones{PTO_XLEN});
+    WriteTileElement(0, 0, 0, Ones{PTO_XLEN});
     WriteTilePredicateBit(1, 0, 0, TRUE);
     WriteTilePredicateBit(1, 0, 1, FALSE);
     WriteTilePredicateBit(1, 0, 2, TRUE);
-    Store(Zeros{PTO_XLEN} + 0x100, 1, Zeros{PTO_XLEN} + 11);
+    Store(Zeros{PTO_XLEN} + 0x105, 1, Zeros{PTO_XLEN} + 11);
     Store(Zeros{PTO_XLEN} + 0x107, 1, Zeros{PTO_XLEN} + 33);
     WritePEGPR(0, 2, Zeros{PTO_XLEN} + 0x108);
     let started = ExecuteCommandInstruction(MaskGatherStart(), 32);
@@ -67,7 +65,7 @@ begin
     assert ReadTileElement(destination, 0, 3) == Zeros{PTO_XLEN} + 0xff;
     assert ReadTileElement(destination, 1, 0) == Zeros{PTO_XLEN} + 0xff;
     assert _MemoryEventCount == 2;
-    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x100;
+    assert _MemoryEvents[[0]].address == Zeros{PTO_XLEN} + 0x105;
     assert _MemoryEvents[[1]].address == Zeros{PTO_XLEN} + 0x107;
     StopMemoryEventCapture();
     return 0;

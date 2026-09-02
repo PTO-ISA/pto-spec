@@ -9,7 +9,7 @@ end;
 
 func ConfigureIndexTlsuTile(index: TileIndex, columns: integer {1..16})
 begin
-    ConfigureTile(index, 2048, 1, 16, 1, columns, TileDataType_U64,
+    ConfigureTile(index, 2048, 1, 16, 1, 1, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
 end;
 
@@ -58,26 +58,25 @@ begin
         WriteTileElement(30, 0, lane, Zeros{PTO_XLEN} + 2);
     end;
 
+    WriteTileElement(28, 0, 0, Zeros{PTO_XLEN});
     for fault_position = 0 to 2 do
+        let start_address = if fault_position == 0 then
+            Zeros{PTO_XLEN} + 4096
+            else if fault_position == 1 then Zeros{PTO_XLEN} + 4095
+            else Zeros{PTO_XLEN} + 4094;
         for lane = 0 to 2 do
-            let index_value = if lane == fault_position then
-                Zeros{PTO_XLEN} + 6400 else Zeros{PTO_XLEN} + (lane * 2);
-            WriteTileElement(28, 0, lane, index_value);
             WriteTileElement(27, 0, lane, Zeros{PTO_XLEN} + 9);
         end;
-        Store(base_address, 1, Zeros{PTO_XLEN} + 0x21);
-        Store(base_address + 1, 1, Zeros{PTO_XLEN} + 0x43);
-        Store(base_address + 2, 1, Zeros{PTO_XLEN} + 0x65);
         ClearFault();
         StartMemoryEventCapture(2);
-        MGATHER(27, base_address, Zeros{PTO_XLEN} + 3, 28);
+        MGATHER(27, start_address, Zeros{PTO_XLEN} + 3, 28);
         assert _LastFault == Fault_DataPage;
         assert _MemoryEventCount == 0;
         StopMemoryEventCapture();
 
         ClearFault();
         StartMemoryEventCapture(2);
-        MSCATTER(base_address, Zeros{PTO_XLEN} + 3, 27, 28);
+        MSCATTER(start_address, Zeros{PTO_XLEN} + 3, 27, 28);
         assert _LastFault == Fault_DataPage;
         assert _MemoryEventCount == 0;
         StopMemoryEventCapture();

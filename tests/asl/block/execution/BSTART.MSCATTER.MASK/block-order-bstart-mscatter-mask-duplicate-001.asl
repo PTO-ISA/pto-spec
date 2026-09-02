@@ -2,25 +2,26 @@
 func RunMaskedDuplicate(atomic: boolean, base: Word)
 begin
     ResetProfileState();
-    ConfigureTile(1, 128, 1, 2, 1, 2, TileDataType_U8,
+    ConfigureTile(1, 128, 2, 1, 2, 1, TileDataType_U8,
         TileLayout_RowMajor, TileLocation_Any);
     ConfigureTile(2, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigurePredicateTile(3, 128, 1, 2, 1, 2);
+    ConfigurePredicateTile(3, 128, 2, 1, 2, 1);
     WriteTileElement(1, 0, 0, Zeros{PTO_XLEN} + 0x31);
-    WriteTileElement(1, 0, 1, Zeros{PTO_XLEN} + 0x72);
+    WriteTileElement(1, 1, 0, Zeros{PTO_XLEN} + 0x72);
     WriteTileElement(2, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(2, 0, 1, Zeros{PTO_XLEN});
     WriteTilePredicateBit(3, 0, 0, TRUE);
-    WriteTilePredicateBit(3, 0, 1, TRUE);
+    WriteTilePredicateBit(3, 1, 0, TRUE);
     WritePEGPR(0, 2, base);
     var start: bits(64) = Zeros{64} + 0x00711181;
     start[31:27] = Zeros{5} + 27;
     let started = ExecuteCommandInstruction(start, 32);
     assert started == CommandExecution_Executed;
     SetBundleControlAttributeState(FALSE, atomic, FALSE, FALSE, FALSE, FALSE);
-    SetBundleDimension(0, Zeros{PTO_XLEN} + 2);
-    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 2);
+    SetBundleDimension(0, Zeros{PTO_XLEN} + 1);
+    SetBundleDimension(1, Zeros{PTO_XLEN} + 2);
+    WritePEGPR(0, 4, Zeros{PTO_XLEN} + 1);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, TRUE, 1, 2, FALSE);
     AddBundleTileBinding(FALSE, 0, 0, '0001', TRUE, FALSE, 3, 0, TRUE);
     SetBundleScalarBinding(0, 0, 2, 4, 0, 2);

@@ -88,16 +88,31 @@ begin
     let columns = if _BundleDimensionPresent[[2]] then
         UInt(_BundleDimensions[[2]]) as integer {1..65535}
         else valid_columns;
-    if _Tiles[[binding.source0]].valid_rows != valid_rows ||
-       _Tiles[[binding.source0]].valid_columns != valid_columns then
+    if !CurrentBundleIndexedTLSUModeLegal() ||
+       _Tiles[[binding.source0]].layout != TileLayout_RowMajor then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    let element_mode = CurrentBundleIndexedTLSUUsesElementIndices();
+    if (element_mode &&
+        (_Tiles[[binding.source0]].valid_rows != valid_rows ||
+         _Tiles[[binding.source0]].valid_columns != valid_columns)) ||
+       (!element_mode &&
+        (_Tiles[[binding.source0]].valid_rows != 1 ||
+         _Tiles[[binding.source0]].valid_columns != valid_rows)) then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;
     let base_address = ReadPEAbsoluteGPROperand(_CurrentMemoryAgent,
         _BundleScalarBindings[[0]].source0);
-    let row_stride_elements = ReadPEAbsoluteGPROperand(
-        _CurrentMemoryAgent, _BundleScalarBindings[[0]].source1);
-    if UInt(row_stride_elements) < valid_columns then
+    if element_mode && _BundleScalarBindings[[0]].source1 != 0 then
+        SetFault(Fault_TileLegality, ReadTPC());
+        return FALSE;
+    end;
+    let row_stride_elements = if element_mode then Zeros{PTO_XLEN}
+        else ReadPEAbsoluteGPROperand(
+            _CurrentMemoryAgent, _BundleScalarBindings[[0]].source1);
+    if !element_mode && UInt(row_stride_elements) < valid_columns then
         SetFault(Fault_TileLegality, ReadTPC());
         return FALSE;
     end;

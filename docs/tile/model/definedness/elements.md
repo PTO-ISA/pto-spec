@@ -163,7 +163,8 @@ end;
 pure func IndexedTLSUIndexDataTypeLegal(
     data_type: TileDataType) => boolean
 begin
-    return TileDataTypeIsInteger(data_type);
+    return data_type == TileDataType_S32 ||
+           data_type == TileDataType_U32;
 end;
 pure func TileDataTypeIsFloating(data_type: TileDataType) => boolean
 begin

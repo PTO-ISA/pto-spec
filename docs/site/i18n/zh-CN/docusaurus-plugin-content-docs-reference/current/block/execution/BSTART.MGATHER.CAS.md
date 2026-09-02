@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/execution/BSTART.MGATHER.CAS.asl`
 
-Begins an atomic compare-and-swap strided indexed TLSU gather block.
+Atomically compare and conditionally replace GM elements at signed or unsigned byte displacements.
 
 ## Normative identity {#PTO-INST-BLOCK-BSTART-MGATHER-CAS}
 
@@ -151,7 +151,6 @@ Every encoded field value is assigned here, owned by another mnemonic, or reserv
 | --- | --- |
 | DataType | transfer, comparison, replacement, and destination element type |
 | B.IOR.RegSrc0 | per-PE private-GPR GM base address |
-| B.IOR.RegSrc1 | per-PE private-GPR GM row stride in elements |
 
 ## Decode
 
@@ -174,7 +173,7 @@ B.DIM LB1=ValidRow (optional)
 B.DIM LB2=Col (optional)
 B.IOT IndexTile, ExpectedTile, mask=PE_MASK
 B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>
-B.IOR BaseGPR, StrideGPR, zero, ->zero
+B.IOR BaseGPR, zero, zero, ->zero
 BSTOP
 ```
 
@@ -204,7 +203,8 @@ end;
 ## Defaults and encoded zero
 
 - DataType is always encoded and selects the transfer, comparison, replacement, and destination element type.
-- The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE GM base address and RegSrc1 supplies a nonzero GM row stride in elements no smaller than ValidCol. RegSrc2 and RegDst remain zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.
+- The completed schema requires explicit B.IOR: RegSrc0 supplies the per-PE byte-address base; RegSrc1, RegSrc2, and RegDst must encode zero. Omitted LB1 defaults to one, omitted LB2 defaults to LB0, and omitted B.DATR uses the operation defaults.
+- Each IndexTile logical element is a signed or unsigned byte displacement relative to BaseGPR.
 
 ## Legality
 
@@ -212,7 +212,8 @@ end;
 - Indexed TLSU transfer additionally rejects E2M1X2, E1M2X2, HiF4X2, S4X2, and U4X2 because MGATHER.CAS carries no nibble selector.
 - The body must complete the exact two-B.IOT Local schema documented by PTO-TILE-MGATHER-CAS. B.IOS and extra bindings are not accepted.
 - PE_MASK=0000 is a strict no-op before all schema, GPR, source, dimension, allocation, address, and fault checks.
-- B.IOR RegSrc0 supplies the per-PE GM base and RegSrc1 supplies the GM row stride in elements. RegSrc1 must be at least ValidCol; RegSrc2 and RegDst must be zero.
+- IndexTile must be allocated, fully defined, generically indexable, and use S32 or U32. Each logical element is sign- or zero-extended as a byte displacement.
+- B.IOR RegSrc0 supplies the per-PE byte-address base; RegSrc1, RegSrc2, and RegDst must encode zero.
 
 ## State effects
 
@@ -223,8 +224,8 @@ end;
 
 ### Memory effects
 
-- The start itself performs no memory access. BSTOP or the next BSTART performs the fully preflighted per-lane atomic compare-and-swap sequence.
-- Duplicate-address lanes are legal and serialize in an implementation-defined order; each lane still supplies one atomic event.
+- For each valid coordinate, atomically access BaseGPR plus the corresponding signed or unsigned byte displacement from IndexTile.
+- All lane addresses are preflighted before the first atomic event. Duplicate-address lanes serialize in an implementation-defined order.
 
 ### Ordering
 
@@ -233,8 +234,8 @@ end;
 ## Exceptions
 
 - Reserved DataType encodings raise Fault_IllegalInstruction before architectural effects.
-- At bundle completion, malformed two-command B.IOT composition, missing B.IOR or LB0, packed transfer types, non-integer indices, mismatched source type or shape, invalid dimensions, or any read/write access fault is rejected before destination allocation, atomic events, or memory writes.
+- At bundle completion, malformed two-command B.IOT composition, missing B.IOR or LB0, packed transfer types, non-S32/U32 indices, mismatched source type or shape, invalid dimensions, or any read/write access fault is rejected before destination allocation, atomic events, or memory writes.
 
 ## Examples
 
-- BSTART.MGATHER.CAS DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, StrideGPR, zero, ->zero; BSTOP
+- BSTART.MGATHER.CAS DataType; B.DATR PadValue, Layout (optional); B.DIM LB0=ValidCol; B.DIM LB1=ValidRow (optional); B.DIM LB2=Col (optional); B.IOT IndexTile, ExpectedTile, mask=PE_MASK; B.IOT ReplacementTile, mask=PE_MASK, <last>, ->DstTile<TSize>; B.IOR BaseGPR, zero, zero, ->zero; BSTOP

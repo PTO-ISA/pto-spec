@@ -26,12 +26,12 @@ begin
     assert _MemoryEvents[[1]].order == MemoryOrder_Release;
     StopMemoryEventCapture();
 
-    ConfigureTile(5, 128, 1, 2, 1, 2, TileDataType_U64,
+    ConfigureTile(5, 128, 2, 1, 2, 1, TileDataType_U64,
         TileLayout_RowMajor, TileLocation_Any);
-    ConfigureTile(6, 128, 1, 2, 1, 2, TileDataType_U64,
+    ConfigureTile(6, 128, 1, 2, 1, 2, TileDataType_U32,
         TileLayout_RowMajor, TileLocation_Any);
     WriteTileElement(5, 0, 0, Zeros{PTO_XLEN} + 21);
-    WriteTileElement(5, 0, 1, Zeros{PTO_XLEN} + 22);
+    WriteTileElement(5, 1, 0, Zeros{PTO_XLEN} + 22);
     WriteTileElement(6, 0, 0, Zeros{PTO_XLEN});
     WriteTileElement(6, 0, 1, Zeros{PTO_XLEN});
     Store(Zeros{PTO_XLEN} + 384, 8, Zeros{PTO_XLEN});
@@ -40,7 +40,7 @@ begin
         Zeros{PTO_XLEN});
     SetBundleControlAttributeState(FALSE, TRUE, TRUE, TRUE, FALSE, FALSE);
     MSCATTER(Zeros{PTO_XLEN} + 384,
-        Zeros{PTO_XLEN} + 2, 5, 6);
+        Zeros{PTO_XLEN} + 1, 5, 6);
     assert _MemoryEventCount == 3;
     assert _MemoryEvents[[1]].kind == MemoryEvent_Store;
     assert _MemoryEvents[[2]].kind == MemoryEvent_Store;

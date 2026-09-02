@@ -3,7 +3,7 @@
 
 **Normative ASL source:** `asl/block/operands/B.IOR.asl`
 
-Bind up to three absolute GPR inputs and one absolute GPR output; regular TLSU uses source one as row stride and indexed TLSU uses it as GM row stride in elements.
+Bind absolute GPR operands; indexed TLSU consumes base plus a mode-dependent row stride.
 
 ## Normative identity {#PTO-INST-BLOCK-B-IOR}
 
@@ -345,8 +345,9 @@ end;
 // In TLOAD/TSTORE schemas source zero supplies the GM base and source one
 // supplies row stride in bytes.  Omission is distinct from an
 // encoded selector whose current value is zero.
-// Indexed TLSU schemas require an explicit B.IOR: source zero supplies the GM
-// base and source one supplies a nonzero GM row stride in elements.
+// Row-indexed MGATHER/MSCATTER schemas require an explicit B.IOR: source zero
+// supplies the GM base and source one supplies a nonzero GM row stride in
+// elements. MGATHER.CAS uses source zero only.
 pure func InstructionContractTLSUBaseSource_B_IOR() => integer
 begin
     return 0;
@@ -369,7 +370,7 @@ end;
 - The complete BSTART operation schema determines whether B.IOR is consumed and the number and roles of its GPR inputs and output.
 - When B.IOR is omitted, every consumed input or output uses its operation-defined default. An explicitly encoded selector zero names the architectural zero GPR and is not omission.
 - For TLOAD and TSTORE, omission supplies GM base zero and a dense byte row stride derived from the resolved column count and DataType; explicit RegSrc1=zero supplies a zero stride.
-- MGATHER, MSCATTER, MGATHER.MASK, MSCATTER.MASK, and MGATHER.CAS require explicit B.IOR: RegSrc0 is the GM base address and RegSrc1 is a nonzero GM row stride in elements no smaller than ValidCol.
+- MGATHER, MSCATTER, and MASK variants require explicit B.IOR. Row mode consumes RegSrc0 as GM base and RegSrc1 as a nonzero row stride in elements. Elem mode consumes only RegSrc0 and requires RegSrc1 zero. MGATHER.CAS also consumes only RegSrc0. RegSrc2 and RegDst remain zero for every indexed TLSU form.
 - Matrix postprocess B.IOR slots follow the complete B.FPATR schema: scalar QuantParam then scalar LReLUParam, with omitted consumed slots reading the zero GPR.
 
 ## Legality
@@ -378,7 +379,7 @@ end;
 - Every non-TGPR2T block accepts at most one B.IOR. TGPR2T accepts exactly two immediately contiguous source-only records with arity 3+1; destination-bearing, missing, reordered, intervening-command, wrong-split, or surplus records reject before effects.
 - RegDst and RegSrc0..RegSrc2 accept only absolute GPR selectors 0..23; selectors 24..31 are reserved and reject before effects.
 - Sources may repeat and may alias RegDst where the selected complete schema permits a destination. Any nonzero unconsumed field rejects before block effects.
-- Indexed TLSU consumes RegSrc0 and RegSrc1. RegSrc2 and RegDst must be zero, and the consuming operation rejects a RegSrc1 value smaller than ValidCol before memory or destination effects.
+- Row-mode MGATHER/MSCATTER consumes RegSrc0 and RegSrc1 and rejects a stride smaller than ValidCol. Elem mode and MGATHER.CAS consume only RegSrc0 and require RegSrc1 zero. RegSrc2 and RegDst must be zero for every indexed TLSU form.
 
 ## State effects
 
